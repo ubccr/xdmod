@@ -229,6 +229,7 @@ if (isset($_POST['direct_to'])) {
   <script type="text/javascript" src="js/Arr/ActiveTasksPanel.js"></script>
   <script type="text/javascript" src="js/Arr/EditActiveTaskPanel.js"></script>
   <script type="text/javascript" src="js/Arr/CreateSchedulePanel.js"></script>
+  <script type="text/javascript" src="js/Arr/CreateGroupTasksPanel.js"></script>
   <script type="text/javascript" src="js/Arr/EditSchedulePanel.js"></script>
 
   <script type="text/javascript" src="js/Ingestion/AppKernelStore.js"></script>
