@@ -452,39 +452,42 @@ XDMoD.Arr.createSubmitSettingsMenu = function () {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     var timecoeff = 1000 * 60 * 15;
-    var init_start_time = new Date(Math.round(now.getTime() / timecoeff + 0.5) * timecoeff);
+    var init_start_time = new Date(Math.round(now.getTime() / timecoeff + 1.5) * timecoeff);
     var tomorrow = new Date(today.valueOf())
     tomorrow.setDate(today.getDate() + 1);
 
     //setup validators
     var validateStartEndDateTime = function (theForm, senderName, value) {
         if (theForm) {
-            if (theForm.submitTimeWaysRadioGroup.getValue().inputValue == "submit_time_gen_way__start_same_time") {
-                return true;
-            }
+            var time_now = new Date();
+
             var submit_period = {
                 submitStartDateField: Ext.util.Format.date(theForm.submitStartDateField.getValue(), XDMoD.Arr.date_format),
                 submitStartTimeField: theForm.submitStartTimeField.getValue(),
                 submitEndDateField: Ext.util.Format.date(theForm.submitEndDateField.getValue(), XDMoD.Arr.date_format),
                 submitEndTimeField: theForm.submitEndTimeField.getValue()
             };
-            submit_period[senderName] = value
+            if (senderName == 'submitStartDateField' || senderName == 'submitStartTimeField') {
+                submit_period[senderName] = Ext.util.Format.date(value, XDMoD.Arr.date_format);
+            } else {
+                submit_period[senderName] = value;
+            }
+
 
             var start_time = new Date(submit_period.submitStartDateField + ' ' + submit_period.submitStartTimeField);
             var end_time = new Date(submit_period.submitEndDateField + ' ' + submit_period.submitEndTimeField);
-            console.log("start_time", start_time);
-            console.log("end_time", end_time);
 
-            if (start_time < today) {
-                console.log("Start date can not be in the past");
+
+            if (start_time < time_now) {
                 return "Start date can not be in the past";
             }
-            if (end_time < today) {
-                console.log("End date can not be in the past");
+            if (theForm.submitTimeWaysRadioGroup.getValue().inputValue == "submit_time_gen_way__start_same_time") {
+                return true;
+            }
+            if (end_time < time_now) {
                 return "End date can not be in the past";
             }
             if (start_time > end_time) {
-                console.log("End date should be after start date");
                 return "End date should be after start date";
             }
             return true;
