@@ -8,7 +8,7 @@
                 "name": "module_version_id",
                 "type": "integer",
                 "nullable": false,
-                "extras": "auto_increment"
+                "extra": "auto_increment"
             },
             {
                 "name": "module_id",
