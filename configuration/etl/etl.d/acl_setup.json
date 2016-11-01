@@ -3,7 +3,13 @@
     "defaults": {
         "acls": {
             "namespace": "ETL\\Maintenance",
-            "options_class": "MaintenanceOptions"
+            "options_class": "MaintenanceOptions",
+            "destination": {
+                "type": "mysql",
+                "name": "Database",
+                "config": "database",
+                "schema": "moddb"
+            }
         }
     },
     "acls": [
