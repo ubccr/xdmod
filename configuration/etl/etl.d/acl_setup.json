@@ -1,0 +1,20 @@
+{
+    "#": "Setup of Module Table",
+    "defaults": {
+        "acls": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions"
+        }
+    },
+    "acls": [
+        {
+            "name": "ACLTableManagement",
+            "class": "ManageTables",
+            "description": "Manage ACL related tables",
+            "definition_file_list": [
+                "modules.json"
+            ],
+            "enabled": true
+        }
+    ]
+}

@@ -1,0 +1,66 @@
+{
+    "table_definition": {
+        "name": "module_versions",
+        "engine": "InnoDB",
+        "comment": "Tracks per module versions.",
+        "columns": [
+            {
+                "name": "module_version_id",
+                "type": "integer",
+                "nullable": false,
+                "extras": "auto_increment"
+            },
+            {
+                "name": "module_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "version_major",
+                "type": "integer",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "version_minor",
+                "type": "integer",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "version_micro",
+                "type": "integer",
+                "nullable": false,
+                "default": 1
+            },
+            {
+                "name": "version_patch",
+                "type": "varchar(12)",
+                "nullable": false,
+                "default": ""
+            },
+            {
+                "name": "created_on",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "now()"
+            },
+            {
+                "name": "last_modified_on",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "now()"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "module_version_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}

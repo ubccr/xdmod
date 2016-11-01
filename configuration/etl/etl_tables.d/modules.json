@@ -1,0 +1,45 @@
+{
+    "table_definition": {
+        "name": "modules",
+        "engine": "InnoDB",
+        "comment": "Currently installed modules",
+        "columns": [
+            {
+                "name": "module_id",
+                "type": "integer",
+                "nullable": false,
+                "extras": "auto_increment"
+            },
+            {
+                "name": "current_version_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "display",
+                "type": "varchar(1024)",
+                "nullable": true
+            },
+            {
+                "name": "enabled",
+                "type": "boolean",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "module_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}
