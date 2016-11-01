@@ -1,0 +1,40 @@
+{
+  "table_definition": {
+    "name": "acl_types",
+    "engine": "InnoDB",
+    "comment": "Tracks types that pertain only to acls",
+    "columns": [
+      {
+        "name": "acl_type_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "module_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "type": "varchar(255)",
+        "nullable": false
+      },
+      {
+        "name": "display",
+        "type": "varchar(1024)",
+        "nullable": true
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "acl_type_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

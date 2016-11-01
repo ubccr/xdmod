@@ -1,0 +1,51 @@
+{
+  "table_definition": {
+    "name": "assets",
+    "engine": "InnoDB",
+    "comment": "Tracks currently installed `assets`",
+    "columns": [
+      {
+        "name": "asset_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "module_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "asset_type_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "type": "varchar(255)",
+        "nullable": false
+      },
+      {
+        "name": "display",
+        "type": "varchar(1024)",
+        "nullable": true
+      },
+      {
+        "name": "enabled",
+        "type": "boolean",
+        "nullable": false,
+        "default": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "asset_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "table_definition": {
+    "name": "user_acls",
+    "engine": "InnoDB",
+    "comment": "Tracks which `Users` have which `acls`",
+    "columns": [
+      {
+        "name": "user_acl_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "user_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "acl_id",
+        "type": "integer",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "user_acl_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "table_definition": {
+    "name": "charts",
+    "engine": "InnoDB",
+    "comment": "Tracks which charts have been created within the system",
+    "columns": [
+      {
+        "name": "chart_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "module_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "source_chart_id",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "name": "name",
+        "type": "varchar(255)",
+        "nullable": false
+      },
+      {
+        "name": "title",
+        "type": "varchar(1024)",
+        "nullable": true
+      },
+      {
+        "name": "chart_type",
+        "type": "enum('aggregate', 'timeseries')",
+        "nullable": false
+      },
+      {
+        "name": "created_on",
+        "type": "timestamp",
+        "nullable": false,
+        "default": "now()"
+      },
+      {
+        "name": "last_modified_on",
+        "type": "timestamp",
+        "nullable": false,
+        "default": "now()"
+      },
+      {
+        "name": "config",
+        "type": "text",
+        "nullable": false,
+        "default": ""
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "chart_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

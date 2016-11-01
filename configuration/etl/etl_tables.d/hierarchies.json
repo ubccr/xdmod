@@ -1,0 +1,40 @@
+{
+  "table_definition": {
+    "name": "hierarchies",
+    "engine": "InnoDB",
+    "comment": "Tracks the module installed `hierarchies`.",
+    "columns": [
+        {
+          "name": "hierarchy_id",
+          "type": "integer",
+          "nullable": false,
+          "extra": "auto_increment"
+        },
+        {
+          "name": "module_id",
+          "type": "integer",
+          "nullable": false
+        },
+      {
+        "name": "name",
+        "type": "varchar(255)",
+        "nullable": false
+      },
+      {
+        "name": "display",
+        "type": "varchar(1024)",
+        "nullable": true
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "hierarchy_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

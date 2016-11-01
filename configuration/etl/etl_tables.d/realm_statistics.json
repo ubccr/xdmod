@@ -1,0 +1,40 @@
+{
+  "table_definition": {
+    "name": "realm_statistics",
+    "engine": "InnoDB",
+    "comment": "Tracks which realms provide which statistics",
+    "columns": [
+      {
+        "name": "realm_statistic_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "realm_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "statistic_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "formula",
+        "type": "varchar(10000)",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "realm_statistic_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

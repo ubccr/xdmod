@@ -1,0 +1,56 @@
+{
+  "table_definition": {
+    "name": "statistics",
+    "engine": "InnoDB",
+    "comment": "Tracks all of the `statistics` currently available to the system",
+    "columns": [
+      {
+        "name": "statistic_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "module_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "type": "varchar(255)",
+        "nullable": false
+      },
+      {
+        "name": "display",
+        "type": "varchar(1024)",
+        "nullable": true
+      },
+      {
+        "name": "alias",
+        "type": "varchar(256)",
+        "nullable": false
+      },
+      {
+        "name": "unit",
+        "type": "varchar(64)",
+        "nullable": false
+      },
+      {
+        "name": "decimals",
+        "type": "integer",
+        "nullable": false,
+        "default": 1
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "statistic_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

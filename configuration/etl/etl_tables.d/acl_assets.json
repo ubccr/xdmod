@@ -1,0 +1,35 @@
+{
+  "table_definition": {
+    "name": "acl_assets",
+    "engine": "InnoDB",
+    "comment": "Tracks which `acls` have access to which `assets`",
+    "columns": [
+      {
+        "name": "acl_asset_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "acl_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "asset_id",
+        "type": "integer",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "acl_asset_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

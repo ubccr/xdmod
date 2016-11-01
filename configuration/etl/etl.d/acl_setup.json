@@ -18,7 +18,24 @@
             "class": "ManageTables",
             "description": "Manage ACL related tables",
             "definition_file_list": [
-                "modules.json"
+              "modules.json",
+              "realms.json",
+              "hierarchies.json",
+              "asset_types.json",
+              "acl_types.json",
+              "acls.json",
+              "assets.json",
+              "group_bys.json",
+              "statistics.json",
+              "charts.json",
+              "realm_group_bys.json",
+              "realm_statistics.json",
+              "realm_assets.json",
+              "acl_hierarchies.json",
+              "acl_assets.json",
+              "module_versions.json",
+              "user_charts.json",
+              "acl_charts.json"
             ],
             "enabled": true
         }

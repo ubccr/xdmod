@@ -1,0 +1,80 @@
+{
+  "table_definition": {
+    "name": "group_bys",
+    "engine": "InnoDB",
+    "comment": "Tracks which `group_bys` are available to the system",
+    "columns": [
+      {
+        "name": "group_by_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "module_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "type": "varchar(255)",
+        "nullable": false
+      },
+      {
+        "name": "display",
+        "type": "varchar(1024)",
+        "nullable": true
+      },
+      {
+        "name": "schema_name",
+        "type": "varchar(64)",
+        "nullable": false
+      },
+      {
+        "name": "table_name",
+        "type": "varchar(64)",
+        "nullable": false
+      },
+      {
+        "name": "alias",
+        "type": "varchar(256)",
+        "nullable": false
+      },
+      {
+        "name": "id_column",
+        "type": "varchar(64)",
+        "nullable": false
+      },
+      {
+        "name": "name_column",
+        "type": "varchar(64)",
+        "nullable": false
+      },
+      {
+        "name": "shortname_column",
+        "type": "varchar(64)",
+        "nullable": false
+      },
+      {
+        "name": "order_id_column",
+        "type": "varchar(64)",
+        "nullable": false
+      },
+      {
+        "name": "fk_column",
+        "type": "varchar(64)",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "group_by_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

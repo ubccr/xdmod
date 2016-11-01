@@ -1,0 +1,35 @@
+{
+  "table_definition": {
+    "name": "realm_group_bys",
+    "engine": "InnoDB",
+    "comment": "",
+    "columns": [
+      {
+        "name": "realm_group_by_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "realm_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "group_by_id",
+        "type": "integer",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "realm_group_by_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

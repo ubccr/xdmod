@@ -1,0 +1,50 @@
+{
+  "table_definition": {
+    "name": "realms",
+    "engine": "InnoDB",
+    "comment": "Tracks which `realms` are available to the system",
+    "columns": [
+      {
+        "name": "realm_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "module_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "type": "varchar(255)",
+        "nullable": false
+      },
+      {
+        "name": "display",
+        "type": "varchar(1024)",
+        "nullable": true
+      },
+      {
+        "name": "table_name",
+        "type": "varchar(64)",
+        "nullable": false
+      },
+      {
+        "name": "schema_name",
+        "type": "varchar(64)",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "realm_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

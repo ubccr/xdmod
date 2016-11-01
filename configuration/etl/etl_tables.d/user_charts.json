@@ -1,0 +1,47 @@
+{
+  "table_definition": {
+    "name": "user_charts",
+    "engine": "InnoDB",
+    "comment": "Tracks which `User` has access to which `charts`",
+    "columns": [
+      {
+        "name": "user_chart_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "user_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "chart_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "is_summary",
+        "type": "boolean",
+        "nullable": false,
+        "default": false
+      },
+      {
+        "name": "is_report_source",
+        "type": "boolean",
+        "nullable": false,
+        "default": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "user_chart_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

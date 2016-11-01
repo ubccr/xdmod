@@ -1,0 +1,49 @@
+{
+  "table_definition": {
+    "name": "acl_hierarchies",
+    "engine": "InnoDB",
+    "comment": "Tracks which `acls` have a relationship with which `hierarchies`",
+    "columns": [
+      {
+        "name": "acl_hierarchy_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "acl_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "hierarchy_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "level",
+        "type": "integer",
+        "nullable": false,
+        "default": 0
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "acl_hierarchy_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      },
+      {
+        "name": "idx_aclid_hierarchyid",
+        "columns": [
+          "acl_id",
+          "hierarchy_id"
+        ],
+        "type": "BTREE"
+      }
+    ]
+  }
+}

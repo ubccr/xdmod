@@ -1,0 +1,35 @@
+{
+  "table_definition": {
+    "name": "realm_assets",
+    "engine": "InnoDB",
+    "comment": "Tracks which `assets` are provided by which `realm`",
+    "columns": [
+      {
+        "name": "realm_asset_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "realm_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "asset_id",
+        "type": "integer",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "realm_asset_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}
