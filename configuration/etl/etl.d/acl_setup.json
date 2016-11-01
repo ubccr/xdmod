@@ -1,43 +1,46 @@
 {
-    "#": "Setup of Module Table",
-    "defaults": {
-        "acls": {
-            "namespace": "ETL\\Maintenance",
-            "options_class": "MaintenanceOptions",
-            "destination": {
-                "type": "mysql",
-                "name": "Database",
-                "config": "database",
-                "schema": "moddb"
-            }
+  "#": "Setup of Module Table",
+  "defaults": {
+    "acls": {
+      "namespace": "ETL\\Maintenance",
+      "options_class": "MaintenanceOptions",
+      "endpoints": {
+        "destination": {
+          "type": "mysql",
+          "name": "Database",
+          "config": "database",
+          "schema": "moddb"
         }
-    },
-    "acls": [
-        {
-            "name": "ACLTableManagement",
-            "class": "ManageTables",
-            "description": "Manage ACL related tables",
-            "definition_file_list": [
-              "modules.json",
-              "realms.json",
-              "hierarchies.json",
-              "asset_types.json",
-              "acl_types.json",
-              "acls.json",
-              "assets.json",
-              "group_bys.json",
-              "statistics.json",
-              "charts.json",
-              "realm_group_bys.json",
-              "realm_statistics.json",
-              "realm_assets.json",
-              "acl_hierarchies.json",
-              "acl_assets.json",
-              "module_versions.json",
-              "user_charts.json",
-              "acl_charts.json"
-            ],
-            "enabled": true
-        }
-    ]
+      }
+
+    }
+  },
+  "acls": [
+    {
+      "name": "ACLTableManagement",
+      "class": "ManageTables",
+      "description": "Manage ACL related tables",
+      "definition_file_list": [
+        "modules.json",
+        "realms.json",
+        "hierarchies.json",
+        "asset_types.json",
+        "acl_types.json",
+        "acls.json",
+        "assets.json",
+        "group_bys.json",
+        "statistics.json",
+        "charts.json",
+        "realm_group_bys.json",
+        "realm_statistics.json",
+        "realm_assets.json",
+        "acl_hierarchies.json",
+        "acl_assets.json",
+        "module_versions.json",
+        "user_charts.json",
+        "acl_charts.json"
+      ],
+      "enabled": true
+    }
+  ]
 }
