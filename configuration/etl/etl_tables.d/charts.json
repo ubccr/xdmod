@@ -38,14 +38,12 @@
       {
         "name": "created_on",
         "type": "timestamp",
-        "nullable": false,
-        "default": "now()"
+        "nullable": true
       },
       {
         "name": "last_modified_on",
         "type": "timestamp",
-        "nullable": false,
-        "default": "now()"
+        "nullable": true
       },
       {
         "name": "config",
