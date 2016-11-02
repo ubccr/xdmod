@@ -40,6 +40,21 @@
         "acl_charts.json"
       ],
       "enabled": true
+    },
+    {
+      "name": "ModuleTableImport",
+      "class": "ExecuteSql",
+      "sql_file_list": [
+        {
+          "sql_file": "acls/modules.sql",
+          "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/module_versions.sql",
+          "delimiter": "//"
+        }
+      ],
+      "enabled": true
     }
   ]
 }
