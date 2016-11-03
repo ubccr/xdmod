@@ -44,6 +44,20 @@
     {
       "name": "ModuleTableImport",
       "class": "ExecuteSql",
+      "endpoints": {
+        "source": {
+          "name": "source",
+          "type": "mysql",
+          "config": "database",
+          "schema": "moddb"
+        },
+        "destination": {
+          "name": "destination",
+          "type": "mysql",
+          "config": "database",
+          "schema": "moddb"
+        }
+      },
       "sql_file_list": [
         {
           "sql_file": "acls/modules.sql",
