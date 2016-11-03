@@ -1,4 +1,4 @@
-INSERT INTO module_versions(module_id, version_major, version_minor, version_micro, version_patch)
+INSERT INTO ${DESTINATION_SCHEMA}.module_versions(module_id, version_major, version_minor, version_micro, version_patch)
 SELECT
 m.module_id,
 6,
