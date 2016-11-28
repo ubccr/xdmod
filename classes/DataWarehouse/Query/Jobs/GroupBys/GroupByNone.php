@@ -44,11 +44,6 @@ class GroupByNone extends \DataWarehouse\Query\Jobs\GroupBy
 		return 'stack';
 	}
 
-	public function getDefaultShowTrendLine()
-	{
-		return 'y';
-	}
-
     // JMS Oct 15
     // Use the GroupBy subclass to add a Where clause and needed Join 
 	public function addWhereJoin(\DataWarehouse\Query\Query &$query, 
