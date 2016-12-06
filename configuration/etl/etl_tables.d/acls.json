@@ -47,5 +47,6 @@
         "is_unique": true
       }
     ]
-  }
+  },
+  "destination_columns": ["module_id", "acl_type_id", "name", "display", "enabled"]
 }
