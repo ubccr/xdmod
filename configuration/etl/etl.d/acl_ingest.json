@@ -5,7 +5,7 @@
         "source": {
           "type": "jsonfile",
           "name": "ACL Source",
-          "path": "etl_data.d/acls/acls.json"
+          "path": "acls/acls.json"
         },
         "destination": {
           "type": "mysql",
