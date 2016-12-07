@@ -42,7 +42,7 @@
       "enabled": true
     },
     {
-      "name": "ModuleTableImport",
+      "name": "ACLTableImport",
       "class": "ExecuteSql",
       "endpoints": {
         "source": {
@@ -65,6 +65,18 @@
         },
         {
           "sql_file": "acls/module_versions.sql",
+          "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/realms.sql",
+          "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/acl_types.sql",
+          "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/acls.sql",
           "delimiter": "//"
         }
       ],
