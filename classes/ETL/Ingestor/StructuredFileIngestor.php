@@ -166,15 +166,16 @@ class StructuredFileIngestor extends aIngestor implements iAction
             );
         }, $destColumns);
 
-        $sql = "INSERT INTO " . $this->etlDestinationTable->getFullName() . " (" .
+        $sql = isset($this->parsedDefinitionFile->insert_query)
+            ? $this->parsedDefinitionFile->insert_query
+            : "INSERT INTO " . $this->etlDestinationTable->getFullName() . " (" .
             implode(",", $destColumns) .
             ") VALUES (" .
             implode(",", $valuesComponents) .
             ") ON DUPLICATE KEY UPDATE " .
             implode(", ", array_map(function ($destColumn) {
                 return "$destColumn = COALESCE(VALUES($destColumn), $destColumn)";
-            }, $destColumns))
-        ;
+            }, $destColumns));
 
         $this->logger->debug("Insert query " . $this->destinationEndpoint . ":\n$sql");
 
