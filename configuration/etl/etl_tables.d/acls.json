@@ -48,5 +48,6 @@
       }
     ]
   },
-  "destination_columns": ["module_id", "acl_type_id", "name", "display", "enabled"]
+  "destination_columns": ["module_id", "acl_type_id", "name", "display", "enabled"],
+  "insert_query": "INSERT INTO acls(module_id, acl_type_id, name, display, enabled) SELECT (SELECT m.module_id from modules m where m.name = ? ) as module_id, (SELECT at.acl_type_id from acl_types at where at.name = ?) as acl_type_id, ? as name, ? as display, ? as enabled"
 }
