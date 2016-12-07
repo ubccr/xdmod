@@ -1,0 +1,17 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/acls/tabs.json#/table_definition"
+    },
+    "destination_columns": ["name", "display", "position", "is_default", "javascript_class", "javascript_reference", "tooltip", "user_manual_section_name", "parent_tab_id", "module_id"],
+    "custom_insert_values_components": {
+        "parent_tab_id": "(SELECT t.tab_id FROM tabs t WHERE t.name = ?)",
+        "module_id": "(SELECT m.module_id FROM modules m WHERE m.name = ?)"
+    },
+    "source_values": [
+        ["tg_summary","Summary","100","1","XDMoD.Module.Summary","CCR.xdmod.ui.tgSummaryViewer","Displays summary information","Summary Tab",null,"__MODULE_NAME__" ],
+        ["tg_usage","Usage","200","0","XDMoD.Module.Usage","CCR.xdmod.ui.chartViewerTGUsage","Displays usage","Usage Tab",null, "__MODULE_NAME__" ],
+        ["metric_explorer","Metric Explorer","300","0","XDMoD.Module.MetricExplorer","CCR.xdmod.ui.metricExplorer","","Metric Explorer",null, "__MODULE_NAME__" ],
+        ["report_generator","Report Generator","1000","0","XDMoD.Module.ReportGenerator","CCR.xdmod.ui.reportGenerator","","Report Generator",null, "__MODULE_NAME__" ],
+        ["about_xdmod","About","10000","0","XDMoD.Module.About","CCR.xdmod.ui.aboutXD","","About",null, "__MODULE_NAME__" ]
+    ]
+}

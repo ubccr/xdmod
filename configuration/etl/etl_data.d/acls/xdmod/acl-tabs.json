@@ -1,0 +1,52 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/acls/acl_tabs.json#/table_definition"
+    },
+    "destination_columns": ["acl_id", "tab_id", "parent_acl_tab_id", "position", "is_default"],
+    "custom_insert_values_components": {
+        "acl_id": "(SELECT a.acl_id FROM acls a WHERE a.name = ?)",
+        "tab_id": "(SELECT t.tab_id FROM tabs t WHERE t.name = ?)",
+        "parent_acl_tab_id": "(SELECT pt.tab_id FROM tabs pt WHERE pt.name = ?)"
+    },
+    "source_values": [
+        ["mgr", "tg_summary",       null, 100,   null],
+        ["mgr", "tg_usage",         null, 200,   null],
+        ["mgr", "metric_explorer",  null, 300,   null],
+        ["mgr", "report_generator", null, 1000,  null],
+        ["mgr", "about_xdmod",      null, 10000, null],
+        ["usr", "tg_summary",       null, 100,   null],
+        ["usr", "tg_usage",         null, 200,   null],
+        ["usr", "metric_explorer",  null, 300,   null],
+        ["usr", "report_generator", null, 1000,  null],
+        ["usr", "about_xdmod",      null, 10000, null],
+        ["po",  "tg_summary",       null, 100,   null],
+        ["po",  "tg_usage",         null, 200,   null],
+        ["po",  "metric_explorer",  null, 300,   null],
+        ["po",  "report_generator", null, 1000,  null],
+        ["po",  "about_xdmod",      null, 10000, null],
+        ["cs",  "tg_summary",       null, 100,   null],
+        ["cs",  "tg_usage",         null, 200,   null],
+        ["cs",  "metric_explorer",  null, 300,   null],
+        ["cs",  "report_generator", null, 1000,  null],
+        ["cs",  "about_xdmod",      null, 10000, null],
+        ["cd",  "tg_summary",       null, 100,   null],
+        ["cd",  "tg_usage",         null, 200,   null],
+        ["cd",  "metric_explorer",  null, 300,   null],
+        ["cd",  "report_generator", null, 1000,  null],
+        ["cd",  "about_xdmod",      null, 10000, null],
+        ["pi",  "tg_summary",       null, 100,   null],
+        ["pi",  "tg_usage",         null, 200,   null],
+        ["pi",  "metric_explorer",  null, 300,   null],
+        ["pi",  "report_generator", null, 1000,  null],
+        ["pi",  "about_xdmod",      null, 10000, null],
+        ["cc",  "tg_summary",       null, 100,   null],
+        ["cc",  "tg_usage",         null, 200,   null],
+        ["cc",  "metric_explorer",  null, 300,   null],
+        ["cc",  "report_generator", null, 1000,  null],
+        ["cc",  "about_xdmod",      null, 10000, null],
+        ["pub", "tg_summary",       null, 100,   null],
+        ["pub", "tg_usage",         null, 200,   null],
+        ["pub", "about_xdmod",      null, 10000, null]
+    ]
+
+}

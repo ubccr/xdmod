@@ -1,0 +1,13 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/acls/hierarchies.json#/table_definition"
+    },
+    "destination_columns": ["name", "display", "module_id"],
+    "custom_insert_values_components": {
+        "module_id": "(SELECT module_id FROM modules WHERE name = ?)"
+    },
+    "source_values": [
+        ["acl_hierarchy", "ACL Hierarchy", "xdmod"],
+        ["statistic_hierarchy", "Statistic Hierarchy", "xdmod"]
+    ]
+}

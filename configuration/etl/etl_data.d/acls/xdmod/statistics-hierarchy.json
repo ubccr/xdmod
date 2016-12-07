@@ -1,0 +1,41 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/acls/statistics_hierarchy.json#/table_definition"
+    },
+    "destination_columns": ["statistic_id", "hierarchy_id", "level"],
+    "custom_insert_values_components": {
+        "statistic_id": "(SELECT s.statistic_id FROM statistics s WHERE s.name = ?)",
+        "hierarchy_id": "(SELECT h.hierarchy_id FROM hierarchies h WHERE h.name = ?)"
+    },
+    "source_values": [
+        ["job_count","statistic_hierarchy",0],
+        ["running_job_count","statistic_hierarchy",2],
+        ["started_job_count","statistic_hierarchy",3],
+        ["submitted_job_count","statistic_hierarchy",4],
+        ["active_person_count","statistic_hierarchy",5],
+        ["active_pi_count","statistic_hierarchy",6],
+        ["active_allocation_count","statistic_hierarchy",7],
+        ["active_institution_count","statistic_hierarchy",8],
+        ["total_cpu_hours","statistic_hierarchy",11],
+        ["total_node_hours","statistic_hierarchy",12],
+        ["total_waitduration_hours","statistic_hierarchy",13],
+        ["total_wallduration_hours","statistic_hierarchy",14],
+        ["avg_cpu_hours","statistic_hierarchy",19],
+        ["sem_avg_cpu_hours","statistic_hierarchy",20],
+        ["avg_node_hours","statistic_hierarchy",21],
+        ["sem_avg_node_hours","statistic_hierarchy",22],
+        ["avg_waitduration_hours","statistic_hierarchy",23],
+        ["sem_avg_waitduration_hours","statistic_hierarchy",24],
+        ["avg_wallduration_hours","statistic_hierarchy",25],
+        ["sem_avg_wallduration_hours","statistic_hierarchy",26],
+        ["avg_processors","statistic_hierarchy",27],
+        ["sem_avg_processors","statistic_hierarchy",28],
+        ["min_processors","statistic_hierarchy",29],
+        ["max_processors","statistic_hierarchy",30],
+        ["utilization","statistic_hierarchy",31],
+        ["expansion_factor","statistic_hierarchy",32],
+        ["normalized_avg_processors","statistic_hierarchy",33],
+        ["active_resource_count","statistic_hierarchy",35],
+        ["rate_of_usage","statistic_hierarchy",36]
+    ]
+}

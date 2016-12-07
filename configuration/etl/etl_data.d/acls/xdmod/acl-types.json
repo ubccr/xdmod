@@ -1,0 +1,14 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/acls/acl_types.json#/table_definition"
+    },
+    "destination_columns": ["name", "display", "module_id"],
+    "custom_insert_values_components": {
+        "module_id": "(SELECT module_id FROM modules WHERE name = ?)"
+    },
+    "source_values": [
+        ["data", "Data", "xdmod"],
+        ["feature", "Feature", "xdmod"],
+        ["flag", "Flag", "xdmod"]
+    ]
+}

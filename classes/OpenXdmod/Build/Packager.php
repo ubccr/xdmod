@@ -292,6 +292,7 @@ class Packager
 
         $this->copySourceFiles();
         $this->copyModuleFiles();
+        $this->processModuleFiles();
         $this->createInstallScript();
         $this->createTarFile();
         $this->cleanUp();
@@ -398,6 +399,85 @@ class Packager
 
         foreach ($commands as $command) {
             $this->executeCommand($command);
+        }
+    }
+
+    /**
+     * Process any module specific files.
+     **/
+    private function processModuleFiles()
+    {
+        $this->logger->debug("Processing Module Files");
+
+        $this->replacementValues = array(
+            '__VERSION__' => $this->config->getVersion(),
+            '__VERSION_MAJOR__' => $this->config->getVersionMajor(),
+            '__VERSION_MINOR__' => $this->config->getVersionMinor(),
+            '__VERSION_PATCH__' => $this->config->getVersionPatch(),
+            '__VERSION_PRE_RELEASE__' => $this->config->getVersionPreRelease(),
+            '__MODULE_NAME__' => $this->config->getName()
+        );
+
+        $regex = '/^.+\.template$/';
+
+        $source = CONFIG_DIR;
+
+        $destination = implode(
+            DIRECTORY_SEPARATOR,
+            array($this->getPackageDir(), "configuration")
+        );
+
+        $this->replaceTemplateValues(
+            $source,
+            $destination,
+            $regex,
+            $this->replacementValues
+        );
+
+    }
+
+    /**
+     * Will read files identified by the '$fileRegex' from the '$source'
+     * directory then, for each file, read in the contents and loop through
+     * the '$values' array replacing each 'key' found with the corresponding
+     * value. Finally, write the final contents to the '$destination' folder
+     * with the same name as it was found in '$source'.
+     *
+     * @param string $source      the directory to read from
+     * @param string $destination the directory in which files identified by
+     * '$fileRegex' will be written.
+     * @param string $fileRegex   the regular expression that will determine
+     * which files will be retrieved / processed.
+     * @param array  $values      an array of key => value pairs that will be
+     * used in the replacement process.
+     **/
+    private function replaceTemplateValues($source, $destination, $fileRegex, array $values)
+    {
+        if (is_dir($source)) {
+            $fileMatches = new \RegexIterator(
+                new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($source)
+                ),
+                $fileRegex,
+                RegexIterator::GET_MATCH
+            );
+
+            foreach($fileMatches as $fileMatch) {
+                list($file) = $fileMatch;
+                $contents = file_get_contents($file);
+
+                foreach($values as $key => $value) {
+                    $contents = str_replace($key, $value, $contents);
+                }
+
+                $baseDest = substr($file, strlen(CONFIG_DIR) + 1);
+                $fileName = pathinfo($file, PATHINFO_FILENAME);
+                $subDirectory = substr($baseDest, 0, strpos($baseDest, $fileName) - 1);
+
+                $destinationFile = implode(DIRECTORY_SEPARATOR, array($destination, $subDirectory, $fileName));
+                file_put_contents($destinationFile, $contents);
+                $this->logger->info("Generated Module Specific File: $destinationFile");
+            }
         }
     }
 

@@ -99,6 +99,43 @@ groups based on users assigned to one of the groups.
 
 See the [Hierarchy Guide](hierarchy.html) for more details.
 
+### Acl Setup: Tables
+
+The Acl framework requires some new tables to function properly and
+this action will ensure their presence. For a standard installation
+the default values supplied for each prompt should be sufficient to
+successfully execute the action. Should you have a custom installation,
+wish to perform a dryrun and or increase the verbosity of the action
+then you will need to modify the defaults provided.
+
+It is intended that this action be run multiple times during the
+lifetime of an XDMoD installation. Specifically, anytime the structure
+of the Acl tables changes, running this action will ensure that the
+tables in the installations database are kept in sync with these
+changes.
+
+A script has been provided for your convenience if you wish to execute
+this action outside of xdmod-setup. It is located in the
+'bin' directory and is called 'acl-xdmod-management'.
+
+### Acl Import: XDMoD
+
+The Acl framework requires some initial data to ensure it functions
+properly. Executing this action will ensure that data is present. For
+a standard installation the default values supplied for each prompt
+should be sufficient to successfully execute the action. Should you
+have a custom installation, wish to perform a dryrun or increase the
+verbosity of the action then you will need to modify the defaults
+provided.
+
+It is intended that this action only be run *once* during the lifetime
+of an XDMoD installation. Once the data has been added to the database
+there should be no need to execute this action again.
+
+A script has been provided for your convenience should you wish to
+execute this action outside of xdmod-setup. It is located in the
+'bin' directory and is called 'acl-import'.
+
 Apache Configuration
 --------------------
 

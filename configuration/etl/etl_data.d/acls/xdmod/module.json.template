@@ -1,0 +1,13 @@
+{
+    "name": "AclXdmodImport.Module",
+    "table_definition": {
+        "$ref": "etl_tables.d/acls/modules.json#/table_definition"
+    },
+    "destination_columns": ["name", "display", "enabled", "current_version_id"],
+    "custom_insert_values_components": {
+        "current_version_id": "(SELECT MAX(mv.module_version_id) FROM module_versions mv WHERE 1 = ?)"
+    },
+    "source_values": [
+        ["__MODULE_NAME__", "XDMoD", true, 1]
+    ]
+}

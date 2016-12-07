@@ -1,0 +1,9 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/acls/module_versions.json#/table_definition"
+    },
+    "destination_columns": ["version_major", "version_minor", "version_micro", "version_patch"],
+    "source_values": [
+        ["__VERSION_MAJOR__","__VERSION_MINOR__","__VERSION_PATCH__", "__VERSION_PRE_RELEASE__"]
+    ]
+}

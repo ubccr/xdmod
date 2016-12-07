@@ -1,0 +1,15 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/acls/acl_hierarchies.json#/table_definition"
+    },
+    "destination_columns": ["acl_id", "hierarchy_id", "level", "filter_override"],
+    "custom_insert_values_components": {
+        "acl_id": "(SELECT a.acl_id FROM acls a WHERE a.name = ?)",
+        "hierarchy_id": "(SELECT h.hierarchy_id FROM hierarchies h WHERE h.name = ?)"
+    },
+    "source_values": [
+        ["po","acl_hierarchy",0,1],
+        ["cs","acl_hierarchy",1,0],
+        ["usr","acl_hierarchy",2,0]
+    ]
+}
