@@ -86,6 +86,41 @@ class Config
      */
     private $commandsPreBuild;
 
+
+    /**
+     * the 'major' portion of the '$version' value.
+     * ex. '6.6.0-rc1'
+     *      ^
+     * @var string
+     **/
+    private $versionMajor;
+
+    /**
+     * the 'minor' portion of the '$version' value.
+     * ex. '6.6.0-rc1'
+     *        ^
+     * @var string
+
+     **/
+    private $versionMinor;
+
+    /**
+     * the 'patch' portion of the '$version' value.
+     * ex. '6.6.0-rc1'
+     *          ^
+     * @var string
+     **/
+    private $versionPatch;
+
+    /**
+     * the 'preRelease' portion of the '$version' value.
+     * ex. '6.6.0-rc1'
+     *            ^^^
+     * @var string
+     **/
+    private $versionPreRelease;
+
+
     /**
      * Factory method.
      *
@@ -159,7 +194,7 @@ class Config
             'file_exclude_paths'    => $fileExcludePaths,
             'file_exclude_patterns' => $fileExcludePatterns,
             'file_maps'             => $fileMaps,
-            'commands_pre_build'    => $commandsPreBuild,
+            'commands_pre_build'    => $commandsPreBuild
         ));
     }
 
@@ -298,6 +333,64 @@ class Config
     }
 
     /**
+     * This function will attempt to, given a version string, parse out the
+     * components of a semver compliant version number. Returning them in an
+     * array in the format:
+     * array(
+     *    $versionMajor,
+     *    $versionMinor,
+     *    $versionPatch,
+     *    $versionPreRelease
+     * );
+     *
+     * If a piece of the version can not be parsed it will default to an empty
+     * string ('').
+     *
+     * @param string $version the version as provided by the file 'build.json'
+     *
+     * @return array()
+     **/
+    private function getVersionDetails($version)
+    {
+        $MAJOR = 1;
+        $MINOR = 2;
+        $PATCH = 3;
+        $PRE_RELEASE = 4;
+
+        $major = '';
+        $minor = '';
+        $patch = '';
+        $preRelease = '';
+
+        $matches = array();
+        preg_match("/(\d+)?\.(\d+)?\.?(\d+)?\.?-?([0-9A-Za-z-.]+)?/", $version, $matches);
+        $length = count($matches);
+        for ($i = 1; $i < $length; $i++) {
+            switch ( $i ) {
+                case $MAJOR:
+                    $major = $matches[$i];
+                    break;
+                case $MINOR:
+                    $minor = $matches[$i];
+                    break;
+                case $PATCH:
+                    $patch = $matches[$i];
+                    break;
+                case $PRE_RELEASE:
+                    $preRelease = $matches[i];
+                    break;
+            }
+        }
+
+        return array(
+            $major,
+            $minor,
+            $patch,
+            $preRelease
+        );
+    }
+
+    /**
      * Private constructor to enforce use of factory method.
      *
      * @param array $conf Configuration array.  Requires the following keys:
@@ -327,6 +420,12 @@ class Config
         $this->fileMaps = $conf['file_maps'];
 
         $this->commandsPreBuild = $conf['commands_pre_build'];
+        list(
+            $this->versionMajor,
+            $this->versionMinor,
+            $this->versionPatch,
+            $this->versionPreRelease
+        ) = $this->getVersionDetails($this->version);
     }
 
     /**
@@ -347,6 +446,54 @@ class Config
     public function getVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * Retrieve the 'major' portion of this module's version number.
+     * Ex. 6.6.0-rc1
+     *     ^
+     * in this example the first '6' is the major portion of the version number.
+     **/
+    public function getVersionMajor()
+    {
+        return $this->versionMajor;
+    }
+
+    /**
+     * Retrieve the 'minor' portion of this module's version number.
+     * Ex. 6.6.0-rc1
+     *       ^
+     * in this example the second '6' is the major portion of the version
+     * number.
+     **/
+    public function getVersionMinor()
+    {
+        return $this->versionMinor;
+    }
+
+    /**
+     * Retrieve the 'patch' portion of this module's version number.
+     * Ex. 6.6.0-rc1
+     *         ^
+     * in this example the '0' is the patch portion of the version number.
+     **/
+    public function getVersionPatch()
+    {
+        return $this->versionPatch;
+    }
+
+    /**
+     * Retrieve the 'pre-release' portion of this module's version number.
+     * Ex. 6.6.0-rc1
+     *           ^^^
+     * in this example the 'rc1' is the pre-release portion of the version
+     * number.
+     *
+     * Note: Anything after the '-' character will be stored here.
+     **/
+    public function getVersionPreRelease()
+    {
+        return $this->versionPreRelease;
     }
 
     /**

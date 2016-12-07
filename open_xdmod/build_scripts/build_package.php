@@ -49,9 +49,19 @@ function main()
 
     $shortOptions = implode(
         '',
-        array_map(function ($opt) { return $opt[0]; }, $opts)
+        array_map(
+            function ($opt) {
+                return $opt[0];
+            },
+            $opts
+        )
     );
-    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+    $longOptions = array_map(
+        function ($opt) {
+            return $opt[1];
+        },
+        $opts
+    );
 
     $args = getopt($shortOptions, $longOptions);
 
@@ -112,7 +122,9 @@ function main()
         exit;
     }
 
-    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+    if ($logLevel === -1) {
+        $logLevel = Log::NOTICE;
+    }
 
     $conf = array(
         'file'            => false,
