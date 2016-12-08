@@ -345,7 +345,7 @@ abstract class GroupBy extends \Common\Identity
 	}
 	public function getDefaultShowErrorBars()
 	{
-		return 'y';
+		return 'n';
 	}
 	public function getDefaultShowGuideLines()
 	{
