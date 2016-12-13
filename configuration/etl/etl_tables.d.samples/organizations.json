@@ -1,0 +1,71 @@
+{
+    "table_definition": {
+        "name": "organizations",
+        "engine": "MyISAM",
+        "comment": "Pulled organizations from the xdcdb",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the record."
+            },
+            {
+                "name": "organizationtype_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The type of the organization."
+            },
+            {
+                "name": "abbrev",
+                "type": "varchar(100)",
+                "nullable": true,
+                "comment": "Abbreviated name."
+            },
+            {
+                "name": "name",
+                "type": "varchar(300)",
+                "nullable": true,
+                "comment": "Long name for this organization."
+            },
+            {
+                "name": "url",
+                "type": "varchar(500)",
+                "nullable": true,
+                "comment": "The internet URL."
+            },
+            {
+                "name": "amie_name",
+                "type": "varchar(6)",
+                "nullable": true,
+                "comment": "The amie name."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "amie_name_UNIQUE",
+                "columns": [
+                    "amie_name"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ]
+            }
+        ]
+    },
+
+    "source_table": "organizations",
+ 
+    "source_columns": {
+        "id": "organization_id",
+        "organizationtype_id": "org_type_id",
+        "abbrev": "organization_abbrev",
+        "name": "organization_name",
+        "url": "organization_url",
+        "amie_name": "amie_name"
+    }
+}

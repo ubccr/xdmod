@@ -1,0 +1,300 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Upgrade Open XDMoD.
+ *
+ * @package OpenXdmod
+ *
+ * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use CCR\DB;
+use CCR\DB\MySQLHelper;
+use CCR\Log;
+use Xdmod\Version;
+use OpenXdmod\Migration\MigrationFactory;
+
+// Disable memory limit.
+ini_set('memory_limit', -1);
+
+/**
+ * Supported upgrade migrations.
+ *
+ * @var array
+ */
+$supportedUpgrades = array(
+    '6.0.0' => '6.5.0',
+);
+
+/**
+ * Version number of the currently installed Open XDMoD source code.  If
+ * this number is different than the one found in portal_settings.ini it
+ * indicates that migrations are necessary to update the config files
+ * and databases to this version.
+ *
+ * @var string
+ */
+$installedVersion = OPEN_XDMOD_VERSION;
+
+// Catch any unexpected exceptions.
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        $logger->crit(array(
+            'message'    => $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+/**
+ * Main function.
+ */
+function main()
+{
+    global $argv, $logger, $supportedUpgrades, $installedVersion;
+
+    $opts = array(
+        array('h', 'help'),
+        array('v', 'verbose'),
+        array('',  'debug'),
+        array('q', 'quiet'),
+        array('',  'config-files'),
+        array('',  'databases'),
+        array('',  'current-version:'),
+    );
+
+    $shortOptions = implode(
+        '',
+        array_map(function ($opt) { return $opt[0]; }, $opts)
+    );
+    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+
+    $args = getopt($shortOptions, $longOptions);
+
+    if ($args === false) {
+        fwrite(STDERR, "Failed to parse arguments\n");
+        exit(1);
+    }
+
+    $help = $updateConfigFiles = $updateDatabases = false;
+
+    $logLevel = -1;
+
+    // This will be set to the version number in portal_settings.ini if
+    // no version is specified on the command line.  This is used to
+    // determine what migrations are needed for the config files and
+    // databases.
+    $configFileVersion = null;
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite(STDERR, "Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'h':
+            case 'help':
+                $help = true;
+                break;
+            case 'q':
+            case 'quiet':
+                $logLevel = max($logLevel, Log::WARNING);
+                break;
+            case 'v':
+            case 'verbose':
+                $logLevel = max($logLevel, Log::INFO);
+                break;
+            case 'debug':
+                $logLevel = max($logLevel, Log::DEBUG);
+                break;
+            case 'config-files':
+                $updateConfigFiles = true;
+                break;
+            case 'databases':
+                $updateDatabases = true;
+                break;
+            case 'current-version':
+                $configFileVersion = $value;
+                break;
+            default:
+                fwrite(STDERR, "Unexpected option '$key'\n");
+                exit(1);
+                break;
+        }
+    }
+
+    if ($help) {
+        displayHelpText();
+        exit;
+    }
+
+    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+
+    $conf = array(
+        'file'            => false,
+        'mail'            => false,
+        'consoleLogLevel' => $logLevel,
+    );
+
+    $logger = Log::factory('xdmod-update', $conf);
+
+    Version::setLogger($logger);
+
+    if ($configFileVersion === null) {
+        $configFileVersion = Version::getCurrentVersionNumber(false);
+        $logger->debug("Current version number is '$configFileVersion'");
+    }
+
+    if ($configFileVersion == $installedVersion) {
+        $logger->warning('No upgrades necessary.');
+        exit;
+    }
+
+    if (!$updateConfigFiles && !$updateDatabases) {
+        $updateConfigFiles = $updateDatabases = true;
+    }
+
+    $cmd = implode(' ', array_map('escapeshellarg', $argv));
+    $logger->info("Command: $cmd");
+
+    try {
+        if (Version::isNewerVersionAvailable()) {
+            $latestVer = Version::getLatestVersionNumber();
+            $msg = "Newer version ($latestVer) of Open XDMoD is available";
+            $logger->warning($msg);
+        }
+    } catch (Exception $e) {
+        $msg = 'Failed to query remote server for latest version number';
+        $logger->debug($msg);
+    }
+
+    try {
+        validateVersionNumber($configFileVersion);
+    } catch (Exception $e) {
+        $msg = 'Upgrading from this version is not possible: '
+            . $e->getMessage();
+        $logger->crit($msg);
+        exit(1);
+    }
+
+    displayWarning($configFileVersion, $installedVersion);
+    $response = readline('Are you sure you want to continue (yes/no): ');
+    if ($response != 'yes') {
+        exit;
+    }
+
+    while (isset($supportedUpgrades[$configFileVersion])) {
+        $newVersion = $supportedUpgrades[$configFileVersion];
+
+        $logger->notice("Migrating from $configFileVersion to $newVersion");
+
+        $migration = MigrationFactory::createMigration(
+            $configFileVersion,
+            $newVersion,
+            $updateConfigFiles,
+            $updateDatabases,
+            $logger
+        );
+
+        $migration->execute();
+
+        $configFileVersion = $newVersion;
+    }
+
+    exit;
+}
+
+/**
+ * Make sure the version number is valid.
+ *
+ * @param string $version
+ *
+ * @throws Exception If the version is not valid.
+ */
+function validateVersionNumber($version)
+{
+    global $supportedUpgrades;
+
+    if (!Version::isSupportedVersion($version)) {
+        throw new Exception("Current version '$version' is not supported");
+    }
+
+    if (!isset($supportedUpgrades[$version])) {
+        throw new Exception("No supported upgrades for version '$version'");
+    }
+}
+
+/**
+ * Display warning message.
+ *
+ * @param string $currentVersion Current Open XDMoD version number.
+ * @param string $newVersion Open XDMoD version to migrate to.
+ */
+function displayWarning($currentVersion, $newVersion)
+{
+    echo <<<"EOF"
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+This script will update your Open XDMoD configuration files and database
+from $currentVersion to $newVersion.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+If your database has any modifications or is not using the schema from
+Open XDMoD $currentVersion, this process will fail.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Back up all Open XDMoD data before continuing.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+If you have any addon modules installed (App Kernels, SUPReMM, etc.),
+please ensure those modules are compatible with Open XDMoD $newVersion.
+If any modules are out of date, please upgrade them before continuing.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+EOF;
+}
+
+/**
+ * Output help text to STDOUT.
+ */
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Upgrade the Open XDMoD databases and config files.
+
+Usage: xdmod-upgrade [-v]
+
+    -h, --help
+        Display this message and exit.
+
+    -v, --verbose
+        Output info level logging.
+
+    --debug
+        Output debug level logging.
+
+    -q, --quiet
+        Output warning level logging.
+
+    --config-files
+        Only upgrade configuration files.
+
+    --databases
+        Only upgrade database schemas.
+
+    --current-version *version*
+        Specify the version of your Open XDMoD config files and
+        databases that you are upgrading.  This option is necessary when
+        the version number in portal_settings.ini does not match the
+        version of your config files and databases.
+
+EOF;
+}
+

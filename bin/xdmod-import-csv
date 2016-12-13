@@ -1,0 +1,780 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Import data from CSV files.
+ *
+ * Specifically, this script is used to update the names of people and
+ * the hierarchy dimension data in the HPcDB.  It is necessary to
+ * reingest data after performing these updates.  After updating the
+ * hierarchy it is also necessary to reaggregate for the entire time
+ * period that is affected by the hierarchy change.
+ *
+ * @package OpenXdmod
+ *
+ * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use CCR\DB;
+use CCR\Log;
+use Xdmod\Config;
+
+// Disable memory limit.
+ini_set('memory_limit', -1);
+
+// Catch unexpected exceptions.
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        $logger->crit(array(
+            'message'    => $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+/**
+ * Main function.
+ */
+function main()
+{
+    global $logger, $db, $shredderDb;
+
+    $opts = array(
+        array('h',  'help'),
+        array('v',  'verbose'),
+        array('',   'debug'),
+        array('q',  'quiet'),
+        array('i:', 'input:'),
+        array('t:', 'type:'),
+    );
+
+    $shortOptions = implode(
+        '',
+        array_map(
+            function ($opt) {
+                return $opt[0];
+            },
+            $opts
+        )
+    );
+    $longOptions = array_map(
+        function ($opt) {
+            return $opt[1];
+        },
+        $opts
+    );
+
+    $args = getopt($shortOptions, $longOptions);
+
+    if ($args === false) {
+        fwrite(STDERR, "Failed to parse arguments\n");
+        exit(1);
+    }
+
+    $help = false;
+
+    $type = $input = null;
+
+    $logLevel = -1;
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite(STDERR, "Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'h':
+            case 'help':
+                $help = true;
+                break;
+            case 'q':
+            case 'quiet':
+                $logLevel = max($logLevel, Log::WARNING);
+                break;
+            case 'v':
+            case 'verbose':
+                $logLevel = max($logLevel, Log::INFO);
+                break;
+            case 'debug':
+                $logLevel = max($logLevel, Log::DEBUG);
+                break;
+            case 'i':
+            case 'input':
+                $input = $value;
+                break;
+            case 't':
+            case 'type':
+                $type = $value;
+                break;
+            default:
+                fwrite(STDERR, "Unexpected option '$key'\n");
+                exit(1);
+                break;
+        }
+    }
+
+    if ($logLevel === -1) {
+        $logLevel = Log::NOTICE;
+    }
+
+    if ($help) {
+        displayHelpText();
+        exit;
+    }
+
+    $conf = array(
+        'file'            => false,
+        'mail'            => false,
+        'consoleLogLevel' => $logLevel,
+    );
+
+    $logger = Log::factory('xdmod-import-csv', $conf);
+
+    // NOTE: "process_start_time" is needed for the log summary.
+    $logger->notice(array(
+        'message'            => 'xdmod-import-csv start',
+        'process_start_time' => date('Y-m-d H:i:s'),
+    ));
+
+    $logger->debug('Checking for required arguments');
+
+    if ($input === null) {
+        $logger->crit('No input file specified');
+        exit(1);
+    } elseif (!is_file($input)) {
+        $logger->crit("'$input' is not a file");
+        exit(1);
+    } elseif (!is_readable($input)) {
+        $logger->crit("'$input' is not readable");
+        exit(1);
+    }
+
+    if ($type === null) {
+        $logger->crit('No input type specified');
+        exit(1);
+    }
+
+    try {
+        $logger->debug('Creating database connections');
+        $db = DB::factory('hpcdb');
+        $shredderDb = DB::factory('shredder');
+    } catch (Exception $e) {
+        $msg = 'Failed to create database connection: ' . $e->getMessage();
+        $logger->crit(array(
+            'message'   => $msg,
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+        exit(1);
+    }
+
+    $logger->debug("Opening file '$input'");
+
+    $fh = fopen($input, 'r');
+
+    if ($fh === false) {
+        $logger->crit("Failed to open file '$input'");
+        exit(1);
+    }
+
+    $logger->debug("Reading CSV data from file '$input'");
+
+    $data = array();
+
+    while ($row = fgetcsv($fh)) {
+        // Skip blank lines.
+        if (count($row) == 1 && $row[0] === null) {
+            continue;
+        }
+
+        $data[] = $row;
+    }
+
+    $logger->debug("Closing file '$input'");
+
+    if (!fclose($fh)) {
+        $logger->crit("Failed to close file '$input'");
+        exit(1);
+    }
+
+    $logger->info("Importing type '$type'");
+
+    $logger->info('Starting database transaction');
+    $db->beginTransaction();
+
+    try {
+        switch ($type) {
+            case 'names':
+                updatePeople($data);
+                break;
+            case 'hierarchy':
+                updateHierarchy($data);
+                break;
+            case 'group-to-hierarchy':
+                updateGroupToHierarchy($data);
+                break;
+            default:
+                $logger->crit("Unknown type '$type'");
+                exit(1);
+                break;
+        }
+
+        $logger->info('Committing database transaction');
+        $db->commit();
+    } catch (Exception $e) {
+        $logger->err(array(
+            'message'    => $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+
+        $logger->info('Rolling back database transaction');
+        $db->rollBack();
+    }
+
+    // NOTE: "process_end_time" is needed for the log summary.
+    $logger->notice(array(
+        'message'          => 'xdmod-import-csv end',
+        'process_end_time' => date('Y-m-d H:i:s'),
+    ));
+
+    exit;
+}
+
+/**
+ * Update people's names.
+ *
+ * A person may correspond to a user or PI.
+ *
+ * @param array $people Array of arrays with:
+ *    - username (or groupname)
+ *    - first name
+ *    - last name
+ */
+function updatePeople(array $people)
+{
+    global $db, $logger;
+
+    $logger->debug('Updating people data');
+
+    $personIdForUsername = getPersonIdUsernameMappings();
+
+    foreach ($people as $person) {
+        $logger->debug('Processing row: ' . json_encode($person));
+
+        $fieldCount = count($person);
+        if ($fieldCount != 3) {
+            $msg = "Unexpected number of fields ($fieldCount) in row: "
+                . implode(',', $person);
+            $logger->warning($msg);
+            continue;
+        }
+
+        list($username, $firstName, $lastName) = $person;
+
+        $lowerUsername = strtolower($username);
+
+        if (isset($personIdForUsername[$lowerUsername])) {
+            $personId = $personIdForUsername[$lowerUsername];
+            updatePerson($personId, $firstName, $lastName);
+        } else {
+            createPerson($username, $firstName, $lastName);
+        }
+    }
+}
+
+/**
+ * Create a person in the HPcDB.
+ *
+ * A person may correspond to a user or PI.  Since a person's person_id
+ * originates in mod_shredder.staging_union_user_pi, an entry will be
+ * added to that table as well.
+ *
+ * @param string $username The person's username.
+ * @param string $firstName The person's first name.
+ * @param string $lastName The person's last name.
+ *
+ * @return int The person's HPcDB person_id.
+ */
+function createPerson($username, $firstName, $lastName)
+{
+    global $db, $shredderDb, $logger;
+
+    $logger->debug(array(
+        'message'    => 'Creating person',
+        'username'   => $username,
+        'first_name' => $firstName,
+        'last_name'  => $lastName,
+    ));
+
+    $sql = "
+        REPLACE INTO staging_union_user_pi SET
+            union_user_pi_name = :username
+    ";
+
+    $personId = $shredderDb->insert($sql, array('username' => $username));
+
+    $sql = "
+        INSERT INTO hpcdb_people SET
+            organization_id = 1,
+            person_id = :person_id,
+            first_name = :first_name,
+            last_name = :last_name
+    ";
+
+    $db->execute(
+        $sql,
+        array(
+            'person_id'  => $personId,
+            'first_name' => $firstName,
+            'last_name'  => $lastName,
+        )
+    );
+
+    return $personId;
+}
+
+/**
+ * Update a person's first and last name in the HPcDB.
+ *
+ * A person may correspond to a user or PI.
+ *
+ * @param int $personId The person's HPcDB person_id.
+ * @param string $firstName The person's first name.
+ * @param string $lastName The person's last name.
+ */
+function updatePerson($personId, $firstName, $lastName)
+{
+    global $db, $logger;
+
+    $logger->debug(array(
+        'message'    => 'Updating person',
+        'person_id'  => $personId,
+        'first_name' => $firstName,
+        'last_name'  => $lastName,
+    ));
+
+    $sql = "
+        UPDATE hpcdb_people SET
+            first_name = :first_name,
+            last_name = :last_name
+        WHERE person_id = :person_id
+    ";
+
+    $db->execute(
+        $sql,
+        array(
+            'first_name' => $firstName,
+            'last_name'  => $lastName,
+            'person_id'  => $personId,
+        )
+    );
+}
+
+/**
+ * Update the hierarchy.
+ *
+ * @param array $hierarchy Array of hierarchy items with:
+ *    - abbreviation
+ *    - description
+ *    - parent abbreviation
+ */
+function updateHierarchy($hierarchy)
+{
+    global $logger;
+
+    $logger->debug('Updating hierarchy');
+
+    $hierarchIdForAbbrev = getHierarchyIdAbbrevMappings();
+
+    foreach ($hierarchy as $item) {
+        $logger->debug('Processing row: ' . json_encode($item));
+
+        $abbrev = $item[0];
+
+        if (isset($item[1])) {
+            $desc = $item[1];
+        } else {
+            $desc = null;
+        }
+
+        if (isset($item[2]) && $item[2] != '') {
+            $parentAbbrev = $item[2];
+
+            if (isset($hierarchIdForAbbrev[$parentAbbrev])) {
+                $parentId = $hierarchIdForAbbrev[$parentAbbrev];
+            } else {
+                $parentId = createHierarchyItem($parentAbbrev);
+                $hierarchIdForAbbrev[$parentAbbrev] = $parentId;
+            }
+        } else {
+            $parentId = null;
+        }
+
+        if (isset($hierarchIdForAbbrev[$abbrev])) {
+            $id = $hierarchIdForAbbrev[$abbrev];
+            updateHierarchyItem($id, $abbrev, $desc, $parentId);
+        } else {
+            $id = createHierarchyItem($abbrev, $desc, $parentId);
+            $hierarchIdForAbbrev[$abbrev] = $id;
+        }
+    }
+}
+
+/**
+ * Create a hierarchy item.
+ *
+ * @param string $abbrev The hierarchy item abbreviation.
+ * @param string $desc The hierarchy item description.
+ * @param string $parentId The hierarchy item's parent's id.
+ *
+ * @return int The hierarchy item's HPcDB id.
+ */
+function createHierarchyItem($abbrev, $desc = null, $parentId = null)
+{
+    global $db, $logger;
+
+    $logger->debug(array(
+        'message'   => 'Creating hierarchy item',
+        'abbrev'    => $abbrev,
+        'desc'      => $desc,
+        'parent_id' => $parentId,
+    ));
+
+    $params = array('abbrev' => $abbrev);
+
+    if ($desc !== null) {
+        $params['description'] = $desc;
+    }
+
+    if ($parentId !== null) {
+        $params['parent_id'] = $parentId;
+    }
+
+    $sql = "INSERT INTO hpcdb_fields_of_science ("
+        . implode(', ', array_keys($params))
+        . ") VALUES ("
+        . implode(
+            ', ',
+            array_map(
+                function ($key) {
+                    return ":$key";
+                },
+                array_keys($params)
+            )
+        )
+        . ")";
+
+    return $db->insert($sql, $params);
+}
+
+/**
+ * Update an existing hierarchy item.
+ *
+ * @param int $hierarchyId The hierarchy item's HPcDB id.
+ * @param string $abbrev The hierarchy item abbreviation.
+ * @param string $desc The hierarchy item description.
+ * @param string $parentId The hierarchy item's parent's id.
+ */
+function updateHierarchyItem(
+    $hierarchyId,
+    $abbrev,
+    $desc = null,
+    $parentId = null
+) {
+    global $db, $logger;
+
+    $logger->debug(array(
+        'message'      => 'Updating hierarchy item',
+        'hierarchy_id' => $hierarchyId,
+        'abbrev'       => $abbrev,
+        'desc'         => $desc,
+        'parent_id'    => $parentId,
+    ));
+
+    $params = array('abbrev' => $abbrev);
+
+    if ($desc !== null) {
+        $params['description'] = $desc;
+    }
+
+    if ($parentId !== null) {
+        $params['parent_id'] = $parentId;
+    }
+
+    $sql = "UPDATE hpcdb_fields_of_science SET "
+        . implode(
+            ', ',
+            array_map(
+                function ($key) {
+                    return "$key = :$key";
+                },
+                array_keys($params)
+            )
+        )
+        . " WHERE field_of_science_id = :id";
+
+    $params['id'] = $hierarchyId;
+
+    $db->execute($sql, $params);
+}
+
+/**
+ * Update the mappings from groups to heirarchy items.
+ *
+ * @param array $mappings Array of arrays with:
+ *    - groupname
+ *    - hierarchy abbreviation
+ */
+function updateGroupToHierarchy($mappings)
+{
+    global $logger;
+
+    $logger->debug('Updating group to hierarchy mappings');
+
+    $personIdForUsername = getPersonIdUsernameMappings();
+    $hierarchIdForAbbrev = getHierarchyIdAbbrevMappings();
+
+    foreach ($mappings as $mapping) {
+        $logger->debug('Processing row: ' . json_encode($mapping));
+
+        $fieldCount = count($mapping);
+        if ($fieldCount != 2) {
+            $msg = "Unexpected number of fields ($fieldCount) in row: "
+                . implode(',', $mapping);
+            $logger->warning($msg);
+            continue;
+        }
+
+        list($groupname, $hierarchyAbbrev) = $mapping;
+
+        if (!isset($hierarchIdForAbbrev[$hierarchyAbbrev])) {
+            $msg = "Skipping unknown hierarchy abbreviation '$hierarchyAbbrev'";
+            $logger->warning($msg);
+            continue;
+        }
+
+        $hierarchyId = $hierarchIdForAbbrev[$hierarchyAbbrev];
+
+        $lowerGroupname = strtolower($groupname);
+
+        if (isset($personIdForUsername[$lowerGroupname])) {
+            $personId = $personIdForUsername[$lowerGroupname];
+            updatePersonHierarchyItem($personId, $hierarchyId);
+        } else {
+            createPi($groupname, $hierarchyId);
+        }
+    }
+}
+
+/**
+ * Create a PI in the HPcDB.
+ *
+ * Since a PI's pi_id originates in mod_shredder.staging_pi, an entry
+ * will be added to that table as well.
+ *
+ * @param string $groupname The PI's name.
+ * @param int $hierarchyId The hierarchy item's HPcDB id.
+ *
+ * @return int The PI's HPcDB pi_id.
+ */
+function createPi($groupname, $hierarchyId)
+{
+    global $db, $shredderDb, $logger;
+
+    $logger->debug(array(
+        'message'      => 'Creating PI',
+        'groupname'    => $groupname,
+        'hierarchy_id' => $hierarchyId,
+    ));
+
+    $sql = "REPLACE INTO staging_pi SET pi_name = :pi_name";
+    $piId = $shredderDb->insert($sql, array('pi_name' => $groupname));
+
+    // An account is required to satisfy the foreign key contraint for
+    // the request which is then used to determine the hierarchy item.
+    // The values for request_id and account_id used here must match the
+    // process used in the staging ingestors
+    // (classes/OpenXdmod/Ingestor/Staging/Accounts.php and
+    // classes/OpenXdmod/Ingestor/Staging/Requests.php).  Likewise, the
+    // account name must match the PI's name since that is used by the
+    // allocations ingestor
+    // (classes/OpenXdmod/Ingestor/Staging/Allocations.php).  This is
+    // necessary since the allocation table is used to determine which
+    // request is associated with which job in the jobs ingestor
+    // (classes/OpenXdmod/Ingestor/Hpcdb/Jobs.php).
+
+    $sql = "
+        INSERT INTO hpcdb_accounts SET
+            account_id = :account_id,
+            account_name = :account_name
+    ";
+
+    $db->execute(
+        $sql,
+        array(
+            'account_id'   => $piId,
+            'account_name' => $groupname,
+        )
+    );
+
+    $sql = "
+        INSERT INTO hpcdb_requests SET
+            request_id = :request_id,
+            primary_fos_id = :fos_id,
+            account_id = :account_id
+    ";
+
+    $db->execute(
+        $sql,
+        array(
+            'request_id' => $piId,
+            'fos_id'     => $hierarchyId,
+            'account_id' => $piId,
+        )
+    );
+
+    return $piId;
+}
+
+/**
+ * Update the mapping from a person (PI) to a hierarchy item.
+ *
+ * @param int $personId The person's HPcDB person_id.
+ * @param int $hierarchyId The hierarchy item's HPcDB id.
+ */
+function updatePersonHierarchyItem($personId, $hierarchyId)
+{
+    global $db, $logger;
+
+    $logger->debug(array(
+        'message'      => 'Updating person to hierarchy map',
+        'person_id'    => $personId,
+        'hierarchy_id' => $hierarchyId,
+    ));
+
+    $sql = "
+        UPDATE hpcdb_requests r
+        JOIN hpcdb_principal_investigators pi
+            ON r.request_id = pi.request_id
+        SET r.primary_fos_id = :primary_fos_id
+        WHERE pi.person_id = :person_id
+    ";
+
+    $db->execute($sql, array(
+        'person_id'      => $personId,
+        'primary_fos_id' => $hierarchyId,
+    ));
+}
+
+/**
+ * Returns mapping from username to person_id.
+ *
+ * @return array Keys are usernames and values are person_id's.
+ */
+function getPersonIdUsernameMappings()
+{
+    global $db, $logger;
+
+    $logger->debug('Querying system accounts');
+
+    $sql = "SELECT person_id, username FROM hpcdb_system_accounts";
+    $users = $db->query($sql);
+
+    $personIdForUsername = array();
+
+    foreach ($users as $user) {
+        $lowerUsername = strtolower($user['username']);
+        $personIdForUsername[$lowerUsername] = $user['person_id'];
+    }
+
+    return $personIdForUsername;
+}
+
+/**
+ * Retrieve a map from hierarchy abbreviations to id's.
+ *
+ * @return array Keys are abbreviations and values are hierarchy_id's.
+ */
+function getHierarchyIdAbbrevMappings()
+{
+    global $db, $logger;
+
+    $logger->debug('Querying for hierarchy items');
+
+    $sql = "SELECT field_of_science_id, abbrev FROM hpcdb_fields_of_science";
+    $rows = $db->query($sql);
+
+    $hierarchIdForAbbrev = array();
+
+    foreach ($rows as $row) {
+        $hierarchIdForAbbrev[$row['abbrev']] = $row['field_of_science_id'];
+    }
+
+    return $hierarchIdForAbbrev;
+}
+
+
+/**
+ * Display help text.
+ */
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Usage: xdmod-import-csv -t *type* -i *input-file.csv*
+
+    -h, --help
+        Display this message and exit.
+
+    -v, --verbose
+        Output info level logging.
+
+    --debug
+        Output debug level logging.
+
+    -q, --quiet
+        Output warning level logging.
+
+    -t, --type *type*
+        Specify the type of type being imported.  The valid types are
+        "names", "hierarchy" and "group-to-hierarchy".
+
+    -i, --input *input-file*
+        The input CSV file.  The contents of the input file depends
+        on the type specified.
+
+Input type formats:
+
+The contents of the input file must correspond to the specified input
+type.  The input files must contain valid CSV data.  The number of
+columns in the CSV file must match the number of fields listed (no extra
+columns or missing columns).  The input file should not have a header
+row.
+
+    names
+
+        Fields: username, first name, last name
+
+    hierarchy
+
+        Fields: hierarchy item name, item description, parent name
+
+        A top level hierarchy item should have a blank (empty string)
+        parent name.
+
+    group-to-hierarchy
+
+        Fields: groupname, hierachy item name
+
+NOTE: After updating any names or hierarchy items it is necessary to
+reingest your data for the changes to be applied to the datawarehouse.
+Hierarchy changes also require reaggregating data for the entire time
+period that the heirarchy applies to.
+
+
+EOF;
+}

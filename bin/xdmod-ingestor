@@ -1,0 +1,318 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Ingest job data.
+ *
+ * @package OpenXdmod
+ *
+ * @author Jeffrey T. Palmer <jtpalmer@ccr.buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use CCR\DB;
+use CCR\Log;
+use OpenXdmod\DataWarehouseInitializer;
+
+// Disable memory limit.
+ini_set('memory_limit', -1);
+
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        $logger->crit(array(
+            'message'    => $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+function main()
+{
+    global $argv, $logger;
+
+    $opts = array(
+        array('h', 'help'),
+
+        // Logging levels.
+        array('v', 'verbose'),
+        array('',  'debug'),
+        array('q', 'quiet'),
+
+        array('', 'ingest'),
+        array('', 'aggregate'),
+        array('', 'build-filter-lists'),
+
+        // Dates used by both ingestion and aggregation.
+        array('', 'start-date:'),
+        array('', 'end-date:'),
+
+        // Ingestion phases.
+        array('', 'ingest-all'),
+        array('', 'ingest-shredded'),
+        array('', 'ingest-staging'),
+        array('', 'ingest-hpcdb'),
+
+        // Specify an ingestor.
+        array('', 'ingestor:'),
+    );
+
+    $shortOptions = implode(
+        '',
+        array_map(function ($opt) { return $opt[0]; }, $opts)
+    );
+    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+
+    $args = getopt($shortOptions, $longOptions);
+
+    if ($args === false) {
+        fwrite(STDERR, "Failed to parse arguments\n");
+        exit(1);
+    }
+
+    $help = $ingest = $aggregate = $noAppend = $ingestAll = $ingestShredded
+        = $ingestStaging = $ingestHpcdb = $buildFilterLists = false;
+
+    $startDate = $endDate = null;
+
+    $logLevel = -1;
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite(STDERR, "Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'h':
+            case 'help':
+                $help = true;
+                break;
+            case 'q':
+            case 'quiet':
+                $logLevel = max($logLevel, Log::WARNING);
+                break;
+            case 'v':
+            case 'verbose':
+                $logLevel = max($logLevel, Log::INFO);
+                break;
+            case 'debug':
+                $logLevel = max($logLevel, Log::DEBUG);
+                break;
+            case 'ingest':
+                $ingest = true;
+                break;
+            case 'aggregate':
+                $aggregate = true;
+                break;
+            case 'build-filter-lists':
+                $buildFilterLists = true;
+                break;
+            case 'start-date':
+                $startDate = $value;
+                break;
+            case 'end-date':
+                $endDate = $value;
+                break;
+            case 'ingest-all':
+                $ingestAll = true;
+                break;
+            case 'ingest-shredded':
+                $ingestShredded = true;
+                break;
+            case 'ingest-staging':
+                $ingestStaging = true;
+                break;
+            case 'ingest-hpcdb':
+                $ingestHpcdb = true;
+                break;
+            default:
+                fwrite(STDERR, "Unexpected option '$key'\n");
+                exit(1);
+                break;
+        }
+    }
+
+    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+
+    if ($help) {
+        displayHelpText();
+        exit;
+    }
+
+    $conf = array(
+        'file'            => false,
+        'mail'            => false,
+        'consoleLogLevel' => $logLevel,
+    );
+
+    $logger = Log::factory('xdmod-ingestor', $conf);
+
+    $cmd = implode(' ', array_map('escapeshellarg', $argv));
+    $logger->info("Command: $cmd");
+
+    if (
+        $startDate !== null
+        && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate)
+    ) {
+        $logger->crit("Invalid start date '$startDate'");
+        exit(1);
+    }
+
+    if (
+        $endDate !== null
+        && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)
+    ) {
+        $logger->crit("Invalid end date '$endDate'");
+        exit(1);
+    }
+
+    if ($startDate === null && $endDate !== null) {
+        $logger->crit('Must specify start date with end date');
+        exit(1);
+    }
+
+    if ($startDate !== null && $endDate === null) {
+        $endDate = date('Y-m-d');
+        $logger->info("Using today '$endDate' for end date");
+    }
+
+    // NOTE: "process_start_time" is needed for the log summary.
+    $logger->notice(array(
+        'message'            => 'xdmod-ingestor start',
+        'process_start_time' => date('Y-m-d H:i:s'),
+    ));
+
+    $shredderDb = DB::factory('shredder');
+    $hpcdbDb    = DB::factory('hpcdb');
+    $dwDb       = DB::factory('datawarehouse');
+
+    try {
+        $logger->debug('Creating data warehouse initilializer');
+        $dwi = new DataWarehouseInitializer($shredderDb, $hpcdbDb, $dwDb);
+    } catch (Exception $e) {
+        $msg = 'Failed to create data warehouse initializer: '
+            . $e->getMessage();
+        $logger->crit(array(
+            'message'    => $msg,
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+        exit(1);
+    }
+
+    $dwi->setLogger($logger);
+
+    // If no task was explicitly specified, do ingestion and aggregation.
+    if (!$ingest && !$aggregate && !$buildFilterLists) {
+        $ingest = $aggregate = true;
+    }
+
+    // If any ingestion phase is specified, don't aggregate.
+    if ($ingestAll || $ingestShredded || $ingestStaging || $ingestHpcdb) {
+        $aggregate = false;
+    }
+
+    if ($ingest) {
+        $logger->info('Ingesting data');
+        try {
+
+            // If no ingestion phase is specified, ingest all.
+            if (!$ingestShredded && !$ingestStaging && !$ingestHpcdb) {
+                $ingestAll = true;
+            }
+
+            if ($ingestAll) {
+                $dwi->ingestAll($startDate, $endDate);
+            } else {
+                if ($ingestShredded) {
+                    $dwi->ingestAllShredded($startDate, $endDate);
+                }
+
+                if ($ingestStaging) {
+                    $dwi->ingestAllStaging($startDate, $endDate);
+                }
+
+                if ($ingestHpcdb) {
+                    $dwi->ingestAllHpcdb($startDate, $endDate);
+                }
+            }
+        } catch (Exception $e) {
+            $logger->crit(array(
+                'message'    => 'Ingestion failed: ' . $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
+            ));
+            exit(1);
+        }
+        $logger->info('Done ingesting data');
+    }
+
+    if ($aggregate) {
+        $logger->info('Aggregating data');
+        try {
+            $dwi->initializeAggregation($startDate, $endDate);
+            $dwi->aggregateAllJobs($startDate, $endDate);
+        } catch (Exception $e) {
+            $logger->crit(array(
+                'message'    => 'Aggregation failed: ' . $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
+            ));
+            exit(1);
+        }
+        $logger->info('Done aggregating data');
+    }
+
+    if ($buildFilterLists) {
+        $logger->info('Building filter lists');
+        try {
+            $builder = new FilterListBuilder();
+            $builder->buildAllLists();
+        } catch (Exception $e) {
+            $logger->crit(array(
+                'message'    => 'Filter list building failed: ' . $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
+            ));
+            exit(1);
+        }
+        $logger->info('Done building filter lists');
+    }
+
+    // NOTE: "process_end_time" is needed for the log summary.
+    $logger->notice(array(
+        'message'          => 'xdmod-ingestor end',
+        'process_end_time' => date('Y-m-d H:i:s'),
+    ));
+
+    exit;
+}
+
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Usage: xdmod-ingestor [-v]
+
+    -h, --help
+        Display this message and exit.
+
+    -v, --verbose
+        Output info level and above log messages.
+
+    --debug
+        Output debug level and above log messages.
+
+    -q, --quiet
+        Output warning level and above log messages.
+
+    --start-date *date*
+        Specify the start date (YYYY-MM-DD) to be used during
+        aggregation.
+
+    --end-date *date*
+        Specify the end date (YYYY-MM-DD) to be used during aggregation.
+
+
+EOF;
+}
+

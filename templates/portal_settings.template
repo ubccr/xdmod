@@ -1,0 +1,135 @@
+[general]
+title = "[:general_title:]"
+site_address = "[:general_site_address:]"
+user_manual = "[:general_user_manual:]"
+contact_page_recipient = "[:general_contact_page_recipient:]"
+tech_support_recipient = "[:general_tech_support_recipient:]"
+
+; The version number is updated during the upgrade process.
+version = "[:general_version:]"
+
+debug_mode = "[:general_debug_mode:]"
+debug_recipient = "[:general_debug_recipient:]"
+
+exceptions_logfile = "exceptions.log"
+rest_logfile = "rest_exceptions.log"
+login_logfile = "logins.log"
+rest_general_logfile = "rest_general.log"
+extrest_access_logfile = "extrest_general.log"
+extrest_exception_logfile = "extrest_exceptions.log"
+
+center_logo = "[:general_center_logo:]"
+center_logo_width = "[:general_center_logo_width:]"
+
+sql_debug_mode = "[:general_sql_debug_mode:]"
+
+; An optional value to use as the signature for emails sent by XDMoD.
+;
+; If not provided, the organization will be used instead.
+;
+; To specify a multi-line signature, you must use actual new line characters
+; in the value. "\n" will not work.
+maintainer_email_signature = "[:general_maintainer_email_signature:]"
+
+[features]
+xsede = "off"
+appkernels = "off"
+singlejobviewer = "off"
+
+; Enable support for multiple service providers.
+;
+; This is currently not supported in Open XDMoD, but this setting does control
+; some behaviors that vary based on whether or not multiple service
+; providers are being tracked. It is strongly recommended that this option is
+; set to 'off' in Open XDMoD until support has been added.
+multiple_service_providers = "off"
+
+[internal]
+dw_desc_cache = "off"
+
+; Settings that control the "Roadmap" action on the "About" tab.
+[roadmap]
+url = "[:roadmap_url:]"
+header = "[:roadmap_header:]"
+
+[rest]
+base = "[:rest_base:]"
+version = "[:rest_version:]"
+
+; Controls whether Basic Auth headers are checked for authentication purposes.
+;
+; Some deployment scenarios may require disabling this mechanism.
+; Known scenarios include:
+;     * Running the web server behind certain access control systems, including:
+;         * Apereo CAS
+basic_auth = "[:rest_basic_auth:]"
+
+[auto_login]
+; tabs is a comma delimited list of tab ids that will trigger the login
+; page to show up if presented in an non-authenticated state.
+tabs = "[:auto_login_tabs:]"
+
+[mailer]
+sender_name = "[:mailer_sender_name:]"
+sender_email = "[:mailer_sender_email:]"
+captcha_public_key = "[:mailer_captcha_public_key:]"
+captcha_private_key = "[:mailer_captcha_private_key:]"
+
+[reporting]
+base_path = "/usr/share/xdmod/reporting/jasper_builder"
+java_path = "[:reporting_java_path:]"
+javac_path = "[:reporting_javac_path:]"
+phantomjs_path = "[:reporting_phantomjs_path:]"
+
+[logger]
+db_engine = "MySQLDB"
+host = "[:logger_host:]"
+port = "[:logger_port:]"
+user = "[:logger_user:]"
+pass = "[:logger_pass:]"
+database = "mod_logger"
+table = "log_table"
+email_from = "[:logger_email_from:]"
+email_to = "[:logger_email_to:]"
+email_subject = "[:logger_email_subject:]"
+default_level_console = "NOTICE"
+default_level_file = "WARNING"
+default_level_db = "INFO"
+default_level_mail = "ERR"
+
+[database]
+db_engine = "MySQLDB"
+host = "[:database_host:]"
+port = "[:database_port:]"
+user = "[:database_user:]"
+pass = "[:database_pass:]"
+database = "moddb"
+
+; This section applies to modw, modw_aggregates, and modw_filters.
+[datawarehouse]
+db_engine = "MySQLDB"
+host = "[:datawarehouse_host:]"
+port = "[:datawarehouse_port:]"
+user = "[:datawarehouse_user:]"
+pass = "[:datawarehouse_pass:]"
+database = "modw"
+rest_logfile = "rest_datawarehouse.log"
+
+[shredder]
+db_engine = "MySQLDB"
+host = "[:shredder_host:]"
+port = "[:shredder_port:]"
+user = "[:shredder_user:]"
+pass = "[:shredder_pass:]"
+database = "mod_shredder"
+
+[hpcdb]
+db_engine = "MySQLDB"
+host = "[:hpcdb_host:]"
+port = "[:hpcdb_port:]"
+user = "[:hpcdb_user:]"
+pass = "[:hpcdb_pass:]"
+database = "mod_hpcdb"
+
+[slurm]
+sacct = "[:slurm_sacct:]"

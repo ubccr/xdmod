@@ -1,0 +1,6 @@
+{
+  "auth": {
+    "prefix": "auth",
+    "controller": "NewRest\\Controllers\\AuthenticationControllerProvider"
+  }
+}

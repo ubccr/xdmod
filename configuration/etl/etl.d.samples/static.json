@@ -1,0 +1,21 @@
+{
+    "#": "Ingestors for fixed historgram/bucket data such as job time and processor buckets.",
+    "#": "These inherit default data endpoints and pipeline-specific options from the main",
+    "#": "etl.json config file.",
+
+    "static": [{
+        "name": "JobTimesIngestor",
+        "description": "Job times bucket ingestor",
+        "class": "StructuredFileIngestor",
+        "definition_file": "static/job_times.json",
+        "enabled": true,
+        "truncate_destination": true
+    },{
+        "name": "ProcessorBucketsIngestor",
+        "description": "Processor bucket ingestor",
+        "class": "StructuredFileIngestor",
+        "definition_file": "static/processor_buckets.json",
+        "enabled": true,
+        "truncate_destination": true
+    }]
+}

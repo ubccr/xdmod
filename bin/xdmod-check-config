@@ -1,0 +1,326 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Check for Open XDMoD prerequisites.
+ *
+ * @package OpenXdmod
+ *
+ * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+$opts = array(
+    'h' => 'help',
+    'd' => 'debug',
+);
+
+$shortOptions = implode('', array_keys($opts));
+$longOptions  = array_values($opts);
+
+$args = getopt($shortOptions, $longOptions);
+
+if ($args === false) {
+    _error("Failed to parse arguments");
+    exit(1);
+}
+
+$help = $debug = false;
+
+foreach ($args as $key => $value) {
+    switch ($key) {
+        case 'h':
+        case 'help':
+            $help = true;
+            break;
+        case 'd':
+        case 'debug':
+            $debug = true;
+            break;
+    }
+}
+
+if ($help) {
+    displayHelpText();
+    exit;
+}
+
+try {
+    $version = xd_utilities\getConfiguration('general', 'version');
+
+    echo "XDMoD $version\n\n";
+
+    echo "Required prerequisites\n\n";
+
+    // Apache checks.
+
+    # mod_rewrite (?)
+    #_debug('Checking Apache');
+    #displayResult(
+    #    $result,
+    #    ""
+    #);
+
+    // MySQL checks.
+
+    _debug('Checking for MySQL command line client (mysql)');
+    $mysql = exec('which mysql 2>/dev/null', $output, $returnVar);
+    $result = $returnVar == 0;
+    displayResult(
+        $result,
+        "MySQL command line client installed"
+    );
+
+    // TODO: Connect to database.
+
+    // TODO: Try command line (LOAD IN FILE)?
+
+    // PHP Checks.
+
+    _debug('Checking PHP version');
+    $requiredVersion = '5.3.0';
+    $currentVersion  = phpversion();
+    $result = strcmp($currentVersion, $requiredVersion) >= 0;
+    displayResult(
+        $result,
+        "PHP version must be at least $requiredVersion",
+        "You have PHP version $currentVersion.  Upgrade to $requiredVersion"
+        . " or greater."
+    );
+
+    _debug('Checking for PDO class');
+    $result = class_exists('PDO');
+    displayResult(
+        $result,
+        'PHP Data Objects (PDO) extension installed',
+        'You must install the PHP PDO extensions.'
+    );
+
+    _debug('Checking for MySQL PDO driver');
+    $result = false;
+    if (class_exists('PDO')) {
+        $drivers = PDO::getAvailableDrivers();
+        $result = in_array('mysql', $drivers);
+    }
+    displayResult(
+        $result,
+        'MySQL PDO driver installed',
+        'You must install the MySQL PDO driver.'
+    );
+
+    _debug('Checking for imagecreatefrompng function');
+    $result = function_exists('imagecreatefrompng');
+    displayResult(
+        $result,
+        'PHP GD extension installed'
+    );
+
+    _debug('Checking for gmp_abs function');
+    $result = function_exists('gmp_abs');
+    displayResult(
+        $result,
+        'PHP GMP extension installed'
+    );
+
+    _debug('Checking for mcrypt_cbc function');
+    $result = function_exists('mcrypt_cbc');
+    displayResult(
+        $result,
+        'PHP Mcrypt extension installed'
+    );
+
+    _debug('Checking for curl_close function');
+    $result = function_exists('curl_close');
+    displayResult(
+        $result,
+        'PHP cURL extension installed'
+    );
+
+    _debug('Checking for DOMDocument class');
+    $result = class_exists('DOMDocument');
+    displayResult(
+        $result,
+        'PHP DOM extension installed'
+    );
+
+    _debug('Checking for XMLWriter class');
+    $result = class_exists('XMLWriter');
+    displayResult(
+        $result,
+        'PHP XMLWriter extension installed'
+    );
+
+    _debug('Checking for Log class');
+    $result = class_exists('Log');
+    displayResult(
+        $result,
+        'PHP PEAR Log class installed'
+    );
+
+    _debug('Including Log/mdb2.php');
+    include_once 'Log/mdb2.php';
+
+    _debug('Checking for Log_mdb2 class');
+    $result = class_exists('Log_mdb2');
+    displayResult(
+        $result,
+        'PHP MDB2 class installed'
+    );
+
+    _debug('Including MDB2/Driver/mysql.php');
+    include_once 'MDB2/Driver/mysql.php';
+
+    _debug('Checking for MDB2_Driver_mysql class');
+    $result = class_exists('MDB2_Driver_mysql');
+    displayResult(
+        $result,
+        'PHP MDB2 MySQL driver installed'
+    );
+
+    _debug('Checking for json_encode function');
+    $result = function_exists('json_encode');
+    displayResult(
+        $result,
+        'PHP JSON extension installed'
+    );
+
+    _debug('Checking session_start function');
+    $result = function_exists('session_start');
+    displayResult(
+        $result,
+        'PHP session support installed'
+    );
+
+    _debug('Checking for preg_match function');
+    $result = function_exists('preg_match');
+    displayResult(
+        $result,
+        'PHP PCRE extension installed'
+    );
+
+    _debug('Checking timezone');
+    $tz = ini_get('date.timezone');
+    $result = $tz !== null && $tz !== false;
+    displayResult(
+        $result,
+        'PHP Timezone set',
+        'Set date.timezone in your php.ini'
+    );
+
+    # TODO: Check that the timezone is valid.
+
+    // Folder checks.
+
+    # log folder
+    #_debug('Checking folder permissions');
+    #displayResult(
+    #    $result,
+    #    ""
+    #);
+
+    // Java
+
+    $javaPath = xd_utilities\getConfiguration('reporting', 'java_path');
+    _debug('Checking for java executable');
+    $result = file_exists($javaPath) && is_executable($javaPath);
+    displayResult(
+        $result,
+        'Java executable configured'
+    );
+
+    $javacPath = xd_utilities\getConfiguration('reporting', 'javac_path');
+    _debug('Checking for javac executable');
+    $result = file_exists($javacPath) && is_executable($javacPath);
+    displayResult(
+        $result,
+        'Javac executable configured'
+    );
+
+    $phantomJsPath
+        = xd_utilities\getConfiguration('reporting', 'phantomjs_path');
+    _debug('Checking for phantomjs executable');
+    $result = file_exists($phantomJsPath) && is_executable($phantomJsPath);
+    displayResult(
+        $result,
+        'PhantomJS configured'
+    );
+
+    _debug('Checking for sendmail');
+    $sendmail = exec('which sendmail 2>/dev/null', $output, $returnVar);
+    $result = $returnVar == 0;
+    displayResult(
+        $result,
+        "sendmail executable installed"
+    );
+} catch (Exception $e) {
+    do {
+        _error($e->getMessage());
+        _error($e->getTraceAsString());
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+exit;
+
+/**
+ * Display the help text.
+ */
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Usage: xdmod-check-config [-h] [-d]
+
+    -h, --help
+        Display this message and exit.
+
+    -d, --debug
+        Output debugging messages.
+
+
+EOF;
+}
+
+/**
+ * Display results of check.
+ *
+ * @param bool $result
+ * @param string $message
+ */
+function displayResult($result, $message, $instructions = null)
+{
+    if ($result) {
+        echo " OK       $message\n";
+    } else {
+        echo " NOT OK   $message\n";
+        if ($instructions !== null) {
+            echo "\n$instructions\n\n";
+        }
+    }
+}
+
+/**
+ * Output a debugging message if the debug option was specified.
+ *
+ * @param string $text Debugging message.
+ */
+function _debug($text)
+{
+    global $debug;
+
+    if (!$debug) {
+        return;
+    }
+
+    fwrite(STDERR, "[DEBUG] $text\n");
+}
+
+/**
+ * Output an error message.
+ *
+ * @param string $text Error message.
+ */
+function _error($text)
+{
+    fwrite(STDERR, "[ERROR] $text\n");
+}

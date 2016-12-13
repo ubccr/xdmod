@@ -1,0 +1,73 @@
+{
+    "#": "This is the action definition file for the processor_buckets table that defines the",
+    "#": "processor buckets used to display the histogram. It includes the definition of the table",
+    "#": "as well as static data stored as a JSON array. It is meant to be imported using the",
+    "#": "StructuredFileIngestor action.",
+
+    "table_definition": {
+        "name": "processor_buckets",
+        "engine": "MyISAM",
+        "comment": "",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(4)",
+                "nullable": false
+            },
+            {
+                "name": "min_processors",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "max_processors",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "description",
+                "type": "varchar(50)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "proc",
+                "columns": [
+                    "min_processors",
+                    "max_processors"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": []
+    },
+
+    "#": "Define the mapping between the source value fields and the table columns.",
+    "destination_columns": ["id", "min_processors", "max_processors", "description"],
+
+    "#": "Provide the raw source values.",
+    "source_values":[
+        [1,       1,          1, "1"],
+        [2,       2,          4, "2 - 4"],
+        [3,       5,          8, "5 - 8"],
+        [4,       9,         64, "9 - 64"],
+        [5,      65,        256, "65 - 256"],
+        [6,     257,        512, "257 - 512"],
+        [7,     513,       1024, "513 - 1024"],
+        [8,    1025,       8192, "1k - 8k"],
+        [9,    8193,      32768, "8k - 32k"],
+        [10,  32769,     131072, "32k - 131k"],
+        [11, 131073, 2147483647, "> 131k"]
+    ]
+
+}

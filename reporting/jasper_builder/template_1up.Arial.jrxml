@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+
+<!-- 
+   XDMoD Report
+   Charts Per Page: 1
+   Letter: 8.5" x 11"  (@ 72 DPI, this would be 612 x 792)
+   Left/Right Margins: 1.25" (@ 72 DPI, this would be 90)  (Stated by Michael Northrop & Dave Hart on January 3, 2012)
+-->
+
+<jasperReport
+   xmlns="http://jasperreports.sourceforge.net/jasperreports"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+   name="javabeantest"
+   columnCount="1"
+   printOrder="Vertical"
+	orientation="Portrait"
+   pageWidth="612"
+   pageHeight="792"
+	columnWidth="432"
+   columnSpacing="0"
+   leftMargin="90"
+   rightMargin="90"
+	topMargin="10"
+   bottomMargin="10"
+   whenNoDataType="NoPages"
+	isTitleNewPage="false"
+   isSummaryNewPage="false"
+>
+
+	<property name="ireport.scriptlethandling" value="2" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+   <!-- Parameter and field definitions START -->
+   
+	<parameter name = "title"       class = "java.lang.String"/>
+	<parameter name = "pageHeader"  class = "java.lang.String"/>
+	<parameter name = "pageFooter"  class = "java.lang.String"/>
+
+	<field name="Section_Description_0" class="java.lang.String"> <fieldDescription><![CDATA[Section_Description_0]]></fieldDescription> </field>
+	<field name="Section_Drill_Parameters_0" class="java.lang.String"> <fieldDescription><![CDATA[Section_Drill_Parameters_0]]></fieldDescription> </field>
+	<field name="Section_Image_0" class="java.lang.String"> <fieldDescription><![CDATA[Section_Image_0]]></fieldDescription> </field>
+	<field name="Section_Title_0" class="java.lang.String"> <fieldDescription><![CDATA[Section_Title_0]]></fieldDescription> </field>
+
+   <!-- Parameter and field definitions END -->	
+   
+	<background>
+	  <band height="0" splitType="Stretch"></band>
+   </background>
+	
+	<title>
+		<band></band>
+	</title>
+	
+   <pageHeader>
+   
+      <band height="15" splitType="Stretch">
+
+         <textField
+            isStretchWithOverflow="true"
+            pattern=""
+            isBlankWhenNull="false"
+            evaluationTime="Now"
+            hyperlinkType="None"
+            hyperlinkTarget="Self" 
+         >
+            <reportElement
+               mode="Transparent"
+               x="0" y="10"
+               width="432" height="0"
+               forecolor="#000000" backcolor="#FFFFFF"
+               key="textField"
+               stretchType="NoStretch"
+               positionType="Float"
+               isPrintRepeatedValues="true"
+               isRemoveLineWhenBlank="false"
+               isPrintInFirstWholeBand="false"
+               isPrintWhenDetailOverflows="false"
+            />
+            
+            <!-- box border="Thin"/ --> <!-- DEBUG ONLY -->
+            
+            <textElement textAlignment="Center" rotation="None" lineSpacing="Single">
+               <font
+                  pdfFontName="Helvetica-Oblique"
+                  size="12"
+                  isBold="false"
+                  isItalic="true"
+                  isUnderline="false"
+                  isPdfEmbedded="false"
+                  pdfEncoding="Cp1252"
+                  isStrikeThrough="false"
+               />
+            </textElement>
+              
+            <textFieldExpression class="java.lang.String"><![CDATA[$P{pageHeader}]]></textFieldExpression>    
+
+         </textField>
+         
+      </band>
+      
+	</pageHeader>
+	
+	<!--
+	<columnHeader>
+		<band height="0" splitType="Stretch"> </band>
+	</columnHeader>
+	-->
+	
+	<detail>
+		
+		<band height="600">
+                  
+			<textField isStretchWithOverflow="true">
+
+				<!--
+
+				  Comment (Wed, July 13, 2011)
+
+				  - For positionType="Float" to work properly, the reportElement should have
+				    just enough height to accommodate the corresponding textElement (which is determined by the size 
+                                    of the font used inside that textElement).  To be safe, set the reportElement height 
+                                    to be smaller than the font.size in that textElement.  This way, when the text begins to wrap, it will definitely
+                                    "spill" outside the bounds of the reportElement and cause subsequent reportElements to "budge down", as naturally expected.
+					
+                                   <reportElement .... height="10" .... positionType="Float" .... />
+				   <textElement .... >
+					<font .... size="25" />
+				   </textElement>
+
+				-->
+
+				<!-- reportElement.height (10) < font.size in textElement (25) -->
+	
+				<reportElement 
+				  x="0" y="6"
+				  width="432" height="10"
+				  isRemoveLineWhenBlank="true"
+				  isPrintWhenDetailOverflows="true"
+				  positionType="Float"
+				  forecolor="#000000"
+			   >
+               <printWhenExpression><![CDATA[$V{PAGE_NUMBER}.intValue() == 1 ? Boolean.TRUE: Boolean.FALSE]]></printWhenExpression>
+				</reportElement>
+
+            <!-- box border="Thin"/ --> <!-- DEBUG ONLY -->
+				
+				<textElement textAlignment="Center" markup="styled">
+				   <font
+				     pdfFontName="Helvetica"
+				     size="25" isBold="false"
+				     isItalic="false"
+				     isUnderline="false"
+				     isPdfEmbedded ="false"
+				     pdfEncoding ="Cp1252"
+				     isStrikeThrough="false"
+               />
+				</textElement>
+				
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{title}]]></textFieldExpression>
+
+			</textField>
+		
+			<!-- MAIN REPORT CONTENT START -->
+			
+            <!-- Chart Title -->
+            
+   			<textField isStretchWithOverflow="true">
+   			
+   				<reportElement
+   				  x="0" y="50"
+   				  width="432" height="10"
+   				  positionType="Float"
+   				  forecolor="#000000"
+   			   />
+   			   
+               <!-- box border="Thin"/ --> <!-- DEBUG ONLY -->
+               
+   				<textElement textAlignment="Center" markup="styled" >
+                  <font 
+                     pdfFontName="Helvetica-Bold"
+                     size="16"
+                     isBold="true"
+                     isItalic="false"
+                     isUnderline="false"
+                     isPdfEmbedded="false"
+                     pdfEncoding="Cp1252"
+                     isStrikeThrough="false"
+                  />
+   				</textElement>
+   				
+   				<textFieldExpression class="java.lang.String"><![CDATA[$F{Section_Title_0}]]></textFieldExpression>
+   				
+   			</textField>
+   
+   
+   			<!-- Chart Drill Details -->
+   
+   			<textField
+   			   isStretchWithOverflow="true"
+   			   isBlankWhenNull="false"
+   			   evaluationTime="Now"
+   			   hyperlinkType="None"
+   			   hyperlinkTarget="Self"
+   			>
+   			
+   				<reportElement x="0" y="70" width="432" height="9" key="textField" positionType="Float"/>
+   				
+               <!-- box border="Thin"/ --> <!-- DEBUG ONLY -->
+               
+   				<textElement textAlignment="Center">
+   				   <font size="10" />
+   				</textElement>
+   				
+   				<textFieldExpression class="java.lang.String"><![CDATA[$F{Section_Drill_Parameters_0}]]></textFieldExpression>
+   				
+   			</textField>
+   			
+   			
+   			<!-- Chart Date Range -->
+   
+   			<textField
+   			   isStretchWithOverflow="true"
+   			   isBlankWhenNull="false"
+   			   evaluationTime="Now"
+   			   hyperlinkType="None"
+   			   hyperlinkTarget="Self"
+   			>
+   			
+   				<reportElement x="0" y="100" width="432" height="10" key="textField" positionType="Float"/>
+   				
+               
+   				<textElement textAlignment="Center">
+   				   <font size="12" />
+   				</textElement>
+   				
+   				<textFieldExpression class="java.lang.String"><![CDATA[$F{Section_Description_0}]]></textFieldExpression>
+   			
+   			</textField>
+   						
+            <!-- Chart Image -->
+            
+            <image scaleImage="RetainShape" onErrorType="Icon" isLazy="true" >
+            
+               <reportElement x="0" y="180" width="432" height="324"  isPrintWhenDetailOverflows="true" key="textField" positionType="Float"/>
+               
+               <!-- box border="Thin"/ --> <!-- DEBUG ONLY -->
+               
+               <imageExpression class="java.lang.String"><![CDATA[$F{Section_Image_0}]]></imageExpression>
+            
+            </image>
+
+			<!-- MAIN REPORT CONTENT END -->
+			
+		</band>
+		
+	</detail>
+	
+	<!--
+	<columnFooter>
+		<band height="0" splitType="Stretch"></band>
+	</columnFooter>
+	-->
+	
+	<pageFooter>
+	
+		<band height="22" splitType="Stretch">
+		
+   		<textField
+            isStretchWithOverflow="true"
+   		   pattern=""
+            isBlankWhenNull="false"
+            evaluationTime="Now"
+            hyperlinkType="None"
+            hyperlinkTarget="Self"
+         >
+   		
+            <reportElement 
+               mode="Transparent"
+               x="0" y="0"
+               width="432" height="10"
+               forecolor="black"
+               backcolor="#FFFFFF"
+   			   key="textField"
+   			   stretchType="NoStretch"
+   			   positionType="FixRelativeToBottom"
+   			   isPrintRepeatedValues="true"
+               isRemoveLineWhenBlank="false"
+               isPrintInFirstWholeBand="false"
+               isPrintWhenDetailOverflows="false"
+            />
+   
+            <!-- box border="Thin"/ --> <!-- DEBUG ONLY -->
+   		
+   			<textElement 
+   			   textAlignment="Center"
+   			   verticalAlignment="Top"
+   			   rotation="None"
+   			   lineSpacing="Single"
+   			>
+   			
+               <font
+                  pdfFontName="Helvetica-Oblique"
+                  size="12"
+                  isBold="false"
+                  isItalic="true"
+                  isUnderline="false"
+                  isPdfEmbedded ="false"
+                  pdfEncoding ="Cp1252"
+                  isStrikeThrough="false"
+               />
+   				
+   			</textElement>
+   		
+   			<textFieldExpression class="java.lang.String"><![CDATA[$P{pageFooter}]]></textFieldExpression>
+   		
+   		</textField>
+		
+		</band>
+	
+	</pageFooter>
+	
+	<summary>
+		<band height="0" splitType="Stretch"></band>
+	</summary>
+	
+</jasperReport>

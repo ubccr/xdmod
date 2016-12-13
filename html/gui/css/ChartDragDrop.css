@@ -1,0 +1,32 @@
+.dd-ct {
+    position:absolute;
+    border: 1px solid silver;
+    width: 180px;
+    height: 180px;
+    top: 32px;
+    background-color: #ffffc0;
+}
+
+.dd-item {
+    height: 18px;
+    border: 1px solid #a0a0a0;
+    background-color: #c4d0ff;
+    vertical-align: middle;
+    cursor: move;
+    padding: 2px;
+    z-index: 1000;
+}
+
+.dd-ct .dd-item {
+    margin: 2px;
+}
+
+.dd-proxy {
+    opacity: 0.4;
+    -moz-opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+
+.dd-over {
+    background-color: #ffff60;
+}

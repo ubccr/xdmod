@@ -1,0 +1,12 @@
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd">
+    <filter>
+        <blacklist>
+            <directory suffix=".php">../../external_libraries</directory>
+            <directory suffix=".php">../../configuration</directory>
+            <directory suffix=".php">../../vendor</directory>
+            <directory suffix=".php">.</directory>
+        </blacklist>
+    </filter>
+</phpunit>

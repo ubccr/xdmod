@@ -1,0 +1,211 @@
+/* Styling for message prompt (defined in CCR.js as CCR.xdmod.ui.reportGeneratorMessage) */
+
+.report_generator_message_prompt {
+   background-image: url('../images/report_generator/report_general_info.png');
+}
+
+/* Allow the chart entries in the grids to resize, and truncate the contained text as necessary */
+.report_generator_grid_chart_item_renderer {
+
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   width:auto;
+
+}
+
+.report_generator_chart_layout .x-form-check-wrap {
+   padding-left: 8px;
+}
+
+.wnd_report_built .x-panel-body {
+   border: 0px solid;
+}
+
+.wnd_report_icon .x-panel-body {
+   background-image: url('../images/report_icon_wnd.png');
+}
+
+.icon_chart {
+   background-image: url('../images/chart_bar.png');
+}
+
+.icon_table {
+   background-image: url('../images/table.png');
+}
+
+.report_generator_tooltip_drill_details {
+
+   font-family: arial;
+   font-size: 10px;
+   border-top: 1px solid #888;
+
+}
+
+.report_generator_tooltip_drill_details td {
+   padding: 2px;
+}
+
+.report_generator_tooltip_drill_details_header {
+   color: #00f;
+   font-family: arial;
+   font-size: 11px;
+}
+
+
+.report_generator_chart_timeframe_editor .x-btn-group-mc .x-btn-group-body {
+   background-color: #ddd !important;
+}
+
+/* Report Overview Button Icon Stylings */
+
+.report_overview .btn_new {
+   background-image: url('../images/report_generator/new_report.png');
+}
+
+.report_overview .btn_new_based_on {
+   background-image: url('../images/report_generator/new_report_based_on.png');
+}
+
+.report_overview .btn_edit {
+   background-image: url('../images/report_generator/edit_report.png');
+}
+
+.report_overview .btn_preview {
+   background-image: url('../images/report_generator/preview_report.png');
+}
+
+.report_overview .btn_send {
+   background-image: url('../images/report_generator/send_report.png');
+}
+
+.report_overview .btn_download {
+   background-image: url('../images/report_generator/download_report.png');
+}
+
+.report_overview .btn_delete {
+   background-image: url('../images/report_generator/delete_report.png');
+}
+
+.report_overview .btn_info {
+   background-image: url('../images/report_generator/report_general_info.png');
+}
+
+.btn_report_template {
+   background-image: url('../images/report_generator/report_template.png');
+}
+
+.btn_resource_provider {
+   background-image: url('../images/report_generator/resource_provider.png');
+}
+
+.btn_selected_report {
+   background-image: url('../images/report_generator/selected_report.png');
+}
+               
+/* Report Editor Button Icon Stylings */
+
+.report_edit .btn_general_info {
+   background-image: url('../images/report_generator/report_general_info.png');
+}
+
+.report_edit .btn_save,
+.report_edit.btn_save_as {
+   background-image: url('../images/report_generator/save_report.png');
+}
+
+.report_edit .btn_preview {
+   background-image: url('../images/report_generator/preview_report.png');
+}
+
+.report_edit .btn_send {
+   background-image: url('../images/report_generator/send_report.png');
+}
+
+.report_edit .btn_download {
+   background-image: url('../images/report_generator/download_report.png');
+}
+
+.report_edit .btn_return_to_overview {
+   background-image: url('../images/report_generator/back_to_reports_overview.png');
+}
+
+.report_editor_charts .btn_delete {
+   background-image: url('../images/report_generator/remove_chart.png');
+}
+
+.report_editor_charts .btn_annotate {
+   background-image: url('../images/report_generator/annotate_chart.png');
+}
+
+.report_editor_charts .btn_timeframe_edit {
+   background-image: url('../images/date_edit.png');
+}
+
+.btn_select {
+   background-image: url('../images/report_generator/select_icon.png');
+}
+
+.btn_all_reports {
+   background-image: url('../images/report_generator/all_reports.png');
+}
+
+.btn_no_reports {
+   background-image: url('../images/report_generator/report_clear.png');
+}
+
+.btn_all_charts {
+   background-image: url('../images/report_generator/all_charts.png');
+}
+
+.btn_no_charts {
+   background-image: url('../images/report_generator/chart_clear.png');
+}
+
+.btn_invert_selection {
+   background-image: url('../images/report_generator/invert_icon.png');
+}
+
+.fbar_report_status {
+   background: url('../images/report_generator/all_reports.png') no-repeat;
+   padding-left: 20px !important;
+   font-weight: bold !important;
+}
+
+.fbar_report_chart_status {
+   background: url('../images/report_generator/all_charts.png') no-repeat;
+   padding-left: 20px !important;
+   font-weight: bold !important;
+}
+
+/* Report Preview Stylings */
+
+.report_preview_top_icon {
+   background-image: url('../images/report_generator/preview_report.png');
+}
+
+.report_preview .btn_send {
+   background-image: url('../images/report_generator/send_report.png');
+}
+
+.report_preview .btn_download {
+   background-image: url('../images/report_generator/download_report.png');
+}
+
+.report_preview .btn_return_to_previous {
+   background-image: url('../images/report_generator/back_to_reports_overview.png');
+}
+
+.report_preview .custom_report_viewer {
+   background-color: #ddd;
+}
+
+.pdf_icon {
+   background-image: url('../images/report_generator/pdf_icon.png');
+   left: 1px;
+}
+
+.msword_icon {
+   background-image: url('../images/report_generator/msword_icon.png');
+   left: 1px;
+}

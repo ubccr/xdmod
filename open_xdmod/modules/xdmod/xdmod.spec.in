@@ -1,0 +1,290 @@
+Name:          xdmod
+Version:       __VERSION__
+Release:       __RELEASE__%{?dist}
+Summary:       Data warehouse and web portal for mining statistical data from resource managers
+URL:           http://open.xdmod.org/
+Vendor:        Center for Computational Research, University at Buffalo
+Packager:      Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+Group:         Applications/Internet
+License:       LGPLv3+
+Source:        %{name}-%{version}.tar.gz
+BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildArch:     noarch
+BuildRequires: php-cli
+Requires:      httpd
+
+%{?el6:Requires: mysql >= 5.1}
+%{?el7:Requires: mariadb >= 5.1}
+
+Requires:      php >= 5.3 php-cli php-mysql php-pdo php-gd php-mcrypt php-xml
+Requires:      php-pear-Log php-pear-MDB2 php-pear-MDB2-Driver-mysql
+Requires:      java-1.7.0-openjdk java-1.7.0-openjdk-devel
+Requires:      cronie
+Requires:      logrotate
+
+%description
+XDMoD is a data warehouse and web portal for mining statistical data
+from resource managers in high-performance computing environments.
+XDMoD presents resource utilization over set time periods and provides
+detailed interactive charts, graphs, and tables.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+DESTDIR=$RPM_BUILD_ROOT ./install \
+    --quiet \
+    --bindir=%{_bindir} \
+    --libdir=%{_libdir}/%{name} \
+    --sysconfdir=%{_sysconfdir}/%{name} \
+    --datadir=%{_datadir}/%{name} \
+    --docdir=%{_docdir}/%{name}-%{version} \
+    --logdir=%{_localstatedir}/log/%{name} \
+    --httpdconfdir=%{_sysconfdir}/httpd/conf.d \
+    --logrotatedconfdir=%{_sysconfdir}/logrotate.d \
+    --crondconfdir=%{_sysconfdir}/cron.d
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/%{name}-*
+%{_libdir}/%{name}/
+%{_datadir}/%{name}/
+%{_docdir}/%{name}-%{version}/
+
+%attr(0775,root,apache) %dir %{_localstatedir}/log/%{name}
+
+%config(noreplace) %{_sysconfdir}/%{name}/
+%config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%config(noreplace) %{_sysconfdir}/cron.d/%{name}
+%config(noreplace) %{_datadir}/%{name}/html/robots.txt
+
+%changelog
+* Wed Sep 21 2016 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 6.0.0-1.0
+- Important Notes
+    - Updated Highcharts from v3.0.9 to v4.2.5.
+        - Commercial users (as defined by the Highcharts license terms) will
+          need to acquire a new Highcharts license if their current license does
+          not cover the new version.
+- Features
+    - Added demo user type.
+    - Added roadmap link to feature request dialog.
+    - Shredders
+        - Fixed calculation of missing end times from the start time and wall
+          time.
+        - LSF
+            - Now storing the node list, exit code and exit status for SUPReMM
+              support.
+        - Slurm
+            - Now allowing null eligible times.
+            - Failed parsing of datetimes are no longer a fatal error.
+        - SGE
+            - Now supporting older versions of SGE that contain only 43 fields
+              in their accounting logs.
+- Bug Fixes
+    - General
+        - Fixed some charts not rendering if more than 1000 points were plotted.
+        - Improved consistency of chart aesthetics across tabs.
+        - Fixed report generator not cleaning up old report files.
+    - Metric Explorer
+        - Fixed Add Filter list only including filter types applicable to the
+          realm of the first data series on a chart.
+    - Shredders
+        - PBS
+            - Fixed parsing of newer `exec_host` formats (e.g. host/0-3,
+              host/0*8).
+    - `xdmod-import`
+        - Fixed importing of hierarchy and group-to-hierarchy files.
+- Refactors and Miscellaneous
+    - Refactored Open XDMoD to be the code base upon which XDMoD is built
+      instead of the other way around.
+    - Updated jQuery from v1.9.1 to v1.12.4.
+    - Updated Node.js Mongo driver from v1.4 to v2.1.
+    - Improved tab loader to allow tabs to be defined in configuration files
+      instead of being hard-coded into the loader.
+    - Merged public and private versions of the main page into a single page.
+    - Added options to more quickly build Open XDMoD for development purposes.
+    - Reduced duplicate code in asset setup script.
+* Tue May 24 2016 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 5.6.0-1.0
+- New Features
+    - Federated Authentication
+        - Open XDMoD can now use any authentication system supported by
+          SimpleSAMLphp (https://simplesamlphp.org/).
+        - For more information, please view the
+          Federated Authentication guide.
+    - Roadmap
+        - Added interactive roadmap for XDMoD development to About tab.
+    - Contact Us
+        - Added option to contact developers for technical support.
+    - Data Warehouse
+        - Improved speed of filter (dimension value) lists by precomputing
+          available values.
+    - Metric Explorer
+        - Added redo button.
+    - Shredders
+        - Added support for PBS Pro.
+        - Added additional input validation to the Slurm helper script.
+    - Upgrade Process
+        - Added warning to upgrade addon modules before migrating.
+    - Database
+        - Changed column types and added indexes to the logging table.
+    - Documentation
+        - User manual now available.
+        - Improved installation and configuration documentation.
+- Bug Fixes
+    - General
+        - Enabled toolbar scrolling when window is too small.
+        - Fixed trend line R^2 values sometimes not being calculated.
+        - Removed redundant warnings about role-based restrictions.
+        - Fixed the About tab not being able to be the default tab.
+        - Improved chart loading speed by removing most animations.
+        - Fixed incorrect trend line calculation and display for discontinuous
+          data series.
+        - Fixed security vulnerability in Report Generator's image generator.
+        - Fixed extra slashes in URLs in password reset emails (including
+          account creation emails).
+        - Fixed email template paths.
+        - The About tab can now be set as the default module.
+    - Data Warehouse
+        - Fixed cases where current time period would not be aggregated.
+            - Now that this is resolved, code that can work by scanning any
+              aggregate table now uses the year tables, as those are smallest.
+        - Improved consistency of time period tables and removed unused ones.
+    - Metric Explorer
+        - Fixed handling of HTML characters in chart titles.
+        - Fixed issues with axis renames not persisting.
+        - Fixed Load Chart search not working.
+        - Modified chart options menu label to be a fixed length.
+            - This prevents the button from being placed in the toolbar's
+              overflow area when it shouldn't be.
+        - Fixed changes to y-axes not being undoable.
+        - Modified "Show Trend Line" button in chart options to be disabled when
+          trend lines aren't available.
+        - Fixed case where duration selectors in main toolbar and on x-axis
+          popup could desynchronize.
+    - Shredders
+        - Fixed handling of "NONE" in SGE's `pe_taskid` field.
+        - Now allowing all values that were previously resulting in fatal
+          errors in Slurm fields that represent lengths of time.
+    - Upgrade Process
+        - Fixed broken error for when portal_settings.ini is not writable.
+    - Usage
+        - Fixed bad default settings for dimensions that default to pie charts.
+        - Fixed long initial load time by starting on a single-chart page.
+* Fri Dec 18 2015 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 5.5.0-1.0
+- New Features
+    - SUPReMM support
+    - Metric Explorer Changes
+        - Improved management of charts
+            - Charts are no longer automatically saved after each
+              operation. A manual Save button has been added that will
+              indicate whether or not a chart needs to be saved.
+            - When displaying pie charts, only a single dataset is
+              allowed.
+            - Added ability to rename saved charts.
+            - Added undo capability.
+        - Improved UI for data filtering
+            - Added Quick Filters for quickly restricting data. This
+              replaces the Role selector.
+        - Improved data access controls
+            - Non-public metrics and dimensions are now restricted
+              according to users' roles.
+            - Improved filter lists to only include values for which
+              the user can view the underlying data.
+            - Added the ability to include a remainder data series.
+    - Migrated more server calls to the new REST stack
+    - Simplified the chart/data retrieval infrastructure used by the
+      Metric Explorer and Usage tabs
+    - Improved performance of certain queries
+    - Updated PBS parsing to support time fields that are formatted in
+      seconds and not HH:MM:SS
+- Bug Fixes
+    - Fixed report generator document formatting
+    - Fixed inconsistent data series ordering between timeseries charts
+      when sorted by value in Usage and Metric Explorer tabs
+    - Fixed Metric Explorer sometimes loading the same chart twice
+    - Fixed the "Hide Tooltip" option not always working as expected in
+      Usage tab
+    - Fixed filter lists occasionally getting stuck under a loading mask
+    - Fixed predefined date durations not being saved correctly in the
+      Metric Explorer
+    - Removed auto-loading of the last open chart in Metric Explorer, a
+      new chart is now opened when visiting the Metric Explorer
+    - Improved stability, consistency, and performance of numerous other
+      components
+    - Prevent warning messages produced by LSF jobs that don't have a
+      host list
+* Wed Aug 19 2015 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 5.0.0-1.0
+- New Features
+    - Utilization metric may now be normalized to a specified percent
+      allocated
+    - Removed javac dependency
+    - Add host filter shredder feature
+    - Improved stability of Usage tab
+    - Improved error handling for internal dashboard errors
+    - Added meaningful HTTP status codes to failed login responses
+    - Resolved frequent warnings in Apache logs about implicitly
+      converting arrays to strings
+    - PBS memory value parsing errors are no longer fatal
+    - Removed Apache requirement for listening on 127.0.0.1
+    - Added support for Univa Grid Engine 8.2+
+    - Shredders now skip duplicate data
+    - Added support for MySQL 5.6+
+    - Added support for PhantomJS 2.0+
+    - Added helper script for updating resource specs
+    - Improved documentation
+- Bug Fixes
+    - Adjust LSF unique key constraint
+    - Added PBS unique key constraint to prevent duplicate job data
+* Tue Feb 17 2015 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 4.5.2-1.0
+- New Features
+    - Remove excessive "wall time" error messages
+    - Add more debug logging
+    - SGE memory value parsing errors are no longer fatal
+- Bug Fixes
+    - Fix SGE parsing regression
+* Thu Feb 05 2015 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 4.5.1-1.0
+- New Features
+    - Support for Torque's new "exec_host" syntax
+    - Updated SGE parsing to support Univa's new "job_class" field and
+      requests for "INFINITY" memory
+- Bug Fixes
+    - Backslash characters in LSF log files now parsed correctly
+    - Report generator now handles double quotes in portal_settings.ini
+      properly
+    - Fixed optional Node Utilization statistic
+* Thu Dec 04 2014 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 4.5.0-1.0
+- New Features
+    - Major re-write of the Metric Explorer user interface including a
+      metric catalog and context-sensitive menus
+    - Report generator performance enhancements
+    - General user interface updates
+    - Improved image export dialog
+    - Added metric description pane in Metric Explorer
+    - Improved session management
+    - Added additional error checking and reporting to shredders
+    - Added LSF support
+    - Improved utilization metric to support resources that don't have a
+      constant cpu count over their lifetime
+    - Added suport for alternate PI data sources
+    - Improved logging
+    - Added weighted job size statistic
+    - Improved IE compatibility
+    - Added xdmod-admin script
+    - Added automatic update checker
+    - Added support for slurm job arrays
+    - Improved documentation
+- Bug Fixes
+    - PBS and SGE job arrays were not ingested correctly
+    - sacct configuration option was not recognized
+    - Arrow keys did not work in axis range boxes
+    - Parentheses not available in Metric Explorer chart titles
+    - Proper handling of apostrophes in search dialogs
+    - On some charts, data points on the last day of the specified date
+      range were not displayed correctly
+* Mon Nov 18 2013 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 3.5.0-1.0
+- Initial public release

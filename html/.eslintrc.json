@@ -1,0 +1,17 @@
+{
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "AppKernel": false,
+    "Compliance": false,
+    "CCR": false,
+    "Ext": false,
+    "ga": false,
+    "_gaq": false,
+    "jQuery": false,
+    "Highcharts": false,
+    "truncateText": false,
+    "XDMoD": false
+  }
+}

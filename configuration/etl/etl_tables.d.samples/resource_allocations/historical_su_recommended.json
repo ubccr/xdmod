@@ -1,0 +1,24 @@
+{
+    "#": "Include the resource allocaitons table definition",
+
+    "include": "etl_tables.d/resource_allocations/resource_allocations.json",
+
+    "#": "Specify the source data file and metadata, in this case an array of JSON data.",
+
+    "source_data": {
+        "type": "JsonArray",
+        "fields": [ "resource", "id", "recommended", "start_alloc_date" ],
+        "#": "It would be nice to be able to reference path variables like ${data_dir} here",
+        "data": "etl_data.d/resource_allocations/historical_su_recommended.json"
+    },
+
+    "#": "Generate UPDATE table SET recommended = ? WHERE id = ? AND start_alloc_date = ?",
+    "#": "with values taken from each row in the data set.",
+
+    "update": {
+        "#": "Set a field in the included table to the corresponding field in the source data",
+        "set": [ "recommended" ],
+        "#": "Generate a WHERE clause where these existing fields in the table match those in the source data",
+        "where": [ "id", "start_alloc_date" ]
+    }
+}

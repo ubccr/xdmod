@@ -1,0 +1,13 @@
+Dear [:site_title:] user:
+
+You are receiving this message because you currently have an account on
+[:site_title:] ([:site_address:]) associated with this email address.
+
+This message is to inform you that on [:date:], [:site_title:] services will
+be unavailable.  We anticipate this outage to be temporary, and will
+inform you when our services will be available once again.
+
+Please contact us with any questions or comments at [:contact_email:].
+
+Thank you for using [:site_title:],
+[:maintainer_signature:]

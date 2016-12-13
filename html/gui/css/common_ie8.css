@@ -1,0 +1,10 @@
+/**
+ * CSS fixes for Internet Explorer 8 and lower.
+ */
+
+/**
+ * Fix the alignment of checkbox labels inside toolbars in ExtJS 3.4.
+ */
+.ext-ie .x-toolbar-cell .x-form-checkbox {
+    margin-top: 3px;
+}

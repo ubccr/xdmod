@@ -1,0 +1,118 @@
+/* -------------------- Documenation Formatting ------------------------ */
+
+.rest_documentation {
+   margin: 10px;
+   font-family: Tahoma,Verdana,Arial,Helvetica,sans-serif;
+   font-size: 12px;
+}
+
+.rest_documentation a {
+   text-decoration: none;
+}
+
+.section_header {
+   background-image:  url("../images/bg.gif");
+   font-size: 12px;
+   border-bottom: 1px solid #a9bfd3;
+   font-weight: bold;
+}
+
+
+.section_arguments,
+.authentication_notice,
+.section_usage,
+.section_output {
+   border: 1px solid #ccc;
+   border-top: none;
+   font-family: inherit;
+   font-size: inherit;
+}
+
+.section_arguments td,
+.section_usage td,
+.authentication_notice td,
+.section_output td {
+   padding: 3px;
+}
+
+.section_usage {
+   background: #fef1d5;
+}
+
+.authentication_notice {
+   background: #fae5f3;
+}
+
+.section_arguments {
+   background: #dffcc6;
+}
+
+.section_output {
+   background: #fefdd0;
+}
+
+.permalink {
+   float: right;
+}
+
+.permalink td {
+   font-size: 12px;
+}
+
+.permalink a {
+   text-decoration: none;
+}
+
+/* ------------------------------ Rest structure ------------------------------ */
+
+.rest_call {
+   font-family: Courier;
+}
+
+.rest_base {
+   color: #080;
+}
+
+.rest_arguments,
+.rest_output {
+   color: #00f;
+}
+
+.rest_optional_argument {
+   background: #fefdd0 !important;
+}
+
+.rest_optional_arguments_header {
+   background: #fee9c3 !important;
+}
+
+.rest_token {
+   color: #f00;
+}
+
+.rest_entity {
+   color: #00f;
+}
+
+/* ---------------- Tree toolbar option icons (expand, collapse) ------------- */
+
+.icon-expand-all {
+    background-image: url(../../gui/images/expand-all.gif) !important;
+}
+.icon-collapse-all {
+    background-image: url(../../gui/images/collapse-all.gif) !important;
+}
+
+/* ------------------------- Tree node icons ------------------------- */
+
+.iconRealm {
+    background-image: url(../images/node_realm.png) !important;
+}
+
+.iconCategory {
+    background-image: url(../images/node_category.png) !important;
+}
+
+.iconAction {
+    background-image: url(../images/node_action.png) !important;
+}

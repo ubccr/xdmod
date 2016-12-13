@@ -1,0 +1,85 @@
+{
+    "name": "xdmod",
+    "version": "6.0.0",
+    "release": "1.0",
+    "files": {
+        "include_paths": [
+            "/"
+        ],
+        "exclude_paths": [
+            "/classes/UnitTesting",
+            "/composer.json",
+            "/composer.lock",
+            "/docs",
+            "/etl",
+            "/html/gui/js/modules/Module.template",
+            "/logs",
+            "/phpcs.xml",
+            "/setup",
+            "/sonar-project.properties",
+            "/user_manual_builder"
+        ],
+        "exclude_patterns": [
+            "#/\\.#",
+            "#xdmod-.*\\.rpm$#",
+            "#xdmod-.*\\.tar\\.gz$#"
+        ]
+    },
+    "file_maps": {
+        "data": [
+            "classes",
+            "db",
+            "external_libraries",
+            "html",
+            "libraries",
+            "reporting",
+            "templates",
+            "tools",
+            "vendor",
+            { "configuration/constants.php": true },
+            { "configuration/linker.php" : true }
+        ],
+        "bin": [
+            "bin/"
+        ],
+        "lib": [
+            "background_scripts/"
+        ],
+        "doc": [
+            {"AUTHORS.md": "AUTHORS"},
+            {"CHANGELOG.md": "CHANGELOG"},
+            "LICENSE",
+            "NOTICE",
+            {"README.md": "README"},
+            "licenses"
+        ],
+        "etc": [
+            "configuration/colors1.json",
+            "configuration/datawarehouse.json",
+            "configuration/etl",
+            "configuration/hierarchy.json",
+            "configuration/internal_dashboard.json",
+            "configuration/organization.json",
+            "configuration/portal_settings.ini",
+            "configuration/processor_buckets.json",
+            "configuration/resource_specs.json",
+            "configuration/resource_types.json",
+            "configuration/resources.json",
+            "configuration/roles.json",
+            "configuration/rest.json",
+            "configuration/rest.d",
+            "configuration/setup.json",
+            "configuration/update_check.json",
+            "email_templates"
+        ],
+        "etc/httpd": {
+            "configuration/apache.conf": "xdmod.conf"
+        },
+        "etc/logrotated": {
+            "configuration/logrotate.conf": "xdmod"
+        },
+        "etc/crond": {
+            "configuration/cron.conf": "xdmod"
+        }
+    }
+}

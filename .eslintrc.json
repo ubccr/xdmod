@@ -1,0 +1,66 @@
+{
+  "env": {},
+  "globals": {},
+  "extends": "eslint:recommended",
+  "rules": {
+    "curly": 2,
+    "guard-for-in": 2,
+    "no-extend-native": 2,
+    "block-scoped-var": 1,
+    "no-use-before-define": 2,
+    "no-caller": 2,
+    "no-sequences": 2,
+    "no-new": 2,
+    "no-extra-parens": 1,
+    "dot-notation": [
+      1,
+      {
+        "allowPattern": "^[a-z]+(_[a-z]+)+$"
+      }
+    ],
+    "no-implicit-coercion": [
+      2,
+      {
+        "boolean": true,
+        "number": true,
+        "string": false
+      }
+    ],
+    "no-multi-spaces": 2,
+    "key-spacing": [
+      2,
+      {
+        "beforeColon": false,
+        "afterColon": true
+      }
+    ],
+    "comma-spacing": [
+      2,
+      {
+        "before": false,
+        "after": true
+      }
+    ],
+    "semi-spacing": [
+      2,
+      {
+        "before": false,
+        "after": true
+      }
+    ],
+    "no-spaced-func": 2,
+    "no-trailing-spaces": 2,
+    "eol-last": 2,
+    "semi": 2,
+    "space-infix-ops": 2,
+    "consistent-this": [
+      1,
+      "self"
+    ],
+    "linebreak-style": [
+      2,
+      "unix"
+    ],
+    "keyword-spacing": 1
+  }
+}

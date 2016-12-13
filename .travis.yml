@@ -1,0 +1,33 @@
+# Use container-based environment for quicker initialization
+sudo: false
+
+# Specify the build matrix
+language: php
+php:
+    - '5.3.3'
+    - '5.4'
+env:
+    global:
+        - NODE_VERSION=6
+    matrix:
+        - TEST_SUITE=syntax
+        - TEST_SUITE=style
+        - TEST_SUITE=unit
+        - TEST_SUITE=build
+
+matrix:
+    allow_failures:
+        - env: TEST_SUITE=style
+
+# Add dependency directories to the Travis cache
+cache:
+    directories:
+        - node_modules
+        - $HOME/.composer/cache
+        - /tmp/pear/cache
+
+# Delegate the installation step to the custom Travis installation script
+install: ./.travis.install.sh
+
+# Delegate the build step to the custom Travis build script
+script: ./.travis.build.sh

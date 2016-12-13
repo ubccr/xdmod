@@ -1,0 +1,28 @@
+html
+{
+  border-bottom: 1px solid;
+}
+
+body, table
+{
+  font-family: arial;
+  font-size: 12px;
+  margin: 0;
+}
+
+a
+{
+  text-decoration: none;
+  color: #00f;
+}
+
+.link
+{
+  padding-right: 6px;
+}
+
+a:hover
+{
+  color: #f00;
+}
+

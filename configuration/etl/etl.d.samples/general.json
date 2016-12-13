@@ -1,0 +1,82 @@
+{
+    "#": "This example displays most features available in the main etl.json configuration file.",
+
+    "#": "Define paths for the various configuraiton and data subdirectories. This block is",
+    "#": "expanded to fully qualified paths and added to all actions.",
+
+    "paths": {
+        "definition_file_dir": "etl_tables.d",
+        "specs_dir": "etl_specs.d",
+        "macro_dir": "etl_macros.d",
+        "sql_dir": "etl_sql.d",
+        "data_dir": "etl_data.d",
+        "local_config_dir": "etl.d"
+    },
+
+    "#": "Specify defaults that will be applied to actions. In general, if a key is defined",
+    "#": "by an action, it will not be overwritten.",
+
+    "defaults": {
+
+        "#": "Global options are lowest priority and applied to all actions if not already defined",
+
+        "global" : {
+            "endpoints": {
+                "utility": {
+                    "#": "Endpoint type is used to instantiate the correct endpoint.",
+                    "type": "mysql",
+
+                    "#": "Human-readable name",
+                    "name": "Utility DB",
+
+                    "#": "Section in the config file used for connection parameters.",
+                    "config": "datawarehouse",
+
+                    "#": "Schema associated with this endpoint. This will be the default schema",
+                    "#": "used by queries using this endpoint.",
+                    "schema": "modw"
+                },
+                "source": {
+                    "type": "postgres",
+                    "name": "XDCDB accounting",
+                    "config": "tgcdbmirror",
+                    "schema": "acct"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Federated OSG",
+                    "config": "datawarehouse",
+                    "schema": "federated_osg"
+                },
+            }
+        },
+
+        "#": "Pipeline-specific options. These are applied to actions in pipelines with the same",
+        "#": "name as the section but are not applied if the key already exists.",
+
+        "ingestors": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions"
+        }
+    },
+
+    "#": "Define a pipeline as an array of action definition objects",
+
+    "ingestors": [
+        {
+            "#": "Ingest select fields from the XDCSB organization table, altering the field names.",
+
+            "name": "xdcdb-orgs",
+            "description": "Ingest select fields from the XDCSB organization",
+            "class": "SimpleDatabaseIngestor",
+
+            "#": "Definition of the destination table as well as specification of the source table.",
+            "definition_file": "organizations.json",
+
+            "enabled": true,
+
+            "#": "Always truncate the existing table before ingesting",
+            "truncate_destination": true
+        }
+    ]
+}

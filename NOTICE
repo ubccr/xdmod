@@ -1,0 +1,152 @@
+Open XDMoD is bundled with the following open source software, copies of
+the licenses can be found in docs/licenses:
+
+Name:    Ext JS 3.4.1.1
+License: GPL 3.0
+Author:  Sencha Inc.
+Link:    http://www.sencha.com/products/extjs/
+
+Name:    Zend Framework 1.12.0
+License: New BSD License
+Author:  Zend Technologies USA, Inc.
+Link:    http://framework.zend.com/
+
+Name:    jQuery
+License: MIT license
+Author:  jQuery Foundation and other contributors
+Link:    http://jquery.com/
+
+Name:    Highcharts
+License: Creative Commons Attribution-NonCommercial 3.0
+Author:  Torstein Hønsi
+Link:    http://www.highcharts.com/
+
+Name:    Jasper Reports
+License: LGPL 3.0
+Author:  Jaspersoft Corporation
+Link:    http://community.jaspersoft.com/project/jasperreports-library
+
+Name:    Commons BeanUtils
+License: Apache License Version 2.0
+Author:  The Apache Software Foundation
+Link:    http://commons.apache.org/proper/commons-beanutils/
+
+Name:    Commons Collections
+License: Apache License Version 2.0
+Author:  The Apache Software Foundation
+Link:    http://commons.apache.org/proper/commons-collections/
+
+Name:    Commons Digester
+License: Apache License Version 2.0
+Author:  The Apache Software Foundation
+Link:    http://commons.apache.org/proper/commons-digester/
+
+Name:    Commons Logging
+License: Apache License Version 2.0
+Author:  The Apache Software Foundation
+Link:    http://commons.apache.org/proper/commons-logging/
+
+Name:    iText
+License: Affero General Public License
+Author:  iText Software Corp.
+Link:    http://itextpdf.com/
+
+Name:    Apache POI
+License: Apache License Version 2.0
+Author:  The Apache Software Foundation
+Link:    http://poi.apache.org/
+
+Name:    Xalan-Java
+License: Apache License Version 2.0
+Author:  The Apache Software Foundation
+Link:    http://xml.apache.org/xalan-j/
+
+Name:    RSVP.js
+License: MIT license
+Author:  Yehuda Katz, Tom Dale, Stefan Penner and contributors
+Link:    https://github.com/tildeio/rsvp.js
+
+Name:    Silex
+License: MIT License
+Author:  Fabien Potencier, Igor Wiedler
+Link:    http://silex.sensiolabs.org
+
+Name:    SimpleSAMLphp
+License: LGPL 2.1
+Author:  UNINETT and external contributors
+Link:    https://simplesamlphp.org
+
+Name:    PHP OpenID
+License: Apache License Version 2.0
+Author:  JanRain, Inc.
+Link:    https://github.com/openid/php-openid
+
+Name:    PHP SQL Parser
+License: New BSD License
+Author:  André Rothe, Justin Swanhart
+Link:    http://code.google.com/p/php-sql-parser/
+
+Name:    JSON Schema for PHP
+License: MIT License
+Author:  Justin Rainbow
+Link:    https://github.com/justinrainbow/json-schema
+
+Name:    Symfony Process Component
+License: MIT License
+Author:  Fabien Potencier and the Symfony Community
+Link:    https://symfony.com/components/Process
+
+Name:    Farm-Fresh Web Icons
+License: Creative Commons Attribution 3.0 License
+Author:  Marcis Gasuns
+Link:    http://www.fatcow.com/free-icons
+
+Name:    Ext.ux.Printer
+License: MIT License
+Author:  Ed Spencer
+Link:    https://github.com/edspencer/Ext.ux.Printer
+
+Name:    Ext.ux.MessageWindow
+License: LGPL 3.0
+Author:  Michael LeComte
+Link:    http://extjs.com/forum/showthread.php?t=48135
+
+Name:    PasswordStrengthMeter.js
+License: MIT License
+Author:  Steve Moitozo
+Link:    http://geekwisdom.com
+
+Name:    number-functions.js
+License: LGPL 2.1
+Author:  Baron Schwartz
+Link:    http://www.xaprb.com/blog/2006/01/05/javascript-number-formatting/
+
+Name:    console-polyfill
+License: MIT License
+Author:  Paul Miller
+Link:    https://github.com/paulmillr/console-polyfill
+
+Name:    reCAPTCHA PHP Library
+License: MIT License
+Author:  Mike Crawford, Ben Maurer
+Link:    https://developers.google.com/recaptcha/old/docs/php
+
+Name:    jquery-base64
+License: MIT License
+Author:  Carlo Zottmann
+Link:    https://github.com/carlo/jquery-base64
+
+Name:    Ext.ux.form.GroupComboBox
+License: "BSD"
+Author:  Robert B. Williams
+Link:    https://www.sencha.com/forum/showthread.php?45412-Ext-ux-form-GroupComboBox
+
+Name:    composer/installers
+License: MIT License
+Author:  Composer
+Link:    https://composer.github.io/installers
+
+Name:    EmailValidator
+License: MIT
+Author:  Eduardo Gulias Davis
+Link:    https://github.com/egulias/EmailValidator

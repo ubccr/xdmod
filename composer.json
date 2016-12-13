@@ -1,0 +1,415 @@
+{
+    "require": {
+        "silex/silex": "~1.2",
+        "simplesamlphp/simplesamlphp": "~1.14",
+        "openid/php-openid": "dev-master#ee669c6a9d4d95b58ecd9b6945627276807694fb",
+        "greenlion/php-sql-parser": "~4.0.0",
+        "justinrainbow/json-schema": "~2.0",
+        "symfony/process": "~2.0",
+        "sencha/extjs-gpl": "3.4.*",
+        "highsoft/highcharts": "^4.2.5",
+        "zendframework/zendframework-minimal": "^1.12.0",
+        "moment/moment-min-file": "^2.13.0",
+        "moment/moment-timezone-min-file": "^0.5.4",
+        "jquery/jquery-min-file": "^1.12.4",
+        "carlo/jquery-base64-file": "^1.0",
+        "tildeio/rsvpjs-min-file": "^3.0.18",
+        "jaspersoft/jasperreports-library-jar": "^3.7.6",
+        "apache/xalan-j-2jars": "^2.7.1",
+        "apache/poi": "^3.6",
+        "itextpdf/itextpdf": "^2.1.7",
+        "apache/commons-beanutils": "^1.8.0",
+        "apache/commons-collections": "^2.1.1",
+        "apache/commons-digester": "^1.7",
+        "apache/commons-logging": "^1.0.4",
+        "egulias/email-validator": "^1.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*",
+        "squizlabs/php_codesniffer": "2.*"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "sencha/extjs-gpl",
+                "type": "vanilla-plugin",
+                "version": "3.4.1.1",
+                "license": "GPL-3.0",
+                "homepage": "https://www.sencha.com/products/extjs",
+                "dist": {
+                    "url": "https://cdn.sencha.com/ext/gpl/ext-3.4.1.1-gpl.zip",
+                    "type": "zip",
+                    "shasum": "26734b47eae909ff7f8cd7de4cadfb3531bd3cdc"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "extjs"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "highsoft/highcharts",
+                "type": "vanilla-plugin",
+                "version": "4.2.5",
+                "license": [
+                    "CC-BY-NC-3.0",
+                    "proprietary"
+                ],
+                "homepage": "https://www.highcharts.com/products/highcharts",
+                "dist": {
+                    "url": "https://code.highcharts.com/zips/Highcharts-4.2.5.zip",
+                    "type": "zip",
+                    "shasum": "e4ad04f3a6c1b5042d25a8f960f62ce5aeb32777"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "highcharts"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "zendframework/zendframework-minimal",
+                "type": "vanilla-plugin",
+                "version": "1.12.0",
+                "license": "BSD-3-Clause",
+                "homepage": "https://framework.zend.com",
+                "dist": {
+                    "url": "https://packages.zendframework.com/releases/ZendFramework-1.12.0/ZendFramework-1.12.0-minimal.tar.gz",
+                    "type": "tar",
+                    "shasum": "5035e0e4a6782ebfa8d65bf44479ada938ddbf20"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "Zend"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "moment/moment-min-file",
+                "type": "vanilla-plugin",
+                "version": "2.13.0",
+                "license": "MIT",
+                "homepage": "https://momentjs.com",
+                "dist": {
+                    "url": "https://raw.githubusercontent.com/moment/moment/2.13.0/min/moment.min.js",
+                    "type": "file",
+                    "shasum": "a8ca7eea2616fa92e2e85ba6291af6ea012fd190"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "moment"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "moment/moment-timezone-min-file",
+                "type": "vanilla-plugin",
+                "version": "0.5.4",
+                "license": "MIT",
+                "homepage": "https://momentjs.com",
+                "dist": {
+                    "url": "https://raw.githubusercontent.com/moment/moment-timezone/0.5.4/builds/moment-timezone-with-data.min.js",
+                    "type": "file",
+                    "shasum": "39b9fccc20863c23f19524a756d75cfef2ff9cbe"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "moment-timezone"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "jquery/jquery-min-file",
+                "type": "vanilla-plugin",
+                "version": "1.12.4",
+                "license": "MIT",
+                "homepage": "https://jquery.com",
+                "dist": {
+                    "url": "https://code.jquery.com/jquery-1.12.4.min.js",
+                    "type": "file",
+                    "shasum": "5a9dcfbef655a2668e78baebeaa8dc6f41d8dabb"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "jquery"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "carlo/jquery-base64-file",
+                "type": "vanilla-plugin",
+                "version": "1.0",
+                "license": "MIT",
+                "homepage": "https://github.com/carlo/jquery-base64",
+                "dist": {
+                    "url": "https://github.com/carlo/jquery-base64/raw/master/jquery.base64.js",
+                    "type": "file",
+                    "shasum": "7f0ba311c1676b1b730b29b06e1a9e9e55760acc"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "base64"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "tildeio/rsvpjs-min-file",
+                "type": "vanilla-plugin",
+                "version": "3.0.18",
+                "license": "MIT",
+                "homepage": "https://github.com/tildeio/rsvp.js",
+                "dist": {
+                    "url": "https://rsvpjs-builds.s3.amazonaws.com/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js",
+                    "type": "file",
+                    "shasum": "24522232c6252718638ad3475e236da7692fa4ae"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "rsvp"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "jaspersoft/jasperreports-library-jar",
+                "type": "vanilla-plugin",
+                "version": "3.7.6",
+                "license": "LGPL-3.0",
+                "homepage": "http://community.jaspersoft.com/project/jasperreports-library",
+                "dist": {
+                    "url": "https://downloads.sourceforge.net/project/jasperreports/archive/jasperreports/JasperReports%203.7.6/jasperreports-3.7.6.jar",
+                    "type": "file",
+                    "shasum": "6d32314023c5e33a649b6f40fab51eb0922a6da9"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "jasperreports"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "apache/xalan-j-2jars",
+                "type": "vanilla-plugin",
+                "version": "2.7.1",
+                "license": "Apache-2.0",
+                "homepage": "https://xalan.apache.org/xalan-j",
+                "dist": {
+                    "url": "https://archive.apache.org/dist/xalan/xalan-j/binaries/xalan-j_2_7_1-bin-2jars.zip",
+                    "type": "zip",
+                    "shasum": "e14810b4c586fb40e80c049b9096215ab22d816d"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "xalan"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "apache/poi",
+                "type": "vanilla-plugin",
+                "version": "3.6",
+                "license": "Apache-2.0",
+                "homepage": "http://poi.apache.org",
+                "dist": {
+                    "url": "https://archive.apache.org/dist/poi/release/bin/poi-bin-3.6-20091214.tar.gz",
+                    "type": "tar",
+                    "shasum": "e65a6fc5acd1c4e09c654cf72e9f70707235d309"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "poi"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "itextpdf/itextpdf",
+                "type": "vanilla-plugin",
+                "version": "2.1.7",
+                "license": "AGPL-3.0",
+                "homepage": "http://itextpdf.com",
+                "dist": {
+                    "url": "http://central.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7.jar",
+                    "type": "file",
+                    "shasum": "892bfb3e97074a61123b3b2d7caa2db112750864"
+                }
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "extra": {
+                "installer-name": "itext"
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "apache/commons-beanutils",
+                "type": "vanilla-plugin",
+                "version": "1.8.0",
+                "license": "Apache-2.0",
+                "homepage": "https://commons.apache.org/proper/commons-beanutils",
+                "dist": {
+                    "url": "https://archive.apache.org/dist/commons/beanutils/binaries/commons-beanutils-1.8.0-bin.tar.gz",
+                    "type": "tar",
+                    "shasum": "f21decfd6f01a42cae665db8e1a4401b154a2fe9"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "commons-beanutils"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "apache/commons-collections",
+                "type": "vanilla-plugin",
+                "version": "2.1.1",
+                "license": "Apache-2.0",
+                "homepage": "https://commons.apache.org/proper/commons-collections",
+                "dist": {
+                    "url": "https://archive.apache.org/dist/commons/collections/binaries/commons-collections-2.1.1.tar.gz",
+                    "type": "tar",
+                    "shasum": "26baa7ff12af5b2484b64c0011f32e48a10b0df9"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "commons-collections"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "apache/commons-digester",
+                "type": "vanilla-plugin",
+                "version": "1.7",
+                "license": "Apache-2.0",
+                "homepage": "https://commons.apache.org/proper/commons-digester",
+                "dist": {
+                    "url": "https://archive.apache.org/dist/commons/digester/binaries/commons-digester-1.7.tar.gz",
+                    "type": "tar",
+                    "shasum": "43842197ddfe6930bd9a20b526e4e8c96bee1137"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "commons-digester"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "apache/commons-logging",
+                "type": "vanilla-plugin",
+                "version": "1.0.4",
+                "license": "Apache-2.0",
+                "homepage": "https://commons.apache.org/proper/commons-logging",
+                "dist": {
+                    "url": "https://archive.apache.org/dist/commons/logging/binaries/commons-logging-1.0.4.tar.gz",
+                    "type": "tar",
+                    "shasum": "633cad7b22536388da2c0b3ddb0661f25a07e849"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "commons-logging"
+                }
+            }
+        }
+    ],
+    "extra": {
+        "installer-paths": {
+            "html/gui/lib/{$name}": [
+                "sencha/extjs-gpl",
+                "highsoft/highcharts",
+                "moment/moment-min-file",
+                "moment/moment-timezone-min-file",
+                "jquery/jquery-min-file",
+                "tildeio/rsvpjs-min-file"
+            ],
+            "html/gui/lib/jquery-plugins/{$name}": [
+                "carlo/jquery-base64-file"
+            ],
+            "external_libraries/{$name}": [
+                "zendframework/zendframework-minimal"
+            ],
+            "reporting/jasper_builder/lib/{$name}": [
+                "jaspersoft/jasperreports-library-jar",
+                "apache/xalan-j-2jars",
+                "apache/poi",
+                "itextpdf/itextpdf",
+                "apache/commons-beanutils",
+                "apache/commons-collections",
+                "apache/commons-digester",
+                "apache/commons-logging"
+            ]
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "5.3.3"
+        },
+        "secure-http": false
+    },
+    "scripts": {
+        "post-install-cmd": "Xdmod\\ComposerScripts::postInstall",
+        "post-update-cmd": "Xdmod\\ComposerScripts::postUpdate"
+    },
+    "autoload": {
+        "classmap": [
+            "composer.scripts.php"
+        ]
+    }
+}

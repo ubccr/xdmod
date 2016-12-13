@@ -1,0 +1,54 @@
+{
+    "menu": [
+        {
+            "class": "XDMoD.Summary.TabPanel",
+            "config": {
+                "title": "Summary"
+            }
+        },
+        {
+            "class": "XDMoD.UserManagement.Panel",
+            "config": {
+                "title": "User Management"
+            }
+        }
+    ],
+    "logs": [
+        {
+            "ident": "xdmod-shredder",
+            "title": "Shredder"
+        },
+        {
+            "ident": "xdmod-slurm",
+            "title": "Slurm Helper"
+        },
+        {
+            "ident": "xdmod-ingestor",
+            "title": "Ingestor"
+        },
+        {
+            "ident": "xdmod-import-csv",
+            "title": "CSV Import"
+        },
+        {
+            "ident": "ReportScheduler",
+            "title": "Report Scheduler"
+        }
+    ],
+    "summary": [
+        {
+            "class": "XDMoD.Summary.Portal",
+            "config": {
+                "title": "Overview"
+            }
+        },
+        {
+            "class": "XDMoD.Log.TabPanel"
+        }
+    ],
+    "portlets": [
+        {
+            "class": "XDMoD.UsersSummary.Portlet"
+        }
+    ]
+}

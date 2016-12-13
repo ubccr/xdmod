@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<ruleset name="XDMoD Standard">
+  <description>XDMoD PHP coding standard</description>
+  <rule ref="PSR1"/>
+  <rule ref="PSR2"/>
+</ruleset>

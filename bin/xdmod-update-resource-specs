@@ -1,0 +1,446 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Update resource specifications.
+ *
+ * @package OpenXdmod
+ *
+ * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use CCR\Log;
+use CCR\Json;
+use Xdmod\Config;
+
+// Catch any unexpected exceptions.
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        $logger->crit(array(
+            'message'    => $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+/**
+ * Main function.
+ */
+function main()
+{
+    global $argv, $logger;
+
+    $opts = array(
+        array('h',  'help'),
+        array('v',  'verbose'),
+        array('',   'debug'),
+        array('q',  'quiet'),
+        array('',   'force'),
+        array('r:', 'resource:'),
+        array('',   'start-date:'),
+        array('',   'end-date:'),
+        array('',   'node-count:'),
+        array('',   'cpu-count:'),
+        array('',   'percent-allocated:'),
+      );
+
+    $shortOptions = implode(
+        '',
+        array_map(function ($opt) { return $opt[0]; }, $opts)
+    );
+    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+
+    $args = getopt($shortOptions, $longOptions);
+
+    if ($args === false) {
+        fwrite(STDERR, "Failed to parse arguments\n");
+        exit(1);
+    }
+
+    $help = $force = false;
+
+    $resource = $startDate = $endDate = $nodes = $processors
+        = $percentAllocated = null;
+
+    $logLevel = -1;
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite(STDERR, "Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'h':
+            case 'help':
+                $help = true;
+                break;
+            case 'q':
+            case 'quiet':
+                $logLevel = max($logLevel, Log::WARNING);
+                break;
+            case 'v':
+            case 'verbose':
+                $logLevel = max($logLevel, Log::INFO);
+                break;
+            case 'debug':
+                $logLevel = max($logLevel, Log::DEBUG);
+                break;
+            case 'force':
+                $force = true;
+                break;
+            case 'r':
+            case 'resource':
+                $resource = $value;
+                break;
+            case 'start-date':
+                $startDate = $value;
+                break;
+            case 'end-date':
+                $endDate = $value;
+                break;
+            case 'node-count':
+                $nodes = $value;
+                break;
+            case 'cpu-count':
+                $processors = $value;
+                break;
+            case 'percent-allocated':
+                $percentAllocated = $value;
+                break;
+            default:
+                fwrite(STDERR, "Unexpected option '$key'\n");
+                exit(1);
+                break;
+        }
+    }
+
+    if ($help) {
+        displayHelpText();
+        exit;
+    }
+
+    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+
+    $conf = array(
+        'file'            => false,
+        'mail'            => false,
+        'consoleLogLevel' => $logLevel,
+    );
+
+    $logger = Log::factory('xdmod-urs', $conf);
+
+    $cmd = implode(' ', array_map('escapeshellarg', $argv));
+    $logger->info("Command: $cmd");
+
+    if ($resource === null) {
+        $logger->crit('No resource specified');
+        exit(1);
+    }
+
+    if (
+        $startDate !== null
+        && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate)
+    ) {
+        $logger->crit("Invalid start date '$startDate'");
+        exit(1);
+    }
+
+    if (
+        $endDate !== null
+        && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)
+    ) {
+        $logger->crit("Invalid end date '$endDate'");
+        exit(1);
+    }
+
+    $config = Config::factory();
+
+    $resourceSpecsFile = $config->getFilePath('resource-specs');
+
+    $resourceSpecsData = Json::loadFile($resourceSpecsFile);
+
+    $logger->debug(array(
+        'message' => 'Loaded resource spec data',
+        'data'    => json_encode($resourceSpecsData),
+    ));
+
+    // Resource specs for the specified resource.
+    $resourceData = array_filter(
+        $resourceSpecsData,
+        function ($datum) use ($resource) {
+            return $datum['resource'] === $resource;
+        }
+    );
+
+    if (!verifyResourceSpecs($resourceData) && !$force) {
+        $logger->err('Current resource_specs.json is not valid (see above)');
+        exit(1);
+    }
+
+    // Order specs by end date.
+    usort(
+        $resourceData,
+        function ($a, $b) {
+            if (!isset($a['end_date'])) {
+                return 1;
+            }
+
+            if (!isset($b['end_date'])) {
+                return -1;
+            }
+
+            return strcmp($a['end_date'], $b['end_date']);
+        }
+    );
+
+    if (count($resourceData) > 0) {
+        $lastEntry = $resourceData[count($resourceData) - 1];
+
+        if ($nodes === null) {
+            $nodes = $lastEntry['nodes'];
+        }
+
+        if ($processors === null) {
+            $processors = $lastEntry['processors'];
+        }
+
+        if (
+            $percentAllocated === null
+            && isset($lastEntry['percent_allocated'])
+        ) {
+            $percentAllocated = $lastEntry['percent_allocated'];
+        }
+
+        $oneDay = new DateInterval('P1D');
+
+        if ($startDate === null) {
+            if (isset($lastEntry['end_date'])) {
+                $startDt = new DateTime($lastEntry['end_date']);
+                $startDt->add($oneDay);
+                $startDate = $startDt->format('Y-m-d');
+            } else {
+                $startDate = date('Y-m-d');
+            }
+
+            $logger->debug("Using calculated start date '$startDate'");
+        }
+
+        if (!isset($lastEntry['end_date'])) {
+            $endDt = new DateTime($startDate);
+            $endDt->sub($oneDay);
+            $previousEndDate = $endDt->format('Y-m-d');
+            $resourceData[count($resourceData) - 1]['end_date']
+                = $previousEndDate;
+            $msg = "Updating last entry end date to '$previousEndDate'";
+            $logger->debug($msg);
+        }
+    }
+
+    $ppn = (int)($processors / $nodes);
+
+    $newEntry = array(
+        'resource'          => $resource,
+        'start_date'        => $startDate,
+        'end_date'          => $endDate,
+        'nodes'             => $nodes,
+        'processors'        => $processors,
+        'ppn'               => $ppn,
+        'percent_allocated' => $percentAllocated,
+    );
+
+    if ($startDate === null) {
+        unset($newEntry['start_date']);
+    }
+
+    if ($endDate === null) {
+        unset($newEntry['end_date']);
+    }
+
+    if ($percentAllocated === null) {
+        unset($newEntry['percent_allocated']);
+    }
+
+    $resourceData[] = $newEntry;
+
+    if (!verifyResourceSpecs($resourceData) && !$force) {
+        $logger->err('New resource specs are not valid (see above)');
+        exit(1);
+    }
+
+    // Resource specs for all the other resources.
+    $otherResourceData = array_filter(
+        $resourceSpecsData,
+        function ($datum) use ($resource) {
+            return $datum['resource'] !== $resource;
+        }
+    );
+
+    $resourceSpecsData = array_merge($otherResourceData, $resourceData);
+
+    Json::saveFile($resourceSpecsFile, $resourceSpecsData);
+}
+
+/**
+ * Verify that resource specs are accurate.
+ *
+ * Assumes that spec entries are ordered correctly and that there are
+ * no gaps between entries.
+ */
+function verifyResourceSpecs(array $resourceData)
+{
+    global $logger;
+
+    $logger->debug('Verifying resource specs: ' . json_encode($resourceData));
+
+    $valid = true;
+
+    $lastEndDt = null;
+
+    $oneDay = new DateInterval('P1D');
+
+    $lastIdx = count($resourceData) - 1;
+
+    foreach (array_values($resourceData) as $i => $datum) {
+        $logger->debug('Verifying entry: ' . json_encode($datum));
+
+        $startDate
+            = isset($datum['start_date'])
+            ? $datum['start_date']
+            : null;
+
+        $endDate
+            = isset($datum['end_date'])
+            ? $datum['end_date']
+            : null;
+
+        if (
+            $startDate !== null
+            && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate)
+        ) {
+            $logger->err("Invalid start date '$startDate'");
+        }
+
+        if (
+            $endDate !== null
+            && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)
+        ) {
+            $logger->err("Invalid end date '$endDate'");
+        }
+
+        // The first entry doesn't require a start date.
+        if ($i === 0 && $startDate !== null) {
+            $logger->debug('First entry has a start date');
+        }
+
+        // The last entry doesn't require an end date.
+        if ($i === $lastIdx && $endDate !== null) {
+            $logger->debug('Last entry has an end date');
+        }
+
+        if ($i > 0) {
+
+            // All entries other than the first require a start date.
+            if ($startDate === null) {
+                $valid = false;
+                $msg = 'Entry is missing required start date: '
+                    . json_encode($datum);
+                $logger->err($msg);
+            } elseif ($endDate !== null) {
+                $expectedStartDt = clone $lastEndDt;
+                $expectedStartDt->add($oneDay);
+
+                $expectedStartDate = $expectedStartDt->format('Y-m-d');
+
+                if ($startDate !== $expectedStartDate) {
+                    $msg = "Expected start_date '$expectedStartDate', but"
+                        . " found '$startDate': " . json_encode($datum);
+                    $logger->err($msg);
+                    $valid = false;
+                }
+            }
+        }
+
+        if ($i < $lastIdx) {
+
+            // All entries other than the last require an end date.
+            if ($endDate === null) {
+                $valid = false;
+                $msg = 'Entry is missing required end date: '
+                    . json_encode($datum);
+                $logger->err($msg);
+            }
+        }
+
+        if ($endDate !== null) {
+            $lastEndDt = new DateTime($endDate);
+        }
+    }
+
+    return $valid;
+}
+
+/**
+ * Output help text to STDOUT.
+ */
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Update resource specifications stored in resource_specs.json.
+
+If you do not specify the start and end dates, the new resource specs
+entry will start today and the previously last resource specs entry's
+end date will be updated to yesterday (assuming it was not already set).
+
+Usage: xdmod-update-resource-specs -r *resource* ...
+
+    -h, --help
+        Display this message and exit.
+
+    -v, --verbose
+        Output info level logging.
+
+    --debug
+        Output debug level logging.
+
+    -q, --quiet
+        Output warning level logging.
+
+    --force
+        Allow invalid resource spec entries.
+
+    -r, --resource *resource*
+        Specify the resource to update.
+
+    --start-date *start-date*
+        Specify the resource spec start date (YYYY-MM-DD).  Defaults to
+        today's date.
+
+    --end-date *end-date*
+        Specify the resource spec end date (YYYY-MM-DD).
+
+    --node-count *node-count*
+        Specify the resource spec node count.  Defaults to the most
+        recent node count for the resource.
+
+    --cpu-count *cpu-count*
+        Specify the resource spec cpu count.  Defaults to the most
+        recent cpu count for the resource.
+
+    --percent-allocated *percent*
+        Specify the resource spec percent allocated.  Defaults to the
+        most recent percent allocated for the resource.
+
+Examples:
+
+Update the node count to 10 and cpu count to 160 for "myresource":
+
+    xdmod-update-resource-specs -r myresource --node-count 10 --cpu-count 160
+
+EOF;
+}

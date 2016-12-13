@@ -1,0 +1,75 @@
+
+iframe
+{
+    border: 0;
+}
+
+#dashboard-header
+{
+    border-bottom: 1px solid #444;
+    font-family: arial;
+    font-size: 12px;
+}
+
+#dashboard-header a
+{
+    text-decoration: none;
+    color: #00f;
+}
+
+#dashboard-header a:hover
+{
+    color: #f00;
+}
+
+div.grid-row-error
+{
+    background-color: #ff8080;
+}
+
+div.grid-row-error:hover
+{
+    background-color: #ffa0a0;
+    background-image: none;
+}
+
+div.grid-row-warning
+{
+    background-color: #ffff80;
+}
+
+div.grid-row-warning:hover
+{
+    background-color: #ffffa0;
+    background-image: none;
+}
+
+div.grid-start-stop
+{
+    background-color: #ccc;
+}
+
+div.grid-start-stop:hover
+{
+    background-color: #ddd;
+    background-image: none;
+}
+
+div.status-info-details
+{
+    overflow: scroll;
+    margin: 10px;
+    border: 1px solid #aaa;
+    max-height: 300px;
+}
+
+div.status-info-details pre
+{
+    margin: 10px;
+}
+
+.x-grid3-cell
+{
+    box-sizing: border-box;
+}
+

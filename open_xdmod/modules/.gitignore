@@ -1,0 +1,8 @@
+# Ignore everything in this directory except this and the core XDMoD module.
+#
+# This allows modules to be checked out or symlinked here without being picked
+# up by the main repo.
+
+/*
+!.gitignore
+!xdmod/

@@ -1,0 +1,348 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Shred slurm data using the sacct command.
+ *
+ * @package OpenXdmod
+ *
+ * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use CCR\DB;
+use CCR\Log;
+use OpenXdmod\Shredder;
+
+// Disable memory limit.
+ini_set('memory_limit', -1);
+
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        $logger->crit(array(
+            'message'    => $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+function main()
+{
+    global $argv, $logger;
+
+    $opts = array(
+        array('h',  'help'),
+        array('v',  'verbose'),
+        array('',   'debug'),
+        array('q',  'quiet'),
+        array('r:', 'resource:'),
+        array('',   'start-time:'),
+        array('',   'end-time:'),
+    );
+
+    $shortOptions = implode(
+        '',
+        array_map(function ($opt) { return $opt[0]; }, $opts)
+    );
+    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+
+    $args = getopt($shortOptions, $longOptions);
+
+    if ($args === false) {
+        fwrite(STDERR, "Failed to parse arguments\n");
+        exit(1);
+    }
+
+    $help = false;
+
+    $resource = $startTime = $endTime = null;
+
+    $logLevel = -1;
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite("Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'h':
+            case 'help':
+                $help = true;
+                break;
+            case 'q':
+            case 'quiet':
+                $logLevel = max($logLevel, Log::WARNING);
+                break;
+            case 'v':
+            case 'verbose':
+                $logLevel = max($logLevel, Log::INFO);
+                break;
+            case 'debug':
+                $logLevel = max($logLevel, Log::DEBUG);
+                break;
+            case 'r':
+            case 'resource':
+                $resource = $value;
+                break;
+            case 'start-time':
+                $startTime = $value;
+                break;
+            case 'end-time':
+                $endTime = $value;
+                break;
+            default:
+                fwrite(STDERR, "Unexpected option '$key'\n");
+                exit(1);
+                break;
+        }
+    }
+
+    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+
+    if ($help) {
+        displayHelpText();
+        exit;
+    }
+
+    $conf = array(
+        'file'            => false,
+        'mail'            => false,
+        'consoleLogLevel' => $logLevel,
+    );
+
+    $logger = Log::factory('xdmod-slurm', $conf);
+
+    $cmd = implode(' ', array_map('escapeshellarg', $argv));
+    $logger->info("Command: $cmd");
+
+    $logger->debug('Checking for required arguments');
+
+    if ($resource === null) {
+        $logger->crit('No resource name specified');
+        exit(1);
+    }
+
+    // NOTE: "process_start_time" is needed for the log summary.
+    $logger->notice(array(
+        'message'            => 'xdmod-slurm-helper start',
+        'process_start_time' => date('Y-m-d H:i:s'),
+    ));
+
+    try {
+        $logger->debug('Creating database connection');
+        $db = DB::factory('shredder');
+    } catch (Exception $e) {
+        $msg = 'Failed to create database connection: ' . $e->getMessage();
+        $logger->crit(array(
+            'message'    => $msg,
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+        exit(1);
+    }
+
+    try {
+        $shredder = Shredder::factory('slurm', $db);
+        $shredder->setLogger($logger);
+        $shredder->setResource($resource);
+    } catch (Exception $e) {
+        $msg = 'Failed to create shredder: ' . $e->getMessage();
+        $logger->crit(array(
+            'message'    => $msg,
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+        exit(1);
+    }
+
+    try {
+        $sacct = xd_utilities\getConfiguration('slurm', 'sacct');
+    } catch (Exception $e) {
+        $sacct = 'sacct';
+    }
+
+    $args = getSacctCmdArgs($shredder, $startTime, $endTime);
+
+    $logFile   = tempnam(sys_get_temp_dir(), 'sacct-log-');
+    $errorFile = tempnam(sys_get_temp_dir(), 'sacct-error-');
+
+    $args[] = "1>$logFile";
+    $args[] = "2>$errorFile";
+
+    array_unshift($args, $sacct);
+
+    $cmd = implode(' ', $args);
+    $logger->info("Executing command: $cmd");
+
+    // Set time zone to UTC, execute the command, then restore the
+    // previously set timezone.  This is necessary since the logger uses
+    // the timezone to display the time in log messages.
+
+    $tz = getenv('TZ');
+
+    putenv('TZ=UTC');
+    system($cmd);
+
+    if (empty($tz)) {
+        putenv("TZ");
+    } else {
+        putenv("TZ=$tz");
+    }
+
+    if (filesize($errorFile) > 0) {
+        $error = file_get_contents($errorFile);
+        $logger->crit("Error while executing sacct: $error");
+        exit(1);
+    }
+
+    $count = $shredder->shredFile($logFile);
+
+    $logger->info("Total shredded: $count");
+    $logger->info("Done shredding!");
+
+    $logger->notice('Normalizing data');
+
+    try {
+        $ingestor = $shredder->getJobIngestor();
+        $ingestor->ingest();
+    } catch (Exception $e) {
+        $logger->crit(array(
+            'message'    => 'Ingestion failed: ' . $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+        exit(1);
+    }
+
+    $logger->notice('Done normalizing data');
+
+    // NOTE: "process_end_time" is needed for the log summary.
+    $logger->notice(array(
+        'message'          => 'xdmod-slurm-helper end',
+        'process_end_time' => date('Y-m-d H:i:s'),
+    ));
+}
+
+function getSacctCmdArgs(
+    Shredder $shredder,
+    $startTime = null,
+    $endTime = null
+) {
+    global $logger;
+
+    $args = array(
+        '--allusers',
+        '--parsable2',
+        '--noheader',
+        '--allocations',
+    );
+
+    if ($shredder->hasResource()) {
+        $args[] = '--clusters';
+        $args[] = $shredder->getResource();
+    } else {
+        $args[] = '--allclusters';
+    }
+
+    $utc = new DateTimeZone('UTC');
+
+    $format = implode(',', $shredder->getFieldNames());
+    $args[] = '--format';
+    $args[] = $format;
+
+    $states = implode(',', $shredder->getStates());
+    $args[] = '--state';
+    $args[] = $states;
+
+    if ($startTime !== null) {
+        $args[] = '--starttime';
+        $args[] = $startTime;
+    } else {
+        $maxDateTime = $shredder->getJobMaxDateTime();
+
+        if ($maxDateTime !== null) {
+            $logger->info("Most recent job end datetime '$maxDateTime'");
+
+            $dateTimeFormat = '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/';
+
+            if (!preg_match($dateTimeFormat, $maxDateTime)) {
+                throw new Exception("Invalid datetime format '$maxDateTime'");
+            }
+
+            $start = new DateTime($maxDateTime);
+            $start->add(new DateInterval('PT1S'));
+            $start->setTimezone($utc);
+        } else {
+
+            // If no date is specified, use the earliest date possible.
+            // Using "0" epoch time with TZ=UTC results in no data being
+            // returned from sacct.  Use a different day to prevent this
+            // issue.
+            $start = DateTime::createFromFormat('U', 24 * 60 * 60);
+        }
+
+        $args[] = '--starttime';
+        $args[] = $start->format('Y-m-d\TH:i:s');
+    }
+
+    if ($endTime !== null) {
+        $args[] = '--endtime';
+        $args[] = $endTime;
+    } else {
+        $end = new DateTime('now');
+        $end->sub(new DateInterval('P1D'));
+        $end->setTime(23, 59, 59);
+        $end->setTimezone($utc);
+
+        $args[] = '--endtime';
+        $args[] = $end->format('Y-m-d\TH:i:s');
+    }
+
+    return $args;
+}
+
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Usage: xdmod-slurm-helper [-v] [-r resource]
+
+    -h, --help
+        Display this message and exit.
+
+    -v, --verbose
+        Output info level logging.
+
+    --debug
+        Output debug level logging.
+
+    -q, --quiet
+        Output warning level logging.
+
+    -r, --resource *resource*
+        Shred accounting data for only the specified cluster.  This
+        value will be passed to the sacct --clusters option.  If
+        this option is not specified all clusters will be shredded using
+        the sacct --allclusters option.  You should consistently
+        always or never use this option if you are not explicitly
+        specifying a time range since the cluster name is used to
+        determine the date range.  Unlike the sacct command, only one
+        cluster should be specified.
+
+    --start-time *datetime*
+        Specify the start date and time to shred from sacct  The
+        datetime must be in a format accepted by the sacct --starttime
+        option.  Defaults to the epoch if no data has been shredded from
+        Slurm (or the resource that has been specified) or one second
+        after the date and time of the most recently found data.
+
+    --end-time *datetime*
+        Specify the end date and time to shred from sacct.  The datetime
+        must be in a format accepted by the sacct --endtime option.
+        Defaults to 23:59:59 of the day before the current day.
+
+
+EOF;
+}
+

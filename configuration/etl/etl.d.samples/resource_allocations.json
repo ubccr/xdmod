@@ -1,0 +1,79 @@
+{
+    "#": "Example of a more complex pipeline definiton used to query the XRAS database for",
+    "#": "resource allocation details, importing historical information not contained in the",
+    "#": "XRAS database from a JSON file, and generating an aggregation table.",
+
+    "defaults": {
+
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "postgres",
+                    "name": "XDCDB xras",
+                    "config": "tgcdbmirror",
+                    "schema": "xras"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "RA",
+                    "config": "datawarehouse",
+                    "schema": "modw_ra"
+                }
+            }
+        }
+    },
+
+    "#": "Define a resource-allocations pipeline",
+
+    "resource-allocations": [
+        {
+            "#": "Recreate the ResourceAllocations realm directly from XRAS. We are still missing some of",
+            "#": "the recommended values and will need to pull those in from static data using another step.",
+            
+            "name": "ResourceAllocationsIngestor",
+            "description": "Ingestor for SUs available, requested, recommended, awarded",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "class": "DatabaseIngestor",
+            "definition_file": "resource_allocations/resource_allocations.json",
+            "enabled": true,
+            "truncate_destination": true
+        },{
+            "#": "Update the existing tables with historical data",
+            "name": "XrasHistoricalUpdate",
+            "description": "Historical data missing from XRAS",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "class": "UpdateIngestor",
+            "definition_file": "resource_allocations/historical_su_recommended.json",
+            "enabled": true
+        },{
+            "name": "ResourceAllocationsAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "description": "Aggregator for OSG jobs",
+            "definition_file": "resource_allocations/resourceallocationfact_by.aggregation.json",
+            "enabled": true,
+            "truncate_destination": true,
+            "table_prefix": "resourceallocationfact_by_",
+            "#": "We only aggregate on quarter and year as data is only updated quarterly",
+            "aggregation_units": ["quarter", "year"],
+            "#": "Override the default endpoints for this action",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Federated OSG",
+                    "config": "datawarehouse",
+                    "schema": "modw_ra"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "modw_aggregates",
+                    "config": "datawarehouse",
+                    "schema": "modw_aggregates"
+                }
+            }
+        }
+    ]
+}

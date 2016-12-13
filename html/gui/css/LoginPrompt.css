@@ -1,0 +1,48 @@
+.win_splash_login_prompt .password_reset_description {
+   width: 290px !important;
+   padding-top: 5px;
+   color: #777;
+}
+
+.win_splash_login_prompt .no_account_description {
+   width: 290px !important;
+   color: #777;
+}
+
+/* To give bevelled look to buttons */
+
+.win_splash_login_prompt .x-btn-tl{
+	background-position: -6px 0;
+}
+
+.win_splash_login_prompt .x-btn-tr{
+	background-position: -9px 0;
+}
+
+.win_splash_login_prompt .x-btn-tc{
+	background-position: 0 -9px;
+}
+
+.win_splash_login_prompt .x-btn-ml{
+	background-position: -6px -24px;
+}
+
+.win_splash_login_prompt .x-btn-mr{
+	background-position: -9px -24px;
+}
+
+.win_splash_login_prompt .x-btn-mc{
+	background-position: 0 -2168px;
+}
+
+.win_splash_login_prompt .x-btn-bl{
+	background-position: -6px -3px;
+}
+
+.win_splash_login_prompt .x-btn-br{
+	background-position: -9px -3px;
+}
+
+.win_splash_login_prompt .x-btn-bc{
+	background-position: 0 -18px;
+}

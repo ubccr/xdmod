@@ -1,0 +1,23 @@
+Dear [:site_title:] user:
+
+You are receiving this message because you currently have an account on
+[:site_title:] ([:site_address:]) associated with this email address.
+
+Today, we are proud to announce the availability of [:product_name:] [:version:].
+
+Major updates in this new release of [:product_name:] include:
+
+- [Feature Item 1]
+- [Feature Item 2]
+- [Feature Item 3]
+
+Also, you may find it helpful, if you have not already done so, to review the
+XDMoD manual and list of Frequently Asked Questions (FAQ) found at:
+
+    https://xdmod.ccr.buffalo.edu/faq/
+    https://xdmod.ccr.buffalo.edu/user_manual/
+
+Please contact us with any questions or comments at [:contact_email:].
+
+Thank you for using [:product_name:],
+[:maintainer_signature:]

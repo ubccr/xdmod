@@ -1,0 +1,18 @@
+{
+    "name": "xdmod-etl",
+    "repository": "",
+    "version": "0.0.0",
+    "private": true,
+    "description": "The XDMoD nodejs-based etl framework",
+    "author": "XDMoD CCR Help <ccr-xdmod-help@buffalo.edu",
+    "dependencies": {
+        "cloneextend": "0.0.x",
+        "ini": "1.2.x",
+        "mongodb": "2.1.x",
+        "mysql": "2.2.x",
+        "tv4": "^1.0.13",
+        "winston": "0.7.x",
+        "winston-mysql-transport": "0.1.x"
+    },
+    "engine": "node >= 0.10.25"
+}

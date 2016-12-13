@@ -1,0 +1,43 @@
+{
+    "#": "Query the NSF Award Search REST API",
+
+    "defaults": {
+
+        "#": "Options specific to the Eucalyptus ingestors",
+        "nsf": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "utility": {
+                    "type": "mysql",
+                    "name": "MODW xras",
+                    "config": "datawarehouse",
+                    "schema": "modw_xras"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Federated OSG",
+                    "config": "datawarehouse",
+                    "schema": "federated_osg"
+                }
+            }
+        }
+    },
+        
+   "nsf": [{
+       "name": "NSFAwardSearchIngestor",
+       "description": "Query NSF award search REST API",
+       "class": "RestIngestor",
+       "definition_file": "nsf/award_search.json",
+       "enabled": true,
+       "truncate_destination": true,
+       "endpoints": {
+           "source": {
+               "type": "rest",
+               "name": "NSF Award Search",
+               "base_url": "http://api.nsf.gov/services/v1/awards",
+               "sleep_seconds": 2.0
+           }
+       }
+   }]
+}

@@ -1,0 +1,3 @@
+[submodule "docs/xdmod-jekyll-theme"]
+	path = docs/xdmod-jekyll-theme
+	url = https://github.com/ubccr/xdmod-jekyll-theme

@@ -1,0 +1,120 @@
+{
+    "table_definition": {
+        "name": "euca_instances",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "record_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "created_ts",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "ts",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "owner",
+                "type": "varchar(64)",
+                "nullable": false
+            },
+            {
+                "name": "instance_id",
+                "type": "varchar(64)",
+                "nullable": false
+            },
+            {
+                "name": "cores",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "creation_time",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "ip_address",
+                "type": "varchar(16)",
+                "nullable": false
+            },
+            {
+                "name": "image_id",
+                "type": "varchar(64)",
+                "nullable": false
+            }
+        ],
+
+        "indexes": [
+            {
+                "name": "record_id",
+                "columns": [
+                    "record_id"
+                ]
+            },
+            {
+                "name": "owner",
+                "columns": [
+                    "owner"
+                ]
+            },
+            {
+                "name": "cores",
+                "columns": [
+                    "cores"
+                ]
+            },
+            {
+                "name": "image_id",
+                "columns": [
+                    "image_id"
+                ]
+            }
+        ]
+
+    },
+
+    "#": "The result columns from the source query are set as parameters for the request",
+    "source_query": {
+        "records": {
+            "award_id": "id"
+        },
+        "joins": [{
+            "name": "test",
+            "schema": "smgallo"
+        }]
+    },
+    
+    "#": "Set up request parameters and url format",
+    "rest_request": {
+        "parameters": {
+            "timestamp": {
+                "type": "datetime",
+                "format": "Y-m-d\\TH:i:s\\Z",
+                "value": "${START_DATE}"
+            },
+            "steve": "gallo"
+        },
+        "format": "/${award_id}.json/outcomes?${^REMAINING}"
+    },
+
+    "#": "Configure the expected response including the mapping from response fields to database columns",
+    "rest_response": {
+        "field_map": {
+            "pk": "record_id",
+            "created": "created_ts",
+            "timestamp": "ts",
+            "owner": "owner",
+            "instance_id": "instance_id",
+            "cores": "cores",
+            "creation_time": "creation_time",
+            "ip": "ip_address",
+            "image_id": "image_id"
+        }
+    }
+}

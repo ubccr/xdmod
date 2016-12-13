@@ -1,0 +1,783 @@
+.invalid_text_entry {
+    padding-left: 19px !important;
+    background-color: #fdc6c8 !important;
+    background-image: url('../../gui/images/exclamation.png') !important;
+    background-repeat:  no-repeat !important;
+    background-position: 1px 2px !important;
+}
+
+.assist_panel_section {
+	border: 1px solid #bbb; 
+	padding: 5px; 
+	background-color: #fef8ee;
+	width: 263px;
+}
+
+.x-grid3-cell
+{
+    box-sizing: border-box;
+}
+.
+x-form-check-wrap {
+   padding-left: 1px;
+   padding-bottom: 1px;
+}
+
+/* img { -ms-interpolation-mode: bicubic; } */
+
+#help_button td.x-btn-mc {
+   background-image: none !important;
+   background-color: #f1fb85;
+}
+
+.dateframe_refresh_button_highlight td.x-btn-mc {
+   background-image: none !important;
+   background-color: #f1fb85;
+}
+
+.signin_button_highlight td.x-btn-mc {
+   background-image: none !important;
+   background-color: #fbabab;
+}
+#help_button td.x-btn-mc .x-btn-text {
+   font-weight: bold;
+   color: #1b63e9;
+}
+
+.userMapMessageText {
+	font-weight: bold;
+	color: #00f;
+	width: 70px;
+}
+/*
+h1 {
+	font-family: arial;
+	font-size:22px;
+	font-weight:bold;
+
+	padding:2px 2px;
+}
+h2 {
+	font-family: arial,"Times New Roman",Times,serif;
+	font-size:18px;
+	color:#083772;
+	letter-spacing:-1px;
+	font-weight:normal;
+	
+	padding:2px 2px;
+	
+}
+h3 {
+		font-family: arial;
+	font-size:14px;
+
+	font-weight:bold;
+
+	padding: 2px 2px 2px 2px;
+}
+*/
+.popup_message_general {
+    background-image: url(../images/about_16.png) !important;
+}
+
+/*  ----------------------------------------- */
+
+/* CustomSearch.js (Search Usage module */
+
+/* Addresses issues regarding the 'Search By' section 
+   when in IE8 Quirks Mode */
+   
+/* CustomSearch tab no longer exists and its source has been removed. 
+ * However, the custom_search_mode class is referenced by 
+ * report_builder/ReportCreator.js and
+ * report_builder/ChartDateEditor.js
+ *
+ * JMS 28 July 2014
+ */
+.custom_search_mode_group .x-form-item {
+   margin-top: 0px !important;
+   padding-top: 0px !important;
+   overflow: hidden !important;
+   height: 15px;
+}
+
+.custom_search_mode_group .x-form-clear-left {
+  display: none !important;
+}
+
+.custom_search_mode_group .x-form-cb-label {
+   top: -2px !important;
+}
+
+.custom_search_mode_group .x-form-check-wrap input{
+   /* border: 1px solid #f00; */
+   position: relative;
+   top: -3px !important;
+}
+
+/*  ----------------------------------------- */
+
+.date_range
+{
+   font-size: 10px;
+   font-family: tahoma,arial,verdana,sans-serif;
+}
+
+.highlighted_tab .x-tab-right,
+.highlighted_tab .x-tab-left,
+.highlighted_tab .x-tab-strip-inner {
+         
+   background-color: #93fc7b !important;
+   background-image: none !important;
+            
+}
+         
+.checkbox_available_for_report {
+   padding-bottom: 4px !important;
+}
+
+.valid_chart_drop_target {
+   background-image: url(../images/add_chart.png);
+   background-position: 3px 3px;
+   background-repeat:no-repeat;
+}
+
+.down_arrow {
+   background-image: url(../images/down_arrow.png) !important;
+}
+
+.load_time_message_prompt {
+   background-image: url('../images/clock.png');
+}
+
+.red {
+	color: red;
+}
+.logout {
+    background-image: url(../images/logout.png) !important;
+}
+.help {
+    background-image: url(../images/help.png) !important;
+}
+.contact {
+    background-image: url(../images/contact.png) !important;
+}
+.about {
+    background-image: url(../images/about.png) !important;
+}
+.user_profile {
+    background-image: url(../images/user_profile.png) !important;
+}
+.user_management {
+    background-image: url(../images/people.png) !important;
+}
+
+.signup_16 {
+   background-image: url('../images/signup_16.png') !important;
+}
+
+.help_16 {
+    background-image: url(../images/help_16.png) !important;
+}
+
+.roadmap {
+    background-image: url(../images/lorry.png) !important;
+}
+
+.user_manual_16 {
+    background-image: url(../images/user_manual_16.png) !important;
+}
+
+.contact_16 {
+    background-image: url(../images/contact_16.png) !important;
+}
+.bulb_16 {
+	background-image: url(../images/bulb_16.png) !important;
+}
+.youtube_16 {
+    background-image: url(../images/youtube_16.png) !important;
+}
+.assist_next {
+    background-image: url(../images/arrow_right.png) !important;
+}
+.about_16 {
+    background-image: url(../images/about_16.png) !important;
+}
+.user_profile_16 {
+    background-image: url(../images/user_profile_16.png) !important;
+}
+.user_management_16 {
+    background-image: url(../images/people_16.png) !important;
+}
+
+.btn_dashboard {
+    background-image: url(../images/icon_dashboard.png) !important;
+}
+
+.add_chart {
+    background-image: url(../images/add_chart.png) !important;
+}
+
+.custom_chart {
+    background-image: url(../images/custom.png) !important;
+}
+.report {
+    background-image: url(../images/report.png) !important;
+}
+.menu {
+    background-image: url(../images/menu.png) !important;
+}
+.drill {
+    background-image: url(../images/drill2.png) !important;
+}
+.layout_1 {
+    background-image: url(../images/person.png) !important;
+}
+.appkernel {
+    background-image: url(../images/kernel.png) !important;
+}
+.resource {
+    background-image: url(../images/resource.png) !important;
+}
+.metric {
+    background-image: url(../images/metric.png) !important;
+}
+.units {
+    background-image: url(../images/metric_cores.png) !important;
+}
+.expired {
+    background-image: url(../images/expired.png) !important;
+}
+.active {
+    background-image: url(../images/active.png) !important;
+}
+.expired_allocation {
+    background-image: url(../images/expired_allocation.png) !important;
+}
+
+.icon-expand-all {
+    background-image: url(../images/expand-all.gif) !important;
+}
+.icon-collapse-all {
+    background-image: url(../images/collapse-all.gif) !important;
+}
+
+.dataset {
+    background-image: url(../images/dataset.png) !important;
+}
+.chart {
+    background-image: url(../images/icon_chart.png) !important;
+}
+.h_chart {
+    background-image: url(../images/icon_h_chart.png) !important;
+}
+.line_chart {
+    background-image: url(../images/line_chart.png) !important;
+}
+.area_chart {
+    background-image: url(../images/area_chart.png) !important;
+}
+.pie_chart {
+    background-image: url(../images/pie_chart.png) !important;
+}
+.export {
+    background-image: url(../images/export.png) !important;
+}
+.report_add {
+    background-image: url(../images/report_add.png) !important;
+}
+.excel {
+    background-image: url(../images/excel.png) !important;
+}
+.csv {
+    background-image: url(../images/csv.png) !important;
+}
+.xml {
+    background-image: url(../images/xml.png) !important;
+}
+.png {
+    background-image: url(../images/png.png) !important;
+}
+.logo93 {
+    background-image: url(../images/xdmod_small_93.png) !important;
+}
+.query_save {
+    background-image: url(../images/query_save.png) !important;
+}
+.query_stop {
+    background-image: url(../images/query_stop.png) !important;
+}
+.bullet {
+    background-image: url(../images/bullet.png) !important;
+}
+.info {
+    background-image: url(../images/info.png) !important;
+}
+.search {
+    background-image: url(../images/search.png) !important;
+}
+.refresh {
+    background-image: url(../images/refresh.png) !important;
+}
+.debug {
+    background-image: url(../images/debug.png) !important;
+}
+.custom_date {
+    background-image: url(../images/clock.png) !important;
+}
+.timeseries {
+    background-image: url(../images/timeseries.png) !important;
+}
+.aggregate {
+    background-image: url(../images/aggregate.png) !important;
+}
+.automatic {
+    background-image: url(../images/automatic.png) !important;
+}
+.filter {
+    background-image: url(../images/filter.png) !important;
+}
+.quick_filter {
+    background-image: url(../images/quick_filter.png) !important;
+}
+.filter16 {
+    background-image: url(../images/filter16.png) !important;
+}
+.nodes {
+    background-image: url(../images/nodes.png) !important;
+}
+.node {
+    background-image: url(../images/node.png) !important;
+}
+.blank {
+    background-image: url(../images/s.gif) !important;
+}
+.xd-toolbar {
+	background-color:#ffffff !important;
+	background-image: none !important;
+}
+
+.chart_thumb{
+	background: #dddddd;
+	padding:1px;
+}
+.chart_thumb img{
+	border:1px solid white;
+	/*height: 140px;
+	width: 225px;*/
+}
+.chart_thumb-wrap{
+	float: left;
+	margin: 4px;
+	margin-right: 0;
+	padding: 5px;
+}
+.chart_thumb-wrap span{
+	display: block;
+	overflow: hidden;
+	text-align: center;
+	font-family: arial, "Times New Roman",Times,serif;
+	font-size:10px;
+	letter-spacing:0px;
+	font-weight:normal;
+}
+.chart_thumb-wrap2{
+	float: left;
+	margin: 4px;
+	margin-right: 0;
+	padding: 5px;
+}
+.chart_thumb-wrap2 span{
+	display: block;
+	overflow: hidden;
+	text-align: center;
+	font-family: arial, "Times New Roman",Times,serif;
+	font-size:10px;
+	letter-spacing:0px;
+	font-weight:bold;
+}
+.x-view-selected .chart_thumb{
+	background:#8db2e3;
+}
+
+.x-dd-drag-proxy .multi-proxy .chart_thumb-img{
+	height: 20px;
+	width: 30px;
+	margin:1px;
+}
+.x-dd-drag-proxy .chart_thumb-img{
+	height: 60px;
+	width: 80px;
+}
+
+.summary_key {
+	text-align: right;
+	vertical-align:  top;
+	valign: top;
+ 	color:#15428b;
+	font-weight:bold; 
+    font-size: 10px;
+    font-family: arial,verdana,sans-serif;
+}
+
+.summary_value {
+	text-align: right;
+	font-family: arial, "Times New Roman",Times,serif;
+	font-size:12px;
+	letter-spacing:0px;
+	font-weight:bold;
+	padding-right: 30px;
+
+}
+
+.kernel_description_label {
+	font-family: arial, "Times New Roman",Times,serif;
+	font-size:14px;
+	color:#083772;
+	font-weight: bold;
+	background:#fff;
+	font-style:italic;
+}
+
+.kernel_description {
+	font-family: arial, "Times New Roman",Times,serif;
+	font-size:14px;
+	color:#000000;
+	font-weight: normal;
+	background:#fff;
+	/*line-height: 14px;*/
+}
+
+.kernel_description ul {
+	list-style: square !important;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+
+.comments_label {
+	font-family: arial, "Times New Roman",Times,serif;
+	font-size:14px;
+	color:#083772;
+	letter-spacing:-1px;
+	font-weight: bold;
+	background:#fff;
+	font-style:italic;
+}
+
+.comments_description {
+	font-family: arial, "Times New Roman",Times,serif;
+	font-size:14px;
+	color:#000000;
+	letter-spacing:0px;
+	font-weight: normal;
+	background:#fff;
+	/*line-height: 14px;*/
+}
+.comments_subnotes {
+	font-family: arial, "Times New Roman",Times,serif;
+	font-size:14px;
+	color:#000000;
+	letter-spacing:0px;
+	font-weight: normal;
+	background:#fff;
+	font-style: italic;
+		text-decoration: underline;
+	/*line-height: 14px;*/
+}
+.legend_label {
+	font-family: arial,"Times New Roman",Times,serif;
+	font-size:12px;
+	color:#083772;
+	letter-spacing:-1px;
+	font-weight: bold;
+	background:#fff;
+	font-style:italic;
+}
+
+.legend_description {
+	font-family: arial,"Times New Roman",Times,serif;
+	font-size:12px;
+	color:#000000;
+	letter-spacing:0px;
+	font-weight: normal;
+	background:#fff;
+	/*line-height: 14px;*/
+}
+.legend_description ul {
+	list-style: square !important;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+.legend_description ol {
+	list-style: none !important;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+.comments_description ul {
+	list-style: square !important;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+.xd-table
+{
+	width: 100% !important;
+}
+.xd-table td {
+	vertical-align: top;
+	padding-right: 10px;
+	padding-left: 10px;
+	
+}
+
+.xd-img {
+	border: 0px;
+}
+
+.x-grid3-dirty-cell {
+	background-image: none;
+}
+
+.tab-strip span.x-tab-strip-text{
+	font:12px verdana,arial,helvetica !important;
+	/*color: #1111ff!important;*/
+	font-weight: normal;
+}
+.x-tab-strip-active span.x-tab-strip-text
+{
+	font:14px verdana,arial,helvetica !important;
+	font-weight: bold !important;
+	color: #1111ff !important;
+}
+
+.ext-el-mask-msg div 
+{
+	cursor:default !important;
+}
+
+.details_key
+{
+	font: 12px arial, Geneva, sans-serif;
+	color: #083772;
+
+}
+.details_key_expired
+{
+	font: 12px arial, Geneva, sans-serif;
+	font-style: oblique;
+}
+.details_value
+{
+	font: 12px arial, "Times New Roman", Times, serif;
+	font-weight: bold;
+}
+        
+.x-tree-multiline-node-collapsed .x-tree-elbow-line-multiline-expanded {
+	background-image: none;
+}
+
+.x-tree-node .x-tree-multiline-node-details {
+	font-style:italic;
+	font-family: arial, "Times New Roman", Times, serif;
+}
+.x-tree-node-disabled .x-tree-multiline-node-details {
+	font-style:italic;
+	font-family: arial, "Times New Roman", Times, serif;
+	color: gray !important;
+}
+.xd-menu
+{
+	border: none !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+.xd-menu ul
+{
+	padding: 0 !important;
+}
+.xd-chartconfig-btn-split {
+    background-image: url("../images/custom.png") !important;
+}
+.xd-durationconfig-btn-split {
+    background-image: url("../images/custom_date.png") !important;
+}
+.ak_thumb_title
+{
+	font-size: 10px;
+	background:#eee;
+	color:#36F;
+    font-family: tahoma,arial,verdana,sans-serif;
+}
+.ak_thumb_subtitle
+{
+	font-size: 8px;
+background:#eee;
+    font-family: tahoma,arial,verdana,sans-serif;
+}
+.chart_thumb_subtitle
+{
+	font-size: 8px;
+background:#fafafa;
+    font-family: tahoma,arial,verdana,sans-serif;
+}
+
+.menu-title
+{
+	font-weight:bold;
+}
+
+.x-tree-node .x-tree-selected {
+	font-weight:bold;
+	background-color: #ebf3fd;
+}
+
+.x-tree-node .x-tree-node-over {
+	background-color: #eee;
+}
+
+.general_btn_close {
+    background-image: url('../images/close.png') !important;
+}
+
+.contact_btn_send {
+    background-image: url('../images/email_go.png') !important;
+}
+
+.parameter_description ul {
+	font-family: arial;
+	list-style: square !important;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+.x-panel-print img {
+	width: 100% !important;
+}
+
+.active_role_selector {
+   background-color: #fbfaa7 !important;
+   background-image: none !important;
+}
+
+.timeseries {
+    background-image: url(../images/marketwatch.png) !important;
+}
+.aggregate {
+    background-image: url(../images/sum.png) !important;
+}
+.add_filter {
+    background-image: url(../images/add_filter.png) !important;
+}
+.delete_filter {
+    background-image: url(../images/delete_filter.png) !important;
+}
+.add_data {
+    background-image: url(../images/add_metric.png) !important;
+}
+.delete_data {
+    background-image: url(../images/delete_metric.png) !important;
+}
+.edit_data {
+    background-image: url(../images/edit_metric.png) !important;
+}
+.realm {
+    background-image: url(../images/realm.png) !important;
+}
+
+/*.highcharts-container span { 
+ background-color: #ffffff;
+ padding-bottom: 5px; //so the Qs dont get cut off
+}*/
+
+.exclamation {
+    background-image: url(../images/exclamation_ak.png) !important;
+}
+ 	
+.delete {
+    background-image: url(../images/delete.png) !important;
+}
+.add {
+    background-image: url(../images/add.png) !important;
+}
+
+.print {
+    background-image: url(../images/printer.png) !important;
+}
+
+.new_ue {
+    background-image: url(../images/new.png) !important;
+}
+
+.delete2 {
+    background-image: url(../images/delete2.png) !important;
+}
+
+.save_as {
+    background-image: url(../images/save_as.png) !important;
+}
+.sort_type {
+    background-image: url(../images/sort.png) !important;
+}
+.display_type {
+    background-image: url(../images/chart_bar.png) !important;
+}
+.layer {
+    background-image: url(../images/layer.png) !important;
+}
+.stacking {
+    background-image: url(../images/chart_bar_stacked.png) !important;
+}
+.line {
+    background-image: url(../images/chart_line.png) !important;
+}
+.column {
+    background-image: url(../images/chart_bar.png) !important;
+}
+.area {
+    background-image: url(../images/chart_area.png) !important;
+}
+.areaspline {
+    background-image: url(../images/chart_areaspline.png) !important;
+}
+.spline {
+    background-image: url(../images/chart_spline.png) !important;
+}
+.pie {
+    background-image: url(../images/chart_pie.png) !important;
+}
+.scatter {
+    background-image: url(../images/chart_scatter.png) !important;
+}
+.color_management {
+    background-image: url(../images/color_management.png) !important;
+}
+.loadsave {
+    background-image: url(../images/loadsave.png) !important;
+}
+.chartoptions {
+    background-image: url(../images/chartoptions.png) !important;
+}
+div.chart_thumb a {
+	text-decoration: none;
+}
+.date_edit {
+    background-image: url(../images/date_edit.png) !important;
+    background-repeat: no-repeat;
+}
+
+.jobviewer_helpcontent {
+    font-family: arial, "Times New Roman",Times,serif;
+    font-size: 14px;
+    color: black;
+    width: 75%;
+    background: white;
+}
+
+.jobviewer_helpcontent ul {
+    list-style: square !important;
+    padding-left: 30px;
+}
+
+.jobviewer_helpcontent strong {
+    font-weight: bold;
+}

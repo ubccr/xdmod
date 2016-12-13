@@ -1,0 +1,6 @@
+{
+  "summary_statistics": {
+    "prefix": "summary_statistics",
+    "controller": "NewRest\\Controllers\\SummaryStatisticsControllerProvider"
+  }
+}

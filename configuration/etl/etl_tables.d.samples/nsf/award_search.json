@@ -1,0 +1,131 @@
+{
+    "table_definition": {
+        "name": "nsf_award_search",
+        "engine": "MyISAM",
+        "comment": "NSF Award information",
+        "columns": [{
+            "name": "award_id",
+            "type": "int(10) unsigned",
+            "nullable": "false",
+            "comment": "9 digit NSF award number"
+        },{
+            "name": "entry_date",
+            "type": "date",
+            "comment": "Date of entry into NSF database"
+        },{
+            "name": "start_date",
+            "type": "date",
+            "comment": "Project start date"
+        },{
+            "name": "end_date",
+            "type": "date",
+            "comment": "Project end date"
+        },{
+            "name": "estimated_dollars",
+            "type": "int(10) unsigned",
+            "comment": "Estimated amount of funds to be awarded"
+        },{
+            "name": "obligated_dollars",
+            "type": "int(10) unsigned",
+            "comment": "Dollars oblicated to this award"
+        },{
+            "name": "pi_first_name",
+            "type": "varchar(64)"
+        },{
+            "name": "pi_last_name",
+            "type": "varchar(64)"
+        },{
+            "name": "awardee_name",
+            "type": "varchar(64)",
+            "comment": "Name of entity receiving award"
+        },{
+            "name": "transaction_type",
+            "type": "varchar(64)",
+            "comment": "Grant, cooperative agreement, or other"
+        }]
+
+     
+    },
+
+    "#": "Query XRAS for all NSF award numbers that we haven't already ingested",
+    "#": "Need a way to handle consistently failing values such as request_supporting_grant_id=15045",
+    "source_query": {
+        "records": {
+            "#": "Make award_id available as a parameter. Use DISTINCT because there are duplicates!",
+            "award_id": "DISTINCT PREG_REPLACE('/[^0-9]+/', '', sgrant.grant_num)"
+        },
+
+        "joins": [{
+            "name": "request_supporting_grants",
+            "schema": "${UTILITY_SCHEMA}",
+            "alias": "sgrant"
+        },{
+            "name": "funding_agencies",
+            "schema": "${UTILITY_SCHEMA}",
+            "alias": "agency",
+            "on": "agency.funding_agency_id = sgrant.funding_agency_id"
+        },{
+            "name": "nsf_award_search",
+            "schema": "${DESTINATION_SCHEMA}",
+            "alias": "existing",
+            "type": "LEFT OUTER",
+            "on": "PREG_REPLACE('/[^0-9]+/', '', sgrant.grant_num) = existing.award_id"
+        }],
+
+        "where": [
+            "agency.fa_abbr = 'NSF'",
+            "existing.award_id IS NULL"
+        ]
+    },
+
+    "rest_request": {
+        "parameters": {
+            "print_fields": "id,date,startDate,expDate,estimatedTotalAmt,fundsObligatedAmt,awardeeName,piFirstName,piLastName,transType",
+            "award_id": {
+                "#": "Value will be overriden by the source_query records. Cannot be null or it will fail isset()",
+                "value": "",
+                "verify": {
+                    "type": "regex",
+                    "format": "/^[0-9]{1,9}$/"
+                }
+            }
+        },
+        "format": "/${award_id}.json?printFields=${print_fields}"
+    },
+
+    "rest_response": {
+        "response": "response",
+        "results": "award",
+        "error": "serviceNotification",
+        "field_map": {
+            "award_id": "id",
+            "entry_date": {
+                "name": "date",
+                "transform": {
+                    "type": "datetime",
+                    "format": "Y-m-d"
+                }
+            },
+            "start_date": {
+                "name": "startDate",
+                "transform": {
+                    "type": "datetime",
+                    "format": "Y-m-d"
+                }
+            },
+            "end_date": {
+                "name": "expDate",
+                "transform": {
+                    "type": "datetime",
+                    "format": "Y-m-d"
+                }
+            },
+            "estimated_dollars": "estimatedTotalAmt",
+            "obligated_dollars": "fundsObligatedAmt",
+            "pi_first_name": "piFirstName",
+            "pi_last_name": "piLastName",
+            "awardee_name": "awardeeName",
+            "transaction_type": "transType"
+        }
+    }
+}

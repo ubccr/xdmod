@@ -1,0 +1,362 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Perform Open XDMoD administrative tasks.
+ *
+ * @package OpenXdmod
+ *
+ * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use CCR\DB;
+use CCR\DB\MySQLHelper;
+use CCR\Log;
+use Xdmod\Config;
+
+// TODO
+// Tasks:
+// - Delete resources from database
+//
+
+// Catch any unexpected exceptions.
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        $logger->crit(array(
+            'message'    => $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+/**
+ * Main function.
+ */
+function main()
+{
+    global $argv, $logger;
+
+    $opts = array(
+        array('h', 'help'),
+        array('v', 'verbose'),
+        array('',  'debug'),
+        array('q', 'quiet'),
+        array('f', 'force'),
+        array('r', 'resource'),
+        array('',  'resources'),
+        array('j', 'job'),
+        array('',  'jobs'),
+        array('l', 'list'),
+        array('t', 'truncate'),
+     );
+
+    $shortOptions = implode(
+        '',
+        array_map(function ($opt) { return $opt[0]; }, $opts)
+    );
+    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+
+    $args = getopt($shortOptions, $longOptions);
+
+    if ($args === false) {
+        fwrite(STDERR, "Failed to parse arguments\n");
+        exit(1);
+    }
+
+    $help = $force = false;
+
+    $entity = null;
+    $action = null;
+
+    $logLevel = -1;
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite(STDERR, "Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'h':
+            case 'help':
+                $help = true;
+                break;
+            case 'q':
+            case 'quiet':
+                $logLevel = max($logLevel, Log::WARNING);
+                break;
+            case 'v':
+            case 'verbose':
+                $logLevel = max($logLevel, Log::INFO);
+                break;
+            case 'debug':
+                $logLevel = max($logLevel, Log::DEBUG);
+                break;
+            case 'f':
+            case 'force':
+                $force = true;
+                break;
+            case 'r':
+            case 'resource':
+            case 'resources':
+                if ($entity !== null) {
+                    fwrite(STDERR, "Only one entity type may be specified\n");
+                    exit(1);
+                }
+                $entity = 'resources';
+                break;
+            case 'j':
+            case 'job':
+            case 'jobs':
+                if ($entity !== null) {
+                    fwrite(STDERR, "Only one entity type may be specified\n");
+                    exit(1);
+                }
+                $entity = 'jobs';
+                break;
+            case 'l':
+            case 'list':
+                if ($action !== null) {
+                    fwrite(STDERR, "Only one action may be specified\n");
+                    exit(1);
+                }
+                $action = 'list';
+                break;
+            case 't':
+            case 'truncate':
+                if ($action !== null) {
+                    fwrite(STDERR, "Only one action may be specified\n");
+                    exit(1);
+                }
+                $action = 'truncate';
+                break;
+            default:
+                fwrite(STDERR, "Unexpected option '$key'\n");
+                exit(1);
+                break;
+        }
+    }
+
+    if ($help) {
+        displayHelpText();
+        exit;
+    }
+
+    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+
+    $conf = array(
+        'file'            => false,
+        'mail'            => false,
+        'consoleLogLevel' => $logLevel,
+    );
+
+    $logger = Log::factory('xdmod-admin', $conf);
+
+    $cmd = implode(' ', array_map('escapeshellarg', $argv));
+    $logger->info("Command: $cmd");
+
+    if ($entity === null) {
+        $logger->crit('No entity type specified');
+        exit(1);
+    }
+
+    if ($action === null) {
+        $logger->crit('No action specified');
+        exit(1);
+    }
+
+    switch ($entity) {
+        case 'resources':
+            switch ($action) {
+                case 'list':
+                    listResources();
+                    break;
+                default:
+                    $logger->crit("Cannot perform '$action' on '$entity'");
+                    exit(1);
+                    break;
+            }
+            break;
+        case 'jobs':
+            switch ($action) {
+                case 'truncate':
+                    truncateJobs();
+                    break;
+                default:
+                    $logger->crit("Cannot perform '$action' on '$entity'");
+                    exit(1);
+                    break;
+            }
+            break;
+        default:
+            $logger->crit("Unknown entity type '$entity'");
+            exit(1);
+            break;
+    }
+
+    exit;
+}
+
+/**
+ * List all the configured resources.
+ */
+function listResources()
+{
+    global $logger;
+
+    $config = Config::factory();
+
+    $resourcesConfig = $config['resources'];
+
+    foreach ($resourcesConfig as $resourceData) {
+        echo 'Resource: ', $resourceData['resource'], "\n";
+        echo 'Name: ',     $resourceData['name'],     "\n";
+        echo "\n";
+    }
+}
+
+/**
+ * Truncate all the job tables.
+ */
+function truncateJobs()
+{
+    global $logger, $force;
+
+    if (!$force && !confirm('Truncate all job data?')) {
+        return;
+    }
+
+    $shredderDb = DB::factory('shredder');
+    $hpcDb      = DB::factory('hpcdb');
+    $modwDb     = DB::factory('datawarehouse');
+
+    $dbsAndTables = array(
+        array(
+            'db'     => $shredderDb,
+            'tables' => array(
+                'shredded_job_pbs',
+                'shredded_job_sge',
+                'shredded_job_slurm',
+                'shredded_job_lsf',
+                'shredded_job',
+                'staging_job',
+            ),
+        ),
+        array(
+            'db'     => $hpcDb,
+            'tables' => array(
+                'hpcdb_jobs',
+            ),
+        ),
+        array(
+            'db'     => $modwDb,
+            'tables' => array(
+                'modw.jobfact',
+                'modw.jobfactstatus',
+                'modw.jobhosts',
+                'modw_aggregates.jobfact_by_year',
+                'modw_aggregates.jobfact_by_quarter',
+                'modw_aggregates.jobfact_by_month',
+                'modw_aggregates.jobfact_by_day',
+            ),
+        ),
+    );
+
+    $logger->notice('Truncating job data');
+
+    foreach ($dbsAndTables as $dbAndTables) {
+        $db     = $dbAndTables['db'];
+        $tables = $dbAndTables['tables'];
+
+        $helper = MySQLHelper::factory($db);
+
+        $dbName = $db->_db_name;
+        $logger->info("Truncating job tables in $dbName");
+
+        foreach ($tables as $table) {
+            if ($helper->tableExists($table)) {
+                $logger->info("Truncating $table");
+                $db->execute("TRUNCATE $table");
+            }
+        }
+    }
+}
+
+/**
+ * Prompt the user for confirmation.
+ *
+ * @param string $msg Confirmation message.
+ *
+ * @return bool True if the message is confirmed.
+ */
+function confirm($msg)
+{
+    $response = null;
+
+    while ($response === null) {
+        $response = readline("$msg (yes/no): [no] ");
+
+        if (!in_array($response, array('yes', 'no', ''))) {
+            echo "\n'$response' is not a valid option.\n\n";
+            $response = null;
+        }
+    }
+
+    return $response == 'yes';
+}
+
+/**
+ * Output help text to STDOUT.
+ */
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Perform administrative tasks.
+
+This command currently supports truncating all job data or listing the
+currently configured resources.
+
+Usage: xdmod-admin [-v]
+
+    -h, --help
+        Display this message and exit.
+
+    -v, --verbose
+        Output info level logging.
+
+    --debug
+        Output debug level logging.
+
+    -q, --quiet
+        Output warning level logging.
+
+    -f, --force
+        Force the action.  You will not be prompted to confirm the
+        action requested.  (e.g. Truncating all jobs.)
+
+    -r, --resource, --resources
+        Perform action on resources.
+
+    -j, --job, --jobs
+        Perform action on jobs.
+
+    -t, --truncate
+        Truncate data (only used for jobs).
+
+    -l, --list
+        List data (only used for resources).
+
+Examples:
+
+    xdmod-admin --jobs --truncate
+
+    xdmod-admin --resources --list
+
+EOF;
+}
+

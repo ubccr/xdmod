@@ -1,0 +1,32 @@
+{
+    "#": "Setup of action state tables",
+
+    "defaults": {
+
+        "#": "Options specific to general actions",
+        "action-state": {
+            "#": "Maintenance-specific defaults",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Utility DB",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        }
+    },
+
+    "action-state": [{
+        "name": "StateTableManagement",
+        "class": "ManageTables",
+        "description": "Manage action state tables",
+        "definition_file_list": [
+            "action_state.json"
+        ],
+        "enabled": true
+    }]
+}

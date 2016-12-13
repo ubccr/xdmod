@@ -1,0 +1,312 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Shred resource manager log files.
+ *
+ * @package OpenXdmod
+ *
+ * @author Jeffrey T. Palmer <jtpalmer@ccr.buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use CCR\DB;
+use CCR\DB\NullDB;
+use CCR\Log;
+use OpenXdmod\Shredder;
+
+// Disable memory limit.
+ini_set('memory_limit', -1);
+
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        $logger->crit(array(
+            'message'    => $e->getMessage(),
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+function main()
+{
+    global $argv, $logger;
+
+    $opts = array(
+        array('h',  'help'),
+        array('v',  'verbose'),
+        array('',   'debug'),
+        array('q',  'quiet'),
+        array('',   'dry-run'),
+        array('f:', 'format:'),
+        array('i:', 'in:'),
+        array('d:', 'dir:'),
+        array('r:', 'resource:'),
+        array('',   'host-filter:'),
+    );
+
+    $shortOptions = implode(
+        '',
+        array_map(function ($opt) { return $opt[0]; }, $opts)
+    );
+    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+
+    $args = getopt($shortOptions, $longOptions);
+
+    if ($args === false) {
+        fwrite(STDERR, "Failed to parse arguments\n");
+        exit(1);
+    }
+
+    $help = $dryRun = false;
+
+    $format = $file = $dir = $resource = $hostFilter = null;
+
+    $logLevel = -1;
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite(STDERR, "Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'h':
+            case 'help':
+                $help = true;
+                break;
+            case 'q':
+            case 'quiet':
+                $logLevel = max($logLevel, Log::WARNING);
+                break;
+            case 'v':
+            case 'verbose':
+                $logLevel = max($logLevel, Log::INFO);
+                break;
+            case 'debug':
+                $logLevel = max($logLevel, Log::DEBUG);
+                break;
+            case 'f':
+            case 'format':
+                $format = $value;
+                break;
+            case 'i':
+            case 'in':
+                $file = $value;
+                break;
+            case 'd':
+            case 'dir':
+                $dir = $value;
+                break;
+            case 'r':
+            case 'resource':
+                $resource = $value;
+                break;
+            case 'dry-run':
+                $dryRun = true;
+                break;
+            case 'host-filter':
+                $hostFilter = $value;
+                break;
+            default:
+                fwrite(STDERR, "Unexpected option '$key'\n");
+                exit(1);
+                break;
+        }
+    }
+
+    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+
+    if ($help) {
+        displayHelpText();
+        exit;
+    }
+
+    $conf = array(
+        'file'            => false,
+        'mail'            => false,
+        'consoleLogLevel' => $logLevel,
+    );
+
+    $logger = Log::factory('xdmod-shredder', $conf);
+
+    $cmd = implode(' ', array_map('escapeshellarg', $argv));
+    $logger->info("Command: $cmd");
+
+    $logger->debug('Checking for required arguments');
+
+    if ($format === null) {
+        $logger->crit('No input format specified');
+        exit(1);
+    }
+
+    if ($resource === null) {
+        $logger->crit('No resource name specified');
+        exit(1);
+    }
+
+    if ($dir === null && $file === null) {
+        $logger->crit('No input source specified');
+        exit(1);
+    }
+
+    if ($dir !== null && $file !== null) {
+        $logger->crit('Multiple input sources specified');
+        exit(1);
+    }
+
+    // NOTE: "process_start_time" is needed for the log summary.
+    $logger->notice(array(
+        'message'            => 'xdmod-shredder start',
+        'process_start_time' => date('Y-m-d H:i:s'),
+    ));
+
+    try {
+        $logger->debug('Creating database connection');
+
+        if ($dryRun) {
+            $logger->debug('Using null database');
+            $db = new NullDB();
+        } else {
+            $db = DB::factory('shredder');
+        }
+    } catch (Exception $e) {
+        $msg = 'Failed to create database connection: ' . $e->getMessage();
+        $logger->crit(array(
+            'message'    => $msg,
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+        exit(1);
+    }
+
+    $logger->debug("Creating shredder for format '$format'");
+
+    try {
+        $shredder = Shredder::factory($format, $db);
+        $shredder->setLogger($logger);
+        $shredder->setResource($resource);
+
+        if ($hostFilter !== null) {
+            $shredder->setHostFilter($hostFilter);
+        }
+    } catch (Exception $e) {
+        $msg = 'Failed to create shredder: ' . $e->getMessage();
+        $logger->crit(array(
+            'message'    => $msg,
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+        exit(1);
+    }
+
+    try {
+        if ($dir !== null) {
+            $count = $shredder->shredDirectory($dir);
+        }
+
+        if ($file !== null) {
+            $count = $shredder->shredFile($file);
+        }
+
+         if ($count === false) {
+            exit(1);
+         }
+    } catch (Exception $e) {
+        $msg = 'Failed to shred files: ' . $e->getMessage();
+        $logger->crit(array(
+            'message'    => $msg,
+            'stacktrace' => $e->getTraceAsString(),
+        ));
+        exit(1);
+    }
+
+    $logger->notice('Done shredding files');
+
+    if ($shredder->hasJobErrors()) {
+        $logger->debug('Found job errors');
+        $jobErrorLogFile = tempnam(
+            sys_get_temp_dir(),
+            'xdmod_shredder_job_errors-'
+        );
+        $shredder->writeJobErrors($jobErrorLogFile);
+        $logger->notice("Job errors written to '$jobErrorLogFile'");
+    }
+
+    if (!$dryRun) {
+        $logger->notice('Normalizing data');
+
+        try {
+            $ingestor = $shredder->getJobIngestor();
+            $ingestor->ingest();
+        } catch (Exception $e) {
+            $logger->crit(array(
+                'message'    => 'Ingestion failed: ' . $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
+            ));
+            exit(1);
+        }
+
+        $logger->notice('Done normalizing data');
+    }
+
+    // NOTE: "process_end_time" is needed for the log summary.
+    $logger->notice(array(
+        'message'          => 'xdmod-shredder end',
+        'process_end_time' => date('Y-m-d H:i:s'),
+    ));
+
+    exit;
+}
+
+function displayHelpText()
+{
+    echo <<<'EOF'
+
+Usage: xdmod-shredder [-v] -r resource -f format [-i file|-d dir]
+
+    -h, --help
+        Display this message and exit.
+
+    -v, --verbose
+        Output info level logging.
+
+    --debug
+        Output debug level logging.
+
+    -q, --quiet
+        Output warning level logging.
+
+    --dry-run
+        Parse log files, but don't insert anything into the database.
+
+    -r, --resource *resource*
+        Specify the resource name of the log files being shredded.
+
+    -f, --format *format*
+        Specify the log file format ("pbs" for PBS/TORQUE, "sge" for Sun
+        Grid Engine, "uge" for Univa Grid Engine 8.2+, "slurm" for
+        Slurm or "lsf" for LSF).
+
+    -i, --input *file*
+        Specify a single log file to shred.
+
+    -d, --dir *directory*
+        Specify a directory containing log files to shred.  Log files in
+        the directory must be named in YYYYMMDD format where the file
+        name corresponds to the end date of the jobs it contains.  Only
+        files with dates that are more recent than the end date of the
+        most recent job will be shredded.
+
+    --host-filter *host-regex*
+        Specify the host filter regex for jobs.  Any job that does not
+        match the filter will be ignored.  The filter supports Perl
+        compatible regular expressions (PCRE).  Note that the filter is
+        only tested against the host name of the first node in the node
+        list.  This option is intended to be used with log files that
+        contain jobs from multiple resources.
+
+
+EOF;
+}
+

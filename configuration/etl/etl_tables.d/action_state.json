@@ -1,0 +1,61 @@
+{
+    "table_definition": {
+        "name": "etl_action_state",
+        "engine": "MyISAM",
+        "comment": "Action state objects",
+        "columns": [
+            {
+                "name": "state_key",
+                "type": "varchar(64)",
+                "nullable": false
+            },
+            {
+                "name": "state_type",
+                "type": "enum('intra', 'inter')",
+                "default": "intra",
+                "nullable": false
+            },
+            {
+                "name": "creating_action",
+                "type": "varchar(32)",
+                "nullable": false
+            },
+            {
+                "name": "modifying_action",
+                "type": "varchar(32)",
+                "nullable": true
+            },
+            {
+                "name": "creation_time",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "modified_time",
+                "type": "timestamp",
+                "nullable": false
+            },
+            {
+                "name": "state_size_bytes",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Size of state object, updated automatically by triggers"
+            },
+            {
+                "name": "state_object",
+                "type": "blob",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "id",
+                "columns": [
+                    "state_key"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

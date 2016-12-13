@@ -1,0 +1,140 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Open XDMoD interactive setup.
+ *
+ * @package OpenXdmod
+ *
+ * @author Ryan Gentner
+ * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+ */
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+use OpenXdmod\Setup\MainMenu;
+use OpenXdmod\Setup\Console;
+use Xdmod\Config;
+use Xdmod\Version;
+
+// Catch unexpected exceptions.
+try {
+    checkForNewerVersion();
+    checkConfigFilePermissions();
+    main();
+} catch (Exception $e) {
+    do {
+        fwrite(STDERR, $e->getMessage() . "\n");
+        fwrite(STDERR, $e->getTraceAsString() . "\n");
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+/**
+ * Main function.
+ */
+function main()
+{
+    $menu = MainMenu::factory();
+    while (1) { $menu->display(); }
+    exit;
+}
+
+/**
+ * Check if a newer version of Open XDMoD is available.
+ */
+function checkForNewerVersion()
+{
+    try {
+        $config = Config::factory();
+        $updateConfig = $config['update_check'];
+
+        if (Version::isNewerVersionAvailable($updateConfig)) {
+            $currVer   = Version::getCurrentVersionNumber();
+            $latestVer = Version::getLatestVersionNumber();
+
+            $console = Console::factory();
+
+            $console->displayMessage(<<<"EOT"
+You are currently using Open XDMoD $currVer, but a newer version
+($latestVer) is available.
+EOT
+            );
+
+            $console->displayBlankLine();
+
+            $answer = $console->prompt(
+                'Do you want to continue?',
+                'no',
+                array('yes', 'no')
+            );
+
+            if ($answer === 'no') {
+                exit;
+            }
+        }
+    } catch (Exception $e) {
+        // Don't do anything.
+    }
+}
+
+/**
+ * Check that the current user executing this script has write
+ * permissions to the Open XDMoD configuration files.  If the user
+ * doesn't have the appropriate permissions, present a warning message.
+ */
+function checkConfigFilePermissions()
+{
+    $etcDir = '__XDMOD_ETC_PATH__';
+
+    $foundUnwritableFile = false;
+
+    $iter = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(
+            $etcDir,
+            FilesystemIterator::SKIP_DOTS
+        ),
+        RecursiveIteratorIterator::SELF_FIRST
+    );
+
+    foreach ($iter as $path => $info) {
+
+        // Ignore directories.
+        if ($info->isDir()) {
+            continue;
+        }
+
+        // Ignore non-ini and non-json files.
+        if (!preg_match('/\.(ini|json)$/', $path)) {
+            continue;
+        }
+
+        if (!is_writable($path)) {
+            $foundUnwritableFile = true;
+        }
+    }
+
+    if ($foundUnwritableFile) {
+        $console = Console::factory();
+
+        $console->displayMessage(<<<"EOT"
+You do not have write access to all the files in the Open XDMoD
+configuration directory ($etcDir).
+
+Any attempt to update these configuration files will fail.  You should
+run this script as root or using sudo.
+EOT
+        );
+
+        $console->displayBlankLine();
+
+        $answer = $console->prompt(
+            'Do you want to continue?',
+            'no',
+            array('yes', 'no')
+        );
+
+        if ($answer === 'no') {
+            exit;
+        }
+    }
+}

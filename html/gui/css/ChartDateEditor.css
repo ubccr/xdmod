@@ -1,0 +1,65 @@
+/*
+.chart_date_editor .x-btn-tl{
+	background-position: -6px 0;
+}
+
+.chart_date_editor .x-btn-tr{
+	background-position: -9px 0;
+}
+
+.chart_date_editor .x-btn-tc{
+	background-position: 0 -9px;
+}
+
+.chart_date_editor .x-btn-ml{
+	background-position: -6px -24px;
+}
+
+.chart_date_editor .x-btn-mr{
+	background-position: -9px -24px;
+}
+
+.chart_date_editor .x-btn-mc{
+	background-position: 0 -2168px;
+}
+
+.chart_date_editor .x-btn-bl{
+	background-position: -6px -3px;
+}
+
+.chart_date_editor .x-btn-br{
+	background-position: -9px -3px;
+}
+
+.chart_date_editor .x-btn-bc{
+	background-position: 0 -18px;
+}
+
+*/
+
+.chart_date_editor_cancel_button {
+   background-image: url("../images/close.png") !important
+}
+
+.chart_date_editor_update_button {
+   background-image: url("../images/accept.png") !important
+}
+
+.no-icon-menu img.x-menu-item-icon {
+   display: none !important;
+}
+
+.no-icon-menu .x-menu-item-text {
+   position: relative; left: -24px;
+}
+
+/* Updates to mask */
+
+.chart_date_editor .ext-el-mask-msg {
+   top: 6px !important;
+}
+
+.chart_date_editor .ext-el-mask-msg div {
+   padding: 1px !important;
+   border: 0px !important;
+}

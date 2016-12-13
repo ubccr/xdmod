@@ -1,0 +1,45 @@
+{
+    "menu": [
+        {
+            "position": 10,
+            "label": "General Settings",
+            "handler": "GeneralSetup"
+        },
+        {
+            "position": 20,
+            "label": "Database Settings",
+            "handler": "DatabaseSetup"
+        },
+        {
+            "position": 30,
+            "label": "Organization",
+            "handler": "OrganizationSetup"
+        },
+        {
+            "position": 40,
+            "label": "Resources",
+            "handler": "ResourcesSetup"
+        },
+        {
+            "position": 50,
+            "label": "Create Admin User",
+            "handler": "AdminUserSetup"
+        },
+        {
+            "position": 60,
+            "label": "Hierarchy",
+            "handler": "HierarchySetup"
+        },
+        {
+            "position": 70,
+            "label": "Automatically Check for Updates",
+            "handler": "UpdateCheckSetup"
+        },
+        {
+            "position": 1000,
+            "label": "Quit",
+            "handler": "QuitSetup",
+            "trigger": "q"
+        }
+    ]
+}

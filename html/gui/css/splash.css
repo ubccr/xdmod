@@ -1,0 +1,36 @@
+body { 
+   font-size:10px; 
+   line-height:1.7em; 
+   background-color: #fff; /* cea; */ 
+}
+
+.about_16 {
+   background-image: url('../images/about_16.png') !important;
+}
+
+.contact_16 {
+   background-image: url('../images/contact_16.png') !important;
+}
+
+.overview_16 {
+   background-image: url('../images/kernel.png') !important;
+}
+
+.welcome_message {
+   /* padding-left: 40px !important; */
+   margin-top: -6px;
+}
+
+.overlay_message {
+   text-align: center;
+}
+
+.version_info {
+
+   font-size: 12px;
+   font-family: Arial;
+   color: #888;
+   float: right;
+   margin-right: 15px;
+
+}

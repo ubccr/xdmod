@@ -1,0 +1,6 @@
+{
+  "user": {
+    "prefix": "users",
+    "controller": "NewRest\\Controllers\\UserControllerProvider"
+  }
+}
