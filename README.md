@@ -49,6 +49,34 @@ and click the Fork button. Once you have finished working on a feature or bug
 fix for a project, push the work to your fork and open a pull request against
 the main repo for that project.
 
+### Using Git
+
+To get started on core Open XDMoD development, simply clone the Open XDMoD
+repository.
+
+To work on an Open XDMoD module, one option is to clone the module repository
+directly inside of your Open XDMoD repository's `open_xdmod/modules` directory.
+If your module repository is named with the `xdmod-` prefix, remove it from the
+clone's directory name. Alternatively, you may clone the module repository
+elsewhere and create a symbolic link to it from `open_xdmod/modules`.
+
+For example, to work on your fork of the SUPReMM module using a direct clone,
+run this command, substituting in your GitHub username and Open XDMoD repo
+location:
+
+```bash
+git clone git@github.com:[username]/xdmod-supremm [xdmod_repo]/open_xdmod/modules/supremm
+```
+
+To work on your fork of the SUPReMM module using an external clone and a
+symbolic link, run these commands, substituting in your GitHub username
+and the relevant paths:
+
+```bash
+git clone git@github.com:[username]/xdmod-supremm [supremm_repo]
+ln -s [supremm_repo] [xdmod_repo]/open_xdmod/modules/supremm
+```
+
 ### Using Repo
 
 To assist with initial setup and development across Open XDMoD and its modules,
@@ -124,34 +152,6 @@ files to `.repo/local_manifests` that will extend the main manifest file being
 used. More information about the manifest file format and local manifest files
 may be found [here][repo-format]. Once you have made the desired changes, run
 `repo sync` to pull the changes in.
-
-### Using Git
-
-To get started on core Open XDMoD development, simply clone the Open XDMoD
-repository.
-
-To work on an Open XDMoD module, one option is to clone the module repository
-directly inside of your Open XDMoD repository's `open_xdmod/modules` directory.
-If your module repository is named with the `xdmod-` prefix, remove it from the
-clone's directory name. Alternatively, you may clone the module repository
-elsewhere and create a symbolic link to it from `open_xdmod/modules`.
-
-For example, to work on your fork of the SUPReMM module using a direct clone,
-run this command, substituting in your GitHub username and Open XDMoD repo
-location:
-
-```bash
-git clone git@github.com:[username]/xdmod-supremm [xdmod_repo]/open_xdmod/modules/supremm
-```
-
-To work on your fork of the SUPReMM module using an external clone and a
-symbolic link, run these commands, substituting in your GitHub username
-and the relevant paths:
-
-```bash
-git clone git@github.com:[username]/xdmod-supremm [supremm_repo]
-ln -s [supremm_repo] [xdmod_repo]/open_xdmod/modules/supremm
-```
 
 ## Building
 
