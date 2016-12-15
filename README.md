@@ -39,14 +39,14 @@ Before getting started, please see
 ## Developing
 
 Development on Open XDMoD and its modules can be started using either
-Repo or Git. If you are unsure which to start with, try Repo, as it is
+[Repo][] or Git. If you are unsure which to start with, try Repo, as it is
 easy to transition from a Repo workflow to a pure Git workflow. If you
 don't want to install yet another tool, using Git will work just fine.
 
 ### Using Repo
 
 To assist with initial setup and development across Open XDMoD and its modules,
-we support the use of [Repo](https://code.google.com/p/git-repo/), a tool built
+we support the use of [Repo][], a tool built
 by the Android development team to help manage multi-repository projects.
 We supply a [Repo manifest repository](https://github.com/ubccr/xdmod-repo-manifest)
 that can be used to get started with Open XDMoD and first-party modules.
@@ -179,3 +179,4 @@ Some software products used by Open XDMoD are not free for commercial use.
 See the [license page on the Open XDMoD website][license-page] for details.
 
 [license-page]: http://open.xdmod.org/notices.html
+[repo]: https://code.google.com/p/git-repo/
