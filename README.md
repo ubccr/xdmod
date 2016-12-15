@@ -43,12 +43,20 @@ Development on Open XDMoD and its modules can be started using either
 easy to transition from a Repo workflow to a pure Git workflow. If you
 don't want to install yet another tool, using Git will work just fine.
 
+Before starting with either, however, you will want to fork any repositories
+you are interested in working on. Simply visit the repositories' pages on GitHub
+and click the Fork button. Once you have finished working on a feature or bug
+fix for a project, push the work to your fork and open a pull request against
+the main repo for that project.
+
 ### Using Repo
 
 To assist with initial setup and development across Open XDMoD and its modules,
 we support the use of [Repo][], a tool built
 by the Android development team to help manage multi-repository projects.
-We supply a [Repo manifest repository](https://github.com/ubccr/xdmod-repo-manifest)
+It can help you get started by setting up multiple repositories at once, and it
+provides some convenience functions for working across repositories.
+We supply a [Repo manifest repository][xdmod-repo-manifest]
 that can be used to get started with Open XDMoD and first-party modules.
 
 The steps below will get you started, but further documentation on using Repo
@@ -77,11 +85,45 @@ command, substituting in your GitHub username:
 repo forall -c 'git remote add origin git@github.com:[username]/$REPO_PROJECT'
 ```
 
-To start a branch on one or more projects, use this command:
+To check that the above command worked correctly, you can run this command:
 
 ```bash
-repo start [branch] [projects...]
+repo forall -c 'git fetch origin'
 ```
+
+Now that the repositories have been set up, you can use standard Git commands
+in each repository. Repo also provides some convenience functions for performing
+tasks across all repositories. For example, `repo status` will display the
+current branch and changes for all repositories. You can also use `repo forall`
+to execute any shell command in all repositories.
+
+#### Custom Modules with Repo
+
+If you are working on custom modules for Open XDMoD, you can tell Repo where to
+find them using one of two methods.
+
+If you want to use a custom configuration in
+multiple places, you can fork or clone the
+[XDMoD Repo manifest repository][xdmod-repo-manifest] and apply modifications
+there. (Note that a fork, like the source repo, will be public. If you wish to
+keep your custom configs private, clone the main repo directly and treat the
+clone as an independent repo. You can then push the clone to your own private
+server, or you can just keep it local to your machine.) The existing entries for
+various Open XDMoD modules can be used as templates for your custom modules. The
+format of the Repo manifest file is described in greater detail
+[here][repo-format]. Once you have made your changes and committed them,
+run these commands to pull in your changes:
+
+```bash
+repo init -u [local_or_remote_path_to_manifest_repo] -b [branch_with_changes]
+repo sync
+```
+
+If you just want to make some small changes locally, you can add local manifest
+files to `.repo/local_manifests` that will extend the main manifest file being
+used. More information about the manifest file format and local manifest files
+may be found [here][repo-format]. Once you have made the desired changes, run
+`repo sync` to pull the changes in.
 
 ### Using Git
 
@@ -180,3 +222,5 @@ See the [license page on the Open XDMoD website][license-page] for details.
 
 [license-page]: http://open.xdmod.org/notices.html
 [repo]: https://code.google.com/p/git-repo/
+[repo-format]: https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.txt
+[xdmod-repo-manifest]: https://github.com/ubccr/xdmod-repo-manifest
