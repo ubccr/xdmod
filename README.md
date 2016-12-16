@@ -21,6 +21,28 @@ For more information, including information about additional Open XDMoD
 capabilities provided as optional modules, please visit
 [the Open XDMoD website](http://open.xdmod.org).
 
+## Modules for Open XDMoD
+
+In addition to the analysis functionality provided by the main Open XDMoD
+package, Open XDMoD also supports extending its capabilities through
+modules. The XDMoD team currently supports the modules below.
+
+### Application Kernels
+
+This module enables analysis of "application kernels", which are regression
+tests for the performance of an HPC system and the software that runs on it.
+For more information, visit the Application Kernels Module
+[website](http://appkernels.xdmod.org/ak-overview.html) and
+[repository](https://github.com/ubccr/xdmod-appkernels).
+
+### SUPReMM
+
+This module enables analysis of individual and aggregate job performance using
+hardware data from CPUs, memory, filesystems, network interfaces, and more.
+For more information, visit the SUPReMM Module
+[website](http://supremm.xdmod.org/supremm-overview.html) and
+[repository](https://github.com/ubccr/xdmod-supremm).
+
 ## Installation
 
 Prebuilt packages of Open XDMoD are available as
@@ -34,7 +56,18 @@ for additional information.
 
 Feedback is always welcome, and contributions are greatly appreciated!
 Before getting started, please see
-[our contributing guidelines](.github/CONTRIBUTING.md).
+[our contributing instructions and guidelines](.github/CONTRIBUTING.md).
+
+In short, the steps to take are:
+  1. Fork any repositories for Open XDMoD or its modules that you wish to
+     work on.
+  1. Clone and set up the repositories on your local system
+     (see "[Developing](#developing)", below).
+  1. Develop your work and test it, ensuring your work follows
+     [our contributing guidelines](.github/CONTRIBUTING.md).
+  1. Push your work to your forks.
+  1. Open pull requests for your work from your forks to the central
+     repositories. The pull requests will then be reviewed by the XDMoD team.
 
 ## Developing
 
