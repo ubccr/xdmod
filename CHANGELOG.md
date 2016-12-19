@@ -41,6 +41,7 @@ Open XDMoD Change Log
         - Stopped package builds from being logged to an Open XDMoD database.
         - Fixed documentation files from modules overwriting core files when
           installing using tarballs.
+        - Fixed UGE shredder.
 - Refactors and Miscellaneous
     - Added documentation for using LDAP for federated authentication.
     - Spun the App Kernels, SUPReMM, and XSEDE modules out into separate
