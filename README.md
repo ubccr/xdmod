@@ -214,6 +214,8 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
   1. Change directory to the root of the Open XDMoD repository.
   1. Install Composer dependencies for Open XDMoD.
     - `composer install`
+    - Depending on the versions of various software installed on your system,
+      you may run into errors. See the [Building FAQ](#building-faq) below.
   1. Run the package builder script.
     - `open_xdmod/build_scripts/build_package.php --module xdmod`
     - To build Open XDMoD modules, substitute `xdmod` with the name of a
@@ -237,8 +239,39 @@ substitute accordingly.
     - `tar -xOf ~/rpmbuild/SOURCES/xdmod-x.y.z.tar.gz xdmod-x.y.z/xdmod.spec >~/rpmbuild/SPECS/xdmod.spec`
   1. Run `rpmbuild`.
     - `rpmbuild -bb ~/rpmbuild/SPECS/xdmod.spec`
+    - There may be warnings about files not being found or files being
+      listed twice. These are likely benign.
 
 The resulting RPM will be located in `~/rpmbuild/RPMS/noarch`.
+
+### Building FAQ
+
+#### Why is Composer unable to download some files?
+
+Certain combinations of PHP and Composer do not handle redirects over HTTPS
+correctly. To get things working, try one or more steps below.
+
+  1. Update Composer to a newer version.
+  1. Update PHP to a newer version.
+  1. If the above did not work or is not feasible, you can globally disable
+     HTTPS in Composer by running `composer config -g disable-tls true`. While
+     disabling HTTPS is not recommended by the Composer developers or us, all
+     dependencies downloaded using XDMoD's config files will be checked
+     against checksums to help prevent against tampering.
+
+#### Why can't Composer unzip Ext JS?
+
+The ZIP file for the version of Ext JS being used contains multiple files
+with the same path, and some ZIP programs and libraries do not handle this case
+quietly. If Composer uses the system's `unzip` utility to unpack the ZIP file
+and that version of `unzip` asks for input, Composer will error out.
+
+Fortunately, PHP's ZIP library will work for this case. Unfortunately,
+getting Composer to use the PHP library currently requires either modifying
+Composer's code or hiding your system's `unzip` utility. You can do the latter
+quickly by temporarily renaming `unzip` to something like `unzip-hidden`, then
+changing the name back once Composer has completed installation. These solutions
+aren't ones we're fans of, so if you have a better solution, please share!
 
 ## License
 
