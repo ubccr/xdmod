@@ -46,7 +46,7 @@ class Uge extends Sge
         // the number of entry names.  It may be larger due to new
         // fields that have been added to the accounting log format
         // (e.g. "job_class").
-        if (count($entries) < self::$entryNameCount) {
+        if (count($entries) < self::$minimumEntryCount) {
             $this->logger->err("Malformed UGE acct line: '$line'");
             return;
         }
