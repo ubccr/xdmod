@@ -37,6 +37,7 @@
         "acl_assets.json",
         "module_versions.json",
         "user_charts.json",
+        "user_acls.json",
         "acl_charts.json"
       ],
       "enabled": true
