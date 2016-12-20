@@ -1,0 +1,43 @@
+{
+    "#": "Paths for the various configuraiton and data subdirectories. This is added to the global",
+    "#": "defaults and actions.",
+
+    "paths": {
+        "definition_file_dir": "etl_tables.d",
+        "specs_dir": "etl_specs.d",
+        "macro_dir": "etl_macros.d",
+        "sql_dir": "etl_sql.d",
+        "data_dir": "etl_data.d",
+        "local_config_dir": "etl.d"
+    },
+
+    "defaults": {
+
+        "#": "Global options are lowest priority and applied to all actions",
+
+        "global" : {
+            "#": "The utility endpoint is used by the etl_overseer script to query resource codes.",
+            "endpoints": {
+                "utility": {
+                    "type": "mysql",
+                    "name": "Utility DB",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+
+        "#": "Options specific to the 'ingestors' pipeline",
+
+        "ingestors": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions"
+        }
+       
+    },
+    
+    "#": "Empty default pipeline",
+
+    "ingestors": []
+
+}
