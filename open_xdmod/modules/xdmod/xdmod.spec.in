@@ -64,6 +64,58 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
+* Thu Dec 22 2016 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 6.5.0-1.0
+- Features
+    - General
+        - Modified the Summary tab to reload automatically after its charts are
+          modified in Metric Explorer.
+        - Modified REST stack to support multiple configuration files, allowing
+          modules to supply their own REST resources.
+        - Increased maximum size of node lists in database, allowing jobs
+          running across more nodes to be more accurately tracked.
+        - Improved efficiency of job host list parser and ingestor.
+        - Added ability to disable Basic Auth in REST API.
+        - Improved email validation.
+    - ETLv2
+        - Added new PHP-based ETL system to Open XDMoD.
+        - Vastly improved logging and debugging.
+        - Supports individual ETL actions as well as ordered sets of actions
+          called pipelines.
+        - Optimized for performance when importing large numbers of records.
+        - Predefined actions support flexible ingestion of data from multiple
+          sources.
+        - ETL is configured via JSON files and requires far less code
+          modification when customizing to more easily support flexibility at
+          customer installations.
+- Bug Fixes
+    - General
+        - Fixed stacked area charts not handling empty data points correctly.
+        - Stopped inaccurate warning about Adobe Flash content in browsers that
+          block Flash. (XDMoD does not make use of Flash.)
+        - Fixed various typos and grammatical errors.
+        - Fixed incorrectly-oriented subpanel titles in Internet Explorer 10.
+        - Downgraded PHP packages that required PHP 5.3.9 instead of
+          Open XDMoD's current minimum PHP version, 5.3.3.
+        - Fixed inconsistency between labels used for users and PIs on a job.
+        - Fixed automatic aggregation unit selection for charts not working
+          correctly on servers running PHP 5.3.3.
+        - Stopped package builds from being logged to an Open XDMoD database.
+        - Fixed documentation files from modules overwriting core files when
+          installing using tarballs.
+        - Fixed UGE shredder.
+- Refactors and Miscellaneous
+    - Added documentation for using LDAP for federated authentication.
+    - Spun the App Kernels, SUPReMM, and XSEDE modules out into separate
+      code repositories.
+    - Began transition to a more flexible, more efficient data warehouse that
+      will support innovative HPC resources including cloud computing resources.
+    - Consolidated third-party JavaScript libraries into one library directory.
+    - Improved development setup process for external contributors.
+    - Migrated website from a single SourceForge site to multiple GitHub sites.
+    - Cleaned up and reorganized numerous other assets.
+    - Added `reqgres` and `reqtres` to the list of Slurm fields that are
+      shredded and stored in the Slurm job table.
+
 * Wed Sep 21 2016 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 6.0.0-1.0
 - Important Notes
     - Updated Highcharts from v3.0.9 to v4.2.5.

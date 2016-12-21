@@ -21,6 +21,28 @@ For more information, including information about additional Open XDMoD
 capabilities provided as optional modules, please visit
 [the Open XDMoD website](http://open.xdmod.org).
 
+## Modules for Open XDMoD
+
+In addition to the analysis functionality provided by the main Open XDMoD
+package, Open XDMoD also supports extending its capabilities through
+modules. The XDMoD team currently supports the modules below.
+
+### Application Kernels
+
+This module enables analysis of "application kernels", which are regression
+tests for the performance of an HPC system and the software that runs on it.
+For more information, visit the Application Kernels Module
+[website](http://appkernels.xdmod.org/ak-overview.html) and
+[repository](https://github.com/ubccr/xdmod-appkernels).
+
+### SUPReMM
+
+This module enables analysis of individual and aggregate job performance using
+hardware data from CPUs, memory, filesystems, network interfaces, and more.
+For more information, visit the SUPReMM Module
+[website](http://supremm.xdmod.org/supremm-overview.html) and
+[repository](https://github.com/ubccr/xdmod-supremm).
+
 ## Installation
 
 Prebuilt packages of Open XDMoD are available as
@@ -34,54 +56,31 @@ for additional information.
 
 Feedback is always welcome, and contributions are greatly appreciated!
 Before getting started, please see
-[our contributing guidelines](.github/CONTRIBUTING.md).
+[our contributing instructions and guidelines](.github/CONTRIBUTING.md).
+
+In short, the steps to take are:
+  1. Fork any repositories for Open XDMoD or its modules that you wish to
+     work on.
+  1. Clone and set up the repositories on your local system
+     (see "[Developing](#developing)", below).
+  1. Develop your work and test it, ensuring your work follows
+     [our contributing guidelines](.github/CONTRIBUTING.md).
+  1. Push your work to your forks.
+  1. Open pull requests for your work from your forks to the central
+     repositories. The pull requests will then be reviewed by the XDMoD team.
 
 ## Developing
 
 Development on Open XDMoD and its modules can be started using either
-Repo or Git. If you are unsure which to start with, try Repo, as it is
+[Repo][] or Git. If you are unsure which to start with, try Repo, as it is
 easy to transition from a Repo workflow to a pure Git workflow. If you
 don't want to install yet another tool, using Git will work just fine.
 
-### Using Repo
-
-To assist with initial setup and development across Open XDMoD and its modules,
-we support the use of [Repo](https://code.google.com/p/git-repo/), a tool built
-by the Android development team to help manage multi-repository projects.
-We supply a [Repo manifest repository](https://github.com/ubccr/xdmod-repo-manifest)
-that can be used to get started with Open XDMoD and first-party modules.
-
-The steps below will get you started, but further documentation on using Repo
-can be found [here](https://source.android.com/source/using-repo.html). At any
-point, standard Git commands may be used in individual project directories,
-as the directories are simply standard Git repositories.
-
-To clone Open XDMoD and first-party modules, run the following commands,
-substituting in the branch for the version you wish you base your work on
-(e.g. `xdmod6.5`):
-
-```bash
-repo init -u git@github.com:ubccr/xdmod-repo-manifest -b [branch]
-repo sync
-```
-
-Note that unlike `git clone`, Repo does not automatically create a local branch
-tracking the initial branch that was checked out (although you can create these
-branches manually, if you wish, by running `repo forall -c 'git checkout
-[branch]'`).
-
-To add forks of the various projects to all repositories at once, run this
-command, substituting in your GitHub username:
-
-```bash
-repo forall -c 'git remote add origin git@github.com:[username]/$REPO_PROJECT'
-```
-
-To start a branch on one or more projects, use this command:
-
-```bash
-repo start [branch] [projects...]
-```
+Before starting with either, however, you will want to fork any repositories
+you are interested in working on. Simply visit the repositories' pages on GitHub
+and click the Fork button. Once you have finished working on a feature or bug
+fix for a project, push the work to your fork and open a pull request against
+the main repo for that project.
 
 ### Using Git
 
@@ -111,6 +110,82 @@ git clone git@github.com:[username]/xdmod-supremm [supremm_repo]
 ln -s [supremm_repo] [xdmod_repo]/open_xdmod/modules/supremm
 ```
 
+### Using Repo
+
+To assist with initial setup and development across Open XDMoD and its modules,
+we support the use of [Repo][], a tool built
+by the Android development team to help manage multi-repository projects.
+It can help you get started by setting up multiple repositories at once, and it
+provides some convenience functions for working across repositories.
+We supply a [Repo manifest repository][xdmod-repo-manifest]
+that can be used to get started with Open XDMoD and first-party modules.
+
+The steps below will get you started, but further documentation on using Repo
+can be found [here](https://source.android.com/source/using-repo.html). At any
+point, standard Git commands may be used in individual project directories,
+as the directories are simply standard Git repositories.
+
+To clone Open XDMoD and first-party modules, run the following commands,
+substituting in the branch for the version you wish you base your work on
+(e.g. `xdmod6.5`):
+
+```bash
+repo init -u git@github.com:ubccr/xdmod-repo-manifest -b [branch]
+repo sync
+```
+
+Note that unlike `git clone`, Repo does not automatically create a local branch
+tracking the initial branch that was checked out (although you can create these
+branches manually, if you wish, by running `repo forall -c 'git checkout
+[branch]'`).
+
+To add forks of the various projects to all repositories at once, run this
+command, substituting in your GitHub username:
+
+```bash
+repo forall -c 'git remote add origin git@github.com:[username]/$REPO_PROJECT'
+```
+
+To check that the above command worked correctly, you can run this command:
+
+```bash
+repo forall -c 'git fetch origin'
+```
+
+Now that the repositories have been set up, you can use standard Git commands
+in each repository. Repo also provides some convenience functions for performing
+tasks across all repositories. For example, `repo status` will display the
+current branch and changes for all repositories. You can also use `repo forall`
+to execute any shell command in all repositories.
+
+#### Custom Modules with Repo
+
+If you are working on custom modules for Open XDMoD, you can tell Repo where to
+find them using one of two methods.
+
+If you want to use a custom configuration in
+multiple places, you can fork or clone the
+[XDMoD Repo manifest repository][xdmod-repo-manifest] and apply modifications
+there. (Note that a fork, like the source repo, will be public. If you wish to
+keep your custom configs private, clone the main repo directly and treat the
+clone as an independent repo. You can then push the clone to your own private
+server, or you can just keep it local to your machine.) The existing entries for
+various Open XDMoD modules can be used as templates for your custom modules. The
+format of the Repo manifest file is described in greater detail
+[here][repo-format]. Once you have made your changes and committed them,
+run these commands to pull in your changes:
+
+```bash
+repo init -u [local_or_remote_path_to_manifest_repo] -b [branch_with_changes]
+repo sync
+```
+
+If you just want to make some small changes locally, you can add local manifest
+files to `.repo/local_manifests` that will extend the main manifest file being
+used. More information about the manifest file format and local manifest files
+may be found [here][repo-format]. Once you have made the desired changes, run
+`repo sync` to pull the changes in.
+
 ## Building
 
 ### Dependencies
@@ -136,9 +211,17 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 
 #### Source
 
+This process has been tested on CentOS 6, CentOS 7, and Ubuntu 16.04. Known
+issues are documented in the [Building FAQ](#building-faq) below. If you run
+into any issues not listed below on these or any other platforms, please
+let us know.
+
   1. Change directory to the root of the Open XDMoD repository.
   1. Install Composer dependencies for Open XDMoD.
     - `composer install`
+    - Depending on the versions of various software installed on your system,
+      you may run into errors. If you do, see the [Building FAQ](#building-faq)
+      below.
   1. Run the package builder script.
     - `open_xdmod/build_scripts/build_package.php --module xdmod`
     - To build Open XDMoD modules, substitute `xdmod` with the name of a
@@ -147,6 +230,11 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 The resulting tarball will be located in `open_xdmod/build`.
 
 #### RPM
+
+This process has been tested on CentOS 6 and CentOS 7. Known
+issues are documented in the [Building FAQ](#building-faq) below. If you run
+into any issues not listed below on these or any other platforms, please
+let us know.
 
 This procedure assumes your `rpmbuild` directory is `~/rpmbuild`. If it is not,
 substitute accordingly.
@@ -162,8 +250,70 @@ substitute accordingly.
     - `tar -xOf ~/rpmbuild/SOURCES/xdmod-x.y.z.tar.gz xdmod-x.y.z/xdmod.spec >~/rpmbuild/SPECS/xdmod.spec`
   1. Run `rpmbuild`.
     - `rpmbuild -bb ~/rpmbuild/SPECS/xdmod.spec`
+    - There may be warnings about files not being found or files being
+      listed twice. These are likely benign - see the
+      [Building FAQ](#building-faq) below.
 
 The resulting RPM will be located in `~/rpmbuild/RPMS/noarch`.
+
+### Building FAQ
+
+#### Why is Composer unable to download some files?
+
+Certain combinations of PHP and Composer do not handle redirects over HTTPS
+correctly. This is known to affect the version of PHP that CentOS 6 supplies
+combined with current stable versions of Composer (as of this writing, 1.2.4).
+To get things working, try one or more steps below.
+
+  1. Update Composer to a newer version.
+  1. If the above did not work or is not feasible, you can globally disable
+     HTTPS in Composer by running `composer config -g disable-tls true`. While
+     disabling HTTPS is not recommended by the Composer developers or us, all
+     dependencies downloaded using XDMoD's config files will be checked
+     against checksums to help prevent against tampering.
+
+#### Why is Composer failing to unzip Ext JS?
+
+The ZIP file for the version of Ext JS being used contains multiple files
+with the same path, and some ZIP programs and libraries do not handle this case
+quietly. If Composer uses the system's `unzip` utility to unpack the ZIP file
+and that version of `unzip` asks for input, Composer will error out. This is
+known to affect the ZIP utilities that Ubuntu 16.04 supplies and the current
+stable versions of Composer (as of this writing, 1.2.4).
+
+Fortunately, PHP's ZIP library will work for this case. Unfortunately,
+getting Composer to use the PHP library currently requires either modifying
+Composer's code or hiding your system's `unzip` utility. You can do the latter
+quickly by temporarily renaming `unzip` to something like `unzip-hidden`, then
+changing the name back once Composer has completed installation. These solutions
+aren't ones we're fans of, so if you have a better solution, please share!
+
+#### Why is `rpmbuild` warning about files not being found?
+
+When building modules for Open XDMoD, `rpmbuild` may warn about core Open
+XDMoD files being missing. These warnings can be safely ignored if they are
+for the following files:
+
+- `/usr/share/xdmod/configuration/linker.php`
+- `/usr/share/xdmod/reporting/jasper_builder/ReportBuilder.sh`
+- `/usr/share/xdmod/configuration/constants.php`
+- `/etc/xdmod/portal_settings.ini`
+- `/usr/local/xdmod/etc/logrotate.d/xdmod`
+- `/etc/cron.d/xdmod`
+- `/usr/local/xdmod/etc/apache.d/xdmod.conf`
+
+If other files are not being found, then there may be a problem with the build
+configuration or the module's RPM spec file.
+
+#### Why is `rpmbuild` warning about files being listed twice?
+
+When building the core Open XDMoD package, `robots.txt` is included both as
+a code file (being inside the `html` directory) and as a config file (in order
+to prevent customizations from being lost on upgrade). This warning can be
+safely ignored.
+
+If other files produce this warning, then there may be a problem with the build
+configuration or the module's RPM spec file.
 
 ## License
 
@@ -179,3 +329,6 @@ Some software products used by Open XDMoD are not free for commercial use.
 See the [license page on the Open XDMoD website][license-page] for details.
 
 [license-page]: http://open.xdmod.org/notices.html
+[repo]: https://code.google.com/p/git-repo/
+[repo-format]: https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.txt
+[xdmod-repo-manifest]: https://github.com/ubccr/xdmod-repo-manifest
