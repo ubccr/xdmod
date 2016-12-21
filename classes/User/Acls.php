@@ -21,7 +21,7 @@ FROM user_acls ua
     ON a.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
-        return $db->query($sql, array('user_id' => $userId), true);
+        return $db->query($sql, array('user_id' => $userId));
     }
 
     public static function userHasAcl(iDatabase $db, \XDUser $user, iAcl $acl)
@@ -43,7 +43,7 @@ WHERE
   AND a.enabled = TRUE
 SQL;
 
-        $results =  $db->query($sql, array('acl_id' => $aclId, 'user_id' => $userId), true);
+        $results =  $db->query($sql, array('acl_id' => $aclId, 'user_id' => $userId));
 
         return $results[0] == 1;
     }
@@ -69,7 +69,7 @@ WHERE
   AND ua.user_id = :user_id
   AND a.enabled = TRUE
 SQL;
-        $results = $db->query($sql, array('user_id' => $userId, 'acl_ids' => $aclIds), true);
+        $results = $db->query($sql, array('user_id' => $userId, 'acl_ids' => $aclIds));
 
         return $results[0] == 1;
     }

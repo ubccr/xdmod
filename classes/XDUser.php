@@ -525,6 +525,7 @@ SQL;
 
       $acls = array_reduce($results, function($carry, $item) {
           $carry []= new Acl($item);
+          return $carry;
       }, array());
 
       $user->setAcls($acls);
@@ -549,6 +550,7 @@ SQL;
        $results = $pdo->query($query, array('user_id' => $uid));
        $assets = array_reduce($results, function($carry, $item) {
            $carry []= new Asset($item);
+           return $carry;
        }, array());
        $user->setAssets($assets);
 
