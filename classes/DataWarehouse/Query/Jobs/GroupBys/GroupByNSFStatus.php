@@ -48,11 +48,6 @@ class GroupByNSFStatus extends \DataWarehouse\Query\Jobs\GroupBy
 		return 'stack';
 	}
 	
-	public function getDefaultShowTrendLine()
-	{
-		return 'n';
-	}
-
 	public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false)
 	{
 		$query->addTable($this->nsfstatuscode_table);
