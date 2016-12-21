@@ -16,6 +16,7 @@
 namespace ETL;
 
 use \Exception;  // Base exception
+use Log;
 
 class EtlOverseer extends Loggable
 implements iEtlOverseer
@@ -40,8 +41,9 @@ implements iEtlOverseer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(EtlOverseerOptions $options)
+    public function __construct(EtlOverseerOptions $options, Log $logger = null)
     {
+        parent::__construct($logger);
         $this->etlOverseerOptions = $options;
     }  // __construct()
 
@@ -260,7 +262,7 @@ implements iEtlOverseer
                 $this->standaloneActions = $this->verifyActions($etlConfig, $actionNames);
             }
 
-            // Verify sections that were specified directly on the command line
+            // Verify sections that were specified as part of a pipeline
             $sectionNames = $this->etlOverseerOptions->getSectionNames();
             if ( count($sectionNames) > 0 ) {
                 $this->sectionActions = $this->verifySections($etlConfig, $sectionNames);
@@ -271,17 +273,51 @@ implements iEtlOverseer
             return;
         }
 
+        // Generate a list of individual actions that will be executed so we can store them in the
+        // lock file.
+
+        $uniqueActionList = array_unique(
+            array_reduce(
+                $this->sectionActions,
+                function ($carry, $item) { return array_merge($carry, $item); },
+                $this->standaloneActions
+            )
+        );
+        $actionNameList = array_map(function($obj) { return $obj->getName(); }, $uniqueActionList);
+
+        // Generate a lock file
+
+        $lockfile = new LockFile(
+            $this->etlOverseerOptions->getLockDir(),
+            $this->etlOverseerOptions->getLockFilePrefix(),
+            $this->logger
+        );
+
+        $lockfile->lock($actionNameList);
+
         foreach ( $this->standaloneActions as $actionName => $actionObj ) {
-            $this->_execute($actionName, $actionObj);
+            try {
+                $this->_execute($actionName, $actionObj);
+            } catch ( Exception $e ) {
+                $lockfile->unlock();
+                throw $e;
+            }
         }
 
         foreach ( $this->sectionActions as $sectionName => $actionList ) {
             $this->logger->notice("Start processing section '$sectionName'");
             foreach ( $actionList as $actionName => $actionObj ) {
-                $this->_execute($actionName, $actionObj);
+                 try {
+                     $this->_execute($actionName, $actionObj);
+                 } catch ( Exception $e ) {
+                     $lockfile->unlock();
+                     throw $e;
+                 }
             }
             $this->logger->notice("Finished processing section '$sectionName'");
         }
+
+        $lockfile->unlock();
 
     }  // execute()
 
@@ -311,12 +347,14 @@ implements iEtlOverseer
         try {
             $actionObj->execute($this->etlOverseerOptions);
         } catch ( Exception $e ) {
-            if ( null !== $actionObj->getOptions()->stop_on_exception
+            if ( isset($actionObj->getOptions()->stop_on_exception)
                  && true == $actionObj->getOptions()->stop_on_exception ) {
-                $this->logger->warning($e->getMessage());
+                $msg = "Stopping ETL due to exception in " . $actionObj;
+                $this->logger->warning($msg);
                 throw $e;
             } else {
-                $this->logger->error($e->getMessage());
+                $msg = "Exception thrown by " . $actionObj . " but stop_on_execution=false, continuing";
+                $this->logger->warning($msg);
             }
         }
 
