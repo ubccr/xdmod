@@ -517,11 +517,11 @@ FROM user_acls ua
 WHERE ua.user_id = :user_id
       AND a.enabled = TRUE
 SQL;
-      $pdo->execute($query,
+      $results = $pdo->query($query,
           array(
               'user_id' => $uid
           ));
-      $results = $pdo->fetchAll();
+
 
       $acls = array_reduce($results, function($carry, $item) {
           $carry []= new Acl($item);
@@ -546,8 +546,7 @@ WHERE
 AND a.enabled = TRUE
 AND ast.enabled = TRUE;
 SQL;
-       $pdo->execute($query, array('user_id', $uid));
-       $results = $pdo->fetchAll();
+       $results = $pdo->query($query, array('user_id', $uid));
        $assets = array_reduce($results, function($carry, $item) {
            $carry []= new Asset($item);
        }, array());
