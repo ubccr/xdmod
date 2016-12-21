@@ -185,7 +185,8 @@ implements iAction
             'SOURCE_SCHEMA' => $sourceEndpoint->getSchema(),
             'DESTINATION_SCHEMA' => $destinationEndpoint->getSchema(),
             'START_DATE' =>  $destinationEndpoint->quote($etlOverseerOptions->getStartDate()),
-            'END_DATE' => $destinationEndpoint->quote($etlOverseerOptions->getEndDate())
+            'END_DATE' => $destinationEndpoint->quote($etlOverseerOptions->getEndDate()),
+            'LAST_MODIFIED' => $destinationEndpoint->quote($etlOverseerOptions->getLastModifiedStartDate())
             );
         $this->variableMap = array_merge($this->variableMap, $localVariableMap);
 
@@ -243,10 +244,10 @@ implements iAction
 
                 $this->logger->debug("Executing SQL: $sql");
                 $sqlStartTime = microtime(true);
-
+                $numRowsAffected = 0;
                 try {
                     if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                        $destinationEndpoint->getHandle()->execute($sql);
+                        $numRowsAffected = $destinationEndpoint->getHandle()->execute($sql);
                     }
                 } catch ( PDOException $e ) {
                     $msg = "Error executing sql: " . $e->getMessage();
@@ -254,7 +255,7 @@ implements iAction
                 }
 
                 $time = microtime(true) - $sqlStartTime;
-                $this->logger->debug("Elapsed time: " . round($time, 5));
+                $this->logger->debug("Affected $numRowsAffected rows. Elapsed time: " . round($time, 5));
 
                 $numStatementsProcessed++;
 
