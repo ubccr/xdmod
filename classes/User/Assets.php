@@ -6,6 +6,36 @@ use XDUser;
 
 class Assets
 {
+
+    public static function createAsset(PDO $connection, iAsset $asset)
+    {
+        if (!isset($connection, $asset)) {
+            return false;
+        }
+
+        if (NULL != $asset->getAssetId()){
+            throw new Exception('Cannot create an asset that already has an id');
+        }
+
+        $sql = <<<SQL
+INSERT INTO assets(module_id, asset_type_id, name, display, enabled) 
+VALUES (:module_id, :asset_type_id, :name, :display, :enabled);
+SQL;
+
+        $prepared = $connection->prepare($sql);
+
+        $prepared->bindParam('module_id', $asset->getModuleId());
+        $prepared->bindParam('asset_type_id', $asset->getAssetTypeId());
+        $prepared->bindParam('name', $asset->getName());
+        $prepared->bindParam('display', $asset->getDisplay());
+        $prepared->bindParam('enabled', $asset->getEnabled());
+
+        $result = $prepared->execute();
+        $prepared->closeCursor();
+
+        return $result;
+    }
+
     /**
      * Determine whether or not the '$user' has been granted access to the provided
      * '$asset'.
@@ -44,7 +74,9 @@ SQL;
         $prepared->bindParam('user_id', $userId);
         $prepared->bindParam('asset_id', $assetId);
 
-        $result = $prepared->execute();
+        $prepared->execute();
+
+        $result = $prepared->fetchAll(PDO::FETCH_ASSOC);
 
         return $result[0] == 1;
     }
@@ -85,7 +117,9 @@ SQL;
         $prepared->bindParam('user_id', $userId);
         $prepared->bindParam('asset_ids', implode(', ', $assetIds));
 
-        $result = $prepared->execute();
+        $prepared->execute();
+
+        $result = $prepared->fetchAll(PDO::FETCH_ASSOC);
 
         return $result[0] == 1;
     }

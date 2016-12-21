@@ -161,4 +161,13 @@ interface iDatabase
      * @return string The quoted string.
      */
     public function quote($string);
+
+    /**
+     * Returns the internal PDO handle used to process requested database
+     * actions.
+     *
+     * @return \PDO
+     */
+    public function handle();
+
 }

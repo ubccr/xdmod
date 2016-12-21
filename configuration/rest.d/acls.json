@@ -1,0 +1,6 @@
+{
+    "acls": {
+        "prefix": "acls",
+        "controller": "NewRest\\Controllers\\AclsControllerProvider"
+    }
+}

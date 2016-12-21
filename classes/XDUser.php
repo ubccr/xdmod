@@ -3,6 +3,10 @@
 require_once dirname(__FILE__).'/../configuration/linker.php';
 
 use CCR\DB;
+use User\Acl;
+use User\Asset;
+use User\iAcl;
+use User\iAsset;
 
 /**
  * XDMoD Portal User
@@ -43,6 +47,16 @@ class XDUser {
    private $_token;
 
    private $_cachedActiveRole;
+
+    /**
+     * @var iAsset[]
+     */
+   private $_assets;
+
+    /**
+     * @var iAcl[]
+     */
+   private $_acls;
 
    const PUBLIC_USER = 1;
    const INTERNAL_USER = 2;
@@ -494,6 +508,53 @@ class XDUser {
 
       }//foreach
 
+       // BEGIN: ACL population
+       $query = <<<SQL
+SELECT a.*
+FROM user_acls ua
+  JOIN acls a
+    ON a.acl_id = ua.acl_id
+WHERE ua.user_id = :user_id
+      AND a.enabled = TRUE
+SQL;
+      $pdo->execute($query,
+          array(
+              'user_id' => $uid
+          ));
+      $results = $pdo->fetchAll();
+
+      $acls = array_reduce($results, function($carry, $item) {
+          $carry []= new Acl($item);
+      }, array());
+
+      $user->setAcls($acls);
+      // END: ACL population
+
+      // BEGIN: Asset Population
+       $query = <<<SQL
+SELECT DISTINCT
+  ast.*
+FROM acl_assets aa
+  JOIN acls a
+    ON a.acl_id = aa.acl_id
+  JOIN assets ast
+    ON ast.asset_id = aa.asset_id
+  JOIN user_acls AS ua
+    ON aa.acl_id = ua.acl_id
+WHERE
+  ua.user_id = :user_id
+AND a.enabled = TRUE
+AND ast.enabled = TRUE;
+SQL;
+       $pdo->execute($query, array('user_id', $uid));
+       $results = $pdo->fetchAll();
+       $assets = array_reduce($results, function($carry, $item) {
+           $carry []= new Asset($item);
+       }, array());
+       $user->setAssets($assets);
+
+      // END:   Asset Population
+
       return $user;
 
    }//getUserByID
@@ -888,8 +949,29 @@ class XDUser {
         }
         /* END: Update Token Information */
 
-        /* BEGIN: UserRole Updating */
 
+
+        /* BEGIN: ACL data processing */
+
+        // REMOVE: existing user -> acl relations
+        $this->_pdo->execute(
+            'DELETE FROM user_acls WHERE user_id = :user_id',
+            array('user_id', $this->_id)
+        );
+
+        // ADD: current user -> acl relations
+        foreach($this->_acls as $acl) {
+            $this->_pdo->execute(
+                'INSERT INTO user_acls(user_id, acl_id) VALUES(:user_id, :acl_id)',
+                array(
+                    'user_id' => $this->_id,
+                    'acl_id' => $acl->getAclId()
+                )
+            );
+        }
+        /* END:   ACL data processing */
+
+        /* BEGIN: UserRole Updating */
         // Rebuild roles data for user --------------
         $this->_pdo->execute(
             'DELETE FROM UserRoles WHERE user_id=:id',
@@ -2819,4 +2901,26 @@ class XDUser {
 
       return $returnData;
    }
+
+   public function getAssets()
+   {
+       return $this->_assets;
+   }
+
+   public function setAssets(array $assets)
+   {
+       $this->_assets = $assets;
+   }
+
+   public function getAcls()
+   {
+       return $this->_acls;
+   }
+
+   public function setAcls(array $acls)
+   {
+       $this->_acls = $acls;
+   }
+
+
 }//XDUser
