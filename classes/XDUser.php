@@ -546,7 +546,7 @@ WHERE
 AND a.enabled = TRUE
 AND ast.enabled = TRUE;
 SQL;
-       $results = $pdo->query($query, array('user_id', $uid));
+       $results = $pdo->query($query, array('user_id' => $uid));
        $assets = array_reduce($results, function($carry, $item) {
            $carry []= new Asset($item);
        }, array());
