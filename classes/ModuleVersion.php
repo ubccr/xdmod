@@ -23,10 +23,10 @@
  * @method void    setCreatedOn($createdOn)
  * @method string  getLastModifiedOn()
  * @method void    setLastModifiedOn($lastModifiedOn)
- * @method iModule getModule()
- * @method void    setModule(iModule $module)
+ * @method Module getModule()
+ * @method void    setModule(Module $module)
  */
-class ModuleVersion extends DBOBject implements iModuleVersion
+class ModuleVersion extends DBOBject
 {
     /**
      * @var integer
@@ -79,7 +79,7 @@ class ModuleVersion extends DBOBject implements iModuleVersion
     protected $lastModifiedOn;
 
     /**
-     * @var iModule
+     * @var Module
      */
     protected $module;
 

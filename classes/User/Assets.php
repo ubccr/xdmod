@@ -7,7 +7,7 @@ use XDUser;
 class Assets
 {
 
-    public static function createAsset(PDO $connection, iAsset $asset)
+    public static function createAsset(PDO $connection, Asset $asset)
     {
         if (!isset($connection, $asset)) {
             return false;
@@ -42,10 +42,10 @@ SQL;
      *
      * @param PDO $connection
      * @param XDUser $user
-     * @param iAsset $asset
+     * @param Asset $asset
      * @return bool
      */
-    public static function userHasAsset(PDO $connection, XDUser $user, iAsset $asset)
+    public static function userHasAsset(PDO $connection, XDUser $user, Asset $asset)
     {
         if (!isset($connection, $user, $asset)) {
             return false;
@@ -84,7 +84,7 @@ SQL;
     /**
      * @param PDO $connection
      * @param XDUser $user
-     * @param iAsset[] $assets
+     * @param Asset[] $assets
      * @return bool
      */
     public static function userHasAssets(PDO $connection, XDUser $user, array $assets = array())
@@ -94,7 +94,7 @@ SQL;
         }
 
         $userId = $user->getUserID();
-        $assetIds = array_reduce($assets, function($carry, iAsset $item) use ($connection) {
+        $assetIds = array_reduce($assets, function($carry, Asset $item) use ($connection) {
             $carry []= $connection->quote($item->getAssetId(), PDO::PARAM_INT);
         }, array());
 

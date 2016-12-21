@@ -13,13 +13,13 @@
  * @method void             setDisplay($display)
  * @method boolean          getEnabled()
  * @method void             setEnabled($enabled)
- * @method iModuleVersion   getCurrentVersion()
- * @method void             setCurrentVersion(iModuleVersion $currentVersion)
- * @method iModuleVersion[] getVersions()
+ * @method ModuleVersion    getCurrentVersion()
+ * @method void             setCurrentVersion(ModuleVersion $currentVersion)
+ * @method ModuleVersion[]  getVersions()
  * @method void             setVersions(array $versions)
  *
  */
-class Module extends DBObject implements iModule
+class Module extends DBObject
 {
     /**
      * @var integer
@@ -47,12 +47,12 @@ class Module extends DBObject implements iModule
     protected $enabled;
 
     /**
-     * @var iModuleVersion
+     * @var ModuleVersion
      */
     protected $currentVersion;
 
     /**
-     * @var iModuleVersion[]
+     * @var ModuleVersion[]
      */
     protected $versions;
 

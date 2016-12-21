@@ -1,7 +1,7 @@
 <?php namespace User;
 
 use DBObject;
-use iModule;
+use Module;
 
 /**
  * Class Acl
@@ -20,11 +20,11 @@ use iModule;
  * @method void    setDisplay($display)
  * @method boolean getEnabled()
  * @method void    setEnabled($enabled)
- * @method iModule getModule()
- * @method void    setModule(iModule $module)
+ * @method Module getModule()
+ * @method void    setModule(Module $module)
  *
  */
-class Acl extends DBObject implements iAcl
+class Acl extends DBObject
 {
 
     protected $aclId;

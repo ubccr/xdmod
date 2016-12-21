@@ -1,7 +1,7 @@
 <?php namespace User;
 
 use DBObject;
-use iModule;
+use Module;
 
 /**
  * Class Asset
@@ -20,12 +20,12 @@ use iModule;
  * @method void       setDisplay($display)
  * @method boolean    getEnabled()
  * @method void       setEnabled($enabled)
- * @method iModule    getModule()
- * @method void       setModule(iModule $module)
- * @method iAssetType getAssetType()
- * @method void       setAssetType(iAssetType $assetType)
+ * @method Module     getModule()
+ * @method void       setModule(Module $module)
+ * @method AssetType  getAssetType()
+ * @method void       setAssetType(AssetType $assetType)
  */
-class Asset extends DBObject implements iAsset
+class Asset extends DBObject
 {
     /**
      * @var integer
@@ -58,12 +58,12 @@ class Asset extends DBObject implements iAsset
     protected $enabled;
 
     /**
-     * @var iModule
+     * @var Module
      */
     protected $module;
 
     /**
-     * @var iAssetType
+     * @var AssetType
      */
     protected $assetType;
 }

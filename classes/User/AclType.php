@@ -1,7 +1,7 @@
 <?php namespace User;
 
 use DBObject;
-use iModule;
+use Module;
 
 
 /**
@@ -16,11 +16,11 @@ use iModule;
  * @method void    setName($name)
  * @method string  getDisplay()
  * @method void    setDisplay($display)
- * @method iModule getModule()
- * @method void    setModule(iModule $module)
+ * @method Module getModule()
+ * @method void    setModule(Module $module)
  *
  */
-class AclType extends DBObject implements iAclType
+class AclType extends DBObject
 {
     /**
      * @var integer
@@ -43,7 +43,7 @@ class AclType extends DBObject implements iAclType
     protected $display;
 
     /**
-     * @var iModule
+     * @var Module
      */
     protected $module;
 }
