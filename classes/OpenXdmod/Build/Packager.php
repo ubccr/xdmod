@@ -491,7 +491,10 @@ class Packager
         $dirs = array_diff(scandir($srcDir), array(
             '.',
             '..',
+            '.git',
+            '.github',
             'assets',
+            'docs',
             'tests',
         ));
 
