@@ -211,11 +211,17 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 
 #### Source
 
+This process has been tested on CentOS 6, CentOS 7, and Ubuntu 16.04. Known
+issues are documented in the [Building FAQ](#building-faq) below. If you run
+into any issues not listed below on these or any other platforms, please
+let us know.
+
   1. Change directory to the root of the Open XDMoD repository.
   1. Install Composer dependencies for Open XDMoD.
     - `composer install`
     - Depending on the versions of various software installed on your system,
-      you may run into errors. See the [Building FAQ](#building-faq) below.
+      you may run into errors. If you do, see the [Building FAQ](#building-faq)
+      below.
   1. Run the package builder script.
     - `open_xdmod/build_scripts/build_package.php --module xdmod`
     - To build Open XDMoD modules, substitute `xdmod` with the name of a
@@ -224,6 +230,11 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 The resulting tarball will be located in `open_xdmod/build`.
 
 #### RPM
+
+This process has been tested on CentOS 6 and CentOS 7. Known
+issues are documented in the [Building FAQ](#building-faq) below. If you run
+into any issues not listed below on these or any other platforms, please
+let us know.
 
 This procedure assumes your `rpmbuild` directory is `~/rpmbuild`. If it is not,
 substitute accordingly.
@@ -240,7 +251,8 @@ substitute accordingly.
   1. Run `rpmbuild`.
     - `rpmbuild -bb ~/rpmbuild/SPECS/xdmod.spec`
     - There may be warnings about files not being found or files being
-      listed twice. These are likely benign.
+      listed twice. These are likely benign - see the
+      [Building FAQ](#building-faq) below.
 
 The resulting RPM will be located in `~/rpmbuild/RPMS/noarch`.
 
@@ -249,22 +261,25 @@ The resulting RPM will be located in `~/rpmbuild/RPMS/noarch`.
 #### Why is Composer unable to download some files?
 
 Certain combinations of PHP and Composer do not handle redirects over HTTPS
-correctly. To get things working, try one or more steps below.
+correctly. This is known to affect the version of PHP that CentOS 6 supplies
+combined with current stable versions of Composer (as of this writing, 1.2.4).
+To get things working, try one or more steps below.
 
   1. Update Composer to a newer version.
-  1. Update PHP to a newer version.
   1. If the above did not work or is not feasible, you can globally disable
      HTTPS in Composer by running `composer config -g disable-tls true`. While
      disabling HTTPS is not recommended by the Composer developers or us, all
      dependencies downloaded using XDMoD's config files will be checked
      against checksums to help prevent against tampering.
 
-#### Why can't Composer unzip Ext JS?
+#### Why is Composer failing to unzip Ext JS?
 
 The ZIP file for the version of Ext JS being used contains multiple files
 with the same path, and some ZIP programs and libraries do not handle this case
 quietly. If Composer uses the system's `unzip` utility to unpack the ZIP file
-and that version of `unzip` asks for input, Composer will error out.
+and that version of `unzip` asks for input, Composer will error out. This is
+known to affect the ZIP utilities that Ubuntu 16.04 supplies and the current
+stable versions of Composer (as of this writing, 1.2.4).
 
 Fortunately, PHP's ZIP library will work for this case. Unfortunately,
 getting Composer to use the PHP library currently requires either modifying
@@ -272,6 +287,33 @@ Composer's code or hiding your system's `unzip` utility. You can do the latter
 quickly by temporarily renaming `unzip` to something like `unzip-hidden`, then
 changing the name back once Composer has completed installation. These solutions
 aren't ones we're fans of, so if you have a better solution, please share!
+
+#### Why is `rpmbuild` warning about files not being found?
+
+When building modules for Open XDMoD, `rpmbuild` may warn about core Open
+XDMoD files being missing. These warnings can be safely ignored if they are
+for the following files:
+
+- `/usr/share/xdmod/configuration/linker.php`
+- `/usr/share/xdmod/reporting/jasper_builder/ReportBuilder.sh`
+- `/usr/share/xdmod/configuration/constants.php`
+- `/etc/xdmod/portal_settings.ini`
+- `/usr/local/xdmod/etc/logrotate.d/xdmod`
+- `/etc/cron.d/xdmod`
+- `/usr/local/xdmod/etc/apache.d/xdmod.conf`
+
+If other files are not being found, then there may be a problem with the build
+configuration or the module's RPM spec file.
+
+#### Why is `rpmbuild` warning about files being listed twice?
+
+When building the core Open XDMoD package, `robots.txt` is included both as
+a code file (being inside the `html` directory) and as a config file (in order
+to prevent customizations from being lost on upgrade). This warning can be
+safely ignored.
+
+If other files produce this warning, then there may be a problem with the build
+configuration or the module's RPM spec file.
 
 ## License
 
