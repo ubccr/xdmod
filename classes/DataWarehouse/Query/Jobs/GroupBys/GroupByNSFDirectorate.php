@@ -62,11 +62,6 @@ class GroupByNSFDirectorate extends \DataWarehouse\Query\Jobs\GroupBy
    {
       return 'y';
    }
-
-   public function getDefaultShowErrorBars()
-   {
-       return 'n';
-   }
    public function getDefaultShowGuideLines()
    {
        return 'n';
