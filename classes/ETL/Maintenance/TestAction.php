@@ -34,14 +34,6 @@ implements iAction
 
     public function execute(EtlOverseerOptions $etlOptions)
     {
-        // This should be made into a generic testing action that can
-        // 1. Sleep
-        // 2. Throw an exception
-        // 3. Echo a string
-        if ( ! isset($this->options->type) ) {
-            return true;
-        }
-
         if ( $etlOptions->isDryrun() ) {
             return;
         }
