@@ -273,24 +273,19 @@ class Slurm extends Shredder
 
             list($jobId, $arrayPart) =  explode('_', $job['job_id'], 2);
 
+            try {
+                $arrayIds = $this->parseJobArrayIndexes($arrayPart);
+            } catch (Exception $e) {
+                $this->logger->debug($e->getMessage());
+                $msg = "Failed to parse job id '{$job['job_id']}'";
+                throw new Exception($msg);
+            }
+
             $job['job_id'] = $jobId;
 
-            if (preg_match('/^\d+$/', $arrayPart)) {
-                $job['job_array_index'] = $arrayPart;
+            foreach ($arrayIds as $arrayId) {
+                $job['job_array_index'] = $arrayId;
                 $this->insertRow($job);
-            } elseif (
-                preg_match('/^\[(\d+)-(\d+)\]$/', $arrayPart, $matches)
-            ) {
-                $start = $matches[1];
-                $end   = $matches[2];
-
-                foreach (range($start, $end) as $arrayIndex) {
-                    $job['job_array_index'] = $arrayIndex;
-                    $this->insertRow($job);
-                }
-            } else {
-                $msg = "Unexpected job id format '{$job['job_id']}'";
-                throw new Exception($msg);
             }
         } else {
             $job['job_array_index'] = -1;
@@ -450,5 +445,56 @@ class Slurm extends Shredder
             + $hours * 60 * 60
             + $minutes * 60
             + $seconds;
+    }
+
+    /**
+     * Parse the array indexes part of a job id.
+     *
+     * A job ID that contains array indexes is expected to be a number
+     * followed by an underscored followed by either a single number or
+     * a comma delimited list of numbers and ranges. e.g.: 123_1,
+     * 123_[1,2], 123_[1-3], 123_[1,4-9], 123_[2-5,17].
+     *
+     * @param string $arrayList The part of the job id that contains
+     *   the array indexes (everything after the underscore).
+     *
+     * @return array An array containing all the job array IDs.
+     *
+     * @throws Exception If parsing fails.
+     */
+    private function parseJobArrayIndexes($arrayList)
+    {
+        if (preg_match('/^\d+$/', $arrayList)) {
+            return array($arrayList);
+        }
+
+        $containsBrackets
+            = strpos($arrayList, '[') === 0
+            && strrpos($arrayList, ']') === strlen($arrayList) - 1;
+
+        if ($containsBrackets) {
+
+            // Remove brackets and split on comma.
+            $arrayParts = explode(
+                ',',
+                substr($arrayList, 1, strlen($arrayList) - 2)
+            );
+
+            $arrayIds = array();
+
+            foreach ($arrayParts as $arrayPart) {
+                if (strpos($arrayPart, '-') !== false) {
+                    list($min, $max) = explode('-', $arrayPart, 2);
+                    $arrayIds = array_merge($arrayIds, range($min, $max));
+                } else {
+                    $arrayIds[] = $arrayPart;
+                }
+            }
+
+            return $arrayIds;
+        } else {
+            $msg = "Failed to parse job array indexes '$arrayList'";
+            throw new Exception($msg);
+        }
     }
 }
