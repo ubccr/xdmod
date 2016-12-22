@@ -47,6 +47,41 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
         $shredder->shredLine($line);
     }
 
+    /**
+     * @dataProvider accountingLogWithJobArraysProvider
+     */
+    public function testJobArrayParsing($line, array $arrayIds)
+    {
+        $shredder = $this
+            ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
+            ->setConstructorArgs(array($this->db))
+            ->setMethods(array('insertRow'))
+            ->getMock();
+
+        $callCount = 0;
+
+        $shredder
+            ->expects($this->exactly(count($arrayIds)))
+            ->method('insertRow')
+            ->with($this->callback(
+                function ($subject) use (&$callCount, $arrayIds) {
+
+                    // There is a bug in the PHPUnit version being used
+                    // that calls the callback more that it should.
+                    // See https://github.com/sebastianbergmann/phpunit-mock-objects/pull/311
+                    if ($callCount >= count($arrayIds)) {
+                        return true;
+                    }
+
+                    return $arrayIds[$callCount++] == $subject['job_array_index'];
+                }
+            ));
+
+        $shredder->setLogger(\Log::singleton('null'));
+
+        $shredder->shredLine($line);
+    }
+
     public function accountingLogProvider()
     {
         return array(
@@ -173,6 +208,40 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
                     'node_list' => 'cpn-k16-35-01,cpn-k16-37-01',
                     'job_name' => 'allocation',
                 ),
+            ),
+        );
+    }
+
+    public function accountingLogWithJobArraysProvider()
+    {
+
+        // Array of arrays containing two elements:
+        // 1. An accounting log line.
+        // 2. An array of job array indexes present in accounting log line.
+        return array(
+            array(
+                '4103947_100|4103947|ub-hpc|general-compute|anon|anon|918273|unknown|192837|2015-06-26T13:57:00|2015-06-26T13:57:00|2015-06-28T02:55:50|2015-07-01T02:55:50|3-00:00:00|1:0|TIMEOUT|32|256|256|3000Mc|||3-00:00:00|d07n07s02,d07n19s02,d07n25s01,d07n28s01,d07n29s01,d07n31s02,d07n38s02,d09n04s[01-02],d09n05s02,d09n06s01,d09n07s01,d09n08s[01-02],d09n09s01,d09n11s[01-02],d09n13s01,d09n14s01,d09n15s01,d09n16s01,d09n17s01,d09n24s01,d09n25s02,d09n28s01,d09n35s01,d09n38s02,d13n[03,05,07-08,16]|1AbC-2-3',
+                array(100),
+            ),
+            array(
+                '4103947_[1-3]|4103947|ub-hpc|general-compute|anon|anon|918273|unknown|192837|2015-06-26T13:57:00|2015-06-26T13:57:00|2015-06-28T02:55:50|2015-07-01T02:55:50|3-00:00:00|1:0|TIMEOUT|32|256|256|3000Mc|||3-00:00:00|d07n07s02,d07n19s02,d07n25s01,d07n28s01,d07n29s01,d07n31s02,d07n38s02,d09n04s[01-02],d09n05s02,d09n06s01,d09n07s01,d09n08s[01-02],d09n09s01,d09n11s[01-02],d09n13s01,d09n14s01,d09n15s01,d09n16s01,d09n17s01,d09n24s01,d09n25s02,d09n28s01,d09n35s01,d09n38s02,d13n[03,05,07-08,16]|1AbC-2-3',
+                array(1, 2, 3),
+            ),
+            array(
+                '4103947_[1,5]|4103947|ub-hpc|general-compute|anon|anon|918273|unknown|192837|2015-06-26T13:57:00|2015-06-26T13:57:00|2015-06-28T02:55:50|2015-07-01T02:55:50|3-00:00:00|1:0|TIMEOUT|32|256|256|3000Mc|||3-00:00:00|d07n07s02,d07n19s02,d07n25s01,d07n28s01,d07n29s01,d07n31s02,d07n38s02,d09n04s[01-02],d09n05s02,d09n06s01,d09n07s01,d09n08s[01-02],d09n09s01,d09n11s[01-02],d09n13s01,d09n14s01,d09n15s01,d09n16s01,d09n17s01,d09n24s01,d09n25s02,d09n28s01,d09n35s01,d09n38s02,d13n[03,05,07-08,16]|1AbC-2-3',
+                array(1, 5),
+            ),
+            array(
+                '4103947_[9-11,20]|4103947|ub-hpc|general-compute|anon|anon|918273|unknown|192837|2015-06-26T13:57:00|2015-06-26T13:57:00|2015-06-28T02:55:50|2015-07-01T02:55:50|3-00:00:00|1:0|TIMEOUT|32|256|256|3000Mc|||3-00:00:00|d07n07s02,d07n19s02,d07n25s01,d07n28s01,d07n29s01,d07n31s02,d07n38s02,d09n04s[01-02],d09n05s02,d09n06s01,d09n07s01,d09n08s[01-02],d09n09s01,d09n11s[01-02],d09n13s01,d09n14s01,d09n15s01,d09n16s01,d09n17s01,d09n24s01,d09n25s02,d09n28s01,d09n35s01,d09n38s02,d13n[03,05,07-08,16]|1AbC-2-3',
+                array(9, 10, 11, 20),
+            ),
+            array(
+                '4103947_[91,100-102]|4103947|ub-hpc|general-compute|anon|anon|918273|unknown|192837|2015-06-26T13:57:00|2015-06-26T13:57:00|2015-06-28T02:55:50|2015-07-01T02:55:50|3-00:00:00|1:0|TIMEOUT|32|256|256|3000Mc|||3-00:00:00|d07n07s02,d07n19s02,d07n25s01,d07n28s01,d07n29s01,d07n31s02,d07n38s02,d09n04s[01-02],d09n05s02,d09n06s01,d09n07s01,d09n08s[01-02],d09n09s01,d09n11s[01-02],d09n13s01,d09n14s01,d09n15s01,d09n16s01,d09n17s01,d09n24s01,d09n25s02,d09n28s01,d09n35s01,d09n38s02,d13n[03,05,07-08,16]|1AbC-2-3',
+                array(91, 100, 101, 102),
+            ),
+            array(
+                '4103947_[9-11,13,16-20]|4103947|ub-hpc|general-compute|anon|anon|918273|unknown|192837|2015-06-26T13:57:00|2015-06-26T13:57:00|2015-06-28T02:55:50|2015-07-01T02:55:50|3-00:00:00|1:0|TIMEOUT|32|256|256|3000Mc|||3-00:00:00|d07n07s02,d07n19s02,d07n25s01,d07n28s01,d07n29s01,d07n31s02,d07n38s02,d09n04s[01-02],d09n05s02,d09n06s01,d09n07s01,d09n08s[01-02],d09n09s01,d09n11s[01-02],d09n13s01,d09n14s01,d09n15s01,d09n16s01,d09n17s01,d09n24s01,d09n25s02,d09n28s01,d09n35s01,d09n38s02,d13n[03,05,07-08,16]|1AbC-2-3',
+                array(9, 10, 11, 13, 16, 17, 18, 19, 20),
             ),
         );
     }

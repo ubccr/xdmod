@@ -42,6 +42,7 @@ Open XDMoD Change Log
         - Fixed documentation files from modules overwriting core files when
           installing using tarballs.
         - Fixed UGE shredder.
+        - Fixed Slurm job array index parsing.
 - Refactors and Miscellaneous
     - Added documentation for using LDAP for federated authentication.
     - Spun the App Kernels, SUPReMM, and XSEDE modules out into separate
