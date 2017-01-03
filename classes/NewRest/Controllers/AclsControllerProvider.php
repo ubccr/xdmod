@@ -22,7 +22,7 @@ class AclsControllerProvider extends BaseControllerProvider
     {
         $root = $this->prefix;
         $class = get_class($this);
-        $controller->get("$root/", "$class::_listAcls");
+        $controller->get("$root/", "$class::listAcls");
     }
 
     public function listAcls(Request $request, Application $app)
@@ -32,4 +32,3 @@ class AclsControllerProvider extends BaseControllerProvider
         return $app->json($acls);
     }
 }
-
