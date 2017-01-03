@@ -38,7 +38,7 @@ class Acls
             throw new Exception('Must provide an acl');
         }
 
-        if (NULL != $acl->getAclId()) {
+        if (null != $acl->getAclId()) {
             throw new Exception('acl must not have an id.');
         }
 
@@ -54,7 +54,7 @@ class Acls
             throw new Exception('Acl must be provided to complete requested update.');
         }
 
-        if (NULL == $acl->getAclId()) {
+        if (null == $acl->getAclId()) {
             throw new Exception('Acl must have an id to be updated.');
         }
 
@@ -70,7 +70,7 @@ class Acls
             throw new Exception('Acl must be provided to complete requested deletion.');
         }
 
-        if (NULL == $acl->getAclId()) {
+        if (null == $acl->getAclId()) {
             throw new Exception('Acl must have an id to be deleted.');
         }
 
