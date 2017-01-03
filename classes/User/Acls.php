@@ -273,7 +273,7 @@ WHERE
 SQL;
 
         $results = $db->query($sql, array('acl_id' => $aclId, 'user_id' => $userId));
-;
+
         return $results[0] == 1;
     }
 
