@@ -29,6 +29,6 @@ class AclsControllerProvider extends BaseControllerProvider
     {
         $user = $request->attributes->get(BaseControllerProvider::_USER);
         $acls = Acls::listAcls($user);
-        return $app->json($acls);
+        return $app->json(array($acls));
     }
 }
