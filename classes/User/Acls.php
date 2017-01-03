@@ -13,6 +13,14 @@ class Acls
 {
 
     /**
+     * @return Acl[]
+     */
+    public static function getAcls()
+    {
+        return self::_getAcls(DB::factory('database'));
+    }
+
+    /**
      * Attempt to retrieve the acl identified by the '$aclId' provided.
      *
      * @param integer $aclId
@@ -87,9 +95,9 @@ class Acls
      * @param XDUser $user
      * @return array
      */
-    public static function listAcls(XDUser $user)
+    public static function listUserAcls(XDUser $user)
     {
-        return self::_listAcls(
+        return self::_listUserAcls(
             DB::factory('database'),
             $user
         );
@@ -119,6 +127,18 @@ class Acls
         );
     }
 
+    /**
+     * @param iDatabase $db
+     * @return array
+     */
+    private static function _getAcls(iDatabase $db)
+    {
+       $results = $db->query("SELECT a.* FROM acls a");
+       return array_reduce($results, function($carry, $item) {
+           $carry []= new Acl($item);
+           return $carry;
+       }, array());
+    }
 
     /**
      * Attempt to create a database representation of the provided '$acl'. Note,
@@ -227,7 +247,7 @@ SQL;
      * @param XDUser $user
      * @return array
      */
-    private static function _listAcls(iDatabase $db, XDUser $user)
+    private static function _listUserAcls(iDatabase $db, XDUser $user)
     {
         if (!isset($db, $user)) {
             return array();
