@@ -112,13 +112,11 @@ class Acls
 
     public static function userHasAcls(XDUser $user, array $acls)
     {
-        $db = DB::factory('database');
-        try {
-            $results = self::_userHasAcls($db, $user, $acls);
-        } finally {
-            $db->destroy();
-        }
-        return $results;
+        return self::_userHasAcls(
+            DB::factory('database'),
+            $user,
+            $acls
+        );
     }
 
 
