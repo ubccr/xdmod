@@ -15,7 +15,7 @@ class Accounts extends PDODBMultiIngestor
             "
                 SELECT
                     account_id   AS id,
-                    ''           AS charge_number,
+                    account_name AS charge_number,
                     -1           AS granttype_id,
                     account_name AS short_name,
                     account_name AS long_name
