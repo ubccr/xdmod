@@ -1,11 +1,235 @@
 <?php namespace User;
 
+use CCR\DB;
 use CCR\DB\iDatabase;
+use Exception;
+use XDUser;
 
+/**
+ * Class Acls
+ * @package User
+ */
 class Acls
 {
 
-    public static function listAcls(iDatabase $db, \XDUser $user)
+    /**
+     * Attempt to retrieve the acl identified by the '$aclId' provided.
+     *
+     * @param integer $aclId
+     * @return null|Acl null if an acl could not be found for the provided '$aclId'
+     *                  else a fully populated Acl.
+     * @throws Exception if an '$aclId' is not provided.
+     */
+    public static function getAcl($aclId)
+    {
+        if (!isset($aclId)) {
+            throw new Exception('Must provide an acl id.');
+        }
+
+        return self::_getAcl(
+            DB::factory('database'),
+            $aclId
+        );
+    }
+
+    public static function createAcl(Acl $acl)
+    {
+        if (!isset($acl)) {
+            throw new Exception('Must provide an acl');
+        }
+
+        if (NULL != $acl->getAclId()) {
+            throw new Exception('acl must not have an id.');
+        }
+
+        return self::_createAcl(
+            DB::factory('database'),
+            $acl
+        );
+    }
+
+    public static function updateAcl(Acl $acl)
+    {
+        if (!isset($acl)) {
+            throw new Exception('Acl must be provided to complete requested update.');
+        }
+
+        if (NULL == $acl->getAclId()) {
+            throw new Exception('Acl must have an id to be updated.');
+        }
+
+        return self::_updateAcl(
+            DB::factory('database'),
+            $acl
+        );
+    }
+
+    public static function deleteAcl(Acl $acl)
+    {
+        if (!isset($acl)) {
+            throw new Exception('Acl must be provided to complete requested deletion.');
+        }
+
+        if (NULL == $acl->getAclId()) {
+            throw new Exception('Acl must have an id to be deleted.');
+        }
+
+        return self::_deleteAcl(
+            DB::factory('database'),
+            $acl
+        );
+    }
+
+
+    /**
+     * Retrieve a list of a user's current acls.
+     *
+     * @param XDUser $user
+     * @return array
+     */
+    public static function listAcls(XDUser $user)
+    {
+        return self::_listAcls(
+            DB::factory('database'),
+            $user
+        );
+    }
+
+    /**
+     * @param XDUser $user
+     * @param integer $aclId
+     * @return bool
+     */
+    public static function userHasAcl(XDUser $user, $aclId)
+    {
+        return self::_userHasAcl(
+            DB::factory('database'),
+            $user,
+            $aclId
+        );
+    }
+
+
+    public static function userHasAcls(XDUser $user, array $acls)
+    {
+        $db = DB::factory('database');
+        try {
+            $results = self::_userHasAcls($db, $user, $acls);
+        } finally {
+            $db->destroy();
+        }
+        return $results;
+    }
+
+
+    /**
+     * Attempt to create a database representation of the provided '$acl'. Note,
+     * the 'aclId' property of '$acl' must not be set. If it is, it will be
+     * overridden.
+     *
+     * @param iDatabase $db that will be used to create '$acl'
+     * @param Acl $acl that will be created
+     * @return Acl with the $aclId populated.
+     */
+    private static function _createAcl(iDatabase $db, Acl $acl)
+    {
+        $query = <<<SQL
+INSERT INTO acls(module_id, acl_type_id, name, display, enabled) 
+VALUES(:module_id, :acl_type_id, :name, :display, :enabled);
+SQL;
+        $aclId = $db->insert($query, array(
+            ':module_id' => $acl->getModuleId(),
+            ':acl_type_id' => $acl->getAclTypeId(),
+            ':name' => $acl->getName(),
+            ':display' => $acl->getDisplay(),
+            ':enabled' => $acl->getEnabled()
+        ));
+
+        $acl->setAclId($aclId);
+
+        return $acl;
+    }
+
+    /**
+     * Attempt to retrieve the Acl identified by the provided '$aclId'.
+     *
+     * @param iDatabase $db to be used in the Acl retrieval.
+     * @param integer $aclId to be retrieved.
+     * @return null|Acl null if no Acl could be found with the provided aclId
+     *                       else a fully populated Acl object.
+     */
+    private static function _getAcl(iDatabase $db, $aclId)
+    {
+        $query = <<<SQL
+SELECT 
+  a.*
+FROM acls a 
+WHERE a.acl_id = :acl_id
+SQL;
+        $results = $db->query($query, array(':acl_id' => $aclId));
+
+        if (count($results) !== 1) {
+            return null;
+        }
+        return new Acl($results[0]);
+    }
+
+    /**
+     * Attempt to update the database representation of the provided '$acl' such
+     * that the information in the database corresponds to the data in the
+     * object provided.
+     *
+     * @param iDatabase $db the database to be used for the update procedure.
+     * @param Acl $acl to be used when updating the database table.
+     *
+     * @return bool true iff the number of rows updated equals 1.
+     */
+    private static function _updateAcl(iDatabase $db, Acl $acl)
+    {
+        $query = <<<SQL
+UPDATE acls a 
+SET 
+  a.module_id = :module_id,
+  a.acl_type_id = :acl_type_id,
+  a.name = :name,
+  a.display = :display,
+  a.enabled = :enabled
+WHERE 
+  a.acl_id = :acl_id
+SQL;
+        $rows = $db->execute($query, array(
+            ':module_id' => $acl->getModuleId(),
+            ':acl_type_id' => $acl->getAclTypeId(),
+            ':name' => $acl->getName(),
+            ':display' => $acl->getDisplay(),
+            ':enabled' => $acl->getEnabled()
+        ));
+
+        return $rows === 1;
+    }
+
+    /**
+     * Attempt to delete the acl identified by the provided '$aclId'.
+     *
+     * @param iDatabase $db the database to use when performing the delete.
+     * @param integer $aclId the id of the acl to be deleted.
+     * @return bool true iff the number of rows deleted = 1.
+     */
+    private static function _deleteAcl(iDatabase $db, $aclId)
+    {
+        $query = "DELETE FROM acls a WHERE a.acl_id = :acl_id";
+        $rows = $db->execute($query, array(
+            ':acl_id' => $aclId
+        ));
+        return $rows === 1;
+    }
+
+    /**
+     * @param iDatabase $db
+     * @param XDUser $user
+     * @return array
+     */
+    private static function _listAcls(iDatabase $db, XDUser $user)
     {
         if (!isset($db, $user)) {
             return array();
@@ -14,23 +238,28 @@ class Acls
         $userId = $user->getUserID();
 
         $sql = <<<SQL
-SELECT 
-  ua.*
-FROM user_acls ua 
-  JOIN acls a 
+SELECT
+  a.*
+FROM user_acls ua
+  JOIN acls a
     ON a.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
         return $db->query($sql, array('user_id' => $userId));
     }
 
-    public static function userHasAcl(iDatabase $db, \XDUser $user, iAcl $acl)
+    /**
+     * @param iDatabase $db
+     * @param XDUser $user
+     * @param integer $aclId
+     * @return bool
+     */
+    private static function _userHasAcl(iDatabase $db, XDUser $user, $aclId)
     {
-        if (!isset($db, $user, $acl)) {
+        if (!isset($db, $user, $aclId)) {
             return false;
         }
         $userId = $user->getUserID();
-        $aclId = $acl->getAclId();
 
         $sql = <<<SQL
 SELECT 1
@@ -43,19 +272,19 @@ WHERE
   AND a.enabled = TRUE
 SQL;
 
-        $results =  $db->query($sql, array('acl_id' => $aclId, 'user_id' => $userId));
-
+        $results = $db->query($sql, array('acl_id' => $aclId, 'user_id' => $userId));
+;
         return $results[0] == 1;
     }
 
-    public static function userHasAcls(iDatabase $db, \XDUser $user, array $acls)
+    private static function _userHasAcls(iDatabase $db, XDUser $user, array $acls)
     {
         if (!isset($db, $user, $acls)) {
             return false;
         }
         $handle = $db->handle();
         $userId = $user->getUserID();
-        $aclIds = array_reduce($acls, function ($carry, iAcl $item) use ($handle) {
+        $aclIds = array_reduce($acls, function ($carry, Acl $item) use ($handle) {
             $carry [] = $handle->quote($item->getAclId(), PDO::PARAM_INT);
         }, array());
 

@@ -1,16 +1,168 @@
 <?php namespace User;
 
+use CCR\DB;
+use CCR\DB\iDatabase;
 use Exception;
-use PDO;
 use XDUser;
 
 class Assets
 {
-
-    public static function createAsset(PDO $connection, Asset $asset)
+    /**
+     * Creates a new representation of the provided 'Asset' object in the corresponding
+     * 'assets' table.
+     *
+     * @param Asset $asset the asset to be created. Note, the assetId must not be set.
+     * @return Asset with the assetId property populated.
+     *
+     * @throws Exception if the asset is not set or if the asset already has an assetId.
+     */
+    public static function createAsset(Asset $asset)
     {
-        if (!isset($connection, $asset)) {
-            return false;
+        $assetId = self::_createAsset(
+            DB::factory('database'),
+            $asset
+        );
+        $asset->setAssetId($assetId);
+
+        return $asset;
+    }
+
+    /**
+     * Retrieves the Asset identified by the provided '$assetId'
+     *
+     * @param integer $assetId of the Asset to be retrieved
+     * @return Asset
+     *
+     * @throws Exception if an asset id is not provided.
+     */
+    public static function getAsset($assetId)
+    {
+        if (!isset($assetId)) {
+            throw new Exception('Must provide an asset id.');
+        }
+
+        return self::_getAsset($assetId);
+    }
+
+    /**
+     * Updates the database representation of the provided '$asset'
+     *
+     * @param Asset $asset the asset to be updated.
+     * @return bool true if 1 row is updated ( based on assetId ) else false.
+     * @throws Exception if no $asset is provided or if the $asset does not have an assetId.
+     */
+    public static function updateAsset(Asset $asset)
+    {
+        if (!isset($asset)) {
+            throw new Exception('An asset must be provided to update.');
+        }
+
+        if (NULL == $asset->getAssetId()) {
+            throw new Exception('A valid asset id is required to complete the requested update.');
+        }
+
+        return self::_updateAsset(
+            DB::factory('database'),
+            $asset
+        );
+    }
+
+    /**
+     * Delete the asset identified by the provided '$assetId'.
+     *
+     * @param integer $assetId of the asset to be deleted.
+     * @return bool if there is 1 row deleted.
+     * @throws Exception if the $assetId argument is not provided.
+     */
+    public static function deleteAsset($assetId)
+    {
+        if (!isset($assetId)) {
+            throw new Exception('An assetId must be provided.');
+        }
+
+        return self::_deleteAsset(
+            DB::factory('database'),
+            $assetId
+        );
+    }
+
+    /**
+     * @param XDUser $user
+     * @return Asset[]
+     * @throws Exception
+     */
+    public static function listAssets(XDUser $user)
+    {
+        if (!isset($user)) {
+            throw new Exception('A user must be provided');
+        }
+
+        return self::_listAssets(
+            DB::factory('database'),
+            $user
+        );
+    }
+
+    /**
+     * Determine whether or not the provided user has been granted access to the
+     * provided asset.
+     *
+     * @param XDUser $user to be queried for access to '$asset'
+     * @param Asset $asset to be queried for.
+     * @return bool true if the user has the specified asset else false.
+     *
+     * @throws Exception if a user or asset is not specified.
+     */
+    public static function userHasAsset(XDUser $user, Asset $asset)
+    {
+        if (!isset($user, $asset)) {
+            throw new Exception('A user and asset must be provided.');
+        }
+
+        return self::_userHasAsset(
+            DB::factory('database'),
+            $user,
+            $asset
+        );
+    }
+
+    /**
+     * Determine whether the provided user has been granted access to all of the
+     * provided assets.
+     *
+     * @param  XDUser    $user to be queried for access to '$assets'
+     * @param  Asset[]   $assets to be queried for access to.
+     * @return bool      true iff the provided user has access to all of the assets
+     *                   supplied.
+     * @throws Exception if the user or assets are not provided or if the assets
+     *                   array is empty.
+     */
+    public static function userHasAssets(XDUser $user, array $assets)
+    {
+        if (!isset($user, $assets) || count($assets) == 0) {
+            throw new Exception('A user and set of assets must be supplied.');
+        }
+
+        return self::_userHasAssets(
+            DB::factory('database'),
+            $user,
+            $assets
+        );
+    }
+
+
+    /**
+     * Creates the provided '$asset' using the provided '$db'.
+     *
+     * @param iDatabase $db the database to use when creating the provided asset.
+     * @param Asset $asset the asset to be created.
+     * @return integer the newly created assetId.
+     * @throws Exception if the db or the asset is not set. Also if the assetId is set.
+     */
+    private static function _createAsset(iDatabase $db, Asset $asset)
+    {
+        if (!isset($db, $asset)) {
+            throw new Exception('A valid database and asset must be provided.');
         }
 
         if (NULL != $asset->getAssetId()){
@@ -22,35 +174,136 @@ INSERT INTO assets(module_id, asset_type_id, name, display, enabled)
 VALUES (:module_id, :asset_type_id, :name, :display, :enabled);
 SQL;
 
-        $prepared = $connection->prepare($sql);
+        $id = $db->insert($sql, array(
+            'module_id' => $asset->getModuleId(),
+            'asset_type_id' => $asset->getAssetTypeId(),
+            'name' => $asset->getName(),
+            'display' => $asset->getDisplay(),
+            'enabled' => $asset->getEnabled()
+        ));
 
-        $prepared->bindParam('module_id', $asset->getModuleId());
-        $prepared->bindParam('asset_type_id', $asset->getAssetTypeId());
-        $prepared->bindParam('name', $asset->getName());
-        $prepared->bindParam('display', $asset->getDisplay());
-        $prepared->bindParam('enabled', $asset->getEnabled());
+        return $id;
+    }
 
-        $result = $prepared->execute();
-        $prepared->closeCursor();
+    /**
+     * Attempt to retrieve the asset identified by the provided assetId.
+     *
+     * @param integer $assetId to be used when retrieving an asset.
+     * @return null|Asset null if no asset was found for the provided asset id.
+     */
+    private static function _getAsset($assetId)
+    {
+        $db = DB::factory('database');
+        $query = <<<SQL
+SELECT 
+a.*
+FROM assets a 
+WHERE a.asset_id = :asset_id
+SQL;
+        $results = $db->query($query, array(':asset_id' => $assetId));
+        if (!count($results) != 1) {
+            return null;
+        }
+        return new Asset($results[0]);
+    }
 
-        return $result;
+    /**
+     * Attempt to update the provided asset's database representation with the
+     * information contained in the argument 'asset'.
+     *
+     * @param iDatabase $db the database to be used when updating the provided
+     *                      asset.
+     * @param Asset $asset the asset to be updated.
+     * @return bool true if the number of rows updated is 1 else false.
+     * @throws Exception if the db or asset is not provided or if the asset does
+     *                   not have an assetId.
+     */
+    private static function _updateAsset(iDatabase $db, Asset $asset)
+    {
+        $query =<<<SQL
+UPDATE assets a SET 
+a.module_id = :module_id,
+a.asset_type_id = :asset_type_id,
+a.name = :name,
+a.display = :display,
+a.enabled = :enabled
+WHERE a.asset_id = :asset_id
+SQL;
+        $updated = $db->execute($query, array(
+            ':module_id' => $asset->getModuleId(),
+            ':asset_type_id' => $asset->getAssetTypeId(),
+            ':name' => $asset->getName(),
+            ':display' => $asset->getDisplay(),
+            ':enabled' => $asset->getEnabled(),
+            ':asset_id' => $asset->getAssetId()
+        ));
+
+        return $updated === 1;
+    }
+
+    /**
+     * Attempt to delete the asset identified by the provided '$assetId'.
+     *
+     * @param iDatabase $db the database to use
+     * @param integer $assetId of the asset to be deleted.
+     *
+     * @return bool if the number of deleted rows is 1 else false.
+     */
+    private static function _deleteAsset(iDatabase $db, $assetId)
+    {
+        $query = "DELETE FROM assets a WHERE a.asset_id = :asset_id";
+        $updated = $db->execute($query, array(
+            ':asset_id' => $assetId
+        ));
+        return $updated === 1;
+    }
+
+    /**
+     * @param iDatabase $db
+     * @param XDUser $user
+     * @return Asset[]
+     */
+    private static function _listAssets(iDatabase $db, XDUser $user)
+    {
+        $userId = $user->getUserID();
+
+        $query =<<<SQL
+SELECT DISTINCT
+  ast.*
+FROM acl_assets aa
+  JOIN acls a
+    ON a.acl_id = aa.acl_id
+  JOIN assets ast
+    ON ast.asset_id = aa.asset_id
+  JOIN user_acls AS ua
+    ON aa.acl_id = ua.acl_id
+WHERE
+  ua.user_id = :user_id
+AND a.enabled = TRUE
+AND ast.enabled = TRUE
+SQL;
+        $results = $db->query($query, array(
+            ':user_id' => $userId
+        ));
+
+        $assets = array_reduce($results, function($carry, $item) {
+            $carry []= new Asset($item);
+        }, array());
+
+        return $assets;
     }
 
     /**
      * Determine whether or not the '$user' has been granted access to the provided
      * '$asset'.
      *
-     * @param PDO $connection
+     * @param iDatabase $db
      * @param XDUser $user
      * @param Asset $asset
      * @return bool
      */
-    public static function userHasAsset(PDO $connection, XDUser $user, Asset $asset)
+    private static function _userHasAsset(iDatabase $db, XDUser $user, Asset $asset)
     {
-        if (!isset($connection, $user, $asset)) {
-            return false;
-        }
-
         $userId = $user->getUserId();
         $assetId = $asset->getAssetId();
 
@@ -70,32 +323,29 @@ WHERE
   AND ast.enabled = TRUE;
 SQL;
 
-        $prepared = $connection->prepare($sql);
-        $prepared->bindParam('user_id', $userId);
-        $prepared->bindParam('asset_id', $assetId);
+        $results = $db->query($sql,array(
+            ':user_id' => $userId,
+            ':asset_id' => $assetId
+        ));
 
-        $prepared->execute();
-
-        $result = $prepared->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result[0] == 1;
+        return $results[0] == 1;
     }
 
     /**
-     * @param PDO $connection
+     * @param iDatabase $db
      * @param XDUser $user
      * @param Asset[] $assets
      * @return bool
      */
-    public static function userHasAssets(PDO $connection, XDUser $user, array $assets = array())
+    private static function _userHasAssets(iDatabase $db, XDUser $user, array $assets = array())
     {
-        if (!isset($connection, $user, $assets)) {
+        if (!isset($db, $user, $assets)) {
             return false;
         }
 
         $userId = $user->getUserID();
-        $assetIds = array_reduce($assets, function($carry, Asset $item) use ($connection) {
-            $carry []= $connection->quote($item->getAssetId(), PDO::PARAM_INT);
+        $assetIds = array_reduce($assets, function($carry, Asset $item) {
+            $carry []= $item->getAssetId();
         }, array());
 
         $sql = <<<SQL
@@ -113,15 +363,11 @@ WHERE
   AND ast.asset_id IN (:asset_ids)
   AND ast.enabled = TRUE;
 SQL;
-        $prepared = $connection->prepare($sql);
-        $prepared->bindParam('user_id', $userId);
-        $prepared->bindParam('asset_ids', implode(', ', $assetIds));
+        $results = $db->query($sql, array(
+            ':user_id' => $userId,
+            ':asset_ids' => implode(', ', $assetIds)
+        ));
 
-        $prepared->execute();
-
-        $result = $prepared->fetchAll(PDO::FETCH_ASSOC);
-
-        return $result[0] == 1;
+        return count($results) >= 1 && $results[0] == 1;
     }
-
 }

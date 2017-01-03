@@ -1,6 +1,5 @@
 <?php namespace NewRest\Controllers;
 
-use CCR\DB;
 use Silex\Application;
 use Silex\ControllerCollection;
 
@@ -23,14 +22,14 @@ class AclsControllerProvider extends BaseControllerProvider
     {
         $root = $this->prefix;
         $class = get_class($this);
-        $controller->get("$root/", "$class::listAcls");
+        $controller->get("$root/", "$class::_listAcls");
     }
 
     public function listAcls(Request $request, Application $app)
     {
-        $connection = DB::factory('database');
         $user = $request->attributes->get(BaseControllerProvider::_USER);
-        $acls = Acls::listAcls($connection, $user);
+        $acls = Acls::listAcls($user);
         return $app->json($acls);
     }
 }
+
