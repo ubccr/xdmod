@@ -38,16 +38,24 @@ class AclsControllerProvider extends BaseControllerProvider
             ->convert('id', "$conversions::toInt");
 
         $controller->get("$root/current", "$class::listUserAcls");
+        $controller->put("$root/current/{id}", "$class::addUserAcl")
+            ->assert('id', '^\d+')
+            ->convert('id', "$conversions::toInt");
+        $controller->delete("$root/current/{id}", "$class::removeUserAcl")
+            ->assert('id', '^\d+')
+            ->convert('id', "$conversions::toInt");
     }
 
     public function listAcls(Request $request, Application $app)
     {
-        return $app->json(
-            array(
-                'success' => true,
-                'results' => Acls::getAcls()
-            )
-        );
+        $acls = Acls::getAcls();
+        $success = isset($acls);
+        $status = true == $success ? 200 : 500;
+
+        return $app->json(array(
+                'success' => $success,
+                'results' => $acls
+        ), $status);
     }
 
     public function createAcl(Request $request, Application $app)
@@ -72,6 +80,7 @@ class AclsControllerProvider extends BaseControllerProvider
 
         $success = isset($acl);
         $status = true == $success ? 200 : 500;
+
         return $app->json(array(
             'success' => $success,
             'results' => $acl
@@ -137,7 +146,40 @@ class AclsControllerProvider extends BaseControllerProvider
     public function listUserAcls(Request $request, Application $app)
     {
         $user = $request->attributes->get(BaseControllerProvider::_USER);
+
         $acls = Acls::listUserAcls($user);
-        return $app->json(array('results' => $acls));
+        $success = isset($acls);
+        $status = true == $success ? 200 : 500;
+
+        return $app->json(array(
+            'success' => $success,
+            'results' => $acls
+        ), $status);
+    }
+
+    public function addUserAcl(Request $request, Application $app, $id)
+    {
+        $user = $request->attributes->get(BaseControllerProvider::_USER);
+
+        $success = Acls::addUserAcl($user, $id);
+        $status = true == $sucess ? 200 : 500;
+
+        return $app->json(array(
+            'success' => $sucess,
+            'results' => $success
+        ), $status);
+    }
+
+    public function removeUserAcl(Request $request, Application $app, $id)
+    {
+        $user = $request->attributes->get(BaseControllerProvider::_USER);
+
+        $success = Acls::deleteUserAcl($user, $id);
+        $status = true == $sucess ? 200 : 500;
+
+        return $app->json(array(
+            'success' => $sucess,
+            'results' => $success
+        ), $status);
     }
 }

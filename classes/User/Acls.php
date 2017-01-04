@@ -88,7 +88,6 @@ class Acls
         );
     }
 
-
     /**
      * Retrieve a list of a user's current acls.
      *
@@ -97,9 +96,57 @@ class Acls
      */
     public static function listUserAcls(XDUser $user)
     {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+
+        if (null == $user->getUserID()) {
+            throw new Exception('A valid user id must be provided.');
+        }
+
         return self::_listUserAcls(
             DB::factory('database'),
             $user
+        );
+    }
+
+    public static function addUserAcl(XDUser $user, $aclId)
+    {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+
+        if (null == $user->getUserID()) {
+            throw new Exception('A valid user id must be provided.');
+        }
+
+        if (!isset($aclId)) {
+            throw new Exception('A valid acl id must be provided.');
+        }
+
+        return self::_addUserAcl(
+            DB::factory('database'),
+            $user,
+            $aclId
+        );
+    }
+
+    public static function deleteUserAcl(XDUser $user, $aclId)
+    {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+        if (null == $user->getUserID()) {
+            throw new Exception('A valid user id must be provided.');
+        }
+        if (!isset($aclId)) {
+            throw new Exception('A valid acl id must be provided.');
+        }
+
+        return self::_deleteUserAcl(
+            DB::factory('databse'),
+            $user,
+            $aclId
         );
     }
 
@@ -110,6 +157,18 @@ class Acls
      */
     public static function userHasAcl(XDUser $user, $aclId)
     {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+
+        if (null == $user->getUserID()) {
+            throw new Exception('A valid user id must be provided.');
+        }
+
+        if (!isset($aclId)) {
+            throw new Exception('A valid acl id must be provided.');
+        }
+
         return self::_userHasAcl(
             DB::factory('database'),
             $user,
@@ -120,6 +179,14 @@ class Acls
 
     public static function userHasAcls(XDUser $user, array $acls)
     {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+
+        if (null == $user->getUserID()) {
+            throw new Exception('A valid user id must be provided.');
+        }
+
         return self::_userHasAcls(
             DB::factory('database'),
             $user,
@@ -133,11 +200,11 @@ class Acls
      */
     private static function _getAcls(iDatabase $db)
     {
-       $results = $db->query("SELECT a.* FROM acls a");
-       return array_reduce($results, function($carry, $item) {
-           $carry []= new Acl($item);
-           return $carry;
-       }, array());
+        $results = $db->query("SELECT a.* FROM acls a");
+        return array_reduce($results, function ($carry, $item) {
+            $carry []= new Acl($item);
+            return $carry;
+        }, array());
     }
 
     /**
@@ -237,6 +304,26 @@ SQL;
     {
         $query = "DELETE FROM acls a WHERE a.acl_id = :acl_id";
         $rows = $db->execute($query, array(
+            ':acl_id' => $aclId
+        ));
+        return $rows === 1;
+    }
+
+    private static function _addUserAcl(iDatabase $db, XDUser $user, $aclId)
+    {
+        $query = "INSERT INTO user_acls(user_id, acl_id) VALUES(:user_id, :acl_id)";
+        $rows = $db->execute($query, array(
+            ':user_id' => $user->getUserId(),
+            ':acl_id' => $aclId
+        ));
+        return $rows === 1;
+    }
+
+    private static function _deleteUserAcl(iDatabase $db, XDUser $user, $aclId)
+    {
+        $query = "DELETE FROM user_acls ua WHERE ua.user_id = :user_id AND ua.acl_id = :acl_id";
+        $rows = $db->execute($query, array(
+            ':user_id' => $user->getUserId(),
             ':acl_id' => $aclId
         ));
         return $rows === 1;
