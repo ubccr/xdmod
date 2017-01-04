@@ -336,7 +336,7 @@ SQL;
             ':user_id' => $user->getUserId(),
             ':acl_id' => $aclId
         ));
-        return $rows === 1;
+        return $rows <= 1;
     }
 
     /**
