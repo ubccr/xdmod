@@ -5,8 +5,6 @@ require_once dirname(__FILE__).'/../configuration/linker.php';
 use CCR\DB;
 use User\Acl;
 use User\Asset;
-use User\iAcl;
-use User\iAsset;
 
 /**
  * XDMoD Portal User
@@ -49,12 +47,12 @@ class XDUser {
    private $_cachedActiveRole;
 
     /**
-     * @var iAsset[]
+     * @var Asset[]
      */
    private $_assets;
 
     /**
-     * @var iAcl[]
+     * @var Acl[]
      */
    private $_acls;
 
@@ -2903,21 +2901,33 @@ SQL;
       return $returnData;
    }
 
+    /**
+     * @return Asset[]
+     */
    public function getAssets()
    {
        return $this->_assets;
    }
 
+    /**
+     * @param Asset[] $assets
+     */
    public function setAssets(array $assets)
    {
        $this->_assets = $assets;
    }
 
+    /**
+     * @return Acl[]
+     */
    public function getAcls()
    {
        return $this->_acls;
    }
 
+    /**
+     * @param Acl[] $acls
+     */
    public function setAcls(array $acls)
    {
        $this->_acls = $acls;
