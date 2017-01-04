@@ -311,12 +311,22 @@ SQL;
 
     private static function _addUserAcl(iDatabase $db, XDUser $user, $aclId)
     {
-        $query = "INSERT INTO user_acls(user_id, acl_id) VALUES(:user_id, :acl_id)";
-        $rows = $db->execute($query, array(
+        $params = array(
             ':user_id' => $user->getUserId(),
             ':acl_id' => $aclId
-        ));
-        return $rows === 1;
+        );
+
+        $query = "SELECT 1 FROM user_acls WHERE user_id = :user_id AND acl_id = :acl_id";
+        $results = $db->query($query, $params);
+
+        $success = isset($results) && count($results) === 1;
+        if (!$success) {
+            $query = "INSERT INTO user_acls(user_id, acl_id) VALUES(:user_id, :acl_id)";
+            $rows = $db->execute($query, $params);
+            $success = $rows === 1;
+        }
+
+        return $success;
     }
 
     private static function _deleteUserAcl(iDatabase $db, XDUser $user, $aclId)
