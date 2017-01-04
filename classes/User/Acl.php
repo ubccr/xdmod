@@ -55,12 +55,12 @@ class Acl extends DBObject implements JsonSerializable
     function jsonSerialize()
     {
         return array(
-            'acl_id' => Acl::ACL_ID,
-            'module_id' => Acl::MODULE_ID,
-            'acl_type_id' => Acl::ACL_TYPE_ID,
-            'name' => Acl::NAME,
-            'display'=> Acl::DISPLAY,
-            'enabled' => Acl::ENABLED
+            Acl::ACL_ID => $this->aclId,
+            Acl::MODULE_ID => $this->moduleId,
+            Acl::ACL_TYPE_ID => $this->aclTypeId,
+            Acl::NAME => $this->name,
+            Acl::DISPLAY => $this->display,
+            Acl::ENABLED => $this->enabled
         );
     }
 }
