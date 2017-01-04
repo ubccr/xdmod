@@ -144,7 +144,7 @@ class Acls
         }
 
         return self::_deleteUserAcl(
-            DB::factory('databse'),
+            DB::factory('database'),
             $user,
             $aclId
         );
