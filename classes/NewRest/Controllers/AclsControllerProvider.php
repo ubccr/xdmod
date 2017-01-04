@@ -162,10 +162,10 @@ class AclsControllerProvider extends BaseControllerProvider
         $user = $request->attributes->get(BaseControllerProvider::_USER);
 
         $success = Acls::addUserAcl($user, $id);
-        $status = true == $sucess ? 200 : 500;
+        $status = true == $success ? 200 : 500;
 
         return $app->json(array(
-            'success' => $sucess,
+            'success' => $success,
             'results' => $success
         ), $status);
     }
