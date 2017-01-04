@@ -331,7 +331,7 @@ SQL;
 
     private static function _deleteUserAcl(iDatabase $db, XDUser $user, $aclId)
     {
-        $query = "DELETE FROM user_acls ua WHERE ua.user_id = :user_id AND ua.acl_id = :acl_id";
+        $query = "DELETE FROM user_acls WHERE user_id = :user_id AND acl_id = :acl_id";
         $rows = $db->execute($query, array(
             ':user_id' => $user->getUserId(),
             ':acl_id' => $aclId
