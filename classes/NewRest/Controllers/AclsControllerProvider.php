@@ -28,13 +28,13 @@ class AclsControllerProvider extends BaseControllerProvider
         $controller->get("$root/", "$class::listAcls");
         $controller->post("$root/", "$class::createAcl");
         $controller->get("$root/{id}", "$class::getAcl")
-            ->assert('id', '\d+')
+            ->assert('id', '^\d+')
             ->convert('id', "$conversions::toInt");
         $controller->put("$root/{id}", "$class::updateAcl")
-            ->assert('id', '\d+')
+            ->assert('id', '^\d+')
             ->convert('id', "$conversions::toInt");
         $controller->delete("$root/{id}", "$class::deleteAcl")
-            ->assert('id', '\d+')
+            ->assert('id', '^\d+')
             ->convert('id', "$conversions::toInt");
 
         $controller->get("$root/current", "$class::listUserAcls");
@@ -87,7 +87,7 @@ class AclsControllerProvider extends BaseControllerProvider
         return $app->json(array(
             'success' => $success,
             'results' => $acl
-        ),$status);
+        ), $status);
     }
 
     public function updateAcl(Request $request, Application $app, $id)
