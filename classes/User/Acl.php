@@ -33,6 +33,13 @@ use Module;
  */
 class Acl extends DBObject implements JsonSerializable
 {
+    const ACL_ID = 'acl_id';
+    const MODULE_ID = 'module_id';
+    const ACL_TYPE_ID = 'acl_type_id';
+    const NAME = 'name';
+    const DISPLAY = 'display';
+    const ENABLED = 'enabled';
+
 
     protected $aclId;
     protected $moduleId;
@@ -48,12 +55,12 @@ class Acl extends DBObject implements JsonSerializable
     function jsonSerialize()
     {
         return array(
-            'acl_id' => $this->aclId,
-            'module_id' => $this->moduleId,
-            'acl_type_id' => $this->aclTypeId,
-            'name' => $this->name,
-            'display'=> $this->display,
-            'enabled' => $this->enabled
+            'acl_id' => Acl::ACL_ID,
+            'module_id' => Acl::MODULE_ID,
+            'acl_type_id' => Acl::ACL_TYPE_ID,
+            'name' => Acl::NAME,
+            'display'=> Acl::DISPLAY,
+            'enabled' => Acl::ENABLED
         );
     }
 }
