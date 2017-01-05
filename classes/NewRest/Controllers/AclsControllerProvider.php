@@ -25,25 +25,46 @@ class AclsControllerProvider extends BaseControllerProvider
         $class = get_class($this);
         $conversions = '\NewRest\Utilities\Conversions';
 
-        $controller->get("$root/", "$class::listAcls");
-        $controller->post("$root/", "$class::createAcl");
+        $isAuthorized = function(Request $request, Application $app) {
+            $authorized = $this->isAuthorized($request, array('mgr'));
+            if (!$authorized) {
+                return $app->json(
+                    array(
+                        'success' => false,
+                        'message' => 'Not authorized for the requested operation.'
+                    ),
+                    401
+                );
+            }
+        };
+
+        $controller->get("$root/", "$class::listAcls")
+            ->before($isAuthorized);
+        $controller->post("$root/", "$class::createAcl")
+            ->before($isAuthorized);
         $controller->get("$root/{id}", "$class::getAcl")
             ->assert('id', '^\d+')
-            ->convert('id', "$conversions::toInt");
+            ->convert('id', "$conversions::toInt")
+            ->before($isAuthorized);
         $controller->put("$root/{id}", "$class::updateAcl")
             ->assert('id', '^\d+')
-            ->convert('id', "$conversions::toInt");
+            ->convert('id', "$conversions::toInt")
+            ->before($isAuthorized);
         $controller->delete("$root/{id}", "$class::deleteAcl")
             ->assert('id', '^\d+')
-            ->convert('id', "$conversions::toInt");
+            ->convert('id', "$conversions::toInt")
+            ->before($isAuthorized);
 
-        $controller->get("$root/current", "$class::listUserAcls");
+        $controller->get("$root/current", "$class::listUserAcls")
+            ->before($isAuthorized);
         $controller->put("$root/current/{id}", "$class::addUserAcl")
             ->assert('id', '^\d+')
-            ->convert('id', "$conversions::toInt");
+            ->convert('id', "$conversions::toInt")
+            ->before($isAuthorized);
         $controller->delete("$root/current/{id}", "$class::removeUserAcl")
             ->assert('id', '^\d+')
-            ->convert('id', "$conversions::toInt");
+            ->convert('id', "$conversions::toInt")
+            ->before($isAuthorized);
     }
 
     public function listAcls(Request $request, Application $app)
