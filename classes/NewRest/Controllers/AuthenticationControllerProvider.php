@@ -60,18 +60,13 @@ class AuthenticationControllerProvider extends BaseControllerProvider
      * @param Request $request that will be used to retrieve the token.
      * @param Application $app that will be used to facilitate the json
      *                         encoding of the response.
-     * @return \Symfony\Component\HttpFoundation\JsonResponse indicating
-     *                         that the user has been successfully logged
-     *                         out.
+     * @return
      */
     public function logout(Request $request, Application $app)
     {
         $authInfo = Authentication::getAuthenticationInfo($request);
         \XDSessionManager::logoutUser($authInfo['token']);
 
-        return $app->json(array(
-            'success' => true,
-            'message' => 'User logged out successfully'
-        ));
+        return $app->redirect("/");
     }
 }

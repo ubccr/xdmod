@@ -31,7 +31,7 @@ XDMoD.SessionManager._sessionExpiredNotification = new Ext.Window({
             new Ext.Button({
                 text: 'Complete Logout',
                 handler: function () {
-                    location.href = location.href.split('#')[0];
+                    location.href = location.href.split('#')[0] + XDMoD.REST.url + "/logout";
                 }
             })
 
