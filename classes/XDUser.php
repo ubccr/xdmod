@@ -552,7 +552,7 @@ SQL;
            $carry[$asset->getName()] = $asset;
            return $carry;
        }, array());
-       $user->setAssets($userassets);
+       $user->setAssets($assets);
 
       // END:   Asset Population
 
