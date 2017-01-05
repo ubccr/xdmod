@@ -721,10 +721,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     protected function isAuthorized(Request $request, array $requirements)
     {
         $user = $request->attributes->get(BaseControllerProvider::_USER);
-        $acls = $user->getAcls();
-        $results = array_filter($acls, function (Acl $item) use ($requirements) {
-            return in_array($item->getName(), $requirements);
-        });
-        return isset($results) && count($results) === count($requirements);
+        return $user->hasAcls($requirements);
     }
 }

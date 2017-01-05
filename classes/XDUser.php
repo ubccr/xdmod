@@ -522,7 +522,8 @@ SQL;
 
 
       $acls = array_reduce($results, function($carry, $item) {
-          $carry []= new Acl($item);
+          $acl = new Acl($item);
+          $carry [$acl->getName()]= $acl;
           return $carry;
       }, array());
 
@@ -547,10 +548,11 @@ AND ast.enabled = TRUE;
 SQL;
        $results = $pdo->query($query, array('user_id' => $uid));
        $assets = array_reduce($results, function($carry, $item) {
-           $carry []= new Asset($item);
+           $asset = new Asset($item);
+           $carry[$asset->getName()] = $asset;
            return $carry;
        }, array());
-       $user->setAssets($assets);
+       $user->setAssets($userassets);
 
       // END:   Asset Population
 
@@ -2933,5 +2935,55 @@ SQL;
        $this->_acls = $acls;
    }
 
+   public function hasAcl($acl, $property = 'name')
+   {
+       $isAcl = $acl instanceof Acl;
+       $isString = is_string($acl);
+       $getter = 'get'.ucfirst($property);
+       if (false === $isAcl && false === $isString) {
+           $aclClass = get_class($acl);
+           throw new Exception("Unknown acl type encountered. Expected Acl or string got $aclClass.");
+       }
+       $value = $isAcl ? $acl->$getter() : $acl;
+       return array_key_exists($value, $this->_acls);
+   }
 
+    /**
+     * @param Acl[]|string[] $acls
+     * @param string $property
+     * @return bool
+     * @throws Exception
+     */
+    public function hasAcls(array $acls, $property = 'name')
+    {
+        $total = 0;
+        foreach($acls as $acl) {
+            $found = $this->hasAcl($acl, $property);
+            $total += $found ? 1 : 0;
+        }
+        return $total === count($acls);
+    }
+
+    public function hasAsset($asset, $property = 'name')
+    {
+        $isAsset = $asset instanceof Asset;
+        $isString = is_string($asset);
+        $getter = 'get'.ucfirst($property);
+        if (false === $isAsset && false === $isString) {
+            $assetClass = get_class($asset);
+            throw new Exception("Unknown asset type encountered. Expected Asset or string got $assetClass.");
+        }
+        $value = $isAsset ? $asset->$getter() : $asset;
+        return array_key_exists($value, $this->_assets);
+    }
+
+    public function hasAssets(array $assets, $property = 'name')
+    {
+        $total = 0;
+        foreach($assets as $asset) {
+            $found = $this->hasAcl($asset, $property);
+            $total += $found ? 1 : 0;
+        }
+        return $total === count($assets);
+    }
 }//XDUser
