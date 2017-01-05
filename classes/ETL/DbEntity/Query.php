@@ -701,12 +701,29 @@ class Query extends aNamedEntity
         $joinList[] = "FROM " . $this->joins[0]->getCreateSql($includeSchema);
 
         for ( $i = 1; $i < count($this->joins); $i++ ) {
+
             if ( null === $this->joins[$i]->getOn() ) {
                 $msg = "Join clause for table '" . $this->joins[$i]->getName() . "' does not provide ON condition";
             }
+
+            // When we move to explictly marking the FROM clause this functionality may be moved
+            // into the Join class
+
             $joinType = $this->joins[$i]->getType();
-            $joinList[] = ( null !== $joinType ? "$joinType " : "" ) . "JOIN " . $this->joins[$i]->getCreateSql($includeSchema);
-        }
+
+            // Handle various join types. STRAIGHT_JOIN is a mysql enhancement.
+
+            $joinStr = "JOIN";
+
+            if ( "STRAIGHT" == $joinType ) {
+                $joinStr = "STRAIGHT_JOIN";
+            } else if ( null !== $joinType) {
+                $joinStr = $joinType . " JOIN";
+            }
+
+            $joinList[] = $joinStr . " " . $this->joins[$i]->getCreateSql($includeSchema);
+
+        }  // for ( $i = 1; $i < count($this->joins); $i++ )
 
         // Construct the SELECT statement
 
