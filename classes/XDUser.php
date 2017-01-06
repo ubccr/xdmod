@@ -2950,15 +2950,18 @@ SQL;
 
     /**
      * @param Acl[]|string[] $acls
+     * @param bool $strict
      * @param string $property
      * @return bool
-     * @throws Exception
      */
-    public function hasAcls(array $acls, $property = 'name')
+    public function hasAcls(array $acls, $strict = false, $property = 'name')
     {
         $total = 0;
         foreach($acls as $acl) {
             $found = $this->hasAcl($acl, $property);
+            if (!$found && $strict) {
+                return false;
+            }
             $total += $found ? 1 : 0;
         }
         return $total === count($acls);

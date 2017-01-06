@@ -75,6 +75,32 @@ class Authorization
         return $result;
     }
 
+    public static function authorized(XDUser $user, array $requirements = array(), $blacklist = false)
+    {
+        $result = array(
+            self::_SUCCESS => false,
+            self::_MESSAGE => self::_DEFAULT_MESSAGE
+        );
+
+        if (!isset($user)) {
+            throw new \Exception('A valid user must be supplied to complete the requested operation.');
+        }
+
+        if (isset($requirements) &&
+            is_array($requirements) &&
+            count($requirements) > 0) {
+            throw new \Exception('A valid set of requirements are required to complete the requested operation.');
+        }
+        $found = $user->hasAcls($requirements, $blacklist);
+        if ($found) {
+            $result[self::_SUCCESS] = true;
+            $result[self::_MESSAGE] = '';
+        } else {
+            $result[self::_MESSAGE] .= " [ Not Authorized ]";
+        }
+        return $result;
+    }
+
     /**
      * Conduct any processing on the provided requirements prior to the actual
      * authorization process.
