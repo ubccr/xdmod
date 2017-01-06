@@ -6,6 +6,7 @@ For XDMoD to authenticate against LDAP XDMoD has to be set up as an IDP.
 
 *Note: For this example we are going to use the [ForumSystems Online LDAP Test Server][forumsys-ldap] You will need to change settings to your ldap as appropriate*
 
+Make sure you have read and setup [OpenXDMoD for SimpleSAML](simplesamlphp.html).
 More information on [SimpleSAMLphp LDAP][ssp-ldap].
 
 
@@ -124,6 +125,8 @@ to:
   *  `openssl req -newkey rsa:2048 -new -x509 -days 3652 -nodes -out /etc/xdmod/simplesamlphp/cert/xdmod-idp.crt -keyout /etc/xdmod/simplesamlphp/cert/xdmod-idp.pem`
 *  Create /etc/xdmod/simplesamlphp/metadata/saml20-idp-hosted.php with content like the following (you will want to change the auth if you changed it in authsources.php)
 
+*Note: if you have not changed your SIMPLESAMLPHP_CONFIG_DIR these files will need to be located in `/usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/{% raw % }{cert,config,metadata}{% endraw %}`*
+
 ```php
 <?php
   $metadata['xdmod-hosted-idp-ldap'] = array(
@@ -168,11 +171,39 @@ Goto the SimpleSAMLphp installation page and login as the administrative user.
 `https://{% raw %}{{HOSTNAME}}{% endraw %}/simplesaml/module.php/core/frontpage_welcome.php`
 
 Go to the `Federation` tab
-Under the section labeled `SAML 2.0 IdP Metadata (Trusted)`
+Under the section labeled `SAML 2.0 IdP Metadata`
 click on `xdmod-hosted-idp-ldap`
-copy the contents of the page beginning with the $metadata and put it into `/etc/xdmod/simplesamlphp/metadata/saml20-idp-remote.php`
+copy the contents of the page beginning with the $metadata and put it into `/etc/xdmod/simplesamlphp/metadata/saml20-idp-remote.php` this is a php file so make sure that the beging of the file start with `<?php`
 
+This example WILL NOT WORK IT IS JUST FOR COMPARISON
+```php
+<?php
+
+$metadata['xdmod-hosted-idp-ldap'] = array (
+  'metadata-set' => 'saml20-idp-remote',
+  'entityid' => 'xdmod-hosted-idp-ldap',
+  'SingleSignOnService' =>
+  array (
+    0 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://{% raw %}{{HOSTNAME}}{% endraw %}/simplesaml/saml2/idp/SSOService.php',
+    ),
+  ),
+  'SingleLogoutService' =>
+  array (
+    0 =>
+    array (
+      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' => 'https://{% raw %}{{HOSTNAME}}{% endraw %}/simplesaml/saml2/idp/SingleLogoutService.php',
+    ),
+  ),
+  'certData' => '...',
+  'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+);
+```
 You should now be able to go to the `Authentication` tab and test the `xdmod-sp` authentication source.
+If you are using the forumsys example to test the username / password to use will be tesla / password
 
 [forumsys-ldap]: http://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/
 [ssp-idp]: https://simplesamlphp.org/docs/stable/simplesamlphp-idp
