@@ -86,9 +86,17 @@ class Authorization
             throw new \Exception('A valid user must be supplied to complete the requested operation.');
         }
 
-        if (isset($requirements) &&
-            is_array($requirements) &&
-            count($requirements) > 0) {
+        if (
+            (
+                isset($requirements) &&
+                !is_array($requirements)
+            ) ||
+            (
+                isset($requirements) &&
+                is_array($requirements) &&
+                count($requirements) <= 0
+            )
+        ) {
             throw new \Exception('A valid set of requirements are required to complete the requested operation.');
         }
         $found = $user->hasAcls($requirements, $blacklist);
