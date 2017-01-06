@@ -2964,7 +2964,7 @@ SQL;
         $total = 0;
         foreach($acls as $acl) {
             $found = $this->hasAcl($acl, $property);
-            if (!$found && $strict) {
+            if ($found && $strict) {
                 return false;
             }
             $total += $found ? 1 : 0;
