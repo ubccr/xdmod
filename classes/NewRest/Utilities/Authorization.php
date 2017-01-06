@@ -99,13 +99,12 @@ class Authorization
         ) {
             throw new \Exception('A valid set of requirements are required to complete the requested operation.');
         }
+
         $found = $user->hasAcls($requirements, $blacklist);
-        if ($found) {
-            $result[self::_SUCCESS] = true;
-            $result[self::_MESSAGE] = '';
-        } else {
-            $result[self::_MESSAGE] .= " [ Not Authorized ]";
-        }
+        $result[self::_SUCCESS] = (!$found && $blacklist) || ($found && !$blacklist);
+        $result[self::_MESSAGE] = (!$found && !$blacklist) || ($found && $blacklist)
+            ? ' [ Not Authorized ]'
+            : '';
         return $result;
     }
 
