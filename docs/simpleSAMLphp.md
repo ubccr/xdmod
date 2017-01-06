@@ -177,20 +177,15 @@ The following locations will need to be added to your Open XDMoD server configur
 You will need to specify the full path to `simplesamlphp` for the aliases.
 
 ```conf
-location ~ ^/simplesaml/(.+\.php.*)$ {
-  ###
-  # If you want to set up a different SIMPLESAMLPHP_CONFIG_DIR this
-  # needs to be set in the php-fpm.conf as an environment variable.
-  ###
-  alias /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www/$1;
-  fastcgi_split_path_info ^(.+\/module\.php)(/.+)$;
-  fastcgi_pass   127.0.0.1:9000;
-  fastcgi_index  index.php;
-  #fastcgi_param SCRIPT_FILENAME /var/www/simplesaml$fastcgi_script_name;
-  include        fastcgi_params;
-}
-location ~ ^/simplesaml/(.*) {
-  alias /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www/$1;
+location ^~ /simplesaml {
+  alias /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www;
+  location ~ ^(?<prefix>/simplesaml)(?<phpfile>.+?\.php)(?<pathinfo>/.*)?$ {
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_split_path_info ^(.+\/module\.php)(/.+)$;
+    fastcgi_param SCRIPT_FILENAME $document_root$phpfile;
+    fastcgi_param PATH_INFO       $pathinfo if_not_empty;
+  }
 }
 ```
 
