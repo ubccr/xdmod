@@ -102,7 +102,7 @@ class Authorization
 
         $found = $user->hasAcls($requirements);
         $result[self::_SUCCESS] = (!$found && $blacklist) || ($found && !$blacklist);
-        $result[self::_MESSAGE] = (!$found && !$blacklist) || ($found && $blacklist)
+        $result[self::_MESSAGE] .= (!$found && !$blacklist) || ($found && $blacklist)
             ? ' [ Not Authorized ]'
             : '';
         return $result;
