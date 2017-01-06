@@ -385,6 +385,11 @@ class XDUser {
              NULL,                     // Organization ID
              NULL                      // Person ID
       );
+      $user->setAcls(array(
+          ROLE_ID_PUBLIC => new Acl(
+              array('name' => ROLE_ID_PUBLIC)
+          )
+      ));
 
       //$user->setActiveRole(ROLE_ID_PUBLIC);
       //$user->setPrimaryRole(ROLE_ID_PUBLIC);
