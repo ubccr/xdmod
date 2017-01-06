@@ -286,7 +286,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             if ($user->isPublicUser()) {
                 throw new AccessDeniedException($message, 401);
             } else {
-                throw new AccessDeniedHttpException($message, 403);
+                throw new AccessDeniedHttpException($message, null, 403);
             }
         }
 
