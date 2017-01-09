@@ -6,7 +6,7 @@ For XDMoD to authenticate against LDAP XDMoD has to be set up as an IDP.
 
 *Note: For this example we are going to use the [ForumSystems Online LDAP Test Server][forumsys-ldap] You will need to change settings to your ldap as appropriate*
 
-Make sure you have read and setup [OpenXDMoD for SimpleSAML](simplesamlphp.html).
+Make sure you have read and setup [OpenXDMoD for SimpleSAML](simpleSAMLphp.html).
 More information on [SimpleSAMLphp LDAP][ssp-ldap].
 
 
