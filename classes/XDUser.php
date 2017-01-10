@@ -2933,9 +2933,7 @@ SQL;
    {
        return (!$names)
            ? $this->_acls
-           : array_map(function(Acl $item) {
-               return $item->getName();
-           }, $this->_acls);
+           : array_keys($this->_acls);
    }
 
     /**
