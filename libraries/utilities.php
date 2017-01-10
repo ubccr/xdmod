@@ -23,9 +23,9 @@ $iniData = null;
  * first time that this function is called unless the $cache is set to
  * false.
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param string $option Desired option within the section
+ * @param bool   $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -60,9 +60,9 @@ function getConfiguration($section, $option, $useCachedOptions = true)
  *
  * @see getConfiguration
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param string $option Desired option within the section
+ * @param bool   $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -83,9 +83,8 @@ function getConfigurationUrlBase($section, $option, $useCachedOptions = true)
  * Same as getConfiguration however it returns the whole section as
  * an associative array.
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param bool   $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -119,8 +118,11 @@ function getConfigurationSection($section, $useCachedOptions = true)
 
 /**
  * Load the configuration data.
- *
  * @return array
+ * @throws Exception if the settings file could not be read
+ * @throws Exception if the settings file could not be parsed
+ * @throws Exception if one of the partial settings files could not be read
+ * @throws Exception if one of the partial settings files could not be parsed
  */
 function loadConfiguration()
 {
@@ -208,6 +210,8 @@ function tokenResolver($input)
 
 /**
  * Remove an element from an array.
+ * @param array $array
+ * @param mixed $value
  */
 function remove_element_by_value(&$array, $value)
 {
@@ -219,6 +223,9 @@ function remove_element_by_value(&$array, $value)
 
 /**
  * Power cube?
+ * @param array $arr
+ * @param int $minLength default value of 1
+ * @return array
  */
 function power_cube($arr, $minLength = 1)
 {
@@ -301,6 +308,9 @@ function ensure_string_ends_with($string, $ending)
 
 /**
  * Power permutations?
+ * @param array $arr
+ * @param int $minLength default value of 1
+ * @return array
  */
 function power_perms($arr, $minLength = 1)
 {
@@ -318,6 +328,9 @@ function power_perms($arr, $minLength = 1)
 
 /**
  * Power set?
+ * @param array $in
+ * @param int $minLength default value of 1
+ * @return array
  */
 function power_set($in, $minLength = 1)
 {
@@ -363,6 +376,9 @@ function factorial($int)
 
 /**
  * Permutations?
+ * @param array $arr
+ * @param int|null $nth default value of null
+ * @return array
  */
 function perm($arr, $nth = null)
 {
@@ -388,6 +404,8 @@ function perm($arr, $nth = null)
 
 /**
  * Permutation helper function?
+ * @param array $arr
+ * @return array
  */
 function perms($arr)
 {
@@ -402,6 +420,10 @@ function perms($arr)
 
 /**
  * Delete an element of an array.
+ * @param array $array
+ * @param mixed $delete_key
+ * @param bool $use_old_keys
+ * @return bool
  */
 function array_delete_by_key(&$array, $delete_key, $use_old_keys = false)
 {
@@ -471,6 +493,9 @@ function array_replace_key_value(array &$a, $key, $newValue, $default = null) {
  * or param1=value&param2=value&…
  *
  * If no match is found, an empty string is returned
+ * @param mixed $param
+ * @param string $haystack
+ * @return string
  */
 function getParameterIn($param, $haystack)
 {
@@ -506,6 +531,8 @@ function generateError($dom, $nodeRoot, $code, $message)
 
 /**
  * Print a message, then "delete" it.
+ * @param string $message
+ * @return int
  */
 function printAndDelete($message)
 {
