@@ -13,4 +13,5 @@ then
     PHPUNITARGS="${PHPUNITARGS} --coverage-html ../../html/phpunit"
 fi
 
+cd $(dirname $0)
 phpunit ${PHPUNITARGS} .
