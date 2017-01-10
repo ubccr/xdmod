@@ -2925,11 +2925,17 @@ SQL;
    }
 
     /**
-     * @return Acl[]
+     * @param bool $names defaults to `false`. If true, then the names of the
+     *                    acls will be returned instead of the Acl objects themselves.
+     * @return Acl[]|string[]
      */
-   public function getAcls()
+   public function getAcls($names = false)
    {
-       return $this->_acls;
+       return (!$names)
+           ? $this->_acls
+           : array_map(function(Acl $item) {
+               return $item->getName();
+           }, $this->_acls);
    }
 
     /**
