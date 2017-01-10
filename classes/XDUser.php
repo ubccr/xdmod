@@ -406,7 +406,7 @@ class XDUser {
      * @return boolean If this user is a public user, true. Otherwise, false.
      */
     public function isPublicUser() {
-        return $this->getPrimaryRole()->getIdentifier() === ROLE_ID_PUBLIC;
+        return array_key_exists(ROLE_ID_PUBLIC, $this->_acls);
     }
 
    // ---------------------------
@@ -609,7 +609,7 @@ SQL;
 
    public function isDeveloper() {
 
-      return (in_array(ROLE_ID_DEVELOPER, $this->getRoles()));
+      return array_key_exists(ROLE_ID_DEVELOPER, $this->_acls);
 
    }//isDeveloper
 
@@ -625,7 +625,7 @@ SQL;
 
    public function isManager() {
 
-      return (in_array(ROLE_ID_MANAGER, $this->getRoles()));
+      return array_key_exists(ROLE_ID_MANAGER, $this->_acls);
 
    }//isManager
 
