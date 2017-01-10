@@ -64,7 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
-* Thu Dec 22 2016 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 6.5.0-1.0
+* Tue Jan 10 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 6.5.0-1.0
 - Features
     - General
         - Modified the Summary tab to reload automatically after its charts are
