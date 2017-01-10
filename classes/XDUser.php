@@ -47,11 +47,15 @@ class XDUser {
    private $_cachedActiveRole;
 
     /**
+     * An array that is assumed to be stored in the following manner:
+     *  _assets[$asset->name] = $asset;
      * @var Asset[]
      */
    private $_assets;
 
     /**
+     * An array that is assumed to be stored in the following manner:
+     *   _acls[$acl->name] = $acl;
      * @var Acl[]
      */
    private $_acls;
