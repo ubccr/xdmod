@@ -44,8 +44,7 @@ class RequestDescripter
         }
 
         foreach ($this->_request_keys as $key) {
-            if (
-                !isset($request2[$key])
+            if (!isset($request2[$key])
                 || $this->_request[$key] !== $request2[$key]
             ) {
                 return false;
@@ -61,7 +60,6 @@ class RequestDescripter
 
         foreach ($this->_request_keys as $key) {
             if ($key != "controller_module") {
-
                 // Array values are not being handled properly, but if
                 // they are implicitly converted to a string a warning
                 // is generated.  Use the literal string "Array" instead
@@ -92,9 +90,10 @@ class RequestDescripter
         $ret = array();
 
         foreach ($arr as $a) {
-
             // To account for the input string containing a trailing '&'
-            if (empty($a)) { continue; }
+            if (empty($a)) {
+                continue;
+            }
 
             list($key, $value) = explode('=', $a, 2);
 

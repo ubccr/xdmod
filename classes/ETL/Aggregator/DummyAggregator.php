@@ -14,12 +14,12 @@ namespace ETL\Aggregator;
 use ETL\iAction;
 use ETL\EtlConfiguration;
 use ETL\EtlOverseerOptions;
-use \Log
+use \Log;
 
-class DummyAggregator
-implements iAction
+class DummyAggregator implements iAction
 {
     protected $options;
+
     public function __construct(AggregatorOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
         $this->options = $options;

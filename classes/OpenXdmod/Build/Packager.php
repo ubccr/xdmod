@@ -373,7 +373,6 @@ class Packager
 
             $this->logger->debug('END: tests output');
         }
-
     }
 
     /**
@@ -611,7 +610,6 @@ class Packager
         $srcFileInfo = array();
 
         foreach ($srcIter as $path => $info) {
-
             // Remove source path prefix.
             $relPath = substr($path, $srcLength);
 
@@ -630,7 +628,6 @@ class Packager
         // Build lists of all files and directories from the include
         // path list.
         foreach ($this->config->getFileIncludePaths() as $path) {
-
             // Special case to include all files.
             if ($path === '/') {
                 $includeFiles = $srcFiles;
@@ -787,9 +784,9 @@ class Packager
             throw new Exception("Failed to copy file '$srcFile' to '$destFile'");
         }
 
-       if (!chmod($destFile, fileperms($srcFile))) {
-          throw new Exception("Failed change the mode of file '$destFile'");
-       }
+        if (!chmod($destFile, fileperms($srcFile))) {
+            throw new Exception("Failed change the mode of file '$destFile'");
+        }
     }
 
     /**
@@ -808,9 +805,9 @@ class Packager
             throw new Exception("Failed to create directory '$destDir'");
         }
 
-       if (!chmod($destDir, fileperms($srcDir))) {
-          throw new Exception("Failed change the mode of directory '$destDir'");
-       }
+        if (!chmod($destDir, fileperms($srcDir))) {
+            throw new Exception("Failed change the mode of directory '$destDir'");
+        }
 
         foreach (scandir($srcDir) as $file) {
             if ($file === '.' || $file === '..') {

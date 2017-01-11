@@ -41,7 +41,8 @@ try {
                         $tabs[$module->getName()]['permitted_modules'] = array_values(
                             array_unique(
                                 array_merge(
-                                    $tabs[$module->getName()]['permitted_modules'], $module->getPermittedModules()
+                                    $tabs[$module->getName()]['permitted_modules'],
+                                    $module->getPermittedModules()
                                 )
                             )
                         );
@@ -54,7 +55,9 @@ try {
     // Sort tabs
     usort(
         $tabs,
-        function ($a, $b) { return ($a['pos'] < $b['pos']) ? -1 : 1; }
+        function ($a, $b) {
+            return ($a['pos'] < $b['pos']) ? -1 : 1;
+        }
     );
 
     $returnData = array(
@@ -65,8 +68,7 @@ try {
             array('tabs' => json_encode(array_values($tabs)))
         ),
     );
-} catch (SessionExpiredException $see)
-{
+} catch (SessionExpiredException $see) {
     // TODO: Refactor generic catch block below to handle specific exceptions,
     //       which would allow this block to be removed.
     throw $see;
@@ -81,4 +83,3 @@ try {
 }
 
 xd_controller\returnJSON($returnData);
-

@@ -30,11 +30,10 @@ abstract class aIngestor extends aRdbmsDestinationAction
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        if ( ! $options instanceof IngestorOptions ) {
+        if (! $options instanceof IngestorOptions) {
             $msg = "Options is not an instance of IngestorOptions";
             $this->logAndThrowException($msg);
         }
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -45,12 +44,12 @@ abstract class aIngestor extends aRdbmsDestinationAction
     public function verify(EtlOverseerOptions $etlOptions = null)
     {
 
-        if ( $this->isVerified() ) {
+        if ($this->isVerified()) {
             return;
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
+        if (null !== $etlOptions) {
             $this->setEtlOverseerOptions($etlOptions);
         }
 
@@ -61,7 +60,6 @@ abstract class aIngestor extends aRdbmsDestinationAction
         $this->verified = true;
 
         return true;
-
     }  // verify()
 
     /* ------------------------------------------------------------------------------------------
@@ -71,7 +69,7 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
     protected function initialize()
     {
-        if ( $this->isInitialized() ) {
+        if ($this->isInitialized()) {
             return;
         }
 
@@ -85,7 +83,6 @@ abstract class aIngestor extends aRdbmsDestinationAction
         $this->initialized = true;
 
         return true;
-
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
@@ -111,9 +108,8 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
         // The EtlOverseerOptions class allows iteration over a list of chunked date ranges
 
-        if ( false !== $this->performPreExecuteTasks() ) {
-
-            foreach ( $etlOptions as $interval ) {
+        if (false !== $this->performPreExecuteTasks()) {
+            foreach ($etlOptions as $interval) {
                 $this->logger->info("Process date interval (start: " .
                                     $etlOptions->getCurrentStartDate() .
                                     ", end: " .
@@ -124,20 +120,20 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
                 $numRecordsProcessed = $this->_execute();
                 $totalRecordsProcessed += $numRecordsProcessed;
-
             }  // foreach ( $etlOptions as $interval )
 
             $this->performPostExecuteTasks($totalRecordsProcessed);
-
         }  // if ( false !== $this->performPreExecuteTasks() )
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $message = sprintf('%s: Rows Processed: %d records (Time Taken: %01.2f s)',
-                           get_class($this),
-                           $totalRecordsProcessed,
-                           $time);
+        $message = sprintf(
+            '%s: Rows Processed: %d records (Time Taken: %01.2f s)',
+            get_class($this),
+            $totalRecordsProcessed,
+            $time
+        );
         $this->logger->info($message);
 
         // NOTE: This is needed for the log summary.
@@ -185,5 +181,4 @@ abstract class aIngestor extends aRdbmsDestinationAction
      */
 
     abstract protected function _execute();
-
 }  // abstract class aIngestor

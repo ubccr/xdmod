@@ -1,31 +1,29 @@
 <?php
 
-   class SVGFormat implements iBinaryFormat {
+class SVGFormat implements iBinaryFormat
+{
 
-      public function toString() {
+    public function toString()
+    {
          
-         return "svg";
-         
-      }//toString  
+        return "svg";
+    }//toString
         
-      // -----------------------------------
+   // -----------------------------------
          
-      public function getHeaders() {
+    public function getHeaders()
+    {
          
-         return array(
-            'content-type' => 'image/svg+xml'
-         );
-         
-      }//getHeaders   
+        return array(
+          'content-type' => 'image/svg+xml'
+        );
+    }//getHeaders
 
-      // -----------------------------------
+   // -----------------------------------
       
-      public function getDescription() {
+    public function getDescription()
+    {
          
-         return "An XML-based file format for describing two-dimensional vector graphics";
-         
-      }//getDescription 
-         
-   }//SVGFormat
-   
-?>
+        return "An XML-based file format for describing two-dimensional vector graphics";
+    }//getDescription
+}//SVGFormat

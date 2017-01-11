@@ -66,77 +66,82 @@ $args = getopt(implode('', array_keys($options)), $options);
 
 foreach ($args as $arg => $value) {
     switch ($arg) {
-
-    case 'b':
-    case 'base-dir':
-        if ( ! is_dir($value) ) usage_and_exit("Base directory does not exist: '$value'");
-        $scriptOptions['base-dir'] = $value;
-        break;
-
-    case 'c':
-    case 'config-file':
-        $scriptOptions['config-file'] = $value;
-        break;
-
-    case 'd':
-    case 'delete':
-        $scriptOptions['delete-objects'] = array_merge($scriptOptions['delete-objects'],
-                                                       ( is_array($value) ? $value : array($value) ));
-        break;
-
-    case 't':
-    case 'dryrun':
-        $scriptOptions['dryrun'] = true;
-        break;
-
-    case 'e':
-    case 'endpoint':
-        $scriptOptions['endpoint'] = $value;
-        break;
-
-    case 'i':
-    case 'info':
-        $scriptOptions['info-objects'] = array_merge($scriptOptions['info-objects'],
-                                                     ( is_array($value) ? $value : array($value) ));
-        break;
-
-    case 'l':
-    case 'list':
-        $scriptOptions['list'] = true;
-        break;
-
-    case 'v':
-    case 'verbosity':
-        switch ( $value ) {
-        case 'debug':
-            $scriptOptions['verbosity'] = Log::DEBUG;
+        case 'b':
+        case 'base-dir':
+            if (! is_dir($value)) {
+                usage_and_exit("Base directory does not exist: '$value'");
+            }
+            $scriptOptions['base-dir'] = $value;
             break;
+
+        case 'c':
+        case 'config-file':
+            $scriptOptions['config-file'] = $value;
+            break;
+
+        case 'd':
+        case 'delete':
+            $scriptOptions['delete-objects'] = array_merge(
+                $scriptOptions['delete-objects'],
+                ( is_array($value) ? $value : array($value) )
+            );
+            break;
+
+        case 't':
+        case 'dryrun':
+            $scriptOptions['dryrun'] = true;
+            break;
+
+        case 'e':
+        case 'endpoint':
+            $scriptOptions['endpoint'] = $value;
+            break;
+
+        case 'i':
         case 'info':
-            $scriptOptions['verbosity'] = Log::INFO;
+            $scriptOptions['info-objects'] = array_merge(
+                $scriptOptions['info-objects'],
+                ( is_array($value) ? $value : array($value) )
+            );
             break;
-        case 'notice':
-            $scriptOptions['verbosity'] = Log::NOTICE;
+
+        case 'l':
+        case 'list':
+            $scriptOptions['list'] = true;
             break;
-        case 'warning':
-            $scriptOptions['verbosity'] = Log::WARNING;
+
+        case 'v':
+        case 'verbosity':
+            switch ($value) {
+                case 'debug':
+                    $scriptOptions['verbosity'] = Log::DEBUG;
+                    break;
+                case 'info':
+                    $scriptOptions['verbosity'] = Log::INFO;
+                    break;
+                case 'notice':
+                    $scriptOptions['verbosity'] = Log::NOTICE;
+                    break;
+                case 'warning':
+                    $scriptOptions['verbosity'] = Log::WARNING;
+                    break;
+                case 'quiet':
+                    $scriptOptions['verbosity'] = Log::EMERG;
+                    break;
+                default:
+                    usage_and_exit("Invalid verbosity level: $value");
+                    break;
+            }  // switch ( $value )
             break;
-        case 'quiet':
-            $scriptOptions['verbosity'] = Log::EMERG;
+
+        case 'h':
+        case 'help':
+            usage_and_exit();
             break;
+
         default:
-            usage_and_exit("Invalid verbosity level: $value");
+            usage_and_exit("Invalid option: $arg");
             break;
-        }  // switch ( $value )
-        break;
-
-    case 'h':
-    case 'help':
-        usage_and_exit();
-        break;
-
-    default:
-        usage_and_exit("Invalid option: $arg");
-        break;
     }
 }  // foreach ($args as $arg => $value)
 
@@ -147,15 +152,15 @@ foreach ($args as $arg => $value) {
 // etl_overseer.php -c /etc/etl/etl.json -n 2 -p osg month --dryrun
 
 $parsedArgs = array_keys($args);
-foreach ( $argv as $index => $arg ) {
+foreach ($argv as $index => $arg) {
     $opt = null;
     
-    if ( 0 === strpos($arg, "--") ) {
+    if (0 === strpos($arg, "--")) {
         $opt = substr($arg, 2);
-    } else if ( 0 === strpos($arg, "-") ) {
+    } elseif (0 === strpos($arg, "-")) {
         $opt = substr($arg, 1);
     }
-    if ( null !== $opt && ! in_array($opt, $parsedArgs) ) {
+    if (null !== $opt && ! in_array($opt, $parsedArgs)) {
         usage_and_exit("Unparsed argument: $arg");
     }
 }
@@ -168,22 +173,24 @@ $conf = array(
     'mail' => false
     );
 
-if ( null !== $scriptOptions['verbosity'] ) $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
+if (null !== $scriptOptions['verbosity']) {
+    $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
+}
 
 $logger = Log::factory('DWI', $conf);
 
 $cmd = implode(' ', array_map('escapeshellarg', $argv));
 $logger->info("Command: $cmd");
 
-if ( null === $scriptOptions['config-file'] ) {
+if (null === $scriptOptions['config-file']) {
     usage_and_exit("Config file required");
-} else if ( null !== $scriptOptions['config-file'] && ! is_file($scriptOptions['config-file']) ) {
+} elseif (null !== $scriptOptions['config-file'] && ! is_file($scriptOptions['config-file'])) {
     usage_and_exit("Config file not found: '" . $scriptOptions['config-file'] . "'");
 }
 
 // NOTE: "process_start_time" is needed for log summary.
 
-if ( $scriptOptions['dryrun']) {
+if ($scriptOptions['dryrun']) {
     $logger->notice("Running in DRYRUN mode");
 }
 
@@ -191,27 +198,29 @@ if ( $scriptOptions['dryrun']) {
 // Parse the ETL configuration. We will need it for listing available ingestors, aggregators, etc.
 
 try {
-    $etlConfig = new EtlConfiguration($scriptOptions['config-file'],
-                                      $scriptOptions['base-dir']);
+    $etlConfig = new EtlConfiguration(
+        $scriptOptions['config-file'],
+        $scriptOptions['base-dir']
+    );
     $etlConfig->setLogger($logger);
     $etlConfig->initialize();
     $etlConfig->cleanup();
-} catch ( Exception $e ) {
+} catch (Exception $e) {
     exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
 }
 
-if ( false === ($ep = $etlConfig->getGlobalEndpoint($scriptOptions['endpoint'])) ) {
+if (false === ($ep = $etlConfig->getGlobalEndpoint($scriptOptions['endpoint']))) {
     exit("Unknown data endpoint: '{$scriptOptions['endpoint']}'\n");
 }
 
-if ( $scriptOptions['list'] ) {
+if ($scriptOptions['list']) {
     try {
         $list = StateManager::getList($ep, $logger);
-    } catch ( Exception $e ) {
+    } catch (Exception $e) {
         exit($e->getMessage() . "\n");
     }
 
-    if ( 0 == count($list) ) {
+    if (0 == count($list)) {
         print "No state objects found\n";
     } else {
         $headings = array(
@@ -225,32 +234,32 @@ if ( $scriptOptions['list'] ) {
             );
         print implode(LIST_SEPARATOR, $headings) . "\n";
         
-        foreach ( $list as $row ) {
+        foreach ($list as $row) {
             print implode(LIST_SEPARATOR, $row) . "\n";
         }
     }
 }
 
-if ( 0 != count($scriptOptions['delete-objects']) ) {
-    foreach ( $scriptOptions['delete-objects'] as $key ) {
+if (0 != count($scriptOptions['delete-objects'])) {
+    foreach ($scriptOptions['delete-objects'] as $key) {
         $logger->info("Delete state with key $key");
 
         try {
             StateManager::delete($key, $ep, $logger);
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             exit($e->getMessage() . "\n");
         }
     }
 }
 
-if ( 0 != count($scriptOptions['info-objects']) ) {
-    foreach ( $scriptOptions['info-objects'] as $key ) {
+if (0 != count($scriptOptions['info-objects'])) {
+    foreach ($scriptOptions['info-objects'] as $key) {
         try {
             $stateObj = StateManager::load($key, $ep, $logger);
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             exit($e->getMessage() . "\n");
         }
-        if ( false === $stateObj ) {
+        if (false === $stateObj) {
             print "No state object with key $key\n";
         } else {
             print $stateObj;
@@ -278,7 +287,7 @@ function usage_and_exit($msg = null)
 
     fwrite(
         STDERR,
-<<<"EOMSG"
+        <<<"EOMSG"
 Usage: {$argv[0]}
 
     -h, --help
@@ -309,7 +318,7 @@ Usage: {$argv[0]}
     Level of verbosity to output from the ETL process
 
 EOMSG
-        );
+    );
 
     exit(1);
 }

@@ -78,4 +78,3 @@ class PIPeople extends PDODBMultiIngestor
         );
     }
 }
-

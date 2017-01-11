@@ -143,7 +143,9 @@ class PDODBSynchronizingIngestor implements Ingestor
             }
 
             $insertData = array_map(
-                function ($column) use ($row) { return $row[$column]; },
+                function ($column) use ($row) {
+                    return $row[$column];
+                },
                 $columns
             );
 

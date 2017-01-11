@@ -100,7 +100,6 @@ try {
         default:
             throw new Exception("Invalid thumbnail type value supplied: " . $_REQUEST['type']);
             break;
-
     } // switch($_REQUEST['type'])
 
     if ($user_id !== $user->getUserID()) {
@@ -125,7 +124,6 @@ try {
     }
 
     print $blob;
-
 } catch (Exception $e) {
     header("Content-Type: image/png");
     $unique_id = uniqid();

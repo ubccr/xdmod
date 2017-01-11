@@ -20,4 +20,3 @@ $returnData['status']     = 'success';
 $returnData['user_types'] = $userTypeEntries;
 
 \xd_controller\returnJSON($returnData);
-

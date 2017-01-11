@@ -5,9 +5,9 @@
  */
 abstract class XDException extends \Exception
 {
-	/**
-	 * The message used by this exception if none is provided.
-	 */
+    /**
+     * The message used by this exception if none is provided.
+     */
     const defaultMessage = 'Unknown XDMoD Exception Occurred';
 
     /**
@@ -50,9 +50,7 @@ abstract class XDException extends \Exception
     public $headers = array();
 
     public function __construct($message = self::defaultMessage, $code = self::defaultCode, Exception $previous = null)
-	{
-		parent::__construct($message, $code, $previous);
-	}
+    {
+        parent::__construct($message, $code, $previous);
+    }
 }
-
-?>

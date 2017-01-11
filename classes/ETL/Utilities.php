@@ -51,18 +51,18 @@ class Utilities
         $string,
         array $map,
         array &$substitutedVariables = null,
-        array &$unsubstitutedVariables = null )
-    {
+        array &$unsubstitutedVariables = null
+    ) {
+    
 
         // If we are not tracking the variables that have or have not been substituted, simply
         // perform a string replacement.
 
-        if ( null === $substitutedVariables && null == $unsubstitutedVariables ) {
-            foreach ( $map as $k => $v ) {
+        if (null === $substitutedVariables && null == $unsubstitutedVariables) {
+            foreach ($map as $k => $v) {
                 $string = str_replace('${' . $k . '}', $v, $string);
             }
         } else {
-
             $localSubstituted = array();
             $localUnsubstituted = array();
 
@@ -70,30 +70,28 @@ class Utilities
 
             array_map(function ($v, $k) use (&$string, &$localSubstituted) {
                     $search = '${' . $k . '}';
-                    if ( false !== strpos($string, $search) ) {
-                        $substituted[] = $k;
-                    }
+                if (false !== strpos($string, $search)) {
+                    $substituted[] = $k;
+                }
                     $string = str_replace($search, $v, $string);
-                }, $map, array_keys($map));
+            }, $map, array_keys($map));
 
             // If there are any variables left in the string, track them as unsubstituted.
 
-            if ( null !== $substitutedVariables ) {
+            if (null !== $substitutedVariables) {
                 $substitutedVariables = $localSubstituted;
             }
 
-            if ( null !== $unsubstitutedVariables ) {
+            if (null !== $unsubstitutedVariables) {
                 $matches = array();
-                if ( 0 !== preg_match_all('/(\$\{.+\})/', $string, $matches ) ) {
+                if (0 !== preg_match_all('/(\$\{.+\})/', $string, $matches)) {
                     $localUnsubstituted = array_shift($matches);
                 }
                 $unsubstitutedVariables = $localUnsubstituted;
             }
-
         }  // else ( null === $substitutedVariables && null == $unsubstitutedVariables )
 
         return $string;
-
     }  // substituteVariables()
 
     /* ------------------------------------------------------------------------------------------
@@ -135,17 +133,17 @@ class Utilities
 
     public static function processMacro($string, stdClass $config)
     {
-        if ( null === self::$etlConfig ) {
+        if (null === self::$etlConfig) {
             $msg = __CLASS__ . ": ETL configuration object not set";
             throw new Exception($msg);
         }
 
         $paths = self::$etlConfig->getPaths();
 
-        if ( ! isset($paths->macro_dir) ) {
+        if (! isset($paths->macro_dir)) {
             $msg = __CLASS__ . ": ETL configuration paths.macro_dir is not set";
             throw new Exception($msg);
-        } else if ( ! is_dir($paths->macro_dir) ) {
+        } elseif (! is_dir($paths->macro_dir)) {
             $msg = __CLASS__ . ": ETL configuration paths.macro_dir '{$paths->macro_dir}' is not a directory";
             throw new Exception($msg);
         }
@@ -155,13 +153,13 @@ class Utilities
 
         // Verify requred options
 
-        foreach ( $requiredProperties as $p ) {
-            if ( ! isset($config->$p) || null === $config->$p || "" == $config->$p ) {
+        foreach ($requiredProperties as $p) {
+            if (! isset($config->$p) || null === $config->$p || "" == $config->$p) {
                 $missingProperties[] = $p;
             }
         }
 
-        if ( 0 != count($missingProperties) ) {
+        if (0 != count($missingProperties)) {
             $msg = __CLASS__ . ": Required properties not provided: " . implode(", ", $missingProperties);
             throw new Exception($msg);
         }
@@ -169,15 +167,15 @@ class Utilities
         // Read in a macro file, substitute keys for values, and return the macro
 
         $filename = $paths->macro_dir . "/" . $config->file;
-        if ( ! is_file($filename) ) {
+        if (! is_file($filename)) {
             $msg = __CLASS__ . ": Cannot load macro file '$filename'";
             throw new Exception($msg);
-        } else if ( 0 == filesize($filename) ) {
+        } elseif (0 == filesize($filename)) {
             // No use processing an empty macro
             return;
         }
 
-        if ( false === ($macro = @file_get_contents($filename)) ) {
+        if (false === ($macro = @file_get_contents($filename))) {
             $msg = __CLASS__ . ": Error reading macro file '$filename'";
             throw new Exception($msg);
         }
@@ -186,8 +184,8 @@ class Utilities
 
         $stripped = array();
 
-        foreach ( explode("\n", $macro) as $line ) {
-            if ( 0 === strpos($line, "--") || 0 === strpos($line,  "#") ) {
+        foreach (explode("\n", $macro) as $line) {
+            if (0 === strpos($line, "--") || 0 === strpos($line, "#")) {
                 continue;
             }
             $stripped[] = $line;
@@ -197,14 +195,13 @@ class Utilities
 
         // Replace macro arguments
 
-        if ( isset($config->args) && count($config->args) > 0 ) {
+        if (isset($config->args) && count($config->args) > 0) {
             $macro = self::substituteVariables($macro, (array) $config->args);
         }
 
         $string = self::substituteVariables($string, array( $config->name => $macro ));
 
         return $string;
-
     }  // processMacro()
 
     /* ------------------------------------------------------------------------------------------
@@ -225,5 +222,4 @@ class Utilities
     {
         return ( false === $value ? false : filter_var($value, $filter, $options) );
     }  // filterBooleanVar()
-
 }  // class Utilities

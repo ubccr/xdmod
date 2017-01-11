@@ -131,7 +131,6 @@ class JobHosts implements Ingestor
                    AND end_time <= UNIX_TIMESTAMP('$this->endDate 23:59:59')
             ";
         } else {
-
             // Only ingest new jobs.
             $sql = "SELECT MAX(job_id) AS max_id FROM jobhosts";
             list($row) = $this->destDb->query($sql);

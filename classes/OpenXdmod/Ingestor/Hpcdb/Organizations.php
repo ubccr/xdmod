@@ -37,4 +37,3 @@ class Organizations extends PDODBMultiIngestor
         );
     }
 }
-

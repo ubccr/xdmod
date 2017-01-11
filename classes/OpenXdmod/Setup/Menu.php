@@ -64,7 +64,7 @@ class Menu
 
         $this->console->displayBlankLine();
 
-        $option = $this->console->prompt('Select an option:' , '', $triggerSet);
+        $option = $this->console->prompt('Select an option:', '', $triggerSet);
 
         $this->getHandlerForTrigger($option)->handle();
     }

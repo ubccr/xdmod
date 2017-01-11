@@ -13,38 +13,35 @@
 
 class AliasTest extends PHPUnit_Framework_TestCase
 {
-	private $_alias;
-	private $_alias1;
-	
-	function setUp()
-    {
-		$this->_alias = new \DataWarehouse\Query\Model\Alias('alias_name');
-		$this->_alias1 = new \DataWarehouse\Query\Model\Alias('');
-    }
-	
-	function tearDown() {
-		$this->_alias = NULL;
-		$this->_alias1 = NULL;
-	}
-	
+    private $_alias;
+    private $_alias1;
     
-	public function testGetName()
+    function setUp()
     {
-		$this->assertEquals( $this->_alias->getName(), 'alias_name', "This should pass" );
-		
+        $this->_alias = new \DataWarehouse\Query\Model\Alias('alias_name');
+        $this->_alias1 = new \DataWarehouse\Query\Model\Alias('');
     }
-	
-	public function testSetName()
+    
+    function tearDown()
     {
-		$this->_alias1->setName('mock_name');
-		$this->assertEquals( $this->_alias1->getName(), 'mock_name', "This should pass" );
+        $this->_alias = null;
+        $this->_alias1 = null;
     }
-	
-	public function testToString()
+    
+    
+    public function testGetName()
     {
-		$this->assertEquals( $this->_alias->__toString(), 'alias_name', "This should pass" );
+        $this->assertEquals($this->_alias->getName(), 'alias_name', "This should pass");
     }
-
+    
+    public function testSetName()
+    {
+        $this->_alias1->setName('mock_name');
+        $this->assertEquals($this->_alias1->getName(), 'mock_name', "This should pass");
+    }
+    
+    public function testToString()
+    {
+        $this->assertEquals($this->_alias->__toString(), 'alias_name', "This should pass");
+    }
 }
-
-?>

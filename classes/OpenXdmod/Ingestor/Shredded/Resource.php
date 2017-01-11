@@ -20,4 +20,3 @@ class Resource extends PDODBSynchronizingIngestor
         );
     }
 }
-

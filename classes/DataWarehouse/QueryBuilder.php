@@ -9,7 +9,7 @@ namespace DataWarehouse;
  */
 class QueryBuilder
 {
-    private static $_self = NULL;
+    private static $_self = null;
 
     public static $_realms = null;
 
@@ -28,7 +28,7 @@ class QueryBuilder
 
     public static function getInstance()
     {
-        if (self::$_self == NULL) {
+        if (self::$_self == null) {
             self::$_self = new QueryBuilder();
         }
 
@@ -78,7 +78,7 @@ class QueryBuilder
 
     private static function loadQueryRealmConfig()
     {
-        if( self::$_realms !== null ) {
+        if (self::$_realms !== null) {
             // Already loaded config
             return;
         }
@@ -86,7 +86,7 @@ class QueryBuilder
         $config = \Xdmod\Config::factory();
         $dwconfig = $config['datawarehouse']['realms'];
 
-        foreach($dwconfig as $realmName => $data) {
+        foreach ($dwconfig as $realmName => $data) {
             self::$_realms[$realmName] = array(
                 "realm"     => $realmName,
                 "classname" => "\\DataWarehouse\\Query\\" . $realmName . "\\Aggregate",
@@ -133,8 +133,7 @@ class QueryBuilder
 
         if (isset($request['query_group'])) {
             $query_group = $request['query_group'];
-        }
-        elseif (isset($request['querygroup'])) {
+        } elseif (isset($request['querygroup'])) {
             $query_group = $request['querygroup'];
         }
 
@@ -154,11 +153,9 @@ class QueryBuilder
     {
         if (isset($request['group_by'])) {
             return $request['group_by'];
-        }
-        elseif (isset($request['dimension'])) {
+        } elseif (isset($request['dimension'])) {
             return $request['dimension'];
-        }
-        else {
+        } else {
             throw new \Exception('Parameter group_by/dimension is not set');
         }
     }
@@ -171,7 +168,7 @@ class QueryBuilder
             : (
                 isset($request['fact'])
                 ? $request['fact']
-                : NULL
+                : null
             );
     }
 
@@ -189,28 +186,22 @@ class QueryBuilder
 
         $activeRole = $user->getMostPrivilegedRole();
 
-        if (
-               $query_group === 'my_usage'
+        if ($query_group === 'my_usage'
             || $query_group === 'my_summary'
             || $query_group === 'tg_usage'
             || $query_group === 'tg_summary'
         ) {
             // Do nothing...
-        }
-        elseif (preg_match($rp_usage_regex, $query_group, $matches) > 0) {
+        } elseif (preg_match($rp_usage_regex, $query_group, $matches) > 0) {
             $request['provider'] = $matches['rp_id'];
             $query_group         = 'tg_usage';
-        }
-        elseif (preg_match($rp_summary_regex, $query_group, $matches) > 0) {
+        } elseif (preg_match($rp_summary_regex, $query_group, $matches) > 0) {
             $request['provider'] = $matches['rp_id'];
             $query_group         = 'tg_summary';
-        }
-        else {
+        } else {
             if (($suffix_index = strpos($query_group, '_summary')) !== false) {
                 $suffix = '_summary';
-            }
-            elseif (
-                ($suffix_index = strpos($query_group, '_usage')) !== false
+            } elseif (($suffix_index = strpos($query_group, '_usage')) !== false
             ) {
                 $suffix = '_usage';
             }
@@ -221,7 +212,7 @@ class QueryBuilder
                     substr($query_group, 0, strpos($query_group, $suffix))
                 );
 
-                $role_data = array_pad($role_data, 2, NULL);
+                $role_data = array_pad($role_data, 2, null);
 
                 $activeRole = $user->assumeActiveRole(
                     $role_data[0],
@@ -329,17 +320,13 @@ class QueryBuilder
         if (preg_match($rp_usage_regex, $query_group, $matches) > 0) {
             $request['provider'] = $matches['rp_id'];
             $query_group         = 'tg_usage';
-        }
-        elseif (preg_match($rp_summary_regex, $query_group, $matches) > 0) {
+        } elseif (preg_match($rp_summary_regex, $query_group, $matches) > 0) {
             $request['provider'] = $matches['rp_id'];
             $query_group         = 'tg_summary';
-        }
-        else {
+        } else {
             if (($suffix_index = strpos($query_group, '_summary')) !== false) {
                 $suffix = '_summary';
-            }
-            elseif (
-                ($suffix_index = strpos($query_group, '_usage')) !== false
+            } elseif (($suffix_index = strpos($query_group, '_usage')) !== false
             ) {
                 $suffix = '_usage';
             }
@@ -350,7 +337,7 @@ class QueryBuilder
                     substr($query_group, 0, strpos($query_group, $suffix))
                 );
 
-                $role_data = array_pad($role_data, 2, NULL);
+                $role_data = array_pad($role_data, 2, null);
 
                 $activeRole = $user->assumeActiveRole(
                     $role_data[0],
@@ -387,4 +374,3 @@ class QueryBuilder
         return $query_descripter->pullQueryParameterDescriptions($request);
     }
 }
-

@@ -10,13 +10,16 @@ abstract class RawQuery extends \DataWarehouse\Query\Query
 {
     public function __construct($realm, $schema, $facttable, $parameters)
     {
-        /* We are being a bit cheeky here by inheriting from the Query class. 
+        /* We are being a bit cheeky here by inheriting from the Query class.
          * This provides the implementations for most of the stuff we want and
          * we disable the stuff we don't want by overloading the duration functions
          * and crafting the constructor arguments.
          */
 
-        parent::__construct($realm, $schema, $facttable,
+        parent::__construct(
+            $realm,
+            $schema,
+            $facttable,
             array(),
             "day",
             "2010-01-01",
@@ -26,7 +29,8 @@ abstract class RawQuery extends \DataWarehouse\Query\Query
             array(),
             'query_groupname',
             array(),
-            false);
+            false
+        );
 
         $this->setDataTable($schema, $facttable);
         $this->setParameters($parameters);
@@ -34,14 +38,12 @@ abstract class RawQuery extends \DataWarehouse\Query\Query
 
     protected function setDuration($ignore1, $ignore2)
     {
-        // Overload the setDuration function to do nothing. This prevents the 
+        // Overload the setDuration function to do nothing. This prevents the
         // time-aggregation-specific code from running
     }
 
-    /* should return an array containing the documentation for the various 
+    /* should return an array containing the documentation for the various
      * columns
      */
     abstract public function getColumnDocumentation();
 }
-
-?>

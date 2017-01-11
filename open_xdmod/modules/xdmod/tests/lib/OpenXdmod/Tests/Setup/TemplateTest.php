@@ -38,7 +38,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
      */
     protected function getSettingsData($path)
     {
-       $data = parse_ini_file($path, true);
+        $data = parse_ini_file($path, true);
 
         if ($data === false) {
             throw new Exception("Failed to parse '$path'");

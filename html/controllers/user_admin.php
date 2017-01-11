@@ -34,4 +34,3 @@ $controller->registerOperation('empty_report_image_cache');
 $controller->registerOperation('search_users');
 
 $controller->invoke('POST', 'xdDashboardUser');
-

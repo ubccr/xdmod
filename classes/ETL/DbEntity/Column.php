@@ -16,8 +16,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Column extends aNamedEntity
-implements iTableItem
+class Column extends aNamedEntity implements iTableItem
 {
     // Column type (free-form string)
     private $type = null;
@@ -46,7 +45,7 @@ implements iTableItem
     {
         parent::__construct($systemQuoteChar, $logger);
 
-        if ( ! is_object($config) ) {
+        if (! is_object($config)) {
             $msg = __CLASS__ . ": Column definition must be an object";
             $this->logAndThrowException($msg);
         }
@@ -55,7 +54,6 @@ implements iTableItem
         $this->verifyRequiredConfigKeys($requiredKeys, $config);
 
         $this->initialize($config);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -65,16 +63,16 @@ implements iTableItem
 
     protected function initialize(stdClass $config, $force = false)
     {
-        if ( $this->initialized && ! $force ) {
+        if ($this->initialized && ! $force) {
             return true;
         }
 
-        foreach ( $config as $property => $value ) {
-            if ( '#' == $property ) {
+        foreach ($config as $property => $value) {
+            if ('#' == $property) {
                 continue;
             }
 
-            if ( ! property_exists($this, $property) ) {
+            if (! property_exists($this, $property)) {
                 $msg = "Property '$property' in config is not supported";
                 $this->logAndThrowException($msg);
             }
@@ -83,7 +81,6 @@ implements iTableItem
         }  // foreach ( $config as $property => $value )
 
         $this->initialized = true;
-
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
@@ -100,8 +97,7 @@ implements iTableItem
 
     private function filterValue($property, $value)
     {
-        switch ( $property ) {
-
+        switch ($property) {
             case 'nullable':
                 // The config files use "NULL" and "NOT NULL" but the MySQL information schema uses "YES" and
                 // "NO"
@@ -196,7 +192,7 @@ implements iTableItem
 
     public function compare(iTableItem $cmp)
     {
-        if ( ! $cmp instanceof Column ) {
+        if (! $cmp instanceof Column) {
             return 1;
         }
 
@@ -207,7 +203,7 @@ implements iTableItem
         // Note that the "enum" type will be handled in a special case below so only match types here
         // that are different and are not both enumerated.
 
-        if ( $this->getName() != $cmp->getName()
+        if ($this->getName() != $cmp->getName()
              ||
              ( $this->getType() != $cmp->getType()
                && ! (0 === strpos($this->getType(), 'enum')
@@ -220,8 +216,7 @@ implements iTableItem
         // Timestamp fields have special handling for default and extra fields.
         // See https://dev.mysql.com/doc/refman/5.5/en/timestamp-initialization.html
 
-        if ( "timestamp" == $this->getType() ) {
-
+        if ("timestamp" == $this->getType()) {
             // In the mode where a config file is compared to an existing database, the source is
             // considered the configuration while the destination is the database.
 
@@ -233,7 +228,7 @@ implements iTableItem
             // MySQL considers the following equivalent to CURRENT_TIMESTAMP and will convert them
             // automatically. Map them now so we don't get into an endless ALTER TABLE loop.
 
-            if ( null !== $srcExtra) {
+            if (null !== $srcExtra) {
                 $search = array(
                     "CURRENT_TIMESTAMP()",
                     "NOW()",
@@ -249,10 +244,9 @@ implements iTableItem
             // If no DEFAULT is provided but an EXTRA is provided the default will be 0 unless
             // the collumn is nullable, then it will be NULL.
 
-            if ( ( (null === $srcDefault && null === $srcExtra)
+            if (( (null === $srcDefault && null === $srcExtra)
                    || ('current_timestamp' === strtolower($srcDefault) && 'on update current_timestamp' === strtolower($srcExtra)) )
-                 && ('current_timestamp' != strtolower($destDefault) || null === $destExtra) )
-            {
+                 && ('current_timestamp' != strtolower($destDefault) || null === $destExtra) ) {
                 return -1;
             }
 
@@ -261,17 +255,16 @@ implements iTableItem
             // Note that valid defaults are 0 or a datetime format and MySQL will translate 0 to
             // '0000-00-00 00:00:00' and will add '00:00:00' to date strings.
 
-            if ( (null !== $srcDefault && null === $srcExtra) ) {
-                if ( null !== $destExtra ) {
+            if ((null !== $srcDefault && null === $srcExtra)) {
+                if (null !== $destExtra) {
                     // Extra has changed (destination has a value)
                     return -1;
-                } else if ( null === $destDefault ) {
+                } elseif (null === $destDefault) {
                     // Default has changed from NULL to something
                     return -1;
-                } else if ( strtolower($srcDefault) != strtolower($destDefault)
+                } elseif (strtolower($srcDefault) != strtolower($destDefault)
                             && ( ("0" == "$srcDefault" && '0000-00-00 00:00:00' != $destDefault)
-                                 || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault) ) )
-                {
+                                 || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault) ) ) {
                     // Note the casting of 0 to "0" above is necessary because php considers 0 == "0000-01-01" to be true.
                     // Default has changed
                     return -1;
@@ -282,13 +275,12 @@ implements iTableItem
             // is automatically updated to the current timestamp and has the given constant default
             // value.
 
-            if ( null !== $srcDefault && null !== $srcExtra ) {
-                if ( strtolower($srcExtra) != strtolower($destExtra) ) {
+            if (null !== $srcDefault && null !== $srcExtra) {
+                if (strtolower($srcExtra) != strtolower($destExtra)) {
                     return -1;
-                } else if ( strtolower($srcDefault) != strtolower($destDefault)
+                } elseif (strtolower($srcDefault) != strtolower($destDefault)
                             && ( ("0" == "$srcDefault" && '0000-00-00 00:00:00' != $destDefault)
-                                 || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault)) )
-                {
+                                 || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault)) ) {
                     // Note the casting of 0 to "0" above is necessary because php considers 0 == "0000-01-01" to be true.
                     return -1;
                 }
@@ -298,24 +290,22 @@ implements iTableItem
             // automatically updated to the current timestamp. The default is 0 unless the column is
             // defined with the NULL attribute, in which case the default is NULL.
 
-            if ( null === $srcDefault && null !== $srcExtra ) {
-                if ( null === $destExtra
+            if (null === $srcDefault && null !== $srcExtra) {
+                if (null === $destExtra
                      || strtolower($srcExtra) != strtolower($destExtra)
-                     || (null !== $destDefault && '0000-00-00 00:00:00' != $destDefault) )
-                {
+                     || (null !== $destDefault && '0000-00-00 00:00:00' != $destDefault) ) {
                     return -1;
                 }
             }
-
         } else {
             // The following properties do not have defaults set by the database and should be considered if
             // one of them is set.
-            if ( ( null !== $this->getDefault() || null !== $cmp->getDefault() )
+            if (( null !== $this->getDefault() || null !== $cmp->getDefault() )
                  && $this->getDefault() != $cmp->getDefault() ) {
                 return -1;
             }
 
-            if ( ( null !== $this->getExtra() || null !== $cmp->getExtra() )
+            if (( null !== $this->getExtra() || null !== $cmp->getExtra() )
                  && $this->getExtra() != $cmp->getExtra() ) {
                 return -1;
             }
@@ -324,14 +314,14 @@ implements iTableItem
         // The enum type may be formatted by the database to add spaces between parameter
         // values. Normalize the values before comparing.
 
-        if ( 0 === ($myStartPos = strpos($this->getType(), 'enum'))
+        if (0 === ($myStartPos = strpos($this->getType(), 'enum'))
              && 0 === ($cmpStartPos = strpos($cmp->getType(), 'enum')) ) {
             // Extract the enum value list and normalize it to include no spaces between values
             $myType = substr($this->getType(), 4);
             $myType = implode(',', preg_split('/\s*,\s*/', trim($myType, "() \t\n\r\0\x0B")));
             $cmpType = substr($cmp->getType(), 4);
             $cmpType = implode(',', preg_split('/\s*,\s*/', trim($cmpType, "() \t\n\r\0\x0B")));
-            if ( $myType != $cmpType ) {
+            if ($myType != $cmpType) {
                 return -1;
             }
         }
@@ -339,7 +329,7 @@ implements iTableItem
         // The following properties have a default set by the database. If the property is not specified
         // a value will be provided when the database information schema is queried.
 
-        if ( ( null !== $this->isNullable() && null !== $cmp->isNullable() )
+        if (( null !== $this->isNullable() && null !== $cmp->isNullable() )
              && $this->isNullable() != $cmp->isNullable() ) {
             return -1;
         }
@@ -347,13 +337,12 @@ implements iTableItem
         // The following properties do not have defaults set by the database and should be considered if
         // one of them is set.
 
-        if ( ( null !== $this->getComment() || null !== $cmp->getComment() )
+        if (( null !== $this->getComment() || null !== $cmp->getComment() )
              && $this->getComment() != $cmp->getComment() ) {
             return -1;
         }
 
         return 0;
-
     }  // compare()
 
     /* ------------------------------------------------------------------------------------------
@@ -372,7 +361,7 @@ implements iTableItem
         $parts = array();
         $parts[] = $this->getName(true);
         $parts[] = $this->type;
-        if ( null !== $this->nullable ) {
+        if (null !== $this->nullable) {
             $parts[] = ( false === $this->nullable ? "NOT NULL" : "NULL" );
         }
 
@@ -387,37 +376,33 @@ implements iTableItem
         // - Note that in MySQL a nullable column with no default is considered a default of NULL.
         // - Note that MySQL assigns TIMESTAMP columns a default of CURRENT_TIMESTAMP with an extra field of "on update CURRENT_TIMESTAMP"
 
-        if ( null !== $this->default ) {
-
-            if ( ($this->nullable && "NULL" == $this->default)  ||
+        if (null !== $this->default) {
+            if (($this->nullable && "NULL" == $this->default)  ||
                  ( "timestamp" == $this->type && (is_numeric($this->default) || 'current_timestamp' == strtolower($this->default)) ) ||
                  is_numeric($this->default) ||
                  "b'" == substr($this->default, 0, 2) ||
                  "x'" == substr($this->default, 0, 2) ||
                  "X'" == substr($this->default, 0, 2) ) {
                 $parts[] = "DEFAULT " . $this->default;
-            } else if ( ($this->nullable && null === $this->default) ) {
+            } elseif (($this->nullable && null === $this->default)) {
                 $parts[] = "DEFAULT NULL";
             } elseif (is_bool($this->default)) {
                 $parts[] = "DEFAULT " . ($this->default ? "TRUE" : "FALSE");
-            } else if ( "'" == substr( $this->default, 0, 1) && "'" == substr( $this->default, -1) ) {
+            } elseif ("'" == substr($this->default, 0, 1) && "'" == substr($this->default, -1)) {
                 $parts[] = "DEFAULT " . addslashes($this->default);
-            }
-            else {
+            } else {
                 $parts[] = "DEFAULT '" . addslashes($this->default) . "'";
             }
-
         }  // if ( null !== $this->default )
 
-        if ( null !== $this->extra ) {
+        if (null !== $this->extra) {
             $parts[] = $this->extra;
         }
-        if ( null !== $this->comment ) {
+        if (null !== $this->comment) {
             $parts[] =  "COMMENT '" . addslashes($this->comment) . "'";
         }
 
         return implode(" ", $parts);
-
     }  // getCreateSql()
 
     /* ------------------------------------------------------------------------------------------
@@ -437,43 +422,38 @@ implements iTableItem
 
     public function toJsonObj($succinct = false)
     {
-        if ( $succinct ) {
-
+        if ($succinct) {
             $data = array($this->name, $this->type);
-            if ( null !== $this->nullable ) {
+            if (null !== $this->nullable) {
                 $data[] = ( $this->nullable ? "null" : "not null" );
             }
-            if ( null !== $this->default ) {
+            if (null !== $this->default) {
                 $data[] = $this->default;
             }
-            if ( null !== $this->extra) {
+            if (null !== $this->extra) {
                 $data[] = $this->extra;
             }
-            if ( null !== $this->comment) {
+            if (null !== $this->comment) {
                 $data[] = $this->comment;
             }
-
         } else {
-
             $data = new stdClass;
             $data->name = $this->name;
             $data->type = $this->type;
-            if ( null !== $this->nullable ) {
+            if (null !== $this->nullable) {
                 $data->nullable = $this->nullable;
             }
-            if ( null !== $this->default ) {
+            if (null !== $this->default) {
                 $data->default = $this->default;
             }
-            if ( null !== $this->extra) {
+            if (null !== $this->extra) {
                 $data->extra = $this->extra;
             }
-            if ( null !== $this->comment) {
+            if (null !== $this->comment) {
                 $data->comment = $this->comment;
             }
         }
 
         return $data;
-
     }  // toJsonObj()
-
 }  // class Column

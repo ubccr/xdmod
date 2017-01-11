@@ -22,4 +22,3 @@ class PeopleOnAccountsHistory extends ArrayIngestor
         );
     }
 }
-

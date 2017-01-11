@@ -136,7 +136,7 @@ class ResourcesSetup extends SubMenuSetupItem
      */
     public function save()
     {
-        $this->saveJsonConfig($this->resources,     'resources');
+        $this->saveJsonConfig($this->resources, 'resources');
         $this->saveJsonConfig($this->resourceSpecs, 'resource_specs');
     }
 }

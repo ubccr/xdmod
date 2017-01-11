@@ -7,7 +7,7 @@ namespace DataWarehouse\Data;
  * timeseries data set. (Note that we must implement all methods
  * of the abstract class in order to use the iterator)
  * http://php.net/manual/en/class.iterator.php
- * 
+ *
  * This special-purpose iterator is used for a small subset of the
  * records returned by a given timeseries query.
  * Once fetched from the database, dataObjects are stored in an array.
@@ -18,7 +18,7 @@ namespace DataWarehouse\Data;
  */
 class SimpleTimeseriesDataIterator implements \Iterator
 {
-    private $groupColumn; // SimpleTimeseriesData 
+    private $groupColumn; // SimpleTimeseriesData
     private $dataset; // SimpleTimeseriesDataset
 
     // index of the iterator
@@ -49,35 +49,38 @@ class SimpleTimeseriesDataIterator implements \Iterator
             $this->column_name = $dataset->getAggregationUnit()->getUnitName();
             $this->where_column_name = $dataset->_query->getAggregationUnit()->getUnitName() . '_id';
         } else {
-
             $this->is_dimension = substr($column_type_and_name, 0, 3) == 'dim';
             $this->column_name = substr($column_type_and_name, 4);
 
             $this->where_column_name = $groupColumn->getName();
-            $gpBy = $groupColumn->getGroupBy(); 
-            if (isset( $gpBy )) $this->where_column_name .= '_id';
+            $gpBy = $groupColumn->getGroupBy();
+            if (isset($gpBy)) {
+                $this->where_column_name .= '_id';
+            }
         }
     }
 
     //-------------------------------------------------
     // public function current()
-    // 
+    //
     // Returns the current SimpleTimeseriesDataset object from the iterator
     //
     // @return \DataWarehouse\Data\SimpleTimeseriesData
     //-------------------------------------------------
     public function current()
     {
-        if (!$this->valid()) { return NULL; }
+        if (!$this->valid()) {
+            return null;
+        }
 
         $value = $this->groupColumn->getValue($this->index);
         $id    = $this->groupColumn->getId($this->index);
 
-        if ( !in_array( $id, $this->limit_ids ) ) {
+        if (!in_array($id, $this->limit_ids)) {
             // TODO: instead of keeping a limit_ids array and a dataObjects array,
             // just keep an assoc array of dataObjects...
 
-            // add the current id to the iterator object's id array 
+            // add the current id to the iterator object's id array
             // so these ids can be excluded from the summary query:
             $this->limit_ids[] = $id;
 
@@ -91,16 +94,15 @@ class SimpleTimeseriesDataIterator implements \Iterator
 
             $dataObject->setName($value);
 
-            $dataObject->setGroupName ( $value );
-            $dataObject->setGroupId ( $this->groupColumn->getId($this->index) );
+            $dataObject->setGroupName($value);
+            $dataObject->setGroupId($this->groupColumn->getId($this->index));
 
-            $dataObject->setUnit ( $this->dataset->getColumnLabel(
+            $dataObject->setUnit($this->dataset->getColumnLabel(
                 $this->column_name,
-                $this->is_dimension)
-            );
+                $this->is_dimension
+            ));
 
             $this->dataObjects[$id] = $dataObject;
-
         } else {
             $dataObject = $this->dataObjects[$id];
         }
@@ -122,7 +124,7 @@ class SimpleTimeseriesDataIterator implements \Iterator
         return $this->index;
     }
 
-    // advance index then return current 
+    // advance index then return current
     // @return SimpleTimeseriesData object
     public function next()
     {
@@ -146,8 +148,8 @@ class SimpleTimeseriesDataIterator implements \Iterator
     // use an array to keep the ids of records <= $limit
     // these records are not stored in the iterator
     // @return array
-    public function getLimitIds() {
+    public function getLimitIds()
+    {
         return $this->limit_ids;
     }
-
-} // class SimpleTimeseriesDataIterator 
+} // class SimpleTimeseriesDataIterator

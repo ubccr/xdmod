@@ -9,11 +9,11 @@
 
    <body>
    
-      <?php
+        <?php
        
          $img = str_replace(basename($_SERVER['PHP_SELF']), 'update_in_progress.png', $_SERVER['PHP_SELF']);
       
-      ?>
+        ?>
       
       <center>
          <br /><br />

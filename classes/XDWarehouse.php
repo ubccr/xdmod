@@ -55,8 +55,7 @@ class XDWarehouse
         $piFilter = false,
         $university_id = null
     ) {
-        if (
-            $searchMode != FORMAL_NAME_SEARCH
+        if ($searchMode != FORMAL_NAME_SEARCH
             && $searchMode != USERNAME_SEARCH
         ) {
             throw new \Exception('Invalid search mode specified');
@@ -70,8 +69,7 @@ class XDWarehouse
 
         $filterElements = array();
 
-        if ($piFilter == true)   {
-
+        if ($piFilter == true) {
             // Filter to account for principal investigators only
             $filterElements[] = '
                 p.id IN (
@@ -116,7 +114,6 @@ class XDWarehouse
 
         switch ($searchMode) {
             case FORMAL_NAME_SEARCH:
-
                 // For pagination, a total record count is needed ...
                 $recordCountQuery = $this->_pdo->query(
                     "SELECT COUNT(*) AS total_records FROM person AS p $filter"
@@ -135,7 +132,6 @@ class XDWarehouse
                 break;
 
             case USERNAME_SEARCH:
-
                 // For pagination, a total record count is needed ...
                 $recordCountQuery = $this->_pdo->query(
                     "
@@ -198,10 +194,11 @@ class XDWarehouse
         $instQuery = $this->_pdo->query(
             "SELECT name FROM organization WHERE id = :id",
             array('id' => $institution_id)
-
         );
 
-        if (count($instQuery) == 0){ return NO_MAPPING; }
+        if (count($instQuery) == 0) {
+            return NO_MAPPING;
+        }
 
         return $instQuery[0]['name'];
     }
@@ -224,7 +221,9 @@ class XDWarehouse
             array('id' => $person_id)
         );
 
-        if (count($nameQuery) == 0){ return NO_MAPPING; }
+        if (count($nameQuery) == 0) {
+            return NO_MAPPING;
+        }
 
         return $nameQuery[0]['formal_name'];
     }
@@ -393,4 +392,3 @@ class XDWarehouse
         return $users;
     }
 }
-

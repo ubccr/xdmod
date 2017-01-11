@@ -7,8 +7,7 @@ class Log_xdmailer extends Log_mail
 
     function log($message, $priority = null)
     {
-        if (is_array($message))
-        {
+        if (is_array($message)) {
             $parts = array();
 
             if (isset($message['message'])) {
@@ -27,12 +26,8 @@ class Log_xdmailer extends Log_mail
             }
 
             return parent::log(implode("\n", $parts), $priority);
-            
-        }
-        else
-        {
+        } else {
             return parent::log($message, $priority);
         }
     }
 }
-

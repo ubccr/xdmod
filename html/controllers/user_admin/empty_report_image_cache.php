@@ -5,32 +5,25 @@
    \xd_security\assertDashboardUserLoggedIn();
    \xd_security\assertParameterSet('uid', RESTRICTION_UID);
    
-   try {
+try {
+    $target_user = XDUser::getUserByID($_POST['uid']);
 
-      $target_user = XDUser::getUserByID($_POST['uid']);
+    if ($target_user == null) {
+        \xd_response\presentError("user_does_not_exist");
+    }
 
-      if ($target_user == NULL) {
-         \xd_response\presentError("user_does_not_exist");
-      }
+    $chart_pool = new XDChartPool($target_user);
+    $chart_pool->emptyCache();
 
-      $chart_pool = new XDChartPool($target_user);
-      $chart_pool->emptyCache();
-
-      $report_manager = new XDReportManager($target_user);
-      $report_manager->emptyCache();
+    $report_manager = new XDReportManager($target_user);
+    $report_manager->emptyCache();
             
-      $displayUsername = $target_user->isXSEDEUser() ? $target_user->getXSEDEUsername() : $target_user->getUsername();
+    $displayUsername = $target_user->isXSEDEUser() ? $target_user->getXSEDEUsername() : $target_user->getUsername();
 
-      $returnData['success'] = true;
-      $returnData['message'] = "The report image cache for user <b>$displayUsername</b> has been emptied";
+    $returnData['success'] = true;
+    $returnData['message'] = "The report image cache for user <b>$displayUsername</b> has been emptied";
 
-      xd_controller\returnJSON($returnData);
-   
-   }
-   catch(Exception $e) {
-      
-      \xd_response\presentError($e->getMessage());
-
-   }
-
-?>
+    xd_controller\returnJSON($returnData);
+} catch (Exception $e) {
+    \xd_response\presentError($e->getMessage());
+}

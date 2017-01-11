@@ -58,7 +58,6 @@ class RawDataset
         $redactlist = array();
 
         foreach ($this->query_results[0] as $key => $value) {
-
             // Skip the error columns (if present)
             if (\xd_utilities\string_ends_with($key, '_error')) {
                 continue;

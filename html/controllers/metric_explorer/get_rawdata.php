@@ -96,7 +96,6 @@ try {
     );
 
     if ($format === 'jsonstore') {
-
         $query_classname = '\\DataWarehouse\\Query\\' . $data_description->realm . '\\RawData';
 
         $query = new $query_classname(
@@ -114,8 +113,7 @@ try {
         $groupedRoleParameters = array();
         foreach ($global_filters->data as $global_filter) {
             if ($global_filter->checked == 1) {
-                if (
-                !isset(
+                if (!isset(
                     $groupedRoleParameters[$global_filter->dimension_id]
                 )
                 ) {
@@ -153,7 +151,7 @@ try {
         $ret = array();
 
         // As a small optimization only compute the total count the first time (ie when the offset is 0)
-        if($offset === null or $offset == 0) {
+        if ($offset === null or $offset == 0) {
             $privquery = new $query_classname(
                 'day',
                 $start_date,
@@ -189,7 +187,6 @@ try {
 
         print json_encode($ret);
         exit(0);
-
     }
 } catch (SessionExpiredException $see) {
     // TODO: Refactor generic catch block below to handle specific exceptions,

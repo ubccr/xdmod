@@ -107,14 +107,13 @@ abstract class aNamedEntity extends aEtlObject
 
     public function setSchema($schema)
     {
-        if ( null !== $schema && ! is_string($schema) ) {
+        if (null !== $schema && ! is_string($schema)) {
             $msg = "Entity schema must be null or a string";
             $this->logAndThrowException($msg);
         }
 
         $this->schema = $schema;
         return $this;
-
     }  // setSchema()
 
     /* ------------------------------------------------------------------------------------------
@@ -134,14 +133,13 @@ abstract class aNamedEntity extends aEtlObject
 
     public function setSystemQuoteChar($char)
     {
-        if ( null !== $char && ! is_string($char) ) {
+        if (null !== $char && ! is_string($char)) {
             $msg = "System quote character must be a string";
             $this->logAndThrowException($msg);
         }
 
         $this->systemQuoteChar = $char;
         return $this;
-
     }  // setSystemQuoteChar()
 
     /* ------------------------------------------------------------------------------------------
@@ -158,5 +156,4 @@ abstract class aNamedEntity extends aEtlObject
     {
         return $this->systemQuoteChar . $identifier . $this->systemQuoteChar;
     }  // quote()
-
 }  // abstract class aNamedEntity

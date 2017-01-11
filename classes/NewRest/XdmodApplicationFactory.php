@@ -19,7 +19,8 @@ use DataWarehouse\Query\Exceptions\BadRequestException;
  *
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-class XdmodApplicationFactory {
+class XdmodApplicationFactory
+{
 
     /**
      * A key which will be used to define our base url.
@@ -107,7 +108,6 @@ class XdmodApplicationFactory {
             );
 
             $logger->info($retval);
-
         }, Application::EARLY_EVENT);
 
         // SETUP: a before middleware that detects / starts the query debug mode for a request.

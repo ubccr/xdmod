@@ -11,35 +11,32 @@ namespace DataWarehouse\Query\TimeAggregationUnits;
 */
 class DayAggregationUnit extends \DataWarehouse\Query\TimeAggregationUnit
 {
-	/*
+    /*
 	* public constructor.
-	*/	
-	public function __construct() 
-	{
-		parent::__construct('day');
-	} //__construct() 
-	
-	/*
+	*/
+    public function __construct()
+    {
+        parent::__construct('day');
+    } //__construct()
+    
+    /*
 	* @returns the minimum integer value a day could have in the duration of a year
 	*/
-	public function getMinPeriodPerYear()
-	{
-		return 1;
-	} //getMinPeriodPerYear()
-	
-	/*
+    public function getMinPeriodPerYear()
+    {
+        return 1;
+    } //getMinPeriodPerYear()
+    
+    /*
 	* @returns the maximum integer value a day could have in the duration of a year
 	*/
-	public function getMaxPeriodPerYear()
-	{
-		return 366;
-	} //getMaxPeriodPerYear()	
-	
-	public function getTimeLabel($timestamp)
-	{
-		return date('Y-m-d', $timestamp);
-	}
+    public function getMaxPeriodPerYear()
+    {
+        return 366;
+    } //getMaxPeriodPerYear()
+    
+    public function getTimeLabel($timestamp)
+    {
+        return date('Y-m-d', $timestamp);
+    }
 }
-
-
-?>

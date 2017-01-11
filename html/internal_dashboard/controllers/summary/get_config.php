@@ -14,7 +14,6 @@ try {
     $summaries = array();
 
     foreach ($config['internal_dashboard']['summary'] as $summary) {
-
         // Add an empty config if none is found.
         if (!isset($summary['config'])) {
             $summary['config'] = array();
@@ -50,7 +49,6 @@ try {
     );
 
     $returnData['count'] = count($returnData['response']);
-
 } catch (Exception $e) {
     $returnData = array(
         'success' => false,
@@ -59,4 +57,3 @@ try {
 }
 
 echo json_encode($returnData);
-

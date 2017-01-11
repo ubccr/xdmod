@@ -33,4 +33,3 @@ $returnData = array(
 );
 
 xd_controller\returnJSON($returnData);
-

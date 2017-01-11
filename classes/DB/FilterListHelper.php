@@ -26,7 +26,8 @@ class FilterListHelper
      *                             given instead of a pair list.
      * @return string              The full name of the dimensions' table.
      */
-    public static function getFullTableName(Query $realmQuery, GroupBy $groupBy1, GroupBy $groupBy2 = null) {
+    public static function getFullTableName(Query $realmQuery, GroupBy $groupBy1, GroupBy $groupBy2 = null)
+    {
         $schemaName = static::getSchemaName();
         $shortTableName = static::getTableName($realmQuery, $groupBy1, $groupBy2);
         return "{$schemaName}.{$shortTableName}";
@@ -43,7 +44,8 @@ class FilterListHelper
      *                             given instead of a pair list.
      * @return string              The short name of the dimensions' table.
      */
-    public static function getTableName(Query $realmQuery, GroupBy $groupBy1, GroupBy $groupBy2 = null) {
+    public static function getTableName(Query $realmQuery, GroupBy $groupBy1, GroupBy $groupBy2 = null)
+    {
         $groupBy1Name = $groupBy1->getName();
 
         $secondDimensionGiven = $groupBy2 !== null;
@@ -76,7 +78,8 @@ class FilterListHelper
      *
      * @return string The schema name.
      */
-    public static function getSchemaName() {
+    public static function getSchemaName()
+    {
         if (empty(static::$targetSchema)) {
             static::$targetSchema = 'modw_filters';
         }
@@ -93,7 +96,8 @@ class FilterListHelper
      *
      * @return string The aggregation unit to use.
      */
-    public static function getQueryAggregationUnit() {
+    public static function getQueryAggregationUnit()
+    {
         return 'year';
     }
 }

@@ -1,15 +1,16 @@
 <?php
 
 namespace DataWarehouse;
+
 use Exception;
 
 require_once("Log.php");
 
 class Search extends \aRestAction
 {
-    protected $logger = NULL;
-    private $_params = NULL;
-    private $_requestmethod = NULL;
+    protected $logger = null;
+    private $_params = null;
+    private $_requestmethod = null;
     private $_supported_types = array(
             \DataWarehouse\Query\RawQueryTypes::ACCOUNTING =>
             array(
@@ -92,12 +93,11 @@ class Search extends \aRestAction
         $method = $target . ucfirst($this->_operation);
 
         $this->_requestmethod = "GET";
-        if( isset($_SERVER['REQUEST_METHOD']) ) {
-            $this->_requestmethod = strtoupper($_SERVER['REQUEST_METHOD'] );
+        if (isset($_SERVER['REQUEST_METHOD'])) {
+            $this->_requestmethod = strtoupper($_SERVER['REQUEST_METHOD']);
         }
 
         if (!method_exists($this, $method)) {
-
             if ($this->_operation == 'Help') {
                 // The help method for this action does not exist, so attempt to generate a response
                 // using that action's Documentation() method
@@ -109,15 +109,12 @@ class Search extends \aRestAction
                 }
 
                 return $this->$documentationMethod()->getRESTResponse();
-
             } else {
                 throw new Exception("Unknown action '$target' in category '" . strtolower(__CLASS__) . "'");
             }
-
         }  // if ( ! method_exists($this, $method) )
 
         return $this->$method($arguments);
-
     } // __call()
 
     // --------------------------------------------------------------------------------
@@ -134,7 +131,6 @@ class Search extends \aRestAction
         $logConf = array('mode' => 0644);
         $logfile = LOG_DIR . "/" . \xd_utilities\getConfiguration('datawarehouse', 'rest_logfile');
         $this->logger = \Log::factory('file', $logfile, 'Search', $logConf, $maxLogLevel);
-
     }  // __construct
 
     // --------------------------------------------------------------------------------
@@ -149,16 +145,17 @@ class Search extends \aRestAction
     /** @return the parameter value (if it is a string matching /[0-9]+/ or null otherwise
      *
      * */
-    private function getIntParam($name, $mandatory = false) {
-        if( isset($this->_params[$name]) ) {
+    private function getIntParam($name, $mandatory = false)
+    {
+        if (isset($this->_params[$name])) {
             $value = $this->_params[$name];
-            if( ! ctype_digit($value) ) {
+            if (! ctype_digit($value)) {
                 throw new \DataWarehouse\Query\Exceptions\BadRequestException("Invalid value for $name parameter. Must be an int.");
             }
             return $value;
         }
         // else the parameter is absent
-        if( $mandatory ) {
+        if ($mandatory) {
             throw new \DataWarehouse\Query\Exceptions\BadRequestException("Required parameter $name is missing.");
         }
         return null;
@@ -169,21 +166,23 @@ class Search extends \aRestAction
      * @param mandatory - boolean whether to raise an exception if the parameter is missing
      * @return the value of the named parameter or null if absent and not mandatory
      */
-    private function getStringParam($name, $mandatory) {
-        if( isset($this->_params[$name]) ) {
+    private function getStringParam($name, $mandatory)
+    {
+        if (isset($this->_params[$name])) {
             return $this->_params[$name];
         }
         // else the parameter is absent
-        if( $mandatory ) {
+        if ($mandatory) {
             throw new \DataWarehouse\Query\Exceptions\BadRequestException("Required parameter $name is missing.");
         }
         return null;
     }
 
-    private function getRealmParam($mandatory) {
+    private function getRealmParam($mandatory)
+    {
         $realm = $this->getStringParam('realm', $mandatory);
-        if($realm !== null) {
-            if($realm != "SUPREMM") {
+        if ($realm !== null) {
+            if ($realm != "SUPREMM") {
                 throw new \DataWarehouse\Query\Exceptions\BadRequestException("Unsupported realm " . $realm);
             }
         }
@@ -201,31 +200,25 @@ class Search extends \aRestAction
         $id    = $this->getIntParam('recordid');
         $realm = $this->getRealmParam(false);
 
-        if( $nodeid !== null &&  $tsid !== null && $infoid !== null && $jobid !== null && $id !== null && $realm !== null ) {
-            if( $infoid != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS ) {
+        if ($nodeid !== null &&  $tsid !== null && $infoid !== null && $jobid !== null && $id !== null && $realm !== null) {
+            if ($infoid != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
                 throw new \DataWarehouse\Query\Exceptions\BadRequestException("Node $infoid is a leaf");
             }
             return $this->processJobNodeTimeseries($user, $realm, $jobid, $tsid, $nodeid);
-        }
-        else if( $tsid !== null && $infoid !== null && $jobid !== null && $id !== null && $realm !== null ) {
-            if( $infoid != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS ) {
+        } elseif ($tsid !== null && $infoid !== null && $jobid !== null && $id !== null && $realm !== null) {
+            if ($infoid != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
                 throw new \DataWarehouse\Query\Exceptions\BadRequestException("Node $infoid is a leaf");
             }
             return $this->processJobTimeseriesInfo($user, $realm, $jobid, $tsid);
-        }
-        else if( $infoid !== null && $jobid !== null  && $id !== null && $realm !== null) {
+        } elseif ($infoid !== null && $jobid !== null  && $id !== null && $realm !== null) {
             return $this->processJobInfo($user, $realm, $jobid, $infoid);
-        }
-        else if( $jobid !== null && $id !== null && $realm !== null ) {
+        } elseif ($jobid !== null && $id !== null && $realm !== null) {
             return $this->processJobByJobid($user, $realm, $id, $jobid);
-        }
-        else if( $id !== null && $realm !== null ) {
+        } elseif ($id !== null && $realm !== null) {
             return $this->processHistoryRecord($user, $realm, $id);
-        }
-        else if( $realm !== null ) {
+        } elseif ($realm !== null) {
             return $this->processHistoryTopLevel($user, $realm);
-        }
-        else {
+        } else {
             return $this->processHistory($user);
         }
     }
@@ -234,32 +227,32 @@ class Search extends \aRestAction
     {
         $searchhistory = $this->getUserStorage($user, $realm);
 
-        switch($this->_requestmethod) {
-        case "GET":
-            $record = $searchhistory->getById($id);
-            foreach($record['results'] as &$r) {
-                $r['dtype'] = "jobid";
-            }
-            return $record;
+        switch ($this->_requestmethod) {
+            case "GET":
+                $record = $searchhistory->getById($id);
+                foreach ($record['results'] as &$r) {
+                    $r['dtype'] = "jobid";
+                }
+                return $record;
             break;
-        case "DELETE":
-            $ndel = $searchhistory->delById($id);
-            return array( "total" => $ndel );
+            case "DELETE":
+                $ndel = $searchhistory->delById($id);
+                return array( "total" => $ndel );
             break;
-        case "PUT":
-        case "POST":
-            if(!isset($this->_params['data']) ) {
-                throw new \DataWarehouse\Query\Exceptions\BadRequestException("Missing data parameter");
-            }
-            $data = json_decode($this->_params['data'], true);
-            $result = $searchhistory->upsert($id, $data);
-            if( $result === null ) {
-                throw new \DataWarehouse\Query\Exceptions\AccessDeniedException("Request would exceed storage limits");
-            }
-            return array( "results" => $result );
+            case "PUT":
+            case "POST":
+                if (!isset($this->_params['data'])) {
+                    throw new \DataWarehouse\Query\Exceptions\BadRequestException("Missing data parameter");
+                }
+                $data = json_decode($this->_params['data'], true);
+                $result = $searchhistory->upsert($id, $data);
+                if ($result === null) {
+                    throw new \DataWarehouse\Query\Exceptions\AccessDeniedException("Request would exceed storage limits");
+                }
+                return array( "results" => $result );
             break;
-        default:
-            throw new \DataWarehouse\Query\Exceptions\BadRequestException("HTTP method " . $this->_requestmethod . " is not supported for this endpoint");
+            default:
+                throw new \DataWarehouse\Query\Exceptions\BadRequestException("HTTP method " . $this->_requestmethod . " is not supported for this endpoint");
         }
     }
 
@@ -268,23 +261,23 @@ class Search extends \aRestAction
 
 
         $searchhistory = $this->getUserStorage($user, $realm);
-        switch($this->_requestmethod) {
+        switch ($this->_requestmethod) {
             case "GET":
                 $history = $searchhistory->get();
                 $results = array();
-                foreach($history as $h) {
+                foreach ($history as $h) {
                     $results[] = array( "text" => $h['text'], "dtype" => "recordid", "recordid" => $h['recordid'] );
                 }
                 return array( "results" => $results );
                 break;
             case "POST":
-                if(!isset($this->_params['data']) ) {
+                if (!isset($this->_params['data'])) {
                     throw new \DataWarehouse\Query\Exceptions\BadRequestException("Missing data parameter");
                 }
                 $data = json_decode($this->_params['data'], true);
 
                 // Validate the data
-                if( isset($data['searchterms']) && is_array($data['searchterms']) && isset($data['results']) && is_array($data['results']) && isset($data['text']) ) {
+                if (isset($data['searchterms']) && is_array($data['searchterms']) && isset($data['results']) && is_array($data['results']) && isset($data['text'])) {
                     $data['dtype'] = "recordid";
                     $result = $searchhistory->insert($data);
                     return array( "results" => $result );
@@ -302,7 +295,7 @@ class Search extends \aRestAction
 
     private function processHistory($user)
     {
-        switch($this->_requestmethod) {
+        switch ($this->_requestmethod) {
             case "GET":
                 return array( "results" => array( array( "dtype" => "realm", "realm" => "SUPREMM", "text" => "SUPREMM" ) ) );
                 break;
@@ -363,13 +356,13 @@ class Search extends \aRestAction
 
     private function processJobInfo($user, $realm, $jobid, $infoid)
     {
-        switch($infoid) {
+        switch ($infoid) {
             case "".\DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
                 $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
                 $info = new $infoclass();
 
                 $result = array();
-                foreach($info->getJobTimeseriesMetaData($user, $jobid) as $tsid) {
+                foreach ($info->getJobTimeseriesMetaData($user, $jobid) as $tsid) {
                     $tsid['url'] = "/rest/datawarehouse/search/jobs/timeseries";
                     $tsid['type'] = "timeseries";
                     $tsid['dtype'] = "tsid";
@@ -380,9 +373,8 @@ class Search extends \aRestAction
             case "".\DataWarehouse\Query\RawQueryTypes::PEERS:
                 $dataset = $this->getJobDataset($user, $realm, $jobid, "peers");
                 $result = array();
-                foreach($dataset->getResults() as $jobpeer)
-                {
-                    $result[] = array( 
+                foreach ($dataset->getResults() as $jobpeer) {
+                    $result[] = array(
                         "text" => $jobpeer['resource'] . '-' . $jobpeer['local_job_id'],
                         "dtype" => "peerid",
                         "peerid" => $jobpeer['jobid'],
@@ -402,7 +394,7 @@ class Search extends \aRestAction
         $info = new $infoclass();
 
         $result = array();
-        foreach($info->getJobTimeseriesMetricNodeMeta($user, $jobid, $tsid, $nodeid) as $cpu) {
+        foreach ($info->getJobTimeseriesMetricNodeMeta($user, $jobid, $tsid, $nodeid) as $cpu) {
             $cpu['url'] = "/rest/datawarehouse/search/jobs/timeseries";
             $cpu['type'] = "timeseries";
             $cpu['dtype'] = "cpuid";
@@ -418,7 +410,7 @@ class Search extends \aRestAction
         $info = new $infoclass();
 
         $result = array();
-        foreach($info->getJobTimeseriesMetricMeta($user, $jobid, $tsid) as $node) {
+        foreach ($info->getJobTimeseriesMetricMeta($user, $jobid, $tsid) as $node) {
             $node['url'] = "/rest/datawarehouse/search/jobs/timeseries";
             $node['type'] = "timeseries";
             $node['dtype'] = "nodeid";
@@ -430,7 +422,7 @@ class Search extends \aRestAction
 
     private function historyDocumentation()
     {
-	    $doc = new \RestDocumentation();
+        $doc = new \RestDocumentation();
         $doc->setAuthenticationRequirement(true);
         return $doc;
     }
@@ -441,13 +433,12 @@ class Search extends \aRestAction
         $realm = $this->getRealmParam(true);
 
         $action = $this->_request->getActionArguments();
-        if($action == "" ) {
+        if ($action == "") {
             return $this->processJobSearch($user, $realm);
-        }
-        else {
+        } else {
             $jobid = $this->getIntParam("jobid", true);
 
-            switch($action) {
+            switch ($action) {
                 case "accounting":
                 case "jobscript":
                 case "analysis":
@@ -477,18 +468,19 @@ class Search extends \aRestAction
 
     function is_assoc($var)
     {
-        return is_array($var) && array_diff_key($var,array_keys(array_keys($var)));
+        return is_array($var) && array_diff_key($var, array_keys(array_keys($var)));
     }
 
     /*
      * Convert a php associative array to the format used by the extjs tree implementation
      */
-    private function arraytostore($phparray){
+    private function arraytostore($phparray)
+    {
 
         $result = array();
 
-        foreach($phparray as $key => $value) {
-            if( $this->is_assoc($value) ) {
+        foreach ($phparray as $key => $value) {
+            if ($this->is_assoc($value)) {
                 // Next level down
                 $result[] = array("key" => $key, "value" => "", "expanded" => true, "children" => $this->arraytostore($value) );
             } else {
@@ -506,7 +498,7 @@ class Search extends \aRestAction
 
         $jobsummary = $query->getJobSummary($user, $jobid);
 
-        if( !isset($jobsummary['lariat']) ){
+        if (!isset($jobsummary['lariat'])) {
             return array("success" => false, "message" => "Executable information unavailable for $realm $jobid");
         }
 
@@ -529,49 +521,37 @@ class Search extends \aRestAction
         $result = array();
 
         // Really this should be a recursive function!
-        foreach( $jobsummary as $key => $val )
-        {
+        foreach ($jobsummary as $key => $val) {
             $name = "$key";
-            if( is_array($val) )
-            {
-                if ( array_key_exists('avg', $val) )
-                {
-                    $result[] = array_merge( array("name" => $name, "leaf" => true), $val);
-                }
-                else
-                {
+            if (is_array($val)) {
+                if (array_key_exists('avg', $val)) {
+                    $result[] = array_merge(array("name" => $name, "leaf" => true), $val);
+                } else {
                     $l1data = array( "name" => $name, "avg" => "", "expanded" => "true",  "children" => array() );
-                    foreach( $val as $subkey => $subval )
-                    {
+                    foreach ($val as $subkey => $subval) {
                         $subName = "$subkey";
-                        if( is_array($subval) )
-                        {
-                            if ( array_key_exists('avg', $subval) )
-                            {
-                                $l1data['children'][] = array_merge( array("name" => $subName, "leaf" => true), $subval);
-                            }
-                            else
-                            {
+                        if (is_array($subval)) {
+                            if (array_key_exists('avg', $subval)) {
+                                $l1data['children'][] = array_merge(array("name" => $subName, "leaf" => true), $subval);
+                            } else {
                                 $l2data = array("name" => $subName, "avg" => "", "expanded" => "true", "children" => array());
 
-                                foreach( $subval as $subsubkey => $subsubval )
-                                {
+                                foreach ($subval as $subsubkey => $subsubval) {
                                     $subSubName = "$subsubkey";
-                                    if( is_array($subsubval) ) {
-                                        if ( array_key_exists('avg', $subsubval) )
-                                        {
-                                            $l2data['children'][] = array_merge( array("name" => $subSubName, "leaf" => true), $subsubval);
+                                    if (is_array($subsubval)) {
+                                        if (array_key_exists('avg', $subsubval)) {
+                                            $l2data['children'][] = array_merge(array("name" => $subSubName, "leaf" => true), $subsubval);
                                         }
                                     }
                                 }
 
-                                if( count($l2data['children']) > 0 ) {
+                                if (count($l2data['children']) > 0) {
                                     $l1data['children'][] =  $l2data;
                                 }
                             }
                         }
                     }
-                    if( count($l1data['children']) > 0 ) {
+                    if (count($l1data['children']) > 0) {
                         $result[] = $l1data;
                     }
                 }
@@ -598,8 +578,7 @@ class Search extends \aRestAction
 
         $dataset = new \DataWarehouse\Data\RawDataset($query);
 
-        if( ! $dataset->hasResults() )
-        {
+        if (! $dataset->hasResults()) {
             // No data returned for the query. This could be because the roleParameters
             // caused the data to be filtered. In this case we will return access-denied.
             // need to rerun the query without the role params to see if any results come back.
@@ -608,7 +587,7 @@ class Search extends \aRestAction
             $priv_query = new $queryclass($params, $stats);
             $results = $priv_query->execute(1);
 
-            if( $results['count'] != 0 ) {
+            if ($results['count'] != 0) {
                 throw new \DataWarehouse\Query\Exceptions\AccessDeniedException();
             }
         }
@@ -616,7 +595,8 @@ class Search extends \aRestAction
         return $dataset;
     }
 
-    private function getJobTimeseriesDataset($user, $realm, $jobid, $tsid, $nodeid, $cpuid) {
+    private function getJobTimeseriesDataset($user, $realm, $jobid, $tsid, $nodeid, $cpuid)
+    {
 
         $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $info = new $infoclass();
@@ -628,11 +608,11 @@ class Search extends \aRestAction
     private function processJobSearch($user, $realm)
     {
         $searchparams = json_decode($this->getStringParam("params", true), true);
-        if($searchparams === NULL) {
-            throw new \DataWarehouse\Query\Exceptions\BadRequestException("params: " . json_last_error_msg() );
+        if ($searchparams === null) {
+            throw new \DataWarehouse\Query\Exceptions\BadRequestException("params: " . json_last_error_msg());
         }
 
-        if( isset($searchparams['local_job_id']) && isset($searchparams['resource_id']) ) {
+        if (isset($searchparams['local_job_id']) && isset($searchparams['resource_id'])) {
             return $this->processJobSearchByLocalJobId($user, $realm, $searchparams['local_job_id'], $searchparams['resource_id']);
         }
         return $this->processJobSearchByDimension($user, $realm, $searchparams);
@@ -640,7 +620,7 @@ class Search extends \aRestAction
 
     private function processJobSearchByLocalJobId($user, $realm, $local_job_id, $resource_id)
     {
-        if( (! ctype_digit($local_job_id) ) || (! ctype_digit($resource_id) ) ) {
+        if ((! ctype_digit($local_job_id) ) || (! ctype_digit($resource_id) )) {
             throw new \DataWarehouse\Query\Exceptions\BadRequestException("Invalid resource_id local_job_id");
         }
         $params = array();
@@ -662,8 +642,7 @@ class Search extends \aRestAction
             array_push($results, $res);
         }
 
-        if( ! $dataset->hasResults() )
-        {
+        if (! $dataset->hasResults()) {
             // No data returned for the query. This could be because the roleParameters
             // caused the data to be filtered. In this case we will return access-denied.
             // need to rerun the query without the role params to see if any results come back.
@@ -672,7 +651,7 @@ class Search extends \aRestAction
             $priv_query = new $queryclass($params, "brief");
             $priv_results = $priv_query->execute(1);
 
-            if( $priv_results['count'] != 0 ) {
+            if ($priv_results['count'] != 0) {
                 throw new \DataWarehouse\Query\Exceptions\AccessDeniedException();
             }
         }
@@ -682,8 +661,8 @@ class Search extends \aRestAction
 
     private function processJobSearchByDimension($user, $realm, $params)
     {
-        $start_date = $this->getStringParam("start_date", True);
-        $end_date = $this->getStringParam("end_date", True);
+        $start_date = $this->getStringParam("start_date", true);
+        $end_date = $this->getStringParam("end_date", true);
 
         $role = $user->getActiveRole();
         $realms = $role->getAllQueryRealms("tg_usage");
@@ -695,7 +674,7 @@ class Search extends \aRestAction
 
         $searchterms = array_intersect_key(array_keys($params), $allowedSearchDims);
 
-        if( count($searchterms) < 1 ) {
+        if (count($searchterms) < 1) {
             throw new \DataWarehouse\Query\Exceptions\BadRequestException();
         }
 
@@ -718,8 +697,7 @@ class Search extends \aRestAction
 
         $totalCount = $dataset->getTotalPossibleCount();
 
-        if( $totalCount == 0 )
-        {
+        if ($totalCount == 0) {
             // No data returned for the query. This could be because the roleParameters
             // caused the data to be filtered. In this case we will return access-denied.
             // need to rerun the query without the role params to see if any results come back.
@@ -731,7 +709,7 @@ class Search extends \aRestAction
             $dataset = new \DataWarehouse\Data\SimpleDataset($privquery);
             $privresults = $dataset->getResults();
 
-            if( count($privresults) != 0 ) {
+            if (count($privresults) != 0) {
                 throw new \DataWarehouse\Query\Exceptions\AccessDeniedException();
             }
         }
@@ -741,10 +719,8 @@ class Search extends \aRestAction
 
     private function jobsDocumentation()
     {
-	    $doc = new \RestDocumentation();
+        $doc = new \RestDocumentation();
         $doc->setAuthenticationRequirement(true);
         return $doc;
     }
 }
-
-?>

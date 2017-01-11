@@ -35,4 +35,3 @@ class AllocationBreakdown extends PDODBSynchronizingIngestor
         );
     }
 }
-

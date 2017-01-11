@@ -53,4 +53,3 @@ class PeopleOnAccounts extends PDODBMultiIngestor
         );
     }
 }
-

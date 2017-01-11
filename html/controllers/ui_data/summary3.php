@@ -73,8 +73,7 @@ try {
         $summaryCharts[$i] = json_encode($summaryChartObject);
     }
 
-    if (!isset($_REQUEST['public_user']) || $_REQUEST['public_user'] != 'true')
-    {
+    if (!isset($_REQUEST['public_user']) || $_REQUEST['public_user'] != 'true') {
         $userProfile = $logged_in_user->getProfile();
 
         // Attempt to retrieve the queries from the new location, falling back
@@ -86,14 +85,13 @@ try {
             if ($queries != null) {
                 $queries = array_values(json_decode($queries, true));
             }
-        } else if (isset($queries['data'])) {
+        } elseif (isset($queries['data'])) {
             $queries = $queries['data'];
         }
 
-        if ($queries != NULL) {
+        if ($queries != null) {
             foreach ($queries as $i => $query) {
                 if (isset($query['config'])) {
-
                     $queryConfig = json_decode($query['config']);
 
                     $name = isset($query['name']) ? $query['name'] : null;
@@ -131,7 +129,6 @@ try {
     $result['charts'] = json_encode(array_values($summaryCharts));
 
     echo json_encode(array('totalCount' => 1, 'success' => true, 'message' => '', 'data' => array($result) ));
-
 } catch (SessionExpiredException $see) {
     // TODO: Refactor generic catch block below to handle specific exceptions,
     //       which would allow this block to be removed.
@@ -142,4 +139,3 @@ try {
                            'data' => array(),
                            'success' => false));
 }
-

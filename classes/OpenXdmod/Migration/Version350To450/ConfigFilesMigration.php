@@ -73,7 +73,7 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
         }
 
         $this->writeJsonConfigFile('resource_specs', $newResourceSpecs);
-        $this->writeJsonConfigFile('resources',      $newResources);
+        $this->writeJsonConfigFile('resources', $newResources);
 
         $settingsTemplate = new Template('portal_settings');
 

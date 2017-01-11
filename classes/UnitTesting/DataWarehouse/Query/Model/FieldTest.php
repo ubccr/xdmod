@@ -13,34 +13,31 @@
 
 class FieldTest extends PHPUnit_Framework_TestCase
 {
-	private $_field;
-	
-	function setUp()
-    {
-		//$this->_field
-    }
-	
-	function tearDown() {
-		$this->_field = NULL;
-	}
-	
+    private $_field;
     
-	public function testGetDefinition()
+    function setUp()
     {
-		//$this->assertEquals( $this->_alias->getName(), 'alias_name', "This should pass" );
-		
+        //$this->_field
     }
-	
-	public function testGetAlias()
+    
+    function tearDown()
     {
-		//$this->_alias1->setName('mock_name');
-		//$this->assertEquals( $this->_alias1->getName(), 'mock_name', "This should pass" );
+        $this->_field = null;
     }
-	
-	public function testGetQualifiedName()
-	{
-	}
-
+    
+    
+    public function testGetDefinition()
+    {
+        //$this->assertEquals( $this->_alias->getName(), 'alias_name', "This should pass" );
+    }
+    
+    public function testGetAlias()
+    {
+        //$this->_alias1->setName('mock_name');
+        //$this->assertEquals( $this->_alias1->getName(), 'mock_name', "This should pass" );
+    }
+    
+    public function testGetQualifiedName()
+    {
+    }
 }
-
-?>

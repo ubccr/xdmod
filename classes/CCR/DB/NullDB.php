@@ -42,7 +42,7 @@ class NullDB implements iDatabase
 
     public function prepare($query)
     {
-        return FALSE;
+        return false;
     }
 
     public function beginTransaction()

@@ -19,8 +19,7 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
         if ($query_instance->getQueryType() == 'aggregate') {
             $date_table_start_ts = $query_instance->_start_date_ts;
             $date_table_end_ts   = $query_instance->_end_date_ts;
-        }
-        else {
+        } else {
             $agg_unit = $query_instance->getAggregationUnit()->getUnitName();
             $date_table = $query_instance->getDateTable();
             $date_table_start_ts = new TableField(
@@ -81,4 +80,3 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
             . " their system specifications, over time.";
     }
 }
-

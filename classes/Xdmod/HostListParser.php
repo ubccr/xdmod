@@ -158,7 +158,6 @@ class HostListParser
         if ($rangeList === '') {
             $expanded = array($prefix);
         } else {
-
             // Remove "[" and "]".
             $rangeList = substr($rangeList, 1, -1);
 

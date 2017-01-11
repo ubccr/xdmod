@@ -116,4 +116,3 @@ switch ($operation) {
 }
 
 print json_encode($response);
-

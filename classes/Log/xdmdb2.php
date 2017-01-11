@@ -7,12 +7,9 @@ class Log_xdmdb2 extends Log_mdb2
 
     function log($message, $priority = null)
     {
-        if (is_array($message))
-        {
+        if (is_array($message)) {
             return $this->log_impl(json_encode($message), $priority);
-        }
-        else
-        {
+        } else {
             return $this->log_impl(json_encode(array('message' => $message)), $priority);
         }
     }
@@ -51,7 +48,7 @@ class Log_xdmdb2 extends Log_mdb2
             'message'  => $message
         );
 
-        if(PEAR::isError($values['id'])) {
+        if (PEAR::isError($values['id'])) {
             error_log("Failed to process log entry: " . print_r($values, true));
             return false;
         }
@@ -90,4 +87,3 @@ class Log_xdmdb2 extends Log_mdb2
         return true;
     }
 }
-

@@ -77,8 +77,7 @@ class PDODBMultiIngestor implements Ingestor
                 $this->_source_db->handle()->prepare(
                     $updateStatement
                 )->execute();
-            }
-            catch (PDOException $e) {
+            } catch (PDOException $e) {
                 $this->_logger->info(array(
                     'message'    => $e->getMessage(),
                     'sql'        => $updateStatement,
@@ -111,10 +110,8 @@ class PDODBMultiIngestor implements Ingestor
                 );
                 $srcStatement->execute();
                 $query_success = true;
-            }
-            catch (PDOException $e) {
-                if (
-                    !isset($srcStatement)
+            } catch (PDOException $e) {
+                if (!isset($srcStatement)
                     || $srcStatement === false
                     || $srcStatement->errorCode() != "40001"
                     || $n_attempts > self::MAX_QUERY_ATTEMPTS
@@ -145,13 +142,11 @@ class PDODBMultiIngestor implements Ingestor
         )->execute();
 
         if ($this->_delete_statement == null) {
-
             $this->_logger->debug("Truncating table {$this->_insert_table}");
             $this->_destination_db->handle()->prepare(
                 "TRUNCATE TABLE {$this->_insert_table}"
             )->execute();
-        }
-        elseif ($this->_delete_statement !== 'nodelete') {
+        } elseif ($this->_delete_statement !== 'nodelete') {
             $this->_logger->debug(
                 'Delete statement: ' . $this->_delete_statement
             );
@@ -171,14 +166,14 @@ class PDODBMultiIngestor implements Ingestor
 
         $f = fopen($infile_name, 'w');
 
-        if ($f === FALSE) {
+        if ($f === false) {
             $this->_logger->debug("Failed to open '$infile_name'");
 
             $infile_name = sys_get_temp_dir() . "/{$this->_insert_table}.data"
                 . $this->_destination_db->_db_port . rand();
             $f = fopen($infile_name, 'w');
 
-            if ($f === FALSE) {
+            if ($f === false) {
                 throw new Exception(
                     get_class($this)
                     . ': tmp file error: could not open file: ' . $infile_name
@@ -190,11 +185,10 @@ class PDODBMultiIngestor implements Ingestor
 
         $exec_output = array();
 
-        while (
-            $srcRow = $srcStatement->fetch(
-                PDO::FETCH_ASSOC,
-                PDO::FETCH_ORI_NEXT
-            )
+        while ($srcRow = $srcStatement->fetch(
+            PDO::FETCH_ASSOC,
+            PDO::FETCH_ORI_NEXT
+        )
         ) {
             $tmp_values = array();
 
@@ -226,8 +220,7 @@ class PDODBMultiIngestor implements Ingestor
                 $this->_logger->info($message);
             }
 
-            if (
-                   $sourceRows !== 0
+            if ($sourceRows !== 0
                 && $sourceRows % 250000 == 0
                 || $rowsTotal == $sourceRows
             ) {
@@ -254,8 +247,7 @@ class PDODBMultiIngestor implements Ingestor
 
                     fclose($f);
                     $f = fopen($infile_name, 'w');
-                }
-                catch (Exception $e) {
+                } catch (Exception $e) {
                     $this->_logger->err(array(
                         'message'    => $e->getMessage(),
                         'stacktrace' => $e->getTraceAsString(),
@@ -277,8 +269,7 @@ class PDODBMultiIngestor implements Ingestor
                 $this->_destination_db->handle()->prepare(
                     $updateStatement
                 )->execute();
-            }
-            catch (PDOException $e) {
+            } catch (PDOException $e) {
                 $this->_logger->err(array(
                     'message'    => $e->getMessage(),
                     'sql'        => $updateStatement,
@@ -320,7 +311,6 @@ class PDODBMultiIngestor implements Ingestor
             'records_examined' => $rowsTotal,
             'records_loaded'   => $sourceRows,
         ));
- 
     }
 
     public function setLogger(Log $logger)
@@ -335,7 +325,7 @@ class PDODBMultiIngestor implements Ingestor
     public function getSchemaAndTableNames()
     {
         $tableinfo = explode(".", $this->_insert_table);
-        if( 1 == count($tableinfo) ) {
+        if (1 == count($tableinfo)) {
             // Using unqualified table name
             return array("schema" => $this->_destination_db->_db_name, "tablename" => $this->_insert_table);
         } else {
@@ -346,20 +336,19 @@ class PDODBMultiIngestor implements Ingestor
     public function checkForChanges()
     {
         $stmt = $this->_destination_db->handle()->prepare(
-            "SELECT `COLUMN_NAME` FROM `information_schema`.`COLUMNS` WHERE (`TABLE_SCHEMA` = :schema) AND (`TABLE_NAME` = :tablename) AND (`COLUMN_KEY` = 'PRI')");
+            "SELECT `COLUMN_NAME` FROM `information_schema`.`COLUMNS` WHERE (`TABLE_SCHEMA` = :schema) AND (`TABLE_NAME` = :tablename) AND (`COLUMN_KEY` = 'PRI')"
+        );
 
-        $stmt->execute( $this->getSchemaAndTableNames() );
+        $stmt->execute($this->getSchemaAndTableNames());
 
         $primarykeys = $stmt->fetchAll();
 
         $constraints = array();
-        foreach($primarykeys as $keydata) 
-        {
+        foreach ($primarykeys as $keydata) {
             $constraints[] = sprintf(" b.%s = c.%s ", $keydata['COLUMN_NAME'], $keydata['COLUMN_NAME']);
         }
 
-        if(0 == count($constraints))
-        {
+        if (0 == count($constraints)) {
             $this->_logger->info("no primary keys defined for {$this->_insert_table}. Change check not run.");
             return;
         }
@@ -371,8 +360,7 @@ class PDODBMultiIngestor implements Ingestor
         $stmt->execute();
 
         $sadness = false;
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC) )
-        {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $this->_logger->crit(array(
                 'message'          => 'Missing row',
                 'rowdata'          => print_r($row, true),
@@ -381,7 +369,7 @@ class PDODBMultiIngestor implements Ingestor
             $sadness = true;
         }
 
-        if(!$sadness) {
+        if (!$sadness) {
             $this->_logger->info("data consistency check passed for {$this->_insert_table}");
         }
     }
@@ -468,4 +456,3 @@ class PDODBMultiIngestor implements Ingestor
         }
     }
 }
-

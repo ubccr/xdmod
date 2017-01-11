@@ -84,7 +84,6 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             ->delete("$root/queries/{id}", "$base::deleteQueryById")
             ->convert('id', $idConverter);
         // QUERY ROUTES ========================================================
-
     }
 
     /**
@@ -104,7 +103,6 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
         $statusCode = 401;
 
         try {
-
             $user = $this->authorize($request);
             if (isset($user)) {
                 $metaData = new \UserStorage($user, self::_QUERY_METADATA);
@@ -226,7 +224,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                     $payload['success'] = true;
                     $payload['data'] = $data;
                     $statusCode = 200;
-                }  else {
+                } else {
                     $payload['message'] = 'Error creating chart. User is over the chart limit.';
                     $statusCode = 500;
                 }
@@ -248,7 +246,6 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             $payload,
             $statusCode
         );
-
     }
 
     /**
@@ -279,8 +276,6 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
 
                 $query = $queries->getById($id);
                 if (isset($query)) {
-
-
                     $data = $this->getStringParam($request, 'data');
                     if (isset($data)) {
                         $jsonData = json_decode($data, true);
@@ -291,8 +286,12 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                         $config = $this->getStringParam($request, 'config');
                     }
 
-                    if (isset($name)) $query['name'] = $name;
-                    if (isset($config)) $query['config'] = $config;
+                    if (isset($name)) {
+                        $query['name'] = $name;
+                    }
+                    if (isset($config)) {
+                        $query['config'] = $config;
+                    }
 
                     $queries->upsert($id, $query);
 
@@ -354,7 +353,6 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
 
 
                 if (isset($query)) {
-
                     $before = count($queries->get());
                     $after = $queries->delById($id);
                     $success = $before > $after;
@@ -401,7 +399,9 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
      */
     private function migrateOldQueries(\XDUser $user, \UserStorage $queries, $removeOldQueries = true)
     {
-        if (!isset($user)) return;
+        if (!isset($user)) {
+            return;
+        }
 
         $profile = $user->getProfile();
         $oldQueries = $profile->fetchValue(self::_OLD_QUERIES_STORE);
@@ -469,7 +469,9 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             $hasConfig = !empty($oldQuery['config']);
             $isValid = $hasName && $hasConfig;
 
-            if ($isValid) $results[] = $oldQuery;
+            if ($isValid) {
+                $results[] = $oldQuery;
+            }
         }
         return $results;
     }
@@ -502,5 +504,4 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
     {
         return is_string($value) ? json_decode($value) : $value;
     }
-
 }

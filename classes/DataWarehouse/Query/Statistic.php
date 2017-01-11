@@ -194,8 +194,7 @@ abstract class Statistic extends \DataWarehouse\Query\Model\FormulaField
      */
     public function setOrderByStat($sort_option = SORT_DESC)
     {
-        if (
-            isset($sort_option)
+        if (isset($sort_option)
             && $sort_option != SORT_ASC
             && $sort_option != SORT_DESC
             && $sort_option != SORT_REGULAR

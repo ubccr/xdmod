@@ -195,7 +195,6 @@ class Config implements ArrayAccess
     {
         foreach ($partialData as $key => $value) {
             if (substr($key, 0, 1) == '+') {
-
                 // If the key starts with a "+", merge the values.
 
                 $mainKey   = substr($key, 1);
@@ -215,18 +214,15 @@ class Config implements ArrayAccess
                 }
 
                 if ($this->isAssocArray($mainValue)) {
-
                     // Recurse if the value is an associative array
                     // (JSON Object).
                     $data[$mainKey] = $this->mergeData($mainValue, $value);
                 } else {
-
                     // Just merge if the value is a numeric array
                     // (JSON Array).
                     $data[$mainKey] = array_merge($mainValue, $value);
                 }
             } else {
-
                 // Otherwise overwrite the values.
                 $data[$key] = $value;
             }

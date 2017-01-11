@@ -21,13 +21,12 @@ function detectUser($failover_methods = array())
     } catch (\Exception $e) {
         if (count($failover_methods) == 0) {
             // Previously: Exception with 'Session Expired', No Logged In User code
-            throw new \SessionExpiredException(); 
+            throw new \SessionExpiredException();
         }
 
         switch ($failover_methods[0]) {
             case \XDUser::PUBLIC_USER:
-                if (
-                    isset($_REQUEST['public_user'])
+                if (isset($_REQUEST['public_user'])
                     && $_REQUEST['public_user'] === 'true'
                 ) {
                     return \XDUser::getPublicUser();
@@ -40,12 +39,10 @@ function detectUser($failover_methods = array())
                 try {
                     return getInternalUser();
                 } catch (\Exception $e) {
-                    if (
-                        isset($failover_methods[1])
+                    if (isset($failover_methods[1])
                         && $failover_methods[1] == \XDUser::PUBLIC_USER
                     ) {
-                        if (
-                            isset($_REQUEST['public_user'])
+                        if (isset($_REQUEST['public_user'])
                             && $_REQUEST['public_user'] === 'true'
                         ) {
                             return \XDUser::getPublicUser();
@@ -111,7 +108,7 @@ function getDashboardUser()
 
     $user = \XDUser::getUserByID($_SESSION['xdDashboardUser']);
 
-    if ($user == NULL) {
+    if ($user == null) {
         throw new \Exception('User does not exist');
     }
 
@@ -136,7 +133,7 @@ function getLoggedInUser()
 
     $user = \XDUser::getUserByID($_SESSION['xdUser']);
 
-    if ($user == NULL) {
+    if ($user == null) {
         throw new \Exception('User does not exist');
     }
 
@@ -151,14 +148,13 @@ function getLoggedInUser()
 function getInternalUser()
 {
 
-    if (
-        isset($_SERVER['REMOTE_ADDR'])
+    if (isset($_SERVER['REMOTE_ADDR'])
         && $_SERVER['REMOTE_ADDR'] == '127.0.0.1'
         && isset($_REQUEST['user_id'])
     ) {
         $user = \XDUser::getUserByID($_REQUEST['user_id']);
 
-        if ($user == NULL) {
+        if ($user == null) {
             throw new \Exception('Internal user does not exist');
         }
     } else {
@@ -183,7 +179,7 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
 
         $user = \XDUser::getUserByID($_SESSION[$session_variable]);
 
-        if ($user == NULL) {
+        if ($user == null) {
             $returnData['status']     = 'user_does_not_exist';
             $returnData['success']    = false;
             $returnData['totalCount'] = 0;
@@ -198,7 +194,6 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
         }
 
         if (in_array(SAB_MEMBER, $requirements)) {
-
             // This user must be a member of the Science Advisory Board
             if (!in_array('sab', $user->getRoles())) {
                 $returnData['status']     = 'not_sab_member';
@@ -222,8 +217,7 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
         }
 
         if (in_array(STATUS_CENTER_DIRECTOR_ROLE, $requirements)) {
-            if (
-                $user->getActiveRole()->getIdentifier()
+            if ($user->getActiveRole()->getIdentifier()
                 != ROLE_ID_CENTER_DIRECTOR
             ) {
                 $returnData['status']     = 'not_a_center_director';
@@ -259,29 +253,47 @@ function secureCheck(&$required_params, $m, $enforce_all = true)
 
     $qualifyingParams = 0;
 
-    if ($m == 'GET')     { $param_array = $_GET; }
-    if ($m == 'POST')    { $param_array = $_POST; }
-    if ($m == 'REQUEST') { $param_array = $_REQUEST; }
+    if ($m == 'GET') {
+        $param_array = $_GET;
+    }
+    if ($m == 'POST') {
+        $param_array = $_POST;
+    }
+    if ($m == 'REQUEST') {
+        $param_array = $_REQUEST;
+    }
 
     foreach ($required_params as $param => $pattern) {
         if (!isset($param_array[$param])) {
-            if ($enforce_all) { return false; }
-            if (!$enforce_all) { continue; }
+            if ($enforce_all) {
+                return false;
+            }
+            if (!$enforce_all) {
+                continue;
+            }
         }
 
         $param_array[$param]
             = preg_replace('/\s+/', ' ', $param_array[$param]);
 
         if (preg_match($pattern, $param_array[$param]) == 0) {
-            if ($enforce_all) { return false; }
-            if (!$enforce_all) { continue; }
+            if ($enforce_all) {
+                return false;
+            }
+            if (!$enforce_all) {
+                continue;
+            }
         }
 
         $qualifyingParams++;
     }
 
-    if ($enforce_all) { return true; }
-    if (!$enforce_all) { return $qualifyingParams; }
+    if ($enforce_all) {
+        return true;
+    }
+    if (!$enforce_all) {
+        return $qualifyingParams;
+    }
 }
 
 /**
@@ -291,14 +303,12 @@ function assertParametersSet($requiredParams = array())
 {
     foreach ($requiredParams as $k => $v) {
         if (!is_int($k)) {
-
             // $k represents the name of the param
             // $v represents the format of the value that param must conform
             //    to (a regex)
             $param_name = $k;
             $pattern    = $v;
         } else {
-
             // $v represents the name of the param
             $param_name = $v;
             $pattern    = '/.*/';

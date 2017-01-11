@@ -21,4 +21,3 @@ spl_autoload_register(
 
 // Autoloader for XDMoD classes.
 require_once __DIR__ . '/../../../../configuration/linker.php';
-

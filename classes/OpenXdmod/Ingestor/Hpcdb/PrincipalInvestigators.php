@@ -26,4 +26,3 @@ class PrincipalInvestigators extends PDODBMultiIngestor
         );
     }
 }
-

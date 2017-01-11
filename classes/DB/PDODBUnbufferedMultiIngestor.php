@@ -2,7 +2,7 @@
 
 use CCR\DB\PDODB;
 
-class PDODBUnbufferedMultiIngestor Extends PDODBMultiIngestor
+class PDODBUnbufferedMultiIngestor extends PDODBMultiIngestor
 {
     public function __construct(
         PDODB $dest_db,
@@ -31,8 +31,7 @@ class PDODBUnbufferedMultiIngestor Extends PDODBMultiIngestor
                 $msg = 'Failed to determine count query for source query '
                     . "'$source_query'";
                 throw new Exception($msg);
-            }
-            elseif ($count_statement === null) {
+            } elseif ($count_statement === null) {
                 throw new Exception('Error occurred during preg_replace');
             }
         }
@@ -53,10 +52,9 @@ class PDODBUnbufferedMultiIngestor Extends PDODBMultiIngestor
     public function ingest()
     {
         $pdo = $this->_source_db->handle();
-        $buffered = $pdo->getAttribute( PDO::MYSQL_ATTR_USE_BUFFERED_QUERY);
+        $buffered = $pdo->getAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY);
         $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
         parent::ingest();
         $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $buffered);
     }
 }
-

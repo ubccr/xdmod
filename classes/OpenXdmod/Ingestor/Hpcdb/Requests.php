@@ -28,4 +28,3 @@ class Requests extends PDODBMultiIngestor
         );
     }
 }
-

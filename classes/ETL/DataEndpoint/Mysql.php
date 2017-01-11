@@ -12,8 +12,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use \Log;
 
-class Mysql extends aRdbmsEndpoint
-implements iRdbmsEndpoint
+class Mysql extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
 
     /* ------------------------------------------------------------------------------------------
@@ -42,7 +41,7 @@ implements iRdbmsEndpoint
         // Interrogate the source and destination connections and compare host/port information
 
         $criteria = array();
-        foreach ( $comparisonValues as $value ) {
+        foreach ($comparisonValues as $value) {
             $criteria[] = "Variable_name = '$value'";
         }
 
@@ -51,24 +50,23 @@ implements iRdbmsEndpoint
         $destinationResult = $cmp->getHandle()->query($sql);
 
         $sourceInfo = array();
-        foreach ( $sourceResult as $row ) {
+        foreach ($sourceResult as $row) {
             $sourceInfo[ $row['Variable_name'] ] = $row['Value'];
         }
 
         $destinationInfo = array();
-        foreach ( $destinationResult as $row ) {
+        foreach ($destinationResult as $row) {
             $destinationInfo[ $row['Variable_name'] ] = $row['Value'];
         }
 
         $match = true;
-        foreach ( $comparisonValues as $value ) {
-            if ( $sourceInfo[$value] != $destinationInfo[$value] ) {
+        foreach ($comparisonValues as $value) {
+            if ($sourceInfo[$value] != $destinationInfo[$value]) {
                 $match = false;
             }
         }
 
         return $match;
-
     }  // isSameServer()
 
     /* ------------------------------------------------------------------------------------------
@@ -78,7 +76,7 @@ implements iRdbmsEndpoint
 
     public function schemaExists($schemaName)
     {
-        if ( empty($schemaName) ) {
+        if (empty($schemaName)) {
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
         }
@@ -93,7 +91,7 @@ WHERE schema_name = :schema";
         try {
             $dbh = $this->getHandle();
             $result = $dbh->query($sql, $params);
-            if ( 0 == count($result) ) {
+            if (0 == count($result)) {
                 return false;
             }
         } catch (\PdoException $e) {
@@ -102,7 +100,6 @@ WHERE schema_name = :schema";
         }
 
         return true;
-
     }  // schemaExists()
 
     /* ------------------------------------------------------------------------------------------
@@ -112,7 +109,7 @@ WHERE schema_name = :schema";
 
     public function createSchema($schemaName)
     {
-        if ( empty($schemaName) ) {
+        if (empty($schemaName)) {
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
         }
@@ -131,7 +128,5 @@ WHERE schema_name = :schema";
         }
 
         return true;
-
     }  // createSchema()
-
 }  // class Mysql

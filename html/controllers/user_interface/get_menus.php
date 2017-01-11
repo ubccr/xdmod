@@ -5,7 +5,7 @@ require_once __DIR__ . '/../common_params.php';
 $returnData = array();
 
 try {
-   $user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));
+    $user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));
 
     $activeRole = $user->getMostPrivilegedRole();
 
@@ -32,8 +32,7 @@ try {
                 'leaf'        => false,
             );
         }
-    } elseif (
-        isset($_REQUEST['node'])
+    } elseif (isset($_REQUEST['node'])
         && substr($_REQUEST['node'], 0, 6) == 'realm_'
     ) {
         $query_group_name = 'tg_usage';
@@ -60,7 +59,9 @@ try {
 
             foreach ($query_descripter_groups as $query_descripter_group) {
                 foreach ($query_descripter_group as $query_descripter) {
-                    if ($query_descripter->getShowMenu() !== true) { continue; }
+                    if ($query_descripter->getShowMenu() !== true) {
+                        continue;
+                    }
 
                     $returnData[] = array(
                         'text'                 => $query_descripter->getMenuLabel(),
@@ -94,8 +95,7 @@ try {
                 );
             }
         }
-    } elseif (
-        isset($_REQUEST['node'])
+    } elseif (isset($_REQUEST['node'])
         && substr($_REQUEST['node'], 0, 9) == 'group_by_'
     ) {
         if (isset($_REQUEST['realm'])) {
@@ -140,7 +140,7 @@ try {
                 }
 
                 $texts = array();
-                foreach($returnData as $key => $row) {
+                foreach ($returnData as $key => $row) {
                     $texts[$key] = $row['text'];
                 }
                 array_multisort($texts, SORT_ASC, $returnData);
@@ -161,4 +161,3 @@ try {
 }
 
 xd_controller\returnJSON($returnData);
-

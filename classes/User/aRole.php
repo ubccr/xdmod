@@ -213,7 +213,7 @@ abstract class aRole implements \User\iRole
                 $descripter->setDisableMenu($descripterConfig['disable']);
             }
 
-            if($descripter->getGroupByName() == "none") {
+            if ($descripter->getGroupByName() == "none") {
                 // Special case: the group by none class always go at the top of the list.
                 $this->addQueryDescripter($descripter);
             } else {
@@ -245,7 +245,7 @@ abstract class aRole implements \User\iRole
 
         $this->_user_id = $user->getUserID();
 
-        if ($simulatedActiveRole != NULL) {
+        if ($simulatedActiveRole != null) {
             $this->_simulated_organization = $simulatedActiveRole;
 
             $query = "
@@ -302,7 +302,7 @@ abstract class aRole implements \User\iRole
     {
 
         // A new user has been created, yet not saved.
-        if ($this->_user_id == NULL) {
+        if ($this->_user_id == null) {
             throw new \Exception(
                 'No user ID has been assigned to this role.  You must call'
                 . ' configure() before calling getCorrespondingUserID()'
@@ -422,8 +422,7 @@ abstract class aRole implements \User\iRole
             if (isset($realm_name)) {
                 if (isset($this->_querys[$query_groupname][$realm_name])) {
                     if (isset($group_by_name)) {
-                        if (
-                            isset($this->_querys[$query_groupname][$realm_name][$group_by_name])) {
+                        if (isset($this->_querys[$query_groupname][$realm_name][$group_by_name])) {
                             if (isset($statistic_name)) {
                                 if (isset($this->_querys[$query_groupname][$realm_name][$group_by_name][$statistic_name . '-timeseries'])) {
                                     return $this->_querys[$query_groupname][$realm_name][$group_by_name][$statistic_name . '-timeseries'];
@@ -442,7 +441,6 @@ abstract class aRole implements \User\iRole
                             return array();
                         }
                     } else {
-
                         // No group name specified.
 
                         if ($flatten) {
@@ -467,14 +465,11 @@ abstract class aRole implements \User\iRole
                             return $this->_querys[$query_groupname][$realm_name];
                         }
                     }
-
                 } else {
-
                     // No queries for the specified realm.
                     return array();
                 }
             } else {
-
                 // No realm specified.
 
                 if ($flatten) {
@@ -535,8 +530,7 @@ abstract class aRole implements \User\iRole
 
         $availableQueryDescriptors = array();
         foreach ($queryDescriptors as $queryDescriptor) {
-            if (
-                $queryDescriptor->getDisableMenu()
+            if ($queryDescriptor->getDisableMenu()
             ) {
                 continue;
             }
@@ -651,7 +645,7 @@ abstract class aRole implements \User\iRole
                         continue;
                     }
 
-                    if ($query_descripter->getDisableMenu() ) {
+                    if ($query_descripter->getDisableMenu()) {
                         $returnData[] = array(
                             'id'       => 'group_by_' . $realm_name . '_'
                                         . $query_descripter->getGroupByName(),
@@ -674,7 +668,9 @@ abstract class aRole implements \User\iRole
     public function getSummaryCharts()
     {
         return array_map(
-            function ($chart) { return json_encode($chart); },
+            function ($chart) {
+                return json_encode($chart);
+            },
             self::getConfig($this->_identifier, 'summary_charts')
         );
     }

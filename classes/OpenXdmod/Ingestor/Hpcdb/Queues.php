@@ -28,4 +28,3 @@ class Queues extends PDODBMultiIngestor
         );
     }
 }
-

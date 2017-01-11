@@ -578,7 +578,9 @@ class DataWarehouseInitializer
     private function addPrefix(array $names = array(), $prefix)
     {
         return array_map(
-            function ($name) use ($prefix) { return $prefix . $name; },
+            function ($name) use ($prefix) {
+                return $prefix . $name;
+            },
             $names
         );
     }
@@ -662,4 +664,3 @@ class DataWarehouseInitializer
         return array($startDate, $endDate);
     }
 }
-

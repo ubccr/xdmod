@@ -263,8 +263,7 @@ class Slurm extends Shredder
         $underscorePos = strpos($job['job_id'], '_');
 
         if ($underscorePos !== false) {
-            if (
-                   $underscorePos == 0
+            if ($underscorePos == 0
                 || $underscorePos == strlen($job['job_id']) - 1
             ) {
                 $msg = "Unexpected underscore in job id '{$job['job_id']}'";
@@ -340,8 +339,7 @@ class Slurm extends Shredder
         // inside the brackets. (e.g. "node[10-20],node30" returns
         // "node10", "node[3,5]" returns "node3".)
 
-        if (
-                $bracketPos === false
+        if ($bracketPos === false
             || ($commaPos !== false && $bracketPos < $commaPos)
         ) {
             $nodes = explode(',', $nodeList);
@@ -473,7 +471,6 @@ class Slurm extends Shredder
             && strrpos($arrayList, ']') === strlen($arrayList) - 1;
 
         if ($containsBrackets) {
-
             // Remove brackets and split on comma.
             $arrayParts = explode(
                 ',',

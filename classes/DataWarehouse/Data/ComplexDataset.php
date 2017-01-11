@@ -23,12 +23,12 @@ class ComplexDataset
 
     // --------------------------------------------------------------
     // init()
-    // Instantiate and set up each Query, then instantiate 
+    // Instantiate and set up each Query, then instantiate
     // its Simple*Dataset and add it to $this->_dataDescripters.
     //
     // Does not compute combined x axis. @refer getXAxis().
     // Now general for Simple or SimpleTimeseries Dataset types.
-    // 
+    //
     // Annotated with JMS notes from 29 Apr 2014
     //
     //  @param $startDate -- format YYYY-MM-DD
@@ -40,7 +40,7 @@ class ComplexDataset
     //
     //  @return array $globalFilterDescriptions -- Descriptions of the global filters
     //  @return array $yAxisArray  --  elided due to lack of interest, JMS
-    //  @return array $metrics -- name (key) and description (value) of data metric 
+    //  @return array $metrics -- name (key) and description (value) of data metric
     //  @return array $dimensions -- name (key) and description (value) of data dimension
     //  @return array $dataSources -- text data source name (key)
     // --------------------------------------------------------------
@@ -53,8 +53,8 @@ class ComplexDataset
         $query_type // new and semi improved...
     ) {
         // JMS: please improve this when possible.
-        if ( !in_array($query_type, array('aggregate','timeseries') ) ) {
-            throw new \Exception( get_class($this)." unsupported query_type found: ".$query_type);
+        if (!in_array($query_type, array('aggregate','timeseries'))) {
+            throw new \Exception(get_class($this)." unsupported query_type found: ".$query_type);
         }
 
         $globalFilterDescriptions = array();
@@ -64,16 +64,15 @@ class ComplexDataset
         $dataSources = array();
 
         foreach ($data_series as $data_description_index => $data_description) {
-
             // Determine query class, then instantiate it
-            // this is quite horrible, and I apologize, but it beats 900 lines of 
+            // this is quite horrible, and I apologize, but it beats 900 lines of
             // redundant code, no? --JMS
-            $query_classname = '\\DataWarehouse\\Query\\' . 
-                $data_description->realm .  '\\' . 
+            $query_classname = '\\DataWarehouse\\Query\\' .
+                $data_description->realm .  '\\' .
                 ( $query_type == "aggregate" ? "Aggregate" : "Timeseries");
 
             try {
-                $stat = $query_classname::getStatistic( $data_description->metric);
+                $stat = $query_classname::getStatistic($data_description->metric);
                 $metrics[$stat->getLabel(false)] = $stat->getInfo();
             } catch (\Exception $ex) {
                 continue;
@@ -96,8 +95,7 @@ class ComplexDataset
             $dimensions[$group_by->getLabel()] = $group_by->getInfo();
             $query->addStat($data_description->metric);
 
-            if (
-                $data_description->std_err == 1
+            if ($data_description->std_err == 1
                 || (
                     property_exists($data_description, 'std_err_labels')
                     && $data_description->std_err_labels
@@ -135,8 +133,7 @@ class ComplexDataset
 
             // Create the Simple*Dataset; add to $this->_dataDescripters[]
             $this->addDataset($data_description, $query);
-
-        } // foreach ($data_series as $data_description_index => $data_description) 
+        } // foreach ($data_series as $data_description_index => $data_description)
 
         return array(
             $dimensions,
@@ -155,13 +152,13 @@ class ComplexDataset
     // @param data_description
     // @param query object
     // --------------------------------------------------------------
-    protected function addDataset( $data_description, $query ) 
+    protected function addDataset($data_description, $query)
     {
         // what type is this query?
         $query_type = $query->getQueryType();
 
-        $datasetClassname  
-            = $query_type == "aggregate" 
+        $datasetClassname
+            = $query_type == "aggregate"
             ? '\DataWarehouse\Data\SimpleDataset'
             : '\DataWarehouse\Data\SimpleTimeseriesDataset';
 
@@ -179,10 +176,11 @@ class ComplexDataset
     // Throws exception if _xAxisDataObject not set.
     // @returns $this->_totalX, total number of points on x axis
     // --------------------------------------------------------------
-    public function getTotalX() {
+    public function getTotalX()
+    {
 
-        if (!isset($this->_xAxisDataObject) )  {
-            throw new \Exception( get_class($this)." _xAxisDataObject not set; _totalX=". $this->_totalX );
+        if (!isset($this->_xAxisDataObject)) {
+            throw new \Exception(get_class($this)." _xAxisDataObject not set; _totalX=". $this->_totalX);
         }
         return $this->_totalX;
     } // function getTotalX()
@@ -192,32 +190,34 @@ class ComplexDataset
     // Throws exception if _dataDescripters not set.
     // @returns total number of _dataDescripters (y datasets)
     // --------------------------------------------------------------
-    public function getTotalDatasetCount() {
+    public function getTotalDatasetCount()
+    {
 
         // TODO JMS note: I may want to be able to return 0 here..
-        if (empty($this->_dataDescripters) )  {
-            throw new \Exception( get_class($this)." _dataDescripters array is empty" );
+        if (empty($this->_dataDescripters)) {
+            throw new \Exception(get_class($this)." _dataDescripters array is empty");
         }
         return count($this->_dataDescripters);
     } // function getTotalDatasetCount()
 
     // ---------------------------------------------
     // setOrderBy()
-    // Set sort and order by for a single SimpleDataset. 
-    // These parameters are used to sort the store. 
+    // Set sort and order by for a single SimpleDataset.
+    // These parameters are used to sort the store.
     // This is called by init() for the ComplexDataset.
-    // 
+    //
     // @return Query
     // ---------------------------------------------
-    protected function setOrderBy(&$data_description, &$query) {
+    protected function setOrderBy(&$data_description, &$query)
+    {
         $query->addOrderByAndSetSortInfo($data_description);
         return $query;
     } // function setOrderBy()
 
     // ---------------------------------------------------------------
-    // determineRoleParameters() 
-    // 
-    // Set role parameters for a single SimpleDataset. 
+    // determineRoleParameters()
+    //
+    // Set role parameters for a single SimpleDataset.
     //  Role parameters: grouped with global filters.
     //      User-added filters added to chart
     //      implicit role-associated filters
@@ -233,12 +233,10 @@ class ComplexDataset
         // set global filters for dataset
         if (!$data_description->ignore_global) {
             foreach ($global_filters->data as $global_filter) {
-                if (
-                    isset($global_filter->checked)
+                if (isset($global_filter->checked)
                     && $global_filter->checked == 1
                 ) {
-                    if (
-                        !isset($groupedRoleParameters[
+                    if (!isset($groupedRoleParameters[
                             $global_filter->dimension_id
                         ])
                     ) {
@@ -249,7 +247,7 @@ class ComplexDataset
                     $groupedRoleParameters[$global_filter->dimension_id][]
                         = $global_filter->value_id;
                 }
-            } // foreach ($global_filters...) 
+            } // foreach ($global_filters...)
         }
         return $groupedRoleParameters;
     } // function determineRoleParameters()
@@ -258,7 +256,7 @@ class ComplexDataset
     // --------------------------------------------------------------
     // getXAxis()
     //
-    // Interleave the x axes for the multiple SimpleDatasets that 
+    // Interleave the x axes for the multiple SimpleDatasets that
     // constitute this ComplexDataset. Assumes init() has been called.
     // Call this function prior to determining $this->_totalX.
     //
@@ -275,8 +273,8 @@ class ComplexDataset
     ) {
 
         // init() should be called before this function.
-        if (!isset($this->_dataDescripters) )  {
-            throw new \Exception( get_class($this)." _dataDescripters not set" );
+        if (!isset($this->_dataDescripters)) {
+            throw new \Exception(get_class($this)." _dataDescripters not set");
         }
 
         if (!isset($this->_xAxisDataObject) || $force_reexec === true) {
@@ -285,8 +283,7 @@ class ComplexDataset
             $sort_type = 'none';
 
             foreach ($this->_dataDescripters as $dataDescripterAndDataset) {
-                if (
-                    $dataDescripterAndDataset->data_description->sort_type
+                if ($dataDescripterAndDataset->data_description->sort_type
                     !== 'none'
                 ) {
                     $sort_type = $dataDescripterAndDataset->data_description
@@ -309,10 +306,8 @@ class ComplexDataset
 
                 // Ensure that all possible x values are reflected in the _xAxisDataObject
                 foreach ($subXAxisObject->getValues() as $index => $label) {
-
                     // if we are missing this x value, add it to temp xAxisDataObject
                     if (!isset($tempXDataObject[$label])) {
-
                         $order = $subXAxisObject->getOrderId($index);
                         $value = $yAxisDataObject->getValue($index);
 
@@ -326,26 +321,27 @@ class ComplexDataset
             } // foreach ($this->_dataDescripters ... )
 
             // set the _xAxisDataObject. Since this is Aggregate data it is a dimension not a metric
-            $this->_xAxisDataObject = new \DataWarehouse\Data\SimpleData('','dim');
-            $this->_xAxisDataObject->setUnit( 'X Axis' );
+            $this->_xAxisDataObject = new \DataWarehouse\Data\SimpleData('', 'dim');
+            $this->_xAxisDataObject->setUnit('X Axis');
 
-            // tempXDataObject contains properly sorted values. 
+            // tempXDataObject contains properly sorted values.
             $sortedVals = $this->sortTempXArray($sort_type, $tempXDataObject);
-            $this->_xAxisDataObject->setValues(  $sortedVals );
+            $this->_xAxisDataObject->setValues($sortedVals);
 
             // Determine total number of points on x axis:
             $this->_totalX = $this->_xAxisDataObject->getCount();
 
             // Assign name for x axis from the names of constituent datasets:
-            $this->_xAxisDataObject->setName(implode(' / ',array_unique($names)));
-
-        } // if (!isset($this->_xAxisDataObject) || $force_reexec === true) 
+            $this->_xAxisDataObject->setName(implode(' / ', array_unique($names)));
+        } // if (!isset($this->_xAxisDataObject) || $force_reexec === true)
 
         // Slice array according to supplied limit and offset, reset count:
-        $this->_xAxisDataObject->setValues( array_slice($this->_xAxisDataObject->getValues(), 
-                                                        $offset, 
-                                                        $limit) );
-        $this->_xAxisDataObject->getCount( true );
+        $this->_xAxisDataObject->setValues(array_slice(
+            $this->_xAxisDataObject->getValues(),
+            $offset,
+            $limit
+        ));
+        $this->_xAxisDataObject->getCount(true);
 
         return $this->_xAxisDataObject;
     } // function getXAxis
@@ -353,12 +349,13 @@ class ComplexDataset
     // --------------------------------------------------------------
     // sortTempXArray()
     // Given a sort type (value or label, asc or desc) and a temp data object
-    // consisting of array of x values, order ids, and y values, return a 
+    // consisting of array of x values, order ids, and y values, return a
     // sorted array of x values.
     //
     // @return array
     // --------------------------------------------------------------
-    protected function sortTempXArray($sort_type, &$tempXDataObject) {
+    protected function sortTempXArray($sort_type, &$tempXDataObject)
+    {
 
         // arrays are keyed by x value, from x axis obj;
         $values = array(); // y values
@@ -369,7 +366,7 @@ class ComplexDataset
             $orders[$key] = $vArray['order'];
         }
 
-        // sort the x axis values as specified 
+        // sort the x axis values as specified
         switch ($sort_type) {
             case 'value_asc':
                 array_multisort(
@@ -404,26 +401,26 @@ class ComplexDataset
 
         // now retrieve the x values reflecting the proper sort
         $labels = array();
-        foreach ( $tempXDataObject as $value) {
+        foreach ($tempXDataObject as $value) {
             $labels[] = $value['label'];
         }
 
         return $labels;
-    } // function sortTempXArray() 
+    } // function sortTempXArray()
 
 
     // --------------------------------------------------------------
     // getYAxis()
-    // 
-    //    @return array 
+    //
+    //    @return array
     //          $returnYAxis[$yAxisIndex] = $yAxisObject;
-    //    containing yAxisObjects. 
+    //    containing yAxisObjects.
     //
     //  Each element has format:
     //              $yAxisObject->series[] = array(
-    //                   'yAxisDataObject',      SimpleData 
-    //                   'data_description',     ...   ?? 
-    //                   'decimals',             integer 
+    //                   'yAxisDataObject',      SimpleData
+    //                   'data_description',     ...   ??
+    //                   'decimals',             integer
     //                   'semDecimals',          integer
     //                   'filterParametersTitle' string??
     //                );
@@ -443,10 +440,8 @@ class ComplexDataset
 
         // For each item on the _dataDescripters array, generate an axisId (name)
         // and push the dataset onto a yAxisArray. If shared y axis, push onto
-        // subarray. 
-        foreach ( $this->_dataDescripters
-            as $data_description_index => $dataDescripterAndDataset
-        ) {
+        // subarray.
+        foreach ($this->_dataDescripters as $data_description_index => $dataDescripterAndDataset) {
             $data_description = $dataDescripterAndDataset->data_description;
 
             $query_classname
@@ -475,9 +470,7 @@ class ComplexDataset
         } // foreach _dataDescripter ... => dataDescripterAndDataset
 
         $returnYAxis = array();
-        foreach ( array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) 
-        {
-
+        foreach (array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) {
             // build up a default class structure and accumulate values inside it:
             $yAxisObject = new \stdClass();
             $yAxisObject->series = array();
@@ -532,7 +525,9 @@ class ComplexDataset
                         = ' {' . $filterParametersTitle . '}';
                 }
 
-                if ($this->_xAxisDataObject->getCount() <= 0) { continue; }
+                if ($this->_xAxisDataObject->getCount() <= 0) {
+                    continue;
+                }
 
                 $newValues = array_fill(
                     0,
@@ -567,13 +562,12 @@ class ComplexDataset
                         true
                     );
 
-                    if ($found !== FALSE) {
+                    if ($found !== false) {
                         $newValues[$found] = $yAxisDataObject->getValue($xIndex);
                         $xIds[$found]      = $subXAxisObject->getId($xIndex);
                         $xValues[$found]   = $subXAxisObject->getValue($xIndex);
 
-                        if (
-                            $dataDescripterAndDataset->data_description
+                        if ($dataDescripterAndDataset->data_description
                                                      ->std_err
                         ) {
                             $newErrors[$found]
@@ -597,7 +591,7 @@ class ComplexDataset
                 $decimals = $statisticObject->getDecimals();
 
                 $yAxisObject->decimals = max($yAxisObject->decimals, $decimals);
-                $yAxisDataObject->setValues ( $newValues );
+                $yAxisDataObject->setValues($newValues);
 
                 // following used only to id drilldown for pie charts. (!!)
                 $yAxisDataObject->setXIds($xIds);
@@ -631,9 +625,8 @@ class ComplexDataset
             } // foreach ($yAxisDataDescriptions as $dataDescripterAndDataset) {
 
             $returnYAxis[$yAxisIndex] = $yAxisObject;
-        } // foreach ( array_values($yAxisArray) ... => $yAxisDataDescriptions) 
+        } // foreach ( array_values($yAxisArray) ... => $yAxisDataDescriptions)
 
         return $returnYAxis;
     } // getYAxis()
 } // class ComplexDataset
-

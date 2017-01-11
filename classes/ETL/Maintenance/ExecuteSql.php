@@ -27,8 +27,7 @@ use PHPSQLParser\exceptions\UnsupportedFeatureException;
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
 
-class ExecuteSql extends aAction
-implements iAction
+class ExecuteSql extends aAction implements iAction
 {
     // Delimiter for SQL scripts that contain multiple statements
     const DEFAULT_MULTI_STATEMENT_DELIMITER = '//';
@@ -42,7 +41,7 @@ implements iAction
 
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
-        if ( ! $options instanceof MaintenanceOptions ) {
+        if (! $options instanceof MaintenanceOptions) {
             $msg = __CLASS__ . ": Options is not an instance of MaintenanceOptions";
             $this->logAndThrowException($msg);
         }
@@ -54,17 +53,16 @@ implements iAction
 
         // The SQL file list must be provided and be an array
 
-        if ( ! is_string($options->sql_file_list) && ! is_array($options->sql_file_list) ) {
+        if (! is_string($options->sql_file_list) && ! is_array($options->sql_file_list)) {
             $msg = __CLASS__ . ": file_list must be a string or an array";
             $this->logAndThrowException($msg);
         }
 
         // Undocumented behavior: Normalize a single file string/object list to an array
 
-        if ( is_string($options->sql_file_list) || is_object($options->sql_file_list) ) {
+        if (is_string($options->sql_file_list) || is_object($options->sql_file_list)) {
             $options->sql_file_list = array($options->sql_file_list);
         }
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -74,12 +72,12 @@ implements iAction
 
     public function verify(EtlOverseerOptions $etlOptions = null)
     {
-        if ( $this->isVerified() ) {
+        if ($this->isVerified()) {
             return;
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
+        if (null !== $etlOptions) {
             $this->etlOverseerOptions = $etlOptions;
         }
 
@@ -87,12 +85,11 @@ implements iAction
 
         // Verify that each sql file exists and is readable
 
-        foreach ( $this->options->sql_file_list as $sqlFile ) {
-
+        foreach ($this->options->sql_file_list as $sqlFile) {
             $filename = $sqlFile;
 
-            if ( is_object($sqlFile) ) {
-                if ( ! isset($sqlFile->sql_file) ) {
+            if (is_object($sqlFile)) {
+                if (! isset($sqlFile->sql_file)) {
                     $msg =  "sql_file_list object does not have sql_file property set";
                     $this->logAndThrowException($msg);
                 } else {
@@ -100,10 +97,10 @@ implements iAction
                 }
             }  // if ( is_object($sqlFile) )
 
-            if ( ! file_exists($filename) ) {
+            if (! file_exists($filename)) {
                 $msg = "SQL file does not exist '$filename'";
                 $this->logAndThrowException($msg);
-            } else if ( ! is_readable($filename) ) {
+            } elseif (! is_readable($filename)) {
                 $msg = "SQL file is not readable '$filename'";
                 $this->logAndThrowException($msg);
             }
@@ -112,7 +109,6 @@ implements iAction
         $this->verified = true;
 
         return true;
-
     }  // verify()
 
     /* ------------------------------------------------------------------------------------------
@@ -126,7 +122,7 @@ implements iAction
 
     protected function initialize()
     {
-        if ( $this->isInitialized() ) {
+        if ($this->isInitialized()) {
             return;
         }
 
@@ -139,8 +135,8 @@ implements iAction
 
         $sqlFileList  = $this->options->sql_file_list;
 
-        foreach ( $sqlFileList as &$sqlFile ) {
-            if ( is_object($sqlFile) && isset($sqlFile->sql_file) ) {
+        foreach ($sqlFileList as &$sqlFile) {
+            if (is_object($sqlFile) && isset($sqlFile->sql_file)) {
                 $sqlFile->sql_file = $this->options->applyBasePath("paths->sql_dir", $sqlFile->sql_file);
             } else {
                 $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
@@ -152,7 +148,6 @@ implements iAction
         $this->initialized = true;
 
         return true;
-
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
@@ -172,7 +167,7 @@ implements iAction
         $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
         $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
 
-        if ( ! $destinationEndpoint instanceof iRdbmsEndpoint ) {
+        if (! $destinationEndpoint instanceof iRdbmsEndpoint) {
             $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
@@ -189,16 +184,16 @@ implements iAction
             );
         $this->variableMap = array_merge($this->variableMap, $localVariableMap);
 
-        foreach ( $this->options->sql_file_list as $sqlFile ) {
+        foreach ($this->options->sql_file_list as $sqlFile) {
             $delimiter = self::DEFAULT_MULTI_STATEMENT_DELIMITER;
 
             // An object can be used to override the default delimiter.
 
             $filename = $sqlFile;
 
-            if ( is_object($sqlFile) ) {
+            if (is_object($sqlFile)) {
                 $filename = $sqlFile->sql_file;
-                if ( isset($sqlFile->delimiter) ) {
+                if (isset($sqlFile->delimiter)) {
                     $delimiter = $sqlFile->delimiter;
                 }
             }  // if ( is_object($sqlFile) )
@@ -215,11 +210,10 @@ implements iAction
             $numStatementsProcessed = 0;
 
             foreach ($sqlStatementList as $sql) {
-
                 // Skip empty queries
 
                 $sql = trim($sql);
-                if ( "" == $sql ) {
+                if ("" == $sql) {
                     continue;
                 }
 
@@ -237,7 +231,7 @@ implements iAction
 
                 // Skip delimiter and use statements
 
-                if ( preg_match('/^\s*(use|delimiter)/', $sql) ) {
+                if (preg_match('/^\s*(use|delimiter)/', $sql)) {
                     continue;
                 }
 
@@ -245,10 +239,10 @@ implements iAction
                 $sqlStartTime = microtime(true);
 
                 try {
-                    if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                    if (! $this->etlOverseerOptions->isDryrun()) {
                         $destinationEndpoint->getHandle()->execute($sql);
                     }
-                } catch ( PDOException $e ) {
+                } catch (PDOException $e) {
                     $msg = "Error executing sql: " . $e->getMessage();
                     $this->logAndThrowSqlException($sql, $e);
                 }
@@ -257,11 +251,9 @@ implements iAction
                 $this->logger->debug("Elapsed time: " . round($time, 5));
 
                 $numStatementsProcessed++;
-
             }  // foreach ($sqlStatementList as $sql)
 
             $this->logger->info("Processed $numStatementsProcessed SQL statements");
-
         }  // foreach ( $this->options->sql_file_list as $sqlFile )
 
         $time_end = microtime(true);
@@ -272,5 +264,4 @@ implements iAction
                                     'elapsed_time' => round($time, 5)
                                   ));
     }  // execute()
-
 }  // class ExecuteSql

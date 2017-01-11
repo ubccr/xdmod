@@ -42,4 +42,3 @@ class ResourceTypes extends PDODBMultiIngestor
         );
     }
 }
-

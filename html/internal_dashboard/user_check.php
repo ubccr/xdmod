@@ -10,7 +10,7 @@ if (isset($_POST['xdmod_username']) && isset($_POST['xdmod_password'])) {
         $_POST['xdmod_password']
     );
 
-    if ($user == NULL) {
+    if ($user == null) {
         denyWithMessage('Invalid login');
     }
 
@@ -19,7 +19,7 @@ if (isset($_POST['xdmod_username']) && isset($_POST['xdmod_password'])) {
 }
 
 // Check that the user has been set in the session.
-if (!isset($_SESSION['xdDashboardUser'])){
+if (!isset($_SESSION['xdDashboardUser'])) {
     denyWithMessage('');
     exit;
 }
@@ -27,14 +27,13 @@ if (!isset($_SESSION['xdDashboardUser'])){
 // Retrieve user data.
 try {
     $user = XDUser::getUserByID($_SESSION['xdDashboardUser']);
-} catch(Exception $e) {
+} catch (Exception $e) {
     denyWithMessage('There was a problem initializing your account.');
     exit;
 }
 
 // Check that the user exists.
 if (!isset($user)) {
-
     // There is an issue with the account (most likely deleted while the
     // user was logged in, and the user refreshed the entire site)
     session_destroy();

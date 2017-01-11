@@ -23,10 +23,9 @@ $captcha_private_key = xd_utilities\getConfiguration(
 );
 
 if ($captcha_private_key !== '') {
-    if (
-        !isset($_POST["recaptcha_challenge_field"])
+    if (!isset($_POST["recaptcha_challenge_field"])
         || !isset($_POST["recaptcha_response_field"])
-    ){
+    ) {
         \xd_response\presentError('Recaptcha information not specified');
     }
 
@@ -133,11 +132,9 @@ $response = array();
 try {
     $mail->send();
     $response['success'] = true;
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $response['success'] = false;
     $response['message'] = $e->getMessage();
 }
 
 echo json_encode($response);
-

@@ -56,10 +56,14 @@ EOT
         $this->console->displayBlankLine();
 
         $nodes = $this->console->prompt('How many nodes does this resource have?');
-        if (empty($nodes) || !is_numeric($nodes)) { $nodes = 1; }
+        if (empty($nodes) || !is_numeric($nodes)) {
+            $nodes = 1;
+        }
 
         $cpus = $this->console->prompt('How many total processors (cpu cores) does this resource have?');
-        if (empty($cpus) || !is_numeric($cpus)) { $cpus = 1; }
+        if (empty($cpus) || !is_numeric($cpus)) {
+            $cpus = 1;
+        }
 
         $ppn = $cpus / $nodes;
 

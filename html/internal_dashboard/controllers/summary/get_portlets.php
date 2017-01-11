@@ -14,7 +14,6 @@ try {
     $portlets = array();
 
     foreach ($config['internal_dashboard']['portlets'] as $portlet) {
-
         // Add an empty config if none is found.
         if (!isset($portlet['config'])) {
             $portlet['config'] = array();
@@ -25,9 +24,11 @@ try {
 
     // Add log portlets.
     foreach ($config['internal_dashboard']['logs'] as $log) {
-      $logSummary = Summary::factory($log['ident'], TRUE);
+        $logSummary = Summary::factory($log['ident'], true);
 
-        if ($logSummary->getProcessStartRowId() === null) { continue; }
+        if ($logSummary->getProcessStartRowId() === null) {
+            continue;
+        }
 
         $portlets[] = array(
             'class'  => 'XDMoD.Log.SummaryPortlet',
@@ -48,7 +49,6 @@ try {
     );
 
     $returnData['count'] = count($returnData['response']);
-
 } catch (Exception $e) {
     $returnData = array(
         'success' => false,
@@ -57,4 +57,3 @@ try {
 }
 
 echo json_encode($returnData);
-

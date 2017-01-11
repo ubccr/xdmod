@@ -268,8 +268,7 @@ class Lsf extends Shredder
 
         $this->logger->debug('Parsed data: ' . json_encode($job));
 
-        if (
-            $job['num_ex_hosts'] > 0
+        if ($job['num_ex_hosts'] > 0
             && !$this->testHostFilter($job['exec_hosts'][0])
         ) {
             $this->logger->debug('Skipping line due to host filter');
@@ -346,11 +345,9 @@ class Lsf extends Shredder
 
             // These entries indicate that the next "num" fields are
             // all part of the next field
-            if (
-                   $fieldName == 'num_asked_hosts'
+            if ($fieldName == 'num_asked_hosts'
                 || $fieldName == 'num_ex_hosts'
             ) {
-
                 // Determine the last index to include in the array.
                 $maxIdx = $fieldIdx + $fields[$fieldIdx];
 
@@ -410,4 +407,3 @@ class Lsf extends Shredder
         $this->db->insert($sql, array_values($columnValues));
     }
 }
-

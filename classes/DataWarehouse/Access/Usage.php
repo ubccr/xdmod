@@ -42,7 +42,8 @@ class Usage extends Common
      *                             results: The data to respond with.
      *                             headers: Headers to set on the response.
      */
-    public function getCharts(XDUser $user, $chartsKey = 'data') {
+    public function getCharts(XDUser $user, $chartsKey = 'data')
+    {
         // Get the request's realm and the realm's query class.
         $usageRealm = \xd_utilities\array_get($this->request, 'realm');
         $usageRealmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
@@ -83,8 +84,7 @@ class Usage extends Common
 
         // If this request is asking for timeseries data for multiple metrics
         // for a datasheet, return an error response.
-        if (
-            $usageIsTimeseries
+        if ($usageIsTimeseries
             && !$isSingleMetricQuery
             && $isJsonStoreExport
         ) {
@@ -209,12 +209,10 @@ class Usage extends Common
 
         // If this is a text export, perform special handling of the response.
         if ($isTextExport) {
-
             $meResponse = $meResponses[0];
 
             // If this is a JSON store export...
             if ($isJsonStoreExport) {
-
                 // Combine multiple results into a single object to return.
                 $meRequest = $meRequests[0];
                 $emptyResultFound = false;
@@ -537,7 +535,7 @@ class Usage extends Common
             unset($meChart['xAxis']['dtitle']);
 
             // set x-axis title, if any, bold:
-            if (isset ($meChart['xAxis']['title']['style']) ) {
+            if (isset($meChart['xAxis']['title']['style'])) {
                 $meChart['xAxis']['title']['style']['fontWeight'] = 'bold';
             }
 
@@ -556,7 +554,7 @@ class Usage extends Common
                 }
 
                 // set y-axis title, if any, bold:
-                if (isset ($meChart['yAxis'][0]['title']['style']) ) {
+                if (isset($meChart['yAxis'][0]['title']['style'])) {
                     $meChart['yAxis'][0]['title']['style']['fontWeight'] = 'bold';
                 }
 
@@ -583,8 +581,7 @@ class Usage extends Common
                 $meRequest['data_series_unencoded'][0]['sort_type'],
                 'value'
             );
-            if (
-                isset($meChart['xAxis']['categories'])
+            if (isset($meChart['xAxis']['categories'])
                 && $chartSortedByValue
                 && $usageGroupBy !== 'none'
             ) {
@@ -621,7 +618,10 @@ class Usage extends Common
 
             // For each data series...
             $primaryDataSeriesRank = $usageOffset;
-            array_walk($meChart['series'], function(&$meDataSeries, $meDataSeriesIndex) use (
+            array_walk($meChart['series'], function (
+                &$meDataSeries,
+                $meDataSeriesIndex
+            ) use (
                 $usageRealm,
                 $usageGroupBy,
                 $usageIsTimeseries,
@@ -644,8 +644,7 @@ class Usage extends Common
                 // grouped chart, add the rank to the series label.
                 if ($isPrimaryDataSeries) {
                     $primaryDataSeriesRank++;
-                    if (
-                        $usageIsTimeseries
+                    if ($usageIsTimeseries
                         && $chartSortedByValue
                         && $usageGroupBy !== 'none'
                     ) {
@@ -679,7 +678,7 @@ class Usage extends Common
                 // If this is not a trend line series and not a thumbnail,
                 // fill in the drilldown function.
                 if (!$isTrendLineSeries && !$thumbnailRequested) {
-                    $drillDowns = implode(',',$user->getMostPrivilegedRole()->getQueryDescripters(
+                    $drillDowns = implode(',', $user->getMostPrivilegedRole()->getQueryDescripters(
                         'tg_usage',
                         $usageRealm,
                         $usageGroupBy,
@@ -690,7 +689,7 @@ class Usage extends Common
                     if ($usageIsTimeseries) {
                         $drilldownDetails = $meDataSeries['drilldown'];
                         $drilldownId = $drilldownDetails['id'];
-                        $drilldownLabel = json_encode( $drilldownDetails['label'] );
+                        $drilldownLabel = json_encode($drilldownDetails['label']);
                         $drilldownFunction = "function(event) {
                             this.ts = this.x;
                             XDMoD.Module.Usage.drillChart(
@@ -774,8 +773,7 @@ class Usage extends Common
                 'sort_type' => $meRequest['data_series_unencoded'][0]['sort_type'],
             );
             foreach ($meReportGeneratorMeta as $reportKey => $reportValue) {
-                if (
-                    $reportKey === 'included_in_report'
+                if ($reportKey === 'included_in_report'
                     || array_key_exists($reportKey, $usageChart)
                 ) {
                     continue;
@@ -846,7 +844,8 @@ class Usage extends Common
      * @return array                A request array that can be used for
      *                              generating a Metric Explorer chart.
      */
-    private function convertChartRequest(array $usageRequest, $useGivenFormat) {
+    private function convertChartRequest(array $usageRequest, $useGivenFormat)
+    {
         // Start with a Metric Explorer request pre-filled with defaults
         // not present in Usage requests.
         $meRequest = array(
@@ -1034,7 +1033,8 @@ class Usage extends Common
      *                               chart.
      * @return string                The filename of the chart.
      */
-    private function generateFilename($title, $start_date, $end_date, $isTimeseries) {
+    private function generateFilename($title, $start_date, $end_date, $isTimeseries)
+    {
         return
             str_replace('%', 'Percent', $title)
             . '_'
@@ -1046,5 +1046,3 @@ class Usage extends Common
         ;
     }
 }
-
-?>

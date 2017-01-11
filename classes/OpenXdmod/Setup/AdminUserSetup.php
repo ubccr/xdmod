@@ -33,10 +33,8 @@ class AdminUserSetup extends SetupItem
                 $password,
                 $emailAddress,
                 $firstName,
-
                 // Middle name.
                 '',
-
                 $lastName,
                 array(ROLE_ID_MANAGER),
                 ROLE_ID_MANAGER

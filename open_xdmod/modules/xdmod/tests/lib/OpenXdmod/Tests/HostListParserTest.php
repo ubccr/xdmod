@@ -37,7 +37,6 @@ class HostListTest extends \PHPUnit_Framework_TestCase
             $hosts,
             $this->parser->expandHostList($hostList)
         );
-
     }
 
     /**

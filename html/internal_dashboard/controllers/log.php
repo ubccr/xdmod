@@ -9,4 +9,3 @@ $controller->registerOperation('get_summary');
 $controller->registerOperation('get_messages');
 $controller->registerOperation('get_levels');
 $controller->invoke('REQUEST', 'xdDashboardUser');
-

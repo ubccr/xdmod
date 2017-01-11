@@ -47,7 +47,7 @@ abstract class SetupItem
     protected function getJsonConfigFilePath($file, $pkg = null)
     {
         return $pkg === null
-            ? sprintf('%s/%s.json',      CONFIG_DIR, $file)
+            ? sprintf('%s/%s.json', CONFIG_DIR, $file)
             : sprintf('%s/%s.d/%s.json', CONFIG_DIR, $file, $pkg);
     }
 
@@ -62,7 +62,7 @@ abstract class SetupItem
     protected function getIniConfigFilePath($file, $pkg = null)
     {
         return $pkg === null
-            ? sprintf('%s/%s.ini',      CONFIG_DIR, $file)
+            ? sprintf('%s/%s.ini', CONFIG_DIR, $file)
             : sprintf('%s/%s.d/%s.ini', CONFIG_DIR, $file, $pkg);
     }
 

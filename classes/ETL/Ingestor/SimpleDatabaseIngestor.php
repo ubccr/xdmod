@@ -13,8 +13,7 @@ namespace ETL\Ingestor;
 use ETL\EtlOverseerOptions;
 use ETL\iAction;
 
-class SimpleDatabaseIngestor extends pdoIngestor
-implements iAction
+class SimpleDatabaseIngestor extends pdoIngestor implements iAction
 {
 
     /* ------------------------------------------------------------------------------------------
@@ -24,12 +23,12 @@ implements iAction
 
     public function verify(EtlOverseerOptions $etlOptions = null)
     {
-        if ( $this->isVerified() ) {
+        if ($this->isVerified()) {
             return;
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
+        if (null !== $etlOptions) {
             $this->etlOverseerOptions = $etlOptions;
         }
 
@@ -37,7 +36,7 @@ implements iAction
 
         parent::verify();
 
-        if ( ! isset($this->parsedDefinitionFile->source_table) ) {
+        if (! isset($this->parsedDefinitionFile->source_table)) {
             $msg = "source_table not found in definition file";
             $this->logAndThrowException($msg);
         }
@@ -45,7 +44,6 @@ implements iAction
         $this->verified = true;
 
         return true;
-
     }  // verify()
 
     /* ------------------------------------------------------------------------------------------
@@ -66,12 +64,12 @@ implements iAction
 
         $optionalColumnNames = null;
     
-        if ( isset($this->parsedDefinitionFile->source_columns) ) {
+        if (isset($this->parsedDefinitionFile->source_columns)) {
             $optionalColumnNames = ( is_array($this->parsedDefinitionFile->source_columns)
                                      ? $this->parsedDefinitionFile->source_columns
                                      : array_values((array) $this->parsedDefinitionFile->source_columns) );
             $missing = array_diff($optionalColumnNames, $sourceColumnNames);
-            if ( 0 != count($missing) ) {
+            if (0 != count($missing)) {
                 $msg = "Requested colums missing from table $sourceTable: " . implode(",", $missing);
                 $this->logAndThrowException($msg);
             }
@@ -79,13 +77,12 @@ implements iAction
             // If the optional columns value is an object it is a mapping between the source table columns
             // and the destination table columns. Construct the columns using "AS".
 
-            if ( is_object($this->parsedDefinitionFile->source_columns) ) {
+            if (is_object($this->parsedDefinitionFile->source_columns)) {
                 $optionalColumnNames = array();
                 foreach ($this->parsedDefinitionFile->source_columns as $dest => $src) {
                     $optionalColumnNames[] = "$src AS $dest";
                 }
             }
-      
         }  // if ( isset($this->options->columns) )
 
         // Copy all columns or a subset, as requested
@@ -97,7 +94,5 @@ implements iAction
         $sourceQuery = "SELECT " . implode(", ", $columns) . " FROM $sourceTable";
 
         return $sourceQuery;
-
     }  // getSourceQuery()
-
 }  // class SimpleDatabaseIngestor

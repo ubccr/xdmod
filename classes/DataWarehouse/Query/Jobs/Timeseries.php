@@ -28,7 +28,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
             $start_date,
             $end_date,
             $group_by,
-            $stat ,
+            $stat,
             $parameters,
             $query_groupname,
             $parameter_description,
@@ -36,5 +36,3 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
         );
     }
 }
-
-?>

@@ -8,7 +8,8 @@ $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
 $realmParameter = null;
 try {
     $realmParameter = getRealm();
-} catch (\Exception $e) {}
+} catch (\Exception $e) {
+}
 
 $realms = null;
 if ($realmParameter !== null) {
@@ -24,4 +25,3 @@ xd_controller\returnJSON(MetricExplorer::getDimensionValues(
     getSearchText(),
     getSelectedFilterIds()
 ));
-?>

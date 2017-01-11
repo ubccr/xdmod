@@ -1,20 +1,17 @@
 <?php
-	
+    
 // XDMoD RESTful Service Front Controller
 
-require_once (dirname(__FILE__).'../../../configuration/linker.php');
+require_once(dirname(__FILE__).'../../../configuration/linker.php');
 
 // Pear::Log http://pear.php.net/package/Log
 require_once("Log.php");
 
 
-if (
-    isset($_SERVER['HTTP_USER_AGENT'])
+if (isset($_SERVER['HTTP_USER_AGENT'])
     && preg_match('/MSIE/', $_SERVER['HTTP_USER_AGENT'])
 ) {
-
-  session_cache_limiter("private");
-
+    session_cache_limiter("private");
 }
 define('EXCEPTION_MESSAGE_SUFFIX', \xd_rest\getExceptionMessageSuffix());
 
@@ -42,7 +39,7 @@ $generalAccessLogger = Log::factory('file', $general_logfile, 'REST', $logConf);
 
 $response = array();
 $parser = new RestParser();
-$request = NULL;
+$request = null;
 
 // ============================================================================================
 
@@ -51,41 +48,30 @@ $service_handler_start_time = microtime(true);
 $logged_request_uri = cleanURL($_SERVER['REQUEST_URI']);
 
 try {
-
 // Break REST query (URL) into its constituent components ..
       
-   $request = $parser->parseRequest();
+    $request = $parser->parseRequest();
    
-   $token = $request->getToken();
+    $token = $request->getToken();
    
-   if (!empty($token)) {
-   
-      // If a token has been specified...
+    if (!empty($token)) {
+        // If a token has been specified...
       
-      try {
-      
-         $user = XDSessionManager::resolveUserFromToken($request);
-         $rest_caller  = 'token_mapped_to_';
-         $rest_caller .= ($user->isXSEDEUser() == true) ? $user->getXSEDEUsername().'_xsede' : $user->getUsername();
-
-      }
-      catch(\Exception $e) {
+        try {
+            $user = XDSessionManager::resolveUserFromToken($request);
+            $rest_caller  = 'token_mapped_to_';
+            $rest_caller .= ($user->isXSEDEUser() == true) ? $user->getXSEDEUsername().'_xsede' : $user->getUsername();
+        } catch (\Exception $e) {
+            // All exceptions thrown on behalf of XDSessionManager::resolveUserFromToken(...) indicate that the
+            // token supplied to the REST call was invalid.
          
-         // All exceptions thrown on behalf of XDSessionManager::resolveUserFromToken(...) indicate that the
-         // token supplied to the REST call was invalid. 
-         
-         $rest_caller = 'invalid_token';
-               
-      }
-         
-   }
-   else {
-      
-      // A token was never specified in the REST call to begin with
+            $rest_caller = 'invalid_token';
+        }
+    } else {
+        // A token was never specified in the REST call to begin with
             
-      $rest_caller = 'no_token';
-      
-   }
+        $rest_caller = 'no_token';
+    }
    
    //$generalAccessLogger->log($_SERVER['REMOTE_ADDR']." $rest_caller ".$logged_request_uri);
   
@@ -98,83 +84,74 @@ try {
    print 'Token: '.$request->getToken()."<br>\n";   
   */
           
-  try {
-      
-    $handler = RestHandler::factory($request);
+    try {
+        $handler = RestHandler::factory($request);
          
-    // Attempt to route the request to the proper class residing in the proper namespace
+        // Attempt to route the request to the proper class residing in the proper namespace
          
-    $category_obj_ref = $handler->{$request->getCategory()}();
+        $category_obj_ref = $handler->{$request->getCategory()}();
          
-    $arguments = explode('/', $request->getActionArguments());
+        $arguments = explode('/', $request->getActionArguments());
             
-    if ($arguments[0] == 'help') {
-      $category_obj_ref = $category_obj_ref->help();
-    }
+        if ($arguments[0] == 'help') {
+            $category_obj_ref = $category_obj_ref->help();
+        }
 
-    // Any exceptions thrown by the action will propogate back up to the front controller,
-    // and trip the catch { .. } block below.
+        // Any exceptions thrown by the action will propogate back up to the front controller,
+        // and trip the catch { .. } block below.
          
-    $response = $category_obj_ref->{$request->getAction()}();
-
-  }
-  catch (\Exception $e) {
-      
-    // REASONS FOR ENTERING THIS CATCH { ... } BLOCK:
-    // (1) There was an issue finding the proper action (function) to invoke.
-    // (2) The action itself, if found, threw an exception.
+        $response = $category_obj_ref->{$request->getAction()}();
+    } catch (\Exception $e) {
+        // REASONS FOR ENTERING THIS CATCH { ... } BLOCK:
+        // (1) There was an issue finding the proper action (function) to invoke.
+        // (2) The action itself, if found, threw an exception.
          
-    // In this case, parsing of the request succeeded, so allow the response to
-    // propogate to the logic below in order to present the information in the format
-    // the caller requested (or use the default format if no recognizable format was 
-    // explicitly provided in the call).
+        // In this case, parsing of the request succeeded, so allow the response to
+        // propogate to the logic below in order to present the information in the format
+        // the caller requested (or use the default format if no recognizable format was
+        // explicitly provided in the call).
     
-    $logger->log(generateLogMsg($e), PEAR_LOG_ERR);
+        $logger->log(generateLogMsg($e), PEAR_LOG_ERR);
 
-    // If a SessionExpiredException was thrown, allow the global exception
-    // handler to process it. There should not be session-checking code in the
-    // REST API, but the browser client depends on it currently.
-    if ($e instanceof \SessionExpiredException) {
-      logTimestamps('FAIL', 'session_expired_exception');
-      throw $e;
-    }
+        // If a SessionExpiredException was thrown, allow the global exception
+        // handler to process it. There should not be session-checking code in the
+        // REST API, but the browser client depends on it currently.
+        if ($e instanceof \SessionExpiredException) {
+            logTimestamps('FAIL', 'session_expired_exception');
+            throw $e;
+        }
 
-    // If a custom exception was throw, allow the global exception handler
-    // to process it.
+        // If a custom exception was throw, allow the global exception handler
+        // to process it.
+        if ($e instanceof \XDException) {
+            throw $e;
+        }
+
+        $response['success'] = false;
+        $response['message'] = $e->getMessage().EXCEPTION_MESSAGE_SUFFIX;
+    }  // try
+} catch (\Exception $e) {
+   // If a custom exception was thrown, allow the global exception
+   // handler to process it.
     if ($e instanceof \XDException) {
         throw $e;
     }
 
-    $response['success'] = false;
-    $response['message'] = $e->getMessage().EXCEPTION_MESSAGE_SUFFIX;
-    
-  }  // try
-       
-}
-catch(\Exception $e) {
-
-   // If a custom exception was thrown, allow the global exception
-   // handler to process it.
-   if ($e instanceof \XDException) {
-      throw $e;
-   }
-
-   logTimestamps('FAIL', 'parse_exception');
+    logTimestamps('FAIL', 'parse_exception');
     
    // There was an issue parsing the request.  Since parsing failed, there is no
    // way to determine what return format the end-user wanted -- in this case,
    // the default format (JSON) is provided
       
-   $response['success'] = false;
-   $response['message'] = $e->getMessage().EXCEPTION_MESSAGE_SUFFIX;
+    $response['success'] = false;
+    $response['message'] = $e->getMessage().EXCEPTION_MESSAGE_SUFFIX;
    
-   $msg = generateLogMsg($e, "Error parsing request");
+    $msg = generateLogMsg($e, "Error parsing request");
            
-   $logger->log($msg, PEAR_LOG_ERR);
+    $logger->log($msg, PEAR_LOG_ERR);
 
-   print json_encode($response);
-   exit;
-      
+    print json_encode($response);
+    exit;
 }  // try
     
 // ----------------------------------------------------------------------
@@ -187,32 +164,28 @@ catch(\Exception $e) {
 $response['action'] = $request->getAction();
 
 try {
-      
-   $rest_response = RestResponse::factory($response);
+    $rest_response = RestResponse::factory($response);
      
-   $response = $rest_response->{$request->getOutputFormat()}()->render();
+    $response = $rest_response->{$request->getOutputFormat()}()->render();
    
-   logTimestamps('SUCCESS');
+    logTimestamps('SUCCESS');
    
-   print $response;
-   
-}
-catch(\Exception $e) {
-       
-   logTimestamps('FAIL', 'response_render_exception');
+    print $response;
+} catch (\Exception $e) {
+    logTimestamps('FAIL', 'response_render_exception');
   
-   $logger->log(generateLogMsg($e, "Handler error"), PEAR_LOG_ERR);
+    $logger->log(generateLogMsg($e, "Handler error"), PEAR_LOG_ERR);
    
    // If a SessionExpiredException was thrown, allow the global exception
    // handler to process it. There should not be session-checking code in the
    // REST API, but the browser client depends on it currently.
-   if ($e instanceof \SessionExpiredException) {
-      throw $e;
-   }
+    if ($e instanceof \SessionExpiredException) {
+        throw $e;
+    }
 
-   $response['success'] = false;
+    $response['success'] = false;
   
-   $response['message'] = $e->getMessage().EXCEPTION_MESSAGE_SUFFIX; 
+    $response['message'] = $e->getMessage().EXCEPTION_MESSAGE_SUFFIX;
   
   // It is important that this message be textual (a RAW format is not entirely
   // reliable in this case, so use JSON).
@@ -220,8 +193,7 @@ catch(\Exception $e) {
   // Rendering has failed nonetheless, so present the error in a 'reliable' format
   // (using json_encode)
    
-  print json_encode($response);
- 
+    print json_encode($response);
 }  // try
 
 // --------------------------------------------------------------------------------
@@ -236,24 +208,25 @@ catch(\Exception $e) {
 //  semi-colons.
 // --------------------------------------------------------------------------------
 
-function generateLogMsg(\Exception $e, $msg = NULL) {
+function generateLogMsg(\Exception $e, $msg = null)
+{
    
-   $logMsg = array();
-   $logMsg[] = $_SERVER['REMOTE_ADDR'];  //old: $request->getIPAddress();
-   $logMsg[] = $_SERVER['REQUEST_URI'];  // old: cleanURL($request->getUrl()); 
+    $logMsg = array();
+    $logMsg[] = $_SERVER['REMOTE_ADDR'];  //old: $request->getIPAddress();
+    $logMsg[] = $_SERVER['REQUEST_URI'];  // old: cleanURL($request->getUrl());
    
-   $t = $e->getTrace();
+    $t = $e->getTrace();
    
-   if ( is_array($t) && count($t) > 0 ) {
-      $t = array_shift($t);
-      if ( array_key_exists('file', $t) )
-         $logMsg[] = $t['file'] . "::" . $t['function'] . "() (line " . $t['line'] . ")";
-   }
+    if (is_array($t) && count($t) > 0) {
+        $t = array_shift($t);
+        if (array_key_exists('file', $t)) {
+            $logMsg[] = $t['file'] . "::" . $t['function'] . "() (line " . $t['line'] . ")";
+        }
+    }
    
-   $logMsg[] = ( NULL !== $msg ? $msg . ": " : "" ) . $e->getMessage();
+    $logMsg[] = ( null !== $msg ? $msg . ": " : "" ) . $e->getMessage();
    
-   return implode("; ", $logMsg);
-
+    return implode("; ", $logMsg);
 }//generateLogMsg()
 
 // --------------------------------------------------------------------------------
@@ -270,20 +243,18 @@ function generateLogMsg(\Exception $e, $msg = NULL) {
 //
 // --------------------------------------------------------------------------------
 
-function cleanURL($url) {
+function cleanURL($url)
+{
 
-   $uri_components = explode('/', $url);
+    $uri_components = explode('/', $url);
 
-   $uri_components_mod = array();
+    $uri_components_mod = array();
    
-   foreach($uri_components as $component) {
+    foreach ($uri_components as $component) {
+        $uri_components_mod[] = preg_replace('/password=(.+)/', 'password=...', $component);
+    }//foreach
 
-      $uri_components_mod[] = preg_replace('/password=(.+)/', 'password=...', $component);
-
-   }//foreach
-
-   return implode('/', $uri_components_mod);
-
+    return implode('/', $uri_components_mod);
 }//cleanURL
 
 // --------------------------------------------------------------------------------
@@ -298,20 +269,20 @@ function cleanURL($url) {
 //
 // --------------------------------------------------------------------------------
 
-function logTimestamps($status, $reason = '') {
+function logTimestamps($status, $reason = '')
+{
 
-   global $service_handler_start_time;
-   global $generalAccessLogger;
-   global $logged_request_uri;
-   global $rest_caller;
+    global $service_handler_start_time;
+    global $generalAccessLogger;
+    global $logged_request_uri;
+    global $rest_caller;
    
-   $service_handler_end_time = microtime(true);
-   $service_handler_turnaround = $service_handler_end_time - $service_handler_start_time;
+    $service_handler_end_time = microtime(true);
+    $service_handler_turnaround = $service_handler_end_time - $service_handler_start_time;
    
-   if (!empty($reason)){ $reason = " REASON=$reason"; }
+    if (!empty($reason)) {
+        $reason = " REASON=$reason";
+    }
    
-   $generalAccessLogger->log($_SERVER['REMOTE_ADDR']." REQUEST CALLER=$rest_caller ENDPOINT=$logged_request_uri STATUS=$status$reason START=$service_handler_start_time END=$service_handler_end_time DELTA=$service_handler_turnaround");
-    
+    $generalAccessLogger->log($_SERVER['REMOTE_ADDR']." REQUEST CALLER=$rest_caller ENDPOINT=$logged_request_uri STATUS=$status$reason START=$service_handler_start_time END=$service_handler_end_time DELTA=$service_handler_turnaround");
 }//logTimestamps
-
-?>

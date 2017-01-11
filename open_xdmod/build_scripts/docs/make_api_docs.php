@@ -89,4 +89,3 @@ function main()
 
     system("rm -rf $outputDir/phpdoc-cache-*");
 }
-

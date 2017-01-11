@@ -3,8 +3,8 @@
 require_once 'user_check.php';
 
 if (isset($_POST['direct_to'])) {
-  header('Location: ' . $_POST['direct_to']);
-  exit;
+    header('Location: ' . $_POST['direct_to']);
+    exit;
 }
 
 // Set REST cookies.
@@ -15,12 +15,11 @@ if (isset($_POST['direct_to'])) {
 <html>
 <head>
 
-  <?php
-  if(preg_match('/(?i)msie [1-8]/',$_SERVER['HTTP_USER_AGENT']))
-  {
-    echo "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=EmulateIE7\" />"."\n";
-  }
-  ?>
+    <?php
+    if (preg_match('/(?i)msie [1-8]/', $_SERVER['HTTP_USER_AGENT'])) {
+        echo "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=EmulateIE7\" />"."\n";
+    }
+    ?>
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>XDMoD Internal Dashboard</title>
@@ -31,7 +30,7 @@ if (isset($_POST['direct_to'])) {
   <link rel="stylesheet" type="text/css" href="css/AdminPanel.css" />
   <script type="text/javascript" src="../gui/lib/oldie-console-patch.js"></script>
   <script type="text/javascript" src="../gui/lib/oldie-array-methods-patch.js"></script>
-  <?php ExtJS::loadSupportScripts('../gui/lib'); ?>
+    <?php ExtJS::loadSupportScripts('../gui/lib'); ?>
   <script type="text/javascript" src="../gui/lib/ext-oldie-history-patch.js"></script>
   <script type="text/javascript" src="../gui/lib/jquery/jquery-1.12.4.min.js"></script>
 
@@ -83,7 +82,7 @@ if (isset($_POST['direct_to'])) {
   <script type="text/javascript" src="../gui/js/RESTProxy.js"></script>
 
   <script type="text/javascript">
-      <?php \xd_rest\printJavascriptVariables(); ?>
+        <?php \xd_rest\printJavascriptVariables(); ?>
   </script>
   <script type="text/javascript" src="../gui/js/REST.js"></script>
 
@@ -201,8 +200,8 @@ if (isset($_POST['direct_to'])) {
   <script type="text/javascript" src="../gui/js/ExportPanel.js"></script>
   <script type="text/javascript" src="../gui/js/PortalModule.js"></script>
 
-  <?php /* App Kernel files. */ ?>
-  <?php if (xd_utilities\getConfiguration('features', 'appkernels') == 'on'): ?>
+    <?php /* App Kernel files. */ ?>
+    <?php if (xd_utilities\getConfiguration('features', 'appkernels') == 'on') : ?>
 
   <script type="text/javascript" src="js/Arr/SummaryStore.js"></script>
   <script type="text/javascript" src="js/Arr/SummaryPortlet.js"></script>
@@ -233,7 +232,7 @@ if (isset($_POST['direct_to'])) {
 
   <script type="text/javascript" src="js/Ingestion/AppKernelStore.js"></script>
   <script type="text/javascript" src="js/Ingestion/AppKernelGrid.js"></script>
-  <?php endif; ?>
+    <?php endif; ?>
 
   <!-- Open XDMoD Install List -->
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
@@ -253,15 +252,13 @@ if (isset($_POST['direct_to'])) {
 
   <script type="text/javascript" src="js/dashboard.js"></script>
 
-  <?php /* App Kernel code. */ ?>
-  <?php if (xd_utilities\getConfiguration('features', 'appkernels') == 'on'): ?>
-  <?php
-    if(isset($_GET['op']))
-    {
-        if($_GET['op']=='ak_instance')
-        {
-          $instance_id=$_GET['instance_id'];
-          echo <<< END
+    <?php /* App Kernel code. */ ?>
+    <?php if (xd_utilities\getConfiguration('features', 'appkernels') == 'on') : ?>
+    <?php
+    if (isset($_GET['op'])) {
+        if ($_GET['op']=='ak_instance') {
+            $instance_id=$_GET['instance_id'];
+            echo <<< END
 <script type="text/javascript">
     Ext.onReady(function () {
     new XDMoD.AppKernel.InstanceWindow({instanceId:$instance_id}).show();
@@ -270,8 +267,8 @@ if (isset($_POST['direct_to'])) {
 END;
         }
     }
-  ?>
-  <?php endif; ?>
+    ?>
+    <?php endif; ?>
 </head>
 <body></body>
 </html>

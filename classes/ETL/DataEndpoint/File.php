@@ -9,8 +9,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use \Log;
 
-class File extends aDataEndpoint
-implements iDataEndpoint
+class File extends aDataEndpoint implements iDataEndpoint
 {
 
     // The path to the file.
@@ -40,7 +39,6 @@ implements iDataEndpoint
         $this->key = md5(implode($this->keySeparator, array($this->type, $this->path, $this->mode)));
 
         $this->path = $options->applyBasePath("paths->data_dir", $options->path);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -54,13 +52,12 @@ implements iDataEndpoint
 
     public function setPath($path)
     {
-        if ( ! is_string($path) ) {
+        if (! is_string($path)) {
             $msg = "Path must be a string";
             $this->logAndThrowException($msg);
         }
 
         return $this;
-
     }  // setPath()
 
     /* ------------------------------------------------------------------------------------------
@@ -83,14 +80,13 @@ implements iDataEndpoint
         // The first time a connection is made the endpoint handle should be set.
 
         $this->handle = @fopen($this->path, $this->mode);
-        if ( false === $this->handle ) {
+        if (false === $this->handle) {
             $error = error_get_last();
             $msg = "Error opening file '{$this->path}': " . $error['message'];
             $this->logAndThrowException($msg);
         }
 
         return $this->handle;
-
     }  // connect()
 
     /* ------------------------------------------------------------------------------------------
@@ -100,11 +96,11 @@ implements iDataEndpoint
 
     public function disconnect()
     {
-        if ( null === $this->handle ) {
+        if (null === $this->handle) {
             return true;
         }
     
-        if ( false === @fclose($this->handle) ) {
+        if (false === @fclose($this->handle)) {
             $error = error_get_last();
             $msg = "Error closing file '{$this->path}': " . $error['message'];
             $this->logAndThrowException($msg);
@@ -113,7 +109,6 @@ implements iDataEndpoint
         $this->handle = null;
 
         return true;
-
     }  // disconnect()
 
     /* ------------------------------------------------------------------------------------------
@@ -128,27 +123,26 @@ implements iDataEndpoint
         $readModes = array("r", "r+", "w+", "a+", "x+", "c+");
         $writeModes = array("r+", "w", "w+", "a", "a+", "x", "x+", "c", "c+");
 
-        if ( ! is_string($this->path) ) {
+        if (! is_string($this->path)) {
             $msg =  "Path '" . $this->path . "' is not a string";
             $this->logAndThrowException($msg);
         }
 
-        if ( ! in_array($this->mode, array_merge($readModes, $writeModes)) ) {
+        if (! in_array($this->mode, array_merge($readModes, $writeModes))) {
             $msg = "Unsupported mode '{$this->mode}'";
             $this->logAndThrowException($msg);
         }
         
-        if ( in_array($this->mode, $readModes) && ! is_readable($this->path) ) {
+        if (in_array($this->mode, $readModes) && ! is_readable($this->path)) {
             $msg = "File '{$this->path}' is not readable";
             $this->logAndThrowException($msg);
         }
 
         $fh = $this->connect();
-        if ( ! $leaveConnected ) {
+        if (! $leaveConnected) {
             $this->disconnect();
         }
 
         return true;
     }  // verify()
-
 }  // class File

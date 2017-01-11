@@ -20,14 +20,14 @@
 class RestHandler
 {
 
-  // Handler request - must be set before 
-  private $_request = NULL;
+  // Handler request - must be set before
+    private $_request = null;
 
   // Constructor is PRIVATE (can only create class instance via factory(...))
-  private function __construct($request)
-  {
-    $this->_request = $request;
-  }
+    private function __construct($request)
+    {
+        $this->_request = $request;
+    }
 
   // --------------------------------------------------------------------------------
   // Instantiate a copy of this handler
@@ -37,10 +37,10 @@ class RestHandler
   // @returns An instantiated object
   // --------------------------------------------------------------------------------
 
-  public static function factory($request)
-  {
-    return new RestHandler($request);
-  }// factory()
+    public static function factory($request)
+    {
+        return new RestHandler($request);
+    }// factory()
 
   // --------------------------------------------------------------------------------
   // Intercept method calls to $target that do not map to defined methods.  This
@@ -50,63 +50,55 @@ class RestHandler
   // @param $arguments An array of arguments passed to $target
   // --------------------------------------------------------------------------------
 
-   public function __call($target, $arguments)
-   {
+    public function __call($target, $arguments)
+    {
   
-      if (NULL === $this->_request)
-      {
-         // factory(..) needed to be called prior to invoking a method 
-         $msg = "";
-         throw new Exception("REST request not supplied"); 
-      }
+        if (null === $this->_request) {
+            // factory(..) needed to be called prior to invoking a method
+            $msg = "";
+            throw new Exception("REST request not supplied");
+        }
 
-      // Verify that the class to handle the operation exists and instantiate a copy
+        // Verify that the class to handle the operation exists and instantiate a copy
 
-      $realmDir = xd_rest\resolveRealm($this->_request->getRealm());
+        $realmDir = xd_rest\resolveRealm($this->_request->getRealm());
       
-      $categoryPath = dirname(__FILE__).'/'.$realmDir;
+        $categoryPath = dirname(__FILE__).'/'.$realmDir;
       
-      /*
-      $categoryPath = dirname(__FILE__).'/'.ucfirst(strtolower($this->_request->getRealm()));
+        /*
+        $categoryPath = dirname(__FILE__).'/'.ucfirst(strtolower($this->_request->getRealm()));
 
-      if (!is_dir($categoryPath))
-      {
+        if (!is_dir($categoryPath))
+        {
          $msg = "Unknown realm '" . $this->_request->getRealm()."'";
          throw new \Exception($msg);      
-      } 
-      */      
+        } 
+        */
    
-      $absolute_class_name = "\\" . $realmDir . "\\" . ucfirst(strtolower($target));
-      $class_definition_file = $categoryPath . "/" . ucfirst(strtolower($target)) . ".php";
+        $absolute_class_name = "\\" . $realmDir . "\\" . ucfirst(strtolower($target));
+        $class_definition_file = $categoryPath . "/" . ucfirst(strtolower($target)) . ".php";
       
-      if (!file_exists($class_definition_file))
-      {
-         $msg = "Category '$target' is not defined for realm '" . $this->_request->getRealm() . "'";
-         throw new \Exception($msg);      
-      }
+        if (!file_exists($class_definition_file)) {
+            $msg = "Category '$target' is not defined for realm '" . $this->_request->getRealm() . "'";
+            throw new \Exception($msg);
+        }
             
-      require_once($class_definition_file);
+        require_once($class_definition_file);
 
-      // Ensure that the class has been loaded / recognized...
+        // Ensure that the class has been loaded / recognized...
       
-      if (!class_exists($absolute_class_name))
-      {
-         $msg = "Category '$target' not supported by " . $this->_request->getRealm();
-         throw new \Exception($msg);
-      }
+        if (!class_exists($absolute_class_name)) {
+            $msg = "Category '$target' not supported by " . $this->_request->getRealm();
+            throw new \Exception($msg);
+        }
    
-      // Check here to make sure class in question extends the appropriate abstract class
+        // Check here to make sure class in question extends the appropriate abstract class
           
-      if (!is_subclass_of($absolute_class_name, 'aRestAction'))
-      {
-         $msg = "Class '".$absolute_class_name."' does not comply with aRestAction";
-         throw new \Exception($msg);   
-      }
+        if (!is_subclass_of($absolute_class_name, 'aRestAction')) {
+            $msg = "Class '".$absolute_class_name."' does not comply with aRestAction";
+            throw new \Exception($msg);
+        }
 
-      return $absolute_class_name::factory($this->_request);
-
-  } // __call()
-  
+        return $absolute_class_name::factory($this->_request);
+    } // __call()
 }  // class RestHandler
-
-?>

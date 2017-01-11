@@ -127,5 +127,4 @@ interface iDataEndpoint
      */
 
     public function __toString();
-
 }  // interface iDataEndpoint

@@ -6,63 +6,61 @@
       The Center For Computational Research, University At Buffalo
    */
 
-	require_once dirname(__FILE__).'/../configuration/linker.php';
-	
-	$page_title = xd_utilities\getConfiguration('general', 'title');
-	$site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
+    require_once dirname(__FILE__).'/../configuration/linker.php';
+    
+    $page_title = xd_utilities\getConfiguration('general', 'title');
+    $site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
   
    $validationCheck = XDUser::validateRID($_GET['rid']);
 
-	// -------------------------------
+    // -------------------------------
    
-   if ($validationCheck['status'] == INVALID) {
-   
+if ($validationCheck['status'] == INVALID) {
 ?>
 <html>
 
-   <head>
-				
-      <link rel="shortcut icon" href="gui/icons/favicon_static.ico" />
-					
-      <style type="text/css">
-			
-         body, table {
+<head>
+                
+<link rel="shortcut icon" href="gui/icons/favicon_static.ico" />
+                    
+<style type="text/css">
+            
+   body, table {
          
-            font-family: helvetica;
-            font-size: 12px;
+      font-family: helvetica;
+      font-size: 12px;
                
-         }
-					    
-      </style>
-		
-      <title><?php print $page_title; ?></title>
-				
-   </head>
+   }
+                        
+</style>
+        
+<title><?php print $page_title; ?></title>
+                
+</head>
    
-   <body bgcolor="#ffeeee">
-				
-      <table width=100%>
-         <tr><td align=right><a href="index.php"><img src="gui/images/xdmod_mini.png" border=0></a></td></tr>   
-      </table>
+<body bgcolor="#ffeeee">
+                
+<table width=100%>
+   <tr><td align=right><a href="index.php"><img src="gui/images/xdmod_mini.png" border=0></a></td></tr>   
+</table>
       
-      <center>
+<center>
       
-         <br><br>
+   <br><br>
       
-         <font color="#ff0000">The page you are trying to access has already expired.<br><br>
-            If you still need to reset your password, visit the <a href="<?php print $site_address; ?>">login page</a> and click on <b>Problem Logging In?</b> below the login prompt.
-         </font>
+   <font color="#ff0000">The page you are trying to access has already expired.<br><br>
+      If you still need to reset your password, visit the <a href="<?php print $site_address; ?>">login page</a> and click on <b>Problem Logging In?</b> below the login prompt.
+   </font>
          
-      </center>
-					
-   </body>
+</center>
+                    
+</body>
    
 </html>		
 <?php
 
-      exit;
-
-		}//if (INVALID)
+exit;
+}//if (INVALID)
 
       $first_name = $validationCheck['user_first_name'];
       
@@ -79,10 +77,10 @@
 
       <link rel="shortcut icon" href="gui/icons/favicon_static.ico" />
             
-      <?php
+        <?php
          ExtJS::loadSupportScripts('gui/lib');
-      ?>
-	  
+        ?>
+      
       <script type="text/javascript" src="gui/lib/jquery/jquery-1.12.4.min.js"></script>
       <script type="text/javascript" src="gui/lib/PasswordStrengthMeter.js"></script>
       
@@ -106,9 +104,9 @@
 
       <title><?php print "$page_title: ".ucfirst($mode); ?> Password</title>
 
-	</head>
+    </head>
 
-	<body onload="initPage()">
+    <body onload="initPage()">
 
       <table width=100%>
       
@@ -120,10 +118,10 @@
       </table>
                
       <center>
-		
+        
          <br><br>
          Welcome, <?php print $first_name; ?>. To <?php print $mode; ?> your password, supply a new password below and click on <b>Update</b>.<br><br>
-		
+        
          <div class="splashContainer loginSection">
                   
             <div>
@@ -167,7 +165,7 @@
                 
          </div>    
           
-		</center>
+        </center>
 
    </body>
 

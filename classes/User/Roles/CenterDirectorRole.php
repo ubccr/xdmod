@@ -25,11 +25,11 @@ class CenterDirectorRole extends \User\AuthenticatedRole
 
     public function getIdentifier($absolute_identifier = false)
     {
-        if ($absolute_identifier == true)
+        if ($absolute_identifier == true) {
             return ROLE_ID_CENTER_DIRECTOR.';'.$this->getActiveCenter();
-        else
+        } else {
             return parent::getIdentifier($absolute_identifier);
-
+        }
     }//getIdentifier
 
     // --------------------------------------------------
@@ -49,14 +49,15 @@ class CenterDirectorRole extends \User\AuthenticatedRole
         $center_name = (count($center_data) > 0) ? $center_data[0]['description'] : '';
 
         return "$baseName - $center_name";
-
     }//getFormalName
 
     // --------------------------------------------------
 
     public function getActiveCenter()
     {
-        if (!empty($this->_simulated_organization)) return $this->_simulated_organization;
+        if (!empty($this->_simulated_organization)) {
+            return $this->_simulated_organization;
+        }
 
         $pdo = DB::factory('database');
 
@@ -70,11 +71,11 @@ class CenterDirectorRole extends \User\AuthenticatedRole
         );
 
 
-        if (count($centerData) > 0)
+        if (count($centerData) > 0) {
             return $centerData[0]['param_value'];
-        else
+        } else {
             return -1;
-
+        }
     }//getActiveCenter
 
     // --------------------------------------------------
@@ -100,14 +101,11 @@ class CenterDirectorRole extends \User\AuthenticatedRole
 
         $centerStaffMembers = array();
 
-        foreach($staffMembers as $member) {
-
+        foreach ($staffMembers as $member) {
             $centerStaffMembers[] = array('id' => $member['id'], 'name' => $member['name']);
-
         }//foreach
 
         return $centerStaffMembers;
-
     }//enumCenterStaffMembers
 
     // --------------------------------------------------
@@ -120,7 +118,7 @@ class CenterDirectorRole extends \User\AuthenticatedRole
 
         $roles = $member->getRoles();
 
-        if (!in_array(ROLE_ID_CENTER_DIRECTOR, $roles)){
+        if (!in_array(ROLE_ID_CENTER_DIRECTOR, $roles)) {
             $roles[] = ROLE_ID_CENTER_DIRECTOR;
         }
 
@@ -142,7 +140,6 @@ class CenterDirectorRole extends \User\AuthenticatedRole
 
         // Any exception thrown by invoking saveUser() will be handled by the caller of upgradeStaffMember()
         $member->saveUser();
-
     }//upgradeStaffMember
 
     // --------------------------------------------------
@@ -185,7 +182,6 @@ class CenterDirectorRole extends \User\AuthenticatedRole
         $center_director_affiliations = $member->getOrganizationCollection(ROLE_ID_CENTER_DIRECTOR);
 
         if (count($center_director_affiliations) == 0) {
-
             // Since this member no longer is a Center Director of any organization,
             // remove (revoke) the Center Director role from the member
 
@@ -195,10 +191,6 @@ class CenterDirectorRole extends \User\AuthenticatedRole
 
             // Any exception thrown by invoking saveUser() will be handled by the caller of upgradeStaffMember()
             $member->saveUser();
-
         }
-
     }//downgradeStaffMember
-
 }//CenterDirectorRole
-

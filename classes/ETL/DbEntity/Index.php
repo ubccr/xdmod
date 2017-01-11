@@ -16,8 +16,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Index extends aNamedEntity
-implements iTableItem
+class Index extends aNamedEntity implements iTableItem
 {
     private $type = null;
     private $is_unique = null;
@@ -32,7 +31,7 @@ implements iTableItem
     {
         parent::__construct($systemQuoteChar, $logger);
 
-        if ( ! is_object($config) ) {
+        if (! is_object($config)) {
             $msg = __CLASS__ . ": Index definition must be an array or object";
             $this->logAndThrowException($msg);
         }
@@ -41,7 +40,6 @@ implements iTableItem
         $this->verifyRequiredConfigKeys($requiredKeys, $config);
 
         $this->initialize($config);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -51,32 +49,29 @@ implements iTableItem
 
     protected function initialize(stdClass $config, $force = false)
     {
-        if ( $this->initialized && ! $force ) {
+        if ($this->initialized && ! $force) {
             return true;
         }
 
-        if ( ! is_array($config->columns) || 0 == count($config->columns) ) {
+        if (! is_array($config->columns) || 0 == count($config->columns)) {
             $msg = "Index columns must be an non-empty array";
             $this->logAndThrowException($msg);
         }
 
-        if ( ! isset($config->name) ) {
+        if (! isset($config->name)) {
             $config->name = $this->generateIndexName($config->columns);
         }
 
-        foreach ( $config as $property => $value ) {
-
-            if ( ! property_exists($this, $property) ) {
+        foreach ($config as $property => $value) {
+            if (! property_exists($this, $property)) {
                 $msg = "Property '$property' in config is not supported";
                 $this->logAndThrowException($msg);
             }
 
             $this->$property = $value;
-
         }  // foreach ( $config as $property => $value )
 
         $this->initialized = true;
-
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
@@ -110,9 +105,9 @@ implements iTableItem
 
     private function filterValue($property, $value)
     {
-        switch ( $property ) {
-        default:
-            break;
+        switch ($property) {
+            default:
+                break;
         }  // switch ( $property )
 
         return $value;
@@ -155,7 +150,7 @@ implements iTableItem
 
     public function compare(iTableItem $cmp)
     {
-        if ( ! $cmp instanceof Index ) {
+        if (! $cmp instanceof Index) {
             return 1;
         }
 
@@ -163,7 +158,7 @@ implements iTableItem
         // columns are required but if the type and uniqueness are provided use those in the comparison
         // as well.
 
-        if ( $this->getName() != $cmp->getName()
+        if ($this->getName() != $cmp->getName()
              || $this->getColumnNames() != $cmp->getColumnNames() ) {
             return -1;
         }
@@ -171,7 +166,7 @@ implements iTableItem
         // The following properties have a default set by the database. If the property is not specified
         // a value will be provided when the database information schema is queried.
 
-        if ( ( null !== $this->getType() && null !== $cmp->getType() )
+        if (( null !== $this->getType() && null !== $cmp->getType() )
              && $this->getType() != $cmp->getType() ) {
             return -11;
         }
@@ -181,14 +176,13 @@ implements iTableItem
 
         // By default a primary key in MySQL has the name PRIMARY and is unique
 
-        if ( "PRIMARY" != $this->getName() && "PRIMARY" != $cmp->getName()
+        if ("PRIMARY" != $this->getName() && "PRIMARY" != $cmp->getName()
              && ( null !== $this->isUnique() && null !== $cmp->isUnique() )
              && $this->isUnique() != $cmp->isUnique() ) {
             return -111;
         }
 
         return 0;
-
     }  // compare()
 
     /* ------------------------------------------------------------------------------------------
@@ -209,13 +203,12 @@ implements iTableItem
         $parts[] = (null !== $this->name && "PRIMARY" == $this->name
                     ? "PRIMARY KEY"
                     : ( null !== $this->is_unique && $this->is_unique ? "UNIQUE ": "") . "INDEX " . $this->getName(true) );
-        if ( null !== $this->type ) {
+        if (null !== $this->type) {
             $parts[] = "USING {$this->type}";
         }
         $parts[] = "(" . implode(", ", array_map(array($this, 'quote'), $this->columns)) . ")";
 
         return implode(" ", $parts);
-
     }  // getCreateSql()
 
     /* ------------------------------------------------------------------------------------------
@@ -235,22 +228,20 @@ implements iTableItem
 
     public function toJsonObj($succinct = false)
     {
-        if ( $succinct ) {
+        if ($succinct) {
             $data = $this->columns;
         } else {
             $data = new stdClass;
             $data->name = $this->name;
             $data->columns = $this->columns;
-            if ( null !== $this->type ) {
+            if (null !== $this->type) {
                 $data->type = $this->type;
             }
-            if ( null !== $this->is_unique ) {
+            if (null !== $this->is_unique) {
                 $data->is_unique = ( 1 == $this->is_unique);
             }
         }
 
         return $data;
-
     }  // toJsonObj()
-
 }  // class Index

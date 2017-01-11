@@ -39,7 +39,8 @@ class Common
             'legend'
     */
 
-    public function __construct($request) {
+    public function __construct($request)
+    {
         $this->request = $request;
     }
 
@@ -193,8 +194,7 @@ class Common
     {
         if (!isset($this->request['limit']) || empty($this->request['limit'])) {
             $limit = 20;
-        }
-        else {
+        } else {
             $limit = $this->request['limit'];
         }
 
@@ -205,8 +205,7 @@ class Common
     {
         if (!isset($this->request['start']) || empty($this->request['start'])) {
             $offset = 0;
-        }
-        else {
+        } else {
             $offset = $this->request['start'];
         }
 
@@ -252,7 +251,7 @@ class Common
         return
             isset($this->request['search_text']) && $this->request['search_text'] != ''
             ? trim($this->request['search_text'])
-            : NULL;
+            : null;
     }
 
     protected function getInline()
@@ -278,9 +277,7 @@ class Common
 
     protected function exportImage($returnData, $width, $height, $scale, $format, $filename)
     {
-        if (isset($this->request['render_thumbnail']))
-        {
-
+        if (isset($this->request['render_thumbnail'])) {
             \xd_charting\processForThumbnail($returnData);
 
             $result = array(
@@ -291,12 +288,10 @@ class Common
             return $result;
         }
 
-        if (isset($this->request['render_for_report']))
-        {
-
+        if (isset($this->request['render_for_report'])) {
             \xd_charting\processForReport($returnData);
 
-            $result = array( 
+            $result = array(
                 "headers" => array( "Content-Type" => "image/png"),
                 "results" => \xd_charting\exportHighchart($returnData, $width, $height, $scale, 'png')
             );
@@ -304,46 +299,38 @@ class Common
             return $result;
         }
 
-        if ($format === 'png' || $format === 'svg' ) 
-        {
+        if ($format === 'png' || $format === 'svg') {
             $result = array(
-                "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
-                "results" => \xd_charting\exportHighchart( $returnData['data'][0], $width, $height, $scale, $format)
+                "headers" => \DataWarehouse\ExportBuilder::getHeader($format, false, $filename),
+                "results" => \xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, $format)
             );
 
             return $result;
-        }
-        elseif($format === 'png_inline')
-        {
+        } elseif ($format === 'png_inline') {
             $result = array(
-                "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
+                "headers" => \DataWarehouse\ExportBuilder::getHeader($format, false, $filename),
                 "results" => 'data:image/png;base64,'.base64_encode(\xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, 'png'))
             );
             return $result;
-
-        }
-        elseif($format === 'svg_inline')
-        {
+        } elseif ($format === 'svg_inline') {
             $result = array(
-                "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
+                "headers" => \DataWarehouse\ExportBuilder::getHeader($format, false, $filename),
                 "results" => 'data:image/svg+xml;base64,' . base64_encode(
-                    \xd_charting\exportHighchart( $returnData['data'][0], $width, $height, $scale, 'svg'))
+                    \xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, 'svg')
+                )
                 );
 
             return $result;
-        }
-        elseif ($format === 'hc_jsonstore' ) {
-
+        } elseif ($format === 'hc_jsonstore') {
             $result = array(
-                "headers" => \DataWarehouse\ExportBuilder::getHeader( $format ),
-                "results" => \xd_charting\encodeJSON( $returnData )
+                "headers" => \DataWarehouse\ExportBuilder::getHeader($format),
+                "results" => \xd_charting\encodeJSON($returnData)
             );
 
             return $result;
-        }
-        elseif ($format === '_internal') {
+        } elseif ($format === '_internal') {
             $result = array(
-                'headers' => \DataWarehouse\ExportBuilder::getHeader( 'hc_jsonstore' ),
+                'headers' => \DataWarehouse\ExportBuilder::getHeader('hc_jsonstore'),
                 'results' => $returnData,
             );
             return $result;

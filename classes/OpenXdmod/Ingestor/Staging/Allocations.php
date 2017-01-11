@@ -32,4 +32,3 @@ class Allocations extends PDODBSynchronizingIngestor
         );
     }
 }
-

@@ -6,42 +6,34 @@
       
       <link rel="shortcut icon" href="images/favicon.ico" />
 
-      <?php
-         
-         require_once dirname(__FILE__).'/../../configuration/linker.php';
+        <?php
                 
-         $jsCall = "";
+        require_once dirname(__FILE__).'/../../configuration/linker.php';
+        $jsCall = "";
          
-         if (isset($_GET['jump_to']) && substr_count($_GET['jump_to'], '_') == 2) {
-         
+        if (isset($_GET['jump_to']) && substr_count($_GET['jump_to'], '_') == 2) {
             list($jRealm, $jCategory, $jAction) = explode('_', $_GET['jump_to']);
-            
+
             // Verify that the (combination of the) specified realm, category, and action is valid
 
             try {
-            
-               $realm = xd_rest\resolveEntity($jRealm, REST_REALM);
-               
-               $category = xd_rest\resolveEntity($jCategory, REST_CATEGORY, $realm);
-               
-               $action = xd_rest\resolveEntity($jAction, REST_ACTION, $realm, $category);
-               
-               $jsCall = "autoPilot('$realm', '$category', '$action');";
-               
-            }
-            catch(Exception $e) {
-   
-               // The user has specified a realm_category_action combination that is not recognizable.
-               // In this case, ignore the exception and load the page without any auto tree navigation
-               // taking place.
-               
-            }//try 
-         
-         }//if(isset($_GET...))
-         
-         ExtJS::loadSupportScripts('../gui/lib');
-                 
-      ?>
+                $realm = xd_rest\resolveEntity($jRealm, REST_REALM);
+
+                $category = xd_rest\resolveEntity($jCategory, REST_CATEGORY, $realm);
+
+                $action = xd_rest\resolveEntity($jAction, REST_ACTION, $realm, $category);
+
+                $jsCall = "autoPilot('$realm', '$category', '$action');";
+            } catch (Exception $e) {
+                // The user has specified a realm_category_action combination that is not recognizable.
+                // In this case, ignore the exception and load the page without any auto tree navigation
+                // taking place.
+            }//try
+        }//if(isset($_GET...))
+
+        ExtJS::loadSupportScripts('../gui/lib');
+
+        ?>
 
       <!-- API Catalog Stylings -->
       
@@ -57,8 +49,8 @@
             
             tree_depth_cache = 0; 
             
-            <?php 
-               print $jsCall;    // Hook into 'jump_to' (PHP logic)   
+            <?php
+               print $jsCall;    // Hook into 'jump_to' (PHP logic)
             ?>
             
          };  

@@ -8,7 +8,6 @@
 use CCR\DB;
 
 try {
-
     $pdo = DB::factory('database');
 
     $sql = 'SELECT COUNT(*) AS count FROM moddb.Users';
@@ -40,7 +39,6 @@ try {
         ),
         'count' => 1,
     );
-
 } catch (Exception $e) {
     $returnData = array(
         'success' => false,
@@ -49,4 +47,3 @@ try {
 }
 
 echo json_encode($returnData);
-

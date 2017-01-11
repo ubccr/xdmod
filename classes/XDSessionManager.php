@@ -121,7 +121,6 @@ class XDSessionManager
         // expired REST tokens.
 
         if (!isset($_SESSION['xdInit'])) {
-
             // Session died (token no longer valid);
             $msg = 'Token invalid or expired. '
                 . 'You must authenticate before using this call.';
@@ -201,7 +200,6 @@ class XDSessionManager
 
             return $user;
         } else {
-
             // An error occurred (session is intact, yet a
             // corresponding record pertaining to that session
             // does not exist in the DB)

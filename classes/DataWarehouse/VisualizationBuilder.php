@@ -9,7 +9,7 @@ namespace DataWarehouse;
  */
 class VisualizationBuilder
 {
-    private static $_self = NULL;
+    private static $_self = null;
 
     public static $plot_action_formats = array(
         'session_variable',
@@ -36,7 +36,7 @@ class VisualizationBuilder
 
     public static function getInstance()
     {
-        if (self::$_self == NULL) {
+        if (self::$_self == null) {
             self::$_self = new VisualizationBuilder();
         }
 
@@ -70,4 +70,3 @@ class VisualizationBuilder
         return (float) $sec + ((float) $usec * 100000);
     }
 }
-

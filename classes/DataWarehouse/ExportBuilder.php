@@ -20,7 +20,7 @@ class ExportBuilder
      *
      * @var ExportBuilder
      */
-    private static $_self = NULL;
+    private static $_self = null;
 
     /**
      * Factory method.
@@ -29,7 +29,7 @@ class ExportBuilder
      */
     public static function getInstance()
     {
-        if (static::$_self == NULL) {
+        if (static::$_self == null) {
             static::$_self = new static();
         }
 
@@ -243,8 +243,7 @@ class ExportBuilder
         if (isset($request['format'])) {
             $f = strtolower($request['format']);
 
-            if (
-                isset(static::$supported_formats[$f])
+            if (isset(static::$supported_formats[$f])
                 && (
                     count($formats_subset) == 0
                     ||
@@ -275,7 +274,7 @@ class ExportBuilder
         $inline = true,
         $filename = 'data'
     ) {
-        if(!in_array(strtolower($format), static::$dataset_action_formats)) {
+        if (!in_array(strtolower($format), static::$dataset_action_formats)) {
             throw new \Exception("Unsupported export format $format");
         }
         $exportFunction = 'export' . ucfirst($format);
@@ -299,7 +298,7 @@ class ExportBuilder
     ) {
         $fp = fopen('php://temp/maxmemory:104857600', 'w');
 
-        if(!$fp) {
+        if (!$fp) {
             throw \Exception("Unable to open temporary file for csv file export");
         }
 
@@ -515,7 +514,6 @@ class ExportBuilder
                 $xml->startElement('row');
 
                 foreach ($row as $index => $cell) {
-
                     $xml->startElement('cell');
 
                     if (isset($headers[$index])) {

@@ -106,7 +106,6 @@ class Json
         $outOfQuotes = true;
 
         for ($i = 0; $i <= $strLen; $i++) {
-
             // Grab the currect character in the string.
             $char = substr($json, $i, 1);
 
@@ -117,7 +116,6 @@ class Json
             if ($char == '"' && $prevChar != '\\') {
                 $outOfQuotes = !$outOfQuotes;
             } elseif (($char == '}' || $char == ']') && $outOfQuotes) {
-
                 // If this character is the end of an element,
                 // output a new line and indent the next line.
                 $indentLvl--;
@@ -128,7 +126,6 @@ class Json
             $result .= $char;
 
             if ($outOfQuotes) {
-
                 // If the last character was the beginning of an
                 // element, output a new line and indent the next line.
                 if ($char == ',' || $char == '{' || $char == '[') {
@@ -138,8 +135,7 @@ class Json
 
                     // If the array or object is empty, close it immediately
                     // skipping the next char.
-                    if (
-                           ($char     == '{' || $char     == '[')
+                    if (($char     == '{' || $char     == '[')
                         && ($nextChar == '}' || $nextChar == ']')
                     ) {
                         $result .= $nextChar;

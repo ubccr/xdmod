@@ -16,11 +16,11 @@ use XDUser;
 
 class MetricExplorer extends Common
 {
-    public function get_data($user) 
+    public function get_data($user)
     {
-        if(isset($this->request['config'])) {
-            $config = json_decode($this->request['config'],true);
-            $this->request = array_merge($config,$this->request);
+        if (isset($this->request['config'])) {
+            $config = json_decode($this->request['config'], true);
+            $this->request = array_merge($config, $this->request);
         }
 
         $format = \DataWarehouse\ExportBuilder::getFormat(
@@ -108,8 +108,7 @@ class MetricExplorer extends Common
                 $data_description->display_type = 'line';
             }
 
-            if (
-                !isset($data_description->{'enabled'})
+            if (!isset($data_description->{'enabled'})
                 || $data_description->{'enabled'}
             ) {
                 $data_series[] = $data_description;
@@ -137,8 +136,7 @@ class MetricExplorer extends Common
             );
         }
 
-        if (
-            $format === 'hc_jsonstore'
+        if ($format === 'hc_jsonstore'
             || $format === 'png'
             || $format === 'svg'
             || $format === 'png_inline'
@@ -252,8 +250,7 @@ class MetricExplorer extends Common
                 if ($data_description->std_err == 1) {
                     try {
                         $query->addStat('sem_'.$data_description->metric);
-                    }
-                    catch (Exception $ex) {
+                    } catch (Exception $ex) {
                         $data_description->std_err = 0;
                     }
                 }
@@ -261,10 +258,9 @@ class MetricExplorer extends Common
                 $groupedRoleParameters = array();
                 foreach ($global_filters->data as $global_filter) {
                     if ($global_filter->checked == 1) {
-                        if (
-                            !isset(
-                                $groupedRoleParameters[$global_filter->dimension_id]
-                            )
+                        if (!isset(
+                            $groupedRoleParameters[$global_filter->dimension_id]
+                        )
                         ) {
                             $groupedRoleParameters[$global_filter->dimension_id]
                                 = array();
@@ -294,7 +290,7 @@ class MetricExplorer extends Common
                 } else {
                     $datasetsRestrictedMessages[] = '';
                 }
-            } // foreach ($data_series as $data_description_index => $data_description) 
+            } // foreach ($data_series as $data_description_index => $data_description)
 
             if ($format === 'csv' || $format === 'xml' || $format === 'json') {
                 $exportedDatas = array();
@@ -311,10 +307,9 @@ class MetricExplorer extends Common
                 }
 
                 return \DataWarehouse\ExportBuilder::export($exportedDatas, $format, $inline, $filename);
+            } // if ($format === 'csv' || $format === 'xml')
 
-            } // if ($format === 'csv' || $format === 'xml') 
-
-            elseif($format === 'jsonstore') {
+            elseif ($format === 'jsonstore') {
                 $exportedDatas = array();
 
                 foreach ($datasets as $datasetIndex => $dataset) {
@@ -331,12 +326,11 @@ class MetricExplorer extends Common
                 );
 
                 return $result;
-            } // elseif($format === 'jsonstore') 
-
-        } //  elseif ($format === 'jsonstore' || $format === 'csv' || $format === 'xml') 
+            } // elseif($format === 'jsonstore')
+        } //  elseif ($format === 'jsonstore' || $format === 'csv' || $format === 'xml')
 
         throw new Exception("Internal Error");
-    } // function get_data($user) 
+    } // function get_data($user)
 
     private function getAggregationUnit()
     {
@@ -352,8 +346,7 @@ class MetricExplorer extends Common
             return json_decode(0);
         }
 
-        if (
-            is_array($this->request['data_series'])
+        if (is_array($this->request['data_series'])
             && is_array($this->request['data_series']['data'])
         ) {
             $v = $this->request['data_series']['data'];
@@ -373,8 +366,7 @@ class MetricExplorer extends Common
                     $y->line_type = 'Solid';
                 }
 
-                if (
-                    !isset($y->line_width)
+                if (!isset($y->line_width)
                     || empty($y->line_width)
                     || !is_numeric($y->line_width)
                 ) {
@@ -399,14 +391,12 @@ class MetricExplorer extends Common
         $jret = json_decode($ret);
 
         foreach ($jret as &$y) {
-
             // Set values of new attribs for backward compatibility.
             if (!isset($y->line_type) || empty($y->line_type)) {
                 $y->line_type = 'Solid';
             }
 
-            if (
-                !isset($y->line_width)
+            if (!isset($y->line_width)
                 || empty($y->line_width)
                 || !is_numeric($y->line_width)
             ) {
@@ -427,8 +417,7 @@ class MetricExplorer extends Common
 
     private function getGlobalFilters()
     {
-        if (
-            !isset($this->request['global_filters'])
+        if (!isset($this->request['global_filters'])
             || empty($this->request['global_filters'])
         ) {
             return (object)array('data' => array(), 'total' => 0);
@@ -473,8 +462,7 @@ class MetricExplorer extends Common
             foreach ($this->request['x_axis'] as $k => $x) {
                 if (is_array($x)) {
                     $ret->{$k} = (object)$x;
-                }
-                else {
+                } else {
                     $ret->{$k} = $x;
                 }
             }
@@ -497,8 +485,7 @@ class MetricExplorer extends Common
             foreach ($this->request['y_axis'] as $k => $x) {
                 if (is_array($x)) {
                     $ret->{$k} = (object)$x;
-                }
-                else {
+                } else {
                     $ret->{$k} = $x;
                 }
             }
@@ -518,11 +505,10 @@ class MetricExplorer extends Common
         if (is_array($this->request['legend'])) {
             $ret = new stdClass;
 
-            foreach($this->request['legend'] as $k => $x) {
+            foreach ($this->request['legend'] as $k => $x) {
                 if (is_array($x)) {
                     $ret->{$k} = (object)$x;
-                }
-                else {
+                } else {
                     $ret->{$k} = $x;
                 }
             }
@@ -602,7 +588,8 @@ class MetricExplorer extends Common
      *                               Explorer chart request. Any new global
      *                               filters will be stored in here.
      */
-    public static function convertActiveRoleToGlobalFilters(XDUser $user, $activeRoleId, $globalFilters) {
+    public static function convertActiveRoleToGlobalFilters(XDUser $user, $activeRoleId, $globalFilters)
+    {
         // Load the active role's filter parameters.
         // (Regex for artificial service provider roles from now-deleted code.)
         if (preg_match('/rp_(?P<rp_id>[0-9]+)/', $activeRoleId, $resourceProviderRoleIdMatches)) {
@@ -815,8 +802,7 @@ class MetricExplorer extends Common
         } catch (PDOException $e) {
             // If the filter table was missing from the schema,
             // throw a more user-friendly exception.
-            if (
-                $e->getCode() === '42S02'
+            if ($e->getCode() === '42S02'
                 && strpos($e->getMessage(), 'modw_filters') !== false
             ) {
                 throw new MissingFilterListTableException();
@@ -829,7 +815,8 @@ class MetricExplorer extends Common
                 try {
                     $schemaCheckResults = $db->query("SHOW SCHEMAS LIKE 'modw_filters'");
                     $missingSchema = empty($schemaCheckResults);
-                } catch (Exception $schemaCheckException) {}
+                } catch (Exception $schemaCheckException) {
+                }
 
                 if ($missingSchema) {
                     throw new MissingFilterListTableException();
@@ -844,7 +831,7 @@ class MetricExplorer extends Common
         if ($searchText !== null) {
             $searchComponents = preg_split('/\s+/', $searchText, null, PREG_SPLIT_NO_EMPTY);
             foreach ($searchComponents as $searchComponent) {
-                $dimensionValues = array_filter($dimensionValues, function($dimensionValue) use ($searchComponent) {
+                $dimensionValues = array_filter($dimensionValues, function ($dimensionValue) use ($searchComponent) {
                     return stripos($dimensionValue['short_name'], $searchComponent) !== false
                         || stripos($dimensionValue['name'], $searchComponent) !== false;
                 });
@@ -1004,7 +991,8 @@ class MetricExplorer extends Common
      *                            (Defaults to 'tg_usage'.)
      * @return array              The realms available to the user.
      */
-    public static function getRealmsFromUser(XDUser $user, $queryGroup = 'tg_usage') {
+    public static function getRealmsFromUser(XDUser $user, $queryGroup = 'tg_usage')
+    {
         return array_keys($user->getMostPrivilegedRole()->getAllQueryRealms($queryGroup));
     }
 
@@ -1047,7 +1035,4 @@ class MetricExplorer extends Common
         // Return the group by object.
         return $groupBy;
     }
-
 } // class MetricExplorer extends Common
-
-?>

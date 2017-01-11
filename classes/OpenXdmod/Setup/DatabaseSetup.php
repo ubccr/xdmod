@@ -51,8 +51,7 @@ EOT
             'DB Password:'
         );
 
-        while (
-               strpos($settings['db_pass'], "'") !== false
+        while (strpos($settings['db_pass'], "'") !== false
             || strpos($settings['db_pass'], '"') !== false
         ) {
             $this->console->displayMessage('Invalid password!');

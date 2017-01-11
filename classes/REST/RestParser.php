@@ -8,9 +8,10 @@
    *
    */
 
-class RestParser {
+class RestParser
+{
   
-  private $_token = NULL;
+    private $_token = null;
   
   // ===========================
   
@@ -27,162 +28,145 @@ class RestParser {
    *
    */
 
-  public function parseRequest($internalCall = NULL) {
+    public function parseRequest($internalCall = null)
+    {
 
-    if($internalCall !== null) {
-      $rawRequest = $internalCall;
-      $requestURI = "";
-      $origRequest = "";
-    }
-    else {
-      // Reduce contiguous blocks of forward slashes to one forward slash
-      $requestURI = preg_replace('~\/{2,}~', '/', $_SERVER['REQUEST_URI']);
-      $rawRequest = substr($requestURI, strlen(dirname($_SERVER['SCRIPT_NAME'])) + 1);
-      $origRequest = $requestURI;
-    }
+        if ($internalCall !== null) {
+            $rawRequest = $internalCall;
+            $requestURI = "";
+            $origRequest = "";
+        } else {
+            // Reduce contiguous blocks of forward slashes to one forward slash
+            $requestURI = preg_replace('~\/{2,}~', '/', $_SERVER['REQUEST_URI']);
+            $rawRequest = substr($requestURI, strlen(dirname($_SERVER['SCRIPT_NAME'])) + 1);
+            $origRequest = $requestURI;
+        }
     
-    // Detach request portion of URL from the Argument portion  
-    // E.g. /request/portion?argument=portion ==>  /request/portion, argument=portion
+        // Detach request portion of URL from the Argument portion
+        // E.g. /request/portion?argument=portion ==>  /request/portion, argument=portion
 
        
-    $index = strpos($rawRequest, '?');
+        $index = strpos($rawRequest, '?');
          
-    $token = NULL;
+        $token = null;
       
-    if ($index !== false) {
-         
-      list($rawRequest, $args) = explode('?', $rawRequest, 2);
+        if ($index !== false) {
+            list($rawRequest, $args) = explode('?', $rawRequest, 2);
             
-      // At this point, we can attempt to extract a token, should one be specified in the argument portion
-      $token = $this->_fetchArgument('token', $args);
-      
-    }
+            // At this point, we can attempt to extract a token, should one be specified in the argument portion
+            $token = $this->_fetchArgument('token', $args);
+        }
 
-    if( $token === NULL && function_exists('getallheaders')  ) {
-        // Check to see if the token was in the HTTP headers
-        $headers = getallheaders();
-        foreach($headers as $name => $value) {
-            if( strtolower($name) == 'authorization' ) {
-                $token = $value;
-                break;
+        if ($token === null && function_exists('getallheaders')) {
+            // Check to see if the token was in the HTTP headers
+            $headers = getallheaders();
+            foreach ($headers as $name => $value) {
+                if (strtolower($name) == 'authorization') {
+                    $token = $value;
+                    break;
+                }
             }
         }
-    }
 
-    // Extract remaining elements from request ------------------------------------
+        // Extract remaining elements from request ------------------------------------
          
-    $structureFragments = explode('/', 'realm/category/action/action_args/output_format');
+        $structureFragments = explode('/', 'realm/category/action/action_args/output_format');
          
-    $rawRequest .= '/';
+        $rawRequest .= '/';
          
-    $requestComponents = array();
+        $requestComponents = array();
       
-    foreach($structureFragments as $fragment) {
+        foreach ($structureFragments as $fragment) {
+            if ($fragment == 'action_args') {
+                $rawRequest = preg_replace('/\/+$/', '', $rawRequest);
+                break;
+            }
             
-      if ($fragment == 'action_args')
-      {
-        $rawRequest = preg_replace('/\/+$/', '', $rawRequest);
-        break;
-      }
-            
-      $index = strpos($rawRequest, '/');
+            $index = strpos($rawRequest, '/');
          
-      if ($index === false)
-      {
-        $msg = $origRequest." -- ".$fragment." required";
-        throw new Exception($msg);
-      }
+            if ($index === false) {
+                $msg = $origRequest." -- ".$fragment." required";
+                throw new Exception($msg);
+            }
 
-      list($requestComponents[$fragment], $rawRequest) = explode('/', $rawRequest, 2);
+            list($requestComponents[$fragment], $rawRequest) = explode('/', $rawRequest, 2);
 
-      //print "$fragment ==> {$requestComponents[$fragment]}<br><br>";
+            //print "$fragment ==> {$requestComponents[$fragment]}<br><br>";
 
-      if (empty($requestComponents[$fragment])) {
-        $msg = $origRequest." -- ".$fragment." required";
-        throw new Exception($msg);
-      }
+            if (empty($requestComponents[$fragment])) {
+                $msg = $origRequest." -- ".$fragment." required";
+                throw new Exception($msg);
+            }
+        }//foreach($structureFragments as $fragment)
 
-    }//foreach($structureFragments as $fragment)
+        $actionArguments = $rawRequest;
 
-    $actionArguments = $rawRequest;
-
-    // Determine the output format -----------------------------------------------
+        // Determine the output format -----------------------------------------------
          
-    $trailingComponents = explode('/', $actionArguments);
+        $trailingComponents = explode('/', $actionArguments);
          
-    // Use default output format unless another valid format is specified at the end of the request
-    $outputFormat = REST_DEFAULT_FORMAT;
+        // Use default output format unless another valid format is specified at the end of the request
+        $outputFormat = REST_DEFAULT_FORMAT;
                             
-    $validFormats = \xd_rest\enumerateOutputFormats();
+        $validFormats = \xd_rest\enumerateOutputFormats();
    
-    // -----------------------------------------
+        // -----------------------------------------
          
-    if ( in_array( end($trailingComponents), array_keys($validFormats) ) ){
-            
-      $outputFormat = array_pop($trailingComponents);
-      $actionArguments = implode('/', $trailingComponents);
-            
-    }
+        if (in_array(end($trailingComponents), array_keys($validFormats))) {
+            $outputFormat = array_pop($trailingComponents);
+            $actionArguments = implode('/', $trailingComponents);
+        }
    
-    // ------------------
+        // ------------------
 
-    $response = new RestElements();
+        $response = new RestElements();
          
-    $response->setToken(($token != NULL) ? $token : '');	
-    $response->setUrl($requestURI);
-    if( isset($_SERVER['REMOTE_ADDR']) ) {
-        $response->setIPAddress($_SERVER['REMOTE_ADDR']);
-    }
-    $response->setRealm($requestComponents['realm']);
-    $response->setCategory($requestComponents['category']);
-    $response->setAction($requestComponents['action']);
-    $response->setActionArguments($actionArguments);
-    $response->setOutputFormat($outputFormat);			            		
-    $response->setStatus(REST_PARSE_OK);
+        $response->setToken(($token != null) ? $token : '');
+        $response->setUrl($requestURI);
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            $response->setIPAddress($_SERVER['REMOTE_ADDR']);
+        }
+        $response->setRealm($requestComponents['realm']);
+        $response->setCategory($requestComponents['category']);
+        $response->setAction($requestComponents['action']);
+        $response->setActionArguments($actionArguments);
+        $response->setOutputFormat($outputFormat);
+        $response->setStatus(REST_PARSE_OK);
 
-    if( $internalCall !== null ) {
-        // If this is an internal call, then the IP address is set to a special
-        // value (INTERNAL_CALL). This is used by the XDSessionManager to skip the
-        // over-the-network user authentication code.
-        $response->setIPAddress('INTERNAL_CALL');
-    }
+        if ($internalCall !== null) {
+            // If this is an internal call, then the IP address is set to a special
+            // value (INTERNAL_CALL). This is used by the XDSessionManager to skip the
+            // over-the-network user authentication code.
+            $response->setIPAddress('INTERNAL_CALL');
+        }
       
-    return $response;
-
-  }  // parseRequest()
+        return $response;
+    }  // parseRequest()
 
   // ===========================
 
-  private function _fetchArgument($arg, $arg_string) {
+    private function _fetchArgument($arg, $arg_string)
+    {
 
-    $args = explode('&', $arg_string);
+        $args = explode('&', $arg_string);
 
-    foreach($args as $current_arg) {
+        foreach ($args as $current_arg) {
+            $kv_pair = explode('=', $current_arg);
 
-      $kv_pair = explode('=', $current_arg);
+            $key = $kv_pair[0];
 
-      $key = $kv_pair[0];
+            if ($key == $arg) {
+                if (count($kv_pair) == 2) {
+                    if (empty($kv_pair[1])) {
+                        return null;
+                    }
+                    return $kv_pair[1];
+                } else {
+                    return null;
+                }
+            }
+        }  // foreach($args as $current_arg)
 
-      if ($key == $arg) {
-
-        if (count($kv_pair) == 2){
-          if (empty($kv_pair[1])) {
-            return NULL;
-          }
-          return $kv_pair[1];
-        }
-        else{
-          return NULL;
-        }
-
-      }
-
-    }  // foreach($args as $current_arg)
-
-    return NULL;
-
-  }  // _fetchArgument()
-
-  }  // class RestParser
-
-?>
+        return null;
+    }  // _fetchArgument()
+}  // class RestParser

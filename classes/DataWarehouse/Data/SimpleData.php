@@ -4,7 +4,7 @@ namespace DataWarehouse\Data;
 
 /**
  * This class represents one data column as one returned
- * from a database query. This is an array of numbers or 
+ * from a database query. This is an array of numbers or
  * values, potentially with error bars and with labels.
  *
  * TODO: support statistic and group by? Perhaps just in timeseries?
@@ -24,8 +24,8 @@ class SimpleData extends \Common\Identity
     protected $_errors = array();
 
     /**
-     * order_ids and ids: 
-     * only available in case the data is a dimension and 
+     * order_ids and ids:
+     * only available in case the data is a dimension and
      * not a stat (metric).
      */
     protected $_order_ids = array();
@@ -33,7 +33,7 @@ class SimpleData extends \Common\Identity
 
     // JMS: knowledge of statistic and group by belongs with query
     // in the SimpleDataset class.
-    //protected $statisticObject; 
+    //protected $statisticObject;
     //protected $groupByObject;
     // TODO: consider that groupby should live in SimpleTimeseriesDataset
     // instead of SimpleTimeseriesData class?
@@ -55,9 +55,9 @@ class SimpleData extends \Common\Identity
     protected $_errorsCount;
     protected $_valuesCount;
 
-    // derived from Query class 
+    // derived from Query class
     protected $_statistic;
-    protected $_group_by; 
+    protected $_group_by;
 
     // ----------- public functions ------------- //
 
@@ -66,9 +66,10 @@ class SimpleData extends \Common\Identity
         parent::__construct($name);
     }
 
-    // Helper function for debugging 
+    // Helper function for debugging
     // JMS April 2015
-    public function __toString() {
+    public function __toString()
+    {
         $st = isset($this->_statistic) ? $this->getStatistic()->getAlias() : null;
 
         return "Data Name: {$this->getName()}\n"
@@ -82,15 +83,15 @@ class SimpleData extends \Common\Identity
             . "Std Err: " . implode(',', $this->getErrors()) . "\n"
             . "Std Err Count: " . $this->getErrorCount() . "\n"
             . "X Values: " . implode(',', $this->getXValues()) . "\n"
-            . "X Values Count: " . count( $this->getXValues() ). "\n"
+            . "X Values Count: " . count($this->getXValues()). "\n"
             . "X Ids: " . implode(',', $this->getXIds()) . "\n"
-            . "X Ids Count: " . count( $this->getXIds() ). "\n";
-    } // __toString() 
+            . "X Ids Count: " . count($this->getXIds()). "\n";
+    } // __toString()
 
     /**
-     *  truncate() 
+     *  truncate()
      *
-     * Truncate the dataset in PHP. 
+     * Truncate the dataset in PHP.
      * No computation is done with the errors beyond $limit (set to 0).
      * We have no short labels in SimpleData model as of now.
      * Weights are unused.
@@ -118,13 +119,13 @@ class SimpleData extends \Common\Identity
                     if ($otherSum == 0) {
                         $otherSum = $this->_values[$i];
                     } else {
-                        $otherSum = min($otherSum,  $this->_values[$i]);
+                        $otherSum = min($otherSum, $this->_values[$i]);
                     }
                 } elseif ($isMax) {
                     if ($otherSum == 0) {
                         $otherSum = $this->_values[$i];
                     } else {
-                        $otherSum = max($otherSum,  $this->_values[$i]);
+                        $otherSum = max($otherSum, $this->_values[$i]);
                     }
                 } else {
                     $otherSum += $this->_values[$i];
@@ -133,11 +134,11 @@ class SimpleData extends \Common\Identity
 
             // slice arrays to discard all data values beyond stated limit index
             $sliceIdx = $limit + 1;
-            $this->_values = array_slice( $this->_values, null, $sliceIdx);
-            $this->_x_values = array_slice( $this->_x_values, null, $sliceIdx);
-            $this->_x_ids = array_slice( $this->_x_ids, null, $sliceIdx);
-            $this->_ids = array_slice( $this->_ids, null, $sliceIdx);
-            $this->_errors = array_slice( $this->_errors, null, $sliceIdx);
+            $this->_values = array_slice($this->_values, null, $sliceIdx);
+            $this->_x_values = array_slice($this->_x_values, null, $sliceIdx);
+            $this->_x_ids = array_slice($this->_x_ids, null, $sliceIdx);
+            $this->_ids = array_slice($this->_ids, null, $sliceIdx);
+            $this->_errors = array_slice($this->_errors, null, $sliceIdx);
 
             // Compute the limiting value, and the limiting value's label:
             if ($isMin) {
@@ -211,8 +212,8 @@ class SimpleData extends \Common\Identity
 
         foreach ($this->values as $value) {
             if ($value != NoValue) {
-                $min = min($min,$value);
-                $max = max($max,$value);
+                $min = min($min, $value);
+                $max = max($max, $value);
             }
         }
 
@@ -232,7 +233,7 @@ class SimpleData extends \Common\Identity
      */
     public function getValue($idx)
     {
-        if (isset( $this->_values[$idx] ) || array_key_exists($idx, $this->_values) ) {
+        if (isset($this->_values[$idx]) || array_key_exists($idx, $this->_values)) {
             return $this->_values[$idx];
         }
         /*
@@ -253,7 +254,7 @@ class SimpleData extends \Common\Identity
 
     public function getError($idx)
     {
-        if (isset( $this->_errors[$idx] ) || array_key_exists($idx, $this->_errors) ) {
+        if (isset($this->_errors[$idx]) || array_key_exists($idx, $this->_errors)) {
             return $this->_errors[$idx];
         }
 
@@ -270,7 +271,7 @@ class SimpleData extends \Common\Identity
 
     public function getXId($idx)
     {
-        if (isset( $this->_x_ids[$idx] ) || array_key_exists($idx, $this->_x_ids) ) {
+        if (isset($this->_x_ids[$idx]) || array_key_exists($idx, $this->_x_ids)) {
             return $this->_x_ids[$idx];
         }
 
@@ -286,7 +287,7 @@ class SimpleData extends \Common\Identity
 
     public function getXValue($idx)
     {
-        if (isset( $this->_x_values[$idx] ) || array_key_exists($idx, $this->_x_values) ) {
+        if (isset($this->_x_values[$idx]) || array_key_exists($idx, $this->_x_values)) {
             return $this->_x_values[$idx];
         }
 
@@ -307,7 +308,7 @@ class SimpleData extends \Common\Identity
 
     public function getOrderId($idx)
     {
-        if (isset( $this->_order_ids[$idx] ) || array_key_exists($idx, $this->_order_ids) ) {
+        if (isset($this->_order_ids[$idx]) || array_key_exists($idx, $this->_order_ids)) {
             return $this->_order_ids[$idx];
         }
 
@@ -323,7 +324,7 @@ class SimpleData extends \Common\Identity
 
     public function getId($idx)
     {
-        if (isset( $this->_ids[$idx] ) || array_key_exists($idx, $this->_ids) ) {
+        if (isset($this->_ids[$idx]) || array_key_exists($idx, $this->_ids)) {
             return $this->_ids[$idx];
         }
 
@@ -339,7 +340,7 @@ class SimpleData extends \Common\Identity
 
     public function getGroupBy()
     {
-        return $this->_group_by; 
+        return $this->_group_by;
     }
 
 
@@ -389,5 +390,4 @@ class SimpleData extends \Common\Identity
     {
         $this->_group_by= $gp;
     }
-
 } // class SimpleData
