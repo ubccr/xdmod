@@ -938,11 +938,17 @@ class HighChart2
 								// only compute average (2nd parameter) if not drawing pie chart
 								$yAxisDataObject->truncate($this->limit, $data_description->display_type!=='pie');
 
-								// now set the x labels from what we've done:
-								$this->_xAxisDataObject->setValues($yAxisDataObject->getXValues());
+								// now merge the x labels, if needed, from multiple datasets:
+								$mergedlabels = $yAxisDataObject->getXValues();
+								foreach( $mergedlabels as $idx => $label) {
+									if ($label === null) {
+										$tmp = $this->_xAxisDataObject->getValues();
+										$mergedlabels[$idx] = $tmp[$idx];
+									}
+								}
+								$this->_xAxisDataObject->setValues($mergedlabels);
 								$this->_xAxisDataObject->getCount(true);
 								$this->setXAxis( $x_axis, $font_size);
-
 								$dataSeriesSummarized = true;
 						}
 				} // summarizeDataseries
