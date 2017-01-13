@@ -392,7 +392,11 @@ if ( $showList ) {
 
         case 'list-resources':
             $sql = "SELECT code, start_date, end_date from {$utilitySchema}.resourcefact WHERE resourcetype_id NOT IN (0,4) ORDER BY CODE ASC";
-            $result = $utilityEndpoint->getHandle()->query($sql);
+            try {
+                $result = $utilityEndpoint->getHandle()->query($sql);
+            } catch (Exception $e) {
+                exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+            }
             $headings = array("Resource Code","Start Date","End Date");
             print implode(LIST_SEPARATOR, $headings) . "\n";
 
@@ -519,7 +523,11 @@ if ( null !== $scriptOptions['start-date'] || null !== $scriptOptions['end-date'
 // Look up resource ids and generate the mapping for resource codes to ids. This can be stored in
 // the overseer and used by actions if needed.
 
-$result = $utilityEndpoint->getHandle()->query("SELECT id, code from {$utilitySchema}.resourcefact");
+try {
+    $result = $utilityEndpoint->getHandle()->query("SELECT id, code from {$utilitySchema}.resourcefact");
+} catch (Exception $e) {
+    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+}
 $scriptOptions['resource-code-map'] = array();
 
 foreach ( $result as $row ) {

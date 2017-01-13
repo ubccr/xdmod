@@ -32,6 +32,9 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
     // Database hostname
     protected $hostname = null;
 
+    // Database port
+    protected $port = null;
+
     // User used to connect to the database
     protected $username = null;
 
@@ -59,6 +62,9 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
             $section = xd_utilities\getConfigurationSection($this->config);
             if ( array_key_exists("host", $section) ) {
                 $this->hostname = $section["host"];
+            }
+            if ( array_key_exists("port", $section) ) {
+                $this->port = $section["port"];
             }
             if ( array_key_exists("user", $section) ) {
                 $this->username = $section["user"];
@@ -123,8 +129,15 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
         // DB::factory() does not support connecting to an alternate schema and needs a separate entry
         // in the config file. You can, however, explicitly reference a schema in your query.
 
-        $this->handle = DB::factory($this->config);
+        try {
+            $this->handle = DB::factory($this->config);
+        } catch (Exception $e) {
+            $msg = "Error connecting to data endpoint '" . $this->name . "'. " . $e->getMessage();
+             $this->logAndThrowException($msg);
+        }
+
         return $this->handle;
+
     }  // connect()
 
     /* ------------------------------------------------------------------------------------------
@@ -262,6 +275,7 @@ ORDER BY ordinal_position ASC";
     {
         return "{$this->name} (" . get_class($this) . ", config={$this->config}, schema={$this->schema}" .
             (null !== $this->hostname ? ", host={$this->hostname}" : "" ) .
+            (null !== $this->port ? ":{$this->port}" : "" ) .
             (null !== $this->username ? ", user={$this->username}" : "" ) .
             ")";
     }  // __toString()
