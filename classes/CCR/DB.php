@@ -19,75 +19,94 @@
 namespace CCR;
 
 use xd_utilities;
-use \Exception;
+use Exception;
 use CCR\DB\iDatabase;
 
 class DB
 {
-  // An array (pool) of database connection handles, one per configuration file section
-  
-  private static $instancePool = array();
+    // An array (pool) of database connection handles, one per configuration file section
 
-  // Ensure that this class is a singleton
+    private static $instancePool = array();
 
-  private function __construct() {}
+    // Ensure that this class is a singleton
 
-  // ================================================================================
-  // Cleanup
-  // ================================================================================
+    private function __construct() {}
 
-  public function __destruct() {}
+    // ================================================================================
+    // Cleanup
+    // ================================================================================
 
-  // ================================================================================
-  // Create an instance of the database singleton.  A single argument is
-  // required, which is configuration file section identifier (e.g. [datawarehouse]).
-  // The database connection parameters in that section will be used to create the
-  // instance, which will be cached for re-use by subsequent requests targeting the
-  // same section.
-  //
-  // @throws Exception if there is an invalid number of arguments
-  //
-  // @returns An instance of the database class
-  // ================================================================================
-  
-  public static function factory($section, $autoConnect = true)
-  {   
-    // If this section has been used before in creating a database instance (handle), then
-    // it will have been cached.  In this case, the cached handle will be returned.
-    
-    if ( array_key_exists($section, self::$instancePool) ) {
-		return self::$instancePool[$section];
-    }
-    
-    $engine =   xd_utilities\getConfiguration($section, 'db_engine');
-    $host =     xd_utilities\getConfiguration($section, 'host');
-    $database = xd_utilities\getConfiguration($section, 'database');
-    $user =     xd_utilities\getConfiguration($section, 'user');
-    $passwd =   xd_utilities\getConfiguration($section, 'pass');
-    $port =     xd_utilities\getConfiguration($section, 'port');
-    
-    $engine = "CCR\\DB\\$engine";
-    
-    // Ensure that the class exists before we attempt to instantiate it
+    public function __destruct() {}
 
-    if ( class_exists($engine) ) {
-      $db = new $engine($host, $port, $database, $user, $passwd);
-    } else {
-      $msg = "Error creating database '" . $options->name . "', class '$className' not found";
-      throw new Exception($msg);
-    }
+    // ================================================================================
+    // Create an instance of the database singleton.  A single argument is
+    // required, which is configuration file section identifier (e.g. [datawarehouse]).
+    // The database connection parameters in that section will be used to create the
+    // instance, which will be cached for re-use by subsequent requests targeting the
+    // same section.
+    //
+    // @param $sectionName Name of the configuration section containing database parameters
+    // @param $autoConnect If TRUE, connect to the database after creating the object
+    //
+    // @throws Exception if there is an invalid number of arguments
+    //
+    // @returns An instance of the database class
+    // ================================================================================
 
-    // All database interfaces must implement iDatabase
+    public static function factory($sectionName, $autoConnect = true)
+    {
+        // If this section has been used before in creating a database instance (handle), then
+        // it will have been cached.  In this case, the cached handle will be returned.
 
-    if ( ! $db instanceof iDatabase ) {
-      throw new Exception("$engine does not implenment interface iDatabase");
-    }
+        if ( array_key_exists($sectionName, self::$instancePool) ) {
+            return self::$instancePool[$sectionName];
+        }
 
-    self::$instancePool[$section] = $db;
-    if ($autoConnect) self::$instancePool[$section]->connect();
-    
-    return self::$instancePool[$section];
-    
-  }  // factory()
+        try {
+            $iniSection = xd_utilities\getConfigurationSection($sectionName, 'db_engine');
+        } catch (Exception $e) {
+            $msg = "Unable to get database configuration options: " . $e->getMessage();
+            throw new Exception ($msg);
+        }
+
+        // Not all engines are required to specify all configuration options (e.g., Oracle) so
+        // allow NULL (empty) options. Specific engines may enforce additional requirements.
+
+        $engine   = ( array_key_exists('db_engine', $iniSection) ? $iniSection['db_engine'] : null);
+        $database = ( array_key_exists('database', $iniSection) ? $iniSection['database'] : null);
+        $user     = ( array_key_exists('user', $iniSection) ? $iniSection['user'] : null );
+
+        if ( null === $engine || null === $database || null === $user ) {
+            $msg = "Configuration section '$sectionName' missing required options (db_engine, database, user)";
+            throw new Exception($msg);
+        }
+
+        $password = ( array_key_exists('pass', $iniSection) ? $iniSection['pass'] : null );
+        $host     = ( array_key_exists('host', $iniSection) ? $iniSection['host'] : null );
+        $port     = ( array_key_exists('port', $iniSection) ? $iniSection['port'] : null );
+
+        $engine = "CCR\\DB\\$engine";
+
+        // Ensure that the class exists before we attempt to instantiate it
+
+        if ( class_exists($engine) ) {
+            $db = new $engine($host, $port, $database, $user, $password);
+        } else {
+            $msg = "Error creating database defined in section '$sectionName', class '$engine' not found";
+            throw new Exception($msg);
+        }
+
+        // All database interfaces must implement iDatabase
+
+        if ( ! $db instanceof iDatabase ) {
+            throw new Exception("$engine does not implenment interface iDatabase");
+        }
+
+        self::$instancePool[$sectionName] = $db;
+        if ($autoConnect) self::$instancePool[$sectionName]->connect();
+
+        return self::$instancePool[$sectionName];
+
+    }  // factory()
 
 }  // class DB
