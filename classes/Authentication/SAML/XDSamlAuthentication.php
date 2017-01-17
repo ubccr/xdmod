@@ -113,10 +113,10 @@ class XDSamlAuthentication
             $orgDisplay = "";
             $icon = "";
             foreach ($idpAuth as $idp) {
-                if ($idp['OrganizationDisplayName']) {
+                if (!empty($idp['OrganizationDisplayName'])) {
                     $orgDisplay = $idp['OrganizationDisplayName'];
                 }
-                if ($idp['icon']) {
+                if (!empty($idp['icon'])) {
                     $icon = $idp['icon'];
                 }
             }

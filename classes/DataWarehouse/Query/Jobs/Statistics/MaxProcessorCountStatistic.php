@@ -12,7 +12,7 @@ class MaxProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
 	public function __construct($query_instance = NULL)
 	{
-		parent::__construct('coalesce(ceil(max(jf.processors)),0)', 'max_processors', 'Job Size: Max', 'Core Count',0);
+		parent::__construct('coalesce(max(jf.processors),0)', 'max_processors', 'Job Size: Max', 'Core Count',0);
 	}
 
 	public function getInfo()
