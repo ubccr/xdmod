@@ -12,8 +12,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use \Log;
 
-class Postgres extends aRdbmsEndpoint
-implements iRdbmsEndpoint
+class Postgres extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
@@ -40,9 +39,11 @@ implements iRdbmsEndpoint
      * ------------------------------------------------------------------------------------------
      */
 
-    public function schemaExists($schemaName)
+    public function schemaExists($schemaName = null)
     {
-        if ( empty($schemaName) ) {
+        if ( null === $schemaName ) {
+            $schemaName = $this->getSchema();
+        } elseif ( empty($schemaName) ) {
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
         }
@@ -54,7 +55,7 @@ nspname as name
 FROM pg_catalog.pg_namespace
 WHERE nspname = :schema";
 
-        $params = array(":schema" => $this->getSchema());
+        $params = array(":schema" => $schemaName);
 
         try {
             $dbh = $this->getHandle();
@@ -63,7 +64,7 @@ WHERE nspname = :schema";
                 return false;
             }
         } catch (\PdoException $e) {
-            $msg = "Error querying for schema '" . $this->getSchema() . "'";
+            $msg = "Error querying for schema '$schemaName'";
             $this->logAndThrowSqlException($sql, $e, $msg);
         }
 
@@ -76,15 +77,21 @@ WHERE nspname = :schema";
      * ------------------------------------------------------------------------------------------
      */
 
-    public function createSchema($schemaName)
+    public function createSchema($schemaName = null)
     {
-        if ( empty($schemaName) ) {
+        if ( null === $schemaName ) {
+            $schemaName = $this->getSchema(true);
+        } elseif ( empty($schemaName) ) {
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
+        } else {
+            $schemaName = ( 0 !== strpos($schemaName, $this->systemQuoteChar)
+                            ? $this->quoteSystemIdentifier($schemaName)
+                            : $schemaName );
         }
 
         // Don't use bind parameters because we don't want to quote the schema
-        $sql = "CREATE SCHEMA IF NOT EXISTS " . $this->getSchema(true);
+        $sql = "CREATE SCHEMA IF NOT EXISTS $schemaName";
 
         $params = array(":schema" => $this->getSchema());
 
@@ -92,12 +99,11 @@ WHERE nspname = :schema";
             $dbh = $this->getHandle();
             $result = $dbh->query($sql, $params);
         } catch (\PdoException $e) {
-            $msg = "Error creating schema '" . $this->getSchema() . "'";
+            $msg = "Error creating schema '$schemaName'";
             $this->logAndThrowSqlException($sql, $e, $msg);
         }
 
         return true;
 
     }  // createSchema()
-
 }  // class Postgres

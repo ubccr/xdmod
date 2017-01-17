@@ -15,7 +15,7 @@ namespace ETL\DataEndpoint;
 
 interface iRdbmsEndpoint extends iDataEndpoint
 {
-    
+
     /* ------------------------------------------------------------------------------------------
      * Wrap a system identifier in quotes appropriate for the endpint. For example, MySQL uses a
      * backtick (`) to quote identifiers while Oracle and Postgres using double quotes (").
@@ -25,14 +25,14 @@ interface iRdbmsEndpoint extends iDataEndpoint
      * @return The identifier quoted appropriately for the endpoint
      * ------------------------------------------------------------------------------------------
      */
-  
+
     public function quoteSystemIdentifier($identifier);
 
     /* ------------------------------------------------------------------------------------------
      * @return The character for quoting system identifiers using this endpoint.
      * ------------------------------------------------------------------------------------------
      */
-  
+
     public function getSystemQuoteChar();
 
     /* ------------------------------------------------------------------------------------------
@@ -52,6 +52,7 @@ interface iRdbmsEndpoint extends iDataEndpoint
      * associated with the named table.
      *
      * @param $tableName The table to inspect
+     * @param $schemaName Optional schema name used to override the current DataEmdpoint schema
      *
      * @return An array of column names for the table
      *
@@ -59,23 +60,23 @@ interface iRdbmsEndpoint extends iDataEndpoint
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getTableColumnNames($tableName);
+    public function getTableColumnNames($tableName, $schemaName = null);
 
     /* ------------------------------------------------------------------------------------------
      * Query the RDBMS and return TRUE if the schema exists, FALSE otherwise.
      *
-     * @param $schemaName The schema to inspect
+     * @param $schemaName The schema to inspector NULL current DataEndpoint schema
      *
      * @return TRUE if the schema exists.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function schemaExists($schemaName);
+    public function schemaExists($schemaName = null);
 
     /* ------------------------------------------------------------------------------------------
      * Create a schema.
      *
-     * @param $schemaName The schema to create
+     * @param $schemaName The schema to create, or NULL to use the current DataEndpoint schema
      *
      * @return TRUE if the schema was created.
      *
@@ -83,7 +84,7 @@ interface iRdbmsEndpoint extends iDataEndpoint
      * ------------------------------------------------------------------------------------------
      */
 
-    public function createSchema($schemaName);
+    public function createSchema($schemaName = null);
 
     /* ------------------------------------------------------------------------------------------
      * @param $quote TRUE to wrap the name in quotes to handle special characters
@@ -94,5 +95,4 @@ interface iRdbmsEndpoint extends iDataEndpoint
      */
 
     public function getSchema($quote = false);
-
 }  // interface iRdbmsEndpoint

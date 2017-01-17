@@ -228,7 +228,7 @@ AND table_name = :tablename";
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getTableColumnNames($tableName)
+    public function getTableColumnNames($tableName, $schemaName = null)
     {
         if ( empty($tableName) ) {
             $msg = "Table name cannot be empty";
@@ -242,7 +242,11 @@ WHERE table_schema = :schema
 AND table_name = :tablename
 ORDER BY ordinal_position ASC";
 
-        $params = array(":schema" => $this->getSchema(),
+        if ( null === $schemaName ) {
+            $schemaName = $this->getSchema();
+        }
+
+        $params = array(":schema" => $schemaName,
                         ":tablename"  => $tableName);
 
         try {
@@ -253,7 +257,7 @@ ORDER BY ordinal_position ASC";
                 $this->logAndThrowException($msg);
             }
         } catch (PDOException $e) {
-            $msg = "Error retrieving column names from '" . $this->getSchema() . ".'$tableName' ";
+            $msg = "Error retrieving column names from '$schemaName'$tableName' ";
             $this->logAndThrowSqlException($sql, $e, $msg);
         }
 
@@ -279,5 +283,4 @@ ORDER BY ordinal_position ASC";
             (null !== $this->username ? ", user={$this->username}" : "" ) .
             ")";
     }  // __toString()
-
 }  // class aRdbmsEndpoint
