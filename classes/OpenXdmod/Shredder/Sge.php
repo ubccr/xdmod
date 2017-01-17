@@ -319,7 +319,6 @@ class Sge extends Shredder
 
         // Map numeric $entries array into a associative array.
         foreach (self::$entryNames as $index => $name) {
-
             // Not all supported versions contain all the entries, but
             // the current code expects a value for each entry.  Use
             // null to indicate the absence of a field.

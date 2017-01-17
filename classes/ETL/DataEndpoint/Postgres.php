@@ -12,8 +12,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use \Log;
 
-class Postgres extends aRdbmsEndpoint
-implements iRdbmsEndpoint
+class Postgres extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
 
     public function __construct(DataEndpointOptions $options, Log $logger = null)
@@ -42,7 +41,7 @@ implements iRdbmsEndpoint
 
     public function schemaExists($schemaName)
     {
-        if ( empty($schemaName) ) {
+        if (empty($schemaName)) {
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
         }
@@ -59,7 +58,7 @@ WHERE nspname = :schema";
         try {
             $dbh = $this->getHandle();
             $result = $dbh->query($sql, $params);
-            if ( 0 == count($result) ) {
+            if (0 == count($result)) {
                 return false;
             }
         } catch (\PdoException $e) {
@@ -68,7 +67,6 @@ WHERE nspname = :schema";
         }
 
         return true;
-
     }  // schemaExists()
 
     /* ------------------------------------------------------------------------------------------
@@ -78,7 +76,7 @@ WHERE nspname = :schema";
 
     public function createSchema($schemaName)
     {
-        if ( empty($schemaName) ) {
+        if (empty($schemaName)) {
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
         }
@@ -97,7 +95,5 @@ WHERE nspname = :schema";
         }
 
         return true;
-
     }  // createSchema()
-
 }  // class Postgres

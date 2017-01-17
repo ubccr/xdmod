@@ -28,4 +28,3 @@ class AllocationsOnResources extends PDODBSynchronizingIngestor
         );
     }
 }
-

@@ -50,8 +50,7 @@ function getDataSeries()
         return json_decode(0);
     }
 
-    if (
-        is_array($_REQUEST['data_series'])
+    if (is_array($_REQUEST['data_series'])
         && is_array($_REQUEST['data_series']['data'])
     ) {
         $v = $_REQUEST['data_series']['data'];
@@ -71,8 +70,7 @@ function getDataSeries()
                 $y->line_type = 'Solid';
             }
 
-            if (
-                !isset($y->line_width)
+            if (!isset($y->line_width)
                 || empty($y->line_width)
                 || !is_numeric($y->line_width)
             ) {
@@ -97,14 +95,12 @@ function getDataSeries()
     $jret = json_decode($ret);
 
     foreach ($jret as &$y) {
-
         // Set values of new attribs for backward compatibility.
         if (!isset($y->line_type) || empty($y->line_type)) {
             $y->line_type = 'Solid';
         }
 
-        if (
-            !isset($y->line_width)
+        if (!isset($y->line_width)
             || empty($y->line_width)
             || !is_numeric($y->line_width)
         ) {
@@ -134,8 +130,7 @@ function getSelectedFilterIds()
 
 function getGlobalFilters()
 {
-    if (
-        !isset($_REQUEST['global_filters'])
+    if (!isset($_REQUEST['global_filters'])
         || empty($_REQUEST['global_filters'])
     ) {
         return (object)array('data' => array(), 'total' => 0);
@@ -180,8 +175,7 @@ function getXAxis()
         foreach ($_REQUEST['x_axis'] as $k => $x) {
             if (is_array($x)) {
                 $ret->{$k} = (object)$x;
-            }
-            else {
+            } else {
                 $ret->{$k} = $x;
             }
         }
@@ -204,8 +198,7 @@ function getYAxis()
         foreach ($_REQUEST['y_axis'] as $k => $x) {
             if (is_array($x)) {
                 $ret->{$k} = (object)$x;
-            }
-            else {
+            } else {
                 $ret->{$k} = $x;
             }
         }
@@ -225,11 +218,10 @@ function getLegend()
     if (is_array($_REQUEST['legend'])) {
         $ret = new stdClass;
 
-        foreach($_REQUEST['legend'] as $k => $x) {
+        foreach ($_REQUEST['legend'] as $k => $x) {
             if (is_array($x)) {
                 $ret->{$k} = (object)$x;
-            }
-            else {
+            } else {
                 $ret->{$k} = $x;
             }
         }
@@ -248,4 +240,3 @@ function getShowFilters()
             || $_REQUEST['show_filters'] == 'true'
         : true;
 }
-

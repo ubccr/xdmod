@@ -152,8 +152,7 @@ function getLimit()
 {
     if (!isset($_REQUEST['limit']) || empty($_REQUEST['limit'])) {
         $limit = 20;
-    }
-    else {
+    } else {
         $limit = $_REQUEST['limit'];
     }
 
@@ -164,8 +163,7 @@ function getOffset()
 {
     if (!isset($_REQUEST['start']) || empty($_REQUEST['start'])) {
         $offset = 0;
-    }
-    else {
+    } else {
         $offset = $_REQUEST['start'];
     }
 
@@ -197,6 +195,5 @@ function getSearchText()
     return
         isset($_REQUEST['search_text']) && $_REQUEST['search_text'] != ''
         ? trim($_REQUEST['search_text'])
-        : NULL;
+        : null;
 }
-

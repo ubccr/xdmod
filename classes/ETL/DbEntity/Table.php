@@ -69,16 +69,16 @@ class Table extends aNamedEntity
         // is a filename and parse it. I am intentionally not storing the config as a property so we
         // don't need to carry it around if there are many of these objects.
 
-        if ( ! is_object($config) && is_string($config) ) {
+        if (! is_object($config) && is_string($config)) {
             $config = $this->parseJsonFile($config, "Table Definition");
-        } else if ( ! $config instanceof stdClass) {
+        } elseif (! $config instanceof stdClass) {
             $msg = __CLASS__ . ": Argument is not a filename or object";
             $this->logAndThrowException($msg);
         }
 
         // Support the table config directly or assigned to a "table_definition" key
 
-        if ( isset($config->table_definition) ) {
+        if (isset($config->table_definition)) {
             $config = $config->table_definition;
         }
 
@@ -88,7 +88,6 @@ class Table extends aNamedEntity
         $this->verifyRequiredConfigKeys($requiredKeys, $config);
 
         $this->initialize($config);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -98,7 +97,7 @@ class Table extends aNamedEntity
 
     protected function initialize(stdClass $config, $force = false)
     {
-        if ( $this->initialized && ! $force ) {
+        if ($this->initialized && ! $force) {
             return true;
         }
 
@@ -114,9 +113,8 @@ class Table extends aNamedEntity
 
         $columns = $config->columns;
 
-        foreach ( $columns as $key => $definition ) {
-
-            if ( is_object($definition) &&
+        foreach ($columns as $key => $definition) {
+            if (is_object($definition) &&
                  ! is_numeric($key)
                  && ! isset($definition->name) ) {
                 // If the index name is not provided, allow shorthand for using the index key as the name
@@ -124,32 +122,29 @@ class Table extends aNamedEntity
             }
 
             $this->addColumn($definition, true);
-
         }  // foreach ( $columns as $key => $definition )
 
 
         // Set indexes
 
-        if ( isset($config->indexes) ) {
-
+        if (isset($config->indexes)) {
             $indexes =  $config->indexes;
-            foreach ( $indexes as $key => $definition ) {
+            foreach ($indexes as $key => $definition) {
                 $this->addIndex($definition);
             }
-
         }  // if ( isset($config->indexes) )
 
 
         // Set triggers
 
-        if ( isset($config->triggers) ) {
+        if (isset($config->triggers)) {
             $triggers =  $config->triggers;
-            foreach ( $triggers as $key => $definition ) {
+            foreach ($triggers as $key => $definition) {
                 // Default to the current table name and schema of the parent table.
-                if ( ! isset($definition->table) ) {
+                if (! isset($definition->table)) {
                     $definition->table = $this->name;
                 }
-                if ( ! isset($definition->schema) ) {
+                if (! isset($definition->schema)) {
                     $definition->schema = $this->schema;
                 }
                 $this->addTrigger($definition);
@@ -157,7 +152,6 @@ class Table extends aNamedEntity
         }
 
         $this->initialized = true;
-
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
@@ -174,16 +168,15 @@ class Table extends aNamedEntity
 
         $columnNames = $this->getColumnNames();
 
-        foreach ( $this->getIndexes() as $index ) {
+        foreach ($this->getIndexes() as $index) {
             $indexColumns = $index->getColumnNames();
             $missingColumnNames = array_diff($indexColumns, $columnNames);
-            if ( 0 != count($missingColumnNames) ) {
+            if (0 != count($missingColumnNames)) {
                 $msg = "Columns in index '" . $index->getName() . "' not found in table definition: " .
                     implode(", ", $missingColumnNames);
                 $this->logAndThrowException($msg);
             }
         }  // foreach ( $this->getIndexes() as $index )
-
     }  // verify()
 
     /* ------------------------------------------------------------------------------------------
@@ -205,8 +198,9 @@ class Table extends aNamedEntity
         $tableName,
         iRdbmsEndpoint $endpoint,
         $systemQuoteChar = null,
-        Log $logger = null)
-    {
+        Log $logger = null
+    ) {
+    
         $schemaName = null;
         $qualifiedTableName = null;
 
@@ -216,7 +210,7 @@ class Table extends aNamedEntity
 
         // If a schema was specified in the table name use it, otherwise use the default schema
 
-        if ( false === strpos($tableName, ".") ) {
+        if (false === strpos($tableName, ".")) {
             $schemaName = $endpoint->getSchema();
             $qualifiedTableName = $schemaName . "." . $tableName;
         } else {
@@ -227,7 +221,7 @@ class Table extends aNamedEntity
         $params = array(':schema'    => $schemaName,
                         ':tablename' => $tableName);
 
-        if ( null !== $logger ) {
+        if (null !== $logger) {
             $logger->debug("Discover table '$qualifiedTableName'");
         }
 
@@ -241,18 +235,16 @@ AND table_name = :tablename";
 
         try {
             $result = $endpoint->getHandle()->query($sql, $params);
-            if ( count($result) > 1 ) {
+            if (count($result) > 1) {
                 $msg = "Multiple rows returned for table";
                 $this->logAndThrowException($msg);
-
             }
 
             // The table did not exist, return false
 
-            if ( 0 == count($result) ) {
+            if (0 == count($result)) {
                 return false;
             }
-
         } catch (Exception $e) {
             $msg = "Error discovering table '$qualifiedTableName': " . $e->getMessage();
             $this->logAndThrowException($msg);
@@ -287,7 +279,7 @@ ORDER BY ordinal_position ASC";
 
         try {
             $result = $endpoint->getHandle()->query($sql, $params);
-            if ( 0 == count($result) ) {
+            if (0 == count($result)) {
                 $msg = "No columns returned";
                 $this->logAndThrowException($msg);
             }
@@ -296,7 +288,7 @@ ORDER BY ordinal_position ASC";
             $this->logAndThrowException($msg);
         }
 
-        foreach ( $result as $row ) {
+        foreach ($result as $row) {
             $newTable->addColumn((object) $row);
         }
 
@@ -318,7 +310,7 @@ ORDER BY index_name ASC";
             $this->logAndThrowException($msg);
         }
 
-        foreach ( $result as $row ) {
+        foreach ($result as $row) {
             $row['columns'] = explode(",", $row['columns']);
             $newTable->addIndex((object) $row);
         }
@@ -341,12 +333,11 @@ ORDER BY trigger_name ASC";
             $this->logAndThrowException($msg);
         }
 
-        foreach ( $result as $row ) {
+        foreach ($result as $row) {
             $newTable->addTrigger((object) $row);
         }
 
         return $newTable;
-
     }  // discover()
 
     /* ------------------------------------------------------------------------------------------
@@ -362,14 +353,13 @@ ORDER BY trigger_name ASC";
     {
         parent::setSchema($schema);
 
-        foreach ( $this->triggers as $trigger ) {
-            if ( null === $trigger->getSchema() ) {
+        foreach ($this->triggers as $trigger) {
+            if (null === $trigger->getSchema()) {
                 $trigger->setSchema($schema);
             }
         }
 
         return $this;
-
     }  // setSchema()
 
     /* ------------------------------------------------------------------------------------------
@@ -411,14 +401,14 @@ ORDER BY trigger_name ASC";
     {
         $item = ( $definition instanceof Column ? $definition : new Column($definition, $this->getSystemQuoteChar()) );
 
-        if ( ! ($item instanceof iTableItem) ) {
+        if (! ($item instanceof iTableItem)) {
             $msg = "Column does not implement interface iTableItem";
             $this->logAndThrowException($msg);
         }
 
         $name = $item->getName();
 
-        if ( array_key_exists($name, $this->columns) && ! $overwriteDuplicates ) {
+        if (array_key_exists($name, $this->columns) && ! $overwriteDuplicates) {
             $msg = "Cannot add duplicate column '$name'";
             $this->logAndThrowException($msg, PEAR_LOG_WARNING);
         }
@@ -426,7 +416,6 @@ ORDER BY trigger_name ASC";
         $this->columns[ $name ] = $item;
 
         return $this;
-
     }  // addColumn()
 
     /* ------------------------------------------------------------------------------------------
@@ -496,14 +485,14 @@ ORDER BY trigger_name ASC";
     {
         $item = ( $definition instanceof Index ? $definition : new Index($definition, $this->getSystemQuoteChar()) );
 
-        if ( ! ($item instanceof iTableItem) ) {
+        if (! ($item instanceof iTableItem)) {
             $msg = "Index does not implement interface iTableItem";
             $this->logAndThrowException($msg);
         }
 
         $name = $item->getName();
 
-        if ( array_key_exists($name, $this->indexes) ) {
+        if (array_key_exists($name, $this->indexes)) {
             $msg = "Cannot add duplicate index '$name'";
             $this->logAndThrowException($msg);
         }
@@ -511,7 +500,6 @@ ORDER BY trigger_name ASC";
         $this->indexes[ $name ] = $item;
 
         return $this;
-
     }  // addIndex()
 
     /* ------------------------------------------------------------------------------------------
@@ -581,7 +569,7 @@ ORDER BY trigger_name ASC";
     {
         $item = ( $definition instanceof Trigger ? $definition : new Trigger($definition, $this->getSystemQuoteChar()) );
 
-        if ( ! ($item instanceof iTableItem) ) {
+        if (! ($item instanceof iTableItem)) {
             $msg = "Trigger does not implement interface iTableItem";
             $this->logAndThrowException($msg);
         }
@@ -589,7 +577,6 @@ ORDER BY trigger_name ASC";
         $this->triggers[ $item->getName() ] = $item;
 
         return $this;
-
     }  // addTrigger()
 
     /* ------------------------------------------------------------------------------------------
@@ -656,7 +643,7 @@ ORDER BY trigger_name ASC";
 
     public function getCreateSql($includeSchema = true)
     {
-        if ( 0 == count($this->columns) ) {
+        if (0 == count($this->columns)) {
             return false;
         }
 
@@ -665,20 +652,20 @@ ORDER BY trigger_name ASC";
         // ${AGGREGATION_UNIT} column with an aggregation unit of "year".
 
         $columnCreateList = array();
-        foreach ( $this->columns as $name => $column ) {
+        foreach ($this->columns as $name => $column) {
             $columnCreateList[$name] = $column->getCreateSql($includeSchema);
         }
 
         $indexCreateList = array();
-        foreach ( $this->indexes as $name => $index ) {
+        foreach ($this->indexes as $name => $index) {
             $indexCreateList[$name] = $index->getCreateSql($includeSchema);
         }
 
         $triggerCreateList = array();
-        foreach ( $this->triggers as $name => $trigger ) {
+        foreach ($this->triggers as $name => $trigger) {
             // The table schema may have been set after the table was initially created. If the trigger
             // doesn't explicitly define a schema, default to the table's schema.
-            if ( null === $trigger->getSchema() ) {
+            if (null === $trigger->getSchema()) {
                 $trigger->setSchema($this->getSchema());
             }
             $triggerCreateList[$name] = $trigger->getCreateSql($includeSchema);
@@ -695,12 +682,11 @@ ORDER BY trigger_name ASC";
             ( null !== $this->comment && ! empty($this->comment) ? " COMMENT = '" . addslashes($this->comment) . "'" : "" ) .
             ";";
 
-        foreach ( $triggerCreateList as $trigger ) {
+        foreach ($triggerCreateList as $trigger) {
             $sqlList[] = $trigger;
         }
 
         return $sqlList;
-
     }  // getCreateSql()
 
     /* ------------------------------------------------------------------------------------------
@@ -741,48 +727,47 @@ ORDER BY trigger_name ASC";
         // matches an existing column name, mark this column to be renamed instead of added and dropped.
         // We can then construct the CHANGE COLUMN statement.
 
-        foreach ( $addColNames as $index => $addName ) {
+        foreach ($addColNames as $index => $addName) {
             $hint = $destTable->getColumn($addName)->getHints();
-            if ( null !== $hint
+            if (null !== $hint
                  && isset($hint->rename_from)
-                 && false !== ( $hintIndex = array_search($hint->rename_from, $dropColNames) ) )
-            {
+                 && false !== ( $hintIndex = array_search($hint->rename_from, $dropColNames) ) ) {
                 $renameColNames[$hint->rename_from] = $addName;
                 unset($addColNames[$index]);
                 unset($dropColNames[$hintIndex]);
             }
         }  // foreach ( $addColNames as $addName )
 
-        if ( $this->engine != $destTable->getEngine() ) {
+        if ($this->engine != $destTable->getEngine()) {
             $alterList[] = "ENGINE = " . $destTable->getEngine();
         }
 
-        if ( $this->comment != $destTable->getComment() ) {
+        if ($this->comment != $destTable->getComment()) {
             $alterList[] = "COMMENT = '" . addslashes($destTable->getComment()) . "'";
         }
 
-        foreach ( $addColNames as $name ) {
+        foreach ($addColNames as $name) {
             $alterList[] = "ADD COLUMN " . $destTable->getColumn($name)->getCreateSql($includeSchema);
         }
 
-        foreach ( $dropColNames as $name ) {
+        foreach ($dropColNames as $name) {
             $alterList[] = "DROP COLUMN " . $this->quote($name);
         }
 
-        foreach ( $changeColNames as $name ) {
+        foreach ($changeColNames as $name) {
             $destColumn = $destTable->getColumn($name);
             // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == $destColumn->compare( $this->getColumn($name) ) ) {
+            if (0 == $destColumn->compare($this->getColumn($name))) {
                 continue;
             }
             $alterList[] = "CHANGE COLUMN " . $destColumn->getName(true) . " " . $destColumn->getAlterSql($includeSchema);
         }
 
-        foreach ( $renameColNames as $fromColumnName => $toColumnName ) {
+        foreach ($renameColNames as $fromColumnName => $toColumnName) {
             $destColumn = $destTable->getColumn($toColumnName);
             $currentColumn = $this->getColumn($fromColumnName);
             // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == $destColumn->compare( $currentColumn ) ) {
+            if (0 == $destColumn->compare($currentColumn)) {
                 continue;
             }
             $alterList[] = "CHANGE COLUMN " . $currentColumn->getName(true) . " " . $destColumn->getAlterSql($includeSchema);
@@ -798,19 +783,19 @@ ORDER BY trigger_name ASC";
         $addIndexNames = array_diff($destIndexNames, $currentIndexNames);
         $changeIndexNames = array_intersect($currentIndexNames, $destIndexNames);
 
-        foreach ( $dropIndexNames as $name ) {
+        foreach ($dropIndexNames as $name) {
             $alterList[] = "DROP INDEX " . $this->quote($name);
         }
 
-        foreach ( $addIndexNames as $name ) {
+        foreach ($addIndexNames as $name) {
             $alterList[] = "ADD " . $destTable->getIndex($name)->getCreateSql($includeSchema);
         }
 
         // Altered indexes need to be dropped then added
-        foreach ( $changeIndexNames as $name ) {
+        foreach ($changeIndexNames as $name) {
             $destIndex = $destTable->getIndex($name);
             // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == $destIndex->compare($this->getIndex($name)) ) {
+            if (0 == $destIndex->compare($this->getIndex($name))) {
                 continue;
             }
             $alterList[] = "DROP INDEX " . $destIndex->getName(true);
@@ -833,15 +818,15 @@ ORDER BY trigger_name ASC";
 
         // Drop triggers first, then alter, then create
 
-        foreach ( $dropTriggerNames as $name ) {
+        foreach ($dropTriggerNames as $name) {
             $triggerList[] = "DROP TRIGGER " .
                 ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
                 $this->quote($name) . ";";
         }
 
-        foreach ( $changeTriggerNames as $name ) {
+        foreach ($changeTriggerNames as $name) {
             $destTrigger = $destTable->getTrigger($name);
-            if ( 0 == $destTrigger->compare( $this->getTrigger($name)) ) {
+            if (0 == $destTrigger->compare($this->getTrigger($name))) {
                 continue;
             }
 
@@ -851,33 +836,32 @@ ORDER BY trigger_name ASC";
             $triggerList[] = $destTable->getTrigger($name)->getCreateSql($includeSchema);
         }
 
-        foreach ( $addTriggerNames as $name ) {
+        foreach ($addTriggerNames as $name) {
             $triggerList[] = $destTable->getTrigger($name)->getCreateSql($includeSchema);
         }
 
         // --------------------------------------------------------------------------------
         // Put it all together
 
-        if ( 0 == count($alterList) && 0 == count($triggerList) ) {
+        if (0 == count($alterList) && 0 == count($triggerList)) {
             return false;
         }
 
         $tableName = ( $includeSchema ? $this->getFullName() : $this->getName() );
 
         $sqlList = array();
-        if ( 0 != count($alterList) ) {
+        if (0 != count($alterList)) {
             $sqlList[] = "ALTER TABLE $tableName\n" .
                 implode(",\n", $alterList) . ";";
         }
 
-        if ( 0 != count($triggerList) ) {
-            foreach ( $triggerList as $trigger ) {
+        if (0 != count($triggerList)) {
+            foreach ($triggerList as $trigger) {
                 $sqlList[] = $trigger;
             }
         }
 
         return $sqlList;
-
     }  // getAlterSql()
 
     /* ------------------------------------------------------------------------------------------
@@ -893,36 +877,35 @@ ORDER BY trigger_name ASC";
     {
         $data = new stdClass;
         $data->name = $this->name;
-        if ( null !== $this->schema && $includeSchema ) {
+        if (null !== $this->schema && $includeSchema) {
             $data->schema = $this->schema;
         }
-        if ( null !== $this->engine ) {
+        if (null !== $this->engine) {
             $data->engine = $this->engine;
         }
-        if ( null !== $this->comment && "" != $this->comment ) {
+        if (null !== $this->comment && "" != $this->comment) {
             $data->comment = $this->comment;
         }
 
         $columns = array();
-        foreach ( $this->columns as $column ) {
+        foreach ($this->columns as $column) {
             $columns[] = $column->toJsonObj($succinct);
         }
         $data->columns = $columns;
 
         $indexes = array();
-        foreach ( $this->indexes as $index ) {
+        foreach ($this->indexes as $index) {
             $indexes[] = $index->toJsonObj($succinct);
         }
         $data->indexes = $indexes;
 
         $triggers = array();
-        foreach ( $this->triggers as $trigger ) {
+        foreach ($this->triggers as $trigger) {
             $triggers[] = $trigger->toJsonObj($succinct);
         }
         $data->triggers = $triggers;
 
         return $data;
-
     }  // toJsonObj()
 
     /* ------------------------------------------------------------------------------------------
@@ -939,5 +922,4 @@ ORDER BY trigger_name ASC";
     {
         return json_encode($this->toJsonObj($succinct, $includeSchema));
     }  // toJson()
-
 }  // class Table

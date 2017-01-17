@@ -2,12 +2,10 @@
 
    // Binary (Raw Data) interface
    
-   interface iBinaryFormat {
+interface iBinaryFormat
+{
 
-      public function toString();
-      public function getDescription();
-      public function getHeaders();
-  
-   }//iBinaryFormat  
-   
-?>
+    public function toString();
+    public function getDescription();
+    public function getHeaders();
+}//iBinaryFormat

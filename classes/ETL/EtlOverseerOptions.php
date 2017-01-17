@@ -117,7 +117,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         parent::__construct($logger);
 
-        foreach ( $options as $option => $value ) {
+        foreach ($options as $option => $value) {
             switch ($option) {
                 case 'actions':
                     $this->setActionNames($value);
@@ -168,12 +168,11 @@ class EtlOverseerOptions extends Loggable implements \Iterator
         // Automatially build up the list of supported restrictions
 
         $r = new \ReflectionClass($this);
-        foreach ( $r->getConstants() as $const => $value ) {
-            if ( 0 === strpos($const, 'RESTRICT_') ) {
+        foreach ($r->getConstants() as $const => $value) {
+            if (0 === strpos($const, 'RESTRICT_')) {
                 $this->supportedOverseerRestrictions[] = $value;
             }
         }
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -195,9 +194,8 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         $queryRestrictions = $query->getOverseerRestrictions();
 
-        foreach ( $queryRestrictions as $restriction => $template ) {
-
-            if ( ! in_array($restriction, $this->supportedOverseerRestrictions) ) {
+        foreach ($queryRestrictions as $restriction => $template) {
+            if (! in_array($restriction, $this->supportedOverseerRestrictions)) {
                 $msg = "Query specified unsupported overseer restriction '$restriction'";
                 $this->logger->notice($msg);
             }
@@ -211,22 +209,22 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
             switch ($restriction) {
                 case self::RESTRICT_START_DATE:
-                    if ( null !== ($value = $this->getCurrentStartDate()) ) {
+                    if (null !== ($value = $this->getCurrentStartDate())) {
                         $replacement = $endpoint->quote($value);
                     }
                     break;
                 case self::RESTRICT_END_DATE:
-                    if ( null !== ($value = $this->getCurrentEndDate()) ) {
+                    if (null !== ($value = $this->getCurrentEndDate())) {
                         $replacement = $endpoint->quote($value);
                     }
                     break;
                 case self::RESTRICT_LAST_MODIFIED_START_DATE:
-                    if ( null !== ($value = $this->getLastModifiedStartDate()) ) {
+                    if (null !== ($value = $this->getLastModifiedStartDate())) {
                         $replacement = $endpoint->quote($value);
                     }
                     break;
                 case self::RESTRICT_LAST_MODIFIED_END_DATE:
-                    if ( null !== ($value = $this->getLastModifiedEndDate()) ) {
+                    if (null !== ($value = $this->getLastModifiedEndDate())) {
                         $replacement = $endpoint->quote($value);
                     }
                     break;
@@ -234,7 +232,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
                     $value = ( array_key_exists($restriction, $overrides) && is_array($overrides[$restriction])
                                ? $overrides[$restriction]
                                : $this->includeOnlyResourceCodes );
-                    if ( count($value) > 0 ) {
+                    if (count($value) > 0) {
                         $replacement = "(" . implode(",", $this->mapResourceCodesToIds($value)) . ")";
                     }
                     break;
@@ -242,7 +240,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
                     $value = ( array_key_exists($restriction, $overrides) && is_array($overrides[$restriction])
                                ? $overrides[$restriction]
                                : $this->excludeResourceCodes );
-                    if ( count($value) > 0 ) {
+                    if (count($value) > 0) {
                         $replacement = "(" . implode(",", $this->mapResourceCodesToIds($value)) . ")";
                     }
                     break;
@@ -250,7 +248,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
                     break;
             } // switch ($restriction)
 
-            if ( null !== $replacement ) {
+            if (null !== $replacement) {
                 $value = str_replace('${VALUE}', $replacement, $template);
                 $query->addOverseerRestrictionValue($restriction, $value);
             }
@@ -281,10 +279,10 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setStartDate($date)
     {
-        if ( null === $date ) {
+        if (null === $date) {
             $this->startDate = date("Y-m-d H:i:s");
         } else {
-            if ( false === ($ts = strtotime($date)) ) {
+            if (false === ($ts = strtotime($date))) {
                 $msg = get_class($this) . ": Could not parse start date '$date'";
                 throw new Exception($msg);
             }
@@ -317,10 +315,10 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setEndDate($date)
     {
-        if ( null === $date ) {
+        if (null === $date) {
             $this->endDate = date("Y-m-d H:i:s");
         } else {
-            if ( false === ($ts = strtotime($date)) ) {
+            if (false === ($ts = strtotime($date))) {
                 $msg = get_class($this) . ": Could not parse end date '$date'";
                 throw new Exception($msg);
             }
@@ -353,7 +351,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setNumberOfDays($numberOfDays)
     {
-        if ( ! is_numeric($numberOfDays) ) {
+        if (! is_numeric($numberOfDays)) {
             $msg = "Invalid number for number of days: '$numberOfDays'";
             $this->logAndThrowException($msg);
         }
@@ -386,9 +384,9 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setLastModifiedStartDate($date)
     {
-        if ( null === $date ) {
+        if (null === $date) {
             $this->lastModifiedStartDate = null;
-        } else if ( false === ( $ts = strtotime($date)) ) {
+        } elseif (false === ( $ts = strtotime($date))) {
             $msg = get_class($this) . ": Could not parse last modified start date '$date'";
             throw new Exception($msg);
         } else {
@@ -421,9 +419,9 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setLastModifiedEndDate($date)
     {
-        if ( null === $date ) {
+        if (null === $date) {
             $this->lastModifiedEndDate = null;
-        } else if ( false === ( $ts = strtotime($date)) ) {
+        } elseif (false === ( $ts = strtotime($date))) {
             $msg = get_class($this) . ": Could not parse last modified start date '$date'";
             throw new Exception($msg);
         } else {
@@ -439,7 +437,8 @@ class EtlOverseerOptions extends Loggable implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getCurrentStartDate() {
+    public function getCurrentStartDate()
+    {
         $current = current($this->etlPeriodChunkList);
         return ( false === $current ? null : $current[0] );
     }  // getCurrentStartDate()
@@ -450,7 +449,8 @@ class EtlOverseerOptions extends Loggable implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getCurrentEndDate() {
+    public function getCurrentEndDate()
+    {
         $current = current($this->etlPeriodChunkList);
         return ( false === $current ? null : $current[1] );
     }  // getCurrentEndDate()
@@ -476,7 +476,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setChunkSize($days)
     {
-        if ( ! (null === $days || is_numeric($days) ) ) {
+        if (! (null === $days || is_numeric($days) )) {
             $msg = get_class($this) . ": Chunk size must be NULL or numeric";
             throw new Exception($msg);
         }
@@ -507,7 +507,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         $origFlag = $flag;
         $flag = Utilities::filterBooleanVar($flag);
-        if ( null === $flag ) {
+        if (null === $flag) {
             $msg = get_class($this) . ": Force flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
         }
@@ -538,7 +538,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         $origFlag = $flag;
         $flag = Utilities::filterBooleanVar($flag);
-        if ( null === $flag ) {
+        if (null === $flag) {
             $msg = get_class($this) . ": Dryrun flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
         }
@@ -569,7 +569,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         $origFlag = $flag;
         $flag = Utilities::filterBooleanVar($flag);
-        if ( null === $flag ) {
+        if (null === $flag) {
             $msg = get_class($this) . ": Verbose flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
         }
@@ -620,11 +620,12 @@ class EtlOverseerOptions extends Loggable implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function mapResourceCodesToIds(array $codes) {
+    public function mapResourceCodesToIds(array $codes)
+    {
         $resourceIdList = array();
 
-        foreach ( $codes as $code ) {
-            if ( false === ($resourceId = $this->getResourceIdFromCode($code)) ) {
+        foreach ($codes as $code) {
+            if (false === ($resourceId = $this->getResourceIdFromCode($code))) {
                 $msg = "Unknown include resource code: '$code'";
                 $this->logAndThrowException($msg);
             } else {
@@ -658,7 +659,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setIncludeOnlyResourceCodes($codes)
     {
-        if ( null === $codes ) {
+        if (null === $codes) {
             $this->includeOnlyResourceCodes = array();
         } else {
             $this->includeOnlyResourceCodes = ( ! is_array($codes) ? array($codes) : $codes );
@@ -688,7 +689,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setExcludeResourceCodes($codes)
     {
-        if ( null === $codes ) {
+        if (null === $codes) {
             $this->excludeResourceCodes = array();
         } else {
             $this->excludeResourceCodes = ( ! is_array($codes) ? array($codes) : $codes );
@@ -790,7 +791,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     private function generateEtlChunkList()
     {
-        if ( null === $this->etlIntervalChunkSize ) {
+        if (null === $this->etlIntervalChunkSize) {
             $this->etlPeriodChunkList = array(array($this->startDate, $this->endDate));
             return;
         }
@@ -801,7 +802,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
         $currentEndTs = strtotime($this->endDate);
         $secondsPerChunk = (60 * 60 * 24) * $this->etlIntervalChunkSize;
 
-        while ( $currentEndTs > $startTs ) {
+        while ($currentEndTs > $startTs) {
             $intervalEnd = date('Y-m-d H:i:s', $currentEndTs);
             // Decrement 1 year or the remainder if the period is less than 1 year
             $decrementSeconds = ( ($currentEndTs - $startTs) < $secondsPerChunk
@@ -809,11 +810,10 @@ class EtlOverseerOptions extends Loggable implements \Iterator
                                   : $secondsPerChunk );
             $currentEndTs -= $decrementSeconds;
             // When printing the start date, round up 1 second unless this is the last interval.
-            $intervalStart = date('Y-m-d H:i:s', $currentEndTs + ( $currentEndTs == $startTs ? 0 : 1 ) );
+            $intervalStart = date('Y-m-d H:i:s', $currentEndTs + ( $currentEndTs == $startTs ? 0 : 1 ));
             $chunkList[] = array($intervalStart, $intervalEnd);
         }
 
         $this->etlPeriodChunkList = $chunkList;
     }  // generateEtlChunkList()
-
 }  // class EtlOverseerOptions

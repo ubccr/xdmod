@@ -281,8 +281,7 @@ class QueryDescripter
     {
         $results = array();
         $aggclass = $this->getDefaultQuery('2014-01-01', '2014-01-02');
-        foreach($statslist as $statname)
-        {
+        foreach ($statslist as $statname) {
             $results[$statname] = $aggclass->addStat($statname);
         }
 
@@ -315,10 +314,7 @@ class QueryDescripter
 
         $parameters = array();
 
-        foreach (
-            $registeredGroupBys
-            as $registeredGroupByName => $registeredGroupByClassname
-        ) {
+        foreach ($registeredGroupBys as $registeredGroupByName => $registeredGroupByClassname) {
             $group_by_instance = new $registeredGroupByClassname();
 
             $parameters = array_merge(
@@ -338,10 +334,7 @@ class QueryDescripter
 
         $parameters = array();
 
-        foreach (
-            $registeredGroupBys
-            as $registeredGroupByName => $registeredGroupByClassname
-        ) {
+        foreach ($registeredGroupBys as $registeredGroupByName => $registeredGroupByClassname) {
             $group_by_instance = new $registeredGroupByClassname();
 
             $parameters = array_merge(

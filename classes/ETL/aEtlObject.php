@@ -58,7 +58,7 @@ abstract class aEtlObject extends Loggable
     public function setName($name)
     {
 
-        if ( ! is_string($name) ) {
+        if (! is_string($name)) {
             $msg = "Entity name must be a string";
             $this->logAndThrowException($msg);
         }
@@ -66,7 +66,6 @@ abstract class aEtlObject extends Loggable
         $this->name = $name;
 
         return $this;
-
     }  // setName()
 
     /* ------------------------------------------------------------------------------------------
@@ -100,7 +99,7 @@ abstract class aEtlObject extends Loggable
 
     public function verify()
     {
-        if ( null === $this->name ) {
+        if (null === $this->name) {
             $msg = "Name is not set";
             $this->logAndThrowException($msg);
         }
@@ -124,19 +123,18 @@ abstract class aEtlObject extends Loggable
     {
         $missing = array();
 
-        foreach ( $requiredKeys as $key ) {
-            if ( ! isset($config->$key) ) {
+        foreach ($requiredKeys as $key) {
+            if (! isset($config->$key)) {
                 $missing[] = $key;
             }
         }
 
-        if ( 0 != count($missing) ) {
+        if (0 != count($missing)) {
             $msg = "Config missing required keys (" . implode(", ", $missing) . ")";
             $this->logAndThrowException($msg);
         }
 
         return true;
-
     }  // verifyRequiredConfigKeys()
 
     /* ------------------------------------------------------------------------------------------
@@ -174,5 +172,4 @@ abstract class aEtlObject extends Loggable
     {
         return $this->name . " (" . get_class($this) . ")";
     }  // __toString()
-
 }  // abstract class aEtlObject

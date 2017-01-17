@@ -22,19 +22,18 @@ use \Exception;
  * The implementation of the interface iDatabase based on PDO
  */
 
-class PDODB
-implements iDatabase
+class PDODB implements iDatabase
 {
-    public $_db_engine = NULL;
-    public $_db_host = NULL;
-    public $_db_port = NULL;
-    public $_db_name = NULL;
-    public $_db_username = NULL;
-    public $_db_password = NULL;
+    public $_db_engine = null;
+    public $_db_host = null;
+    public $_db_port = null;
+    public $_db_name = null;
+    public $_db_username = null;
+    public $_db_password = null;
 
-    public $_dsn_override = NULL;
+    public $_dsn_override = null;
 
-    protected $_dbh = NULL;
+    protected $_dbh = null;
 
     protected static $_debug_mode = false;
     protected static $_queries = array();
@@ -51,7 +50,7 @@ implements iDatabase
     // @param $db_password Database user password
     // --------------------------------------------------------------------------------
 
-    public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password, $dsn_override = NULL)
+    public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password, $dsn_override = null)
     {
         $this->_db_engine = $db_engine;
         $this->_db_host = $db_host;
@@ -73,8 +72,9 @@ implements iDatabase
 
     public function disconnect()
     {
-        if (NULL !== $this->_dbh)
+        if (null !== $this->_dbh) {
             $this->_dbh->close();
+        }
     }
 
     // --------------------------------------------------------------------------------
@@ -87,13 +87,12 @@ implements iDatabase
 
     public function connect()
     {
-        if (NULL === $this->_dbh) {
+        if (null === $this->_dbh) {
             try {
-                $dsn = (NULL !== $this->_dsn_override) ? $this->_dsn_override : $this->_db_engine . ':host=' . $this->_db_host . ';port=' . $this->_db_port . ';dbname=' . $this->_db_name;
+                $dsn = (null !== $this->_dsn_override) ? $this->_dsn_override : $this->_db_engine . ':host=' . $this->_db_host . ';port=' . $this->_db_port . ';dbname=' . $this->_db_name;
 
                 $this->_dbh = new PDO($dsn, $this->_db_username, $this->_db_password);
                 $this->_dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
             } catch (Exception $err) {
                 throw $err;
             }
@@ -105,7 +104,7 @@ implements iDatabase
 
     public function destroy()
     {
-        $this->_dbh = NULL;
+        $this->_dbh = null;
     }
 
     // --------------------------------------------------------------------------------
@@ -126,12 +125,14 @@ implements iDatabase
         $stmt = $this->prepare($query);
 
         try {
-            if ( $this->debugging() ) $this->debug($query, $params);
+            if ($this->debugging()) {
+                $this->debug($query, $params);
+            }
         } catch (Exception $e) {
             // TODO: setup the logger and log this.
         }
       
-        if (FALSE === $stmt->execute($params)) {
+        if (false === $stmt->execute($params)) {
             list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
@@ -151,18 +152,19 @@ implements iDatabase
         $stmt = $this->prepare($query);
       
         try {
-            if ( $this->debugging() ) $this->debug($query, $params);
+            if ($this->debugging()) {
+                $this->debug($query, $params);
+            }
         } catch (Exception $e) {
             // TODO: setup the logger and log this.
         }
 
-        if (FALSE === $stmt->execute($params)) {
+        if (false === $stmt->execute($params)) {
             list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
 
         return $stmt->rowCount();
-
     } // execute()
 
     // --------------------------------------------------------------------------------
@@ -183,7 +185,6 @@ implements iDatabase
         }
       
         return $this->handle()->prepare($query);
-
     }  // prepare()
 
     // --------------------------------------------------------------------------------
@@ -204,18 +205,19 @@ implements iDatabase
         $stmt = $this->prepare($statement);
       
         try {
-            if ( $this->debugging() ) $this->debug($statement, $params);
+            if ($this->debugging()) {
+                $this->debug($statement, $params);
+            }
         } catch (Exception $e) {
             // TODO: setup the logger and log this.
         }
       
-        if (FALSE === $stmt->execute($params)) {
+        if (false === $stmt->execute($params)) {
             list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
 
         return $this->handle()->lastInsertID();
-
     } // insert()
 
     // --------------------------------------------------------------------------------
@@ -240,7 +242,9 @@ implements iDatabase
         $query = "select count(*) as count_result from $full_tablename";
 
         try {
-            if ( $this->debugging() ) $this->debug($query, array());
+            if ($this->debugging()) {
+                $this->debug($query, array());
+            }
         } catch (Exception $e) {
             // TODO: setup the logger and log this.
         }
@@ -326,7 +330,8 @@ implements iDatabase
 
         try {
             $sql_debug_mode = \xd_utilities\getConfiguration('general', 'sql_debug_mode');
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
 
 
         return  $sql_debug_mode || PDODB::$_debug_mode;
@@ -334,7 +339,7 @@ implements iDatabase
 
     private function debug($query, $params)
     {
-        PDODB::$_queries[] = trim(preg_replace("(\s+)"," ", $query));
+        PDODB::$_queries[] = trim(preg_replace("(\s+)", " ", $query));
         PDODB::$_params[] = PDODB::protectParams($params);
     }
 

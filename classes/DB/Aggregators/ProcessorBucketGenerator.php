@@ -21,7 +21,9 @@ class ProcessorBucketGenerator
                     return '(' . implode(
                         ',',
                         array_map(
-                            function ($column) { return "'$column'"; },
+                            function ($column) {
+                                return "'$column'";
+                            },
                             $bucket
                         )
                     ) . ')';
@@ -37,5 +39,3 @@ class ProcessorBucketGenerator
         ")->execute();
     }
 }
-
-?>

@@ -128,7 +128,8 @@ class XDReportManager
             );
         }
 
-        $this->_pdo->execute("
+        $this->_pdo->execute(
+            "
             UPDATE Reports SET
                 name            = :report_name,
                 title           = :report_title,
@@ -152,20 +153,19 @@ class XDReportManager
                 'schedule'        => $this->_report_schedule,
                 'delivery'        => $this->_report_delivery,
                 'report_id'       => $this->_report_id,
-           )
+            )
         );
     }
 
     private function _fontWrapper($text, $font_name, $font_size = 12)
     {
-     return '<span style="font-family: ' . strtolower($font_name)
+        return '<span style="font-family: ' . strtolower($font_name)
         . '; font-size: ' . $font_size . 'px">' . $text . '</span>';
-
     }
 
     public static function sanitizeFilename($filename)
     {
-        $filename = preg_replace('/[^a-zA-Z0-9-_\. ]/','', $filename);
+        $filename = preg_replace('/[^a-zA-Z0-9-_\. ]/', '', $filename);
         $filename = strtolower(str_replace(" ", "_", $filename));
 
         return (empty($filename) == true) ? 'xdmod_report' : $filename;
@@ -187,8 +187,7 @@ class XDReportManager
             if (strtolower($report_chart['timeframe_type']) == 'user defined') {
                 list($start_date, $end_date)
                     = explode(' to ', $report_chart['chart_date_description']);
-            }
-            else {
+            } else {
                 $e = \xd_date\getEndpoints($report_chart['timeframe_type']);
 
                 $start_date = $e['start_date'];
@@ -225,10 +224,10 @@ class XDReportManager
 
             $chartSlot[$suffix] = array(
                 'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->_fontWrapper($report_data['general']['title'], $report_font, 22) . '<br />' : '',
-                'header_text'                    => $this->_fontWrapper($report_data['general']['header'],       $report_font, 12),
-                'footer_text'                    => $this->_fontWrapper($report_data['general']['footer'],       $report_font, 12),
-                'chart_title_' . $suffix         => $this->_fontWrapper($report_chart['chart_title'],            $report_font, 16),
-                'chart_drill_details_' . $suffix => $this->_fontWrapper($report_chart['chart_drill_details'],    $report_font, 12),
+                'header_text'                    => $this->_fontWrapper($report_data['general']['header'], $report_font, 12),
+                'footer_text'                    => $this->_fontWrapper($report_data['general']['footer'], $report_font, 12),
+                'chart_title_' . $suffix         => $this->_fontWrapper($report_chart['chart_title'], $report_font, 16),
+                'chart_drill_details_' . $suffix => $this->_fontWrapper($report_chart['chart_drill_details'], $report_font, 12),
                 'chart_timeframe_' . $suffix     => $this->_fontWrapper($report_chart['chart_date_description'], $report_font, 14),
                 'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
             );
@@ -244,7 +243,6 @@ class XDReportManager
         }
 
         if (count($chartSlot) > 0) {
-
             // Handle remainder of charts...
 
             $combinedSlots = array();
@@ -341,7 +339,7 @@ class XDReportManager
         $name_frags = explode(' ', $base_name);
         $name_suffix = array_pop($name_frags);
 
-        if (is_numeric($name_suffix)){
+        if (is_numeric($name_suffix)) {
             $base_name = implode(' ', $name_frags).' ';
             $values[] = $name_suffix;
         }
@@ -433,11 +431,10 @@ class XDReportManager
         $reportBreakdown = array();
 
         foreach ($results as $r) {
-
             $reportBreakdown[] = array(
                 'role'        => \xd_roles\getFormalRoleNameFromIdentifier(
-                                     $r['active_role']
-                                 ),
+                    $r['active_role']
+                ),
                 'num_reports' => $r['num_reports']
             );
         }
@@ -559,12 +556,11 @@ class XDReportManager
 
         if ($dh = opendir($cache_dir)) {
             while (($file = readdir($dh)) !== false) {
-                if (
-                    preg_match(
-                        '/^xd_report_volatile_' . $this->_user_id
+                if (preg_match(
+                    '/^xd_report_volatile_' . $this->_user_id
                             . '_(.+).[png|xrc]/',
-                        $file
-                    )
+                    $file
+                )
                     ||
                     preg_match(
                         '/^' . $this->_user_id . '-(.+).png/',
@@ -772,7 +768,7 @@ class XDReportManager
             }
         }
 
-        return NULL;
+        return null;
     }
 
     public function removeReportCharts($report_id)
@@ -803,7 +799,9 @@ class XDReportManager
         $result = $this->_pdo->query($query, array('report_id' => $report_id));
 
         foreach ($result as $r) {
-            if (is_null($r['blob_timestamp'])) { continue; }
+            if (is_null($r['blob_timestamp'])) {
+                continue;
+            }
 
             list($blob_start, $blob_end) = explode(',', $r['blob_timestamp']);
 
@@ -1128,8 +1126,7 @@ class XDReportManager
 
             $this->_ripTransform($insertion_rank, 'did');
 
-            if (
-                is_array($insertion_rank)
+            if (is_array($insertion_rank)
                 && isset($insertion_rank['rank'])
                 && isset($insertion_rank['start_date'])
                 && isset($insertion_rank['end_date'])
@@ -1155,9 +1152,7 @@ class XDReportManager
                     . '_'
                     . $insertion_rank['end_date']
                     . '.png';
-
-            }
-            else {
+            } else {
                 return sys_get_temp_dir()
                     . '/xd_report_volatile_'
                     . $this->_user_id
@@ -1166,8 +1161,7 @@ class XDReportManager
                     . $duplication_id
                     . '.png';
             }
-        }
-        else {
+        } else {
             return sys_get_temp_dir()
                 . '/'
                 . $insertion_rank['report_id']
@@ -1181,18 +1175,20 @@ class XDReportManager
         }
     }
 
-    private function _ripTransform (&$arr, $item)
+    private function _ripTransform(&$arr, $item)
     {
         if (is_array($arr) && isset($arr[$item])) {
             unset($arr[$item]);
-            if (count($arr) == 1) $arr = array_pop($arr);
+            if (count($arr) == 1) {
+                $arr = array_pop($arr);
+            }
         }
     }
 
     public function fetchChartBlob(
         $type,
         $insertion_rank,
-        $chart_id_cache_file = NULL
+        $chart_id_cache_file = null
     ) {
         $pdo = DB::factory('database');
         $trace = "";
@@ -1206,10 +1202,8 @@ class XDReportManager
 
                 if (file_exists($temp_file)) {
                     print file_get_contents($temp_file);
-                }
-                else {
-                    if (
-                        is_array($insertion_rank)
+                } else {
+                    if (is_array($insertion_rank)
                         && isset($insertion_rank['rank'])
                         && isset($insertion_rank['start_date'])
                         && isset($insertion_rank['end_date'])
@@ -1220,9 +1214,7 @@ class XDReportManager
                             $insertion_rank['start_date'],
                             $insertion_rank['end_date']
                         );
-                    }
-                    else {
-
+                    } else {
                         // If no start or end dates are supplied, then,
                         // grab directly from chart pool
 
@@ -1287,8 +1279,7 @@ class XDReportManager
 
                 if (file_exists($temp_file)) {
                     print file_get_contents($temp_file);
-                }
-                else {
+                } else {
                     $blob = $this->generateChartBlob(
                         $type,
                         $insertion_rank,
@@ -1356,8 +1347,7 @@ class XDReportManager
         if (strtolower($timeframe_type) == 'user defined') {
             $start_date = $active_start;
             $end_date = $active_end;
-        }
-        else {
+        } else {
             $e = \xd_date\getEndpoints($timeframe_type);
 
             $start_date = $e['start_date'];
@@ -1372,7 +1362,6 @@ class XDReportManager
         }
 
         if (empty($image_data)) {
-
             // No BLOB to begin with
             return $this->generateChartBlob(
                 $type,
@@ -1380,9 +1369,7 @@ class XDReportManager
                 $start_date,
                 $end_date
             );
-        }
-        else {
-
+        } else {
             // BLOB exists. Parse out the date information prepended to
             // the actual image data then compare against $start_date
             // and $end_date to see if the image data needs to be
@@ -1395,12 +1382,9 @@ class XDReportManager
                 $image_data_header = substr($blob_elements[1], 0, 8);
 
                 if ($image_data_header == "\x89PNG\x0d\x0a\x1a\x0a") {
-
                     // Cached blob is still usable (contains raw png data)
                     return $blob_elements[1];
-                }
-                else {
-
+                } else {
                     // Cached data is not considered 'valid'. Re-generate blob
                     return $this->generateChartBlob(
                         $type,
@@ -1409,9 +1393,7 @@ class XDReportManager
                         $end_date
                     );
                 }
-            }
-            else {
-
+            } else {
                 // Cached data has gone stale. Re-generate blob
                 return $this->generateChartBlob(
                     $type,
@@ -1423,7 +1405,7 @@ class XDReportManager
         }
     }
 
-    private function getChartData($chart_id, $overrides) 
+    private function getChartData($chart_id, $overrides)
     {
         $arg_set = explode("&", $chart_id);
         $query_params = array();
@@ -1444,35 +1426,30 @@ class XDReportManager
                 'function' => 'get_data' ),
             'data_explorer' => array(
                 'class' => '\DataWarehouse\Access\DataExplorer',
-                'function' => 'get_ak_plot'), 
+                'function' => 'get_ak_plot'),
             'custom_query' => array(
                 'class' => '\DataWarehouse\Access\CustomQuery',
                 'function' => 'get_data'
             )
         );
 
-        if( isset($query_params['controller_module']) && isset($query_params['operation']) )
-        {
+        if (isset($query_params['controller_module']) && isset($query_params['operation'])) {
             $module = $query_params['controller_module'];
             $operation = $query_params['operation'];
 
-            if( isset($supportedControllers[$module]) && $supportedControllers[$module]['function'] == $operation ) {
+            if (isset($supportedControllers[$module]) && $supportedControllers[$module]['function'] == $operation) {
                 $c = new $supportedControllers[$module]['class']($callargs);
                 $response = $c->$operation($this->_user);
-            }
-            else 
-            {
+            } else {
                 $usageAdapter = new Usage($callargs);
                 $response = $usageAdapter->getCharts($this->_user);
             }
             return $response['results'];
-        }
-        else
-        {
+        } else {
             // No controller specified - this must be a chart generated with an ealier verson
             // of the XDMoD software. Use the presence of format=hc_jsonstore to determine which
             // controller processes the chart
-            if( isset($query_params['format']) && $query_params['format'] == 'hc_jsonstore') {
+            if (isset($query_params['format']) && $query_params['format'] == 'hc_jsonstore') {
                 $c = new \DataWarehouse\Access\MetricExplorer($callargs);
                 $response = $c->get_data($this->_user);
             } else {
@@ -1507,8 +1484,7 @@ class XDReportManager
                 if (file_exists($temp_file) == true) {
                     $chart_id_config = file($temp_file);
                     $iq[] = array('chart_id' => $chart_id_config[0]);
-                }
-                else {
+                } else {
                     return $this->generateChartBlob(
                         'chart_pool',
                         $insertion_rank['rank'],
@@ -1635,7 +1611,7 @@ class XDReportManager
     private function writeXMLConfiguration(
         $outputdir,
         $report_id,
-        $export_format = NULL
+        $export_format = null
     ) {
         $dom = new DOMDocument("1.0");
 
@@ -1670,7 +1646,7 @@ class XDReportManager
             $dom,
             $nodeRoot,
             "Format",
-            ($export_format != NULL)
+            ($export_format != null)
             ? $export_format
             : $this->getReportFormat($report_id)
         );
@@ -1713,8 +1689,7 @@ class XDReportManager
             if (strtolower($entry['timeframe_type']) == 'user defined') {
                 list($start_date, $end_date)
                     = explode(' to ', $entry['comments']);
-            }
-            else {
+            } else {
                 $e = \xd_date\getEndpoints($entry['timeframe_type']);
 
                 $start_date = $e['start_date'];
@@ -1725,7 +1700,7 @@ class XDReportManager
             // work with the correct chart (image)
             $entry['comments'] = $start_date . ' to ' . $end_date;
 
-            $imagedata = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'] ) );
+            $imagedata = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'] ));
             $imagefilename = $outputdir . "/" . $entry['order'] . ".png";
             file_put_contents($imagefilename, $imagedata);
 
@@ -1760,7 +1735,6 @@ class XDReportManager
         $remainingSlots = $chartCount % $charts_per_page;
 
         if ($remainingSlots > 0) {
-
             // Handle remainder of charts
 
             for ($r = $remainingSlots; $r < $charts_per_page; $r++) {
@@ -1814,11 +1788,9 @@ class XDReportManager
     public function buildReport($report_id, $export_format)
     {
 
-        if (
-            $this->getReportDerivation($report_id)
+        if ($this->getReportDerivation($report_id)
                 == 'Monthly Compliance Report'
         ) {
-
             $compliance_report = new XDComplianceReport();
 
             $data = $compliance_report->prepareComplianceData();
@@ -1835,7 +1807,7 @@ class XDReportManager
 
         $base_path = xd_utilities\getConfiguration('reporting', 'base_path');
 
-        $report_format = ($export_format != NULL) ? $export_format : $this->getReportFormat($report_id);
+        $report_format = ($export_format != null) ? $export_format : $this->getReportFormat($report_id);
 
         $report_font = $this->getReportFont($report_id);
 
@@ -2104,8 +2076,7 @@ class XDReportManager
 
         try {
             $mail->send();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 
@@ -2205,4 +2176,3 @@ class XDReportManager
         return new $templateClass($user, $r);
     }
 }
-

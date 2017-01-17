@@ -428,7 +428,6 @@ class Shredder
                 try {
                     $this->shredLine($line);
                 } catch (PDOException $e) {
-
                     // Ignore duplicate key errors.
                     if ($e->getCode() == 23000) {
                         $msg = 'Skipping duplicate data: ' . $e->getMessage();
@@ -825,8 +824,7 @@ class Shredder
             $errorMessages[] = 'Job end time is 0.';
         }
 
-        if (
-            $startTime !== null
+        if ($startTime !== null
             && $endTime !== null
             && $startTime > $endTime
         ) {
@@ -859,9 +857,15 @@ class Shredder
         // Must have at least two of the three values to determine the
         // third.
         $invalidCount = 0;
-        if ($startTime == 0)    { $invalidCount++; }
-        if ($endTime   == 0)    { $invalidCount++; }
-        if ($walltime === null) { $invalidCount++; }
+        if ($startTime == 0) {
+            $invalidCount++;
+        }
+        if ($endTime   == 0) {
+            $invalidCount++;
+        }
+        if ($walltime === null) {
+            $invalidCount++;
+        }
 
         if ($invalidCount > 1) {
             $this->logger->err(array(
@@ -876,7 +880,9 @@ class Shredder
 
         if ($walltime === null) {
             $walltime = $endTime - $startTime;
-            if ($walltime < 0) { $walltime = 0; }
+            if ($walltime < 0) {
+                $walltime = 0;
+            }
             $this->logger->debug("Setting wall time to $walltime");
         }
 
@@ -891,7 +897,6 @@ class Shredder
         }
 
         if ($startTime > $endTime) {
-
             // Assume the end time is correct.
             $startTime = $endTime - $walltime;
             $this->logger->debug("Setting start time to $startTime");
@@ -1054,4 +1059,3 @@ class Shredder
         throw new Exception("No config found for '$name' in '$file'");
     }
 }
-

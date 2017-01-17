@@ -66,9 +66,9 @@ class Timeseries extends \DataWarehouse\Query\Query
     }
 
     public function getQueryString(
-        $limit = NULL,
-        $offset = NULL,
-        $extraHavingClause = NULL
+        $limit = null,
+        $offset = null,
+        $extraHavingClause = null
     ) {
         $wheres = $this->getWhereConditions();
         $groups = $this->getGroups();
@@ -92,7 +92,7 @@ class Timeseries extends \DataWarehouse\Query\Query
             $data_query .= " group by \n" . implode(",\n", $select_group_by);
         }
 
-        if ($extraHavingClause != NULL) {
+        if ($extraHavingClause != null) {
             $data_query .= " having " . $extraHavingClause . "\n";
         }
 
@@ -100,7 +100,7 @@ class Timeseries extends \DataWarehouse\Query\Query
             $data_query .= " order by \n" . implode(",\n", $select_order_by);
         }
 
-        if ($limit !== NULL && $offset !== NULL) {
+        if ($limit !== null && $offset !== null) {
             $data_query .= " limit $limit offset $offset";
         }
 
@@ -145,8 +145,7 @@ class Timeseries extends \DataWarehouse\Query\Query
 
             $yAxisIndex = 1;
 
-            while(
-                (
+            while ((
                     $yAxis
                     = isset($chartProperties["Y Axis $yAxisIndex"])
                     ? $chartProperties["Y Axis $yAxisIndex"]
@@ -165,8 +164,7 @@ class Timeseries extends \DataWarehouse\Query\Query
             $this->clearOrders();
 
             foreach ($sortInfo as $sort) {
-                if (
-                       $sort['column_name'] == 'day'
+                if ($sort['column_name'] == 'day'
                     || $sort['column_name'] == 'month'
                     || $sort['column_name'] == 'quarter'
                     || $sort['column_name'] == 'year'
@@ -202,8 +200,7 @@ class Timeseries extends \DataWarehouse\Query\Query
             $this->clearOrders();
 
             foreach ($sortInfo as $sort) {
-                if (
-                       $sort['column_name'] == 'day'
+                if ($sort['column_name'] == 'day'
                     || $sort['column_name'] == 'month'
                     || $sort['column_name'] == 'quarter'
                 ) {
@@ -393,7 +390,6 @@ class Timeseries extends \DataWarehouse\Query\Query
 
             $sorted_group_to_id[$gi['name']]          = $group_to_id[$gi['name']];
             $sorted_group_to_short_label[$gi['name']] = $group_to_short_label[$gi['name']];
-
         }
 
         $data_by_group['series'] = $sorted_group_to_id ;
@@ -403,7 +399,7 @@ class Timeseries extends \DataWarehouse\Query\Query
         $statement->closeCursor();
         $statement->execute();
 
-        while($result = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
+        while ($result = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
             $data_by_group[$result['name']][$period_id_lookup[$result["{$this->_aggregation_unit}_id"]]] = $result[$stat];
 
             // running_job_count will never be zero, but just in case

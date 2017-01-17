@@ -15,12 +15,12 @@ class UserStorage
         $userProfile = $this->_user->getProfile();
         $storage = $userProfile->fetchValue($this->_container);
 
-        if($storage === null ) {
+        if ($storage === null) {
             return array();
         }
 
         $output = array();
-        foreach($storage['data'] as $value) {
+        foreach ($storage['data'] as $value) {
             $output[] = $value;
         }
         return $output;
@@ -31,10 +31,10 @@ class UserStorage
         $userProfile = $this->_user->getProfile();
         $storage = $userProfile->fetchValue($this->_container);
 
-        if($storage === null ) {
+        if ($storage === null) {
             return null;
         }
-        if(!isset($storage['data'][$id])) {
+        if (!isset($storage['data'][$id])) {
             return null;
         }
         return $storage['data'][$id];
@@ -46,7 +46,7 @@ class UserStorage
         $userProfile = $this->_user->getProfile();
         $storage = $userProfile->fetchValue($this->_container);
 
-        if($storage === null) {
+        if ($storage === null) {
             $storage = array( "maxid" => -1, "data" => array() );
         }
 
@@ -55,7 +55,7 @@ class UserStorage
 
         $storage['data'][ "$newid" ] = $data;
 
-        if( count($storage['data']) > UserStorage::MAX_RECORDS ) {
+        if (count($storage['data']) > UserStorage::MAX_RECORDS) {
             return null;
         }
         $userProfile->setValue($this->_container, $storage);
@@ -67,7 +67,7 @@ class UserStorage
     private function _getnewid(&$storage)
     {
         $newid = ($storage['maxid'] + 1) % PHP_INT_MAX;
-        while(isset($storage['data'][$newid])) {
+        while (isset($storage['data'][$newid])) {
             $newid = ($newid + 1) % PHP_INT_MAX;
         }
         $storage['maxid'] = $newid;
@@ -79,15 +79,15 @@ class UserStorage
         $userProfile = $this->_user->getProfile();
         $storage = $userProfile->fetchValue($this->_container);
 
-        if($storage === null) {
+        if ($storage === null) {
             $storage = array( "maxid" => $id, "data" => array() );
         }
         $data['recordid'] = $id;
 
         $storage['data'][ $id ] = $data;
-        $storage['maxid'] = max($id, $storage['maxid'] );
+        $storage['maxid'] = max($id, $storage['maxid']);
 
-        if( count($storage['data']) > UserStorage::MAX_RECORDS ) {
+        if (count($storage['data']) > UserStorage::MAX_RECORDS) {
             return null;
         }
         $userProfile->setValue($this->_container, $storage);
@@ -110,15 +110,15 @@ class UserStorage
         $userProfile = $this->_user->getProfile();
         $storage = $userProfile->fetchValue($this->_container);
 
-        if($storage === null) {
+        if ($storage === null) {
             return 0;
         }
         unset($storage['data']["$id"]);
         $count = count($storage['data']);
-        if( $count == 0 ) {
+        if ($count == 0) {
             $storage['maxid'] = -1;
-        } else if ( $id == $storage['maxid'] ) {
-            $storage['maxid'] = max( array_keys( $storage['data'] ) );
+        } elseif ($id == $storage['maxid']) {
+            $storage['maxid'] = max(array_keys($storage['data']));
         }
 
         $userProfile->setValue($this->_container, $storage);
@@ -127,5 +127,3 @@ class UserStorage
         return $count;
     }
 }
-
-?>

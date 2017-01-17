@@ -225,14 +225,16 @@ function power_cube($arr, $minLength = 1)
     $pp = power_set($arr, $minLength);
 
     foreach ($pp as $key => $value) {
-        if (count($value) <= 0) { continue; }
+        if (count($value) <= 0) {
+            continue;
+        }
         $pp_copy = $pp;
         unset($pp_copy[$key]);
 
-        $value_string = implode(",",$value);
+        $value_string = implode(",", $value);
 
         foreach ($pp_copy as $pp_copy_el) {
-            $el_value = implode(",",$pp_copy_el);
+            $el_value = implode(",", $pp_copy_el);
             if (string_begins_with($el_value, $value_string)) {
                 unset($pp[$key]);
                 break;
@@ -308,7 +310,7 @@ function power_perms($arr, $minLength = 1)
 
     foreach ($power_set as $set) {
         $perms = perms($set);
-        $result = array_merge($result,$perms);
+        $result = array_merge($result, $perms);
     }
 
     return $result;
@@ -325,10 +327,12 @@ function power_set($in, $minLength = 1)
     $return = array();
 
     for ($i = 0; $i < $members; $i++) {
-        $b = sprintf("%0".$count."b",$i);
+        $b = sprintf("%0".$count."b", $i);
         $out = array();
         for ($j = 0; $j < $count; $j++) {
-            if ($b{$j} == '1') { $out[] = $in[$j]; }
+            if ($b{$j} == '1') {
+                $out[] = $in[$j];
+            }
         }
         if (count($out) >= $minLength) {
             $return[] = $out;
@@ -351,7 +355,9 @@ function factorial($int)
         return 1;
     }
 
-    for ($f = 2; $int-1 > 1; $f *= $int--);
+    for ($f = 2; $int-1 > 1;
+    $f *= $int--) {
+    }
 
     return $f;
 }
@@ -419,7 +425,8 @@ function array_delete_by_key(&$array, $delete_key, $use_old_keys = false)
  * @return mixed       The value for the key or the given default if the
  *                     key was not present.
  */
-function array_extract(array &$a, $key, $default = null) {
+function array_extract(array &$a, $key, $default = null)
+{
     $value = array_get($a, $key, $default);
     unset($a[$key]);
     return $value;
@@ -435,7 +442,8 @@ function array_extract(array &$a, $key, $default = null) {
  * @return mixed       The value for the key or the given default if the
  *                     key was not present.
  */
-function array_get(array $a, $key, $default = null) {
+function array_get(array $a, $key, $default = null)
+{
     if (!array_key_exists($key, $a)) {
         return $default;
     }
@@ -454,7 +462,8 @@ function array_get(array $a, $key, $default = null) {
  * @return mixed       The old value for the key or the given default if the
  *                     key was not present.
  */
-function array_replace_key_value(array &$a, $key, $newValue, $default = null) {
+function array_replace_key_value(array &$a, $key, $newValue, $default = null)
+{
     $oldValue = array_get($a, $key, $default);
     $a[$key] = $newValue;
     return $oldValue;
@@ -493,8 +502,8 @@ function getParameterIn($param, $haystack)
  */
 function generateError($dom, $nodeRoot, $code, $message)
 {
-    \xd_domdocument\createElement($dom, $nodeRoot, "code",  $code);
-    \xd_domdocument\createElement($dom, $nodeRoot, "reason",  $message);
+    \xd_domdocument\createElement($dom, $nodeRoot, "code", $code);
+    \xd_domdocument\createElement($dom, $nodeRoot, "reason", $message);
 
     return true;
 }
@@ -507,7 +516,7 @@ function printAndDelete($message)
     $message_length = strlen($message);
 
     print $message;
-    print str_repeat(chr(8) , $message_length);
+    print str_repeat(chr(8), $message_length);
 
     return $message_length;
 }
@@ -537,11 +546,11 @@ function checkForCenterLogo($apply_css = true)
             $use_center_logo = true;
             $img_data = base64_encode(file_get_contents($logo));
         }
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
     }
 
     if ($use_center_logo == true && $apply_css == true) {
-print <<<EOF
+        print <<<EOF
    <style type="text/css">
       .custom_center_logo {
          height: 25px;

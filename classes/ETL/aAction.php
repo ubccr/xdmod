@@ -77,22 +77,24 @@ abstract class aAction extends aEtlObject
         $this->etlConfig = $etlConfig;
         $this->logger->info("Create action " . $this);
 
-        if ( null !== $this->options->definition_file ) {
-
+        if (null !== $this->options->definition_file) {
             // Set up the path to the definition file for this action
 
-            $this->definitionFile = $this->options->applyBasePath("paths->definition_file_dir",
-                                                                  $this->options->definition_file);
+            $this->definitionFile = $this->options->applyBasePath(
+                "paths->definition_file_dir",
+                $this->options->definition_file
+            );
 
             // Parse the action definition so it is available before initialize() is called. If it
             // has already been set by a child constructor leave it alone.
 
-            if ( null === $this->parsedDefinitionFile ) {
+            if (null === $this->parsedDefinitionFile) {
                 $this->logger->info("Parse definition file: '" . $this->definitionFile . "'");
                 $this->parsedDefinitionFile = new Configuration(
                     $this->definitionFile,
                     $this->options->paths->base_dir,
-                    $logger);
+                    $logger
+                );
                 $this->parsedDefinitionFile->parse();
                 $this->parsedDefinitionFile->cleanup();
             }
@@ -105,7 +107,7 @@ abstract class aAction extends aEtlObject
 
         try {
             $section = \xd_utilities\getConfigurationSection("general");
-            if ( array_key_exists("dw_etl_log_recipient", $section) ) {
+            if (array_key_exists("dw_etl_log_recipient", $section)) {
                 $this->variableMap['DW_ETL_LOG_RECIPIENT'] = $section['dw_etl_log_recipient'];
             } else {
                 $msg = "XDMoD configuration option general.dw_etl_log_recipient is not set";
@@ -115,7 +117,6 @@ abstract class aAction extends aEtlObject
             $msg = "'general' section not defined in XDMoD configuration";
             $this->logAndThrowException($msg);
         }
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -125,7 +126,7 @@ abstract class aAction extends aEtlObject
 
     public function verify()
     {
-        if ( null === $this->etlOverseerOptions ) {
+        if (null === $this->etlOverseerOptions) {
             $msg = "ETL Overseer options not set";
             $this->logAndThrowException($msg);
         }
@@ -133,7 +134,6 @@ abstract class aAction extends aEtlObject
         parent::verify();
 
         return true;
-
     }  // verify()
 
     /* ------------------------------------------------------------------------------------------
@@ -182,15 +182,13 @@ abstract class aAction extends aEtlObject
     {
         $this->overseerRestrictionOverrides = array();
 
-        if ( isset($this->options->include_only_resource_codes) && is_array($this->options->include_only_resource_codes) ) {
+        if (isset($this->options->include_only_resource_codes) && is_array($this->options->include_only_resource_codes)) {
             $this->overseerRestrictionOverrides[EtlOverseerOptions::RESTRICT_INCLUDE_ONLY_RESOURCES] = $this->options->include_only_resource_codes;
-
         }
 
-        if ( isset($this->options->exclude_resource_codes) && is_array($this->options->exclude_resource_codes) ) {
+        if (isset($this->options->exclude_resource_codes) && is_array($this->options->exclude_resource_codes)) {
             $this->overseerRestrictionOverrides[EtlOverseerOptions::RESTRICT_EXCLUDE_RESOURCES] = $this->options->exclude_resource_codes;
         }
-
     }  // setOverseerRestrictionOverrides()
 
     /* ------------------------------------------------------------------------------------------

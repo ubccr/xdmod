@@ -23,80 +23,62 @@
 
    // --------------------------------------
       
-   switch($operation) {
-   
-      case "set_variable":
-        
-         if (!in_array($variable, $allowed_names)) {
-         
+switch ($operation) {
+    case "set_variable":
+        if (!in_array($variable, $allowed_names)) {
             $response['success'] = false;
-            $response['message'] = "invalid use of this controller.  write access denied";   
+            $response['message'] = "invalid use of this controller.  write access denied";
    
-            echo json_encode($response);         
+            echo json_encode($response);
             
             exit;
-            
-         }
+        }
 
-         assert_variable_set('value');
+        assert_variable_set('value');
                   
-         $_SESSION[$variable] = $_POST['value'];
+        $_SESSION[$variable] = $_POST['value'];
          
-         $response['success'] = true;
+        $response['success'] = true;
          
-         break;
+        break;
    
-      case "get_variable":
-
-         if (!in_array($variable, $allowed_names)) {
-         
+    case "get_variable":
+        if (!in_array($variable, $allowed_names)) {
             $response['success'] = false;
-            $response['message'] = "invalid use of this controller.  read access denied";   
+            $response['message'] = "invalid use of this controller.  read access denied";
    
-            echo json_encode($response);         
+            echo json_encode($response);
             
             exit;
-            
-         }
+        }
                
-         if (isset($_SESSION[$variable])) {
- 
+        if (isset($_SESSION[$variable])) {
             $response['success'] = true;
-            $response[$variable] = $_SESSION[$variable];         
-            
-         }
-         else {
-         
+            $response[$variable] = $_SESSION[$variable];
+        } else {
             $response['success'] = false;
-            $response['message'] = 'variable not set';           
-         
-         }
+            $response['message'] = 'variable not set';
+        }
       
-         break;
+        break;
          
-      default:
-      
-         $response['success'] = false;
-         $response['message'] = "unknown operation $operation";   
-         
-   }//switch
+    default:
+        $response['success'] = false;
+        $response['message'] = "unknown operation $operation";
+}//switch
       
    echo json_encode($response);
    
    // ========================================================
    
-   function assert_variable_set($var) {
+function assert_variable_set($var)
+{
  
-      if (!isset($_POST[$var])) {
+    if (!isset($_POST[$var])) {
+        $response['success'] = false;
+        $response['message'] = "$var not specified";
    
-         $response['success'] = false;
-         $response['message'] = "$var not specified";   
-   
-         echo json_encode($response);
-         exit;
-   
-      }//if
-        
-   }//assert_variable_set
-   
-?>
+        echo json_encode($response);
+        exit;
+    }//if
+}//assert_variable_set

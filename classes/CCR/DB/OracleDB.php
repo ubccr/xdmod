@@ -10,13 +10,12 @@ namespace CCR\DB;
 
 class OracleDB extends PDODB
 {
-	function __construct($db_host,$db_port,$db_name,$db_username,$db_password)
-	{
-		parent::__construct("oci",$db_host,$db_port,$db_name,$db_username,$db_password, "oci:dbname=$db_name");
-	}
-	function __destruct()
-	{
-		parent::__destruct();
+    function __construct($db_host, $db_port, $db_name, $db_username, $db_password)
+    {
+        parent::__construct("oci", $db_host, $db_port, $db_name, $db_username, $db_password, "oci:dbname=$db_name");
+    }
+    function __destruct()
+    {
+        parent::__destruct();
     }
 }
-?>

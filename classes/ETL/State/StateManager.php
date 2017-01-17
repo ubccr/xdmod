@@ -50,7 +50,7 @@ class StateManager
 
     private static function logAndThrowException($msg, Log $logger = null, $logLevel = PEAR_LOG_ERR)
     {
-        if ( null !== $logger ) {
+        if (null !== $logger) {
             $logger->log($msg, $logLevel);
         }
         throw new Exception($msg);
@@ -81,9 +81,10 @@ class StateManager
         iRdbmsEndpoint $endpoint,
         Log $logger = null,
         $key = null,
-        stdClass $options = null)
-    {
-        if ( empty($actionName) || ! is_string($actionName) ) {
+        stdClass $options = null
+    ) {
+    
+        if (empty($actionName) || ! is_string($actionName)) {
             $msg = "Action name must be a non-empty string";
             self::logAndThrowException($msg, $logger);
         }
@@ -92,11 +93,11 @@ class StateManager
 
         $type = self::INTER_ACTION;
 
-        if ( null === $key ) {
+        if (null === $key) {
             // If this string changes, the key for intra-action state objects will also change
             $key = self::generateKey($actionName);
             $type = self::INTRA_ACTION;
-        } else if ( empty($key) || ! is_string($key) ) {
+        } elseif (empty($key) || ! is_string($key)) {
             $msg = "Key must be a non-empty string";
             self::logAndThrowException($msg, $logger);
         }
@@ -106,9 +107,9 @@ class StateManager
 
         try {
             $stateObj = self::load($key, $endpoint, $logger);
-            if ( false === $stateObj ) {
+            if (false === $stateObj) {
                 $stateObj = new ActionState($key, $actionName, $type, $options, $logger);
-                if ( null !== $logger) {
+                if (null !== $logger) {
                     $logger->info("Created new state object '$key'");
                 }
             }
@@ -118,7 +119,6 @@ class StateManager
         }
 
         return $stateObj;
-
     }  // get()
 
     /* ------------------------------------------------------------------------------------------
@@ -137,12 +137,12 @@ class StateManager
 
     public static function load($key, iRdbmsEndpoint $endpoint, Log $logger = null)
     {
-        if ( empty($key) || ! is_string($key) ) {
+        if (empty($key) || ! is_string($key)) {
             $msg = "Key must be a non-empty string";
             self::logAndThrowException($msg, $logger);
         }
 
-        if ( strlen($key) > self::MAX_STATE_KEY_LEN ) {
+        if (strlen($key) > self::MAX_STATE_KEY_LEN) {
             $msg = "Object state key cannot exceed " . self::MAX_STATE_KEY_LEN. " bytes";
             self::logAndThrowException($msg, $logger);
         }
@@ -153,7 +153,7 @@ state_type, creating_action, modifying_action, creation_time, modified_time, sta
 FROM $tableName
 WHERE state_key = ?";
 
-        if ( null !== $logger ) {
+        if (null !== $logger) {
             $logger->info("Load action state object with key '$key'");
             $logger->debug("$sql");
         }
@@ -166,13 +166,13 @@ WHERE state_key = ?";
             $stmt->bindColumn('state_size_bytes', $stateBytes);
             $stmt->bindColumn('state_object', $serializedObj, PDO::PARAM_LOB);
             $stmt->fetch(PDO::FETCH_BOUND);
-        } catch ( PDOException $e ) {
+        } catch (PDOException $e) {
             $msg = "Error loading state for key '$key': " . $e->getMessage();
             self::logAndThrowException($msg, $logger);
         }
 
-        if ( 0 == $stmt->rowCount() ) {
-            if ( null !== $logger ) {
+        if (0 == $stmt->rowCount()) {
+            if (null !== $logger) {
                 $msg = "No state object found with key '$key'";
                 $logger->warning($msg);
             }
@@ -194,7 +194,6 @@ WHERE state_key = ?";
         $stateObj->getMetadata()->state_size_bytes = $stateBytes;
 
         return $stateObj;
-        
     }  // load()
 
     /* ------------------------------------------------------------------------------------------
@@ -217,16 +216,16 @@ WHERE state_key = ?";
 
         // If we have an object extract the key, otherwise assume the identifier is a key string
 
-        if ( $identifier instanceof iActionState) {
+        if ($identifier instanceof iActionState) {
             $key = $identifier->getKey();
-        } else if ( ! empty($identifier) && is_string($identifier) ) {
+        } elseif (! empty($identifier) && is_string($identifier)) {
             $key = $identifier;
         } else {
             $msg = "Identifier must be an object implementing iActionState or a non-empty key string";
             self::logAndThrowException($msg, $logger);
         }
         
-        if ( strlen($key) > self::MAX_STATE_KEY_LEN ) {
+        if (strlen($key) > self::MAX_STATE_KEY_LEN) {
             $msg = "Object state key cannot exceed " . self::MAX_STATE_KEY_LEN. " bytes";
             self::logAndThrowException($msg, $logger);
         }
@@ -234,20 +233,20 @@ WHERE state_key = ?";
         $tableName = $endpoint->getSchema(true) . "." . $endpoint->quoteSystemIdentifier(self::STATE_TABLE);
         $sql = "DELETE FROM $tableName WHERE state_key = ?";
 
-        if ( null !== $logger ) {
+        if (null !== $logger) {
             $logger->info("Delete action state object with key '$key'");
             $logger->debug("$sql");
         }
 
         try {
             $rowsAffected = $endpoint->getHandle()->execute($sql, array($key));
-        } catch ( PDOException $e ) {
+        } catch (PDOException $e) {
             $msg = "Error deleting state for key '$key': " . $e->getMessage();
             self::logAndThrowException($msg, $logger);
         }
 
-        if ( 0 == $rowsAffected ) {
-            if ( null !== $logger ) {
+        if (0 == $rowsAffected) {
+            if (null !== $logger) {
                 $msg = "No state object found with with key '$key'";
                 $logger->warning($msg);
             }
@@ -255,7 +254,6 @@ WHERE state_key = ?";
         }
 
         return true;
-
     }  // delete()
 
     /* ------------------------------------------------------------------------------------------
@@ -276,12 +274,12 @@ WHERE state_key = ?";
     public static function save(iActionState $stateObj, $actionName, iRdbmsEndpoint $endpoint, Log $logger = null)
     {
 
-        if ( empty($actionName) || ! is_string($actionName) ) {
+        if (empty($actionName) || ! is_string($actionName)) {
             $msg = "Action name must be a non-empty string";
             self::logAndThrowException($msg, $logger);
         }
 
-        if ( strlen($stateObj->getKey()) > self::MAX_STATE_KEY_LEN ) {
+        if (strlen($stateObj->getKey()) > self::MAX_STATE_KEY_LEN) {
             $msg = "Object state key cannot exceed " . self::MAX_STATE_KEY_LEN. " bytes";
             self::logAndThrowException($msg, $logger);
         }
@@ -300,7 +298,7 @@ ON DUPLICATE KEY UPDATE
         $key = $stateObj->getKey();
         $type = $stateObj->getType();
 
-        if ( null !== $logger ) {
+        if (null !== $logger) {
             $logger->info("Save action state object with key '$key' and type '$type'");
             $logger->debug("$sql");
         }
@@ -321,13 +319,12 @@ ON DUPLICATE KEY UPDATE
             $stmt->bindParam(':object_size_upd', $size, PDO::PARAM_INT);
             $stmt->bindParam(':object_upd', $serialized, PDO::PARAM_LOB);
             $stmt->execute();
-        } catch ( PDOException $e ) {
+        } catch (PDOException $e) {
             $msg = "Error saving state object for action '$actionName' with key '{$this->key}'";
             self::logAndThrowException($msg, $logger);
         }
 
         return true;
-
     }  // save()
 
     /* ------------------------------------------------------------------------------------------
@@ -350,13 +347,13 @@ ON DUPLICATE KEY UPDATE
 state_key, state_type, creating_action, creation_time, modifying_action, modified_time, state_size_bytes
 FROM $tableName";
 
-        if ( null !== $logger ) {
+        if (null !== $logger) {
             $logger->debug("$sql");
         }
 
         try {
             $result = $endpoint->getHandle()->query($sql);
-        } catch ( PDOException $e ) {
+        } catch (PDOException $e) {
             $msg = "Error listing state objects: " . $e->getMessage();
             self::logAndThrowException($msg, $logger);
         }
@@ -381,12 +378,11 @@ FROM $tableName";
 
     public static function generateKey($actionName, $type = self::INTRA_ACTION)
     {
-        if ( self::INTRA_ACTION == $type ) {
+        if (self::INTRA_ACTION == $type) {
             // If this string changes, the key for intra-action state objects will also change
             return sha1('/Xuu$2tTjxW9f$P~@s#:' . $actionName);
         } else {
             return $actionName;
         }
     }  // generateKey()
-
 }  // class StateManager

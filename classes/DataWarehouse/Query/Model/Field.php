@@ -88,4 +88,3 @@ class Field
         return $this->_def;
     }
 }
-

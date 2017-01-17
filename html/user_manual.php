@@ -1,6 +1,6 @@
 <?php
 
-   /* 
+   /*
       XDMoD User Manual (Entry Point)
    */
    
@@ -11,5 +11,3 @@
    $query_string = (!empty($_SERVER['QUERY_STRING'])) ? '?'.$_SERVER['QUERY_STRING']: '';
    
    header("Location: $user_manual_address$query_string");
-   
-?>

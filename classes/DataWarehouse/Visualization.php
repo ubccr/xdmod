@@ -1,5 +1,6 @@
 <?php
 namespace DataWarehouse;
+
 /*
  * contains utility functions
  * @author: Amin Ghadersohi
@@ -15,24 +16,23 @@ abstract class Visualization
         $r = ($color & 0x00ff0000) >> 16;
         $g = ($color & 0x0000ff00) >> 8;
         $b = $color & 0x000000ff;
-        if ($color > 0xffffff)
+        if ($color > 0xffffff) {
             $a = max(0, min(255, $a + $steps));
+        }
         $r = max(0, min(255, $r + $steps));
         $g = max(0, min(255, $g + $steps));
         $b = max(0, min(255, $b + $steps));
         return ($a << 24) + ($r << 16) + ($g << 8) + $b;
     }
     //http://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/
-    public static function getColors($count = NULL, $palleteIndex = 0, $includeWhite = true)
+    public static function getColors($count = null, $palleteIndex = 0, $includeWhite = true)
     {
         $ret = array();
         $colors = json_decode(COLORS);
         $colors = $colors[$palleteIndex];
-        if ($count == NULL || count($colors) >= $count)
-        {
-            foreach ($colors as $result)
-            {
-                if($result[0] == 'FFFFFF' && !$includeWhite) {
+        if ($count == null || count($colors) >= $count) {
+            foreach ($colors as $result) {
+                if ($result[0] == 'FFFFFF' && !$includeWhite) {
                     continue;
                 }
                 $ret[] = hexdec($result[0]);
@@ -40,12 +40,10 @@ abstract class Visualization
         }
         $ret_count = count($ret);
         srand($count);
-        if ($count != NULL && $ret_count < $count)
-        {
+        if ($count != null && $ret_count < $count) {
             $value = 15;
             $increment = 310.0 / ($count - $ret_count);
-            for ($i = $ret_count; $i < $count; $i++)
-            {
+            for ($i = $ret_count; $i < $count; $i++) {
                 $value = $value + $increment;
                 $rgb = self::HSVtoRGB(array(
                     $value / 360.0,
@@ -74,8 +72,7 @@ abstract class Visualization
         $N = $V * (1 - $S * $F);
         $K = $V * (1 - $S * (1 - $F));
         //4
-        switch ($I)
-        {
+        switch ($I) {
             case 0:
                 list($R, $G, $B) = array(
                     $V,

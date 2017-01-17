@@ -31,7 +31,6 @@ class Authorization
         $validRequirements = isset($requirements) && is_array($requirements) && count($requirements) > 0;
 
         if ($validUser && $validRequirements) {
-
             $requirements = self::_preProcessRequirements($user, $requirements);
 
             $roles = $user->getRoles();
@@ -40,15 +39,17 @@ class Authorization
 
             if (in_array(SAB_MEMBER, $requirements) && !in_array('sab', $roles)) {
                 $result[self::_MESSAGE] = self::_DEFAULT_MESSAGE . "\n[ Not a SAB Member ]";
-            } else if (in_array(STATUS_MANAGER_ROLE, $requirements) && !$isManager) {
+            } elseif (in_array(STATUS_MANAGER_ROLE, $requirements) && !$isManager) {
                 $result[self::_MESSAGE] = self::_DEFAULT_MESSAGE . "\n[ Not a Manager ]";
-            } else if (in_array(STATUS_CENTER_DIRECTOR_ROLE, $requirements) && $activeRole !== ROLE_ID_CENTER_DIRECTOR) {
+            } elseif (in_array(STATUS_CENTER_DIRECTOR_ROLE, $requirements) && $activeRole !== ROLE_ID_CENTER_DIRECTOR) {
                 $result[self::_MESSAGE] = self::_DEFAULT_MESSAGE . "\n [ Not a Center Director ]";
             } else {
                 if (!$blacklist) {
                     $found = 0;
                     foreach ($requirements as $requirement) {
-                        if (in_array($requirement, $roles)) $found += 1;
+                        if (in_array($requirement, $roles)) {
+                            $found += 1;
+                        }
                     }
                     if ($found >= count($requirements)) {
                         $result[self::_SUCCESS] = true;
@@ -58,8 +59,10 @@ class Authorization
                     }
                 } else {
                     $found = 0;
-                    foreach($requirements as $requirement) {
-                        if (in_array($requirement, $roles)) $found += 1;
+                    foreach ($requirements as $requirement) {
+                        if (in_array($requirement, $roles)) {
+                            $found += 1;
+                        }
                     }
                     if ($found === 0) {
                         $result[self::_SUCCESS] = true;
@@ -68,7 +71,6 @@ class Authorization
                         $result[self::_MESSAGE] .= " [ Not Authorized ]";
                     }
                 }
-
             }
         }
 
@@ -92,6 +94,4 @@ class Authorization
 
         return $requirements;
     }
-
-
 }

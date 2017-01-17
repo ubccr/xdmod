@@ -80,16 +80,15 @@ abstract class aOptions extends \stdClass
 
     public function __construct(array $options = null)
     {
-        if ( null === $options ) {
+        if (null === $options) {
             return;
         }
 
-        foreach ( $options as $key => $value ) {
+        foreach ($options as $key => $value) {
             // Don't set using the $options array directly, be sure to use __set() to allow extending
             // classes to perform input verificaiton
             $this->$key = $value;
         }
-
     } //  __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -104,15 +103,15 @@ abstract class aOptions extends \stdClass
 
         // Verify requred options
 
-        foreach ( $this->requiredOptions as $opt ) {
-            if ( ! array_key_exists($opt, $this->options)
+        foreach ($this->requiredOptions as $opt) {
+            if (! array_key_exists($opt, $this->options)
                  || null === $this->options[$opt]
                  || "" === $this->options[$opt] ) {
                 $missingOptions[] = $opt;
             }
         }
 
-        if ( 0 != count($missingOptions) ) {
+        if (0 != count($missingOptions)) {
             $msg = get_class($this) . ": Required options not provided: " . implode(", ", $missingOptions);
             throw new Exception($msg);
         }
@@ -136,14 +135,13 @@ abstract class aOptions extends \stdClass
     protected function verifyProperty($property, $value)
     {
 
-        switch ( $property ) {
-
+        switch ($property) {
             case 'enabled':
             case 'truncate_destination':
             case 'stop_on_exception':
                 $origValue = $value;
                 $value = Utilities::filterBooleanVar($value);
-                if ( null === $value ) {
+                if (null === $value) {
                     $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
                     throw new Exception($msg);
                 }
@@ -151,14 +149,14 @@ abstract class aOptions extends \stdClass
 
             case 'name':
             case 'definition_file':
-                if ( ! is_string($value) ) {
+                if (! is_string($value)) {
                     $msg = get_class($this) . ": '$property' must be a string (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
                 break;
 
             case 'paths':
-                if ( ! is_object($value) ) {
+                if (! is_object($value)) {
                     get_class($this) . ": '$property' must be an object (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
@@ -169,7 +167,6 @@ abstract class aOptions extends \stdClass
         }
 
         return $value;
-
     }  // verifyProperty()
 
     /* ------------------------------------------------------------------------------------------
@@ -186,13 +183,13 @@ abstract class aOptions extends \stdClass
 
     protected function verifyRequiredProperty($property, $value)
     {
-        if ( ! in_array($property, $this->requiredOptions) ) {
+        if (! in_array($property, $this->requiredOptions)) {
             return;
         }
 
         // Required parameters are not allowed to be empty.
 
-        if ( null === $value || "" === $value ) {
+        if (null === $value || "" === $value) {
             $msg = get_class($this) . ": '$property' is a required parameter and cannot be empty or NULL";
             throw new Exception($msg);
         }
@@ -225,7 +222,7 @@ abstract class aOptions extends \stdClass
 
     public function __get($property)
     {
-        if ( array_key_exists($property, $this->options) ) {
+        if (array_key_exists($property, $this->options)) {
             return $this->options[$property];
         }
 
@@ -265,14 +262,14 @@ abstract class aOptions extends \stdClass
 
     public function applyBasePath($basePathKey, $path, $keySeparator = '->')
     {
-        if ( empty($basePathKey) ) {
+        if (empty($basePathKey)) {
             $msg = get_class($this) . ": base path key cannot be empty";
             throw new Exception($msg);
         }
 
         // Do not modify fully qualified paths
 
-        if ( 0 === strpos($path, "/")) {
+        if (0 === strpos($path, "/")) {
             return $path;
         }
 
@@ -281,21 +278,20 @@ abstract class aOptions extends \stdClass
 
         $parts = explode($keySeparator, $basePathKey);
 
-        if ( 1 == count($parts) ) {
+        if (1 == count($parts)) {
             // If there is only 1 part (no period in the key name) prepend the value of that key
 
-            if ( null === $this->$basePathKey ) {
+            if (null === $this->$basePathKey) {
                 return $path;
             } else {
                 return $this->$basePathKey . "/$path";
             }
-
         } else {
             // If this is a multi-level key ensure that the top level key exists first by comparing to
             // NULL ( from $this->__get() ). If it does exist and the child is set, prepend the path.
 
             $topLevelKey = $parts[0];
-            if ( null === $this->$topLevelKey ) {
+            if (null === $this->$topLevelKey) {
                 return $path;
             }
 
@@ -304,8 +300,6 @@ abstract class aOptions extends \stdClass
             eval($evalStr);
 
             return ( null != $value ? $value . "/$path" : $path);
-
         } // else ( 1 == count($parts) )
-
     }  // applyBasePath()
 }  // class aOptions

@@ -17,8 +17,7 @@ use ETL\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use \Log;
 
-class DummyIngestor
-implements iAction
+class DummyIngestor implements iAction
 {
     protected $options;
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)

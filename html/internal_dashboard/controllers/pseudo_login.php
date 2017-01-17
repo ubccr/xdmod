@@ -9,36 +9,34 @@
 
    // ======================================================================
    
-   function getAbsoluteURL() {
+function getAbsoluteURL()
+{
    
-      $protocol = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
+    $protocol = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
       
-      return $protocol.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-   
-   }//getAbsoluteURL
+    return $protocol.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+}//getAbsoluteURL
    
    // ======================================================================
       
-   if (isset($_REQUEST['uid'])) {
+if (isset($_REQUEST['uid'])) {
+    $user_to_login_as = $_REQUEST['uid'];
 
-      $user_to_login_as = $_REQUEST['uid'];
+    $user = XDUser::getUserById($user_to_login_as);
 
-      $user = XDUser::getUserById($user_to_login_as);
+    if (!XDUser::isAuthenticated($user)) {
+        print "Unknown user id $user_to_login_as";
+        exit;
+    }
 
-      if (!XDUser::isAuthenticated($user)) {
-         print "Unknown user id $user_to_login_as";
-         exit;
-      }
+    XDSessionManager::recordLogin($user);
 
-      XDSessionManager::recordLogin($user);
-
-      $redirect_url = str_replace('internal_dashboard/controllers/pseudo_login.php', '', getAbsoluteURL());
+    $redirect_url = str_replace('internal_dashboard/controllers/pseudo_login.php', '', getAbsoluteURL());
    
-      header("Location: $redirect_url");
+    header("Location: $redirect_url");
 
-      exit;
-
-   }//if (uid set)
+    exit;
+}//if (uid set)
 
 ?>
 
@@ -61,7 +59,7 @@
 
    <body>
 
-   <?php
+    <?php
 
       $pdo = DB::factory('database');
 
@@ -72,32 +70,28 @@
 
       $rIndex = 0;
 
-      foreach ($result as $r) {
-
-         $bgColor = ($rIndex++ % 2 == 0) ? '#eef' : '#fff';
+    foreach ($result as $r) {
+        $bgColor = ($rIndex++ % 2 == 0) ? '#eef' : '#fff';
          
-         $formal_name = $r['last_name'].', '.$r['first_name'];
-         $username = $r['username'];
+        $formal_name = $r['last_name'].', '.$r['first_name'];
+        $username = $r['username'];
          
-         if (strpos($username, ';') !== false) {
-         
+        if (strpos($username, ';') !== false) {
             list($xsede_username, $dummy) = explode(';', $username);
             $username = $xsede_username." (XSEDE)";
+        }
          
-         }
+        $user_id = $r['id'];
+        $login_link = "<a target=\"_blank\" href=\"?uid=$user_id\">Login as this user</a>";
          
-         $user_id = $r['id'];
-         $login_link = "<a target=\"_blank\" href=\"?uid=$user_id\">Login as this user</a>";
-         
-         print "<tr bgcolor=\"$bgColor\"><td width=200>";
-         print implode('</td><td width=200>', array($formal_name, $username, $login_link));
-         print "</td></tr>\n";
-
-      }//foreach 
+        print "<tr bgcolor=\"$bgColor\"><td width=200>";
+        print implode('</td><td width=200>', array($formal_name, $username, $login_link));
+        print "</td></tr>\n";
+    }//foreach
 
       print "</table>";
 
-   ?>
+    ?>
 
    </body>
 

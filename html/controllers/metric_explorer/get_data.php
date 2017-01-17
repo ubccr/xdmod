@@ -18,10 +18,8 @@ $m = new \DataWarehouse\Access\MetricExplorer($_REQUEST);
 
 $result = $m->get_data($user);
 
-foreach($result['headers'] as $k => $v) {
-    header( $k . ": " . $v);
+foreach ($result['headers'] as $k => $v) {
+    header($k . ": " . $v);
 }
 
 echo $result['results'];
-
-?>

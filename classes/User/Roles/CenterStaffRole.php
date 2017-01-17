@@ -23,30 +23,31 @@ class CenterStaffRole extends CenterDirectorRole
 
     public function getIdentifier($absolute_identifier = false)
     {
-        if ($absolute_identifier == true)
+        if ($absolute_identifier == true) {
             return ROLE_ID_CENTER_STAFF.';'.$this->getActiveCenter();
-        else
+        } else {
             return parent::getIdentifier($absolute_identifier);
-
+        }
     }//getIdentifier
 
     // -----------------------------------------------------------
 
     // configure: Generates the parameters associated with the parent user the role mapped to that user.
 
-    public function configure(\XDUser $user, $simulatedActiveRole = NULL)
+    public function configure(\XDUser $user, $simulatedActiveRole = null)
     {
         parent::configure($user, $simulatedActiveRole);
 
         //  $this->addParameter('person',  $user->getPersonID()); //Don't need this. AG 4/11
-
     }//configure
 
     // -----------------------------------------------------------
 
     public function getActiveCenter()
     {
-        if (!empty($this->_simulated_organization)) return $this->_simulated_organization;
+        if (!empty($this->_simulated_organization)) {
+            return $this->_simulated_organization;
+        }
 
         $pdo = DB::factory('database');
 
@@ -59,13 +60,10 @@ class CenterStaffRole extends CenterDirectorRole
             )
         );
 
-        if (count($centerData) > 0)
+        if (count($centerData) > 0) {
             return $centerData[0]['param_value'];
-        else
+        } else {
             return -1;
-
+        }
     }//getActiveCenter
-
 }//CenterStaffRole
-
-?>

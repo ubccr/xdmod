@@ -52,10 +52,9 @@ class AggregationTable extends Table
 
         $this->setTablePrefix($config->name);
      
-        if ( isset($this->config->query) ) {
+        if (isset($this->config->query)) {
             $this->query = new Query($config->query);
         }
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -72,13 +71,12 @@ class AggregationTable extends Table
 
     public function getName($quote = false)
     {
-        if ( null === $this->aggregationUnit ) {
+        if (null === $this->aggregationUnit) {
             $msg = "Aggregation unit must be set to generate table name";
             $this->logAndThrowException($msg);
         }
 
         return parent::getName($quote);
-    
     }  // getName()
 
     /* ------------------------------------------------------------------------------------------
@@ -105,7 +103,7 @@ class AggregationTable extends Table
 
     public function setTablePrefix($tablePrefix)
     {
-        if ( empty($tablePrefix) ) {
+        if (empty($tablePrefix)) {
             $msg = "Table prefix unit cannot be empty or null";
             $this->logAndThrowException($msg);
         }
@@ -138,7 +136,7 @@ class AggregationTable extends Table
 
     public function setAggregationUnit($aggregationUnit)
     {
-        if ( empty($aggregationUnit) ) {
+        if (empty($aggregationUnit)) {
             $msg = "Aggregation unit cannot be empty or null";
             $this->logAndThrowException($msg);
         }
@@ -179,7 +177,6 @@ class AggregationTable extends Table
         $data->query = $this->query->toJsonObj($succinct, $includeSchema);
     
         return $data;
-
     }  // toJsonObj()
 
     /* ------------------------------------------------------------------------------------------
@@ -219,13 +216,13 @@ class AggregationTable extends Table
         $indexJson = array();
         $triggerJson = array();
 
-        foreach ( $this->columns as $column ) {
+        foreach ($this->columns as $column) {
             $columnJson[] = $column->toJsonObj();
         }
-        foreach ( $this->indexes as $index ) {
+        foreach ($this->indexes as $index) {
             $indexJson[] = $index->toJsonObj();
         }
-        foreach ( $this->triggers as $trigger ) {
+        foreach ($this->triggers as $trigger) {
             $triggerJson[] = $trigger->toJsonObj();
         }
 
@@ -235,9 +232,9 @@ class AggregationTable extends Table
         $newTable = clone $this;
         $newTable->deleteColumns()->deleteIndexes()->deleteTriggers();
 
-        foreach ( $columnJson as $def ) {
-            foreach ( $def as $key => &$value ) {
-                if ( null !== $variableMap ) {
+        foreach ($columnJson as $def) {
+            foreach ($def as $key => &$value) {
+                if (null !== $variableMap) {
                     $value = Utilities::substituteVariables($value, $variableMap);
                 }
             }
@@ -248,12 +245,11 @@ class AggregationTable extends Table
             // warning for the year_id column.
 
             $newTable->addColumn($def, true);
-
         }
 
-        foreach ( $indexJson as $def ) {
-            foreach ( $def as $key => &$value ) {
-                if ( null !== $variableMap ) {
+        foreach ($indexJson as $def) {
+            foreach ($def as $key => &$value) {
+                if (null !== $variableMap) {
                     $value = Utilities::substituteVariables($value, $variableMap);
                 }
             }
@@ -261,9 +257,9 @@ class AggregationTable extends Table
             $newTable->addIndex($def);
         }
 
-        foreach ( $triggerJson as $def ) {
-            foreach ( $def as $key => &$value ) {
-                if ( null !== $variableMap ) {
+        foreach ($triggerJson as $def) {
+            foreach ($def as $key => &$value) {
+                if (null !== $variableMap) {
                     $value = Utilities::substituteVariables($value, $variableMap);
                 }
             }
@@ -272,7 +268,5 @@ class AggregationTable extends Table
         }
 
         return $newTable;
-
     }  // copyAndApplyVariables()
-
-}  // class AggregationTable 
+}  // class AggregationTable

@@ -16,8 +16,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Join extends aNamedEntity
-implements iTableItem
+class Join extends aNamedEntity implements iTableItem
 {
     // NOTE: The join name is treated as the table.
 
@@ -39,7 +38,7 @@ implements iTableItem
     {
         parent::__construct($systemQuoteChar, $logger);
 
-        if ( ! is_object($config) ) {
+        if (! is_object($config)) {
             $msg = __CLASS__ . ": Join definition must be an object";
             $this->logAndThrowException($msg);
         }
@@ -48,7 +47,6 @@ implements iTableItem
         $this->verifyRequiredConfigKeys($requiredKeys, $config);
 
         $this->initialize($config);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -58,16 +56,16 @@ implements iTableItem
 
     protected function initialize(stdClass $config, $force = false)
     {
-        if ( $this->initialized && ! $force ) {
+        if ($this->initialized && ! $force) {
             return true;
         }
 
-        foreach ( $config as $property => $value ) {
-            if ( '#' == $property ) {
+        foreach ($config as $property => $value) {
+            if ('#' == $property) {
                 continue;
             }
 
-            if ( ! property_exists($this, $property) ) {
+            if (! property_exists($this, $property)) {
                 $msg = "Property '$property' in config is not supported";
                 $this->logAndThrowException($msg);
             }
@@ -76,7 +74,6 @@ implements iTableItem
         }  // foreach ( $config as $property => $value )
 
         $this->initialized = true;
-
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
@@ -93,9 +90,9 @@ implements iTableItem
 
     private function filterValue($property, $value)
     {
-        switch ( $property ) {
-        default:
-            break;
+        switch ($property) {
+            default:
+                break;
         }  // switch ( $property )
 
         return $value;
@@ -144,12 +141,11 @@ implements iTableItem
 
     public function compare(iTableItem $cmp)
     {
-        if ( ! $cmp instanceof Join ) {
+        if (! $cmp instanceof Join) {
             return 1;
         }
 
         return 0;
-
     }  // compare()
 
     /* ------------------------------------------------------------------------------------------
@@ -165,15 +161,14 @@ implements iTableItem
         $quoteName = ( 0 !== strpos($this->getName(), '(') );
 
         $parts[] = ( null !== $this->schema && $includeSchema ? $this->getFullName() : $this->getName($quoteName) );
-        if ( null !== $this->alias ) {
+        if (null !== $this->alias) {
             $parts[] = "AS {$this->alias}";
         }
-        if ( null !== $this->on ) {
+        if (null !== $this->on) {
             $parts[] = "ON {$this->on}";
         }
 
         return implode(" ", $parts);
-
     }  // getCreateSql()
 
     /* ------------------------------------------------------------------------------------------
@@ -197,21 +192,19 @@ implements iTableItem
     {
         $data = new stdClass;
         $data->name = $this->name;
-        if ( null !== $this->schema ) {
+        if (null !== $this->schema) {
             $data->schema = $this->schema;
         }
-        if ( null !== $this->type ) {
+        if (null !== $this->type) {
             $data->type = $this->type;
         }
-        if ( null !== $this->alias ) {
+        if (null !== $this->alias) {
             $data->alias = $this->alias;
         }
-        if ( null !== $this->on ) {
+        if (null !== $this->on) {
             $data->on = $this->on;
         }
 
         return $data;
-
     }  // toJsonObj()
-
 }  // class Join

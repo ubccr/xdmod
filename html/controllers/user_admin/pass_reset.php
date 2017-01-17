@@ -16,7 +16,7 @@ if (!$isValid) {
 
 $user_to_email = XDUser::getUserByID($_POST['uid']);
 
-if ($user_to_email == NULL) {
+if ($user_to_email == null) {
     $returnData['success'] = false;
     $returnData['status'] = 'user_does_not_exist';
     xd_controller\returnJSON($returnData);
@@ -52,11 +52,9 @@ try {
     $returnData['success'] = true;
     $returnData['status'] = "Password reset e-mail sent to user {$user_to_email->getUsername()}";
     $returnData['message'] = $returnData['status'];
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $returnData['success'] = false;
     $returnData['message'] = $e->getMessage();
 }
 
 xd_controller\returnJSON($returnData);
-

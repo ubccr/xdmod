@@ -34,7 +34,6 @@ class MainMenu extends Menu
         $count   = 0;
 
         foreach ($itemConf as $conf) {
-
             // If there is no trigger in the configuration, then use
             // consecutive numbers.
             $trigger

@@ -117,4 +117,3 @@ class ArrayIngestor implements Ingestor
         $this->_logger = $logger;
     }
 }
-

@@ -36,9 +36,7 @@ if (isset($_POST['roles'])) {
         $required_params = implode(', ', $diff);
         \xd_response\presentError("Role config items required: $required_params");
     }
-
-}
-else {
+} else {
     \xd_response\presentError("Role information is required");
 }
 
@@ -59,7 +57,7 @@ try {
         $_POST['last_name'],
         $role_config['mainRoles'],
         $role_config['primaryRole'],
-        NULL,
+        null,
         $_POST['assignment']
     );
 
@@ -139,8 +137,7 @@ try {
     // -------------------
 
     $mail->send();
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     \xd_response\presentError($e->getMessage());
 }
 

@@ -35,4 +35,3 @@ class ResourceTypes extends ArrayIngestor
         );
     }
 }
-

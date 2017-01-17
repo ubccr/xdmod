@@ -106,5 +106,4 @@ class Loggable
     {
         return "(" . get_class($this) . ")";
     }  // __toString()
-
 }  // class Loggable

@@ -13,52 +13,46 @@
 
 class IdentityTest extends PHPUnit_Framework_TestCase
 {
-	private $_identity;
-	private $_identity1;
-	function setUp()
+    private $_identity;
+    private $_identity1;
+    function setUp()
     {
-		$this->_identity = new \Common\Identity('identity_name');
-		$this->_identity1 = new \Common\Identity('');
+        $this->_identity = new \Common\Identity('identity_name');
+        $this->_identity1 = new \Common\Identity('');
     }
-	
-	function tearDown() {
-		$this->_identity = NULL;
-		$this->_identity1 = NULL;
-	}
-	
-	public function testNoDefaultParameterToConstructor()
-	{
-		try
-		{
-			$identity = NULL;
-			$identity =  new \Common\Identity(); // this construction should fail since the name parameter is not specified
-		}
-		catch(Exception $ex)
-		{
-			$this->assertEquals($identity, NULL, "This should pass");
-			return;
-		}
-		$this->fail("\Common\Identity constructor fails to reject construction without parameter");
-		
-	}
     
-	public function testGetName()
+    function tearDown()
     {
-		$this->assertEquals( $this->_identity->getName(), 'identity_name', "This should pass" );
-		$this->assertEquals( $this->_identity1->getName(), '', "This should pass" );
+        $this->_identity = null;
+        $this->_identity1 = null;
     }
-	
-	public function testSetName()
+    
+    public function testNoDefaultParameterToConstructor()
     {
-		$this->_identity1->setName('mock_name');
-		$this->assertEquals( $this->_identity1->getName(), 'mock_name', "This should pass" );
+        try {
+            $identity = null;
+            $identity =  new \Common\Identity(); // this construction should fail since the name parameter is not specified
+        } catch (Exception $ex) {
+            $this->assertEquals($identity, null, "This should pass");
+            return;
+        }
+        $this->fail("\Common\Identity constructor fails to reject construction without parameter");
     }
-	
-	public function testToString()
+    
+    public function testGetName()
     {
-		$this->assertEquals( $this->_identity->__toString(), 'identity_name', "This should pass" );
+        $this->assertEquals($this->_identity->getName(), 'identity_name', "This should pass");
+        $this->assertEquals($this->_identity1->getName(), '', "This should pass");
     }
-
+    
+    public function testSetName()
+    {
+        $this->_identity1->setName('mock_name');
+        $this->assertEquals($this->_identity1->getName(), 'mock_name', "This should pass");
+    }
+    
+    public function testToString()
+    {
+        $this->assertEquals($this->_identity->__toString(), 'identity_name', "This should pass");
+    }
 }
-
-?>

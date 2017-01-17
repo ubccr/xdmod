@@ -26,7 +26,6 @@ if ($auth && $auth->isSamlConfigured()) {
 }
 // Used for Federated login or samlErrors
 if (!empty($formal_name) || $samlError) {
-
 ?>
 <!DOCTYPE html>
 <html>

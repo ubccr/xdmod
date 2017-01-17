@@ -73,9 +73,9 @@ class DataEndpoint
 
         // If the type is defined and has a mapping to an implementation, create a class for the type.
 
-        if ( ! array_key_exists($options->type, self::$classmap) ) {
+        if (! array_key_exists($options->type, self::$classmap)) {
             $msg = __CLASS__ . ": Undefined data endpoint type: '{$options->type}'";
-            if ( null !== $logger ) {
+            if (null !== $logger) {
                 $logger->err($msg);
             }
             throw new Exception($msg);
@@ -86,16 +86,14 @@ class DataEndpoint
 
         $endpoint = new $className($options, $logger);
 
-        if ( ! $endpoint instanceof iDataEndpoint ) {
+        if (! $endpoint instanceof iDataEndpoint) {
             $msg = __CLASS__ . ": $className does not implement iDataEndpoint";
-            if ( null !== $logger ) {
+            if (null !== $logger) {
                 $logger->err($msg);
             }
             throw new Exception($msg);
         }
 
         return $endpoint;
-
     }  // factory()
-
 }  // class DataEndpoint

@@ -17,8 +17,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Trigger extends aNamedEntity
-implements iTableItem
+class Trigger extends aNamedEntity implements iTableItem
 {
     // The time that the trigger is fired (before, after)
     private $time = null;
@@ -44,7 +43,7 @@ implements iTableItem
     {
         parent::__construct($systemQuoteChar, $logger);
     
-        if ( ! is_object($config) ) {
+        if (! is_object($config)) {
             $msg = __CLASS__ . ": Argument is not an object";
             $this->logAndThrowException($msg);
         }
@@ -53,7 +52,6 @@ implements iTableItem
         $this->verifyRequiredConfigKeys($requiredKeys, $config);
 
         $this->initialize($config);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -63,26 +61,24 @@ implements iTableItem
 
     protected function initialize(stdClass $config, $force = false)
     {
-        if ( $this->initialized && ! $force ) {
+        if ($this->initialized && ! $force) {
             return true;
         }
 
-        foreach ( $config as $property => $value ) {
-            if ( '#' == $property ) {
+        foreach ($config as $property => $value) {
+            if ('#' == $property) {
                 continue;
             }
 
-            if ( ! property_exists($this, $property) ) {
+            if (! property_exists($this, $property)) {
                 $msg = "Property '$property' in config is not supported";
                 $this->logAndThrowException($msg);
             }
 
             $this->$property = $value;
-      
         }  // foreach ( $config as $property => $value )
 
         $this->initialized = true;
-
     }  // initialize()
  
     /* ------------------------------------------------------------------------------------------
@@ -142,7 +138,7 @@ implements iTableItem
 
     public function compare(iTableItem $cmp)
     {
-        if ( ! $cmp instanceof Trigger ) {
+        if (! $cmp instanceof Trigger) {
             return 1;
         }
 
@@ -150,7 +146,7 @@ implements iTableItem
 
         // Triggers are considered equal if all non-null properties are the same.
 
-        if ( $this->getName() != $cmp->getName()
+        if ($this->getName() != $cmp->getName()
              || $this->getTime() != $cmp->getTime()
              || $this->getEvent() != $cmp->getEvent()
              || $this->getTable() != $cmp->getTable()
@@ -161,7 +157,7 @@ implements iTableItem
         // The following properties have a default set by the database. If the property is not specified
         // a value will be provided when the database information schema is queried.
 
-        if ( ( null !== $this->getDefiner() && null !== $cmp->getDefiner() )
+        if (( null !== $this->getDefiner() && null !== $cmp->getDefiner() )
              && $this->getDefiner() != $cmp->getDefiner() ) {
             return -1;
         }
@@ -169,11 +165,10 @@ implements iTableItem
         // The following properties do not have defaults set by the database and should be considered if
         // one of them is set.
 
-        if ( ( null !== $this->getSchema() || null !== $cmp->getSchema() )
+        if (( null !== $this->getSchema() || null !== $cmp->getSchema() )
              && $this->getSchema() != $cmp->getSchema() ) {
             return -1;
         }
-
     }  // compare()
 
     /* ------------------------------------------------------------------------------------------
@@ -191,23 +186,22 @@ implements iTableItem
             $this->quote($this->table);
         $parts = array();
         $parts[] = "CREATE";
-        if ( null !== $this->definer ) {
+        if (null !== $this->definer) {
             $parts[] = "DEFINER = {$this->definer}";
         }
         $parts[] = "TRIGGER $name";
         $parts[] = $this->time;
         $parts[] = $this->event;
         $parts[] = "ON $tableName FOR EACH ROW\n";
-        if ( $addBeginEnd ) {
+        if ($addBeginEnd) {
             $parts[] = "BEGIN\n";
         }
         $parts[] = $this->body;
-        if ( $addBeginEnd ) {
+        if ($addBeginEnd) {
             $parts[] = "\nEND";
         }
 
         return implode(" ", $parts);
-
     }  // getCreateSql()
 
     /* ------------------------------------------------------------------------------------------
@@ -231,7 +225,7 @@ implements iTableItem
 
         $data = new stdClass;
         $data->name = $this->name;
-        if ( null !== $this->schema ) {
+        if (null !== $this->schema) {
             $data->schema = $this->schema;
         }
         $data->time = $this->time;
@@ -242,7 +236,5 @@ implements iTableItem
         $data->definer = $this->definer;
 
         return $data;
-
     }  // toJsonObj()
-
 }  // class Trigger

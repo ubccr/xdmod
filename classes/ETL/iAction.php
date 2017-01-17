@@ -91,5 +91,4 @@ interface iAction
      */
 
     public function __toString();
-
 }  // interface iAction

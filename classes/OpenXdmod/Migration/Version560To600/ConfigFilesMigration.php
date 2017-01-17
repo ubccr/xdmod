@@ -176,7 +176,6 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
                 $permittedModules[$i] = $modified;
             };
         }
-
     }
 
     /**

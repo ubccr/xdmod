@@ -92,5 +92,4 @@ interface iActionState
      */
 
     public function getMetadata();
-
 } // interface iActionState

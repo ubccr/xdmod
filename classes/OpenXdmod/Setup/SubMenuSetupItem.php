@@ -23,4 +23,3 @@ abstract class SubMenuSetupItem extends SetupItem
      */
     abstract public function quit();
 }
-

@@ -31,10 +31,10 @@ class QuarterGenerator extends TimePeriodGenerator
         if ($current_month < 4) {
             $next_month = 4;
             $next_year = $current_year;
-        } else if ($current_month < 7) {
+        } elseif ($current_month < 7) {
             $next_month = 7;
             $next_year = $current_year;
-        } else if ($current_month < 10) {
+        } elseif ($current_month < 10) {
             $next_month = 10;
             $next_year = $current_year;
         } else {
@@ -55,9 +55,9 @@ class QuarterGenerator extends TimePeriodGenerator
 
         if ($current_month < 4) {
             $quarter_end_month = 3;
-        } else if ($current_month < 7) {
+        } elseif ($current_month < 7) {
             $quarter_end_month = 6;
-        } else if ($current_month < 10) {
+        } elseif ($current_month < 10) {
             $quarter_end_month = 9;
         } else {
             $quarter_end_month = 12;
@@ -75,9 +75,9 @@ class QuarterGenerator extends TimePeriodGenerator
 
         if ($current_month < 4) {
             $quarter_index = 1;
-        } else if ($current_month < 7) {
+        } elseif ($current_month < 7) {
             $quarter_index = 2;
-        } else if ($current_month < 10) {
+        } elseif ($current_month < 10) {
             $quarter_index = 3;
         } else {
             $quarter_index = 4;
@@ -96,9 +96,9 @@ class QuarterGenerator extends TimePeriodGenerator
 
         if ($current_month < 4) {
             $quarter_start_month = 1;
-        } else if ($current_month < 7) {
+        } elseif ($current_month < 7) {
             $quarter_start_month = 4;
-        } else if ($current_month < 10) {
+        } elseif ($current_month < 10) {
             $quarter_start_month = 7;
         } else {
             $quarter_start_month = 10;

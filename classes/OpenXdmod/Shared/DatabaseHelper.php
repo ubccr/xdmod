@@ -38,14 +38,13 @@ class DatabaseHelper
         foreach ($databases as $database) {
             $console->displayBlankLine();
 
-            if (
-                MySQLHelper::databaseExists(
-                    $settings['db_host'],
-                    $settings['db_port'],
-                    $username,
-                    $password,
-                    $database
-                )
+            if (MySQLHelper::databaseExists(
+                $settings['db_host'],
+                $settings['db_port'],
+                $username,
+                $password,
+                $database
+            )
             ) {
                 $console->displayMessage(
                     "Database `$database` already exists."

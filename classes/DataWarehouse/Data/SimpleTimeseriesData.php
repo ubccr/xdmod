@@ -28,15 +28,15 @@ class SimpleTimeseriesData extends SimpleData
     public function getStartTs()
     {
         return $this->_start_ts;
-    } 
+    }
 
     /**
      *  JMS June 2015
      */
-    public function setStartTs( $ts )
+    public function setStartTs($ts)
     {
         $this->_start_ts = $ts;
-    } 
+    }
 
     /**
      *  JMS June 2015
@@ -49,7 +49,7 @@ class SimpleTimeseriesData extends SimpleData
     /**
      *  JMS June 2015
      */
-    public function setGroupName( $g )
+    public function setGroupName($g)
     {
         $this->_group_name= $g;
     }
@@ -65,7 +65,7 @@ class SimpleTimeseriesData extends SimpleData
     /**
      *  JMS June 2015
      */
-    public function setGroupId( $g )
+    public function setGroupId($g)
     {
         $this->_group_id= $g;
     }
@@ -149,20 +149,20 @@ class SimpleTimeseriesData extends SimpleData
 
     // -----------------------------
     // summarize()
-    // 
+    //
     // was known as add() in TimeseriesData
     // enables summarization of datasets
-    // so that a set of timeseries datasets 
+    // so that a set of timeseries datasets
     // can be reported as a single column
-    // 
+    //
     // Depending on the stat alias, we take
     // min, max, or sum of ts datasets.
-    // Averaging is done elsewhere (see 
+    // Averaging is done elsewhere (see
     // class @HighChartTimeseries2)
     //
     // NOTE that all errors get set == 0.
     // This is consistent with previous implementation.
-    // 
+    //
     // JMS 24 July 15
     // -----------------------------
     public function summarize(SimpleTimeseriesData $d)
@@ -186,10 +186,8 @@ class SimpleTimeseriesData extends SimpleData
                 } else {
                     $values[$key] = min($oldValue, $value);
                 }
-
             } elseif ($isMax) {
                 $values[$key] = max($oldValue, $value);
-
             } else {
                 $values[$key] = $oldValue + $value;
             }
@@ -201,17 +199,16 @@ class SimpleTimeseriesData extends SimpleData
         $this->setErrors($sems);
     } // summarize
 
-    // Helper function for debugging 
+    // Helper function for debugging
     // JMS April 2015
-    public function __toString() {
+    public function __toString()
+    {
 
         $retval = parent::__toString();
-        $retval .= "Start Timestamp:".  implode(',',$this->getStartTs())."\n"
+        $retval .= "Start Timestamp:".  implode(',', $this->getStartTs())."\n"
             . "groupByObject: " . $this->getGroupBy(). "\n"
             . "groupName: " . $this->getGroupName() . "\n"
             . "groupId: " . $this->getGroupId() . "\n";
         return $retval;
-
-    } // __toString() 
-
+    } // __toString()
 } // class SimpleTimeseriesData

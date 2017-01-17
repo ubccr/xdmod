@@ -20,4 +20,3 @@ class PI extends PDODBSynchronizingIngestor
         );
     }
 }
-

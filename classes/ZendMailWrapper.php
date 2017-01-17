@@ -16,4 +16,3 @@ class ZendMailWrapper
         return new Zend_Mail();
     }
 }
-

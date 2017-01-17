@@ -8,7 +8,6 @@
 use CCR\DB;
 
 try {
-
     $pdo = DB::factory('logger');
 
     $sql = '
@@ -25,8 +24,10 @@ try {
     }
 
     if (isset($_REQUEST['logLevels']) && is_array($_REQUEST['logLevels'])) {
-        $clauses[] = 'priority IN (' . implode(',',
-            array_pad(array(), count($_REQUEST['logLevels']), '?')) . ')';
+        $clauses[] = 'priority IN (' . implode(
+            ',',
+            array_pad(array(), count($_REQUEST['logLevels']), '?')
+        ) . ')';
         $params = array_merge($params, $_REQUEST['logLevels']);
     }
 
@@ -86,7 +87,6 @@ try {
     list($countRow) = $pdo->query($sql, $params);
 
     $returnData['count'] = $countRow['count'];
-
 } catch (Exception $e) {
     $returnData = array(
         'success' => false,
@@ -95,4 +95,3 @@ try {
 }
 
 echo json_encode($returnData);
-

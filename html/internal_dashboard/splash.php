@@ -31,11 +31,11 @@
 
       <center>
 
-         <?php
-            if (isset($reject_response)){
-               print '<span style="color: #f00">'.$reject_response.'</span>';
-            }
-         ?>
+        <?php
+        if (isset($reject_response)) {
+            print '<span style="color: #f00">'.$reject_response.'</span>';
+        }
+        ?>
 
          <br><br>
          <img src="images/masthead_splash.png"><br><br>

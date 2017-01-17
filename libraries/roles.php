@@ -1,6 +1,6 @@
 <?php
 
-	namespace xd_roles;
+    namespace xd_roles;
 
     use CCR\DB;
 
@@ -15,22 +15,22 @@
     * @return int (the numerical id corresponding to the role identifier passed in)
     *
     */
-    		
-   function getRoleIDFromIdentifier($identifier) {
-	 
-      $pdo = DB::factory('database');
+            
+function getRoleIDFromIdentifier($identifier)
+{
+     
+    $pdo = DB::factory('database');
 
-      $role_data = $pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
-         ':abbrev' => $identifier,
-      ));
+    $role_data = $pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
+    ':abbrev' => $identifier,
+    ));
 
-      if (count($role_data) == 0) {
+    if (count($role_data) == 0) {
          throw new Exception('Invalid role identifier specified -- '.$identifier);
-      }
+    }
           
-      return $role_data[0]['role_id'];
-
-   }//getRoleIDFromIdentifier
+    return $role_data[0]['role_id'];
+}//getRoleIDFromIdentifier
    
    // ----------------------------------------------------------
 
@@ -43,49 +43,45 @@
     * @return String (the formal name associated with the $identifier passed in)
     *
     */
-    		
-   function getFormalRoleNameFromIdentifier($identifier) {
-	 
-      $pdo = DB::factory('database');
+            
+function getFormalRoleNameFromIdentifier($identifier)
+{
+     
+    $pdo = DB::factory('database');
       
-      $role_config = explode(';', $identifier);
+    $role_config = explode(';', $identifier);
       
-      $role_data = $pdo->query("SELECT description FROM Roles WHERE abbrev=:abbrev", array(
-         ':abbrev' => $role_config[0],
-      ));
+    $role_data = $pdo->query("SELECT description FROM Roles WHERE abbrev=:abbrev", array(
+    ':abbrev' => $role_config[0],
+    ));
 
-      if (count($role_data) == 0) {
+    if (count($role_data) == 0) {
          return "Unknown Role ID $identifier";
-      }
+    }
       
-      $role_label = $role_data[0]['description'];
+    $role_label = $role_data[0]['description'];
       
-      switch($role_config[0]) {
-      
-         case ROLE_ID_CAMPUS_CHAMPION:
-         
-            $role_query = $pdo->query("SELECT o.name FROM modw.organization AS o WHERE o.id=:id", array(
+    switch ($role_config[0]) {
+        case ROLE_ID_CAMPUS_CHAMPION:
+             $role_query = $pdo->query("SELECT o.name FROM modw.organization AS o WHERE o.id=:id", array(
                ':id' => $role_config[1],
-            ));
+             ));
                          
             $role_label .= ' - '.$role_query[0]['name'];
             break;
          
-         case ROLE_ID_CENTER_DIRECTOR:
-         case ROLE_ID_CENTER_STAFF:
-
+        case ROLE_ID_CENTER_DIRECTOR:
+        case ROLE_ID_CENTER_STAFF:
             $role_query = $pdo->query("SELECT CONCAT(o.abbrev, ' (', o.name, ')') AS description FROM modw.organization AS o WHERE o.id=:id", array(
-               ':id' => $role_config[1],
+             ':id' => $role_config[1],
             ));
                          
-            $role_label .= ' - '.$role_query[0]['description'];        
+            $role_label .= ' - '.$role_query[0]['description'];
             break;
-    
-      }//switch($role_data)
+    }//switch($role_data)
       
-      return $role_label;
-
-   }//getFormalRoleNameFromIdentifier
+    return $role_label;
+}//getFormalRoleNameFromIdentifier
    
    // ----------------------------------------------------------
 
@@ -102,34 +98,28 @@
     *
     */
        
-   function determineActiveRoleForUser($user) {
+function determineActiveRoleForUser($user)
+{
    
-   	if (isset($_REQUEST['active_role'])) {
-   	  
-   	  $role_data = explode(';', $_REQUEST['active_role']);
-   	  $role_data = array_pad($role_data, 2, NULL);
-   	  
-   	  return $user->assumeActiveRole($role_data[0], $role_data[1]);
-   	  
-   	}
-   
-   	return $user->getActiveRole();
-   
-   }//determineActiveRoleForUser
-   
-   function determineActiveRoleForUser2($user, $active_role) {
-   
-   	if (isset($active_role)) {
-   	  
-   	  $role_data = explode(':', $active_roles);
-   	  $role_data = array_pad($role_data, 2, NULL);
-   	  
-   	  return $user->assumeActiveRole($role_data[0], $role_data[1]);
-   	  
-   	}
-   
-   	return $user->getActiveRole();
-   
-   }//determineActiveRoleForUser2
+    if (isset($_REQUEST['active_role'])) {
+        $role_data = explode(';', $_REQUEST['active_role']);
+        $role_data = array_pad($role_data, 2, null);
       
-?>
+        return $user->assumeActiveRole($role_data[0], $role_data[1]);
+    }
+   
+    return $user->getActiveRole();
+}//determineActiveRoleForUser
+   
+function determineActiveRoleForUser2($user, $active_role)
+{
+   
+    if (isset($active_role)) {
+        $role_data = explode(':', $active_roles);
+        $role_data = array_pad($role_data, 2, null);
+      
+        return $user->assumeActiveRole($role_data[0], $role_data[1]);
+    }
+   
+    return $user->getActiveRole();
+}//determineActiveRoleForUser2

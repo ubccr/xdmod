@@ -20,4 +20,3 @@ class FormulaField extends Field
         parent::__construct($formula, $aliasname);
     }
 }
-

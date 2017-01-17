@@ -223,8 +223,9 @@ abstract class ConfigFilesMigration extends Migration
      *
      * @throws Exception if the file is not writable
      */
-    protected function assertFileIsWritable($filePath) {
-        if (!is_writable($filePath)){
+    protected function assertFileIsWritable($filePath)
+    {
+        if (!is_writable($filePath)) {
             throw new Exception("Cannot write to file '$filePath'");
         }
     }

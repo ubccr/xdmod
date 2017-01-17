@@ -24,4 +24,3 @@ $session_variable
     : 'xdUser';
 
 $controller->invoke('POST', $session_variable);
-

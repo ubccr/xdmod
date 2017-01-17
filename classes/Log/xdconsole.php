@@ -7,8 +7,7 @@ class Log_xdconsole extends Log_console
 
     function log($message, $priority = null)
     {
-        if (is_array($message))
-        {
+        if (is_array($message)) {
             $parts = array();
 
             if (isset($message['message'])) {
@@ -27,11 +26,8 @@ class Log_xdconsole extends Log_console
             }
 
             return parent::log(implode(' ', $parts), $priority);
-        }
-        else
-        {
+        } else {
             return parent::log($message, $priority);
         }
     }
 }
-

@@ -11,35 +11,22 @@
    
    $response = array('action' => 'dashboard_launch');
    
-   try {
-   
-      $user = \xd_security\getLoggedInUser();
+try {
+    $user = \xd_security\getLoggedInUser();
       
-      if ( isset($user) && $user->isManager() ) {
-      
-         $_SESSION['xdDashboardUser'] = $user->getUserID();
-         $response['success'] = true;
-         
-      }
-      else {
-      
-         $response['success'] = false;
-      
-      }
-
-   }
-   catch(SessionExpiredException $see) {
-      // TODO: Refactor generic catch block below to handle specific exceptions,
-      //       which would allow this block to be removed.
-      throw $see;
-   }
-   catch(Exception $e) {
-      
-      unset($_SESSION['xdDashboardUser']);
-      $response['success'] = false;
-   
-   }
+    if (isset($user) && $user->isManager()) {
+        $_SESSION['xdDashboardUser'] = $user->getUserID();
+        $response['success'] = true;
+    } else {
+        $response['success'] = false;
+    }
+} catch (SessionExpiredException $see) {
+   // TODO: Refactor generic catch block below to handle specific exceptions,
+   //       which would allow this block to be removed.
+    throw $see;
+} catch (Exception $e) {
+    unset($_SESSION['xdDashboardUser']);
+    $response['success'] = false;
+}
       
    echo json_encode($response);
-   
-?>

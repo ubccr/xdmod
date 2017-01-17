@@ -9,4 +9,3 @@ $controller
 $controller->registerOperation('get_config');
 $controller->registerOperation('get_portlets');
 $controller->invoke('REQUEST', 'xdDashboardUser');
-

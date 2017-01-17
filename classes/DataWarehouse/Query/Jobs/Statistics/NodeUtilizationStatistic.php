@@ -74,7 +74,5 @@ class NodeUtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
             . " have potentially provided during that period. It does not"
             . " include non-" . ORGANIZATION_NAME . " jobs.<br/>This value is"
             . " only accurate if node sharing is not allowed";
-
     }
 }
-

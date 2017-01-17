@@ -57,10 +57,10 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
 
         try {
             $section = xd_utilities\getConfigurationSection($this->config);
-            if ( array_key_exists("host", $section) ) {
+            if (array_key_exists("host", $section)) {
                 $this->hostname = $section["host"];
             }
-            if ( array_key_exists("user", $section) ) {
+            if (array_key_exists("user", $section)) {
                 $this->username = $section["user"];
             }
         } catch (\Exception $e) {
@@ -70,7 +70,6 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
 
         // Since the name is arbitrary, do not use it for the unique key
         $this->key = md5(implode($this->keySeparator, array($this->type, $this->config, $this->schema)));
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -82,12 +81,12 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
     {
         // The first time a connection is made the endpoint handle should be set.
 
-        if ( false === $this->schemaExists($this->schema) ) {
+        if (false === $this->schemaExists($this->schema)) {
             $msg = "Schema '{$this->schema}' does not exist"
                 . (null !== $this->username ? " for user '{$this->username}'" : "" );
-            if ( $this->createSchemaIfNotExists ) {
+            if ($this->createSchemaIfNotExists) {
                 $this->logger->notice($msg . ", creating");
-                if ( ! $dryrun ) {
+                if (! $dryrun) {
                     $this->createSchema($this->schema);
                 }
             } else {
@@ -95,7 +94,7 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
             }
         }
 
-        if ( ! $leaveConnected ) {
+        if (! $leaveConnected) {
             $this->disconnect();
         }
 
@@ -175,7 +174,7 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
 
     public function tableExists($tableName, $schemaName = null)
     {
-        if ( empty($tableName) ) {
+        if (empty($tableName)) {
             $msg = "Table name cannot be empty";
             $this->logAndThrowException($msg);
         }
@@ -186,7 +185,7 @@ FROM information_schema.tables
 WHERE table_schema = :schema
 AND table_name = :tablename";
 
-        if ( null === $schemaName ) {
+        if (null === $schemaName) {
             $schemaName = $this->getSchema();
         }
 
@@ -198,7 +197,7 @@ AND table_name = :tablename";
         try {
             $dbh = $this->getHandle();
             $result = $dbh->query($sql, $params);
-            if ( 0 == count($result) ) {
+            if (0 == count($result)) {
                 return false;
             }
         } catch (PDOException $e) {
@@ -207,7 +206,6 @@ AND table_name = :tablename";
         }
 
         return true;
-
     }  // tableExists()
 
     /* ------------------------------------------------------------------------------------------
@@ -217,7 +215,7 @@ AND table_name = :tablename";
 
     public function getTableColumnNames($tableName)
     {
-        if ( empty($tableName) ) {
+        if (empty($tableName)) {
             $msg = "Table name cannot be empty";
             $this->logAndThrowException($msg);
         }
@@ -235,7 +233,7 @@ ORDER BY ordinal_position ASC";
         try {
             $dbh = $this->getHandle();
             $result = $dbh->query($sql, $params);
-            if ( 0 == count($result) ) {
+            if (0 == count($result)) {
                 $msg = "No columns returned";
                 $this->logAndThrowException($msg);
             }
@@ -245,12 +243,11 @@ ORDER BY ordinal_position ASC";
         }
 
         $columnNames = array();
-        foreach ( $result as $row ) {
+        foreach ($result as $row) {
             $columnNames[] = $row['name'];
         }
 
         return $columnNames;
-
     }  // getTableColumnNames()
 
     /* ------------------------------------------------------------------------------------------
@@ -265,5 +262,4 @@ ORDER BY ordinal_position ASC";
             (null !== $this->username ? ", user={$this->username}" : "" ) .
             ")";
     }  // __toString()
-
 }  // class aRdbmsEndpoint

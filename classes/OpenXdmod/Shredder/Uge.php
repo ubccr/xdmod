@@ -55,7 +55,7 @@ class Uge extends Sge
 
         // Map numeric $entries array into a associative array.
         foreach (self::$entryNames as $index => $name) {
-           $job[$name] = $entries[$index];
+            $job[$name] = $entries[$index];
         }
 
         $this->logger->debug('Parsed data: ' . json_encode($job));

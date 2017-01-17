@@ -8,7 +8,7 @@ class MockXDUserProfile
 
     public function fetchValue($ident)
     {
-        if( isset($this->_data[$ident]) ) {
+        if (isset($this->_data[$ident])) {
             return $this->_data[$ident];
         } else {
             return null;
@@ -29,5 +29,3 @@ class MockXDUserProfile
     {
     }
 }
-
-?>

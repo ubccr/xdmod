@@ -2,18 +2,18 @@
 
 namespace UnitTesting\mock;
 
-class MockXDUser {
+class MockXDUser
+{
 
     private $_profile = null;
 
-    public function __construct() 
+    public function __construct()
     {
         $this->_profile = new MockXDUserProfile();
     }
 
-    public function getProfile() {
+    public function getProfile()
+    {
         return $this->_profile;
     }
 }
-
-?>

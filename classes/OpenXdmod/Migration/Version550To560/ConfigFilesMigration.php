@@ -46,8 +46,7 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
             ),
         );
         foreach ($dimensionAssociations as $role => $roleDimensionAssociations) {
-            if (
-                !isset($mainRolesConfig['roles'][$role])
+            if (!isset($mainRolesConfig['roles'][$role])
                 || isset($mainRolesConfig['roles'][$role]['dimensions'])
             ) {
                 continue;

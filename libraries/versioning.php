@@ -18,7 +18,6 @@ function getPortalVersion($short = false)
     $version = \xd_utilities\getConfiguration('general', 'version');
 
     if ($short) {
-
         // Remove any trailing version info.
         $ver = explode(' (', $version);
         return $ver[0];
@@ -37,7 +36,6 @@ function getPortalVersion($short = false)
     }
 
     if (!empty($revision)) {
-
         // This is a development version (since the git meta-data (in
         // the .git directory) is intact).
         $version .= sprintf('.%s (%s) Dev', $revision, date('Y.m.d'));

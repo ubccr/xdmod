@@ -55,14 +55,13 @@ abstract class aRdbmsDestinationAction extends aAction
         parent::__construct($options, $etlConfig, $logger);
 
         $this->destinationEndpoint = $etlConfig->getDataEndpoint($this->options->destination);
-        if ( ! $this->destinationEndpoint instanceof iRdbmsEndpoint ) {
+        if (! $this->destinationEndpoint instanceof iRdbmsEndpoint) {
             $this->destinationEndpoint = null;
             $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
         $this->destinationHandle = $this->destinationEndpoint->getHandle();
         $this->logger->debug("Destination endpoint: " . $this->destinationEndpoint);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -72,12 +71,12 @@ abstract class aRdbmsDestinationAction extends aAction
 
     public function verify(EtlOverseerOptions $etlOptions = null)
     {
-        if ( $this->isVerified() ) {
+        if ($this->isVerified()) {
             return;
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
+        if (null !== $etlOptions) {
             $this->etlOverseerOptions = $etlOptions;
         }
 
@@ -86,14 +85,13 @@ abstract class aRdbmsDestinationAction extends aAction
 
         $this->initialize();
 
-        if ( 0 == count($this->etlDestinationTableList) ) {
+        if (0 == count($this->etlDestinationTableList)) {
             $msg = "No ETL destination tables defined";
             $this->logAndThrowException($msg);
         }
 
-        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
-
-            if ( ! $etlTable instanceof Table ) {
+        foreach ($this->etlDestinationTableList as $etlTableKey => $etlTable) {
+            if (! $etlTable instanceof Table) {
                 $msg = "ETL destination table with key '$etlTableKey' is not an instance of Table";
                 $this->logAndThrowException($msg);
             }
@@ -104,7 +102,6 @@ abstract class aRdbmsDestinationAction extends aAction
         $this->verified = true;
 
         return true;
-
     }  // verify()
 
     /* ------------------------------------------------------------------------------------------
@@ -118,7 +115,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
     protected function initialize()
     {
-        if ( $this->isInitialized() ) {
+        if ($this->isInitialized()) {
             return;
         }
 
@@ -127,9 +124,8 @@ abstract class aRdbmsDestinationAction extends aAction
         // If the destaination table list is not empty, assume that a child class has set it and do
         // not override.  Otherwise populate it based on the parsed definition.
 
-        if ( 0 == count($this->etlDestinationTableList) ) {
-
-            if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
+        if (0 == count($this->etlDestinationTableList)) {
+            if (! isset($this->parsedDefinitionFile->table_definition)) {
                 $msg = "Definition file does not contain a 'table_definition' key";
                 $this->logAndThrowException($msg);
             }
@@ -148,40 +144,38 @@ abstract class aRdbmsDestinationAction extends aAction
             $parsedTableDefinition = $this->parsedDefinitionFile->table_definition;
             $tableDefinitionList = array();
 
-            if ( is_object($parsedTableDefinition) ) {
+            if (is_object($parsedTableDefinition)) {
                 // Standard single destination table
                 $tableDefinitionList[$parsedTableDefinition->name] = $parsedTableDefinition;
-            } else if ( is_array($parsedTableDefinition) ) {
+            } elseif (is_array($parsedTableDefinition)) {
                 // Temporary format for multiple destination tables
-                foreach ( $parsedTableDefinition as $singleTableDefinition ) {
+                foreach ($parsedTableDefinition as $singleTableDefinition) {
                     $tableDefinitionList[$singleTableDefinition->name] = $singleTableDefinition;
                 }
             }
 
-            foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition ) {
-
+            foreach ($tableDefinitionList as $etlTableKey => $tableDefinition) {
                 $this->logger->debug("Create ETL destination table object for table definition key '$etlTableKey'");
-                $etlTable = new Table($tableDefinition,
-                                      $this->destinationEndpoint->getSystemQuoteChar(),
-                                      $this->logger);
+                $etlTable = new Table(
+                    $tableDefinition,
+                    $this->destinationEndpoint->getSystemQuoteChar(),
+                    $this->logger
+                );
                 $etlTable->setSchema($this->destinationEndpoint->getSchema());
                 $tableName = $etlTable->getFullName();
 
-                if ( ! is_string($tableName) || empty($tableName) )
-                {
+                if (! is_string($tableName) || empty($tableName)) {
                     $msg = "Destination table name must be a non-empty string";
                     $this->logAndThrowException($msg);
                 }
 
                 $this->etlDestinationTableList[$etlTableKey] = $etlTable;
-
             }  // foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition )
 
-            if ( 0 == count($this->etlDestinationTableList) ) {
+            if (0 == count($this->etlDestinationTableList)) {
                 $msg = "No table definitions specified";
                 $this->logAndThrowException($msg);
             }
-
         }  // if ( 0 == count($this->etlDestinationTableList) )
 
         // Set substitution variables provided by this class
@@ -191,7 +185,6 @@ abstract class aRdbmsDestinationAction extends aAction
         $this->initialized = true;
 
         return true;
-
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
@@ -205,7 +198,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
     protected function truncateDestination()
     {
-        if ( ! $this->options->truncate_destination ) {
+        if (! $this->options->truncate_destination) {
             return;
         }
 
@@ -213,7 +206,6 @@ abstract class aRdbmsDestinationAction extends aAction
         // the table.
 
         return $this->performTruncateDestinationTasks();
-
     }  // truncateDestination()
 
     /* ------------------------------------------------------------------------------------------
@@ -230,18 +222,15 @@ abstract class aRdbmsDestinationAction extends aAction
     protected function performTruncateDestinationTasks()
     {
 
-        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
-
+        foreach ($this->etlDestinationTableList as $etlTableKey => $etlTable) {
             $tableName = $etlTable->getFullName();
             $this->logger->info("Truncate destination table: $tableName");
 
             try {
-
-                if ( false === $this->destinationEndpoint->tableExists($etlTable->getName(), $etlTable->getSchema()) ) {
+                if (false === $this->destinationEndpoint->tableExists($etlTable->getName(), $etlTable->getSchema())) {
                     $this->logger->info("Table does not exist: '$tableName', skipping.");
                     continue;
                 }
-
             } catch (PDOException $e) {
                 $this->logAndThrowSqlException($sql, $e, "Error verifying table $tableName");
             }
@@ -249,7 +238,7 @@ abstract class aRdbmsDestinationAction extends aAction
             $sql = "TRUNCATE TABLE $tableName";
 
             try {
-                if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                if (! $this->etlOverseerOptions->isDryrun()) {
                     $this->destinationHandle->execute($sql);
                     $this->logger->debug("Truncate destination task: $sql");
                 }
@@ -257,7 +246,6 @@ abstract class aRdbmsDestinationAction extends aAction
                 $this->logAndThrowSqlException($sql, $e, "Error truncating destination with key '$etlTableKey'");
             }
         }  // foreach ( $this->etlDestinationTableList as $etlTable )
-
     }  // performTruncateDestinationTasks()
 
     /* ------------------------------------------------------------------------------------------
@@ -276,7 +264,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
     protected function executeSqlList(array $sqlList, $handle, $msgPrefix = "")
     {
-        if ( 0 == count($sqlList) ) {
+        if (0 == count($sqlList)) {
             return true;
         }
 
@@ -284,17 +272,15 @@ abstract class aRdbmsDestinationAction extends aAction
         foreach ($sqlList as $sql) {
             try {
                 $this->logger->debug($msgPrefix . $sql);
-                if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                if (! $this->etlOverseerOptions->isDryrun()) {
                     $handle->execute($sql);
                 }
-            }
-            catch (PDOException $e) {
+            } catch (PDOException $e) {
                 $this->logAndThrowSqlException($sql, $e, "Error executing SQL");
             }
         }  // foreach ($sqlList as $sql)
 
         return true;
-
     }  // executeSqlList()
 
     /* ------------------------------------------------------------------------------------------
@@ -311,14 +297,13 @@ abstract class aRdbmsDestinationAction extends aAction
 
     public function parseSql($sql)
     {
-        if ( null === $sql || "" == $sql ) {
+        if (null === $sql || "" == $sql) {
             $msg = "Empty SQL statement";
             $this->logAndThrowSqlException($msg);
         }
 
         $parser = new PHPSQLParser($sql);
         return $parser->parsed;
-
     } // parseSql()
 
     /* ------------------------------------------------------------------------------------------
@@ -338,15 +323,15 @@ abstract class aRdbmsDestinationAction extends aAction
     {
         $parsedSql = $this->parseSql($sql);
 
-        if ( ! array_key_exists("SELECT", $parsedSql) ) {
+        if (! array_key_exists("SELECT", $parsedSql)) {
             $msg = "Select block not found in parsed SQL";
             $this->logAndThrowException($msg);
         }
 
         $columnNames = array();
 
-        foreach ( $parsedSql['SELECT'] as $item ) {
-            if ( array_key_exists('alias', $item)
+        foreach ($parsedSql['SELECT'] as $item) {
+            if (array_key_exists('alias', $item)
                  && $item['alias']['as']
                  && array_key_exists('name', $item['alias']) ) {
                 $columnNames[] = $item['alias']['name'];
@@ -357,7 +342,6 @@ abstract class aRdbmsDestinationAction extends aAction
         }  // foreach ( $parsedSql['SELECT'] as $item )
 
         return $columnNames;
-
     } // getSqlColumnNames()
 
     /* ------------------------------------------------------------------------------------------
@@ -382,14 +366,13 @@ abstract class aRdbmsDestinationAction extends aAction
         $tableColumnNames = $table->getColumnNames();
         $missingColumnNames = array_diff($sqlColumnNames, $tableColumnNames);
 
-        if ( 0 != count($missingColumnNames) ) {
+        if (0 != count($missingColumnNames)) {
             $msg = "The following columns from the SQL SELECT were not found in table definition for '{$table->getName()}': " .
                 implode(", ", $missingColumnNames);
             $this->logAndThrowException($msg);
         }
 
         return $sqlColumnNames;
-
     } // verifySqlColumns()
 
     /* ------------------------------------------------------------------------------------------
@@ -409,52 +392,49 @@ abstract class aRdbmsDestinationAction extends aAction
 
     public function manageTable(Table $table, iDataEndpoint $endpoint)
     {
-        if ( null === $this->etlOverseerOptions ) {
+        if (null === $this->etlOverseerOptions) {
             $msg = "ETL overseer options are not set. These are typically set in iAction::execute() or iAction::verify()";
             $this->logAndThrowException($msg);
         }
 
         // Check for an existing table with the same name
 
-        $existingTable = Table::discover($table->getName(),
-                                         $endpoint,
-                                         $endpoint->getSystemQuoteChar(),
-                                         $this->logger);
+        $existingTable = Table::discover(
+            $table->getName(),
+            $endpoint,
+            $endpoint->getSystemQuoteChar(),
+            $this->logger
+        );
 
         // If no table with that name exists, create it. Otherwise check for differences and apply them.
 
-        if ( false === $existingTable ) {
-
+        if (false === $existingTable) {
             $this->logger->notice("Table " . $table->getFullName() . " does not exist, creating.");
 
             $sqlList = $table->getCreateSql();
 
-            foreach ( $sqlList as $sql ) {
+            foreach ($sqlList as $sql) {
                 $this->logger->debug($sql);
-                if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                if (! $this->etlOverseerOptions->isDryrun()) {
                     $endpoint->getHandle()->execute($sql);
                 }
             }
-
         } else {
             // A return value of FALSE indicates no changes to be made
             $sqlList = $existingTable->getAlterSql($table);
 
-            if ( false !== $sqlList ) {
+            if (false !== $sqlList) {
                 $this->logger->notice("Altering table " . $existingTable->getFullName());
 
-                foreach ( $sqlList as $sql ) {
+                foreach ($sqlList as $sql) {
                     $this->logger->debug($sql);
-                    if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                    if (! $this->etlOverseerOptions->isDryrun()) {
                         $endpoint->getHandle()->execute($sql);
                     }
                 }
             }  // if ( false !== $sqlList )
-
         }  // else ( false === $existingTable )
 
         return $table;
-
     }  // manageTable()
-
 }  // abstract class aRdbmsDestinationAction

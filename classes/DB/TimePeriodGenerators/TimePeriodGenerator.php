@@ -167,7 +167,8 @@ abstract class TimePeriodGenerator
      *                              total_hours:   The timespan of the range in hours.
      *                              total_seconds: The timespan of the range in seconds.
      */
-    private function getTimestampsAndTotals(DateTime $start_dt, DateTime $end_dt) {
+    private function getTimestampsAndTotals(DateTime $start_dt, DateTime $end_dt)
+    {
         // Convert the datetimes to Unix timestamps.
         $start_ts = $start_dt->getTimestamp();
         $end_ts = $end_dt->getTimestamp();

@@ -52,4 +52,3 @@ class Allocations extends PDODBMultiIngestor
         );
     }
 }
-

@@ -31,4 +31,3 @@ class PrincipalInvestigators extends PDODBSynchronizingIngestor
         );
     }
 }
-

@@ -14,8 +14,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use \Log;
 
-class Rest extends aDataEndpoint
-implements iDataEndpoint
+class Rest extends aDataEndpoint implements iDataEndpoint
 {
     // The base url for this endpoint
     protected $baseUrl = null;
@@ -42,13 +41,12 @@ implements iDataEndpoint
         // $msg = "sleep_seconds is a non-numeric value, ignoring";
         // $this->logger->warning($msg);
           
-        if ( null !== $options->sleep_seconds && is_numeric($options->sleep_seconds) ) {
+        if (null !== $options->sleep_seconds && is_numeric($options->sleep_seconds)) {
             $seconds = (float) $options->sleep_seconds;
             $this->sleepMicroseconds = $seconds * 1000000;
         }
     
         $this->key = md5(implode($this->keySeparator, array($this->type, $this->name, $this->baseUrl)));
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -61,7 +59,7 @@ implements iDataEndpoint
         // The first time a connection is made the endpoint handle should be set.
 
         $this->connect();
-        if ( ! $leaveConnected ) {
+        if (! $leaveConnected) {
             $this->disconnect();
         }
 
@@ -123,5 +121,4 @@ implements iDataEndpoint
     {
         return "{$this->name} (" . get_class($this) . ", base_url = {$this->baseUrl})";
     }  // __toString()
-
 }  // class Rest

@@ -6,7 +6,7 @@ use \UnitTesting\mock;
 
 class ExportBuilderTest extends PHPUnit_Framework_TestCase
 {
-    function __construct() 
+    function __construct()
     {
         $this->_dummydata = array(array(
             'headers' => array('Column1', 'Column2'),
@@ -25,14 +25,15 @@ class ExportBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('results', $result);
         $this->assertArrayHasKey('Content-type', $result['headers']);
 
-        if(!$inline) {
+        if (!$inline) {
             $this->assertArrayHasKey('Content-Disposition', $result['headers']);
         }
 
         return $result;
     }
 
-    function testExportJson() {
+    function testExportJson()
+    {
 
         $result = $this->exportHelper('json', true, 'filename');
 
@@ -40,13 +41,13 @@ class ExportBuilderTest extends PHPUnit_Framework_TestCase
 
         $data = json_decode($result['results'], true);
 
-        foreach($data as $datum)
-        {
+        foreach ($data as $datum) {
             $this->assertArrayHasKey('title', $datum);
         }
     }
 
-    function testExportXml() {
+    function testExportXml()
+    {
 
         $result = $this->exportHelper('xml', true, 'filename');
 
@@ -59,7 +60,8 @@ class ExportBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('value2', $parsedxml->rows[0]->row->cell[1]->value);
     }
 
-    function testExportXls() {
+    function testExportXls()
+    {
 
         $result = $this->exportHelper('xls', false, 'filename');
 
@@ -83,7 +85,8 @@ EOF;
         $this->assertEquals($expected, $result['results']);
     }
 
-    function testExportCsv() {
+    function testExportCsv()
+    {
 
         $result = $this->exportHelper('csv', false, 'filename');
 
@@ -116,6 +119,3 @@ EOF;
         $result = $this->exportHelper('bananas', false, 'yes we have no bananas');
     }
 }
-
-
-?>

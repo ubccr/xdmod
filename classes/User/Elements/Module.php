@@ -77,11 +77,11 @@ class Module extends \Common\Identity
      *                        - cls               : javascript class that corresponds to this module.
      *                        - ref               : javascript static reference for the 'cls' property.
      *                        - tooltip           : the tooltip that should be displayed when the tab is receives the hover event.
-     *                        - userManualSectionName : the term that is meant to identify which User Manual Section corresponds with this module. 
+     *                        - userManualSectionName : the term that is meant to identify which User Manual Section corresponds with this module.
      */
-    public function __construct( array $config )
+    public function __construct(array $config)
     {
-        if ( !isset($config['name'])) {
+        if (!isset($config['name'])) {
             throw new Exception("'name' property required for module construction.");
         }
         if (!isset($config['title'])) {

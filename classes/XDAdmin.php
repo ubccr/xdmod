@@ -129,7 +129,7 @@ class XDAdmin
 
         $results = array();
 
-        foreach($emailAddressResults as $address) {
+        foreach ($emailAddressResults as $address) {
             $results[] = $address['email_address'];
         }
 
@@ -166,7 +166,7 @@ class XDAdmin
      *
      * @return array
      */
-    public function enumerateInstitutions($start, $limit, $nameFilter = NULL)
+    public function enumerateInstitutions($start, $limit, $nameFilter = null)
     {
         $start = (int)$start;
         $limit = (int)$limit;

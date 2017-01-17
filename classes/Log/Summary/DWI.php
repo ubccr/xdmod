@@ -7,10 +7,10 @@
  */
 
 namespace Log\Summary;
+
 use Log\Summary;
 
-class DWI
-extends Summary
+class DWI extends Summary
 {
     /**
      * The array keys used by the logger to indicate record counts.
@@ -22,5 +22,4 @@ extends Summary
         'records_examined',
         'records_loaded'
     );
-
 }  // class DWI

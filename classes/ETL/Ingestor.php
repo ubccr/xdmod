@@ -51,8 +51,8 @@ class Ingestor
         // If the class name does not include a namespace designation, use the namespace from the
         // ingestor configuration or the default namespace if not specified.
 
-        if ( false === strstr($className, '\\') ) {
-            if ( $options->namespace ) {
+        if (false === strstr($className, '\\')) {
+            if ($options->namespace) {
                 $className = $options->namespace .
                     ( strpos($options->namespace, '\\') != strlen($options->namespace) - 1 ? "\\" : "" ) .
                     $className;
@@ -61,26 +61,24 @@ class Ingestor
             }
         }
 
-        if ( class_exists($className) ) {
+        if (class_exists($className)) {
             $ingestor = new $className($options, $etlConfig, $logger);
         } else {
             $msg = __CLASS__ . ": Error creating ingestor '{$options->name}', class '$className' not found";
-            if ( null !== $logger ) {
+            if (null !== $logger) {
                 $logger->err($msg);
             }
             throw new Exception($msg);
         }
 
-        if ( ! $ingestor instanceof iAction ) {
+        if (! $ingestor instanceof iAction) {
             $msg = __CLASS__ . ": $className does not implenment interface iAction";
-            if ( null !== $logger ) {
+            if (null !== $logger) {
                 $logger->err($msg);
             }
             throw new Exception($msg);
         }
 
         return $ingestor;
-
     }  // factory()
-
 }  // class Ingestor

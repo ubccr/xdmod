@@ -84,7 +84,6 @@ foreach ($active_frequencies as $frequency) {
     $logger->debug("Reports Scheduled for $frequency Delivery: $suffix");
 
     foreach ($report_details as $details) {
-
         try {
             $user = XDUser::getUserByID($details['user_id']);
         } catch (Exception $e) {
@@ -117,8 +116,7 @@ foreach ($active_frequencies as $frequency) {
                     $frequency,
                     $build_response
                 );
-
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 $msg = "Error Preparing report on " . gethostname() . " {$details['report_id']}: "
                     . $e->getMessage();
                 $logger->err(array(
@@ -203,8 +201,7 @@ function getActiveFrequencies($verbose = false)
 
     // First of the month and the month denotes the start of a new 6-month
     // block
-    if (
-        $day_of_month == 3
+    if ($day_of_month == 3
         && in_array($month_index, $semi_annual_start_months)
     ) {
         $activeFrequencies[] = 'Semi-annual';

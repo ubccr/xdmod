@@ -24,11 +24,11 @@ require_once __DIR__ . '/../../configuration/linker.php';
  *
  * @return mixed
  **/
-function getConfigValue($section, $key, $default=null)
+function getConfigValue($section, $key, $default = null)
 {
     try {
         $result = xd_utilities\getConfiguration($section, $key);
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
         $result = $default;
     }
     return $result;
@@ -59,4 +59,3 @@ if (!empty($url)) {
 EOT;
 }
 echo implode($result);
-?>

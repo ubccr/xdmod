@@ -90,7 +90,7 @@ class Log
             $mask = E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE
                 | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED;
 
-            if ($e !== NULL && ($e['type'] & $mask) == 0) {
+            if ($e !== null && ($e['type'] & $mask) == 0) {
                 $logger->crit(array(
                     'message' => $e['message'],
                     'file'    => $e['file'],
@@ -117,7 +117,6 @@ class Log
         $loggers = array();
 
         foreach ($loggerTypes as $type) {
-
             // Skip logger types that have been disabled.
             if (isset($conf[$type]) && $conf[$type] === false) {
                 continue;
@@ -278,4 +277,3 @@ class Log
         return xd_utilities\getConfiguration('logger', $option);
     }
 }
-

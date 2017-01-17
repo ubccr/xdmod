@@ -4,40 +4,35 @@
 
    // --------------------------------
 
-   function breakpoint($label) {
+function breakpoint($label)
+{
 
-      $returnData = array('breakpoint' => $label);
-      \xd_controller\returnJSON($returnData);
-
-   }//breakpoint
-
-   // --------------------------------
-      
-   function dumpArray(&$arr) {
-   
-      print '<pre>'.print_r($arr, 1).'</pre>';
-   
-   }//dumpArray
+    $returnData = array('breakpoint' => $label);
+    \xd_controller\returnJSON($returnData);
+}//breakpoint
 
    // --------------------------------
       
-   function dumpQueryResultsAsTable(&$arr) {
+function dumpArray(&$arr)
+{
    
-      print '<table border=1 cellpadding=10>';
+    print '<pre>'.print_r($arr, 1).'</pre>';
+}//dumpArray
+
+   // --------------------------------
       
-      print '<tr><td>'.implode('</td><td>', array_keys($arr[0])).'</td></tr>';
-      
-      foreach ($arr AS $entry) {
-      
-         print '<tr><td>';
-         print implode('</td><td>', $entry);
-         print '</td></tr>';
-         
-      }
-      
-      print '</table>';
+function dumpQueryResultsAsTable(&$arr)
+{
    
-   }//dumpQueryResultsAsTable   
-
-
-?>
+    print '<table border=1 cellpadding=10>';
+      
+    print '<tr><td>'.implode('</td><td>', array_keys($arr[0])).'</td></tr>';
+      
+    foreach ($arr as $entry) {
+        print '<tr><td>';
+        print implode('</td><td>', $entry);
+        print '</td></tr>';
+    }
+      
+    print '</table>';
+}//dumpQueryResultsAsTable

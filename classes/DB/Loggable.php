@@ -8,11 +8,9 @@
  
 class Loggable
 {
-	protected $_logger = null;
+    protected $_logger = null;
     public function setLogger(Log $logger)
     {
         $this->_logger = $logger;
     }
 } //Ingestor
-
-?>

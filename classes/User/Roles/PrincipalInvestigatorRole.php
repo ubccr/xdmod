@@ -18,12 +18,11 @@ class PrincipalInvestigatorRole extends \User\AuthenticatedRole
     public function __construct()
     {
         parent::__construct(ROLE_ID_PRINCIPAL_INVESTIGATOR);
-
     }//__construct
 
     // -----------------------------------
 
-    public function configure(\XDUser $user, $simulatedActiveRole = NULL)
+    public function configure(\XDUser $user, $simulatedActiveRole = null)
     {
         parent::configure($user, $simulatedActiveRole);
 
@@ -35,10 +34,6 @@ class PrincipalInvestigatorRole extends \User\AuthenticatedRole
 
         $pi_mapping = (count($pi_check_query) == 1) ? $user->getPersonID() : -1;
 
-        $this->addParameter('pi',  $pi_mapping);
-
+        $this->addParameter('pi', $pi_mapping);
     }//configure
-
 }//PrincipalInvestigatorRole
-
-?>

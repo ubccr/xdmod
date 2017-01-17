@@ -57,7 +57,6 @@ class DataEndpointOptions extends aOptions
         // Apply any defaults passed in via the constructor
 
         parent::__construct($options);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -69,17 +68,16 @@ class DataEndpointOptions extends aOptions
     {
         // Perform input verificaiton.
 
-        switch ( $property ) {
-      
-        case 'paths':
-            if ( ! is_object($value) ) {
-                $msg = get_class($this) . ": paths must be an object";
-                throw new Exception($msg);
-            }
-            break;
+        switch ($property) {
+            case 'paths':
+                if (! is_object($value)) {
+                    $msg = get_class($this) . ": paths must be an object";
+                    throw new Exception($msg);
+                }
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         $this->verifyProperty($property, $value);
@@ -87,5 +85,4 @@ class DataEndpointOptions extends aOptions
         $this->options[$property] = $value;
         return $this;
     }  // __set()
-
 }  // class DataEndpointOptions

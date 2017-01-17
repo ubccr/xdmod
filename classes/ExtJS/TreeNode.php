@@ -3,98 +3,94 @@
 namespace ExtJS;
 
    //
-   // \ExtJS\TreeNode: 
+   // \ExtJS\TreeNode:
    // Encapsulates the array representing store content required for an ExtJS tree component.
     
-   class TreeNode {
+class TreeNode
+{
       
-      private $_tree_data;            // @array                                             
+    private $_tree_data;            // @array
 
-      // ----------------------------------------------         
+   // ----------------------------------------------
 
-      public function __construct($nodeText = '', $leafNode = false)
-      {
+    public function __construct($nodeText = '', $leafNode = false)
+    {
       
-         $this->_tree_data = array();
+        $this->_tree_data = array();
          
-         $this->_tree_data['text'] = $nodeText;
-         $this->_tree_data['leaf'] = $leafNode;  
-         
-      }//__construct
+        $this->_tree_data['text'] = $nodeText;
+        $this->_tree_data['leaf'] = $leafNode;
+    }//__construct
 
-      // ----------------------------------------------
+   // ----------------------------------------------
       
-      public function getData() {
+    public function getData()
+    {
       
-         return $this->_tree_data;
-                  
-      }//getData
+        return $this->_tree_data;
+    }//getData
       
-      // ----------------------------------------------
+   // ----------------------------------------------
       
-      public function render() {
+    public function render()
+    {
       
-         // This will most likely be used by trees which have a single root node
+        // This will most likely be used by trees which have a single root node
          
-         //       (L)
-         //      /
-         // (R)--
-         //      \
-         //      (L)
+        //       (L)
+        //      /
+        // (R)--
+        //      \
+        //      (L)
          
-         return json_encode($this->_tree_data);
-                  
-      }//render
+        return json_encode($this->_tree_data);
+    }//render
       
-      // ----------------------------------------------   
+   // ----------------------------------------------
    
-      public function setAsLeaf($leafNode)
-      {
-         $this->_tree_data['leaf'] = $leafNode;
-      }
+    public function setAsLeaf($leafNode)
+    {
+        $this->_tree_data['leaf'] = $leafNode;
+    }
 
-      // ----------------------------------------------   
+   // ----------------------------------------------
    
-      public function setIconClass($iconClass)
-      {
-         $this->_tree_data['iconCls'] = $iconClass;
-      }
+    public function setIconClass($iconClass)
+    {
+        $this->_tree_data['iconCls'] = $iconClass;
+    }
             
-      // ----------------------------------------------   
+   // ----------------------------------------------
 
-      public function setID($nodeID)
-      {         
-         $this->_tree_data['id'] = $nodeID;
-      }
+    public function setID($nodeID)
+    {
+        $this->_tree_data['id'] = $nodeID;
+    }
 
-      // ----------------------------------------------   
+   // ----------------------------------------------
 
-      public function setText($nodeText)
-      {         
-         $this->_tree_data['text'] = $nodeText;
-      }
+    public function setText($nodeText)
+    {
+        $this->_tree_data['text'] = $nodeText;
+    }
 
-      // ----------------------------------------------  
+   // ----------------------------------------------
 
-      public function addChildNode($childNode)
-      {         
+    public function addChildNode($childNode)
+    {
          
-         if (!isset($this->_tree_data['children'])){
+        if (!isset($this->_tree_data['children'])) {
             $this->_tree_data['children'] = array();
-         }
+        }
                   
-         $this->_tree_data['children'][] = $childNode->getData();
-         
-      }//addChildNode
+        $this->_tree_data['children'][] = $childNode->getData();
+    }//addChildNode
 
-      // ----------------------------------------------        
+   // ----------------------------------------------
 
-      public function setAttribute($attribute, $value) {
+    public function setAttribute($attribute, $value)
+    {
                      
-         $this->_tree_data[$attribute] = $value;   
-      
-      }//setAttribute
-      
-   }//TreeNode
-
-?>
+        $this->_tree_data[$attribute] = $value;
+    }//setAttribute
+}//TreeNode

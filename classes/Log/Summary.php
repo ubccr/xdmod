@@ -183,8 +183,9 @@ class Summary
         // Allow disabling of the expensive database queries if we do not need them (e.g., when
         // querying the summaryu configuration).
 
-        if ( $queryRecordCounts )
-          $this->recordCounts = $this->_getRecordCounts();
+        if ($queryRecordCounts) {
+            $this->recordCounts = $this->_getRecordCounts();
+        }
     }
 
     /**
@@ -200,19 +201,20 @@ class Summary
      * @return The Summary class.
      */
 
-    public function factory($ident, $queryRecordCounts = FALSE)
+    public function factory($ident, $queryRecordCounts = false)
     {
-      if ( empty($ident) ) {
-        throw new \Exception('"ident" required');
-      }
+        if (empty($ident)) {
+            throw new \Exception('"ident" required');
+        }
 
       // If a ident-string specific summary class exists load it, otherwise use the default.
 
-      $summary = "Log\Summary\\$ident";
-      if ( class_exists($summary) )
-        return new $summary($ident, $queryRecordCounts);
-      else
-        return new Summary($ident, $queryRecordCounts);
+        $summary = "Log\Summary\\$ident";
+        if (class_exists($summary)) {
+            return new $summary($ident, $queryRecordCounts);
+        } else {
+            return new Summary($ident, $queryRecordCounts);
+        }
     }
 
     public function getProcessStartRowId()
@@ -329,7 +331,9 @@ class Summary
 
     private function _getRecordCounts()
     {
-        if ( count($this->recordCountKeys) == 0 ) return array();
+        if (count($this->recordCountKeys) == 0) {
+            return array();
+        }
         $counts = array();
 
         foreach ($this->recordCountKeys as $key) {
@@ -414,4 +418,3 @@ class Summary
         return array($sql, $params);
     }
 }
-

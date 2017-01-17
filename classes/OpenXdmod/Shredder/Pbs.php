@@ -475,13 +475,10 @@ class Pbs extends Shredder
                 $cpus = array();
 
                 if (strpos($cpuPart, '-') !== false) {
-
                     // The "-" indicates this is a range of CPU indexes.
                     list($min, $max) = explode('-', $cpuPart, 2);
                     $cpus = range($min, $max);
-
                 } elseif (strpos($cpuPart, '*') !== false) {
-
                     // The number to the left of the "*" is a unique
                     // index and the number on the right is a CPU count
                     // for that index.
@@ -497,7 +494,6 @@ class Pbs extends Shredder
                         range(1, $count)
                     );
                 } else {
-
                     // Single CPU.
                     $cpus = array($cpuPart);
                 }

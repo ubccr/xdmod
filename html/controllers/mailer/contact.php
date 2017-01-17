@@ -21,20 +21,21 @@ $response = array();
 $user_is_public = $_POST['username'] === '__public__';
 
 if ($user_is_public) {
-  $user_logged_in = false;
-  try {
-    \xd_security\getLoggedInUser();
-    $user_logged_in = true;
-  } catch (Exception $e) {}
+    $user_logged_in = false;
+    try {
+        \xd_security\getLoggedInUser();
+        $user_logged_in = true;
+    } catch (Exception $e) {
+    }
 
-  if ($user_logged_in) {
-    \xd_response\presentError("Client claims to be public user but is logged in.");
-  }
+    if ($user_logged_in) {
+        \xd_response\presentError("Client claims to be public user but is logged in.");
+    }
 } else {
-  $user = \xd_security\getLoggedInUser();
-  if ($_POST['username'] !== $user->getUsername()) {
-    \xd_response\presentError("Client claims to be a user other than the logged in user.");
-  }
+    $user = \xd_security\getLoggedInUser();
+    if ($_POST['username'] !== $user->getUsername()) {
+        \xd_response\presentError("Client claims to be a user other than the logged in user.");
+    }
 }
 
 // ----------------------------------------------------------
@@ -47,20 +48,20 @@ $reason = isset($_POST['reason']) ? $_POST['reason'] : 'contact';
 $captcha_private_key = xd_utilities\getConfiguration('mailer', 'captcha_private_key');
 
 if ($captcha_private_key !== '' && !isset($_SESSION['xdUser'])) {
-  if (!isset($_POST["recaptcha_challenge_field"]) || !isset($_POST["recaptcha_response_field"])){
-    \xd_response\presentError('Recaptcha information not specified');
-  }
+    if (!isset($_POST["recaptcha_challenge_field"]) || !isset($_POST["recaptcha_response_field"])) {
+        \xd_response\presentError('Recaptcha information not specified');
+    }
 
-  $recaptcha_check = recaptcha_check_answer(
-    $captcha_private_key,
-    $_SERVER["REMOTE_ADDR"],
-    $_POST["recaptcha_challenge_field"],
-    $_POST["recaptcha_response_field"]
-  );
+    $recaptcha_check = recaptcha_check_answer(
+        $captcha_private_key,
+        $_SERVER["REMOTE_ADDR"],
+        $_POST["recaptcha_challenge_field"],
+        $_POST["recaptcha_response_field"]
+    );
 
-  if (!$recaptcha_check->is_valid) {
-    \xd_response\presentError('You must enter the words in the Recaptcha box properly.');
-  };
+    if (!$recaptcha_check->is_valid) {
+        \xd_response\presentError('You must enter the words in the Recaptcha box properly.');
+    };
 }
 
 // ----------------------------------------------------------
@@ -75,15 +76,15 @@ $recipient
 $mail = ZendMailWrapper::init();
 
 switch ($reason) {
-  case 'wishlist':
-    $subject = "[WISHLIST] Feature request sent from a portal visitor";
-    $message_type = "feature request";
-    break;
+    case 'wishlist':
+        $subject = "[WISHLIST] Feature request sent from a portal visitor";
+        $message_type = "feature request";
+        break;
 
-  default:
-    $subject = "Message sent from a portal visitor";
-    $message_type = "message";
-    break;
+    default:
+        $subject = "Message sent from a portal visitor";
+        $message_type = "message";
+        break;
 }
 
 $mail->setSubject($subject);
@@ -106,8 +107,7 @@ $mail->setBodyText($message);
 
 try {
     $mail->send();
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $response['success'] = false;
     $response['message'] = $e->getMessage();
     echo json_encode($response);
@@ -137,8 +137,7 @@ $mail->setBodyText($message);
 
 try {
     $mail->send();
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $response['success'] = false;
     $response['message'] = $e->getMessage();
     echo json_encode($response);
@@ -150,4 +149,3 @@ catch (Exception $e) {
 $response['success'] = true;
 
 echo json_encode($response);
-

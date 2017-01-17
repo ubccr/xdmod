@@ -1,31 +1,29 @@
 <?php
 
-   class PNGFormat implements iBinaryFormat {
+class PNGFormat implements iBinaryFormat
+{
 
-      public function toString() {
+    public function toString()
+    {
          
-         return "png";
-         
-      }//toString  
+        return "png";
+    }//toString
         
-      // -----------------------------------
+   // -----------------------------------
          
-      public function getHeaders() {
+    public function getHeaders()
+    {
          
-         return array(
-            'content-type' => 'image/png'
-         );
-         
-      }//getHeaders  
+        return array(
+          'content-type' => 'image/png'
+        );
+    }//getHeaders
 
-      // -----------------------------------
+   // -----------------------------------
       
-      public function getDescription() {
+    public function getDescription()
+    {
          
-         return "A bitmapped image format that employs lossless data compression.";
-         
-      }//getDescription   
-   
-   }//PNGFormat
-   
-?>
+        return "A bitmapped image format that employs lossless data compression.";
+    }//getDescription
+}//PNGFormat

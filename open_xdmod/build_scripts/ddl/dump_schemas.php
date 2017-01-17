@@ -28,9 +28,13 @@ function main()
 
     $shortOptions = implode(
         '',
-        array_map(function ($opt) { return $opt[0]; }, $opts)
+        array_map(function ($opt) {
+            return $opt[0];
+        }, $opts)
     );
-    $longOptions = array_map(function ($opt) { return $opt[1]; }, $opts);
+    $longOptions = array_map(function ($opt) {
+        return $opt[1];
+    }, $opts);
 
     $args = getopt($shortOptions, $longOptions);
 
@@ -171,7 +175,9 @@ function dumpSchema(
     );
 
     $sedCmd = 'sed ' . implode(' ', array_map(
-        function ($expr) { return '-e ' . escapeshellarg($expr); },
+        function ($expr) {
+            return '-e ' . escapeshellarg($expr);
+        },
         $sedExpressions
     ));
 

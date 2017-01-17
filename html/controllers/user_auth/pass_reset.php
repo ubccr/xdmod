@@ -13,7 +13,7 @@ if (!$isValid) {
 
 // -----------------------------
 
-$user_to_email = XDUser::userExistsWithEmailAddress($_POST['email'], TRUE);
+$user_to_email = XDUser::userExistsWithEmailAddress($_POST['email'], true);
 
 if ($user_to_email == INVALID) {
     $returnData['status'] = 'no_user_mapping';
@@ -56,12 +56,10 @@ try {
     $status = $mail->send();
     $returnData['success'] = true;
     $returnData['status']  = 'success';
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $returnData['success'] = false;
     $returnData['message'] = $e->getMessage();
     $returnData['status']  = 'failure';
 }
 
 xd_controller\returnJSON($returnData);
-

@@ -17,8 +17,7 @@ namespace ETL\Aggregator;
 use ETL\iAction;
 use \PDOException;
 
-class JobsAggregator extends pdoAggregator
-implements iAction
+class JobsAggregator extends pdoAggregator implements iAction
 {
     // Name of the status table that we will be updating
     const STATUS_TABLE = "jobfactstatus";
@@ -46,18 +45,17 @@ implements iAction
 
         try {
             $this->logger->debug($sql);
-            if ( 0 === $this->utilityHandle->execute($sql) ) {
+            if (0 === $this->utilityHandle->execute($sql)) {
                 $msg = "Aggregation unit column 'aggregated_{$aggregationUnit}' not found in {$sourceSchema}.{$tableName}";
                 $this->logger->notice($msg);
                 return false;
             }
-        } catch (PDOException $e ) {
+        } catch (PDOException $e) {
             $msg = "Error querying {$sourceSchema}.{$tableName}";
             $this->logAndThrowSqlException($sql, $e, $msg);
         }
 
         return parent::performPreAggregationUnitTasks($aggregationUnit);
-
     }  // performPreAggregationUnitTasks()
 
     /* ------------------------------------------------------------------------------------------
@@ -74,7 +72,7 @@ implements iAction
 
         $this->logger->info("Update status table {$sourceSchema}.{$tableName} for '$aggregationUnit'");
 
-        if ( 0 == $numAggregationPeriodsProcessed ) {
+        if (0 == $numAggregationPeriodsProcessed) {
             return parent::performPostAggregationUnitTasks($aggregationUnit, $numAggregationPeriodsProcessed);
         }
 
@@ -84,34 +82,33 @@ implements iAction
         // If we're forcing the date we want to only update jobfactstatus for the dates that we're
         // actually updating.
 
-        if ( null !== $this->resourceIdListString ) {
+        if (null !== $this->resourceIdListString) {
             $whereClauses[] =  "resource_id IN (" . $this->resourceIdListString . ")";
         }
 
-        if ( $this->etlOverseerOptions->isForce() ) {
+        if ($this->etlOverseerOptions->isForce()) {
             $qStartDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
             $qEndDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
             $whereClauses[] = "end_time_ts BETWEEN UNIX_TIMESTAMP($qStartDate) AND UNIX_TIMESTAMP($qEndDate)";
         }  // if ( $this->etlOverseerOptions->isForce() )
 
-        if ( 0 != count($whereClauses) ) {
+        if (0 != count($whereClauses)) {
             $sql .= " WHERE " . implode(" AND ", $whereClauses);
         }
 
         $this->logger->debug($sql);
 
         try {
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
+            if (! $this->etlOverseerOptions->isDryrun()) {
                 $numRows = $this->destinationHandle->execute($sql);
                 $this->logger->info("Updated $numRows rows");
             }
-        } catch (PDOException $e ) {
+        } catch (PDOException $e) {
             $msg = "Error updating {$sourceSchema}.{$tableName}";
             $this->logAndThrowSqlException($sql, $e, $msg);
         }
 
         return parent::performPostAggregationUnitTasks($aggregationUnit, $numAggregationPeriodsProcessed);
-
     }  // performPostAggregationUnitTasks()
 
     /* ------------------------------------------------------------------------------------------
@@ -148,7 +145,7 @@ implements iAction
 
         $this->logger->info("Clean status table {$sourceSchema}.{$tableName}");
 
-        if ( 0 === $numRecordsProcessed ) {
+        if (0 === $numRecordsProcessed) {
             return parent::performPostExecuteTasks($numRecordsProcessed);
         }
 
@@ -161,17 +158,17 @@ implements iAction
 
             $result = $this->destinationHandle->query($sql);
 
-            foreach ( $result as $row ) {
+            foreach ($result as $row) {
                 $whereClauses[] = $row['Field'] . "=1";
             }
 
             // If we're restricting aggregation to selected resources only delete entries for those resources
 
-            if ( null !== $this->resourceIdListString ) {
+            if (null !== $this->resourceIdListString) {
                 $whereClauses[] = "resource_id IN (" . $this->resourceIdListString . ")";
             }
 
-            if ( $this->etlOverseerOptions->isForce() ) {
+            if ($this->etlOverseerOptions->isForce()) {
                 $qStartDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
                 $qEndDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
                 $whereClauses[] = "end_time_ts BETWEEN UNIX_TIMESTAMP($qStartDate) AND UNIX_TIMESTAMP($qEndDate)";
@@ -179,21 +176,19 @@ implements iAction
 
             // If we always run the full set of aggregation periods, this can be done once at the end...
 
-            $sql = "DELETE FROM {$sourceSchema}.{$tableName} WHERE " . implode(" AND " , $whereClauses);
+            $sql = "DELETE FROM {$sourceSchema}.{$tableName} WHERE " . implode(" AND ", $whereClauses);
             $this->logger->debug($sql);
 
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
+            if (! $this->etlOverseerOptions->isDryrun()) {
                 $numRows = $this->destinationHandle->execute($sql);
                 $this->logger->info("Removed $numRows rows");
             }
-
-        } catch (PDOException $e ) {
+        } catch (PDOException $e) {
             $msg = "Error cleaning {$sourceSchema}.{$tableName}";
             $this->logAndThrowSqlException($sql, $e, $msg);
         }
 
         return parent::performPostExecuteTasks($numRecordsProcessed);
-
     }  // performPostExecuteTasks()
 
 
@@ -217,7 +212,7 @@ implements iAction
 
     protected function getDirtyAggregationPeriods($aggregationUnit)
     {
-        if ( empty($aggregationUnit) ) {
+        if (empty($aggregationUnit)) {
             $msg = "Empty aggregation unit";
             $this->logAndThrowException($msg);
         }
@@ -231,22 +226,19 @@ implements iAction
         // If we are forcing aggregation for a specific period, simply select all periods that overlap
         // the specified date range
 
-        if ( $this->etlOverseerOptions->isForce() ) {
-
+        if ($this->etlOverseerOptions->isForce()) {
             $startDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
             $endDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
 
-            if ( null !== $startDate && null !== $endDate ) {
+            if (null !== $startDate && null !== $endDate) {
                 $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate) " .
                     "AND d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
-            } else if ( null !== $startDate ) {
+            } elseif (null !== $startDate) {
                 $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate)";
-            } else if ( null !== $endDate ) {
+            } elseif (null !== $endDate) {
                 $dateRangeSql = "d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
             }
-
         } else {
-
             // Under normal operation, be smart about what to aggregate. Check the status table and only
             // select periods where a job needs to be aggregated.
             //
@@ -290,7 +282,7 @@ implements iAction
              */
 
             $whereClauses = array("aggregated_${aggregationUnit} = 0");
-            if ( null !== $this->resourceIdListString ) {
+            if (null !== $this->resourceIdListString) {
                 $whereClauses[] = "resource_id IN (" . $this->resourceIdListString . ")";
             }
 
@@ -302,7 +294,6 @@ implements iAction
 
             $dateRangeSql = "d.${aggregationUnit}_end_ts >= js_limits.min_start " .
                 "AND d.${aggregationUnit}_start_ts <= js_limits.max_end";
-
         }  // else ( $this->etlOverseerOptions->isForce() )
 
         // NOTE: The "ORDER BY 2 DESC, 3 DESC" is important because it allows most recent periods to be
@@ -333,7 +324,7 @@ implements iAction
 
         try {
             $this->logger->debug("Select dirty aggregation periods:\n$sql");
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
+            if (! $this->etlOverseerOptions->isDryrun()) {
                 $result = $this->utilityHandle->query($sql);
             }
         } catch (PDOException $e) {
@@ -341,7 +332,6 @@ implements iAction
         }
 
         return $result;
-
     }  // getDirtyAggregationPeriods()
 
 
@@ -359,7 +349,7 @@ implements iAction
 
     protected function checkResourceSpecs()
     {
-        if ( $this->verifiedResourceSpecs ) {
+        if ($this->verifiedResourceSpecs) {
             return;
         }
 
@@ -383,7 +373,7 @@ implements iAction
 
         $this->logger->debug("Verify resource specs exist:\n$sql");
         $result = $this->sourceHandle->query($sql, $params);
-        if ( count($result) > 0 ) {
+        if (count($result) > 0) {
             $resources = array();
             foreach ($result as $resource) {
                 $resources[] = $resource['resource_id'];
@@ -401,7 +391,5 @@ implements iAction
         }
 
         $this->verifiedResourceSpecs = true;
-
     }  // checkResourceSpecs()
-
 }  // class JobsAggregator

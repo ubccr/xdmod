@@ -6,7 +6,6 @@
  */
 
 try {
-
     require_once 'Log.php';
 
     $returnData = array(
@@ -24,7 +23,6 @@ try {
     );
 
     $returnData['count'] = count($returnData['response']);
-
 } catch (Exception $e) {
     $returnData = array(
         'success' => false,
@@ -33,4 +31,3 @@ try {
 }
 
 echo json_encode($returnData);
-

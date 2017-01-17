@@ -57,4 +57,3 @@ class Identity
         return $this->getName();
     }
 }
-

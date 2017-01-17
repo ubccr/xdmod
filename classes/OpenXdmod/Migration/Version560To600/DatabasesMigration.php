@@ -21,14 +21,12 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
     {
         $modified = array();
         foreach ($data as $datum) {
-
             if (count($datum['searchterms']) == 0) {
                 // No search terms were saved for this entry
                 continue;
             }
 
             if (isset($datum['searchterms']['realm'])) {
-
                 $output = array("params" => $datum['searchterms']);
 
                 if (isset($output['params']['params']) && !is_string($output['params']['params'])) {
@@ -68,7 +66,6 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
                 $this->logger->info('Updated ' . count($modifiedSearches) .
                     ' JobViewer SearchHistory records for user ' . $user->getUsername() . "\n");
             }
-
         }
     }
 }

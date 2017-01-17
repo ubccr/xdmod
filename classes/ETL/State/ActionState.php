@@ -51,12 +51,12 @@ class ActionState extends Loggable implements iActionState
     {
         parent::__construct($logger);
 
-        if ( empty($key) || ! is_string($key) ) {
+        if (empty($key) || ! is_string($key)) {
             $msg = "Key must be a valid non-empty string";
             $this->logAndThrowException($msg);
         }
 
-        if ( empty($actionName) || ! is_string($actionName) ) {
+        if (empty($actionName) || ! is_string($actionName)) {
             $msg = "Action name must be a valid non-empty string";
             $this->logAndThrowException($msg);
         }
@@ -70,7 +70,6 @@ class ActionState extends Loggable implements iActionState
         $this->metadata->modifying_action = null;
         $this->metadata->modified_time = null;
         $this->metadata->state_size_bytes = 0;
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -78,7 +77,8 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }  // getKey()
             
@@ -87,7 +87,8 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function setKey($key) {
+    public function setKey($key)
+    {
         $this->key = $key;
         return $this;
     }  // setKey()
@@ -97,7 +98,8 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getType() {
+    public function getType()
+    {
         return $this->metadata->type;
     }  // getType()
 
@@ -106,7 +108,8 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getMetadata() {
+    public function getMetadata()
+    {
         return $this->metadata;
     }  // getMetadata()
 
@@ -121,8 +124,9 @@ class ActionState extends Loggable implements iActionState
       * ------------------------------------------------------------------------------------------
      */
 
-    public function &__get($prop) {
-        if ( array_key_exists($prop, $this->properties) ) {
+    public function &__get($prop)
+    {
+        if (array_key_exists($prop, $this->properties)) {
             return $this->properties[$prop];
         }
 
@@ -137,10 +141,10 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __set($prop, $value) {
+    public function __set($prop, $value)
+    {
 
         $this->properties[$prop] = $value;
-
     }  // __set()
 
     /* ------------------------------------------------------------------------------------------
@@ -152,10 +156,10 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __isset($prop) {
+    public function __isset($prop)
+    {
 
         return ( array_key_exists($prop, $this->properties) && null !== $this->properties[$prop] );
-
     }  // __isset()
 
     /* ------------------------------------------------------------------------------------------
@@ -165,8 +169,9 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __unset($prop) {
-        if ( array_key_exists($prop, $this->properties) ) {
+    public function __unset($prop)
+    {
+        if (array_key_exists($prop, $this->properties)) {
             unset($this->properties[$prop]);
         }
     }  // __unset()
@@ -178,7 +183,8 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __sleep() {
+    public function __sleep()
+    {
         return array_diff(array_keys(get_object_vars($this)), array('logger'));
     }  // __unset()
 
@@ -189,11 +195,11 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __toString() {
+    public function __toString()
+    {
         $str = "Key: {$this->key}\n" .
             "Metadata: " . print_r($this->metadata, true) .
             "Properties: " . print_r($this->properties, true);
         return $str;
     }  // __unset()
-
 }  // class ActionState

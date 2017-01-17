@@ -23,12 +23,12 @@ if (!$isValid) {
 
 $xdw = new XDWarehouse();
 
-$name_filter = (isset($_POST['query'])) ? $_POST['query'] : NULL;
+$name_filter = (isset($_POST['query'])) ? $_POST['query'] : null;
 $use_pi_filter = ($_POST['pi_only'] == 'y');
 
 // Determine if the user accessing the controller is a Campus Champion
 
-$university_id = NULL;
+$university_id = null;
 
 $user_session_variable
     = (isset($_POST['dashboard_mode']))
@@ -37,11 +37,9 @@ $user_session_variable
 
 $user = \XDUser::getUserByID($_SESSION[$user_session_variable]);
 
-if (
-    $user->getActiveRole()->getIdentifier() == ROLE_ID_CAMPUS_CHAMPION
+if ($user->getActiveRole()->getIdentifier() == ROLE_ID_CAMPUS_CHAMPION
     && (!isset($_POST['userManagement']))
 ) {
-
     // Add an additional filter to eventually produce a listing of
     // individuals affiliated with the same university as this user.
     $university_id = $user->getActiveRole()->getUniversityID();
@@ -104,4 +102,3 @@ $returnData = array(
 );
 
 xd_controller\returnJSON($returnData);
-

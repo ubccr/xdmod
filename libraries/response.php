@@ -67,7 +67,8 @@ function presentError($error)
  * @param  boolean $allow_caching Allow the generated JavaScript to be cached.
  *                                (Defaults to false.)
  */
-function useDynamicJavascriptHeaders($allow_caching = false) {
+function useDynamicJavascriptHeaders($allow_caching = false)
+{
     // Set the content type of the response to JavaScript.
     header('Content-Type: application/javascript');
 

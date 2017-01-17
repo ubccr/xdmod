@@ -4,7 +4,7 @@ namespace DataWarehouse\Query\Jobs\Statistics;
 
 class JobSizeWeightedByCPUHours extends \DataWarehouse\Query\Jobs\Statistic
 {
-    public function __construct($query_instance = NULL)
+    public function __construct($query_instance = null)
     {
         parent::__construct(
             '
@@ -28,4 +28,3 @@ class JobSizeWeightedByCPUHours extends \DataWarehouse\Query\Jobs\Statistic
             . " hours}/sum(i =  0 to n){job i cpu hours}";
     }
 }
-

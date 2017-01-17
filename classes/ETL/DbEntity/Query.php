@@ -91,16 +91,16 @@ class Query extends aNamedEntity
     {
         parent::__construct($systemQuoteChar, $logger);
 
-        if ( ! is_object($config) && is_string($config) ) {
+        if (! is_object($config) && is_string($config)) {
             $config = $this->parseJsonFile($config, "Query Definition");
-        } else if ( ! $config instanceof stdClass) {
+        } elseif (! $config instanceof stdClass) {
             $msg = __CLASS__ . ": Argument is not a filename or object";
             $this->logAndThrowException($msg);
         }
 
         // Support the query config directly or assigned to a "source_query" key
 
-        if ( isset($config->source_query) ) {
+        if (isset($config->source_query)) {
             $config = $config->source_query;
         }
 
@@ -110,7 +110,6 @@ class Query extends aNamedEntity
         $this->verifyRequiredConfigKeys($requiredKeys, $config);
 
         $this->initialize($config);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -128,13 +127,12 @@ class Query extends aNamedEntity
         $columnNames = $destinationTable->getColumnNames();
         $missingColumnNames = array_diff(array_keys($this->records), $columnNames);
 
-        if ( 0 != count($missingColumnNames) ) {
+        if (0 != count($missingColumnNames)) {
             $msg = "Columns in records not found in table: " . implode(", ", $missingColumnNames);
             $this->logAndThrowException($msg);
         }
 
         return true;
-
     }  // verify()
 
     /* ------------------------------------------------------------------------------------------
@@ -147,7 +145,7 @@ class Query extends aNamedEntity
 
     protected function initialize(stdClass $config, $force = false)
     {
-        if ( $this->initialized && ! $force ) {
+        if ($this->initialized && ! $force) {
             return true;
         }
 
@@ -156,89 +154,89 @@ class Query extends aNamedEntity
         $this->initialized = false;
         $errorMsg = array();
 
-        if ( ! isset($config->records) ) {
+        if (! isset($config->records)) {
             $errorMsg[] = "records property not found";
-        } else if ( ! is_object($config->records) ) {
+        } elseif (! is_object($config->records)) {
             $errorMsg[] = "records property must be an object";
         }
 
-        if ( ! isset($config->joins) ) {
+        if (! isset($config->joins)) {
             $errorMsg[] = "joins property not found";
-        } else if ( ! is_array($config->joins) ) {
+        } elseif (! is_array($config->joins)) {
             $errorMsg[] = "joins property must be an array";
-        } else if ( 0 == count($config->joins) ) {
+        } elseif (0 == count($config->joins)) {
             $errorMsg[] = "joins property must include as least one element";
         }
 
-        if ( isset($config->groupby) ) {
-            if ( ! is_array($config->groupby) ) {
+        if (isset($config->groupby)) {
+            if (! is_array($config->groupby)) {
                 $errorMsg[] = "groupby property must be an array";
-            } else if ( 0 == count($config->groupby) ) {
+            } elseif (0 == count($config->groupby)) {
                 $errorMsg[] = "groupby property must include as least one element";
             }
         }
 
-        if ( isset($config->where) && ! is_array($config->where) ) {
+        if (isset($config->where) && ! is_array($config->where)) {
             $errorMsg[] = "where property must be an array";
         }
 
-        if ( isset($config->macros) && ! is_array($config->macros) ) {
+        if (isset($config->macros) && ! is_array($config->macros)) {
             $errorMsg[] = "macros property must be an array";
         }
 
-        if ( isset($config->query_hint) && ! is_string($config->query_hint) ) {
+        if (isset($config->query_hint) && ! is_string($config->query_hint)) {
             $msg = "Query hints must be a string";
             $this->logAndThrowException($msg);
         }
 
-        if ( isset($config->overseer_restrictions) && ! is_object($config->overseer_restrictions) ) {
+        if (isset($config->overseer_restrictions) && ! is_object($config->overseer_restrictions)) {
             $msg = "ETL overseer restrictions must be an object";
             $this->logger->logAndThrowException($msg);
         }
 
-        if ( 0 != count($errorMsg) ) {
+        if (0 != count($errorMsg)) {
             $msg = "Error in query definition (" . implode(", ", $errorMsg) . ")";
             $this->logAndThrowException($msg);
         }
 
         // Set records. Each formula must match an existing column.
 
-        foreach ( $config->records as $column => $formula ) {
+        foreach ($config->records as $column => $formula) {
             $this->addRecord($column, $formula);
         }
 
         // Set joins. A single join is required but more may be included
 
-        foreach ( $config->joins as $definition ) {
+        foreach ($config->joins as $definition) {
             $this->addJoin($definition);
         }
 
-        if ( isset($config->groupby) ) {
-            foreach ( $config->groupby as $groupby ) {
+        if (isset($config->groupby)) {
+            foreach ($config->groupby as $groupby) {
                 $this->addGroupBy($groupby);
             }
         }
 
         // Set optional where clauses and macros
 
-        if ( isset($config->where) ) {
-            foreach ( $config->where as $where ) {
+        if (isset($config->where)) {
+            foreach ($config->where as $where) {
                 $this->addWhere($where);
             }
         }
 
-        if ( isset($config->macros) ) {
-            foreach ( $config->macros as $macro ) {
+        if (isset($config->macros)) {
+            foreach ($config->macros as $macro) {
                 $this->addMacro($macro);
             }
         }
 
-        if ( isset($config->query_hint) ) {
+        if (isset($config->query_hint)) {
             $this->setHint($config->query_hint);
         }
 
-        if ( isset($config->overseer_restrictions) ) {
-            foreach ( $config->overseer_restrictions as $restriction => $template ) {
+        if (isset($config->overseer_restrictions)) {
+            foreach ($config->overseer_restrictions as $restriction => $template) {
                 $this->addOverseerRestriction($restriction, $template);
             }
         }
@@ -246,7 +244,6 @@ class Query extends aNamedEntity
         $this->initialized = true;
 
         return true;
-
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
@@ -266,10 +263,10 @@ class Query extends aNamedEntity
     public function addRecord($columnName, $formula)
     {
         // Note in PHP "" and "0" are both equal to 0 due to conversion comparing strings to integers.
-        if ( null === $formula || "" === $formula ) {
+        if (null === $formula || "" === $formula) {
             $msg = "Empty formula for column '$columnName' '$formula'";
             $this->logAndThrowException($msg);
-        } else if ( array_key_exists($columnName, $this->records) ) {
+        } elseif (array_key_exists($columnName, $this->records)) {
             $msg = "Column '$columnName' already has a formula specified";
             $this->logAndThrowException($msg);
         }
@@ -277,7 +274,6 @@ class Query extends aNamedEntity
         $this->records[$columnName] = $formula;
 
         return $this;
-
     }  // addRecord()
 
     /* ------------------------------------------------------------------------------------------
@@ -332,7 +328,7 @@ class Query extends aNamedEntity
     public function removeRecord($columnName)
     {
         $record = $this->getRecord($columnName);
-        if ( false !== $record ) {
+        if (false !== $record) {
             unset($this->records[$columnName]);
         }
         return $record;
@@ -349,7 +345,7 @@ class Query extends aNamedEntity
 
     public function addGroupBy($groupBy)
     {
-        if ( empty($groupBy) || ! is_string($groupBy) ) {
+        if (empty($groupBy) || ! is_string($groupBy)) {
             $msg = "Cannot add an empty group by";
             $this->logAndThrowException($msg);
         }
@@ -397,7 +393,7 @@ class Query extends aNamedEntity
     {
         $item = ( $definition instanceof Join ? $definition : new Join($definition, $this->systemQuoteChar) );
 
-        if ( ! ($item instanceof iTableItem) ) {
+        if (! ($item instanceof iTableItem)) {
             $msg = "Join does not implement interface iTableItem";
             $this->logAndThrowException($msg);
         }
@@ -443,14 +439,13 @@ class Query extends aNamedEntity
 
     public function addWhere($where)
     {
-        if ( empty($where) || ! is_string($where) ) {
+        if (empty($where) || ! is_string($where)) {
             $msg = "WHERE clause is empty or not a string '$where'";
             $this->logAndThrowException($msg);
         }
 
         $this->where[] = $where;
         return $this;
-
     }  // addWhere()
 
     /* ------------------------------------------------------------------------------------------
@@ -574,17 +569,16 @@ class Query extends aNamedEntity
 
     public function addOverseerRestriction($restriction, $template)
     {
-        if ( ! is_string($restriction) || "" == $restriction ) {
+        if (! is_string($restriction) || "" == $restriction) {
             $msg = "Overseer restriction key must be a non-empty string";
             $this->logAndThrowException($msg);
-        } else if ( ! is_string($template) || "" == $template ) {
+        } elseif (! is_string($template) || "" == $template) {
             $msg = "Overseer restriction template must be a non-empty string";
             $this->logAndThrowException($msg);
         }
 
         $this->overseerRestrictions[$restriction] = $template;
         return $this;
-
     }  // addOverseerRestriction()
 
     /* ------------------------------------------------------------------------------------------
@@ -630,17 +624,16 @@ class Query extends aNamedEntity
 
     public function addOverseerRestrictionValue($restriction, $value)
     {
-        if ( ! is_string($restriction) || "" == $restriction ) {
+        if (! is_string($restriction) || "" == $restriction) {
             $msg = "Overseer restriction key must be a non-empty string";
             $this->logAndThrowException($msg);
-        } else if ( ! is_string($value) || "" == $value ) {
+        } elseif (! is_string($value) || "" == $value) {
             $msg = "Overseer restriction template must be a non-empty string";
             $this->logAndThrowException($msg);
         }
 
         $this->overseerRestrictionValues[$restriction] = $value;
         return $this;
-
     }  // addOverseerRestrictionValue()
 
     /* ------------------------------------------------------------------------------------------
@@ -673,7 +666,7 @@ class Query extends aNamedEntity
 
     public function getSelectSql($includeSchema = true)
     {
-        if ( 0 == count($this->joins) ) {
+        if (0 == count($this->joins)) {
             $msg = "At least one join is required";
             $this->logAndThrowException($msg);
         }
@@ -682,8 +675,8 @@ class Query extends aNamedEntity
 
         $columnList = array();
         $thisObj = $this;
-        foreach ( $this->records as $columnName => $formula ) {
-            if ( "#" == $columnName ) {
+        foreach ($this->records as $columnName => $formula) {
+            if ("#" == $columnName) {
                 continue;
             }
 
@@ -700,8 +693,8 @@ class Query extends aNamedEntity
         $joinList = array();
         $joinList[] = "FROM " . $this->joins[0]->getCreateSql($includeSchema);
 
-        for ( $i = 1; $i < count($this->joins); $i++ ) {
-            if ( null === $this->joins[$i]->getOn() ) {
+        for ($i = 1; $i < count($this->joins); $i++) {
+            if (null === $this->joins[$i]->getOn()) {
                 $msg = "Join clause for table '" . $this->joins[$i]->getName() . "' does not provide ON condition";
             }
             $joinType = $this->joins[$i]->getType();
@@ -722,14 +715,13 @@ class Query extends aNamedEntity
         // If any macros have been defined, process those macros now. Since macros can contain variables
         // themselves, we will process the variables later.
 
-        if ( count($this->macros) > 0 ) {
-            foreach ( $this->macros as $macro ) {
+        if (count($this->macros) > 0) {
+            foreach ($this->macros as $macro) {
                 $sql = Utilities::processMacro($sql, $macro);
             }
         }
 
         return $sql;
-
     }  // getSelectSql()
 
     /* ------------------------------------------------------------------------------------------
@@ -748,18 +740,17 @@ class Query extends aNamedEntity
         $data->records = $this->records;
         $data->joins = $this->joins;
 
-        if ( count($this->groupBys) > 0 ) {
+        if (count($this->groupBys) > 0) {
             $data->groupbys = $this->groupBys;
         }
-        if ( count($this->where) > 0 ) {
+        if (count($this->where) > 0) {
             $data->where = $this->where;
         }
-        if ( count($this->macros) > 0 ) {
+        if (count($this->macros) > 0) {
             $data->macros = $this->macros;
         }
 
         return $data;
-
     }  // toJsonObj()
 
     /* ------------------------------------------------------------------------------------------
@@ -776,5 +767,4 @@ class Query extends aNamedEntity
     {
         return json_encode($this->toJsonObj($succinct, $includeSchema));
     }  // toJson()
-
 }  // class Query

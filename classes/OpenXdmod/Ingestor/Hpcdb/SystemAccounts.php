@@ -34,4 +34,3 @@ class SystemAccounts extends PDODBMultiIngestor
         );
     }
 }
-

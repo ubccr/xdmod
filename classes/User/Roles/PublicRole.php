@@ -19,9 +19,5 @@ class PublicRole extends \User\aRole
     public function __construct()
     {
         parent::__construct(ROLE_ID_PUBLIC);
-
     }//__construct
-
 }//PublicRole
-
-?>

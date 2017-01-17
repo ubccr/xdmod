@@ -72,7 +72,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
 
     protected function initialize()
     {
-        if ( $this->isInitialized() ) {
+        if ($this->isInitialized()) {
             return;
         }
 
@@ -86,12 +86,12 @@ class StructuredFileIngestor extends aIngestor implements iAction
         reset($this->etlDestinationTableList);
         $this->etlDestinationTable = current($this->etlDestinationTableList);
         $etlTableKey = key($this->etlDestinationTableList);
-        if ( count($this->etlDestinationTableList) > 1 ) {
+        if (count($this->etlDestinationTableList) > 1) {
             $msg = $this . " does not support multiple ETL destination tables, using first table with key: '$etlTableKey'";
             $logger->warning($msg);
         }
 
-        if ( ! isset($this->parsedDefinitionFile->destination_columns) ) {
+        if (! isset($this->parsedDefinitionFile->destination_columns)) {
             $msg = "destination_columns key not present in definition file: " . $this->definitionFile;
             $this->logAndThrowException($msg);
         }
@@ -106,8 +106,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
             $this->logAndThrowException($msg);
         }
 
-        if (
-            ! $this->sourceEndpoint
+        if (! $this->sourceEndpoint
             && ! isset($this->parsedDefinitionFile->source_values)
         ) {
             $msg = "source file not configured and (default) source values not in definition file";
@@ -120,7 +119,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
             $this->etlDestinationTable->getColumnNames()
         );
 
-        if ( 0 != count($missingColumnNames) ) {
+        if (0 != count($missingColumnNames)) {
             $msg = "The following columns from the data file were not found in table " . $this->etlDestinationTable->getFullName() . ": " .
                 implode(", ", $missingColumnNames);
             $this->logAndThrowException($msg);
@@ -129,7 +128,6 @@ class StructuredFileIngestor extends aIngestor implements iAction
         $this->initialized = true;
 
         return true;
-
     }  // initialize()
 
     /**
@@ -170,11 +168,11 @@ class StructuredFileIngestor extends aIngestor implements iAction
 
         $this->logger->debug("Insert query\n$sql");
 
-        if ( ! $this->etlOverseerOptions->isDryrun() ) {
+        if (! $this->etlOverseerOptions->isDryrun()) {
             try {
                 $insertStatement = $this->destinationHandle->prepare($sql);
 
-                foreach ( $sourceValues as $sourceValue ) {
+                foreach ($sourceValues as $sourceValue) {
                     $insertStatement->execute($this->convertSourceValueToRow(
                         $sourceValue,
                         $destColumns,

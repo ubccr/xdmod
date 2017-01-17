@@ -10,14 +10,14 @@ namespace xd_rest;
  */
 function resolveSecurePort($port)
 {
-    switch($port) {
+    switch ($port) {
         // Secure (HTTPS)
         case ':9444':
             // Non-Secure (HTTP)
             return ':9001';
-  }
+    }
 
-  return $port;
+    return $port;
 }
 
 /**
@@ -60,7 +60,6 @@ function enumerateOutputFormats()
     $r = \RestResponse::factory(array());
 
     foreach ($filteredResponseMethods as $f) {
-
         // The user should not be able to explicitly request 'raw', as
         // all request handlers may not explicitly provide a
         // content-type
@@ -204,16 +203,16 @@ function resolveEntity($entity, $type, $realm = "", $category = "")
             $pool = enumerateRealms();
             break;
         case REST_CATEGORY:
-            if (empty($realm)){
+            if (empty($realm)) {
                 throw new \Exception('A realm must be specified for any calls to resolveEntity with REST_CATEGORY passed as an argument for type');
             }
             $pool = enumerateCategories($realm);
             break;
         case REST_ACTION:
-            if (empty($realm)){
+            if (empty($realm)) {
                 throw new \Exception('A realm must be specified for any calls to resolveEntity with REST_ACTION passed as an argument for type');
             }
-            if (empty($category)){
+            if (empty($category)) {
                 throw new \Exception('A category must be specified for any calls to resolveEntity with REST_ACTION passed as an argument for type');
             }
             $pool = enumerateActions($realm, $category);
@@ -240,7 +239,7 @@ function isUniqueRealm($realmName)
     try {
         $directory = resolveRealm($realmName);
         return true;
-    } catch(\Exception $ex) {
+    } catch (\Exception $ex) {
         return false;
     }
 }
@@ -271,7 +270,7 @@ function resolveRealm($realmName)
         while (($file = readdir($dh)) !== false) {
             if (filetype(REST_BASE_DIRECTORY . $file) == 'dir' && !in_array($file, $directories_to_ignore)) {
                 if ($input_realm_lower == strtolower($file)) {
-                    if (empty($realm_dir)){
+                    if (empty($realm_dir)) {
                         $realm_dir = $file;
                     } else {
                         throw new \Exception("Ambiguity: unable to resolve realm handler for '$realmName'");
@@ -299,7 +298,7 @@ function getToken()
 {
     if (isset($_SESSION['session_token'])) {
         $token = $_SESSION['session_token'];
-    } else if (isset($_SESSION['public_session_token'])) {
+    } elseif (isset($_SESSION['public_session_token'])) {
         $token = $_SESSION['public_session_token'];
     } else {
         $token = '';

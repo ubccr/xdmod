@@ -29,4 +29,3 @@ class PIResource extends PDODBSynchronizingIngestor
         );
     }
 }
-

@@ -86,7 +86,7 @@ class Configuration extends Loggable implements \Iterator
     {
         parent::__construct($logger);
 
-        if ( empty($filename) ) {
+        if (empty($filename)) {
             $msg = "Configuration filename cannot be empty";
             $this->logAndThrowException($msg);
         }
@@ -102,12 +102,11 @@ class Configuration extends Loggable implements \Iterator
         // prepend the current directory so we have a fully qualified path.
 
         $this->baseDir = ( null === $baseDir ? dirname($filename) : $baseDir );
-        if ( 0 !== strpos($this->baseDir, "/") ) {
+        if (0 !== strpos($this->baseDir, "/")) {
             $this->baseDir = getcwd() . "/" . $this->baseDir;
         }
 
         $this->addKeyHandler('include', array($this, 'includeHandler'), self::PRE_HANDLER);
-
     }  // __construct()
   
     /* ------------------------------------------------------------------------------------------
@@ -150,16 +149,15 @@ class Configuration extends Loggable implements \Iterator
     protected function removeComments(stdClass &$config)
     {
         foreach ($config as $key => &$value) {
-            if ( 0 === strpos($key, self::COMMENT_KEY) ) {
+            if (0 === strpos($key, self::COMMENT_KEY)) {
                 unset($config->$key);
                 continue;
             }
-            if ( is_object($value) ) {
+            if (is_object($value)) {
                 $this->removeComments($value);
             }
         }
         unset($value);
-
     }  // removeComments()
 
     /* ------------------------------------------------------------------------------------------
@@ -176,7 +174,7 @@ class Configuration extends Loggable implements \Iterator
     {
         // Don't parse if the file has already been parsed unless we are forcing it.
 
-        if ( null !== $this->parsedConfig && ! $force ) {
+        if (null !== $this->parsedConfig && ! $force) {
             return;
         }
 
@@ -213,15 +211,13 @@ class Configuration extends Loggable implements \Iterator
         // Find the keys found in the config that have handlers
         $parsedKeysWithHandlers = array_intersect($parsedKeys, array_keys($this->keyHandlersPre));
 
-        foreach ( $parsedKeysWithHandlers as $key ) {
-
+        foreach ($parsedKeysWithHandlers as $key) {
             $handler = $this->keyHandlersPre[$key];
             
             // Callback takes (callable handler, reserved key data, current config)
             // Callback returns updated config
             
             $constructedConfig = call_user_func($handler, $key, $this->parsedConfig->$key, $constructedConfig);
-
         }  // foreach ( $configKeys as $configKey => $configValue )
 
         // Find all other keys parsed from the file
@@ -229,7 +225,7 @@ class Configuration extends Loggable implements \Iterator
         
         // Copy the non-reserved keys into the configuration, overriding any existing keys
 
-        foreach ( $parsedKeysWithoutHandlers as $key ) {
+        foreach ($parsedKeysWithoutHandlers as $key) {
             $constructedConfig->$key = $this->parsedConfig->$key;
         }
 
@@ -237,27 +233,24 @@ class Configuration extends Loggable implements \Iterator
         // added by a pre-handler.
         $parsedKeysWithHandlers = array_intersect(array_keys(get_object_vars($constructedConfig)), array_keys($this->keyHandlersPost));
         
-        foreach ( $parsedKeysWithHandlers as $key ) {
-            
+        foreach ($parsedKeysWithHandlers as $key) {
             $handler = $this->keyHandlersPost[$key];
             
             // Callback takes (callable handler, reserved key data, current config)
             // Callback returns updated config
 
             $constructedConfig = call_user_func($handler, $key, $constructedConfig->$key, $constructedConfig);
-
         }  // foreach ( $configKeys as $configKey => $configValue )
 
         // Process the constructed configuration to create sections
 
-        foreach ( $constructedConfig as $key => $value ) {
+        foreach ($constructedConfig as $key => $value) {
             $this->addSection($key, $value);
         }
 
         $this->constructedConfig = $constructedConfig;
 
         return true;
-
     }  // parse()
 
     /* ------------------------------------------------------------------------------------------
@@ -272,7 +265,7 @@ class Configuration extends Loggable implements \Iterator
 
     protected function addSection($name, $data = null)
     {
-        if ( in_array($name, $this->sectionNames) ) {
+        if (in_array($name, $this->sectionNames)) {
             return $this;
         }
 
@@ -280,7 +273,6 @@ class Configuration extends Loggable implements \Iterator
         $this->sectionData[$name] = $data;
 
         return $this;
-
     }  // addSection()
 
     /* ==========================================================================================
@@ -304,9 +296,9 @@ class Configuration extends Loggable implements \Iterator
     protected function includeHandler($key, $value, $config)
     {
 
-        if ( null === $value ) {
+        if (null === $value) {
             return $config;
-        } else if ( is_object($value) ) {
+        } elseif (is_object($value)) {
             $msg = "Include handler for $key supports only scalars and arrays, skipping.";
             $this->logger->warning($msg);
             return $config;
@@ -315,15 +307,14 @@ class Configuration extends Loggable implements \Iterator
         // Normalize the value to an array to support multiple includes
         $value = ( is_array($value) ? $value : array($value) );
 
-        foreach ( $value as $includeFilename ) {
-            
-            if ( 0 !== strpos($includeFilename, "/") ) {
+        foreach ($value as $includeFilename) {
+            if (0 !== strpos($includeFilename, "/")) {
                 $includeFilename = $this->baseDir . "/" . $includeFilename;
             }
 
             $this->logger->debug("Processing include file '$includeFilename'");
 
-            if ( ! is_readable($includeFilename) ) {
+            if (! is_readable($includeFilename)) {
                 $msg = "Include file not readable: '$includeFilename', skipping.";
                 $this->logger->warning($msg);
                 continue;
@@ -336,14 +327,12 @@ class Configuration extends Loggable implements \Iterator
             // entire file as-is such as an inline include. This should be done using a different
             // handler.
 
-            foreach ( $includeFile as $key => $value ) {
+            foreach ($includeFile as $key => $value) {
                 $config->$key = $value;
             }
-
         }  // foreach ( $value as $includeFilename )
 
         return $config;
-
     }  // includeHandler()
 
     /* ==========================================================================================
@@ -398,24 +387,23 @@ class Configuration extends Loggable implements \Iterator
 
     public function addKeyHandler($key, $handler, $when = self::PRE_HANDLER)
     {
-        if ( ! is_string($key) ) {
+        if (! is_string($key)) {
             $msg = "Invalid key: '$key'";
             $this->logAndThrowException($msg);
         }
 
-        if ( ! is_callable($handler) ) {
+        if (! is_callable($handler)) {
             $msg = "Handler for key '$key' is not callable: '" . print_r($handler, true) . "'";
             $this->logAndThrowException($msg);
         }
 
-        if ( self::PRE_HANDLER == $when ) {
+        if (self::PRE_HANDLER == $when) {
             $this->keyHandlersPre[$key] = $handler;
         } else {
             $this->keyHandlersPost[$key] = $handler;
         }
 
         return $this;
-
     }  // addKeyHandler()
 
     /* ------------------------------------------------------------------------------------------
@@ -433,14 +421,13 @@ class Configuration extends Loggable implements \Iterator
     {
         $retval = false;
 
-        if ( self::PRE_HANDLER == $when && array_key_exists($key, $this->keyHandlersPre) ) {
+        if (self::PRE_HANDLER == $when && array_key_exists($key, $this->keyHandlersPre)) {
             $retval = true;
-        } else if ( self::POST_HANDLER == $when && array_key_exists($key, $this->keyHandlersPost) ) {
+        } elseif (self::POST_HANDLER == $when && array_key_exists($key, $this->keyHandlersPost)) {
             $retval = true;
         }
 
         return $retval;
-
     }  // hasKeyHandler()
 
     /* ------------------------------------------------------------------------------------------
@@ -454,18 +441,18 @@ class Configuration extends Loggable implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getKeyHandler($key, $when) {
+    public function getKeyHandler($key, $when)
+    {
 
         $retval = false;
 
-        if ( self::PRE_HANDLER == $when && array_key_exists($key, $this->keyHandlersPre) ) {
+        if (self::PRE_HANDLER == $when && array_key_exists($key, $this->keyHandlersPre)) {
             $retval = $this->keyHandlersPre[$key];
-        } else if ( self::POST_HANDLER == $when && array_key_exists($key, $this->keyHandlersPost) ) {
+        } elseif (self::POST_HANDLER == $when && array_key_exists($key, $this->keyHandlersPost)) {
             $retval = $this->keyHandlersPost[$key];
         }
 
         return $retval;
-
     }  // getKeyHandler()
 
     /* ------------------------------------------------------------------------------------------
@@ -479,11 +466,12 @@ class Configuration extends Loggable implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getKeyHandlers($when) {
+    public function getKeyHandlers($when)
+    {
 
-        if ( self::PRE_HANDLER == $when ) {
+        if (self::PRE_HANDLER == $when) {
             return $this->keyHandlersPre;
-        } else if ( self::POST_HANDLER == $when ) {
+        } elseif (self::POST_HANDLER == $when) {
             return $this->keyHandlersPost;
         }
         return false;
@@ -504,10 +492,10 @@ class Configuration extends Loggable implements \Iterator
     {
         $retval = false;
 
-        if ( self::PRE_HANDLER == $when && array_key_exists($key, $this->keyHandlersPre) ) {
+        if (self::PRE_HANDLER == $when && array_key_exists($key, $this->keyHandlersPre)) {
             $retval = $this->keyHandlersPre[$key];
             unset($this->keyHandlersPre[$key]);
-        } else if ( self::POST_HANDLER == $when && array_key_exists($key, $this->keyHandlersPost) ) {
+        } elseif (self::POST_HANDLER == $when && array_key_exists($key, $this->keyHandlersPost)) {
             $retval = $this->keyHandlersPost[$key];
             unset($this->keyHandlersPost[$key]);
         }
@@ -572,7 +560,7 @@ class Configuration extends Loggable implements \Iterator
 
     public function __get($property)
     {
-        if ( array_key_exists($property, $this->sectionData) ) {
+        if (array_key_exists($property, $this->sectionData)) {
             return $this->sectionData[$property];
         }
 
@@ -605,5 +593,4 @@ class Configuration extends Loggable implements \Iterator
     {
         return get_class($this) . " ({$this->filename})";
     }  // __toString()
-
 }  // class Configuration

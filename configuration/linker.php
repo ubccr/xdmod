@@ -35,25 +35,25 @@ ini_alter('include_path', $include_path);
 
 function xdmodAutoload($className)
 {
-   $pathList = explode(":", ini_get('include_path'));
+    $pathList = explode(":", ini_get('include_path'));
 
    // if class does not have a namespace
-   if(strpos($className,'\\') === FALSE) {
-      $includeFile = $className.".php";
-      foreach ($pathList as $path) {
-         if (is_readable("$path/$includeFile")) {
-            require_once("$path/$includeFile");
-            break;
-         }
-      }
-   } else {
-      // convert namespace to full file path
-      $class = dirname(__FILE__) . '/../classes/'
+    if (strpos($className, '\\') === false) {
+        $includeFile = $className.".php";
+        foreach ($pathList as $path) {
+            if (is_readable("$path/$includeFile")) {
+                require_once("$path/$includeFile");
+                break;
+            }
+        }
+    } else {
+        // convert namespace to full file path
+        $class = dirname(__FILE__) . '/../classes/'
          . str_replace('\\', '/', $className) . '.php';
-      if (is_readable("$class")) {
-         require_once($class);
-      }
-   }
+        if (is_readable("$class")) {
+            require_once($class);
+        }
+    }
 }
 
 spl_autoload_register('xdmodAutoload');
@@ -65,14 +65,14 @@ require_once($baseDir . '/libraries/utilities.php');
 $libraries = scandir($baseDir . '/libraries');
 
 foreach ($libraries as $library) {
-   $file = "$baseDir/libraries/$library";
-   if (is_dir($file)) {
-      continue;
-   }
-   require_once($file);
+    $file = "$baseDir/libraries/$library";
+    if (is_dir($file)) {
+        continue;
+    }
+    require_once($file);
 }
 
-class HttpCodeMessages 
+class HttpCodeMessages
 {
     // HTTP 1.1 messages from: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 
@@ -136,73 +136,73 @@ class HttpCodeMessages
  */
 function handle_uncaught_exception($exception)
 {
-   $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
+    $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
-   $logConf = array('mode' => 0644);
-   $logger = Log::factory('file', $logfile, 'exception', $logConf);
+    $logConf = array('mode' => 0644);
+    $logger = Log::factory('file', $logfile, 'exception', $logConf);
 
-   $logger->log('Exception Code: '.$exception->getCode(), PEAR_LOG_ERR);
-   $logger->log('Message: '.$exception->getMessage(), PEAR_LOG_ERR);
-   $logger->log('Origin: '.$exception->getFile().' (line '.$exception->getLine().')', PEAR_LOG_INFO);
+    $logger->log('Exception Code: '.$exception->getCode(), PEAR_LOG_ERR);
+    $logger->log('Message: '.$exception->getMessage(), PEAR_LOG_ERR);
+    $logger->log('Origin: '.$exception->getFile().' (line '.$exception->getLine().')', PEAR_LOG_INFO);
 
-   $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
+    $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-   $logger->log("Trace:\n".$stringTrace."\n-------------------------------------------------------", PEAR_LOG_INFO);
+    $logger->log("Trace:\n".$stringTrace."\n-------------------------------------------------------", PEAR_LOG_INFO);
 
    // If working in a server context, build headers to output.
-   $httpCode = 500;
-   $headers = array();
-   $isServerContext = isset($_SERVER['SERVER_PROTOCOL']);
-   if ($isServerContext) {
-      $uncheckedExceptionHttpCode = null;
-      if ($exception instanceof XDException) {
-         $uncheckedExceptionHttpCode = $exception->httpCode;
-         $headers = $exception->headers;
-      } else if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
-         $uncheckedExceptionHttpCode = $exception->getStatusCode();
-         $headers = $exception->getHeaders();
-      }
+    $httpCode = 500;
+    $headers = array();
+    $isServerContext = isset($_SERVER['SERVER_PROTOCOL']);
+    if ($isServerContext) {
+        $uncheckedExceptionHttpCode = null;
+        if ($exception instanceof XDException) {
+            $uncheckedExceptionHttpCode = $exception->httpCode;
+            $headers = $exception->headers;
+        } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+            $uncheckedExceptionHttpCode = $exception->getStatusCode();
+            $headers = $exception->getHeaders();
+        }
 
-      if ($uncheckedExceptionHttpCode !== null) {
-         if (array_key_exists($uncheckedExceptionHttpCode, HttpCodeMessages::$messages)) {
-            $httpCode = $uncheckedExceptionHttpCode;
-         }
-      }
-   }
+        if ($uncheckedExceptionHttpCode !== null) {
+            if (array_key_exists($uncheckedExceptionHttpCode, HttpCodeMessages::$messages)) {
+                $httpCode = $uncheckedExceptionHttpCode;
+            }
+        }
+    }
 
-   $exceptionData = xd_response\buildError($exception);
-   $content = json_encode($exceptionData);
-   if ($isServerContext) {
-      $headers['Content-Type'] = 'application/json';
-   }
+    $exceptionData = xd_response\buildError($exception);
+    $content = json_encode($exceptionData);
+    if ($isServerContext) {
+        $headers['Content-Type'] = 'application/json';
+    }
 
-   return array(
+    return array(
       'content' => $content,
       'isServerContext' => $isServerContext,
       'headers' => $headers,
       'httpCode' => $httpCode,
-   );
+    );
 } // handle_uncaught_exception
 
 function global_uncaught_exception_handler($exception)
 {
    // Perform logging and output building for the exception.
-   $exceptionOutput = handle_uncaught_exception($exception);
+    $exceptionOutput = handle_uncaught_exception($exception);
 
    // If running in a server context...
-   if ($exceptionOutput['isServerContext']) {
-      // Set the exception's headers (if any).
-      foreach ($exceptionOutput['headers'] as $headerKey => $headerValue) {
-         header("$headerKey: $headerValue");
-      }
+    if ($exceptionOutput['isServerContext']) {
+        // Set the exception's headers (if any).
+        foreach ($exceptionOutput['headers'] as $headerKey => $headerValue) {
+            header("$headerKey: $headerValue");
+        }
 
-      // Set the status code header.
-      $httpCode = $exceptionOutput['httpCode'];
-      header("{$_SERVER['SERVER_PROTOCOL']} $httpCode ".HttpCodeMessages::$messages[$httpCode]);
-   }
+        // Set the status code header.
+        $httpCode = $exceptionOutput['httpCode'];
+        header("{$_SERVER['SERVER_PROTOCOL']} $httpCode ".HttpCodeMessages::$messages[$httpCode]);
+    }
 
    // Print the exception's content.
-   echo $exceptionOutput['content'];
+    echo $exceptionOutput['content'];
 } // global_uncaught_exception_handler
 
 set_exception_handler('global_uncaught_exception_handler');
@@ -212,14 +212,13 @@ set_exception_handler('global_uncaught_exception_handler');
 $config = Xdmod\Config::factory();
 
 $org = $config['organization'];
-define('ORGANIZATION_NAME',        $org['name']);
+define('ORGANIZATION_NAME', $org['name']);
 define('ORGANIZATION_NAME_ABBREV', $org['name']);
 
 $hierarchy = $config['hierarchy'];
-define('HIERARCHY_TOP_LEVEL_LABEL',    $hierarchy['top_level_label']);
-define('HIERARCHY_TOP_LEVEL_INFO',     $hierarchy['top_level_info']);
+define('HIERARCHY_TOP_LEVEL_LABEL', $hierarchy['top_level_label']);
+define('HIERARCHY_TOP_LEVEL_INFO', $hierarchy['top_level_info']);
 define('HIERARCHY_MIDDLE_LEVEL_LABEL', $hierarchy['middle_level_label']);
-define('HIERARCHY_MIDDLE_LEVEL_INFO',  $hierarchy['middle_level_info']);
+define('HIERARCHY_MIDDLE_LEVEL_INFO', $hierarchy['middle_level_info']);
 define('HIERARCHY_BOTTOM_LEVEL_LABEL', $hierarchy['bottom_level_label']);
-define('HIERARCHY_BOTTOM_LEVEL_INFO',  $hierarchy['bottom_level_info']);
-
+define('HIERARCHY_BOTTOM_LEVEL_INFO', $hierarchy['bottom_level_info']);

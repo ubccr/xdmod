@@ -17,16 +17,12 @@ class ManagerRole extends \User\AuthenticatedRole
         parent::__construct(ROLE_ID_MANAGER);
     }//__construct
 
-    public function configure(\XDUser $user, $simulatedActiveRole = NULL)
+    public function configure(\XDUser $user, $simulatedActiveRole = null)
     {
         parent::configure($user, $simulatedActiveRole);
 
         // $p = new \DataWarehouse\Query\Model\Parameter('person_id', '=', $user->getPersonID());
 
-        $this->addParameter('person',  $user->getPersonID());
-
+        $this->addParameter('person', $user->getPersonID());
     }//configure
-
 }//ManagerRole
-
-?>

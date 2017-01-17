@@ -98,7 +98,6 @@ class AggregatorOptions extends aOptions
         // Apply any defaults passed in via the constructor
 
         parent::__construct($options);
-
     } //  __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -108,14 +107,13 @@ class AggregatorOptions extends aOptions
 
     protected function verifyProperty($property, $value)
     {
-        switch ( $property ) {
-
+        switch ($property) {
             case 'buffered_query':
             case 'optimize_query':
             case 'disable_keys':
                 $origValue = $value;
                 $value = \ETL\Utilities::filterBooleanVar($value);
-                if ( null === $value ) {
+                if (null === $value) {
                     $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
                     throw new Exception($msg);
                 }
@@ -125,8 +123,8 @@ class AggregatorOptions extends aOptions
             case 'include_only_resource_codes':
             case 'exclude_resource_codes':
                 $value = ( is_array($value) ? $value : array($value) );
-                foreach ( $value as $v ) {
-                    if ( ! is_string($v) ) {
+                foreach ($value as $v) {
+                    if (! is_string($v)) {
                         $msg = get_class($this) . ": '$property' must be a string or array of strings (type = " . gettype($v) . ")";
                         throw new Exception($msg);
                     }
@@ -136,7 +134,7 @@ class AggregatorOptions extends aOptions
             case 'utility':
             case 'source':
             case 'destination':
-                if ( ! is_string($value) ) {
+                if (! is_string($value)) {
                     $msg = get_class($this) . ": '$property' must be a string (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
@@ -148,7 +146,6 @@ class AggregatorOptions extends aOptions
         }
 
         return $value;
-
     }  // verifyProperty()
 
     /* ------------------------------------------------------------------------------------------
@@ -166,5 +163,4 @@ class AggregatorOptions extends aOptions
         $this->options[$property] = $value;
         return $this;
     }  // __set()
-
 }  // class AggregatorOptions

@@ -1,13 +1,15 @@
 <?php
     
-   class ExtJS {
+class ExtJS
+{
       
-      // loadSupportScripts: Provides a convenient way to introduce the base ExtJS scripts and stylings 
-      // into a page which requires the ExtJS javascript library
+   // loadSupportScripts: Provides a convenient way to introduce the base ExtJS scripts and stylings
+   // into a page which requires the ExtJS javascript library
       
-      public static function loadSupportScripts($path, $version = 'extjs') {
+    public static function loadSupportScripts($path, $version = 'extjs')
+    {
       
-         $extData = <<<EXT
+        $extData = <<<EXT
          
          <!-- ExtJS $version support files START -->
          
@@ -39,10 +41,6 @@
          
 EXT;
       
-         echo $extData;
-      
-      }//loadSupportScripts
-            
-   }//ExtJS
-
-?>
+        echo $extData;
+    }//loadSupportScripts
+}//ExtJS

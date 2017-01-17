@@ -26,4 +26,3 @@ class EmailAddresses extends PDODBSynchronizingIngestor
         );
     }
 }
-

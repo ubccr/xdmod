@@ -14,16 +14,14 @@
 
 namespace CCR\DB;
 
-class PostgresDB
-extends PDODB
-implements iDatabase
+class PostgresDB extends PDODB implements iDatabase
 {
-	function __construct($db_host,$db_port,$db_name,$db_username,$db_password)
-	{
-		parent::__construct("pgsql",$db_host,$db_port,$db_name,$db_username,$db_password);
-	}
-	function __destruct()
-	{
-		parent::__destruct();
+    function __construct($db_host, $db_port, $db_name, $db_username, $db_password)
+    {
+        parent::__construct("pgsql", $db_host, $db_port, $db_name, $db_username, $db_password);
+    }
+    function __destruct()
+    {
+        parent::__destruct();
     }
 }

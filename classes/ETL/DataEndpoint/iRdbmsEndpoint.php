@@ -94,5 +94,4 @@ interface iRdbmsEndpoint extends iDataEndpoint
      */
 
     public function getSchema($quote = false);
-
 }  // interface iRdbmsEndpoint

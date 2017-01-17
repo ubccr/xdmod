@@ -6,39 +6,32 @@
    
    \xd_security\assertParameterSet('uid', RESTRICTION_UID);
 
-   try {
-
-      $user_to_remove = XDUser::getUserByID($_POST['uid']);
+try {
+    $user_to_remove = XDUser::getUserByID($_POST['uid']);
    
-      if ($user_to_remove == NULL) {
-         \xd_response\presentError("user_does_not_exist");
-      }
+    if ($user_to_remove == null) {
+        \xd_response\presentError("user_does_not_exist");
+    }
    
-      if ($logged_in_user->getUsername() == $user_to_remove->getUsername()) {
-         \xd_response\presentError("You are not allowed to delete your own account.");
-      }
+    if ($logged_in_user->getUsername() == $user_to_remove->getUsername()) {
+        \xd_response\presentError("You are not allowed to delete your own account.");
+    }
    
-      // Remove all entries in this user's profile
-      $profile = $user_to_remove->getProfile();
-      $profile->clear();
+   // Remove all entries in this user's profile
+    $profile = $user_to_remove->getProfile();
+    $profile->clear();
        
-      $username = $user_to_remove->getUsername();
+    $username = $user_to_remove->getUsername();
    
-      $statusPrefix = $user_to_remove->isXSEDEUser() ? 'XSEDE ' : '';
-      $displayUsername = $user_to_remove->isXSEDEUser() ? $user_to_remove->getXSEDEUsername() : $user_to_remove->getUsername();
+    $statusPrefix = $user_to_remove->isXSEDEUser() ? 'XSEDE ' : '';
+    $displayUsername = $user_to_remove->isXSEDEUser() ? $user_to_remove->getXSEDEUsername() : $user_to_remove->getUsername();
       
-      $user_to_remove->removeUser();
+    $user_to_remove->removeUser();
    
-      $returnData['success'] = true;
-      $returnData['message'] = $statusPrefix."User <b>$displayUsername</b> deleted from the portal";
+    $returnData['success'] = true;
+    $returnData['message'] = $statusPrefix."User <b>$displayUsername</b> deleted from the portal";
    
-      \xd_controller\returnJSON($returnData);
-
-   }
-   catch(Exception $e) {
-      
-      \xd_response\presentError($e->getMessage());
-
-   }
-   
-?>
+    \xd_controller\returnJSON($returnData);
+} catch (Exception $e) {
+    \xd_response\presentError($e->getMessage());
+}

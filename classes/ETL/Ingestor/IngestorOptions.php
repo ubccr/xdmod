@@ -98,7 +98,6 @@ class IngestorOptions extends aOptions
         // Apply any defaults passed in via the constructor
 
         parent::__construct($options);
-
     } //  __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -110,8 +109,7 @@ class IngestorOptions extends aOptions
     {
         // Perform input verificaiton and possibly transformation
 
-        switch ( $property ) {
-
+        switch ($property) {
             case 'buffered_query':
             case 'optimize_query':
             case 'disable_keys':
@@ -119,7 +117,7 @@ class IngestorOptions extends aOptions
             case 'force_load_data_infile_replace_into':
                 $origValue = $value;
                 $value = \ETL\Utilities::filterBooleanVar($value);
-                if ( null === $value ) {
+                if (null === $value) {
                     $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
                     throw new Exception($msg);
                 }
@@ -128,8 +126,8 @@ class IngestorOptions extends aOptions
             case 'include_only_resource_codes':
             case 'exclude_resource_codes':
                 $value = ( is_array($value) ? $value : array($value) );
-                foreach ( $value as $v ) {
-                    if ( ! is_string($v) ) {
+                foreach ($value as $v) {
+                    if (! is_string($v)) {
                         $msg = get_class($this) . ": resource code must be a string or array of strings (type = " . gettype($v) . ")";
                         throw new Exception($msg);
                     }
@@ -139,7 +137,7 @@ class IngestorOptions extends aOptions
             case 'utility':
             case 'source':
             case 'destination':
-                if ( ! is_string($value) ) {
+                if (! is_string($value)) {
                     $msg = get_class($this) . ": '$property' must be a string (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
@@ -151,7 +149,6 @@ class IngestorOptions extends aOptions
         }
 
         return $value;
-
     }  // verifyProperty()
 
     /* ------------------------------------------------------------------------------------------
@@ -167,5 +164,4 @@ class IngestorOptions extends aOptions
         $this->options[$property] = $value;
         return $this;
     }  // __set()
-
 }  // class IngestorOptions
