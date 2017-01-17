@@ -18,6 +18,7 @@
       <exclude name="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
       <exclude name="Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpen" />
       <exclude name="Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpenBrace" />
+      <exclude name="Squiz.Classes.ValidClassName.NotCamelCaps" />
   </rule>
   <rule ref="Generic.Files.LineLength">
       <properties>
