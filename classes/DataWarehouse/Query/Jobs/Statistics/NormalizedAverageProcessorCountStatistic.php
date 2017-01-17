@@ -13,7 +13,7 @@ class NormalizedAverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs
 	public function __construct($query_instance = NULL)
 	{
 		$job_count_formula = $query_instance->getQueryType() == 'aggregate'?'job_count':'running_job_count';
-		parent::__construct('100.0*coalesce(ceil(sum(jf.processors*jf.'.$job_count_formula.')/sum(jf.'.$job_count_formula.'))/(select sum(rrf.processors) from modw.resourcespecs rrf where find_in_set(rrf.resource_id,group_concat(distinct jf.resource_id)) <> 0 and '.$query_instance->getAggregationUnit()->getUnitName().'_end_ts >= rrf.start_date_ts and (rrf.end_date_ts is null or '.$query_instance->getAggregationUnit()->getUnitName().'_end_ts <= rrf.end_date_ts)),0)', 'normalized_avg_processors', 'Job Size: Normalized', '% of Total Cores',1);
+		parent::__construct('100.0*coalesce(sum(jf.processors*jf.'.$job_count_formula.')/sum(jf.'.$job_count_formula.')/(select sum(rrf.processors) from modw.resourcespecs rrf where find_in_set(rrf.resource_id,group_concat(distinct jf.resource_id)) <> 0 and '.$query_instance->getAggregationUnit()->getUnitName().'_end_ts >= rrf.start_date_ts and (rrf.end_date_ts is null or '.$query_instance->getAggregationUnit()->getUnitName().'_end_ts <= rrf.end_date_ts)),0)', 'normalized_avg_processors', 'Job Size: Normalized', '% of Total Cores',1);
 	}
 
 	public function getInfo()
