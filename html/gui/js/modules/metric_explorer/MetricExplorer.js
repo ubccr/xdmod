@@ -1606,6 +1606,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
+        var handler;
         var axisIndex = axis.options.index;
         var axisTitle = axis.options.title.text;
         var originalTitle = axis.options.otitle;
@@ -1649,31 +1650,94 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     allLogScale = (allLogScale === undefined || allLogScale === true) && record.get('log_scale');
                 }
             }
-
         });
 
-        var handler = function() {
+        var setLog = new Ext.form.Checkbox({
+            checked: allLogScale === true,
+            value: allLogScale, // value to initialize field
+            boxLabel: 'Log Scale Y Axis',
+            iconCls: 'log_scale',
+            xtype: 'checkbox',
+            listeners: {
+                specialkey: function(field, e) {
+                    if (e.getKey() == e.ENTER) {
+                        handler();
+                    }
+                },
+                check: function(t, ch) {
+                    t.setValue(ch);
+                }
+            }
+        });
+
+        var menu = new Ext.menu.Menu({
+            scope: instance,
+            showSeparator: false,
+            ignoreParentClicks: true,
+            items: [
+                '<span class="menu-title">Y Axis [' + (axisIndex + 1) + ']</span><br/>',
+                '<span class="menu-title">min:</span><br/>',
+                minField,
+                '<span class="menu-title">max:</span><br/>',
+                maxField,
+                setLog // log scaling checkbox
+            ],
+            listeners: {
+                'show': {
+                    fn: function(menu) {
+                        menu.getEl().slideIn('t', {
+                            easing: 'easeIn',
+                            duration: 0.2
+                        });
+                    }
+                },
+                'hide': {
+                    fn: function(menu) {
+                        menu.destroy();
+                    }
+                }
+            }
+        });
+
+        /**
+         * Calculate the new maximum number based on the smallest
+         * power of the base that is still larger than the
+         * current maximum value.
+         */
+        function calcMax(base, cur_max) {
+            var result = 0;
+            var exponent = 1;
+            while (result < cur_max) {
+                result = Math.pow(base, exponent);
+                exponent += 1;
+            }
+            return result;
+        }
+
+        handler = function() {
             var oldMin = axis.min,
                 oldMax = axis.max,
+                allLog = setLog.getValue(),
+                axisType = null,
                 newMin = minField.getValue(),
                 newMax = maxField.getValue();
 
-            if (axis.isLog) {
+            // disable the undo stack so this can be treated as a single change:
+            instance.fireEvent('disable_commit');
 
-                /**
-                 * Calculate the new maximum number based on the smallest
-                 * power of the base that is still larger than the
-                 * current maximum value.
-                 */
-                function calcMax(base, cur_max) {
-                    var result = 0;
-                    var exponent = 1;
-                    while (result < cur_max) {
-                        result = Math.pow(base, exponent);
-                        exponent += 1;
+            // Set log_scale to the value of allLog
+            instance.datasetStore.each(function(record) {
+                for (var i = 0; i < yAxisDatasetIds.length; i++) {
+                    if (Math.abs(yAxisDatasetIds[i] - record.data.id) < 1e-14) {
+                        record.set('log_scale', allLog);
                     }
-                    return result;
                 }
+            });
+
+            // Calculate best min and max for log plot
+            if (allLog) {
+
+                axisType = 'logarithmic';
 
                 /* This is only pre-defined until we decide to either
                  * update the tick-value for log-axis charts, or give
@@ -1684,14 +1748,20 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 /* Calculate a new maximum value so things look right on the screen. */
                 newMax = calcMax(defaultBase, newMax);
 
-                if (newMin == "" || newMin == 0) {
+                /* Do not permit minimum <= 0 */
+                if (newMin == "" || newMin <= 0) {
                     newMin = null;
                 }
-            }
 
-            if (newMin == "") {
-                newMin = 0;
-            }
+            } else {
+
+                axisType = 'linear';
+
+                if (newMin == "") {
+                    newMin = 0;
+                }
+            } // if (allLog)
+
             if (newMax == "") {
                 newMax = null;
             }
@@ -1719,55 +1789,21 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 axis.target.yAxis[axisIndex].update({
                     min: newMin,
                     max: newMax,
+                    type: axisType,
                     startOnTick: newMin == null,
                     endOnTick: newMax == null
                 }, true);
 
                 instance.saveQuery();
             }
-            menu.hide();
+
+            // re-enable the undo stack to treat this as a single change
+            instance.fireEvent('enable_commit', true);
+
+            menu.destroy();
         };
 
-        var menu = new Ext.menu.Menu({
-            scope: instance,
-            showSeparator: false,
-            ignoreParentClicks: true,
-            items: [
-                '<span class="menu-title">Y Axis [' + (axisIndex + 1) + ']</span><br/>',
-                '<span class="menu-title">min:</span><br/>',
-                minField,
-                '<span class="menu-title">max:</span><br/>',
-                maxField
-            ],
-            listeners: {
-                'show': {
-                    fn: function(menu) {
-                        menu.getEl().slideIn('t', {
-                            easing: 'easeIn',
-                            duration: 0.2
-                        });
-                    }
-                }
-            }
-        });
 
-        menu.addItem({
-            text: 'Log Scale Y Axis',
-            iconCls: 'log_scale',
-            xtype: 'menucheckitem',
-            checked: allLogScale === true,
-            listeners: {
-                checkchange: function(t, check) {
-                    instance.datasetStore.each(function(record) {
-                        for (var i = 0; i < yAxisDatasetIds.length; i++) {
-                            if (Math.abs(yAxisDatasetIds[i] - record.data.id) < 1e-14) {
-                                record.set('log_scale', check);
-                            }
-                        }
-                    });
-                }
-            }
-        });
         if (axisTitle == null || axisTitle == '') {
             menu.addItem('-');
             menu.addItem({
@@ -1822,7 +1858,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 xtype: 'button',
                 text: 'Cancel',
                 handler: function() {
-                    menu.hide();
+                    menu.destroy();
                 }
             }]
         });
