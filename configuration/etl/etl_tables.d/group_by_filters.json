@@ -1,0 +1,40 @@
+{
+    "table_definition": {
+        "name": "group_by_filters",
+        "engine": "InnoDB",
+        "comment": "Tracks which `filters` have been associated with which `group_bys`",
+        "columns": [
+            {
+                "name": "group_by_filter_id",
+                "type": "integer",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "group_by_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "filter_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "key",
+                "type": "varchar(255)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "group_by_filter_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}

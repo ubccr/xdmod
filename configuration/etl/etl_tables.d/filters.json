@@ -1,0 +1,35 @@
+{
+    "table_definition": {
+        "name": "filters",
+        "engine": "InnoDB",
+        "comment": "Tracks which `filters` have been added to the system",
+        "columns": [
+            {
+                "name": "filter_id",
+                "type": "integer",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "context",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "key",
+                "type": "varchar(255)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "filter_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}

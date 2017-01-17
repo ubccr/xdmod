@@ -30,6 +30,7 @@
         "group_bys.json",
         "statistics.json",
         "charts.json",
+        "filters.json",
         "realm_group_bys.json",
         "realm_statistics.json",
         "realm_assets.json",
@@ -38,7 +39,9 @@
         "module_versions.json",
         "user_charts.json",
         "user_acls.json",
-        "acl_charts.json"
+        "acl_charts.json",
+        "group_by_filters.json",
+        "acl_filters.json"
       ],
       "enabled": true
     },
