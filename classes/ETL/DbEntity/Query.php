@@ -93,7 +93,7 @@ class Query extends aNamedEntity
 
         if ( ! is_object($config) && is_string($config) ) {
             $config = $this->parseJsonFile($config, "Query Definition");
-        } else if ( ! $config instanceof stdClass) {
+        } elseif ( ! $config instanceof stdClass) {
             $msg = __CLASS__ . ": Argument is not a filename or object";
             $this->logAndThrowException($msg);
         }
@@ -158,22 +158,22 @@ class Query extends aNamedEntity
 
         if ( ! isset($config->records) ) {
             $errorMsg[] = "records property not found";
-        } else if ( ! is_object($config->records) ) {
+        } elseif ( ! is_object($config->records) ) {
             $errorMsg[] = "records property must be an object";
         }
 
         if ( ! isset($config->joins) ) {
             $errorMsg[] = "joins property not found";
-        } else if ( ! is_array($config->joins) ) {
+        } elseif ( ! is_array($config->joins) ) {
             $errorMsg[] = "joins property must be an array";
-        } else if ( 0 == count($config->joins) ) {
+        } elseif ( 0 == count($config->joins) ) {
             $errorMsg[] = "joins property must include as least one element";
         }
 
         if ( isset($config->groupby) ) {
             if ( ! is_array($config->groupby) ) {
                 $errorMsg[] = "groupby property must be an array";
-            } else if ( 0 == count($config->groupby) ) {
+            } elseif ( 0 == count($config->groupby) ) {
                 $errorMsg[] = "groupby property must include as least one element";
             }
         }
@@ -269,7 +269,7 @@ class Query extends aNamedEntity
         if ( null === $formula || "" === $formula ) {
             $msg = "Empty formula for column '$columnName' '$formula'";
             $this->logAndThrowException($msg);
-        } else if ( array_key_exists($columnName, $this->records) ) {
+        } elseif ( array_key_exists($columnName, $this->records) ) {
             $msg = "Column '$columnName' already has a formula specified";
             $this->logAndThrowException($msg);
         }
@@ -577,7 +577,7 @@ class Query extends aNamedEntity
         if ( ! is_string($restriction) || "" == $restriction ) {
             $msg = "Overseer restriction key must be a non-empty string";
             $this->logAndThrowException($msg);
-        } else if ( ! is_string($template) || "" == $template ) {
+        } elseif ( ! is_string($template) || "" == $template ) {
             $msg = "Overseer restriction template must be a non-empty string";
             $this->logAndThrowException($msg);
         }
@@ -633,7 +633,7 @@ class Query extends aNamedEntity
         if ( ! is_string($restriction) || "" == $restriction ) {
             $msg = "Overseer restriction key must be a non-empty string";
             $this->logAndThrowException($msg);
-        } else if ( ! is_string($value) || "" == $value ) {
+        } elseif ( ! is_string($value) || "" == $value ) {
             $msg = "Overseer restriction template must be a non-empty string";
             $this->logAndThrowException($msg);
         }
@@ -704,9 +704,24 @@ class Query extends aNamedEntity
             if ( null === $this->joins[$i]->getOn() ) {
                 $msg = "Join clause for table '" . $this->joins[$i]->getName() . "' does not provide ON condition";
             }
+
+            // When we move to explictly marking the FROM clause this functionality may be moved
+            // into the Join class
+
             $joinType = $this->joins[$i]->getType();
-            $joinList[] = ( null !== $joinType ? "$joinType " : "" ) . "JOIN " . $this->joins[$i]->getCreateSql($includeSchema);
-        }
+
+            // Handle various join types. STRAIGHT_JOIN is a mysql enhancement.
+
+            $joinStr = "JOIN";
+
+            if ( "STRAIGHT" == $joinType ) {
+                $joinStr = "STRAIGHT_JOIN";
+            } elseif (null !== $joinType) {
+                $joinStr = $joinType . " JOIN";
+            }
+
+            $joinList[] = $joinStr . " " . $this->joins[$i]->getCreateSql($includeSchema);
+        }  // for ( $i = 1; $i < count($this->joins); $i++ )
 
         // Construct the SELECT statement
 
@@ -722,7 +737,7 @@ class Query extends aNamedEntity
         // If any macros have been defined, process those macros now. Since macros can contain variables
         // themselves, we will process the variables later.
 
-        if ( count($this->macros) > 0 ) {
+        if (count($this->macros) > 0) {
             foreach ( $this->macros as $macro ) {
                 $sql = Utilities::processMacro($sql, $macro);
             }
