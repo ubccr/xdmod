@@ -87,6 +87,10 @@
         {
           "sql_file": "acls/user_acls.sql",
           "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/report_template_acl.sql",
+          "delimiter": "//"
         }
       ],
       "enabled": true
