@@ -1,0 +1,30 @@
+{
+    "table_definition": {
+        "name": "ReportTemplateACL",
+        "engine": "InnoDB",
+        "comment": "Tracks which report templates have a relationship to which `acls`",
+        "columns": [
+            {
+                "name": "template_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "acl_id",
+                "type": "integer",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "template_id",
+                    "acl_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}

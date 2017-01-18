@@ -41,7 +41,8 @@
         "user_acls.json",
         "acl_charts.json",
         "group_by_filters.json",
-        "acl_filters.json"
+        "acl_filters.json",
+        "report_template_acl.json"
       ],
       "enabled": true
     },
@@ -81,6 +82,10 @@
         },
         {
           "sql_file": "acls/acls.sql",
+          "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/user_acls.sql",
           "delimiter": "//"
         }
       ],
