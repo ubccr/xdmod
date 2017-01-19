@@ -26,6 +26,11 @@
         "nullable": true
       },
       {
+        "name": "description",
+        "type": "varchar(2056)",
+        "nullable": true
+      },
+      {
         "name": "schema_name",
         "type": "varchar(64)",
         "nullable": false
@@ -64,6 +69,11 @@
         "name": "fk_column",
         "type": "varchar(64)",
         "nullable": false
+      },
+      {
+        "name": "class",
+        "type": "varchar(1024)",
+        "nullable": true
       }
     ],
     "indexes": [
