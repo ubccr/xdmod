@@ -743,37 +743,6 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
                cur.order_id_column = inc.order_id_column AND
                cur.fk_column = inc.fk_column AND cur.class = inc.class
     WHERE cur.group_by_id IS NULL;
-
-INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, description, schema_name, table_name, alias, id_column, name_column, shortname_column, order_id_column, fk_column, class)
-    SELECT DISTINCT inc.*
-    FROM (
-             SELECT
-                 m.module_id,
-                 '' AS name,
-                 '' AS display,
-                 '' AS description,
-                 '' AS schema_name,
-                 '' AS table_name,
-                 '' AS alias,
-                 '' AS id_column,
-                 '' AS name_column,
-                 '' AS shortname_column,
-                 '' AS order_id_column,
-                 '' AS fk_column,
-                 '' AS class
-             FROM ${DESTINATION_SCHEMA}.modules AS m
-             WHERE m.name = 'xdmod') inc
-        LEFT JOIN ${DESTINATION_SCHEMA}.group_bys cur
-            ON cur.module_id = inc.module_id AND cur.name = inc.name AND
-               cur.display = inc.display AND cur.description = inc.description
-               AND cur.schema_name = inc.schema_name AND
-               cur.table_name = inc.table_name AND cur.alias = inc.alias AND
-               cur.id_column = inc.id_column AND
-               cur.name_column = inc.name_column AND
-               cur.shortname_column = inc.shortname_column AND
-               cur.order_id_column = inc.order_id_column AND
-               cur.fk_column = inc.fk_column AND cur.class = inc.class
-    WHERE cur.group_by_id IS NULL;
 -- End Jobs Group Bys
 
 -- Accounts Group Bys
