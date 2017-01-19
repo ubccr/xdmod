@@ -78,12 +78,17 @@ implements iDataEndpoint
                 $this->logAndThrowException("No valid filter options specified for '{$this->path}'.");
             }
 
-            // Run the filter process.
-            $filterProc = ProcessBuilder::create($filterProcArgs)->getProcess();
+            try {
+                // Run the filter process.
+                $filterProc = ProcessBuilder::create($filterProcArgs)->getProcess();
 
-            $filterProc->run();
-            if (! $filterProc->isSuccessful()) {
-                $this->logAndThrowException('Filter Error: ' . $filterProc->getErrorOutput());
+                $filterProc->run();
+                if (! $filterProc->isSuccessful()) {
+                    $this->logAndThrowException('Filter Error: ' . $filterProc->getErrorOutput());
+                }
+            } catch (Exception $e) {
+                $msg = "Filter Error (" . implode(", ", $filterProcArgs) . "): " . $e->getMessage();
+                $this->logAndThrowException($msg);
             }
 
             // Parse the filter process's output.
