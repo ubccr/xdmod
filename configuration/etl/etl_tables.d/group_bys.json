@@ -32,12 +32,12 @@
       },
       {
         "name": "schema_name",
-        "type": "varchar(128)",
+        "type": "varchar(64)",
         "nullable": false
       },
       {
         "name": "table_name",
-        "type": "varchar(128)",
+        "type": "varchar(64)",
         "nullable": false
       },
       {
@@ -52,12 +52,12 @@
       },
       {
         "name": "name_column",
-        "type": "varchar(64)",
+        "type": "varchar(128)",
         "nullable": false
       },
       {
         "name": "shortname_column",
-        "type": "varchar(64)",
+        "type": "varchar(128)",
         "nullable": false
       },
       {
