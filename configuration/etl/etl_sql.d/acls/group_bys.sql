@@ -624,18 +624,18 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
     FROM (
              SELECT
                  m.module_id,
-                 'science'                  AS name,
-                 'Field Of Science'         AS display,
-                 ''                         AS description,
-                 'modw'                     AS schema_name,
-                 'fieldofscience_hierarchy' AS table_name,
-                 'fosb'                     AS alias,
-                 'id'                       AS id_column,
-                 'description'              AS name_column,
-                 'description'              AS shortname_column,
-                 'order_id'                 AS order_id_column,
-                 'order_id'                 AS fk_column,
-                 'GroupByScience'           AS class
+                 'science'                                                   AS name,
+                 'Field Of Science'                                          AS display,
+                 'The field of science indicated on the allocation request.' AS description,
+                 'modw'                                                      AS schema_name,
+                 'fieldofscience_hierarchy'                                  AS table_name,
+                 'fosb'                                                      AS alias,
+                 'id'                                                        AS id_column,
+                 'description'                                               AS name_column,
+                 'description'                                               AS shortname_column,
+                 'order_id'                                                  AS order_id_column,
+                 'order_id'                                                  AS fk_column,
+                 'GroupByScience'                                            AS class
              FROM ${DESTINATION_SCHEMA}.modules AS m
              WHERE m.name = 'xdmod') inc
         LEFT JOIN ${DESTINATION_SCHEMA}.group_bys cur
@@ -756,12 +756,12 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
                  ''                   AS description,
                  'modw'               AS schema_name,
                  'days'               AS table_name,
-                 'gt'                 AS alias,
+                 'd'                  AS alias,
                  'id'                 AS id_column,
                  'date(gt.day_start)' AS name_column,
                  'date(gt.day_start)' AS shortname_column,
                  'id'                 AS order_id_column,
-                 'id'                 AS fk_column,
+                 'day_id'             AS fk_column,
                  'GroupByDay'         AS class
              FROM ${DESTINATION_SCHEMA}.modules AS m
              WHERE m.name = 'xdmod') inc
@@ -1065,10 +1065,10 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
                  'modw'              AS schema_name,
                  'days'              AS table_name,
                  'd'                 AS alias,
-                 'day_id'            AS id_column,
+                 'id'                AS id_column,
                  'date(d.day_start)' AS name_column,
                  'date(d.day_start)' AS shortname_column,
-                 'day_id'            AS order_id_column,
+                 'id'                AS order_id_column,
                  'day_id'            AS fk_column,
                  'GroupByDay'        AS class
              FROM ${DESTINATION_SCHEMA}.modules AS m
@@ -1640,18 +1640,18 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
     FROM (
              SELECT
                  m.module_id,
-                 'parent_science'           AS name,
-                 'Parent Science'           AS display,
-                 ''                         AS description,
-                 'modw'                     AS schema_name,
-                 'fieldofscience_hierarchy' AS table_name,
-                 'fosm'                     AS alias,
-                 'parent_id'                AS id_column,
-                 'parent_description'       AS name_column,
-                 'parent_description'       AS shortname_column,
-                 'parent_description'       AS order_id_column,
-                 'fos_id'                   AS fk_column,
-                 'GroupByParentScience'     AS class
+                 'parent_science'                                                           AS name,
+                 'Parent Science'                                                           AS display,
+                 'The parent of the field of science indiciated on the allocation request.' AS description,
+                 'modw'                                                                     AS schema_name,
+                 'fieldofscience_hierarchy'                                                 AS table_name,
+                 'fosm'                                                                     AS alias,
+                 'parent_id'                                                                AS id_column,
+                 'parent_description'                                                       AS name_column,
+                 'parent_description'                                                       AS shortname_column,
+                 'parent_description'                                                       AS order_id_column,
+                 'fos_id'                                                                   AS fk_column,
+                 'GroupByParentScience'                                                     AS class
              FROM ${DESTINATION_SCHEMA}.modules AS m
              WHERE m.name = 'xdmod') inc
         LEFT JOIN ${DESTINATION_SCHEMA}.group_bys cur
@@ -2250,7 +2250,8 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
              FROM ${DESTINATION_SCHEMA}.modules AS m
              WHERE m.name = 'xdmod') inc
         LEFT JOIN ${DESTINATION_SCHEMA}.group_bys cur
-            ON cur.module_id = inc.module_id AND cur.name = inc.name AND
+            ON cur.module_id = inc.module_id
+               AND cur.name = inc.name AND
                cur.display = inc.display AND cur.description = inc.description
                AND cur.schema_name = inc.schema_name AND
                cur.table_name = inc.table_name AND cur.alias = inc.alias AND
