@@ -536,7 +536,7 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
                  'Queue pertains to the low level job queues on each resource.' AS description,
                  'modw'                                                         AS schema_name,
                  'queue'                                                        AS table_name,
-                 'q'                                                            AS alias,
+                 'u'                                                            AS alias,
                  'id'                                                           AS id_column,
                  'id'                                                           AS name_column,
                  'id'                                                           AS shortname_column,
