@@ -95,6 +95,10 @@
         {
           "sql_file": "acls/group_bys.sql",
           "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/statistics.sql",
+          "delimiter": "//"
         }
       ],
       "enabled": true
