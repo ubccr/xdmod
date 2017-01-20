@@ -26,6 +26,11 @@
         "nullable": true
       },
       {
+        "name": "formula",
+        "type": "varchar(2048)",
+        "nullable": false
+      },
+      {
         "name": "alias",
         "type": "varchar(256)",
         "nullable": false
