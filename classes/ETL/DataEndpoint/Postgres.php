@@ -41,13 +41,6 @@ class Postgres extends aRdbmsEndpoint implements iRdbmsEndpoint
 
     public function schemaExists($schemaName = null)
     {
-        if ( null === $schemaName ) {
-            $schemaName = $this->getSchema();
-        } elseif ( empty($schemaName) ) {
-            $msg = "Schema name cannot be empty";
-            $this->logAndThrowException($msg);
-        }
-
         // See http://www.postgresql.org/docs/current/static/catalogs.html
 
         $sql = "SELECT
@@ -55,20 +48,7 @@ nspname as name
 FROM pg_catalog.pg_namespace
 WHERE nspname = :schema";
 
-        $params = array(":schema" => $schemaName);
-
-        try {
-            $dbh = $this->getHandle();
-            $result = $dbh->query($sql, $params);
-            if ( 0 == count($result) ) {
-                return false;
-            }
-        } catch (\PdoException $e) {
-            $msg = "Error querying for schema '$schemaName'";
-            $this->logAndThrowSqlException($sql, $e, $msg);
-        }
-
-        return true;
+        return $this->executeSchemaExistsQuery($sql, $schemaName);
 
     }  // schemaExists()
 

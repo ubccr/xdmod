@@ -77,32 +77,12 @@ class Mysql extends aRdbmsEndpoint implements iRdbmsEndpoint
 
     public function schemaExists($schemaName = null)
     {
-        if ( null === $schemaName ) {
-            $schemaName = $this->getSchema();
-        } elseif ( empty($schemaName) ) {
-            $msg = "Schema name cannot be empty";
-            $this->logAndThrowException($msg);
-        }
-
         $sql = "SELECT
 schema_name as name, catalog_name as catalog
 FROM information_schema.schemata
 WHERE schema_name = :schema";
 
-        $params = array(":schema" => $schemaName);
-
-        try {
-            $dbh = $this->getHandle();
-            $result = $dbh->query($sql, $params);
-            if ( 0 == count($result) ) {
-                return false;
-            }
-        } catch (\PdoException $e) {
-            $msg = "Error querying for schema '$schemaName'";
-            $this->logAndThrowSqlException($sql, $e, $msg);
-        }
-
-        return true;
+        return $this->executeSchemaExistsQuery($sql, $schemaName);
 
     }  // schemaExists()
 
@@ -126,8 +106,6 @@ WHERE schema_name = :schema";
 
         // Don't use bind parameters because we don't want to quote the schema
         $sql = "CREATE DATABASE IF NOT EXISTS $schemaName";
-
-        // $params = array(":schema" => $this->getSchema());
 
         try {
             $dbh = $this->getHandle();

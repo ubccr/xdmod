@@ -133,7 +133,7 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
             $this->handle = DB::factory($this->config);
         } catch (Exception $e) {
             $msg = "Error connecting to data endpoint '" . $this->name . "'. " . $e->getMessage();
-             $this->logAndThrowException($msg);
+            $this->logAndThrowException($msg);
         }
 
         return $this->handle;
@@ -269,6 +269,48 @@ ORDER BY ordinal_position ASC";
         return $columnNames;
 
     }  // getTableColumnNames()
+
+    /* ------------------------------------------------------------------------------------------
+     * Helper function used by specific data endpoint drivers to query the underlying
+     * database to check if a schema exists.
+     *
+     * @param $sql The SQL statement used to query for the schema
+     * @param $schemaName The name of the schema, or NULL to use the default schema for
+     *    this endpoint
+     * @param $sqlParameters An array of additional parameters for the SQL
+     *   statement. Parameters here will override local parameters with the same key
+     *
+     * @return TRUE if the schema exists, FALSE if it does not
+     * @throw Exception If an empty and non-NULL schema was provided
+     * @throw Exception If tehre was an errir querying the database
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function executeSchemaExistsQuery($sql, $schemaName = null, array $sqlParameters = array())
+    {
+        if ( null === $schemaName ) {
+            $schemaName = $this->getSchema();
+        } elseif ( empty($schemaName) ) {
+            $msg = "Schema name cannot be empty";
+            $this->logAndThrowException($msg);
+        }
+
+        $localSqlParameters = array(":schema" => $schemaName);
+        $localSqlParameters = array_merge($localSqlParameters, $sqlParameters);
+
+        try {
+            $dbh = $this->getHandle();
+            $result = $dbh->query($sql, $localSqlParameters);
+            if ( 0 == count($result) ) {
+                return false;
+            }
+        } catch (\PdoException $e) {
+            $msg = "Error querying for schema '$schemaName'";
+            $this->logAndThrowSqlException($sql, $e, $msg);
+        }
+
+        return true;
+    }  // executeSchemaExistsQuery()
 
     /* ------------------------------------------------------------------------------------------
      * @see aDataEndpoint::__toString()
