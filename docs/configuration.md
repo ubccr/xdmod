@@ -323,7 +323,7 @@ For example, to use accounts from PBS/TORQUE you must use
     [
         {
             "resource": "resource1",
-            "name": "Resource 1"
+            "name": "Resource 1",
             "description": "Our first HPC resource",
             "resource_type_id": 1
         },
