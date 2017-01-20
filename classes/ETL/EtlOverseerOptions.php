@@ -57,6 +57,12 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     // $includeOnlyResourceCodes
     private $excludeResourceCodes = array();
 
+    // Directory where lock files are stored
+    private $lockDir = null;
+
+    // Optional prefix for lock files
+    private $lockFilePrefix = null;
+
     // A mapping of resource codes to resource ids.
     private $resourceCodeToIdMap = array();
 
@@ -157,6 +163,12 @@ class EtlOverseerOptions extends Loggable implements \Iterator
                     break;
                 case 'start-date':
                     $this->setStartDate($value);
+                    break;
+                case 'lock-dir':
+                    $this->setLockDir($value);
+                    break;
+                case 'lock-file-prefix':
+                    $this->setLockFilePrefix($value);
                     break;
                 default:
                     break;
@@ -353,7 +365,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     public function setNumberOfDays($numberOfDays)
     {
-        if ( ! is_numeric($numberOfDays) ) {
+        if ( null !== $numberOfDays && ! is_numeric($numberOfDays) ) {
             $msg = "Invalid number for number of days: '$numberOfDays'";
             $this->logAndThrowException($msg);
         }
@@ -483,6 +495,56 @@ class EtlOverseerOptions extends Loggable implements \Iterator
         $this->etlIntervalChunkSize = $days;
         return $this;
     }  // setChunkSize()
+
+    /* ------------------------------------------------------------------------------------------
+     * @return The directory where lock files are stored.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getLockDir()
+    {
+        return $this->lockDir;
+    }  // getLockDir()
+
+    /* ------------------------------------------------------------------------------------------
+     * Set the directory where lock files are stored.
+     *
+     * @param $dir The lock directory.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function setLockDir($dir)
+    {
+        $this->lockDir = $dir;
+        return $this;
+    }  // setLockDir()
+
+    /* ------------------------------------------------------------------------------------------
+     * @return The optional prefix to use when creating lock files.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getLockFilePrefix()
+    {
+        return $this->lockFilePrefix;
+    }  // getLockFilePrefix()
+
+    /* ------------------------------------------------------------------------------------------
+     * Set the directory where lock files are stored.
+     *
+     * @param $dir The lock directory.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function setLockFilePrefix($prefix)
+    {
+        $this->lockFilePrefix = $prefix;
+        return $this;
+    }  // setLockFilePrefix()
 
     /* ------------------------------------------------------------------------------------------
      * @return The value of the force flag

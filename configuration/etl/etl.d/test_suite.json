@@ -1,0 +1,48 @@
+{
+    "defaults": {
+
+        "test-suite": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions"
+        }
+       
+    },
+
+    "test-suite": [
+        {
+            "name": "Sleep",
+            "class": "TestAction",
+            "type": "sleep",
+            "enabled": true
+        },
+        {
+            "name": "Sleep120",
+            "class": "TestAction",
+            "type": "sleep",
+            "sleep_seconds": 120,
+            "enabled": true
+        },
+        {
+            "name": "Exception",
+            "class": "TestAction",
+            "type": "exception",
+            "exception_message": "I'm throwing an exception!",
+            "enabled": true
+        },
+        {
+            "name": "ExceptionNoStop",
+            "class": "TestAction",
+            "type": "exception",
+            "exception_message": "I'm throwing an exception but not stopping ETL!",
+            "enabled": true,
+            "stop_on_exception": false
+        },
+        {
+            "name": "Echo",
+            "class": "TestAction",
+            "type": "echo",
+            "echo_message": "Test message",
+            "enabled": true
+        }
+    ]
+}
