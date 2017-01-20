@@ -605,7 +605,7 @@ class pdoIngestor extends aIngestor
             $updateColumnList = array_map(function($s) { return "$s=VALUES($s)"; }, $destColumnList);
             $updateColumns = implode(',', $updateColumnList);
             $sql = "INSERT INTO $qualifiedDestTableName ($destColumns) " . $this->sourceQueryString
-                . " ON DUPLICATE KEY UPDATE $updateColumns";
+                . "\nON DUPLICATE KEY UPDATE $updateColumns";
         }
 
         $this->logger->debug($sql);
