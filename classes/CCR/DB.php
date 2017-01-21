@@ -30,13 +30,17 @@ class DB
 
     // Ensure that this class is a singleton
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     // ================================================================================
     // Cleanup
     // ================================================================================
 
-    public function __destruct() {}
+    public function __destruct()
+    {
+    }
 
     // ================================================================================
     // Create an instance of the database singleton.  A single argument is
@@ -103,10 +107,11 @@ class DB
         }
 
         self::$instancePool[$sectionName] = $db;
-        if ($autoConnect) self::$instancePool[$sectionName]->connect();
+        if ($autoConnect) {
+            self::$instancePool[$sectionName]->connect();
+        }
 
         return self::$instancePool[$sectionName];
 
     }  // factory()
-
 }  // class DB

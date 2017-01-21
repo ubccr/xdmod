@@ -481,7 +481,7 @@ if ( $showList ) {
                         $endpointSummary[2][$i],
                         $endpointSummary[3][$i]
                     );
-                    print implode(LIST_SEPARATOR, $a) . "\n";;
+                    print implode(LIST_SEPARATOR, $a) . "\n";
                 }
                 break;
 
@@ -689,7 +689,7 @@ Usage: {$argv[0]}
 
     NOTE: Date and time options support "+1 day", "now", "now - 1 day", etc. notation.
 
-        EOMSG;
+EOMSG
     );
 
     exit(1);

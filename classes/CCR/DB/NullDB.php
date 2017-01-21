@@ -18,7 +18,7 @@ class NullDB implements iDatabase
     {
     }
 
-    public function _destruct()
+    public function __destruct()
     {
     }
 
@@ -52,9 +52,13 @@ class NullDB implements iDatabase
         return 0;
     }
 
+    public function getRowCount($schema, $table)
+    {
+    }
+
     public function prepare($query)
     {
-        return FALSE;
+        return false;
     }
 
     public function beginTransaction()
