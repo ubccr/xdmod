@@ -12,8 +12,7 @@
  * - Changed name from Database to iDatabase for consistency with coding conventions
  *
  * 2017-01-12 Steve Gallo <smgallo@buffalo.edu>
- * - Added methods that were added over time to PDODB (__construct(), handle(), insert(),
- *   getRowCount())
+ * - Added methods that were added over time to PDODB (handle(), insert(), getRowCount())
  * - Added documentation and cleaned up for consistency
  * ==========================================================================================
  */
@@ -22,21 +21,6 @@ namespace CCR\DB;
 
 interface iDatabase
 {
-    /* ------------------------------------------------------------------------------------------
-     * Constructor
-     *
-     * @param $db_engine PDO database engine name
-     * @param $db_host Database hostname
-     * @param $db_port Database port
-     * @param $db_name Database name
-     * @param $db_username Database username
-     * @param $db_password Database user password
-     * @param $dsn_extra Optional extra parameters to be added to the DSN
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password);
-
     /* ------------------------------------------------------------------------------------------
      * Perform any necessary cleanup when the object is destroyed, such as closing the
      * connection
