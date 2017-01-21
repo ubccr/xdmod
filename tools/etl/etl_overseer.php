@@ -26,6 +26,8 @@ use ETL\Utilities;
 // ==========================================================================================
 // Script options with defaults
 
+// Allow initialization of some options from the configuration file
+
 $scriptOptions = array(
     // List of individual actions to execute
     'actions'           => array(),
@@ -59,6 +61,10 @@ $scriptOptions = array(
     'list-ingestors'    => false,
     // List available resources
     'list-resources'    => false,
+    // Directory for storing ETL lock files
+    'lock-dir'          => null,
+    // Optional ETL lock file prefix
+    'lock-file-prefix'  => null,
     // Previous number of days to ingest
     'number-of-days'    => null,
     // List of options to add to or override individual action options
@@ -73,6 +79,28 @@ $scriptOptions = array(
     'start-date'        => null,
     'verbosity'         => Log::NOTICE
 );
+
+// Override defaults with values from the configuration file, if there are any
+
+try {
+    $etlConfigOptions = \xd_utilities\getConfigurationSection("etl");
+
+    foreach ( $etlConfigOptions as $configKey => $configValue ) {
+
+        // Allow options to be separated with underscores or dashes
+        $dashKey = str_replace('_', '-', $configKey);
+
+        if ( array_key_exists($configKey, $scriptOptions) ) {
+            $scriptOptions[$configKey] = $configValue;
+        } else if ( array_key_exists($dashKey, $scriptOptions) ) {
+            $scriptOptions[$dashKey] = $configValue;
+        }
+    }  // foreach ( $etlConfigOptions as $configkey => $configValue )
+
+} catch ( Exception $e ) {
+    // Simply ignore the exception if there is no [etl] section in the config file
+    continue;
+}
 
 $showList = false;
 
@@ -98,8 +126,10 @@ $options = array(
     't'   => 'dryrun',
     'v:'  => 'verbosity:',
     'x:'  => 'exclude-resource-codes:',
-    'y:'  => 'last-modified-end-date:'
-);
+    'y:'  => 'last-modified-end-date:',
+    ''    => 'lock-dir',
+    ''    => 'lock-file-prefix'
+    );
 
 $args = getopt(implode('', array_keys($options)), $options);
 
@@ -279,7 +309,15 @@ foreach ($args as $arg => $value) {
             }
             $scriptOptions['last-modified-end-date'] = $value;
             break;
+        
+        case 'lock-dir':
+            $scriptOptions['lock-dir'] = $value;
+            break;
 
+        case 'lock-preifx':
+            $scriptOptions['lock-prefix'] = $value;
+            break;
+        
         case 'h':
         case 'help':
             usage_and_exit();
@@ -311,9 +349,11 @@ foreach ( $argv as $index => $arg ) {
     }
 }
 
-if ( null === $scriptOptions['start-date'] &&
-     null === $scriptOptions['end-date'] &&
-     null === $scriptOptions['number-of-days'] ) {
+if ( ! $showList &&
+     ( null === $scriptOptions['start-date'] &&
+       null === $scriptOptions['end-date'] &&
+       null === $scriptOptions['number-of-days']) )
+{
     usage_and_exit("Must provide start/end date or number of days");
 }
 
@@ -584,13 +624,12 @@ if ( count($scriptOptions['process-sections']) == 0 &&
 // ------------------------------------------------------------------------------------------
 // Create the overseer and perform the requested operations for each date interval
 
-$overseer = new EtlOverseer($overseerOptions);
+$overseer = new EtlOverseer($overseerOptions, $logger);
 if ( ! ($overseer instanceof iEtlOverseer ) )
 {
     $msg = "EtlOverseer is not an instance of iEtlOverseer";
     exit($msg);
 }
-$overseer->setLogger($logger);
 
 try {
     $logger->notice(array('message'         => 'ETL time period',

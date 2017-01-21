@@ -610,7 +610,9 @@ class pdoAggregator extends aAggregator
 
             if ( null !== $startDate ) {
                 $ranges[] = "$startDate <= d.${aggregationUnit}_end";
-            } else if ( null !== $endDate ) {
+            }
+
+            if ( null !== $endDate ) {
                 $ranges[] = "$endDate >= d.${aggregationUnit}_start";
             }
 
@@ -848,7 +850,7 @@ class pdoAggregator extends aAggregator
             $discoveredBindParams['insert'] = $matches[0];
 
             $this->logger->debug("Aggregation select query ($aggregationUnit)\n" . $this->selectSql);
-            $this->logger->debug("Aggregation insert query ($aggregationUnit)\n" . $this->$insertSql);
+            $this->logger->debug("Aggregation insert query ($aggregationUnit)\n" . $this->insertSql);
 
         }  // else ($optimize)
 
@@ -1114,8 +1116,9 @@ class pdoAggregator extends aAggregator
 
             // Perform aggregation on this aggregation period
 
-            if ( $optimize ) {
+            $this->logger->debug("Aggregating $aggregationUnit $period_id");
 
+            if ( $optimize ) {
 
                 try {
                     if ( ! $this->etlOverseerOptions->isDryrun() ) {
