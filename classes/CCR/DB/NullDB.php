@@ -14,17 +14,29 @@ namespace CCR\DB;
 
 class NullDB implements iDatabase
 {
+    public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password)
+    {
+    }
+
+    public function _destruct()
+    {
+    }
+
     public function connect()
     {
     }
 
-    public function destroy()
+    public function disconnect()
     {
     }
 
     public function insert($statement, $params = array())
     {
         return 0;
+    }
+
+    public function handle()
+    {
     }
 
     public function query(

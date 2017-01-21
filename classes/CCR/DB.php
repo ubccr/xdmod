@@ -66,7 +66,7 @@ class DB
             $iniSection = xd_utilities\getConfigurationSection($sectionName, 'db_engine');
         } catch (Exception $e) {
             $msg = "Unable to get database configuration options: " . $e->getMessage();
-            throw new Exception ($msg);
+            throw new Exception($msg);
         }
 
         // Not all engines are required to specify all configuration options (e.g., Oracle) so
