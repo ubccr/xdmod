@@ -7,6 +7,16 @@ if "$using_php_533"; then
     echo "Using newer version of PHP for installing dependencies"
     phpenv global 5.3
     php --version
+
+    # Update Composer since the attempt made by the Travis setup script
+    # using PHP 5.3.3 would have failed.
+    #
+    # First, we update to the latest developer version since the version
+    # of Composer pre-installed on Travis systems (1.0.0) doesn't support
+    # selecting an update channel. Then, we use this version to rollback to
+    # the latest stable version.
+    composer self-update
+    composer self-update --stable
 fi
 
 # Install Composer dependencies.

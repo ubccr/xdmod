@@ -19,7 +19,8 @@ class Allocations extends PDODBMultiIngestor
                     al.account_id,
                     req.request_id,
                     pi.person_id AS principalinvestigator_person_id,
-                    req.primary_fos_id AS fos_id
+                    req.primary_fos_id AS fos_id,
+                    acc.account_name AS charge_number
                 FROM hpcdb_allocations al
                 JOIN hpcdb_accounts acc
                     ON al.account_id = acc.account_id
