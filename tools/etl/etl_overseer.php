@@ -92,7 +92,7 @@ try {
 
         if ( array_key_exists($configKey, $scriptOptions) ) {
             $scriptOptions[$configKey] = $configValue;
-        } else if ( array_key_exists($dashKey, $scriptOptions) ) {
+        } elseif ( array_key_exists($dashKey, $scriptOptions) ) {
             $scriptOptions[$dashKey] = $configValue;
         }
     }  // foreach ( $etlConfigOptions as $configkey => $configValue )
