@@ -29,25 +29,25 @@ class PDODB implements iDatabase
 {
 
     // Database connection parameters
-    public $_db_engine = null;
-    public $_db_host = null;
-    public $_db_port = null;
-    public $_db_name = null;
-    public $_db_username = null;
-    public $_db_password = null;
+    public $db_engine = null;
+    public $db_host = null;
+    public $db_port = null;
+    public $db_name = null;
+    public $db_username = null;
+    public $db_password = null;
 
     // Optional extra parameters to be added to the DSN
-    public $_dsn_extra = null;
+    public $dsn_extra = null;
 
     // Generated DSN
-    protected $_dsn = null;
+    protected $dsn = null;
 
     // Handle to the PDO instance
-    protected $_dbh = null;
+    protected $dbh = null;
 
-    protected static $_debug_mode = false;
-    protected static $_queries = array();
-    protected static $_params = array();
+    protected static $debug_mode = false;
+    protected static $queries = array();
+    protected static $params = array();
 
     // --------------------------------------------------------------------------------
     // @see iDatabase::__construct()
@@ -55,13 +55,13 @@ class PDODB implements iDatabase
 
     public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password, $dsn_extra = null)
     {
-        $this->_db_engine = $db_engine;
-        $this->_db_host = $db_host;
-        $this->_db_port = $db_port;
-        $this->_db_name = $db_name;
-        $this->_db_username = $db_username;
-        $this->_db_password = $db_password;
-        $this->_dsn_extra = $dsn_extra;
+        $this->db_engine = $db_engine;
+        $this->db_host = $db_host;
+        $this->db_port = $db_port;
+        $this->db_name = $db_name;
+        $this->db_username = $db_username;
+        $this->db_password = $db_password;
+        $this->dsn_extra = $dsn_extra;
     } // __construct()
 
     // --------------------------------------------------------------------------------
@@ -79,15 +79,15 @@ class PDODB implements iDatabase
 
     public function connect()
     {
-        if ( null !== $this->_dbh) {
-            return $this->_dbh;
+        if ( null !== $this->dbh) {
+            return $this->dbh;
         }
 
-        $this->_dsn = $this->generateDsn();
-        $this->_dbh = new PDO($this->_dsn, $this->_db_username, $this->_db_password);
-        $this->_dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->dsn = $this->generateDsn();
+        $this->dbh = new PDO($this->dsn, $this->db_username, $this->db_password);
+        $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        return $this->_dbh;
+        return $this->dbh;
     } // connect()
 
     // --------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ class PDODB implements iDatabase
 
     public function disconnect()
     {
-        $this->_dbh = null;
+        $this->dbh = null;
     }
 
 
@@ -117,13 +117,13 @@ class PDODB implements iDatabase
 
     protected function generateDsn()
     {
-        $dsn = $this->_db_engine
-            . ':host=' . $this->_db_host
-            . ( null !== $this->_db_port ? ';port=' . $this->_db_port : '' )
-            . ';dbname=' . $this->_db_name;
+        $dsn = $this->db_engine
+            . ':host=' . $this->db_host
+            . ( null !== $this->db_port ? ';port=' . $this->db_port : '' )
+            . ';dbname=' . $this->db_name;
 
-        if ( null !== $this->_dsn_extra ) {
-            $dsn .= ( 0 !== strpos($this->_dsn_extra, ';') ? ';' : '' ) . $this->_dsn_extra;
+        if ( null !== $this->dsn_extra ) {
+            $dsn .= ( 0 !== strpos($this->dsn_extra, ';') ? ';' : '' ) . $this->dsn_extra;
         }
 
         return $dsn;
@@ -135,7 +135,7 @@ class PDODB implements iDatabase
 
     public function getDsn()
     {
-        return $this->_dsn;
+        return $this->dsn;
     }  // getDsn()
 
     // --------------------------------------------------------------------------------
@@ -304,25 +304,25 @@ class PDODB implements iDatabase
     public static function debugInfo()
     {
         return array(
-            "queries" => PDODB::$_queries,
-            "params" => PDODB::$_params
+            "queries" => PDODB::$queries,
+            "params" => PDODB::$params
         );
     }
 
     public static function debugOn()
     {
-        PDODB::$_debug_mode = true;
+        PDODB::$debug_mode = true;
     }
 
     public static function debugOff()
     {
-        PDODB::$_debug_mode = false;
+        PDODB::$debug_mode = false;
     }
 
     public static function resetDebugInfo()
     {
-        unset($GLOBALS['PDODB::$_queries']);
-        unset($GLOBALS['PDODB::$_params']);
+        unset($GLOBALS['PDODB::$queries']);
+        unset($GLOBALS['PDODB::$params']);
     }
 
     private function debugging()
@@ -334,13 +334,13 @@ class PDODB implements iDatabase
         } catch (Exception $e) {
         }
 
-        return  $sql_debug_mode || PDODB::$_debug_mode;
+        return  $sql_debug_mode || PDODB::$debug_mode;
     }
 
     private function debug($query, $params)
     {
-        PDODB::$_queries[] = trim(preg_replace("(\s+)", " ", $query));
-        PDODB::$_params[] = PDODB::protectParams($params);
+        PDODB::$queries[] = trim(preg_replace("(\s+)", " ", $query));
+        PDODB::$params[] = PDODB::protectParams($params);
     }
 
     private static function protectParams($params)
