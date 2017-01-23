@@ -32,6 +32,9 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
     // Database hostname
     protected $hostname = null;
 
+    // Database port
+    protected $port = null;
+
     // User used to connect to the database
     protected $username = null;
 
@@ -59,6 +62,9 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
             $section = xd_utilities\getConfigurationSection($this->config);
             if ( array_key_exists("host", $section) ) {
                 $this->hostname = $section["host"];
+            }
+            if ( array_key_exists("port", $section) ) {
+                $this->port = $section["port"];
             }
             if ( array_key_exists("user", $section) ) {
                 $this->username = $section["user"];
@@ -123,8 +129,15 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
         // DB::factory() does not support connecting to an alternate schema and needs a separate entry
         // in the config file. You can, however, explicitly reference a schema in your query.
 
-        $this->handle = DB::factory($this->config);
+        try {
+            $this->handle = DB::factory($this->config);
+        } catch (Exception $e) {
+            $msg = "Error connecting to data endpoint '" . $this->name . "'. " . $e->getMessage();
+            $this->logAndThrowException($msg);
+        }
+
         return $this->handle;
+
     }  // connect()
 
     /* ------------------------------------------------------------------------------------------
@@ -215,7 +228,7 @@ AND table_name = :tablename";
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getTableColumnNames($tableName)
+    public function getTableColumnNames($tableName, $schemaName = null)
     {
         if ( empty($tableName) ) {
             $msg = "Table name cannot be empty";
@@ -229,7 +242,11 @@ WHERE table_schema = :schema
 AND table_name = :tablename
 ORDER BY ordinal_position ASC";
 
-        $params = array(":schema" => $this->getSchema(),
+        if ( null === $schemaName ) {
+            $schemaName = $this->getSchema();
+        }
+
+        $params = array(":schema" => $schemaName,
                         ":tablename"  => $tableName);
 
         try {
@@ -240,7 +257,7 @@ ORDER BY ordinal_position ASC";
                 $this->logAndThrowException($msg);
             }
         } catch (PDOException $e) {
-            $msg = "Error retrieving column names from '" . $this->getSchema() . ".'$tableName' ";
+            $msg = "Error retrieving column names from '$schemaName'$tableName' ";
             $this->logAndThrowSqlException($sql, $e, $msg);
         }
 
@@ -254,6 +271,48 @@ ORDER BY ordinal_position ASC";
     }  // getTableColumnNames()
 
     /* ------------------------------------------------------------------------------------------
+     * Helper function used by specific data endpoint drivers to query the underlying
+     * database to check if a schema exists.
+     *
+     * @param $sql The SQL statement used to query for the schema
+     * @param $schemaName The name of the schema, or NULL to use the default schema for
+     *    this endpoint
+     * @param $sqlParameters An array of additional parameters for the SQL
+     *   statement. Parameters here will override local parameters with the same key
+     *
+     * @return TRUE if the schema exists, FALSE if it does not
+     * @throw Exception If an empty and non-NULL schema was provided
+     * @throw Exception If tehre was an errir querying the database
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function executeSchemaExistsQuery($sql, $schemaName = null, array $sqlParameters = array())
+    {
+        if ( null === $schemaName ) {
+            $schemaName = $this->getSchema();
+        } elseif ( empty($schemaName) ) {
+            $msg = "Schema name cannot be empty";
+            $this->logAndThrowException($msg);
+        }
+
+        $localSqlParameters = array(":schema" => $schemaName);
+        $localSqlParameters = array_merge($localSqlParameters, $sqlParameters);
+
+        try {
+            $dbh = $this->getHandle();
+            $result = $dbh->query($sql, $localSqlParameters);
+            if ( 0 == count($result) ) {
+                return false;
+            }
+        } catch (\PdoException $e) {
+            $msg = "Error querying for schema '$schemaName'";
+            $this->logAndThrowSqlException($sql, $e, $msg);
+        }
+
+        return true;
+    }  // executeSchemaExistsQuery()
+
+    /* ------------------------------------------------------------------------------------------
      * @see aDataEndpoint::__toString()
      * ------------------------------------------------------------------------------------------
      */
@@ -262,8 +321,8 @@ ORDER BY ordinal_position ASC";
     {
         return "{$this->name} (" . get_class($this) . ", config={$this->config}, schema={$this->schema}" .
             (null !== $this->hostname ? ", host={$this->hostname}" : "" ) .
+            (null !== $this->port ? ":{$this->port}" : "" ) .
             (null !== $this->username ? ", user={$this->username}" : "" ) .
             ")";
     }  // __toString()
-
 }  // class aRdbmsEndpoint

@@ -63,6 +63,9 @@ class Query extends aNamedEntity
     // Optional array of WHERE clauses
     protected $where = array();
 
+    // Optional array of ORDER BY fields
+    protected $orderBys = array();
+
     // Optional defined macros
     protected $macros = array();
 
@@ -178,6 +181,14 @@ class Query extends aNamedEntity
             }
         }
 
+        if ( isset($config->orderby) ) {
+            if ( ! is_array($config->orderby) ) {
+                $errorMsg[] = "orderby property must be an array";
+            } elseif ( 0 == count($config->orderby) ) {
+                $errorMsg[] = "orderby property must include as least one element";
+            }
+        }
+
         if ( isset($config->where) && ! is_array($config->where) ) {
             $errorMsg[] = "where property must be an array";
         }
@@ -224,6 +235,12 @@ class Query extends aNamedEntity
         if ( isset($config->where) ) {
             foreach ( $config->where as $where ) {
                 $this->addWhere($where);
+            }
+        }
+
+        if ( isset($config->orderby) ) {
+            foreach ( $config->orderby as $orderby ) {
+                $this->addOrderBy($orderby);
             }
         }
 
@@ -379,9 +396,54 @@ class Query extends aNamedEntity
 
     public function deleteGroupBys()
     {
-        $this->groupbys = array();
+        $this->groupBys = array();
         return $this;
     }  // deleteGroupBys()
+
+    /* ------------------------------------------------------------------------------------------
+     * Add a order by clause to this query.
+     *
+     * @param $orderBy An array containing the group by column names.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function addOrderBy($orderBy)
+    {
+        if ( empty($orderBy) || ! is_string($orderBy) ) {
+            $msg = "Cannot add an empty group by";
+            $this->logAndThrowException($msg);
+        }
+
+        $this->orderBys[] = $orderBy;
+        return $this;
+    }  // addOrderBys()
+
+    /* ------------------------------------------------------------------------------------------
+     * Get the list of order by columns.
+     *
+     * @return An array of group by column names.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getOrderBys()
+    {
+        return $this->orderBys;
+    }  // getOrderBys()
+
+    /* ------------------------------------------------------------------------------------------
+     * Remove all order bys from this query.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function deleteOrderBys()
+    {
+        $this->orderBys = array();
+        return $this;
+    }  // deleteOrderBys()
 
     /* ------------------------------------------------------------------------------------------
      * Add a join clause for this query.
@@ -732,6 +794,7 @@ class Query extends aNamedEntity
             implode(",\n", $columnList) . "\n" .
             implode("\n", $joinList) . "\n" .
             ( count($whereConditions) > 0 ? "WHERE " . implode("\nAND ", $whereConditions) . "\n" : "" ) .
+            ( count($this->orderBys) > 0 ? "ORDER BY " . implode(", ", $this->orderBys) : "" );
             ( count($this->groupBys) > 0 ? "GROUP BY " . implode(", ", $this->groupBys) : "" );
 
         // If any macros have been defined, process those macros now. Since macros can contain variables
@@ -766,6 +829,9 @@ class Query extends aNamedEntity
         if ( count($this->groupBys) > 0 ) {
             $data->groupbys = $this->groupBys;
         }
+        if ( count($this->orderBys) > 0 ) {
+            $data->orderbys = $this->orderBys;
+        }
         if ( count($this->where) > 0 ) {
             $data->where = $this->where;
         }
@@ -791,5 +857,4 @@ class Query extends aNamedEntity
     {
         return json_encode($this->toJsonObj($succinct, $includeSchema));
     }  // toJson()
-
 }  // class Query

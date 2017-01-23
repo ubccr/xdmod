@@ -14,17 +14,29 @@ namespace CCR\DB;
 
 class NullDB implements iDatabase
 {
+    public function __construct()
+    {
+    }
+
+    public function __destruct()
+    {
+    }
+
     public function connect()
     {
     }
 
-    public function destroy()
+    public function disconnect()
     {
     }
 
     public function insert($statement, $params = array())
     {
         return 0;
+    }
+
+    public function handle()
+    {
     }
 
     public function query(
@@ -40,9 +52,13 @@ class NullDB implements iDatabase
         return 0;
     }
 
+    public function getRowCount($schema, $table)
+    {
+    }
+
     public function prepare($query)
     {
-        return FALSE;
+        return false;
     }
 
     public function beginTransaction()
