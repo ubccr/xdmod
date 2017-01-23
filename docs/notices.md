@@ -84,10 +84,13 @@ where denoted. These software products are free for commercial use.
   available under the [MIT License][mit].
 - [EmailValidator](https://github.com/egulias/EmailValidator), which is
   available under the [MIT License][mit].
+- [PDOOCI](https://github.com/taq/pdooci), which is available under the
+  [GPL 2.0][gpl2].
 
 \* = Not available under an [OSI-approved license][osi].
 
 [osi]:          http://opensource.org/licenses
+[gpl2]:         https://www.gnu.org/licenses/gpl-2.0.txt
 [gpl3]:         http://www.gnu.org/licenses/gpl-3.0.txt
 [new-bsd]:      https://opensource.org/licenses/BSD-3-Clause
 [mit]:          http://en.wikipedia.org/wiki/MIT_License
