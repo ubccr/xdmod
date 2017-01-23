@@ -585,6 +585,22 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
         };
 
         var previewReport = function () {
+            if (self.getReportID().length == 0) {
+                CCR.xdmod.ui.reportGeneratorMessage(
+                    'Report Editor',
+                    'You must save this report before you can preview it.'
+                );
+                return;
+            }
+
+            if (self.isDirty()) {
+                CCR.xdmod.ui.reportGeneratorMessage(
+                    'Report Editor',
+                    'You have made changes to this report which you must save before previewing.'
+                );
+                return;
+            }
+
             if (self.reportCharts.reportStore.data.length == 0) {
                 CCR.xdmod.ui.reportGeneratorMessage(
                     'Report Editor',

@@ -32,7 +32,7 @@ if [ "$TEST_SUITE" = "syntax" ] || [ "$TEST_SUITE" = "style" ]; then
     files_changed=()
     while IFS= read -r -d $'\0' file; do
         files_changed+=("$file")
-    done < <(git diff --name-only --diff-filter=d -z "$TRAVIS_COMMIT_RANGE")
+    done < <(git diff --name-only --diff-filter=da -z "$TRAVIS_COMMIT_RANGE")
 
     # Separate the changed files by language.
     php_files_changed=()
@@ -44,6 +44,17 @@ if [ "$TEST_SUITE" = "syntax" ] || [ "$TEST_SUITE" = "style" ]; then
             js_files_changed+=("$file")
         fi
     done
+
+    # Get any added files by language
+    php_files_added=()
+    js_files_added=()
+    while IFS= read -r -d $'\0' file; do
+        if [[ "$file" == *.php ]]; then
+            php_files_added+=("$file")
+        elif [[ "$file" == *.js ]]; then
+            js_files_added+=("$file")
+        fi
+    done < <(git diff --name-only --diff-filter=A -z "$TRAVIS_COMMIT_RANGE")
 fi
 
 # Perform a test set based on the value of $TEST_SUITE.
@@ -62,20 +73,46 @@ if [ "$TEST_SUITE" = "syntax" ]; then
         fi
     done
 elif [ "$TEST_SUITE" = "style" ]; then
+    npm install https://github.com/jpwhite4/lint-diff/tarball/master
+
     for file in "${php_files_changed[@]}"; do
+        phpcs "$file" --report=json > "$file.lint.new.json"
+        if [ $? != 0 ]; then
+            git show "$commit_range_start:$file" | phpcs --stdin-path="$file" --report=json > "$file.lint.orig.json"
+            ./node_modules/.bin/lint-diff "$file.lint.orig.json" "$file.lint.new.json"
+            if [ $? != 0 ]; then
+                build_exit_value=2
+            fi
+            rm "$file.lint.orig.json"
+        fi
+        rm "$file.lint.new.json"
+    done
+    for file in "${php_files_added[@]}"; do
         phpcs "$file"
         if [ $? != 0 ]; then
             build_exit_value=2
         fi
     done
     for file in "${js_files_changed[@]}"; do
+        eslint "$file" -f json > "$file.lint.new.json"
+        if [ $? != 0 ]; then
+            git show "$commit_range_start:$file" | eslint --stdin --stdin-filename "$file" -f json > "$file.lint.orig.json"
+            ./node_modules/.bin/lint-diff "$file.lint.orig.json" "$file.lint.new.json"
+            if [ $? != 0 ]; then
+                build_exit_value=2
+            fi
+            rm "$file.lint.orig.json"
+        fi
+        rm "$file.lint.new.json"
+    done
+    for file in "${js_files_added[@]}"; do
         eslint "$file"
         if [ $? != 0 ]; then
             build_exit_value=2
         fi
     done
 elif [ "$TEST_SUITE" = "unit" ]; then
-    open_xdmod/modules/xdmod/tests/runtests.sh
+    open_xdmod/modules/xdmod/tests/runtests.sh && classes/UnitTesting/RunTests.sh
     if [ $? != 0 ]; then
         build_exit_value=2
     fi
