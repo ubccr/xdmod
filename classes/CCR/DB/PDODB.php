@@ -28,13 +28,14 @@ use Exception;
 class PDODB implements iDatabase
 {
 
-    // Database connection parameters
-    public $db_engine = null;
-    public $db_host = null;
-    public $db_port = null;
-    public $db_name = null;
-    public $db_username = null;
-    public $db_password = null;
+    // Database connection parameters. Be aware that these are accessed directly
+    // throughout the ETLv1 code and in the ETLv2 pdoIngester.php
+    public $_db_engine = null;
+    public $_db_host = null;
+    public $_db_port = null;
+    public $_db_name = null;
+    public $_db_username = null;
+    public $_db_password = null;
 
     // Optional extra parameters to be added to the DSN
     public $dsn_extra = null;
@@ -43,7 +44,7 @@ class PDODB implements iDatabase
     protected $dsn = null;
 
     // Handle to the PDO instance
-    protected $dbh = null;
+    protected $_dbh = null;
 
     protected static $debug_mode = false;
     protected static $queries = array();
@@ -55,12 +56,12 @@ class PDODB implements iDatabase
 
     public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password, $dsn_extra = null)
     {
-        $this->db_engine = $db_engine;
-        $this->db_host = $db_host;
-        $this->db_port = $db_port;
-        $this->db_name = $db_name;
-        $this->db_username = $db_username;
-        $this->db_password = $db_password;
+        $this->_db_engine = $db_engine;
+        $this->_db_host = $db_host;
+        $this->_db_port = $db_port;
+        $this->_db_name = $db_name;
+        $this->_db_username = $db_username;
+        $this->_db_password = $db_password;
         $this->dsn_extra = $dsn_extra;
     } // __construct()
 
@@ -79,15 +80,15 @@ class PDODB implements iDatabase
 
     public function connect()
     {
-        if ( null !== $this->dbh) {
-            return $this->dbh;
+        if ( null !== $this->_dbh) {
+            return $this->_dbh;
         }
 
         $this->dsn = $this->generateDsn();
-        $this->dbh = new PDO($this->dsn, $this->db_username, $this->db_password);
-        $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->_dbh = new PDO($this->dsn, $this->_db_username, $this->_db_password);
+        $this->_dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        return $this->dbh;
+        return $this->_dbh;
     } // connect()
 
     // --------------------------------------------------------------------------------
@@ -96,7 +97,7 @@ class PDODB implements iDatabase
 
     public function disconnect()
     {
-        $this->dbh = null;
+        $this->_dbh = null;
     }
 
 
@@ -117,10 +118,10 @@ class PDODB implements iDatabase
 
     protected function generateDsn()
     {
-        $dsn = $this->db_engine
-            . ':host=' . $this->db_host
-            . ( null !== $this->db_port ? ';port=' . $this->db_port : '' )
-            . ';dbname=' . $this->db_name;
+        $dsn = $this->_db_engine
+            . ':host=' . $this->_db_host
+            . ( null !== $this->_db_port ? ';port=' . $this->_db_port : '' )
+            . ';dbname=' . $this->_db_name;
 
         if ( null !== $this->dsn_extra ) {
             $dsn .= ( 0 !== strpos($this->dsn_extra, ';') ? ';' : '' ) . $this->dsn_extra;
