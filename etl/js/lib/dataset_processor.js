@@ -249,6 +249,9 @@ DatasetProcessor.prototype.process = function (totalCores, coreIndex) {
                 self.onEndProcess();
                 return;
             }
+
+            self.emit('message', self.dataset.name + ': connected to database \'' + db.databaseName + '\'');
+
             //look for jobs that haven't been processed yet,
             //or processed by an older version of this script
             var query;
@@ -281,7 +284,7 @@ DatasetProcessor.prototype.process = function (totalCores, coreIndex) {
                     self.onEndProcess();
                 }
 
-                self.emit('message', self.dataset.name + ': ' + " query " + util.inspect(query));
+                self.emit('message', self.dataset.name + ': query \'' + self.collection.collectionName + '\' ' + util.inspect(query));
 
                 self.stream = self.collection
                     .find(query)
