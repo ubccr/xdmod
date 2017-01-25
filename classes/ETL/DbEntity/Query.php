@@ -794,7 +794,7 @@ class Query extends aNamedEntity
             implode(",\n", $columnList) . "\n" .
             implode("\n", $joinList) . "\n" .
             ( count($whereConditions) > 0 ? "WHERE " . implode("\nAND ", $whereConditions) . "\n" : "" ) .
-            ( count($this->orderBys) > 0 ? "ORDER BY " . implode(", ", $this->orderBys) : "" );
+            ( count($this->orderBys) > 0 ? "ORDER BY " . implode(", ", $this->orderBys) : "" ) .
             ( count($this->groupBys) > 0 ? "GROUP BY " . implode(", ", $this->groupBys) : "" );
 
         // If any macros have been defined, process those macros now. Since macros can contain variables
