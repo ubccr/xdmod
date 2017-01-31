@@ -745,7 +745,7 @@ class Query extends aNamedEntity
         $columnList = array();
         $thisObj = $this;
         foreach ( $this->records as $columnName => $formula ) {
-            if ( "#" == $columnName ) {
+            if ( $this->isComment($columnName) ) {
                 continue;
             }
 

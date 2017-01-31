@@ -27,6 +27,9 @@ abstract class aNamedEntity extends aEtlObject
 
     protected $systemQuoteChar = '`';
 
+    // Keys starting with this character are considered comments
+    const COMMENT_KEY = "#";
+
     /* ------------------------------------------------------------------------------------------
      * Construct a database entity object from a JSON definition file or a definition object.
      *
@@ -158,5 +161,19 @@ abstract class aNamedEntity extends aEtlObject
     {
         return $this->systemQuoteChar . $identifier . $this->systemQuoteChar;
     }  // quote()
+
+    /* ------------------------------------------------------------------------------------------
+     * Identify commented out keys in JSON definition/specification files.
+     *
+     * @param $key The string to examine
+     *
+     * @return TRUE if the key is considered a comment, FALSE otherwise.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function isComment($key)
+    {
+        return ( 0 === strpos($key, self::COMMENT_KEY) );
+    }  // isComment()
 
 }  // abstract class aNamedEntity

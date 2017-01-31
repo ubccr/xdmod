@@ -63,7 +63,7 @@ implements iTableItem
         }
 
         foreach ( $config as $property => $value ) {
-            if ( '#' == $property ) {
+            if ( $this->isComment($property) ) {
                 continue;
             }
 
