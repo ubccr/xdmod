@@ -17,6 +17,8 @@
  * ${:PERIOD_SECONDS} The number of seconds in the current aggregation period being processed.
  * ${:PERIOD_VALUE} The value of the aggregation period within the year (e.g., day of year, month of year, etc.)
  * ${:PERIOD_ID} Identifier into the aggregation period tables (e.g., days, months, etc.)
+ * ${:PERIOD_START} Start datetime of the current period
+ * ${:PERIOD_END} End datetime of the current period
  * ${:PERIOD_START_TS} Start timestamp of the current period
  * ${:PERIOD_END_TS} End timestamp of the current period
  *
@@ -283,6 +285,10 @@ class pdoAggregator extends aAggregator
             ':PERIOD_VALUE' => ":period_value",
             // Identifier into the aggregation period tables (e.g., days, months, etc.)
             ':PERIOD_ID' => ":period_id",
+            // Start datetime of the period
+            ':PERIOD_START' => ":period_start",
+            // End datetime of the period
+            ':PERIOD_END' => ":period_end",
             // Start timestamp of the period
             ':PERIOD_START_TS' => ":period_start_ts",
             // End timestamp of the period
@@ -668,7 +674,7 @@ class pdoAggregator extends aAggregator
         $sql =
             "SELECT distinct
          d.id as period_id,
-         d.`year` as year_id,
+         d.`year` as year_value,
          d.`${aggregationUnit}` as period_value,
          d.${aggregationUnit}_start as period_start,
          d.${aggregationUnit}_end as period_end,
@@ -690,7 +696,8 @@ class pdoAggregator extends aAggregator
         try {
             $this->logger->debug("Select dirty aggregation periods:\n$sql");
             if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                $result = $this->utilityHandle->query($sql);
+                // $result = $this->utilityHandle->query($sql);
+                $result = $this->sourceHandle->query($sql);
             }
         } catch (PDOException $e) {
             $this->logAndThrowSqlException($sql, $e, "Error querying dirty date ids");
@@ -888,25 +895,23 @@ class pdoAggregator extends aAggregator
 
                 $batchStartTime = microtime(true);
 
-                $dateIdSlice = array_slice($aggregationPeriodList, $aggregationPeriodListOffset, $batchSliceSize);
-                if ( count($dateIdSlice) == 0 ) {
+                $aggregationPeriodSlice = array_slice($aggregationPeriodList, $aggregationPeriodListOffset, $batchSliceSize);
+                if ( count($aggregationPeriodSlice) == 0 ) {
                     break;
                 }
 
                 // Is this the last slice?
-                $done = ( count($dateIdSlice) < $batchSliceSize );
+                $done = ( count($aggregationPeriodSlice) < $batchSliceSize );
 
                 // Find the min/max time range and day id for this slice so we know which jobs to
                 // include in the temporary table.
 
-                $firstSlice = current($dateIdSlice);
-                $lastSlice = end($dateIdSlice);
-                reset($dateIdSlice);
+                $firstSlice = current($aggregationPeriodSlice);
+                $lastSlice = end($aggregationPeriodSlice);
+                reset($aggregationPeriodSlice);
 
                 // Note that slices are ordered newest to oldest
 
-                $minPeriodSeconds = $lastSlice['period_start_ts'];
-                $maxPeriodSeconds = $firstSlice['period_end_ts'];
                 $minDayId = $lastSlice['period_start_day_id'];
                 $maxDayId = $firstSlice['period_end_day_id'];
                 $minPeriodId = $lastSlice['period_id'];
@@ -937,12 +942,45 @@ class pdoAggregator extends aAggregator
                     // A subset of the bind variables are available. We should check to see if there
                     // are more that we can't handle.
 
-                    $availableParams = array(
-                        ":period_start_ts" => $minPeriodSeconds,
-                        ":period_end_ts" => $maxPeriodSeconds,
-                        ":period_start_day_id" => $minDayId,
-                        ":period_end_day_id" => $maxDayId
+                    // We are taking the WHERE clause from source query so we need to
+                    // support all bind parameters available to that query. Min and max
+                    // information will need to come from the last and first slice,
+                    // respecitively (see note below).
+
+                    $availableParamKeys = array_map(
+                        function ($k) {
+                            return ":$k";
+                        },
+                        array_keys($firstSlice)
                     );
+
+                    // NOTE 1
+                    //
+                    // The aggregation periods are supplied in reverse order so newer
+                    // periods are processed first. This means we need to invert the
+                    // start/end slices.
+                    //
+                    // NOTE 2
+                    //
+                    // Since the WHERE clause was meant to be used with a SINGLE
+                    // aggregation period, parameters such as period_hours and
+                    // period_seconds are not summed and chosen arbitrarily from one of
+                    // the periods.  Similarly, period_id and period_value are chosen
+                    // arbitrarily.
+
+                    $availableParamValues = array_map(
+                        function ($k, $first, $last) {
+                            if ( FALSE !== strpos($k, '_end') || FALSE !== strpos($k, 'end_') ) {
+                                return $first;
+                            } else {
+                                return $last;
+                            }
+                        },
+                        array_keys($firstSlice),
+                        $firstSlice,
+                        $lastSlice);
+
+                    $availableParams = array_combine($availableParamKeys, $availableParamValues);
 
                     $bindParams = array();
                     preg_match_all($bindParamRegex, $whereClause, $matches);
@@ -963,16 +1001,18 @@ class pdoAggregator extends aAggregator
 
                 $this->processAggregationPeriods(
                     $aggregationUnit,
-                    $dateIdSlice,
+                    $aggregationPeriodSlice,
                     $selectStmt,
                     $insertStmt,
                     $discoveredBindParams,
                     $numAggregationPeriods,
                     $aggregationPeriodListOffset);
 
-                $this->logger->info("[EXPERIMENTAL] Total time for batch (day_id $minDayId - $maxDayId): "
-                                    . round((microtime(true) - $batchStartTime), 2) . "s "
-                                    . "(" . round((microtime(true) - $batchStartTime) / count($dateIdSlice), 3) . "s/period)");
+                $this->logger->info(
+                    "[EXPERIMENTAL] Total time for batch (day_id $minDayId - $maxDayId): "
+                    . round((microtime(true) - $batchStartTime), 2) . "s "
+                    . "(" . round((microtime(true) - $batchStartTime) / count($aggregationPeriodSlice), 3) . "s/period)"
+                );
 
                 $aggregationPeriodListOffset += $batchSliceSize;
 
@@ -1043,32 +1083,22 @@ class pdoAggregator extends aAggregator
         $optimize = $this->allowSingleDatabaseOptimization();
         $numPeriodsProcessed = 0;
 
-        foreach ($aggregationPeriodList as $date_result) {
+        foreach ($aggregationPeriodList as $aggregationPeriodInfo) {
             $dateIdStartTime = microtime(true);
             $numRecords = 0;
 
-            $period_id       = $date_result['period_id'];
-            $year_id         = $date_result['year_id'];
-            $period_value    = $date_result["period_value"];
-            $period_seconds  = $date_result["period_seconds"];
-            $period_start_ts = $date_result["period_start_ts"];
-            $period_end_ts   = $date_result["period_end_ts"];
-            $period_start_day_id = $date_result["period_start_day_id"];
-            $period_end_day_id   = $date_result["period_end_day_id"];
+            // Make all of the data for each aggregation period available to the
+            // query. Change the array keys into bind parameters.
 
-            // Generate a list of available parameters and prune these based on the parameters
-            // discovered in the SQL.
+            $availableParamKeys = array_map(
+                function ($k) {
+                    return ":$k";
+                },
+                array_keys($aggregationPeriodInfo)
+            );
 
-            $availableParams = array(
-                ":period_id" => $period_id,
-                ":year_value" => $year_id,
-                ":period_value" => $period_value,
-                ":period_seconds" => $period_seconds,
-                ":period_start_ts" => $period_start_ts,
-                ":period_end_ts" => $period_end_ts,
-                ":period_start_day_id" => $period_start_day_id,
-                ":period_end_day_id" => $period_end_day_id
-                );
+            $availableParams = array_combine($availableParamKeys, $aggregationPeriodInfo);
+            $periodId = $aggregationPeriodInfo['period_id'];
 
             // If we're not completely re-aggregating, delete existing entries from the aggregation table
             // matching the periods that we are aggregating. Be sure to restrict resources if necessary.
@@ -1099,7 +1129,7 @@ class pdoAggregator extends aAggregator
 
                     foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
                         $qualifiedDestTableName = $etlTable->getFullName();
-                        $deleteSql = "DELETE FROM $qualifiedDestTableName WHERE {$aggregationUnit}_id = $period_id";
+                        $deleteSql = "DELETE FROM $qualifiedDestTableName WHERE {$aggregationUnit}_id = $periodId";
 
                         if ( count($restrictions) > 0 ) {
                             $deleteSql .= " AND " . implode(" AND ", $dummyQuery->getOverseerRestrictionValues());
@@ -1116,7 +1146,7 @@ class pdoAggregator extends aAggregator
 
             // Perform aggregation on this aggregation period
 
-            $this->logger->debug("Aggregating $aggregationUnit $period_id");
+            $this->logger->debug("Aggregating $aggregationUnit $periodId");
 
             if ( $optimize ) {
 
@@ -1164,7 +1194,7 @@ class pdoAggregator extends aAggregator
             $numPeriodsProcessed++;
             $this->logger->info("Aggregated $aggregationUnit ("
                                 . ( $numPeriodsProcessed + $aggregationPeriodOffset)
-                                . " of $totalNumAggregationPeriods) $period_id records = $numRecords, time = " .
+                                . " of $totalNumAggregationPeriods) $periodId records = $numRecords, time = " .
                                 round((microtime(true) - $dateIdStartTime), 2) . "s");
 
         }  // foreach ($aggregationPeriodList as $date_result)
