@@ -159,7 +159,7 @@ class pdoAggregator extends aAggregator
         if ( null === $this->etlSourceQuery ) {
             $msg = "ETL source query is not set";
             $this->logAndThrowException($msg);
-        } else if ( ! $this->etlSourceQuery instanceof Query ) {
+        } elseif ( ! $this->etlSourceQuery instanceof Query ) {
             $msg = "ETL source query is not an instance of Query";
             $this->logAndThrowException($msg);
         }
@@ -235,9 +235,11 @@ class pdoAggregator extends aAggregator
         }
 
         $this->logger->debug("Create ETL destination aggregation table object");
-        $this->etlDestinationTable = new AggregationTable($this->parsedDefinitionFile->table_definition,
-                                                          $this->destinationEndpoint->getSystemQuoteChar(),
-                                                          $this->logger);
+        $this->etlDestinationTable = new AggregationTable(
+            $this->parsedDefinitionFile->table_definition,
+            $this->destinationEndpoint->getSystemQuoteChar(),
+            $this->logger
+        );
         $this->etlDestinationTable->setSchema($this->destinationEndpoint->getSchema());
 
         if ( isset($this->options->table_prefix) &&
@@ -266,8 +268,10 @@ class pdoAggregator extends aAggregator
             }
 
             $this->logger->debug("Create ETL source query object");
-            $this->etlSourceQuery = new Query($this->parsedDefinitionFile->source_query,
-                                              $this->sourceEndpoint->getSystemQuoteChar());
+            $this->etlSourceQuery = new Query(
+                $this->parsedDefinitionFile->source_query,
+                $this->sourceEndpoint->getSystemQuoteChar()
+            );
         }  // ( null === $this->etlSourceQuery )
 
         // --------------------------------------------------------------------------------
@@ -297,7 +301,7 @@ class pdoAggregator extends aAggregator
             ':PERIOD_START_DAY_ID' => ":period_start_day_id",
             // The day_id of the end of this period
             ':PERIOD_END_DAY_ID' => ":period_end_day_id"
-            );
+        );
 
         $this->variableMap = array_merge($this->variableMap, $parameters);
 
@@ -570,41 +574,41 @@ class pdoAggregator extends aAggregator
         $endDayIdToUnitId = null;
 
         switch ( $aggregationUnit ) {
-        case 'day':
-            // No conversion needed
-            $unitIdToStartDayId = "d.id";
-            $unitIdToEndDayId = "d.id";
-            $startDayIdToUnitId = $startDayIdField;
-            $endDayIdToUnitId = $endDayIdField;
-            break;
-        case 'month':
-            $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(concat(d.`year`, '-', d.`month`, '-01'))";
-            $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-', d.`month`, '-01'), interval 1 month), interval 1 day))";
-            $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000 + "
-                . "MONTH(date_add(concat(truncate($startDayIdField/100000, 0), '-01-01'), interval (mod($startDayIdField, 1000) - 1) day))";
-            $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000 + "
-                . "MONTH(date_add(concat(truncate($endDayIdField/100000, 0), '-01-01'), interval (mod($endDayIdField, 1000) - 1) day))";
-            break;
-        case 'quarter':
-            $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(date_add(concat(d.`year`, '-01-01'), interval (d.`quarter` - 1) quarter))";
-            $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-01-01'), interval d.`quarter` quarter), interval 1 day))";
-            $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000 + "
-                . "QUARTER(date_add(concat(truncate($startDayIdField/100000, 0), '-01-01'), interval (mod($startDayIdField, 1000) - 1) day))";
-            $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000 + "
-                . "QUARTER(date_add(concat(truncate($endDayIdField/100000, 0), '-01-01'), interval (mod($endDayIdField, 1000) - 1) day))";
-            break;
-        case 'year':
-            $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(concat(d.`year`, '-01-01'))";
-            $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-01-01'), interval 1 year), interval 1 day))";
-            $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000";
-            $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000";
-            break;
-        default:
-            // We should never get here because we are verifying the existance of the aggregation
-            // unit tables in performPreAggregationUnitTasks.
-            $msg = "Unsupported aggregation unit '$aggregationUnit'";
-            $this->logAndThrowException($msg);
-            break;
+            case 'day':
+                // No conversion needed
+                $unitIdToStartDayId = "d.id";
+                $unitIdToEndDayId = "d.id";
+                $startDayIdToUnitId = $startDayIdField;
+                $endDayIdToUnitId = $endDayIdField;
+                break;
+            case 'month':
+                $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(concat(d.`year`, '-', d.`month`, '-01'))";
+                $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-', d.`month`, '-01'), interval 1 month), interval 1 day))";
+                $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000 + "
+                    . "MONTH(date_add(concat(truncate($startDayIdField/100000, 0), '-01-01'), interval (mod($startDayIdField, 1000) - 1) day))";
+                $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000 + "
+                    . "MONTH(date_add(concat(truncate($endDayIdField/100000, 0), '-01-01'), interval (mod($endDayIdField, 1000) - 1) day))";
+                break;
+            case 'quarter':
+                $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(date_add(concat(d.`year`, '-01-01'), interval (d.`quarter` - 1) quarter))";
+                $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-01-01'), interval d.`quarter` quarter), interval 1 day))";
+                $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000 + "
+                    . "QUARTER(date_add(concat(truncate($startDayIdField/100000, 0), '-01-01'), interval (mod($startDayIdField, 1000) - 1) day))";
+                $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000 + "
+                    . "QUARTER(date_add(concat(truncate($endDayIdField/100000, 0), '-01-01'), interval (mod($endDayIdField, 1000) - 1) day))";
+                break;
+            case 'year':
+                $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(concat(d.`year`, '-01-01'))";
+                $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-01-01'), interval 1 year), interval 1 day))";
+                $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000";
+                $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000";
+                break;
+            default:
+                // We should never get here because we are verifying the existance of the aggregation
+                // unit tables in performPreAggregationUnitTasks.
+                $msg = "Unsupported aggregation unit '$aggregationUnit'";
+                $this->logAndThrowException($msg);
+                break;
         }  // switch ( $aggregationUnit )
 
         if ( $this->etlOverseerOptions->isForce() ) {
@@ -656,7 +660,7 @@ class pdoAggregator extends aAggregator
                 $query->overseer_restrictions = $aggregationPeriodQueryOptions->overseer_restrictions;
             } else {
                 $msg = "No restrictions on selection of periods to aggregate. "
-                     . "Re-aggregating all records in " . $sourceSchema . "." . $tableName;
+                    . "Re-aggregating all records in " . $sourceSchema . "." . $tableName;
                 $this->logger->notice($msg);
             }
 
@@ -784,7 +788,7 @@ class pdoAggregator extends aAggregator
             }
             $this->etlSourceQueryModified = true;
 
-        } else if ( ! $enableBatchAggregation && $this->etlSourceQueryModified ) {
+        } elseif ( ! $enableBatchAggregation && $this->etlSourceQueryModified ) {
 
             $this->logger->info("[EXPERIMENTAL] Restore original first table");
 
@@ -876,7 +880,8 @@ class pdoAggregator extends aAggregator
                 $selectStmt,
                 $insertStmt,
                 $discoveredBindParams,
-                $numAggregationPeriods);
+                $numAggregationPeriods
+            );
 
         } else {
 
@@ -970,7 +975,7 @@ class pdoAggregator extends aAggregator
 
                     $availableParamValues = array_map(
                         function ($k, $first, $last) {
-                            if ( FALSE !== strpos($k, '_end') || FALSE !== strpos($k, 'end_') ) {
+                            if ( false !== strpos($k, '_end') || false !== strpos($k, 'end_') ) {
                                 return $first;
                             } else {
                                 return $last;
@@ -978,7 +983,8 @@ class pdoAggregator extends aAggregator
                         },
                         array_keys($firstSlice),
                         $firstSlice,
-                        $lastSlice);
+                        $lastSlice
+                    );
 
                     $availableParams = array_combine($availableParamKeys, $availableParamValues);
 
@@ -1006,7 +1012,8 @@ class pdoAggregator extends aAggregator
                     $insertStmt,
                     $discoveredBindParams,
                     $numAggregationPeriods,
-                    $aggregationPeriodListOffset);
+                    $aggregationPeriodListOffset
+                );
 
                 $this->logger->info(
                     "[EXPERIMENTAL] Total time for batch (day_id $minDayId - $maxDayId): "
@@ -1038,7 +1045,7 @@ class pdoAggregator extends aAggregator
                                     "start_time"   => $time_start,
                                     "end_time"     => $time_end,
                                     "elapsed_time" => round($time, 5)
-                                  ));
+        ));
 
         return $numAggregationPeriods;
 
@@ -1074,8 +1081,8 @@ class pdoAggregator extends aAggregator
         PDOStatement $insertStmt,
         array $discoveredBindParams,
         $totalNumAggregationPeriods,
-        $aggregationPeriodOffset = 0)
-    {
+        $aggregationPeriodOffset = 0
+    ) {
         if ( $this->etlOverseerOptions->isDryrun() ) {
             return 0;
         }
@@ -1280,12 +1287,15 @@ class pdoAggregator extends aAggregator
             "(" .
             implode(",\n", array_keys($this->etlSourceQuery->getRecords()))
             . ")\nVALUES\n(" .
-            implode(",\n",
-                    array_map(function ($s) {
-                            return ":$s";
-                        },
-                        array_keys($this->etlSourceQuery->getRecords()))
-                ) .
+            implode(
+                ",\n",
+                array_map(
+                    function ($s) {
+                        return ":$s";
+                    },
+                    array_keys($this->etlSourceQuery->getRecords())
+                )
+            ) .
             ")";
 
         $this->optimizedInsertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
@@ -1309,5 +1319,4 @@ class pdoAggregator extends aAggregator
         return true;
 
     }  // buildSqlStatements()
-
 }  // class pdoAggregator
