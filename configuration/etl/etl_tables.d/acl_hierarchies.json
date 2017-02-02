@@ -25,6 +25,12 @@
         "type": "integer",
         "nullable": false,
         "default": 0
+      },
+      {
+        "name": "filter_override",
+        "type": "boolean",
+        "nullable": false,
+        "default": false
       }
     ],
     "indexes": [
