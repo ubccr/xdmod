@@ -51,8 +51,8 @@ class Utilities
         $string,
         array $map,
         array &$substitutedVariables = null,
-        array &$unsubstitutedVariables = null )
-    {
+        array &$unsubstitutedVariables = null
+    ) {
 
         // If we are not tracking the variables that have or have not been substituted, simply
         // perform a string replacement.
@@ -68,13 +68,17 @@ class Utilities
 
             // Track variables that have been substituted
 
-            array_map(function ($v, $k) use (&$string, &$localSubstituted) {
+            array_map(
+                function ($v, $k) use (&$string, &$localSubstituted) {
                     $search = '${' . $k . '}';
                     if ( false !== strpos($string, $search) ) {
                         $substituted[] = $k;
                     }
                     $string = str_replace($search, $v, $string);
-                }, $map, array_keys($map));
+                },
+                $map,
+                array_keys($map)
+            );
 
             // If there are any variables left in the string, track them as unsubstituted.
 
@@ -145,7 +149,7 @@ class Utilities
         if ( ! isset($paths->macro_dir) ) {
             $msg = __CLASS__ . ": ETL configuration paths.macro_dir is not set";
             throw new Exception($msg);
-        } else if ( ! is_dir($paths->macro_dir) ) {
+        } elseif ( ! is_dir($paths->macro_dir) ) {
             $msg = __CLASS__ . ": ETL configuration paths.macro_dir '{$paths->macro_dir}' is not a directory";
             throw new Exception($msg);
         }
@@ -172,7 +176,7 @@ class Utilities
         if ( ! is_file($filename) ) {
             $msg = __CLASS__ . ": Cannot load macro file '$filename'";
             throw new Exception($msg);
-        } else if ( 0 == filesize($filename) ) {
+        } elseif ( 0 == filesize($filename) ) {
             // No use processing an empty macro
             return;
         }
@@ -187,7 +191,7 @@ class Utilities
         $stripped = array();
 
         foreach ( explode("\n", $macro) as $line ) {
-            if ( 0 === strpos($line, "--") || 0 === strpos($line,  "#") ) {
+            if ( 0 === strpos($line, "--") || 0 === strpos($line, "#") ) {
                 continue;
             }
             $stripped[] = $line;
@@ -226,4 +230,23 @@ class Utilities
         return ( false === $value ? false : filter_var($value, $filter, $options) );
     }  // filterBooleanVar()
 
+    /* ------------------------------------------------------------------------------------------
+     * Generate an array of strings that can be used as PDO bind parameters (e.g., :var)
+     * using the keys from the source array.
+     *
+     * @param $source An associative array whose keys will be used to generate bind parameters
+     *
+     * @return An array containing the keys of $source pre-pended with ":"
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public static function createPdoBindVarsFromArrayKeys(array $source)
+    {
+        return array_map(
+            function ($key) {
+                return ":$key";
+            },
+            array_keys($source)
+        );
+    }  // createPdoBindVarsFromArrayKeys()
 }  // class Utilities
