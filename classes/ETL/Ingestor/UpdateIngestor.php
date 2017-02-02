@@ -141,7 +141,7 @@ implements iAction
             $msg = "'fields' key missing or not an array in 'source_data' block: " . $this->definitionFile;
             $this->logAndThrowException($msg);
         }
-        
+
         // 2. Create data & verify source. Data source is iteratable. Instantiate object based on columns and data.
         // 3. In execute()
         //    a. Construct prepared update statement
@@ -169,7 +169,7 @@ implements iAction
         }
 
         // If the data is a string assume it is a filename, otherwise assume it is parsed JSON.
-        
+
         if ( is_string($this->parsedDefinitionFile->source_data->data) ) {
             $filename = $this->parsedDefinitionFile->source_data->data;
             if ( 0 !== strpos($filename, "/") ) {
@@ -198,7 +198,7 @@ implements iAction
      * @see iAction::execute()
      * ------------------------------------------------------------------------------------------
      */
-  
+
     public function execute(EtlOverseerOptions $etlOptions)
     {
         $this->etlOverseerOptions = $etlOptions;
@@ -215,9 +215,9 @@ implements iAction
             implode(", ", array_map(function($s) { return "$s = ?"; }, $this->parsedDefinitionFile->update->set)) .
             " WHERE " .
             implode(" AND ", array_map(function($w) { return "$w = ?"; }, $this->parsedDefinitionFile->update->where));
-        
-        $this->logger->debug("Update query\n$sql"); 
-       
+
+        $this->logger->debug("Update query\n$sql");
+
         // The order and number of the fields must match the update statement
         $dataFields = array_merge($this->parsedDefinitionFile->update->set, $this->parsedDefinitionFile->update->where);
 
@@ -227,11 +227,11 @@ implements iAction
             function($field) use($fieldsToIndexes) { return $fieldsToIndexes[$field]; },
             $dataFields
             );
-        
+
         if ( ! $etlOptions->isDryrun() ) {
             try {
                 $updateStatement = $this->destinationHandle->prepare($sql);
-                
+
                 foreach ( $this->data as $record ) {
                     $row = array_map(
                         function($index) use ($record) { return $record[$index]; },
@@ -243,7 +243,10 @@ implements iAction
                 }
 
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($sql, $e, "Error updating " . $this->etlDestinationTable->getFullName());
+                $this->logAndThrowException(
+                    "Error updating " . $this->etlDestinationTable->getFullName(),
+                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                );
             }
         }
 

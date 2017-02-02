@@ -168,7 +168,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
             }, $destColumns))
         ;
 
-        $this->logger->debug("Insert query\n$sql");
+        $this->logger->debug("Insert query " . $this->destinationEndpoint . ":\n$sql");
 
         if ( ! $this->etlOverseerOptions->isDryrun() ) {
             try {
@@ -182,7 +182,10 @@ class StructuredFileIngestor extends aIngestor implements iAction
                     ));
                 }
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($sql, $e, "Error inserting file data");
+                $this->logAndThrowException(
+                    "Error inserting file data",
+                    array('exception' => $e, 'endpoint' => $this)
+                );
             }
         }
 

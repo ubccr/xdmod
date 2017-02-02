@@ -387,6 +387,7 @@ class pdoIngestor extends aIngestor
 
             try {
 
+                $this->logger->debug("Source query " . $this->sourceEndpoint . ":\n" . $this->sourceQueryString);
                 $srcStatement = $this->sourceHandle->prepare($this->sourceQueryString);
 
                 $start = microtime(true);
@@ -397,7 +398,10 @@ class pdoIngestor extends aIngestor
 
                 // ER_LOCK_DEADLOCK: Deadlock found when trying to get lock; try restarting transaction
                 if ( $srcStatement->errorCode() != "40001" ) {
-                    $this->logAndThrowSqlException($this->sourceQueryString, $e, "Error querying source");
+                    $this->logAndThrowException(
+                        "Error querying source",
+                        array('exception' => $e, 'sql' => $this->sourceQueryString, 'endpoint' => $this->sourceEndpoint)
+                    );
                 } elseif ( $n_attempts > self::MAX_QUERY_ATTEMPTS ) {
                     $msg = "Could not execute source query after " . self::MAX_QUERY_ATTEMPTS . " attempts. Exiting.";
                     $this->logAndThrowException($msg);
@@ -487,7 +491,7 @@ class pdoIngestor extends aIngestor
             $sqlList[] = "SET FOREIGN_KEY_CHECKS = 0";
         }
 
-        $this->executeSqlList($sqlList, $this->destinationHandle, "Pre-execute tasks");
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Pre-execute tasks");
 
         return true;
 
@@ -526,7 +530,7 @@ class pdoIngestor extends aIngestor
             $sqlList[] = "SET FOREIGN_KEY_CHECKS = 1";
         }
 
-        $this->executeSqlList($sqlList, $this->destinationHandle, "Post-execute tasks");
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Post-execute tasks");
 
         return true;
     }  // performPostExecuteTasks()
@@ -545,8 +549,6 @@ class pdoIngestor extends aIngestor
             $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
             $this->sourceQueryString = $this->getSourceQueryString();
         }
-
-        $this->logger->debug("Source query:\n" . $this->sourceQueryString);
 
         // ------------------------------------------------------------------------------------------
         // Main ingest
@@ -621,7 +623,7 @@ class pdoIngestor extends aIngestor
                 . "\nON DUPLICATE KEY UPDATE $updateColumns";
         }
 
-        $this->logger->debug($sql);
+        $this->logger->debug("Single DB ingest SQL " . $this->destinationEndpoint . ":\n$sql");
 
         if ( $this->etlOverseerOptions->isDryrun() ) {
             return 0;
@@ -710,7 +712,7 @@ class pdoIngestor extends aIngestor
 
             }
 
-            $this->logger->debug("load statement for destination table key '$etlTableKey'\n$loadStatement");
+            $this->logger->debug("LOAD statement for destination table key '$etlTableKey' " . $this->destinationEndpoint . ":\n$loadStatement");
 
             $infileList[$etlTableKey] = $infileName;
             $loadStatementList[$etlTableKey] = $loadStatement;

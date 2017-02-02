@@ -110,8 +110,10 @@ AND table_name = UPPER(:tablename)";
                 return false;
             }
         } catch (PDOException $e) {
-            $msg = "Error querying for table '$schema'.'$tableName':";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error querying for table '$schema'.'$tableName':",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+            );
         }
 
         return true;
@@ -152,8 +154,10 @@ ORDER BY column_id ASC";
                 $this->logAndThrowException($msg);
             }
         } catch (PDOException $e) {
-            $msg = "Error retrieving column names from '" . $this->getSchema() . ".'$tableName' ";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error retrieving column names from '" . $this->getSchema() . ".'$tableName' ",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+            );
         }
 
         $columnNames = array();

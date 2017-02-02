@@ -14,6 +14,7 @@ namespace ETL;
 use Log;
 use Exception;
 use PDOException;
+use ETL\DataEndpoint\iDataEndpoint;
 
 class Loggable
 {
@@ -49,50 +50,55 @@ class Loggable
     }  // setLogger()
 
     /* ------------------------------------------------------------------------------------------
-     * Helper function to log errors (including a stacktrace) in a consistent format and throw a
-     * general Exception.
+     * Helper function to log errors in a consistent format and provide a mechanism to
+     * supply additional, optional, parameters for greater detail.
      *
-     * @param $message An optional human-readable error message
-     * @param $logLevel An optional level for the log message (default ERR)
-     *
-     * @throws Exception
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function logAndThrowException($message, $logLevel = PEAR_LOG_ERR)
-    {
-        $message = "{$this}: $message";
-        $logMessage = array(
-            'message'    => $message
-            );
-        $this->logger->log($logMessage, $logLevel);
-        throw new Exception($message);
-    }  // logAndThrowException
-
-    /* ------------------------------------------------------------------------------------------
-     * Helper function to log database errors (including a stacktrace) in a consistent format and
-     * throw a general Exception.
-     *
-     * @param $sql The SQL statement
-     * @param $e The exception object
-     * @param $message An optional human-readable error message
-     * @param $logLevel An optional level for the log message (default ERR)
+     * @param $message An human-readable error message
+     * @param $options An optional array of additional details. Information will typically
+     *   be added to the exception message as well as the log file. Currently supported
+     *   options are:
+     *   'log_level' => Override the default PEAR_LOG_ERR with another log level
+     *   'exception' => An exception that was caught allowing us to include the message and
+     *                  stack trace
+     *   'sql' => SQL query being executed when the error was caught
+     *   'endpoint' => DataEndpoint being used when error was caught
      *
      * @throws Exception
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function logAndThrowSqlException($sql, PDOException $e, $message = null, $logLevel = PEAR_LOG_ERR)
+    protected function logAndThrowException($message, array $options = null)
     {
-        $message = "{$this}: " . ( null !== $message ? "$message. " : "" ) . $e->getMessage();
-        $logMessage = array(
-            'message'    => $e->getMessage(),
-            'sql'        => $sql,
-            'stacktrace' => $e->getTraceAsString()
-            );
+        $logMessage = array();
+        $message = "{$this}: " . ( is_string($message) ? "'$message'" : "''" );
+        $logLevel = PEAR_LOG_ERR;
+
+        if ( null !== $options ) {
+
+            if ( array_key_exists('exception', $options) && $options['exception'] instanceof Exception ) {
+                $message .= " Exception: '" . $options['exception']->getMessage() . "'";
+            }
+
+            if ( array_key_exists('sql', $options) && is_string($options['sql']) ) {
+                $logMessage['sql'] = $sql;
+                $logMessage['stacktrace'] = $e->getTraceAsString();
+            }
+
+            if ( array_key_exists('endpoint', $options) && $options['endpoint'] instanceof iDataEndpoint ) {
+                $message .= " Using DataEndpoint: '" . $options['endpoint'] . "'";
+            }
+
+            if ( array_key_exists('log_level', $options) && ! empty($options['log_level']) ) {
+                $logLevel = $logMessage['log_level'];
+            }
+        }  // if ( null !== $options )
+
+        $logMessage['message'] = $message;
+
         $this->logger->log($logMessage, $logLevel);
         throw new Exception($message);
-    }  // logAndThrowSqlException
+
+    }  // logAndThrowException()
 
     /* ------------------------------------------------------------------------------------------
      * Generate a string representation of the endpoint. Typically the name, plus other pertinant
@@ -106,5 +112,4 @@ class Loggable
     {
         return "(" . get_class($this) . ")";
     }  // __toString()
-
 }  // class Loggable

@@ -52,8 +52,10 @@ implements iAction
                 return false;
             }
         } catch (PDOException $e ) {
-            $msg = "Error querying {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error querying {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint)
+            );
         }
 
         return parent::performPreAggregationUnitTasks($aggregationUnit);
@@ -106,8 +108,10 @@ implements iAction
                 $this->logger->info("Updated $numRows rows");
             }
         } catch (PDOException $e ) {
-            $msg = "Error updating {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error updating {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+            );
         }
 
         return parent::performPostAggregationUnitTasks($aggregationUnit, $numAggregationPeriodsProcessed);
@@ -188,8 +192,10 @@ implements iAction
             }
 
         } catch (PDOException $e ) {
-            $msg = "Error cleaning {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error cleaning {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+            );
         }
 
         return parent::performPostExecuteTasks($numRecordsProcessed);
@@ -337,7 +343,10 @@ implements iAction
                 $result = $this->utilityHandle->query($sql);
             }
         } catch (PDOException $e) {
-            $this->logAndThrowSqlException($sql, $e, "Error querying dirty date ids");
+            $this->logAndThrowException(
+                "Error querying aggregation dirty date ids",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint)
+            );
         }
 
         return $result;
@@ -381,7 +390,7 @@ implements iAction
             ":endDate" => $endDate
             );
 
-        $this->logger->debug("Verify resource specs exist:\n$sql");
+        $this->logger->debug("Verify resource specs exist " . $this->sourceEndpoint . ":\n$sql");
         $result = $this->sourceHandle->query($sql, $params);
         if ( count($result) > 0 ) {
             $resources = array();

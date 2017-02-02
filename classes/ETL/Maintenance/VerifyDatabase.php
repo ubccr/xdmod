@@ -281,7 +281,7 @@ implements iAction
 
         $time_start = microtime(true);
 
-        $this->logger->debug("Executing SQL: " . $this->sqlQueryString);
+        $this->logger->debug("Executing SQL " . $this->sourceEndpoint . ": " . $this->sqlQueryString);
         $verifyConfig = $this->parsedDefinitionFile->verify_database;
         $lineTemplate = $verifyConfig->response->line;
         $lines = array();
@@ -300,8 +300,10 @@ implements iAction
                 }
             }
         } catch ( PDOException $e ) {
-            $msg = "Error executing sql: " . $e->getMessage();
-            $this->logAndThrowSqlException($this->sqlQueryString, $e);
+            $this->logAndThrowException(
+                "Error executing SQL",
+                array('exception' => $e, 'sql' => $this->sqlQueryString, 'endpoint' => $this->sourceEndpoint)
+            );
         }
 
         // How do we substitute variables in the header and footer?

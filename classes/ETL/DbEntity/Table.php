@@ -419,8 +419,10 @@ ORDER BY trigger_name ASC";
         $name = $item->getName();
 
         if ( array_key_exists($name, $this->columns) && ! $overwriteDuplicates ) {
-            $msg = "Cannot add duplicate column '$name'";
-            $this->logAndThrowException($msg, PEAR_LOG_WARNING);
+            $this->logAndThrowException(
+                "Cannot add duplicate column '$name'",
+                array('log_level' => PEAR_LOG_WARNING)
+            );
         }
 
         $this->columns[ $name ] = $item;

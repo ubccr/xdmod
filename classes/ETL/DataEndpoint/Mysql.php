@@ -111,8 +111,10 @@ WHERE schema_name = :schema";
             $dbh = $this->getHandle();
             $result = $dbh->execute($sql);
         } catch (\PdoException $e) {
-            $msg = "Error creating schema '$schemaName'";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error creating schema '$schemaName'",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+            );
         }
 
         return true;

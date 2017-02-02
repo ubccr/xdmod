@@ -242,7 +242,7 @@ implements iAction
                     continue;
                 }
 
-                $this->logger->debug("Executing SQL: $sql");
+                $this->logger->debug("Executing SQL " . $destinationEndpoint . ":\n$sql");
                 $sqlStartTime = microtime(true);
                 $numRowsAffected = 0;
                 try {
@@ -250,8 +250,10 @@ implements iAction
                         $numRowsAffected = $destinationEndpoint->getHandle()->execute($sql);
                     }
                 } catch ( PDOException $e ) {
-                    $msg = "Error executing sql: " . $e->getMessage();
-                    $this->logAndThrowSqlException($sql, $e);
+                    $this->logAndThrowException(
+                        "Error executing SQL",
+                        array('exception' => $e, 'sql' => $this->sqlQueryString, 'endpoint' => $this->sourceEndpoint)
+                    );
                 }
 
                 $time = microtime(true) - $sqlStartTime;

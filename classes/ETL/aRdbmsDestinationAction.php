@@ -243,18 +243,24 @@ abstract class aRdbmsDestinationAction extends aAction
                 }
 
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($sql, $e, "Error verifying table $tableName");
+                $this->logAndThrowException(
+                    "Error verifying table $tableName",
+                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                );
             }
 
             $sql = "TRUNCATE TABLE $tableName";
 
             try {
                 if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                    $this->logger->debug("Truncate destination task " . $this->destinationEndpoint . ": $sql");
                     $this->destinationHandle->execute($sql);
-                    $this->logger->debug("Truncate destination task: $sql");
                 }
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($sql, $e, "Error truncating destination with key '$etlTableKey'");
+                $this->logAndThrowException(
+                    "Error truncating destination with key '$etlTableKey'",
+                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                );
             }
         }  // foreach ( $this->etlDestinationTableList as $etlTable )
 
@@ -265,7 +271,7 @@ abstract class aRdbmsDestinationAction extends aAction
      * there was an error.
      *
      * @param $sqlList An array of SQL statements to execute
-     * @param $handle A PDO object
+     * @param $endpoint An endpoint implementing iDataEndpoint
      * @param $msgPrefix String to prefix log messages with
      *
      * @return TRUE on success
@@ -274,22 +280,25 @@ abstract class aRdbmsDestinationAction extends aAction
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function executeSqlList(array $sqlList, $handle, $msgPrefix = "")
+    protected function executeSqlList(array $sqlList, iDataEndpoint $endpoint, $msgPrefix = "")
     {
         if ( 0 == count($sqlList) ) {
             return true;
         }
 
-        $msgPrefix = ( "" != $msgPrefix ? $msgPrefix . ": " : "" );
+        $this->logger->debug("Execute" . ( "" != $msgPrefix ? " $msgPrefix" : "" ) .": " . $endpoint);
         foreach ($sqlList as $sql) {
             try {
-                $this->logger->debug($msgPrefix . $sql);
+                $this->logger->debug($sql);
                 if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                    $handle->execute($sql);
+                    $endpoint->getHandle()->execute($sql);
                 }
             }
             catch (PDOException $e) {
-                $this->logAndThrowSqlException($sql, $e, "Error executing SQL");
+                $this->logAndThrowException(
+                    "Error executing " . ( "" != $msgPrefix ? "$msgPrefix " : "" ) . "SQL",
+                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $endpoint)
+                );
             }
         }  // foreach ($sqlList as $sql)
 
@@ -312,8 +321,7 @@ abstract class aRdbmsDestinationAction extends aAction
     public function parseSql($sql)
     {
         if ( null === $sql || "" == $sql ) {
-            $msg = "Empty SQL statement";
-            $this->logAndThrowSqlException($msg);
+            $this->logAndThrowException("Empty SQL statement");
         }
 
         $parser = new PHPSQLParser($sql);
@@ -430,7 +438,7 @@ abstract class aRdbmsDestinationAction extends aAction
             $sqlList = $table->getCreateSql();
 
             foreach ( $sqlList as $sql ) {
-                $this->logger->debug($sql);
+                $this->logger->debug("Create table SQL " . $endpoint . ":\n$sql");
                 if ( ! $this->etlOverseerOptions->isDryrun() ) {
                     $endpoint->getHandle()->execute($sql);
                 }
@@ -444,7 +452,7 @@ abstract class aRdbmsDestinationAction extends aAction
                 $this->logger->notice("Altering table " . $existingTable->getFullName());
 
                 foreach ( $sqlList as $sql ) {
-                    $this->logger->debug($sql);
+                    $this->logger->debug("Alter table SQL " . $endpoint . ":\n$sql");
                     if ( ! $this->etlOverseerOptions->isDryrun() ) {
                         $endpoint->getHandle()->execute($sql);
                     }

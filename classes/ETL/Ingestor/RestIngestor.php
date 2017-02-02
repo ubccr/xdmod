@@ -334,7 +334,7 @@ implements iAction
             // Disable keys for faster inserts
             $qualifiedDestTableName = $this->etlDestinationTable->getFullName();
             $sqlList = array("ALTER TABLE $qualifiedDestTableName DISABLE KEYS");
-            $this->executeSqlList($sqlList, $this->destinationHandle) ;
+            $this->executeSqlList($sqlList, $this->destinationEndpoint);
         }
 
         return true;
@@ -351,7 +351,7 @@ implements iAction
         if ( "myisam" == strtolower($this->etlDestinationTable->getEngine()) ) {
             $qualifiedDestTableName = $this->etlDestinationTable->getFullName();
             $sqlList = array("ALTER TABLE $qualifiedDestTableName ENABLE KEYS");
-            $this->executeSqlList($sqlList, $this->destinationHandle);
+            $this->executeSqlList($sqlList, $this->destinationEndpoint);
         }
 
         return true;

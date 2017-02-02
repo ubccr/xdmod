@@ -388,7 +388,7 @@ class pdoAggregator extends aAggregator
             }
         }
 
-        $this->executeSqlList($sqlList, $this->destinationHandle, "Pre-aggregation unit tasks");
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Pre-aggregation unit tasks");
 
         return true;
     }  // performPreAggregationUnitTasks()
@@ -418,7 +418,7 @@ class pdoAggregator extends aAggregator
             }
         }
 
-        $this->executeSqlList($sqlList, $this->destinationHandle, "Post-aggregation unit tasks");
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Post-aggregation unit tasks");
 
         return true;
 
@@ -448,7 +448,10 @@ class pdoAggregator extends aAggregator
                 continue;
             }
         } catch (PDOException $e) {
-            $this->logAndThrowSqlException($sql, $e, "Error verifying aggregation unit table for '$aggregationUnit'");
+            $this->logAndThrowException(
+                "Error verifying aggregation unit table for '$aggregationUnit'",
+                array('exception' => $e, 'sql' => $sql)
+            );
         }
 
         return true;
@@ -532,7 +535,7 @@ class pdoAggregator extends aAggregator
 
         if ( null === $startDayIdField || null === $endDayIdField ) {
             $t = Utilities::substituteVariables($firstTable->getFullName(false), $this->variableMap);
-            $this->logger->debug("Discover $t");
+            $this->logger->debug("Discover table $t");
             $firstTableDef = Table::discover($t, $this->sourceEndpoint, null, $this->logger);
 
             // If we are in dryrun mode the table may not have been created yet but we still want to
@@ -698,13 +701,15 @@ class pdoAggregator extends aAggregator
         $result = array();
 
         try {
-            $this->logger->debug("Select dirty aggregation periods:\n$sql");
+            $this->logger->debug("Select dirty aggregation periods SQL " . $this->sourceEndpoint . ":\n$sql");
             if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                // $result = $this->utilityHandle->query($sql);
                 $result = $this->sourceHandle->query($sql);
             }
         } catch (PDOException $e) {
-            $this->logAndThrowSqlException($sql, $e, "Error querying dirty date ids");
+            $this->logAndThrowException(
+                "Error querying dirty date ids",
+                array('exception' => $e, 'sql' => $sql)
+            );
         }
 
         return $result;
@@ -825,7 +830,10 @@ class pdoAggregator extends aAggregator
             try {
                 $insertStmt =  $this->destinationHandle->prepare($this->optimizedInsertSql);
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($this->optimizedInsertSql, $e, "Error preparing optimized aggregation insert statement");
+                $this->logAndThrowException(
+                    "Error preparing optimized aggregation insert statement",
+                    array('exception' => $e, 'sql' => $this->optimizedInsertSql)
+                );
             }
 
             // Detect the bind variables used in the query so we can filter these later. PDO will
@@ -835,20 +843,26 @@ class pdoAggregator extends aAggregator
             preg_match_all($bindParamRegex, $this->optimizedInsertSql, $matches);
             $discoveredBindParams['insert'] = array_unique($matches[0]);
 
-            $this->logger->debug("Aggregation optimized insert query ($aggregationUnit)\n" . $this->optimizedInsertSql);
+            $this->logger->debug("Aggregation optimized INSERT SQL ($aggregationUnit) " . $this->destinationEndpoint . ":\n" . $this->optimizedInsertSql);
 
         } else {
 
             try {
                 $selectStmt =  $this->sourceHandle->prepare($this->selectSql);
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($this->selectSql, $e, "Error preparing aggregation select statement");
+                $this->logAndThrowException(
+                    "Error preparing aggregation select statement",
+                    array('exception' => $e, 'sql' => $this->selectSql)
+                );
             }
 
             try {
                 $insertStmt =  $this->destinationHandle->prepare($this->insertSql);
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($this->insertSql, $e, "Error preparing aggregation insert statement");
+                $this->logAndThrowException(
+                    "Error preparing aggregation insert statement",
+                    array('exception' => $e, 'sql' => $this->insertSql)
+                );
             }
 
             // Detect the bind variables used in the query so we can filter these later. PDO will
@@ -860,8 +874,8 @@ class pdoAggregator extends aAggregator
             preg_match_all($bindParamRegex, $this->insertSql, $matches);
             $discoveredBindParams['insert'] = $matches[0];
 
-            $this->logger->debug("Aggregation select query ($aggregationUnit)\n" . $this->selectSql);
-            $this->logger->debug("Aggregation insert query ($aggregationUnit)\n" . $this->insertSql);
+            $this->logger->debug("Aggregation SELECT SQL ($aggregationUnit) " . $this->sourceEndpoint . ":\n" . $this->selectSql);
+            $this->logger->debug("Aggregation INSERT SQL ($aggregationUnit) " . $this->destinationEndpoint . ":\n" . $this->insertSql);
 
         }  // else ($optimize)
 
@@ -930,7 +944,10 @@ class pdoAggregator extends aAggregator
                     $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
                     $result = $this->sourceHandle->execute($sql);
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($sql, $e, "Error removing temporary batch aggregation table");
+                    $this->logAndThrowException(
+                        "Error removing temporary batch aggregation table",
+                        array('exception' => $e, 'sql' => $sql)
+                    );
                 }
 
                 $origTableName =
@@ -991,10 +1008,13 @@ class pdoAggregator extends aAggregator
                     $sql =
                         "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
                         . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
-                    $this->logger->debug("[EXPERIMENTAL] Batch temp table: $sql");
+                    $this->logger->debug("[EXPERIMENTAL] Batch temp table " . $this->sourceEndpoint . ": $sql");
                     $result = $this->sourceHandle->execute($sql, $usedParams);
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($sql, $e, "Error creating temporary batch aggregation table ");
+                    $this->logAndThrowException(
+                        "Error creating temporary batch aggregation table",
+                        array('exception' => $e, 'sql' => $sql)
+                    );
                 }
 
                 $this->logger->info("[EXPERIMENTAL] Setup for batch $minPeriodId - $maxPeriodId (day_id $minDayId - $maxDayId): "
@@ -1024,7 +1044,10 @@ class pdoAggregator extends aAggregator
                 $sql = "DROP TEMPORARY TABLE IF EXISTS $tmpTableName";
                 $result = $this->sourceHandle->execute($sql);
             } catch (PDOException $e ) {
-                $this->logAndThrowSqlException($sql, $e, "Error removing temporary batch aggregation table");
+                $this->logAndThrowException(
+                    "Error removing temporary batch aggregation table",
+                    array('exception' => $e, 'sql' => $sql)
+                );
             }
 
         }  // else ( ! $enableBatchAggregation )
@@ -1131,12 +1154,15 @@ class pdoAggregator extends aAggregator
                             $deleteSql .= " AND " . implode(" AND ", $dummyQuery->getOverseerRestrictionValues());
                         }
 
-                        $this->logger->debug($deleteSql);
+                        $this->logger->debug("Delete aggregation unit SQL " . $this->destinationEndpoint . ":\n$deleteSql");
                         $this->destinationHandle->execute($deleteSql);
                     }
 
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($deleteSql, $e, "Error removing existing aggregation data");
+                    $this->logAndThrowException(
+                        "Error removing existing aggregation data",
+                        array('exception' => $e, 'sql' => $deleteSql)
+                    );
                 }
             }  // if ( ! $this->options->truncate_destination )
 
@@ -1153,9 +1179,11 @@ class pdoAggregator extends aAggregator
                         $numRecords = $insertStmt->rowCount();
                     }
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($this->optimizedInsertSql, $e, "Error processing aggregation period");
+                    $this->logAndThrowException(
+                        "Error processing aggregation period",
+                        array('exception' => $e, 'sql' => $this->optimizedInsertSql)
+                    );
                 }
-
 
             } else {
 
@@ -1166,7 +1194,11 @@ class pdoAggregator extends aAggregator
                     $selectStmt->execute($bindParams);
                     $numRecords = $selectStmt->rowCount();
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($this->selectSql, $e, "Error selecting raw job data");
+                    $this->logAndThrowException(
+                        "Error selecting raw job data",
+                        array('exception' => $e, 'sql' => $this->selectSql)
+                    );
+
                 }
 
                 $msg = array(
@@ -1182,7 +1214,10 @@ class pdoAggregator extends aAggregator
                         $insertStmt->execute($row);
                     }
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($this->insertSql, $e, "Error inserting aggregated data");
+                    $this->logAndThrowException(
+                        "Error inserting aggregated data",
+                        array('exception' => $e, 'sql' => $this->insertSql)
+                    );
                 }
 
             }  // else ( $optimize )
