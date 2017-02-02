@@ -27,8 +27,7 @@ use PHPSQLParser\exceptions\UnsupportedFeatureException;
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
 
-class ExecuteSql extends aAction
-implements iAction
+class ExecuteSql extends aAction implements iAction
 {
     // Delimiter for SQL scripts that contain multiple statements
     const DEFAULT_MULTI_STATEMENT_DELIMITER = '//';
@@ -103,7 +102,7 @@ implements iAction
             if ( ! file_exists($filename) ) {
                 $msg = "SQL file does not exist '$filename'";
                 $this->logAndThrowException($msg);
-            } else if ( ! is_readable($filename) ) {
+            } elseif ( ! is_readable($filename) ) {
                 $msg = "SQL file is not readable '$filename'";
                 $this->logAndThrowException($msg);
             }
@@ -275,5 +274,4 @@ implements iAction
                                     'elapsed_time' => round($time, 5)
                                   ));
     }  // execute()
-
 }  // class ExecuteSql

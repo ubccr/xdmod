@@ -71,7 +71,7 @@ class Table extends aNamedEntity
 
         if ( ! is_object($config) && is_string($config) ) {
             $config = $this->parseJsonFile($config, "Table Definition");
-        } else if ( ! $config instanceof stdClass) {
+        } elseif ( ! $config instanceof stdClass) {
             $msg = __CLASS__ . ": Argument is not a filename or object";
             $this->logAndThrowException($msg);
         }
@@ -205,8 +205,8 @@ class Table extends aNamedEntity
         $tableName,
         iRdbmsEndpoint $endpoint,
         $systemQuoteChar = null,
-        Log $logger = null)
-    {
+        Log $logger = null
+    ) {
         $schemaName = null;
         $qualifiedTableName = null;
 
@@ -774,7 +774,7 @@ ORDER BY trigger_name ASC";
         foreach ( $changeColNames as $name ) {
             $destColumn = $destTable->getColumn($name);
             // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == $destColumn->compare( $this->getColumn($name) ) ) {
+            if ( 0 == $destColumn->compare($this->getColumn($name)) ) {
                 continue;
             }
             $alterList[] = "CHANGE COLUMN " . $destColumn->getName(true) . " " . $destColumn->getAlterSql($includeSchema);
@@ -784,7 +784,7 @@ ORDER BY trigger_name ASC";
             $destColumn = $destTable->getColumn($toColumnName);
             $currentColumn = $this->getColumn($fromColumnName);
             // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == $destColumn->compare( $currentColumn ) ) {
+            if ( 0 == $destColumn->compare($currentColumn) ) {
                 continue;
             }
             $alterList[] = "CHANGE COLUMN " . $currentColumn->getName(true) . " " . $destColumn->getAlterSql($includeSchema);
@@ -843,7 +843,7 @@ ORDER BY trigger_name ASC";
 
         foreach ( $changeTriggerNames as $name ) {
             $destTrigger = $destTable->getTrigger($name);
-            if ( 0 == $destTrigger->compare( $this->getTrigger($name)) ) {
+            if ( 0 == $destTrigger->compare($this->getTrigger($name))) {
                 continue;
             }
 
@@ -941,5 +941,4 @@ ORDER BY trigger_name ASC";
     {
         return json_encode($this->toJsonObj($succinct, $includeSchema));
     }  // toJson()
-
 }  // class Table

@@ -151,7 +151,7 @@ abstract class aRdbmsDestinationAction extends aAction
             if ( is_object($parsedTableDefinition) ) {
                 // Standard single destination table
                 $tableDefinitionList[$parsedTableDefinition->name] = $parsedTableDefinition;
-            } else if ( is_array($parsedTableDefinition) ) {
+            } elseif ( is_array($parsedTableDefinition) ) {
                 // Temporary format for multiple destination tables
                 foreach ( $parsedTableDefinition as $singleTableDefinition ) {
                     $tableDefinitionList[$singleTableDefinition->name] = $singleTableDefinition;
@@ -161,9 +161,11 @@ abstract class aRdbmsDestinationAction extends aAction
             foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition ) {
 
                 $this->logger->debug("Create ETL destination table object for table definition key '$etlTableKey'");
-                $etlTable = new Table($tableDefinition,
-                                      $this->destinationEndpoint->getSystemQuoteChar(),
-                                      $this->logger);
+                $etlTable = new Table(
+                    $tableDefinition,
+                    $this->destinationEndpoint->getSystemQuoteChar(),
+                    $this->logger
+                );
                 $etlTable->setSchema($this->destinationEndpoint->getSchema());
                 $tableName = $etlTable->getFullName();
 
@@ -424,10 +426,12 @@ abstract class aRdbmsDestinationAction extends aAction
 
         // Check for an existing table with the same name
 
-        $existingTable = Table::discover($table->getName(),
-                                         $endpoint,
-                                         $endpoint->getSystemQuoteChar(),
-                                         $this->logger);
+        $existingTable = Table::discover(
+            $table->getName(),
+            $endpoint,
+            $endpoint->getSystemQuoteChar(),
+            $this->logger
+        );
 
         // If no table with that name exists, create it. Otherwise check for differences and apply them.
 
@@ -464,5 +468,4 @@ abstract class aRdbmsDestinationAction extends aAction
         return $table;
 
     }  // manageTable()
-
 }  // abstract class aRdbmsDestinationAction

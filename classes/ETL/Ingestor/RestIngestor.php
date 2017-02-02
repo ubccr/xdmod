@@ -24,8 +24,7 @@ use ETL\Utilities;
 use \Log;
 use \PDO;
 
-class RestIngestor extends aIngestor
-implements iAction
+class RestIngestor extends aIngestor implements iAction
 {
     // Parsed configuration options for REST request handling
     protected $restRequestConfig = null;
@@ -126,8 +125,10 @@ implements iAction
 
         if ( null === $this->etlSourceQuery && isset($this->parsedDefinitionFile->source_query) ) {
             $this->logger->info("Create ETL source query object");
-            $this->etlSourceQuery = new Query($this->parsedDefinitionFile->source_query,
-                                              $this->utilityEndpoint->getSystemQuoteChar());
+            $this->etlSourceQuery = new Query(
+                $this->parsedDefinitionFile->source_query,
+                $this->utilityEndpoint->getSystemQuoteChar()
+            );
 
             // If supported by the source query, set the date ranges here
 
@@ -157,16 +158,18 @@ implements iAction
             );
 
         if ( null === $this->restResponseConfig && isset($this->parsedDefinitionFile->rest_response) ) {
-            $this->restResponseConfig = (object) array_merge((array) $defaultRestResponseConfig,
-                                                             (array) $this->parsedDefinitionFile->rest_response);
-        } else if ( ! isset($this->parsedDefinitionFile->rest_response) ) {
+            $this->restResponseConfig = (object) array_merge(
+                (array) $defaultRestResponseConfig,
+                (array) $this->parsedDefinitionFile->rest_response
+            );
+        } elseif ( ! isset($this->parsedDefinitionFile->rest_response) ) {
             $msg = "rest_response key not found in definition file";
             $this->logAndThrowException($msg);
         }
 
         if ( null === $this->restRequestConfig && isset($this->parsedDefinitionFile->rest_request) ) {
             $this->restRequestConfig = $this->parsedDefinitionFile->rest_request;
-        } else if ( ! isset($this->parsedDefinitionFile->rest_response) ) {
+        } elseif ( ! isset($this->parsedDefinitionFile->rest_response) ) {
             $msg = "rest_request key not found in definition file";
             $this->logAndThrowException($msg);
         }
@@ -246,7 +249,7 @@ implements iAction
         if ( null !== $this->restRequestConfig && ! is_object($this->restRequestConfig) ) {
             $msg = "REST request config must be an object";
             $this->logAndThrowException($msg);
-        } else if ( null !== $this->restResponseConfig && ! is_object($this->restResponseConfig) ) {
+        } elseif ( null !== $this->restResponseConfig && ! is_object($this->restResponseConfig) ) {
             $msg = "REST response config must be an object";
             $this->logAndThrowException($msg);
         }
@@ -294,8 +297,10 @@ implements iAction
         // If the field map is set, ensure that all destination colums exist in the table
 
         if ( isset($this->restResponseConfig->field_map) ) {
-            $diff = array_diff(array_keys((array) $this->restResponseConfig->field_map),
-                               $this->destinationTableColumnNames);
+            $diff = array_diff(
+                array_keys((array) $this->restResponseConfig->field_map),
+                $this->destinationTableColumnNames
+            );
             if ( 0 != count($diff) ) {
                 $msg = "Field map includes columns not in destination table: " . implode(",", $diff);
                 $this->logAndThrowException($msg);
@@ -376,10 +381,12 @@ implements iAction
         $prevKey = ( isset($this->restResponseConfig->prev) ? $this->restResponseConfig->prev : null );
         $fieldMap = ( isset($this->restResponseConfig->field_map) ? (array) $this->restResponseConfig->field_map : null );
 
-        $reservedKeys = array_filter(array($countKey, $resultsKey, $nextKey, $prevKey),
-                                     function ($value) {
-                                         return ( null !== $value );
-                                     } );
+        $reservedKeys = array_filter(
+            array($countKey, $resultsKey, $nextKey, $prevKey),
+            function ($value) {
+                return ( null !== $value );
+            }
+        );
 
         // --------------------------------------------------------------------------------
         // Perform a-priori verifications
@@ -485,7 +492,7 @@ implements iAction
             if ( ! is_array($results) ) {
                 $msg = "Request results is expected to be an array. Type returned was " . gettype($results);
                 $this->logAndThrowException($msg);
-            } else if ( 0 == count($results) ) {
+            } elseif ( 0 == count($results) ) {
                 $msg = "Request returned an empty result set, skipping. url = {$this->currentUrl}";
                 $this->logger->notice($msg);
 
@@ -713,7 +720,7 @@ implements iAction
 
         // Apply any parameter transform/verify directives prior to setting the url.
 
-        if ( 0 != count( $this->parameterDirectives) ) {
+        if ( 0 != count($this->parameterDirectives) ) {
             foreach ( $this->parameterDirectives as $parameter => $directives ) {
                 if ( ! array_key_exists($parameter, $this->restParameters) ) {
                     continue;
@@ -726,37 +733,44 @@ implements iAction
                     return false;
                 }
             }
-        }  // if ( 0 != count( $this->responseDirectives) )
+        }  // if ( 0 != count($this->responseDirectives) )
 
         if ( null !== $this->restRequestConfig && isset($this->restRequestConfig->format) ) {
 
             // A format was specified. Substitute any existing parameters in the format string.
 
             $substitutions = array();
-            $queryString = Utilities::substituteVariables($this->restRequestConfig->format,
-                                                          $this->restParameters,
-                                                          $substitutions);
+            $queryString = Utilities::substituteVariables(
+                $this->restRequestConfig->format,
+                $this->restParameters,
+                $substitutions
+            );
 
             if ( false !== strpos($queryString, '${^REMAINING}') ) {
                 $used = array_combine($substitutions, $substitutions);
                 $remaining = array_diff_key($this->restParameters, $used);
-                $parameters = implode("&", array_map(function ($v, $k) {
+                $parameters = implode(
+                    "&",
+                    array_map(
+                        function ($v, $k) {
                             return $k . "=" . urlencode($v);
                         },
                         $remaining,
-                        array_keys($remaining))
-                    );
+                        array_keys($remaining)
+                    )
+                );
                 $queryString = Utilities::substituteVariables($queryString, array('^REMAINING' => $parameters));
             }
         } else {
             // Use standard query string format
 
-            $parameters = array_map(function ($v, $k) {
+            $parameters = array_map(
+                function ($v, $k) {
                     return $k . "=" . urlencode($v);
                 },
                 $this->restParameters,
                 array_keys($this->restParameters)
-                );
+            );
             $queryString = "?" . implode("&", $parameters);
         }
 
@@ -804,7 +818,7 @@ implements iAction
                 return false;
             }
 
-        } else if ( null !== $nextKey ) {
+        } elseif ( null !== $nextKey ) {
             if ( ! isset($response->$nextKey) || null === $response->$nextKey ) {
                 $this->logger->warning("Next property '$nextKey' not present or has null value in response, finished.");
                 return false;
@@ -916,19 +930,20 @@ implements iAction
         }
 
         switch ( $directive->type ) {
-        case 'datetime':
-            break;
-        case 'sprintf':
-            break;
-        case 'regex':
-            if ( false === preg_match($directive->format, "test") ) {
-                $msg = "Invalid regex format '{$directive->format}' for key '$key'";
+            case 'datetime':
+                break;
+            case 'sprintf':
+                break;
+            case 'regex':
+                if ( false === preg_match($directive->format, "test") ) {
+                    $msg = "Invalid regex format '{$directive->format}' for key '$key'";
+                    $this->logAndThrowException($msg);
+                }
+                break;
+            default:
+                $msg = "Unsupported transform type '{$directive->type}' for key '$key'";
                 $this->logAndThrowException($msg);
-            }
-        default:
-            $msg = "Unsupported transform type '{$directive->type}' for key '$key'";
-            $this->logAndThrowException($msg);
-            break;
+                break;
         }
 
         return true;
@@ -955,16 +970,16 @@ implements iAction
         }
 
         switch ( $directive->type ) {
-        case 'regex':
-            if ( false === preg_match($directive->format, "test") ) {
-                $msg = "Invalid regex format '{$directive->format}' for key '$key'";
+            case 'regex':
+                if ( false === preg_match($directive->format, "test") ) {
+                    $msg = "Invalid regex format '{$directive->format}' for key '$key'";
+                    $this->logAndThrowException($msg);
+                }
+                break;
+            default:
+                $msg = "Unsupported transform type '{$directive->type}' for key '$key'";
                 $this->logAndThrowException($msg);
-            }
-            break;
-        default:
-            $msg = "Unsupported transform type '{$directive->type}' for key '$key'";
-            $this->logAndThrowException($msg);
-            break;
+                break;
         }
 
         return true;
@@ -1018,24 +1033,24 @@ implements iAction
     private function applyTransformDirective($value, \stdClass $directive)
     {
         switch ( $directive->type ) {
-        case 'datetime':
-            $value = date($directive->format, strtotime($value));
-            break;
-        case 'regex':
-            $matches = null;
-            $matched = preg_match($directive->format, $value, $matches);
-            if ( false === $matched ) {
-                $msg = "Error transforming regex '{$directive->format}'";
-                $this->logAndThrowException($msg);
-            } else if ( 1 == $matched ) {
-                $value = $matches[0];
-            }
-            break;
-        case 'sprintf':
-            $value = sprintf($directive->format, $value);
-            break;
-        default:
-            break;
+            case 'datetime':
+                $value = date($directive->format, strtotime($value));
+                break;
+            case 'regex':
+                $matches = null;
+                $matched = preg_match($directive->format, $value, $matches);
+                if ( false === $matched ) {
+                    $msg = "Error transforming regex '{$directive->format}'";
+                    $this->logAndThrowException($msg);
+                } elseif ( 1 == $matched ) {
+                    $value = $matches[0];
+                }
+                break;
+            case 'sprintf':
+                $value = sprintf($directive->format, $value);
+                break;
+            default:
+                break;
         }  // switch ( $directive->type )
 
         return $value;
@@ -1057,19 +1072,18 @@ implements iAction
     private function applyVerifyDirective($value, \stdClass $directive)
     {
         switch ( $directive->type ) {
-        case 'regex':
-            $matched = preg_match($directive->format, $value);
-            if ( 0 === $matched ) {
-                $msg = "Failed {$directive->type} ({$directive->format}) verification for '$value'";
-                $this->logAndThrowException($msg);
-            }
-            break;
-        default:
-            break;
+            case 'regex':
+                $matched = preg_match($directive->format, $value);
+                if ( 0 === $matched ) {
+                    $msg = "Failed {$directive->type} ({$directive->format}) verification for '$value'";
+                    $this->logAndThrowException($msg);
+                }
+                break;
+            default:
+                break;
         }  // switch ( $directive->type )
 
         return true;
 
     }  // verifyTransformDirective()
-
 }  // class RestIngestor

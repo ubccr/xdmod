@@ -17,8 +17,7 @@ namespace ETL\Aggregator;
 use ETL\iAction;
 use \PDOException;
 
-class JobsAggregator extends pdoAggregator
-implements iAction
+class JobsAggregator extends pdoAggregator implements iAction
 {
     // Name of the status table that we will be updating
     const STATUS_TABLE = "jobfactstatus";
@@ -183,7 +182,7 @@ implements iAction
 
             // If we always run the full set of aggregation periods, this can be done once at the end...
 
-            $sql = "DELETE FROM {$sourceSchema}.{$tableName} WHERE " . implode(" AND " , $whereClauses);
+            $sql = "DELETE FROM {$sourceSchema}.{$tableName} WHERE " . implode(" AND ", $whereClauses);
             $this->logger->debug($sql);
 
             if ( ! $this->etlOverseerOptions->isDryrun() ) {
@@ -245,9 +244,9 @@ implements iAction
             if ( null !== $startDate && null !== $endDate ) {
                 $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate) " .
                     "AND d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
-            } else if ( null !== $startDate ) {
+            } elseif ( null !== $startDate ) {
                 $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate)";
-            } else if ( null !== $endDate ) {
+            } elseif ( null !== $endDate ) {
                 $dateRangeSql = "d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
             }
 
@@ -412,5 +411,4 @@ implements iAction
         $this->verifiedResourceSpecs = true;
 
     }  // checkResourceSpecs()
-
 }  // class JobsAggregator

@@ -27,8 +27,7 @@ use PHPSQLParser\PHPSQLParser;
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
 
-class VerifyDatabase extends aAction
-implements iAction
+class VerifyDatabase extends aAction implements iAction
 {
     // Column names extracted from the query, used to verify macro expansions used in the line
     // messages are valid.
@@ -93,19 +92,19 @@ implements iAction
 
         // Verify that the response block and destination email are set
 
-        if (  ! isset($this->parsedDefinitionFile->verify_database) ) {
+        if ( ! isset($this->parsedDefinitionFile->verify_database) ) {
             $msg = "Required key verify_database not found in definition file";
             $this->logAndThrowException($msg);
         }
 
         $verifyConfig = $this->parsedDefinitionFile->verify_database;
 
-        if (  ! isset($verifyConfig->response) ) {
+        if ( ! isset($verifyConfig->response) ) {
             $msg = "Required key verify_database.response not found in definition file";
             $this->logAndThrowException($msg);
         }
 
-        if (  ! isset($verifyConfig->response->line) ) {
+        if ( ! isset($verifyConfig->response->line) ) {
             $msg = "Required key verify_database.response.line not found in definition file";
             $this->logAndThrowException($msg);
         }
@@ -117,7 +116,7 @@ implements iAction
             $missing = array_diff($matches[0], $this->queryColumnNames);
             if ( 0 != count($missing) ) {
                 $msg = "The following column names were referenced in the line template but are "
-                    . "not present in the query: " . implode(", " , $missing);
+                    . "not present in the query: " . implode(", ", $missing);
                 $this->logAndThrowException($msg);
             }
         }
@@ -177,7 +176,7 @@ implements iAction
         if ( ! isset($this->parsedDefinitionFile->source_query) ) {
             $msg = "Required source_query key not found";
             $this->logAndThrowException($msg);
-        } else if ( isset($this->parsedDefinitionFile->source_query->sql_file) ) {
+        } elseif ( isset($this->parsedDefinitionFile->source_query->sql_file) ) {
 
             $sqlFile = $this->parsedDefinitionFile->source_query->sql_file;
             $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
@@ -219,9 +218,11 @@ implements iAction
 
         } else {
             $this->logger->debug("Create ETL source query object");
-            $sourceQuery = new Query($this->parsedDefinitionFile->source_query,
-                                     $this->sourceEndpoint->getSystemQuoteChar(),
-                                     $this->logger);
+            $sourceQuery = new Query(
+                $this->parsedDefinitionFile->source_query,
+                $this->sourceEndpoint->getSystemQuoteChar(),
+                $this->logger
+            );
             $this->queryColumnNames = array_keys($sourceQuery->getRecords());
             $this->setOverseerRestrictionOverrides();
             $this->etlOverseerOptions->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
@@ -254,7 +255,8 @@ implements iAction
                 $verifyConfig->response->$option,
                 $this->variableMap,
                 $substitutedVars,
-                $unsubstitutedVars);
+                $unsubstitutedVars
+            );
 
             if ( 0 != count($unsubstitutedVars) ) {
                 $msg = $this . " Unsubstituted variables found in response $option: " . implode(",", $unsubstitutedVars);
@@ -324,5 +326,4 @@ implements iAction
                                     'elapsed_time' => round($time, 5)
                                   ));
     }  // execute()
-
 }  // class ExecuteSql

@@ -20,8 +20,7 @@ use ETL\aOptions;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 
-class UpdateIngestor extends aRdbmsDestinationAction
-implements iAction
+class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 {
     // Data parsed from the source JSON file or inline from the source_data definition
     protected $data = null;
@@ -154,12 +153,12 @@ implements iAction
             $this->parsedDefinitionFile->update->set,
             $this->parsedDefinitionFile->update->where,
             $this->parsedDefinitionFile->source_data->fields
-            );
+        );
 
         $missingColumnNames = array_diff(
             array_unique($updateColumns),
             $this->etlDestinationTable->getColumnNames()
-            );
+        );
 
         if ( 0 != count($missingColumnNames) ) {
             $msg = "The following columns from the update configuration were not " .
@@ -181,7 +180,7 @@ implements iAction
                                                  'type' => "jsonfile"));
             $jsonFile = DataEndpoint::factory($opt, $this->logger);
             $this->data = $jsonFile->parse();
-        } else if ( is_array($this->parsedDefinitionFile->source_data->data) ) {
+        } elseif ( is_array($this->parsedDefinitionFile->source_data->data) ) {
             $this->data = $this->parsedDefinitionFile->source_data->data;
         } else {
             $msg = "Source data must be an inline array or a filename";
@@ -211,10 +210,26 @@ implements iAction
 
         // Note that the update ingestor does not manage or truncate tables.
 
-        $sql = "UPDATE " . $this->etlDestinationTable->getFullName() . " SET " .
-            implode(", ", array_map(function($s) { return "$s = ?"; }, $this->parsedDefinitionFile->update->set)) .
-            " WHERE " .
-            implode(" AND ", array_map(function($w) { return "$w = ?"; }, $this->parsedDefinitionFile->update->where));
+        $sql = "UPDATE " . $this->etlDestinationTable->getFullName() . " SET "
+            . implode(
+                ", ",
+                array_map(
+                    function ($s) {
+                        return "$s = ?";
+                    },
+                    $this->parsedDefinitionFile->update->set
+                )
+            )
+            . " WHERE "
+            . implode(
+                " AND ",
+                array_map(
+                    function ($w) {
+                        return "$w = ?";
+                    },
+                    $this->parsedDefinitionFile->update->where
+                )
+            );
 
         $this->logger->debug("Update query\n$sql");
 
@@ -224,9 +239,11 @@ implements iAction
         // Set up the indexes that we will need in the correct order for each data record
         $fieldsToIndexes = array_flip($this->parsedDefinitionFile->source_data->fields);
         $dataIndexes = array_map(
-            function($field) use($fieldsToIndexes) { return $fieldsToIndexes[$field]; },
+            function ($field) use ($fieldsToIndexes) {
+                return $fieldsToIndexes[$field];
+            },
             $dataFields
-            );
+        );
 
         if ( ! $etlOptions->isDryrun() ) {
             try {
@@ -234,9 +251,11 @@ implements iAction
 
                 foreach ( $this->data as $record ) {
                     $row = array_map(
-                        function($index) use ($record) { return $record[$index]; },
+                        function ($index) use ($record) {
+                            return $record[$index];
+                        },
                         $dataIndexes
-                        );
+                    );
                     $updateStatement->execute($row);
                     $numRecordsUpdated += $updateStatement->rowCount();
                     $numRecordsProcessed++;
@@ -262,5 +281,4 @@ implements iAction
                                   'records_updated' => $numRecordsUpdated
                                   ));
     }  // execute()
-
 }  // class StructuredFileIngestor
