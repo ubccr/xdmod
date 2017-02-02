@@ -952,12 +952,7 @@ class pdoAggregator extends aAggregator
                     // information will need to come from the last and first slice,
                     // respecitively (see note below).
 
-                    $availableParamKeys = array_map(
-                        function ($k) {
-                            return ":$k";
-                        },
-                        array_keys($firstSlice)
-                    );
+                    $availableParamKeys = Utilities::createPdoBindVarsFromArrayKeys($firstSlice);
 
                     // NOTE 1
                     //
@@ -1097,13 +1092,7 @@ class pdoAggregator extends aAggregator
             // Make all of the data for each aggregation period available to the
             // query. Change the array keys into bind parameters.
 
-            $availableParamKeys = array_map(
-                function ($k) {
-                    return ":$k";
-                },
-                array_keys($aggregationPeriodInfo)
-            );
-
+            $availableParamKeys = Utilities::createPdoBindVarsFromArrayKeys($aggregationPeriodInfo);
             $availableParams = array_combine($availableParamKeys, $aggregationPeriodInfo);
             $periodId = $aggregationPeriodInfo['period_id'];
 
@@ -1284,19 +1273,11 @@ class pdoAggregator extends aAggregator
         $this->selectSql = $this->etlSourceQuery->getSelectSql($includeSchema);
 
         $this->insertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
-            "(" .
-            implode(",\n", array_keys($this->etlSourceQuery->getRecords()))
-            . ")\nVALUES\n(" .
-            implode(
-                ",\n",
-                array_map(
-                    function ($s) {
-                        return ":$s";
-                    },
-                    array_keys($this->etlSourceQuery->getRecords())
-                )
-            ) .
-            ")";
+            "("
+            . implode(",\n", array_keys($this->etlSourceQuery->getRecords()))
+            . ")\nVALUES\n("
+            . implode(",\n", Utilities::createPdoBindVarsFromArrayKeys($this->etlSourceQuery->getRecords()))
+            . ")";
 
         $this->optimizedInsertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
             "(" .
