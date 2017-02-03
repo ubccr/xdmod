@@ -74,8 +74,7 @@ class RestIngestor extends aIngestor implements iAction
 
         if ( ! $this->sourceEndpoint instanceof Rest ) {
             $this->sourceEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\Rest";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\Rest");
         }
         $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
         $this->sourceEndpoint->connect();
@@ -86,8 +85,7 @@ class RestIngestor extends aIngestor implements iAction
 
         if ( ! $this->utilityEndpoint instanceof aRdbmsEndpoint ) {
             $this->utilityEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\aRdbmsEndpoint";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\aRdbmsEndpoint");
         }
         $this->utilityHandle = $this->utilityEndpoint->getHandle();
 
@@ -115,8 +113,7 @@ class RestIngestor extends aIngestor implements iAction
         $this->etlDestinationTable = current($this->etlDestinationTableList);
         $etlTableKey = key($this->etlDestinationTableList);
         if ( count($this->etlDestinationTableList) > 1 ) {
-            $msg = $this . " does not support multiple ETL destination tables, using first table with key: '$etlTableKey'";
-            $logger->warning($msg);
+            $logger->warning($this . " does not support multiple ETL destination tables, using first table with key: '$etlTableKey'");
         }
 
         // If the source query is specified in the definition file use it to obtain parameters for the
@@ -163,15 +160,13 @@ class RestIngestor extends aIngestor implements iAction
                 (array) $this->parsedDefinitionFile->rest_response
             );
         } elseif ( ! isset($this->parsedDefinitionFile->rest_response) ) {
-            $msg = "rest_response key not found in definition file";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("rest_response key not found in definition file");
         }
 
         if ( null === $this->restRequestConfig && isset($this->parsedDefinitionFile->rest_request) ) {
             $this->restRequestConfig = $this->parsedDefinitionFile->rest_request;
         } elseif ( ! isset($this->parsedDefinitionFile->rest_response) ) {
-            $msg = "rest_request key not found in definition file";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("rest_request key not found in definition file");
         }
 
         // --------------------------------------------------------------------------------
@@ -192,8 +187,7 @@ class RestIngestor extends aIngestor implements iAction
                     continue;
                 }
                 if ( ! isset($value->value) ) {
-                    $msg = "{$this} Parameter '$parameter' object does not specify a 'value' key, skipping";
-                    $this->logger->warning($msg);
+                    $this->logger->warning("{$this} Parameter '$parameter' object does not specify a 'value' key, skipping");
                     continue;
                 }
                 $this->parameterDirectives[$parameter] = $value;
@@ -209,8 +203,7 @@ class RestIngestor extends aIngestor implements iAction
                     continue;
                 }
                 if ( ! isset($value->name) ) {
-                    $msg = "{$this} Response field map '$key' object does not specify a 'name' key, skipping";
-                    $this->logger->warning($msg);
+                    $this->logger->warning("{$this} Response field map '$key' object does not specify a 'name' key, skipping");
                     continue;
                 }
                 // Use the response field name as the key so we can make easy lookups in the response object
@@ -247,11 +240,9 @@ class RestIngestor extends aIngestor implements iAction
         parent::verify();
 
         if ( null !== $this->restRequestConfig && ! is_object($this->restRequestConfig) ) {
-            $msg = "REST request config must be an object";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("REST request config must be an object");
         } elseif ( null !== $this->restResponseConfig && ! is_object($this->restResponseConfig) ) {
-            $msg = "REST response config must be an object";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("REST response config must be an object");
         }
 
         // Verify that any type formatting directives in the request and response are valid
@@ -288,8 +279,7 @@ class RestIngestor extends aIngestor implements iAction
             $this->manageTable($this->etlDestinationTable, $this->destinationEndpoint);
 
         } catch ( Exception $e ) {
-            $msg = "Error managing ETL table for " . $this->getName() . ": " . $e->getMessage();
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Error managing ETL table for " . $this->getName() . ": " . $e->getMessage());
         }
 
         $this->destinationTableColumnNames = $this->etlDestinationTable->getColumnNames();
@@ -302,8 +292,7 @@ class RestIngestor extends aIngestor implements iAction
                 $this->destinationTableColumnNames
             );
             if ( 0 != count($diff) ) {
-                $msg = "Field map includes columns not in destination table: " . implode(",", $diff);
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Field map includes columns not in destination table: " . implode(",", $diff));
             }
         }  // if ( isset($this->restResponseConfig->field_map) )
 
@@ -320,8 +309,7 @@ class RestIngestor extends aIngestor implements iAction
             $this->etlSourceQueryResult = $this->utilityHandle->query($sql, array(), true);
 
             if ( 0 == $this->etlSourceQueryResult->rowCount() ) {
-                $msg = "Source query return 0 rows, exiting";
-                $this->logger->warning($msg);
+                $this->logger->warning("{$this} Source query return 0 rows, exiting");
                 return false;
             }
         }  // if ( null !== $this->etlSourceQuery ) {
@@ -424,16 +412,14 @@ class RestIngestor extends aIngestor implements iAction
         while ( false !== ( $retval = curl_exec($this->sourceHandle) ) ) {
 
             if ( 0 !== curl_errno($this->sourceHandle) ) {
-                $msg = "Error during REST call: " . curl_error($this->sourceHandle);
-                $this->logger->err($msg);
+                $this->logger->err("${this} Error during REST call: " . curl_error($this->sourceHandle));
                 break;
             }
 
             $response = json_decode($retval);
 
             if ( null === $response || ! is_object($response) ) {
-                $msg = "Response is not an object: $retval";
-                $this->logger->err($msg);
+                $this->logger->err("{$this} Response is not an object: $retval");
                 break;
             }
 
@@ -453,9 +439,10 @@ class RestIngestor extends aIngestor implements iAction
                         }
                         continue;
                     } else {
-                        $msg = "Configured top-level response key '$responseKey' not found in response. " .
-                            "Response keys are '" . implode(",", array_keys((array) $response)) . "'";
-                        $this->logAndThrowException($msg);
+                        $this->logAndThrowException(
+                            "Configured top-level response key '$responseKey' not found in response. "
+                            . "Response keys are '" . implode(",", array_keys((array) $response)) . "'"
+                        );
                     }
                 } else {
                     $response = $response->$responseKey;
@@ -474,9 +461,10 @@ class RestIngestor extends aIngestor implements iAction
                         }
                         continue;
                     } else {
-                        $msg = "Configured results key '$resultsKey' not found in response. " .
-                            "Response keys are '" . implode(",", array_keys((array) $response)) . "'\n" . print_r($response, true);
-                        $this->logAndThrowException($msg);
+                        $this->logAndThrowException(
+                            "Configured results key '$resultsKey' not found in response. "
+                            . "Response keys are '" . implode(",", array_keys((array) $response)) . "'\n" . print_r($response, true)
+                        );
                     }
                 } else {
                     $results = $response->$resultsKey;
@@ -490,11 +478,9 @@ class RestIngestor extends aIngestor implements iAction
             // We assume that the response is an array of results, even if it is a single result.
 
             if ( ! is_array($results) ) {
-                $msg = "Request results is expected to be an array. Type returned was " . gettype($results);
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Request results is expected to be an array. Type returned was " . gettype($results));
             } elseif ( 0 == count($results) ) {
-                $msg = "Request returned an empty result set, skipping. url = {$this->currentUrl}";
-                $this->logger->notice($msg);
+                $this->logger->notice("Request returned an empty result set, skipping. url = {$this->currentUrl}");
 
                 if ( false === $this->setNextUrl($response, $nextKey) ) {
                     break;
@@ -519,24 +505,9 @@ class RestIngestor extends aIngestor implements iAction
                 if ( null === $fieldMap ) {
                     $diff = array_diff($resultKeyNames, $this->destinationTableColumnNames);
                     if ( 0 != count($diff) ) {
-                        $msg = "Result missing keys found in destination table: " .
-                            implode(",", $diff);
-                        $this->logAndThrowException($msg);
+                        $this->logAndThrowException("Result missing keys found in destination table: " . implode(",", $diff));
                     }
                 }
-
-                /*
-                  $diff = ( null === $fieldMap
-                  ? array_diff($resultKeyNames, $this->destinationTableColumnNames)
-                  : array_diff(array_values($fieldMap), $resultKeyNames) );
-
-                  if ( 0 != count($diff) ) {
-                  $msg = "Result missing keys found in " .
-                  ( null === $fieldMap ? "destination table" : "field map") . ": " .
-                  implode(",", $diff);
-                  $this->logAndThrowException($msg);
-                  }
-                */
 
                 // Create a mapping of result fields to database columns using the field map if provided or
                 // the result keys otherwise. A field map is recommended.
@@ -592,9 +563,10 @@ class RestIngestor extends aIngestor implements iAction
                 }
 
                 if ( $numColumns != count($recordParameters) ) {
-                    $msg = "Record counts do not match (expected $numColumns but receieved " . count($recordParameters) .
-                        "). url = {$this->currentUrl}";
-                    $this->logger->warning($msg);
+                    $this->logger->warning(
+                        "{$this} Record counts do not match (expected $numColumns but receieved "
+                        . count($recordParameters) . "). url = {$this->currentUrl}"
+                    );
                 }
 
                 $valueList[] = "(" . implode(", ", array_keys($recordParameters)) . ")";
@@ -692,8 +664,7 @@ class RestIngestor extends aIngestor implements iAction
     protected function setParameter($parameter, $value)
     {
         if ( null === $parameter || empty($parameter) ) {
-            $msg = "REST parameter name not provided";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("REST parameter name not provided");
         }
 
         $this->restParameters[$parameter] = $value;
@@ -728,8 +699,10 @@ class RestIngestor extends aIngestor implements iAction
                 try {
                     $this->restParameters[$parameter] = $this->applyDirectives($this->restParameters[$parameter], $directives);
                 } catch ( Exception $e ) {
-                    $msg = "Parameter '$parameter' (" . $this->restParameters[$parameter] . ") failed processing directives, skipping.";
-                    $this->logger->err($msg);
+                    $this->logger->err(
+                        "{$this} Parameter '$parameter' (" . $this->restParameters[$parameter]
+                        . ") failed processing directives, skipping."
+                    );
                     return false;
                 }
             }
@@ -859,8 +832,7 @@ class RestIngestor extends aIngestor implements iAction
                 $transformList = ( is_array($directives->transform) ? $directives->transform : array($directives->transform) );
                 foreach ( $transformList as $directive ) {
                     if ( ! is_object($directive) ) {
-                        $msg = "Transformation directives for '$parameter' must be an object";
-                        $this->logAndThrowException($msg);
+                        $this->logAndThrowException("Transformation directives for '$parameter' must be an object");
                     }
                     $this->verifyTransformDirective($parameter, $directive);
                 }
@@ -870,8 +842,7 @@ class RestIngestor extends aIngestor implements iAction
                 $verifyList = ( is_array($directives->verify) ? $directives->verify : array($directives->verify) );
                 foreach ( $verifyList as $directive ) {
                     if ( ! is_object($directive) ) {
-                        $msg = "Verification directives for '$parameter' must be an object";
-                        $this->logAndThrowException($msg);
+                        $this->logAndThrowException("Verification directives for '$parameter' must be an object");
                     }
                     $this->verifyVerifyDirective($parameter, $directive);
                 }
@@ -885,8 +856,7 @@ class RestIngestor extends aIngestor implements iAction
                 $transformList = ( is_array($directives->transform) ? $directives->transform : array($directives->transform) );
                 foreach ( $transformList as $directive ) {
                     if ( ! is_object($directive) ) {
-                        $msg = "Transformation directives for '$key' must be an object";
-                        $this->logAndThrowException($msg);
+                        $this->logAndThrowException("Transformation directives for '$key' must be an object");
                     }
                     $this->verifyTransformDirective($key, $directive);
                 }
@@ -896,8 +866,7 @@ class RestIngestor extends aIngestor implements iAction
                 $verifyList = ( is_array($directives->verify) ? $directives->verify : array($directives->verify) );
                 foreach ( $verifyList as $directive ) {
                     if ( ! is_object($directive) ) {
-                        $msg = "Verification directives for '$key' must be an object";
-                        $this->logAndThrowException($msg);
+                        $this->logAndThrowException("Verification directives for '$key' must be an object");
                     }
                     $this->verifyVerifyDirective($key, $directive);
                 }
@@ -925,8 +894,7 @@ class RestIngestor extends aIngestor implements iAction
     private function verifyTransformDirective($key, \stdClass $directive)
     {
         if ( ! isset($directive->type) || ! isset($directive->format) ) {
-            $msg = "Transform directive for '$key' must specify a type and format.";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Transform directive for '$key' must specify a type and format.");
         }
 
         switch ( $directive->type ) {
@@ -936,13 +904,11 @@ class RestIngestor extends aIngestor implements iAction
                 break;
             case 'regex':
                 if ( false === preg_match($directive->format, "test") ) {
-                    $msg = "Invalid regex format '{$directive->format}' for key '$key'";
-                    $this->logAndThrowException($msg);
+                    $this->logAndThrowException("Invalid regex format '{$directive->format}' for key '$key'");
                 }
                 break;
             default:
-                $msg = "Unsupported transform type '{$directive->type}' for key '$key'";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Unsupported transform type '{$directive->type}' for key '$key'");
                 break;
         }
 
@@ -965,20 +931,17 @@ class RestIngestor extends aIngestor implements iAction
     private function verifyVerifyDirective($key, \stdClass $directive)
     {
         if ( ! isset($directive->type) || ! isset($directive->format) ) {
-            $msg = "Transform directive for '$key' must specify a type and format.";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Transform directive for '$key' must specify a type and format.");
         }
 
         switch ( $directive->type ) {
             case 'regex':
                 if ( false === preg_match($directive->format, "test") ) {
-                    $msg = "Invalid regex format '{$directive->format}' for key '$key'";
-                    $this->logAndThrowException($msg);
+                    $this->logAndThrowException("Invalid regex format '{$directive->format}' for key '$key'");
                 }
                 break;
             default:
-                $msg = "Unsupported transform type '{$directive->type}' for key '$key'";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Unsupported transform type '{$directive->type}' for key '$key'");
                 break;
         }
 
@@ -1040,8 +1003,7 @@ class RestIngestor extends aIngestor implements iAction
                 $matches = null;
                 $matched = preg_match($directive->format, $value, $matches);
                 if ( false === $matched ) {
-                    $msg = "Error transforming regex '{$directive->format}'";
-                    $this->logAndThrowException($msg);
+                    $this->logAndThrowException("Error transforming regex '{$directive->format}'");
                 } elseif ( 1 == $matched ) {
                     $value = $matches[0];
                 }
@@ -1075,8 +1037,7 @@ class RestIngestor extends aIngestor implements iAction
             case 'regex':
                 $matched = preg_match($directive->format, $value);
                 if ( 0 === $matched ) {
-                    $msg = "Failed {$directive->type} ({$directive->format}) verification for '$value'";
-                    $this->logAndThrowException($msg);
+                    $this->logAndThrowException("Failed {$directive->type} ({$directive->format}) verification for '$value'");
                 }
                 break;
             default:
