@@ -215,8 +215,10 @@ AND table_name = :tablename";
                 return false;
             }
         } catch (PDOException $e) {
-            $msg = "Error querying for table '$schema'.'$tableName':";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error querying for table '$schema'.'$tableName':",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+            );
         }
 
         return true;
@@ -257,8 +259,10 @@ ORDER BY ordinal_position ASC";
                 $this->logAndThrowException($msg);
             }
         } catch (PDOException $e) {
-            $msg = "Error retrieving column names from '$schemaName'$tableName' ";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error retrieving column names from '$schemaName'.'$tableName' ",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+            );
         }
 
         $columnNames = array();
@@ -305,8 +309,10 @@ ORDER BY ordinal_position ASC";
                 return false;
             }
         } catch (\PdoException $e) {
-            $msg = "Error querying for schema '$schemaName'";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error querying for schema '$schemaName'",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+            );
         }
 
         return true;
@@ -319,7 +325,7 @@ ORDER BY ordinal_position ASC";
 
     public function __toString()
     {
-        return "{$this->name} (" . get_class($this) . ", config={$this->config}, schema={$this->schema}" .
+        return "('" . $this->name . "', class=" . get_class($this) . ", config={$this->config}, schema={$this->schema}" .
             (null !== $this->hostname ? ", host={$this->hostname}" : "" ) .
             (null !== $this->port ? ":{$this->port}" : "" ) .
             (null !== $this->username ? ", user={$this->username}" : "" ) .

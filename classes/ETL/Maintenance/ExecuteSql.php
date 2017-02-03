@@ -27,8 +27,7 @@ use PHPSQLParser\exceptions\UnsupportedFeatureException;
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
 
-class ExecuteSql extends aAction
-implements iAction
+class ExecuteSql extends aAction implements iAction
 {
     // Delimiter for SQL scripts that contain multiple statements
     const DEFAULT_MULTI_STATEMENT_DELIMITER = '//';
@@ -103,7 +102,7 @@ implements iAction
             if ( ! file_exists($filename) ) {
                 $msg = "SQL file does not exist '$filename'";
                 $this->logAndThrowException($msg);
-            } else if ( ! is_readable($filename) ) {
+            } elseif ( ! is_readable($filename) ) {
                 $msg = "SQL file is not readable '$filename'";
                 $this->logAndThrowException($msg);
             }
@@ -242,7 +241,7 @@ implements iAction
                     continue;
                 }
 
-                $this->logger->debug("Executing SQL: $sql");
+                $this->logger->debug("Executing SQL " . $destinationEndpoint . ":\n$sql");
                 $sqlStartTime = microtime(true);
                 $numRowsAffected = 0;
                 try {
@@ -250,8 +249,10 @@ implements iAction
                         $numRowsAffected = $destinationEndpoint->getHandle()->execute($sql);
                     }
                 } catch ( PDOException $e ) {
-                    $msg = "Error executing sql: " . $e->getMessage();
-                    $this->logAndThrowSqlException($sql, $e);
+                    $this->logAndThrowException(
+                        "Error executing SQL",
+                        array('exception' => $e, 'sql' => $this->sqlQueryString, 'endpoint' => $this->sourceEndpoint)
+                    );
                 }
 
                 $time = microtime(true) - $sqlStartTime;
@@ -273,5 +274,4 @@ implements iAction
                                     'elapsed_time' => round($time, 5)
                                   ));
     }  // execute()
-
 }  // class ExecuteSql

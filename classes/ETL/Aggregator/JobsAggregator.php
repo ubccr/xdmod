@@ -17,8 +17,7 @@ namespace ETL\Aggregator;
 use ETL\iAction;
 use \PDOException;
 
-class JobsAggregator extends pdoAggregator
-implements iAction
+class JobsAggregator extends pdoAggregator implements iAction
 {
     // Name of the status table that we will be updating
     const STATUS_TABLE = "jobfactstatus";
@@ -52,8 +51,10 @@ implements iAction
                 return false;
             }
         } catch (PDOException $e ) {
-            $msg = "Error querying {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error querying {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint)
+            );
         }
 
         return parent::performPreAggregationUnitTasks($aggregationUnit);
@@ -106,8 +107,10 @@ implements iAction
                 $this->logger->info("Updated $numRows rows");
             }
         } catch (PDOException $e ) {
-            $msg = "Error updating {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error updating {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+            );
         }
 
         return parent::performPostAggregationUnitTasks($aggregationUnit, $numAggregationPeriodsProcessed);
@@ -179,7 +182,7 @@ implements iAction
 
             // If we always run the full set of aggregation periods, this can be done once at the end...
 
-            $sql = "DELETE FROM {$sourceSchema}.{$tableName} WHERE " . implode(" AND " , $whereClauses);
+            $sql = "DELETE FROM {$sourceSchema}.{$tableName} WHERE " . implode(" AND ", $whereClauses);
             $this->logger->debug($sql);
 
             if ( ! $this->etlOverseerOptions->isDryrun() ) {
@@ -188,8 +191,10 @@ implements iAction
             }
 
         } catch (PDOException $e ) {
-            $msg = "Error cleaning {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error cleaning {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+            );
         }
 
         return parent::performPostExecuteTasks($numRecordsProcessed);
@@ -239,9 +244,9 @@ implements iAction
             if ( null !== $startDate && null !== $endDate ) {
                 $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate) " .
                     "AND d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
-            } else if ( null !== $startDate ) {
+            } elseif ( null !== $startDate ) {
                 $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate)";
-            } else if ( null !== $endDate ) {
+            } elseif ( null !== $endDate ) {
                 $dateRangeSql = "d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
             }
 
@@ -337,7 +342,10 @@ implements iAction
                 $result = $this->utilityHandle->query($sql);
             }
         } catch (PDOException $e) {
-            $this->logAndThrowSqlException($sql, $e, "Error querying dirty date ids");
+            $this->logAndThrowException(
+                "Error querying aggregation dirty date ids",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint)
+            );
         }
 
         return $result;
@@ -381,7 +389,7 @@ implements iAction
             ":endDate" => $endDate
             );
 
-        $this->logger->debug("Verify resource specs exist:\n$sql");
+        $this->logger->debug("Verify resource specs exist " . $this->sourceEndpoint . ":\n$sql");
         $result = $this->sourceHandle->query($sql, $params);
         if ( count($result) > 0 ) {
             $resources = array();
@@ -403,5 +411,4 @@ implements iAction
         $this->verifiedResourceSpecs = true;
 
     }  // checkResourceSpecs()
-
 }  // class JobsAggregator

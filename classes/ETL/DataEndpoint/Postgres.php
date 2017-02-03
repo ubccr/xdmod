@@ -79,8 +79,10 @@ WHERE nspname = :schema";
             $dbh = $this->getHandle();
             $result = $dbh->query($sql, $params);
         } catch (\PdoException $e) {
-            $msg = "Error creating schema '$schemaName'";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error creating schema '$schemaName'",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+            );
         }
 
         return true;
