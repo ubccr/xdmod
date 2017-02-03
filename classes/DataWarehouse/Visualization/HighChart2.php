@@ -1,6 +1,7 @@
 <?php
 namespace DataWarehouse\Visualization;
 
+use DataWarehouse;
 use DataWarehouse\RoleRestrictionsStringBuilder;
 
 /*
@@ -51,7 +52,7 @@ class HighChart2
 
     protected $_xAxisDataObject; // SimpleData object
     protected $_xAxisLabel;
-    protected $_multiRealm = false;
+    protected $_multiCategory = false;
     protected $_queryType = 'aggregate';
 
     protected $_subtitleText = '';
@@ -83,7 +84,7 @@ class HighChart2
         $min_aggregation_unit = null,
         $showWarnings = true
     ) {
-    
+
         $this->setDuration($start_date, $end_date, $aggregation_unit, $min_aggregation_unit);
 
         $this->_width = $width *$scale;
@@ -542,30 +543,33 @@ class HighChart2
     } // registerContextMenus()
 
     // ---------------------------------------------------------
-    // setMultiRealm()
+    // setMultiCategory()
     //
-    // Determine whether plot contains multiple realms; set
-    // _multiRealm instance variable.
+    // Determine whether plot contains multiple categories; set
+    // _multiCategory instance variable.
     //
     // called by configure()
     // JMS, June 2015
     //
     // @param data_series
     // ---------------------------------------------------------
-    protected function setMultiRealm(&$data_series)
+    protected function setMultiCategory(&$data_series)
     {
         foreach($data_series as $data_description_index => $data_description)
         {
-            if(isset($pRealm) && $data_description->realm != $pRealm)
+            $category = DataWarehouse::getCategoryForRealm(
+                $data_description->realm
+            );
+            if(isset($pCategory) && $category != $pCategory)
             {
-                $this->_multiRealm = true;
+                $this->_multiCategory = true;
                 return;
             } else {
-                $pRealm = $data_description->realm;
+                $pCategory = $category;
             }
         }
-        $this->_multiRealm = false;
-    } // setMultiRealm()
+        $this->_multiCategory = false;
+    } // setMultiCategory()
 
     // ---------------------------------------------------------
     // setXAxisLabel()
@@ -764,11 +768,11 @@ class HighChart2
         $summarizeDataseries = false
     ) {   // JMS: clearly we do not have enough parameters.
                                         // support min/max/average 'truncation' of dataset
-    
+
 
         $this->limit = $limit;
         $this->show_filters = $show_filters;
-        $this->setMultiRealm($data_series );
+        $this->setMultiCategory($data_series);
         $this->registerContextMenus();
 
         // Instantiate the color generator:
@@ -1112,8 +1116,12 @@ class HighChart2
                 if ($data_description->restrictedByRoles && $this->_showWarnings) {
                     $dataSeriesName .= $this->roleRestrictionsStringBuilder->registerRoleRestrictions($data_description->roleRestrictionsParameters);
                 }
-                if($this->_multiRealm) {
-                    $dataSeriesName = $data_description->realm . ': ' . $dataSeriesName;
+                if($this->_multiCategory) {
+                    $dataSeriesName = (
+                        DataWarehouse::getCategoryForRealm($data_description->realm)
+                        . ': '
+                        . $dataSeriesName
+                    );
                 }
 
                 $formattedDataSeriesName = str_replace('style=""', 'style="color:'.$yAxisColor.'"', $dataSeriesName);
@@ -1247,7 +1255,7 @@ class HighChart2
         $legendItemClick,
         $pointClick
     ) {
-    
+
         // build error data series and add it to chart
         if($data_description->std_err == 1 && $data_description->display_type != 'pie')
         {
@@ -1496,7 +1504,7 @@ class HighChart2
         $limit = null,
         $offset = null
     ) {
-    
+
         $returnData = array(
             'totalCount' => $this->_total,
             'success' => true,

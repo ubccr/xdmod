@@ -1,6 +1,8 @@
 <?php
 namespace DataWarehouse\Visualization;
 
+use DataWarehouse;
+
 /*
 *
 * @author Amin Ghadersohi
@@ -42,7 +44,7 @@ class HighChartTimeseries2 extends HighChart2
         $min_aggregation_unit = null,
         $showWarnings = true
     ) {
-    
+
         parent::__construct(
             $aggregation_unit,
             $start_date,
@@ -138,7 +140,7 @@ class HighChartTimeseries2 extends HighChart2
     ) {   // JMS: clearly we do not have enough parameters.
                                         // support min/max/average 'truncation' of dataset
 
-    
+
         $this->show_filters = $show_filters;
 
         $this->registerContextMenus();
@@ -153,15 +155,16 @@ class HighChartTimeseries2 extends HighChart2
 
         // prepare yAxisArray for each yAxis we will plot:
         $yAxisArray = array();
-        $multiRealm = false;
+        $multiCategory = false;
         foreach($data_series as $data_description_index => $data_description)
         {
-            // set multirealm true or false
-            if(isset($pRealm) && $data_description->realm != $pRealm)
+            // set multiCategory true or false
+            $category = DataWarehouse::getCategoryForRealm($data_description->realm);
+            if(isset($pCategory) && $category != $pCategory)
             {
-                $multiRealm = true;
+                $multiCategory = true;
             } else {
-                $pRealm = $data_description->realm;
+                $pCategory = $category;
             }
 
             // Determine statistic name. In this case use the Aggregate classname to get the stat.
@@ -293,7 +296,7 @@ class HighChartTimeseries2 extends HighChart2
                 // Note that while this var name is a ComplexDataset in the parent class
                 // the item it contains is a Simple*Dataset.
                 // so when we iterate over datasets in parent class we are fiddling with SImple*Datsets
-            
+
                 $dataset = new \DataWarehouse\Data\SimpleTimeseriesDataset($query);
 
                 // JMS: to here we have the ComplexDataset::init() function
@@ -661,9 +664,13 @@ class HighChartTimeseries2 extends HighChart2
                         {
                             $dataSeriesName .= $this->roleRestrictionsStringBuilder->registerRoleRestrictions($data_description->roleRestrictionsParameters);
                         }
-                        if($multiRealm)
+                        if($multiCategory)
                         {
-                            $dataSeriesName = $data_description->realm . ': ' . $dataSeriesName;
+                            $dataSeriesName = (
+                                DataWarehouse::getCategoryForRealm($data_description->realm)
+                                . ': '
+                                . $dataSeriesName
+                            );
                         }
                         $formattedDataSeriesName = $dataSeriesName;
                         if ($areMultipleDataSeries)
@@ -830,7 +837,7 @@ class HighChartTimeseries2 extends HighChart2
                                 );
                                 $this->_chart['series'][] = $data_series_desc;
                             } // if($new_values_count > 1)
-                        
+
                         } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
 
 

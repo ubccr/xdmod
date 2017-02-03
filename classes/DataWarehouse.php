@@ -15,6 +15,7 @@
  */
 
 use CCR\DB;
+use Xdmod\Config;
 
 /*
  *	@Class DataWarehouse
@@ -448,4 +449,52 @@ class DataWarehouse
         );
         return $results;
     } // getAllocationsByChargeNumber()
+
+    /**
+     * Get a mapping of categories to realms.
+     *
+     * If a realm does not explicitly declare a category, its name is used
+     * as the category.
+     *
+     * @return array An associative array mapping categories to the realms
+     *               they contain.
+     */
+    public static function getCategories()
+    {
+        $config = Config::factory();
+        $dwConfig = $config['datawarehouse'];
+
+        $categories = array();
+        foreach ($dwConfig['realms'] as $realmName => $realm) {
+            $category = (
+                isset($realm['category'])
+                ? $realm['category']
+                : $realmName
+            );
+            $categories[$category][] = $realmName;
+        }
+        return $categories;
+    }
+
+    /**
+     * Get the category for a given realm.
+     *
+     * If a realm does not explicitly declare a category, its name is used
+     * as the category.
+     *
+     * @param  string $realmName The name of the realm to get
+     *                           the category for.
+     * @return string            The category the realm belongs to.
+     */
+    public static function getCategoryForRealm($realmName)
+    {
+        $config = Config::factory();
+        $dwConfig = $config['datawarehouse'];
+
+        if (isset($dwConfig['realms'][$realmName]['category'])) {
+            return $dwConfig['realms'][$realmName]['category'];
+        }
+
+        return $realmName;
+    }
 } // class DataWarehouse

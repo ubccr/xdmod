@@ -34,7 +34,7 @@ try {
         }
     } elseif (
         isset($_REQUEST['node'])
-        && substr($_REQUEST['node'], 0, 6) == 'realm_'
+        && \xd_utilities\string_begins_with($_REQUEST['node'], 'category_')
     ) {
         $query_group_name = 'tg_usage';
 
@@ -42,48 +42,106 @@ try {
             $query_group_name = $_REQUEST['query_group'];
         }
 
-        if (isset($_REQUEST['realm'])) {
-            $realms = explode(',', $_REQUEST['realm']);
-        } else {
-            $realms = array_keys(
-                $activeRole->getAllQueryRealms($query_group_name)
-            );
+        // Get the categories and remove any realms the user doesn't have
+        // access to.
+        $categories = DataWarehouse::getCategories();
+
+        $realms = array_keys(
+            $activeRole->getAllQueryRealms($query_group_name)
+        );
+
+        $categories = array_map(function ($category) use ($realms) {
+            return array_filter($category, function ($realm) use ($realms) {
+                return in_array($realm, $realms);
+            });
+        }, $categories);
+        $categories = array_filter($categories);
+
+        // Ensure the categories are sorted as the realms were.
+        $categoryRealmIndices = array();
+        foreach ($categories as $categoryName => $category) {
+            foreach ($category as $realm) {
+                $realmIndex = array_search($realm, $realms);
+                if (
+                    !isset($categoryRealmIndices[$categoryName])
+                    || $categoryRealmIndices[$categoryName] > $realmIndex
+                ) {
+                    $categoryRealmIndices[$categoryName] = $realmIndex;
+                }
+            }
+        }
+        array_multisort($categoryRealmIndices, $categories);
+
+        // If the user requested certain categories, ensure those categories
+        // are valid.
+        if (isset($_REQUEST['category'])) {
+            $requestedCategories = explode(',', $_REQUEST['category']);
+            $missingCategories = array_diff($requestedCategories, array_keys($categories));
+            if (!empty($missingCategories)) {
+                throw new Exception("Invalid categories: " . implode(', ', $missingCategories));
+            }
+            $categories = array_map(function ($categoryName) use ($categories) {
+                return $categories[$categoryName];
+            }, $requestedCategories);
         }
 
-        foreach ($realms as $realm_name) {
-            $query_descripter_groups = $activeRole->getQueryDescripters(
-                $query_group_name,
-                $realm_name
-            );
-
+        foreach ($categories as $categoryName => $category) {
             $hasItems = false;
+            $categoryReturnData = array();
+            foreach ($category as $realm_name) {
+                $query_descripter_groups = $activeRole->getQueryDescripters(
+                    $query_group_name,
+                    $realm_name
+                );
 
-            foreach ($query_descripter_groups as $query_descripter_group) {
-                foreach ($query_descripter_group as $query_descripter) {
-                    if ($query_descripter->getShowMenu() !== true) { continue; }
+                foreach ($query_descripter_groups as $query_descripter_group) {
+                    foreach ($query_descripter_group as $query_descripter) {
+                        if ($query_descripter->getShowMenu() !== true) { continue; }
 
-                    $returnData[] = array(
-                        'text'                 => $query_descripter->getMenuLabel(),
-                        'id'                   => 'group_by_'
-                                                . $realm_name
-                                                . '_'
-                                                . $query_descripter->getGroupByName(),
-                        'group_by'             => $query_descripter->getGroupByName(),
-                        'query_group'          => $query_group_name,
-                        'realm'                => $realm_name,
-                        'defaultChartSettings' => $query_descripter->getChartSettings(true),
-                        'chartSettings'        => $query_descripter->getChartSettings(true),
-                        'node_type'            => 'group_by',
-                        'iconCls'              => 'menu',
-                        'description'          => $query_descripter->getGroupByLabel(),
-                        'leaf'                 => false,
-                    );
+                        $nodeId = (
+                            'group_by_'
+                            . $categoryName
+                            . '_'
+                            . $query_descripter->getGroupByName()
+                        );
+                        $nodeText = preg_replace(
+                            '/' . preg_quote($realm_name, '/') . '/',
+                            $categoryName,
+                            $query_descripter->getMenuLabel()
+                        );
 
-                    $hasItems = true;
+                        $nodeRealms = (
+                            isset($categoryReturnData[$nodeId])
+                            ? $categoryReturnData[$nodeId]['realm'] . ",${realm_name}"
+                            : $realm_name
+                        );
+
+                        $categoryReturnData[$nodeId] = array(
+                            'text'                 => $nodeText,
+                            'id'                   => $nodeId,
+                            'group_by'             => $query_descripter->getGroupByName(),
+                            'query_group'          => $query_group_name,
+                            'category'             => $categoryName,
+                            'realm'                => $nodeRealms,
+                            'defaultChartSettings' => $query_descripter->getChartSettings(true),
+                            'chartSettings'        => $query_descripter->getChartSettings(true),
+                            'node_type'            => 'group_by',
+                            'iconCls'              => 'menu',
+                            'description'          => $query_descripter->getGroupByLabel(),
+                            'leaf'                 => false,
+                        );
+
+                        $hasItems = true;
+                    }
                 }
             }
 
             if ($hasItems) {
+                $returnData = array_merge(
+                    $returnData,
+                    array_values($categoryReturnData)
+                );
+
                 $returnData[] = array(
                     'text'      => '',
                     'id'        => '-111',
@@ -98,8 +156,8 @@ try {
         isset($_REQUEST['node'])
         && substr($_REQUEST['node'], 0, 9) == 'group_by_'
     ) {
-        if (isset($_REQUEST['realm'])) {
-            $realm_name = $_REQUEST['realm'];
+        if (isset($_REQUEST['category'])) {
+            $categoryName = $_REQUEST['category'];
 
             if (isset($_REQUEST['group_by'])) {
                 $query_group_name = 'tg_usage';
@@ -108,35 +166,53 @@ try {
                     $query_group_name = $_REQUEST['query_group'];
                 }
 
+                // Get the categories. If the requested one does not exist,
+                // throw an exception.
+                $categories = DataWarehouse::getCategories();
+                if (!isset($categories[$categoryName])) {
+                    throw new Exception("Category not found.");
+                }
+
                 $group_by_name = $_REQUEST['group_by'];
-                $query_descripter = $activeRole->getQueryDescripters($query_group_name, $realm_name, $group_by_name);
 
-                $group_by = $query_descripter->getGroupByInstance();
-
-                foreach ($query_descripter->getPermittedStatistics() as $realm_group_by_statistic) {
-                    $statistic_object = $query_descripter->getStatistic($realm_group_by_statistic);
-                    if ($statistic_object->isVisible()) {
-                        $returnData[] = array(
-                            'text'                 => $statistic_object->getLabel(false),
-                            'id'                   => 'statistic_'
-                                                    . $realm_name
-                                                    . '_'
-                                                    . $group_by_name
-                                                    . '_'
-                                                    . $statistic_object->getAlias()->getName(),
-                            'statistic'            => $statistic_object->getAlias()->getName(),
-                            'group_by'             => $group_by_name,
-                            'group_by_label'       => $group_by->getLabel(),
-                            'query_group'          => $query_group_name,
-                            'realm'                => $realm_name,
-                            'defaultChartSettings' => $query_descripter->getChartSettings(),
-                            'chartSettings'        => $query_descripter->getChartSettings(),
-                            'node_type'            => 'statistic',
-                            'iconCls'              => 'chart',
-                            'description'          => $statistic_object->getAlias()->getName(),
-                            'leaf'                 => true,
-                        );
+                foreach ($categories[$categoryName] as $realm_name) {
+                    $query_descripter = $activeRole->getQueryDescripters($query_group_name, $realm_name, $group_by_name);
+                    if (empty($query_descripter)) {
+                        continue;
                     }
+
+                    $group_by = $query_descripter->getGroupByInstance();
+
+                    foreach ($query_descripter->getPermittedStatistics() as $realm_group_by_statistic) {
+                        $statistic_object = $query_descripter->getStatistic($realm_group_by_statistic);
+                        if ($statistic_object->isVisible()) {
+                            $returnData[] = array(
+                                'text'                 => $statistic_object->getLabel(false),
+                                'id'                   => 'statistic_'
+                                                        . $realm_name
+                                                        . '_'
+                                                        . $group_by_name
+                                                        . '_'
+                                                        . $statistic_object->getAlias()->getName(),
+                                'statistic'            => $statistic_object->getAlias()->getName(),
+                                'group_by'             => $group_by_name,
+                                'group_by_label'       => $group_by->getLabel(),
+                                'query_group'          => $query_group_name,
+                                'category'             => $categoryName,
+                                'realm'                => $realm_name,
+                                'defaultChartSettings' => $query_descripter->getChartSettings(),
+                                'chartSettings'        => $query_descripter->getChartSettings(),
+                                'node_type'            => 'statistic',
+                                'iconCls'              => 'chart',
+                                'description'          => $statistic_object->getAlias()->getName(),
+                                'leaf'                 => true,
+                            );
+                        }
+                    }
+                }
+
+                if (empty($returnData)) {
+                    throw new Exception("Category not found.");
                 }
 
                 $texts = array();
@@ -161,4 +237,3 @@ try {
 }
 
 xd_controller\returnJSON($returnData);
-
