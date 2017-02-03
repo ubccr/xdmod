@@ -23,10 +23,10 @@ class HighChartTimeseries2 extends HighChart2
 {
     // ---------------------------------------------------------
     // __construct()
-    // 
+    //
     // Constructor for HighChart2Timeseries class.
     //
-    // note that showContextMenu has default false in HC2T class. 
+    // note that showContextMenu has default false in HC2T class.
     // ---------------------------------------------------------
     public function __construct(
         $aggregation_unit,
@@ -41,8 +41,8 @@ class HighChartTimeseries2 extends HighChart2
         $hide_tooltip = false,
         $min_aggregation_unit = null,
         $showWarnings = true
-    )
-    {
+    ) {
+    
         parent::__construct(
             $aggregation_unit,
             $start_date,
@@ -62,13 +62,13 @@ class HighChartTimeseries2 extends HighChart2
     }
 
     //-------------------------------------------------
-    // useMean( $stat ) 
-    // Based on inspection of the Statistic Alias for the dataset, 
+    // useMean( $stat )
+    // Based on inspection of the Statistic Alias for the dataset,
     // should the mean of the values be computed for the remainder set?
-    // 
+    //
     // @param is $dataObj->getStatistic()->getAlias(); or $data_description->metric
     //-------------------------------------------------
-    private function useMean( $stat ) {
+    private function useMean($stat) {
             $retVal
                 = strpos($stat, 'avg_') !== false
                 || strpos($stat, 'count') !== false
@@ -79,19 +79,19 @@ class HighChartTimeseries2 extends HighChart2
     }
 
     //-------------------------------------------------
-    // getDataname( $stat, $limit ) 
-    // 
-    // Based on inspection of the Statistic Alias for the dataset, 
+    // getDataname( $stat, $limit )
+    //
+    // Based on inspection of the Statistic Alias for the dataset,
     // what operation should be reported for the remainder set?
     //
     // @param is $dataObj->getStatistic()->getAlias(); or $data_description->metric
     // @param is number of full datasets to represent in chart
     //-------------------------------------------------
-    private function getDataname( $stat, $limit ) {
+    private function getDataname($stat, $limit) {
 
             // use statistics alias for object
             //$stat = $dataObj->getStatistic()->getAlias(); or $data_description->metric
-            $useMean = $this->useMean( $stat );
+            $useMean = $this->useMean($stat );
 
             $isMin = strpos($stat, 'min_') !== false ;
             $isMax = strpos($stat, 'max_') !== false ;
@@ -102,25 +102,25 @@ class HighChartTimeseries2 extends HighChart2
                 . ($this->_total - $limit)
                 . ' Others';
 
-            if ($isMin) {
-                $dataname
-                    = 'Minimum over all '
-                    . ($this->_total - $limit)
-                    . ' others';
-            } elseif ($isMax) {
-                $dataname
-                    = 'Maximum over all '
-                    . ($this->_total - $limit)
-                    . ' others';
-            } // if $isMin
+        if ($isMin) {
+            $dataname
+            = 'Minimum over all '
+            . ($this->_total - $limit)
+            . ' others';
+        } elseif ($isMax) {
+            $dataname
+            = 'Maximum over all '
+            . ($this->_total - $limit)
+            . ' others';
+        } // if $isMin
 
             return $dataname;
-       }
+    }
 
     // ---------------------------------------------------------
     // configure()
-    // 
-    // Given chart data series and parameters, build 
+    //
+    // Given chart data series and parameters, build
     // SimpleTimeseriesDataset, set all needed chart parameters.
     //
     // ---------------------------------------------------------
@@ -132,12 +132,13 @@ class HighChartTimeseries2 extends HighChart2
         &$show_filters,
         &$global_filters,
         $font_size,
-        $limit = NULL,
-        $offset = NULL,
-        $summarizeDataseries = false)   // JMS: clearly we do not have enough parameters.
+        $limit = null,
+        $offset = null,
+        $summarizeDataseries = false
+    ) {   // JMS: clearly we do not have enough parameters.
                                         // support min/max/average 'truncation' of dataset
 
-    {
+    
         $this->show_filters = $show_filters;
 
         $this->registerContextMenus();
@@ -235,7 +236,7 @@ class HighChartTimeseries2 extends HighChart2
                     {
                         if(isset($global_filter->checked) && $global_filter->checked == 1)
                         {
-                            if(!isset($groupedRoleParameters[$global_filter->dimension_id])) 
+                            if(!isset($groupedRoleParameters[$global_filter->dimension_id]))
                             {
                                 $groupedRoleParameters[$global_filter->dimension_id] = array();
                             }
@@ -288,7 +289,7 @@ class HighChartTimeseries2 extends HighChart2
                 $query->addOrderByAndSetSortInfo($data_description);
 
                 // JMS:
-                // and here we instantiate the dataset. 
+                // and here we instantiate the dataset.
                 // Note that while this var name is a ComplexDataset in the parent class
                 // the item it contains is a Simple*Dataset.
                 // so when we iterate over datasets in parent class we are fiddling with SImple*Datsets
@@ -303,10 +304,10 @@ class HighChartTimeseries2 extends HighChart2
                 $defaultYAxisLabel = 'yAxis'.$yAxisIndex;
                 $yAxisLabel = ($data_description->combine_type=='percent'? '% of ':'').(
                                 ($this->_hasLegend && $dataSeriesCount > 1)
-                                    ? $dataset->getColumnUnit($data_description->metric,false)
-                                    : $dataset->getColumnLabel($data_description->metric,false)
+                                    ? $dataset->getColumnUnit($data_description->metric, false)
+                                    : $dataset->getColumnLabel($data_description->metric, false)
                                 );
-                if($this->_shareYAxis) 
+                if($this->_shareYAxis)
                 {
                     $yAxisLabel = $defaultYAxisLabel;
                 }
@@ -316,7 +317,7 @@ class HighChartTimeseries2 extends HighChart2
                 $config = $this->getAxisOverrides($y_axis, $yAxisLabel, $yAxisIndex);
                 if($config !== null)
                 {
-                    if(isset($config->title)) 
+                    if(isset($config->title))
                     {
                         $yAxisLabel = $config->title;
                     }
@@ -324,23 +325,23 @@ class HighChartTimeseries2 extends HighChart2
                     {
                         $yAxisMin = $data_description->log_scale && $config->min <= 0?null:$config->min;
                     }
-                    if(isset($config->max)) 
+                    if(isset($config->max))
                     {
                         $yAxisMax = $config->max;
                     }
                 }
-                if($yAxisLabel == $defaultYAxisLabel) 
+                if($yAxisLabel == $defaultYAxisLabel)
                 {
                     $yAxisLabel = '';
                 }
 
                 if($yAxis == null)
                 {
-                    // set initial dataset's plot color: 
+                    // set initial dataset's plot color:
                     $yAxisColorValue = ($data_description->color == 'auto' || $data_description->color == 'FFFFFF')
                                 ? $colorGenerator->getColor()
-                                : $colorGenerator->getConfigColor( hexdec($data_description->color) );
-                    $yAxisColor = '#'.str_pad(dechex($yAxisColorValue),6,'0',STR_PAD_LEFT);
+                                : $colorGenerator->getConfigColor(hexdec($data_description->color) );
+                    $yAxisColor = '#'.str_pad(dechex($yAxisColorValue), 6, '0', STR_PAD_LEFT);
                     $yAxisColorUsedBySeries = false;
 
                     $yAxis = array(
@@ -387,7 +388,7 @@ class HighChartTimeseries2 extends HighChart2
                 }
                 $pointInterval = $this->getPointInterval();
 
-                // set x axis if needed 
+                // set x axis if needed
                 if(!isset($xAxis))
                 {
                     $defaultXAxisLabel = 'xAxis';
@@ -397,12 +398,12 @@ class HighChartTimeseries2 extends HighChart2
                     if(isset($x_axis->{$xAxisLabel}))
                     {
                         $config = $x_axis->{$xAxisLabel};
-                        if(isset($config->title)) 
+                        if(isset($config->title))
                         {
                             $xAxisLabel = $config->title;
                         }
                     }
-                    if($xAxisLabel == $defaultXAxisLabel) 
+                    if($xAxisLabel == $defaultXAxisLabel)
                     {
                         $xAxisLabel = '';
                     }
@@ -454,7 +455,7 @@ class HighChartTimeseries2 extends HighChart2
                      $this->_chart['xAxis'] = $xAxis;
                 } // if(!isset($xAxis))
 
-                //  ----------- set up yAxis, assign to chart ... eventually ----------- 
+                //  ----------- set up yAxis, assign to chart ... eventually -----------
 
                 if($data_description->std_err == 1)
                 {
@@ -462,33 +463,39 @@ class HighChartTimeseries2 extends HighChart2
                     $semDecimals = $semStatisticObject->getDecimals();
                 }
 
-                // get the full dataset count: how many unique values in the dimension we group by? 
-                $datagroupFullCount = $dataset->getUniqueCount($data_description->group_by, 
-                                                                     $data_description->realm);
+                // get the full dataset count: how many unique values in the dimension we group by?
+                $datagroupFullCount = $dataset->getUniqueCount(
+                    $data_description->group_by,
+                    $data_description->realm
+                );
                 $this->_total = max($this->_total, $datagroupFullCount);
 
-                // If summarizeDataseries (Usage), use $limit to minimize the number of sorted 
-                // queries we must execute. If ME, use the $limit (default 10) to enable paging 
-                // thru dataset.  
+                // If summarizeDataseries (Usage), use $limit to minimize the number of sorted
+                // queries we must execute. If ME, use the $limit (default 10) to enable paging
+                // thru dataset.
 
                 // Query for the top $limit categories in the realm, over the selected time period
-                //$datagroupDataObject = $dataset->getColumnSortedMax($data_description->metric, 
-                //                                                        'dim_'.$data_description->group_by, 
+                //$datagroupDataObject = $dataset->getColumnSortedMax($data_description->metric,
+                //                                                        'dim_'.$data_description->group_by,
                 //                                                        $limit,
-                //                                                        $offset, 
+                //                                                        $offset,
                 //                                                        $data_description->realm);
                 // Roll back to the 'old way' of getting top-n sorted dimension values:
-                $datagroupDataObject = $dataset->getColumnUniqueOrdered( 'dim_'.$data_description->group_by, 
-                                                                        $limit,
-                                                                        $offset, 
-                                                                        $data_description->realm);
+                $datagroupDataObject = $dataset->getColumnUniqueOrdered(
+                    'dim_'.$data_description->group_by,
+                    $limit,
+                    $offset,
+                    $data_description->realm
+                );
 
                 // Use the top $limit categories to build an iterator with $limit objects inside:
-                $yAxisDataObjectsIterator = $dataset->getColumnIteratorBy('met_'.$data_description->metric,
-                                                                          $datagroupDataObject);
+                $yAxisDataObjectsIterator = $dataset->getColumnIteratorBy(
+                    'met_'.$data_description->metric,
+                    $datagroupDataObject
+                );
 
                 // --- Set up dataset truncation for Usage tab support: ----
-                // Populate an array with our iterator contents, but only up to $limit. 
+                // Populate an array with our iterator contents, but only up to $limit.
                 // (implicitly) run the queries and populate the array, but only up to $limit:
                 // that is taken care of by the limit on datagroupDataObject above.
                 $yAxisDataObjectsArray = array();
@@ -503,21 +510,23 @@ class HighChartTimeseries2 extends HighChart2
                     // Run one more query containing everything that was NOT in the top n.
                     // Populate SimpleTimeseriesData object yAxisTruncateObj with this
                     // summary information
-                    $yAxisTruncateObj = $dataset->getSummarizedColumn( $data_description->metric,
-                                                                       $data_description->group_by, 
-                                                                       $this->_total - $limit,
-                                                                       $yAxisDataObjectsIterator->getLimitIds(),
-                                                                       $data_description->realm);
+                    $yAxisTruncateObj = $dataset->getSummarizedColumn(
+                        $data_description->metric,
+                        $data_description->group_by,
+                        $this->_total - $limit,
+                        $yAxisDataObjectsIterator->getLimitIds(),
+                        $data_description->realm
+                    );
 
                     // set the remainder dataset label for plotting
-                    $dataname = $this->getDataname( $data_description->metric, $limit );
-                    $yAxisTruncateObj->setGroupName( $dataname ); 
+                    $dataname = $this->getDataname($data_description->metric, $limit );
+                    $yAxisTruncateObj->setGroupName($dataname );
                     // set label on the dataseries' legend
-                    $yAxisTruncateObj->setName( $dataname ); 
+                    $yAxisTruncateObj->setName($dataname );
 
                     $yAxisDataObjectsArray[] = $yAxisTruncateObj;
                     $dataTruncated = true;
-                } 
+                }
                 unset($yAxisDataObjectsIterator);
 
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
@@ -526,7 +535,7 @@ class HighChartTimeseries2 extends HighChart2
                 $numYAxisDataObjects = count($yAxisDataObjectsArray);
                 foreach($yAxisDataObjectsArray as $yIndex => $yAxisDataObject)
                 {
-                    if( $yAxisDataObject != NULL)
+                    if( $yAxisDataObject != null)
                     {
                         $yAxisDataObject->joinTo($xAxisData, null);
 
@@ -539,10 +548,10 @@ class HighChartTimeseries2 extends HighChart2
                             $color_value = $colorGenerator->getColor();
                         }
 
-                        $color = '#'.str_pad(dechex($color_value),6,'0',STR_PAD_LEFT);
-                        $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value,-70)),6,'0',STR_PAD_LEFT);
+                        $color = '#'.str_pad(dechex($color_value), 6, '0', STR_PAD_LEFT);
+                        $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value, -70)), 6, '0', STR_PAD_LEFT);
 
-                        //highcharts chokes on datasets that are all null so detect them and replace 
+                        //highcharts chokes on datasets that are all null so detect them and replace
                         // all with zero. this will give the user the right impression. (hopefully)
                         $all_null = true;
                         foreach($yAxisDataObject->getValues() as $value)
@@ -553,7 +562,7 @@ class HighChartTimeseries2 extends HighChart2
                                 break;
                             }
                         }
-                        if($all_null) 
+                        if($all_null)
                         {
                             continue;
                         }
@@ -586,13 +595,13 @@ class HighChartTimeseries2 extends HighChart2
                         $seriesValues = array();
                         if($data_description->display_type == 'pie')
                         {
-                           throw new \Exception( get_class($this)." ERROR: chart display_type 'pie' reached in timeseries plot."); 
+                            throw new \Exception(get_class($this)." ERROR: chart display_type 'pie' reached in timeseries plot.");
                         }
                         else // ($data_description->display_type != 'pie')
                         {
                             if ($data_description->value_labels && $std_err_labels_enabled) {
                                 $dataLabelsConfig['formatter'] = "function(){ return Highcharts.numberFormat(this.y, $decimals)+' [+/-'+Highcharts.numberFormat(this.percentage, $decimals)+']';}";
-                            } else if ($std_err_labels_enabled) {
+                            } elseif ($std_err_labels_enabled) {
                                 $dataLabelsConfig['formatter'] = "function(){ return '+/-'+Highcharts.numberFormat(this.percentage, $decimals);}";
                             } else {
                                 $dataLabelsConfig['formatter'] = "function(){ return Highcharts.numberFormat(this.y, $decimals);}";
@@ -630,7 +639,9 @@ class HighChartTimeseries2 extends HighChart2
 
                                 try {
                                     $seriesValue['percentage'] = $yAxisDataObject->getError($i);
-                                } catch (\Exception $e) {}
+                                } catch (\Exception $e) {
+
+                                }
 
                                 $seriesValues[] = $seriesValue;
                             }
@@ -646,16 +657,16 @@ class HighChartTimeseries2 extends HighChart2
 
                         $areMultipleDataSeries = $dataSeriesCount > 1;
                         $dataSeriesName = $areMultipleDataSeries ? $yAxisDataObject->getName() : $yAxisDataObject->getGroupName();
-                        if ($data_description->restrictedByRoles && $this->_showWarnings) 
+                        if ($data_description->restrictedByRoles && $this->_showWarnings)
                         {
                             $dataSeriesName .= $this->roleRestrictionsStringBuilder->registerRoleRestrictions($data_description->roleRestrictionsParameters);
                         }
-                        if($multiRealm) 
+                        if($multiRealm)
                         {
                             $dataSeriesName = $data_description->realm . ': ' . $dataSeriesName;
                         }
                         $formattedDataSeriesName = $dataSeriesName;
-                        if ($areMultipleDataSeries) 
+                        if ($areMultipleDataSeries)
                         {
                             $dataUnit = $yAxisDataObject->getUnit();
                             $formattedDataSeriesName .= " [<span style=\"color:$yAxisColor\">$dataUnit</span>]";
@@ -666,7 +677,7 @@ class HighChartTimeseries2 extends HighChart2
                         if(isset($legend->{$formattedDataSeriesName}))
                         {
                             $config = $legend->{$formattedDataSeriesName};
-                            if(isset($config->title)) 
+                            if(isset($config->title))
                             {
                                 $lookupDataSeriesName = $config->title;
                             }
@@ -689,7 +700,7 @@ class HighChartTimeseries2 extends HighChart2
                             'datasetId' => $data_description->id,
                             'zIndex' => $zIndex,
                             'drilldown' => $drilldown,
-                            'color'=> $data_description->display_type == 'pie'? NULL: $color,
+                            'color'=> $data_description->display_type == 'pie'? null: $color,
                             'trackByArea'=>  $data_description->display_type == 'area' ||  $data_description->display_type == 'areaspline',
                             'type' => $data_description->display_type,
                             'dashStyle' => $data_description->line_type,
@@ -724,7 +735,7 @@ class HighChartTimeseries2 extends HighChart2
                             'pointRange' => $pointInterval,
                             'isRemainder' => $isRemainder,
                             'isRestrictedByRoles' => $data_description->restrictedByRoles
-                        ); // $data_series_desc 
+                        ); // $data_series_desc
 
                         if($data_description->display_type!=='line')
                         {
@@ -734,7 +745,7 @@ class HighChartTimeseries2 extends HighChart2
                                 $data_series_desc['stacking'] = 'normal';
                                 $data_series_desc['connectNulls'] = true;
                             }
-                            else if($data_description->combine_type=='percent' && !$data_description->log_scale )
+                            elseif($data_description->combine_type=='percent' && !$data_description->log_scale )
                             {
                                 $data_series_desc['stacking'] = 'percent';
                             }
@@ -766,15 +777,15 @@ class HighChartTimeseries2 extends HighChart2
                                     }
                                 }
 
-                                $trend_formula = (number_format($m,2)==0?number_format($m,3):number_format($m,2)).'x '.($b>0?'+':'').number_format($b,2);
+                                $trend_formula = (number_format($m, 2)==0?number_format($m, 3):number_format($m, 2)).'x '.($b>0?'+':'').number_format($b, 2);
 
-                                $dsn = 'Trend Line: '.$formattedDataSeriesName.' ('.$trend_formula.'), R-Squared='.number_format($r_squared,2);
+                                $dsn = 'Trend Line: '.$formattedDataSeriesName.' ('.$trend_formula.'), R-Squared='.number_format($r_squared, 2);
 
                                 $lookupDataSeriesName = $dsn;
                                 if(isset($legend->{$dsn}))
                                 {
                                     $config = $legend->{$dsn};
-                                    if(isset($config->title)) 
+                                    if(isset($config->title))
                                     {
                                         $lookupDataSeriesName = $config->title;
                                     }
@@ -825,13 +836,13 @@ class HighChartTimeseries2 extends HighChart2
 
                         if($data_description->std_err == 1 && $data_description->display_type != 'pie')
                         {
-                            $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value,-70);
-                            $error_color = '#'.str_pad(dechex($error_color_value),6,'0',STR_PAD_LEFT);
+                            $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
+                            $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
 
                             $errorCount = $yAxisDataObject->getErrorCount();
                             $error_series = array();
 
-                            for($i = 0 ; $i < $errorCount; $i++)
+                            for($i = 0; $i < $errorCount; $i++)
                             {
                                 // build the error bar and set for display
                                 $v = $yAxisDataObject->getValue($i);
@@ -850,16 +861,16 @@ class HighChartTimeseries2 extends HighChart2
                             if(isset($legend->{$dsn}))
                             {
                                 $config = $legend->{$dsn};
-                                if(isset($config->title)) 
+                                if(isset($config->title))
                                 {
                                     $lookupDataSeriesName = $config->title;
                                 }
                             }
                             $visible = true;
-                                if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
+                            if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
                                 {
-                                    $visible = $data_description->visibility->{$dsn};
-                                }
+                                $visible = $data_description->visibility->{$dsn};
+                            }
 
                             $err_series_tooltip = "function() { ".
                                 "var fErr = Highcharts.numberFormat(this.stderr, $semDecimals); ".
@@ -929,4 +940,3 @@ class HighChartTimeseries2 extends HighChart2
 
     } // function configure()
 } // class HighChartTimeseries2
-

@@ -537,7 +537,7 @@ class Usage extends Common
             unset($meChart['xAxis']['dtitle']);
 
             // set x-axis title, if any, bold:
-            if (isset ($meChart['xAxis']['title']['style']) ) {
+            if (isset($meChart['xAxis']['title']['style'])) {
                 $meChart['xAxis']['title']['style']['fontWeight'] = 'bold';
             }
 
@@ -556,7 +556,7 @@ class Usage extends Common
                 }
 
                 // set y-axis title, if any, bold:
-                if (isset ($meChart['yAxis'][0]['title']['style']) ) {
+                if (isset($meChart['yAxis'][0]['title']['style'])) {
                     $meChart['yAxis'][0]['title']['style']['fontWeight'] = 'bold';
                 }
 
@@ -621,7 +621,10 @@ class Usage extends Common
 
             // For each data series...
             $primaryDataSeriesRank = $usageOffset;
-            array_walk($meChart['series'], function(&$meDataSeries, $meDataSeriesIndex) use (
+            array_walk($meChart['series'], function (
+                &$meDataSeries,
+                $meDataSeriesIndex
+            ) use (
                 $usageRealm,
                 $usageGroupBy,
                 $usageIsTimeseries,
@@ -679,7 +682,7 @@ class Usage extends Common
                 // If this is not a trend line series and not a thumbnail,
                 // fill in the drilldown function.
                 if (!$isTrendLineSeries && !$thumbnailRequested) {
-                    $drillDowns = implode(',',$user->getMostPrivilegedRole()->getQueryDescripters(
+                    $drillDowns = implode(',', $user->getMostPrivilegedRole()->getQueryDescripters(
                         'tg_usage',
                         $usageRealm,
                         $usageGroupBy,
@@ -690,7 +693,7 @@ class Usage extends Common
                     if ($usageIsTimeseries) {
                         $drilldownDetails = $meDataSeries['drilldown'];
                         $drilldownId = $drilldownDetails['id'];
-                        $drilldownLabel = json_encode( $drilldownDetails['label'] );
+                        $drilldownLabel = json_encode($drilldownDetails['label']);
                         $drilldownFunction = "function(event) {
                             this.ts = this.x;
                             XDMoD.Module.Usage.drillChart(
@@ -1046,5 +1049,3 @@ class Usage extends Common
         ;
     }
 }
-
-?>
