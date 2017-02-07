@@ -64,20 +64,22 @@ class Aggregator extends Loggable
     */
     protected function getDistributionSQLCaseStatement($stat, $max, $s1, $e1, $s2, $e2)
     {
-        return "case when ($s1 between $s2 and $e2 and
-       $e1 between $s2 and $e2 )
-      then $stat
-     when ($s1 < $s2 and
-       $e1 between $s2 and $e2 )
-       then $stat*($e1 - $s2 ) / ($e1 - $s1)
-     when ($s1 between $s2 and $e2 and
-       $e1 > $e2 )
-       then	 $stat*( $e2 - $s1) / ($e1 - $s1)
-     when ($s1 < $s2 and
-       $e1 > $e2 )
-       then	$stat*( $max ) / ($e1 - $s1)
-     else $stat
-    end";
+        return "
+            CASE
+                WHEN ($s1 BETWEEN $s2 AND $e2 AND
+                        $e1 BETWEEN $s2 AND $e2 )
+                    THEN $stat
+                WHEN ($s1 < $s2 AND
+                        $e1 BETWEEN $s2 AND $e2 )
+                    THEN $stat * ($e1 - $s2 + 1) / ($e1 - $s1 + 1 )
+                WHEN ($s1 BETWEEN $s2 AND $e2 AND
+                        $e1 > $e2 )
+                    THEN	 $stat * ( $e2 - $s1 + 1 ) / ($e1 - $s1 + 1 )
+                WHEN ($s1 < $s2 AND
+                        $e1 > $e2 )
+                    THEN	$stat * ( $max ) / ($e1 - $s1 + 1 )
+                ELSE $stat
+            END";
     }
 
     /*
@@ -86,20 +88,22 @@ class Aggregator extends Loggable
     */
     protected function getDistributionSQLCaseStatementWithDtype($stat, $dtype, $max, $s1, $e1, $s2, $e2)
     {
-        return "case when ($s1 between $s2 and $e2 and
-       $e1 between $s2 and $e2 )
-      then $stat
-     when ($s1 < $s2 and
-       $e1 between $s2 and $e2 )
-       then CAST( $stat*($e1 - $s2 ) / ($e1 - $s1) AS $dtype )
-     when ($s1 between $s2 and $e2 and
-       $e1 > $e2 )
-       then CAST( $stat*( $e2 - $s1) / ($e1 - $s1) AS $dtype )
-     when ($s1 < $s2 and
-       $e1 > $e2 )
-       then CAST( $stat*( $max ) / ($e1 - $s1) AS $dtype )
-     else $stat
-    end";
+        return "
+            CASE
+                WHEN ($s1 BETWEEN $s2 AND $e2 AND
+                        $e1 BETWEEN $s2 AND $e2 )
+                    THEN $stat
+                WHEN ($s1 < $s2 AND
+                        $e1 BETWEEN $s2 AND $e2 )
+                    THEN CAST( $stat * ($e1 - $s2 + 1) / ($e1 - $s1 + 1) AS $dtype )
+                WHEN ($s1 BETWEEN $s2 AND $e2 AND
+                        $e1 > $e2 )
+                   THEN CAST( $stat * ( $e2 - $s1 + 1) / ($e1 - $s1 + 1) AS $dtype )
+                WHEN ($s1 < $s2 AND
+                        $e1 > $e2 )
+                    THEN CAST( $stat * ( $max ) / ($e1 - $s1 + 1) AS $dtype )
+                ELSE $stat
+            END";
     }
 
     /*
@@ -107,9 +111,11 @@ class Aggregator extends Loggable
     */
     protected function getIf($condition, $then, $else)
     {
-        return "case when $condition
-       then $then
-     else $else
-     	end";
+        return "
+            CASE
+                WHEN $condition
+                    THEN $then
+                ELSE $else
+            END";
     }
 } //Aggregator
