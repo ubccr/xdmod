@@ -214,7 +214,7 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 This process has been tested on CentOS 6, CentOS 7, and Ubuntu 16.04. Known
 issues are documented in the [Building FAQ](#building-faq) below. If you run
 into any issues not listed below on these or any other platforms, please
-let us know.
+let us know. The tested version of composer is 1.3.2 (TravisCI builds use --stable)
 
   1. Change directory to the root of the Open XDMoD repository.
   1. Install Composer dependencies for Open XDMoD.
@@ -262,7 +262,7 @@ The resulting RPM will be located in `~/rpmbuild/RPMS/noarch`.
 
 Certain combinations of PHP and Composer do not handle redirects over HTTPS
 correctly. This is known to affect the version of PHP that CentOS 6 supplies
-combined with current stable versions of Composer (as of this writing, 1.2.4).
+combined with current stable versions of Composer (as of this writing, 1.3.2).
 To get things working, try one or more steps below.
 
   1. Update Composer to a newer version.
@@ -274,19 +274,9 @@ To get things working, try one or more steps below.
 
 #### Why is Composer failing to unzip Ext JS?
 
-The ZIP file for the version of Ext JS being used contains multiple files
-with the same path, and some ZIP programs and libraries do not handle this case
-quietly. If Composer uses the system's `unzip` utility to unpack the ZIP file
-and that version of `unzip` asks for input, Composer will error out. This is
-known to affect the ZIP utilities that Ubuntu 16.04 supplies and the current
-stable versions of Composer (as of this writing, 1.2.4).
+Older versions of Composer (< 1.3.2) had issues with the Ext JS zip file.
 
-Fortunately, PHP's ZIP library will work for this case. Unfortunately,
-getting Composer to use the PHP library currently requires either modifying
-Composer's code or hiding your system's `unzip` utility. You can do the latter
-quickly by temporarily renaming `unzip` to something like `unzip-hidden`, then
-changing the name back once Composer has completed installation. These solutions
-aren't ones we're fans of, so if you have a better solution, please share!
+Upgrading to at least version 1.3.2 resolves this issue.
 
 #### Why is `rpmbuild` warning about files not being found?
 
