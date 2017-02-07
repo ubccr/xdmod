@@ -1205,7 +1205,7 @@ class pdoAggregator extends aAggregator
                     "unit"        => $aggregationUnit,
                     "num_records" => $numRecords
                 );
-                $this->logger->debug(array_merge($msg, $date_result));
+                $this->logger->debug(array_merge($msg, $aggregationPeriodInfo));
 
                 // Insert the new rows.
 
@@ -1228,7 +1228,7 @@ class pdoAggregator extends aAggregator
                                 . " of $totalNumAggregationPeriods) $periodId records = $numRecords, time = " .
                                 round((microtime(true) - $dateIdStartTime), 2) . "s");
 
-        }  // foreach ($aggregationPeriodList as $date_result)
+        }  // foreach ($aggregationPeriodList as $aggregationPeriodInfo)
 
         return $numPeriodsProcessed;
 

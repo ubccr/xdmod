@@ -254,8 +254,8 @@ abstract class aRdbmsDestinationAction extends aAction
             $sql = "TRUNCATE TABLE $tableName";
 
             try {
+                $this->logger->debug("Truncate destination task " . $this->destinationEndpoint . ":\n$sql");
                 if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                    $this->logger->debug("Truncate destination task " . $this->destinationEndpoint . ": $sql");
                     $this->destinationHandle->execute($sql);
                 }
             } catch (PDOException $e) {
