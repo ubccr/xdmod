@@ -10,7 +10,7 @@
 
 class Aggregator extends Loggable
 {
-    private static $__initialized;
+    public static $__initialized;
 
     /**
      * (Optional) The name of the realm associated with this aggregator.
