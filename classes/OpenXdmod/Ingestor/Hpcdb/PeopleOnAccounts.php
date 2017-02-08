@@ -19,7 +19,6 @@ class PeopleOnAccounts extends PDODBMultiIngestor
                     poah.resource_id,
                     poah.person_id,
                     poah.state_id AS allocationstate_id,
-                    poah4.min_activity_time,
                     poah.activity_time AS start_time,
                     (
                         SELECT MIN(poah2.activity_time) AS min
@@ -32,11 +31,6 @@ class PeopleOnAccounts extends PDODBMultiIngestor
                     ) AS end_time,
                     comments
                 FROM hpcdb_people_on_accounts_history poah
-                LEFT OUTER JOIN (
-                    SELECT poah3.person_id, MIN(poah3.activity_time) AS min_activity_time
-                    FROM hpcdb_people_on_accounts_history poah3
-                    GROUP BY poah3.person_id
-                ) AS poah4 ON poah4.person_id = poah.person_id
             ',
             'peopleonaccount',
             array(
@@ -45,7 +39,6 @@ class PeopleOnAccounts extends PDODBMultiIngestor
                 'resource_id',
                 'person_id',
                 'allocationstate_id',
-                'min_activity_time',
                 'start_time',
                 'end_time',
                 'comments',
@@ -53,4 +46,3 @@ class PeopleOnAccounts extends PDODBMultiIngestor
         );
     }
 }
-
