@@ -11,7 +11,7 @@
 --
 -- 2) Source time period overlaps a portion of destination time period. Return (stat * fraction of overlap)
 --
--- Ss ----- Se             OR            Ss ----- Se  
+-- Ss ----- Se             OR            Ss ----- Se
 --      Ds ---------- De        Ds ---------- De
 --
 -- 3) Source includes destination. Return (stat * max) where max may not be De - Ds.
@@ -30,15 +30,27 @@
 -- @param $dest_end_ts End time of the destination period
 -- --------------------------------------------------------------------------------
 CAST(
-CASE
-  WHEN (${src_start_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts}) AND (${src_end_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts} )
-    THEN ${statistic}
-  WHEN ( ${src_start_ts} < ${dest_start_ts} AND ${src_end_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts} )
-    THEN ${statistic} * (${src_end_ts} - ${dest_start_ts}) / (${src_end_ts} - ${src_start_ts})
-  WHEN ( ${src_start_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts} AND ${src_end_ts} > ${dest_end_ts} )
-    THEN ${statistic} * ((${dest_end_ts} + 1) - ${src_start_ts}) / (${src_end_ts} - ${src_start_ts})
-  WHEN ( ${src_start_ts} < ${dest_start_ts} AND ${src_end_ts} > ${dest_end_ts} )
-    THEN ${statistic} * ${max} / (${src_end_ts} - ${src_start_ts})
-  ELSE ${statistic}
-END
+    CASE
+      WHEN (
+          ${src_start_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts}
+          AND ${src_end_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts}
+        )
+        THEN ${statistic}
+      WHEN (
+          ${src_start_ts} < ${dest_start_ts}
+          AND ${src_end_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts}
+        )
+        THEN ${statistic} * ( ${src_end_ts} - ${dest_start_ts} + 1 ) / ( ${src_end_ts} - ${src_start_ts} + 1 )
+      WHEN (
+            ${src_start_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts}
+            AND ${src_end_ts} > ${dest_end_ts}
+        )
+        THEN ${statistic} * ( ${dest_end_ts} - ${src_start_ts} + 1 ) / (${src_end_ts} - ${src_start_ts} + 1 )
+      WHEN (
+          ${src_start_ts} < ${dest_start_ts}
+          AND ${src_end_ts} > ${dest_end_ts}
+        )
+        THEN ${statistic} * ${max} / ( ${src_end_ts} - ${src_start_ts} + 1 )
+      ELSE ${statistic}
+    END
 AS ${data_type})
