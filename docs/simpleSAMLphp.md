@@ -81,7 +81,6 @@ $config = array(
         'personId' => 'person_id',
         'orgId' => 'organization_id',
         'fieldOfScience' => 'field_of_science',
-        'parentId' => 'parent_user_id',
         'itname' => 'username'
       )
     )
