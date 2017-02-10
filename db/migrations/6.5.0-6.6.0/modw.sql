@@ -10,3 +10,5 @@ ALTER TABLE `peopleonaccount` ADD KEY `aggregation_index` (`resource_id`,`accoun
 
 ALTER TABLE `peopleonaccount` ENABLE KEYS;
 UNLOCK TABLES;
+
+INSERT INTO schema_version_history VALUES ('modw', '6.6.0', NOW(), 'upgraded', 'N/A');
