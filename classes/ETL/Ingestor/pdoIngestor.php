@@ -720,6 +720,7 @@ class pdoIngestor extends aIngestor
         }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
 
         if ( $this->etlOverseerOptions->isDryrun() ) {
+            $this->logger->debug("Source query " . $this->sourceEndpoint . ":\n" . $this->sourceQueryString);
             // If this is DRYRUN mode clean up the files that tempnam() created
             foreach ( $infileList as $etlTableKey => $infileName ) {
                 @unlink($infileName);
