@@ -811,6 +811,9 @@ class pdoIngestor extends aIngestor
                     $value = '\N';
                 } elseif ( empty($value) ) {
                     $value = $stringEnc . '' . $stringEnc;
+                } else {
+                    // Handle proper escaping of backslashes to preserve source data containing them.
+                    $value = str_replace('\\', '\\\\', $value);
                 }
             }
 
