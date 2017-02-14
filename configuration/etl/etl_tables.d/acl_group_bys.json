@@ -11,6 +11,11 @@
                 "extra": "auto_increment"
             },
             {
+                "name": "realm_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
                 "name": "acl_id",
                 "type": "integer",
                 "nullable": false
