@@ -1,4 +1,4 @@
--- // Jobs Statistics
+-- Jobs Statistics
 
 INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
@@ -957,9 +957,9 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
--- // Jobs Statistics
+--  Jobs Statistics
 
--- // Account Statistics
+--  Account Statistics
 
 INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
@@ -1056,9 +1056,9 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
--- // Account Statistics
+--  Account Statistics
 
--- // Allocation Statistics
+--  Allocation Statistics
 INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
@@ -1272,9 +1272,9 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
--- // Allocation Statistics
+--  Allocation Statistics
 
--- // Grant Statistics
+--  Grant Statistics
 INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
@@ -1322,9 +1322,9 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
--- // Grant Statistics
+--  Grant Statistics
 
--- // Job Statistics: XSEDE
+--  Job Statistics: XSEDE
 INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
@@ -1516,9 +1516,9 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
--- // Job Statistics: XSEDE
+--  Job Statistics: XSEDE
 
--- // Performance Statistics
+--  Performance Statistics
 INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
@@ -2190,9 +2190,9 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
--- // Performance Statistics
+--  Performance Statistics
 
--- // Proposal Statistics
+--  Proposal Statistics
 
 INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
@@ -2241,9 +2241,9 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
--- // Proposal Statistics
+--  Proposal Statistics
 
--- // Resource Allocation Statistics
+--  Resource Allocation Statistics
 INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
@@ -2555,4 +2555,4 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
--- // Resource Allocation Statistics
+--  Resource Allocation Statistics
