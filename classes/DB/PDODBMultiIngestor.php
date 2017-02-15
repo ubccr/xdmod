@@ -208,7 +208,7 @@ class PDODBMultiIngestor implements Ingestor
                         : (
                             empty($srcRow[$insert_field])
                             ? $string_enc . '' . $string_enc
-                            : $srcRow[$insert_field]
+                            : str_replace('\\', '\\\\', $srcRow[$insert_field])
                         )
                     );
             }
