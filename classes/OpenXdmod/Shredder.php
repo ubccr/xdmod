@@ -293,30 +293,6 @@ class Shredder
     }
 
     /**
-     * Return the resource node name for a node name.
-     *
-     * @param string $node
-     * @param string $date
-     * @param string $fallback
-     *
-     * @return string
-     */
-    public function getResourceForNode($node, $date, $fallback = null)
-    {
-        $this->logger->debug("Getting resource name for node '$node'");
-
-        if ($this->hasResource()) {
-            return $this->getResource();
-        }
-
-        if ($fallback === null) {
-            throw new Exception("Failed to find resource for node '$node'");
-        }
-
-        return $fallback;
-    }
-
-    /**
      * Set the column used to determine the PI.
      *
      * @param string $columnName

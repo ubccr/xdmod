@@ -353,12 +353,7 @@ class Sge extends Shredder
 
         $this->checkJobData($line, $job);
 
-        $date = DateTime::createFromFormat('U', $job['end_time']);
-
-        $job['clustername'] = $this->getResourceForNode(
-            $job['hostname'],
-            $date->format('Y-m-d')
-        );
+        $job['clustername'] = $this->getResource();
 
         $this->insertRow($job);
     }

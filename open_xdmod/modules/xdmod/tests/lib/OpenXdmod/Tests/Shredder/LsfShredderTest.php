@@ -34,7 +34,7 @@ class LsfShredderTest extends \PHPUnit_Framework_TestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Lsf')
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow'))
+            ->setMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
 
         $shredder
@@ -42,7 +42,13 @@ class LsfShredderTest extends \PHPUnit_Framework_TestCase
             ->method('insertRow')
             ->with($row);
 
+        $shredder
+            ->method('getResourceConfig')
+            ->willReturn(array());
+
         $shredder->setLogger(\Log::singleton('null'));
+
+        $shredder->setResource('testresource');
 
         $shredder->shredLine($line);
     }
@@ -202,7 +208,7 @@ class LsfShredderTest extends \PHPUnit_Framework_TestCase
                     'unknown61' => '1',
                     'unknown62' => '',
                     'walltime' => 5794523.29,
-                    'resource_name' => null,
+                    'resource_name' => 'testresource',
                     'node_list' => 'host1201-ib,host1234-ib,host1235-ib,host1236-ib,host1257-ib,host1270-ib,host1301-ib,host1303-ib',
                 )
             ),

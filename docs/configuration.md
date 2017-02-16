@@ -289,13 +289,6 @@ principal investigator (`pi`), center staff (`cs`) and manager (`mgr`).
         }
     }
 
-### node_attributes.json
-
-Used to define data needed for sub-resources.
-
-**NOTE**: This configuration file is deprecated and may be removed in
-a future release.
-
 ### organization.json
 
 Defines the organization name and abbreviation.
