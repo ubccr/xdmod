@@ -253,11 +253,7 @@ class Pbs extends Shredder
             return;
         }
 
-        $job['host'] = $this->getResourceForNode(
-            $node,
-            $date,
-            $jobIdData['host']
-        );
+        $job['host'] = $this->getResource();
 
         foreach (array_keys($job) as $key) {
             if (!in_array($key, self::$columnNames)) {
