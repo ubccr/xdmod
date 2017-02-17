@@ -1049,12 +1049,13 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                     var tab;
                                     for (var i = 0; i < views.length; i++) {
                                         var view = views[i];
-                                        view['jobid'] = jobId;
+                                        view.jobid = jobId;
 
-                                        var dtype = view['dtype'];
+                                        var dtype = view.dtype;
                                         var id = view[dtype];
 
 
+                                        New Error introduced;
                                         var jobPath = self._copy(path, [], true);
                                         jobPath[jobPath.length] = {dtype: dtype, value: id};
 
