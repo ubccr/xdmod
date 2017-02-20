@@ -1877,12 +1877,18 @@ SQL;
 
    public function getRoles($flag = 'informal') {
 
-      if ($flag == 'informal'){ return $this->_roles; }
+      if ($flag == 'informal'){ return $this->_acls; }
 
       if ($flag == 'formal') {
-
-         $query  = "SELECT r.description, r.abbrev FROM Roles AS r, UserRoles AS ur ";
-         $query .= "WHERE r.role_id = ur.role_id AND ur.user_id = :user_id ORDER BY ur.is_primary DESC";
+          $query = <<<SQL
+SELECT 
+a.display,
+a.name
+FROM user_acls ua 
+JOIN acls a 
+ON a.acl_id = ua.acl_id 
+WHERE ua.user_id = :user_id
+SQL;
 
          $results = $this->_pdo->query($query, array(
             ':user_id' => $this->_id,
@@ -1892,7 +1898,7 @@ SQL;
 
          foreach($results as $roleSet) {
 
-            $roles[$roleSet['description']] = $roleSet['abbrev'];
+            $roles[$roleSet['display']] = $roleSet['name'];
 
          }
 
