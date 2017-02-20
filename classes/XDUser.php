@@ -4,6 +4,7 @@ require_once dirname(__FILE__).'/../configuration/linker.php';
 
 use CCR\DB;
 use User\Acl;
+use User\Acls;
 use User\Asset;
 
 /**
@@ -376,6 +377,8 @@ class XDUser {
     */
 
     public static function getPublicUser() {
+      $pubAcl = Acls::getAclByName(ROLE_ID_PUBLIC);
+      $acl = isset($pubAcl) ? $pubAcl : new Acl(array('name' => ROLE_ID_PUBLIC));
 
       $user = new self (
              'Public User',            // Username
@@ -390,9 +393,7 @@ class XDUser {
              NULL                      // Person ID
       );
       $user->setAcls(array(
-          ROLE_ID_PUBLIC => new Acl(
-              array('name' => ROLE_ID_PUBLIC)
-          )
+          ROLE_ID_PUBLIC => $acl
       ));
 
       //$user->setActiveRole(ROLE_ID_PUBLIC);

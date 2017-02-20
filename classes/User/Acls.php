@@ -3,6 +3,7 @@
 use CCR\DB;
 use CCR\DB\iDatabase;
 use Exception;
+use PDO;
 use XDUser;
 
 /**
@@ -216,6 +217,18 @@ class Acls
             $realms
         );
 
+    }
+
+    public static function getAclByName($name)
+    {
+        if (!isset($name)) {
+            throw new Exception('A valid acl name is required');
+        }
+
+        return self::_getAclByName(
+            DB::factory('database'),
+            $name
+        );
     }
 
     /**
@@ -510,6 +523,19 @@ SQL;
         }
 
         return $results;
+    }
+
+    private static function _getAclByName(iDatabase $db, $name)
+    {
+        $sql = "SELECT * FROM acls a WHERE a.name = :name";
+
+        $rows = $db->query($sql, array(':name' => $name));
+
+        if (isset($rows) && count($rows) > 0) {
+            return new Acl($rows[0]);
+        }
+
+        return null;
     }
 
 }

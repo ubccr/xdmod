@@ -66,8 +66,7 @@ class AclsControllerProvider extends BaseControllerProvider
             ->convert('id', "$conversions::toInt")
             ->before($isAuthorized);
 
-        $controller->get("$root/menus/disabled", "$class::getDisabledMenus")
-            ->before("$isAuthorized");
+        $controller->get("$root/menus/disabled", "$class::getDisabledMenus");
     }
 
     public function listAcls(Request $request, Application $app)
@@ -207,7 +206,7 @@ class AclsControllerProvider extends BaseControllerProvider
         ), $status);
     }
 
-    public function getUserAcls(Request $request, Application $app)
+    public function getDisabledMenus(Request $request, Application $app)
     {
         $user = $request->get(BaseControllerProvider::_USER);
         $realm = self::getStringParam($request, 'realm');
