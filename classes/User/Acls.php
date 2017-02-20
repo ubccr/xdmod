@@ -93,6 +93,7 @@ class Acls
      *
      * @param XDUser $user
      * @return array
+     * @throws Exception
      */
     public static function listUserAcls(XDUser $user)
     {
@@ -154,6 +155,7 @@ class Acls
      * @param XDUser $user
      * @param integer $aclId
      * @return bool
+     * @throws Exception
      */
     public static function userHasAcl(XDUser $user, $aclId)
     {
@@ -192,6 +194,28 @@ class Acls
             $user,
             $acls
         );
+    }
+
+    public static function getDisabledMenus(XDUser $user, array $realms)
+    {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+
+        if (!isset($realms)) {
+            throw new Exception('A valid set of realms must be provided.');
+        }
+
+        if (count($realms) < 1) {
+            throw new Exception('At least one realm expected must be provided.');
+        }
+
+        return self::_getDisabledMenus(
+            DB::factory('database'),
+            $user,
+            $realms
+        );
+
     }
 
     /**
@@ -417,4 +441,75 @@ SQL;
 
         return $results[0] == 1;
     }
+
+
+
+    private static function _getDisabledMenus(iDatabase $db, XDUser $user, array $realmNames)
+    {
+        // Needed because we have 'IN' clauses.
+        $handle = $db->handle();
+
+        // PDO can't handle 'IN' for prepared statements so create some suitable strings
+        // for substitution. ( making sure to quote where appropriate ).
+        $acls = implode(',', array_reduce($user->getAcls(), function($carry, Acl $item) use($handle) {
+            $carry []= $handle->quote($item->getAclId(), PDO::PARAM_INT);
+            return $carry;
+        }, array()));
+
+        $realms = implode(',', array_reduce($realmNames, function($carry, $item) use ($handle) {
+            $carry []= $handle->quote($item);
+            return $carry;
+        }, array()));
+
+        $sql = <<<SQL
+SELECT DISTINCT
+  a.name,
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE CONCAT('group_by_',r.name,'_',gb.name) END AS id,
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE gb.name END as group_by,
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE r.name END as realm
+FROM acl_group_bys agb
+  JOIN acls a
+    ON a.acl_id = agb.acl_id
+  JOIN group_bys gb
+    ON gb.group_by_id = agb.group_by_id
+  JOIN realm_group_bys rgb
+    ON gb.group_by_id = rgb.group_by_id
+  JOIN realms r
+    ON rgb.realm_id = r.realm_id
+       AND agb.realm_id = r.realm_id
+WHERE agb.acl_id IN ($acls)
+      AND r.name IN ($realms)
+  ORDER BY a.name
+SQL;
+        $results = array();
+
+        /* By retrieving all of the query_descripters ( acl_group_bys ) for all
+         * of a users acls / the provided realms in one go we do not need the
+         * 'foreach role ... role->getDisabledMenus()' we then take care of
+         * formatting the results as the XDUser->getDisabledMenus function
+         * expects by including the group_by name / ordering by group_by name
+         * and constructing an associative array based on said group_by name.
+         * The code in XDUser->getDisabledMenus is still responsible for detecting
+         * whether or not any given disabled menu is present for all other acls.
+         */
+        $rows = $db->query($sql);
+
+        $previousName = null;
+        foreach($rows as $row) {
+            $name = $row['name'];
+            if ($name != $previousName) {
+                $previousName = $name;
+            }
+            if ($row['id'] != null) {
+                $results[$name] = array(
+                    'id' => $row['id'],
+                    'group_by' => $row['group_by'],
+                    'realm' => $row['realm']
+                );
+            }
+        }
+
+        return $results;
+    }
+
 }

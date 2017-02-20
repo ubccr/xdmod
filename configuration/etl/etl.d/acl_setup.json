@@ -43,7 +43,8 @@
         "group_by_filters.json",
         "acl_filters.json",
         "report_template_acl.json",
-        "acl_group_bys.json"
+        "acl_group_bys.json",
+        "group_by_statistics.json"
       ],
       "enabled": true
     },
