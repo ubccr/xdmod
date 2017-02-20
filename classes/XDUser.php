@@ -2762,17 +2762,7 @@ SQL;
       // Get the set of disabled menus for each role the user has.
       $disabledMenusByRole = array();
 
-      foreach($this->_roles as $role_abbrev)
-      {
-
-         if ($role_abbrev == 'dev') continue;
-
-         $role = \User\aRole::factory($this->_getFormalRoleName($role_abbrev));
-         $disabledMenusByRole[$role_abbrev] = $role->getDisabledMenus($realms);
-
-      }
-      $role = \User\aRole::factory($this->_getFormalRoleName('pub'));
-      $disabledMenusByRole['pub'] = $role->getDisabledMenus($realms);
+      $disabledMenusByRole = Acls::getDisabledMenus($this, $realms);
 
       // If the user only has one role, return that role's menus immediately.
       if (count($disabledMenusByRole) === 1) {
