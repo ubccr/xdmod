@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "name": "tabs",
+        "name": "acl_tabs",
         "engine": "InnoDB",
         "comment": "Tracks which `acls` have a relationship with which `tabs`",
         "columns": [
