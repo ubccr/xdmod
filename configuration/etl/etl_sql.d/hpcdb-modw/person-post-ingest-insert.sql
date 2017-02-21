@@ -1,0 +1,35 @@
+INSERT IGNORE INTO `${DESTINATION_SCHEMA}`.`person` (
+    id,
+    organization_id,
+    nsfstatuscode_id,
+    first_name,
+    middle_name,
+    last_name,
+    email_address,
+    long_name,
+    short_name,
+    order_id
+) VALUES (
+    -1,
+    -1,
+    -1,
+    'Unknown',
+    '',
+    'Unknown',
+    '',
+    'Unknown',
+    'Unknown',
+    -1
+),
+(
+    -2,
+    -2,
+    -2,
+    'unassociated',
+    '',
+    'unassociated',
+    '',
+    'unassociated',
+    'unassociated',
+    -2
+)

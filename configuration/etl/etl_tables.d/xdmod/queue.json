@@ -1,0 +1,40 @@
+{
+    "table_definition": {
+        "name": "queue",
+        "engine": "MyISAM",
+        "comment": "The queue names of the different resources.",
+        "columns": [{
+                "name": "id",
+                "type": "char(50)",
+                "nullable": false,
+                "default": "",
+                "comment": "The name of the queue."
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The resource this queue belongs to."
+            }
+        ],
+        "indexes": [{
+                "name": "fk_Queue_Resource_idx",
+                "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id",
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

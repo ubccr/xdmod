@@ -1,0 +1,27 @@
+{
+    "table_definition": {
+        "name": "peopleunderpi",
+        "engine": "MyISAM",
+        "columns": [{
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "person_id",
+                "type": "varchar(45)",
+                "nullable": false
+            }
+        ],
+        "indexes": [{
+            "name": "PRIMARY",
+            "columns": [
+                "principalinvestigator_person_id",
+                "person_id"
+            ],
+            "type": "BTREE",
+            "is_unique": true
+        }],
+        "triggers": []
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "table_definition": {
+        "name": "job_times",
+        "engine": "MyISAM",
+        "columns": [{
+                "name": "id",
+                "type": "int(4)",
+                "nullable": false
+            },
+            {
+                "name": "min_duration",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "max_duration",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "description",
+                "type": "varchar(50)",
+                "nullable": false
+            }
+        ],
+        "indexes": [{
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "times",
+                "columns": [
+                    "min_duration",
+                    "max_duration"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": []
+    }
+}

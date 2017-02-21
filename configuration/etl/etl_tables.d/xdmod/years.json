@@ -1,0 +1,148 @@
+{
+    "table_definition": {
+        "comment": "autogen - one rec for each year of TG operation.",
+        "engine": "MyISAM",
+        "columns": [{
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": "The id of the year record.",
+                "hints": null,
+                "rename": null,
+                "name": "id"
+            },
+            {
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": "The year of the record.",
+                "hints": null,
+                "rename": null,
+                "name": "year"
+            },
+            {
+                "type": "datetime",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": "The start datetime of the year",
+                "hints": null,
+                "rename": null,
+                "name": "year_start"
+            },
+            {
+                "type": "datetime",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": "The end datetime of the year",
+                "hints": null,
+                "rename": null,
+                "name": "year_end"
+            },
+            {
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": "The number of hours in the year.",
+                "hints": null,
+                "rename": null,
+                "name": "hours"
+            },
+            {
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": "The number of seconds in the year",
+                "hints": null,
+                "rename": null,
+                "name": "seconds"
+            },
+            {
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": "The start timestamp of the year in epochs.",
+                "hints": null,
+                "rename": null,
+                "name": "year_start_ts"
+            },
+            {
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": "The end timestamp of the year in epochs. If the last job fell during this year the end of the year will be abrupt. Hence a partial year.",
+                "hints": null,
+                "rename": null,
+                "name": "year_end_ts"
+            },
+            {
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": null,
+                "extra": null,
+                "comment": null,
+                "hints": null,
+                "rename": null,
+                "name": "year_middle_ts"
+            }
+        ],
+        "indexes": [{
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true,
+                "name": "PRIMARY"
+            },
+            {
+                "columns": [
+                    "id",
+                    "seconds",
+                    "year_start_ts",
+                    "year_end_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false,
+                "name": "year_index"
+            },
+            {
+                "columns": [
+                    "id",
+                    "year_start_ts",
+                    "year_middle_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false,
+                "name": "year_index2"
+            },
+            {
+                "columns": [
+                    "year",
+                    "year_start",
+                    "year_end"
+                ],
+                "type": "BTREE",
+                "is_unique": true,
+                "name": "year_pk2"
+            },
+            {
+                "columns": [
+                    "year"
+                ],
+                "type": "BTREE",
+                "is_unique": true,
+                "name": "year_yq"
+            }
+        ],
+        "triggers": [],
+        "schema": "modw",
+        "name": "years"
+    }
+}
