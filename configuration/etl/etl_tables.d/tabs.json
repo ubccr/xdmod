@@ -58,7 +58,7 @@
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "realm_id"
+                    "tab_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true
