@@ -1,0 +1,164 @@
+{
+    "table_definition": {
+        "name": "allocation",
+        "engine": "MyISAM",
+        "comment": "Holds allocation records.",
+        "columns": [{
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "The id of the allocation record."
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "This is the resource that the allocation sus where assigned in relativity to. It doesnt mean that the allocation can be used to run on this resource. To use this allocation, there must be resources assigned to this allocation in the allocationonresource t"
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "This is the id of the accoun that owns this allocation, usually belongs to the PI of the project."
+            },
+            {
+                "name": "request_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the request that resulted in this allocation."
+            },
+            {
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The person id of the pi who owns this allocation."
+            },
+            {
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "boardtype_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "initial_allocation",
+                "type": "decimal(15,2)",
+                "nullable": false,
+                "comment": "The initial amount of the allocation in SUs."
+            },
+            {
+                "name": "initial_start_date",
+                "type": "date",
+                "nullable": false,
+                "comment": "The initial start date of the allocation."
+            },
+            {
+                "name": "initial_start_date_ts",
+                "type": "int(14)",
+                "nullable": false
+            },
+            {
+                "name": "initial_end_date",
+                "type": "date",
+                "nullable": false,
+                "comment": "The initial assumed end of the allocation."
+            },
+            {
+                "name": "base_allocation",
+                "type": "decimal(15,2)",
+                "nullable": false,
+                "comment": "The current amount of the allocation, which is the initial modified by any amounts since it was initiated. Allocations can be modified by transfers or not, supplements awarded."
+            },
+            {
+                "name": "remaining_allocation",
+                "type": "decimal(18,4)",
+                "nullable": false,
+                "comment": "This is the remaning amount of the allocation. Negative values mean they’ve consumed more SUs than they’ve been allocated. This may happen for a number of reasons, the most common being the project submits final job(s) when they are still “in the black” b"
+            },
+            {
+                "name": "end_date",
+                "type": "date",
+                "nullable": false,
+                "comment": "This is the actual date the allocation was actually ended. "
+            },
+            {
+                "name": "end_date_ts",
+                "type": "int(14)",
+                "nullable": false
+            },
+            {
+                "name": "allocation_type_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The type of the allocation (extension, supplement, transfer, new, renewal, advance, adjustment)"
+            },
+            {
+                "name": "charge_number",
+                "type": "varchar(200)",
+                "nullable": true
+            },
+            {
+                "name": "conversion_factor",
+                "type": "decimal(10,4)",
+                "nullable": false,
+                "default": "1.0000"
+            },
+            {
+                "name": "xd_su_per_hour",
+                "type": "decimal(15,2)",
+                "nullable": false,
+                "default": "0.00"
+            },
+            {
+                "name": "long_name",
+                "type": "varchar(500)",
+                "nullable": true
+            },
+            {
+                "name": "short_name",
+                "type": "varchar(500)",
+                "nullable": true
+            },
+            {
+                "name": "order_id",
+                "type": "int(11)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "allocation_charge_number",
+                "columns": [
+                    "charge_number"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "aggregation_index",
+                "columns": [
+                    "account_id",
+                    "id",
+                    "initial_start_date_ts",
+                    "end_date_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+
+        ],
+        "triggers": []
+    }
+}

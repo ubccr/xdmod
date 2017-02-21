@@ -1,0 +1,29 @@
+{
+    "table_definition": {
+            "$ref": "etl_tables.d/xdmod/days.json#/table_definition"
+        },
+    "source_query": {
+        "#overseer_restrictions": {
+            "#start_date": "jf.end_time >= UNIX_TIMESTAMP(${VALUE})",
+            "#end_date": "jf.end_time <= UNIX_TIMESTAMP(${VALUE})"
+        },
+        "records": {
+            "min_datetime": "DATE_SUB(min_job_date, INTERVAL 1 DAY)",
+            "max_datetime": "max_job_date"
+        },
+        "joins": [{
+            "name": "minmaxdate",
+            "schema": "${DESTINATION_SCHEMA}",
+            "alias": "mmf"
+
+        }],
+        "destination_record_map": {
+            "days": {
+                "id": "id"
+            }
+        },
+        "#where": [
+            "1 = 2"
+        ]
+    }
+}

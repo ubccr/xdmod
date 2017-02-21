@@ -1,0 +1,31 @@
+{
+    "table_definition": {
+        "name": "staging_jobhosts",
+        "engine": "MyISAM",
+        "columns": [{
+                "name": "job_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "hostname",
+                "type": "varchar(248)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "order_id",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    }
+}

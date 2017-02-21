@@ -1,0 +1,35 @@
+{
+    "table_definition": {
+        "name": "nodecount",
+        "engine": "InnoDB",
+        "columns": [{
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "nodes",
+                "type": "varchar(100)",
+                "nullable": false
+            }
+        ],
+        "indexes": [{
+                "name": "nodes_UNIQUE",
+                "columns": [
+                    "nodes"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

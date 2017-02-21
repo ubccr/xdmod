@@ -1,0 +1,25 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/resource-fact.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "r.resource_id",
+            "resourcetype_id": "r.resource_type_id",
+            "organization_id":"r.organization_id",
+            "name": "r.resource_name",
+            "code": "r.resource_code",
+            "description": "r.resource_description",
+            "shared_jobs": "r.resource_shared_jobs",
+            "timezone": "r.resource_timezone"
+        },
+        "joins": [{
+            "name": "hpcdb_resources",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "r"
+        }],
+        "orderby": [
+            "r.resource_id"
+        ]
+    }
+}
