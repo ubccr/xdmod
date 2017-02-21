@@ -1,0 +1,68 @@
+{
+    "table_definition": {
+        "name": "tabs",
+        "engine": "InnoDB",
+        "comment": "Tracks which `tabs` are available to the system",
+        "columns": [
+            {
+                "name": "tab_id",
+                "type": "integer",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "module_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "display",
+                "type": "varchar(1024)",
+                "nullable": true
+            },
+            {
+                "name": "position",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "is_default",
+                "type": "boolean",
+                "nullable": false,
+                "default": false
+            },
+            {
+                "name": "javascript_class",
+                "type": "varchar(2048)",
+                "nullable": false
+            },
+            {
+                "name": "javascript_reference",
+                "type": "varchar(2048)"
+            },
+            {
+                "name": "tooltip",
+                "type": "varchar(2048)"
+            },
+            {
+                "name": "user_manual_section_name",
+                "type": "varchar(512)"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "realm_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}

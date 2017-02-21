@@ -1,0 +1,50 @@
+{
+    "table_definition": {
+        "name": "tabs",
+        "engine": "InnoDB",
+        "comment": "Tracks which `acls` have a relationship with which `tabs`",
+        "columns": [
+            {
+                "name": "acl_tab_id",
+                "type": "integer",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "acl_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "tab_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "position",
+                "type": "integer"
+            },
+            {
+                "name": "is_default",
+                "type": "boolean"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "acl_tab_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "idx_acl_tab",
+                "columns": [
+                    "acl_id",
+                    "tab_id"
+                ]
+            }
+        ]
+    }
+}
