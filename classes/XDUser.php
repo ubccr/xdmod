@@ -1878,7 +1878,13 @@ SQL;
 
    public function getRoles($flag = 'informal') {
 
-      if ($flag == 'informal'){ return $this->_acls; }
+      if ($flag == 'informal') {
+          $roles = array_reduce($this->_acls, function($carry, Acl $item) {
+              $carry[$item->getDisplay()] = $item->getName();
+              return $carry;
+          }, array());
+          return $roles;
+      }
 
       if ($flag == 'formal') {
           $query = <<<SQL
