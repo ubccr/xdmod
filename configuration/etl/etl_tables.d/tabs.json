@@ -16,6 +16,10 @@
                 "nullable": false
             },
             {
+                "name": "parent_tab_id",
+                "type": "integer"
+            },
+            {
                 "name": "name",
                 "type": "varchar(255)",
                 "nullable": false
