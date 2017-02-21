@@ -1880,7 +1880,7 @@ SQL;
 
       if ($flag == 'informal') {
           $roles = array_reduce($this->_acls, function($carry, Acl $item) {
-              $carry[$item->getDisplay()] = $item->getName();
+              $carry[] = $item->getName();
               return $carry;
           }, array());
           return $roles;
