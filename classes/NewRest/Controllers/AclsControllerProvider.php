@@ -25,7 +25,7 @@ class AclsControllerProvider extends BaseControllerProvider
         $class = get_class($this);
         $conversions = '\NewRest\Utilities\Conversions';
 
-        $isAuthorized = function(Request $request, Application $app) {
+        $isAuthorized = function (Request $request, Application $app) {
             $authorized = $this->isAuthorized($request, array('mgr'));
             if (!$authorized) {
                 return $app->json(
@@ -67,6 +67,9 @@ class AclsControllerProvider extends BaseControllerProvider
             ->before($isAuthorized);
 
         $controller->get("$root/menus/disabled", "$class::getDisabledMenus");
+
+        $controller->get("$root/roles", "$class::getUserRoles")
+            ->before($isAuthorized);
     }
 
     public function listAcls(Request $request, Application $app)
@@ -76,8 +79,8 @@ class AclsControllerProvider extends BaseControllerProvider
         $status = true == $success ? 200 : 500;
 
         return $app->json(array(
-                'success' => $success,
-                'results' => $acls
+            'success' => $success,
+            'results' => $acls
         ), $status);
     }
 
@@ -217,6 +220,19 @@ class AclsControllerProvider extends BaseControllerProvider
         return $app->json(array(
             'success' => $success,
             'data' => $menus
+        ));
+    }
+
+    public function getUserRoles(Request $request, Application $app)
+    {
+        $user = $request->get(BaseControllerProvider::_USER);
+        $roles = $user->getRoles();
+
+        $success = isset($roles);
+
+        return $app->json(array(
+            'success' => $success,
+            'data' => $roles
         ));
     }
 }
