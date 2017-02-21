@@ -1882,12 +1882,12 @@ SQL;
 
       if ($flag == 'formal') {
           $query = <<<SQL
-SELECT 
+SELECT
 a.display,
 a.name
-FROM user_acls ua 
-JOIN acls a 
-ON a.acl_id = ua.acl_id 
+FROM user_acls ua
+JOIN acls a
+ON a.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
 
