@@ -103,6 +103,14 @@
         {
           "sql_file": "acls/statistics.sql",
           "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/tabs.sql",
+          "delimiter": "//"
+        },
+        {
+          "sql_file": "acls/acl_tabs.sql",
+          "delimiter": "//"
         }
       ],
       "enabled": true
