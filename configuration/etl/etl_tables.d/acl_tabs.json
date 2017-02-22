@@ -21,6 +21,10 @@
                 "nullable": false
             },
             {
+                "name": "parent_acl_tab_id",
+                "type": "integer"
+            },
+            {
                 "name": "position",
                 "type": "integer"
             },
