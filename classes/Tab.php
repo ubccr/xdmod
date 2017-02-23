@@ -14,6 +14,8 @@
  * @method void    setDisplay($display)
  * @method integer getPosition()
  * @method void    setPosition($position)
+ * @method bool    getIsDefault()
+ * @method void    setIsDefault($isDefault)
  * @method string  getJavaScriptClass()
  * @method void    setJavascriptClass($javascriptClass)
  * @method string  getJavascriptReference()
