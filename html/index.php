@@ -362,21 +362,15 @@
       <script type="text/javascript" src="gui/js/report_builder/ChartThumbPreview.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportExportMenu.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportCloneMenu.js"></script>
-      <?php endif; ?>
-      <script type="text/javascript" src="gui/js/report_builder/ReportEntryTypeMenu.js"></script>
-      <?php if ($userLoggedIn): ?>
       <script type="text/javascript" src="gui/js/report_builder/ChartDateEditor.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/Reporting.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportManager.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/AvailableCharts.js"></script>
-      <script type="text/javascript" src="gui/js/report_builder/ChartAnnotator.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/SaveReportAsDialog.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportCreatorGrid.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportCreator.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportsOverview.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportPreview.js"></script>
-
-      <script type="text/javascript" src="gui/js/report_builder/RoleBreakdownGrid.js"></script>
       <?php endif; ?>
 
       <?php if ($userLoggedIn): ?>

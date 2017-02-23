@@ -412,7 +412,7 @@ class Query extends aNamedEntity
     public function addOrderBy($orderBy)
     {
         if ( empty($orderBy) || ! is_string($orderBy) ) {
-            $msg = "Cannot add an empty group by";
+            $msg = "Cannot add an empty order by";
             $this->logAndThrowException($msg);
         }
 

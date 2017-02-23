@@ -49,7 +49,6 @@ XDMoD.Reporting.PreviewThumb = function(ref, title, timeframe_desc, store_id, re
 };//XDMoD.Reporting.PreviewThumb
 
 XDMoD.Reporting.Singleton.ChartDateEditor = new XDMoD.Reporting.ChartDateEditor();
-XDMoD.Reporting.Singleton.ReportEntryTypeMenu = new XDMoD.Reporting.ReportEntryTypeMenu();
 
 function dismissPlaceholder(placeholder_id) {
 
