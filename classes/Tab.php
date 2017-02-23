@@ -12,6 +12,8 @@
  * @method void    setName($name)
  * @method string  getDisplay()
  * @method void    setDisplay($display)
+ * @method integer getPosition()
+ * @method void    setPosition($position)
  * @method string  getJavaScriptClass()
  * @method void    setJavascriptClass($javascriptClass)
  * @method string  getJavascriptReference()
@@ -28,6 +30,7 @@ class Tab extends DBObject implements JsonSerializable
     const PARENT_TAB_ID = 'parent_tab_id';
     const NAME = 'name';
     const DISPLAY = 'display';
+    const POSITION = 'position';
     const IS_DEFAULT = 'is_default';
     const JAVASCRIPT_CLASS = 'javascript_class';
     const JAVASCRIPT_REFERENCE = 'javascript_reference';
@@ -39,6 +42,7 @@ class Tab extends DBObject implements JsonSerializable
     protected $parentTabId;
     protected $name;
     protected $display;
+    protected $position;
     protected $isDefault;
     protected $javascriptClass;
     protected $javascriptReference;
@@ -56,6 +60,7 @@ class Tab extends DBObject implements JsonSerializable
             static::PARENT_TAB_ID => $this->parentTabId,
             static::NAME => $this->name,
             static::DISPLAY => $this->display,
+            static::POSITION => $this->position,
             static::IS_DEFAULT => $this->isDefault,
             static::JAVASCRIPT_CLASS => $this->javascriptClass,
             static::JAVASCRIPT_REFERENCE => $this->javascriptReference,
