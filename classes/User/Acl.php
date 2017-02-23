@@ -63,10 +63,5 @@ class Acl extends DBObject implements JsonSerializable
             Acl::ENABLED => $this->enabled
         );
     }
-
-    function __toString()
-    {
-        return json_encode($this);
-    }
 }
 

@@ -74,4 +74,9 @@ class DBObject {
         }
 
     }
+
+    function __toString()
+    {
+        return json_encode($this);
+    }
 }
