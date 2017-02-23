@@ -124,7 +124,7 @@ SQL;
 
         if (isset($rows) && count($rows) > 0) {
             $results = array_reduce($rows, function ($carry, $item) {
-                $carry [] = new Tab($item);
+                $carry [$item['name']] = new Tab($item);
                 return $carry;
             }, array());
         }

@@ -1,0 +1,6 @@
+{
+    "acls": {
+        "prefix": "ui",
+        "controller": "NewRest\\Controllers\\UIControllerProvider"
+    }
+}
