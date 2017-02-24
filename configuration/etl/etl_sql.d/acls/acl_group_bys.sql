@@ -1,5 +1,5 @@
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -18,11 +18,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -41,11 +41,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -64,11 +64,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -87,11 +87,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -110,11 +110,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -133,11 +133,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -156,11 +156,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -179,11 +179,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -202,11 +202,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -225,11 +225,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -248,11 +248,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -271,11 +271,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -294,13 +294,13 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 -- default
 
--- usr 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+-- usr
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -319,11 +319,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -342,11 +342,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -365,11 +365,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -388,11 +388,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -411,11 +411,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -434,11 +434,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -457,11 +457,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -480,11 +480,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -503,11 +503,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -526,11 +526,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -549,11 +549,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -572,11 +572,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -595,12 +595,12 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 -- usr
 
--- cd 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+-- cd
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -619,11 +619,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -642,11 +642,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -665,11 +665,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -688,11 +688,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -711,11 +711,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -734,11 +734,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -757,11 +757,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -780,11 +780,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -803,11 +803,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -826,11 +826,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -849,11 +849,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -872,11 +872,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -895,12 +895,12 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 -- cd
 
--- pi 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+-- pi
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -919,11 +919,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -942,11 +942,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -965,11 +965,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -988,11 +988,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1011,11 +1011,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1034,11 +1034,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1057,11 +1057,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1080,11 +1080,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1103,11 +1103,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1126,11 +1126,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1149,11 +1149,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1172,11 +1172,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1195,12 +1195,12 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 -- pi
 
--- cs 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+-- cs
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1219,11 +1219,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1242,11 +1242,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1265,11 +1265,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1288,11 +1288,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1311,11 +1311,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1334,11 +1334,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1357,11 +1357,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1380,11 +1380,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1403,11 +1403,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1426,11 +1426,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1449,11 +1449,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1472,11 +1472,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1495,12 +1495,12 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 -- cs
 
 -- mgr
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1519,11 +1519,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1542,11 +1542,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1565,11 +1565,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1588,11 +1588,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1611,11 +1611,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1634,11 +1634,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1657,11 +1657,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1680,11 +1680,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1703,11 +1703,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1726,11 +1726,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1749,11 +1749,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1772,11 +1772,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1795,11 +1795,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 -- mgr
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1818,11 +1818,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1841,11 +1841,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1864,11 +1864,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1887,11 +1887,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1910,11 +1910,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1933,11 +1933,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1956,11 +1956,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -1979,11 +1979,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -2002,11 +2002,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -2025,11 +2025,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -2048,11 +2048,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -2071,11 +2071,11 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
 
-INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
+INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, visible)
     SELECT inc.*
     FROM (SELECT
               a.acl_id,
@@ -2094,6 +2094,6 @@ INSERT INTO acl_group_bys (acl_id, realm_id, group_by_id, hide)
             ON cur.acl_id = inc.acl_id
                AND cur.realm_id = inc.realm_id
                AND cur.group_by_id = inc.group_by_id
-               AND cur.hide = inc.hide
+               AND cur.visible = inc.hide
     WHERE cur.acl_group_by_id IS NULL;
 
