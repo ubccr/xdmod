@@ -46,7 +46,8 @@
         "acl_group_bys.json",
         "group_by_statistics.json",
         "tabs.json",
-        "acl_tabs.json"
+        "acl_tabs.json",
+        "user_acl_filters.json"
       ],
       "enabled": true
     },
