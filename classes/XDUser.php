@@ -1940,7 +1940,7 @@ SQL;
           }
           return $carry;
       }, array());
-      $this->setAzcls($acls);
+      $this->setAcls($acls);
    }
 
    // ---------------------------
@@ -2598,7 +2598,6 @@ SQL;
 
       $user->setRoles($user_role_set);
 
-
       // ----------------------------------------------
 
       $user->saveUser();
@@ -2924,15 +2923,5 @@ SQL;
             $total += $found ? 1 : 0;
         }
         return $total === count($assets);
-    }
-
-    public function getRootHierarchyAcl($hierarchyId)
-    {
-
-    }
-
-    public function setRootHierarchyAcl($acl)
-    {
-
     }
 }//XDUser
