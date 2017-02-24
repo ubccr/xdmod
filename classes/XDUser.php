@@ -1073,7 +1073,7 @@ SQL;
 
    public function getToken() {
 
-      if ($this->_active_role->getIdentifier() == ROLE_ID_PUBLIC) {
+      if ($this->isPublicUser()) {
          return '';
       }
 
@@ -1097,7 +1097,7 @@ SQL;
 
    public function getTokenExpiration() {
 
-      if ($this->_active_role->getIdentifier() == ROLE_ID_PUBLIC) {
+      if ($this->isPublicUser()) {
          return '';
       }
 
@@ -1161,6 +1161,11 @@ SQL;
       ));
       $this->_pdo->execute("DELETE FROM UserRoles WHERE user_id=:user_id", array(
          ':user_id' => $this->_id,
+      ));
+
+      // Make sure to remove the acl relations
+      $this->_pdo->execute("DELETE FROM user_acls WHERE user_id = :user_id", array(
+          ':user_id', $this->_id
       ));
 
       // Reset any associations to dependent users
@@ -1927,6 +1932,15 @@ SQL;
 
    public function setRoles($role_set) {
       $this->_roles = $role_set;
+      // Make sure to also set the Acls
+      $acls = array_reduce($role_set, function($carry, $roleName) {
+          $acl = Acls::getAclByName($roleName);
+          if ($acl !== null) {
+              $carry []= $acl;
+          }
+          return $carry;
+      }, array());
+      $this->setAzcls($acls);
    }
 
    // ---------------------------
@@ -2584,6 +2598,7 @@ SQL;
 
       $user->setRoles($user_role_set);
 
+
       // ----------------------------------------------
 
       $user->saveUser();
@@ -2909,5 +2924,15 @@ SQL;
             $total += $found ? 1 : 0;
         }
         return $total === count($assets);
+    }
+
+    public function getRootHierarchyAcl($hierarchyId)
+    {
+
+    }
+
+    public function setRootHierarchyAcl($acl)
+    {
+
     }
 }//XDUser
