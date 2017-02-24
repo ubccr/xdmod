@@ -1,0 +1,58 @@
+{
+    "table_definition": {
+        "name": "user_acl_filters",
+        "engine": "InnoDB",
+        "comment": "Tracks which `Users` have which `value` in relation to which `acl` and `filter`",
+        "columns": [
+            {
+                "name": "user_acl_filter_id",
+                "type": "integer",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "user_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "acl_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "filter_id",
+                "type": "integer",
+                "nullable": false
+            },
+            {
+                "name": "value",
+                "type": "varchar(1024)"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "user_acl_filter_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "idx_user_id",
+                "columns": [
+                    "user_id"
+                ],
+                "type": "BTREE"
+            },
+            {
+                "name": "idx_acl_id",
+                "columns": [
+                    "acl_id"
+                ],
+                "type": "BTREE"
+            }
+        ]
+    }
+}
