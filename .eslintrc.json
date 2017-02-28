@@ -1,17 +1,20 @@
 {
-  "env": {},
+  "extends": "airbnb-base/legacy",
+  "env": {
+    "browser": false,
+    "node": false
+  },
   "globals": {},
-  "extends": "eslint:recommended",
   "rules": {
-    "curly": "error",
-    "guard-for-in": "error",
-    "no-extend-native": "error",
+    "curly": [
+      "error",
+      "all"
+    ],
     "block-scoped-var": "warn",
-    "no-use-before-define": "error",
-    "no-caller": "error",
-    "no-sequences": "error",
-    "no-new": "error",
-    "no-extra-parens": "warn",
+    "no-extra-parens": [
+      "warn",
+      "all"
+    ],
     "dot-notation": [
       "warn",
       {
@@ -26,41 +29,9 @@
         "string": false
       }
     ],
-    "no-multi-spaces": "error",
-    "key-spacing": [
-      "error",
-      {
-        "beforeColon": false,
-        "afterColon": true
-      }
-    ],
-    "comma-spacing": [
-      "error",
-      {
-        "before": false,
-        "after": true
-      }
-    ],
-    "semi-spacing": [
-      "error",
-      {
-        "before": false,
-        "after": true
-      }
-    ],
-    "no-spaced-func": "error",
-    "no-trailing-spaces": "error",
-    "eol-last": "error",
-    "semi": "error",
-    "space-infix-ops": "error",
     "consistent-this": [
       "warn",
       "self"
-    ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "keyword-spacing": "warn"
+    ]
   }
 }
