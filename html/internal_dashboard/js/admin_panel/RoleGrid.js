@@ -125,7 +125,6 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
       self.reset = function() {
 
          self.rselector.reset();
-         self.prselector.reset();
 
          centerAssignments[XDMoD.Admin.Roles.CENTER_DIRECTOR].length = 0;
          centerAssignments[XDMoD.Admin.Roles.CENTER_STAFF].length = 0;

@@ -1146,8 +1146,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         roleGrid.setCenterConfig(XDMoD.Admin.Roles.CENTER_DIRECTOR, json.user_information.center_director_sites);
                         roleGrid.setCenterConfig(XDMoD.Admin.Roles.CENTER_STAFF, json.user_information.center_staff_sites);
 
-                        roleGrid.setPrimaryRole(json.user_information.primary_role);
-
                         userSettings.setDisabled(false);
                         userEditor.hideMask();
                         btnSaveChanges.setDisabled(false);
