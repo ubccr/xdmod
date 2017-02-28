@@ -3,64 +3,64 @@
   "globals": {},
   "extends": "eslint:recommended",
   "rules": {
-    "curly": 2,
-    "guard-for-in": 2,
-    "no-extend-native": 2,
-    "block-scoped-var": 1,
-    "no-use-before-define": 2,
-    "no-caller": 2,
-    "no-sequences": 2,
-    "no-new": 2,
-    "no-extra-parens": 1,
+    "curly": "error",
+    "guard-for-in": "error",
+    "no-extend-native": "error",
+    "block-scoped-var": "warn",
+    "no-use-before-define": "error",
+    "no-caller": "error",
+    "no-sequences": "error",
+    "no-new": "error",
+    "no-extra-parens": "warn",
     "dot-notation": [
-      1,
+      "warn",
       {
         "allowPattern": "^[a-z]+(_[a-z]+)+$"
       }
     ],
     "no-implicit-coercion": [
-      2,
+      "error",
       {
         "boolean": true,
         "number": true,
         "string": false
       }
     ],
-    "no-multi-spaces": 2,
+    "no-multi-spaces": "error",
     "key-spacing": [
-      2,
+      "error",
       {
         "beforeColon": false,
         "afterColon": true
       }
     ],
     "comma-spacing": [
-      2,
+      "error",
       {
         "before": false,
         "after": true
       }
     ],
     "semi-spacing": [
-      2,
+      "error",
       {
         "before": false,
         "after": true
       }
     ],
-    "no-spaced-func": 2,
-    "no-trailing-spaces": 2,
-    "eol-last": 2,
-    "semi": 2,
-    "space-infix-ops": 2,
+    "no-spaced-func": "error",
+    "no-trailing-spaces": "error",
+    "eol-last": "error",
+    "semi": "error",
+    "space-infix-ops": "error",
     "consistent-this": [
-      1,
+      "warn",
       "self"
     ],
     "linebreak-style": [
-      2,
+      "error",
       "unix"
     ],
-    "keyword-spacing": 1
+    "keyword-spacing": "warn"
   }
 }
