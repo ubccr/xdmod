@@ -312,7 +312,7 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
 
             if (entryData.role == 'Center Staff') activeType = XDMoD.Admin.Roles.CENTER_STAFF;
 
-            return '<div style="margin-top: -1px; margin-left: 14px">' +
+            return '<div style="margin-top: -1px; margin-left: 26px">' +
                    '<a title="Specify Centers" href="javascript:void(0)" onClick="XDMoD.Admin.RoleGrid.prepCenterMenu(this, ' + activeType + ', \'' + self.id + '\')">' +
                    '<img src="images/center_edit.png"></a></div>';
 
@@ -484,7 +484,9 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
          store: store,
          cm: cm,
          enableColumnResize: false,
-
+         viewConfig: {
+             forceFit: true
+         },
          plugins: [ccInclude]
 
       });
