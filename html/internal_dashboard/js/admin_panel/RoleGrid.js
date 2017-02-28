@@ -438,97 +438,6 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
 
       // --------------------------------------------
 
-      var ccPrimary = new Ext.grid.CheckColumn({
-
-         header: 'Primary',
-         dataIndex: 'primary',
-         width: 55,
-         renderer: chkPrimaryRenderer,
-
-         type: 'radio',
-         singleSelect: true,
-
-         onMouseDown : function(e, t) {
-
-            if (t.className && t.className.indexOf('x-grid3-cc-' + this.id) != -1) {
-
-               var index = this.grid.getView().findRowIndex(t);
-               var record = this.grid.store.getAt(index);
-
-               e.stopEvent();
-
-               if (this.singleSelect) {
-
-                  primaryAssignment[XDMoD.Admin.Roles.CENTER_DIRECTOR] = -1;
-                  primaryAssignment[XDMoD.Admin.Roles.CENTER_STAFF] = -1;
-
-                  this.grid.store.each(function(r) {
-
-                     // Enforces 'single select / radio' behavior
-
-                     r.set(this.dataIndex, r.id == record.id);
-
-                     // Need to update role information
-
-                     if (r.id == record.id) {
-
-                        self.selectedPrimaryRole = record.data.role_id;
-
-                        // The 'primary role' must be in the 'included' role set
-                        if (!r.data['include']) {
-
-                           record.set('include', true);
-                           self.selectedRoles.push(r.data.role_id);
-
-                        }
-
-                     }//if (r.id == record.id)
-
-                  }, this);
-
-               }
-               else {
-                  record.set(this.dataIndex, !record.data[this.dataIndex]);
-               }
-
-               isDirty = true;
-
-               if (self.selectionChangeHandler)
-                  self.selectionChangeHandler();
-
-            }
-
-         },//onMouseDown
-
-         setValue : function(v) {
-
-            this.grid.store.each(function(r) {
-
-               r.set(this.dataIndex, v == r.data.role_id);
-
-               if (v == r.data.role_id)
-                  self.selectedPrimaryRole = r.data.role_id;
-
-            }, this);
-
-         },//setValue
-
-         reset : function() {
-
-            self.selectedPrimaryRole = '';
-
-            this.grid.store.each(function(r) {
-
-               r.set(this.dataIndex, false);
-
-            }, this);
-
-         }//reset
-
-      });//ccPrimary
-
-      // --------------------------------------------
-
       var roleDescriptionRenderer = function(val) {
 
          if (val == 'Center Director')
@@ -552,8 +461,7 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
                renderer: roleDescriptionRenderer,
                width: self.role_description_column_width
             },
-            ccInclude,
-            ccPrimary
+            ccInclude
          ]
 
       });//cm
@@ -578,15 +486,13 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
          cm: cm,
          enableColumnResize: false,
 
-         plugins: [ccInclude, ccPrimary]
+         plugins: [ccInclude]
 
       });
 
       this.selectedRoles = [];
 
       this.rselector = ccInclude;
-
-      this.prselector = ccPrimary;
 
       // As far as I can tell, the ControllerProxy doesn't provide any useful functionality. -smg 2015-07-13
       // Dashboard.ControllerProxy(store, {operation: 'enum_roles'});
@@ -597,10 +503,6 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
 
    onRender : function(ct, position){
       XDMoD.Admin.RoleGrid.superclass.onRender.call(this, ct, position);
-   },
-
-   setPrimaryRole: function(prim_role) {
-      this.prselector.setValue(prim_role);
    },
 
    setRoles: function (roles) {
