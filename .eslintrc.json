@@ -10,15 +10,11 @@
       "error",
       "all"
     ],
-    "block-scoped-var": "warn",
-    "no-extra-parens": [
-      "warn",
-      "all"
-    ],
-    "dot-notation": [
-      "warn",
+    "brace-style": [
+      "error",
+      "1tbs",
       {
-        "allowPattern": "^[a-z]+(_[a-z]+)+$"
+        "allowSingleLine": false
       }
     ],
     "no-implicit-coercion": [
@@ -32,6 +28,54 @@
     "consistent-this": [
       "warn",
       "self"
-    ]
+    ],
+    "indent": [
+      "error",
+      4,
+      {
+        "SwitchCase": 1,
+        "VariableDeclarator": 1,
+        "outerIIFEBody": 1,
+        "FunctionDeclaration": {
+          "parameters": 1,
+          "body": 1
+        },
+        "FunctionExpression": {
+          "parameters": 1,
+          "body": 1
+        }
+      }
+    ],
+    "func-names": "off",
+    "vars-on-top": "off",
+    "new-cap": [
+      "error",
+      {
+        "newIsCap": true,
+        "newIsCapExceptions": [],
+        "capIsNew": false,
+        "capIsNewExceptions": [
+          "Immutable.Map",
+          "Immutable.Set",
+          "Immutable.List"
+        ],
+        "properties": false
+      }
+    ],
+    "max-len": [
+      "error",
+      512,
+      4,
+      {
+        "ignoreUrls": true,
+        "ignoreComments": false,
+        "ignoreRegExpLiterals": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ],
+    "no-continue": "off",
+    "no-plusplus": "off",
+    "no-prototype-builtins": "off"
   }
 }
