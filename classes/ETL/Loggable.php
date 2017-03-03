@@ -80,8 +80,8 @@ class Loggable
             }
 
             if ( array_key_exists('sql', $options) && is_string($options['sql']) ) {
-                $logMessage['sql'] = $sql;
-                $logMessage['stacktrace'] = $e->getTraceAsString();
+                $logMessage['sql'] = $options['sql'];
+                $logMessage['stacktrace'] = $options['exception']->getTraceAsString();
             }
 
             if ( array_key_exists('endpoint', $options) && $options['endpoint'] instanceof iDataEndpoint ) {
