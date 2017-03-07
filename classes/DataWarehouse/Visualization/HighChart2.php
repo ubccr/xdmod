@@ -555,17 +555,20 @@ class HighChart2
     // ---------------------------------------------------------
     protected function setMultiCategory(&$data_series)
     {
+        // For each data series, check if the category matches the category of
+        // the previous data series. If not, there is more than one category
+        // being used in this plot.
         foreach($data_series as $data_description_index => $data_description)
         {
             $category = DataWarehouse::getCategoryForRealm(
                 $data_description->realm
             );
-            if(isset($pCategory) && $category != $pCategory)
+            if(isset($prevCategory) && $category != $prevCategory)
             {
                 $this->_multiCategory = true;
                 return;
             } else {
-                $pCategory = $category;
+                $prevCategory = $category;
             }
         }
         $this->_multiCategory = false;

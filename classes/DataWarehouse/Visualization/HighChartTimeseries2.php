@@ -160,11 +160,11 @@ class HighChartTimeseries2 extends HighChart2
         {
             // set multiCategory true or false
             $category = DataWarehouse::getCategoryForRealm($data_description->realm);
-            if(isset($pCategory) && $category != $pCategory)
+            if(isset($prevCategory) && $category != $prevCategory)
             {
                 $multiCategory = true;
             } else {
-                $pCategory = $category;
+                $prevCategory = $category;
             }
 
             // Determine statistic name. In this case use the Aggregate classname to get the stat.
