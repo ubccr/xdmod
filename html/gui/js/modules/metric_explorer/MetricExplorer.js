@@ -64,6 +64,24 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
     ],
 
     /**
+     * A mapping of realms to the categories they belong to.
+     *
+     * A realm belongs to one category, so the values are strings.
+     *
+     * @type {Object}
+     */
+    realmsToCategories: {},
+
+    /**
+     * A mapping of dimensions to the realms they apply to.
+     *
+     * A dimension may apply to multiple realms, so the values are arrays.
+     *
+     * @type {Object}
+     */
+    dimensionsToRealms: {},
+
+    /**
      * Used by other modules to display information within the Metric Explorer.
      * Modules that currently use this functionality are:
      *     - Summary
@@ -1918,7 +1936,64 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             instance = CCR.xdmod.ui.metricExplorer;
         }
         XDMoD.Module.MetricExplorer.yAxisContextMenu(axis, instance);
-    }
+    },
+
+    /**
+     * Get the category that a given realm belongs to.
+     *
+     * @param  {string} realm The realm to look up the category for.
+     * @return {string}       The category the realm belongs to.
+     */
+    getCategoryForRealm: function (realm) {
+        return XDMoD.Module.MetricExplorer.realmsToCategories[realm];
+    },
+
+    /**
+     * Set the category that a given realm belongs to.
+     *
+     * @param  {string} realm    The realm to set the category for.
+     * @param  {string} category The category the realm belongs to.
+     */
+    setCategoryForRealm: function (realm, category) {
+        XDMoD.Module.MetricExplorer.realmsToCategories[realm] = category;
+    },
+
+    /**
+     * Reset the mapping of realms to categories.
+     */
+    resetRealmCategoryMapping: function () {
+        XDMoD.Module.MetricExplorer.realmsToCategories = {};
+    },
+
+    /**
+     * Get the realms that a given dimension applies to.
+     *
+     * @param  {string} dimension The dimension to look up the realms for.
+     * @return {array}            The realms the dimension applies to.
+     */
+    getRealmsForDimension: function (dimension) {
+        return XDMoD.Module.MetricExplorer.dimensionsToRealms[dimension];
+    },
+
+    /**
+     * Add a realm that a given dimension applies to.
+     *
+     * @param  {string} dimension The dimension to add the realm for.
+     * @param  {string} realm     The realm the dimension applies to.
+     */
+    addRealmToDimension: function (dimension, realm) {
+        if (!XDMoD.Module.MetricExplorer.dimensionsToRealms.hasOwnProperty(dimension)) {
+            XDMoD.Module.MetricExplorer.dimensionsToRealms[dimension] = [];
+        }
+        XDMoD.Module.MetricExplorer.dimensionsToRealms[dimension].push(realm);
+    },
+
+    /**
+     * Reset the mapping of dimensions to realms.
+     */
+    resetDimensionRealmMapping: function () {
+        XDMoD.Module.MetricExplorer.dimensionsToRealms = {};
+    },
 }); //Ext.apply(XDMoD.Module.MetricExplorer
 
 // ===========================================================================
@@ -2578,12 +2653,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                         listeners: {
                             beforeshow: function updateTip(tip) {
                                 var menuItem = thisMenu.findById(tip.triggerElement.id);
-                                if (!menuItem.initialConfig.realms) {
+                                if (!menuItem.initialConfig.categories) {
                                     return false;
                                 }
 
-                                tip.header.dom.firstChild.innerHTML = "Realms";
-                                tip.body.dom.innerHTML = menuItem.initialConfig.realms;
+                                tip.header.dom.firstChild.innerHTML = "Categories";
+                                tip.body.dom.innerHTML = menuItem.initialConfig.categories;
                             }
                         }
                     });
@@ -2626,6 +2701,9 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             this.allDimensions = [];
             this.allMetrics = [];
 
+            XDMoD.Module.MetricExplorer.resetRealmCategoryMapping();
+            XDMoD.Module.MetricExplorer.resetDimensionRealmMapping();
+
             this.metricsMenu.removeAll(true);
             this.filtersMenu.removeAll(true);
             this.metricsMenu.add('<span class="menu-title">Add Data:</span><br/>');
@@ -2639,25 +2717,40 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 var dataCatalogRoot = this.dataCatalogTree.getRootNode();
                 dataCatalogRoot.removeAll();
 
+                var categories = [];
+                var categoryNodes = {};
+                var categoryMetricMenuItems = {};
                 for (var realm in this.realms) {
                     if (this.realms.hasOwnProperty(realm)) {
 
+                        var category = this.realms[realm].category;
                         var realm_metrics = this.realms[realm]['metrics'];
                         var realm_dimensions = this.realms[realm]['dimensions'];
 
-                        var realmNode = new Ext.tree.TreeNode({
-                            id: realm,
-                            leaf: false,
-                            singleClickExpand: true,
-                            type: 'realm',
-                            text: realm,
-                            realm: realm,
-                            iconCls: 'realm'
-                        });
-                        dataCatalogRoot.appendChild(realmNode);
+                        XDMoD.Module.MetricExplorer.setCategoryForRealm(realm, category);
 
-                        var realmItems = [];
-                        realmItems.push('<b class="menu-title">' + realm + ' Metrics:</b><br/>');
+                        var categoryNode;
+                        var categoryMetricMenuItem;
+                        var categoryPreviouslyFound = categoryNodes.hasOwnProperty(category);
+                        if (categoryPreviouslyFound) {
+                            categoryNode = categoryNodes[category];
+                            categoryNode.realm += ',' + realm;
+                            categoryMetricMenuItem = categoryMetricMenuItems[category];
+                        } else {
+                            categories.push(category);
+                            categoryNode = categoryNodes[category] = new Ext.tree.TreeNode({
+                                id: category,
+                                leaf: false,
+                                singleClickExpand: true,
+                                type: 'category',
+                                text: category,
+                                realm: realm,
+                                iconCls: 'realm'
+                            });
+                            categoryMetricMenuItem = categoryMetricMenuItems[category] = [
+                                '<b class="menu-title">' + category + ' Metrics:</b><br/>'
+                            ];
+                        }
 
                         for (var rm in realm_metrics) {
                             if (realm_metrics.hasOwnProperty(rm)) {
@@ -2673,6 +2766,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     type: 'metric',
                                     text: realm_metrics[rm].text,
                                     iconCls: 'chart',
+                                    category: category,
                                     realm: realm,
                                     metric: rm,
                                     listeners: {
@@ -2702,7 +2796,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                                         var config = {
                                                             group_by: d,
                                                             metric: n.attributes.metric,
-                                                            realm: n.attributes.realm
+                                                            realm: n.attributes.realm,
+                                                            category: n.attributes.category
                                                         };
                                                         Ext.apply(config, this.defaultDatasetConfig);
                                                         menu.add({
@@ -2731,10 +2826,10 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     }
                                 }); // var metricNode
 
-                                realmNode.appendChild(metricNode);
+                                categoryNode.appendChild(metricNode);
                                 this.allMetrics.push([rm, realm_metrics[rm].text]);
 
-                                realmItems.push({
+                                categoryMetricMenuItem.push({
                                     text: realm_metrics[rm].text,
                                     iconCls: 'chart',
                                     realm: realm,
@@ -2747,16 +2842,9 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                         }));
                                         addDataButtonHandler.call(b.scope, b.scope.datasetsGridPanel.toolbars[0].el, b.metric, b.realm, this.realms);
                                     }
-                                }); // realmItems.push
+                                }); // categoryMetricMenuItem.push
                             }
                         } //for(rm in realm_metrics)
-
-                        this.metricsMenu.add({
-                            text: realm,
-                            iconCls: 'realm',
-                            menu: realmItems,
-                            disabled: realmItems.length <= 0
-                        });
 
                         // Construct the list of filters for user selection:
                         for (var rdFilter in realm_dimensions) {
@@ -2768,6 +2856,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     continue;
                                 }
 
+                                XDMoD.Module.MetricExplorer.addRealmToDimension(rdFilter, realm);
                                 this.allDimensions.push([rdFilter, realm_dimensions[rdFilter].text]);
 
                                 // Define one element in the filterMap for each filter name:
@@ -2780,6 +2869,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     filterItems.push({
                                         text: realm_dimensions[rdFilter].text,
                                         iconCls: 'menu',
+                                        categories: [category],
                                         realms: [realm],
                                         dimension: rdFilter,
                                         scope: this,
@@ -2808,8 +2898,11 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                     }); // filterItems.push
 
                                 } else {
-                                    // Pick up the realm names for multi-realm filters.
+                                    // Pick up the realm categories and names for multi-realm filters.
                                     // Ensure we have all the applicable realms listed for each filter.
+                                    if (filterItems[filterMap[rdFilter]].categories.indexOf(category) == -1) {
+                                        filterItems[filterMap[rdFilter]].categories.push(category);
+                                    }
                                     if (filterItems[filterMap[rdFilter]].realms.indexOf(realm) == -1) {
                                         filterItems[filterMap[rdFilter]].realms.push(realm);
                                     }
@@ -2818,6 +2911,18 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                         } //for(var rdFilter in realm_dimensions)
                     }
                 } //for(var realm in realms)
+
+                Ext.each(categories, function(category) {
+                    dataCatalogRoot.appendChild(categoryNodes[category]);
+
+                    var categoryMetricMenuItem = categoryMetricMenuItems[category];
+                    this.metricsMenu.add({
+                        text: category,
+                        iconCls: 'realm',
+                        menu: categoryMetricMenuItem,
+                        disabled: categoryMetricMenuItem.length <= 0
+                    });
+                }, this);
 
                 // Sort the filter entries in the Add Filter drop-down list.
                 // Perform the sort on the text attribute.
@@ -3538,6 +3643,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             fields: [
                 'id',
                 'metric',
+                'category',
                 'realm',
                 'group_by',
                 'x_axis',
@@ -3989,12 +4095,23 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             }, //viewConfig
 
             columns: [
-                enabledCheckColumn, {
-                    id: 'realm',
-                    tooltip: 'Realm',
-                    width: 50,
-                    header: 'Realm',
-                    dataIndex: 'realm'
+                enabledCheckColumn,
+                {
+                    id: 'category',
+                    tooltip: 'The category the metric belongs to.',
+                    width: 80,
+                    header: 'Category',
+
+                    // Use the realm to lookup the category.
+                    dataIndex: 'realm',
+                    renderer: {
+                        fn: function(value) {
+                            return Ext.util.Format.htmlEncode(
+                                XDMoD.Module.MetricExplorer.getCategoryForRealm(value)
+                            );
+                        },
+                        scope: this
+                    }
                 },
                 {
                     id: 'metric',
@@ -4214,11 +4331,30 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     header: 'Filter',
                     dataIndex: 'value_name'
                 }, {
-                    id: 'realms',
-                    tooltip: 'Realms that this filter applies to',
+                    id: 'categories',
+                    tooltip: 'Categories that this filter applies to',
                     width: 150,
-                    header: 'Applicable Realms',
-                    dataIndex: 'realms'
+                    header: 'Applicable Categories',
+
+                    // Find the applicable categories using the dimension.
+                    dataIndex: 'dimension_id',
+                    renderer: {
+                        fn: function(value) {
+                            var realms = XDMoD.Module.MetricExplorer.getRealmsForDimension(value);
+
+                            var categoryMapping = {};
+                            Ext.each(realms, function(realm) {
+                                var category = XDMoD.Module.MetricExplorer.getCategoryForRealm(realm);
+                                categoryMapping[category] = true;
+                            }, this);
+
+                            var categories = Object.keys(categoryMapping);
+                            categories.sort();
+                            categories = categories.map(Ext.util.Format.htmlEncode);
+                            return categories.join(', ');
+                        },
+                        scope: this
+                    }
                 }
             ],
             tbar: [
@@ -5076,13 +5212,18 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 metric = r.get('metric'),
                 enabled = r.get('enabled'),
                 metricNodeId = realm + '_' + metric,
-                realmNode = catalogRoot.findChild('id', realm),
+                // Use the realm to find the category node as the record may
+                // predate categories.
+                categoryNode = catalogRoot.findChild(
+                    'id',
+                    XDMoD.Module.MetricExplorer.getCategoryForRealm(realm)
+                ),
                 datasetNodeText = dimension != 'none' ?
                 'by ' + this.realms[realm]['dimensions'][dimension].text :
                 'Summary';
 
-            realmNode.expand(false, false, function() {
-                var metricNode = realmNode.findChild('id', metricNodeId);
+            categoryNode.expand(false, false, function() {
+                var metricNode = categoryNode.findChild('id', metricNodeId);
                 metricNode.expand(false, false, function() {
                     var datasetNode = {
                         type: 'dataset',
