@@ -1,5 +1,6 @@
 <?php namespace User;
 
+use CCR\DB;
 use DBObject;
 use JsonSerializable;
 use Module;
@@ -27,9 +28,8 @@ use Module;
  * @method void    setDisplay($display)
  * @method boolean getEnabled()
  * @method void    setEnabled($enabled)
- * @method Module  getModule()
- * @method void    setModule(Module $module)
- *
+ * @method integer getUserId()
+ * @method void    setUserId($userId)
  */
 class Acl extends DBObject implements JsonSerializable
 {
@@ -39,7 +39,53 @@ class Acl extends DBObject implements JsonSerializable
         'acl_type_id' => 'aclTypeId',
         'name' => 'name',
         'display' => 'display',
-        'enabled' => 'enabled'
+        'enabled' => 'enabled',
+
+        // Needed for getParameters
+        'user_id' => 'userId'
     );
+
+    /**
+     * @return array|null
+     * @throws \Exception
+     */
+    public function getParameters()
+    {
+        $userId = $this->getUserId();
+        if (!isset($userId)) {
+            throw new \Exception('Acl has no user_id. Cannot retrieve parameters');
+        }
+        $aclId = $this->getAclId();
+        if (!isset($aclId)) {
+            throw new \Exception('Acl has no acl_id. Cannot retrieve parameters');
+        }
+
+        $db = DB::factory('database');
+
+        $query =<<< SQL
+SELECT uap.user_id,
+  uap.acl_id,
+  uap.name,
+  uap.operation,
+  uap.value
+FROM user_acl_parameters uap
+  JOIN user_acls ua
+    ON uap.user_id = ua.user_id
+       AND uap.acl_id = ua.acl_id
+WHERE
+  ua.user_id = :user_id
+AND ua.acl_id = :acl_id
+SQL;
+        $rows = $db->query($query, array(':user_id' => $userId, ':acl_id' => $aclId));
+        if (false !== $rows) {
+            $results = array_reduce($rows, function($carry, $item) {
+                $carry[$item['name']] = $item['value'];
+                return $carry;
+            }, $rows);
+            return $results;
+        }
+
+        return null;
+    }
 }
 

@@ -1247,7 +1247,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
             $query = new $QueryClass("day", $startDate, $endDate, null, "", array(), 'tg_usage', array(), false);
 
-            $allRoles = $user->getAllRoles();
+            $allRoles = $user->getAcls();
             $query->setMultipleRoleParameters($allRoles);
 
             $query->setRoleParameters($params);
