@@ -237,7 +237,7 @@ class Query
 
         $query_string = $this->getQueryString($limit);
 
-        $debug = filter_var(\xd_utilities\getConfiguration('general', 'sql_debug_mode'), FILTER_VALIDATE_BOOLEAN);
+        $debug = \xd_utilities\filter_var(\xd_utilities\getConfiguration('general', 'sql_debug_mode'), FILTER_VALIDATE_BOOLEAN);
         if ($debug == true) {
             $class = get_class($this);
             $this->log->debug(sprintf("%s: \n%s", $class, $query_string));
