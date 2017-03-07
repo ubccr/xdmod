@@ -33,35 +33,13 @@ use Module;
  */
 class Acl extends DBObject implements JsonSerializable
 {
-    const ACL_ID = 'acl_id';
-    const MODULE_ID = 'module_id';
-    const ACL_TYPE_ID = 'acl_type_id';
-    const NAME = 'name';
-    const DISPLAY = 'display';
-    const ENABLED = 'enabled';
-
-
-    protected $aclId;
-    protected $moduleId;
-    protected $aclTypeId;
-    protected $name;
-    protected $display;
-    protected $enabled;
-    protected $module;
-
-    /**
-     * @inheritdoc
-     */
-    function jsonSerialize()
-    {
-        return array(
-            Acl::ACL_ID => $this->aclId,
-            Acl::MODULE_ID => $this->moduleId,
-            Acl::ACL_TYPE_ID => $this->aclTypeId,
-            Acl::NAME => $this->name,
-            Acl::DISPLAY => $this->display,
-            Acl::ENABLED => $this->enabled
-        );
-    }
+    protected $PROP_MAP = array(
+        'acl_id' => 'aclId',
+        'module_id' => 'moduleId',
+        'acl_type_id' => 'aclTypeId',
+        'name' => 'name',
+        'display' => 'display',
+        'enabled' => 'enabled'
+    );
 }
 

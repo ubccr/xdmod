@@ -13,23 +13,9 @@
 class Hierarchy extends DBObject implements JsonSerializable
 {
 
-    const HIERARCHY_ID = 'hierarchy_id';
-    const MODULE_ID = 'module_id';
-    const NAME = 'name';
-
-    protected $hierarchyId;
-    protected $moduleId;
-    protected $name;
-
-    /**
-     * @inheritdoc
-     */
-    function jsonSerialize()
-    {
-        return array(
-            static::HIERARCHY_ID => $this->hierarchyId,
-            static::MODULE_ID => $this->moduleId,
-            static::NAME => $this->name
-        );
-    }
+    protected $PROP_MAP = array(
+        'hierarchy_id'=> 'hierarchyId',
+        'module_id'=> 'moduleId',
+        'name' => 'name'
+    );
 }

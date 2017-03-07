@@ -2,6 +2,7 @@
 
 /**
  * Class Filter
+ * @package User
  *
  * @method integer getFilterId()
  * @method void    setFilterId($filterId)
@@ -10,25 +11,11 @@
  * @method string  getKey()
  * @method void    setKey($key)
  */
-class Filter extends DBObject implements JsonSerializable
+class Filter extends DBObject
 {
-    const FILTER_ID = 'filter_id';
-    const CONTEXT = 'context';
-    const KEY = 'key';
-
-    protected $filterId;
-    protected $context;
-    protected $key;
-
-    /**
-     * @inheritdoc
-     */
-    function jsonSerialize()
-    {
-        return array(
-            static::FILTER_ID => $this->filterId,
-            static::CONTEXT => $this->context,
-            static::KEY => $this->key
-        );
-    }
+    protected $PROP_MAP = array(
+        'filter_id'=> 'filterId',
+        'context'=> 'context',
+        'key' => 'key'
+    );
 }

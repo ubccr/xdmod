@@ -23,64 +23,19 @@
  * @method void    setCreatedOn($createdOn)
  * @method string  getLastModifiedOn()
  * @method void    setLastModifiedOn($lastModifiedOn)
- * @method Module getModule()
- * @method void    setModule(Module $module)
  */
 class ModuleVersion extends DBOBject
 {
-    /**
-     * @var integer
-     */
-    protected $moduleVersionId;
-
-    /**
-     * @var integer
-     */
-    protected $moduleId;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $display;
-
-    /**
-     * @var integer
-     */
-    protected $versionMajor;
-
-    /**
-     * @var integer
-     */
-    protected $versionMinor;
-
-    /**
-     * @var integer
-     */
-    protected $versionMicro;
-
-    /**
-     * @var string
-     */
-    protected $versionPatch;
-
-    /**
-     * @var string
-     */
-    protected $createdOn;
-
-    /**
-     * @var string
-     */
-    protected $lastModifiedOn;
-
-    /**
-     * @var Module
-     */
-    protected $module;
-
+    protected $PROP_MAP = array(
+        'module_version_id' => 'moduleVersionId',
+        'module_id'=> 'moduleId',
+        'name' => 'name',
+        'display'=> 'display',
+        'version_major' => 'versionMajor',
+        'version_minor' => 'versionMinor',
+        'version_micro' => 'versionMicro',
+        'version_patch' => 'versionPatch',
+        'created_on' => 'createdOn',
+        'last_modified_on' => 'lastModifiedOn'
+    );
 }

@@ -20,50 +20,16 @@ use Module;
  * @method void       setDisplay($display)
  * @method boolean    getEnabled()
  * @method void       setEnabled($enabled)
- * @method Module     getModule()
- * @method void       setModule(Module $module)
- * @method AssetType  getAssetType()
- * @method void       setAssetType(AssetType $assetType)
  */
 class Asset extends DBObject
 {
-    /**
-     * @var integer
-     */
-    protected $assetId;
+    protected $PROP_MAP = array(
+        'asset_id' => 'assetId',
+        'module_id' => 'moduleId',
+        'asset_type_id' => 'assetTypeId',
+        'name' => 'name',
+        'display' => 'display',
+        'enabled' => 'enabled'
+    );
 
-    /**
-     * @var integer
-     */
-    protected $moduleId;
-
-    /**
-     * @var integer
-     */
-    protected $assetTypeId;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $display;
-
-    /**
-     * @var boolean
-     */
-    protected $enabled;
-
-    /**
-     * @var Module
-     */
-    protected $module;
-
-    /**
-     * @var AssetType
-     */
-    protected $assetType;
 }

@@ -31,50 +31,18 @@
 class GroupBy extends DBObject implements JsonSerializable
 {
 
-    const GROUP_BY_ID = 'group_by_id';
-    const MODULE_ID = 'module_id';
-    const NAME = 'name';
-    const DISPLAY = 'display';
-    const SCHEMA_NAME = 'schema_name';
-    const TABLE_NAME = 'table_name';
-    const ALIAS = 'alias';
-    const ID_COLUMN = 'id_column';
-    const NAME_COLUMN = 'name_column';
-    const SHORTNAME_COLUMN = 'shortname_column';
-    const ORDER_ID_COLUMN = 'order_id_column';
-    const FK_COLUMN = 'fk_column';
-
-    protected $groupById;
-    protected $moduleId;
-    protected $name;
-    protected $display;
-    protected $schemaName;
-    protected $tableName;
-    protected $alias;
-    protected $idColumn;
-    protected $nameColumn;
-    protected $shortnameColumn;
-    protected $orderIdColumn;
-    protected $fkColumn;
-
-    /**
-     * @inheritdoc
-     */
-    function jsonSerialize()
-    {
-        return array(
-            static::GROUP_BY_ID => $this->groupById,
-            static::MODULE_ID => $this->moduleId,
-            static::NAME => $this->name,
-            static::DISPLAY => $this->display,
-            static::SCHEMA_NAME => $this->schemaName,
-            static::TABLE_NAME => $this->tableName,
-            static::ALIAS => $this->alias,
-            static::ID_COLUMN => $this->idColumn,
-            static::NAME_COLUMN => $this->nameColumn,
-            static::SHORTNAME_COLUMN => $this->shortnameColumn,
-            static::ORDER_ID_COLUMN => $this->orderIdColumn,
-            static::FK_COLUMN => $this->fkColumn,
-        );
-    }
+    protected $PROP_MAP = array(
+        'group_by_id'=> 'groupById',
+        'module_id' => 'moduleId',
+        'name' => 'name',
+        'display' => 'display',
+        'schema_name'=> 'schemaName',
+        'table_name' => 'tableName',
+        'alias'=> 'alias',
+        'id_column' => 'idColumn',
+        'name_column' => 'nameColumn',
+        'shortname_column' => 'shortnameColumn',
+        'order_id_column' => 'orderIdColumn',
+        'fk_column' => 'fkColumn'
+    );
 }

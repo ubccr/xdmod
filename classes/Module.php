@@ -13,48 +13,14 @@
  * @method void             setDisplay($display)
  * @method boolean          getEnabled()
  * @method void             setEnabled($enabled)
- * @method ModuleVersion    getCurrentVersion()
- * @method void             setCurrentVersion(ModuleVersion $currentVersion)
- * @method ModuleVersion[]  getVersions()
- * @method void             setVersions(array $versions)
- *
  */
 class Module extends DBObject
 {
-    /**
-     * @var integer
-     */
-    protected $moduleId;
-
-    /**
-     * @var integer
-     */
-    protected $currentVersionId;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $display;
-
-    /**
-     * @var boolean
-     */
-    protected $enabled;
-
-    /**
-     * @var ModuleVersion
-     */
-    protected $currentVersion;
-
-    /**
-     * @var ModuleVersion[]
-     */
-    protected $versions;
-
-
+    protected $PROP_MAP = array(
+        'module_id'=> 'moduleId',
+        'current_version_id' => 'currentVersionId',
+        'name' => 'name',
+        'display' => 'display',
+        'enabled' => 'enabled'
+    );
 }

@@ -16,34 +16,13 @@ use Module;
  * @method void    setName($name)
  * @method string  getDisplay()
  * @method void    setDisplay($display)
- * @method Module getModule()
- * @method void    setModule(Module $module)
- *
  */
 class AclType extends DBObject
 {
-    /**
-     * @var integer
-     */
-    protected $aclTypeId;
-
-    /**
-     * @var integer
-     */
-    protected $moduleId;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $display;
-
-    /**
-     * @var Module
-     */
-    protected $module;
+    protected $PROP_MAP = array(
+        'acl_type_id' => 'aclTypeId',
+        'module_id' => 'moduleId',
+        'name' => 'name',
+        'display'=> 'display'
+    );
 }
