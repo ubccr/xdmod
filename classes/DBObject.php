@@ -13,49 +13,83 @@
  *
  * @author Ryan Rathsam <ryanrath@buffalo.edu>
  */
-class DBObject {
+class DBObject implements \ArrayAccess, JsonSerializable {
 
+    protected $PROP_MAP = array();
 
-    public function __construct($options)
+    /**
+     * Default Constructor
+     *
+     * @param array $options the options used to configure this instance.
+     **/
+    public function __construct($options = array())
     {
-        /* We retrieve all of the properties defined by this class, check to see
-         * check to see if a snake_case version of the properties exist in the
-         * options supplied by the user. If one is found, then set this objects
-         * property equal to the user supplied value. This provides a ridiculously
-         * easy way to go from table rows -> populated classes.
-         */
+        $properties = $this->PROP_MAP;
 
-        $properties = get_object_vars($this);
-
-        foreach($properties as $property => $value) {
-            $name = $this->fromCamelCase($property);
-            if (array_key_exists($name, $options)) {
-                $this->$property = $options[$name];
+        foreach ($properties as $property => $value) {
+            if (array_key_exists($property, $options)) {
+                $this->$value = $options[$property];
             }
         }
     }
 
     /**
-     * Accepts a string formatted in CamelCase and coverts the string to
-     * snake_case.
-     *
-     * @param $input string the value to be converted
-     *
-     * @return string converted to snake_case
+     * @inheritdoc
      */
-    protected function fromCamelCase($input)
+    public function offsetExists($offset)
     {
-        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
-        $ret = $matches[0];
-        foreach ($ret as &$match) {
-            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        return $this->propertyExists($offset);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetGet($offset)
+    {
+        if ($this->propertyExists($offset)) {
+            $property = $this->PROP_MAP[$offset];
+            return $this->$property;
         }
-        return implode('_', $ret);
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetSet($offset, $value)
+    {
+        if ($this->propertyExists($offset)) {
+            $property = $this->PROP_MAP[$offset];
+            $this->$property = $value;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetUnset($offset)
+    {
+        if ($this->propertyExists($offset)) {
+            $property = $this->PROP_MAP[$offset];
+            unset($this->$property);
+        }
+    }
+
+    /**
+     * Attempt to determine whether or not this object has a property $name
+     *
+     * @param mixed $name the name of the property to check exists.
+     * @return bool
+     */
+    protected function propertyExists($name)
+    {
+        $property = isset($this->PROP_MAP[$name]) ?  $this->PROP_MAP[$name] : null;
+        return array_key_exists($property, get_object_vars($this));
     }
 
     /**
      * @inheritDoc
-     */
+     **/
     function __call($name, $arguments)
     {
         /* The following block of code dynamically generates 'getters' and
@@ -66,17 +100,25 @@ class DBObject {
 
         $var = lcfirst(substr($name, 3));
         if ((strncasecmp($name, 'get', 3) === 0) &&
-            (property_exists($this, $var))) {
+            property_exists($this, $var)
+        ) {
             return $this->$var;
         } else if ((strncasecmp($name, 'set', 3) === 0) &&
-            (property_exists($this, $var))) {
+            (property_exists($this, $var))
+        ) {
             $this->$var = $arguments[0];
         }
-
     }
 
-    function __toString()
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
     {
-        return json_encode($this);
+        return $this->PROP_MAP;
     }
 }
