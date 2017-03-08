@@ -19,11 +19,6 @@
         "name": "statistic_id",
         "type": "integer",
         "nullable": false
-      },
-      {
-        "name": "formula",
-        "type": "varchar(10000)",
-        "nullable": false
       }
     ],
     "indexes": [
