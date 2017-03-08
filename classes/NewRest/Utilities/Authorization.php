@@ -88,7 +88,7 @@ class Authorization
 
         $notAnArray = isset($requirements) && !is_array($requirements);
         $noContents = isset($requirements) && is_array($requirements) && count($requirements) <= 0;
-        $requirementsInvalid = $notAnArray || $noContents;
+        $requirementsInvalid = $notAnArray && $noContents;
         if ($requirementsInvalid) {
             throw new \Exception('A valid set of requirements are required to complete the requested operation.');
         }

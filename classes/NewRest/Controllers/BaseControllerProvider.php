@@ -263,7 +263,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                the given parameters.
      * @throws AccessDeniedException
      */
-    public function authorize(Request $request, array $requirements = null, $blacklist = false)
+    public function authorize(Request $request, array $requirements = array(), $blacklist = false)
     {
         // If role requirements were not given, then the only check to perform
         // is that the user is not a public user.
