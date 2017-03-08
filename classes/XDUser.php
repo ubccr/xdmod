@@ -518,7 +518,7 @@ class XDUser {
 
        // BEGIN: ACL population
        $query = <<<SQL
-SELECT a.*
+SELECT a.*, ua.user_id
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id

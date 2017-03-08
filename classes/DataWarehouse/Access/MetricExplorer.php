@@ -570,7 +570,7 @@ class MetricExplorer extends Common
         $group_by_name = null,
         $statistic_name = null
     ) {
-        $userRoles = $user->getAllRoles(true);
+        $userRoles = $user->getAcls();
 
         $authorizedRoles = array();
         foreach ($userRoles as $userRole) {
