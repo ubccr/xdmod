@@ -61,6 +61,11 @@ class XDUser {
      */
    private $_acls;
 
+    /**
+     * @var XDUser
+     */
+   private static $_publicUser;
+
    const PUBLIC_USER = 1;
    const INTERNAL_USER = 2;
 
@@ -377,10 +382,19 @@ class XDUser {
     */
 
     public static function getPublicUser() {
-      $pubAcl = Acls::getAclByName(ROLE_ID_PUBLIC);
-      $acl = isset($pubAcl) ? $pubAcl : new Acl(array('name' => ROLE_ID_PUBLIC));
+      /*$pubAcl = Acls::getAclByName(ROLE_ID_PUBLIC);
+      $acl = isset($pubAcl) ? $pubAcl : new Acl(array('name' => ROLE_ID_PUBLIC));*/
 
-      $user = new self (
+      if (isset(self::$_publicUser)) {
+          return self::$_publicUser;
+      } else {
+          self::$_publicUser = self::getUserByUserName('Public User');
+          return self::$_publicUser;
+      }
+
+
+
+      /*$user = new self (
              'Public User',            // Username
              NULL,                     // Password
              NO_EMAIL_ADDRESS_SET,     // E-Mail Address
@@ -394,12 +408,12 @@ class XDUser {
       );
       $user->setAcls(array(
           ROLE_ID_PUBLIC => $acl
-      ));
+      ));*/
 
       //$user->setActiveRole(ROLE_ID_PUBLIC);
       //$user->setPrimaryRole(ROLE_ID_PUBLIC);
 
-      return $user;
+      //return $user;
 
     }//getPublicUser
 
@@ -2923,5 +2937,33 @@ SQL;
             $total += $found ? 1 : 0;
         }
         return $total === count($assets);
+    }
+
+    /**
+     * @param string $username
+     *
+     * @return null|XDUser
+     * @throws Exception if no $username is provided.
+     */
+    public static function getUserByUserName($username)
+    {
+        if (!isset($username)) {
+            return null;
+        }
+
+        $query = <<<SQL
+SELECT 
+  u.id
+FROM Users u 
+WHERE u.username = :username 
+SQL;
+        $db = DB::factory('database');
+        $row = $db->query($query, array(':username' => $username));
+        if ($row !== false) {
+            $uid = $row[0]['id'];
+            return self::getUserByID($uid);
+        }
+
+        return null;
     }
 }//XDUser
