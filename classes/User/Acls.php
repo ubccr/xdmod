@@ -593,7 +593,7 @@ ORDER BY r.name , gb.display, s.display
 SQL;
         $realms = array();
 
-        $rows = $db->query($query, array(':user_id', $user->getUserID()));
+        $rows = $db->query($query, array(':user_id' => $user->getUserID()));
         if ($rows !== false && count($rows) > 0) {
             foreach ($rows as $row) {
                 $realm = $row['realm'];
