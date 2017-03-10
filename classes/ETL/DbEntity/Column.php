@@ -107,7 +107,7 @@ implements iTableItem
                 // "NO"
                 $tmp = strtolower($value);
                 $tmp = ( "null" == $tmp ? true : $tmp );
-                $value = $value = \ETL\Utilities::filterBooleanVar($value);
+                $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                 break;
 
             case 'extra':

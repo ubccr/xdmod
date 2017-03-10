@@ -114,7 +114,7 @@ class AggregatorOptions extends aOptions
             case 'optimize_query':
             case 'disable_keys':
                 $origValue = $value;
-                $value = \ETL\Utilities::filterBooleanVar($value);
+                $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                 if ( null === $value ) {
                     $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
                     throw new Exception($msg);

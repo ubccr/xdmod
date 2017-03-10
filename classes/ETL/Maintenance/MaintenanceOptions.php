@@ -60,7 +60,7 @@ class MaintenanceOptions extends aOptions
         case 'stop_on_exception':
         case 'truncate_destination':
             $origValue = $value;
-            $value = \ETL\Utilities::filterBooleanVar($value);
+            $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
             if ( null === $value ) {
                 $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
                 throw new Exception($msg);

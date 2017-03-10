@@ -556,7 +556,15 @@ EOF;
 }
 
 /**
- * A temporary shim function to use while our supported PHP version is < 5.4.8
+ * A temporary shim function to use while our supported PHP version is < 5.4.8 because 5.3
+ * incorrectly returns NULL in the following case:
+ *
+ * filter_var(false, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)
+ *
+ * See
+ * https://bugs.php.net/bug.php?id=49510 and
+ * http://php.net/manual/en/function.filter-var.php and
+ * http://stackoverflow.com/questions/9132274/php-validation-booleans-using-filter-var
  *
  * @param mixed $value to be filtered
  * @param int $filter the type of filter to apply
@@ -564,7 +572,10 @@ EOF;
  * @return bool|mixed false if the value is logically false, else the results of
  * \filter_var($value, $filter, $options)
  */
+
 function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
 {
-    return ( false === $value ? false : \filter_var($value, $filter, $options) );
+    return ( FILTER_VALIDATE_BOOLEAN == $filter && false === $value
+             ? false
+             : \filter_var($value, $filter, $options) );
 }
