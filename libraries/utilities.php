@@ -554,3 +554,17 @@ EOF;
 
     return $use_center_logo;
 }
+
+/**
+ * A temporary shim function to use while our supported PHP version is < 5.4.8
+ *
+ * @param mixed $value to be filtered
+ * @param int $filter the type of filter to apply
+ * @param mixed $options the options to be supplied to the filter
+ * @return bool|mixed false if the value is logically false, else the results of
+ * \filter_var($value, $filter, $options)
+ */
+function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
+{
+    return ( false === $value ? false : \filter_var($value, $filter, $options) );
+}
