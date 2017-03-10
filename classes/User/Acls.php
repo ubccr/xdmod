@@ -231,6 +231,22 @@ class Acls
         );
     }
 
+    public static function getDescriptors(XDUser $user)
+    {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+
+        if ($user->getUserID() == null) {
+            throw new Exception('A valid user must be provided.');
+        }
+
+        return self::_getDescriptors(
+            DB::factory('database'),
+            $user
+        );
+    }
+
     /**
      * @param iDatabase $db
      * @return array
@@ -239,7 +255,7 @@ class Acls
     {
         $results = $db->query("SELECT a.* FROM acls a");
         return array_reduce($results, function ($carry, $item) {
-            $carry []= new Acl($item);
+            $carry [] = new Acl($item);
             return $carry;
         }, array());
     }
@@ -456,7 +472,6 @@ SQL;
     }
 
 
-
     private static function _getDisabledMenus(iDatabase $db, XDUser $user, array $realmNames)
     {
         // Needed because we have 'IN' clauses.
@@ -464,13 +479,13 @@ SQL;
 
         // PDO can't handle 'IN' for prepared statements so create some suitable strings
         // for substitution. ( making sure to quote where appropriate ).
-        $acls = implode(',', array_reduce($user->getAcls(), function($carry, Acl $item) use($handle) {
-            $carry []= $handle->quote($item->getAclId(), PDO::PARAM_INT);
+        $acls = implode(',', array_reduce($user->getAcls(), function ($carry, Acl $item) use ($handle) {
+            $carry [] = $handle->quote($item->getAclId(), PDO::PARAM_INT);
             return $carry;
         }, array()));
 
-        $realms = implode(',', array_reduce($realmNames, function($carry, $item) use ($handle) {
-            $carry []= $handle->quote($item);
+        $realms = implode(',', array_reduce($realmNames, function ($carry, $item) use ($handle) {
+            $carry [] = $handle->quote($item);
             return $carry;
         }, array()));
 
@@ -508,7 +523,7 @@ SQL;
         $rows = $db->query($sql);
 
         $previousName = null;
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             $name = $row['name'];
             if ($name != $previousName) {
                 $previousName = $name;
@@ -536,6 +551,86 @@ SQL;
         }
 
         return null;
+    }
+
+
+    /**
+     * @param iDatabase $db
+     * @param XDUser $user
+     * @return array
+     */
+    private static function _getDescriptors(iDatabase $db, XDUser $user)
+    {
+        $query = <<<SQL
+SELECT DISTINCT
+  r.display                    AS realm,
+  gb.name                      AS dimension_name,
+  gb.display                   AS dimension_text,
+  gb.description               AS dimension_info,
+  s.name                       AS metric_name,
+  CASE WHEN INSTR(s.display, s.unit) < 0
+    THEN CONCAT(s.display, ' (', s.unit, ')')
+  ELSE s.display
+  END                          AS metric_text,
+  s.description                AS metric_info,
+  sem.statistic_id IS NOT NULL AS metric_std_err
+FROM acl_group_bys agb
+  JOIN user_acls ua
+    ON agb.acl_id = ua.acl_id
+  LEFT JOIN realms r
+    ON agb.realm_id = r.realm_id
+  LEFT JOIN group_bys gb
+    ON agb.group_by_id = gb.group_by_id
+  LEFT JOIN statistics s
+    ON agb.statistic_id = s.statistic_id
+  LEFT JOIN statistics sem
+    ON sem.name = CONCAT('sem_', s.name)
+WHERE
+  ua.user_id = :user_id
+  AND agb.enabled = TRUE
+  AND agb.visible = TRUE
+ORDER BY r.name , gb.display, s.display
+SQL;
+        $realms = array();
+
+        $rows = $db->query($query, array(':user_id', $user->getUserID()));
+        if ($rows !== false && count($rows) > 0) {
+            foreach ($rows as $row) {
+                $realm = $row['realm'];
+
+                if (!array_key_exists($realm, $realms)) {
+                    $realms[$realm] = array(
+                        'metrics' => array(),
+                        'dimensions' => array(),
+                        'text' => $realm
+                    );
+                }
+                $dimensions = &$realms[$realm]['dimensions'];
+                $metrics = &$realms[$realm]['metrics'];
+
+                $dimensionName = $row['dimension_name'];
+                $metricName = $row['statistic_name'];
+
+                // Dimension Processing
+                if (!array_key_exists($dimensionName, $dimensions)) {
+                    $dimensions[$dimensionName] = array(
+                        'info' => $row['dimension_info'],
+                        'text' => $row['dimension_text']
+                    );
+                }
+
+                // Statistic Processing
+                if (!array_key_exists($metricName, $metrics)) {
+                    $metrics[$metricName] = array(
+                        'info' => $row['metric_info'],
+                        'text' => $row['metric_text'],
+                        'std_err' => $row['metric_std_err']
+                    );
+                }
+            }
+        }
+
+        return $realms;
     }
 
 }

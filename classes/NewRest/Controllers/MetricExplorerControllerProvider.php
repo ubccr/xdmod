@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use \Symfony\Component\HttpFoundation\JsonResponse;
 
 use DataWarehouse\Access\MetricExplorer;
+use User\Acls;
 use XDUser;
 
 class MetricExplorerControllerProvider extends BaseControllerProvider
@@ -84,7 +85,8 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             ->delete("$root/queries/{id}", "$base::deleteQueryById")
             ->convert('id', $idConverter);
         // QUERY ROUTES ========================================================
-
+        $controller
+            ->get("$root/descriptors", "$base::getDescriptors");
     }
 
     /**
@@ -365,6 +367,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                     $payload['message'] = $success ? $payload['message'] : 'There was an error removing the query identified by: ' . $id;
 
                     $statusCode = $success ? 200 : 500;
+
                 } else {
                     $payload['message'] = 'There was no query found for the given id';
                     $statusCode = 404;
@@ -387,6 +390,22 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             $payload,
             $statusCode
         );
+    }
+
+    public function getDescriptors(Request $request, Application $app)
+    {
+        $user = $this->getUserFromRequest($request);
+
+        $descriptors = Acls::getDescriptors($user);
+
+        return $app->json(array(
+            'totalCount' => 1,
+            'data' => array(
+                array(
+                    $descriptors
+                )
+            )
+        ));
     }
 
     /**
