@@ -167,5 +167,4 @@ class IngestorOptions extends aOptions
         $this->options[$property] = $value;
         return $this;
     }  // __set()
-
 }  // class IngestorOptions

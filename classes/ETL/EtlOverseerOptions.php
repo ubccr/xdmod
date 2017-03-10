@@ -400,7 +400,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         if ( null === $date ) {
             $this->lastModifiedStartDate = null;
-        } else if ( false === ( $ts = strtotime($date)) ) {
+        } elseif ( false === ( $ts = strtotime($date)) ) {
             $msg = get_class($this) . ": Could not parse last modified start date '$date'";
             throw new Exception($msg);
         } else {
@@ -435,7 +435,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         if ( null === $date ) {
             $this->lastModifiedEndDate = null;
-        } else if ( false === ( $ts = strtotime($date)) ) {
+        } elseif ( false === ( $ts = strtotime($date)) ) {
             $msg = get_class($this) . ": Could not parse last modified start date '$date'";
             throw new Exception($msg);
         } else {
@@ -877,5 +877,4 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
         $this->etlPeriodChunkList = $chunkList;
     }  // generateEtlChunkList()
-
 }  // class EtlOverseerOptions
