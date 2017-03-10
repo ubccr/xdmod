@@ -1,4 +1,4 @@
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -10,10 +10,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.tgSummaryViewer' AS javascript_reference,
               'Displays summary information' AS tooltip,
               'Summary Tab'                  AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -25,7 +25,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -37,10 +37,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.chartViewerTGUsage' AS javascript_reference,
               'Displays usage'                  AS tooltip,
               'Usage Tab'                       AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -52,7 +52,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -64,10 +64,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.metricExplorer' AS javascript_reference,
               ''                            AS tooltip,
               'Metric Explorer'             AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -79,7 +79,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -91,10 +91,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.reportGenerator' AS javascript_reference,
               ''                             AS tooltip,
               'Report Generator'             AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -106,7 +106,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -118,10 +118,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.aboutXD' AS javascript_reference,
               ''                     AS tooltip,
               'About'                AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -133,7 +133,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -145,10 +145,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.jobViewer'          AS javascript_reference,
               'View detailed job-level metrics' AS tooltip,
               'Job Viewer'                      AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -160,7 +160,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -172,10 +172,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.appKernels'                                                    AS javascript_reference,
               'Displays data reflecting the reliability and performance of grid resources' AS tooltip,
               'App Kernels'                                                                AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -187,7 +187,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 --
-INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, parent_tab_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id         AS module_id,
@@ -200,11 +200,11 @@ INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default,
               ''                  AS javascript_reference,
               ''                  AS tooltip,
               ''                  AS user_manual_section_name
-          FROM modules m, tabs t
+          FROM ${DESTINATION_SCHEMA}.modules m, ${DESTINATION_SCHEMA}.tabs t
           WHERE m.name = 'xdmod'
                 AND t.name = 'app_kernels'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -216,7 +216,7 @@ INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default,
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, parent_tab_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id           AS module_id,
@@ -229,11 +229,11 @@ INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default,
               ''                    AS javascript_reference,
               ''                    AS tooltip,
               ''                    AS user_manual_section_name
-          FROM modules m, tabs t
+          FROM ${DESTINATION_SCHEMA}.modules m, ${DESTINATION_SCHEMA}.tabs t
           WHERE m.name = 'xdmod'
                 AND t.name = 'app_kernels'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -245,7 +245,7 @@ INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default,
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, parent_tab_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id               AS module_id,
@@ -258,11 +258,11 @@ INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default,
               ''                        AS javascript_reference,
               ''                        AS tooltip,
               ''                        AS user_manual_section_name
-          FROM modules m, tabs t
+          FROM ${DESTINATION_SCHEMA}.modules m, ${DESTINATION_SCHEMA}.tabs t
           WHERE m.name = 'xdmod'
                 AND t.name = 'app_kernels'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -274,7 +274,7 @@ INSERT INTO tabs (module_id, parent_tab_id, name, display, position, is_default,
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -286,10 +286,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.AllocationViewer'  AS javascript_reference,
               'Displays your allocation usage' AS tooltip,
               'Allocations Tab'                AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -302,7 +302,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
     WHERE cur.tab_id IS NULL;
 
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -314,10 +314,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.complianceTab' AS javascript_reference,
               ''                           AS tooltip,
               'Compliance Tab'             AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -329,7 +329,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -341,10 +341,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.customQuery'   AS javascript_reference,
               ''                           AS tooltip,
               'Custom Queries Tab'         AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -356,7 +356,7 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
                AND cur.user_manual_section_name = inc.user_manual_section_name
     WHERE cur.tab_id IS NULL;
 
-INSERT INTO tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
+INSERT INTO ${DESTINATION_SCHEMA}.tabs (module_id, name, display, position, is_default, javascript_class, javascript_reference, tooltip, user_manual_section_name)
     SELECT inc.*
     FROM (SELECT
               m.module_id,
@@ -368,10 +368,10 @@ INSERT INTO tabs (module_id, name, display, position, is_default, javascript_cla
               'CCR.xdmod.ui.impact'                                  AS javascript_reference,
               'Scientific Impact by user, organization, and project' AS tooltip,
               'Sci Impact Tab'                                       AS user_manual_section_name
-          FROM modules m
+          FROM ${DESTINATION_SCHEMA}.modules m
           WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN tabs cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.tabs cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display

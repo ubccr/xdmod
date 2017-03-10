@@ -7,7 +7,7 @@ INSERT INTO ${DESTINATION_SCHEMA}.modules (name, display, enabled)
                 'XDMoD' display,
                 TRUE    enabled
         ) inc
-        LEFT JOIN modules m
+        LEFT JOIN ${DESTINATION_SCHEMA}.modules m
             ON m.name = inc.name
                AND m.display = inc.display
     WHERE

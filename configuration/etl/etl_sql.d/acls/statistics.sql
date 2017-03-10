@@ -1,6 +1,6 @@
 -- Jobs Statistics
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -11,10 +11,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_cpu_hours'                                                                                                                                                   alias,
                  'CPU Hour'                                                                                                                                                            unit,
                  2                                                                                                                                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -23,7 +23,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -34,10 +34,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_cpu_hours'                                                                                                                           alias,
                  'CPU Hour'                                                                                                                                    unit,
                  2                                                                                                                                             decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -47,7 +47,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -81,10 +81,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'utilization' alias,
                  '%'           unit,
                  2             decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -94,7 +94,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -105,10 +105,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'job_count'                     alias,
                  'Number of Jobs'                unit,
                  0                               decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -118,7 +118,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -129,10 +129,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'active_institution_count'                   alias,
                  'Number of Institutions'                     unit,
                  0                                            decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -142,7 +142,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -153,10 +153,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'started_job_count'                     alias,
                  'Number of Jobs'                        unit,
                  0                                       decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -166,7 +166,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -177,10 +177,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_node_hours'                                                                                                                                                                         alias,
                  'Node Hour'                                                                                                                                                                                  unit,
                  2                                                                                                                                                                                            decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -190,7 +190,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -201,10 +201,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'total_node_hours'                     alias,
                  'Node Hour'                            unit,
                  0                                      decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -214,7 +214,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -229,10 +229,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'normalized_avg_processors'                                       alias,
                  '% of Total Cores'                                                unit,
                  1                                                                 decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -242,7 +242,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -253,10 +253,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_node_hours'                                                        alias,
                  'Node Hour'                                                             unit,
                  2                                                                       decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -266,7 +266,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -277,10 +277,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'submitted_job_count'                     alias,
                  'Number of Jobs'                          unit,
                  0                                         decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -290,7 +290,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -301,10 +301,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'expansion_factor'                                                          alias,
                  'User Expansion Factor'                                                     unit,
                  1                                                                           decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -314,7 +314,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -325,10 +325,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_waitduration_hours'                                                                                                                                                                          alias,
                  'Hour'                                                                                                                                                                                                unit,
                  2                                                                                                                                                                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -337,7 +337,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -348,10 +348,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_waitduration_hours'                                                                                                                                                                                                                                                                                alias,
                  'Hour'                                                                                                                                                                                                                                                                                                      unit,
                  2                                                                                                                                                                                                                                                                                                           decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -360,7 +360,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -371,10 +371,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'min_processors'                                                                      alias,
                  'Core Count'                                                                          unit,
                  0                                                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -384,7 +384,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -395,10 +395,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_waitduration_hours'                                            alias,
                  'Hour'                                                              unit,
                  2                                                                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -408,7 +408,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -419,10 +419,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'total_waitduration_hours'                alias,
                  'Hour'                                    unit,
                  0                                         decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -432,7 +432,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -443,10 +443,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'total_wallduration_hours'                alias,
                  'Hour'                                    unit,
                  0                                         decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -456,7 +456,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -467,10 +467,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_wallduration_hours'                                                                                                                                                  alias,
                  'Hour'                                                                                                                                                                        unit,
                  2                                                                                                                                                                             decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -479,7 +479,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -490,10 +490,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_wallduration_hours'                                                                                                                          alias,
                  'Hour'                                                                                                                                                unit,
                  2                                                                                                                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -502,7 +502,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -513,10 +513,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'active_pi_count'                                     alias,
                  'Number of PIs'                                       unit,
                  0                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -526,7 +526,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -537,10 +537,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'max_processors'                       alias,
                  'Core Count'                           unit,
                  0                                      decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -550,7 +550,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -561,10 +561,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_processors'                                                                      alias,
                  'Core Count'                                                                          unit,
                  1                                                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -573,7 +573,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -584,10 +584,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_processors'                                                      alias,
                  'Core Count'                                                          unit,
                  1                                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -597,7 +597,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -608,10 +608,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'active_resource_count'           alias,
                  'Number of Resources'             unit,
                  0                                 decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -621,7 +621,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -657,10 +657,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'node_utilization' alias,
                  '%'                unit,
                  2                  decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -669,7 +669,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -683,10 +683,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_job_size_weighted_by_cpu_hours' alias,
                  'Core Count'                         unit,
                  1                                    decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -695,7 +695,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -706,10 +706,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'active_allocation_count'        alias,
                  'Number of Allocations'          unit,
                  0                                decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -719,7 +719,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -730,10 +730,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'total_cpu_hours'                     alias,
                  'CPU Hour'                            unit,
                  0                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -743,7 +743,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -754,10 +754,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'running_job_count'                     alias,
                  'Number of Jobs'                        unit,
                  0                                       decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -766,7 +766,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -783,10 +783,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'burn_rate'                                                                                                                                                                                                  alias,
                  '%'                                                                                                                                                                                                          unit,
                  2                                                                                                                                                                                                            decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -795,7 +795,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -806,10 +806,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_wallduration_hours'                                            alias,
                  'Hour'                                                              unit,
                  2                                                                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -818,7 +818,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -829,10 +829,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_wallduration_hours'                                    alias,
                  'Hour'                                                      unit,
                  2                                                           decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -842,7 +842,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -853,10 +853,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_cpu_hours'                                                 alias,
                  'CPU Hour'                                                      unit,
                  2                                                               decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -865,7 +865,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -876,10 +876,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_cpu_hours'                                         alias,
                  'CPU Hour'                                              unit,
                  2                                                       decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -888,7 +888,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -899,10 +899,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_processors'                                                                                                                        alias,
                  'Core Count'                                                                                                                                unit,
                  2                                                                                                                                           decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -911,7 +911,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -922,10 +922,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_processors'                                                                                                                                                        alias,
                  'Core Count'                                                                                                                                                                unit,
                  2                                                                                                                                                                           decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -934,7 +934,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -945,10 +945,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'active_person_count'           alias,
                  'Number of Users'               unit,
                  0                               decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -961,7 +961,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
 
 --  Account Statistics
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -972,10 +972,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'weight' alias,
                  'Weight' unit,
                  0 decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -985,7 +985,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -996,10 +996,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'new_account_count' alias,
                  'Number of User Accounts' unit,
                  0 decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1009,7 +1009,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1020,10 +1020,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'open_account_count' alias,
                  'Number of User Accounts' unit,
                  0 decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1033,7 +1033,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1044,10 +1044,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'closed_account_count' alias,
                  'Number of User Accounts' unit,
                  0 decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1059,7 +1059,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
 --  Account Statistics
 
 --  Allocation Statistics
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1070,10 +1070,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'Number of Allocations'                      alias,
                  'Number of Allocations'                      unit,
                  0                                            decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1083,7 +1083,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1094,10 +1094,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_used_su'                                  alias,
                  'XD SU'                                        unit,
                  2                                              decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1107,7 +1107,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1118,10 +1118,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'allocated_nu'                                                  alias,
                  'NU'                                                            unit,
                  0                                                               decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1130,7 +1130,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1141,10 +1141,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'rate_of_usage'                                                                               alias,
                  'XD SU/Hour'                                                                                  unit,
                  0                                                                                             decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1153,7 +1153,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                AND cur.decimals = inc.decimals
     WHERE cur.statistic_id IS NULL;
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1164,10 +1164,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'allocated_su'                                           alias,
                  'XD SU'                                                  unit,
                  0                                                        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1177,7 +1177,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1188,10 +1188,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'used_su'      alias,
                  'XD SU'        unit,
                  2              decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1201,7 +1201,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1212,10 +1212,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'active_allocation_count'        alias,
                  'Number of Allocations'          unit,
                  0                                decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1225,7 +1225,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1236,10 +1236,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'allocated_raw_su'                  alias,
                  'CPU Core Hours'                    unit,
                  0                                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1249,7 +1249,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1260,10 +1260,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'burn_rate'                                                                  alias,
                  '%'                                                                          unit,
                  2                                                                            decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1275,7 +1275,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
 --  Allocation Statistics
 
 --  Grant Statistics
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1286,10 +1286,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'award_amount'                      alias,
                  '$'                                 unit,
                  0                                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1299,7 +1299,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1310,10 +1310,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'award_count'                                  alias,
                  'Number of Awards'                             unit,
                  0                                              decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1325,7 +1325,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
 --  Grant Statistics
 
 --  Job Statistics: XSEDE
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1336,10 +1336,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'total_su'                         alias,
                  'XD SU'                            unit,
                  0                               decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1349,7 +1349,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1360,10 +1360,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_job_size_weighted_by_xd_su'                                      alias,
                  'Core Count'                                                          unit,
                  1                                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1373,7 +1373,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1384,10 +1384,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_su'                                                                                                                                                                                alias,
                  'XD SU'                                                                                                                                                                                     unit,
                  2                                                                                                                                                                                           decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1397,7 +1397,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1408,10 +1408,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'sem_avg_nu'                                                                                                                                                                                       alias,
                  'NU'                                                                                                                                                                                               unit,
                  2                                                                                                                                                                                                  decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1421,7 +1421,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1432,10 +1432,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_nu'                                                                 alias,
                  'NU'                                                                     unit,
                  1                                                                        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1445,7 +1445,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1456,10 +1456,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'gateway_job_count'                                                                                                   alias,
                  'Number of Jobs'                                                                                                      unit,
                  0                                                                                                                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1469,7 +1469,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1480,10 +1480,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'avg_su'                                                          alias,
                  'XD SU'                                                           unit,
                  1                                                                 decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1493,7 +1493,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1504,10 +1504,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'total_nu'                                alias,
                  'NU'                                      unit,
                  0                                      decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1519,7 +1519,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
 --  Job Statistics: XSEDE
 
 --  Performance Statistics
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1530,10 +1530,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'io_3d_cwa'                        alias,
                  'IONET:MPI-Tile-IO - 3D Col Write' unit,
                  4                                  decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1543,7 +1543,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1554,10 +1554,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'teps_graph500'         alias,
                  'Net:Graph500 - TEPS'   unit,
                  4                       decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1567,7 +1567,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1578,10 +1578,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpuio_walltime_mwchem'         alias,
                  'CPUIO:NWCHEM - Performance'    unit,
                  4                               decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1591,7 +1591,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1602,10 +1602,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'io_mpi_io_cwa'            alias,
                  'IO:IOR - MPIIO Col Write' unit,
                  4                          decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1615,7 +1615,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1626,10 +1626,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'weight'                alias,
                  'Number of Data Points' unit,
                  0                       decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1639,7 +1639,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1650,10 +1650,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'net_mpi_ra_hpcc'              alias,
                  'Net:HPCC - MPI Random Access' unit,
                  4                              decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1663,7 +1663,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1674,10 +1674,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'memory'                 alias,
                  'Avg Memory Performance' unit,
                  4                        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1687,7 +1687,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1698,10 +1698,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'io'                 alias,
                  'Avg IO Performance' unit,
                  4                    decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1711,7 +1711,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1722,10 +1722,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpunet_sp'         alias,
                  'CPUNET:NPB - SP'   unit,
                  4                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1735,7 +1735,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1746,10 +1746,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'io_3d_cra'                       alias,
                  'IONET:MPI-Tile-IO - 3D Col Read' unit,
                  4                                 decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1759,7 +1759,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1770,10 +1770,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'io_mpi_io_cra'           alias,
                  'IO:IOR - MPIIO Col Read' unit,
                  4                         decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1783,7 +1783,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1794,10 +1794,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'fpu_linpack_hpcc'         alias,
                  'CPUNET:HPCC - LINPACK'    unit,
                  4                          decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1807,7 +1807,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1818,10 +1818,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpunet_cg'         alias,
                  'CPUNET:NPB - CG'   unit,
                  4                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1831,7 +1831,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1842,10 +1842,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'net_ptrans_hpcc'         alias,
                  'Net:HPCC - PTRANS'       unit,
                  4                         decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1855,7 +1855,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1866,10 +1866,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpunet_mg'         alias,
                  'CPUNET:NPB - MG'   unit,
                  4                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1879,7 +1879,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1890,10 +1890,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'io_mpi_io_iwa'            alias,
                  'IO:IOR - MPIIO Ind Write' unit,
                  4                          decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1903,7 +1903,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1914,10 +1914,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpu'                 alias,
                  'Avg CPU Performance' unit,
                  4                     decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1927,7 +1927,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1938,10 +1938,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpunet_lu'         alias,
                  'CPUNET:NPB - LU'   unit,
                  4                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1951,7 +1951,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1962,10 +1962,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'overall'                alias,
                  'Avg System Performance' unit,
                  4                        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1975,7 +1975,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -1986,10 +1986,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'mem_bandwidth_hpcc'         alias,
                  'Mem:HPCC - Bandwidth'       unit,
                  4                            decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -1999,7 +1999,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2010,10 +2010,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'io_mpi_io_ira'           alias,
                  'IO:IOR - MPIIO Ind Read' unit,
                  4                         decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2023,7 +2023,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2034,10 +2034,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'fpu_dgemm_hpcc'         alias,
                  'CPUNET:HPCC - DGEMM'    unit,
                  4                        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2047,7 +2047,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2058,10 +2058,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpu_walltime_graph500'         alias,
                  'CPU:Graph500 - Performance'    unit,
                  4                               decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2071,7 +2071,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2082,10 +2082,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpunet_bt'         alias,
                  'CPUNET:NPB - BT'   unit,
                  4                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2095,7 +2095,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2106,10 +2106,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpunet_ft'         alias,
                  'CPUNET:NPB - FT'   unit,
                  4                   decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2119,7 +2119,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2130,10 +2130,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'fpu_fftw_hpcc'         alias,
                  'CPUNET:HPCC - FFTW'    unit,
                  4                       decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2143,7 +2143,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2154,10 +2154,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'network'                 alias,
                  'Avg Network Performance' unit,
                  4                         decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2167,7 +2167,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2178,10 +2178,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'cpu_inv_mean_noise'            alias,
                  'CPU:OSJitter - Inv Mean Noise' unit,
                  4                               decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2194,7 +2194,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
 
 --  Proposal Statistics
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2205,10 +2205,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'proposal_count'                              alias,
                  'Number of Proposals'                         unit,
                  0                                             decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2218,7 +2218,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2229,10 +2229,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'project_count'                                alias,
                  'Number of Projects'                           unit,
                  0                                              decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2244,7 +2244,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
 --  Proposal Statistics
 
 --  Resource Allocation Statistics
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2255,10 +2255,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'requested_xd_su'                                        alias,
                  'XD SU'                                                  unit,
                  0                                                        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2268,7 +2268,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2279,10 +2279,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'weight' alias,
                  'Weight' unit,
                  0        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2292,7 +2292,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2303,10 +2303,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'available_native_su'            alias,
                  'CPU Core Hours'                 unit,
                  0                                decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2316,7 +2316,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2327,10 +2327,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'awarded_native_su'            alias,
                  'CPU Core Hours'               unit,
                  0                              decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2340,7 +2340,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2351,10 +2351,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'awarded_xd_su'                                        alias,
                  'XD SU'                                                unit,
                  0                                                      decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2364,7 +2364,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2375,10 +2375,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'recommended_native_su'            alias,
                  'CPU Core Hours'                   unit,
                  0                                  decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2388,7 +2388,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2399,10 +2399,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'requested_native_su'            alias,
                  'CPU Core Hours'                 unit,
                  0                                decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2412,7 +2412,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2423,10 +2423,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'requested_nu'                                                                         alias,
                  'NU'                                                                                   unit,
                  0                                                                                      decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2436,7 +2436,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2447,10 +2447,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'awarded_nu'                                                                         alias,
                  'NU'                                                                                 unit,
                  0                                                                                    decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2460,7 +2460,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2471,10 +2471,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'available_nu'                                                                         alias,
                  'NU'                                                                                   unit,
                  0                                                                                      decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2484,7 +2484,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2495,10 +2495,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'recommended_nu'                                                                         alias,
                  'NU'                                                                                     unit,
                  0                                                                                        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2508,7 +2508,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2519,10 +2519,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'recommended_xd_su'                                        alias,
                  'XD SU'                                                    unit,
                  0                                                          decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
@@ -2532,7 +2532,7 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
     WHERE cur.statistic_id IS NULL;
 
 
-INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, decimals)
+INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula, alias, unit, decimals)
     SELECT inc.*
     FROM (
              SELECT
@@ -2543,10 +2543,10 @@ INSERT INTO moddb.statistics (module_id, NAME, display, formula, alias, unit, de
                  'available_xd_su'                                        alias,
                  'XD SU'                                                  unit,
                  0                                                        decimals
-             FROM moddb.modules m
+             FROM ${DESTINATION_SCHEMA}.modules m
              WHERE m.name = 'xdmod'
          ) inc
-        LEFT JOIN moddb.statistics cur
+        LEFT JOIN ${DESTINATION_SCHEMA}.statistics cur
             ON cur.module_id = inc.module_id
                AND cur.name = inc.name
                AND cur.display = inc.display
