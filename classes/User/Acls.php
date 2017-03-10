@@ -609,7 +609,7 @@ SQL;
                 $metrics = &$realms[$realm]['metrics'];
 
                 $dimensionName = $row['dimension_name'];
-                $metricName = $row['statistic_name'];
+                $metricName = $row['metric_name'];
 
                 // Dimension Processing
                 if (!array_key_exists($dimensionName, $dimensions)) {
