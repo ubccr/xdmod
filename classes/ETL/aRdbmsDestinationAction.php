@@ -27,9 +27,10 @@ use ETL\DbEntity\Table;
 
 use PHPSQLParser\PHPSQLParser;
 
-use \PDOException;
-use \stdClass;
-use \Log;
+use Exception;
+use PDOException;
+use stdClass;
+use Log;
 
 abstract class aRdbmsDestinationAction extends aAction
 {
@@ -141,41 +142,42 @@ abstract class aRdbmsDestinationAction extends aAction
             // name and the value is the definition object. In the mean time, we will generate this
             // format here so the rest of the code does not need to change later.
 
-
             // Normalize the table definition into a set of key-value pairs where the key is the
             // table name and the value is the definition object.
 
             $parsedTableDefinition = $this->parsedDefinitionFile->table_definition;
-            $tableDefinitionList = array();
 
-            if ( is_object($parsedTableDefinition) ) {
-                // Standard single destination table
-                $tableDefinitionList[$parsedTableDefinition->name] = $parsedTableDefinition;
-            } elseif ( is_array($parsedTableDefinition) ) {
-                // Temporary format for multiple destination tables
-                foreach ( $parsedTableDefinition as $singleTableDefinition ) {
-                    $tableDefinitionList[$singleTableDefinition->name] = $singleTableDefinition;
+            $parsedTableDefinitionList =
+                ( ! is_array($parsedTableDefinition)
+                  ? array($parsedTableDefinition)
+                  : $parsedTableDefinition );
+
+            foreach ( $parsedTableDefinitionList as $tableDefinition ) {
+
+                try {
+                    $etlTable = new Table(
+                        $tableDefinition,
+                        $this->destinationEndpoint->getSystemQuoteChar(),
+                        $this->logger
+                    );
+                    $this->logger->debug(
+                        "Created ETL destination table object for table definition key '"
+                        . $etlTable->getName()
+                        . "'"
+                    );
+                    $etlTable->setSchema($this->destinationEndpoint->getSchema());
+                    $tableName = $etlTable->getFullName();
+
+                    if ( ! is_string($tableName) || empty($tableName) )
+                    {
+                        $msg = "Destination table name must be a non-empty string";
+                        $this->logAndThrowException($msg);
+                    }
+
+                    $this->etlDestinationTableList[$etlTable->getName()] = $etlTable;
+                } catch (Exception $e) {
+                    $this->logAndThrowException($e->getMessage() . " in file '" . $this->definitionFile . "'");
                 }
-            }
-
-            foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition ) {
-
-                $this->logger->debug("Create ETL destination table object for table definition key '$etlTableKey'");
-                $etlTable = new Table(
-                    $tableDefinition,
-                    $this->destinationEndpoint->getSystemQuoteChar(),
-                    $this->logger
-                );
-                $etlTable->setSchema($this->destinationEndpoint->getSchema());
-                $tableName = $etlTable->getFullName();
-
-                if ( ! is_string($tableName) || empty($tableName) )
-                {
-                    $msg = "Destination table name must be a non-empty string";
-                    $this->logAndThrowException($msg);
-                }
-
-                $this->etlDestinationTableList[$etlTableKey] = $etlTable;
 
             }  // foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition )
 
