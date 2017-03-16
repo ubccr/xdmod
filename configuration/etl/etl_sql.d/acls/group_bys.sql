@@ -97,7 +97,7 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
     FROM (
              SELECT
                  m.module_id,
-                 'user_institution'                                AS name,
+                 'institution'                                AS name,
                  'User Institution'                                AS display,
                  'Organizations that have users with allocations.' AS description,
                  'modw'                                            AS schema_name,
@@ -283,7 +283,7 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
     FROM (
              SELECT
                  m.module_id,
-                 'nsf_directorate'          AS name,
+                 'nsfdirectorate'          AS name,
                  'NSF Directorate'          AS display,
                  ''                         AS description,
                  'modw'                     AS schema_name,
@@ -314,7 +314,7 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
     FROM (
              SELECT
                  m.module_id,
-                 'nsf_status'                           AS name,
+                 'nsfstatus'                           AS name,
                  'User NSF Status'                      AS display,
                  'Categorization of the users who ran ' AS description,
                  'modw'                                 AS schema_name,
@@ -1609,7 +1609,7 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
     FROM (
              SELECT
                  m.module_id,
-                 'nsf_directorate'          AS name,
+                 'nsfdirectorate'          AS name,
                  'NSF Directorate'          AS display,
                  ''                         AS description,
                  'modw'                     AS schema_name,
@@ -2047,7 +2047,7 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
     FROM (
              SELECT
                  m.module_id,
-                 'nsf_directorate'          AS name,
+                 'nsfdirectorate'          AS name,
                  'NSF Directorate'          AS display,
                  ''                         AS description,
                  'modw'                     AS schema_name,
@@ -2298,7 +2298,7 @@ INSERT INTO ${DESTINATION_SCHEMA}.group_bys (module_id, name, display, descripti
     FROM (
              SELECT
                  m.module_id,
-                 'nsf_directorate'          AS name,
+                 'nsfdirectorate'          AS name,
                  'NSF Directorate'          AS display,
                  ''                         AS description,
                  'modw'                     AS schema_name,
