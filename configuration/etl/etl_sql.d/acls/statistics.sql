@@ -2272,10 +2272,10 @@ INSERT INTO ${DESTINATION_SCHEMA}.statistics (module_id, NAME, display, formula,
   FROM (
          SELECT
            m.module_id,
-           'requested_xd_su'                                        name,
-           'XD SUs Requested'                                       display,
-           'coalesce(sum(jf.requested * {$this->xd_su_cf_sql}), 0)' formula,
-           'requested_xd_su'                                        alias,
+           'project_count'                               name,
+           'Number of Projects'                          display,
+           'COALESCE(COUNT(DISTINCT jf.request_num), 0)' formula,
+           'Number of Projects'                          alias,
            'XD SU'                                       unit,
            0                                             decimals
          FROM ${DESTINATION_SCHEMA}.modules m
