@@ -249,7 +249,7 @@ class Acls
 
     public static function getGroupBysForRealm($realmName)
     {
-        if (isset($realmName)) {
+        if (isset($realmName) == false) {
             throw new Exception('A valid realm name must be provided. (null)');
         }
         if (is_string($realmName) == false) {
