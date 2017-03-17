@@ -94,10 +94,17 @@ abstract class aAction extends aEtlObject
 
             // Set up the path to the definition file for this action
 
-            $this->definitionFile = $this->options->applyBasePath(
-                "paths->definition_file_dir",
-                $this->options->definition_file
+            /*
+            $this->definitionFile = realpath(
+                $this->options->applyBasePath(
+                    "paths->definition_file_dir",
+                    $this->options->definition_file
+                )
             );
+            */
+
+            $this->definitionFile = \xd_utilities\qualify_path($this->options->definition_file, $this->options->paths->definition_file_dir);
+            $this->definitionFile = \xd_utilities\resolve_path($this->definitionFile);
 
             // Parse the action definition so it is available before initialize() is called. If it
             // has already been set by a child constructor leave it alone.

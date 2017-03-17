@@ -64,7 +64,7 @@ implements iAction
         $options->definition_file = current($list);
 
         parent::__construct($options, $etlConfig, $logger);
-    
+
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -107,11 +107,11 @@ implements iAction
      * @see iAction::execute()
      * ------------------------------------------------------------------------------------------
      */
-  
+
     public function execute(EtlOverseerOptions $etlOptions)
     {
         $this->etlOverseerOptions = $etlOptions;
-    
+
         $time_start = microtime(true);
 
         foreach ( $this->etlDestinationTableList as $etlTable ) {
@@ -133,7 +133,7 @@ implements iAction
                 $this->logAndThrowException($msg);
             }
         }  // foreach ( $this->etlDestinationTables as $etlTable )
-      
+
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 

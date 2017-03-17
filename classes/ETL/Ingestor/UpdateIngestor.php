@@ -171,9 +171,12 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 
         if ( is_string($this->parsedDefinitionFile->source_data->data) ) {
             $filename = $this->parsedDefinitionFile->source_data->data;
+            $filename = \xd_utilities\qualify_path($filename, $this->options->paths->base_dir);
+            /*
             if ( 0 !== strpos($filename, "/") ) {
                 $filename = $this->options->paths->base_dir . "/$filename";
             }
+            */
             $this->logger->debug("Load data from '$filename'");
             $opt = new DataEndpointOptions(array('name' => "Configuration",
                                                  'path' => $filename,

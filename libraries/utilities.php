@@ -579,3 +579,56 @@ function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
              ? false
              : \filter_var($value, $filter, $options) );
 }
+
+/**
+ * If the specified path is not already fully qualified (e.g., /var/tmp) then prepend the
+ * specified base path to the path.
+ *
+ * @param $path A string containing a path
+ * @param $base_bath A string containing the base path to be prepended to relative paths
+ *
+ * @return A fully qualified path, with the base path prepended to a relative path
+ */
+
+function qualify_path($path, $base_path)
+{
+    if ( 0 !== strpos($path, DIRECTORY_SEPARATOR) && null !== $base_path && "" != $base_path ) {
+        $path = $base_path . DIRECTORY_SEPARATOR . $path;
+    }
+
+    return $path;
+}
+
+/**
+ * Resolve instances of current (.) and parent (..) directory references as well as "//"
+ * to a fully qualified path without these references. For example,
+ * /var/www/share/tools/etl/../../../etc/etl.json resolves to /var/www/etc/etl/etl.  Only
+ * fully qualified paths are resolved as relative paths may not be able to be fully
+ * resolved (e.g., ../../../etc/etl.json cannot properly be resolved on it's own). PHP
+ * provides realpath() but this returns FALSE if the file does not yet exist which may
+ * cause issues in a dynamic environment.
+ */
+
+function resolve_path($path)
+{
+    // If we don't limit to filly qualified paths then relative paths such as "../../foo"
+    // are not properly resolved.
+
+    if ( 0 !== strpos($path, DIRECTORY_SEPARATOR) ) {
+        return $path;
+    }
+
+    $parts = explode(DIRECTORY_SEPARATOR, str_replace('//', '/', $path));
+    $resolved = array();
+
+    foreach ($parts as $part) {
+        if ($part == '.') continue;
+        if ($part == '..') {
+            array_pop($resolved);
+            continue;
+        }
+        $resolved[] = $part;
+    }
+
+    return implode(DIRECTORY_SEPARATOR, $resolved);
+}

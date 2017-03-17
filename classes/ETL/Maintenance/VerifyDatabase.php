@@ -184,7 +184,6 @@ class VerifyDatabase extends aAction implements iAction
 
             $sqlFile = $this->parsedDefinitionFile->source_query->sql_file;
             $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
-
             $this->logger->debug("Using SQL file: '$sqlFile'");
 
             if ( ! file_exists($sqlFile) ) {
