@@ -247,6 +247,24 @@ class Acls
         );
     }
 
+    public static function getGroupBysForRealm($realmName)
+    {
+        if (isset($realmName)) {
+            throw new Exception('A valid realm name must be provided. (null)');
+        }
+        if (is_string($realmName) == false) {
+            throw new Exception('A valid realm name must be provided. (string)');
+        }
+        if (count($realmName) < 1) {
+            throw new Exception('A valid realm name must be provided. (length)');
+        }
+
+        return self::_getGroupBysForRealm(
+            DB::factory('database'),
+            $realmName
+        );
+    }
+
     /**
      * @param iDatabase $db
      * @return array
@@ -631,6 +649,34 @@ SQL;
         }
 
         return $realms;
+    }
+
+    /**
+     * @param iDatabase $db
+     * @param string $realmName
+     *
+     * @return \GroupBy[]|array()
+     */
+    private static function _getGroupBysForRealm(iDatabase $db, $realmName)
+    {
+        $query =<<< SQL
+SELECT
+  gb.*
+FROM realm_group_bys rgb
+JOIN realms r ON rgb.realm_id = r.realm_id
+JOIN group_bys gb ON gb.group_by_id = rgb.group_by_id
+WHERE r.name = :realm_name
+SQL;
+        $rows = $db->query($query, array(
+            ':realm_name' => $realmName
+        ));
+        if ($rows !== false && count($rows) > 0){
+            return array_reduce($rows, function($carry, $item) {
+                $carry []= new \GroupBy($item);
+                return $carry;
+            }, array());
+        }
+        return array();
     }
 
 }

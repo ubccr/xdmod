@@ -12,6 +12,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
+use User\Acls;
 use XDUser;
 use DataWarehouse\Access\MetricExplorer;
 use DataWarehouse\Access\Usage;
@@ -1217,13 +1218,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
     public function _processJobSearch(Request $request, Application $app, XDUser $user, $realm, $startDate, $endDate, $action)
     {
 
-        $activeRole = $user->getActiveRole();
-        $queryRealms = isset($activeRole) ? $activeRole->getAllQueryRealms('tg_usage') : array();
 
         $offset = $this->getIntParam($request, 'start', true);
         $limit = $this->getIntParam($request, 'limit', true);
 
-        $allowableDimensions = array_keys($queryRealms[$realm]);
+        $allowableDimensions = Acls::getGroupBysForRealm($realm);
 
         $params = $this->_parseRestArguments($request, $allowableDimensions, false, 'params');
 
