@@ -3,16 +3,11 @@
 namespace NewRest;
 
 use CCR\DB\PDODB;
-use DataWarehouse\Query\Exceptions\NotFoundException;
 use NewRest\Utilities\Authentication;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Silex\Application;
 use Silex\Provider\UrlGeneratorServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
-use DataWarehouse\Query\Exceptions\AccessDeniedException;
-use DataWarehouse\Query\Exceptions\BadRequestException;
 
 /**
  * Creates or retrieves a Silex application configured for the XDMoD REST API.
@@ -179,21 +174,14 @@ class XdmodApplicationFactory {
             $app->mount($unversionedPathMountPoint, $controller);
         }
 
-        // SETUP: an error handler that will let us fall back to the old rest
-        // stack / controllers.
+        // SETUP: error handler
         $app->error(function (\Exception $e, $code) use ($app) {
-            switch ($code) {
-                case 404:
-                    require BASE_DIR . '/html/rest/legacy_router.php';
-                    exit;
-                default:
-                    $exceptionOutput = \handle_uncaught_exception($e);
-                    return new Response(
-                        $exceptionOutput['content'],
-                        $exceptionOutput['httpCode'],
-                        $exceptionOutput['headers']
-                    );
-            }
+                $exceptionOutput = \handle_uncaught_exception($e);
+                return new Response(
+                    $exceptionOutput['content'],
+                    $exceptionOutput['httpCode'],
+                    $exceptionOutput['headers']
+                );
         });
 
         // Set the application instance as the global instance and return it.

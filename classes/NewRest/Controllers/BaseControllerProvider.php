@@ -264,7 +264,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @throws  Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      *          Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
-    public function authorize(Request $request, array $requirements = null, $blacklist = false)
+    public function authorize(Request $request, array $requirements = array(), $blacklist = false)
     {
         // If role requirements were not given, then the only check to perform
         // is that the user is not a public user.
