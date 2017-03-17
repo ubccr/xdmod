@@ -93,7 +93,7 @@ abstract class aRestAction
 
          $roles = (is_array($roles)) ? $roles : array($roles);
 
-         $currentRoles = $user->getRoles();
+         $currentRoles = $user->getAcls(true);
 
          foreach ($roles as $role) {
             if (in_array($role, $currentRoles)) {
