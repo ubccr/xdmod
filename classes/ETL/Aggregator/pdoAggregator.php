@@ -308,7 +308,7 @@ class pdoAggregator extends aAggregator
         // An individual action may override restrictions provided by the overseer.
         $this->setOverseerRestrictionOverrides();
 
-        $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+        $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
 
         $this->initialized = true;
 
@@ -408,12 +408,10 @@ class pdoAggregator extends aAggregator
             $qualifiedDestTableName = $etlTable->getFullName();
 
             if ( $numAggregationPeriodsProcessed > 0 ) {
-                $this->logger->info("Optimize $qualifiedDestTableName");
                 $sqlList[] = "OPTIMIZE TABLE $qualifiedDestTableName";
             }
 
             if ( $this->options->disable_keys && "myisam" == strtolower($etlTable->getEngine()) ) {
-                $this->logger->info("Enable keys on $qualifiedDestTableName");
                 $sqlList[] = "ALTER TABLE $qualifiedDestTableName ENABLE KEYS";
             }
         }
@@ -498,8 +496,8 @@ class pdoAggregator extends aAggregator
                                            ? $this->parsedDefinitionFile->aggregation_period_query
                                            : null );
 
-        $startDate = $this->sourceHandle->quote($this->etlOverseerOptions->getCurrentStartDate());
-        $endDate = $this->sourceHandle->quote($this->etlOverseerOptions->getCurrentEndDate());
+        $startDate = $this->sourceHandle->quote($this->currentStartDate);
+        $endDate = $this->sourceHandle->quote($this->currentEndDate);
 
         // In addition to the start and end timestamp for each record, we calculate the ids of the
         // daily aggregation period for these times (start_day_id and end_day_id). This is defined as:
@@ -668,7 +666,7 @@ class pdoAggregator extends aAggregator
             }
 
             $recordRangeQuery = new Query($query, $this->sourceEndpoint->getSystemQuoteChar());
-            $this->etlOverseerOptions->applyOverseerRestrictions($recordRangeQuery, $this->utilityEndpoint, $this->overseerRestrictionOverrides);
+            $this->etlOverseerOptions->applyOverseerRestrictions($recordRangeQuery, $this->utilityEndpoint, $this);
 
             $minMaxJoin = "( " . $recordRangeQuery->getSelectSql() . " ) record_ranges";
             $dateRangeRestrictionSql = "d.id BETWEEN record_ranges.start_period_id AND record_ranges.end_period_id";
@@ -729,15 +727,12 @@ class pdoAggregator extends aAggregator
 
     protected function _execute($aggregationUnit)
     {
-        $startDate = $this->etlOverseerOptions->getCurrentStartDate();
-        $endDate = $this->etlOverseerOptions->getCurrentEndDate();
-
         $time_start = microtime(true);
 
         $this->logger->info(array("message" => "aggregate start",
                                   "unit" => $aggregationUnit,
-                                  "start_date" => $startDate,
-                                  "end_date" => $endDate));
+                                  "start_date" => $this->currentStartDate,
+                                  "end_date" => $this->currentEndDate));
 
         // Batching options
 
@@ -1058,8 +1053,8 @@ class pdoAggregator extends aAggregator
         $this->logger->notice(array("message"      => "aggregate end",
                                     "unit"         => $aggregationUnit,
                                     "periods"      => $numAggregationPeriods,
-                                    "start_date"   => $startDate,
-                                    "end_date"     => $endDate,
+                                    "start_date"   => $this->currentStartDate,
+                                    "end_date"     => $this->currentEndDate,
                                     "start_time"   => $time_start,
                                     "end_time"     => $time_end,
                                     "elapsed_time" => round($time, 5)
@@ -1124,16 +1119,18 @@ class pdoAggregator extends aAggregator
 
             if ( ! $this->options->truncate_destination ) {
                 try {
-                    // This will need to get switch back once we start using period_id rather than month_id, year_id, etc.
-                    // $deleteSql = "DELETE FROM {$this->qualifiedDestTableName} WHERE period_id = $period_id";
 
                     $restrictions = array();
 
                     if ( isset($this->parsedDefinitionFile->destination_query)
                          && isset($this->parsedDefinitionFile->destination_query->overseer_restrictions) )
                     {
-                        // Create a dummy query object with overseer restrictions so we can take
-                        // advantage of the ability to apply restrictions from the config file.
+                        // The destination query block allows us to specify overseer restrictions
+                        // that apply to operations on the destination table (e.g., deleting records
+                        // from the table during aggregation). Create a dummy query object using the
+                        // overseer restrictions from the destination_query block so we can apply
+                        // the same restrictions to the delete query as specified in the config
+                        // file.
 
                         $query = (object) array(
                             'records' => (object) array('junk' => 0),
@@ -1142,12 +1139,17 @@ class pdoAggregator extends aAggregator
                         );
 
                         $dummyQuery = new Query($query, $this->destinationEndpoint->getSystemQuoteChar(), $this->logger);
-                        $this->etlOverseerOptions->applyOverseerRestrictions($dummyQuery, $this->utilityEndpoint);
+                        $this->etlOverseerOptions->applyOverseerRestrictions($dummyQuery, $this->utilityEndpoint, $this);
                         $restrictions = $dummyQuery->getOverseerRestrictionValues();
                     }  // if ( isset($this->parsedDefinitionFile->destination_query) ... )
 
                     foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
                         $qualifiedDestTableName = $etlTable->getFullName();
+
+                        // This will need to get switch back once we start using period_id rather than
+                        // month_id, year_id, etc.
+                        // $deleteSql = "DELETE FROM {$this->qualifiedDestTableName} WHERE period_id = $period_id";
+
                         $deleteSql = "DELETE FROM $qualifiedDestTableName WHERE {$aggregationUnit}_id = $periodId";
 
                         if ( count($restrictions) > 0 ) {
@@ -1225,7 +1227,9 @@ class pdoAggregator extends aAggregator
             $numPeriodsProcessed++;
             $this->logger->info("Aggregated $aggregationUnit ("
                                 . ( $numPeriodsProcessed + $aggregationPeriodOffset)
-                                . " of $totalNumAggregationPeriods) $periodId records = $numRecords, time = " .
+                                . "/"
+                                . $totalNumAggregationPeriods
+                                . ") $periodId records = $numRecords, time = " .
                                 round((microtime(true) - $dateIdStartTime), 2) . "s");
 
         }  // foreach ($aggregationPeriodList as $aggregationPeriodInfo)

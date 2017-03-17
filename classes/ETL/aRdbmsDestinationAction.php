@@ -290,7 +290,7 @@ abstract class aRdbmsDestinationAction extends aAction
             return true;
         }
 
-        $this->logger->debug("Execute" . ( "" != $msgPrefix ? " $msgPrefix" : "" ) .": " . $endpoint);
+        $this->logger->info("Execute" . ( "" != $msgPrefix ? " $msgPrefix" : "" ) .": " . $endpoint);
         foreach ($sqlList as $sql) {
             try {
                 $this->logger->debug($sql);

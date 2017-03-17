@@ -12,7 +12,7 @@
 
 namespace ETL;
 
-use \Log;
+use Log;
 use ETL\EtlOverseerOptions;
 
 abstract class aAction extends aEtlObject
@@ -42,6 +42,19 @@ abstract class aAction extends aEtlObject
 
     // The stdClass representing a parsed definition file
     protected $parsedDefinitionFile = null;
+
+    // Does this action support chunking of date ranges? Ingestors may support this to
+    // mitigate timeouts on long-running queries but other actions may not. Defaults to
+    // FALSE.
+    protected $supportDateRangeChunking = false;
+
+    // The current start date that this action is working with. Note that not all actions
+    // utilize a start/end date.
+    protected $currentStartDate = null;
+
+    // The current end date that this action is working with. Note that not all actions
+    // utilize a start/end date.
+    protected $currentEndDate = null;
 
     // --------------------------------------------------------------------------------
     // NOTE: If we want to support additional endpoint names, these should be implemented as an array
@@ -81,8 +94,10 @@ abstract class aAction extends aEtlObject
 
             // Set up the path to the definition file for this action
 
-            $this->definitionFile = $this->options->applyBasePath("paths->definition_file_dir",
-                                                                  $this->options->definition_file);
+            $this->definitionFile = $this->options->applyBasePath(
+                "paths->definition_file_dir",
+                $this->options->definition_file
+            );
 
             // Parse the action definition so it is available before initialize() is called. If it
             // has already been set by a child constructor leave it alone.
@@ -92,7 +107,8 @@ abstract class aAction extends aEtlObject
                 $this->parsedDefinitionFile = new Configuration(
                     $this->definitionFile,
                     $this->options->paths->base_dir,
-                    $logger);
+                    $logger
+                );
                 $this->parsedDefinitionFile->parse();
                 $this->parsedDefinitionFile->cleanup();
             }
@@ -157,6 +173,36 @@ abstract class aAction extends aEtlObject
     }  // getOptions()
 
     /* ------------------------------------------------------------------------------------------
+     * @see iAction::getCurrentStartDate()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getCurrentStartDate()
+    {
+        return $this->currentStartDate;
+    }  // getCurrentStartDate()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see iAction::getCurrentEndDate()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getCurrentEndDate()
+    {
+        return $this->currentEndDate;
+    }  // getCurrentEndDate()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see iAction::supportsDateRangeChunking()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function supportsDateRangeChunking()
+    {
+        return $this->supportDateRangeChunking;
+    }  // supportsDateRangeChunking()
+
+    /* ------------------------------------------------------------------------------------------
      * Set the current EtlOverseerOptions object
      *
      * @return This object for method chaining
@@ -169,12 +215,22 @@ abstract class aAction extends aEtlObject
         return $this;
     }  // setEtlOverseerOptions()
 
+    /* ------------------------------------------------------------------------------------------
+     * @see iAction::getOverseerRestrictionOverrides()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getOverseerRestrictionOverrides()
+    {
+        return $this->overseerRestrictionOverrides;
+    }  // getOverseerRestrictionOverrides()
+
     /* ----------------------------------------------------------------------------------------------------
      * The ETL overseer provides the ability to specify parameters that are interpreted as
-     * restrictions on the actions such as the ETL start/end dates and resources to include or
-     * exclude from the ETL process.  However, in some cases these options may be overriden by the
-     * configuration of a individual action such as resources to include or exclude for that
-     * action. Keep track of the restrictions here.
+     * restrictions on actions such as the ETL start/end dates and resources to include or
+     * exclude from the ETL process.  However, in some cases these options may be
+     * overriden by the configuration of an individual action such as resources to include
+     * or exclude for that action. Keep track of the restrictions here.
      * ----------------------------------------------------------------------------------------------------
      */
 

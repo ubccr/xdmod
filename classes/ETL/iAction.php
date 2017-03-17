@@ -51,7 +51,7 @@ interface iAction
      * @return TRUE if verification was successful
      * ------------------------------------------------------------------------------------------
      */
-  
+
     public function verify(EtlOverseerOptions $etlOptions = null);
 
     /* ------------------------------------------------------------------------------------------
@@ -76,10 +76,45 @@ interface iAction
     public function getOptions();
 
     /* ------------------------------------------------------------------------------------------
+     * @return The current start date that this action is operating on.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getCurrentStartDate();
+
+    /* ------------------------------------------------------------------------------------------
+     * @return The current start date that this action is operating on.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getCurrentEndDate();
+
+    /* ------------------------------------------------------------------------------------------
+     * @return TRUE if this action supports chunking of the overall ETL start and end date
+     *   into smaller pieces to make it more manageable.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function supportsDateRangeChunking();
+
+    /* ----------------------------------------------------------------------------------------------------
+     * The ETL overseer provides the ability to specify parameters that are interpreted as
+     * restrictions on actions such as the ETL start/end dates and resources to include or
+     * exclude from the ETL process.  However, in some cases these options may be
+     * overriden by the configuration of an individual action such as resources to include
+     * or exclude for that action.
+     *
+     * @return An associative array of optional overrides to overseer restrictions.
+     * ----------------------------------------------------------------------------------------------------
+     */
+
+    public function getOverseerRestrictionOverrides();
+
+    /* ------------------------------------------------------------------------------------------
      * @return TRUE if verification has been performed on this action.
      * ------------------------------------------------------------------------------------------
      */
-  
+
     public function isVerified();
 
     /* ------------------------------------------------------------------------------------------
@@ -91,5 +126,4 @@ interface iAction
      */
 
     public function __toString();
-
 }  // interface iAction

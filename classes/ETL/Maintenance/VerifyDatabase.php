@@ -148,13 +148,17 @@ class VerifyDatabase extends aAction implements iAction
         $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
         $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
 
+        list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
+        $this->currentStartDate = $startDate;
+        $this->currentEndDate = $endDate;
+
         // These additional variables are available to the sql statement
 
         $localVariableMap = array(
             'UTILITY_SCHEMA' => $utilityEndpoint->getSchema(),
             'SOURCE_SCHEMA' => $sourceEndpoint->getSchema(),
-            'START_DATE' =>  $sourceEndpoint->quote($this->etlOverseerOptions->getStartDate()),
-            'END_DATE' => $sourceEndpoint->quote($this->etlOverseerOptions->getEndDate())
+            'START_DATE' =>  $sourceEndpoint->quote($this->currentStartDate),
+            'END_DATE' => $sourceEndpoint->quote($this->currentEndDate)
             );
 
         if ( false !== $destinationEndpoint ) {
@@ -225,7 +229,7 @@ class VerifyDatabase extends aAction implements iAction
             );
             $this->queryColumnNames = array_keys($sourceQuery->getRecords());
             $this->setOverseerRestrictionOverrides();
-            $this->etlOverseerOptions->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+            $this->etlOverseerOptions->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this);
             $this->sqlQueryString = $sourceQuery->getSelectSql();
             $this->sqlQueryString = Utilities::substituteVariables($this->sqlQueryString, $this->variableMap, $substitutedVars, $unsubstitutedVars);
 
@@ -283,7 +287,7 @@ class VerifyDatabase extends aAction implements iAction
 
         $time_start = microtime(true);
 
-        $this->logger->debug("Executing SQL " . $this->sourceEndpoint . ": " . $this->sqlQueryString);
+        $this->logger->debug("Executing SQL " . $this->sourceEndpoint . ":\n" . $this->sqlQueryString);
         $verifyConfig = $this->parsedDefinitionFile->verify_database;
         $lineTemplate = $verifyConfig->response->line;
         $lines = array();
@@ -291,7 +295,7 @@ class VerifyDatabase extends aAction implements iAction
         try {
             if ( ! $this->etlOverseerOptions->isDryrun() ) {
                 $result = $this->sourceEndpoint->getHandle()->query($this->sqlQueryString);
-                $this->logger->info(count($result) . " maches found");
+                $this->logger->info(count($result) . " matches found");
                 if ( 0 != count($result) ) {
                     foreach ( $result as $row ) {
                         $line = Utilities::substituteVariables($lineTemplate, $row);

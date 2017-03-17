@@ -148,6 +148,10 @@ class ExecuteSql extends aAction implements iAction
 
         $this->options->sql_file_list = $sqlFileList;
 
+        list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
+        $this->currentStartDate = $startDate;
+        $this->currentEndDate = $endDate;
+
         $this->initialized = true;
 
         return true;
@@ -183,8 +187,8 @@ class ExecuteSql extends aAction implements iAction
             'UTILITY_SCHEMA' => $utilityEndpoint->getSchema(),
             'SOURCE_SCHEMA' => $sourceEndpoint->getSchema(),
             'DESTINATION_SCHEMA' => $destinationEndpoint->getSchema(),
-            'START_DATE' =>  $destinationEndpoint->quote($etlOverseerOptions->getStartDate()),
-            'END_DATE' => $destinationEndpoint->quote($etlOverseerOptions->getEndDate()),
+            'START_DATE' =>  $destinationEndpoint->quote($this->currentStartDate),
+            'END_DATE' => $destinationEndpoint->quote($this->currentEndDate),
             'LAST_MODIFIED' => $destinationEndpoint->quote($etlOverseerOptions->getLastModifiedStartDate())
             );
         $this->variableMap = array_merge($this->variableMap, $localVariableMap);
@@ -212,6 +216,7 @@ class ExecuteSql extends aAction implements iAction
             // does not support multiple SQL statements in a single query.
 
             $sqlStatementList = explode($delimiter, $sqlFileContents);
+            $numSqlStatements = count($sqlStatementList);
             $numStatementsProcessed = 0;
 
             foreach ($sqlStatementList as $sql) {
@@ -241,10 +246,11 @@ class ExecuteSql extends aAction implements iAction
                     continue;
                 }
 
-                $this->logger->debug("Executing SQL " . $destinationEndpoint . ":\n$sql");
                 $sqlStartTime = microtime(true);
                 $numRowsAffected = 0;
                 try {
+                    $this->logger->info("Executing statement (" . ($numStatementsProcessed + 1) . "/$numSqlStatements)");
+                    $this->logger->debug("Executing SQL " . $destinationEndpoint . ":\n$sql");
                     if ( ! $this->etlOverseerOptions->isDryrun() ) {
                         $numRowsAffected = $destinationEndpoint->getHandle()->execute($sql);
                     }

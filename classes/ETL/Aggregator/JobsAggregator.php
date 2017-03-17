@@ -90,8 +90,8 @@ class JobsAggregator extends pdoAggregator implements iAction
         }
 
         if ( $this->etlOverseerOptions->isForce() ) {
-            $qStartDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-            $qEndDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
+            $qStartDate = $this->sourceEndpoint->quote($this->currentStartDate);
+            $qEndDate = $this->sourceEndpoint->quote($this->currentEndDate);
             $whereClauses[] = "end_time_ts BETWEEN UNIX_TIMESTAMP($qStartDate) AND UNIX_TIMESTAMP($qEndDate)";
         }  // if ( $this->etlOverseerOptions->isForce() )
 
@@ -175,8 +175,8 @@ class JobsAggregator extends pdoAggregator implements iAction
             }
 
             if ( $this->etlOverseerOptions->isForce() ) {
-                $qStartDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-                $qEndDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
+                $qStartDate = $this->sourceEndpoint->quote($this->currentStartDate);
+                $qEndDate = $this->sourceEndpoint->quote($this->currentEndDate);
                 $whereClauses[] = "end_time_ts BETWEEN UNIX_TIMESTAMP($qStartDate) AND UNIX_TIMESTAMP($qEndDate)";
             }  // if ( $this->etlOverseerOptions->isForce() )
 
@@ -238,8 +238,8 @@ class JobsAggregator extends pdoAggregator implements iAction
 
         if ( $this->etlOverseerOptions->isForce() ) {
 
-            $startDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-            $endDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
+            $startDate = $this->sourceEndpoint->quote($this->currentStartDate);
+            $endDate = $this->sourceEndpoint->quote($this->currentEndDate);
 
             if ( null !== $startDate && null !== $endDate ) {
                 $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate) " .
@@ -371,8 +371,6 @@ class JobsAggregator extends pdoAggregator implements iAction
             return;
         }
 
-        $startDate = $this->etlOverseerOptions->getCurrentStartDate();
-        $endDate = $this->etlOverseerOptions->getCurrentEndDate();
         $utilitySchema = $this->utilityEndpoint->getSchema();
         $sourceSchema = $this->sourceEndpoint->getSchema();
 
@@ -385,8 +383,8 @@ class JobsAggregator extends pdoAggregator implements iAction
             ( null !== $this->resourceIdListString ? " and resource_id IN (" . $this->resourceIdListString . ")" : "");
 
         $params = array(
-            ":startDate" => $startDate,
-            ":endDate" => $endDate
+            ":startDate" => $this->currentStartDate,
+            ":endDate" => $this->currentEndDate
             );
 
         $this->logger->debug("Verify resource specs exist " . $this->sourceEndpoint . ":\n$sql");

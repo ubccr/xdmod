@@ -18,7 +18,7 @@ use Exception;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DbEntity\Query;
 
-class EtlOverseerOptions extends Loggable implements \Iterator
+class EtlOverseerOptions extends Loggable
 {
     // Start of the ETL period
     private $startDate = null;
@@ -38,10 +38,10 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     private $lastModifiedEndDate = null;
 
     // If breaking the ETL period up into chunks, the number of days for each chunk otherwise NULL.
-    private $etlIntervalChunkSize = null;
+    private $etlIntervalChunkSizeDays = null;
 
     // An array of (chunk start date, chunk end date) tuples. This is the (start date, end date)
-    // broken into $etlIntervalChunkSize chunks.
+    // broken into $etlIntervalChunkSizeDays chunks.
     private $etlPeriodChunkList = null;
 
     // TRUE if we will be forcing a re-propcessing of the an action's data
@@ -129,7 +129,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
                     $this->setActionNames($value);
                     break;
                 case 'chunk-size-days':
-                    $this->setChunkSize($value);
+                    $this->setChunkSizeDays($value);
                     break;
                 case 'dryrun':
                     $this->setDryrun($value);
@@ -197,15 +197,16 @@ class EtlOverseerOptions extends Loggable implements \Iterator
      *
      * @param $query A Query object that contains the restriction templates
      * @param $endpoint A DataEndpoint object used for quoting special characters
-     * @param $endpoint A DataEndpoint object used for quoting special characters
+     * @param $action The action that we are applying the restrictions to
      *
      * @return This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function applyOverseerRestrictions(Query $query, iDataEndpoint $endpoint, array $overrides = array())
+    public function applyOverseerRestrictions(Query $query, iDataEndpoint $endpoint, iAction $action)
     {
         $queryRestrictions = $query->getOverseerRestrictions();
+        $overrides = $action->getOverseerRestrictionOverrides();
 
         foreach ( $queryRestrictions as $restriction => $template ) {
 
@@ -223,12 +224,12 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
             switch ($restriction) {
                 case self::RESTRICT_START_DATE:
-                    if ( null !== ($value = $this->getCurrentStartDate()) ) {
+                    if ( null !== ($value = $action->getCurrentStartDate()) ) {
                         $replacement = $endpoint->quote($value);
                     }
                     break;
                 case self::RESTRICT_END_DATE:
-                    if ( null !== ($value = $this->getCurrentEndDate()) ) {
+                    if ( null !== ($value = $action->getCurrentEndDate()) ) {
                         $replacement = $endpoint->quote($value);
                     }
                     break;
@@ -468,14 +469,36 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     }  // getCurrentEndDate()
 
     /* ------------------------------------------------------------------------------------------
+     * @return A list of (start_date, end_date) tuples representing the date boundaries
+     * for this ETL process broken up into manageable chunks.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getChunkedDatePeriods()
+    {
+        return $this->etlPeriodChunkList;
+    }
+
+    /* ------------------------------------------------------------------------------------------
+     * @return A single (start_date, end_date) tuple containing the date boundaries for
+     *   this ETL process.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getDatePeriod()
+    {
+        return array($this->startDate, $this->endDate);
+    }
+
+    /* ------------------------------------------------------------------------------------------
      * @return The number of days in each ETL chunk, or NULL for no chunking.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getChunkSize()
+    public function getChunkSizeDays()
     {
-        return $this->etlIntervalChunkSize;
-    }  // getChunkSize()
+        return $this->etlIntervalChunkSizeDays;
+    }  // getChunkSizeDays()
 
     /* ------------------------------------------------------------------------------------------
      * Set the number of days in each ETL interval chunk, or NULL to not chunk.
@@ -486,15 +509,15 @@ class EtlOverseerOptions extends Loggable implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function setChunkSize($days)
+    public function setChunkSizeDays($days)
     {
         if ( ! (null === $days || is_numeric($days) ) ) {
             $msg = get_class($this) . ": Chunk size must be NULL or numeric";
             throw new Exception($msg);
         }
-        $this->etlIntervalChunkSize = $days;
+        $this->etlIntervalChunkSizeDays = $days;
         return $this;
-    }  // setChunkSize()
+    }  // setChunkSizeDays()
 
     /* ------------------------------------------------------------------------------------------
      * @return The directory where lock files are stored.
@@ -813,6 +836,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
      * ==========================================================================================
      */
 
+    /*
     public function current()
     {
         return current($this->etlPeriodChunkList);
@@ -837,6 +861,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         return false !== current($this->etlPeriodChunkList);
     }
+    */
 
     /* ------------------------------------------------------------------------------------------
      * Generate a list of ETL date intervals of the requested chunk size from the overall start and
@@ -852,7 +877,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
     private function generateEtlChunkList()
     {
-        if ( null === $this->etlIntervalChunkSize ) {
+        if ( null === $this->etlIntervalChunkSizeDays ) {
             $this->etlPeriodChunkList = array(array($this->startDate, $this->endDate));
             return;
         }
@@ -861,7 +886,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
         $chunkList = array();
         $startTs = strtotime($this->startDate);
         $currentEndTs = strtotime($this->endDate);
-        $secondsPerChunk = (60 * 60 * 24) * $this->etlIntervalChunkSize;
+        $secondsPerChunk = (60 * 60 * 24) * $this->etlIntervalChunkSizeDays;
 
         while ( $currentEndTs > $startTs ) {
             $intervalEnd = date('Y-m-d H:i:s', $currentEndTs);

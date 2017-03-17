@@ -51,9 +51,9 @@ use ETL\Utilities;
 use ETL\DbEntity\Query;
 
 use CCR\DB\MySQLHelper;
-use \PDOException;
-use \PDO;
-use \Log;
+use PDOException;
+use PDO;
+use Log;
 
 class pdoIngestor extends aIngestor
 {
@@ -97,6 +97,10 @@ class pdoIngestor extends aIngestor
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
+
+        // This action supports chunking of the ETL date period
+
+        $this->supportDateRangeChunking = true;
 
         // Get the handles for the various database endpoints
 
@@ -159,7 +163,7 @@ class pdoIngestor extends aIngestor
             // in the _execute() function with the current start/end dates but are needed here to
             // parse the query.
 
-            $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+            $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
 
         }  // ( null === $this->etlSourceQuery )
 
@@ -443,8 +447,8 @@ class pdoIngestor extends aIngestor
             $this->logger->info("Update source query date range");
             // If supported by the source query, set the date ranges here
 
-            $startDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-            $endDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
+            $startDate = $this->sourceEndpoint->quote($this->currentStartDate);
+            $endDate = $this->sourceEndpoint->quote($this->currentEndDate);
 
             if ( false === $this->etlSourceQuery->setDateRange($startDate, $endDate) ) {
                 $msg = "Ingestion date ranges not supported by source query";
@@ -546,7 +550,7 @@ class pdoIngestor extends aIngestor
         // start/end date range here.
 
         if ( null !== $this->etlSourceQuery) {
-            $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+            $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
             $this->sourceQueryString = $this->getSourceQueryString();
         }
 

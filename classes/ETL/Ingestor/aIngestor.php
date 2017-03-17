@@ -79,8 +79,11 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
         parent::initialize();
 
-        $this->variableMap['START_DATE'] = $this->etlOverseerOptions->getStartDate();
-        $this->variableMap['END_DATE'] = $this->etlOverseerOptions->getEndDate();
+        // Initial value for current date range, may be overridden.
+
+        list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
+        $this->currentStartDate = $startDate;
+        $this->currentEndDate = $endDate;
 
         $this->initialized = true;
 
@@ -113,19 +116,41 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
         if ( false !== $this->performPreExecuteTasks() ) {
 
-            foreach ( $etlOptions as $interval ) {
-                $this->logger->info("Process date interval (start: " .
-                                    $etlOptions->getCurrentStartDate() .
-                                    ", end: " .
-                                    $etlOptions->getCurrentEndDate() . ")");
+            // If this action supports chunking of the date range, use the chunked list
+            // otherwise use the entire date range.
 
-                $this->variableMap['START_DATE'] = $etlOptions->getCurrentStartDate();
-                $this->variableMap['END_DATE'] = $etlOptions->getCurrentEndDate();
+            if ( null !== $this->etlOverseerOptions->getChunkSizeDays() && $this->supportDateRangeChunking ) {
+                $datePeriodChunkList = $etlOptions->getChunkedDatePeriods();
+                $this->logger->info("Breaking ETL period into " . count($datePeriodChunkList) . " chunks");
+            } else {
+                // Generate an array containing a single tuple
+                $datePeriodChunkList = array(array( $this->currentStartDate, $this->currentEndDate ));
+            }
+
+            $numDateIntervals = count($datePeriodChunkList);
+            $intervalNum = 1;
+
+            foreach ( $datePeriodChunkList as $dateInterval ) {
+
+                // Set current start and end dates for use deeper down in the machinery.
+
+                $this->currentStartDate = $dateInterval[0];
+                $this->currentEndDate = $dateInterval[1];
+
+                $this->logger->info("Process date interval ($intervalNum/$numDateIntervals) "
+                                    . "(start: "
+                                    . $this->currentStartDate
+                                    . ", end: "
+                                    . $this->currentEndDate . ")");
+
+                $this->variableMap['START_DATE'] = $this->currentStartDate;
+                $this->variableMap['END_DATE'] = $this->currentEndDate;
 
                 $numRecordsProcessed = $this->_execute();
                 $totalRecordsProcessed += $numRecordsProcessed;
+                $intervalNum++;
 
-            }  // foreach ( $etlOptions as $interval )
+            }  // foreach ( $datePeriodChunkList as $dateInterval )
 
             $this->performPostExecuteTasks($totalRecordsProcessed);
 
@@ -134,10 +159,12 @@ abstract class aIngestor extends aRdbmsDestinationAction
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $message = sprintf('%s: Rows Processed: %d records (Time Taken: %01.2f s)',
-                           get_class($this),
-                           $totalRecordsProcessed,
-                           $time);
+        $message = sprintf(
+            '%s: Rows Processed: %d records (Time Taken: %01.2f s)',
+            get_class($this),
+            $totalRecordsProcessed,
+            $time
+        );
         $this->logger->info($message);
 
         // NOTE: This is needed for the log summary.
@@ -185,5 +212,4 @@ abstract class aIngestor extends aRdbmsDestinationAction
      */
 
     abstract protected function _execute();
-
 }  // abstract class aIngestor

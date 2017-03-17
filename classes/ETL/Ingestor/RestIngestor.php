@@ -129,8 +129,8 @@ class RestIngestor extends aIngestor implements iAction
 
             // If supported by the source query, set the date ranges here
 
-            $startDate = $this->utilityEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-            $endDate = $this->utilityEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
+            $startDate = $this->utilityEndpoint->quote($this->currentStartDate);
+            $endDate = $this->utilityEndpoint->quote($this->currentEndDate);
 
             $this->etlSourceQuery->setOverseerRestriction(Query::RESTRICT_START_DATE, $startDate);
             $this->etlSourceQuery->setOverseerRestriction(Query::RESTRICT_END_DATE, $endDate);
