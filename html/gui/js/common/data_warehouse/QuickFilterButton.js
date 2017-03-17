@@ -118,17 +118,6 @@ XDMoD.DataWarehouse.createQuickFilterButton = function (config) {
             }));
         });
 
-        // If enabled, automatically enable most privileged role filters.
-        if (quickFilterButton.autoAddMostPrivilegedRoleFilters) {
-            quickFilterStore.each(function (quickFilterRecord) {
-                if (!quickFilterRecord.get('isMostPrivilegedRoleFilter')) {
-                    return;
-                }
-
-                quickFilterRecord.set('checked', true);
-            });
-        }
-
         // Enable the button.
         quickFilterButton.enable();
     });

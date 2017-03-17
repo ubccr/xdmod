@@ -32,7 +32,6 @@ XDMoD.DataWarehouse.quickFilterStore = new Ext.data.Store({
         'valueId',
         'valueName',
         'isUserSpecificFilter',
-        'isMostPrivilegedRoleFilter',
         'dimensionUserSpecificRatio',
         'checked'
     ]),

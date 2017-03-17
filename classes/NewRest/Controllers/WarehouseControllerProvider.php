@@ -856,8 +856,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 $filtersByFilterId[$serviceProviderDimensionId][$serviceProvider['id']] = array(
                     'valueName' => $serviceProvider['short_name'],
                     'valueId' => $serviceProvider['id'],
-                    'isUserSpecificFilter' => false,
-                    'isMostPrivilegedRoleFilter' => false,
+                    'isUserSpecificFilter' => false
                 );
                 $filters[$serviceProviderDimensionId][] = &$filtersByFilterId[$serviceProviderDimensionId][$serviceProvider['id']];
             }
@@ -866,10 +865,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         // Generate user-specific quick filters if logged in.
         if (!$user->isPublicUser()) {
             $roles = $user->getAllRoles();
-            $mostPrivilegedRoleIdentifier = $user->getMostPrivilegedRole()->getIdentifier(true);
             foreach ($roles as $role) {
                 $roleIdentifier = $role->getIdentifier(true);
-                $isMostPrivilegedRole = $roleIdentifier === $mostPrivilegedRoleIdentifier;
                 foreach ($role->getParameters() as $dimensionId => $valueId) {
                     if (!$multipleProvidersSupported && $dimensionId === $serviceProviderDimensionId) {
                         continue;
@@ -877,9 +874,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
                     if (isset($filtersByFilterId[$dimensionId][$valueId])) {
                         $filtersByFilterId[$dimensionId][$valueId]['isUserSpecificFilter'] = true;
-                        if ($isMostPrivilegedRole) {
-                            $filtersByFilterId[$dimensionId][$valueId]['isMostPrivilegedRoleFilter'] = true;
-                        }
                         continue;
                     }
 
@@ -892,7 +886,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
                         'valueName' => $valueName,
                         'valueId' => $valueId,
                         'isUserSpecificFilter' => true,
-                        'isMostPrivilegedRoleFilter' => $isMostPrivilegedRole,
                     );
                     $filters[$dimensionId][] = &$filtersByFilterId[$dimensionId][$valueId];
 
