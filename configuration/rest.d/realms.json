@@ -1,0 +1,6 @@
+{
+  "realms": {
+    "prefix": "realms",
+    "controller": "NewRest\\Controllers\\RealmControllerProvider"
+  }
+}
