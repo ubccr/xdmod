@@ -5,6 +5,7 @@ namespace NewRest\Controllers;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\BadRequestException;
+use Realm;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerCollection;
@@ -705,18 +706,22 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     public function getRealms(Request $request, Application $app)
     {
-        $user = $this->authorize($request);
+        $this->authorize($request);
 
-        // Get parameters.
-        $queryGroup = $this->getStringParam($request, 'querygroup', false, self::_DEFAULT_QUERY_GROUP);
-
-        // Get the realms for the query group and the user's active role.
-        $realms = array_keys($user->getActiveRole()->getAllQueryRealms($queryGroup));
+        $realms = Realms::listRealms();
+        $success = isset($realms);
+        $data = array();
+        if ($success == true) {
+            $data = array_reduce($realms, function ($carry, Realm $item) {
+                $carry []= $item->getDisplay();
+                return $carry;
+            }, array());
+        }
 
         // Return the realms found.
         return $app->json(array(
-            'success' => true,
-            'results' => $realms,
+            'success' => $success,
+            'results' => $data,
         ));
     }
 
