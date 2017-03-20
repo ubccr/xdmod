@@ -36,7 +36,7 @@ class RealmControllerProvider extends BaseControllerProvider
         $data = array();
         if ($success == true) {
             $data = array_reduce($realms, function ($carry, Realm $item) {
-                $carry []= $item->getName();
+                $carry []= $item->getDisplay();
                 return $carry;
             }, array());
         }
