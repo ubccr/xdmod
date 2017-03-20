@@ -1,6 +1,7 @@
 <?php namespace NewRest\Controllers;
 
 
+use Realm;
 use Realms;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -32,9 +33,17 @@ class RealmControllerProvider extends BaseControllerProvider
     {
         $realms = Realms::listRealms();
         $success = isset($realms);
+        $data = array();
+        if ($success == true) {
+            $data = array_reduce($realms, function ($carry, Realm $item) {
+                $carry []= $item->getName();
+                return $carry;
+            }, array());
+        }
+
         return $app->json(array(
             'success' => $success,
-            'data' => $realms
+            'data' => $data
         ));
     }
 
