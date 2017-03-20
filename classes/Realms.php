@@ -51,6 +51,23 @@ class Realms
     }
 
     /**
+     * @param integer $userId
+     * @return Realm[]|array()
+     * @throws Exception
+     */
+    public static function listRealmsForUserId($userId)
+    {
+        if (!isset($userId)) {
+            throw new Exception('A valid user id is required.');
+        }
+
+        return self::_listRealmsForUserId(
+            DB::factory('database'),
+            $userId
+        );
+    }
+
+    /**
      * @param string $name
      * @return null|Realm
      * @throws Exception
@@ -287,6 +304,35 @@ SQL;
             ':module_name' => $moduleName
         ));
         if ($rows != null && count($rows) > 0) {
+            return array_reduce($rows, function($carry, $item) {
+                $carry []= new Realm($item);
+                return $carry;
+            }, array());
+        }
+        return array();
+    }
+
+    /**
+     * @param iDatabase $db
+     * @param integer $userId
+     */
+    private static function _listRealmsForUserId(iDatabase $db, $userId)
+    {
+        $query = <<<SQL
+SELECT DISTINCT
+  r.*
+FROM realms r
+  JOIN realm_group_bys rgb ON r.realm_id = rgb.realm_id
+  JOIN group_bys gb ON rgb.group_by_id = gb.group_by_id
+  JOIN acl_group_bys agb ON gb.group_by_id = agb.group_by_id
+  JOIN user_acls ua ON agb.acl_id = ua.acl_id
+  JOIN acls a ON ua.acl_id = a.acl_id
+WHERE ua.user_id = :user_id
+SQL;
+        $rows = $db->query($query, array(
+            ':user_id' => $userId
+        ));
+        if ($rows !== false && count($rows) > 0) {
             return array_reduce($rows, function($carry, $item) {
                 $carry []= new Realm($item);
                 return $carry;

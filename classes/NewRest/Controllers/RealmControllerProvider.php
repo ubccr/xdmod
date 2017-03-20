@@ -24,21 +24,23 @@ class RealmControllerProvider extends BaseControllerProvider
     {
         $root = $this->prefix;
         $class = get_class($this);
+        $conversions = '\NewRest\Utilities\Conversions';
 
         $controller->get("$root", "$class::listRealms");
         $controller->get("$root/module", "$class::listRealmsByModule");
+        $controller->get("$root/user", "$class::listRealmsByUser");
+        $controller->get("$root/user/{userId}", "$class::listRealmsByUser")
+            ->assert('userId', '\d+')
+            ->convert('userId', "$conversions::toInt");
     }
 
     public function listRealms(Request $request, Application $app)
     {
         $realms = Realms::listRealms();
-        $success = isset($realms);
+        $success = isset($realms) && count($realms) > 0;
         $data = array();
         if ($success == true) {
-            $data = array_reduce($realms, function ($carry, Realm $item) {
-                $carry []= $item->getDisplay();
-                return $carry;
-            }, array());
+            $data = $this->reduceArray($realms, 'getDisplay');
         }
 
         return $app->json(array(
@@ -58,19 +60,27 @@ class RealmControllerProvider extends BaseControllerProvider
 
         if (isset($moduleId)) {
             $results = Realms::listRealmsForModuleId($moduleId);
-            $success = isset($results);
+            $success = isset($results) && count($results) > 0;
+            $data = array();
+            if ($success == true) {
+                $data = $this->reduceArray($results, 'getDisplay');
+            }
             return $app->json(array(
                 'success' => $success,
-                'data' => $results
+                'data' => $data
             ));
         }
 
         if (isset($moduleName)) {
             $results = Realms::listRealmsForModuleName($moduleName);
-            $success = isset($results);
+            $success = isset($results) && count($results) > 0;
+            $data = array();
+            if ($success == true) {
+                $data = $this->reduceArray($results, 'getDisplay');
+            }
             return $app->json(array(
                 'success' => $success,
-                'data' => $results
+                'data' => $data
             ));
         }
 
@@ -79,5 +89,52 @@ class RealmControllerProvider extends BaseControllerProvider
             'data' => array()
         ));
     }
+
+    public function listRealmsByUser(Request $request, Application $app)
+    {
+        $user = $this->getUserFromRequest($request);
+
+        return $this->listRealmsByUserId($request, $app, $user->getUserID());
+    }
+
+    /**
+     * @param Request $request
+     * @param Application $app
+     * @param integer $userId
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function listRealmsByUserId(Request $request, Application $app, $userId)
+    {
+        $realms = Realms::listRealmsForUserId($userId);
+        $success = isset($realms) && count($realms) > 0;
+        $data = array();
+        if ($success == true) {
+            $data = array_reduce($realms, function ($carry, Realm $item) {
+                $carry []= $item->getDisplay();
+                return $carry;
+            }, array());
+        }
+
+
+        return $app->json(array(
+            'success'=> $success,
+            'data' => $data
+        ));
+    }
+
+    private function isSuccess(array $rows)
+    {
+        return isset($rows) && count($rows) > 0;
+    }
+
+    private function reduceArray(array $source, $functionName)
+    {
+        return array_reduce($source, function($carry, $item) use($functionName) {
+            $carry[]= $item->$functionName();
+            return $carry;
+        }, array());
+    }
+
+
 
 }
