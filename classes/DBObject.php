@@ -90,7 +90,7 @@ class DBObject implements \ArrayAccess, JsonSerializable {
     /**
      * @inheritDoc
      **/
-    function __call($name, $arguments)
+    public function __call($name, $arguments)
     {
         /* The following block of code dynamically generates 'getters' and
          * 'setters' based on the properties the class currently supports.
@@ -117,8 +117,12 @@ class DBObject implements \ArrayAccess, JsonSerializable {
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    function jsonSerialize()
+    public function jsonSerialize()
     {
-        return $this->PROP_MAP;
+        return array_reduce($this->PROP_MAP, function ($carry, $item) {
+            $key = array_search($item, $this->PROP_MAP);
+            $carry[$key] = $this->$item;
+            return $carry;
+        }, array());
     }
 }

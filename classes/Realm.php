@@ -24,7 +24,7 @@ class Realm extends DBObject implements JsonSerializable
         'module_id' => 'moduleId',
         'name' => 'name',
         'display'=> 'display',
-        'schema_schema' => 'schemaName',
+        'schema_name' => 'schemaName',
         'table_name' => 'tableName'
     );
 }
