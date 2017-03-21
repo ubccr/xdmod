@@ -401,9 +401,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
         return $app->json(array(
             'totalCount' => 1,
             'data' => array(
-                array(
-                    $descriptors
-                )
+                $descriptors
             )
         ));
     }

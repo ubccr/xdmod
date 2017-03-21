@@ -584,13 +584,13 @@ SELECT DISTINCT
   r.display                    AS realm,
   gb.name                      AS dimension_name,
   gb.display                   AS dimension_text,
-  gb.description               AS dimension_info,
+  COALESCE(rgb.description,gb.description) AS dimension_info,
   s.name                       AS metric_name,
   CASE WHEN INSTR(s.display, s.unit) < 0
     THEN CONCAT(s.display, ' (', s.unit, ')')
   ELSE s.display
   END                          AS metric_text,
-  s.description                AS metric_info,
+ COALESCE(rs.description, s.description)                AS metric_info,
   sem.statistic_id IS NOT NULL AS metric_std_err
 FROM acl_group_bys agb
   JOIN user_acls ua
@@ -599,14 +599,21 @@ FROM acl_group_bys agb
     ON agb.realm_id = r.realm_id
   LEFT JOIN group_bys gb
     ON agb.group_by_id = gb.group_by_id
+  JOIN realm_group_bys rgb
+    ON rgb.realm_id = r.realm_id
+    AND rgb.group_by_id = gb.group_by_id
   LEFT JOIN statistics s
     ON agb.statistic_id = s.statistic_id
+  JOIN realm_statistics rs
+    ON rs.realm_id = r.realm_id
+    AND rs.statistic_id = s.statistic_id
   LEFT JOIN statistics sem
     ON sem.name = CONCAT('sem_', s.name)
 WHERE
   ua.user_id = :user_id
   AND agb.enabled = TRUE
   AND agb.visible = TRUE
+  AND s.visible = TRUE
 ORDER BY r.name , gb.display, s.display
 SQL;
         $realms = array();
@@ -630,7 +637,7 @@ SQL;
                 $metricName = $row['metric_name'];
 
                 // Dimension Processing
-                if (!array_key_exists($dimensionName, $dimensions)) {
+                if (isset($dimensionName) && !array_key_exists($dimensionName, $dimensions)) {
                     $dimensions[$dimensionName] = array(
                         'info' => $row['dimension_info'],
                         'text' => $row['dimension_text']
@@ -638,7 +645,7 @@ SQL;
                 }
 
                 // Statistic Processing
-                if (!array_key_exists($metricName, $metrics)) {
+                if (isset($metricName) && !array_key_exists($metricName, $metrics)) {
                     $metrics[$metricName] = array(
                         'info' => $row['metric_info'],
                         'text' => $row['metric_text'],
@@ -648,7 +655,7 @@ SQL;
             }
         }
 
-        return $realms;
+        return array('realms' => $realms);
     }
 
     /**
@@ -659,7 +666,7 @@ SQL;
      */
     private static function _getGroupBysForRealm(iDatabase $db, $realmName)
     {
-        $query =<<< SQL
+        $query = <<< SQL
 SELECT
   gb.*
 FROM realm_group_bys rgb
@@ -670,9 +677,9 @@ SQL;
         $rows = $db->query($query, array(
             ':realm_name' => $realmName
         ));
-        if ($rows !== false && count($rows) > 0){
-            return array_reduce($rows, function($carry, $item) {
-                $carry []= new \GroupBy($item);
+        if ($rows !== false && count($rows) > 0) {
+            return array_reduce($rows, function ($carry, $item) {
+                $carry [] = new \GroupBy($item);
                 return $carry;
             }, array());
         }
