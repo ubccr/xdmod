@@ -191,6 +191,8 @@ may be found [here][repo-format]. Once you have made the desired changes, run
 ### Dependencies
 
   - [PHP](https://secure.php.net/)
+    * php-curl (Ubuntu: php7.0-curl)
+    * php-gmp (Ubuntu: php-gmp)
   - [Composer](https://getcomposer.org/)
   - [PEAR](https://pear.php.net/)
   - [PEAR Log Module](https://pear.php.net/package/Log/)
