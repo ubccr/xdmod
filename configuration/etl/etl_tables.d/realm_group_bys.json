@@ -19,6 +19,10 @@
         "name": "group_by_id",
         "type": "integer",
         "nullable": false
+      },
+      {
+        "name": "description",
+        "type": "varchar(2048)"
       }
     ],
     "indexes": [

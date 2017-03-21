@@ -45,6 +45,16 @@
         "type": "integer",
         "nullable": false,
         "default": 1
+      },
+      {
+        "name": "description",
+        "type": "varchar(2048)"
+      },
+      {
+        "name": "visible",
+        "type": "boolean",
+        "nullable": false,
+        "default": true
       }
     ],
     "indexes": [
