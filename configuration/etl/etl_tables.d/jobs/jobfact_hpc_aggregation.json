@@ -1,0 +1,486 @@
+{
+    "#": "Aggregation of HPC job records and tasks ingested from the XDCDB",
+
+    "table_definition": {
+        "name": "jobfact_by_",
+        "engine": "MyISAM",
+        "comment": "Jobfacts aggregated by ${AGGREGATION_UNIT}.",
+        "columns": [
+            {
+                "name": "${AGGREGATION_UNIT}_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+            },{
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+            },{
+                "name": "${AGGREGATION_UNIT}",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+            },{
+                "name": "record_resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The resource on which the request was made"
+            },{
+                "name": "task_resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The resource on which the jobs ran"
+            },{
+                "name": "resource_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the resource that the jobs ran on."
+            },{
+                "name": "resourcetype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The type of the resource on which the jobs ran. References resourcetype.id"
+            },{
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the resource system account (local username) under which the job ran. References systemaccount.id"
+            },{
+                "name": "submission_venue_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The method used to submit this job: cli, gateway, ..."
+            },{
+                "name": "job_record_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Task type or event."
+            },{
+                "name": "job_task_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Type of job: hpc, cloud, hpc-reservation, ...."
+            },{
+                "name": "queue",
+                "type": "char(50)",
+                "nullable": false,
+                "comment": "DIMENSION: The queue of the resource on which the jobs ran."
+            },{
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of allocation these jobs used to run"
+            },{
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the account record from which one can get charge number"
+            },{
+                "name": "requesting_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the person that requested the resources (e.g., made the reservation or submitted the job."
+            },{
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the person that ran the jobs."
+            },{
+                "name": "person_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the person that ran the jobs."
+            },{
+                "name": "person_nsfstatuscode_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The NSF status code of the person that ran the jobs. References person.nsfstatuscode_id"
+            },{
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The field of science of the project to which the jobs belong."
+            },{
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The PI that owns the allocations that these jobs ran under. References principalinvestigator.person_id"
+            },{
+                "name": "piperson_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the PI that owns the project that funds these jobs. References piperson.organization_id"
+            },{
+                "name": "job_time_bucket_id",
+                "type": "int(4)",
+                "nullable": false,
+                "comment": "DIMENSION: Job time is bucketing of wall time based on prechosen intervals in the modw.job_times table."
+            },{
+                "name": "node_count",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Number of nodes each of the jobs used."
+            },{
+                "name": "processor_count",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Number of processors each of the jobs used."
+            },{
+                "name": "processorbucket_id",
+                "type": "int(4)",
+                "nullable": true,
+                "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id"
+            },{
+                "name": "submitted_job_count",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: The number of jobs that started during this day."
+            },{
+                "name": "ended_job_count",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: The number of jobs that ended during this day."
+            },{
+                "name": "started_job_count",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: The number of jobs that started during this day."
+            },{
+                "name": "running_job_count",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: The number of jobs that were running during this day."
+            },{
+                "name": "wallduration",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: (seconds) The wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days."
+            },{
+                "name": "sum_wallduration_squared",
+                "type": "double",
+                "nullable": true,
+                "comment": "FACT: (seconds) The sum of the square of wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days."
+            },{
+                "name": "waitduration",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: (seconds) The amount of time jobs waited to execute during this day."
+            },{
+                "name": "sum_waitduration_squared",
+                "type": "double",
+                "nullable": true,
+                "comment": "FACT: (seconds) The sum of the square of the amount of time jobs waited to execute during this day."
+            },{
+                "name": "local_charge_su",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "local_charge_xdsu",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "local_charge_nu",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "adjusted_charge_su",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "adjusted_charge_xdsu",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "adjusted_charge_nu",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "task_local_charge_su",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "task_local_charge_xdsu",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "task_local_charge_nu",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "task_adjusted_charge_su",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "task_adjusted_charge_xdsu",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "task_adjusted_charge_nu",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "sum_local_charge_xdsu_squared",
+                "type": "double",
+                "nullable": true,
+                "comment": "FACT: The sum of the square of local_charge of jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+            },{
+                "name": "cpu_time",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: (seconds) The amount of the cpu time (processor_count * wallduration) of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used."
+            },{
+                "name": "sum_cpu_time_squared",
+                "type": "double",
+                "nullable": true,
+                "comment": "FACT: (seconds) The sum of the square of the amount of the cpu_time of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used."
+            },{
+                "name": "node_time",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: (seconds) The amount of the node time (nodes * wallduration) of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used."
+            },{
+                "name": "sum_node_time_squared",
+                "type": "double",
+                "nullable": true,
+                "comment": "FACT: (seconds) The sum of the square of the amount of the node_time of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used."
+            },{
+                "name": "sum_weighted_expansion_factor",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: This is the sum of expansion factor per job multiplied by node_count and the [adjusted] duration of jobs that ran in this days."
+            },{
+                "name": "sum_job_weights",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: this is the sum of (node_count multipled by the [adjusted] duration) for jobs that ran in this days."
+            }
+        ],
+
+        "indexes": [
+            {
+                "name": "index_account",
+                "columns": [ "account_id" ]
+            },{
+                "name": "index_allocation",
+                "columns": [ "allocation_id" ]
+            },{
+                "name": "index_fos",
+                "columns": [ "fos_id" ]
+            },{
+                "name": "index_job_time_bucket_id",
+                "columns": [ "job_time_bucket_id" ]
+            },{
+                "name": "index_node_count",
+                "columns": [ "node_count" ]
+            },{
+                "name": "index_resource_organization",
+                "columns": [ "resource_organization_id" ]
+            },{
+                "name": "index_person",
+                "columns": [ "person_id" ]
+            },{
+                "name": "index_person_nsf_status_code",
+                "columns": [ "person_nsfstatuscode_id" ]
+            },{
+                "name": "index_person_organization",
+                "columns": [ "person_organization_id" ]
+            },{
+                "name": "index_pi_organization",
+                "columns": [ "piperson_organization_id" ]
+            },{
+                "name": "index_pi_person",
+                "columns": [ "principalinvestigator_person_id" ]
+            },{
+                "name": "index_processor_count",
+                "columns": [ "processor_count" ]
+            },{
+                "name": "index_queue",
+                "columns": [ "queue" ]
+            },{
+                "name": "index_resource_type",
+                "columns": [ "resourcetype_id" ]
+            },{
+                "name": "index_resource",
+                "columns": [ "record_resource_id" ]
+            },{
+                "name": "index_system_account",
+                "columns": [ "systemaccount_id" ]
+            },{
+                "name": "index_period_value",
+                "columns": [ "${AGGREGATION_UNIT}" ]
+            },{
+                "name": "index_period",
+                "columns": [ "${AGGREGATION_UNIT}_id" ]
+            }]
+    },
+
+    "#": "The aggregation period query determines which periods need to be aggregated based on added or modified",
+    "#": "records. The overseer_restrictions block specifies the criteria for selecting periods requiring",
+    "#": "aggregation. If this clause is not specified or no restrictions match then all records will be",
+    "#": "considered. The first table specified in source_query.joins will be used to determine periods that",
+    "#": "need aggregation.",
+
+    "aggregation_period_query": {
+        "overseer_restrictions": {
+            "last_modified_start_date": "last_modified >= ${VALUE}",
+            "last_modified_end_date": "last_modified <= ${VALUE}",
+            "include_only_resource_codes": "resource_id IN ${VALUE}",
+            "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
+        }
+    },
+
+    "#": "The destination query block allows us to specify overseer restrictions that apply to operations on",
+    "#": "the destination table (e.g., deleting records from the table during aggregation).  If no restrictions",
+    "#": "are specified then the entire aggregation period will be deleted. Note that if there is a restriction",
+    "#": "on the source_query block it is possible to delete an aggregation period from the destination table",
+    "#": "with no restictions and replace it with aggregated data that has been restricted.",
+
+    "destination_query": {
+        "overseer_restrictions": {
+            "include_only_resource_codes": "record_resource_id IN ${VALUE}",
+            "exclude_resource_codes": "record_resource_id NOT IN ${VALUE}"
+        }
+    },
+
+    "source_query": {
+
+        "overseer_restrictions": {
+            "include_only_resource_codes": "record.resource_id IN ${VALUE}",
+            "exclude_resource_codes": "record.resource_id NOT IN ${VALUE}"
+        },
+
+        "query_hint": "SQL_NO_CACHE",
+        "records": {
+            "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
+            "year": "${:YEAR_VALUE}",
+            "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
+            "record_resource_id": "record.resource_id",
+            "task_resource_id": "task.resource_id",
+            "resource_organization_id": "requested_resource.organization_id",
+            "resourcetype_id": "requested_resource.resourcetype_id",
+            "systemaccount_id": "task.systemaccount_id",
+            "submission_venue_id": "record.submission_venue_id",
+            "job_record_type_id": "record.job_record_type_id",
+            "job_task_type_id": "task.job_task_type_id",
+            "queue": "record.queue",
+            "allocation_id": "record.allocation_id",
+            "account_id": "record.account_id",
+            "requesting_person_id": "record.person_id",
+            "person_id": "task.person_id",
+            "person_organization_id": "task.person_organization_id",
+            "person_nsfstatuscode_id": "task.person_nsfstatuscode_id",
+            "fos_id": "record.fos_id",
+            "principalinvestigator_person_id": "record.principalinvestigator_person_id",
+            "piperson_organization_id": "COALESCE(record.piperson_organization_id, 0)",
+            "job_time_bucket_id": "(SELECT id FROM ${UTILITY_SCHEMA}.job_times jt WHERE task.wallduration >= jt.min_duration AND task.wallduration <= jt.max_duration)",
+            "node_count": "task.node_count",
+            "processor_count": "task.processor_count",
+            "processorbucket_id": "(SELECT id FROM ${UTILITY_SCHEMA}.processor_buckets pb WHERE task.processor_count BETWEEN pb.min_processors AND pb.max_processors)",
+            "submitted_job_count": "SUM( IF(task.submit_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, 1, 0) )",
+            "ended_job_count": "SUM( IF(task.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0) )",
+            "started_job_count": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0) )",
+            "running_job_count": "SUM(1)",
+            "wallduration": "COALESCE(SUM( ${wallduration_case_statement}), 0)",
+            "sum_wallduration_squared": "COALESCE(SUM( pow(${wallduration_case_statement}, 2)), 0)",
+            "waitduration": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, task.waitduration, 0) )",
+            "sum_waitduration_squared": "SUM( IF(task.start_day_id = ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, pow(task.waitduration, 2), 0) )",
+            "local_charge_xdsu": "SUM(${local_charge_xdsu_case_statement})",
+            "sum_local_charge_xdsu_squared": "SUM(pow(${local_charge_xdsu_case_statement}, 2))",
+            "cpu_time": "COALESCE(SUM(task.processor_count * ${wallduration_case_statement}), 0)",
+            "sum_cpu_time_squared": "COALESCE(SUM(pow(task.processor_count * ${wallduration_case_statement}, 2)), 0)",
+            "node_time": "COALESCE(SUM(task.node_count * ${wallduration_case_statement}), 0)",
+            "sum_node_time_squared": "COALESCE(SUM( pow(task.node_count * ${wallduration_case_statement}, 2)), 0)",
+            "sum_weighted_expansion_factor": "SUM( ((task.wallduration + task.waitduration) / task.wallduration) * task.node_count * COALESCE(${wallduration_case_statement}, 0))",
+            "sum_job_weights": "SUM(task.node_count * COALESCE(${wallduration_case_statement}, 0))"
+        },
+
+        "groupby": [
+            "${AGGREGATION_UNIT}_id",
+            "year",
+            "${AGGREGATION_UNIT}",
+            "piperson_organization_id",
+            "job_time_bucket_id",
+            "node_count",
+            "processor_count",
+            "person_id",
+            "resource_organization_id",
+            "person_organization_id",
+            "person_nsfstatuscode_id",
+            "record_resource_id",
+            "resourcetype_id",
+            "queue",
+            "fos_id",
+            "account_id",
+            "systemaccount_id",
+            "allocation_id",
+            "principalinvestigator_person_id"
+        ],
+
+        "joins": [
+            {
+                "name": "job_tasks",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "task"
+            },{
+                "name": "job_records",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "record",
+                "on": "record.job_record_id = task.job_record_id",
+                "type": "STRAIGHT"
+            },{
+                "name": "resourcefact",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "requested_resource",
+                "on": "requested_resource.id = record.resource_id"
+            },{
+                "name": "resourcefact",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "task_resource",
+                "on": "task_resource.id = task.resource_id"
+            }            
+        ],
+
+        "where": [
+            "task.start_day_id <= ${:PERIOD_END_DAY_ID} AND task.end_day_id >= ${:PERIOD_START_DAY_ID}",
+	        "task.is_deleted = 0"
+        ],
+
+        "macros": [{
+            "name": "wallduration_case_statement",
+            "file": "statistic_ratio_case.sql",
+            "args": {
+                "statistic": "task.wallduration",
+                "max": "${:PERIOD_SECONDS}",
+                "src_start_ts": "task.start_time_ts",
+                "src_end_ts": "task.end_time_ts",
+                "dest_start_ts": "${:PERIOD_START_TS}",
+                "dest_end_ts": "${:PERIOD_END_TS}"
+            }
+        },{
+            "name": "local_charge_xdsu_case_statement",
+            "file": "statistic_ratio_as_datatype_case.sql",
+            "args": {
+                "data_type": "DECIMAL(18,3)",
+                "statistic": "task.local_charge_xdsu",
+                "max": "${:PERIOD_SECONDS}",
+                "src_start_ts": "task.start_time_ts",
+                "src_end_ts": "task.end_time_ts",
+                "dest_start_ts": "${:PERIOD_START_TS}",
+                "dest_end_ts": "${:PERIOD_END_TS}"
+            }
+        }]
+    }
+}
