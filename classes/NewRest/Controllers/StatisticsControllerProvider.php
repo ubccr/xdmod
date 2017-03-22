@@ -2,6 +2,7 @@
 
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\Request;
 
 use \Statistics;
 use \Statistic;
