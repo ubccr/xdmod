@@ -1389,7 +1389,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
         $query = new $QueryClass($params, $action);
 
-        $allRoles = $user->getAllRoles();
+        $allRoles = $user->getAcls();
         $query->setMultipleRoleParameters($allRoles);
 
         $dataSet = new \DataWarehouse\Data\RawDataset($query, $user);
