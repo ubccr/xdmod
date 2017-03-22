@@ -3,6 +3,7 @@
 use Silex\Application;
 use Silex\ControllerCollection;
 
+use Statistic;
 use Symfony\Component\HttpFoundation\Request;
 use User\Acl;
 use User\Acls;
@@ -70,6 +71,9 @@ class AclsControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/roles", "$class::getUserRoles")
             ->before($isAuthorized);
+
+        $controller->get("$root/statistics/permitted", "$class::getPermittedStatistics");
+
     }
 
     public function listAcls(Request $request, Application $app)
@@ -235,4 +239,28 @@ class AclsControllerProvider extends BaseControllerProvider
             'data' => $roles
         ));
     }
+
+    public function getPermittedStatistics(Request $request, Application $app)
+    {
+        $user = $this->getUserFromRequest($request);
+
+        $realm = $this->getStringParam($request, 'realm', true);
+        $groupBy = $this->getStringParam($request, 'group_by', true);
+
+        $statistics = Acls::getPermittedStatistics($user, $realm, $groupBy);
+        $success = isset($statistics) && count($statistics) > 0;
+        $data = array();
+        if ($success == true) {
+            $data = array_reduce($statistics, function($carry, Statistic $item){
+                $carry []= $item->getName();
+                return $carry;
+            }, array());
+        }
+
+        return $app->json(array(
+            'success' => $success,
+            'data' => $data
+        ));
+    }
+
 }

@@ -86,7 +86,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             ->convert('id', $idConverter);
         // QUERY ROUTES ========================================================
         $controller
-            ->get("$root/descriptors", "$base::getDescriptors");
+            ->get("$root/descriptors", "$base::getDescriptorsForUser");
     }
 
     /**
@@ -392,11 +392,11 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
         );
     }
 
-    public function getDescriptors(Request $request, Application $app)
+    public function getDescriptorsForUser(Request $request, Application $app)
     {
         $user = $this->getUserFromRequest($request);
 
-        $descriptors = Acls::getDescriptors($user);
+        $descriptors = Acls::getDescriptorsForUser($user);
 
         return $app->json(array(
             'totalCount' => 1,
