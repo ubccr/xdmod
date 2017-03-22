@@ -2673,7 +2673,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         this.dwDescriptionStore = new CCR.xdmod.CustomJsonStore({
 
-            url: 'controllers/metric_explorer.php',
+            url: XDMoD.REST.url + '/metrics/explorer/descriptorsr',
             fields: ['realms'],
             root: 'data',
             totalProperty: 'totalCount',
