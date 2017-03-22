@@ -1,0 +1,6 @@
+{
+  "statistics": {
+    "prefix": "statistics",
+    "controller": "NewRest\\Controllers\\StatisticsControllerProvider"
+  }
+}
