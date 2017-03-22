@@ -871,9 +871,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         // Generate user-specific quick filters if logged in.
         if (!$user->isPublicUser()) {
-            $roles = $user->getAllRoles();
+            $roles = $user->getAcls();
             foreach ($roles as $role) {
-                $roleIdentifier = $role->getIdentifier(true);
                 foreach ($role->getParameters() as $dimensionId => $valueId) {
                     if (!$multipleProvidersSupported && $dimensionId === $serviceProviderDimensionId) {
                         continue;
