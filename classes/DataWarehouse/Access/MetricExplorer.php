@@ -4,6 +4,8 @@ namespace DataWarehouse\Access;
 
 use Exception;
 use PDOException;
+use Realm;
+use Realms;
 use stdClass;
 
 use CCR\DB;
@@ -1005,7 +1007,13 @@ class MetricExplorer extends Common
      * @return array              The realms available to the user.
      */
     public static function getRealmsFromUser(XDUser $user, $queryGroup = 'tg_usage') {
-        return array_keys($user->getMostPrivilegedRole()->getAllQueryRealms($queryGroup));
+        return array_reduce(
+            Realms::listRealmsForUserId($user->getUserId()),
+            function($carry, Realm $item) {
+                $carry []= $item->getDisplay();
+                return $carry;
+            },
+            array());
     }
 
     /**
