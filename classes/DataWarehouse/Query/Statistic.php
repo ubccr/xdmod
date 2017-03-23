@@ -275,4 +275,19 @@ abstract class Statistic extends \DataWarehouse\Query\Model\FormulaField
     {
         return null;
     }
+
+    /**
+     * Indicates if this statistic can use tables where data is rolled up
+     * by time period to perform the calculation for an aggregate chart.
+     *
+     * Returns true unless overriden. Subclasses should override this to return
+     * false if their calculations require access to raw data and cannot be
+     * perfomed using data that has been rolled up by fixed time periods.
+     *
+     * @return bool
+     */
+    public function usesTimePeriodTablesForAggregate()
+    {
+        return true;
+    }
 }

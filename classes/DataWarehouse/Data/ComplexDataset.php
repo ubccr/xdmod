@@ -2,6 +2,8 @@
 
 namespace DataWarehouse\Data;
 
+use Exception;
+
 /**
  * Models a dataset comprised of multiple x and y axes.
  *
@@ -76,9 +78,16 @@ class ComplexDataset
 
             try {
                 $stat = $query_classname::getStatistic($data_description->metric);
-                $metrics[$stat->getLabel(false)] = $stat->getInfo();
+                $statLabel = $stat->getLabel(false);
+                $metrics[$statLabel] = $stat->getInfo();
             } catch (\Exception $ex) {
                 continue;
+            }
+
+            if (!$stat->usesTimePeriodTablesForAggregate()) {
+                throw new Exception(
+                    "Metric $statLabel cannot be used in aggregate form. Please switch to a timeseries chart or modify/delete the metric."
+                );
             }
 
             $query = new $query_classname(
