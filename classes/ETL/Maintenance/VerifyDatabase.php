@@ -64,73 +64,6 @@ class VerifyDatabase extends aAction implements iAction
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-
-        parent::verify($etlOverseerOptions);
-
-        $this->initialize();
-
-        // Do this in the initialize phase?
-
-        // $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
-        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
-            // $this->sourceEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        // $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        // $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
-
-        // Verify that the response block and destination email are set
-
-        if ( ! isset($this->parsedDefinitionFile->verify_database) ) {
-            $msg = "Required key verify_database not found in definition file";
-            $this->logAndThrowException($msg);
-        }
-
-        $verifyConfig = $this->parsedDefinitionFile->verify_database;
-
-        if ( ! isset($verifyConfig->response) ) {
-            $msg = "Required key verify_database.response not found in definition file";
-            $this->logAndThrowException($msg);
-        }
-
-        if ( ! isset($verifyConfig->response->line) ) {
-            $msg = "Required key verify_database.response.line not found in definition file";
-            $this->logAndThrowException($msg);
-        }
-
-        // Verify that any fields referenced in the line response are valid column names
-
-        if ( preg_match_all('/\${(.+)}/U', $verifyConfig->response->line, $matches) > 0 ) {
-            array_shift($matches);
-            $missing = array_diff($matches[0], $this->queryColumnNames);
-            if ( 0 != count($missing) ) {
-                $msg = "The following column names were referenced in the line template but are "
-                    . "not present in the query: " . implode(", ", $missing);
-                $this->logAndThrowException($msg);
-            }
-        }
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-    */
-
-    /* ------------------------------------------------------------------------------------------
      * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
@@ -143,14 +76,6 @@ class VerifyDatabase extends aAction implements iAction
         }
 
         $this->initialized = false;
-
-        // $utilityEndpoint = $this->etlConfig->getDataEndpoint($this->options->utility);
-        // $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
-        // $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
-
-        // list($startDate, $endDate) = $this->getEtlOverseerOptions()->getDatePeriod();
-        // $this->currentStartDate = $startDate;
-        // $this->currentEndDate = $endDate;
 
         // These additional variables are available to the sql statement
 
@@ -253,14 +178,11 @@ class VerifyDatabase extends aAction implements iAction
 
         }  // if ( isset($verifyConfig->response->header) )
 
-// $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
         if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
             // $this->sourceEndpoint = null;
             $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
-        // $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        // $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
 
         // Verify that the response block and destination email are set
 

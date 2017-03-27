@@ -67,65 +67,6 @@ class ExecuteSql extends aAction implements iAction
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-
-        parent::verify($etlOverseerOptions);
-
-        $this->initialize();
-
-        // $utilityEndpoint = $this->etlConfig->getDataEndpoint($this->options->utility);
-        // $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
-        // $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
-
-        if ( ! $destinationEndpoint instanceof iRdbmsEndpoint ) {
-            $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        // $this->logger->debug("Destination endpoint: " . $destinationEndpoint);
-
-        // Verify that each sql file exists and is readable
-
-        foreach ( $this->options->sql_file_list as $sqlFile ) {
-
-            $filename = $sqlFile;
-
-            if ( is_object($sqlFile) ) {
-                if ( ! isset($sqlFile->sql_file) ) {
-                    $msg =  "sql_file_list object does not have sql_file property set";
-                    $this->logAndThrowException($msg);
-                } else {
-                    $filename = $sqlFile->sql_file;
-                }
-            }  // if ( is_object($sqlFile) )
-
-            if ( ! file_exists($filename) ) {
-                $msg = "SQL file does not exist '$filename'";
-                $this->logAndThrowException($msg);
-            } elseif ( ! is_readable($filename) ) {
-                $msg = "SQL file is not readable '$filename'";
-                $this->logAndThrowException($msg);
-            }
-        }  // foreach ( $this->sqlScriptFiles as $sqlFile )
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-    */
-
-    /* ------------------------------------------------------------------------------------------
      * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
@@ -157,15 +98,10 @@ class ExecuteSql extends aAction implements iAction
 
         $this->options->sql_file_list = $sqlFileList;
 
-        // list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
-        // $this->currentStartDate = $startDate;
-        // $this->currentEndDate = $endDate;
-
         if ( ! $this->destinationEndpoint instanceof iRdbmsEndpoint ) {
             $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
-        // $this->logger->debug("Destination endpoint: " . $destinationEndpoint);
 
         // Verify that each sql file exists and is readable
 

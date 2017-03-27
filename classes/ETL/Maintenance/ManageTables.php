@@ -56,9 +56,6 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
             $this->logAndThrowException($msg);
         }
 
-        // aRdbmsDestinationAction::__construct() expects the definition file to be set, but we are
-        // handling that manually during initialization.
-
         $list = $options->definition_file_list;
         $options->definition_file = current($list);
 

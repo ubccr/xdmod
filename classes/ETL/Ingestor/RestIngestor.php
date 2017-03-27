@@ -87,25 +87,18 @@ class RestIngestor extends aIngestor implements iAction
 
         parent::initialize($etlOverseerOptions);
 
-        // $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
-
         if ( ! $this->sourceEndpoint instanceof Rest ) {
             // $this->sourceEndpoint = null;
             $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\Rest");
         }
-        //$this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
 
         $this->sourceEndpoint->connect();
-        // $this->sourceHandle = $this->sourceEndpoint->getHandle();
-
-        // $this->utilityEndpoint = $etlConfig->getDataEndpoint($this->options->utility);
         $this->utilityEndpoint->connect();
 
         if ( ! $this->utilityEndpoint instanceof aRdbmsEndpoint ) {
             $this->utilityEndpoint = null;
             $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\aRdbmsEndpoint");
         }
-        // $this->utilityHandle = $this->utilityEndpoint->getHandle();
 
         // This action only supports 1 destination table so use the first one and log a warning if
         // there are multiple.
@@ -167,13 +160,6 @@ class RestIngestor extends aIngestor implements iAction
         }
 
         // --------------------------------------------------------------------------------
-        // Create the list of supported macros. Macros starting with a colon (:) are PDO bind
-        // paramaters passed in the loop of dirty date ids. If this list is modified, be sure to update
-        // the documentation!
-
-        // $this->variableMap["UTILITY_SCHEMA"] = $this->utilityEndpoint->getSchema();
-
-        // --------------------------------------------------------------------------------
         // The values for the request parameter and result field map configuration may be an object
         // containing transformation and verification directives.  Separate the directives out into
         // their own lists, leaving the parameters and field_map as simple key-value pairs.
@@ -231,47 +217,6 @@ class RestIngestor extends aIngestor implements iAction
         return true;
 
     }  // initialize()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-
-        $this->initialize();
-
-        parent::verify($etlOverseerOptions);
-
-        if ( null !== $this->restRequestConfig && ! is_object($this->restRequestConfig) ) {
-            $this->logAndThrowException("REST request config must be an object");
-        } elseif ( null !== $this->restResponseConfig && ! is_object($this->restResponseConfig) ) {
-            $this->logAndThrowException("REST response config must be an object");
-        }
-
-        // Verify that any type formatting directives in the request and response are valid
-
-        foreach ( $this->parameterDirectives as $parameter => $directives ) {
-            $this->verifyDirectives($parameter, $directives);
-        }  // if ( isset($this->restRequestConfig->parameters) )
-
-        foreach ( $this->responseDirectives as $key => $directives ) {
-            $this->verifyDirectives($key, $directives);
-        }  // if ( isset($this->restRequestConfig->field_map) )
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-    */
 
     /* ------------------------------------------------------------------------------------------
      * @see aIngestor::performPreExecuteTasks()

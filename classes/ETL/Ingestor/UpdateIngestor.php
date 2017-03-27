@@ -50,41 +50,6 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    /*
-    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-
-        $this->initialize();
-
-        parent::verify($etlOverseerOptions);
-
-        // The UpdateIngestor does not create the destination table so it must exist.
-
-        $tableName = $this->etlDestinationTable->getName();
-        $schema = $this->etlDestinationTable->getSchema();
-
-        if ( ! $this->destinationEndpoint->tableExists($tableName, $schema) ) {
-            $msg = "Destination table " . $this->etlDestinationTable->getFullName() . " must exist";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-    */
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iAction::initialize()
-     * ------------------------------------------------------------------------------------------
-     */
-
     public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
@@ -168,11 +133,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         if ( is_string($this->parsedDefinitionFile->source_data->data) ) {
             $filename = $this->parsedDefinitionFile->source_data->data;
             $filename = \xd_utilities\qualify_path($filename, $this->options->paths->base_dir);
-            /*
-            if ( 0 !== strpos($filename, "/") ) {
-                $filename = $this->options->paths->base_dir . "/$filename";
-            }
-            */
+
             $this->logger->debug("Load data from '$filename'");
             $opt = new DataEndpointOptions(array('name' => "Configuration",
                                                  'path' => $filename,

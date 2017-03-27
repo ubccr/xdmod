@@ -3,9 +3,6 @@
  * Options used to control the overall ETL process.  These are typically provided from defaults or
  * from the command line.
  *
- * This options object is also an iterator for the chunked date interval, allowing actions to
- * iterate over this object to break the ETL process up into manageble chunks.
- *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2015-09-25
  * ==========================================================================================
@@ -832,38 +829,6 @@ class EtlOverseerOptions extends Loggable
         $this->sectionNames = ( ! is_array($names) ? array($names) : $names );
         return $this;
     }  // setSectionNames()
-
-    /* ==========================================================================================
-     * Iterator implementation. Allow iteration over the list of ETL period chunks.
-     * ==========================================================================================
-     */
-
-    /*
-    public function current()
-    {
-        return current($this->etlPeriodChunkList);
-    }
-
-    public function key()
-    {
-        return key($this->etlPeriodChunkList);
-    }
-
-    public function next()
-    {
-        return next($this->etlPeriodChunkList);
-    }
-
-    public function rewind()
-    {
-        return reset($this->etlPeriodChunkList);
-    }
-
-    public function valid()
-    {
-        return false !== current($this->etlPeriodChunkList);
-    }
-    */
 
     /* ------------------------------------------------------------------------------------------
      * Generate a list of ETL date intervals of the requested chunk size from the overall start and

@@ -44,32 +44,6 @@ abstract class aAggregator extends aRdbmsDestinationAction
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
-    {
-
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-
-        $this->initialize();
-
-        parent::verify($etlOverseerOptions);
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-    */
-
-    /* ------------------------------------------------------------------------------------------
      * @see aAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
@@ -83,12 +57,6 @@ abstract class aAggregator extends aRdbmsDestinationAction
         $this->initialized = false;
 
         parent::initialize($etlOverseerOptions);
-
-        // Initial value for current date range, may be overridden.
-
-        // list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
-        // $this->currentStartDate = $startDate;
-        // $this->currentEndDate = $endDate;
 
         $this->initialized = true;
 

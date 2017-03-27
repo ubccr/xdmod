@@ -300,11 +300,6 @@ class EtlConfiguration extends Configuration
 
         foreach ( $config->paths as $key => &$value ) {
             $value = \xd_utilities\qualify_path($value, $this->baseDir);
-            /*
-            if ( 0 !== strpos($value, "/") ) {
-                $value = $this->baseDir . "/" . $value;
-            }
-            */
         }
         unset($value); // Sever the reference with the last element
 
