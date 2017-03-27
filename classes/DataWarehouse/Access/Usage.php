@@ -144,15 +144,26 @@ class Usage extends Common
             //
             // If one statistic was requested, convert it into a single ME request.
             // Otherwise, create one ME request for each available statistic.
+            //
+            // If the request was for aggregate charts and any statistic can't
+            // be provided in that form, quietly change its chart to timeseries.
             $meRequests = array();
+            $userStatistics = $user->getMostPrivilegedRole()->getQueryDescripters(
+                'tg_usage',
+                $usageRealm,
+                $usageGroupBy
+            )->getPermittedStatistics();
             if ($isSingleMetricQuery) {
+                if (!$usageIsTimeseries) {
+                    $userStatisticObject = $usageRealmAggregateClass::getStatistic($this->request['statistic']);
+                    if (!$userStatisticObject->usesTimePeriodTablesForAggregate()) {
+                        $this->request['dataset_type'] = 'timeseries';
+                        $this->request['display_type'] = 'line';
+                        $this->request['swap_xy'] = false;
+                    }
+                }
                 $meRequests[] = $this->convertChartRequest($this->request, $isTextExport);
             } else {
-                $userStatistics = $user->getMostPrivilegedRole()->getQueryDescripters(
-                    'tg_usage',
-                    $usageRealm,
-                    $usageGroupBy
-                )->getPermittedStatistics();
                 foreach ($userStatistics as $userStatistic) {
                     $userStatisticObject = $usageRealmAggregateClass::getStatistic($userStatistic);
                     if (!$userStatisticObject->isVisible()) {
@@ -161,6 +172,29 @@ class Usage extends Common
 
                     $statisticRequest = $this->request;
                     $statisticRequest['statistic'] = $userStatistic;
+                    if (
+                        !$usageIsTimeseries &&
+                        !$userStatisticObject->usesTimePeriodTablesForAggregate()
+                    ) {
+                        // If a text-based export of aggregate data was requested
+                        // and not all statistics can be provided as aggregates,
+                        // return a failure response.
+                        if ($isTextExport) {
+                            return array(
+                                'results' => \xd_charting\encodeJSON(array(
+                                    'success' => false,
+                                    'message' => "Aggregate data not available for all metrics. Change to timeseries and try again.",
+                                    'totalCount' => 0,
+                                    $chartsKey => array(),
+                                )),
+                                'headers' => array(),
+                            );
+                        }
+
+                        $statisticRequest['dataset_type'] = 'timeseries';
+                        $statisticRequest['display_type'] = 'line';
+                        $statisticRequest['swap_xy'] = false;
+                    }
                     $meRequests[] = $this->convertChartRequest($statisticRequest, $isTextExport);
                 }
             }
@@ -232,6 +266,7 @@ class Usage extends Common
 
                     // Combine multiple results into a single object to return.
                     $meRequest = $meRequests[0];
+                    $meRequestIsTimeseries = $meRequest['timeseries'];
                     $emptyResultFound = false;
                     $combinedResult = null;
                     $combinedResultColumns = null;
@@ -250,7 +285,7 @@ class Usage extends Common
                             continue;
                         }
 
-                        if ($usageIsTimeseries) {
+                        if ($meRequestIsTimeseries) {
                             $combinedResultRecords = $meResult['records'];
                         } else {
                             foreach ($meResult['records'] as $meResultRecord) {
@@ -298,7 +333,7 @@ class Usage extends Common
                         );
                     }
 
-                    if ($usageIsTimeseries) {
+                    if ($meRequestIsTimeseries) {
                         $timeseriesTemplateField = $combinedResultFields[2];
                         $timeseriesTemplateColumn = $combinedResultColumns[2];
 
@@ -390,7 +425,7 @@ class Usage extends Common
                     $combinedResult['message'] = $jsonStoreMessage;
 
                     // Sort the datasheet appropriately.
-                    if ($usageIsTimeseries || !$isSingleMetricQuery) {
+                    if ($meRequestIsTimeseries || !$isSingleMetricQuery) {
                         $sortField = $combinedResultFirstColumn;
                         $sortDirection = 'asc';
                     } else {
@@ -481,6 +516,7 @@ class Usage extends Common
 
                 // Get the request for this chart.
                 $meRequest = $meRequests[$meResponseIndex];
+                $meRequestIsTimeseries = $meRequest['timeseries'];
 
                 // Get the statistic object used by this chart request.
                 $meRequestMetric = $usageRealmAggregateClass::getStatistic($meRequest['data_series_unencoded'][0]['metric']);
@@ -541,7 +577,7 @@ class Usage extends Common
                 $usageChartMenuId = "group_by_${usageRealm}_${usageGroupBy}";
 
                 // Remove extraneous x-axis properties.
-                if ($usageIsTimeseries) {
+                if ($meRequestIsTimeseries) {
                     unset($meChart['xAxis']['title']);
                 } else {
                     unset($meChart['xAxis']['title']['text']);
@@ -582,7 +618,7 @@ class Usage extends Common
                     $meChart['yAxis'][0]['showLastLabel'] = true;
 
                     // Set the y-axis grid line dash style and color.
-                    if ($usageIsTimeseries) {
+                    if ($meRequestIsTimeseries) {
                         $meChart['yAxis'][0]['gridLineDashStyle'] = 'Solid';
                         $meChart['yAxis'][0]['gridLineColor'] = '#C0C0C0';
                     } else {
@@ -641,7 +677,7 @@ class Usage extends Common
                 ) use (
                     $usageRealm,
                     $usageGroupBy,
-                    $usageIsTimeseries,
+                    $meRequestIsTimeseries,
                     $thumbnailRequested,
                     $meRequest,
                     $meRequestMetric,
@@ -662,7 +698,7 @@ class Usage extends Common
                     if ($isPrimaryDataSeries) {
                         $primaryDataSeriesRank++;
                         if (
-                            $usageIsTimeseries
+                            $meRequestIsTimeseries
                             && $chartSortedByValue
                             && $usageGroupBy !== 'none'
                         ) {
@@ -704,7 +740,7 @@ class Usage extends Common
                         )->getDrillTargets($meRequestMetric->getAlias()));
                         $usageGroupByUnit = $usageGroupByObject->getUnit();
 
-                        if ($usageIsTimeseries) {
+                        if ($meRequestIsTimeseries) {
                             $drilldownDetails = $meDataSeries['drilldown'];
                             $drilldownId = $drilldownDetails['id'];
                             $drilldownLabel = json_encode($drilldownDetails['label']);
@@ -750,7 +786,7 @@ class Usage extends Common
                     unset($meDataSeries['visible']);
                     unset($meDataSeries['events']);
 
-                    if ($usageIsTimeseries) {
+                    if ($meRequestIsTimeseries) {
                         unset($meDataSeries['drilldown']);
                     }
 
