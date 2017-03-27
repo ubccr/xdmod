@@ -8,7 +8,7 @@ spl_autoload_register(
         $classPath
             = $dir
             . '/lib/'
-            . str_replace('_', '/', $className)
+            . str_replace('\\', '/', $className)
             . '.php';
 
         if (is_readable($classPath)) {

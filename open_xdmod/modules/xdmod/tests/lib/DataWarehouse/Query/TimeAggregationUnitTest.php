@@ -1,13 +1,13 @@
 <?php
 
-require_once __DIR__.'/../../../../configuration/linker.php';
+namespace UnitTesting\DataWarehouse\Query;
 
 use \UnitTesting\mock;
 
-class TimeAggregationUnitTest extends PHPUnit_Framework_TestCase
+class TimeAggregationUnitTest extends \PHPUnit_Framework_TestCase
 {
 
-    function testGetRawTimePeriod()
+    public function testGetRawTimePeriod()
     {
         $timep = 1420088400;
 
@@ -31,7 +31,7 @@ class TimeAggregationUnitTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException DomainException
      */
-    function testGetRawTimePeriodInvalid1()
+    public function testGetRawTimePeriodInvalid1()
     {
         \DataWarehouse\Query\TimeAggregationUnit::getRawTimePeriod('seven', 'day');
     }
@@ -39,13 +39,13 @@ class TimeAggregationUnitTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException DomainException
      */
-    function testGetRawTimePeriodInvalid2()
+    public function testGetRawTimePeriodInvalid2()
     {
         \DataWarehouse\Query\TimeAggregationUnit::getRawTimePeriod(142008840, 'millenium');
     }
 
 
-    function testDeriveAggregationUnitName()
+    public function testDeriveAggregationUnitName()
     {
         $aggname = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName('auto', '2016-01-01', '2016-01-30');
         $this->assertEquals($aggname, 'day');
@@ -63,5 +63,3 @@ class TimeAggregationUnitTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($aggname, 'quarter');
     }
 }
-
-?>

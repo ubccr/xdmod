@@ -1,15 +1,13 @@
 <?php
 
-require_once __DIR__.'/../../configuration/linker.php';
+namespace UnitTesting;
 
-use \UnitTesting\mock;
-
-class UserStorageTest extends PHPUnit_Framework_TestCase
+class UserStorageTest extends \PHPUnit_Framework_TestCase
 {
-    function testGet() {
+    public function testGet() {
 
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $output = $ustore->get();
 
@@ -17,10 +15,10 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         $this->assertCount(0, $output);
     }
 
-    function testGetExisting() {
+    public function testGetExisting() {
 
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $input = array('test' => '1');
         $res = $ustore->insert($input);
@@ -40,10 +38,10 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
 
     }
 
-    function testGetById() {
+    public function testGetById() {
 
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $input = array('test' => '1');
         $res = $ustore->insert($input);
@@ -58,9 +56,9 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(null, $output);
     }
 
-    function testGetByIdNoExisting() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testGetByIdNoExisting() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $output = $ustore->getById(190);
         $this->assertEquals(null, $output);
@@ -71,15 +69,15 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('test', $ustore->getById($res['recordid']));
     }
 
-    function testInsertLimits() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testInsertLimits() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
-        for($i =0; $i < (UserStorage::MAX_RECORDS + 1); $i++)
+        for($i =0; $i < (\UserStorage::MAX_RECORDS + 1); $i++)
         {
             $tmp = array();
             $res = $ustore->insert($tmp);
-            if($i < UserStorage::MAX_RECORDS) {
+            if($i < \UserStorage::MAX_RECORDS) {
                 $this->assertArrayHasKey('recordid', $res);
             } else {
                 $this->assertEquals(null, $res);
@@ -87,15 +85,15 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    function testUpsertLimits() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testUpsertLimits() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
-        for($i =0; $i < (UserStorage::MAX_RECORDS + 1); $i++)
+        for($i =0; $i < (\UserStorage::MAX_RECORDS + 1); $i++)
         {
             $tmp = array();
             $res = $ustore->upsert($i, $tmp);
-            if($i < UserStorage::MAX_RECORDS) {
+            if($i < \UserStorage::MAX_RECORDS) {
                 $this->assertArrayHasKey('recordid', $res);
                 $this->assertEquals($res['recordid'], $i);
             } else {
@@ -104,7 +102,7 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    private function upsertHelper($ustore, $recordid) 
+    private function upsertHelper($ustore, $recordid)
     {
         $tmp = array('value'.$recordid => $recordid);
         $result = $ustore->upsert($recordid, $tmp);
@@ -129,9 +127,9 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         return $result['recordid'];
     }
 
-    function testBigUpsert() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testBigUpsert() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $this->upsertHelper($ustore, 0);
         $this->upsertHelper($ustore, 1);
@@ -153,42 +151,42 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         $this->assertNotEquals($res1['recordid'], $res2['recordid']);
     }
 
-    function testDelById() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testDelById() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
-        for($i=0; $i< UserStorage::MAX_RECORDS; $i++) {
+        for($i=0; $i< \UserStorage::MAX_RECORDS; $i++) {
             $this->upsertHelper($ustore, $i);
         }
 
-        for($i=0; $i< UserStorage::MAX_RECORDS; $i++) {
+        for($i=0; $i< \UserStorage::MAX_RECORDS; $i++) {
             $nentries = $ustore->delById($i);
-            $this->assertEquals($nentries, UserStorage::MAX_RECORDS - $i - 1);
+            $this->assertEquals($nentries, \UserStorage::MAX_RECORDS - $i - 1);
         }
 
-        for($i=0; $i< UserStorage::MAX_RECORDS; $i++) {
+        for($i=0; $i< \UserStorage::MAX_RECORDS; $i++) {
             $this->upsertHelper($ustore, $i);
         }
 
-        for($i=UserStorage::MAX_RECORDS-1; $i >= 0; $i--) {
+        for($i=\UserStorage::MAX_RECORDS-1; $i >= 0; $i--) {
             $nentries = $ustore->delById($i);
             $this->assertEquals($nentries, $i);
         }
     }
 
-    function testDelById2() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testDelById2() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $recordids = array();
-        for($i=0; $i< UserStorage::MAX_RECORDS; $i++) {
+        for($i=0; $i< \UserStorage::MAX_RECORDS; $i++) {
             $recordids[ "".$this->insertHelper($ustore)] = 1;
         }
 
         ksort($recordids);
-        $this->assertCount(UserStorage::MAX_RECORDS, $recordids);
+        $this->assertCount(\UserStorage::MAX_RECORDS, $recordids);
 
-        $left = UserStorage::MAX_RECORDS;
+        $left = \UserStorage::MAX_RECORDS;
         foreach(array_keys($recordids) as $key) {
             $left -= 1;
             $nentries = $ustore->delById($key);
@@ -196,9 +194,9 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    function testDelByIdNoExisting() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testDelByIdNoExisting() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $result = $ustore->delById(1234);
         $this->assertEquals($result, 0);
@@ -209,9 +207,9 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($result, 1);
     }
 
-    function testDel() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testDel() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $recordid = $this->insertHelper($ustore);
 
@@ -223,9 +221,9 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(null, $result);
     }
 
-    function testDelByIdString() {
-        $mockuser = new \UnitTesting\mock\MockXDUser();
-        $ustore = new UserStorage($mockuser, "TEST");
+    public function testDelByIdString() {
+        $mockuser = new \TestHelpers\mock\MockXDUser();
+        $ustore = new \UserStorage($mockuser, "TEST");
 
         $this->upsertHelper($ustore, 17);
         $this->upsertHelper($ustore, 3);
@@ -238,5 +236,3 @@ class UserStorageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(44, $this->insertHelper($ustore));
     }
 }
-
-?>

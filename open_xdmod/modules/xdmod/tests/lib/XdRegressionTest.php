@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__.'/../../configuration/linker.php';
+namespace UnitTesting;
 
-class XdRegressionTest extends PHPUnit_Framework_TestCase
+class XdRegressionTest extends \PHPUnit_Framework_TestCase
 {
-    function testLinearRegression1() {
+    public function testLinearRegression1() {
 
         $xVals = array(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
         $yVals = array(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
@@ -17,7 +17,7 @@ class XdRegressionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0.0, $r_squared, '', 1.0e-10);
     }
 
-    function testLinearRegression2() {
+    public function testLinearRegression2() {
 
         $xVals = array(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
         $yVals = array(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
@@ -30,7 +30,7 @@ class XdRegressionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1.0, $r_squared, '', 1.0e-10);
     }
 
-    function testLinearRegression3() {
+    public function testLinearRegression3() {
 
         $xVals = array(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
         $yVals = array(1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0);
@@ -39,12 +39,12 @@ class XdRegressionTest extends PHPUnit_Framework_TestCase
         list($slope, $intersect,$correlation, $r_squared) = \xd_regression\linear_regression($xVals, $yVals);
 
         $this->assertEquals(-0.01666666666666666, $slope, '', 1.0e-10);
-        $this->assertEquals(1.1944444444444444,   $intersect, '', 1.0e-10);
+        $this->assertEquals(1.1944444444444444, $intersect, '', 1.0e-10);
         $this->assertEquals(-0.13693063937629155, $correlation, '', 1.0e-10);
         $this->assertEquals(0.018750000000000006, $r_squared, '', 1.0e-10);
     }
 
-    function testLinearRegression4() {
+    public function testLinearRegression4() {
 
         $xVals = array();
         $yVals = array();
@@ -61,7 +61,7 @@ class XdRegressionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1.0, $r_squared, '', 1.0e-10);
     }
 
-    function testLinearRegression5() {
+    public function testLinearRegression5() {
 
         $xVals = array();
         $yVals = array();
@@ -94,7 +94,7 @@ class XdRegressionTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException PHPUnit_Framework_Error
      */
-    function testRegressionMismatch() {
+    public function testRegressionMismatch() {
 
         $xVals = array(1.0, 2.0);
         $yVals = array(1.0, 1.0, 1.0);
@@ -103,5 +103,3 @@ class XdRegressionTest extends PHPUnit_Framework_TestCase
 
     }
 }
-
-?>
