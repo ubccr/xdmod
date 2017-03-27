@@ -121,22 +121,17 @@ class pdoIngestor extends aIngestor
 
         // Get the handles for the various database endpoints
 
-        // $this->utilityEndpoint = $etlConfig->getDataEndpoint($this->options->utility);
         if ( ! $this->utilityEndpoint instanceof iRdbmsEndpoint ) {
             // $this->utilityEndpoint = null;
             $msg = "Utility endpoint does not implement of ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
-        // $this->utilityHandle = $this->utilityEndpoint->getHandle();
 
-        // $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
         if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
             // $this->sourceEndpoint = null;
             $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
-        // $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        // $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
 
         if ( "mysql" == $this->destinationHandle->_db_engine ) {
             $this->_dest_helper = MySQLHelper::factory($this->destinationHandle);
@@ -167,9 +162,6 @@ class pdoIngestor extends aIngestor
 
         // By default, queries may include references to the schema names so they can be changed in the
         // config file.
-
-        // $this->variableMap["UTILITY_SCHEMA"] = $this->utilityEndpoint->getSchema();
-        // $this->variableMap["SOURCE_SCHEMA"] = $this->sourceEndpoint->getSchema();
 
         $this->sourceQueryString = $this->getSourceQueryString();
 
@@ -447,19 +439,6 @@ class pdoIngestor extends aIngestor
         // Update the start/end dates for this query and get the source query string. It is important
         // to do it in the pre-execute stage because if we are chunking our ingest it will get
         // updated every time.
-
-        // if ( null === $this->etlSourceQuery && isset($this->parsedDefinitionFile->source_query) ) {
-        //     $this->logger->info("Update source query date range");
-        //     // If supported by the source query, set the date ranges here
-
-        //     $startDate = $this->sourceEndpoint->quote($this->currentStartDate);
-        //     $endDate = $this->sourceEndpoint->quote($this->currentEndDate);
-
-        //     if ( false === $this->etlSourceQuery->setDateRange($startDate, $endDate) ) {
-        //         $msg = "Ingestion date ranges not supported by source query";
-        //         $this->logger->info($msg);
-        //     }
-        // }
 
         $this->sourceQueryString = $this->getSourceQueryString();
 

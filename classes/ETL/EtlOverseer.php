@@ -130,7 +130,6 @@ class EtlOverseer extends Loggable implements iEtlOverseer
         $action = forward_static_call(array($options->factory, "factory"), $options, $etlConfig, $this->logger);
         $this->logger->info("Verifying action: " . $action);
 
-        // $action->verify($this->etlOverseerOptions);
         $action->initialize($this->etlOverseerOptions);
 
         return $action;

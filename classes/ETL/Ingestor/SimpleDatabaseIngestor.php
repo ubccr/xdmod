@@ -16,36 +16,6 @@ use ETL\iAction;
 class SimpleDatabaseIngestor extends pdoIngestor implements iAction
 {
 
-    /* ------------------------------------------------------------------------------------------
-     * @see iAction::initialize()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-
-        $this->initialize();
-
-        parent::verify($etlOverseerOptions);
-
-        if ( ! isset($this->parsedDefinitionFile->source_table) ) {
-            $msg = "source_table not found in definition file";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-    */
-
     public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {

@@ -45,18 +45,6 @@ abstract class aNamedEntity extends aEtlObject
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize data for this item from a configuration object.
-     *
-     * @param $config A stdClass object representing the item
-     * @param $force Force a re-initialization even if the entity has previously been initialized
-     *
-     * @throw Exception If a property in the config file does not exist in the object.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    // public function initialize(stdClass $config, $force = false);
-
-    /* ------------------------------------------------------------------------------------------
      * Return the table name.
      *
      * @param $quote true to wrap the name in quotes to handle special characters

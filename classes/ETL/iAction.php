@@ -56,7 +56,6 @@ interface iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    // public function verify(EtlOverseerOptions $etlOverseerOptions = null);
     public function initialize(EtlOverseerOptions $etlOverseerOptions = null);
 
     /* ------------------------------------------------------------------------------------------

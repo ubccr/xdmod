@@ -323,14 +323,6 @@ class Configuration extends Loggable implements \Iterator
             $includeFilename = \xd_utilities\qualify_path($includeFilename, $this->baseDir);
             $includeFilename = \xd_utilities\resolve_path($includeFilename);
 
-            /*
-            if ( 0 !== strpos($includeFilename, "/") ) {
-                $includeFilename = $this->baseDir . "/" . $includeFilename;
-            }
-
-            $includeFilename = realpath($includeFilename);
-            */
-
             $this->logger->debug("Processing include file '$includeFilename'");
 
             if ( ! is_readable($includeFilename) ) {

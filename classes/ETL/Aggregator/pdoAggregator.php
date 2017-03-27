@@ -118,62 +118,8 @@ class pdoAggregator extends aAggregator
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-
-        $this->initialize();
-
-        parent::verify($etlOverseerOptions);
-
-        if ( null === $this->etlSourceQuery ) {
-            $msg = "ETL source query is not set";
-            $this->logAndThrowException($msg);
-        } elseif ( ! $this->etlSourceQuery instanceof Query ) {
-            $msg = "ETL source query is not an instance of Query";
-            $this->logAndThrowException($msg);
-        }
-
-        // Group by fields must match existing column names. Variables are not substituted at this point
-        // but it doesn't matter because the naming will still be consistent.
-
-        $columnNames = $this->etlDestinationTable->getColumnNames();
-        $missingColumnNames = array_diff($this->etlSourceQuery->getGroupBys(), $columnNames);
-
-        if ( 0 != count($missingColumnNames) ) {
-            $msg = "Columns in group by not found in table: " . implode(", ", $missingColumnNames);
-            $this->logAndThrowException($msg);
-        }
-
-        $missingColumnNames = array_diff(array_keys($this->etlSourceQuery->getRecords()), $columnNames);
-
-        if ( 0 != count($missingColumnNames) ) {
-            $msg = "Columns in formulas not found in table: " . implode(", ", $missingColumnNames);
-            $this->logAndThrowException($msg);
-        }
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-    */
-
-    /* ------------------------------------------------------------------------------------------
      * Initialize data required to perform the action.  Since this is an action of a target database
      * we must parse the definition of the target table.
-     *
-     * Note: We do not use aRdbmsDestinationAction::initialize() because we cannot get the
-     *   aggregation table name without the aggregation unit.
      *
      * @throws Exception if any query data was not
      * int the correct format.
@@ -188,80 +134,21 @@ class pdoAggregator extends aAggregator
 
         $this->initialized = false;
 
-        /*
-        // If the etlDestinationTable is set, it will not be generated in aRdbmsDestinationAction
-
-        if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
-            $msg = "Definition file does not contain a 'table_definition' key";
-            $this->logAndThrowException($msg);
-        }
-
-        // This action only supports 1 destination table so use the first one and log a warning if
-        // there are multiple.
-
-        if ( is_array($this->parsedDefinitionFile->table_definition)
-             && count($this->parsedDefinitionFile->table_definition) > 0 )
-        {
-            $tableDefinition = $this->parsedDefinitionFile->table_definition;
-            $this->parsedDefinitionFile->table_definition = array_shift($tableDefinition);
-            $msg = $this . " does not support multiple ETL destination tables, using first table.";
-            $this->logger->warning($msg);
-        }
-
-        // Aggregation does not support multiple destination tables.
-
-        if ( ! is_object($this->parsedDefinitionFile->table_definition) ) {
-            $msg = "Table definition must be an object. Aggregation does not currently support multiple destination tables.";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->logger->debug("Create ETL destination aggregation table object");
-        $this->etlDestinationTable = new AggregationTable(
-            $this->parsedDefinitionFile->table_definition,
-            $this->destinationEndpoint->getSystemQuoteChar(),
-            $this->logger
-        );
-        $this->etlDestinationTable->setSchema($this->destinationEndpoint->getSchema());
-
-        if ( isset($this->options->table_prefix) &&
-             $this->options->table_prefix != $this->etlDestinationTable->getTablePrefix() )
-        {
-            $msg =
-                "Overriding table prefix from " .
-                $this->etlDestinationTable->getTablePrefix()
-                . " to " .
-                $this->options->table_prefix;
-            $this->logger->debug($msg);
-            $this->etlDestinationTable->setTablePrefix($this->options->table_prefix);
-        }
-
-        // Aggregation does not support multiple destination tables but we must still populate
-        // the table list since it is used by methods upstream.
-        $this->etlDestinationTableList[$this->parsedDefinitionFile->table_definition->name] = $this->etlDestinationTable;
-        */
-
-        // aRdbmsDestinationAction::initialize() will set the etlDestinationTableList if it is not already set. Since we are
-
         parent::initialize($etlOverseerOptions);
 
         // Set up the handles to the various data sources and verify they are the correct type
 
-        // $this->utilityEndpoint = $etlConfig->getDataEndpoint($this->options->utility);
         if ( ! $this->utilityEndpoint instanceof Mysql ) {
             // $this->utilityEndpoint = null;
             $msg = "Utility endpoint is not an instance of ETL\\DataEndpoint\\Mysql";
             $this->logAndThrowException($msg);
         }
-        // $this->utilityHandle = $this->utilityEndpoint->getHandle();
 
-        // $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
         if ( ! $this->sourceEndpoint instanceof Mysql ) {
             // $this->sourceEndpoint = null;
             $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\Mysql";
             $this->logAndThrowException($msg);
         }
-        // $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        // $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
 
         if ( null === $this->etlSourceQuery ) {
 
@@ -283,8 +170,6 @@ class pdoAggregator extends aAggregator
         // the documentation!
 
         $localParameters = array(
-            // 'UTILITY_SCHEMA' => $this->utilityEndpoint->getSchema(),
-            // 'SOURCE_SCHEMA' => $this->sourceEndpoint->getSchema(),
             ':YEAR_VALUE' => ":year_value",
             // Number of seconds in the aggregation period
             ':PERIOD_SECONDS' => ":period_seconds",
@@ -453,8 +338,6 @@ class pdoAggregator extends aAggregator
             $this->logger->notice("Aggregation unit not supported: '$aggregationUnit'");
             return false;
         }
-
-        // $this->variableMap["AGGREGATION_UNIT"] = $aggregationUnit;
 
         // --------------------------------------------------------------------------------
         // Create/alter the table for this aggregation unit. In dryrun mode, this simply prints out
@@ -747,7 +630,8 @@ class pdoAggregator extends aAggregator
             // intensive for large number of records. The restrictions are specified in the
             // definition file.
             //
-            // For example, if a last_modified field is present then it can be used to determine records that need to be aggregated
+            // For example, if a last_modified field is present then it can be used to
+            // determine records that need to be aggregated
 
             $query = (object) array(
                 'records' => (object) array(
