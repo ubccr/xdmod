@@ -40,19 +40,24 @@ interface iAction
     public function execute(EtlOverseerOptions $etlOptions);
 
     /* ------------------------------------------------------------------------------------------
-     * Perform verification on this action before executing it, allowing us to detect configuration
-     * errors. We pass the EtlOverseerOptions here because verification can occur pre-execution. Since
-     * multiple classes may implement verify(), null may be passed to parent::verify() so there are
-     * not multiple assignments of large objects.
+     * Perform initialization and verification on this action before executing it,
+     * allowing us to detect configuration errors. We pass the EtlOverseerOptions here
+     * because verification may occur pre-execution. Since multiple classes may implement
+     * iAction::initialize(), null may be passed to parent::initialize() so there are not
+     * multiple assignments of large objects.
      *
-     * @param EtlOverseerOptions $etlOptions Options set for this ETL run. This may be null if it was
-     *   set elsewhere in the chain
+     * This must occur AFTER the constructor calls has completed and should be called
+     * prior to verification and/or execution.
+     *
+     * @param EtlOverseerOptions $etlOverseerOptions Options set for this ETL run. This may be null
+     *   if it was set elsewhere in the chain.
      *
      * @return TRUE if verification was successful
      * ------------------------------------------------------------------------------------------
      */
-  
-    public function verify(EtlOverseerOptions $etlOptions = null);
+
+    // public function verify(EtlOverseerOptions $etlOverseerOptions = null);
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null);
 
     /* ------------------------------------------------------------------------------------------
      * @return The name of the action.
@@ -76,11 +81,46 @@ interface iAction
     public function getOptions();
 
     /* ------------------------------------------------------------------------------------------
-     * @return TRUE if verification has been performed on this action.
+     * @return The current start date that this action is operating on.
      * ------------------------------------------------------------------------------------------
      */
-  
-    public function isVerified();
+
+    public function getCurrentStartDate();
+
+    /* ------------------------------------------------------------------------------------------
+     * @return The current start date that this action is operating on.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getCurrentEndDate();
+
+    /* ------------------------------------------------------------------------------------------
+     * @return TRUE if this action supports chunking of the overall ETL start and end date
+     *   into smaller pieces to make it more manageable.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function supportsDateRangeChunking();
+
+    /* ----------------------------------------------------------------------------------------------------
+     * The ETL overseer provides the ability to specify parameters that are interpreted as
+     * restrictions on actions such as the ETL start/end dates and resources to include or
+     * exclude from the ETL process.  However, in some cases these options may be
+     * overriden by the configuration of an individual action such as resources to include
+     * or exclude for that action.
+     *
+     * @return An associative array of optional overrides to overseer restrictions.
+     * ----------------------------------------------------------------------------------------------------
+     */
+
+    public function getOverseerRestrictionOverrides();
+
+    /* ------------------------------------------------------------------------------------------
+     * @return TRUE if initialization has been performed on this action.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function isInitialized();
 
     /* ------------------------------------------------------------------------------------------
      * Generate a string representation of the action. Typically the name, plus other pertinant
@@ -91,5 +131,4 @@ interface iAction
      */
 
     public function __toString();
-
 }  // interface iAction

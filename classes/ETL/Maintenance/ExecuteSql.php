@@ -71,18 +71,28 @@ class ExecuteSql extends aAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    /*
+    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isVerified() ) {
             return;
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->etlOverseerOptions = $etlOptions;
-        }
+
+        parent::verify($etlOverseerOptions);
 
         $this->initialize();
+
+        // $utilityEndpoint = $this->etlConfig->getDataEndpoint($this->options->utility);
+        // $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
+        // $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
+
+        if ( ! $destinationEndpoint instanceof iRdbmsEndpoint ) {
+            $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
+        // $this->logger->debug("Destination endpoint: " . $destinationEndpoint);
 
         // Verify that each sql file exists and is readable
 
@@ -113,23 +123,22 @@ class ExecuteSql extends aAction implements iAction
         return true;
 
     }  // verify()
+    */
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
-     *
-     * @throws Exception if any query data was not
-     * int the correct format.
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
         }
 
         $this->initialized = false;
+
+        parent::initialize($etlOverseerOptions);
 
         // Apply a base path to each SQL file, if needed
 
@@ -148,6 +157,53 @@ class ExecuteSql extends aAction implements iAction
 
         $this->options->sql_file_list = $sqlFileList;
 
+        // list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
+        // $this->currentStartDate = $startDate;
+        // $this->currentEndDate = $endDate;
+
+        if ( ! $this->destinationEndpoint instanceof iRdbmsEndpoint ) {
+            $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
+        // $this->logger->debug("Destination endpoint: " . $destinationEndpoint);
+
+        // Verify that each sql file exists and is readable
+
+        foreach ( $this->options->sql_file_list as $sqlFile ) {
+
+            $filename = $sqlFile;
+
+            if ( is_object($sqlFile) ) {
+                if ( ! isset($sqlFile->sql_file) ) {
+                    $msg =  "sql_file_list object does not have sql_file property set";
+                    $this->logAndThrowException($msg);
+                } else {
+                    $filename = $sqlFile->sql_file;
+                }
+            }  // if ( is_object($sqlFile) )
+
+            if ( ! file_exists($filename) ) {
+                $msg = "SQL file does not exist '$filename'";
+                $this->logAndThrowException($msg);
+            } elseif ( ! is_readable($filename) ) {
+                $msg = "SQL file is not readable '$filename'";
+                $this->logAndThrowException($msg);
+            }
+        }  // foreach ( $this->sqlScriptFiles as $sqlFile )
+
+        // The SQL statements expect these variables to be quoted if they exist
+
+        $varsToQuote = array(
+            'START_DATE',
+            'END_DATE',
+            'LAST_MODIFIED',
+            'LAST_MODIFIED_START_DATE',
+            'LAST_MODIFIED_END_DATE'
+        );
+
+        $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableMap, $this->destinationEndpoint);
+        $this->variableMap = array_merge($this->variableMap, $localVariableMap);
+
         $this->initialized = true;
 
         return true;
@@ -161,33 +217,8 @@ class ExecuteSql extends aAction implements iAction
 
     public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->etlOverseerOptions = $etlOverseerOptions;
-
-        $this->verify();
-
         $time_start = microtime(true);
-
-        $utilityEndpoint = $this->etlConfig->getDataEndpoint($this->options->utility);
-        $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
-        $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
-
-        if ( ! $destinationEndpoint instanceof iRdbmsEndpoint ) {
-            $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        $this->logger->debug("Destination endpoint: " . $destinationEndpoint);
-
-        // These variables are available to the sql statement
-
-        $localVariableMap = array(
-            'UTILITY_SCHEMA' => $utilityEndpoint->getSchema(),
-            'SOURCE_SCHEMA' => $sourceEndpoint->getSchema(),
-            'DESTINATION_SCHEMA' => $destinationEndpoint->getSchema(),
-            'START_DATE' =>  $destinationEndpoint->quote($etlOverseerOptions->getStartDate()),
-            'END_DATE' => $destinationEndpoint->quote($etlOverseerOptions->getEndDate()),
-            'LAST_MODIFIED' => $destinationEndpoint->quote($etlOverseerOptions->getLastModifiedStartDate())
-            );
-        $this->variableMap = array_merge($this->variableMap, $localVariableMap);
+        $this->initialize($etlOverseerOptions);
 
         foreach ( $this->options->sql_file_list as $sqlFile ) {
             $delimiter = self::DEFAULT_MULTI_STATEMENT_DELIMITER;
@@ -206,12 +237,18 @@ class ExecuteSql extends aAction implements iAction
             $this->logger->info("Processing SQL file '$filename' with delimiter '$delimiter'");
 
             $sqlFileContents = file_get_contents($filename);
-            $sqlFileContents = Utilities::substituteVariables($sqlFileContents, $this->variableMap);
+            $sqlFileContents = Utilities::substituteVariables(
+                $sqlFileContents,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in SQL"
+            );
 
             // Split the file on the delimiter and execute each statement. PDO without mysqlnd drivers
             // does not support multiple SQL statements in a single query.
 
             $sqlStatementList = explode($delimiter, $sqlFileContents);
+            $numSqlStatements = count($sqlStatementList);
             $numStatementsProcessed = 0;
 
             foreach ($sqlStatementList as $sql) {
@@ -241,12 +278,13 @@ class ExecuteSql extends aAction implements iAction
                     continue;
                 }
 
-                $this->logger->debug("Executing SQL " . $destinationEndpoint . ":\n$sql");
                 $sqlStartTime = microtime(true);
                 $numRowsAffected = 0;
                 try {
-                    if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                        $numRowsAffected = $destinationEndpoint->getHandle()->execute($sql);
+                    $this->logger->info("Executing statement (" . ($numStatementsProcessed + 1) . "/$numSqlStatements)");
+                    $this->logger->debug("Executing SQL " . $this->destinationEndpoint . ":\n$sql");
+                    if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
+                        $numRowsAffected = $this->destinationHandle->execute($sql);
                     }
                 } catch ( PDOException $e ) {
                     $this->logAndThrowException(

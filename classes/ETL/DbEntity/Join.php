@@ -16,8 +16,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Join extends aNamedEntity
-implements iTableItem
+class Join extends aNamedEntity implements iTableItem
 {
     // NOTE: The join name is treated as the table.
 
@@ -56,7 +55,7 @@ implements iTableItem
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
             return true;
@@ -94,8 +93,8 @@ implements iTableItem
     private function filterValue($property, $value)
     {
         switch ( $property ) {
-        default:
-            break;
+            default:
+                break;
         }  // switch ( $property )
 
         return $value;
@@ -213,5 +212,4 @@ implements iTableItem
         return $data;
 
     }  // toJsonObj()
-
 }  // class Join

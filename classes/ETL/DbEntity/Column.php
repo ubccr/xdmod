@@ -62,7 +62,7 @@ class Column extends aNamedEntity implements iTableItem
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
             return true;

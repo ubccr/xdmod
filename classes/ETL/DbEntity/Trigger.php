@@ -17,8 +17,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Trigger extends aNamedEntity
-implements iTableItem
+class Trigger extends aNamedEntity implements iTableItem
 {
     // The time that the trigger is fired (before, after)
     private $time = null;
@@ -61,7 +60,7 @@ implements iTableItem
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
             return true;
@@ -244,5 +243,4 @@ implements iTableItem
         return $data;
 
     }  // toJsonObj()
-
 }  // class Trigger

@@ -48,7 +48,8 @@ abstract class aAggregator extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    /*
+    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
     {
 
         if ( $this->isVerified() ) {
@@ -56,26 +57,24 @@ abstract class aAggregator extends aRdbmsDestinationAction
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->setEtlOverseerOptions($etlOptions);
-        }
 
         $this->initialize();
 
-        parent::verify();
+        parent::verify($etlOverseerOptions);
 
         $this->verified = true;
 
         return true;
 
     }  // verify()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * @see aAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
@@ -83,10 +82,13 @@ abstract class aAggregator extends aRdbmsDestinationAction
 
         $this->initialized = false;
 
-        parent::initialize();
+        parent::initialize($etlOverseerOptions);
 
-        $this->variableMap['START_DATE'] = $this->etlOverseerOptions->getStartDate();
-        $this->variableMap['END_DATE'] = $this->etlOverseerOptions->getEndDate();
+        // Initial value for current date range, may be overridden.
+
+        // list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
+        // $this->currentStartDate = $startDate;
+        // $this->currentEndDate = $endDate;
 
         $this->initialized = true;
 
@@ -99,27 +101,48 @@ abstract class aAggregator extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->setEtlOverseerOptions($etlOptions);
-        $inDryrunMode = $this->etlOverseerOptions->isDryrun();
-        $numAggregationPeriodsProcessed = 0;
-
-        $this->verify();
+        $this->initialize($etlOverseerOptions);
 
         $totalStartTime = microtime(true);
+        $numAggregationPeriodsProcessed = 0;
 
-        // The EtlOverseerOptions class allows iteration over a list of chunked date ranges
+        // If this action supports chunking of the date range, use the chunked list
+        // otherwise use the entire date range.
 
-        foreach ( $etlOptions as $interval ) {
+        if ( null !== $this->getEtlOverseerOptions()->getChunkSizeDays() && $this->supportDateRangeChunking ) {
+            $datePeriodChunkList = $etlOverseerOptions->getChunkedDatePeriods();
+            $this->logger->info("Breaking ETL period into " . count($datePeriodChunkList) . " chunks");
+        } else {
+            // Generate an array containing a single tuple
+            $datePeriodChunkList = array(array( $this->currentStartDate, $this->currentEndDate ));
+        }
 
-            $this->logger->info("Process date interval (start: " .
-                                $etlOptions->getCurrentStartDate() .
-                                ", end: " .
-                                $etlOptions->getCurrentEndDate() . ")");
+        $numDateIntervals = count($datePeriodChunkList);
+        $intervalNum = 1;
 
-            $this->variableMap['START_DATE'] = $etlOptions->getCurrentStartDate();
-            $this->variableMap['END_DATE'] = $etlOptions->getCurrentEndDate();
+        foreach ( $datePeriodChunkList as $dateInterval ) {
+
+            // Set current start and end dates for use deeper down in the machinery.
+
+            $this->currentStartDate = $dateInterval[0];
+            $this->currentEndDate = $dateInterval[1];
+
+            $this->logger->info(
+                "Process date interval ($intervalNum/$numDateIntervals) "
+                . "(start: "
+                . ( null === $this->currentStartDate ? "none" : $this->currentStartDate )
+                . ", end: "
+                . ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
+                . ")"
+            );
+
+            $localVariableMap = array(
+                'START_DATE' => $this->currentStartDate,
+                'END_DATE' => $this->currentEndDate,
+            );
+            $this->variableMap = array_merge($this->variableMap, $localVariableMap);
 
             if ( false !== $this->performPreExecuteTasks() ) {
 
@@ -131,6 +154,8 @@ abstract class aAggregator extends aRdbmsDestinationAction
                     foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
                         $etlTable->setAggregationUnit($aggregationUnit);
                     }
+
+                    $this->variableMap['AGGREGATION_UNIT'] = $aggregationUnit;
 
                     if ( false === $this->performPreAggregationUnitTasks($aggregationUnit) ) {
                         $this->logger->notice("Pre-aggregation unit tasks failed, skipping unit '$aggregationUnit'");
@@ -149,10 +174,12 @@ abstract class aAggregator extends aRdbmsDestinationAction
                     $this->performPostAggregationUnitTasks($aggregationUnit, $numAggregationPeriodsProcessed);
 
                     $endTime = microtime(true);
-                    $msg = sprintf('Aggregation time for %s %.2fs (avg %.2fs/period)',
-                                   $aggregationUnit,
-                                   $endTime - $startTime,
-                                   ($numAggregationPeriodsProcessed > 0 ? ($endTime - $startTime) / $numAggregationPeriodsProcessed : 0 ) );
+                    $msg = sprintf(
+                        'Aggregation time for %s %.2fs (avg %.2fs/period)',
+                        $aggregationUnit,
+                        $endTime - $startTime,
+                        ($numAggregationPeriodsProcessed > 0 ? ($endTime - $startTime) / $numAggregationPeriodsProcessed : 0 )
+                    );
                     $this->logger->info($msg);
 
                 }  // foreach ( $this->options->aggregation_units as $aggregationUnit )
@@ -163,7 +190,9 @@ abstract class aAggregator extends aRdbmsDestinationAction
 
             }  // if ( false !== $this->performPreExecuteTasks() )
 
-        }  // foreach ( $etlOptions as $interval )
+            $intervalNum++;
+
+        }  // foreach ( $datePeriodChunkList as $dateInterval )
 
         // NOTE: This is needed for the log summary.
         $totalEndTime = microtime(true);
@@ -244,5 +273,4 @@ abstract class aAggregator extends aRdbmsDestinationAction
      */
 
     abstract protected function _execute($aggregationUnit);
-
 }  // abstract class Aggregator

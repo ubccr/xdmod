@@ -54,7 +54,7 @@ abstract class aNamedEntity extends aEtlObject
      * ------------------------------------------------------------------------------------------
      */
 
-    abstract protected function initialize(stdClass $config, $force = false);
+    // public function initialize(stdClass $config, $force = false);
 
     /* ------------------------------------------------------------------------------------------
      * Return the table name.
@@ -175,5 +175,4 @@ abstract class aNamedEntity extends aEtlObject
     {
         return ( 0 === strpos($key, self::COMMENT_KEY) );
     }  // isComment()
-
 }  // abstract class aNamedEntity

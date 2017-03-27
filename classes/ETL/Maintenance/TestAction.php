@@ -21,8 +21,7 @@ use ETL\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use Log;
 
-class TestAction extends aAction
-implements iAction
+class TestAction extends aAction implements iAction
 {
     protected $options;
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
@@ -32,9 +31,9 @@ implements iAction
         parent::__construct($options, $etlConfig, $logger);
     }
 
-    public function execute(EtlOverseerOptions $etlOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        if ( $etlOptions->isDryrun() ) {
+        if ( $etlOverseerOptions->isDryrun() ) {
             return;
         }
 
@@ -67,12 +66,7 @@ implements iAction
         return true;
     }
 
-    public function initialize()
-    {
-        return true;
-    }
-
-    public function verify(EtlOverseerOptions $etlConfig = null)
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         return true;
     }
@@ -96,5 +90,4 @@ implements iAction
     {
         return true;
     }
-
 }  // class TestAction

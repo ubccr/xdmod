@@ -91,25 +91,28 @@ class Configuration extends Loggable implements \Iterator
             $this->logAndThrowException($msg);
         }
 
-        // Apply the base directory to the current filename if it was provided.
+        // If the base directory was provided use that value and ensure the filename is
+        // fully qualified. If not provided, use the dirname of the configuration filename
+        // (which may be the current directory) and qualify the filename with the current
+        // directory so the correct, fully qualified path, shows in the logs.
 
-        $this->filename = ( 0 !== strpos($filename, "/") && null !== $baseDir
-                            ? $baseDir . "/" . $filename
-                            : $filename );
-
-        // If the base directory was provided use that value, otherwise use the dirname of the
-        // configuration filename (which may be the current directory). If the directory is relative
-        // prepend the current directory so we have a fully qualified path.
-
-        $this->baseDir = ( null === $baseDir ? dirname($filename) : $baseDir );
-        if ( 0 !== strpos($this->baseDir, "/") ) {
-            $this->baseDir = getcwd() . "/" . $this->baseDir;
+        if ( null === $baseDir ) {
+            // This will be used for the main config file, any sub-files should have the
+            // base explicitly dir passed to them.
+            $this->baseDir = \xd_utilities\qualify_path(dirname($filename), getcwd());
+            $this->filename = \xd_utilities\qualify_path($filename, getcwd());
+        } else {
+            $this->baseDir = $baseDir;
+            $this->filename = \xd_utilities\qualify_path($filename, $this->baseDir);
         }
+
+        $this->filename = \xd_utilities\resolve_path($this->filename);
+        $this->baseDir = \xd_utilities\resolve_path($this->baseDir);
 
         $this->addKeyHandler('include', array($this, 'includeHandler'), self::PRE_HANDLER);
 
     }  // __construct()
-  
+
     /* ------------------------------------------------------------------------------------------
      * Initialize the configuration object.
      * ------------------------------------------------------------------------------------------
@@ -216,17 +219,17 @@ class Configuration extends Loggable implements \Iterator
         foreach ( $parsedKeysWithHandlers as $key ) {
 
             $handler = $this->keyHandlersPre[$key];
-            
+
             // Callback takes (callable handler, reserved key data, current config)
             // Callback returns updated config
-            
+
             $constructedConfig = call_user_func($handler, $key, $this->parsedConfig->$key, $constructedConfig);
 
         }  // foreach ( $configKeys as $configKey => $configValue )
 
         // Find all other keys parsed from the file
         $parsedKeysWithoutHandlers = array_diff($parsedKeys, $parsedKeysWithHandlers);
-        
+
         // Copy the non-reserved keys into the configuration, overriding any existing keys
 
         foreach ( $parsedKeysWithoutHandlers as $key ) {
@@ -236,11 +239,11 @@ class Configuration extends Loggable implements \Iterator
         // Find the keys found in the current config that have handlers. These keys may have been
         // added by a pre-handler.
         $parsedKeysWithHandlers = array_intersect(array_keys(get_object_vars($constructedConfig)), array_keys($this->keyHandlersPost));
-        
+
         foreach ( $parsedKeysWithHandlers as $key ) {
-            
+
             $handler = $this->keyHandlersPost[$key];
-            
+
             // Callback takes (callable handler, reserved key data, current config)
             // Callback returns updated config
 
@@ -316,10 +319,17 @@ class Configuration extends Loggable implements \Iterator
         $value = ( is_array($value) ? $value : array($value) );
 
         foreach ( $value as $includeFilename ) {
-            
+
+            $includeFilename = \xd_utilities\qualify_path($includeFilename, $this->baseDir);
+            $includeFilename = \xd_utilities\resolve_path($includeFilename);
+
+            /*
             if ( 0 !== strpos($includeFilename, "/") ) {
                 $includeFilename = $this->baseDir . "/" . $includeFilename;
             }
+
+            $includeFilename = realpath($includeFilename);
+            */
 
             $this->logger->debug("Processing include file '$includeFilename'");
 
@@ -328,7 +338,7 @@ class Configuration extends Loggable implements \Iterator
                 $this->logger->warning($msg);
                 continue;
             }
-         
+
             $includeFile = new Configuration($includeFilename);
             $includeFile->initialize();
 
@@ -600,7 +610,7 @@ class Configuration extends Loggable implements \Iterator
      * @return A string representation of the object
      * ------------------------------------------------------------------------------------------
      */
-    
+
     public function __toString()
     {
         return get_class($this) . " ({$this->filename})";

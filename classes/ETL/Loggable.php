@@ -67,7 +67,7 @@ class Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function logAndThrowException($message, array $options = null)
+    public function logAndThrowException($message, array $options = null)
     {
         $logMessage = array();
         $message = "{$this}: " . ( is_string($message) ? "'$message'" : "''" );
