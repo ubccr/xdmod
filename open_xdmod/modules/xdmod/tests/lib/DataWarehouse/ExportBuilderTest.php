@@ -1,12 +1,10 @@
 <?php
 
-require_once __DIR__.'/../../../configuration/linker.php';
+namespace UnitTesting\DataWarehouse;
 
-use \UnitTesting\mock;
-
-class ExportBuilderTest extends PHPUnit_Framework_TestCase
+class ExportBuilderTest extends \PHPUnit_Framework_TestCase
 {
-    function __construct() 
+    public function __construct()
     {
         $this->_dummydata = array(array(
             'headers' => array('Column1', 'Column2'),
@@ -32,7 +30,7 @@ class ExportBuilderTest extends PHPUnit_Framework_TestCase
         return $result;
     }
 
-    function testExportJson() {
+    public function testExportJson() {
 
         $result = $this->exportHelper('json', true, 'filename');
 
@@ -46,7 +44,7 @@ class ExportBuilderTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    function testExportXml() {
+    public function testExportXml() {
 
         $result = $this->exportHelper('xml', true, 'filename');
 
@@ -59,7 +57,7 @@ class ExportBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('value2', $parsedxml->rows[0]->row->cell[1]->value);
     }
 
-    function testExportXls() {
+    public function testExportXls() {
 
         $result = $this->exportHelper('xls', false, 'filename');
 
@@ -83,7 +81,7 @@ EOF;
         $this->assertEquals($expected, $result['results']);
     }
 
-    function testExportCsv() {
+    public function testExportCsv() {
 
         $result = $this->exportHelper('csv', false, 'filename');
 
@@ -111,11 +109,8 @@ EOF;
       * @expectedException        Exception
       * @expectedExceptionMessage Unsupported export format bananas
       */
-    function testExportBananas()
+    public function testExportBananas()
     {
         $result = $this->exportHelper('bananas', false, 'yes we have no bananas');
     }
 }
-
-
-?>
