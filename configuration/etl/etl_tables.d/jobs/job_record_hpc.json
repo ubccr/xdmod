@@ -97,13 +97,15 @@
                     "comment": "The organization of the PI that owns the allocation. References piperson.organization_id"
 	            },{
 		            "name": "job_record_type_id",
-		            "type": "int(11) unsigned",
+		            "type": "int(11)",
 		            "nullable": false,
+                    "default": -1,
 		            "comment": "Type of job: hpc, cloud, hpc-reservation, ..."
 	            },{
 		            "name": "submission_venue_id",
-		            "type": "int(11) unsigned",
+		            "type": "int(11)",
 		            "nullable": false,
+                    "default": -1,
 		            "comment": "Method used to submit this job: cli, gateway, ..."
 	            },{
 		            "name": "queue",
@@ -320,8 +322,9 @@
                     "comment": "The NSF status code of the person who ran the task"
                 },{
                     "name": "job_task_type_id",
-                    "type": "int(11) unsigned",
+                    "type": "int(11)",
                     "nullable": false,
+                    "default": -1,
                     "comment": "Task type or event"
                 },{
                     "name": "name",
@@ -525,8 +528,8 @@
             "allocation_resource_id": "ares.resource_id",
             "fos_id": "req.primary_fos_id",
             "job_record_type_id": 1,
-            "submission_venue_id": 1,
-            "job_task_type_id": 1,
+            "submission_venue_id": -1,
+            "job_task_type_id": 2,
 
             "job_name": "j.jobname",
             "queue": "COALESCE(j.queue, 'NA')",

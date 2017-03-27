@@ -1,0 +1,53 @@
+{
+    "table_definition": {
+        "name": "job_task_countable",
+        "engine": "MyISAM",
+        "comment": "Countable values. e.g., Num databases, num gpus allocated, etc.",
+        "columns": [
+            {
+                "name": "job_record_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "creation_time",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "countable_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Item that we are counting"
+            },
+            {
+                "name": "value",
+                "type": "decimal(18,3)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Countable value"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_countable",
+                "columns": [
+                    "countable_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "job_record_id",
+                    "creation_time"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

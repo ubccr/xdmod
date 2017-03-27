@@ -1,0 +1,50 @@
+{
+    "table_definition": {
+        "name": "asset",
+        "engine": "MyISAM",
+        "comment": "Generic assets",
+        "columns": [
+            {
+                "name": "asset_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "asset_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
+            },
+            {
+                "name": "provider_identifier",
+                "type": "varchar(64)",
+                "nullable": false
+            },
+            {
+                "name": "size",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_asset_type",
+                "columns": [
+                    "asset_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "asset_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}
