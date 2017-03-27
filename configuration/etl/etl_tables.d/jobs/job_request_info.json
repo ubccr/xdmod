@@ -1,0 +1,43 @@
+{
+    "table_definition": {
+        "name": "job_request_info",
+        "engine": "InnoDB",
+        "comment": "Requested job resources, etc.",
+        "columns": [
+            {
+                "name": "job_record_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "requested_nodes",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "requested_cores",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "requested_seconds",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "job_record_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

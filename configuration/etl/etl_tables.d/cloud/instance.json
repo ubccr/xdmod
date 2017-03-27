@@ -1,0 +1,43 @@
+{
+    "table_definition": {
+        "name": "instance",
+        "engine": "MyISAM",
+        "comment": "Cloud instances",
+        "columns": [
+            {
+                "name": "instance_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "account_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "provider_identifier",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "Instance identifier from cloud provider"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "instance_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

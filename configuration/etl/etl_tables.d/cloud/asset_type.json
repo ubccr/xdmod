@@ -1,0 +1,70 @@
+{
+    "table_definition": {
+        "name": "asset_type",
+        "engine": "MyISAM",
+        "comment": "Type of an asset",
+        "columns": [
+            {
+                "name": "asset_type_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "asset_type",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Short version or abbrev"
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "description",
+                "type": "varchar(1024)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "unit_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_unit",
+                "columns": [
+                    "unit_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "asset_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    },
+
+    "#": "Define the mapping between the source value fields and the table columns.",
+    "destination_columns": ["asset_type_id", "asset_type", "display", "description"],
+    
+    "#": "Provide the raw source values.",
+    "source_values": [
+        [-1, "unknown",      "Unknown",          "Unknown" ],
+        [1,  "vol-ebs",      "EBS Volume",       "EBS Volume" ],
+        [2,  "vol-instance", "Instance Volume",  "Instance Store Volume" ],
+        [3,  "ip",           "IP",               "IP Address" ],
+        [4,  "s3-bucket",    "S3 Bucket",        "S3 Bucket" ]
+    ]
+
+}

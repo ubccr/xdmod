@@ -1,0 +1,44 @@
+{
+    "table_definition": {
+        "name": "host",
+        "engine": "MyISAM",
+        "comment": "Hostnames for each resource",
+        "columns": [
+            {
+                "name": "host_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "hostname",
+                "type": "varchar(64)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_resource",
+                "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "host_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "table_definition": {
+        "name": "meta_job",
+        "engine": "MyISAM",
+        "comment": "Grouping of individual job records",
+        "columns": [
+            {
+                "name": "meta_job_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "meta_job_name",
+                "type": "varchar(128)",
+                "nullable": false
+            },
+            {
+                "name": "person_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Meta job owner"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "meta_job_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}
