@@ -74,7 +74,7 @@ for table in $TABLE_LIST; do
 
     echo "Dumping $tablename to $outputfile"
 
-    php $ETL_TABLE_MANAGER -c $ETL_CONFIG --discover-table $tablename --table-key table \
+    php $ETL_TABLE_MANAGER -c $ETL_CONFIG --discover-table $tablename --table-key table_definition \
         --output-format json --operation dump-discovered --output-file $tmpfile
 
     if [ 0 -ne $? ]; then
