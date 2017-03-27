@@ -14,6 +14,8 @@ namespace ETL;
 
 use Log;
 use ETL\EtlOverseerOptions;
+use ETL\DataEndpoint\iDataEndpoint;
+use ETL\DataEndpoint\iRdbmsEndpoint;
 
 abstract class aAction extends aEtlObject
 {
@@ -23,8 +25,9 @@ abstract class aAction extends aEtlObject
     // EtlConfiguration object. This is the parsed configuration.
     protected $etlConfig = null;
 
-    // EtlOverseerOptions object. Contains the options for this ingestion run.
-    protected $etlOverseerOptions = null;
+    // EtlOverseerOptions object. Contains the options for this ingestion run and is
+    // private so we can enforce updating the variable map when it is set.
+    private $etlOverseerOptions = null;
 
     // Individual actions may override ETL overseer restrictions. Store the overrides as an
     // associative array where the key is the restriction name and the value is the overriden
@@ -94,15 +97,6 @@ abstract class aAction extends aEtlObject
 
             // Set up the path to the definition file for this action
 
-            /*
-            $this->definitionFile = realpath(
-                $this->options->applyBasePath(
-                    "paths->definition_file_dir",
-                    $this->options->definition_file
-                )
-            );
-            */
-
             $this->definitionFile = \xd_utilities\qualify_path($this->options->definition_file, $this->options->paths->definition_file_dir);
             $this->definitionFile = \xd_utilities\resolve_path($this->definitionFile);
 
@@ -121,43 +115,38 @@ abstract class aAction extends aEtlObject
             }
         }  // if ( null !== $this->options->definition_file )
 
-        // Set the default time zone and make it available as a variable
-        $this->variableMap['TIMEZONE'] = date_default_timezone_get();
-
-        // Make the ETL log email available to actions as a macro
-
-        try {
-            $section = \xd_utilities\getConfigurationSection("general");
-            if ( array_key_exists("dw_etl_log_recipient", $section) ) {
-                $this->variableMap['DW_ETL_LOG_RECIPIENT'] = $section['dw_etl_log_recipient'];
-            } else {
-                $msg = "XDMoD configuration option general.dw_etl_log_recipient is not set";
-                $this->logger->warning($msg);
-            }
-        } catch (\Exception $e) {
-            $msg = "'general' section not defined in XDMoD configuration";
-            $this->logAndThrowException($msg);
-        }
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
-        if ( null === $this->etlOverseerOptions ) {
-            $msg = "ETL Overseer options not set";
-            $this->logAndThrowException($msg);
+        if ( null === $etlOverseerOptions ) {
+            $this->logAndThrowException("ETL Overseer options not set");
         }
 
-        parent::verify();
+        parent::initialize();
+
+        if ( null !== $etlOverseerOptions ) {
+            $this->setEtlOverseerOptions($etlOverseerOptions);
+        }
+
+        $this->initializeVariableMap();
+        $this->initializeUtilityEndpoint()->initializeSourceEndpoint()->initializeDestinationEndpoint();
+
+        // Set up the start and end dates, which may be null if not provided. Actions that
+        // support chunking of the date period can override these.
+
+        list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
+        $this->currentStartDate = $startDate;
+        $this->currentEndDate = $endDate;
 
         return true;
 
-    }  // verify()
+    }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
      * @see iAction::getClass()
@@ -210,6 +199,16 @@ abstract class aAction extends aEtlObject
     }  // supportsDateRangeChunking()
 
     /* ------------------------------------------------------------------------------------------
+     * @return The ETL overseer options
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getEtlOverseerOptions()
+    {
+        return $this->etlOverseerOptions;
+    }  // getEtlOverseerOptions()
+
+    /* ------------------------------------------------------------------------------------------
      * Set the current EtlOverseerOptions object
      *
      * @return This object for method chaining
@@ -219,6 +218,7 @@ abstract class aAction extends aEtlObject
     public function setEtlOverseerOptions(EtlOverseerOptions $overseerOptions)
     {
         $this->etlOverseerOptions = $overseerOptions;
+
         return $this;
     }  // setEtlOverseerOptions()
 
@@ -282,10 +282,122 @@ abstract class aAction extends aEtlObject
     }  // setVariableMap()
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize data needed to perform the action. This must occur AFTER the constructors have been
-     * called.  Initialize should be called prior to verification and/or execution.
+     * Initialized the variable map based on ETL settings in the overseer options
      * ------------------------------------------------------------------------------------------
      */
 
-    abstract protected function initialize();
+    private function initializeVariableMap()
+    {
+        if ( null === $this->etlOverseerOptions ) {
+            return;
+        }
+
+        $this->variableMap = array();
+
+        // Set up any variables associated with the Overseer that should be available for
+        // substitution in actions such as start and end dates, number of days, etc.
+
+        if ( null !== ( $value = $this->etlOverseerOptions->getStartDate() ) ) {
+            $this->variableMap['START_DATE'] = $value;
+        }
+
+        if ( null !== ( $value = $this->etlOverseerOptions->getEndDate() ) ) {
+            $this->variableMap['END_DATE'] = $value;
+        }
+
+        if ( null !== ( $value = $this->etlOverseerOptions->getNumberOfDays() ) ) {
+            $this->variableMap['NUMBER_OF_DAYS'] = $value;
+        }
+
+        if ( null !== ( $value = $this->etlOverseerOptions->getLastModifiedStartDate() ) ) {
+            $this->variableMap['LAST_MODIFIED_START_DATE'] = $value;
+            $this->variableMap['LAST_MODIFIED'] = $value;
+        }
+
+        if ( null !== ( $value = $this->etlOverseerOptions->getLastModifiedEndDate() ) ) {
+            $this->variableMap['LAST_MODIFIED_END_DATE'] = $value;
+        }
+
+        // Set the default time zone and make it available as a variable
+        $this->variableMap['TIMEZONE'] = date_default_timezone_get();
+
+        // Make the ETL log email available to actions as a macro
+
+        try {
+            $section = \xd_utilities\getConfigurationSection("general");
+            if ( array_key_exists("dw_etl_log_recipient", $section) ) {
+                $this->variableMap['DW_ETL_LOG_RECIPIENT'] = $section['dw_etl_log_recipient'];
+            } else {
+                $msg = "XDMoD configuration option general.dw_etl_log_recipient is not set";
+                $this->logger->warning($msg);
+            }
+        } catch (\Exception $e) {
+            $msg = "'general' section not defined in XDMoD configuration";
+            $this->logAndThrowException($msg);
+        }
+
+        return $this;
+    }  // initializeVariableMap()
+
+    /* ------------------------------------------------------------------------------------------
+     * Initialize the utility endpoint based on the options provided for this action
+     *
+     * @return This object to support method chaining
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function initializeUtilityEndpoint()
+    {
+        if ( false !== ($endpoint = $this->etlConfig->getDataEndpoint($this->options->utility)) ) {
+            if ( $endpoint instanceof iRdbmsEndpoint ) {
+                $this->variableMap['UTILITY_SCHEMA'] = $endpoint->getSchema();
+            }
+            $this->logger->debug("Utility endpoint: " . $endpoint);
+            $this->utilityEndpoint = $endpoint;
+            $this->utilityHandle = $endpoint->getHandle();
+        }
+        return $this;
+    }
+
+    /* ------------------------------------------------------------------------------------------
+     * Initialize the utility endpoint based on the options provided for this action
+     *
+     * @return This object to support method chaining
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function initializeSourceEndpoint()
+    {
+        if ( false !== ($endpoint = $this->etlConfig->getDataEndpoint($this->options->source)) ) {
+            if ( $endpoint instanceof iRdbmsEndpoint ) {
+                $this->variableMap['SOURCE_SCHEMA'] = $endpoint->getSchema();
+            }
+            $this->logger->debug("Source endpoint: " . $endpoint);
+            $this->sourceEndpoint = $endpoint;
+            $this->sourceHandle = $endpoint->getHandle();
+        }
+        return $this;
+    }
+
+    /* ------------------------------------------------------------------------------------------
+     * Initialize the utility endpoint based on the options provided for this action
+     *
+     * @return This object to support method chaining
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function initializeDestinationEndpoint()
+    {
+        if ( false !== ($endpoint = $this->etlConfig->getDataEndpoint($this->options->destination)) ) {
+            if ( $endpoint instanceof iRdbmsEndpoint ) {
+                $this->variableMap['DESTINATION_SCHEMA'] = $endpoint->getSchema();
+            }
+            $this->logger->debug("Destination endpoint: " . $endpoint);
+            $this->destinationEndpoint = $endpoint;
+            $this->destinationHandle = $endpoint->getHandle();
+        }
+        return $this;
+    }
+
+    abstract public function execute(EtlOverseerOptions $etlOverseerOptions);
 }  // abstract class aAction

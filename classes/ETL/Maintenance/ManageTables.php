@@ -21,8 +21,7 @@ use ETL\iAction;
 use ETL\aRdbmsDestinationAction;
 use \Log;
 
-class ManageTables extends aRdbmsDestinationAction
-implements iAction
+class ManageTables extends aRdbmsDestinationAction implements iAction
 {
     // List of ETL Table objects generated from the definition files
     private $etlTableDefinitions = array();
@@ -52,7 +51,7 @@ implements iAction
         if ( ! is_array($options->definition_file_list) ) {
             $msg = "definition_file_list must be an array";
             $this->logAndThrowException($msg);
-        } else if ( 0 == count($options->definition_file_list) ) {
+        } elseif ( 0 == count($options->definition_file_list) ) {
             $msg = "definition_file_list must contain at least one element";
             $this->logAndThrowException($msg);
         }
@@ -68,34 +67,17 @@ implements iAction
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
-     *
-     * @throws Exception if any query data was not
-     * int the correct format.
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
         }
 
-        // We are not calling parent::initialize() because aRdbmsDestinationAction will attempt to
-        // instantiate a Table object if $this->etlDestinationTable is not set.
-
-        // Parse the each table config and set the schema to be our destination schema
-
-        foreach ( $this->options->definition_file_list as $defFile ) {
-            $defFile = $this->options->applyBasePath("paths->definition_file_dir", $defFile);
-            $this->logger->info("Parse table config: '" . $defFile . "'");
-            $etlTable = new Table($defFile,
-                                  $this->destinationEndpoint->getSystemQuoteChar(),
-                                  $this->logger);
-            $etlTable->setSchema($this->destinationEndpoint->getSchema());
-            $this->etlDestinationTableList[$etlTable->getName()] = $etlTable;
-        }
+        parent::initialize($etlOverseerOptions);
 
         $this->initialized = true;
 
@@ -104,15 +86,40 @@ implements iAction
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
+     * Override aRdbmsDestinationAction::createDestinationTableObjects() because there are
+     * multiple definition files referenced by this action and we will be generating a
+     * table for each file.
+     *
+     * @see aRdbmsDestinationAction::createDestinationTableObjects()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function createDestinationTableObjects()
+    {
+        // Parse the each table config and set the schema to be our destination schema
+
+        foreach ( $this->options->definition_file_list as $defFile ) {
+            $defFile = $this->options->applyBasePath("paths->definition_file_dir", $defFile);
+            $this->logger->info("Parse table config: '" . $defFile . "'");
+            $etlTable = new Table(
+                $defFile,
+                $this->destinationEndpoint->getSystemQuoteChar(),
+                $this->logger
+            );
+            $etlTable->setSchema($this->destinationEndpoint->getSchema());
+            $this->etlDestinationTableList[$etlTable->getName()] = $etlTable;
+        }
+    }  // createDestinationTableObjects()
+
+    /* ------------------------------------------------------------------------------------------
      * @see iAction::execute()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->etlOverseerOptions = $etlOptions;
-
         $time_start = microtime(true);
+        $this->initialize($etlOverseerOptions);
 
         foreach ( $this->etlDestinationTableList as $etlTable ) {
 
@@ -143,5 +150,4 @@ implements iAction
                                     'elapsed_time' => round($time, 5)
                                   ));
     }  // execute()
-
 }  // class ManageTables

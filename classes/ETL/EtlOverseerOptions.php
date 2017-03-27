@@ -283,8 +283,9 @@ class EtlOverseerOptions extends Loggable
     }  // getStartDate()
 
     /* ------------------------------------------------------------------------------------------
-     * Set the start date in a format suitable for use by the database. If date is NULL, use the
-     * current date to ensure that the date is always set.
+     * Set the start date in a format suitable for use by the database. A date of NULL
+     * will essentially clear this value. Supports relative formats as per
+     * http://php.net/manual/en/datetime.formats.relative.php
      *
      * @param $date A date representation or null to use the current date.
      *
@@ -295,7 +296,7 @@ class EtlOverseerOptions extends Loggable
     public function setStartDate($date)
     {
         if ( null === $date ) {
-            $this->startDate = date("Y-m-d H:i:s");
+            $this->startDate = null;
         } else {
             if ( false === ($ts = strtotime($date)) ) {
                 $msg = get_class($this) . ": Could not parse start date '$date'";
@@ -319,8 +320,9 @@ class EtlOverseerOptions extends Loggable
     }  // getEndDate()
 
     /* ------------------------------------------------------------------------------------------
-     * Set the end date in a format suitable for use by the database. If date is NULL, use the
-     * current date to ensure that the date is always set.
+     * Set the end date in a format suitable for use by the database. A date of NULL
+     * will essentially clear this value. Supports relative formats as per
+     * http://php.net/manual/en/datetime.formats.relative.php
      *
      * @param $date A date representation, or null to use the current date.
      *
@@ -331,7 +333,7 @@ class EtlOverseerOptions extends Loggable
     public function setEndDate($date)
     {
         if ( null === $date ) {
-            $this->endDate = date("Y-m-d H:i:s");
+            $this->endDate = null;
         } else {
             if ( false === ($ts = strtotime($date)) ) {
                 $msg = get_class($this) . ": Could not parse end date '$date'";
@@ -872,12 +874,17 @@ class EtlOverseerOptions extends Loggable
      * - The first chunk may contain an extra day
      * - If the chunks span daylight savings time you may notice a +/- 1 hour shift but won't miss
      *   any data
+     * - If no start or end date is provided the chunk list will be array(array(null, null))
      * ------------------------------------------------------------------------------------------
      */
 
     private function generateEtlChunkList()
     {
         if ( null === $this->etlIntervalChunkSizeDays ) {
+            $this->etlPeriodChunkList = array(array($this->startDate, $this->endDate));
+            return;
+        } elseif ( null === $this->startDate || null === $this->endDate ) {
+            $this->logger->warning("Cannot chunk open-ended date interval, ignoring chunk option.");
             $this->etlPeriodChunkList = array(array($this->startDate, $this->endDate));
             return;
         }

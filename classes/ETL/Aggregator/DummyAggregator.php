@@ -23,16 +23,14 @@ class DummyAggregator extends aAction implements iAction
         parent::__construct($options, $etlConfig, $logger);
     }
 
-    public function execute(EtlOverseerOptions $etlOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
         return true;
     }
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
-        list($startDate, $endDate) = $etlOptions->getDatePeriod();
-        $this->currentStartDate = $startDate;
-        $this->currentEndDate = $endDate;
+        parent::initialize($etlOverseerOptions);
         return true;
     }
 }  // class DummyAggregator

@@ -52,7 +52,7 @@ class Query extends aNamedEntity
 
     // A 2-element array containing the field names for start and end date/times. If present this
     // query support restricting the query to a particular date range.
-    protected $dateFields = null;
+    // protected $dateFields = null;
 
     // Group by fields
     protected $groupBys = array();
@@ -148,7 +148,7 @@ class Query extends aNamedEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
             return true;
@@ -762,7 +762,7 @@ class Query extends aNamedEntity
         $joinList = array();
         $joinList[] = "FROM " . $this->joins[0]->getCreateSql($includeSchema);
 
-        for ( $i = 1; $i < count($this->joins); $i++ ) {
+        for ($i = 1; $i < count($this->joins); $i++) {
             if ( null === $this->joins[$i]->getOn() ) {
                 $msg = "Join clause for table '" . $this->joins[$i]->getName() . "' does not provide ON condition";
             }

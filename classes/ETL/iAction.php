@@ -40,19 +40,24 @@ interface iAction
     public function execute(EtlOverseerOptions $etlOptions);
 
     /* ------------------------------------------------------------------------------------------
-     * Perform verification on this action before executing it, allowing us to detect configuration
-     * errors. We pass the EtlOverseerOptions here because verification can occur pre-execution. Since
-     * multiple classes may implement verify(), null may be passed to parent::verify() so there are
-     * not multiple assignments of large objects.
+     * Perform initialization and verification on this action before executing it,
+     * allowing us to detect configuration errors. We pass the EtlOverseerOptions here
+     * because verification may occur pre-execution. Since multiple classes may implement
+     * iAction::initialize(), null may be passed to parent::initialize() so there are not
+     * multiple assignments of large objects.
      *
-     * @param EtlOverseerOptions $etlOptions Options set for this ETL run. This may be null if it was
-     *   set elsewhere in the chain
+     * This must occur AFTER the constructor calls has completed and should be called
+     * prior to verification and/or execution.
+     *
+     * @param EtlOverseerOptions $etlOverseerOptions Options set for this ETL run. This may be null
+     *   if it was set elsewhere in the chain.
      *
      * @return TRUE if verification was successful
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null);
+    // public function verify(EtlOverseerOptions $etlOverseerOptions = null);
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null);
 
     /* ------------------------------------------------------------------------------------------
      * @return The name of the action.
@@ -111,11 +116,11 @@ interface iAction
     public function getOverseerRestrictionOverrides();
 
     /* ------------------------------------------------------------------------------------------
-     * @return TRUE if verification has been performed on this action.
+     * @return TRUE if initialization has been performed on this action.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function isVerified();
+    public function isInitialized();
 
     /* ------------------------------------------------------------------------------------------
      * Generate a string representation of the action. Typically the name, plus other pertinant

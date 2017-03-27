@@ -53,13 +53,6 @@ class StructuredFileIngestor extends aIngestor implements iAction
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        if ($options->source !== null && ! $options->ignore_source) {
-            $sourceEndpoint = $etlConfig->getDataEndpoint($options->source);
-            if ($sourceEndpoint instanceof StructuredFile) {
-                $this->sourceEndpoint = $sourceEndpoint;
-                $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
-            }
-        }
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -70,7 +63,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
@@ -78,7 +71,22 @@ class StructuredFileIngestor extends aIngestor implements iAction
 
         $this->initialized = false;
 
-        parent::initialize();
+        parent::initialize($etlOverseerOptions);
+
+        // This ingestor supports an explicit source data endpoint of StructuredFile or
+        // JSON data specified directly in the definition file using the source_values
+        // key. If the source_values key is present, ignore the source endpoint as the
+        // data will have already been parsed.
+
+        if ( isset($this->parsedDefinitionFile->source_values) ) {
+            $this->sourceEndpoint = null;
+            $this->sourceHandle = null;
+        } elseif ( $this->options->source !== null && ! $this->options->ignore_source ) {
+            if ( ! $this->sourceEndpoint instanceof StructuredFile ) {
+                $msg = "Source is not an instance of ETL\\DataEndpoint\\StructuredFile";
+                $this->logAndThrowException($msg);
+            }
+        }
 
         // This action only supports 1 destination table so use the first one and log a warning if
         // there are multiple.
@@ -170,7 +178,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
 
         $this->logger->debug("Insert query " . $this->destinationEndpoint . ":\n$sql");
 
-        if ( ! $this->etlOverseerOptions->isDryrun() ) {
+        if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
             try {
                 $insertStatement = $this->destinationHandle->prepare($sql);
 
@@ -197,11 +205,9 @@ class StructuredFileIngestor extends aIngestor implements iAction
      */
     protected function performPreExecuteTasks()
     {
-        $etlOptions = $this->etlOverseerOptions;
-
         $this->time_start = microtime(true);
 
-        $this->verify($etlOptions);
+        $this->initialize($this->getEtlOverseerOptions());
 
         $this->manageTable($this->etlDestinationTable, $this->destinationEndpoint);
 

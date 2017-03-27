@@ -61,15 +61,6 @@ class VerifyDatabase extends aAction implements iAction
         $requiredKeys = array("source", "definition_file");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
-        $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
-        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
-            $this->sourceEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -77,18 +68,29 @@ class VerifyDatabase extends aAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    /*
+    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isVerified() ) {
             return;
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->setEtlOverseerOptions($etlOptions);
-        }
+
+        parent::verify($etlOverseerOptions);
 
         $this->initialize();
+
+        // Do this in the initialize phase?
+
+        // $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
+        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
+            // $this->sourceEndpoint = null;
+            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
+        // $this->sourceHandle = $this->sourceEndpoint->getHandle();
+        // $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
 
         // Verify that the response block and destination email are set
 
@@ -126,56 +128,47 @@ class VerifyDatabase extends aAction implements iAction
         return true;
 
     }  // verify()
+    */
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
-     *
-     * @throws Exception if any query data was not
-     * int the correct format.
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
+            $this->logger->debug("ALREADY INITIALIZED!");
             return;
         }
 
         $this->initialized = false;
 
-        $utilityEndpoint = $this->etlConfig->getDataEndpoint($this->options->utility);
-        $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
-        $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
+        // $utilityEndpoint = $this->etlConfig->getDataEndpoint($this->options->utility);
+        // $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
+        // $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
 
-        list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
-        $this->currentStartDate = $startDate;
-        $this->currentEndDate = $endDate;
+        // list($startDate, $endDate) = $this->getEtlOverseerOptions()->getDatePeriod();
+        // $this->currentStartDate = $startDate;
+        // $this->currentEndDate = $endDate;
 
         // These additional variables are available to the sql statement
 
-        $localVariableMap = array(
-            'UTILITY_SCHEMA' => $utilityEndpoint->getSchema(),
-            'SOURCE_SCHEMA' => $sourceEndpoint->getSchema(),
-            'START_DATE' =>  $sourceEndpoint->quote($this->currentStartDate),
-            'END_DATE' => $sourceEndpoint->quote($this->currentEndDate)
-            );
+        parent::initialize($etlOverseerOptions);
 
-        if ( false !== $destinationEndpoint ) {
-            $localVariableMap['DESTINATION_SCHEMA'] = $destinationEndpoint->getSchema();
-        }
+        $varsToQuote = array(
+            'START_DATE',
+            'END_DATE',
+            'LAST_MODIFIED',
+            'LAST_MODIFIED_START_DATE',
+            'LAST_MODIFIED_END_DATE'
+        );
 
-        if ( $this->etlOverseerOptions->getNumberOfDays() ) {
-            $localVariableMap['NUMBER_OF_DAYS'] = $this->etlOverseerOptions->getNumberOfDays();
-        }
-
+        $localVariableMap = Utility::quoteVariables($varsToQuote, $this->variableMap, $this->sourceEndpoint);
         $this->variableMap = array_merge($this->variableMap, $localVariableMap);
 
         // Our source query can be either a query specified directly in the definition file, or a
         // more complex query defined in a separate file.
-
-        $substitutedVars = array();
-        $unsubstitutedVars = array();
 
         if ( ! isset($this->parsedDefinitionFile->source_query) ) {
             $msg = "Required source_query key not found";
@@ -192,12 +185,12 @@ class VerifyDatabase extends aAction implements iAction
             }
 
             $this->sqlQueryString = file_get_contents($sqlFile);
-            $this->sqlQueryString = Utilities::substituteVariables($this->sqlQueryString, $this->variableMap, $substitutedVars, $unsubstitutedVars);
-
-            if ( 0 != count($unsubstitutedVars) ) {
-                $msg = $this . " Unsubstituted variables found in source query: " . implode(",", $unsubstitutedVars);
-                $this->logger->warning($msg);
-            }
+            $this->sqlQueryString = Utilities::substituteVariables(
+                $this->sqlQueryString,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in source query"
+            );
 
             $parser = new PHPSQLParser($this->sqlQueryString);
             $parsedSql = $parser->parsed;
@@ -228,14 +221,14 @@ class VerifyDatabase extends aAction implements iAction
             );
             $this->queryColumnNames = array_keys($sourceQuery->getRecords());
             $this->setOverseerRestrictionOverrides();
-            $this->etlOverseerOptions->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this);
+            $this->getEtlOverseerOptions()->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this);
             $this->sqlQueryString = $sourceQuery->getSelectSql();
-            $this->sqlQueryString = Utilities::substituteVariables($this->sqlQueryString, $this->variableMap, $substitutedVars, $unsubstitutedVars);
-
-            if ( 0 != count($unsubstitutedVars) ) {
-                $msg = $this . " Unsubstituted variables found in source query: " . implode(",", $unsubstitutedVars);
-                $this->logger->warning($msg);
-            }
+            $this->sqlQueryString = Utilities::substituteVariables(
+                $this->sqlQueryString,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in source query"
+            );
 
         } // else if ( ! isset($this->parsedDefinitionFile->source_query) )
 
@@ -251,21 +244,54 @@ class VerifyDatabase extends aAction implements iAction
                 continue;
             }
 
-            $substitutedVars = array();
-            $unsubstitutedVars = array();
-
             $this->emailConfiguration[$option] =  Utilities::substituteVariables(
                 $verifyConfig->response->$option,
                 $this->variableMap,
-                $substitutedVars,
-                $unsubstitutedVars
+                $this,
+                "Undefined macros found in response $option"
             );
 
-            if ( 0 != count($unsubstitutedVars) ) {
-                $msg = $this . " Unsubstituted variables found in response $option: " . implode(",", $unsubstitutedVars);
-                $this->logger->warning($msg);
-            }
         }  // if ( isset($verifyConfig->response->header) )
+
+// $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
+        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
+            // $this->sourceEndpoint = null;
+            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
+        // $this->sourceHandle = $this->sourceEndpoint->getHandle();
+        // $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
+
+        // Verify that the response block and destination email are set
+
+        if ( ! isset($this->parsedDefinitionFile->verify_database) ) {
+            $msg = "Required key verify_database not found in definition file";
+            $this->logAndThrowException($msg);
+        }
+
+        $verifyConfig = $this->parsedDefinitionFile->verify_database;
+
+        if ( ! isset($verifyConfig->response) ) {
+            $msg = "Required key verify_database.response not found in definition file";
+            $this->logAndThrowException($msg);
+        }
+
+        if ( ! isset($verifyConfig->response->line) ) {
+            $msg = "Required key verify_database.response.line not found in definition file";
+            $this->logAndThrowException($msg);
+        }
+
+        // Verify that any fields referenced in the line response are valid column names
+
+        if ( preg_match_all('/\${(.+)}/U', $verifyConfig->response->line, $matches) > 0 ) {
+            array_shift($matches);
+            $missing = array_diff($matches[0], $this->queryColumnNames);
+            if ( 0 != count($missing) ) {
+                $msg = "The following column names were referenced in the line template but are "
+                    . "not present in the query: " . implode(", ", $missing);
+                $this->logAndThrowException($msg);
+            }
+        }
 
         $this->initialized = true;
 
@@ -280,11 +306,8 @@ class VerifyDatabase extends aAction implements iAction
 
     public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->setEtlOverseerOptions($etlOverseerOptions);
-
-        $this->verify();
-
         $time_start = microtime(true);
+        $this->initialize($etlOverseerOptions);
 
         $this->logger->debug("Executing SQL " . $this->sourceEndpoint . ":\n" . $this->sqlQueryString);
         $verifyConfig = $this->parsedDefinitionFile->verify_database;
@@ -292,8 +315,8 @@ class VerifyDatabase extends aAction implements iAction
         $lines = array();
 
         try {
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                $result = $this->sourceEndpoint->getHandle()->query($this->sqlQueryString);
+            if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
+                $result = $this->sourceHandle->query($this->sqlQueryString);
                 $this->logger->info(count($result) . " matches found");
                 if ( 0 != count($result) ) {
                     foreach ( $result as $row ) {
@@ -301,7 +324,6 @@ class VerifyDatabase extends aAction implements iAction
                         $this->logger->warning($line);
                         $lines[] = $line;
                     }
-                    // If there are result rows, generate an email replacing any row macros in the line template
                 }
             }
         } catch ( PDOException $e ) {

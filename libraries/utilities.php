@@ -225,14 +225,16 @@ function power_cube($arr, $minLength = 1)
     $pp = power_set($arr, $minLength);
 
     foreach ($pp as $key => $value) {
-        if (count($value) <= 0) { continue; }
+        if (count($value) <= 0) {
+            continue;
+        }
         $pp_copy = $pp;
         unset($pp_copy[$key]);
 
-        $value_string = implode(",",$value);
+        $value_string = implode(",", $value);
 
         foreach ($pp_copy as $pp_copy_el) {
-            $el_value = implode(",",$pp_copy_el);
+            $el_value = implode(",", $pp_copy_el);
             if (string_begins_with($el_value, $value_string)) {
                 unset($pp[$key]);
                 break;
@@ -308,7 +310,7 @@ function power_perms($arr, $minLength = 1)
 
     foreach ($power_set as $set) {
         $perms = perms($set);
-        $result = array_merge($result,$perms);
+        $result = array_merge($result, $perms);
     }
 
     return $result;
@@ -325,10 +327,12 @@ function power_set($in, $minLength = 1)
     $return = array();
 
     for ($i = 0; $i < $members; $i++) {
-        $b = sprintf("%0".$count."b",$i);
+        $b = sprintf("%0" . $count . "b", $i);
         $out = array();
         for ($j = 0; $j < $count; $j++) {
-            if ($b{$j} == '1') { $out[] = $in[$j]; }
+            if ($b{$j} == '1') {
+                $out[] = $in[$j];
+            }
         }
         if (count($out) >= $minLength) {
             $return[] = $out;
@@ -351,7 +355,8 @@ function factorial($int)
         return 1;
     }
 
-    for ($f = 2; $int-1 > 1; $f *= $int--);
+    for ($f = 2; $int-1 > 1; $f *= $int--) {
+    }
 
     return $f;
 }
@@ -493,8 +498,8 @@ function getParameterIn($param, $haystack)
  */
 function generateError($dom, $nodeRoot, $code, $message)
 {
-    \xd_domdocument\createElement($dom, $nodeRoot, "code",  $code);
-    \xd_domdocument\createElement($dom, $nodeRoot, "reason",  $message);
+    \xd_domdocument\createElement($dom, $nodeRoot, "code", $code);
+    \xd_domdocument\createElement($dom, $nodeRoot, "reason", $message);
 
     return true;
 }
@@ -507,7 +512,7 @@ function printAndDelete($message)
     $message_length = strlen($message);
 
     print $message;
-    print str_repeat(chr(8) , $message_length);
+    print str_repeat(chr(8), $message_length);
 
     return $message_length;
 }
@@ -541,7 +546,7 @@ function checkForCenterLogo($apply_css = true)
     }
 
     if ($use_center_logo == true && $apply_css == true) {
-print <<<EOF
+        print <<<EOF
    <style type="text/css">
       .custom_center_logo {
          height: 25px;
@@ -604,8 +609,10 @@ function qualify_path($path, $base_path)
  * to a fully qualified path without these references. For example,
  * /var/www/share/tools/etl/../../../etc/etl.json resolves to /var/www/etc/etl/etl.  Only
  * fully qualified paths are resolved as relative paths may not be able to be fully
- * resolved (e.g., ../../../etc/etl.json cannot properly be resolved on it's own). PHP
- * provides realpath() but this returns FALSE if the file does not yet exist which may
+ * resolved (e.g., ../../../etc/etl.json cannot properly be resolved on it's own). This is
+ * useful for making logs more human readable.
+ *
+ * PHP provides realpath() but this returns FALSE if the file does not yet exist which may
  * cause issues in a dynamic environment.
  */
 
@@ -622,8 +629,10 @@ function resolve_path($path)
     $resolved = array();
 
     foreach ($parts as $part) {
-        if ($part == '.') continue;
-        if ($part == '..') {
+        if ( '.' == $part ) {
+            continue;
+        }
+        if ( '..' == $part ) {
             array_pop($resolved);
             continue;
         }
@@ -631,4 +640,4 @@ function resolve_path($path)
     }
 
     return implode(DIRECTORY_SEPARATOR, $resolved);
-}
+}  // resolve_path()

@@ -46,24 +46,22 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    /*
+    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isVerified() ) {
             return;
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->etlOverseerOptions = $etlOptions;
-        }
 
         $this->initialize();
 
-        parent::verify();
+        parent::verify($etlOverseerOptions);
 
         // The UpdateIngestor does not create the destination table so it must exist.
 
@@ -80,16 +78,14 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         return true;
 
     }  // verify()
+    */
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action. This should be called after the constructor and
-     * as part of the verification process.
-     *
-     * @throws Exception if any query data was not int the correct format.
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
@@ -97,7 +93,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 
         $this->initialized = false;
 
-        parent::initialize();
+        parent::initialize($etlOverseerOptions);
 
         // This action only supports 1 destination table so use the first one and log a warning if
         // there are multiple.
@@ -201,15 +197,29 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->etlOverseerOptions = $etlOptions;
         $numRecordsProcessed = 0;
         $numRecordsUpdated = 0;
 
         $time_start = microtime(true);
 
-        $this->verify($etlOptions);
+        $this->initialize($etlOverseerOptions);
+
+        // The UpdateIngestor does not create the destination table so it must exist.
+
+        $tableName = $this->etlDestinationTable->getName();
+        $schema = $this->etlDestinationTable->getSchema();
+
+        if ( ! $this->destinationEndpoint->tableExists($tableName, $schema) ) {
+            $msg = "Destination table " . $this->etlDestinationTable->getFullName() . " must exist";
+            if ( $this->getEtlOverseerOptions()->isDryrun() ) {
+                // In dry-run mode the table may not exist if a previous action in the pipeline created it
+                $this->logger->warning($msg);
+            } else {
+                $this->logAndThrowException($msg);
+            }
+        }
 
         // Note that the update ingestor does not manage or truncate tables.
 
@@ -248,7 +258,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
             $dataFields
         );
 
-        if ( ! $etlOptions->isDryrun() ) {
+        if ( ! $etlOverseerOptions->isDryrun() ) {
             try {
                 $updateStatement = $this->destinationHandle->prepare($sql);
 

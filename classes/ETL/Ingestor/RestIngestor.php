@@ -70,33 +70,14 @@ class RestIngestor extends aIngestor implements iAction
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
-
-        if ( ! $this->sourceEndpoint instanceof Rest ) {
-            $this->sourceEndpoint = null;
-            $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\Rest");
-        }
-        $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
-        $this->sourceEndpoint->connect();
-        $this->sourceHandle = $this->sourceEndpoint->getHandle();
-
-        $this->utilityEndpoint = $etlConfig->getDataEndpoint($this->options->utility);
-        $this->utilityEndpoint->connect();
-
-        if ( ! $this->utilityEndpoint instanceof aRdbmsEndpoint ) {
-            $this->utilityEndpoint = null;
-            $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\aRdbmsEndpoint");
-        }
-        $this->utilityHandle = $this->utilityEndpoint->getHandle();
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
@@ -104,7 +85,27 @@ class RestIngestor extends aIngestor implements iAction
 
         $this->initialized = false;
 
-        parent::initialize();
+        parent::initialize($etlOverseerOptions);
+
+        // $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
+
+        if ( ! $this->sourceEndpoint instanceof Rest ) {
+            // $this->sourceEndpoint = null;
+            $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\Rest");
+        }
+        //$this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
+
+        $this->sourceEndpoint->connect();
+        // $this->sourceHandle = $this->sourceEndpoint->getHandle();
+
+        // $this->utilityEndpoint = $etlConfig->getDataEndpoint($this->options->utility);
+        $this->utilityEndpoint->connect();
+
+        if ( ! $this->utilityEndpoint instanceof aRdbmsEndpoint ) {
+            $this->utilityEndpoint = null;
+            $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\aRdbmsEndpoint");
+        }
+        // $this->utilityHandle = $this->utilityEndpoint->getHandle();
 
         // This action only supports 1 destination table so use the first one and log a warning if
         // there are multiple.
@@ -127,13 +128,9 @@ class RestIngestor extends aIngestor implements iAction
                 $this->utilityEndpoint->getSystemQuoteChar()
             );
 
-            // If supported by the source query, set the date ranges here
+            // If supported by the source query, set the date ranges here.
 
-            $startDate = $this->utilityEndpoint->quote($this->currentStartDate);
-            $endDate = $this->utilityEndpoint->quote($this->currentEndDate);
-
-            $this->etlSourceQuery->setOverseerRestriction(Query::RESTRICT_START_DATE, $startDate);
-            $this->etlSourceQuery->setOverseerRestriction(Query::RESTRICT_END_DATE, $endDate);
+            $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->utilityEndpoint, $this);
 
         }  // if ( null === $this->etlSourceQuery && isset($this->parsedDefinitionFile->source_query) )
 
@@ -174,7 +171,7 @@ class RestIngestor extends aIngestor implements iAction
         // paramaters passed in the loop of dirty date ids. If this list is modified, be sure to update
         // the documentation!
 
-        $this->variableMap["UTILITY_SCHEMA"] = $this->utilityEndpoint->getSchema();
+        // $this->variableMap["UTILITY_SCHEMA"] = $this->utilityEndpoint->getSchema();
 
         // --------------------------------------------------------------------------------
         // The values for the request parameter and result field map configuration may be an object
@@ -213,6 +210,22 @@ class RestIngestor extends aIngestor implements iAction
             unset($value); // Sever the reference with the last element
         }  // if ( isset($this->restRequestConfig->field_map) )
 
+        if ( null !== $this->restRequestConfig && ! is_object($this->restRequestConfig) ) {
+            $this->logAndThrowException("REST request config must be an object");
+        } elseif ( null !== $this->restResponseConfig && ! is_object($this->restResponseConfig) ) {
+            $this->logAndThrowException("REST response config must be an object");
+        }
+
+        // Verify that any type formatting directives in the request and response are valid
+
+        foreach ( $this->parameterDirectives as $parameter => $directives ) {
+            $this->verifyDirectives($parameter, $directives);
+        }  // if ( isset($this->restRequestConfig->parameters) )
+
+        foreach ( $this->responseDirectives as $key => $directives ) {
+            $this->verifyDirectives($key, $directives);
+        }  // if ( isset($this->restRequestConfig->field_map) )
+
         $this->initialized = true;
 
         return true;
@@ -224,20 +237,18 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    /*
+    public function verify(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isVerified() ) {
             return;
         }
 
         $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->etlOverseerOptions = $etlOptions;
-        }
 
         $this->initialize();
 
-        parent::verify();
+        parent::verify($etlOverseerOptions);
 
         if ( null !== $this->restRequestConfig && ! is_object($this->restRequestConfig) ) {
             $this->logAndThrowException("REST request config must be an object");
@@ -260,6 +271,7 @@ class RestIngestor extends aIngestor implements iAction
         return true;
 
     }  // verify()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * @see aIngestor::performPreExecuteTasks()
@@ -302,7 +314,12 @@ class RestIngestor extends aIngestor implements iAction
 
             $sql = $this->etlSourceQuery->getSelectSql();
             if ( null !== $this->variableMap ) {
-                $sql = Utilities::substituteVariables($sql, $this->variableMap);
+                $sql = Utilities::substituteVariables(
+                    $sql,
+                    $this->variableMap,
+                    $this,
+                    "Undefined macros found in SQL"
+                );
             }
 
             $this->logger->debug("REST source query:\n$sql");
@@ -400,7 +417,7 @@ class RestIngestor extends aIngestor implements iAction
 
         $this->logger->info("REST url: {$this->currentUrl}");
 
-        if ( $this->etlOverseerOptions->isDryrun() ) {
+        if ( $this->getEtlOverseerOptions()->isDryrun() ) {
             return 0;
         }
 
@@ -712,15 +729,17 @@ class RestIngestor extends aIngestor implements iAction
 
             // A format was specified. Substitute any existing parameters in the format string.
 
-            $substitutions = array();
+            $substitutionDetails = array();
             $queryString = Utilities::substituteVariables(
                 $this->restRequestConfig->format,
                 $this->restParameters,
-                $substitutions
+                null,
+                null,
+                $substitutionDetails
             );
 
             if ( false !== strpos($queryString, '${^REMAINING}') ) {
-                $used = array_combine($substitutions, $substitutions);
+                $used = array_combine($substitutionDetails['substituted'], $substitutionDetails['substituted']);
                 $remaining = array_diff_key($this->restParameters, $used);
                 $parameters = implode(
                     "&",
