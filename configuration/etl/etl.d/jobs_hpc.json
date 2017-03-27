@@ -17,16 +17,10 @@
                     "create_schema_if_not_exists": true
                 }
             }
-        },
-
-        "xdcdb-jobs": {
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions"
         }
     },
 
     "#": "Current HPC job ingestion from the XDCDB mirror",
-
 
     "xdcdb-jobs": [
         {

@@ -400,7 +400,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         if ( null === $date ) {
             $this->lastModifiedStartDate = null;
-        } else if ( false === ( $ts = strtotime($date)) ) {
+        } elseif ( false === ( $ts = strtotime($date)) ) {
             $msg = get_class($this) . ": Could not parse last modified start date '$date'";
             throw new Exception($msg);
         } else {
@@ -435,7 +435,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     {
         if ( null === $date ) {
             $this->lastModifiedEndDate = null;
-        } else if ( false === ( $ts = strtotime($date)) ) {
+        } elseif ( false === ( $ts = strtotime($date)) ) {
             $msg = get_class($this) . ": Could not parse last modified start date '$date'";
             throw new Exception($msg);
         } else {
@@ -568,7 +568,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     public function setForce($flag = true)
     {
         $origFlag = $flag;
-        $flag = Utilities::filterBooleanVar($flag);
+        $flag = \xd_utilities\filter_var($flag, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ( null === $flag ) {
             $msg = get_class($this) . ": Force flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
@@ -599,7 +599,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     public function setDryrun($flag = true)
     {
         $origFlag = $flag;
-        $flag = Utilities::filterBooleanVar($flag);
+        $flag = \xd_utilities\filter_var($flag, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ( null === $flag ) {
             $msg = get_class($this) . ": Dryrun flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
@@ -630,7 +630,7 @@ class EtlOverseerOptions extends Loggable implements \Iterator
     public function setVerbose($flag = true)
     {
         $origFlag = $flag;
-        $flag = Utilities::filterBooleanVar($flag);
+        $flag = \xd_utilities\filter_var($flag, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ( null === $flag ) {
             $msg = get_class($this) . ": Verbose flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
@@ -877,5 +877,4 @@ class EtlOverseerOptions extends Loggable implements \Iterator
 
         $this->etlPeriodChunkList = $chunkList;
     }  // generateEtlChunkList()
-
 }  // class EtlOverseerOptions

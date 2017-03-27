@@ -16,8 +16,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Column extends aNamedEntity
-implements iTableItem
+class Column extends aNamedEntity implements iTableItem
 {
     // Column type (free-form string)
     private $type = null;
@@ -107,7 +106,7 @@ implements iTableItem
                 // "NO"
                 $tmp = strtolower($value);
                 $tmp = ( "null" == $tmp ? true : $tmp );
-                $value = $value = \ETL\Utilities::filterBooleanVar($value);
+                $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                 break;
 
             case 'extra':
@@ -265,10 +264,10 @@ implements iTableItem
                 if ( null !== $destExtra ) {
                     // Extra has changed (destination has a value)
                     return -1;
-                } else if ( null === $destDefault ) {
+                } elseif ( null === $destDefault ) {
                     // Default has changed from NULL to something
                     return -1;
-                } else if ( strtolower($srcDefault) != strtolower($destDefault)
+                } elseif ( strtolower($srcDefault) != strtolower($destDefault)
                             && ( ("0" == "$srcDefault" && '0000-00-00 00:00:00' != $destDefault)
                                  || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault) ) )
                 {
@@ -285,7 +284,7 @@ implements iTableItem
             if ( null !== $srcDefault && null !== $srcExtra ) {
                 if ( strtolower($srcExtra) != strtolower($destExtra) ) {
                     return -1;
-                } else if ( strtolower($srcDefault) != strtolower($destDefault)
+                } elseif ( strtolower($srcDefault) != strtolower($destDefault)
                             && ( ("0" == "$srcDefault" && '0000-00-00 00:00:00' != $destDefault)
                                  || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault)) )
                 {
@@ -396,11 +395,11 @@ implements iTableItem
                  "x'" == substr($this->default, 0, 2) ||
                  "X'" == substr($this->default, 0, 2) ) {
                 $parts[] = "DEFAULT " . $this->default;
-            } else if ( ($this->nullable && null === $this->default) ) {
+            } elseif ( ($this->nullable && null === $this->default) ) {
                 $parts[] = "DEFAULT NULL";
             } elseif (is_bool($this->default)) {
                 $parts[] = "DEFAULT " . ($this->default ? "TRUE" : "FALSE");
-            } else if ( "'" == substr( $this->default, 0, 1) && "'" == substr( $this->default, -1) ) {
+            } elseif ( "'" == substr($this->default, 0, 1) && "'" == substr($this->default, -1) ) {
                 $parts[] = "DEFAULT " . addslashes($this->default);
             }
             else {
@@ -475,5 +474,4 @@ implements iTableItem
         return $data;
 
     }  // toJsonObj()
-
 }  // class Column
