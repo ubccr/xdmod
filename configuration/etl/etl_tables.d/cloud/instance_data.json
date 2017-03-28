@@ -1,0 +1,51 @@
+{
+    "table_definition": {
+        "name": "instance_data",
+        "engine": "MyISAM",
+        "comment": "Additional instance information",
+        "columns": [
+            {
+                "name": "event_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "instance_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
+            },
+            {
+                "name": "image_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": -1
+            },
+            {
+                "name": "host_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": -1
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_instance",
+                "columns": [
+                    "instance_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "event_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}
