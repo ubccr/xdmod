@@ -51,9 +51,9 @@ use ETL\Utilities;
 use ETL\DbEntity\Query;
 
 use CCR\DB\MySQLHelper;
-use \PDOException;
-use \PDO;
-use \Log;
+use PDOException;
+use PDO;
+use Log;
 
 class pdoIngestor extends aIngestor
 {
@@ -98,39 +98,18 @@ class pdoIngestor extends aIngestor
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        // Get the handles for the various database endpoints
+        // This action supports chunking of the ETL date period
 
-        $this->utilityEndpoint = $etlConfig->getDataEndpoint($this->options->utility);
-        if ( ! $this->utilityEndpoint instanceof iRdbmsEndpoint ) {
-            $this->utilityEndpoint = null;
-            $msg = "Utility endpoint does not implement of ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        $this->utilityHandle = $this->utilityEndpoint->getHandle();
-
-        $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
-        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
-            $this->sourceEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
-
-        if ( "mysql" == $this->destinationHandle->_db_engine ) {
-            $this->_dest_helper = MySQLHelper::factory($this->destinationHandle);
-        }
+        $this->supportDateRangeChunking = true;
 
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * Retrieve the query data and perform any necessary verification.
-     *
-     * @throws Exception if any query data was not int the correct format.
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
@@ -138,7 +117,23 @@ class pdoIngestor extends aIngestor
 
         $this->initialized = false;
 
-        parent::initialize();
+        parent::initialize($etlOverseerOptions);
+
+        // Get the handles for the various database endpoints
+
+        if ( ! $this->utilityEndpoint instanceof iRdbmsEndpoint ) {
+            $msg = "Utility endpoint does not implement of ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
+
+        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
+            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
+
+        if ( "mysql" == $this->destinationHandle->_db_engine ) {
+            $this->_dest_helper = MySQLHelper::factory($this->destinationHandle);
+        }
 
         // An individual action may override restrictions provided by the overseer.
         $this->setOverseerRestrictionOverrides();
@@ -159,15 +154,12 @@ class pdoIngestor extends aIngestor
             // in the _execute() function with the current start/end dates but are needed here to
             // parse the query.
 
-            $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+            $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
 
         }  // ( null === $this->etlSourceQuery )
 
         // By default, queries may include references to the schema names so they can be changed in the
         // config file.
-
-        $this->variableMap["UTILITY_SCHEMA"] = $this->utilityEndpoint->getSchema();
-        $this->variableMap["SOURCE_SCHEMA"] = $this->sourceEndpoint->getSchema();
 
         $this->sourceQueryString = $this->getSourceQueryString();
 
@@ -353,8 +345,14 @@ class pdoIngestor extends aIngestor
         }
 
         $sql = $this->etlSourceQuery->getSelectSql();
+
         if ( null !== $this->variableMap ) {
-            $sql = Utilities::substituteVariables($sql, $this->variableMap);
+            $sql = Utilities::substituteVariables(
+                $sql,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in source query"
+            );
         }
 
         return $sql;
@@ -438,19 +436,6 @@ class pdoIngestor extends aIngestor
         // Update the start/end dates for this query and get the source query string. It is important
         // to do it in the pre-execute stage because if we are chunking our ingest it will get
         // updated every time.
-
-        if ( null === $this->etlSourceQuery && isset($this->parsedDefinitionFile->source_query) ) {
-            $this->logger->info("Update source query date range");
-            // If supported by the source query, set the date ranges here
-
-            $startDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-            $endDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
-
-            if ( false === $this->etlSourceQuery->setDateRange($startDate, $endDate) ) {
-                $msg = "Ingestion date ranges not supported by source query";
-                $this->logger->info($msg);
-            }
-        }
 
         $this->sourceQueryString = $this->getSourceQueryString();
 
@@ -546,7 +531,7 @@ class pdoIngestor extends aIngestor
         // start/end date range here.
 
         if ( null !== $this->etlSourceQuery) {
-            $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+            $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
             $this->sourceQueryString = $this->getSourceQueryString();
         }
 
@@ -625,7 +610,7 @@ class pdoIngestor extends aIngestor
 
         $this->logger->debug("Single DB ingest SQL " . $this->destinationEndpoint . ":\n$sql");
 
-        if ( $this->etlOverseerOptions->isDryrun() ) {
+        if ( $this->getEtlOverseerOptions()->isDryrun() ) {
             return 0;
         }
 
@@ -719,7 +704,7 @@ class pdoIngestor extends aIngestor
 
         }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
 
-        if ( $this->etlOverseerOptions->isDryrun() ) {
+        if ( $this->getEtlOverseerOptions()->isDryrun() ) {
             $this->logger->debug("Source query " . $this->sourceEndpoint . ":\n" . $this->sourceQueryString);
             // If this is DRYRUN mode clean up the files that tempnam() created
             foreach ( $infileList as $etlTableKey => $infileName ) {

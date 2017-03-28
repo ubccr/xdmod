@@ -16,8 +16,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Index extends aNamedEntity
-implements iTableItem
+class Index extends aNamedEntity implements iTableItem
 {
     private $type = null;
     private $is_unique = null;
@@ -49,7 +48,7 @@ implements iTableItem
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
             return true;
@@ -95,28 +94,6 @@ implements iTableItem
         $name = ( strlen($str) <= 32 ? $str : md5($str) );
         return "index_" . $name;
     }  // generateIndexName()
-
-    /* ------------------------------------------------------------------------------------------
-     * Filter values based on the property. Some properties are true/false but may be specified as
-     * true, NULL, or YES depending on the input source. Other properties may be empty strings when
-     * discovered from the database which should be treated as NULL for our purposes
-     *
-     * @param $property The property we are filtering
-     * @param $value The value of the property as presented from the source (array, object, database)
-     *
-     * @return The filtered value
-     * ------------------------------------------------------------------------------------------
-     */
-
-    private function filterValue($property, $value)
-    {
-        switch ( $property ) {
-        default:
-            break;
-        }  // switch ( $property )
-
-        return $value;
-    }  // filterValue()
 
     /* ------------------------------------------------------------------------------------------
      * @return The list of column names for this index
@@ -252,5 +229,4 @@ implements iTableItem
         return $data;
 
     }  // toJsonObj()
-
 }  // class Index

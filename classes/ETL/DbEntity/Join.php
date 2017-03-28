@@ -16,8 +16,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Join extends aNamedEntity
-implements iTableItem
+class Join extends aNamedEntity implements iTableItem
 {
     // NOTE: The join name is treated as the table.
 
@@ -56,7 +55,7 @@ implements iTableItem
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
             return true;
@@ -78,28 +77,6 @@ implements iTableItem
         $this->initialized = true;
 
     }  // initialize()
-
-    /* ------------------------------------------------------------------------------------------
-     * Filter values based on the property. Some properties are true/false but may be specified as
-     * true, null, or YES depending on the input source. Other properties may be empty strings when
-     * discovered from the database which should be treated as null for our purposes
-     *
-     * @param $property The property we are filtering
-     * @param $value The value of the property as presented from the source (array, object, database)
-     *
-     * @return The filtered value
-     * ------------------------------------------------------------------------------------------
-     */
-
-    private function filterValue($property, $value)
-    {
-        switch ( $property ) {
-        default:
-            break;
-        }  // switch ( $property )
-
-        return $value;
-    }  // filterValue()
 
     /* ------------------------------------------------------------------------------------------
      * Return the optional ON clause for this join.
@@ -213,5 +190,4 @@ implements iTableItem
         return $data;
 
     }  // toJsonObj()
-
 }  // class Join

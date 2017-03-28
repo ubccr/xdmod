@@ -44,7 +44,7 @@ $scriptOptions = array(
     // Groups to run
     'groups'            => array(),
     // Chunk size (in days) for breaking up the process
-    'chunk-size-days'   => 365,
+    'chunk-size-days'   => null,
     // ETL last modified start date, used by some actions. Defaults to the start of the ETL process.
     'last-modified-start-date' => date('Y-m-d H:i:s'),
     // ETL last modified end date, used by some actions.
@@ -348,14 +348,6 @@ foreach ( $argv as $index => $arg ) {
     }
 }
 
-if ( ! $showList &&
-     ( null === $scriptOptions['start-date'] &&
-       null === $scriptOptions['end-date'] &&
-       null === $scriptOptions['number-of-days']) )
-{
-    usage_and_exit("Must provide start/end date or number of days");
-}
-
 // ------------------------------------------------------------------------------------------
 // Set up the logger
 
@@ -513,7 +505,7 @@ if ( $showList ) {
                 $headings = array("Type","Name","Key","Description");
                 print implode(LIST_SEPARATOR, $headings) . "\n";
 
-                for ( $i=0; $i < count($endpointSummary[0]); $i++ ) {
+                for ($i=0; $i < count($endpointSummary[0]); $i++) {
                     $a = array(
                         $endpointSummary[0][$i],
                         $endpointSummary[1][$i],
@@ -547,47 +539,6 @@ if ( $showList ) {
     }
     exit();
 }  // if ( $showList )
-
-// ------------------------------------------------------------------------------------------
-// Calculate start & end dates. Using the -s and -e flags take precedence over the -n flag.
-
-if ( null !== $scriptOptions['start-date'] || null !== $scriptOptions['end-date'] ) {
-
-    if ( null === $scriptOptions['end-date'] ) {
-        // If there is no end date, assume today
-        $scriptOptions['end-date'] = date("Y-m-d 23:59:59");
-        $logger->info("No end date set, assuming " . $scriptOptions['end-date']);
-    } elseif ( null === $scriptOptions['start-date'] ) {
-        // If no start date assume epoch (1970-01-01 00:00:00) in the current timezone
-        $scriptOptions['start-date'] = "1970-01-01 00:00:00";
-        $logger->info("No start date set, assuming " . $scriptOptions['start-date']);
-    }
-
-    // If a time was not provided along with the start or end dates (i.e., it does not fall on the
-    // 86400 seconds in a day boundary) assume that we will use the start and end of the day,
-    // respectively.  We must use UTC because we don't care about timezones in this calculation.
-
-    if ( 0 == (strtotime($scriptOptions['start-date'] . " UTC") % 86400)
-         && '00:00:00' != substr($scriptOptions['start-date'], -8) )
-    {
-        $scriptOptions['start-date'] .= " 00:00:00";
-    }
-
-    if ( 0 == (strtotime($scriptOptions['end-date'] . " UTC") % 86400) ) {
-        $scriptOptions['end-date'] .= " 23:59:59";
-    }
-
-} else {
-
-    // If start/end dates were not provided us the number of days. Note that the current day is
-    // considered the first day so subtract 1.
-
-    $today = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
-
-    $scriptOptions['start-date'] = date("Y-m-d 00:00:00", $today - (86400 * ($scriptOptions['number-of-days'] - 1)));
-    $scriptOptions['end-date']   = date("Y-m-d 23:59:59");
-
-}  // else ($scriptOptions['start-date'] || $scriptOptions['end-date'] )
 
 // ------------------------------------------------------------------------------------------
 // Look up resource ids and generate the mapping for resource codes to ids. This can be stored in
@@ -631,9 +582,6 @@ if ( ! ($overseer instanceof iEtlOverseer ) )
 }
 
 try {
-    $logger->notice(array('message'         => 'ETL time period',
-                          'data_start_time' => $overseerOptions->getStartDate(),
-                          'data_end_time'   => $overseerOptions->getEndDate()));
     $overseer->execute($etlConfig);
 } catch ( Exception $e ) {
     exit($e->getMessage() . "\n" . $e->getTraceAsString() . "\n");
@@ -684,7 +632,7 @@ Usage: {$argv[0]}
     Perform all steps except execution of the actions. Useful for validating the configuration or displaying queries.
 
     -e, --end-date <date>
-    End date of the ETL period. Overrides --number-of-days.
+    End date of the ETL period. Supports relative time formats (see below)
 
     -f, --force
     Force ingestion/aggregation even if the data has already been processed. Job end-date is used to identify jobs.
@@ -702,7 +650,7 @@ Usage: {$argv[0]}
     ETL last modified start date, used by some actions. Defaults to the start of the ETL process (e.g., "now").
 
     -n, --number-of-days
-    Days to ingest from the source (the current day is included)
+    Number of days that the action will operate on.
 
     -o, --option "<tag>=<value>"
     Add or override a top-level configuration option FOR ALL ACTIONS. May be used multiple times. This has the effect of directly modifying the action configuration.
@@ -714,7 +662,7 @@ Usage: {$argv[0]}
     Include only this resource code during action execution. May be used multiple times, default is all resources.
 
     -s, --start-date <date>
-    Start date of the ETL period. Overrides --number-of-days
+    Start date of the ETL period. Supports relative time formats (see below).
 
     -v, --verbosity {debug, info, notice, warning, quiet} [default $verbosityDefault]
     Level of verbosity to output from the ETL process
@@ -725,7 +673,7 @@ Usage: {$argv[0]}
     -y, --last-modified-end-date
     ETL last modified end date, used by some actions.
 
-    NOTE: Date and time options support "+1 day", "now", "now - 1 day", etc. notation.
+    NOTE: Date and time options support relative notation such as "+1 day", "now", "now - 1 week", "now -10 days 00:00:00", etc.
 
 EOMSG
     );

@@ -27,9 +27,10 @@ use ETL\DbEntity\Table;
 
 use PHPSQLParser\PHPSQLParser;
 
-use \PDOException;
-use \stdClass;
-use \Log;
+use Exception;
+use PDOException;
+use stdClass;
+use Log;
 
 abstract class aRdbmsDestinationAction extends aAction
 {
@@ -54,37 +55,38 @@ abstract class aRdbmsDestinationAction extends aAction
 
         parent::__construct($options, $etlConfig, $logger);
 
-        $this->destinationEndpoint = $etlConfig->getDataEndpoint($this->options->destination);
+    }  // __construct()
+
+    /* ------------------------------------------------------------------------------------------
+     * Initialize data required to perform the action.  Since this is an action of a target database
+     * we must parse the definition of the target table.
+     *
+     * @throws Exception if any query data was not
+     * int the correct format.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
+    {
+        if ( $this->isInitialized() ) {
+            return;
+        }
+
+        $this->initialized = false;
+
+        parent::initialize($etlOverseerOptions);
+
         if ( ! $this->destinationEndpoint instanceof iRdbmsEndpoint ) {
             $this->destinationEndpoint = null;
             $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
-        $this->destinationHandle = $this->destinationEndpoint->getHandle();
-        $this->logger->debug("Destination endpoint: " . $this->destinationEndpoint);
 
-    }  // __construct()
+        // Create the objects representing the destination tables. This method can be
+        // overriden in the case of an aggregator to use AggregationTable objects instead
+        // of Table objects.
 
-    /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function verify(EtlOverseerOptions $etlOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->etlOverseerOptions = $etlOptions;
-        }
-
-        // Perform verification by fetching the query data and parsing the table
-        // configuration. Exceptions will be thrown if there were errors.
-
-        $this->initialize();
+        $this->createDestinationTableObjects();
 
         if ( 0 == count($this->etlDestinationTableList) ) {
             $msg = "No ETL destination tables defined";
@@ -101,70 +103,60 @@ abstract class aRdbmsDestinationAction extends aAction
             $etlTable->verify();
         }
 
-        $this->verified = true;
+        $this->initialized = true;
 
         return true;
 
-    }  // verify()
+    }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
-     *
-     * @throws Exception if any query data was not
-     * int the correct format.
+     * Populate the $etlDestinationTableList with Table objects representing the tables
+     * described in the table definition configuration block from the definition file. If
+     * another type of table object is needed (e.g., AggregationTable for aggregation
+     * actions, then this method can be overriden.
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    protected function createDestinationTableObjects()
     {
-        if ( $this->isInitialized() ) {
-            return;
+        if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
+            $msg = "Definition file does not contain a 'table_definition' key";
+            $this->logAndThrowException($msg);
         }
 
-        $this->initialized = false;
+        // A table definition can be either:
+        //
+        // (1) A single table definition object (current default for a single destination
+        // table) or (2) An array of one or more table definitions (how we will initially
+        // handle multiple destination tables).
+        //
+        // In the future, we will support an object with key value pairs where the key is
+        // the table name and the value is the definition object. In the mean time, we
+        // will generate this format here so the rest of the code does not need to change
+        // later.
 
-        // If the destaination table list is not empty, assume that a child class has set it and do
-        // not override.  Otherwise populate it based on the parsed definition.
+        // Normalize the table definition into a set of key-value pairs where the key is the
+        // table name and the value is the definition object.
 
-        if ( 0 == count($this->etlDestinationTableList) ) {
+        $parsedTableDefinition = $this->parsedDefinitionFile->table_definition;
 
-            if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
-                $msg = "Definition file does not contain a 'table_definition' key";
-                $this->logAndThrowException($msg);
-            }
+        $parsedTableDefinitionList =
+            ( ! is_array($parsedTableDefinition)
+              ? array($parsedTableDefinition)
+              : $parsedTableDefinition );
 
-            // A table definition can be either (1) A single table definition object (current
-            // default for a single destination table) or (2) An array of one or more table
-            // definitions (how we will initially handle multiple destination tables). In the
-            // future, we will support an object with key value pairs where the key is the table
-            // name and the value is the definition object. In the mean time, we will generate this
-            // format here so the rest of the code does not need to change later.
+        foreach ( $parsedTableDefinitionList as $tableDefinition ) {
 
-
-            // Normalize the table definition into a set of key-value pairs where the key is the
-            // table name and the value is the definition object.
-
-            $parsedTableDefinition = $this->parsedDefinitionFile->table_definition;
-            $tableDefinitionList = array();
-
-            if ( is_object($parsedTableDefinition) ) {
-                // Standard single destination table
-                $tableDefinitionList[$parsedTableDefinition->name] = $parsedTableDefinition;
-            } elseif ( is_array($parsedTableDefinition) ) {
-                // Temporary format for multiple destination tables
-                foreach ( $parsedTableDefinition as $singleTableDefinition ) {
-                    $tableDefinitionList[$singleTableDefinition->name] = $singleTableDefinition;
-                }
-            }
-
-            foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition ) {
-
-                $this->logger->debug("Create ETL destination table object for table definition key '$etlTableKey'");
+            try {
                 $etlTable = new Table(
                     $tableDefinition,
                     $this->destinationEndpoint->getSystemQuoteChar(),
                     $this->logger
+                );
+                $this->logger->debug(
+                    "Created ETL destination table object for table definition key '"
+                    . $etlTable->getName()
+                    . "'"
                 );
                 $etlTable->setSchema($this->destinationEndpoint->getSchema());
                 $tableName = $etlTable->getFullName();
@@ -175,26 +167,19 @@ abstract class aRdbmsDestinationAction extends aAction
                     $this->logAndThrowException($msg);
                 }
 
-                $this->etlDestinationTableList[$etlTableKey] = $etlTable;
-
-            }  // foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition )
-
-            if ( 0 == count($this->etlDestinationTableList) ) {
-                $msg = "No table definitions specified";
-                $this->logAndThrowException($msg);
+                $this->etlDestinationTableList[$etlTable->getName()] = $etlTable;
+            } catch (Exception $e) {
+                $this->logAndThrowException($e->getMessage() . " in file '" . $this->definitionFile . "'");
             }
 
-        }  // if ( 0 == count($this->etlDestinationTableList) )
+        }  // foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition )
 
-        // Set substitution variables provided by this class
+        if ( 0 == count($this->etlDestinationTableList) ) {
+            $msg = "No table definitions specified";
+            $this->logAndThrowException($msg);
+        }
 
-        $this->variableMap["DESTINATION_SCHEMA"] = $this->destinationEndpoint->getSchema();
-
-        $this->initialized = true;
-
-        return true;
-
-    }  // initialize()
+    }  // createDestinationTableObjects()
 
     /* ------------------------------------------------------------------------------------------
      * Truncate the destination table. Note that performTruncateDestinationTasks() will be called to
@@ -255,7 +240,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
             try {
                 $this->logger->debug("Truncate destination task " . $this->destinationEndpoint . ":\n$sql");
-                if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                     $this->destinationHandle->execute($sql);
                 }
             } catch (PDOException $e) {
@@ -288,11 +273,11 @@ abstract class aRdbmsDestinationAction extends aAction
             return true;
         }
 
-        $this->logger->debug("Execute" . ( "" != $msgPrefix ? " $msgPrefix" : "" ) .": " . $endpoint);
+        $this->logger->info("Execute" . ( "" != $msgPrefix ? " $msgPrefix" : "" ) .": " . $endpoint);
         foreach ($sqlList as $sql) {
             try {
                 $this->logger->debug($sql);
-                if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                     $endpoint->getHandle()->execute($sql);
                 }
             }
@@ -419,11 +404,6 @@ abstract class aRdbmsDestinationAction extends aAction
 
     public function manageTable(Table $table, iDataEndpoint $endpoint)
     {
-        if ( null === $this->etlOverseerOptions ) {
-            $msg = "ETL overseer options are not set. These are typically set in iAction::execute() or iAction::verify()";
-            $this->logAndThrowException($msg);
-        }
-
         // Check for an existing table with the same name
 
         $existingTable = Table::discover(
@@ -443,7 +423,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
             foreach ( $sqlList as $sql ) {
                 $this->logger->debug("Create table SQL " . $endpoint . ":\n$sql");
-                if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                     $endpoint->getHandle()->execute($sql);
                 }
             }
@@ -457,7 +437,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
                 foreach ( $sqlList as $sql ) {
                     $this->logger->debug("Alter table SQL " . $endpoint . ":\n$sql");
-                    if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                    if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                         $endpoint->getHandle()->execute($sql);
                     }
                 }
