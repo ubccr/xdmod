@@ -211,7 +211,7 @@ class VerifyDatabase extends aAction implements iAction
                 $this->logAndThrowException(
                     "The following column names were referenced in the line template but are "
                     . "not present in the query: " . implode(", ", $missing)
-                );;
+                );
             }
         }
 

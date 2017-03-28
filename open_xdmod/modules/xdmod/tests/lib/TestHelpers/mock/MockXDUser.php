@@ -1,12 +1,12 @@
 <?php
 
-namespace UnitTesting\mock;
+namespace TestHelpers\mock;
 
-class MockXDUser {
-
+class MockXDUser
+{
     private $_profile = null;
 
-    public function __construct() 
+    public function __construct()
     {
         $this->_profile = new MockXDUserProfile();
     }
@@ -15,5 +15,3 @@ class MockXDUser {
         return $this->_profile;
     }
 }
-
-?>

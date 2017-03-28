@@ -1,13 +1,11 @@
 <?php
 
-require_once __DIR__.'/../../../../configuration/linker.php';
-
-require_once __DIR__ . '/../../TestHelper.php';
+namespace UnitTesting;
 
 /**
  * Tests for TimePeriodGenerator and its subclasses.
  */
-class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
+class TimePeriodGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * A cache of TimePeriodGenerator instances.
@@ -25,7 +23,7 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
     private function getGenerator($unitName)
     {
         if (!array_key_exists($unitName, $this->generatorCache)) {
-            $this->generatorCache[$unitName] = TimePeriodGenerator::getGeneratorForUnit($unitName);
+            $this->generatorCache[$unitName] = \TimePeriodGenerator::getGeneratorForUnit($unitName);
         }
         return $this->generatorCache[$unitName];
     }
@@ -59,7 +57,7 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
     private function doGeneratorMethodTest($unit, $methodName, array $inputArgs, $expected)
     {
         $generator = $this->getGenerator($unit);
-        $generatorMethod = TestHelper::unlockMethod($generator, $methodName);
+        $generatorMethod = \TestHelpers\TestHelper::unlockMethod($generator, $methodName);
         $this->assertEquals(
             $expected,
             $generatorMethod->invokeArgs($generator, $inputArgs)
@@ -83,8 +81,8 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
         $this->doGeneratorMethodTest(
             $unit,
             'getNextTimePeriodStart',
-            array(new DateTime($inputStr)),
-            new DateTime($expectedStr)
+            array(new \DateTime($inputStr)),
+            new \DateTime($expectedStr)
         );
     }
 
@@ -134,8 +132,8 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
         $this->doGeneratorMethodTest(
             $unit,
             'getTimePeriodEnd',
-            array(new DateTime($inputStr)),
-            new DateTime($expectedStr)
+            array(new \DateTime($inputStr)),
+            new \DateTime($expectedStr)
         );
     }
 
@@ -184,7 +182,7 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
         $this->doGeneratorMethodTest(
             $unit,
             'getTimePeriodInYear',
-            array(new DateTime($inputStr)),
+            array(new \DateTime($inputStr)),
             $expected
         );
     }
@@ -235,8 +233,8 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
         $this->doGeneratorMethodTest(
             $unit,
             'getTimePeriodStart',
-            array(new DateTime($inputStr)),
-            new DateTime($expectedStr)
+            array(new \DateTime($inputStr)),
+            new \DateTime($expectedStr)
         );
     }
 
@@ -303,9 +301,9 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
     public function databaseDateTimeProvider()
     {
         return array(
-            array(new DateTime('2016-01-01T00:00:00'), '2016-01-01 00:00:00'),
-            array(new DateTime('2016-08-24T12:00:00'), '2016-08-24 12:00:00'),
-            array(new DateTime('2016-12-31T23:59:59'), '2016-12-31 23:59:59'),
+            array(new \DateTime('2016-01-01T00:00:00'), '2016-01-01 00:00:00'),
+            array(new \DateTime('2016-08-24T12:00:00'), '2016-08-24 12:00:00'),
+            array(new \DateTime('2016-12-31T23:59:59'), '2016-12-31 23:59:59'),
         );
     }
 
@@ -330,10 +328,10 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
     public function yearFromDateTimeProvider()
     {
         return array(
-            array(new DateTime('2016-01-01T00:00:00'), 2016),
-            array(new DateTime('2016-08-24T12:00:00'), 2016),
-            array(new DateTime('2016-12-31T23:59:59'), 2016),
-            array(new DateTime('1985-10-26T01:20:00'), 1985),
+            array(new \DateTime('2016-01-01T00:00:00'), 2016),
+            array(new \DateTime('2016-08-24T12:00:00'), 2016),
+            array(new \DateTime('2016-12-31T23:59:59'), 2016),
+            array(new \DateTime('1985-10-26T01:20:00'), 1985),
         );
     }
 
@@ -387,11 +385,11 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
      */
     public function timestampsAndTotalsProvider()
     {
-        $utc = new DateTimeZone('UTC');
+        $utc = new \DateTimeZone('UTC');
         return array(
             array(
-                new DateTime('2016-01-01T00:00:00', $utc),
-                new DateTime('2016-01-01T00:00:00', $utc),
+                new \DateTime('2016-01-01T00:00:00', $utc),
+                new \DateTime('2016-01-01T00:00:00', $utc),
                 array(
                     'start_ts' => 1451606400,
                     'middle_ts' => 1451606400,
@@ -401,8 +399,8 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
                 ),
             ),
             array(
-                new DateTime('2016-01-01T00:00:00', $utc),
-                new DateTime('2016-01-01T00:05:00', $utc),
+                new \DateTime('2016-01-01T00:00:00', $utc),
+                new \DateTime('2016-01-01T00:05:00', $utc),
                 array(
                     'start_ts' => 1451606400,
                     'middle_ts' => 1451606550,
@@ -412,8 +410,8 @@ class TimePeriodGeneratorTest extends PHPUnit_Framework_TestCase
                 ),
             ),
             array(
-                new DateTime('2016-01-01T00:00:00', $utc),
-                new DateTime('2016-12-31T23:59:59', $utc),
+                new \DateTime('2016-01-01T00:00:00', $utc),
+                new \DateTime('2016-12-31T23:59:59', $utc),
                 array(
                     'start_ts' => 1451606400,
                     'middle_ts' => 1467417599.5,

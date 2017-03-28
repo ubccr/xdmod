@@ -112,7 +112,7 @@ elif [ "$TEST_SUITE" = "style" ]; then
         fi
     done
 elif [ "$TEST_SUITE" = "unit" ]; then
-    open_xdmod/modules/xdmod/tests/runtests.sh && classes/UnitTesting/RunTests.sh
+    open_xdmod/modules/xdmod/tests/runtests.sh
     if [ $? != 0 ]; then
         build_exit_value=2
     fi

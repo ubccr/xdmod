@@ -1,6 +1,6 @@
 <?php
 
-namespace UnitTesting\mock;
+namespace TestHelpers\mock;
 
 class MockXDUserProfile
 {
@@ -29,5 +29,3 @@ class MockXDUserProfile
     {
     }
 }
-
-?>

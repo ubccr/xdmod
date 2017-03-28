@@ -1,5 +1,7 @@
 <?php
 
+namespace TestHelpers;
+
 /**
  * Provides helper functions for completing tests.
  */
@@ -18,7 +20,7 @@ class TestHelper
      */
     public static function unlockMethod($classOrObject, $methodName)
     {
-        $reflection = new ReflectionClass($classOrObject);
+        $reflection = new \ReflectionClass($classOrObject);
         $method = $reflection->getMethod($methodName);
         $method->setAccessible(true);
         return $method;
