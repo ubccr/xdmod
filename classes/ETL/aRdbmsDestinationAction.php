@@ -88,10 +88,6 @@ abstract class aRdbmsDestinationAction extends aAction
 
         $this->createDestinationTableObjects();
 
-        // Set substitution variables provided by this class
-
-        // $this->variableMap["DESTINATION_SCHEMA"] = $this->destinationEndpoint->getSchema();
-
         if ( 0 == count($this->etlDestinationTableList) ) {
             $msg = "No ETL destination tables defined";
             $this->logAndThrowException($msg);
@@ -408,11 +404,6 @@ abstract class aRdbmsDestinationAction extends aAction
 
     public function manageTable(Table $table, iDataEndpoint $endpoint)
     {
-        // if ( null === $this->getEtlOverseerOptions() ) {
-        //     $msg = "ETL overseer options are not set. These are typically set in iAction::execute() or iAction::verify()";
-        //     $this->logAndThrowException($msg);
-        // }
-
         // Check for an existing table with the same name
 
         $existingTable = Table::discover(

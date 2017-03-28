@@ -96,28 +96,6 @@ class Index extends aNamedEntity implements iTableItem
     }  // generateIndexName()
 
     /* ------------------------------------------------------------------------------------------
-     * Filter values based on the property. Some properties are true/false but may be specified as
-     * true, NULL, or YES depending on the input source. Other properties may be empty strings when
-     * discovered from the database which should be treated as NULL for our purposes
-     *
-     * @param $property The property we are filtering
-     * @param $value The value of the property as presented from the source (array, object, database)
-     *
-     * @return The filtered value
-     * ------------------------------------------------------------------------------------------
-     */
-
-    private function filterValue($property, $value)
-    {
-        switch ( $property ) {
-            default:
-                break;
-        }  // switch ( $property )
-
-        return $value;
-    }  // filterValue()
-
-    /* ------------------------------------------------------------------------------------------
      * @return The list of column names for this index
      * ------------------------------------------------------------------------------------------
      */

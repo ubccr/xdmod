@@ -139,13 +139,11 @@ class pdoAggregator extends aAggregator
         // Set up the handles to the various data sources and verify they are the correct type
 
         if ( ! $this->utilityEndpoint instanceof Mysql ) {
-            // $this->utilityEndpoint = null;
             $msg = "Utility endpoint is not an instance of ETL\\DataEndpoint\\Mysql";
             $this->logAndThrowException($msg);
         }
 
         if ( ! $this->sourceEndpoint instanceof Mysql ) {
-            // $this->sourceEndpoint = null;
             $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\Mysql";
             $this->logAndThrowException($msg);
         }
@@ -504,7 +502,6 @@ class pdoAggregator extends aAggregator
         // Verify table fields exist for any conversions not provided
 
         if ( null === $startDayIdField || null === $endDayIdField ) {
-            // $t = Utilities::substituteVariables($firstTable->getFullName(false), $this->variableMap);
 
             $t = Utilities::substituteVariables(
                 $firstTable->getFullName(false),
@@ -945,7 +942,6 @@ class pdoAggregator extends aAggregator
                     // Use the where clause from the aggregation query to create the temporary table
 
                     $whereClause = implode(" AND ", $this->etlSourceQuery->getWheres());
-                    // $whereClause = Utilities::substituteVariables($whereClause, $this->variableMap);
 
                     $whereClause = Utilities::substituteVariables(
                         $whereClause,
@@ -1323,10 +1319,6 @@ class pdoAggregator extends aAggregator
             $this->selectSql;
 
         if ( null !== $this->variableMap ) {
-
-            // $this->selectSql = Utilities::substituteVariables($this->selectSql, $this->variableMap);
-            // $this->insertSql = Utilities::substituteVariables($this->insertSql, $this->variableMap);
-            // $this->optimizedInsertSql = Utilities::substituteVariables($this->optimizedInsertSql, $this->variableMap);
 
             $this->selectSql = Utilities::substituteVariables(
                 $this->selectSql,

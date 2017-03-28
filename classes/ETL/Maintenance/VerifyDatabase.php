@@ -49,8 +49,7 @@ class VerifyDatabase extends aAction implements iAction
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
         if ( ! $options instanceof MaintenanceOptions ) {
-            $msg = __CLASS__ . ": Options is not an instance of MaintenanceOptions";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(__CLASS__ . ": Options is not an instance of MaintenanceOptions");
         }
 
         parent::__construct($options, $etlConfig, $logger);
@@ -96,8 +95,7 @@ class VerifyDatabase extends aAction implements iAction
         // more complex query defined in a separate file.
 
         if ( ! isset($this->parsedDefinitionFile->source_query) ) {
-            $msg = "Required source_query key not found";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Required source_query key not found");
         } elseif ( isset($this->parsedDefinitionFile->source_query->sql_file) ) {
 
             $sqlFile = $this->parsedDefinitionFile->source_query->sql_file;
@@ -105,8 +103,7 @@ class VerifyDatabase extends aAction implements iAction
             $this->logger->debug("Using SQL file: '$sqlFile'");
 
             if ( ! file_exists($sqlFile) ) {
-                $msg = "SQL file does not exist '$sqlFile'";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("SQL file does not exist '$sqlFile'");
             }
 
             $this->sqlQueryString = file_get_contents($sqlFile);
@@ -121,8 +118,7 @@ class VerifyDatabase extends aAction implements iAction
             $parsedSql = $parser->parsed;
 
             if ( ! array_key_exists("SELECT", $parsedSql) ) {
-                $msg = "Select block not found in parsed SQL";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Select block not found in parsed SQL");
             }
 
             foreach ( $parsedSql['SELECT'] as $item ) {
@@ -179,28 +175,31 @@ class VerifyDatabase extends aAction implements iAction
         }  // if ( isset($verifyConfig->response->header) )
 
         if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
-            // $this->sourceEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint"
+            );
         }
 
         // Verify that the response block and destination email are set
 
         if ( ! isset($this->parsedDefinitionFile->verify_database) ) {
-            $msg = "Required key verify_database not found in definition file";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                "Required key verify_database not found in definition file"
+            );
         }
 
         $verifyConfig = $this->parsedDefinitionFile->verify_database;
 
         if ( ! isset($verifyConfig->response) ) {
-            $msg = "Required key verify_database.response not found in definition file";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                "Required key verify_database.response not found in definition file"
+            );
         }
 
         if ( ! isset($verifyConfig->response->line) ) {
-            $msg = "Required key verify_database.response.line not found in definition file";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                "Required key verify_database.response.line not found in definition file"
+            );
         }
 
         // Verify that any fields referenced in the line response are valid column names
@@ -209,9 +208,10 @@ class VerifyDatabase extends aAction implements iAction
             array_shift($matches);
             $missing = array_diff($matches[0], $this->queryColumnNames);
             if ( 0 != count($missing) ) {
-                $msg = "The following column names were referenced in the line template but are "
-                    . "not present in the query: " . implode(", ", $missing);
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException(
+                    "The following column names were referenced in the line template but are "
+                    . "not present in the query: " . implode(", ", $missing)
+                );;
             }
         }
 

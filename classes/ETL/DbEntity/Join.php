@@ -79,28 +79,6 @@ class Join extends aNamedEntity implements iTableItem
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
-     * Filter values based on the property. Some properties are true/false but may be specified as
-     * true, null, or YES depending on the input source. Other properties may be empty strings when
-     * discovered from the database which should be treated as null for our purposes
-     *
-     * @param $property The property we are filtering
-     * @param $value The value of the property as presented from the source (array, object, database)
-     *
-     * @return The filtered value
-     * ------------------------------------------------------------------------------------------
-     */
-
-    private function filterValue($property, $value)
-    {
-        switch ( $property ) {
-            default:
-                break;
-        }  // switch ( $property )
-
-        return $value;
-    }  // filterValue()
-
-    /* ------------------------------------------------------------------------------------------
      * Return the optional ON clause for this join.
      *
      * @return The on clause, or null if no on clause was specified.
