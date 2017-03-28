@@ -88,7 +88,6 @@ class RestIngestor extends aIngestor implements iAction
         parent::initialize($etlOverseerOptions);
 
         if ( ! $this->sourceEndpoint instanceof Rest ) {
-            // $this->sourceEndpoint = null;
             $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\Rest");
         }
 
@@ -711,7 +710,6 @@ class RestIngestor extends aIngestor implements iAction
             $queryString = "?" . implode("&", $parameters);
         }
 
-        // $newUrl = curl_getinfo($this->sourceHandle, CURLINFO_EFFECTIVE_URL) . $queryString;
         $this->currentUrl = $newUrl = $this->sourceEndpoint->getBaseUrl() . $queryString;
         curl_setopt($this->sourceHandle, CURLOPT_URL, $newUrl);
 

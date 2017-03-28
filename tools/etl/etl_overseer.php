@@ -348,16 +348,6 @@ foreach ( $argv as $index => $arg ) {
     }
 }
 
-/*
-if ( ! $showList &&
-     ( null === $scriptOptions['start-date'] &&
-       null === $scriptOptions['end-date'] &&
-       null === $scriptOptions['number-of-days']) )
-{
-    usage_and_exit("Must provide start/end date or number of days");
-}
-*/
-
 // ------------------------------------------------------------------------------------------
 // Set up the logger
 
@@ -549,49 +539,6 @@ if ( $showList ) {
     }
     exit();
 }  // if ( $showList )
-
-// ------------------------------------------------------------------------------------------
-// Calculate start & end dates. Using the -s and -e flags take precedence over the -n flag.
-
-/*
-if ( null !== $scriptOptions['start-date'] || null !== $scriptOptions['end-date'] ) {
-
-    if ( null === $scriptOptions['end-date'] ) {
-        // If there is no end date, assume today
-        $scriptOptions['end-date'] = date("Y-m-d 23:59:59");
-        $logger->info("No end date set, assuming " . $scriptOptions['end-date']);
-    } elseif ( null === $scriptOptions['start-date'] ) {
-        // If no start date assume epoch (1970-01-01 00:00:00) in the current timezone
-        $scriptOptions['start-date'] = "1970-01-01 00:00:00";
-        $logger->info("No start date set, assuming " . $scriptOptions['start-date']);
-    }
-
-    // If a time was not provided along with the start or end dates (i.e., it does not fall on the
-    // 86400 seconds in a day boundary) assume that we will use the start and end of the day,
-    // respectively.  We must use UTC because we don't care about timezones in this calculation.
-
-    if ( 0 == (strtotime($scriptOptions['start-date'] . " UTC") % 86400)
-         && '00:00:00' != substr($scriptOptions['start-date'], -8) )
-    {
-        $scriptOptions['start-date'] .= " 00:00:00";
-    }
-
-    if ( 0 == (strtotime($scriptOptions['end-date'] . " UTC") % 86400) ) {
-        $scriptOptions['end-date'] .= " 23:59:59";
-    }
-
-} else {
-
-    // If start/end dates were not provided us the number of days. Note that the current day is
-    // considered the first day so subtract 1.
-
-    $today = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
-
-    $scriptOptions['start-date'] = date("Y-m-d 00:00:00", $today - (86400 * ($scriptOptions['number-of-days'] - 1)));
-    $scriptOptions['end-date']   = date("Y-m-d 23:59:59");
-
-}  // else ($scriptOptions['start-date'] || $scriptOptions['end-date'] )
-*/
 
 // ------------------------------------------------------------------------------------------
 // Look up resource ids and generate the mapping for resource codes to ids. This can be stored in

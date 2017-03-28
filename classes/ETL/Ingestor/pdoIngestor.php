@@ -122,13 +122,11 @@ class pdoIngestor extends aIngestor
         // Get the handles for the various database endpoints
 
         if ( ! $this->utilityEndpoint instanceof iRdbmsEndpoint ) {
-            // $this->utilityEndpoint = null;
             $msg = "Utility endpoint does not implement of ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
 
         if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
-            // $this->sourceEndpoint = null;
             $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
             $this->logAndThrowException($msg);
         }
@@ -349,7 +347,6 @@ class pdoIngestor extends aIngestor
         $sql = $this->etlSourceQuery->getSelectSql();
 
         if ( null !== $this->variableMap ) {
-            // $sql = Utilities::substituteVariables($sql, $this->variableMap);
             $sql = Utilities::substituteVariables(
                 $sql,
                 $this->variableMap,
