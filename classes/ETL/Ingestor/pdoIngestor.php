@@ -982,7 +982,7 @@ class pdoIngestor extends aIngestor
             );
             return false;
         } catch ( \ReflectionException $e ) {
-            // No nothing, transform() has not been overriden.
+            // Do nothing, transform() has not been overriden.
         }
 
         // Same database type?
