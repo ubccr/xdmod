@@ -14,7 +14,7 @@ class XdmodTestHelper
 
     public function __construct($config = array())
     {
-        $this->config = json_decode(file_get_contents(".secrets"), true);
+        $this->config = json_decode(file_get_contents(__DIR__ . '/../../.secrets'), true);
 
         $this->siteurl = $this->config['url'];
         $this->headers = array();
@@ -111,7 +111,7 @@ class XdmodTestHelper
     public function authenticate($userrole)
     {
         if (! isset($this->config['role'][$userrole])) {
-            throw Exception("User role $userrole not defined in .secrets file");
+            throw \Exception("User role $userrole not defined in .secrets file");
         }
 
         $this->setauthvariables(null);
