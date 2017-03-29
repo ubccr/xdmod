@@ -322,11 +322,9 @@ SQL;
 SELECT DISTINCT
   r.*
 FROM realms r
-  JOIN realm_group_bys rgb ON r.realm_id = rgb.realm_id
-  JOIN group_bys gb ON rgb.group_by_id = gb.group_by_id
+  JOIN group_bys gb ON r.realm_id = gb.realm_id
   JOIN acl_group_bys agb ON gb.group_by_id = agb.group_by_id
   JOIN user_acls ua ON agb.acl_id = ua.acl_id
-  JOIN acls a ON ua.acl_id = a.acl_id
 WHERE ua.user_id = :user_id
 SQL;
         $rows = $db->query($query, array(

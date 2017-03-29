@@ -46,8 +46,16 @@ class StatisticsControllerProvider extends BaseControllerProvider
         $user = $this->getUserFromRequest($request);
         $realmName = $this->getStringParam($request, 'realm', true);
         $groupByName = $this->getStringParam($request, 'group_by', true);
+        $old = $this->getBooleanParam($request, 'old', false, false);
 
-        $statistics = Statistics::listPermittedStatistics($user, $realmName, $groupByName);
+
+        $statistics = $old == false
+            ? Statistics::listPermittedStatistics($user, $realmName, $groupByName)
+            : $userStatistics = $user->getMostPrivilegedRole()->getQueryDescripters(
+                'tg_usage',
+                $realmName,
+                $groupByName
+            )->getPermittedStatistics();
         $success = isset($statistics) && count($statistics) > 0;
         return $app->json(array(
             'success' => $success,

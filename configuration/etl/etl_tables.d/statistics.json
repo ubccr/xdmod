@@ -16,6 +16,11 @@
         "nullable": false
       },
       {
+        "name": "realm_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
         "name": "name",
         "type": "varchar(255)",
         "nullable": false

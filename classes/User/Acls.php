@@ -248,28 +248,6 @@ class Acls
         );
     }
 
-    public static function getPermittedStatistics(XDUser $user, $realmName, $groupByName)
-    {
-        if (!isset($user)) {
-            throw new Exception('A valid user is required.');
-        }
-
-        if (!isset($realmName)) {
-            throw new Exception('A valid realm is required.');
-        }
-
-        if (!isset($groupByName)){
-            throw new Exception('A valid group by is required');
-        }
-
-        return self::_getPermittedStatistics(
-            DB::factory('database'),
-            $user->getUserID(),
-            $realmName,
-            $groupByName
-        );
-    }
-
     public static function getGroupBysForRealm($realmName)
     {
         if (isset($realmName) == false) {
@@ -541,14 +519,11 @@ FROM acl_group_bys agb
     ON a.acl_id = agb.acl_id
   JOIN group_bys gb
     ON gb.group_by_id = agb.group_by_id
-  JOIN realm_group_bys rgb
-    ON gb.group_by_id = rgb.group_by_id
   JOIN realms r
-    ON rgb.realm_id = r.realm_id
-       AND agb.realm_id = r.realm_id
+    ON gb.realm_id = r.realm_id
 WHERE agb.acl_id IN ($acls)
       AND r.name IN ($realms)
-  ORDER BY a.name
+ORDER BY a.name
 SQL;
         $results = array();
 
@@ -607,29 +582,22 @@ SELECT DISTINCT
   r.display                    AS realm,
   gb.name                      AS dimension_name,
   gb.display                   AS dimension_text,
-  COALESCE(rgb.description,gb.description) AS dimension_info,
-  s.name                       AS metric_name,
+  gb.description               AS dimension_info,
   CASE WHEN INSTR(s.display, s.unit) < 0
     THEN CONCAT(s.display, ' (', s.unit, ')')
   ELSE s.display
   END                          AS metric_text,
- COALESCE(rs.description, s.description)                AS metric_info,
+  s.description,
   sem.statistic_id IS NOT NULL AS metric_std_err
 FROM acl_group_bys agb
   JOIN user_acls ua
     ON agb.acl_id = ua.acl_id
-  LEFT JOIN realms r
-    ON agb.realm_id = r.realm_id
-  LEFT JOIN group_bys gb
-    ON agb.group_by_id = gb.group_by_id
-  JOIN realm_group_bys rgb
-    ON rgb.realm_id = r.realm_id
-    AND rgb.group_by_id = gb.group_by_id
-  LEFT JOIN statistics s
-    ON agb.statistic_id = s.statistic_id
-  JOIN realm_statistics rs
-    ON rs.realm_id = r.realm_id
-    AND rs.statistic_id = s.statistic_id
+  JOIN group_bys gb
+    ON gb.group_by_id = agb.group_by_id
+  JOIN realms r
+    ON r.realm_id = gb.realm_id
+  JOIN statistics s
+    ON s.statistic_id = agb.statistic_id
   LEFT JOIN statistics sem
     ON sem.name = CONCAT('sem_', s.name)
 WHERE
@@ -637,7 +605,7 @@ WHERE
   AND agb.enabled = TRUE
   AND agb.visible = TRUE
   AND s.visible = TRUE
-ORDER BY r.name , gb.display, s.display
+ORDER BY r.name, gb.display, s.display;
 SQL;
         $realms = array();
 
@@ -690,11 +658,10 @@ SQL;
     private static function _getGroupBysForRealm(iDatabase $db, $realmName)
     {
         $query = <<< SQL
-SELECT
+SELECT DISTINCT
   gb.*
-FROM realm_group_bys rgb
-JOIN realms r ON rgb.realm_id = r.realm_id
-JOIN group_bys gb ON gb.group_by_id = rgb.group_by_id
+FROM group_bys gb
+  JOIN realms r ON gb.realm_id = r.realm_id
 WHERE r.name = :realm_name
 SQL;
         $rows = $db->query($query, array(
@@ -703,59 +670,6 @@ SQL;
         if ($rows !== false && count($rows) > 0) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry [] = new \GroupBy($item);
-                return $carry;
-            }, array());
-        }
-        return array();
-    }
-
-    /**
-     * @param iDatabase $db
-     * @param string $realmName
-     * @param string $groupByName
-     * @return Statistic[]|array()
-     */
-    private static function _getPermittedStatistics(iDatabase $db, $userId, $realmName, $groupByName)
-    {
-        $query = <<<SQL
-SELECT s.*
-FROM statistics s
-WHERE statistic_id IN (
-  SELECT statistic_id
-  FROM acl_group_bys agb
-  WHERE agb.group_by_id IN (
-    SELECT rgb.group_by_id
-    FROM realm_group_bys rgb
-      JOIN realms r ON rgb.realm_id = r.realm_id
-      JOIN group_bys gb ON rgb.group_by_id = gb.group_by_id
-    WHERE r.name = :realm_name
-    AND gb.name = :group_by_name
-  )
-        AND agb.statistic_id IN (
-    SELECT rs.statistic_id
-    FROM realm_statistics rs
-      JOIN realms r ON rs.realm_id = r.realm_id
-    WHERE r.name = :realm_name
-  )
-        AND agb.acl_id IN (
-    SELECT ua.acl_id
-    FROM user_acls ua
-    WHERE ua.user_id = :user_id
-  )
-  AND agb.visible = TRUE
-)
-;
-SQL;
-
-        $rows = $db->query($query, array(
-            ':realm_name' => $realmName,
-            ':group_by_name' => $groupByName,
-            ':user_id' => $userId
-        ));
-
-        if ($rows !== false && count($rows) > 0) {
-            return array_reduce($rows, function($carry, $item) {
-                $carry []= new Statistic($item);
                 return $carry;
             }, array());
         }

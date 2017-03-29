@@ -31,8 +31,6 @@
         "statistics.json",
         "charts.json",
         "filters.json",
-        "realm_group_bys.json",
-        "realm_statistics.json",
         "realm_assets.json",
         "acl_hierarchies.json",
         "acl_assets.json",
