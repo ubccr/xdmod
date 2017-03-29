@@ -57,9 +57,16 @@ class StatisticsControllerProvider extends BaseControllerProvider
                 $groupByName
             )->getPermittedStatistics();
         $success = isset($statistics) && count($statistics) > 0;
+        $data = $statistics;
+        if ($success == true && $old == false) {
+            $data = array_reduce($statistics, function($carry, $item) {
+                $carry []= $item->getName();
+                return $carry;
+            }, array());
+        }
         return $app->json(array(
             'success' => $success,
-            'data' => $statistics
+            'data' => $data
         ));
     }
 }
