@@ -58,7 +58,7 @@ SQL;
     private static function _listPermittedStatistics(iDatabase $db, $userId, $realmName, $groupByName)
     {
         $query = <<<SQL
-SELECT DISTINCT s.*
+SELECT DISTINCT s.name
 FROM statistics s
   JOIN acl_group_bys agb
     ON s.statistic_id = agb.statistic_id
@@ -68,12 +68,15 @@ FROM statistics s
     ON agb.group_by_id = gb.group_by_id
   JOIN realms r
     ON gb.realm_id = r.realm_id
+  LEFT JOIN statistics_hierarchy sh
+    ON sh.statistic_id = s.statistic_id
 WHERE
   ua.user_id = :user_id
   AND r.name = :realm_name
   AND gb.name = :group_by_name
   AND agb.visible = TRUE
-  AND agb.enabled = TRUE;
+  AND agb.enabled = TRUE
+ORDER BY COALESCE(sh.value, s.name);
 SQL;
 
         $rows = $db->query($query, array(
