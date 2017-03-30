@@ -2,6 +2,8 @@
 
 // Operation: sab_user->enum_tg_users
 
+use User\Acls;
+
 $params = array(
     'start'       => RESTRICTION_NUMERIC_POS,
     'limit'       => RESTRICTION_NUMERIC_POS,
@@ -38,13 +40,13 @@ $user_session_variable
 $user = \XDUser::getUserByID($_SESSION[$user_session_variable]);
 
 if (
-    $user->getActiveRole()->getIdentifier() == ROLE_ID_CAMPUS_CHAMPION
+    $user->hasAcl(ROLE_ID_CAMPUS_CHAMPION)
     && (!isset($_POST['userManagement']))
 ) {
 
     // Add an additional filter to eventually produce a listing of
     // individuals affiliated with the same university as this user.
-    $university_id = $user->getActiveRole()->getUniversityID();
+    $university_id = Acls::getDescriptorParamValue($user, ROLE_ID_CAMPUS_CHAMPION, 'institution');
 }
 
 if ($_POST['search_mode'] == 'formal_name') {

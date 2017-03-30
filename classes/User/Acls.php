@@ -4,7 +4,6 @@ use CCR\DB;
 use CCR\DB\iDatabase;
 use Exception;
 use PDO;
-use Statistic;
 use XDUser;
 
 /**
@@ -263,6 +262,28 @@ class Acls
         return self::_getGroupBysForRealm(
             DB::factory('database'),
             $realmName
+        );
+    }
+
+    public static function getDescriptorParamValue(XDUser $user, $aclName, $groupByName)
+    {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be supplied.');
+        }
+        if (null == $user->getUserID()) {
+            throw new Exception('A valid user id must be supplied.');
+        }
+        if (!isset($aclName)) {
+            throw new Exception('A valid acl name is required.');
+        }
+        if (!isset($groupByName)) {
+            throw new Exception('A valid group by name is required.');
+        }
+        return self::_getDescriptorParamvalue(
+            DB::factory('database'),
+            $user,
+            $aclName,
+            $groupByName
         );
     }
 
@@ -688,6 +709,35 @@ SQL;
             }, array());
         }
         return array();
+    }
+
+    /**
+     * @param iDatabase $db
+     * @param XDUser $user
+     * @param $aclName
+     * @param $groupByName
+     * @return null|string
+     */
+    private static function _getDescriptorParamValue(iDatabase $db, XDUser $user, $aclName, $groupByName)
+    {
+        $query = <<<SQL
+SELECT DISTINCT uagbp.value
+FROM user_acl_group_by_parameters uagbp
+  JOIN group_bys gb ON gb.group_by_id = uagbp.group_by_id
+  JOIN acls a ON a.acl_id = uagbp.acl_id
+WHERE uagbp.user_id = :user_id 
+  AND a.name = :acl_name 
+  AND gb.name = :group_by_name;
+SQL;
+        $rows = $db->query($query, array(
+            ':user_id' => $user->getUserID(),
+            ':acl_name' => $aclName,
+            ':group_by_name' => $groupByName
+        ));
+        if ($rows !==  false && count($rows) > 0) {
+            return $rows[0]['value'];
+        }
+        return null;
     }
 
 }
