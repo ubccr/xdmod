@@ -504,7 +504,15 @@ SQL;
         }, array()));
 
         $realms = implode(',', array_reduce($realmNames, function ($carry, $item) use ($handle) {
-            $carry [] = $handle->quote($item);
+            $value = null;
+            if ($item instanceof \Realm) {
+                $value = $item->getName();
+            } elseif(is_string($item)) {
+                $value = $item;
+            } else {
+                $value = (string)$item;
+            }
+            $carry [] = $handle->quote($value);
             return $carry;
         }, array()));
 
