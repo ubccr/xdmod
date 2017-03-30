@@ -242,7 +242,7 @@
          $developer = $user->isDeveloper() ? 'true' : 'false';
 
          $primary_center_director = ( $user->hasAcl(ROLE_ID_CENTER_DIRECTOR)  &&
-               true 
+               true
          ) ? 'true' : 'false';
 
       ?>
@@ -274,8 +274,6 @@
                print "CCR.xdmod.ui.isManager = $manager;\n";
                print "CCR.xdmod.ui.isDeveloper = $developer;\n";
                print "CCR.xdmod.ui.isCenterDirector = $primary_center_director;\n";
-
-               print "CCR.xdmod.ui.active_role_label = '{$user->getActiveRole()->getFormalName()}';\n";
             }
 
             print "CCR.xdmod.ui.disabledMenus = ".json_encode($user->getDisabledMenus(
