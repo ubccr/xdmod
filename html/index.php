@@ -5,7 +5,9 @@
       The Center For Computational Research, University At Buffalo
    */
 
-   @session_start();
+use User\Acls;
+
+@session_start();
 
    // Fix to the 'trailing slash' issue -------------------------------
 
@@ -276,9 +278,14 @@
                print "CCR.xdmod.ui.isCenterDirector = $primary_center_director;\n";
             }
 
-            print "CCR.xdmod.ui.disabledMenus = ".json_encode($user->getDisabledMenus(
-                array_keys($user->getActiveRole()->getAllQueryRealms('tg_usage'))
-            )).";\n";
+            print "CCR.xdmod.ui.disabledMenus = ".json_encode(
+                    Acls::getDisabledMenus(
+                            $user,
+                            Realms::listRealmsForUserId(
+                                    $user->getUserID()
+                            )
+                    )
+                ) .";\n";
 
             if ($userLoggedIn) {
                print "CCR.xdmod.ui.allRoles = ".json_encode($user->enumAllAvailableRoles())."\n";

@@ -544,8 +544,11 @@ SQL;
             if ($name != $previousName) {
                 $previousName = $name;
             }
+            if (!isset($results[$name])) {
+                $results[$name] = array();
+            }
             if ($row['id'] != null) {
-                $results[$name] = array(
+                $results[$name] []= array(
                     'id' => $row['id'],
                     'group_by' => $row['group_by'],
                     'realm' => $row['realm']
@@ -583,11 +586,12 @@ SELECT DISTINCT
   gb.name                      AS dimension_name,
   gb.display                   AS dimension_text,
   gb.description               AS dimension_info,
+  s.name                       AS metric_name,
   CASE WHEN INSTR(s.display, s.unit) < 0
     THEN CONCAT(s.display, ' (', s.unit, ')')
   ELSE s.display
   END                          AS metric_text,
-  s.description,
+  s.description                AS metric_info,
   sem.statistic_id IS NOT NULL AS metric_std_err
 FROM acl_group_bys agb
   JOIN user_acls ua

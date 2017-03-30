@@ -217,8 +217,16 @@ class AclsControllerProvider extends BaseControllerProvider
     {
         $user = $request->get(BaseControllerProvider::_USER);
         $realm = self::getStringParam($request, 'realm');
-        $menus = Acls::getDisabledMenus($user, array($realm));
+        $realms = self::getStringParam($request, 'realms', false, array());
 
+        if (is_string($realms)) {
+            $realms = explode(',', $realms);
+        }
+        if (isset($realm)) {
+            $realms []= $realm;
+        }
+
+        $menus = Acls::getDisabledMenus($user, $realms);
         $success = isset($menus);
 
         return $app->json(array(
