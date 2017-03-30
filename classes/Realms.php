@@ -315,6 +315,7 @@ SQL;
     /**
      * @param iDatabase $db
      * @param integer $userId
+     * @return array|mixed
      */
     private static function _listRealmsForUserId(iDatabase $db, $userId)
     {
