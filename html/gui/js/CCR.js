@@ -524,13 +524,6 @@ CCR.ucfirst = function (str) {
     });
 };
 
-CCR.xdmod.ui.userAssumedCenterRole = function () {
-    var role_id = CCR.xdmod.ui.activeRole.split(';')[0];
-
-    return (role_id == CCR.xdmod.UserTypes.CenterDirector || role_id == CCR.xdmod.UserTypes.CenterStaff);
-
-}; //CCR.xdmod.ui.userAssumedCenterRole
-
 CCR.xdmod.enumAssignedResourceProviders = function () {
 
     var assignedResourceProviders = {};
