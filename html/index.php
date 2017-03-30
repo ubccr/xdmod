@@ -289,8 +289,6 @@ use User\Acls;
 
             if ($userLoggedIn) {
                print "CCR.xdmod.ui.allRoles = ".json_encode($user->enumAllAvailableRoles())."\n";
-
-               print "CCR.xdmod.ui.activeRole = '".$user->getActiveRole()->getIdentifier(true)."';\n";
             }
 
             print "CCR.xdmod.org_name = ".json_encode(ORGANIZATION_NAME).";\n";
