@@ -564,7 +564,9 @@ SQL;
             }
         }
 
-        return $results;
+        return array_filter($results, function($item) {
+            return count($item) > 0;
+        });
     }
 
     private static function _getAclByName(iDatabase $db, $name)
