@@ -241,8 +241,7 @@
          $manager = $user->isManager() ? 'true' : 'false';
          $developer = $user->isDeveloper() ? 'true' : 'false';
 
-         $primary_center_director = (
-               ($user->getActiveRole()->getIdentifier() == ROLE_ID_CENTER_DIRECTOR) &&
+         $primary_center_director = ( $user->hasAcl(ROLE_ID_CENTER_DIRECTOR)  &&
                true //($user->getPromoter(ROLE_ID_CENTER_DIRECTOR, $user->getActiveRole()->getActiveCenter()) == -1)
          ) ? 'true' : 'false';
 
