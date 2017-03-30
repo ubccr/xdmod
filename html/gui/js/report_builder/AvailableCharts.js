@@ -23,8 +23,6 @@ XDMoD.AvailableCharts = Ext.extend(Ext.Panel,  {
 
       var self = this;
 
-      var chartBreakdown = [];
-
        var footer_text = new Ext.Toolbar.TextItem({
           cls: 'fbar_report_chart_status',
           text: 'No charts'
@@ -60,8 +58,6 @@ XDMoD.AvailableCharts = Ext.extend(Ext.Panel,  {
             load: {
 
                fn: function(store, records, options) {
-
-                  chartBreakdown = store.reader.jsonData.charts_in_other_roles;
 
                   btnDeleteChart.setDisabled(true);
 

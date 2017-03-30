@@ -56,34 +56,6 @@ use CCR\DB;
       }//emptyCache
 
 		// --------------------------------------------
-		      
-		public function enumChartsUnderOtherRoles() {
-
-         $results = $this->_pdo->query(
-            'SELECT active_role, COUNT(*) AS num_charts FROM ChartPool WHERE user_id=:user_id AND active_role != :active_role GROUP BY active_role',
-            array(
-               'user_id' => $this->_user_id,
-               'active_role' => $this->_user->getActiveRole()->getIdentifier(true)
-            )
-         );
-			
-			$chartBreakdown = array();
-			
-			foreach ($results as $r) {
-			
-			   $chartBreakdown[] = array(
-                                 'role' => \xd_roles\getFormalRoleNameFromIdentifier($r['active_role']),
-                                 'num_charts' => $r['num_charts']
-			                       );
-			
-			}//foreach
-
-			return $chartBreakdown;
-		
-		}//enumChartsUnderOtherRoles
-		
-		// --------------------------------------------
-		
 		public function addChartToQueue($chartIdentifier, $chartTitle, $chartDrillDetails, $chartDateDesc) {
 
          if (empty($chartIdentifier)){
