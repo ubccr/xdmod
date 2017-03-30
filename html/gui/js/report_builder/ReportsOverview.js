@@ -8,8 +8,6 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       var self = this;
 
-      var reportBreakdown = [];
-
       var eReport = function() {
 
          var exceptionReports = [
@@ -90,8 +88,6 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          mnuDownloadReport.setVisible(true);
 
          btnDeleteReport.setDisabled(true);
-
-         reportBreakdown = s.reader.jsonData.reports_in_other_roles;
 
          updateReportCountText();
 
