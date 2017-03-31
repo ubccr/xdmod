@@ -26,6 +26,9 @@ $scriptOptions = array(
     'dest-schema'      => null,
     // Exclude these columns from tables
     'exclude-columns'  => array(),
+    // Ignore the column count between tables as long as the source columns are present in
+    // the destination
+    'ignore-column-count' => false,
     // Map these column names from source to destination tables
     'map-columns'      => array(),
     // Number of missing rows to display, all rows if NULL
@@ -49,7 +52,8 @@ $options = array(
     't:'  => 'table:',
     'v:'  => 'verbosity:',
     'w:'  => 'where:',
-    'x:'  => 'exclude-column:'
+    'x:'  => 'exclude-column:',
+    ''    => 'ignore-column-count'
     );
 
 $args = getopt(implode('', array_keys($options)), $options);
@@ -65,6 +69,10 @@ foreach ($args as $arg => $value) {
         case 'd':
         case 'dest-schema':
             $scriptOptions['dest-schema'] = $value;
+            break;
+
+        case 'ignore-column-count':
+            $scriptOptions['ignore-column-count'] = true;
             break;
 
         case 'n':
@@ -245,7 +253,7 @@ function compareTables($srcTable, $destTable)
     $numSrcColumns = count($srcTableColumns);
     $numDestColumns = count($destTableColumns);
 
-    if ( $numSrcColumns != $numDestColumns ) {
+    if ( ! $scriptOptions['ignore-column-count'] && $numSrcColumns != $numDestColumns ) {
         $logger->err(sprintf(
             "Column number mismatch %s (%d); dest %s (%d)",
             $qualifiedSrcTable,
@@ -253,10 +261,12 @@ function compareTables($srcTable, $destTable)
             $qualifiedDestTable,
             $numDestColumns
         ));
-        $missing = array_diff(array_keys($srcTableColumns), array_keys($destTableColumns));
-        if ( 0 != count($missing) ) {
-            $logger->err(sprintf("%s missing columns: %s", $qualifiedDestTable, implode(', ', $missing)));
-        }
+        return false;
+    }
+
+    $missing = array_diff(array_keys($srcTableColumns), array_keys($destTableColumns));
+    if ( 0 != count($missing) ) {
+        $logger->err(sprintf("%s missing columns: %s", $qualifiedDestTable, implode(', ', $missing)));
         return false;
     }
 
@@ -380,24 +390,11 @@ function getTableRows($table, $schema)
     global $dbh, $logger;
     $tableName = "`$schema`.`$table`";
 
-    $where = array(
-        "table_schema = :schema",
-        "table_name = :tablename",
-    );
-
-    $sql = "SELECT
-table_rows
-FROM information_schema.tables
-" . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" );
-
-    $params = array(
-        ":schema" => $schema,
-        ":tablename"  => $table
-    );
+    $sql = "SELECT COUNT(*) AS table_rows FROM $tableName";
 
     try {
         $stmt = $dbh->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute();
     } catch ( Exception $e ) {
         $logger->err("Error retrieving table information for '$tableName': " . $e->getMessage());
         exit();
@@ -433,13 +430,16 @@ function compareTableData(
     $destTableName = "`$destSchema`.`$destTable`";
     $firstCol = current($srcTableColumns);
 
+    // Generate the ON clause using on the source table columns. This ignores columns
+    // present in the destination table that do not exist in the source table.
+
     $constraints = array_map(
         function ($c1, $c2) {
             // Note the use of the null-safe operator <=>
             return sprintf("src.%s <=> dest.%s", $c1, $c2);
         },
         $srcTableColumns,
-        $destTableColumns
+        $srcTableColumns
     );
 
     $where = array(
@@ -453,8 +453,11 @@ function compareTableData(
     $sql = "
 SELECT src.*
 FROM $srcTableName src
-LEFT OUTER JOIN $destTableName dest ON (" . join(' AND ', $constraints) . ")
-" . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" );
+LEFT OUTER JOIN $destTableName dest ON (" . join(' AND ', $constraints) . ")"
+        . ( 0 != count($where) ? "\nWHERE " . implode(' AND ', $where) : "" )
+        . ( null !== $scriptOptions['num-missing-rows']
+            ? "\nLIMIT " . $scriptOptions['num-missing-rows']
+            : "" );
 
     $logger->debug($sql);
 
@@ -462,14 +465,10 @@ LEFT OUTER JOIN $destTableName dest ON (" . join(' AND ', $constraints) . ")
     $stmt->execute();
     $numRows = $stmt->rowCount();
 
-    $rowsDisplayed = 0;
-    $rowsToDisplay = ( null === $scriptOptions['num-missing-rows'] ? PHP_INT_MAX : $scriptOptions['num-missing-rows'] );
-
     if ( 0 != $numRows ) {
         $logger->warning(sprintf("Missing %d rows in %s.%s", $numRows, $destTable, $destSchema));
-        while ( $rowsDisplayed < $rowsToDisplay && $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+        while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
             $logger->warning(sprintf("Missing row: %s", print_r($row, 1)));
-            $rowsDisplayed++;
         }
     } else {
         $logger->notice("Identical");
@@ -505,6 +504,9 @@ Usage: {$argv[0]}
 
     -d, --dest-schema <destination_schema>
     The schema for the destination tables. If not specified the source schema will be used.
+
+    --ignore-column-count
+    Ignore the column count between tables as long as the source columns are present in the destination.
 
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
