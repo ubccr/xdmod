@@ -111,7 +111,7 @@ class XdmodTestHelper
     public function authenticate($userrole)
     {
         if (! isset($this->config['role'][$userrole])) {
-            throw \Exception("User role $userrole not defined in .secrets file");
+            throw new \Exception("User role $userrole not defined in .secrets file");
         }
 
         $this->setauthvariables(null);
