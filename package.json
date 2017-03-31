@@ -4,7 +4,9 @@
     "description": "An open framework for collecting and analyzing HPC metrics.",
     "dependencies": {},
     "devDependencies": {
-        "eslint": "^3.8.1"
+        "eslint": "^3.16.1",
+        "eslint-config-airbnb-base": "^11.1.0",
+        "eslint-plugin-import": "^2.2.0"
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
