@@ -33,6 +33,8 @@ $scriptOptions = array(
     'map-columns'      => array(),
     // Number of missing rows to display, all rows if NULL
     'num-missing-rows' => null,
+    // Round the values of these columns
+    'round-columns'    => array(),
     // Source table schema
     'source-schema'    => null,
     // Apply where clauses to query
@@ -48,6 +50,7 @@ $options = array(
     'c:'  => 'database-config:',
     'd:'  => 'dest-schema:',
     'n:'  => 'num-missing-rows:',
+    'r:'  => 'round-column:',
     's:'  => 'source-schema:',
     't:'  => 'table:',
     'v:'  => 'verbosity:',
@@ -78,6 +81,15 @@ foreach ($args as $arg => $value) {
         case 'n':
         case 'num-missing-rows':
             $scriptOptions['num-missing-rows'] = $value;
+            break;
+
+        case 'r':
+        case 'round-column':
+            // Merge array because long and short options are grouped separately
+            $scriptOptions['round-columns'] = array_merge(
+                $scriptOptions['round-columns'],
+                ( is_array($value) ? $value : array($value) )
+            );
             break;
 
         case 's':
@@ -430,13 +442,31 @@ function compareTableData(
     $destTableName = "`$destSchema`.`$destTable`";
     $firstCol = current($srcTableColumns);
 
+    // Determine the columns to round, if any.
+
+    $roundColumns = array();
+    foreach ( $scriptOptions['round-columns'] as $column ) {
+        $parts = explode('=', $column);
+        $roundColumns[$parts[0]] = ( 2 == count($parts) ? $parts[1] : 0 );
+    }
+
     // Generate the ON clause using on the source table columns. This ignores columns
     // present in the destination table that do not exist in the source table.
 
     $constraints = array_map(
-        function ($c1, $c2) {
-            // Note the use of the null-safe operator <=>
-            return sprintf("src.%s <=> dest.%s", $c1, $c2);
+        function ($c1, $c2) use ($roundColumns) {
+            if ( array_key_exists($c1, $roundColumns) ) {
+                return sprintf(
+                    'ROUND(src.%s, %d) <=> ROUND(dest.%s, %d)',
+                    $c1,
+                    $roundColumns[$c1],
+                    $c2,
+                    $roundColumns[$c1]
+                );
+            } else {
+                // Note the use of the null-safe operator <=>
+                return sprintf('src.%s <=> dest.%s', $c1, $c2);
+            }
         },
         $srcTableColumns,
         $srcTableColumns
@@ -453,8 +483,8 @@ function compareTableData(
     $sql = "
 SELECT src.*
 FROM $srcTableName src
-LEFT OUTER JOIN $destTableName dest ON (" . join(' AND ', $constraints) . ")"
-        . ( 0 != count($where) ? "\nWHERE " . implode(' AND ', $where) : "" )
+LEFT OUTER JOIN $destTableName dest ON (" . join("\nAND ", $constraints) . ")"
+        . ( 0 != count($where) ? "\nWHERE " . implode("\nAND", $where) : "" )
         . ( null !== $scriptOptions['num-missing-rows']
             ? "\nLIMIT " . $scriptOptions['num-missing-rows']
             : "" );
@@ -510,6 +540,9 @@ Usage: {$argv[0]}
 
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
+
+    -r, --round-column <column>[=<digits>]
+    Round the values in the specified column before comparing. If <digits> is specified round to that number of digits (default 0). This is useful when comparing doubles or values that have been computed and may differ in decimal precision.
 
     -s, --source-schema <source_schema>
     The schema for the source tables.
