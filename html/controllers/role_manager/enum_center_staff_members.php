@@ -3,9 +3,8 @@
 	try {
 	
    	$activeUser = \xd_security\getLoggedInUser();
+   	$members = Centers::listStaffForUser($activeUser);
 
-      $members = $activeUser->getActiveRole()->enumCenterStaffMembers();
-    	
     	$returnData = array();
     	
     	$returnData['success'] = true;
