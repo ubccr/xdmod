@@ -70,6 +70,7 @@
             "configuration/rest.d",
             "configuration/setup.json",
             "configuration/update_check.json",
+            "configuration/assets.json",
             "email_templates"
         ],
         "etc/httpd": {
