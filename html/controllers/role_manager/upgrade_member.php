@@ -20,7 +20,7 @@ try {
     $memberCenters = Centers::listCentersForUser($member);
     $activeUserCenter = Centers::listCenterForUser($activeUser);
     foreach($memberCenters as $memberCenter) {
-        if (!in_array($memberCenter, $activeUserCenters)) {
+        if (!in_array($memberCenter, $activeUserCenter)) {
             \xd_response\presentError('center_mismatch_between_member_and_director');
         }
     }
