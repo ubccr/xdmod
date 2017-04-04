@@ -32,7 +32,7 @@ try {
     // -----------------------------
     $memberDirectorCenters = Centers::listCentersForUser($member, ROLE_ID_CENTER_DIRECTOR);
     $memberIsCenterDirector = array_reduce($activeUserStaffCenter, function($carry, $item) use ($memberDirectorCenters) {
-        $carry && in_array($item, $memberDirectorCenters);
+        return $carry && in_array($item, $memberDirectorCenters);
     }, true);
 
     if ($memberIsCenterDirector === true) {
