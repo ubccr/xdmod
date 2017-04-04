@@ -503,23 +503,27 @@ class pdoAggregator extends aAggregator
 
         if ( null === $startDayIdField || null === $endDayIdField ) {
 
-            $t = Utilities::substituteVariables(
+            $fromTable = Utilities::substituteVariables(
                 $firstTable->getFullName(false),
                 $this->variableMap,
                 $this,
                 "Undefined macros found in FROM table name"
             );
 
-            $this->logger->debug("Discover table $t");
-            $firstTableDef = Table::discover($t, $this->sourceEndpoint, null, $this->logger);
+            $this->logger->debug("Discover table $fromTable");
+            $firstTableDef = Table::discover($fromTable, $this->sourceEndpoint, null, $this->logger);
 
             // If we are in dryrun mode the table may not have been created yet but we still want to
             // be able to display the generated queries so simply set the start and end day id
             // fields.
 
-            if ( false === $firstTableDef && $this->getEtlOverseerOptions()->isDryrun() ) {
-                $startDayIdField = "start_day_id";
-                $endDayIdField = "end_day_id";
+            if ( false === $firstTableDef ) {
+                if ( $this->getEtlOverseerOptions()->isDryrun() ) {
+                    $startDayIdField = "start_day_id";
+                    $endDayIdField = "end_day_id";
+                } else {
+                    $this->logAndThrowException("Table does not exist: $fromTable");
+                }
             } else {
 
                 $missing = array();
