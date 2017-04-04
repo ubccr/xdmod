@@ -2881,11 +2881,25 @@ SQL;
    }
 
     /**
-     * @param Acl[] $acls
+     * @param array[] $acls
      */
    public function setAcls(array $acls)
    {
        $this->_acls = $acls;
+   }
+
+   public function addAcl(Acl $acl, $overwrite = false)
+   {
+       if (!array_key_exists($acl->getName(), $this->_acls) && !$overwrite || $overwrite === true) {
+           $this->_acls[$acl->getName()] = $acl;
+       }
+   }
+
+   public function removeAcl(Acl $acl)
+   {
+       if (array_key_exists($acl->getName(), $this->_acls)) {
+           unset($this->_acls[$acl->getName()]);
+       }
    }
 
    public function hasAcl($acl, $property = 'name')
@@ -2900,6 +2914,7 @@ SQL;
        $value = $isAcl ? $acl->$getter() : $acl;
        return array_key_exists($value, $this->_acls);
    }
+
 
     /**
      * @param Acl[]|string[] $acls
