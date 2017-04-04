@@ -22,7 +22,7 @@ class Centers
         );
     }
 
-    public static function listCentersForUser(XDUser $user, $aclName = null)
+    public static function listCenterForUser(XDUser $user, $aclName = null)
     {
         if (!isset($user)) {
             throw new Exception('A valid user must be provided.');
@@ -36,7 +36,7 @@ class Centers
             throw new Exception('A valid acl name must be provided.');
         }
 
-        return self::_listCentersForUser(
+        return self::_listCenterForUser(
             DB::factory('database'),
             $user,
             $aclName
@@ -153,7 +153,7 @@ DELETE FROM user_acl_group_by_parameters
 WHERE user_acl_parameter_id IN (
   SELECT uagbp.user_acl_parameter_id
   FROM user_acl_group_by_parameters uagbp
-  JOIN group_bys gb ON uagbp.group_by_id ON gb.group_by_id
+  JOIN group_bys gb ON uagbp.group_by_id
   WHERE uagbp.acl_id  = :acl_id
     AND uagbp.user_id = :user_id
     AND gb.name       = 'provider'
@@ -237,7 +237,7 @@ SQL;
  o    *
      * @return array[]
      */
-    private static function _listCentersForUser(iDatabase $db, XDUser $user, $aclName)
+    private static function _listCenterForUser(iDatabase $db, XDUser $user, $aclName)
     {
         $query = <<<SQL
 SELECT DISTINCT uagbp.value
@@ -247,7 +247,8 @@ FROM user_acl_group_by_parameters uagbp
 WHERE
   a.name = :acl_name
   AND uagbp.user_id = :user_id
-  AND gb.name = 'provider';
+  AND gb.name = 'provider'
+ORDER BY uagbp.value DESC LIMIT 1;
 SQL;
 
         $rows = $db->query($query, array(

@@ -17,8 +17,8 @@ try {
 
     $activeUser = \xd_security\getLoggedInUser();
 
-    $memberCenters = Centers::listCentersForUser($member);
-    $activeUserCenters = Centers::listCentersForUser($activeUser);
+    $memberCenters = Centers::listCenterForUser($member);
+    $activeUserCenters = Centers::listCenterForUser($activeUser);
     foreach($memberCenters as $memberCenter) {
         if (!in_array($memberCenter, $activeUserCenters)) {
             \xd_response\presentError('center_mismatch_between_member_and_director');
