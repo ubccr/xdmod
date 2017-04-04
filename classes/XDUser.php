@@ -981,18 +981,20 @@ SQL;
         // REMOVE: existing user -> acl relations
         $this->_pdo->execute(
             'DELETE FROM user_acls WHERE user_id = :user_id',
-            array('user_id', $this->_id)
+            array('user_id' => $this->_id)
         );
 
         // ADD: current user -> acl relations
         foreach($this->_acls as $acl) {
-            $this->_pdo->execute(
-                'INSERT INTO user_acls(user_id, acl_id) VALUES(:user_id, :acl_id)',
-                array(
-                    'user_id' => $this->_id,
-                    'acl_id' => $acl->getAclId()
-                )
-            );
+            if (null !== $acl->getAclId()) {
+                $this->_pdo->execute(
+                    'INSERT INTO user_acls(user_id, acl_id) VALUES(:user_id, :acl_id)',
+                    array(
+                        'user_id' => $this->_id,
+                        'acl_id' => $acl->getAclId()
+                    )
+                );
+            }
         }
         /* END:   ACL data processing */
 
