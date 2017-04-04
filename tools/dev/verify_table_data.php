@@ -446,7 +446,7 @@ function compareTableData(
 
     $roundColumns = array();
     foreach ( $scriptOptions['round-columns'] as $column ) {
-        $parts = explode('=', $column);
+        $parts = explode(',', $column);
         $roundColumns[$parts[0]] = ( 2 == count($parts) ? $parts[1] : 0 );
     }
 
@@ -496,7 +496,7 @@ LEFT OUTER JOIN $destTableName dest ON (" . join("\nAND ", $constraints) . ")"
     $numRows = $stmt->rowCount();
 
     if ( 0 != $numRows ) {
-        $logger->warning(sprintf("Missing %d rows in %s.%s", $numRows, $destTable, $destSchema));
+        $logger->warning(sprintf("Missing %d rows in %s.%s", $numRows, $destSchema, $destTable));
         while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
             $logger->warning(sprintf("Missing row: %s", print_r($row, 1)));
         }
@@ -541,7 +541,7 @@ Usage: {$argv[0]}
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
 
-    -r, --round-column <column>[=<digits>]
+        -r, --round-column <column>[,<digits>]
     Round the values in the specified column before comparing. If <digits> is specified round to that number of digits (default 0). This is useful when comparing doubles or values that have been computed and may differ in decimal precision.
 
     -s, --source-schema <source_schema>
