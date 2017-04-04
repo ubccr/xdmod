@@ -277,7 +277,9 @@ SQL;
             ':user_id' => $user->getUserID()
         ));
         if ($rows !== false && count($rows) > 0) {
-            return $rows;
+            return array_reduce($rows, function($carry, $item) {
+                $carry []= $item['value'];
+            }, array());
         }
 
         return array();
@@ -308,7 +310,9 @@ SQL;
             ':user_id' => $user->getUserID()
         ));
         if ($rows !== false && count($rows) > 0) {
-            return $rows;
+            return array_reduce($rows, function($carry, $item) {
+                $carry []= $item['value'];
+            }, array());
         }
 
         return array();
