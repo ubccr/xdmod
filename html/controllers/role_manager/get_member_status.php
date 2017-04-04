@@ -23,17 +23,11 @@ try {
 
     $memberStaffCenters = Centers::listCentersForUser($member);
     $activeUserStaffCenter = Centers::listCenterForUser($active_user);
-    foreach($memberStaffCenters as $memberCenter) {
-        if (!in_array($memberCenter, $activeUserStaffCenter)) {
-            \xd_response\presentError('center_mismatch_between_member_and_director');
-        }
-    }
+    $centerMismatch = !in_array($activeUserStaffCenter, $memberStaffCenters);
 
     // -----------------------------
     $memberDirectorCenters = Centers::listCentersForUser($member, ROLE_ID_CENTER_DIRECTOR);
-    $memberIsCenterDirector = array_reduce($activeUserStaffCenter, function($carry, $item) use ($memberDirectorCenters) {
-        return $carry && in_array($item, $memberDirectorCenters);
-    }, true);
+    $memberIsCenterDirector = in_array($activeUserStaffCenter, $memberDirectorCenters);
 
     if ($memberIsCenterDirector === true) {
         $returnData['success'] = true;
