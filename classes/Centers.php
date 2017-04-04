@@ -114,6 +114,21 @@ class Centers
         }
     }
 
+    public static function isCenterDirector(XDUser $user, $centerId)
+    {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+        if (!isset($centerId)) {
+            throw new Exception('A valid center id must be provide.d');
+        }
+        return self::_isCenterDirector(
+            DB::factory('database'),
+            $user,
+            $centerId
+        );
+    }
+
     /**
      * @param iDatabase $db
      * @param XDUser $user
@@ -318,6 +333,41 @@ SQL;
         }
 
         return array();
+    }
+
+    /**
+     * @param iDatabase $db
+     * @param XDUser $user
+     * @param integer $centerId
+     *
+     * @return bool|null
+     */
+    private static function _isCenterDirector(iDatabase $db, XDUser $user, $centerId)
+    {
+        $query = <<<SQL
+SELECT COUNT(*) as num_matches
+FROM (
+       SELECT DISTINCT value
+       FROM user_acl_group_by_parameters uagbp
+         JOIN group_bys gb
+           ON uagbp.group_by_id = gb.group_by_id
+              AND gb.name = 'provider'
+         JOIN acls a
+           ON uagbp.acl_id = a.acl_id
+              AND a.name = :acl_name
+       WHERE uagbp.user_id = :user_id
+             AND uagbp.value = :value) data
+SQL;
+        $rows = $db->query($query, array(
+            ':acl_name' => ROLE_ID_CENTER_DIRECTOR,
+            ':user_id'=> $user->getUserID(),
+            ':value' => $centerId
+        ));
+        if ($rows !== false && count($rows) > 0) {
+            return $rows[0]['num_matches'] > 0;
+        }
+
+        return null;
     }
 
 
