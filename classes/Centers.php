@@ -279,6 +279,7 @@ SQL;
         if ($rows !== false && count($rows) > 0) {
             return array_reduce($rows, function($carry, $item) {
                 $carry []= $item['value'];
+                return $carry;
             }, array());
         }
 
@@ -312,6 +313,7 @@ SQL;
         if ($rows !== false && count($rows) > 0) {
             return array_reduce($rows, function($carry, $item) {
                 $carry []= $item['value'];
+                return $carry;
             }, array());
         }
 
