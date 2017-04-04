@@ -29,6 +29,8 @@ $scriptOptions = array(
     // Ignore the column count between tables as long as the source columns are present in
     // the destination
     'ignore-column-count' => false,
+    // Ignore the column types between tables
+    'ignore-column-type'  => false,
     // Map these column names from source to destination tables
     'map-columns'      => array(),
     // Number of missing rows to display, all rows if NULL
@@ -56,7 +58,8 @@ $options = array(
     'v:'  => 'verbosity:',
     'w:'  => 'where:',
     'x:'  => 'exclude-column:',
-    ''    => 'ignore-column-count'
+    ''    => 'ignore-column-count',
+    ''    => 'ignore-column-type'
     );
 
 $args = getopt(implode('', array_keys($options)), $options);
@@ -76,6 +79,10 @@ foreach ($args as $arg => $value) {
 
         case 'ignore-column-count':
             $scriptOptions['ignore-column-count'] = true;
+            break;
+
+        case 'ignore-column-type':
+            $scriptOptions['ignore-column-type'] = true;
             break;
 
         case 'n':
@@ -291,14 +298,14 @@ function compareTables($srcTable, $destTable)
                 sprintf("Dest missing %s type=%s key=%s", $k, $v['type'], $v['key_type'])
             );
             $mismatch = true;
-        } elseif ( $v != $destTableColumns[$k] ) {
+        } elseif ( $v != $destTableColumns[$k] && ! $scriptOptions['ignore-column-type'] ) {
             $logger->err(sprintf(
-                "Column mismatch %s: src type = %s key = %s, dest type = %s key = %s",
+                "Column mismatch %s: src type=%s %s, dest type=%s %s",
                 $k,
                 $v['type'],
-                $v['key_type'],
+                ( "" != $v['key_type'] ? "key=" . $v['key_type'] : "" ),
                 $destTableColumns[$k]['type'],
-                $destTableColumns[$k]['key_type']
+                ( "" != $destTableColumns[$k]['key_type'] ? "key=" . $destTableColumns[$k]['key_type'] : "" )
             ));
             $mismatch = true;
         }
@@ -537,6 +544,9 @@ Usage: {$argv[0]}
 
     --ignore-column-count
     Ignore the column count between tables as long as the source columns are present in the destination.
+
+    --ignore-column-count
+    Ignore the column types between tables, useful for comparing the effect of data type changes.
 
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
