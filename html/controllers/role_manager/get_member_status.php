@@ -36,7 +36,7 @@ try {
     }, true);
 
     if ($memberIsCenterDirector === true) {
-        $returnData['success'] = false;
+        $returnData['success'] = true;
         $returnData['message'] = 'is already a Center Director';
         $returnData['eligible'] = false;
     }

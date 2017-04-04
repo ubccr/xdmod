@@ -186,14 +186,12 @@ SQL;
     {
         $query = <<<SQL
 DELETE FROM user_acl_group_by_parameters
-WHERE user_acl_parameter_id IN (
-  SELECT uagbp.user_acl_parameter_id
-  FROM user_acl_group_by_parameters uagbp
-  JOIN group_bys gb ON uagbp.group_by_id
-  WHERE uagbp.acl_id  = :acl_id
-    AND uagbp.user_id = :user_id
-    AND gb.name       = 'provider'
-);
+WHERE user_id = :user_id
+      AND acl_id = :acl_id
+      AND group_by_id IN (
+  SELECT gb.group_by_id
+  FROM group_bys gb
+  WHERE gb.name = 'provider');
 SQL;
         $rows = $db->execute($query, array(
             ':acl_id' => $acl->getAclId(),
