@@ -289,11 +289,8 @@ SQL;
             ':acl_name' => $aclName,
             ':user_id' => $user->getUserID()
         ));
-        if ($rows !== false && count($rows) > 0) {
-            return array_reduce($rows, function($carry, $item) {
-                $carry []= $item['value'];
-                return $carry;
-            }, array());
+        if ($rows !== false) {
+            return $rows[0]['value'];
         }
 
         return array();
@@ -324,8 +321,8 @@ SQL;
             ':user_id' => $user->getUserID()
         ));
         if ($rows !== false && count($rows) > 0) {
-            return array_reduce($rows, function($carry, $item) {
-                $carry []= $item['value'];
+            return array_reduce($rows, function ($carry, $item) {
+                $carry [] = $item['value'];
                 return $carry;
             }, array());
         }
@@ -343,7 +340,7 @@ SQL;
     private static function _isCenterDirector(iDatabase $db, XDUser $user, $centerId)
     {
         $query = <<<SQL
-SELECT COUNT(*) as num_matches
+SELECT COUNT(*) AS num_matches
 FROM (
        SELECT DISTINCT value
        FROM user_acl_group_by_parameters uagbp
@@ -358,7 +355,7 @@ FROM (
 SQL;
         $rows = $db->query($query, array(
             ':acl_name' => ROLE_ID_CENTER_DIRECTOR,
-            ':user_id'=> $user->getUserID(),
+            ':user_id' => $user->getUserID(),
             ':value' => $centerId
         ));
         if ($rows !== false && count($rows) > 0) {
