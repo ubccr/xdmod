@@ -29,7 +29,7 @@ class Centers
         }
 
         if (null == $aclName) {
-            $aclName =  self::DEFAULT_ACL_NAME;
+            $aclName = self::DEFAULT_ACL_NAME;
         }
 
         if (strlen($aclName) < 1) {
@@ -37,6 +37,27 @@ class Centers
         }
 
         return self::_listCenterForUser(
+            DB::factory('database'),
+            $user,
+            $aclName
+        );
+    }
+
+    public static function listCentersForUser(XDUser $user, $aclName = null)
+    {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be provided.');
+        }
+
+        if (null == $aclName) {
+            $aclName = self::DEFAULT_ACL_NAME;
+        }
+
+        if (strlen($aclName) < 1) {
+            throw new Exception('A valid acl name must be provided.');
+        }
+
+        return self::_listCentersForUser(
             DB::factory('database'),
             $user,
             $aclName
@@ -234,7 +255,7 @@ SQL;
      * @param iDatabase $db
      * @param XDUser $user
      * @param string $aclName
- o    *
+     *
      * @return array[]
      */
     private static function _listCenterForUser(iDatabase $db, XDUser $user, $aclName)
@@ -261,4 +282,37 @@ SQL;
 
         return array();
     }
+
+    /**
+     * @param iDatabase $db
+     * @param XDUser $user
+     * @param string $aclName
+     *
+     * @return array[]
+     */
+    private static function _listCentersForUser(iDatabase $db, XDUser $user, $aclName)
+    {
+        $query = <<<SQL
+SELECT DISTINCT uagbp.value
+FROM user_acl_group_by_parameters uagbp
+  JOIN acls a ON uagbp.acl_id = a.acl_id
+  JOIN group_bys gb ON uagbp.group_by_id = gb.group_by_id
+WHERE
+  a.name = :acl_name
+  AND uagbp.user_id = :user_id
+  AND gb.name = 'provider';
+SQL;
+
+        $rows = $db->query($query, array(
+            ':acl_name' => $aclName,
+            ':user_id' => $user->getUserID()
+        ));
+        if ($rows !== false && count($rows) > 0) {
+            return $rows;
+        }
+
+        return array();
+    }
+
+
 }
