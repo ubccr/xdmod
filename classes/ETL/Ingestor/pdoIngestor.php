@@ -635,7 +635,7 @@ class pdoIngestor extends aIngestor
 
         $totalRecordsProcessed = $this->destinationHandle->execute($sql);
         $this->logger->info(
-            sprintf('%s: Processed %d records', get_class($this), number_format($totalRecordsProcessed))
+            sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
         );
 
         return $totalRecordsProcessed;
@@ -848,7 +848,7 @@ class pdoIngestor extends aIngestor
 
                 if (0 == $totalRecordsProcessed % self::NUM_RECORDS_PER_LOG_MSG) {
                     $this->logger->info(
-                        sprintf('%s: Processed %d records', get_class($this), number_format($totalRecordsProcessed))
+                        sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
                     );
                 }
 
@@ -858,7 +858,9 @@ class pdoIngestor extends aIngestor
                     foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                         try {
                             $this->_dest_helper->executeStatement($loadStatement);
-                            $this->logger->debug("Loaded $numRecordsInFile records into '$etlTableKey'");
+                            $this->logger->debug(
+                                sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
+                            );
 
                             // Clear the infile
 
@@ -887,7 +889,9 @@ class pdoIngestor extends aIngestor
             foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                 try {
                     $this->_dest_helper->executeStatement($loadStatement);
-                    $this->logger->debug("Loaded $numRecordsInFile records into '$etlTableKey'");
+                    $this->logger->debug(
+                        sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
+                    );
                 }
                 catch (Exception $e) {
                     $msg = array('message'    => $e->getMessage(),
@@ -906,8 +910,9 @@ class pdoIngestor extends aIngestor
             }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
         }  // if ( $numRecordsInFile)
 
-        $msg = sprintf('%s: Processed %d records (%d source records)', get_class($this), $totalRecordsProcessed, $numSourceRecordsProcessed);
-        $this->logger->info($msg);
+        $this->logger->info(
+            sprintf('%s: Processed %s records (%s source records)', get_class($this), number_format($totalRecordsProcessed), number_format($numSourceRecordsProcessed))
+        );
 
         // Return buffering to its original state.  This is a MySQL specific optimization.
 
