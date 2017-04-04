@@ -13,6 +13,11 @@ if ($member == NULL) {
 // -----------------------------
 
 try {
+    $returnData = array(
+        'success' => true,
+        'message' => '',
+        'eligible' => true
+    );
 
     $active_user = \xd_security\getLoggedInUser();
 
@@ -23,53 +28,18 @@ try {
             \xd_response\presentError('center_mismatch_between_member_and_director');
         }
     }
-    /*$member_staff_organizations = $member->getOrganizationCollection(ROLE_ID_CENTER_STAFF);
-
-    if (!in_array($active_user->getActiveOrganization(), $member_staff_organizations)) {
-        \xd_response\presentError('center_mismatch_between_member_and_director');
-    }*/
 
     // -----------------------------
+    $memberDirectorCenters = Centers::listCentersForUser($member, ROLE_ID_CENTER_DIRECTOR);
+    $memberIsCenterDirector = array_reduce($activeUserStaffCenter, function($carry, $item) use ($memberDirectorCenters) {
+        $carry && in_array($item, $memberDirectorCenters);
+    }, true);
 
-    $member_director_organizations = $member->getOrganizationCollection(ROLE_ID_CENTER_DIRECTOR);
-
-    if (in_array($active_user->getActiveOrganization(), $member_director_organizations)) {
-
-        // This member is already capable of becoming a center director of this center
-
-        $promoter = $member->getPromoter(ROLE_ID_CENTER_DIRECTOR, $active_user->getActiveOrganization());
-
+    if ($memberIsCenterDirector === true) {
         $returnData['success'] = false;
-        $returnData['message'] = "is already a Center Director";
-
-        if ($promoter != -1) {
-
-            // This member was promoted to a Center Director by another user...
-
-            if ($active_user->getUserId() == $promoter) {
-
-                $returnData['success'] = true;
-                $returnData['eligible'] = false;
-
-            }
-
-            $promoter_user = XDUser::getUserById($promoter);
-            $promoter_name = $promoter_user->getFormalName();
-
-            $returnData['message'] = "has been upgraded to Center Director<br />(promoted by $promoter_name)";
-
-        }
-
-        \xd_controller\returnJSON($returnData);
-
-    }//if (in_array($active_user->getActiveOrganization(), $member_director_organizations))
-
-    // -----------------------------
-
-    $returnData['success'] = true;
-    $returnData['message'] = '';
-    $returnData['eligible'] = true;
-
+        $returnData['message'] = 'is already a Center Director';
+        $returnData['eligible'] = false;
+    }
     echo json_encode($returnData);
 
 } catch (SessionExpiredException $see) {
@@ -81,5 +51,3 @@ try {
     \xd_response\presentError($e->getMessage());
 
 }
-
-?>
