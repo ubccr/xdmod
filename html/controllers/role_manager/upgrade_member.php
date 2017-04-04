@@ -19,10 +19,15 @@ try {
 
     $memberCenters = Centers::listCentersForUser($member);
     $activeUserCenter = Centers::listCenterForUser($activeUser);
-    foreach($memberCenters as $memberCenter) {
-        if (!in_array($memberCenter, $activeUserCenter)) {
-            \xd_response\presentError('center_mismatch_between_member_and_director');
+    $centerMismatch = false;
+    foreach($activeUserCenter as $userCenter) {
+        $centerMismatch = !in_array($userCenter, $memberCenters);
+        if ($centerMismatch === true) {
+            break;
         }
+    }
+    if ($centerMismatch === true) {
+        \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
     $isCenterDirector = Centers::isCenterDirector($member, $activeUserCenter);
