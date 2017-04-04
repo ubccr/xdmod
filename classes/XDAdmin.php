@@ -137,8 +137,7 @@ class XDAdmin
     }
 
     /**
-     * Get a listing of resource providers that ever ran jobs, along
-     * with their id.
+     * Get a listing of resource providers that have corresponding organizations.
      *
      * @return array
      */
@@ -146,13 +145,13 @@ class XDAdmin
     {
         return $this->modw->query("
             SELECT DISTINCT
-                organization_id AS id,
-                o.abbrev        AS organization,
-                o.name          AS name
+              rf.organization_id AS id,
+              o.abbrev           AS organization,
+              o.name             AS name
             FROM
-                modw_aggregates.jobfact_by_quarter,
-                organization o
-            WHERE o.id = organization_id
+              organization o
+              JOIN resourcefact rf
+                ON o.id = rf.organization_id
             ORDER BY o.abbrev ASC
         ");
     }
