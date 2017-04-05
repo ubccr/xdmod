@@ -50,8 +50,7 @@ use User\Acls;
    }
 
 	$userDetails['is_active'] = $selected_user->getAccountStatus() ? 'active' : 'disabled' ;
-	$userDetails['roles'] = $selected_user->getRoles();
-	$userDetails['acls'] = $selected_user->getAcls(true);
+	$userDetails['roles'] = $selected_user->getAcls(true);
 
 	$userDetails['center_director_sites'] = Acls::getDescriptorParamValues($selected_user, ROLE_ID_CENTER_DIRECTOR, 'provider');
 	$userDetails['center_staff_sites'] = Acls::getDescriptorParamValues($selected_user, ROLE_ID_CENTER_STAFF, 'provider');
