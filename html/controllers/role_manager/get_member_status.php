@@ -26,9 +26,7 @@ try {
     $centerMismatch = !in_array($activeUserStaffCenter, $memberStaffCenters);
 
     // -----------------------------
-    $memberDirectorCenters = Centers::listCentersForUser($member, ROLE_ID_CENTER_DIRECTOR);
-    $memberIsCenterDirector = in_array($activeUserStaffCenter, $memberDirectorCenters);
-
+    $memberIsCenterDirector = Centers::isCenterDirector($member, $activeUserStaffCenter);
     if ($memberIsCenterDirector === true) {
         $returnData['success'] = true;
         $returnData['message'] = 'is already a Center Director';

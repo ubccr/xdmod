@@ -64,21 +64,27 @@ class Centers
         );
     }
 
-    public static function downgradeStaffMember(XDUser $user)
+    public static function downgradeStaffMember(XDUser $user, $centerId)
     {
         if (!isset($user)) {
             throw new Exception('A valid user must be provided.');
         }
+        if (!isset($centerId)) {
+            throw new Exception('A valid center id must be provided.');
+        }
+
         $db = DB::factory('database');
         $acl = Acls::getAclByName(ROLE_ID_CENTER_DIRECTOR);
         if (!isset($acl)) {
             throw new Exception('Unable to upgrade staff member. Unable to find center director acl');
         }
 
+
         self::_downgradeStaffMember(
             $db,
             $user,
-            $acl
+            $acl,
+            $centerId
         );
 
         $hasCenterDierectorAffiliations = self::hasCenterDirectorAffiliations($db, $user);
@@ -182,12 +188,13 @@ SQL;
      * @param Acl $acl
      * @return bool
      */
-    private static function _downgradeStaffMember(iDatabase $db, XDUser $user, Acl $acl)
+    private static function _downgradeStaffMember(iDatabase $db, XDUser $user, Acl $acl, $centerId)
     {
         $query = <<<SQL
 DELETE FROM user_acl_group_by_parameters
 WHERE user_id = :user_id
       AND acl_id = :acl_id
+      AND value = :value
       AND group_by_id IN (
   SELECT gb.group_by_id
   FROM group_bys gb
@@ -195,7 +202,8 @@ WHERE user_id = :user_id
 SQL;
         $rows = $db->execute($query, array(
             ':acl_id' => $acl->getAclId(),
-            ':user_id' => $user->getUserID()
+            ':user_id' => $user->getUserID(),
+            ':value' => $centerId
         ));
 
         return $rows !== false && $rows > 0;

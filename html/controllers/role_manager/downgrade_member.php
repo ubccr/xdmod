@@ -25,7 +25,7 @@ try {
         }
     }
 
-    Centers::downgradeStaffMember($member);
+    Centers::downgradeStaffMember($member, $activeUserCenters);
 
     $returnData['success'] = true;
 
