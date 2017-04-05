@@ -225,11 +225,6 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 					} //if (data.results.is_xsede_user == true)
 
 					// ================================================
-
-					lblRole.on('afterrender', function() {
-						document.getElementById('profile_editor_most_privileged_role').innerHTML = data.results.most_privileged_role;
-					});
-
 					self.parentWindow.show();
 
 				}
@@ -325,12 +320,6 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
 			// ------------------------------------------------
 
-			var lblRole = new Ext.form.Label({
-				html: '<div style="width: 300px; font-size: 12px; padding-top: 5px">Top Role: <b style="margin-left: 45px"><span id="profile_editor_most_privileged_role"></span></b><br /></div>'
-			});
-
-			// ------------------------------------------------
-
 			var sectionGeneral = new Ext.Panel({
 
 				labelWidth: 95,
@@ -349,11 +338,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
 					user_profile_firstname,
 					user_profile_lastname,
-					user_profile_email_addr,
-
-					lblRole
-					//cmbFieldOfScience
-
+					user_profile_email_addr
 				]
 
 			}); //sectionGeneral

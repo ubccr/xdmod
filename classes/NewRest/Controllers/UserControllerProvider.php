@@ -135,9 +135,7 @@ class UserControllerProvider extends BaseControllerProvider
             'is_federated_user' => $user->getUserType() == FEDERATED_USER_TYPE,
             'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
             'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']),
-            'field_of_science' => $user->getFieldOfScience(),
-            'active_role' => $user->getActiveRole()->getFormalName(),
-            'most_privileged_role' => $user->getMostPrivilegedRole()->getFormalName(),
+            'field_of_science' => $user->getFieldOfScience()
         );
     }
 
