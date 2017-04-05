@@ -69,9 +69,6 @@ class AclsControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/menus/disabled", "$class::getDisabledMenus");
 
-        $controller->get("$root/roles", "$class::getUserRoles")
-            ->before($isAuthorized);
-
         $controller->get("$root/statistics/permitted", "$class::getPermittedStatistics");
 
     }
@@ -232,19 +229,6 @@ class AclsControllerProvider extends BaseControllerProvider
         return $app->json(array(
             'success' => $success,
             'data' => $menus
-        ));
-    }
-
-    public function getUserRoles(Request $request, Application $app)
-    {
-        $user = $request->get(BaseControllerProvider::_USER);
-        $roles = $user->getRoles();
-
-        $success = isset($roles);
-
-        return $app->json(array(
-            'success' => $success,
-            'data' => $roles
         ));
     }
 
