@@ -491,7 +491,7 @@ function compareTableData(
 SELECT src.*
 FROM $srcTableName src
 LEFT OUTER JOIN $destTableName dest ON (" . join("\nAND ", $constraints) . ")"
-        . ( 0 != count($where) ? "\nWHERE " . implode("\nAND", $where) : "" )
+        . ( 0 != count($where) ? "\nWHERE " . implode("\nAND ", $where) : "" )
         . ( null !== $scriptOptions['num-missing-rows']
             ? "\nLIMIT " . $scriptOptions['num-missing-rows']
             : "" );
@@ -551,7 +551,7 @@ Usage: {$argv[0]}
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
 
-        -r, --round-column <column>[,<digits>]
+    -r, --round-column <column>[,<digits>]
     Round the values in the specified column before comparing. If <digits> is specified round to that number of digits (default 0). This is useful when comparing doubles or values that have been computed and may differ in decimal precision.
 
     -s, --source-schema <source_schema>
