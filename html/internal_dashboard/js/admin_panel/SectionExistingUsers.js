@@ -753,14 +753,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     return;
                 }
 
-                if (!roleGrid.isPrimaryRoleSpecified()) {
-                    CCR.xdmod.ui.userManagementMessage(
-                        'This user must have a primary role assigned.',
-                        false
-                    );
-                    return;
-                }
-				
 				var sel_roles = roleGrid.getSelections();
 				
                 // ===========================================
