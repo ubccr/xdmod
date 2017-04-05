@@ -25,7 +25,6 @@ use User\Acls;
 	$userDetails['time_updated'] = $selected_user->getUpdateTimestamp();
 	$userDetails['time_last_logged_in'] = $selected_user->getLastLoginTimestamp();
 
-	$userDetails['primary_role'] = $selected_user->getPrimaryRole()->getIdentifier();
 	$userDetails['email_address'] = $selected_user->getEmailAddress();
 
 	if ($userDetails['email_address'] == NO_EMAIL_ADDRESS_SET) {
