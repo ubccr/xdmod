@@ -158,18 +158,20 @@
                 "comment": "FACT: (seconds) The wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days."
             },{
                 "name": "sum_wallduration_squared",
-                "type": "double",
+                "type": "decimal(36,4)",
                 "nullable": true,
                 "comment": "FACT: (seconds) The sum of the square of wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days."
             },{
                 "name": "waitduration",
                 "type": "decimal(18,0)",
                 "nullable": true,
+                "default": null,
                 "comment": "FACT: (seconds) The amount of time jobs waited to execute during this day."
             },{
                 "name": "sum_waitduration_squared",
-                "type": "double",
+                "type": "decimal(36,4)",
                 "nullable": true,
+                "default": null,
                 "comment": "FACT: (seconds) The sum of the square of the amount of time jobs waited to execute during this day."
             },{
                 "name": "local_charge_su",
@@ -233,7 +235,7 @@
                 "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
             },{
                 "name": "sum_local_charge_xdsu_squared",
-                "type": "double",
+                "type": "decimal(36,4)",
                 "nullable": true,
                 "comment": "FACT: The sum of the square of local_charge of jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
             },{
@@ -243,7 +245,7 @@
                 "comment": "FACT: (seconds) The amount of the cpu time (processor_count * wallduration) of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used."
             },{
                 "name": "sum_cpu_time_squared",
-                "type": "double",
+                "type": "decimal(36,4)",
                 "nullable": true,
                 "comment": "FACT: (seconds) The sum of the square of the amount of the cpu_time of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used."
             },{
@@ -253,7 +255,7 @@
                 "comment": "FACT: (seconds) The amount of the node time (nodes * wallduration) of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used."
             },{
                 "name": "sum_node_time_squared",
-                "type": "double",
+                "type": "decimal(36,4)",
                 "nullable": true,
                 "comment": "FACT: (seconds) The sum of the square of the amount of the node_time of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used."
             },{
@@ -394,15 +396,15 @@
             "started_job_count": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0) )",
             "running_job_count": "SUM(1)",
             "wallduration": "COALESCE(SUM( ${wallduration_case_statement}), 0)",
-            "sum_wallduration_squared": "COALESCE(SUM( pow(${wallduration_case_statement}, 2)), 0)",
-            "waitduration": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, task.waitduration, 0) )",
-            "sum_waitduration_squared": "SUM( IF(task.start_day_id = ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, pow(task.waitduration, 2), 0) )",
+            "sum_wallduration_squared": "COALESCE(SUM( CAST(POW(${wallduration_case_statement}, 2) AS DECIMAL(36,4)) ), 0)",
+            "waitduration": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, task.waitduration, NULL) )",
+            "sum_waitduration_squared": "SUM( CAST(IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, pow(task.waitduration, 2), NULL) AS DECIMAL(36,4)) )",
             "local_charge_xdsu": "SUM(${local_charge_xdsu_case_statement})",
-            "sum_local_charge_xdsu_squared": "SUM(pow(${local_charge_xdsu_case_statement}, 2))",
+            "sum_local_charge_xdsu_squared": "SUM( CAST(POW(${local_charge_xdsu_case_statement}, 2) AS DECIMAL(36,4)) )",
             "cpu_time": "COALESCE(SUM(task.processor_count * ${wallduration_case_statement}), 0)",
-            "sum_cpu_time_squared": "COALESCE(SUM(pow(task.processor_count * ${wallduration_case_statement}, 2)), 0)",
+            "sum_cpu_time_squared": "COALESCE(SUM( CAST(POW(task.processor_count * ${wallduration_case_statement}, 2) AS DECIMAL(36,4)) ), 0)",
             "node_time": "COALESCE(SUM(task.node_count * ${wallduration_case_statement}), 0)",
-            "sum_node_time_squared": "COALESCE(SUM( pow(task.node_count * ${wallduration_case_statement}, 2)), 0)",
+            "sum_node_time_squared": "COALESCE(SUM( CAST(POW(task.node_count * ${wallduration_case_statement}, 2) AS DECIMAL(36,4)) ), 0)",
             "sum_weighted_expansion_factor": "SUM( ((task.wallduration + task.waitduration) / task.wallduration) * task.node_count * COALESCE(${wallduration_case_statement}, 0))",
             "sum_job_weights": "SUM(task.node_count * COALESCE(${wallduration_case_statement}, 0))"
         },

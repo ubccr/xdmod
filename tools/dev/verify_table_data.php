@@ -26,10 +26,17 @@ $scriptOptions = array(
     'dest-schema'      => null,
     // Exclude these columns from tables
     'exclude-columns'  => array(),
+    // Ignore the column count between tables as long as the source columns are present in
+    // the destination
+    'ignore-column-count' => false,
+    // Ignore the column types between tables
+    'ignore-column-type'  => false,
     // Map these column names from source to destination tables
     'map-columns'      => array(),
     // Number of missing rows to display, all rows if NULL
     'num-missing-rows' => null,
+    // Round the values of these columns
+    'round-columns'    => array(),
     // Source table schema
     'source-schema'    => null,
     // Apply where clauses to query
@@ -45,11 +52,14 @@ $options = array(
     'c:'  => 'database-config:',
     'd:'  => 'dest-schema:',
     'n:'  => 'num-missing-rows:',
+    'r:'  => 'round-column:',
     's:'  => 'source-schema:',
     't:'  => 'table:',
     'v:'  => 'verbosity:',
     'w:'  => 'where:',
-    'x:'  => 'exclude-column:'
+    'x:'  => 'exclude-column:',
+    ''    => 'ignore-column-count',
+    ''    => 'ignore-column-type'
     );
 
 $args = getopt(implode('', array_keys($options)), $options);
@@ -67,9 +77,26 @@ foreach ($args as $arg => $value) {
             $scriptOptions['dest-schema'] = $value;
             break;
 
+        case 'ignore-column-count':
+            $scriptOptions['ignore-column-count'] = true;
+            break;
+
+        case 'ignore-column-type':
+            $scriptOptions['ignore-column-type'] = true;
+            break;
+
         case 'n':
         case 'num-missing-rows':
             $scriptOptions['num-missing-rows'] = $value;
+            break;
+
+        case 'r':
+        case 'round-column':
+            // Merge array because long and short options are grouped separately
+            $scriptOptions['round-columns'] = array_merge(
+                $scriptOptions['round-columns'],
+                ( is_array($value) ? $value : array($value) )
+            );
             break;
 
         case 's':
@@ -245,7 +272,7 @@ function compareTables($srcTable, $destTable)
     $numSrcColumns = count($srcTableColumns);
     $numDestColumns = count($destTableColumns);
 
-    if ( $numSrcColumns != $numDestColumns ) {
+    if ( ! $scriptOptions['ignore-column-count'] && $numSrcColumns != $numDestColumns ) {
         $logger->err(sprintf(
             "Column number mismatch %s (%d); dest %s (%d)",
             $qualifiedSrcTable,
@@ -253,10 +280,12 @@ function compareTables($srcTable, $destTable)
             $qualifiedDestTable,
             $numDestColumns
         ));
-        $missing = array_diff(array_keys($srcTableColumns), array_keys($destTableColumns));
-        if ( 0 != count($missing) ) {
-            $logger->err(sprintf("%s missing columns: %s", $qualifiedDestTable, implode(', ', $missing)));
-        }
+        return false;
+    }
+
+    $missing = array_diff(array_keys($srcTableColumns), array_keys($destTableColumns));
+    if ( 0 != count($missing) ) {
+        $logger->err(sprintf("%s missing columns: %s", $qualifiedDestTable, implode(', ', $missing)));
         return false;
     }
 
@@ -269,14 +298,14 @@ function compareTables($srcTable, $destTable)
                 sprintf("Dest missing %s type=%s key=%s", $k, $v['type'], $v['key_type'])
             );
             $mismatch = true;
-        } elseif ( $v != $destTableColumns[$k] ) {
+        } elseif ( $v != $destTableColumns[$k] && ! $scriptOptions['ignore-column-type'] ) {
             $logger->err(sprintf(
-                "Column mismatch %s: src type = %s key = %s, dest type = %s key = %s",
+                "Column mismatch %s: src type=%s %s, dest type=%s %s",
                 $k,
                 $v['type'],
-                $v['key_type'],
+                ( "" != $v['key_type'] ? "key=" . $v['key_type'] : "" ),
                 $destTableColumns[$k]['type'],
-                $destTableColumns[$k]['key_type']
+                ( "" != $destTableColumns[$k]['key_type'] ? "key=" . $destTableColumns[$k]['key_type'] : "" )
             ));
             $mismatch = true;
         }
@@ -380,24 +409,11 @@ function getTableRows($table, $schema)
     global $dbh, $logger;
     $tableName = "`$schema`.`$table`";
 
-    $where = array(
-        "table_schema = :schema",
-        "table_name = :tablename",
-    );
-
-    $sql = "SELECT
-table_rows
-FROM information_schema.tables
-" . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" );
-
-    $params = array(
-        ":schema" => $schema,
-        ":tablename"  => $table
-    );
+    $sql = "SELECT COUNT(*) AS table_rows FROM $tableName";
 
     try {
         $stmt = $dbh->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute();
     } catch ( Exception $e ) {
         $logger->err("Error retrieving table information for '$tableName': " . $e->getMessage());
         exit();
@@ -433,13 +449,34 @@ function compareTableData(
     $destTableName = "`$destSchema`.`$destTable`";
     $firstCol = current($srcTableColumns);
 
+    // Determine the columns to round, if any.
+
+    $roundColumns = array();
+    foreach ( $scriptOptions['round-columns'] as $column ) {
+        $parts = explode(',', $column);
+        $roundColumns[$parts[0]] = ( 2 == count($parts) ? $parts[1] : 0 );
+    }
+
+    // Generate the ON clause using on the source table columns. This ignores columns
+    // present in the destination table that do not exist in the source table.
+
     $constraints = array_map(
-        function ($c1, $c2) {
-            // Note the use of the null-safe operator <=>
-            return sprintf("src.%s <=> dest.%s", $c1, $c2);
+        function ($c1, $c2) use ($roundColumns) {
+            if ( array_key_exists($c1, $roundColumns) ) {
+                return sprintf(
+                    'ROUND(src.%s, %d) <=> ROUND(dest.%s, %d)',
+                    $c1,
+                    $roundColumns[$c1],
+                    $c2,
+                    $roundColumns[$c1]
+                );
+            } else {
+                // Note the use of the null-safe operator <=>
+                return sprintf('src.%s <=> dest.%s', $c1, $c2);
+            }
         },
         $srcTableColumns,
-        $destTableColumns
+        $srcTableColumns
     );
 
     $where = array(
@@ -453,8 +490,11 @@ function compareTableData(
     $sql = "
 SELECT src.*
 FROM $srcTableName src
-LEFT OUTER JOIN $destTableName dest ON (" . join(' AND ', $constraints) . ")
-" . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" );
+LEFT OUTER JOIN $destTableName dest ON (" . join("\nAND ", $constraints) . ")"
+        . ( 0 != count($where) ? "\nWHERE " . implode("\nAND ", $where) : "" )
+        . ( null !== $scriptOptions['num-missing-rows']
+            ? "\nLIMIT " . $scriptOptions['num-missing-rows']
+            : "" );
 
     $logger->debug($sql);
 
@@ -462,14 +502,10 @@ LEFT OUTER JOIN $destTableName dest ON (" . join(' AND ', $constraints) . ")
     $stmt->execute();
     $numRows = $stmt->rowCount();
 
-    $rowsDisplayed = 0;
-    $rowsToDisplay = ( null === $scriptOptions['num-missing-rows'] ? PHP_INT_MAX : $scriptOptions['num-missing-rows'] );
-
     if ( 0 != $numRows ) {
-        $logger->warning(sprintf("Missing %d rows in %s.%s", $numRows, $destTable, $destSchema));
-        while ( $rowsDisplayed < $rowsToDisplay && $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+        $logger->warning(sprintf("Missing %d rows in %s.%s", $numRows, $destSchema, $destTable));
+        while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
             $logger->warning(sprintf("Missing row: %s", print_r($row, 1)));
-            $rowsDisplayed++;
         }
     } else {
         $logger->notice("Identical");
@@ -506,8 +542,17 @@ Usage: {$argv[0]}
     -d, --dest-schema <destination_schema>
     The schema for the destination tables. If not specified the source schema will be used.
 
+    --ignore-column-count
+    Ignore the column count between tables as long as the source columns are present in the destination.
+
+    --ignore-column-count
+    Ignore the column types between tables, useful for comparing the effect of data type changes.
+
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
+
+    -r, --round-column <column>[,<digits>]
+    Round the values in the specified column before comparing. If <digits> is specified round to that number of digits (default 0). This is useful when comparing doubles or values that have been computed and may differ in decimal precision.
 
     -s, --source-schema <source_schema>
     The schema for the source tables.
