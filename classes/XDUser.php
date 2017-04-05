@@ -1195,6 +1195,9 @@ SQL;
         $this->_pdo->execute("DELETE FROM UserRoleParameters WHERE user_id=:user_id", array(
             ':user_id' => $this->_id,
         ));
+        $this->_pdo->execute("DELETE FROM user_acl_group_by_parameters WHERE user_id=:user_id", array(
+            ':user_id' => $this->_id
+        ));
         $this->_pdo->execute("DELETE FROM UserRoles WHERE user_id=:user_id", array(
             ':user_id' => $this->_id,
         ));
