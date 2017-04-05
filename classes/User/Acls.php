@@ -287,6 +287,30 @@ class Acls
         );
     }
 
+    public static function getDescriptorParamValues(XDUser $user, $aclName, $groupByName)
+    {
+        if (!isset($user)) {
+            throw new Exception('A valid user must be supplied.');
+        }
+        if (null == $user->getUserID()) {
+            throw new Exception('A valid user id must be supplied.');
+        }
+        if (!isset($aclName)) {
+            throw new Exception('A valid acl name is required.');
+        }
+        if (!isset($groupByName)) {
+            throw new Exception('A valid group by name is required.');
+        }
+        return self::_getDescriptorParamvalues(
+            DB::factory('database'),
+            $user,
+            $aclName,
+            $groupByName
+        );
+    }
+
+
+
     /**
      * @param iDatabase $db
      * @return array
@@ -738,6 +762,31 @@ SQL;
             return $rows[0]['value'];
         }
         return null;
+    }
+
+    private static function _getDescriptorParamValues(iDatabase $db, XDUser $user, $aclName, $groupByName)
+    {
+        $query = <<<SQL
+SELECT DISTINCT uagbp.value
+FROM user_acl_group_by_parameters uagbp
+  JOIN group_bys gb ON gb.group_by_id = uagbp.group_by_id
+  JOIN acls a ON a.acl_id = uagbp.acl_id
+WHERE uagbp.user_id = :user_id 
+  AND a.name = :acl_name 
+  AND gb.name = :group_by_name;
+SQL;
+        $rows = $db->query($query, array(
+            ':user_id' => $user->getUserID(),
+            ':acl_name' => $aclName,
+            ':group_by_name' => $groupByName
+        ));
+        if ($rows !==  false && count($rows) > 0) {
+            return array_reduce($rows, function($carry, $item) {
+                $carry []= $item['value'];
+                return $carry;
+            }, array());
+        }
+        return array();
     }
 
 }

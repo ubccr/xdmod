@@ -2,7 +2,9 @@
 
 	// Operation: user_admin->get_user_details
 
-   \xd_security\assertParameterSet('uid', RESTRICTION_UID);
+use User\Acls;
+
+\xd_security\assertParameterSet('uid', RESTRICTION_UID);
 
 	// -----------------------------
 
@@ -51,8 +53,8 @@
 	$userDetails['roles'] = $selected_user->getRoles();
 	$userDetails['acls'] = $selected_user->getAcls(true);
 
-	$userDetails['center_director_sites'] = $selected_user->enumCenterDirectorSites();
-	$userDetails['center_staff_sites'] = $selected_user->enumCenterStaffSites();
+	$userDetails['center_director_sites'] = Acls::getDescriptorParamValues($selected_user, ROLE_ID_CENTER_DIRECTOR, 'provider');
+	$userDetails['center_staff_sites'] = Acls::getDescriptorParamValues($selected_user, ROLE_ID_CENTER_STAFF, 'provider');
 
 	$returnData['user_information'] = $userDetails;
 	$returnData['status'] = 'success';
