@@ -1622,23 +1622,6 @@ SQL
 
     // ---------------------------
 
-    private function _getActiveProvider($role_id)
-    {
-
-        $active_provider = $this->_pdo->query("SELECT param_value FROM UserRoleParameters " .
-            "WHERE user_id=:user_id AND role_id=:role_id AND param_name='provider' AND is_active=1", array(
-            ':user_id' => $this->_id,
-            ':role_id' => $role_id,
-        ));
-
-        if (count($active_provider) > 0) {
-            return $active_provider[0]['param_value'];
-        } else {
-            return NULL;
-        }
-
-    }//_getActiveProvider
-
     public function getActiveRoleSettings()
     {
 
