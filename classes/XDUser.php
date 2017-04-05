@@ -1510,6 +1510,54 @@ SQL;
             ':is_primary' => $primary_flag,
         ));
 
+        $aclName = 'cd';
+
+        $aclCleanup = <<<SQL
+DELETE FROM user_acl_group_by_parameters 
+WHERE user_id = :user_id 
+    AND acl_id IN (
+        SELECT 
+            a.acl_id 
+        FROM acls a 
+        WHERE a.name = :acl_name
+    )
+    AND group_by_id IN (
+        SELECT 
+            gb.group_by_id
+        FROM group_bys gb 
+        WHERE gb.name = 'institution'
+    )
+SQL;
+
+        $aclInsert = <<<SQL
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)  
+SELECT inc.* 
+FROM (
+    SELECT 
+        :user_id AS user_id,
+        a.acl_id AS acl_id, 
+        gb.group_by_id AS group_by_id,
+        :value AS value 
+    FROM acls a, group_bys gb
+    WHERE a.name = :acl_name
+    AND gb.name = 'institution'
+) inc 
+LEFT JOIN user_acl_group_by_parameters cur 
+ON cur.user_id = inc.user_id
+AND cur.acl_id = inc.acl_id
+AND cur.group_by_id = inc.group_by_id
+AND cur.value = inc.value 
+WHERE cur.user_acl_parameter_id IS NULL;
+SQL;
+        $parameters = array(
+            ':user_id' => $this->_id,
+            ':acl_name' => $aclName
+        );
+        $this->_pdo->execute($aclCleanup, $parameters);
+
+        $this->_pdo->execute($aclInsert, $parameters);
+
+
     }//setInstitution
 
     // ---------------------------
