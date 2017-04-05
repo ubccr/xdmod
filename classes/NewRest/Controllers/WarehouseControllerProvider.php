@@ -255,10 +255,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             ->convert('action', "$conversions::toString");
 
         // Metrics routes
-
-        $controller
-            ->get("$root/query_groups", "$current::getQueryGroups");
-
         $controller
             ->get("$root/realms", "$current::getRealms");
 
@@ -668,29 +664,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         return $results;
 
-    }
-
-    /**
-     * Get the query groups available for the user's active role.
-     *
-     * Ported from: classes/REST/DataWarehouse/Explorer.php
-     *
-     * @param  Request $request The request used to make this call.
-     * @param  Application $app The router application.
-     * @return Response             A response containing the following info:
-     *                              success: A boolean indicating if the call was successful.
-     *                              results: An object containing data about
-     *                                       the query groups retrieved.
-     */
-    public function getQueryGroups(Request $request, Application $app)
-    {
-        $user = $this->authorize($request);
-
-        // Return the query groups that are available for the user's active role.
-        return $app->json(array(
-            'success' => true,
-            'results' => $user->getActiveRole()->getAllGroupNames(),
-        ));
     }
 
     /**
