@@ -52,8 +52,24 @@ use User\Acls;
 	$userDetails['is_active'] = $selected_user->getAccountStatus() ? 'active' : 'disabled' ;
 	$userDetails['roles'] = $selected_user->getAcls(true);
 
-	$userDetails['center_director_sites'] = Acls::getDescriptorParamValues($selected_user, ROLE_ID_CENTER_DIRECTOR, 'provider');
-	$userDetails['center_staff_sites'] = Acls::getDescriptorParamValues($selected_user, ROLE_ID_CENTER_STAFF, 'provider');
+	$userDetails['center_director_sites'] = array_reduce(
+		Acls::getDescriptorParamValues($selected_user, ROLE_ID_CENTER_DIRECTOR, 'provider'),
+        function($carry, $item) {
+            $carry []= array(
+                'is_primary' => false,
+                'provider' => $item
+            );
+            return $carry;
+        }, array());
+	$userDetails['center_staff_sites'] = array_reduce(
+	    Acls::getDescriptorParamValues($selected_user, ROLE_ID_CENTER_STAFF, 'provider'),
+        function($carry, $item) {
+            $carry []= array(
+                'is_primary' => false,
+                'provider' => $item
+            );
+            return $carry;
+        }, array());
 
 	$returnData['user_information'] = $userDetails;
 	$returnData['status'] = 'success';

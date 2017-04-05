@@ -287,6 +287,7 @@ class Acls
         );
     }
 
+
     public static function getDescriptorParamValues(XDUser $user, $aclName, $groupByName)
     {
         if (!isset($user)) {
@@ -301,7 +302,7 @@ class Acls
         if (!isset($groupByName)) {
             throw new Exception('A valid group by name is required.');
         }
-        return self::_getDescriptorParamvalues(
+        return self::_getDescriptorParamValues(
             DB::factory('database'),
             $user,
             $aclName,
