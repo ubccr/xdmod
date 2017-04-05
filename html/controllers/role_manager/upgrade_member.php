@@ -5,7 +5,6 @@
 // -----------------------------
 
 try {
-    $returnData = array();
 
     $member = XDUser::getUserByID($_POST['member_id']);
 
@@ -15,24 +14,23 @@ try {
 
     // -----------------------------
 
-    $activeUser = \xd_security\getLoggedInUser();
+    $active_user = \xd_security\getLoggedInUser();
 
-    $memberCenters = Centers::listCentersForUser($member);
-    $activeUserCenter = Centers::listCenterForUser($activeUser);
+    $member_organizations = $member->getOrganizationCollection();
 
-    $centerMismatch = !in_array($activeUserCenter, $memberCenters);
-    if ($centerMismatch === true) {
+    if (!in_array($active_user->getActiveOrganization(), $member_organizations)) {
         \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
-    $isCenterDirector = Centers::isCenterDirector($member, $activeUserCenter);
-    if ($isCenterDirector === true) {
+    if ($member->isCenterDirectorOfOrganization($active_user->getActiveOrganization()) == true) {
         \xd_response\presentError('User is already a center director of this center');
     }
-    Centers::upgradeStaffMember($member);
 
+    // -----------------------------
+
+    $active_user->getActiveRole()->upgradeStaffMember($member);
     $returnData['success'] = true;
-    $returnData['message'] = "has been upgraded to Center Director<br />(promoted by {$activeUser->getFormalName()})";
+    $returnData['message'] = "has been upgraded to Center Director<br />(promoted by {$active_user->getFormalName()})";
 
 } catch (SessionExpiredException $see) {
     // TODO: Refactor generic catch block below to handle specific exceptions,
@@ -45,3 +43,5 @@ try {
 }
 
 echo json_encode($returnData);
+
+?>

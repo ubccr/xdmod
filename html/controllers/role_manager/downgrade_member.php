@@ -13,20 +13,16 @@ if ($member == NULL) {
 // -----------------------------
 
 try {
-    $returnData = array();
 
-    $activeUser = \xd_security\getLoggedInUser();
+    $active_user = \xd_security\getLoggedInUser();
 
-    $memberCenters = Centers::listCenterForUser($member);
-    $activeUserCenters = Centers::listCenterForUser($activeUser);
-    foreach($memberCenters as $memberCenter) {
-        if (!in_array($memberCenter, $activeUserCenters)) {
-            \xd_response\presentError('center_mismatch_between_member_and_director');
-        }
+    $member_organizations = $member->getOrganizationCollection();
+
+    if (!in_array($active_user->getActiveOrganization(), $member_organizations)) {
+        \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
-    Centers::downgradeStaffMember($member, $activeUserCenters);
-
+    $active_user->getActiveRole()->downgradeStaffMember($member);
     $returnData['success'] = true;
 
 } catch (SessionExpiredException $see) {
@@ -38,3 +34,5 @@ try {
 }
 
 echo json_encode($returnData);
+
+?>
