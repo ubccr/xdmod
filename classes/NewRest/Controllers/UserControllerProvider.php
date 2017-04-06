@@ -2,9 +2,12 @@
 
 namespace NewRest\Controllers;
 
+use Centers;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use XDUser;
 
 /**
@@ -55,16 +58,38 @@ class UserControllerProvider extends BaseControllerProvider
     public function setupRoutes(Application $app, \Silex\ControllerCollection $controller)
     {
         $root = $this->prefix;
+        $class = get_class($this);
+        $conversions = '\NewRest\Utilities\Conversions';
 
-        $controller->get("$root/current", '\NewRest\Controllers\UserControllerProvider::getCurrentUser');
-        $controller->patch("$root/current", '\NewRest\Controllers\UserControllerProvider::updateCurrentUser');
+        $isAuthorized = function (Request $request, Application $app) {
+            $authorized = $this->isAuthorized($request, array('mgr'));
+            if (!$authorized) {
+                return $app->json(
+                    array(
+                        'success' => false,
+                        'message' => 'Not authorized for the requested operation.'
+                    ),
+                    401
+                );
+            }
+        };
+
+        $controller->get("$root/current", "$class::getCurrentUser");
+
+        $controller->patch("$root/current", "$class::updateCurrentUser")
+            ->before($isAuthorized);
+        $controller->post("$root/{uid}", "$class::updateUserById")
+            ->assert('uid', '^\d+')
+            ->convert('uid', "$conversions::toInt")
+            ->before($isAuthorized);
+
     }
 
     /**
      * Get details for the current user.
      *
-     * @param  Request     $request The request used to make this call.
-     * @param  Application $app     The router application.
+     * @param  Request $request The request used to make this call.
+     * @param  Application $app The router application.
      * @return array                Response data containing the following info:
      *                              success: A boolean indicating if the call was successful.
      *                              results: An object containing data about
@@ -85,8 +110,8 @@ class UserControllerProvider extends BaseControllerProvider
     /**
      * Update details about the current user.
      *
-     * @param  Request     $request The request used to make this call.
-     * @param  Application $app     The router application.
+     * @param  Request $request The request used to make this call.
+     * @param  Application $app The router application.
      * @return array                Response data containing the following info:
      *                              success: A boolean indicating if the call was successful.
      *                              message
@@ -163,8 +188,8 @@ class UserControllerProvider extends BaseControllerProvider
     /**
      * Update a user with new details.
      *
-     * @param  XDUser $user              The user to update.
-     * @param  array  $updatedProperties A mapping of properties to update
+     * @param  XDUser $user The user to update.
+     * @param  array $updatedProperties A mapping of properties to update
      *                                   to their new values.
      *
      * @throws Exception The new property values failed to save.
@@ -187,5 +212,96 @@ class UserControllerProvider extends BaseControllerProvider
         // Attempt to save the user's new details. This will throw an exception
         // if an error occurs.
         $user->saveUser();
+    }
+
+    public function updateUserById(Request $request, Application $app, $uid)
+    {
+        $currentUser = $this->getUserFromRequest($request);
+
+        $user = XDUser::getUserByID($uid);
+        if ($user == null) {
+            throw new NotFoundHttpException('Unable to find specified user.');
+        }
+
+        $updatingSelf = $currentUser->getUserID() == $user->getUserID();
+
+        // required parameters
+        $email = $this->getStringParam($request, 'email_address', true);
+        $firstName = $this->getStringParam($request, 'first_name', true);
+        $lastName = $this->getStringParam($request, 'last_name', true);
+        $assignedPerson = $this->getIntParam($request, 'assigned_user', true);
+        $isActive = $this->getBooleanParam($request, 'is_active', true);
+        $userType = $this->getIntParam($request, 'user_type', true);
+
+        // optional parameters
+        $rawRoles = $this->getStringParam($request, 'roles');
+        $institution = $this->getIntParam($request, 'institution');
+
+        $roles = isset($rawRoles) ? json_decode($rawRoles, true) : array();
+        $doesNotIncludeMgr = !in_array(ROLE_ID_MANAGER, $roles);
+        $isNotXSEDEUserType = $userType !== XSEDE_USER_TYPE;
+        $hasEmail = strlen($email) > 0;
+
+        if ($updatingSelf == true && $isActive == false) {
+            throw new NotAcceptableHttpException('You are not allowed to disable your own account.');
+        }
+
+        if ($updatingSelf == true && $doesNotIncludeMgr == true) {
+            throw new NotAcceptableHttpException('You are not allowed to revoke manager access from yourself.');
+        }
+
+        if ($isNotXSEDEUserType == true && $hasEmail == false) {
+            throw new NotAcceptableHttpException('This XDMoD user must have an e-mail set.');
+        }
+
+        $missing = array();
+        $requiredRoleProperties = array('mainRoles', 'centerDirectorSites', 'centerStaffSites');
+        foreach($requiredRoleProperties as $requiredRoleProperty) {
+            if (!isset($roles[$requiredRoleProperty])) {
+                $missing []= $requiredRoleProperty;
+            }
+        }
+
+        if (count($missing) > 0) {
+            $msg = 'Missing role information: '. implode(', ', $missing);
+            throw new NotAcceptableHttpException($msg);
+        }
+
+        $mainRoles = isset($roles['mainRoles']) ? $roles['mainRoles'] : array();
+        $centerDirectorSites = isset($roles['centerDirectorSites']) ? $roles['centerDirectorSites'] : array();
+        $centerStaffSites = isset($roles['centerStaffSites']) ? $roles['centerStaffSites'] : array();
+
+
+        $user->setFirstName($firstName);
+        $user->setLastName($lastName);
+        $user->setEmailAddress($email);
+        $user->setPersonID($assignedPerson);
+        $user->setAccountStatus($isActive);
+
+        if ($isNotXSEDEUserType == true) {
+            $user->setUserType($userType);
+        }
+
+        $user->setRoles($mainRoles);
+        Centers::setUserCentersByAcl($user, 'cd', $centerDirectorSites);
+        Centers::setUserCentersByAcl($user, 'cs', $centerStaffSites);
+
+        if (isset($institution)) {
+            Centers::setUserOrganization($user, $institution);
+        }
+
+        $user->saveUser();
+
+        $statusPrefix = $isNotXSEDEUserType ? '' : 'XSEDE';
+        $username = $user->getUsername();
+        $display = $isNotXSEDEUserType ? $username : $user->getXSEDEUsername();
+
+        return $app->json(array(
+            'success' => true,
+            'status' => $statusPrefix."User <b> $display</b> updated successfully",
+            'username' => $username,
+            'user_type' => $userType
+        ));
+
     }
 }

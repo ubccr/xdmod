@@ -135,6 +135,45 @@ class Centers
         );
     }
 
+    public static function setUserCentersByAcl(XDUser $user, $aclName, array $centerIds = array())
+    {
+        if (!isset($user)){
+            throw new Exception('A valid user must be provided.');
+        }
+        if (!isset($aclName)) {
+            throw new Exception('A valid acl name must be provided.');
+        }
+        if (!isset($centerIds)) {
+            throw new Exception('A valid set of center ids must be provided');
+        }
+        if (strlen($aclName) < 1) {
+            throw new Exception('A valid acl name must be provided.');
+        }
+
+        self::_setUserCenters(
+            DB::factory('database'),
+            $user,
+            $aclName,
+            $centerIds
+        );
+    }
+
+    public static function setUserOrganization(XDUser $user, $organizationId)
+    {
+        if (!isset($user)) {
+            throw new Exception('You must provide a valid user.');
+        }
+        if (!isset($organizationId)) {
+            throw new Exception('You must provide a valid organization id.');
+        }
+
+        self::_setUserOrganization(
+            DB::factory('database'),
+            $user,
+            $organizationId
+        );
+    }
+
     /**
      * @param iDatabase $db
      * @param XDUser $user
@@ -373,5 +412,66 @@ SQL;
         return null;
     }
 
+    private static function _setUserCenters(iDatabase $db, XDUser $user, $aclName, array $centerIds)
+    {
+        $delete = <<<SQL
+DELETE FROM user_acl_group_by_parameters
+WHERE   user_id = :user_id
+AND acl_id IN ( SELECT a.acl_id FROM acls a WHERE a.name = :acl_name)
+AND group_by_id IN (SELECT gb.group_by_id FROM group_bys gb WHERE gb.name = 'provider')
+AND value IN (:center_ids);
+SQL;
+        $insert = <<<SQL
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+  SELECT inc.*
+  FROM (
+         SELECT DISTINCT
+           :user_id       AS user_id,
+           a.acl_id       AS acl_id,
+           gb.group_by_id AS group_by_id,
+           o.id         AS value
+         FROM group_bys gb, modw.organization o, acls a 
+         WHERE gb.name = 'provider'
+               AND a.name = :acl_name
+               AND o.id IN (:center_ids)
+       ) inc
+    LEFT JOIN user_acl_group_by_parameters cur
+      ON cur.user_id = inc.user_id
+         AND cur.acl_id = inc.acl_id
+         AND cur.group_by_id = inc.group_by_id
+         AND cur.value = inc.value
+  WHERE cur.user_acl_parameter_id IS NULL;
+SQL;
+        $handle = $db->handle();
+
+        $quotedCenterIds = array_reduce($centerIds, function ($carry, $item) use ($handle) {
+            $carry [] = $handle->quote($item, PDO::PARAM_STR);
+            return $carry;
+        }, array());
+
+        $params = array(
+            ':user_id' => $user->getUserID(),
+            ':acl_name' => $aclName,
+            ':center_ids' => $quotedCenterIds
+        );
+
+        // First remove previous centers
+        $db->execute($delete, $params);
+
+        // Then set the ones provided.
+        $db->execute($insert, $params);
+    }
+
+    private static function _setUserOrganization(iDatabase $db, XDUser $user, $organizationId)
+    {
+        $query = <<<SQL
+UPDATE Users set organization_id = :organization_id WHERE id = :user_id;
+SQL;
+
+        $db->execute($query, array(
+            ':organization_id' => $organizationId,
+            ':user_id' => $user->getUserID()
+        ));
+    }
 
 }
