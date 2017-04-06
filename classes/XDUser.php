@@ -1020,23 +1020,36 @@ SQL;
 
         foreach ($this->_roles as $role) {
             $roleId = $this->_getRoleID($role);
-            $this->_pdo->execute(
-                "INSERT INTO UserRoles VALUES(:id, :roleId, '0', '0')",
-                array('id' => $this->_id,
-                    'roleId' => $roleId)
-            );
+            if ($roleId !== null) {
+                $this->_pdo->execute(
+                    "INSERT INTO UserRoles VALUES(:id, :roleId, '0', '0')",
+                    array('id' => $this->_id,
+                        'roleId' => $roleId)
+                );
+            }
         }
-        $primaryRoleId = $this->_getRoleID($this->_primary_role->getIdentifier());
+        $primaryRoleIdentifier = $this->_primary_role->getIdentifier();
+        $primaryRoleId = $this->_getRoleID($primaryRoleIdentifier);
+        if ($primaryRoleId == null) {
+            throw new Exception("Unable to find id for role $primaryRoleIdentifier");
+        }
         $this->_pdo->execute(
             "UPDATE UserRoles SET is_primary='1' WHERE user_id=:id AND role_id=:roleId",
             array('id' => $this->_id, 'roleId' => $primaryRoleId)
         );
 
         // If the updater (e.g. Manager) has pulled out the (recently) active role for this user, reassign the active role to the primary role.
+        $active_role_id = null;
+        $activeRoleIdentifier = $this->_active_role->getIdentifier();
+        if (in_array($activeRoleIdentifier, $this->_roles)) {
+            $active_role_id = $this->_getRoleID($activeRoleIdentifier);
+            if ($active_role_id == null) {
+                throw new Exception("Unable to retrieve id for role $activeRoleIdentifier");
+            }
+        } else {
+            $active_role_id = $primaryRoleId;
+        }
 
-        $active_role_id = (in_array($this->_active_role->getIdentifier(), $this->_roles)) ?
-            $this->_getRoleID($this->_active_role->getIdentifier()) :
-            $primaryRoleId;
 
 
         $this->_pdo->execute(
@@ -1161,9 +1174,10 @@ SQL;
         $roleResults = $this->_pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
             ':abbrev' => $role_abbrev,
         ));
-
-        return $roleResults[0]['role_id'];
-
+        if ($roleResults !== false && count($roleResults) > 0) {
+            return $roleResults[0]['role_id'];
+        }
+        return null;
     }//_getRoleID
 
     // ---------------------------
@@ -1680,6 +1694,9 @@ SQL
         }
 
         $role_id = $this->_getRoleID($role);
+        if (null === $role_id) {
+            throw new Exception("Unable to retrieve id for role: $role");
+        }
         $acl = Acls::getAclByName($role);
 
         // -------------------------------------------------------
