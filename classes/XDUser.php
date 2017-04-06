@@ -1566,13 +1566,17 @@ AND cur.group_by_id = inc.group_by_id
 AND cur.value = inc.value 
 WHERE cur.user_acl_parameter_id IS NULL;
 SQL;
-        $parameters = array(
+
+        $this->_pdo->execute($aclCleanup, array(
             ':user_id' => $this->_id,
             ':acl_name' => $aclName
-        );
-        $this->_pdo->execute($aclCleanup, $parameters);
+        ));
 
-        $this->_pdo->execute($aclInsert, $parameters);
+        $this->_pdo->execute($aclInsert,array(
+            ':user_id' => $this->_id,
+            ':acl_name' => $aclName,
+            ':value' => $institution_id
+        ));
 
 
     }//setInstitution
