@@ -209,31 +209,6 @@
                 "nullable": true,
                 "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
             },{
-                "name": "task_local_charge_xdsu",
-                "type": "decimal(18,0)",
-                "nullable": true,
-                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
-            },{
-                "name": "task_local_charge_nu",
-                "type": "decimal(18,0)",
-                "nullable": true,
-                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
-            },{
-                "name": "task_adjusted_charge_su",
-                "type": "decimal(18,0)",
-                "nullable": true,
-                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
-            },{
-                "name": "task_adjusted_charge_xdsu",
-                "type": "decimal(18,0)",
-                "nullable": true,
-                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
-            },{
-                "name": "task_adjusted_charge_nu",
-                "type": "decimal(18,0)",
-                "nullable": true,
-                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
-            },{
                 "name": "sum_local_charge_xdsu_squared",
                 "type": "decimal(36,4)",
                 "nullable": true,
