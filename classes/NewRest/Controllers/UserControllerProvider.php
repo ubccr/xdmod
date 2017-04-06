@@ -238,11 +238,11 @@ class UserControllerProvider extends BaseControllerProvider
         $institution = $this->getIntParam($request, 'institution');
 
         $roles = isset($rawRoles) ? json_decode($rawRoles, true) : array();
-        $doesNotIncludeMgr = !in_array(ROLE_ID_MANAGER, $roles);
+        $doesNotIncludeMgr = !in_array(ROLE_ID_MANAGER, $roles['mainRoles']);
         $isNotXSEDEUserType = $userType !== XSEDE_USER_TYPE;
         $hasEmail = strlen($email) > 0;
 
-        if ($updatingSelf == true && $isActive == false) {
+        if ($updatingSelf == true && isset($isActive) && $isActive == false) {
             throw new NotAcceptableHttpException('You are not allowed to disable your own account.');
         }
 
