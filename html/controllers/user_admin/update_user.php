@@ -125,7 +125,7 @@
          
          if (isset($role_config['mainRoles']))     $user_to_update->setRoles($role_config['mainRoles']);
       
-         if (isset($role_config['primaryRole']))   $user_to_update->setPrimaryRole($role_config['primaryRole']);
+         if (isset($role_config['primaryRole']) && !empty($role_config['primaryRole']))   $user_to_update->setPrimaryRole($role_config['primaryRole']);
          
          // -----------------------------
             
