@@ -227,13 +227,13 @@ class UserControllerProvider extends BaseControllerProvider
 
         // required parameters
         $email = $this->getStringParam($request, 'email_address', true);
-        $firstName = $this->getStringParam($request, 'first_name', true);
-        $lastName = $this->getStringParam($request, 'last_name', true);
-        $assignedPerson = $this->getIntParam($request, 'assigned_user', true);
-        $isActive = $this->getBooleanParam($request, 'is_active', true);
-        $userType = $this->getIntParam($request, 'user_type', true);
 
         // optional parameters
+        $firstName = $this->getStringParam($request, 'first_name');
+        $lastName = $this->getStringParam($request, 'last_name');
+        $assignedPerson = $this->getIntParam($request, 'assigned_user');
+        $isActive = $this->getBooleanParam($request, 'is_active');
+        $userType = $this->getIntParam($request, 'user_type');
         $rawRoles = $this->getStringParam($request, 'roles');
         $institution = $this->getIntParam($request, 'institution');
 
@@ -256,14 +256,14 @@ class UserControllerProvider extends BaseControllerProvider
 
         $missing = array();
         $requiredRoleProperties = array('mainRoles', 'centerDirectorSites', 'centerStaffSites');
-        foreach($requiredRoleProperties as $requiredRoleProperty) {
+        foreach ($requiredRoleProperties as $requiredRoleProperty) {
             if (!isset($roles[$requiredRoleProperty])) {
-                $missing []= $requiredRoleProperty;
+                $missing [] = $requiredRoleProperty;
             }
         }
 
         if (count($missing) > 0) {
-            $msg = 'Missing role information: '. implode(', ', $missing);
+            $msg = 'Missing role information: ' . implode(', ', $missing);
             throw new NotAcceptableHttpException($msg);
         }
 
@@ -271,12 +271,22 @@ class UserControllerProvider extends BaseControllerProvider
         $centerDirectorSites = isset($roles['centerDirectorSites']) ? $roles['centerDirectorSites'] : array();
         $centerStaffSites = isset($roles['centerStaffSites']) ? $roles['centerStaffSites'] : array();
 
-
-        $user->setFirstName($firstName);
-        $user->setLastName($lastName);
         $user->setEmailAddress($email);
-        $user->setPersonID($assignedPerson);
-        $user->setAccountStatus($isActive);
+
+        if (isset($firstName)) {
+            $user->setFirstName($firstName);
+        }
+        if (isset($lastName)) {
+            $user->setLastName($lastName);
+        }
+        if (isset($assignedPerson)) {
+            $user->setPersonID($assignedPerson);
+        }
+        if (isset($isActive)) {
+            $user->setAccountStatus($isActive);
+        }
+
+
 
         if ($isNotXSEDEUserType == true) {
             $user->setUserType($userType);
@@ -298,7 +308,7 @@ class UserControllerProvider extends BaseControllerProvider
 
         return $app->json(array(
             'success' => true,
-            'status' => $statusPrefix."User <b> $display</b> updated successfully",
+            'status' => $statusPrefix . "User <b> $display</b> updated successfully",
             'username' => $username,
             'user_type' => $userType
         ));
