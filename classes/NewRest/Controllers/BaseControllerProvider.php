@@ -11,9 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use DataWarehouse\Query\Exceptions\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
 /**
@@ -223,7 +222,8 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                         missing.
      * @return \Symfony\Component\HttpFoundation\JsonResponse if and only if
      *                         the user is missing a token or an ip.
-     * @throws AccessDeniedException
+     *
+     * @throws Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
     public static function authenticate(Request $request, Application $app)
     {
@@ -234,7 +234,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         $user = Authentication::authenticateUser($request);
         if ($user === null) {
-            throw new AccessDeniedException('You must be logged in to access this endpoint.', 401);
+            throw new UnauthorizedHttpException('xdmod', 'You must be logged in to access this endpoint.'); // 401 from framework
         } else {
             $request->attributes->set(BaseControllerProvider::_USER, $user);
         }
@@ -260,7 +260,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                        is false.
      * @return \XDUser The user that was checked and is authorized according to
      *                the given parameters.
-     * @throws AccessDeniedException
+     *
+     * @throws  Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+     *          Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
     public function authorize(Request $request, array $requirements = null, $blacklist = false)
     {
@@ -283,9 +285,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         // limits with their current permissions.
         if (!$success) {
             if ($user->isPublicUser()) {
-                throw new AccessDeniedException($message, 401);
+                throw new UnauthorizedHttpException('xdmod', $message); // 401 from framework
             } else {
-                throw new AccessDeniedHttpException($message, 403);
+                throw new AccessDeniedHttpException($message); // 403 from framework
             }
         }
 
