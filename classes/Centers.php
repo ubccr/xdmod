@@ -444,10 +444,10 @@ INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
 SQL;
         $handle = $db->handle();
 
-        $quotedCenterIds = array_reduce($centerIds, function ($carry, $item) use ($handle) {
+        $quotedCenterIds = implode(',', array_reduce($centerIds, function ($carry, $item) use ($handle) {
             $carry [] = $handle->quote($item, PDO::PARAM_STR);
             return $carry;
-        }, array());
+        }, array()));
 
         $params = array(
             ':user_id' => $user->getUserID(),
@@ -456,7 +456,7 @@ SQL;
         );
 
         // First remove previous centers
-        $db->execute($delete, $params);
+        $deleted = $db->execute($delete, $params);
 
         // Then set the ones provided.
         $db->execute($insert, $params);

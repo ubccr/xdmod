@@ -3135,4 +3135,14 @@ SQL;
 
         return null;
     }
+
+    public function getOrganizationId()
+    {
+        return $this->_organizationID;
+    }
+
+    public function setOrganizationId($organizationId)
+    {
+        $this->_organizationID = $organizationId;
+    }
 }//XDUser

@@ -297,7 +297,7 @@ class UserControllerProvider extends BaseControllerProvider
         Centers::setUserCentersByAcl($user, 'cs', $centerStaffSites);
 
         if (isset($institution)) {
-            Centers::setUserOrganization($user, $institution);
+            $user->setOrganizationId($institution);
         }
 
         $user->saveUser();
