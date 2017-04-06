@@ -120,6 +120,8 @@
             "enabled": true,
             "truncate_destination": false,
             "table_prefix": "jobfact_by_",
+            "#": "Be sure to exclude the same resources as the ingestor or their records will be deleted here",
+            "exclude_resource_codes": ["OSG", "TACC-WRANGLER"],
             "aggregation_units": ["day", "month", "quarter", "year"]
         }
     ]
