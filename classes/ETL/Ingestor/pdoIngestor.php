@@ -67,6 +67,12 @@ class pdoIngestor extends aIngestor
     // Maximum number of records to import at once
     const MAX_RECORDS_PER_INFILE = 250000;
 
+    // The number of records per load file to use when calculating the write timeout
+    const NET_WRITE_TIMEOUT_RECORD_CHUNK = 250000;
+
+    // The number of seconds to allot per file per record chunk
+    const NET_WRITE_TIMEOUT_SECONDS_PER_FILE_CHUNK = 60;
+
     // ------------------------------------------------------------------------------------------
 
     // An 2-dimensional associative array where the keys are ETL table definition keys and the
@@ -660,6 +666,7 @@ class pdoIngestor extends aIngestor
         $infileList = array();
         $outFdList = array();
         $loadStatementList = array();
+        $numDestinationTables = count($this->etlDestinationTableList);
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
@@ -751,6 +758,42 @@ class pdoIngestor extends aIngestor
             $pdo = $this->sourceHandle->handle();
             $originalBufferedQueryAttribute = $pdo->getAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY);
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+
+            // On a busy server, it is possible that the mysql server will close the
+            // connection on us if we are using an unbuffered query and the loading of the
+            // data takes longer than the net_write_timeout (See
+            // https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_net_write_timeout)
+            //
+            // This may happen using an unbuffered query because the server writes result
+            // data to the connection (presumably there is some buffer) and the client
+            // reads the data, transforms it, and adds it to a load file. When the number
+            // of records hits a threshold, the files are loaded and the process does not
+            // read from the connection during loading. If loading takes longer than the
+            // net_write_timeout, the server will close the connection on us. The client
+            // will read whatever is left in the result buffer and assume that all is well
+            // until another operation is attempted on the connection at which point we
+            // will get the ambiguous "MySQL server has gone away" error (see
+            // https://dev.mysql.com/doc/refman/5.7/en/gone-away.html).
+
+            $result = $this->sourceHandle->query(
+                "SHOW SESSION VARIABLES WHERE Variable_name = 'net_write_timeout'"
+            );
+            if ( 0 != count($result) ) {
+                $currentTimeout = $result[0]['Value'];
+                $this->logger->debug("Current net_write_timeout = $currentTimeout");
+            }
+
+            // Base the new timeout on the number of tables we are loading data into and the
+            // number of records that we are loading.
+
+            $newTimeout = $numDestinationTables
+                * (self::MAX_RECORDS_PER_INFILE / self::NET_WRITE_TIMEOUT_RECORD_CHUNK)
+                * self::NET_WRITE_TIMEOUT_SECONDS_PER_FILE_CHUNK;
+
+            if ( $newTimeout > $currentTimeout ) {
+                $sql = sprintf('SET SESSION net_write_timeout = %d', $newTimeout);
+                $this->executeSqlList(array($sql), $this->sourceEndpoint);
+            }
         }
 
         // The number of source records processed during the load phase.
@@ -855,6 +898,9 @@ class pdoIngestor extends aIngestor
                 // If we've reached the maximum number of records per chunk, load the data.
 
                 if ( $numRecordsInFile == self::MAX_RECORDS_PER_INFILE ) {
+                    $numFilesLoaded = 0;
+                    $loadFileStart = microtime(true);
+
                     foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                         try {
                             $this->_dest_helper->executeStatement($loadStatement);
@@ -876,7 +922,11 @@ class pdoIngestor extends aIngestor
                             throw $e;
                         }
                     }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
+
+                    $this->logger->debug(sprintf('Loaded %d files in %ds', $numFilesLoaded, microtime(true) - $loadFileStart));
+                    $loadFileStart = microtime(true);
                     $numRecordsInFile = 0;
+
                 }  // if ( $numRecordsInFile == self::MAX_RECORDS_PER_INFILE )
 
             } // foreach ( $record )
@@ -886,6 +936,9 @@ class pdoIngestor extends aIngestor
         // Process the final chunk.
 
         if ( $numRecordsInFile > 0 ) {
+            $numFilesLoaded = 0;
+            $loadFileStart = microtime(true);
+
             foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                 try {
                     $this->_dest_helper->executeStatement($loadStatement);
@@ -908,6 +961,9 @@ class pdoIngestor extends aIngestor
                 @unlink($infileList[$etlTableKey]);
 
             }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
+
+            $this->logger->debug(sprintf('Loaded %d files in %ds', $numFilesLoaded, microtime(true) - $loadFileStart));
+
         }  // if ( $numRecordsInFile)
 
         $this->logger->info(
