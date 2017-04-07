@@ -3,6 +3,7 @@
 namespace User\Roles;
 
 use CCR\DB;
+use Centers;
 
 /*
  * 'Center Director' Role:
@@ -152,24 +153,6 @@ class CenterDirectorRole extends \User\AuthenticatedRole
 
         $pdo = DB::factory('database');
 
-        $is_primary_role = (
-            ($member->getPrimaryRole()->getIdentifier() == ROLE_ID_CENTER_DIRECTOR) &&
-            ($member->getPrimaryOrganization() == $this->getActiveCenter())
-        );
-
-        if ($is_primary_role == true) {
-            throw new \Exception("Unable to revoke, as this user's default<br />role is Center Director of this Center");
-        }
-
-        $active_role_failover_needed = (
-            ($member->getActiveRole()->getIdentifier() == ROLE_ID_CENTER_DIRECTOR) &&
-            ($member->getActiveOrganization() == $this->getActiveCenter())
-        );
-
-        if ($active_role_failover_needed == true) {
-            $member->assignActiveRoleToPrimary();
-        }
-
         $pdo->execute(
             "DELETE FROM UserRoleParameters WHERE user_id=:user_id AND role_id=:role_id " .
                 "AND param_name=:param_name AND param_value=:param_value ",
@@ -182,7 +165,7 @@ class CenterDirectorRole extends \User\AuthenticatedRole
         );
 
 
-        $center_director_affiliations = $member->getOrganizationCollection(ROLE_ID_CENTER_DIRECTOR);
+        $center_director_affiliations = Centers::listCentersForUser($member, ROLE_ID_CENTER_DIRECTOR);
 
         if (count($center_director_affiliations) == 0) {
 
