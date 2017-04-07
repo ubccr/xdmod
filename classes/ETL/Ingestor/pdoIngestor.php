@@ -778,6 +778,8 @@ class pdoIngestor extends aIngestor
             $result = $this->sourceHandle->query(
                 "SHOW SESSION VARIABLES WHERE Variable_name = 'net_write_timeout'"
             );
+
+            $currentTimeout = 0;
             if ( 0 != count($result) ) {
                 $currentTimeout = $result[0]['Value'];
                 $this->logger->debug("Current net_write_timeout = $currentTimeout");
