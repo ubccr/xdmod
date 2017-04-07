@@ -1679,9 +1679,6 @@ SQL
             ));
         // =======================================
 
-        $active_is_in_set = false;
-        $primary_is_in_set = false;
-
         $active_organization = NULL;
 
         foreach ($organization_ids as $organization_id => $config) {
@@ -1691,17 +1688,14 @@ SQL
 
             if (($config['active'] == true) && ($reassignActiveToPrimary == false)) {
                 $active_flag = 1;
-                $active_is_in_set = true;
             }
 
             if ($config['primary'] == true) {
 
                 $primary_flag = 1;
-                $primary_is_in_set = true;
 
                 if ($reassignActiveToPrimary == true) {
                     $active_flag = 1;
-                    $active_is_in_set = true;
                 }
 
             }
@@ -1747,16 +1741,6 @@ SQL
                     ':value' => $organization_id
                 ));
         }//foreach
-
-        // =======================================
-
-        if ($active_is_in_set == true) {
-            $this->setActiveRole($role, $active_organization);
-        }
-
-        if ($primary_is_in_set == true) {
-            $this->setPrimaryRole($role);
-        }
 
     }//setOrganizations
 
