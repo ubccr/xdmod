@@ -2603,8 +2603,6 @@ SQL;
             // Add PI role to the to-be-created user
             $user_role_set[] = ROLE_ID_PRINCIPAL_INVESTIGATOR;
 
-            $user->setActiveRole(ROLE_ID_PRINCIPAL_INVESTIGATOR);
-
             $cc_org_id = self::isCampusChampion($person_id);
 
             if ($cc_org_id !== false) {
