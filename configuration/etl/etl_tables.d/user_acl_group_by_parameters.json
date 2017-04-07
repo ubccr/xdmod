@@ -1,0 +1,40 @@
+{
+  "table_definition": {
+    "name": "user_acl_group_by_parameters",
+    "engine": "InnoDB",
+    "comment": "Tracks which `Users` have which `acls`",
+    "columns": [
+      {
+        "name": "user_acl_parameter_id",
+        "type": "integer",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "user_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "acl_id",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "name": "value",
+        "type": "integer",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "user_acl_parameter_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}
