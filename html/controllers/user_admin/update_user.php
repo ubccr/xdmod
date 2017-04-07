@@ -109,7 +109,7 @@
 	
 	  $role_config = json_decode($_POST['roles'], true);
 	  
-	  $required_role_config_items = array('mainRoles', 'primaryRole', 
+	  $required_role_config_items = array('mainRoles', 'primaryRole',
 	                                      'centerDirectorSites', 'primaryCenterDirectorSite', 
 	                                      'centerStaffSites', 'primaryCenterStaffSite');
 	  
@@ -124,9 +124,6 @@
          if (empty($role_config['mainRoles']))     $role_config['mainRoles'] = array();
          
          if (isset($role_config['mainRoles']))     $user_to_update->setRoles($role_config['mainRoles']);
-      
-         if (isset($role_config['primaryRole']) && !empty($role_config['primaryRole']))   $user_to_update->setPrimaryRole($role_config['primaryRole']);
-         
          // -----------------------------
             
          $assignActiveToPrimary = false;
