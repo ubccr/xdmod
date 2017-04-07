@@ -1586,23 +1586,6 @@ SQL
 
     /*
      *
-     * @function getActiveRoleID
-     *
-     * @returns string (the id of the active role) (see ROLES section in constants.php)
-     *
-     */
-
-    public function getActiveRoleID()
-    {
-
-        return $this->_active_role->getIdentifier();
-
-    }//getActiveRoleID
-
-    // ---------------------------
-
-    /*
-     *
      * @function setOrganizations
      *
      * @param array $organization_ids  (an array of elements of the form 'organization_id' => '0 or 1')
