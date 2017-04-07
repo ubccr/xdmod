@@ -389,38 +389,12 @@ class XDUser
 
     public static function getPublicUser()
     {
-        /*$pubAcl = Acls::getAclByName(ROLE_ID_PUBLIC);
-        $acl = isset($pubAcl) ? $pubAcl : new Acl(array('name' => ROLE_ID_PUBLIC));*/
-
         if (isset(self::$_publicUser)) {
             return self::$_publicUser;
         } else {
             self::$_publicUser = self::getUserByUserName('Public User');
             return self::$_publicUser;
         }
-
-
-        /*$user = new self (
-               'Public User',            // Username
-               NULL,                     // Password
-               NO_EMAIL_ADDRESS_SET,     // E-Mail Address
-               'Public',                 // First Name
-               '',                       // Middle Name
-               'User',                   // Last Name
-               array(ROLE_ID_PUBLIC),    // Role Set
-               ROLE_ID_PUBLIC,           // Primary Role
-               NULL,                     // Organization ID
-               NULL                      // Person ID
-        );
-        $user->setAcls(array(
-            ROLE_ID_PUBLIC => $acl
-        ));*/
-
-        //$user->setActiveRole(ROLE_ID_PUBLIC);
-        //$user->setPrimaryRole(ROLE_ID_PUBLIC);
-
-        //return $user;
-
     }//getPublicUser
 
     // ---------------------------
