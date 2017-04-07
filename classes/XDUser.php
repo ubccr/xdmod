@@ -1601,38 +1601,6 @@ SQL
 
     // ---------------------------
 
-    public function getActiveRoleSettings()
-    {
-
-        $mainRole = $this->_pdo->query("SELECT r.abbrev, r.role_id FROM Roles AS r, UserRoles AS ur WHERE r.role_id = ur.role_id AND ur.user_id=:user_id AND ur.is_active=1", array(
-            ':user_id' => $this->_id,
-        ));
-
-        $mainRoleID = $mainRole[0]['role_id'];
-        $mainRole = $mainRole[0]['abbrev'];
-
-        $activeCenter = -1;
-
-        if ($mainRole == ROLE_ID_CENTER_DIRECTOR || $mainRole == ROLE_ID_CENTER_STAFF) {
-
-            $activeCenter = $this->_pdo->query("SELECT param_value FROM UserRoleParameters WHERE user_id=:user_id AND role_id=:role_id AND is_active=1", array(
-                ':user_id' => $this->_id,
-                ':role_id' => $mainRoleID,
-            ));
-
-            if (count($activeCenter) > 0)
-                $activeCenter = $activeCenter[0]['param_value'];
-            else
-                $activeCenter = -1;
-
-        }
-
-        return array('main_role' => $mainRole, 'active_center' => $activeCenter);
-
-    }//getActiveRoleSettings
-
-    // ---------------------------
-
     /*
      *
      * @function setOrganizations
