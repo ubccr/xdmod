@@ -68,32 +68,9 @@ try {
     $newuser->saveUser();
 
     // =============================
+    $newuser->setOrganizations($role_config['centerDirectorSites'], ROLE_ID_CENTER_DIRECTOR);
 
-    $centerDirectorConfig = array();
-
-    foreach ($role_config['centerDirectorSites'] as $cdSite) {
-        $primary = ($cdSite == $role_config['primaryCenterDirectorSite']);
-        $centerDirectorConfig[$cdSite] = array(
-            'active'  => $primary,
-            'primary' => $primary,
-        );
-    }
-
-    $newuser->setOrganizations($centerDirectorConfig, ROLE_ID_CENTER_DIRECTOR);
-
-    // -----------------------------
-
-    $centerStaffConfig = array();
-
-    foreach ($role_config['centerStaffSites'] as $csSite) {
-        $primary = ($csSite == $role_config['primaryCenterStaffSite']);
-        $centerStaffConfig[$csSite] = array(
-            'active' => $primary,
-            'primary' => $primary,
-        );
-    }//foreach
-
-    $newuser->setOrganizations($centerStaffConfig, ROLE_ID_CENTER_STAFF);
+    $newuser->setOrganizations($role_config['centerStaffSites'], ROLE_ID_CENTER_STAFF);
 
     // =============================
 

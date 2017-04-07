@@ -1679,26 +1679,7 @@ SQL
             ));
         // =======================================
 
-        foreach ($organization_ids as $organization_id => $config) {
-
-            $active_flag = 0;
-            $primary_flag = 0;
-
-            if (($config['active'] == true) && ($reassignActiveToPrimary == false)) {
-                $active_flag = 1;
-            }
-
-            if ($config['primary'] == true) {
-
-                $primary_flag = 1;
-
-                if ($reassignActiveToPrimary == true) {
-                    $active_flag = 1;
-                }
-
-            }
-
-
+        foreach ($organization_ids as $organization_id ) {
 
             $insertStatement = "INSERT INTO UserRoleParameters " .
                 "(user_id, role_id, param_name, param_op, param_value, is_primary, is_active, promoter) " .
@@ -1708,8 +1689,8 @@ SQL
                 ':user_id' => $this->_id,
                 ':role_id' => $role_id,
                 ':param_value' => $organization_id,
-                ':is_primary' => $primary_flag,
-                ':is_active' => $active_flag,
+                ':is_primary' => false,
+                ':is_active' => false,
             ));
             $this->_pdo->execute(<<<SQL
 INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value) 

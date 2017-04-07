@@ -125,96 +125,11 @@
          
          if (isset($role_config['mainRoles']))     $user_to_update->setRoles($role_config['mainRoles']);
          // -----------------------------
-            
-         $assignActiveToPrimary = false;
-         
-         if (!in_array($user_to_update->getActiveRoleID(), $role_config['mainRoles'])) {
-       
-            // Active role was pulled out -- need to reassign the active role to the primary role  
-            
-            $assignActiveToPrimary = true;
-      
-         }
-         
-         // -----------------------------
-
-         $activeRoleConfig['active_cd_center'] = -1;
-         $activeRoleConfig['active_cs_center'] = -1;
-
-         if (($activeRoleConfig['main_role'] == ROLE_ID_CENTER_DIRECTOR) || ($activeRoleConfig['main_role'] == ROLE_ID_CENTER_STAFF)) {
-         
-            if ($activeRoleConfig['main_role'] == ROLE_ID_CENTER_DIRECTOR) { $site_ref = 'centerDirectorSites'; $active_center_ref = 'active_cd_center'; }
-            if ($activeRoleConfig['main_role'] == ROLE_ID_CENTER_STAFF)    { $site_ref = 'centerStaffSites';    $active_center_ref = 'active_cs_center'; }
-            
-            $activeCenterPersists = in_array($activeRoleConfig['active_center'], $role_config[$site_ref]);
-            
-            if ($activeCenterPersists == true) {
-
-               $activeRoleConfig[$active_center_ref] = $activeRoleConfig['active_center'];
-
-            }
-            else {
-
-               if ($role_config['primaryRole'] == ROLE_ID_CENTER_DIRECTOR) {
-                  $activeRoleConfig['active_cd_center'] = $role_config['primaryCenterDirectorSite'];
-               }
-               elseif ($role_config['primaryRole'] == ROLE_ID_CENTER_STAFF) {
-                  $activeRoleConfig['active_cs_center'] = $role_config['primaryCenterStaffSite'];  
-               }
-               else {
-                  $user_to_update->setActiveRole($role_config['primaryRole']);     
-               }
-               
-            }
-                           
-         }//if (active role was formerly CENTER_DIRECTOR or CENTER_STAFF)
-
-         // -----------------------------                  
-
-         $centerDirectorConfig = array();
-                           
-         foreach ($role_config['centerDirectorSites'] as $cdSite) {
-            
-            $active = ($activeRoleConfig['active_cd_center'] == $cdSite);
-            $primary = ($cdSite == $role_config['primaryCenterDirectorSite']);
-            
-            $centerDirectorConfig[$cdSite] = array('active' => $active, 'primary' => $primary);
-         
-         }//foreach
-         
-         $user_to_update->setOrganizations($centerDirectorConfig, ROLE_ID_CENTER_DIRECTOR, $assignActiveToPrimary);	
+         $user_to_update->setOrganizations($role_config['centerDirectorSites'], ROLE_ID_CENTER_DIRECTOR, false);
  
          // -----------------------------
-      
-         $centerStaffConfig = array();
-                  
-         foreach ($role_config['centerStaffSites'] as $csSite) {
-               
-            $active = ($activeRoleConfig['active_cs_center'] == $csSite);
-            $primary = ($csSite == $role_config['primaryCenterStaffSite']);
-               
-            $centerStaffConfig[$csSite] = array('active' => $active, 'primary' => $primary);
-            
-         }//foreach
-         
-         $user_to_update->setOrganizations($centerStaffConfig, ROLE_ID_CENTER_STAFF, $assignActiveToPrimary);	  
-         
-         // -----------------------------         
-         
-         if (!in_array($user_to_update->getActiveRoleID(), $role_config['mainRoles'])) {
-       
-            // Active role was pulled out -- need to reassign the active role to the primary role  
-
-            $organization_param = NULL;
-            
-            if ($role_config['primaryRole'] == ROLE_ID_CENTER_DIRECTOR) { $organization_param = $role_config['primaryCenterDirectorSite']; }
-            if ($role_config['primaryRole'] == ROLE_ID_CENTER_STAFF)    { $organization_param = $role_config['primaryCenterStaffSite'];    }
-
-            $user_to_update->setActiveRole($role_config['primaryRole'], $organization_param);     
-  
-         }
-         
-	  }
+         $user_to_update->setOrganizations($role_config['centerStaffSites'], ROLE_ID_CENTER_STAFF, false);
+      }
      else {
 	  
          $required_params = implode(', ', $diff);
