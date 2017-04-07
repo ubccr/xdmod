@@ -130,7 +130,7 @@ WHERE
   ua.user_id = :user_id
   AND agb.visible = TRUE
   AND agb.enabled = TRUE
-  AND r.name = :realm_name
+  AND r.name = LOWER(:realm_name)
   AND gb.name = :group_by_name
   AND s.name = :statistic_name
 SQL;
@@ -161,7 +161,7 @@ WHERE
   ua.user_id = :user_id
   AND agb.visible = TRUE
   AND agb.enabled = TRUE
-  AND r.name = :realm_name
+  AND r.name = LOWER(:realm_name)
   AND gb.name = :group_by_name
 SQL;
             $params = array(
@@ -190,7 +190,7 @@ WHERE
   ua.user_id = :user_id
   AND agb.visible = TRUE
   AND agb.enabled = TRUE
-  AND r.name = :realm_name
+  AND r.name = LOWER(:realm_name)
 SQL;
             $params = array(
                 ':user_id' => $userId,
