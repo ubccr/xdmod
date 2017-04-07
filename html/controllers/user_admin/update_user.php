@@ -119,8 +119,6 @@
 
 	  if (count($diff) == 0) {
 	  
-         $activeRoleConfig = $user_to_update->getActiveRoleSettings();
-         
          if (empty($role_config['mainRoles']))     $role_config['mainRoles'] = array();
          
          if (isset($role_config['mainRoles']))     $user_to_update->setRoles($role_config['mainRoles']);
