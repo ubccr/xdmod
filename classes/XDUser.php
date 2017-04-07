@@ -2089,33 +2089,6 @@ SQL;
         $this->setAcls($acls);
     }
 
-    // ---------------------------
-
-    /*
-     *
-     * @function getPrimaryRole
-     *
-     * @return string
-     *
-     */
-
-    public function getPrimaryRole()
-    {
-
-        if ($this->_primary_role->getIdentifier() == ROLE_ID_PUBLIC) {
-            return $this->_primary_role;
-        }
-
-        if ($this->_id == NULL) {
-            throw new Exception('You must call saveUser() on this newly created XDUser prior to using getPrimaryRole()');
-        }
-
-        return $this->_primary_role;
-
-    }//getPrimaryRole
-
-    // ---------------------------
-
     /*
      *
      * @function setPrimaryRole
