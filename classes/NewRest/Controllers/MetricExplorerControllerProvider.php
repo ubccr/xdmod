@@ -87,6 +87,8 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
         // QUERY ROUTES ========================================================
         $controller
             ->get("$root/descriptors", "$base::getDescriptorsForUser");
+        $controller
+            ->post("$root/descriptors", "$base::getDescriptorsForUser");
     }
 
     /**
