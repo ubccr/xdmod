@@ -28,7 +28,7 @@ try {
 
     // -----------------------------
 
-    $active_user->getActiveRole()->upgradeStaffMember($member);
+    Centers::upgradeStaffMember($member);
     $returnData['success'] = true;
     $returnData['message'] = "has been upgraded to Center Director<br />(promoted by {$active_user->getFormalName()})";
 

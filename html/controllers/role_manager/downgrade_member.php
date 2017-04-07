@@ -22,7 +22,7 @@ try {
         \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
-    $active_user->getActiveRole()->downgradeStaffMember($member);
+    Centers::downgradeStaffMember($member, $active_user->getActiveOrganization());
     $returnData['success'] = true;
 
 } catch (SessionExpiredException $see) {
