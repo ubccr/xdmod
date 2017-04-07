@@ -1679,8 +1679,6 @@ SQL
             ));
         // =======================================
 
-        $active_organization = NULL;
-
         foreach ($organization_ids as $organization_id => $config) {
 
             $active_flag = 0;
@@ -1700,9 +1698,7 @@ SQL
 
             }
 
-            if ($active_flag == 1) {
-                $active_organization = $organization_id;
-            }
+
 
             $insertStatement = "INSERT INTO UserRoleParameters " .
                 "(user_id, role_id, param_name, param_op, param_value, is_primary, is_active, promoter) " .
