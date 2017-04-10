@@ -48,8 +48,8 @@ $scriptOptions = array(
     'map-columns'      => array(),
     // Number of missing rows to display, all rows if NULL
     'num-missing-rows' => null,
-    // Use a ratio of experimental error when comparing these columns
-    'error-columns'    => array(),
+    // Use a percent of experimental error when comparing these columns
+    'pct-error-columns'    => array(),
     // Source table schema
     'source-schema'    => null,
     // Truncate these columns before comparing
@@ -124,8 +124,8 @@ foreach ($args as $arg => $value) {
         case 'p':
         case 'pct-error-column':
             // Merge array because long and short options are grouped separately
-            $scriptOptions['error-columns'] = array_merge(
-                $scriptOptions['error-columns'],
+            $scriptOptions['pct-error-columns'] = array_merge(
+                $scriptOptions['pct-error-columns'],
                 ( is_array($value) ? $value : array($value) )
             );
             break;
@@ -531,7 +531,7 @@ function compareTableData(
 
     // Determine the columns to compute the percent error for, if any.
 
-    foreach ( $scriptOptions['error-columns'] as $column ) {
+    foreach ( $scriptOptions['pct-error-columns'] as $column ) {
         $parts = explode(',', $column);
         // Divide by 100 to remove the "* 100" from the pct error formula
         $errorColumns[$parts[0]] = ( 2 == count($parts) ? $parts[1] / 100 : DEFAULT_ERROR_PERECENT / 100 );
