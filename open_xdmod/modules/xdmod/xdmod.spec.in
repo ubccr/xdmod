@@ -45,6 +45,13 @@ DESTDIR=$RPM_BUILD_ROOT ./install \
     --logrotatedconfdir=%{_sysconfdir}/logrotate.d \
     --crondconfdir=%{_sysconfdir}/cron.d
 
+%post
+if [ "$1" -ge 2 ]; then
+    echo "Run xdmod-upgrade to complete the Open XDMoD upgrade process."
+    echo "Refer to http://open.xdmod.org/upgrade.html for more details."
+fi
+exit 0
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
