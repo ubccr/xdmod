@@ -75,7 +75,15 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
         }
 
         // Since the name is arbitrary, do not use it for the unique key
-        $this->key = md5(implode($this->keySeparator, array($this->type, $this->config, $this->schema)));
+        $this->key = md5(implode(
+            $this->keySeparator,
+            array(
+                $this->type,
+                $this->config,
+                $this->schema,
+                $this->createSchemaIfNotExists
+            )
+        ));
 
     }  // __construct()
 
