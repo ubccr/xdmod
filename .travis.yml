@@ -18,7 +18,7 @@ env:
 # Add dependency directories to the Travis cache
 cache:
     directories:
-        - node_modules
+        - $HOME/.npm
         - $HOME/.composer/cache
         - /tmp/pear/cache
 
