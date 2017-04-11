@@ -268,7 +268,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     {
         // If role requirements were not given, then the only check to perform
         // is that the user is not a public user.
-        if ($requirements === null) {
+        if (empty($requirements)) {
             $requirements = array(ROLE_ID_PUBLIC);
             $blacklist = true;
         }
