@@ -4,6 +4,23 @@ use CCR\DB;
 use CCR\DB\iDatabase;
 use User\Acl;
 
+/**
+ * Class Tabs
+ *
+ * The intention of the class is to provide a central location for all functionality
+ * having to do with the concept of 'tabs'. This concept / data  was previously
+ * encoded as the 'permitted_modules' section of the the 'roles.json' file.
+ *
+ * These tabs correspond on a one-to-one basis with the visual tabs that one
+ * encounters in the XDMoD application. They can also be restricted on an acl by
+ * acl basis. So a function has been provided to retrieve a list of tabs for a user
+ * based on those allowed by said users acls.
+ * This is intended to replace aRole->getPermittedModules().
+ *
+ * The infrastructure (columns) is also in place to support a tab having a set
+ * of child tabs, which can be retrieved via the getChildTabs function.
+ *
+ */
 class Tabs
 {
 
