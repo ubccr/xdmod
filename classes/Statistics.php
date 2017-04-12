@@ -5,6 +5,20 @@ use CCR\DB\iDatabase;
 use Exception;
 use Statistic;
 
+/**
+ * Class Statistics
+ *
+ * Statistics attempts to provide a central location for functionality that
+ * pertains to the usage of the 'statistics' table and it's relations.
+ *
+ * The statistics table provides a location that can be queried at runtime for a
+ * list of all the statistics currently supported by the system and their
+ * associated information.
+ *
+ * The current iteration of this classes main function is to provide a method of
+ * retrieving a users list of permitted statistics. It does lack full CRUD
+ * functionality but that it is planned for latter addition.
+ */
 class Statistics
 {
     public static function listStatistics()
