@@ -26,31 +26,47 @@ use User\Acls;
  */
 class Centers
 {
-
+    /**
+     * Default acl name to use when listing a user's center(s).
+     *
+     * @var string
+     */
     const DEFAULT_ACL_NAME = 'cs';
 
+    /**
+     * Attempt to list all users that currently have the center staff acl with a
+     * relation to the same organization as the provided user is a center
+     * director for.
+     *
+     * @param XDUser $user
+     * @return array
+     */
     public static function listStaffForUser(XDUser $user)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
         return self::_listStaffForUser(
             DB::factory('database'),
             $user
         );
     }
 
+    /**
+     * Attempt to list the organization associated with this user, and optionally
+     * within the context of the '$aclName' provided. By default the acl name
+     * that is used is the Center Staff acl.
+     *
+     * @param XDUser $user
+     * @param null $aclName
+     * @return array[]
+     * @throws Exception
+     */
     public static function listCenterForUser(XDUser $user, $aclName = null)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
+        // Check to see if they did not include an $aclName or passed null.
         if (null == $aclName) {
             $aclName = self::DEFAULT_ACL_NAME;
         }
 
+        // Catch if they passed an empty string.
         if (strlen($aclName) < 1) {
             throw new Exception('A valid acl name must be provided.');
         }
@@ -62,16 +78,23 @@ class Centers
         );
     }
 
+    /**
+     * Attempt to retrieve a list of all the Centers ( organizations ) that the
+     * provided user has a relation to via the provided '$aclName'.
+     *
+     * @param XDUser $user
+     * @param null $aclName
+     * @return array[]
+     * @throws Exception
+     */
     public static function listCentersForUser(XDUser $user, $aclName = null)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
+        // Check to see if they did not include an $aclName or passed null.
         if (null == $aclName) {
             $aclName = self::DEFAULT_ACL_NAME;
         }
 
+        // Catch if they passed an empty string.
         if (strlen($aclName) < 1) {
             throw new Exception('A valid acl name must be provided.');
         }
@@ -83,18 +106,26 @@ class Centers
         );
     }
 
+    /**
+     * Attempt to downgrade ( remove the relation ) a user who is a center
+     * director for the Center identified by the provided '$centerId'. A small
+     * side effect of this function is that if the user being downgraded is no
+     * longer a center director of a center then the center director acl will
+     * be removed from the user.
+     *
+     * @param XDUser $user
+     * @param $centerId
+     * @throws Exception
+     */
     public static function downgradeStaffMember(XDUser $user, $centerId)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
         if (!isset($centerId)) {
             throw new Exception('A valid center id must be provided.');
         }
 
         $db = DB::factory('database');
         $acl = Acls::getAclByName(ROLE_ID_CENTER_DIRECTOR);
-        if (!isset($acl)) {
+        if (null === $acl) {
             throw new Exception('Unable to upgrade staff member. Unable to find center director acl');
         }
 
@@ -106,25 +137,31 @@ class Centers
             $centerId
         );
 
-        $hasCenterDierectorAffiliations = self::hasCenterDirectorAffiliations($db, $user);
-        if ($hasCenterDierectorAffiliations !== null && $hasCenterDierectorAffiliations == false) {
+        $hasCenterDirectorAffiliations = self::hasCenterDirectorAffiliations($db, $user);
+        if (false === $hasCenterDirectorAffiliations) {
             $user->removeAcl($acl);
             $user->saveUser();
         }
     }
 
+    /**
+     * Attempt to 'upgrade' a user to be a center director of the same center
+     * as the upgrading user. A side effect of this function is that if the user
+     * does not have the center director acl it will ensure that the user receives
+     * it.
+     *
+     * @param XDUser $user
+     * @throws Exception
+     */
     public static function upgradeStaffMember(XDUser $user)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
         $acl = Acls::getAclByName(ROLE_ID_CENTER_DIRECTOR);
-        if (!isset($acl)) {
+        if (null === $acl) {
             throw new Exception('Unable to upgrade staff member. Unable to find center director acl');
         }
         $userHasAcl = $user->hasAcl($acl);
 
-        if (!$userHasAcl) {
+        if (false === $userHasAcl) {
             $user->addAcl($acl);
         }
 
@@ -134,19 +171,26 @@ class Centers
             $acl
         );
 
-        if (!$userHasAcl) {
+        if (false === $userHasAcl) {
             $user->saveUser();
         }
     }
 
+    /**
+     * Attempt to ascertain whether or not the provided user is a center director
+     * of the Center identified by the provided '$centerId'.
+     *
+     * @param XDUser $user
+     * @param $centerId
+     * @return bool|null
+     * @throws Exception
+     */
     public static function isCenterDirector(XDUser $user, $centerId)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
+        if (null === $centerId) {
+            throw new Exception('A valid center id must be provided.');
         }
-        if (!isset($centerId)) {
-            throw new Exception('A valid center id must be provide.d');
-        }
+
         return self::_isCenterDirector(
             DB::factory('database'),
             $user,
@@ -154,17 +198,22 @@ class Centers
         );
     }
 
+    /**
+     * Attempt to set ( first completely remove and then add ) the user's center
+     * relations for the provided $aclName.
+     *
+     * @param XDUser $user
+     * @param $aclName
+     * @param array $centerIds
+     * @throws Exception
+     */
     public static function setUserCentersByAcl(XDUser $user, $aclName, array $centerIds = array())
     {
-        if (!isset($user)){
-            throw new Exception('A valid user must be provided.');
-        }
-        if (!isset($aclName)) {
+
+        if (null === $aclName) {
             throw new Exception('A valid acl name must be provided.');
         }
-        if (!isset($centerIds)) {
-            throw new Exception('A valid set of center ids must be provided');
-        }
+
         if (strlen($aclName) < 1) {
             throw new Exception('A valid acl name must be provided.');
         }
@@ -177,12 +226,17 @@ class Centers
         );
     }
 
+    /**
+     * Attempt to update the 'organization_id' column of the Users table
+     * for the provided user.
+     *
+     * @param XDUser $user
+     * @param $organizationId
+     * @throws Exception
+     */
     public static function setUserOrganization(XDUser $user, $organizationId)
     {
-        if (!isset($user)) {
-            throw new Exception('You must provide a valid user.');
-        }
-        if (!isset($organizationId)) {
+        if (null === $organizationId) {
             throw new Exception('You must provide a valid organization id.');
         }
 
@@ -244,6 +298,7 @@ SQL;
      * @param iDatabase $db
      * @param XDUser $user
      * @param Acl $acl
+     * @param mixed $centerId
      * @return bool
      */
     private static function _downgradeStaffMember(iDatabase $db, XDUser $user, Acl $acl, $centerId)
@@ -475,7 +530,7 @@ SQL;
         );
 
         // First remove previous centers
-        $deleted = $db->execute($delete, $params);
+        $db->execute($delete, $params);
 
         // Then set the ones provided.
         $db->execute($insert, $params);
@@ -484,7 +539,7 @@ SQL;
     private static function _setUserOrganization(iDatabase $db, XDUser $user, $organizationId)
     {
         $query = <<<SQL
-UPDATE Users set organization_id = :organization_id WHERE id = :user_id;
+UPDATE Users SET organization_id = :organization_id WHERE id = :user_id;
 SQL;
 
         $db->execute($query, array(
