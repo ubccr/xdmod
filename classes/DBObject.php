@@ -13,7 +13,7 @@
  *
  * @author Ryan Rathsam <ryanrath@buffalo.edu>
  */
-class DBObject implements \ArrayAccess, JsonSerializable {
+class DBObject implements \ArrayAccess {
 
     protected $PROP_MAP = array();
 
@@ -108,21 +108,5 @@ class DBObject implements \ArrayAccess, JsonSerializable {
         ) {
             $this->$var = $arguments[0];
         }
-    }
-
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
-    public function jsonSerialize()
-    {
-        return array_reduce($this->PROP_MAP, function ($carry, $item) {
-            $key = array_search($item, $this->PROP_MAP);
-            $carry[$key] = $this->$item;
-            return $carry;
-        }, array());
     }
 }
