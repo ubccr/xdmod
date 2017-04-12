@@ -3,6 +3,17 @@
 use CCR\DB;
 use CCR\DB\iDatabase;
 
+/**
+ * Class Realms
+ *
+ * This class attempts to provide any and all required functions for working
+ * with the table 'realms' and it's relations.
+ *
+ * It provides basic CRUD functionality ( Create, Read, Update, Delete ) as well as a number of methods
+ * of retrieving Realms via associated information i.e.
+ *   - List all realms created by a particular module ( listRealmsFor[Module|ModuleName|ModuleId] )
+ *   - List all realms that a user has access to via their assigned ACLS ( listRealmsForUserId )
+ */
 class Realms
 {
     /**
