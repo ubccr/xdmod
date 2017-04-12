@@ -5,6 +5,17 @@ use CCR\DB\iDatabase;
 use Exception;
 use XDUser;
 
+
+/**
+ * Class Assets
+ * @package User
+ *
+ * It is intended that this class collect all of the functionality required in
+ * working with the 'Asset' class and 'assets' table. At present it provides
+ * basic CRUD functionality ( Create, Read, Update and Delete ). But, as the use
+ * of assets becomes more widespread other functionality may need to reside here.
+ *
+ */
 class Assets
 {
     /**
