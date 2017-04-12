@@ -5,6 +5,25 @@ use CCR\DB\iDatabase;
 use User\Acl;
 use User\Acls;
 
+/**
+ * Class Centers
+ *
+ * This class is meant to provide functionality having to do with a User's
+ * 'Center'. This mainly grew out of the desire to lift the business logic type
+ * functions out of classes like CenterDirectorRole and CenterStaffRole and
+ * consolidate them into a one stop shop for all of your 'Center' related needs.
+ *
+ * In so far as database tables that Centers interacts with, the primary table
+ * is 'user_acl_group_by_parameters'. This table holds a relation between a :
+ *    - user
+ *    - acl
+ *    - group_by
+ *    - organization_id ( which is stored in the value column )
+ *
+ * In particular this table / class attempts to fulfil the need to relate a User
+ * ( that may or may not be associated with a Person ) with an organization,
+ * in the context of an acl and group_by.
+ */
 class Centers
 {
 
