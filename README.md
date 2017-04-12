@@ -191,6 +191,14 @@ may be found [here][repo-format]. Once you have made the desired changes, run
 ### Dependencies
 
   - [PHP](https://secure.php.net/)
+  - PHP Extension Packages
+    - CentOS 6
+      - `php-xml`
+    - CentOS 7
+      - None
+    - Ubuntu 16.04
+      - `php-curl`
+      - `php-gmp`
   - [Composer](https://getcomposer.org/)
   - [PEAR](https://pear.php.net/)
   - [PEAR Log Module](https://pear.php.net/package/Log/)
