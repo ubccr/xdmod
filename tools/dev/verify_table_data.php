@@ -9,6 +9,15 @@
 require __DIR__ . '/../../configuration/linker.php';
 restore_exception_handler();
 
+define("DEFAULT_TRUNCATE_DIGITS", 0);
+define("DEFAULT_COALESCE_VALUE", 0);
+
+// Percent error is calculated as:
+// PE = ABS((Expected - Observed) / Expected) * 100
+// We will remove the 100 from the equation by dividing the allowed pct error by 100:
+// PE / 100 = ABS((Expected - Observed) / Expected)
+define("DEFAULT_ERROR_PERECENT", 0.01);
+
 use CCR\Log;
 use CCR\DB;
 
@@ -18,8 +27,12 @@ use CCR\DB;
 // Allow initialization of some options from the configuration file
 
 $scriptOptions = array(
+    // Attempt to auto-detect how columns should be compared
+    'autodetect-column-comparison' => false,
     // Tables for comparison
     'compare-tables'   => array(),
+    // Coalesce these columns before comparing
+    'coalesce-columns' => array(),
     // Configuration section to use when connecting to the database
     'database-config'  => "datawarehouse",
     // Destination table schema, defaults to source table schema if not set
@@ -35,10 +48,12 @@ $scriptOptions = array(
     'map-columns'      => array(),
     // Number of missing rows to display, all rows if NULL
     'num-missing-rows' => null,
-    // Round the values of these columns
-    'round-columns'    => array(),
+    // Use a percent of experimental error when comparing these columns
+    'pct-error-columns'    => array(),
     // Source table schema
     'source-schema'    => null,
+    // Truncate these columns before comparing
+    'truncate-columns' => array(),
     // Apply where clauses to query
     'wheres'           => array(),
     'verbosity'        => Log::NOTICE
@@ -48,18 +63,21 @@ $scriptOptions = array(
 // Process command line arguments
 
 $options = array(
-    'h'   => 'help',
+    'a'   => 'autodetect-column-comparison',
+    '3:'  => 'coalesce-column:',
     'c:'  => 'database-config:',
     'd:'  => 'dest-schema:',
+    'x:'  => 'exclude-column:',
+    'h'   => 'help',
+    '1'   => 'ignore-column-count',
+    '2'   => 'ignore-column-type',
     'n:'  => 'num-missing-rows:',
-    'r:'  => 'round-column:',
+    'p:'  => 'pct-error-column:',
     's:'  => 'source-schema:',
     't:'  => 'table:',
+    '4:'  => 'truncate-column:',
     'v:'  => 'verbosity:',
-    'w:'  => 'where:',
-    'x:'  => 'exclude-column:',
-    ''    => 'ignore-column-count',
-    ''    => 'ignore-column-type'
+    'w:'  => 'where:'
     );
 
 $args = getopt(implode('', array_keys($options)), $options);
@@ -67,9 +85,22 @@ $args = getopt(implode('', array_keys($options)), $options);
 foreach ($args as $arg => $value) {
     switch ($arg) {
 
+        case 'a':
+        case 'autodetect-column-comparison':
+            $scriptOptions['autodetect-column-comparison'] = true;
+            break;
+
         case 'c':
         case 'database-config':
             $scriptOptions['database-config'] = $value;
+            break;
+
+        case 'coalesce-column':
+            // Merge array because long and short options are grouped separately
+            $scriptOptions['coalesce-columns'] = array_merge(
+                $scriptOptions['coalesce-columns'],
+                ( is_array($value) ? $value : array($value) )
+            );
             break;
 
         case 'd':
@@ -90,11 +121,11 @@ foreach ($args as $arg => $value) {
             $scriptOptions['num-missing-rows'] = $value;
             break;
 
-        case 'r':
-        case 'round-column':
+        case 'p':
+        case 'pct-error-column':
             // Merge array because long and short options are grouped separately
-            $scriptOptions['round-columns'] = array_merge(
-                $scriptOptions['round-columns'],
+            $scriptOptions['pct-error-columns'] = array_merge(
+                $scriptOptions['pct-error-columns'],
                 ( is_array($value) ? $value : array($value) )
             );
             break;
@@ -117,6 +148,14 @@ foreach ($args as $arg => $value) {
                     usage_and_exit("Tables must be in the form 'table' or 'source_table=dest_table'");
                 }
             }
+            break;
+
+        case 'truncate-column':
+            // Merge array because long and short options are grouped separately
+            $scriptOptions['truncate-columns'] = array_merge(
+                $scriptOptions['truncate-columns'],
+                ( is_array($value) ? $value : array($value) )
+            );
             break;
 
         case 'x':
@@ -300,11 +339,13 @@ function compareTables($srcTable, $destTable)
             $mismatch = true;
         } elseif ( $v != $destTableColumns[$k] && ! $scriptOptions['ignore-column-type'] ) {
             $logger->err(sprintf(
-                "Column mismatch %s: src type=%s %s, dest type=%s %s",
+                "Column mismatch %s: src type=%s is_nullable=%s %s, dest type=%s is_nullable=%s %s",
                 $k,
                 $v['type'],
+                $v['is_nullable'],
                 ( "" != $v['key_type'] ? "key=" . $v['key_type'] : "" ),
                 $destTableColumns[$k]['type'],
+                $destTableColumns[$k]['is_nullable'],
                 ( "" != $destTableColumns[$k]['key_type'] ? "key=" . $destTableColumns[$k]['key_type'] : "" )
             ));
             $mismatch = true;
@@ -329,8 +370,8 @@ function compareTables($srcTable, $destTable)
         $destTable,
         $srcSchema,
         $destSchema,
-        array_keys($srcTableColumns),
-        array_keys($destTableColumns)
+        $srcTableColumns,
+        $destTableColumns
     );
 
 }  // compareTables()
@@ -363,7 +404,9 @@ function getTableColumns($table, $schema, array $excludeColumns)
     $sql = "SELECT
 column_name as name,
 column_type as type,
-column_key as key_type
+column_key as key_type,
+UPPER(data_type) as data_type,
+UPPER(is_nullable) as is_nullable
 FROM information_schema.columns
 " . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" ) ."
 ORDER BY ordinal_position ASC";
@@ -441,41 +484,107 @@ function compareTableData(
     $destTable,
     $srcSchema,
     $destSchema,
-    array $srcTableColumns,
-    array $destTableColumns
+    array $srcTableColumnInfo,
+    array $destTableColumnInfo
 ) {
     global $dbh, $logger, $scriptOptions;
     $srcTableName = "`$srcSchema`.`$srcTable`";
     $destTableName = "`$destSchema`.`$destTable`";
+
+    $srcTableColumns = array_keys($srcTableColumnInfo);
     $firstCol = current($srcTableColumns);
 
-    // Determine the columns to round, if any.
+    // Try to automatically determine the comparison based on the column type.
+    //
+    // 1. If either column is nullable, the values need to be coalesced to a non-null
+    //    value before comparing.
+    // 2. If at least one column is a double/float/decimal and differs from the other
+    //    column, truncate the columns before comparison and add the percent-difference
+    //    calculation. Often times, the value of a double that has been calculated in an
+    //    aggregate function may differ after several digits in the mantissa or MySQL may
+    //    use scientific notation to show an approximate-value numeric literal.
 
-    $roundColumns = array();
-    foreach ( $scriptOptions['round-columns'] as $column ) {
+    $truncateColumns = array();
+    $errorColumns = array();
+    $coalesceColumns = array();
+
+    if ( $scriptOptions['autodetect-column-comparison'] ) {
+        $dataTypes = array('DECIMAL', 'NUMERIC', 'DOUBLE', 'FLOAT');
+
+        foreach ( $srcTableColumnInfo as $key => $srcColInfo ) {
+            if ( ! array_key_exists($key, $destTableColumnInfo) ) {
+                continue;
+            }
+            $destColInfo = $destTableColumnInfo[$key];
+
+            if ( 'YES' == $srcColInfo['is_nullable'] || 'YES' == $destColInfo['is_nullable'] ) {
+                $coalesceColumns[$key] = DEFAULT_COALESCE_VALUE;
+            }
+
+            if ( in_array($srcColInfo['data_type'], $dataTypes) || in_array($destColInfo['data_type'], $dataTypes) ) {
+                $truncateColumns[$key] = DEFAULT_TRUNCATE_DIGITS;
+                // Divide by 100 to remove the "* 100" from the pct error formula.
+                $errorColumns[$key] = DEFAULT_ERROR_PERECENT / 100;
+            }
+        }
+    }
+
+    // Determine the columns to compute the percent error for, if any.
+
+    foreach ( $scriptOptions['pct-error-columns'] as $column ) {
         $parts = explode(',', $column);
-        $roundColumns[$parts[0]] = ( 2 == count($parts) ? $parts[1] : 0 );
+        // Divide by 100 to remove the "* 100" from the pct error formula
+        $errorColumns[$parts[0]] = ( 2 == count($parts) ? $parts[1] / 100 : DEFAULT_ERROR_PERECENT / 100 );
+    }
+
+    // Determine the columns to coalesce prior to comparison, if any.
+
+    foreach ( $scriptOptions['coalesce-columns'] as $column ) {
+        $parts = explode(',', $column);
+        $coalesceColumns[$parts[0]] = ( 2 == count($parts) ? $parts[1] : DEFAULT_COALESCE_VALUE );
+    }
+
+    // Determine the columns to truncate prior to comparison, if any.
+
+    foreach ( $scriptOptions['truncate-columns'] as $column ) {
+        $parts = explode(',', $column);
+        $truncateColumns[$parts[0]] = ( 2 == count($parts) ? $parts[1] : DEFAULT_TRUNCATE_DIGITS );
     }
 
     // Generate the ON clause using on the source table columns. This ignores columns
     // present in the destination table that do not exist in the source table.
 
     $constraints = array_map(
-        function ($c1, $c2) use ($roundColumns) {
-            if ( array_key_exists($c1, $roundColumns) ) {
-                return sprintf(
-                    'ROUND(src.%s, %d) <=> ROUND(dest.%s, %d)',
-                    $c1,
-                    $roundColumns[$c1],
-                    $c2,
-                    $roundColumns[$c1]
-                );
-            } else {
-                // Note the use of the null-safe operator <=>
-                return sprintf('src.%s <=> dest.%s', $c1, $c2);
+        function ($col) use ($errorColumns, $coalesceColumns, $truncateColumns) {
+
+            $srcCol = sprintf('src.%s', $col);
+            $destCol = sprintf('dest.%s', $col);
+
+            if ( array_key_exists($col, $coalesceColumns) ) {
+                $srcCol = sprintf('COALESCE(%s, %s)', $srcCol, $coalesceColumns[$col]);
+                $destCol = sprintf('COALESCE(%s, %s)', $destCol, $coalesceColumns[$col]);
             }
+
+            if ( array_key_exists($col, $truncateColumns) ) {
+                $srcCol = sprintf('TRUNCATE(%s, %d)', $srcCol, $truncateColumns[$col]);
+                $destCol = sprintf('TRUNCATE(%s, %d)', $destCol, $truncateColumns[$col]);
+            }
+
+            $onStr = sprintf('%s <=> %s', $srcCol, $destCol);
+
+            if ( array_key_exists($col, $errorColumns) ) {
+                $onStr = sprintf(
+                    '(%s OR ABS((%s - %s) / %s) <= %.15f)',
+                    $onStr,
+                    $destCol,
+                    $srcCol,
+                    $srcCol,
+                    $errorColumns[$col]
+                );
+            }
+
+            return $onStr;
         },
-        $srcTableColumns,
         $srcTableColumns
     );
 
@@ -528,6 +637,10 @@ function usage_and_exit($msg = null)
         fwrite(STDERR, "\n$msg\n\n");
     }
 
+    $defaultPctError = DEFAULT_ERROR_PERECENT;
+    $defaultCoalesce = DEFAULT_COALESCE_VALUE;
+    $defaultTruncate = DEFAULT_TRUNCATE_DIGITS;
+
     fwrite(
         STDERR,
         <<<"EOMSG"
@@ -535,6 +648,12 @@ Usage: {$argv[0]}
 
     -h, --help
     Display this help
+
+    -a, --autodetect-column-comparison
+    Attempt to auto-detect how columns should be compared based on the source and destination column type and whether or not they are nullable.
+
+    --coalesce-column <column>[,<value>]
+    Coalesce <column> to <value> (default $defaultCoalesce) before comparing. This is useful when comparing values that may be NULL.
 
     -c, --database-config
     The portal_settings.ini section to use for database configuration parameters
@@ -545,14 +664,14 @@ Usage: {$argv[0]}
     --ignore-column-count
     Ignore the column count between tables as long as the source columns are present in the destination.
 
-    --ignore-column-count
+    --ignore-column-type
     Ignore the column types between tables, useful for comparing the effect of data type changes.
 
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
 
-    -r, --round-column <column>[,<digits>]
-    Round the values in the specified column before comparing. If <digits> is specified round to that number of digits (default 0). This is useful when comparing doubles or values that have been computed and may differ in decimal precision.
+    -p, --pct=error-column <column>[,error>]
+        Compute the percent error between the source and destination columns and ensure that it is less than <error> (default {$defaultPctError}). This is useful when comparing doubles or values that have been computed and may differ in decimal precision. See --truncate-column.
 
     -s, --source-schema <source_schema>
     The schema for the source tables.
@@ -561,10 +680,13 @@ Usage: {$argv[0]}
     -t, --table <source_table_name>=<dest_table_name>
     A table to compare between the source and destination schemas. Use the 2nd form to specify different names for the source and destination tables. Table names may also include a schema designation, in which case the default schema will not be added. May be specified multiple times.
 
+    --truncate-column <column>[,<digits>]
+    Truncate <column> to <digits> (default $defaultTruncate) before comparing. This is useful when comparing fractional values or squares of fractional values.
+
     -w, --where <where_clause_fragment>
     Add a WHERE clause to the table comparison. The table aliass "src" and "dest" refer to the source and destination tables, respectively.
 
-    -x, --exclude-column
+    -x, --exclude-column <column>
     Exclude this column from the comparison. May be specified multiple times.
 
     -v, --verbosity {debug, info, notice, warning, quiet} [default notice]
