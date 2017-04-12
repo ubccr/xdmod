@@ -9,6 +9,13 @@ use XDUser;
 /**
  * Class Acls
  * @package User
+ *
+ * It is the intended purpose of this class to provide a host of functions to
+ * ease working with and within the Acl framework. It provides basic CRUD
+ * functionality in addition to a number of other functions related to Acls and
+ * their associated pieces of data.
+ *
+ * 
  */
 class Acls
 {
