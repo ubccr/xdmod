@@ -71,13 +71,11 @@ class AclsControllerProvider extends BaseControllerProvider
     public function listAcls(Request $request, Application $app)
     {
         $acls = Acls::getAcls();
-        $success = isset($acls);
-        $status = true == $success ? 200 : 500;
 
         return $app->json(array(
-            'success' => $success,
+            'success' => true,
             'results' => $acls
-        ), $status);
+        ));
     }
 
     public function createAcl(Request $request, Application $app)
