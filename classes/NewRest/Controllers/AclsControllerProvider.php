@@ -28,7 +28,8 @@ class AclsControllerProvider extends BaseControllerProvider
         $conversions = '\NewRest\Utilities\Conversions';
 
         $isAuthorized = function (Request $request, Application $app) {
-            $authorized = $this->isAuthorized($request, array('mgr'));
+            $user = $this->getUserFromRequest($request);
+            $authorized = Authorization::authorized($user, array('mgr'));
             if (!$authorized) {
                 throw new UnauthorizedHttpException('Basic realm="acls"','Not authorized for the requested operation.');
             }

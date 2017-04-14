@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
 /**
@@ -62,15 +63,10 @@ class UserControllerProvider extends BaseControllerProvider
         $conversions = '\NewRest\Utilities\Conversions';
 
         $isAuthorized = function (Request $request, Application $app) {
-            $authorized = $this->isAuthorized($request, array('mgr'));
+            $user = $this->getUserFromRequest($request);
+            $authorized = Authorization::authorized($user, array('mgr'));
             if (!$authorized) {
-                return $app->json(
-                    array(
-                        'success' => false,
-                        'message' => 'Not authorized for the requested operation.'
-                    ),
-                    401
-                );
+                throw new UnauthorizedHttpException('xdmod','Not authorized for the requested operation.');
             }
         };
 

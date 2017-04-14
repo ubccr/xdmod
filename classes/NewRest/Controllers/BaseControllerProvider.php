@@ -707,19 +707,4 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
     }  // formatLogMessage()
 
-    /**
-     * Attempt to ascertain whether or not the user logged into the provided
-     * '$request' has been assigned the required acls.
-     *
-     * @param Request  $request      to be used when retrieving the currently
-     *                               logged in user
-     * @param string[] $requirements the acls that are required be found to
-     *                               return true.
-     * @return bool true iff all requirements are found else false.
-     */
-    protected function isAuthorized(Request $request, array $requirements)
-    {
-        $user = $request->attributes->get(BaseControllerProvider::_USER);
-        return $user->hasAcls($requirements);
-    }
 }
