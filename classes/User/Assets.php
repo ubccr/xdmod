@@ -29,6 +29,10 @@ class Assets
      */
     public static function createAsset(Asset $asset)
     {
+        if (null === $asset) {
+            throw new Exception('An asset must be provided to update.');
+        }
+
         $assetId = self::_createAsset(
             DB::factory('database'),
             $asset
@@ -48,7 +52,7 @@ class Assets
      */
     public static function getAsset($assetId)
     {
-        if (!isset($assetId)) {
+        if (null === $assetId) {
             throw new Exception('Must provide an asset id.');
         }
 
@@ -64,11 +68,11 @@ class Assets
      */
     public static function updateAsset(Asset $asset)
     {
-        if (!isset($asset)) {
+        if (null === $asset) {
             throw new Exception('An asset must be provided to update.');
         }
 
-        if (NULL == $asset->getAssetId()) {
+        if (NULL === $asset->getAssetId()) {
             throw new Exception('A valid asset id is required to complete the requested update.');
         }
 
@@ -87,7 +91,7 @@ class Assets
      */
     public static function deleteAsset($assetId)
     {
-        if (!isset($assetId)) {
+        if (null === $assetId) {
             throw new Exception('An assetId must be provided.');
         }
 
@@ -104,7 +108,7 @@ class Assets
      */
     public static function listAssets(XDUser $user)
     {
-        if (!isset($user)) {
+        if (null === $user) {
             throw new Exception('A user must be provided');
         }
 
@@ -126,10 +130,12 @@ class Assets
      */
     public static function userHasAsset(XDUser $user, Asset $asset)
     {
-        if (!isset($user, $asset)) {
-            throw new Exception('A user and asset must be provided.');
+        if (null === $user->getUserID()) {
+            throw new Exception('User must be saved first.');
         }
-
+        if (null === $asset || null === $asset->getAssetId()) {
+            throw new Exception('A valid asset must be provided.');
+        }
         return self::_userHasAsset(
             DB::factory('database'),
             $user,
@@ -150,8 +156,8 @@ class Assets
      */
     public static function userHasAssets(XDUser $user, array $assets)
     {
-        if (!isset($user, $assets) || count($assets) == 0) {
-            throw new Exception('A user and set of assets must be supplied.');
+        if (null === $user->getUserID()) {
+            throw new Exception('User must be saved first.');
         }
 
         return self::_userHasAssets(
@@ -172,14 +178,6 @@ class Assets
      */
     private static function _createAsset(iDatabase $db, Asset $asset)
     {
-        if (!isset($db, $asset)) {
-            throw new Exception('A valid database and asset must be provided.');
-        }
-
-        if (NULL != $asset->getAssetId()){
-            throw new Exception('Cannot create an asset that already has an id');
-        }
-
         $sql = <<<SQL
 INSERT INTO assets(module_id, asset_type_id, name, display, enabled) 
 VALUES (:module_id, :asset_type_id, :name, :display, :enabled);
@@ -350,7 +348,7 @@ SQL;
      */
     private static function _userHasAssets(iDatabase $db, XDUser $user, array $assets = array())
     {
-        if (!isset($db, $user, $assets)) {
+        if (count($assets) < 1) {
             return false;
         }
 
