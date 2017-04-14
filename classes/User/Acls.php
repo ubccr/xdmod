@@ -38,7 +38,7 @@ class Acls
      */
     public static function getAcl($aclId)
     {
-        if (!isset($aclId)) {
+        if (null === $aclId) {
             throw new Exception('Must provide an acl id.');
         }
 
@@ -50,7 +50,7 @@ class Acls
 
     public static function createAcl(Acl $acl)
     {
-        if (!isset($acl)) {
+        if (null === $acl) {
             throw new Exception('Must provide an acl');
         }
 
@@ -66,7 +66,7 @@ class Acls
 
     public static function updateAcl(Acl $acl)
     {
-        if (!isset($acl)) {
+        if (null === $acl) {
             throw new Exception('Acl must be provided to complete requested update.');
         }
 
@@ -82,7 +82,7 @@ class Acls
 
     public static function deleteAcl(Acl $acl)
     {
-        if (!isset($acl)) {
+        if (null === $acl) {
             throw new Exception('Acl must be provided to complete requested deletion.');
         }
 
@@ -105,10 +105,6 @@ class Acls
      */
     public static function listUserAcls(XDUser $user)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
         if (null == $user->getUserID()) {
             throw new Exception('A valid user id must be provided.');
         }
@@ -121,15 +117,11 @@ class Acls
 
     public static function addUserAcl(XDUser $user, $aclId)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
         if (null == $user->getUserID()) {
             throw new Exception('A valid user id must be provided.');
         }
 
-        if (!isset($aclId)) {
+        if (null === $aclId) {
             throw new Exception('A valid acl id must be provided.');
         }
 
@@ -142,13 +134,10 @@ class Acls
 
     public static function deleteUserAcl(XDUser $user, $aclId)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
         if (null == $user->getUserID()) {
             throw new Exception('A valid user id must be provided.');
         }
-        if (!isset($aclId)) {
+        if (null === $aclId) {
             throw new Exception('A valid acl id must be provided.');
         }
 
@@ -167,15 +156,11 @@ class Acls
      */
     public static function userHasAcl(XDUser $user, $aclId)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
         if (null == $user->getUserID()) {
             throw new Exception('A valid user id must be provided.');
         }
 
-        if (!isset($aclId)) {
+        if (null === $aclId) {
             throw new Exception('A valid acl id must be provided.');
         }
 
@@ -189,10 +174,6 @@ class Acls
 
     public static function userHasAcls(XDUser $user, array $acls)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
         if (null == $user->getUserID()) {
             throw new Exception('A valid user id must be provided.');
         }
@@ -206,12 +187,8 @@ class Acls
 
     public static function getDisabledMenus(XDUser $user, array $realms)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
-        if (!isset($realms)) {
-            throw new Exception('A valid set of realms must be provided.');
+        if (null === $user->getUserID()) {
+            throw new Exception('A valid user id must be provided.');
         }
 
         if (count($realms) < 1) {
@@ -228,7 +205,7 @@ class Acls
 
     public static function getAclByName($name)
     {
-        if (!isset($name)) {
+        if (null === $name) {
             throw new Exception('A valid acl name is required');
         }
 
@@ -240,10 +217,6 @@ class Acls
 
     public static function getDescriptorsForUser(XDUser $user)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be provided.');
-        }
-
         if ($user->getUserID() == null) {
             throw new Exception('A valid user must be provided.');
         }
@@ -256,13 +229,13 @@ class Acls
 
     public static function getGroupBysForRealm($realmName)
     {
-        if (isset($realmName) == false) {
+        if (null === $realmName) {
             throw new Exception('A valid realm name must be provided. (null)');
         }
         if (is_string($realmName) == false) {
             throw new Exception('A valid realm name must be provided. (string)');
         }
-        if (count($realmName) < 1) {
+        if (strlen($realmName) < 1) {
             throw new Exception('A valid realm name must be provided. (length)');
         }
 
@@ -274,16 +247,13 @@ class Acls
 
     public static function getDescriptorParamValue(XDUser $user, $aclName, $groupByName)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be supplied.');
-        }
         if (null == $user->getUserID()) {
             throw new Exception('A valid user id must be supplied.');
         }
-        if (!isset($aclName)) {
+        if (null === $aclName) {
             throw new Exception('A valid acl name is required.');
         }
-        if (!isset($groupByName)) {
+        if (null === $groupByName) {
             throw new Exception('A valid group by name is required.');
         }
         return self::_getDescriptorParamvalue(
@@ -297,16 +267,13 @@ class Acls
 
     public static function getDescriptorParamValues(XDUser $user, $aclName, $groupByName)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user must be supplied.');
-        }
         if (null == $user->getUserID()) {
             throw new Exception('A valid user id must be supplied.');
         }
-        if (!isset($aclName)) {
+        if (null === $aclName) {
             throw new Exception('A valid acl name is required.');
         }
-        if (!isset($groupByName)) {
+        if (null === $groupByName) {
             throw new Exception('A valid group by name is required.');
         }
         return self::_getDescriptorParamValues(
@@ -471,10 +438,6 @@ SQL;
      */
     private static function _listUserAcls(iDatabase $db, XDUser $user)
     {
-        if (!isset($db, $user)) {
-            return array();
-        }
-
         $userId = $user->getUserID();
 
         $sql = <<<SQL
@@ -519,9 +482,10 @@ SQL;
 
     private static function _userHasAcls(iDatabase $db, XDUser $user, array $acls)
     {
-        if (!isset($db, $user, $acls)) {
+        if (count($acls) < 1) {
             return false;
         }
+
         $handle = $db->handle();
         $userId = $user->getUserID();
         $aclIds = array_reduce($acls, function ($carry, Acl $item) use ($handle) {
