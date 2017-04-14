@@ -85,10 +85,6 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             ->delete("$root/queries/{id}", "$base::deleteQueryById")
             ->convert('id', $idConverter);
         // QUERY ROUTES ========================================================
-        $controller
-            ->get("$root/descriptors", "$base::getDescriptorsForUser");
-        $controller
-            ->post("$root/descriptors", "$base::getDescriptorsForUser");
     }
 
     /**
