@@ -287,7 +287,7 @@ SQL;
             ':user_id' => $user->getUserID()
         ));
 
-        if ($rows !== false && count($rows) > 0) {
+        if (count($rows) > 0) {
             return $rows;
         }
 
@@ -319,7 +319,7 @@ SQL;
             ':value' => $centerId
         ));
 
-        return $rows !== false && $rows > 0;
+        return $rows > 0;
     }
 
     /**
@@ -379,7 +379,7 @@ SQL;
         $rows = $db->query($query, array(
             'user_id' => $user->getUserID()
         ));
-        if ($rows != false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return $rows[0]['total'] > 0;
         }
         return null;
@@ -410,11 +410,11 @@ SQL;
             ':acl_name' => $aclName,
             ':user_id' => $user->getUserID()
         ));
-        if ($rows !== false) {
+
+        if ( count($rows) > 0 ) {
             return $rows[0]['value'];
         }
-
-        return array();
+        return null;
     }
 
     /**
@@ -441,7 +441,7 @@ SQL;
             ':acl_name' => $aclName,
             ':user_id' => $user->getUserID()
         ));
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry [] = $item['value'];
                 return $carry;
@@ -479,7 +479,7 @@ SQL;
             ':user_id' => $user->getUserID(),
             ':value' => $centerId
         ));
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return $rows[0]['num_matches'] > 0;
         }
 

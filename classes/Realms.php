@@ -178,7 +178,7 @@ SELECT r.*
 FROM realms r
 SQL;
         $rows = $db->query($query);
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry [] = new Realm($item);
                 return $carry;
@@ -202,7 +202,7 @@ SQL;
         $rows = $db->query($query, array(
             ':realm_name' => $name
         ));
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return new Realm($rows[0]);
         }
         return null;
@@ -219,7 +219,7 @@ SQL;
         $rows = $db->query($query, array(
             'realm_id' => $realmId
         ));
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return new Realm($rows[0]);
         }
         return null;
@@ -240,7 +240,7 @@ SQL;
         $rows = $db->query($query, array(
             ':module_id' => $moduleId
         ));
-        if ($rows != false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry [] = new Realm($item);
                 return $carry;
@@ -269,7 +269,7 @@ SQL;
             ':schema_name' => $realm->getSchemaName(),
             ':realm_id' => $realm->getRealmId()
         ));
-        return $rowCount !== false && $rowCount > 0;
+        return $rowCount > 0;
     }
 
     private static function _deleteRealm(iDatabase $db, $realmId)
@@ -280,7 +280,7 @@ SQL;
         $rowCount = $db->execute($query, array(
             ':realm_id' => $realmId
         ));
-        return $rowCount !== false && $rowCount > 0;
+        return $rowCount > 0;
     }
 
     private static function _listRealmsForModuleId(iDatabase $db, $moduleId)
@@ -293,7 +293,7 @@ SQL;
         $rows = $db->query($query, array(
             ':module_id' => $moduleId
         ));
-        if ($rows != null && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce($rows, function($carry, $item) {
                 $carry []= new Realm($item);
                 return $carry;
@@ -314,7 +314,7 @@ SQL;
         $rows = $db->query($query, array(
             ':module_name' => $moduleName
         ));
-        if ($rows != null && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce($rows, function($carry, $item) {
                 $carry []= new Realm($item);
                 return $carry;
@@ -342,7 +342,7 @@ SQL;
         $rows = $db->query($query, array(
             ':user_id' => $userId
         ));
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce($rows, function($carry, $item) {
                 $carry []= new Realm($item);
                 return $carry;

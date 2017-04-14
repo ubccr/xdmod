@@ -139,7 +139,7 @@ SQL;
             ':user_id' => $userId
         ));
 
-        if (isset($rows) && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             $results = array_reduce($rows, function ($carry, $item) {
                 $carry [$item['name']] = new Tab($item);
                 return $carry;
@@ -159,7 +159,7 @@ SQL;
         $row = $db->query("SELECT t.* FROM tabs t WHERE t.tab_id = :tab_id", array(
             ':tab_id' => $tabId
         ));
-        if (isset($row) && count($row) > 0) {
+        if ( count($row) > 0 ) {
             return new Tab($row[0]);
         }
         return null;
@@ -208,7 +208,7 @@ SQL;
                 ':parent_tab_id' => $tab->getTabId()
             ));
         }
-        if ($rows !== false) {
+        if (count($rows) > 0) {
             return array_reduce($rows, function($carry, $item) {
                 $carry []= new Tab($item);
                 return $carry;

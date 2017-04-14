@@ -212,10 +212,10 @@ FROM assets a
 WHERE a.asset_id = :asset_id
 SQL;
         $results = $db->query($query, array(':asset_id' => $assetId));
-        if (!count($results) != 1) {
-            return null;
+        if ( count(results) > 0 ) {
+            return new Asset($results[0]);
         }
-        return new Asset($results[0]);
+        return null;
     }
 
     /**
@@ -379,6 +379,6 @@ SQL;
             ':asset_ids' => implode(', ', $assetIds)
         ));
 
-        return count($results) >= 1 && $results[0] == 1;
+        return count($results) >= 1;
     }
 }

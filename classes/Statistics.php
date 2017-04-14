@@ -56,7 +56,7 @@ SELECT s.*
 FROM statistics s
 SQL;
         $rows = $db->query($query);
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce(
                 $rows,
                 function ($carry, $item) {
@@ -99,7 +99,7 @@ SQL;
             ':group_by_name' => $groupByName
         ));
 
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce(
                 $rows,
                 function ($carry, $item) {

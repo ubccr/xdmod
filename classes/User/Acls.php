@@ -378,10 +378,10 @@ WHERE a.acl_id = :acl_id
 SQL;
         $results = $db->query($query, array(':acl_id' => $aclId));
 
-        if (count($results) !== 1) {
-            return null;
+        if ( count($results) > 0 ) {
+            return new Acl($results[0]);
         }
-        return new Acl($results[0]);
+        return null;
     }
 
     /**
@@ -444,7 +444,7 @@ SQL;
         $query = "SELECT 1 FROM user_acls WHERE user_id = :user_id AND acl_id = :acl_id";
         $results = $db->query($query, $params);
 
-        $success = isset($results) && count($results) === 1;
+        $success = count($results) >= 1;
         if (!$success) {
             $query = "INSERT INTO user_acls(user_id, acl_id) VALUES(:user_id, :acl_id)";
             $rows = $db->execute($query, $params);
@@ -514,7 +514,7 @@ SQL;
 
         $results = $db->query($sql, array('acl_id' => $aclId, 'user_id' => $userId));
 
-        return $results[0] == 1;
+        return count($results) > 0;
     }
 
     private static function _userHasAcls(iDatabase $db, XDUser $user, array $acls)
@@ -540,7 +540,7 @@ WHERE
 SQL;
         $results = $db->query($sql, array('user_id' => $userId, 'acl_ids' => $aclIds));
 
-        return $results[0] == 1;
+        return count($results) > 0;
     }
 
 
@@ -628,7 +628,7 @@ SQL;
 
         $rows = $db->query($sql, array(':name' => $name));
 
-        if (isset($rows) && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return new Acl($rows[0]);
         }
 
@@ -677,7 +677,7 @@ SQL;
         $realms = array();
 
         $rows = $db->query($query, array(':user_id' => $user->getUserID()));
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             foreach ($rows as $row) {
                 $realm = $row['realm'];
 
@@ -734,7 +734,7 @@ SQL;
         $rows = $db->query($query, array(
             ':realm_name' => $realmName
         ));
-        if ($rows !== false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry [] = new \GroupBy($item);
                 return $carry;
@@ -766,7 +766,7 @@ SQL;
             ':acl_name' => $aclName,
             ':group_by_name' => $groupByName
         ));
-        if ($rows !==  false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return $rows[0]['value'];
         }
         return null;
@@ -788,7 +788,7 @@ SQL;
             ':acl_name' => $aclName,
             ':group_by_name' => $groupByName
         ));
-        if ($rows !==  false && count($rows) > 0) {
+        if ( count($rows) > 0 ) {
             return array_reduce($rows, function($carry, $item) {
                 $carry []= $item['value'];
                 return $carry;
