@@ -36,10 +36,6 @@ class Authorization
             self::_MESSAGE => self::_DEFAULT_MESSAGE
         );
 
-        if (!isset($user)) {
-            throw new \Exception('A valid user must be supplied to complete the requested operation.');
-        }
-
         $notAnArray = isset($requirements) && !is_array($requirements);
         $noContents = isset($requirements) && is_array($requirements) && count($requirements) <= 0;
         $requirementsInvalid = $notAnArray && $noContents;
