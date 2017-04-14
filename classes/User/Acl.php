@@ -101,103 +101,19 @@ SQL;
     public function hasDataAccess($query_groupname, $realm_name = null, $group_by_name = null, $statistic_name = null)
     {
         $userId = $this->getUserId();
-        if (!isset($userId)) {
+        if (null === $userId) {
             throw new \Exception('Acl has no user_id. Cannot check data access');
         }
+
+        $params = array(
+            ':user_id' => $userId
+        );
 
         $hasRealm = isset($realm_name);
         $hasGroupBy = isset($group_by_name);
         $hasStatistic = isset($statistic_name);
 
-        if ($hasRealm == true && $hasGroupBy == true && $hasStatistic == true) {
-            $query =<<<SQL
-SELECT
-  agb.*,
-  r.realm_id,
-  r.name  AS realm,
-  gb.group_by_id,
-  gb.name AS group_by
-FROM acl_group_bys agb
-  JOIN user_acls ua
-    ON agb.acl_id = ua.acl_id
-  LEFT JOIN realms r
-    ON agb.realm_id = r.realm_id
-  LEFT JOIN group_bys gb
-    ON agb.group_by_id = gb.group_by_id
-LEFT JOIN statistics s
-  ON agb.statistic_id = s.statistic_id
-WHERE
-  ua.user_id = :user_id
-  AND agb.visible = TRUE
-  AND agb.enabled = TRUE
-  AND r.name = LOWER(:realm_name)
-  AND gb.name = :group_by_name
-  AND s.name = :statistic_name
-SQL;
-            $params = array(
-                ':user_id' => $userId,
-                ':realm_name' => $realm_name,
-                ':group_by_name' => $group_by_name,
-                ':statistic_name' => $statistic_name
-            );
-        } else if($hasRealm == true && $hasGroupBy == true) {
-            $query =<<<SQL
-SELECT
-  agb.*,
-  r.realm_id,
-  r.name  AS realm,
-  gb.group_by_id,
-  gb.name AS group_by
-FROM acl_group_bys agb
-  JOIN user_acls ua
-    ON agb.acl_id = ua.acl_id
-  LEFT JOIN realms r
-    ON agb.realm_id = r.realm_id
-  LEFT JOIN group_bys gb
-    ON agb.group_by_id = gb.group_by_id
-LEFT JOIN statistics s
-  ON agb.statistic_id = s.statistic_id
-WHERE
-  ua.user_id = :user_id
-  AND agb.visible = TRUE
-  AND agb.enabled = TRUE
-  AND r.name = LOWER(:realm_name)
-  AND gb.name = :group_by_name
-SQL;
-            $params = array(
-                ':user_id' => $userId,
-                ':realm_name' => $realm_name,
-                ':group_by_name' => $group_by_name
-            );
-        } else if ($hasRealm == true) {
-            $query =<<<SQL
-SELECT
-  agb.*,
-  r.realm_id,
-  r.name  AS realm,
-  gb.group_by_id,
-  gb.name AS group_by
-FROM acl_group_bys agb
-  JOIN user_acls ua
-    ON agb.acl_id = ua.acl_id
-  LEFT JOIN realms r
-    ON agb.realm_id = r.realm_id
-  LEFT JOIN group_bys gb
-    ON agb.group_by_id = gb.group_by_id
-LEFT JOIN statistics s
-  ON agb.statistic_id = s.statistic_id
-WHERE
-  ua.user_id = :user_id
-  AND agb.visible = TRUE
-  AND agb.enabled = TRUE
-  AND r.name = LOWER(:realm_name)
-SQL;
-            $params = array(
-                ':user_id' => $userId,
-                ':realm_name' => $realm_name
-            );
-        } else {
-            $query =<<<SQL
+        $query =<<<SQL
 SELECT
   agb.*,
   r.realm_id,
@@ -218,9 +134,17 @@ WHERE
   AND agb.visible = TRUE
   AND agb.enabled = TRUE
 SQL;
-            $params = array(
-                ':user_id' => $userId
-            );
+        if (true === $hasRealm) {
+            $query.= "  AND r.name = LOWER(:realm_name)\n";
+            $params[':realm_name'] = $realm_name;
+        }
+        if (true === $hasGroupBy) {
+            $query .= "  AND gb.name = :group_by_name\n";
+            $params[':group_by_name'] = $group_by_name;
+        }
+        if (true === $hasStatistic) {
+            $query .= "  AND s.name = :statistic_name\n";
+            $params[':statistic_hame'] = $statistic_name;
         }
 
         $db = DB::factory('database');
