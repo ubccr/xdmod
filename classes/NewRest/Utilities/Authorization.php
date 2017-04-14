@@ -13,6 +13,22 @@ class Authorization
 
     const _DEFAULT_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
 
+    /**
+    * This function attempts to determine whether or not the provided $user
+    * has the provided $requirements. If $blacklist is supplied then success
+    * will be whether or not the user *does not* have the provided requirements.
+    *
+    * @param XDUser $user        the user to authorize
+    * @param array $requirements an array of acl names
+    * @param bool $blacklist     whether or not to test for the presence of the $requirements or the absence
+    * @return array              in the form:
+    *                            array(
+    *                                0 => <success>,
+    *                                1 => <message>
+    *                            );
+    * @throws \Exception if the user provided is null
+    *                    if the requirements is not an array or it is an array but has no contents
+    **/
     public static function authorized(XDUser $user, array $requirements = array(), $blacklist = false)
     {
         $result = array(
