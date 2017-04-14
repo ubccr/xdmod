@@ -39,7 +39,7 @@ class Tabs
      */
     public static function getTab($tabId)
     {
-        if (!isset($tabId)) {
+        if (null === $tabId) {
             throw new Exception('A valid tab id must be provided');
         }
 
@@ -60,11 +60,7 @@ class Tabs
      */
     public static function getTabsForUser(XDUser $user)
     {
-        if (!isset($user)) {
-            throw new Exception('Must provide a valid user to retrieve tabs.');
-        }
-
-        if (($user->getUserID()) == null) {
+        if (null === $user->getUserID()) {
             throw new Exception('User must have a valid id.');
         }
 
@@ -76,16 +72,15 @@ class Tabs
 
     public static function getChildTabs(Tab $tab, Acl $acl = null)
     {
-        if (!isset($tab)) {
+        if (null === $tab) {
             throw new Exception('Must provide a valid tab');
         }
 
-        if ($tab->getTabId() == null) {
+        if (null === $tab->getTabId()) {
             throw new Exception('Tab must have a valid id.');
         }
-
-        if (isset($acl) && ($acl->getAclId() == null)) {
-            throw new Exception('If you provide an Acl then it must have a valid id.');
+        if (null !== $acl && null === $acl->getAclId()) {
+            throw new Exception('Acl must have a valid id.');
         }
 
         return self::_getChildTabs(
