@@ -30,14 +30,10 @@ class Statistics
 
     public static function listPermittedStatistics(XDUser $user, $realmName, $groupByName)
     {
-        if (!isset($user)) {
-            throw new Exception('A valid user is required.');
-        }
-
-        if (!isset($realmName)) {
+        if (null === $realmName) {
             throw new Exception('A valid realm is required.');
         }
-        if (!isset($groupByName)) {
+        if (null === $groupByName) {
             throw new Exception('A valid group by is required.');
         }
 
