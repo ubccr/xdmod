@@ -280,18 +280,12 @@ WHERE a.name = :center_staff_name
         AND a.name = :center_director_name
 );
 SQL;
-        $rows = $db->query($query, array(
+        return  $db->query($query, array(
             ':center_staff_name' => $centerStaffName,
             ':provider_name' => $providerName,
             ':center_director_name' => $centerDirectorName,
             ':user_id' => $user->getUserID()
         ));
-
-        if (count($rows) > 0) {
-            return $rows;
-        }
-
-        return array();
     }
 
     /**
