@@ -63,6 +63,15 @@ class XDUser
     private $_acls;
 
     /**
+     * A static reference to the public user. That is used as a singleton so
+     * that the public user need only be retrieved from the db once. Note that
+     * this is different from how the public user was previously used /
+     * utilized. Previously the public user only existed as an ephemeral object
+     * with no backing in the database. This was causing problems with the new
+     * Acl system ( having user -> acl relations explicitly defined ) so we
+     * now have a real (i.e. has a record in a table) public user w/ a real
+     * public acl.
+     *
      * @var XDUser
      */
     private static $_publicUser;
