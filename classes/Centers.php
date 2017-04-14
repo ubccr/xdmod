@@ -119,7 +119,7 @@ class Centers
      */
     public static function downgradeStaffMember(XDUser $user, $centerId)
     {
-        if (!isset($centerId)) {
+        if (null === $centerId) {
             throw new Exception('A valid center id must be provided.');
         }
 
