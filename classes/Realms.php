@@ -28,11 +28,11 @@ class Realms
 
     public static function listRealmsForModule(Module $module)
     {
-        if (!isset($module)) {
+        if (null === $module) {
             throw new Exception('A valid module is required.');
         }
         $moduleId = $module->getModuleId();
-        if (!isset($moduleId)) {
+        if (null === $moduleId) {
             throw new Exception('A valid module id is required.');
         }
         return self::listRealmsForModuleId($moduleId);
@@ -40,7 +40,7 @@ class Realms
 
     public static function listRealmsForModuleName($moduleName)
     {
-        if (!isset($moduleName)) {
+        if (null === $moduleName) {
             throw new Exception('A valid module name is required.');
         }
         return self::_listRealmsForModuleName(
@@ -51,7 +51,7 @@ class Realms
 
     public static function listRealmsForModuleId($moduleId)
     {
-        if (!isset($moduleId)) {
+        if (null === $moduleId) {
             throw new Exception('A valid module id is required.');
         }
 
@@ -68,7 +68,7 @@ class Realms
      */
     public static function listRealmsForUserId($userId)
     {
-        if (!isset($userId)) {
+        if (null === $userId) {
             throw new Exception('A valid user id is required.');
         }
 
@@ -85,7 +85,7 @@ class Realms
      */
     public static function getRealmByName($name)
     {
-        if (!isset($name)) {
+        if (null === $name) {
             throw new Exception('Valid realm name required.');
         }
         if (!is_string($name)) {
@@ -102,7 +102,7 @@ class Realms
 
     public static function getRealmById($realmId)
     {
-        if (!isset($realmId)) {
+        if (null === $realmId) {
             throw new Exception('Valid realm id required.');
         }
         if (!is_numeric($realmId)) {
@@ -116,10 +116,13 @@ class Realms
 
     public static function getRealmsByModule(Module $module)
     {
-        if (!isset($module)) {
+        if (null === $module) {
             throw new Exception('a valid module is required.');
         }
         $moduleId = $module->getModuleId();
+        if (null === $moduleId) {
+            throw new Exception('A valid module is required. (id)');
+        }
         return self::getRealmsByModuleId(
             $moduleId
         );
@@ -127,7 +130,7 @@ class Realms
 
     public static function getRealmsByModuleId($moduleId)
     {
-        if (!isset($moduleId)) {
+        if (null === $moduleId) {
             throw new Exception('A valid module id is required.');
         }
         return self::_getRealmsByModuleId(
@@ -138,11 +141,11 @@ class Realms
 
     public static function updateRealm(Realm $realm)
     {
-        if (!isset($realm)) {
+        if (null === $realm) {
             throw new Exception('A valid realm is required');
         }
         $realmId = $realm->getRealmId();
-        if (!isset($realmId)) {
+        if (null === $realmId) {
             throw new Exception('A valid realm id is required');
         }
         return self::_updateRealm(
@@ -153,11 +156,11 @@ class Realms
 
     public static function deleteRealm(Realm $realm)
     {
-        if (!isset($realm)) {
+        if (null === $realm) {
             throw new Exception('A valid realm is required');
         }
         $realmId = $realm->getRealmId();
-        if (!isset($realmId)) {
+        if (null === $realmId) {
             throw new Exception('A valid realm id is required');
         }
         return self::_deleteRealm(
