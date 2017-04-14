@@ -36,10 +36,7 @@ class Authorization
             self::_MESSAGE => self::_DEFAULT_MESSAGE
         );
 
-        $notAnArray = isset($requirements) && !is_array($requirements);
-        $noContents = isset($requirements) && is_array($requirements) && count($requirements) <= 0;
-        $requirementsInvalid = $notAnArray && $noContents;
-        if ($requirementsInvalid) {
+        if (count($requirements) === 0) {
             throw new \Exception('A valid set of requirements are required to complete the requested operation.');
         }
 
