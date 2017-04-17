@@ -18,7 +18,7 @@
  * @method integer getDecimals()
  * @method void    setDecimals($decimals)
  */
-class Statistic extends DBObject implements JsonSerializable
+class Statistic extends DBObject
 {
     protected $PROP_MAP = array(
         'statistic_id' => 'statisticId',

@@ -28,7 +28,7 @@
  * @method string  getFkColumn()
  * @method void    setFkColumn($fkColumn)
  */
-class GroupBy extends DBObject implements JsonSerializable
+class GroupBy extends DBObject
 {
 
     protected $PROP_MAP = array(

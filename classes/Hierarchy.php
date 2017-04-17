@@ -10,7 +10,7 @@
  * @method integer getName()
  * @method void    setName($name)
  */
-class Hierarchy extends DBObject implements JsonSerializable
+class Hierarchy extends DBObject
 {
 
     protected $PROP_MAP = array(

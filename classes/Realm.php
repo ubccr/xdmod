@@ -17,7 +17,7 @@
  * @method string  getSchemaName()
  * @method void    setSchemaName($schemaName)
  */
-class Realm extends DBObject implements JsonSerializable
+class Realm extends DBObject
 {
     protected $PROP_MAP = array(
         'realm_id'=> 'realmId',

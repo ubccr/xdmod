@@ -25,7 +25,7 @@
  * @method string  getUserManualSectionName()
  * @method void    setUserManualSectionName($userManualSectionName)
  */
-class Tab extends DBObject implements JsonSerializable
+class Tab extends DBObject
 {
     protected $PROP_MAP = array(
         'tab_id' => 'tabId',

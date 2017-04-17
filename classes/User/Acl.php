@@ -30,8 +30,9 @@ use Module;
  * @method void    setEnabled($enabled)
  * @method integer getUserId()
  * @method void    setUserId($userId)
+ *
  */
-class Acl extends DBObject implements JsonSerializable
+class Acl extends DBObject
 {
     protected $PROP_MAP = array(
         'acl_id' => 'aclId',
