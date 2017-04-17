@@ -40,11 +40,11 @@ class Tabs
     public static function getTab($tabId)
     {
         if (null === $tabId) {
-            throw new Exception('A valid tab id must be provided');
+            throw new Exception('A valid tab id must be provided. (missing)');
         }
 
         if (!is_numeric($tabId)) {
-            throw new Exception('A valid tab id must be provided');
+            throw new Exception('A valid tab id must be provided. (non numeric)');
         }
 
         return self::_getTab(
@@ -204,7 +204,7 @@ SQL;
             ));
         }
         if (count($rows) > 0) {
-            return array_reduce($rows, function($carry, $item) {
+            return array_reduce($rows, function ($carry, $item) {
                 $carry []= new Tab($item);
                 return $carry;
             }, array());

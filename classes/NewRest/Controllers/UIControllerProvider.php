@@ -48,10 +48,8 @@ class UIControllerProvider extends BaseControllerProvider
             return $carry;
         }, array());
 
-        $success = isset($tabs);
-
         return $app->json(array(
-            'success' => $success,
+            'success' => true,
             'totalCount' => 1,
             'message' => '',
             'data' => array(

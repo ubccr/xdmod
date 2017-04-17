@@ -15,7 +15,6 @@ use XDUser;
  * functionality in addition to a number of other functions related to Acls and
  * their associated pieces of data.
  *
- * 
  */
 class Acls
 {
@@ -581,7 +580,7 @@ SQL;
             }
         }
 
-        return array_filter($results, function($item) {
+        return array_filter($results, function ($item) {
             return count($item) > 0;
         });
     }
@@ -753,12 +752,11 @@ SQL;
             ':group_by_name' => $groupByName
         ));
         if ( count($rows) > 0 ) {
-            return array_reduce($rows, function($carry, $item) {
+            return array_reduce($rows, function ($carry, $item) {
                 $carry []= $item['value'];
                 return $carry;
             }, array());
         }
         return array();
     }
-
 }

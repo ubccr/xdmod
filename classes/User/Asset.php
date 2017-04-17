@@ -31,5 +31,4 @@ class Asset extends DBObject
         'display' => 'display',
         'enabled' => 'enabled'
     );
-
 }

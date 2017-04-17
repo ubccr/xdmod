@@ -5,7 +5,6 @@ use CCR\DB\iDatabase;
 use Exception;
 use XDUser;
 
-
 /**
  * Class Assets
  * @package User
@@ -72,7 +71,7 @@ class Assets
             throw new Exception('An asset must be provided to update.');
         }
 
-        if (NULL === $asset->getAssetId()) {
+        if (null === $asset->getAssetId()) {
             throw new Exception('A valid asset id is required to complete the requested update.');
         }
 
@@ -295,7 +294,7 @@ SQL;
             ':user_id' => $userId
         ));
 
-        $assets = array_reduce($results, function($carry, $item) {
+        $assets = array_reduce($results, function ($carry, $item) {
             $carry []= new Asset($item);
         }, array());
 
@@ -332,7 +331,7 @@ WHERE
   AND ast.enabled = TRUE;
 SQL;
 
-        $results = $db->query($sql,array(
+        $results = $db->query($sql, array(
             ':user_id' => $userId,
             ':asset_id' => $assetId
         ));
@@ -353,7 +352,7 @@ SQL;
         }
 
         $userId = $user->getUserID();
-        $assetIds = array_reduce($assets, function($carry, Asset $item) {
+        $assetIds = array_reduce($assets, function ($carry, Asset $item) {
             $carry []= $item->getAssetId();
         }, array());
 

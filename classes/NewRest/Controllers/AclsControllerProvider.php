@@ -5,6 +5,7 @@ use Silex\ControllerCollection;
 
 use Statistic;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use User\Acl;
 use User\Acls;
 
@@ -27,15 +28,10 @@ class AclsControllerProvider extends BaseControllerProvider
         $conversions = '\NewRest\Utilities\Conversions';
 
         $isAuthorized = function (Request $request, Application $app) {
-            $authorized = $this->isAuthorized($request, array('mgr'));
+            $user = $this->getUserFromRequest($request);
+            $authorized = Authorization::authorized($user, array('mgr'));
             if (!$authorized) {
-                return $app->json(
-                    array(
-                        'success' => false,
-                        'message' => 'Not authorized for the requested operation.'
-                    ),
-                    401
-                );
+                throw new UnauthorizedHttpException('Basic realm="acls"','Not authorized for the requested operation.');
             }
         };
 
@@ -76,13 +72,11 @@ class AclsControllerProvider extends BaseControllerProvider
     public function listAcls(Request $request, Application $app)
     {
         $acls = Acls::getAcls();
-        $success = isset($acls);
-        $status = true == $success ? 200 : 500;
 
         return $app->json(array(
-            'success' => $success,
+            'success' => true,
             'results' => $acls
-        ), $status);
+        ));
     }
 
     public function createAcl(Request $request, Application $app)

@@ -122,11 +122,6 @@ class RealmControllerProvider extends BaseControllerProvider
         ));
     }
 
-    private function isSuccess(array $rows)
-    {
-        return isset($rows) && count($rows) > 0;
-    }
-
     private function reduceArray(array $source, $functionName)
     {
         return array_reduce($source, function($carry, $item) use($functionName) {

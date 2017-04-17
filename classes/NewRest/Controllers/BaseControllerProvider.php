@@ -11,9 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use DataWarehouse\Query\Exceptions\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use User\Acl;
 
@@ -224,7 +223,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                         missing.
      * @return \Symfony\Component\HttpFoundation\JsonResponse if and only if
      *                         the user is missing a token or an ip.
-     * @throws AccessDeniedException
+     * @throws Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
     public static function authenticate(Request $request, Application $app)
     {
@@ -235,7 +234,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         $user = Authentication::authenticateUser($request);
         if ($user === null) {
-            throw new AccessDeniedException('You must be logged in to access this endpoint.', 401);
+            throw new UnathorizedHttpException('xdmod', 'You must be logged in to access this endpoint.');
         } else {
             $request->attributes->set(BaseControllerProvider::_USER, $user);
         }
@@ -261,7 +260,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                        is false.
      * @return \XDUser The user that was checked and is authorized according to
      *                the given parameters.
-     * @throws AccessDeniedException
+     * @throws Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
     public function authorize(Request $request, array $requirements = array(), $blacklist = false)
     {
@@ -284,9 +283,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         // limits with their current permissions.
         if (!$success) {
             if ($user->isPublicUser()) {
-                throw new AccessDeniedException($message, 401);
+                throw new UnauthorizedHttpException('xdmod', $message);
             } else {
-                throw new AccessDeniedHttpException($message, null, 403);
+                throw new AccessDeniedHttpException($message);
             }
         }
 
@@ -708,19 +707,4 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
     }  // formatLogMessage()
 
-    /**
-     * Attempt to ascertain whether or not the user logged into the provided
-     * '$request' has been assigned the required acls.
-     *
-     * @param Request  $request      to be used when retrieving the currently
-     *                               logged in user
-     * @param string[] $requirements the acls that are required be found to
-     *                               return true.
-     * @return bool true iff all requirements are found else false.
-     */
-    protected function isAuthorized(Request $request, array $requirements)
-    {
-        $user = $request->attributes->get(BaseControllerProvider::_USER);
-        return $user->hasAcls($requirements);
-    }
 }
