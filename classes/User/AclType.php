@@ -3,7 +3,6 @@
 use DBObject;
 use Module;
 
-
 /**
  * Class AclType
  * @package User
