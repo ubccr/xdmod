@@ -297,7 +297,7 @@ SQL;
             ':module_id' => $moduleId
         ));
         if ( count($rows) > 0 ) {
-            return array_reduce($rows, function($carry, $item) {
+            return array_reduce($rows, function ($carry, $item) {
                 $carry []= new Realm($item);
                 return $carry;
             }, array());
@@ -318,7 +318,7 @@ SQL;
             ':module_name' => $moduleName
         ));
         if ( count($rows) > 0 ) {
-            return array_reduce($rows, function($carry, $item) {
+            return array_reduce($rows, function ($carry, $item) {
                 $carry []= new Realm($item);
                 return $carry;
             }, array());
@@ -346,7 +346,7 @@ SQL;
             ':user_id' => $userId
         ));
         if ( count($rows) > 0 ) {
-            return array_reduce($rows, function($carry, $item) {
+            return array_reduce($rows, function ($carry, $item) {
                 $carry []= new Realm($item);
                 return $carry;
             }, array());
