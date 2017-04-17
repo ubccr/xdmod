@@ -1,6 +1,8 @@
 <?php
-	
-	try {
+
+use Models\Services\Centers;
+
+try {
 	
    	$activeUser = \xd_security\getLoggedInUser();
    	$members = Centers::listStaffForUser($activeUser);

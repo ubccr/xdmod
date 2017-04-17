@@ -1,10 +1,11 @@
 <?php namespace NewRest\Controllers;
 
+
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Tabs;
-use Tab;
+use Models\Services\Tabs;
+use Models\Tab;
 
 class UIControllerProvider extends BaseControllerProvider
 {

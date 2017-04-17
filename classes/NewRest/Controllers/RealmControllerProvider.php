@@ -1,8 +1,8 @@
 <?php namespace NewRest\Controllers;
 
 
-use Realm;
-use Realms;
+use Models\Realm;
+use Models\Services\Realms;
 use Silex\Application;
 use Silex\ControllerCollection;
 

@@ -1,7 +1,8 @@
-<?php
+<?php namespace Models\Services;
 
 use CCR\DB;
 use CCR\DB\iDatabase;
+use Models\Tab;
 use User\Acl;
 
 /**

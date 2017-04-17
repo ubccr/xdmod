@@ -3,7 +3,7 @@
 namespace User\Roles;
 
 use CCR\DB;
-use Centers;
+use Models\Services\Centers;
 
 /*
  * 'Center Director' Role:

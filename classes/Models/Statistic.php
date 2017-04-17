@@ -1,4 +1,7 @@
-<?php
+<?php namespace Models;
+
+
+use DBObject;
 
 /**
  * Class Statistic

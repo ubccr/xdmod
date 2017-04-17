@@ -3,7 +3,7 @@
 use Silex\Application;
 use Silex\ControllerCollection;
 
-use Statistic;
+use Models\Statistic;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use User\Acl;

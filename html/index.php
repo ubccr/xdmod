@@ -5,6 +5,7 @@
       The Center For Computational Research, University At Buffalo
    */
 
+use Models\Services\Realms;
 use User\Acls;
 
 @session_start();

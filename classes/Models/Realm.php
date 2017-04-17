@@ -1,4 +1,6 @@
-<?php
+<?php namespace Models;
+
+use DBObject;
 
 /**
  * Class Realm

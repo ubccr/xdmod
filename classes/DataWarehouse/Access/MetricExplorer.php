@@ -4,8 +4,8 @@ namespace DataWarehouse\Access;
 
 use Exception;
 use PDOException;
-use Realm;
-use Realms;
+use Models\Realm;
+use Models\Services\Realms;
 use stdClass;
 
 use CCR\DB;

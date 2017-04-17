@@ -2,7 +2,7 @@
 
 namespace NewRest\Controllers;
 
-use Centers;
+use Models\Services\Centers;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
