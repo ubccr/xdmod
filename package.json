@@ -1,6 +1,6 @@
 {
     "name": "xdmod",
-    "version": "6.6.0",
+    "version": "6.7.0",
     "description": "An open framework for collecting and analyzing HPC metrics.",
     "dependencies": {},
     "devDependencies": {
