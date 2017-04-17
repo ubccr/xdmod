@@ -25,5 +25,4 @@ class AssetType extends DBObject
         'name' => 'name',
         'display'=> 'display'
     );
-
 }
