@@ -78,7 +78,7 @@ AND ua.acl_id = :acl_id
 SQL;
         $rows = $db->query($query, array(':user_id' => $userId, ':acl_id' => $aclId));
         if (false !== $rows) {
-            $results = array_reduce($rows, function($carry, $item) {
+            $results = array_reduce($rows, function ($carry, $item) {
                 $carry[$item['name']] = $item['value'];
                 return $carry;
             }, $rows);
@@ -153,4 +153,3 @@ SQL;
         return $rows !== false && count($rows) > 0;
     }
 }
-
