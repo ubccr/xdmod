@@ -40,11 +40,11 @@ class Tabs
     public static function getTab($tabId)
     {
         if (null === $tabId) {
-            throw new Exception('A valid tab id must be provided');
+            throw new Exception('A valid tab id must be provided. (missing)');
         }
 
         if (!is_numeric($tabId)) {
-            throw new Exception('A valid tab id must be provided');
+            throw new Exception('A valid tab id must be provided. (non numeric)');
         }
 
         return self::_getTab(
