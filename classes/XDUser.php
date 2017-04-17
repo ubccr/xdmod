@@ -5,7 +5,6 @@ require_once dirname(__FILE__) . '/../configuration/linker.php';
 use CCR\DB;
 use User\Acl;
 use User\Acls;
-use User\Asset;
 
 /**
  * XDMoD Portal User
@@ -47,13 +46,6 @@ class XDUser
     private $_token;
 
     private $_cachedActiveRole;
-
-    /**
-     * An array that is assumed to be stored in the following manner:
-     *  _assets[$asset->name] = $asset;
-     * @var Asset[]
-     */
-    private $_assets;
 
     /**
      * An array that is assumed to be stored in the following manner:
@@ -545,31 +537,6 @@ SQL;
         $user->setAcls($acls);
         // END: ACL population
 
-        // BEGIN: Asset Population
-        $query = <<<SQL
-SELECT DISTINCT
-  ast.*
-FROM acl_assets aa
-  JOIN acls a
-    ON a.acl_id = aa.acl_id
-  JOIN assets ast
-    ON ast.asset_id = aa.asset_id
-  JOIN user_acls AS ua
-    ON aa.acl_id = ua.acl_id
-WHERE
-  ua.user_id = :user_id
-AND a.enabled = TRUE
-AND ast.enabled = TRUE;
-SQL;
-        $results = $pdo->query($query, array('user_id' => $uid));
-        $assets = array_reduce($results, function ($carry, $item) {
-            $asset = new Asset($item);
-            $carry[$asset->getName()] = $asset;
-            return $carry;
-        }, array());
-        $user->setAssets($assets);
-
-        // END:   Asset Population
 
         return $user;
 
@@ -2873,22 +2840,6 @@ SQL;
     }
 
     /**
-     * @return Asset[]
-     */
-    public function getAssets()
-    {
-        return $this->_assets;
-    }
-
-    /**
-     * @param Asset[] $assets
-     */
-    public function setAssets(array $assets)
-    {
-        $this->_assets = $assets;
-    }
-
-    /**
      * @param bool $names defaults to `false`. If true, then the names of the
      *                    acls will be returned instead of the Acl objects themselves.
      * @return Acl[]|string[]
@@ -2949,29 +2900,6 @@ SQL;
             $total += $found ? 1 : 0;
         }
         return $total === count($acls);
-    }
-
-    public function hasAsset($asset, $property = 'name')
-    {
-        $isAsset = $asset instanceof Asset;
-        $isString = is_string($asset);
-        $getter = 'get' . ucfirst($property);
-        if (false === $isAsset && false === $isString) {
-            $assetClass = get_class($asset);
-            throw new Exception("Unknown asset type encountered. Expected Asset or string got $assetClass.");
-        }
-        $value = $isAsset ? $asset->$getter() : $asset;
-        return array_key_exists($value, $this->_assets);
-    }
-
-    public function hasAssets(array $assets, $property = 'name')
-    {
-        $total = 0;
-        foreach ($assets as $asset) {
-            $found = $this->hasAcl($asset, $property);
-            $total += $found ? 1 : 0;
-        }
-        return $total === count($assets);
     }
 
     /**
