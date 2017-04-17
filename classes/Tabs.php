@@ -204,7 +204,7 @@ SQL;
             ));
         }
         if (count($rows) > 0) {
-            return array_reduce($rows, function($carry, $item) {
+            return array_reduce($rows, function ($carry, $item) {
                 $carry []= new Tab($item);
                 return $carry;
             }, array());
