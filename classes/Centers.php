@@ -541,5 +541,4 @@ SQL;
             ':user_id' => $user->getUserID()
         ));
     }
-
 }
