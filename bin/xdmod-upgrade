@@ -25,7 +25,7 @@ ini_set('memory_limit', -1);
  * @var array
  */
 $supportedUpgrades = array(
-    '6.5.0' => '6.6.0',
+    '6.7.0' => '7.0.0',
 );
 
 /**
