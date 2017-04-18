@@ -83,5 +83,4 @@ class Maintenance
         return $action;
 
     }  // factory()
-
 }  // class Maintenance

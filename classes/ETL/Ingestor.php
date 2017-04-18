@@ -83,5 +83,4 @@ class Ingestor
         return $ingestor;
 
     }  // factory()
-
 }  // class Ingestor

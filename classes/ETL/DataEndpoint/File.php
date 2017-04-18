@@ -9,8 +9,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use \Log;
 
-class File extends aDataEndpoint
-implements iDataEndpoint
+class File extends aDataEndpoint implements iDataEndpoint
 {
 
     // The path to the file.
@@ -103,13 +102,13 @@ implements iDataEndpoint
         if ( null === $this->handle ) {
             return true;
         }
-    
+
         if ( false === @fclose($this->handle) ) {
             $error = error_get_last();
             $msg = "Error closing file '{$this->path}': " . $error['message'];
             $this->logAndThrowException($msg);
         }
-    
+
         $this->handle = null;
 
         return true;
@@ -135,7 +134,7 @@ implements iDataEndpoint
             $msg = "Unsupported mode '{$this->mode}'";
             $this->logAndThrowException($msg);
         }
-        
+
         if ( in_array($this->mode, $readModes) && ! is_readable($this->path) ) {
             $msg = "File '{$this->path}' is not readable";
             $this->logAndThrowException($msg);
@@ -148,5 +147,4 @@ implements iDataEndpoint
 
         return true;
     }  // verify()
-
 }  // class File

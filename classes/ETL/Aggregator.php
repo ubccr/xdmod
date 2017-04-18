@@ -83,5 +83,4 @@ class Aggregator
         return $aggregator;
 
     }  // factory()
-
 }  // class Aggregator
