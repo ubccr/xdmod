@@ -19,7 +19,8 @@ use DataWarehouse\Query\Exceptions\BadRequestException;
  *
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-class XdmodApplicationFactory {
+class XdmodApplicationFactory
+{
 
     /**
      * A key which will be used to define our base url.

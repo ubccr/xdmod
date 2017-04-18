@@ -404,7 +404,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $record = $searchHistory->getById($id);
         if (isset($record)) {
             foreach ($record['results'] as &$result) {
-                if (isset($result)) $result['dtype'] = 'jobid';
+                if (isset($result)) {
+                    $result['dtype'] = 'jobid';
+                }
             }
         }
 
@@ -429,14 +431,17 @@ class WarehouseControllerProvider extends BaseControllerProvider
         foreach ($searches as $search) {
             $text = isset($search['text']) ? $search['text'] : null;
             if ($text == $title) {
-                if (!isset($search['dtype'])) $search['dtype'] = 'recordid';
+                if (!isset($search['dtype'])) {
+                    $search['dtype'] = 'recordid';
+                }
                 return $app->json(
                     array(
                         'action' => $action,
                         'success' => true,
                         'data' => $search
                     ),
-                    200);
+                    200
+                );
                 break;
             }
         }
@@ -629,7 +634,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $params = json_decode($params, true);
 
-        if($params === NULL) {
+        if($params === null) {
             throw new BadRequestException('params parameter must be valid JSON');
         }
 
@@ -723,7 +728,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $dimensionsToReturn = array();
         $realms = $user->getActiveRole()->getAllQueryRealms($queryGroup);
         foreach ($realms as $query_realm_key => $query_realm_object) {
-            if ($realm == NULL || $realm == $query_realm_key) {
+            if ($realm == null || $realm == $query_realm_key) {
                 foreach ($query_realm_object as $k => $v) {
                     if ($k != "none") {
                         $dimensionsToReturn[] = array(
@@ -815,10 +820,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         // Check whether multiple service providers are supported or not.
         try {
-          $multipleProvidersSupported = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
+            $multipleProvidersSupported = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
         }
-        catch(\Exception $e){
-          $multipleProvidersSupported = FALSE;
+        catch(\Exception $e) {
+            $multipleProvidersSupported = false;
         }
 
         // Generate generic quick filters for all users.
@@ -980,7 +985,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $factsToReturn = array();
         $realms = $user->getActiveRole()->getAllQueryRealms($queryGroup);
         foreach ($realms as $query_realm_key => $query_realm_object) {
-            if ($realm == NULL || $realm == $query_realm_key) {
+            if ($realm == null || $realm == $query_realm_key) {
                 $query_class_name = \DataWarehouse\QueryBuilder::getQueryRealmClassname($query_realm_key);
 
                 $query_class_name::registerGroupBys();
@@ -988,7 +993,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
                 $group_bys = array_keys($query_realm_object);
                 foreach ($group_bys as $group_by) {
-                    if ($dimension == NULL || $dimension == $group_by) {
+                    if ($dimension == null || $dimension == $group_by) {
                         $group_by_instance = $query_class_name::getGroupBy($group_by);
 
                         $factsToReturn = array_merge($factsToReturn, $group_by_instance->getPermittedStatistics());
@@ -1411,7 +1416,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     private function arraytostore(array $values)
     {
-            return array(array("key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values, False) ));
+            return array(array("key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values, false) ));
     }
 
     private function atosrecurse(array $values)
@@ -1451,8 +1456,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $tsId,
         $nodeId,
         $infoId,
-        $action)
-    {
+        $action
+    ) {
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
             throw new BadRequestException("Node $infoId is a leaf", 400);
         }
@@ -1490,8 +1495,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $jobId,
         $tsId,
         $infoId,
-        $action)
-    {
+        $action
+    ) {
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
             throw new BadRequestException("Node $infoId is a leaf", 400);
         }
@@ -1526,8 +1531,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $realm,
         $jobId,
         $infoId,
-        $action)
-    {
+        $action
+    ) {
 
         switch ($infoId) {
             case "" . \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
@@ -1574,8 +1579,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         XDUser $user,
         $realm,
         $jobId,
-        $action)
-    {
+        $action
+    ) {
         $JobMetaDataClass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $info = new $JobMetaDataClass();
         $jobMetaData = $info->getJobMetadata($user, $jobId);
@@ -1936,6 +1941,4 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $container = implode('-', array_filter(array(self::_HISTORY_STORE, strtoupper($realm))));
         return new \UserStorage($user, $container);
     }
-
-
 }

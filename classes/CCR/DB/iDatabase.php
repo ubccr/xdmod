@@ -161,5 +161,4 @@ interface iDatabase
      * @return string The quoted string.
      */
     public function quote($string);
-
 }

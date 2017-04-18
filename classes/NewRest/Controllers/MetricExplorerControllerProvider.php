@@ -291,8 +291,12 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                         $config = $this->getStringParam($request, 'config');
                     }
 
-                    if (isset($name)) $query['name'] = $name;
-                    if (isset($config)) $query['config'] = $config;
+                    if (isset($name)) {
+                        $query['name'] = $name;
+                    }
+                    if (isset($config)) {
+                        $query['config'] = $config;
+                    }
 
                     $queries->upsert($id, $query);
 
@@ -416,7 +420,9 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
      */
     private function migrateOldQueries(\XDUser $user, \UserStorage $queries, $removeOldQueries = true)
     {
-        if (!isset($user)) return;
+        if (!isset($user)) {
+            return;
+        }
 
         $profile = $user->getProfile();
         $oldQueries = $profile->fetchValue(self::_OLD_QUERIES_STORE);
@@ -484,7 +490,9 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             $hasConfig = !empty($oldQuery['config']);
             $isValid = $hasName && $hasConfig;
 
-            if ($isValid) $results[] = $oldQuery;
+            if ($isValid) {
+                $results[] = $oldQuery;
+            }
         }
         return $results;
     }
@@ -517,5 +525,4 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
     {
         return is_string($value) ? json_decode($value) : $value;
     }
-
 }

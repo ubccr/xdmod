@@ -522,10 +522,12 @@ FROM user_acls ua
 WHERE ua.user_id = :user_id
       AND a.enabled = TRUE
 SQL;
-        $results = $pdo->query($query,
+        $results = $pdo->query(
+            $query,
             array(
                 'user_id' => $uid
-            ));
+            )
+        );
 
 
         $acls = array_reduce($results, function ($carry, $item) {
@@ -1509,7 +1511,7 @@ SQL;
             ':acl_name' => $aclName
         ));
 
-        $this->_pdo->execute($aclInsert,array(
+        $this->_pdo->execute($aclInsert, array(
             ':user_id' => $this->_id,
             ':acl_name' => $aclName,
             ':value' => $institution_id
@@ -1603,7 +1605,8 @@ SQL
             array(
                 ':user_id' => $this->_id,
                 ':acl_id' => $acl->getAclId()
-            ));
+            )
+        );
         // =======================================
 
         foreach ($organization_ids as $organization_id ) {
@@ -1619,7 +1622,8 @@ SQL
                 ':is_primary' => false,
                 ':is_active' => false,
             ));
-            $this->_pdo->execute(<<<SQL
+            $this->_pdo->execute(
+                <<<SQL
 INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value) 
 SELECT inc.* 
 FROM (
@@ -1643,7 +1647,8 @@ SQL
                     ':user_id' => $this->_id,
                     ':acl_id' => $acl->getAclId(),
                     ':value' => $organization_id
-                ));
+                )
+            );
         }//foreach
 
     }//setOrganizations

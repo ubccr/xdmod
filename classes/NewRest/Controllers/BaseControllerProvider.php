@@ -179,7 +179,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      */
     protected function _parseRestArguments(Request $request, $requiredParams = array(), $strict = true, $alternative_source = null)
     {
-        if (!isset($request)) return array();
+        if (!isset($request)){
+            return array();
+        }
 
         $found = 0;
         $results = array();
@@ -193,7 +195,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
                 $source = $request->get($alternative_source);
                 $needsDecoding = is_string($source);
 
-                if ($needsDecoding) $source = json_decode($source, true);
+                if ($needsDecoding) {
+                    $source = json_decode($source, true);
+                }
 
                 $found = isset($source[$requiredParam]);
                 $value = $found ? $source[$requiredParam] : null;
@@ -207,7 +211,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $found += $mod;
         }
 
-        if ($found !== $length && $strict) throw new MissingMandatoryParametersException('Not all parameters were supplied');
+        if ($found !== $length && $strict) {
+            throw new MissingMandatoryParametersException('Not all parameters were supplied');
+        }
 
         return $results;
     }//_parseRestArguments
@@ -223,7 +229,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                         missing.
      * @return \Symfony\Component\HttpFoundation\JsonResponse if and only if
      *                         the user is missing a token or an ip.
-     * @throws Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
     public static function authenticate(Request $request, Application $app)
     {
@@ -260,7 +266,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                        is false.
      * @return \XDUser The user that was checked and is authorized according to
      *                the given parameters.
-     * @throws Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
     public function authorize(Request $request, array $requirements = array(), $blacklist = false)
     {
@@ -628,9 +634,11 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @param null $default
      * @return null
      */
-    protected function _getId(Array $values, $selector = 'dtype', $default = null)
+    protected function _getId(array $values, $selector = 'dtype', $default = null)
     {
-        if (!isset($values) || !isset($selector) || !is_string($selector)) return null;
+        if (!isset($values) || !isset($selector) || !is_string($selector)) {
+            return null;
+        }
 
         $idSelector = isset($values[$selector]) ? $values[$selector] : null;
 
@@ -664,7 +672,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * ------------------------------------------------------------------------------------------
      */
 
-    public function formatLogMesssage($message, Request $request, $includeParams = FALSE)
+    public function formatLogMesssage($message, Request $request, $includeParams = false)
     {
         $retval = array('message' => $message);
 
@@ -692,5 +700,4 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         return $retval;
 
     }  // formatLogMessage()
-
 }
