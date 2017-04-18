@@ -2,6 +2,8 @@
 
 use CCR\DB;
 use CCR\DB\iDatabase;
+use Exception;
+use Models\Module;
 use Models\Realm;
 
 /**
