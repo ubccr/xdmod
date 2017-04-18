@@ -1,5 +1,6 @@
 <?php namespace NewRest\Controllers;
 
+use NewRest\Utilities\Authorization;
 use Silex\Application;
 use Silex\ControllerCollection;
 
@@ -29,10 +30,7 @@ class AclsControllerProvider extends BaseControllerProvider
 
         $isAuthorized = function (Request $request, Application $app) {
             $user = $this->getUserFromRequest($request);
-            $authorized = Authorization::authorized($user, array('mgr'));
-            if (!$authorized) {
-                throw new UnauthorizedHttpException('Basic realm="acls"','Not authorized for the requested operation.');
-            }
+            Authorization::authorized($user, array('mgr'));
         };
 
         $controller->get("$root/", "$class::listAcls")
@@ -248,5 +246,4 @@ class AclsControllerProvider extends BaseControllerProvider
             'data' => $data
         ));
     }
-
 }

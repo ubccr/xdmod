@@ -3,6 +3,7 @@
 namespace NewRest\Controllers;
 
 use Models\Services\Centers;
+use NewRest\Utilities\Authorization;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -64,10 +65,7 @@ class UserControllerProvider extends BaseControllerProvider
 
         $isAuthorized = function (Request $request, Application $app) {
             $user = $this->getUserFromRequest($request);
-            $authorized = Authorization::authorized($user, array('mgr'));
-            if (!$authorized) {
-                throw new UnauthorizedHttpException('xdmod','Not authorized for the requested operation.');
-            }
+            Authorization::authorized($user, array('mgr'));
         };
 
         $controller->get("$root/current", "$class::getCurrentUser");

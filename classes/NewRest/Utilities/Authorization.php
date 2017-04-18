@@ -2,6 +2,8 @@
 
 namespace NewRest\Utilities;
 
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
 class Authorization
@@ -21,31 +23,30 @@ class Authorization
     * @param XDUser $user        the user to authorize
     * @param array $requirements an array of acl names
     * @param bool $blacklist     whether or not to test for the presence of the $requirements or the absence
-    * @return array              in the form:
-    *                            array(
-    *                                0 => <success>,
-    *                                1 => <message>
-    *                            );
-    * @throws \Exception if the user provided is null
-    *                    if the requirements is not an array or it is an array but has no contents
+    * @throws \Exception                if the user provided is null
+    *                                   if the requirements is not an array or it is an array but has no contents
+    * @throws UnauthorizedHttpException if the user was not able to satisfy the provided requirements
+    * and is a public user.
+    * @throws AccessDeniedHttpException if the user was not able to satisfy the provided requirements
+    * and is not a public user.
     **/
     public static function authorized(XDUser $user, array $requirements = array(), $blacklist = false)
     {
-        $result = array(
-            self::_SUCCESS => false,
-            self::_MESSAGE => self::_DEFAULT_MESSAGE
-        );
-
         if (count($requirements) === 0) {
             throw new \Exception('A valid set of requirements are required to complete the requested operation.');
         }
 
         $found = $user->hasAcls($requirements);
-        $result[self::_SUCCESS] = (!$found && $blacklist) || ($found && !$blacklist);
-        $result[self::_MESSAGE] .= (!$found && !$blacklist) || ($found && $blacklist)
+        $success = (!$found && $blacklist) || ($found && !$blacklist);
+        $message = self::_DEFAULT_MESSAGE .= (!$found && !$blacklist) || ($found && $blacklist)
             ? ' [ Not Authorized ]'
             : '';
-        return $result;
+        if ($success === false) {
+            if ($user->isPublicUser() === true) {
+                throw new UnauthorizedHttpException('xdmod', $message);
+            } else {
+                throw new AccessDeniedHttpException($message);
+            }
+        }
     }
-
 }

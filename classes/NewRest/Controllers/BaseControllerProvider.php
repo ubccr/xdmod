@@ -273,21 +273,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         // Attempt to authorize the user.
         $user = $this->getUserFromRequest($request);
-        list($success, $message) = Authorization::authorized($user, $requirements, $blacklist);
-
-        // If authorization was not successful, throw an exception.
-        //
-        // If the user was not logged in, respond with a 401 HTTP error code
-        // to indicate that they could try again while logged in. Otherwise,
-        // respond with a 403 to indicate that what they asked for is off
-        // limits with their current permissions.
-        if (!$success) {
-            if ($user->isPublicUser()) {
-                throw new UnauthorizedHttpException('xdmod', $message);
-            } else {
-                throw new AccessDeniedHttpException($message);
-            }
-        }
+        Authorization::authorized($user, $requirements, $blacklist);
 
         // Return the successfully-authorized user.
         return $user;
