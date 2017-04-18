@@ -1,7 +1,5 @@
 <?php namespace Models;
 
-use DBObject;
-
 /**
  * Class Module
  *
