@@ -1,9 +1,7 @@
 <?php namespace User;
 
 use CCR\DB;
-use DBObject;
-use JsonSerializable;
-use Module;
+use Models\DBObject;
 
 /**
  * Class Acl

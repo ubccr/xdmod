@@ -1,7 +1,6 @@
 <?php namespace User;
 
-use DBObject;
-use Module;
+use Models\DBObject;
 
 /**
  * Class AclType
