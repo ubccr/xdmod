@@ -144,14 +144,14 @@ class XDAdmin
     public function enumerateResourceProviders()
     {
         return $this->modw->query("
-            SELECT DISTINCT
-              rf.organization_id AS id,
-              o.abbrev           AS organization,
-              o.name             AS name
+             SELECT DISTINCT
+                organization_id AS id,
+                o.abbrev        AS organization,
+                o.name          AS name
             FROM
-              organization o
-              JOIN resourcefact rf
-                ON o.id = rf.organization_id
+                modw_aggregates.jobfact_by_quarter,
+                organization o
+            WHERE o.id = organization_id
             ORDER BY o.abbrev ASC
         ");
     }
