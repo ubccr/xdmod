@@ -27,7 +27,7 @@
  *
  * @author Ryan Rathsam <ryanrath@buffalo.edu>
  */
-class DBObject implements \ArrayAccess {
+class DBObject {
 
     protected $PROP_MAP = array();
 
@@ -45,60 +45,6 @@ class DBObject implements \ArrayAccess {
                 $this->$value = $options[$property];
             }
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offsetExists($offset)
-    {
-        return $this->propertyExists($offset);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offsetGet($offset)
-    {
-        if ($this->propertyExists($offset)) {
-            $property = $this->PROP_MAP[$offset];
-            return $this->$property;
-        }
-        return null;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offsetSet($offset, $value)
-    {
-        if ($this->propertyExists($offset)) {
-            $property = $this->PROP_MAP[$offset];
-            $this->$property = $value;
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offsetUnset($offset)
-    {
-        if ($this->propertyExists($offset)) {
-            $property = $this->PROP_MAP[$offset];
-            unset($this->$property);
-        }
-    }
-
-    /**
-     * Attempt to determine whether or not this object has a property $name
-     *
-     * @param mixed $name the name of the property to check exists.
-     * @return bool
-     */
-    protected function propertyExists($name)
-    {
-        $property = isset($this->PROP_MAP[$name]) ?  $this->PROP_MAP[$name] : null;
-        return array_key_exists($property, get_object_vars($this));
     }
 
     /**
