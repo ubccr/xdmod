@@ -781,14 +781,6 @@ class EtlConfiguration extends Configuration
         $endpointKey = $endpoint->getKey();
 
         if ( ! array_key_exists($endpointKey, $this->endpoints) ) {
-
-            $endpointName = $endpoint->getName();
-            foreach ( $this->endpoints as $check ) {
-                if ( $check->getName() ==  $endpointName ) {
-                    $this->logger->warning("Duplicate Data Endpoint name '{$endpointName}'");
-                }
-            }
-
             $this->endpoints[$endpointKey] = $endpoint;
         }
 
