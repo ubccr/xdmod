@@ -23,8 +23,7 @@ class Authorization
     * @param XDUser $user        the user to authorize
     * @param array $requirements an array of acl names
     * @param bool $blacklist     whether or not to test for the presence of the $requirements or the absence
-    * @throws \Exception                if the user provided is null
-    *                                   if the requirements is not an array or it is an array but has no contents
+    * @throws \Exception                if the requirements is not an array or it is an array but has no contents
     * @throws UnauthorizedHttpException if the user was not able to satisfy the provided requirements
     * and is a public user.
     * @throws AccessDeniedHttpException if the user was not able to satisfy the provided requirements
@@ -38,7 +37,7 @@ class Authorization
 
         $found = $user->hasAcls($requirements);
         $success = (!$found && $blacklist) || ($found && !$blacklist);
-        $message = self::_DEFAULT_MESSAGE .= (!$found && !$blacklist) || ($found && $blacklist)
+        $message = self::_DEFAULT_MESSAGE . (!$found && !$blacklist) || ($found && $blacklist)
             ? ' [ Not Authorized ]'
             : '';
         if ($success === false) {
