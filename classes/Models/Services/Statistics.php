@@ -4,6 +4,7 @@ use CCR\DB;
 use CCR\DB\iDatabase;
 use Exception;
 use Models\Statistic;
+use XDUser;
 
 /**
  * Class Statistics
@@ -21,6 +22,13 @@ use Models\Statistic;
  */
 class Statistics
 {
+
+    /**
+     * Attempt to retrieve a full listing of the Statistics currently available
+     * to the system.
+     *
+     * @return array|Statistic[]
+     */
     public static function listStatistics()
     {
         return self::_listStatistics(
@@ -28,13 +36,23 @@ class Statistics
         );
     }
 
+    /**
+     * Attempt to list the Statistics that are permitted for the $user, $realmName
+     * and $groupByName provided.
+     *
+     * @param XDUser $user
+     * @param string $realmName
+     * @param string $groupByName
+     * @return array|Statistic[]
+     * @throws Exception
+     */
     public static function listPermittedStatistics(XDUser $user, $realmName, $groupByName)
     {
-        if (null === $realmName) {
-            throw new Exception('A valid realm is required.');
+        if (is_string($realmName) === false) {
+            throw new Exception('A valid realm is required. (non-string)');
         }
-        if (null === $groupByName) {
-            throw new Exception('A valid group by is required.');
+        if (is_string($groupByName) === false) {
+            throw new Exception('A valid group by is required. (non-string)');
         }
 
         return self::_listPermittedStatistics(
@@ -45,6 +63,10 @@ class Statistics
         );
     }
 
+    /**
+     * @param iDatabase $db
+     * @return array|Statistic[]
+     */
     private static function _listStatistics(iDatabase $db)
     {
         $query = <<<SQL
@@ -65,6 +87,13 @@ SQL;
         return array();
     }
 
+    /**
+     * @param iDatabase $db
+     * @param integer $userId
+     * @param string $realmName
+     * @param string $groupByName
+     * @return array|Statistic[]
+     */
     private static function _listPermittedStatistics(iDatabase $db, $userId, $realmName, $groupByName)
     {
         $query = <<<SQL
@@ -86,7 +115,7 @@ WHERE
   AND gb.name = :group_by_name
   AND agb.visible = TRUE
   AND agb.enabled = TRUE
-ORDER BY COALESCE(sh.value, s.name);
+ORDER BY COALESCE(sh.level, s.name);
 SQL;
 
         $rows = $db->query($query, array(
