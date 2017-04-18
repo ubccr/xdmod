@@ -10,6 +10,7 @@
 
 namespace ETL;
 
+use ETL\Configuration\EtlConfiguration;
 use ETL\Aggregator\AggregatorOptions;
 use \Exception;
 use \Log;

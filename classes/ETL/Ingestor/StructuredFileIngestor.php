@@ -13,7 +13,7 @@ namespace ETL\Ingestor;
 use stdClass;
 
 use ETL\iAction;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\aRdbmsDestinationAction;
 use ETL\aOptions;

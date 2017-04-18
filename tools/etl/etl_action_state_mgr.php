@@ -20,7 +20,7 @@ const LIST_SEPARATOR = "\t";
 use \Exception;
 use CCR\Log;
 use CCR\DB;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\Utilities;
 use ETL\State\StateManager;
 
@@ -149,7 +149,7 @@ foreach ($args as $arg => $value) {
 $parsedArgs = array_keys($args);
 foreach ( $argv as $index => $arg ) {
     $opt = null;
-    
+
     if ( 0 === strpos($arg, "--") ) {
         $opt = substr($arg, 2);
     } else if ( 0 === strpos($arg, "-") ) {
@@ -224,7 +224,7 @@ if ( $scriptOptions['list'] ) {
             "Size (bytes)"
             );
         print implode(LIST_SEPARATOR, $headings) . "\n";
-        
+
         foreach ( $list as $row ) {
             print implode(LIST_SEPARATOR, $row) . "\n";
         }

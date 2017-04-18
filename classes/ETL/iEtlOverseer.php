@@ -9,6 +9,8 @@
 
 namespace ETL;
 
+use ETL\Configuration\EtlConfiguration;
+
 interface iEtlOverseer
 {
     /* ------------------------------------------------------------------------------------------

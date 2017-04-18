@@ -60,13 +60,13 @@
 namespace ETL\Aggregator;
 
 use ETL\aOptions;
-use ETL\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\DataEndpoint\Mysql;
 use ETL\DbEntity\AggregationTable;
 use ETL\DbEntity\Query;
 use ETL\DbEntity\Table;
 use ETL\Utilities;
+use ETL\Configuration\EtlConfiguration;
 
 use \Log;
 use \PDOException;

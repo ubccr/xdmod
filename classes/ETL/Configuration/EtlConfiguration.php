@@ -42,10 +42,12 @@
  * ==========================================================================================
  */
 
-namespace ETL;
+namespace ETL\Configuration;
 
-use \Exception;
-use \stdClass;
+use Exception;
+use stdClass;
+use Log;
+use ETL\aOptions;
 use ETL\Ingestor\IngestorOptions;
 use ETL\Aggregator\AggregatorOptions;
 use ETL\DataEndpoint;
@@ -80,8 +82,7 @@ class EtlConfiguration extends Configuration
         array("defaults",
               self::DATA_ENDPOINT_KEY,
               self::PATHS_KEY,
-              self::GLOBAL_DEFAULTS,
-              self::COMMENT_KEY);
+              self::GLOBAL_DEFAULTS);
 
     // TRUE if this is a sub-configuration file
     private $isSubConfig = false;
@@ -124,33 +125,45 @@ class EtlConfiguration extends Configuration
      * Constructor. Read and parse the configuration file.
      *
      * @param $filename Name of the JSON configuration file to parse
-     * @param $baseDir Base directory for configuration files. Overrides the base dir provided in the
-     *   top-level config file
-     * @param $optionOverrides An array of key/value pairs (2-element arrays) containing options to
-     *   either add to or override individual action options. These will be applied to all actions, if
-     *   present.
-     * @param $subConfig TRUE if this is a sub-configuration file
-     * @param $parentDefaults The defaults class from the parent configuration file, if we are
-     *   processing a configuration file in a subdirectory.
+     * @param $baseDir Base directory for configuration files. Overrides the base dir provided in
+     *   the top-level config file
+     * @param $logger A PEAR Log object or null to use the null logger.
+     * @param $options An associative array of additional options passed from the parent. These
+     *   include:
+     *   is_subconfig: TRUE if this is a sub-configuration file
+     *   option_overrides: An array of key/value pairs (2-element arrays) containing options to
+     *      either add to or override individual action options. These will be applied to all
+     *      actions, if present.
+     *   parent_defaults: The defaults class from the parent configuration file, if we are
+     *      processing a configuration file in a subdirectory.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($filename,
-                                $baseDir = null,
-                                array $optionOverrides = null,
-                                $subConfig = false,
-                                stdClass $parentDefaults = null)
-    {
-        parent::__construct($filename, $baseDir);
+    public function __construct(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+        parent::__construct($filename, $baseDir, $logger);
 
-        $this->isSubConfig = $subConfig;
-        $this->optionOverrides = $optionOverrides;
+        $this->isSubConfig = ( array_key_exists('is_subconfig', $options) && $options['is_subconfig'] );
 
-        if ( null !== $parentDefaults ) {
-            $this->parentDefaults = $parentDefaults;
+        if ( array_key_exists('option_overrides', $options) && null !== $options['option_overrides'] ) {
+            if ( ! is_array($options['option_overrides']) ) {
+                $this->logAndThrowException("Option overrides must be an array");
+            } else {
+                $this->optionOverrides = $options['option_overrides'];
+            }
         }
 
-        $this->addKeyHandler('paths', array($this, 'addBasePathsHandler'), self::POST_HANDLER);
+        if ( array_key_exists('parent_defaults', $options) && null !== $options['parent_defaults'] ) {
+            if ( ! is_object($options['parent_defaults']) ) {
+                $this->logAndThrowException("Parent defaults must be an object");
+            } else {
+                $this->parentDefaults = $options['parent_defaults'];
+            }
+        }
 
     }  // __construct()
 
@@ -173,13 +186,11 @@ class EtlConfiguration extends Configuration
             $subConfigDir = $this->paths->local_config_dir;
 
             if ( ! is_dir($subConfigDir) ) {
-                $msg = "ETL configuration directory not found '$subConfigDir'";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("ETL configuration directory not found '$subConfigDir'");
             }
 
             if ( false === ($dh = @opendir($subConfigDir)) ) {
-                $msg = "Error opening configuration directory '$subConfigDir'";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Error opening configuration directory '$subConfigDir'");
             }
 
             // Examine the subdirectory for .json files and parse each one, then merge the results back
@@ -193,9 +204,21 @@ class EtlConfiguration extends Configuration
                 }
                 $subConfigFile = $subConfigDir . "/" . $file;
 
-                $subConfig = new EtlConfiguration($subConfigFile, $this->baseDir, $this->optionOverrides, true, $this->localDefaults);
+                $options = array(
+                    'is_subconfig' => true,
+                    'option_overrides' => $this->optionOverrides,
+                    'parent_defaults' => $this->localDefaults
+                );
+                $subConfig = new EtlConfiguration($subConfigFile, $this->baseDir, $this->logger, $options);
                 $subConfig->setLogger($this->logger);
                 $subConfig->initialize();
+
+                // Merge the transformed JSON configuration into the parent so we can get
+                // the final generated JSON.
+
+                foreach ( $subConfig->getTransformedConfig() as $k => $v ) {
+                    $this->transformedConfig->$k = $v;
+                }
 
                 // Merge everything back into the main object
 
@@ -214,13 +237,16 @@ class EtlConfiguration extends Configuration
                     $this->addSection($sectionName);
 
                     if ( false === ($sectionActionOptions = $subConfig->getSectionActionOptions($sectionName)) ) {
-                        $msg = "Section '$sectionName' not found in subconfig file '$subConfigFile'";
-                        $this->logAndThrowException($msg);
+                        $this->logAndThrowException(
+                            sprintf("Section '%s' not found in subconfig file '%s'", $sectionName, $subConfigFile)
+                        );
                     }
 
                     foreach ( $sectionActionOptions as $actionName => $options ) {
                         if ( array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
-                            fwrite(STDERR, "WARNING: Duplicate action '$actionName' found in $subConfigFile section '$sectionName', skipping.\n");
+                            $this->logAndThrowException(
+                                sprintf("WARNING: Duplicate action '%s' found in %s section '%s', skipping.", $actionName, $subConfigFile, $sectionName)
+                            );
                         } else {
                             $this->actionOptions[$sectionName][$actionName] = $options;
                             $this->configuredActionNames[$sectionName][] = $actionName;
@@ -254,11 +280,6 @@ class EtlConfiguration extends Configuration
         $this->localDefaults = null;
     }  // cleanup()
 
-    /* ==========================================================================================
-     * Key Handlers
-     * ==========================================================================================
-     */
-
     /* ------------------------------------------------------------------------------------------
      * Apply the base path to all relative paths in the "paths" block.
      *
@@ -270,53 +291,46 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function addBasePathsHandler($key, $value, $config)
+    protected function addBaseDirToPaths()
     {
         if ( $this->isSubConfig ) {
-            return $config;
+            return;
         }
 
-        // Paths object must be present
+        // The paths object must be present
 
-        if ( ! isset($config->paths) ) {
-            $msg = "Required configuration 'paths' not found in config file";
-            $this->logAndThrowException($msg);
-        } else if ( ! is_object($config->paths) ) {
-            $msg = "Configuration 'paths' must be an object";
-            $this->logAndThrowException($msg);
+        if ( ! isset($this->transformedConfig->paths) ) {
+            $this->logAndThrowException("Required configuration 'paths' not found in config file");
+        } elseif ( ! is_object($this->transformedConfig->paths) ) {
+            $this->logAndThrowException("Configuration 'paths' must be an object");
         }
 
-        // If the base directory for paths was provided on the command line, use that value. If it
-        // was not provided, use the value in the configuration file or the dirname of the main
-        // configuration file otherwise.
-
-        if ( null === $this->baseDir ) {
-            if ( isset($config->paths->base_dir) ) {
-                $this->baseDir = $config->paths->base_dir;
-            } else {
-                $this->baseDir = dirname($this->filename);
-            }
-        }  // if ( null === $this->baseDir )
-
-        foreach ( $config->paths as $key => &$value ) {
+        foreach ( $this->transformedConfig->paths as $key => &$value ) {
             $value = \xd_utilities\qualify_path($value, $this->baseDir);
         }
         unset($value); // Sever the reference with the last element
 
-        $config->paths->base_dir = $this->baseDir;
+        // Add the base directory to the paths configuration so it is easily accessible
+        $this->transformedConfig->paths->base_dir = $this->baseDir;
 
         // Place the path block into the global defaults so it is automatically propogated to all
         // actions when defaults are applied.
-        $config->defaults->global->paths = $config->paths;
+
+        if ( ! isset($this->transformedConfig->defaults) ) {
+            $this->transformedConfig->defaults = new stdClass;
+            $this->transformedConfig->defaults->global = new stdClass;
+        } elseif ( ! isset($this->transformedConfig->defaults->global) ) {
+            $this->transformedConfig->defaults->global = new stdClass;
+        }
+
+        $this->transformedConfig->defaults->global->paths = $this->transformedConfig->paths;
 
         // Save it for later and remove it from the config.
 
-        $this->paths = $config->paths;
-        unset($config->paths);
+        $this->paths = $this->transformedConfig->paths;
+        unset($this->transformedConfig->paths);
 
-        return $config;
-
-    }  // addBasePathsHandler()
+    }  // addBaseDirToPaths()
 
     /* ==========================================================================================
      * Iterator implementation. Allow iteration over the list of sections.
@@ -362,13 +376,26 @@ class EtlConfiguration extends Configuration
     {
         parent::parse();
 
+        // At this point, the file has been parsed but keys have not been transformed. In
+        // order to support macros in the JSON references we need access to the "paths"
+        // key found in the main configuration file before we apply key transformations.
+
+        $this->addBaseDirToPaths();
+
+        // Now that we have access to the base paths, remove the JSON ref transformer and
+        // replace it with one that understands path macros.
+
+        $this->deleteKeyTransformer('ETL\Configuration\JsonReferenceTransformer');
+        $this->addKeyTransformer(new JsonReferenceWithMacroTransformer($this->logger));
+        $this->processKeyTransformers($this->transformedConfig);
+
         // ------------------------------------------------------------------------------------------
         // Auto-detect the ETL section names in the config file.  To be as flexible as possible, we
         // don't care what the names are as long as they are not one of the reserved keys. Defaults
         // are applied by checking for a section name in the defaults configuration and, if present,
         // applying those default values to the section if they are not already present.
 
-        $config = $this->constructedConfig;
+        $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
         $defaultSectionNames = array_merge(array(self::GLOBAL_DEFAULTS, self::DATA_ENDPOINT_KEY), $etlSectionNames);
 
@@ -390,7 +417,7 @@ class EtlConfiguration extends Configuration
             $localDefaults = json_decode(json_encode($config->defaults), true);
             $this->localDefaults = json_decode(json_encode(array_replace_recursive($parentDefaults, $localDefaults)));
 
-        } else if ( null !== $this->parentDefaults ) {
+        } elseif ( null !== $this->parentDefaults ) {
             $this->localDefaults = $this->parentDefaults;
         }
 
@@ -409,6 +436,11 @@ class EtlConfiguration extends Configuration
             }
 
             foreach ( $config->$sectionName as &$actionConfig ) {
+                if ( ! is_object($actionConfig) ) {
+                    $this->logAndThrowException(
+                        sprintf("In section '%s', expected action object, got %s", $sectionName, gettype($actionConfig))
+                    );
+                }
                 $this->applyDefaultsToAction($actionConfig, $sectionName, $this->localDefaults);
             }
         }  // foreach ( $etlSectionNames as $typeName )
@@ -425,8 +457,7 @@ class EtlConfiguration extends Configuration
                     $endpoint = $this->addDataEndpoint($endpointConfig);
                     $this->globalEndpoints[$name] = $endpoint->getKey();
                 } catch (Exception $e) {
-                    $msg = "Error registering default endpoint '$name': " . $e->getMessage();
-                    $this->logAndThrowException($msg);
+                    $this->logAndThrowException("Error registering default endpoint '$name': " . $e->getMessage());
                 }
             }
         }  // if ( isset(($this->localDefaults->global->endpoints) )
@@ -467,13 +498,14 @@ class EtlConfiguration extends Configuration
                     $this->addAction($actionConfig, $sectionName);
                 } catch ( Exception $e ) {
                     $actionName = ( isset($actionConfig->name) ? $actionConfig->name : "" );
-                    $msg = "Error adding action '$actionName' in section '$sectionName': " . $e->getMessage();
-                    $this->logAndThrowException($msg);
+                    $this->logAndThrowException(
+                        "Error adding action '$actionName' in section '$sectionName': " . $e->getMessage()
+                    );
                 }
             }
         }  // foreach ( $etlSectionNames as $sectionName )
 
-        $this->constructedConfig = $config;
+        $this->transformedConfig = $config;
 
         return true;
 
@@ -527,7 +559,7 @@ class EtlConfiguration extends Configuration
 
                 if ( ! isset($actionConfig->$propertyKey) ) {
                     $actionConfig->$propertyKey = $propertyValue;
-                } else if ( self::DATA_ENDPOINT_KEY == $propertyKey ) {
+                } elseif ( self::DATA_ENDPOINT_KEY == $propertyKey ) {
 
                     // This is the data endpoint property. Only apply endpoints that are not defined in the
                     // action config
@@ -537,7 +569,7 @@ class EtlConfiguration extends Configuration
                             $actionConfig->$propertyKey->$endpointName = $endpointConfig;
                         }
                     }
-                }  // else if ( self::DATA_ENDPOINT_KEY == $property )
+                }  // elseif ( self::DATA_ENDPOINT_KEY == $property )
 
             }  // foreach ( $defaults->$sectionName as $propertyKey => $value )
         }  // if ( isset($defaults->$sectionName) )
@@ -565,7 +597,7 @@ class EtlConfiguration extends Configuration
                             $actionConfig->$propertyKey->$endpointName = $endpointConfig;
                         }
                     }
-                }  // else if ( self::DATA_ENDPOINT_KEY == $propertyKey )
+                }  // elseif ( self::DATA_ENDPOINT_KEY == $propertyKey )
 
             }  // foreach ( $defaults->$globalDefaultKey as $propertyKey => $propertyValue )
         }  // if ( isset($defaults->$globalDefaultKey )
@@ -599,11 +631,9 @@ class EtlConfiguration extends Configuration
         // Verify the section name was provided
 
         if ( null === $sectionName || empty($sectionName) ) {
-            $msg = "Empty or null ETL section name";
-            $this->logAndThrowException($msg);
-        } else if ( ! isset($config->name) ) {
-            $msg = "Action name not set";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Empty or null ETL section name");
+        } elseif ( ! isset($config->name) ) {
+            $this->logAndThrowException("Action name not set");
         }
 
         // Verify that the action name was not already provided for this section
@@ -611,8 +641,9 @@ class EtlConfiguration extends Configuration
         $actionName = $config->name;
 
         if ( array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
-            $msg = "Action '$actionName' is already defined in section '$sectionName'";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                "Action '$actionName' is already defined in section '$sectionName'"
+            );
         }
 
         // If the class is not specified assume that the name is the class
@@ -626,19 +657,18 @@ class EtlConfiguration extends Configuration
 
         if ( ! isset($config->options_class) ) {
             switch ( $sectionName ) {
-            case self::MAINTENANCE:
-                $config->options_class = self::DEFAULT_MAINTENANCE_OPTIONS_CLASS;
-                break;
-            case self::INGESTORS:
-                $config->options_class = self::DEFAULT_INGESTOR_OPTIONS_CLASS;
-                break;
-            case self::AGGREGATORS:
-                $config->options_class = self::DEFAULT_AGGREGATOR_OPTIONS_CLASS;
-                break;
-            default:
-                $msg = "Options class not specified for '$config->name'";
-                $this->logAndThrowException($msg);
-                break;
+                case self::MAINTENANCE:
+                    $config->options_class = self::DEFAULT_MAINTENANCE_OPTIONS_CLASS;
+                    break;
+                case self::INGESTORS:
+                    $config->options_class = self::DEFAULT_INGESTOR_OPTIONS_CLASS;
+                    break;
+                case self::AGGREGATORS:
+                    $config->options_class = self::DEFAULT_AGGREGATOR_OPTIONS_CLASS;
+                    break;
+                default:
+                    $this->logAndThrowException("Options class not specified for '$config->name'");
+                    break;
             }
         }  // if ( ! isset($config->options_class) )
 
@@ -656,13 +686,11 @@ class EtlConfiguration extends Configuration
         }
 
         if ( ! class_exists($optionsClassName) ) {
-            $msg = "Options class '$optionsClassName' not found";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Options class '$optionsClassName' not found");
         }
 
         if ( ! class_exists($optionsClassName) ) {
-            $msg = "Options class '$optionsClassName' not found";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Options class '$optionsClassName' not found");
         }
 
         // Create the options object and ensure it extends aOptions
@@ -670,8 +698,7 @@ class EtlConfiguration extends Configuration
         $options = new $optionsClassName();
 
         if ( ! $options instanceof aOptions ) {
-            $msg = "$optionsClassName does not extend aOptions";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("$optionsClassName does not extend aOptions");
         }
 
         // Set up the options with whatever was included in the config. The factory and implementation
@@ -688,9 +715,10 @@ class EtlConfiguration extends Configuration
                 try {
                     $this->addDataEndpoint($endpointConfig);
                 } catch (Exception $e) {
-                    $msg = "Error registering $endpointName endpoint for $sectionName '{$config->name}': " .
-                        $e->getMessage();
-                    $this->logAndThrowException($msg);
+                    $this->logAndThrowException(
+                        "Error registering $endpointName endpoint for $sectionName '{$config->name}': "
+                        . $e->getMessage()
+                    );
                 }
             }  // foreach ($config->$endpointKey as $endpointName => $endpointConfig)
 
@@ -742,7 +770,7 @@ class EtlConfiguration extends Configuration
         // Set up the options with whatever was included in the config. The factory and implementation
         // classes will check for required parameters.
 
-        $options = new DataEndpoint\DataEndpointOptions();
+        $options = new DataEndpointOptions();
         foreach ( $config as $key => $value ) {
             $options->$key = $value;
         }
@@ -917,21 +945,20 @@ class EtlConfiguration extends Configuration
     {
         if ( null !== $sectionName ) {
             if ( ! array_key_exists($sectionName, $this->actionOptions) ) {
-                $msg = "Invalid section name '$sectionName'";
-                $this->logAndThrowException($msg);
-            } else if ( ! array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
-                $msg = "Action '$actionName' not found in section '$sectionName'";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Invalid section name '$sectionName'");
+            } elseif ( ! array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
+                $this->logAndThrowException("Action '$actionName' not found in section '$sectionName'");
             }
         } else {
             $sectionList = $this->findActionSections($actionName);
             if ( count($sectionList) > 1 ) {
-                $msg = "Ambiguous action '$actionName' found in multiple sections '" .
-                    implode("', '", $sectionList) . "'";
-                $this->logAndThrowException($msg);
-            } else if ( false === $sectionList ) {
-                $msg = "Action '$actionName' not found";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException(
+                    "Ambiguous action '$actionName' found in multiple sections '"
+                    . implode("', '", $sectionList)
+                    . "'"
+                );
+            } elseif ( false === $sectionList ) {
+                $this->logAndThrowException("Action '$actionName' not found");
             }
             $sectionName = array_shift($sectionList);
         }
@@ -994,5 +1021,4 @@ class EtlConfiguration extends Configuration
     {
         return $this->paths;
     }  // getPaths()
-
 }  // class EtlConfiguration
