@@ -62,17 +62,20 @@ class Acl extends DBObject
         $db = DB::factory('database');
 
         $query =<<< SQL
-SELECT uap.user_id,
-  uap.acl_id,
-  uap.name,
-  uap.operation,
-  uap.value
-FROM user_acl_parameters uap
+SELECT DISTINCT
+  uagbp.user_id,
+  uagbp.acl_id,
+  gb.name,
+  '=',
+  uagbp.value
+FROM user_acl_group_by_parameters uagbp
   JOIN user_acls ua
-    ON uap.user_id = ua.user_id
-       AND uap.acl_id = ua.acl_id
+    ON uagbp.user_id = ua.user_id
+       AND uagbp.acl_id = ua.acl_id
+  JOIN group_bys gb
+    ON gb.group_by_id = uagbp.group_by_id
 WHERE
-  ua.user_id = :user_id
+    ua.user_id = :user_id
 AND ua.acl_id = :acl_id
 SQL;
         $rows = $db->query($query, array(':user_id' => $userId, ':acl_id' => $aclId));
