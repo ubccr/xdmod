@@ -1,41 +1,28 @@
 <?php
 /* ==========================================================================================
- * Read and parse the ETL process configuration file (JSON). The configuration file contains a
- * "defaults" section and one or more action defintion (ingestors, aggregators, etc.)
- * sections. Each section defines an array of actions. The defaults section can contain entries
- * for each action section as well as a global section where source, destination, and utility data
- * endpoints can be defined. Optional sub-configuration files in a directory are also supported with
- * the options defined being berged back into the global namespace. Action sections can be
- * identified using any name but special support is included for "ingestors", and "aggregators"
- * sections including class constants and default options objects.
+ * Read and parse the ETL process JSON configuration file. The configuration file contains
+ * a "defaults" section and one or more action defintion (ingestors, aggregators, etc.)
+ * sections called pipelines. Each pipeline defines an array of actions. The defaults
+ * section can contain entries for each pipeline as well as a global section where source,
+ * destination, and utility data endpoints can be defined. Optional local configuration
+ * files in a sub-directory are also supported with the actions and pipelines defined
+ * being merged back into the global namespace. Pipelines can be identified using any name
+ * but special support is included for "ingestors", and "aggregators" sections including
+ * class constants and default options objects.
  *
- * Default options specific to any section can be included in the "defaults" section using the same
- * name as the target section.  When applying defaults, we start with the options configured in the
- * action definition and then apply defaults specific to that section. Global defaults are then
- * applied. This ensures that options appearing in the action configuration take precedence,
- * followed by section-specific defaults, followed by global defaults.
+ * Default options specific to any pipeline can be included in the "defaults" section
+ * using the same name as the target pipeline.  When applying defaults, we start with the
+ * options configured in the action definition and then apply defaults specific to the
+ * pipeline that the action is defined in. Global defaults are then applied. This ensures
+ * that options appearing in the action configuration take precedence, followed by
+ * pipeline-specific defaults, followed by global defaults.
  *
- * NOTE: There is a single GLOBAL namespace for ingestors, aggregators, groups, and data endpoints.
- * NOTE: Any "comment" properties are ignored.
- * NOTE: The "defaults" and "global" sections are reserved and cannot be used except in the defaults
- *   block.
+ * Transformers can be defined that will transform the values of matching keys.
  *
- * The process for parsing the configuration is as follows:
+ * NOTE: The "defaults" and "global" sections are reserved and cannot be used except in
+ *   the defaults block.
  *
- * 1. Read and parse the JSON configuration.  The "defaults" section is reserved for defining
- *    default options either globally or for individual section names.
- * 2. Examine the defaults (global, ingestor, aggregator, etc.) and apply the defaults to each local
- *    section
- *    - Defaults will not override existing definitions (local definitions take priority)
- *    - Common defaults include source and destination endpoints, namespaces, and aggregation units
- * 3. Register the global utility endpoint (e.g., modw)
- * 4. Register enabled actions
- *    - Register source, destination, and utility endpoints (Data endpoints are referenced globally by
- their key)
- *    - Create an options object and insert the values into it
- * 5. If a subdirectory for configuration files has been defined, parse each .json file in the
- *    subdirectory and generate an EtlConfiguration object. Merge the values of each configuration
- *    into the main object.
+ * @see Configuration
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2015-09-25
@@ -84,11 +71,7 @@ class EtlConfiguration extends Configuration
               self::PATHS_KEY,
               self::GLOBAL_DEFAULTS);
 
-    // TRUE if this is a sub-configuration file
-    private $isSubConfig = false;
-
-    // If this is a sub-configuration file we have the option of using global defaults from the parent
-    // private $parentDefaults = array();
+    // If this is a local configuration file we have the option of using global defaults from the parent
     private $parentDefaults = null;
 
     // An array of endpoints defined in the global defaults section. The keys are the endpoint names
@@ -102,14 +85,6 @@ class EtlConfiguration extends Configuration
     // An associative array where keys are section names and values are an array of action option
     // objects.
     private $actionOptions = array();
-
-    // An associative array where keys are section names and values are the names of enabled actions
-    // in that section.
-    private $enabledActionNames = array();
-
-    // An associative array where keys are section names and values are the names of configured
-    // actions in that section.
-    private $configuredActionNames = array();
 
     // An array of key/value pairs (2-element arrays) containing options to either add to or
     // override individual action options. These will be applied to all actions, if present.
@@ -130,7 +105,7 @@ class EtlConfiguration extends Configuration
      * @param $logger A PEAR Log object or null to use the null logger.
      * @param $options An associative array of additional options passed from the parent. These
      *   include:
-     *   is_subconfig: TRUE if this is a sub-configuration file
+     *   is_local_config: TRUE if this is a local configuration file
      *   option_overrides: An array of key/value pairs (2-element arrays) containing options to
      *      either add to or override individual action options. These will be applied to all
      *      actions, if present.
@@ -145,9 +120,7 @@ class EtlConfiguration extends Configuration
         Log $logger = null,
         array $options = array()
     ) {
-        parent::__construct($filename, $baseDir, $logger);
-
-        $this->isSubConfig = ( array_key_exists('is_subconfig', $options) && $options['is_subconfig'] );
+        parent::__construct($filename, $baseDir, $logger, $options);
 
         if ( array_key_exists('option_overrides', $options) && null !== $options['option_overrides'] ) {
             if ( ! is_array($options['option_overrides']) ) {
@@ -168,202 +141,34 @@ class EtlConfiguration extends Configuration
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize the configuration object. Parse the configuration file and process any
-     * subdirectories.
-     */
-
-    public function initialize()
-    {
-        parent::initialize();
-
-        // If this is the main configuration file and a subdirectory is specified parse each config file
-        // in it and merge the results back into the main object.
-        //
-        // NOTE: Ingestors, aggregators, and endpoints are part of a global namespace and must have
-        // unique names.
-
-        if ( ! $this->isSubConfig && isset($this->paths->local_config_dir) ) {
-            $subConfigDir = $this->paths->local_config_dir;
-
-            if ( ! is_dir($subConfigDir) ) {
-                $this->logAndThrowException("ETL configuration directory not found '$subConfigDir'");
-            }
-
-            if ( false === ($dh = @opendir($subConfigDir)) ) {
-                $this->logAndThrowException("Error opening configuration directory '$subConfigDir'");
-            }
-
-            // Examine the subdirectory for .json files and parse each one, then merge the results back
-            // into this object
-
-            while ( false !== ( $file = readdir($dh) ) ) {
-                $len = strlen($file);
-                $pos = strrpos($file, ".json");
-                if ( false === $pos || ($len - $pos) != 5 ) {
-                    continue;
-                }
-                $subConfigFile = $subConfigDir . "/" . $file;
-
-                $options = array(
-                    'is_subconfig' => true,
-                    'option_overrides' => $this->optionOverrides,
-                    'parent_defaults' => $this->localDefaults
-                );
-                $subConfig = new EtlConfiguration($subConfigFile, $this->baseDir, $this->logger, $options);
-                $subConfig->setLogger($this->logger);
-                $subConfig->initialize();
-
-                // Merge the transformed JSON configuration into the parent so we can get
-                // the final generated JSON.
-
-                foreach ( $subConfig->getTransformedConfig() as $k => $v ) {
-                    $this->transformedConfig->$k = $v;
-                }
-
-                // Merge everything back into the main object
-
-                foreach ( $subConfig->getDataEndpoints() as $key => $value ) {
-                    if ( ! array_key_exists($key, $this->endpoints) ) {
-                        $this->endpoints[$key] = $value;
-                    }
-                }  // foreach ( $subConfig->getDataEndpoints() as $key => $value )
-
-                // Merge in sections from the sub-config. A sub-config may contain a duplicate
-                // section name, in which case we will merge the actions with the master config. Do
-                // not allow duplicate action names in the same section.
-
-                foreach ( $subConfig->getSectionNames() as $sectionName ) {
-
-                    $this->addSection($sectionName);
-
-                    if ( false === ($sectionActionOptions = $subConfig->getSectionActionOptions($sectionName)) ) {
-                        $this->logAndThrowException(
-                            sprintf("Section '%s' not found in subconfig file '%s'", $sectionName, $subConfigFile)
-                        );
-                    }
-
-                    foreach ( $sectionActionOptions as $actionName => $options ) {
-                        if ( array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
-                            $this->logAndThrowException(
-                                sprintf("WARNING: Duplicate action '%s' found in %s section '%s', skipping.", $actionName, $subConfigFile, $sectionName)
-                            );
-                        } else {
-                            $this->actionOptions[$sectionName][$actionName] = $options;
-                            $this->configuredActionNames[$sectionName][] = $actionName;
-                            if ($options->enabled) {
-                                $this->enabledActionNames[$sectionName][] = $actionName;
-                            }
-                        }
-                    }
-                }  // foreach ( $subConfig->getSectionNames() as $sectionName )
-
-                $subConfig->cleanup();
-
-            }  //  while ( false !== ( $file = readdir($dh) ) )
-
-            closedir($dh);
-
-        }  // if ( null !== $confSubdirectory )
-
-    }  // initialize()
-
-    /* ------------------------------------------------------------------------------------------
-     * Clean up intermediate information that we don't need to keep around after processing. This
-     * includes parsed and constructed JSON as well as defaults.
+     * @see Configuration::preTransformTasks()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function cleanup()
+    protected function preTransformTasks()
     {
-        parent::cleanup();
-        $this->parentDefaults = null;
-        $this->localDefaults = null;
-    }  // cleanup()
+
+        // At this point, the file has been parsed but keys have not been transformed. In
+        // order to support macros in the JSON references we need access to the "paths"
+        // key found in the main configuration file before we apply key transformations.
+
+        $this->addBaseDirToPaths();
+
+        if ( isset($this->paths->local_config_dir) ) {
+            $this->localConfigDir = $this->paths->local_config_dir;
+        }
+
+        $this->addKeyTransformer(new CommentTransformer($this->logger));
+        $this->addKeyTransformer(new JsonReferenceWithMacroTransformer($this->logger));
+
+        return $this;
+
+    }  // preTransformTasks()
 
     /* ------------------------------------------------------------------------------------------
-     * Apply the base path to all relative paths in the "paths" block.
-     *
-     * @param $key The key that we are processing
-     * @param $value The value associated with the key
-     * @param $config The current state of the constructed configuration file
-     *
-     * @return The updated configuration file after processing the handler
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function addBaseDirToPaths()
-    {
-        if ( $this->isSubConfig ) {
-            return;
-        }
-
-        // The paths object must be present
-
-        if ( ! isset($this->transformedConfig->paths) ) {
-            $this->logAndThrowException("Required configuration 'paths' not found in config file");
-        } elseif ( ! is_object($this->transformedConfig->paths) ) {
-            $this->logAndThrowException("Configuration 'paths' must be an object");
-        }
-
-        foreach ( $this->transformedConfig->paths as $key => &$value ) {
-            $value = \xd_utilities\qualify_path($value, $this->baseDir);
-        }
-        unset($value); // Sever the reference with the last element
-
-        // Add the base directory to the paths configuration so it is easily accessible
-        $this->transformedConfig->paths->base_dir = $this->baseDir;
-
-        // Place the path block into the global defaults so it is automatically propogated to all
-        // actions when defaults are applied.
-
-        if ( ! isset($this->transformedConfig->defaults) ) {
-            $this->transformedConfig->defaults = new stdClass;
-            $this->transformedConfig->defaults->global = new stdClass;
-        } elseif ( ! isset($this->transformedConfig->defaults->global) ) {
-            $this->transformedConfig->defaults->global = new stdClass;
-        }
-
-        $this->transformedConfig->defaults->global->paths = $this->transformedConfig->paths;
-
-        // Save it for later and remove it from the config.
-
-        $this->paths = $this->transformedConfig->paths;
-        unset($this->transformedConfig->paths);
-
-    }  // addBaseDirToPaths()
-
-    /* ==========================================================================================
-     * Iterator implementation. Allow iteration over the list of sections.
-     * ==========================================================================================
-     */
-
-    public function current()
-    {
-        return current($this->actionOptions);
-    }  // current()
-
-    public function key()
-    {
-        return key($this->actionOptions);
-    }  // key()
-
-    public function next()
-    {
-        return next($this->actionOptions);
-    }  // next()
-
-    public function rewind()
-    {
-        return reset($this->actionOptions);
-    }  // rewind()
-
-    public function valid()
-    {
-        return false !== current($this->actionOptions);
-    }  // valid()
-
-    /* ------------------------------------------------------------------------------------------
-     * Parse the configuration file.
+     * Perform additional operations on the parsed configuration file. This includes
+     * handling ETL-specific components such as the "paths" block, applying defaults, and
+     * initializing data endpoints and action objects.
      *
      * @param $force TRUE if the configuration file should be re-parsed.
      *
@@ -372,24 +177,8 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    public function parse($force = false)
+    protected function interpretData()
     {
-        parent::parse();
-
-        // At this point, the file has been parsed but keys have not been transformed. In
-        // order to support macros in the JSON references we need access to the "paths"
-        // key found in the main configuration file before we apply key transformations.
-
-        $this->addBaseDirToPaths();
-
-        // Now that we have access to the base paths, remove the JSON ref transformer and
-        // replace it with one that understands path macros.
-
-        $this->deleteKeyTransformer('ETL\Configuration\JsonReferenceTransformer');
-        $this->addKeyTransformer(new JsonReferenceWithMacroTransformer($this->logger));
-        $this->processKeyTransformers($this->transformedConfig);
-
-        // ------------------------------------------------------------------------------------------
         // Auto-detect the ETL section names in the config file.  To be as flexible as possible, we
         // don't care what the names are as long as they are not one of the reserved keys. Defaults
         // are applied by checking for a section name in the defaults configuration and, if present,
@@ -402,7 +191,7 @@ class EtlConfiguration extends Configuration
         // ------------------------------------------------------------------------------------------
         // Manage default values.  There can be a global default section, plus one for each section
         // defined in the configuration file.  Defaults are applied as long as the name of the entries
-        // in the default and section blocks match.  If we are processing a sub-configuration file merge
+        // in the default and section blocks match.  If we are processing a local configuration file merge
         // the defaults from the parent with local defaults taking precedence. If local defaults are
         // not present but there are parent defaults, use all of them. All defaults are propogated,
         // not only those for sections defined here.
@@ -495,7 +284,7 @@ class EtlConfiguration extends Configuration
                 }
 
                 try {
-                    $this->addAction($actionConfig, $sectionName);
+                    $this->registerAction($actionConfig, $sectionName);
                 } catch ( Exception $e ) {
                     $actionName = ( isset($actionConfig->name) ? $actionConfig->name : "" );
                     $this->logAndThrowException(
@@ -507,32 +296,220 @@ class EtlConfiguration extends Configuration
 
         $this->transformedConfig = $config;
 
-        return true;
-
-    }  // parse()
+    }  // interpretData()
 
     /* ------------------------------------------------------------------------------------------
-     * Add a new section to the internal data structures if it doesn't already exist
+     * Handle creation of an EtlConfiguration object for the given class.
+     *
+     * @see Configuration::processLocalConfig()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function processLocalConfig($localConfigFile)
+    {
+        $options = array(
+            'local_config_dir' => $this->localConfigDir,
+            'is_local_config'  => true,
+            'option_overrides' => $this->optionOverrides,
+            'parent_defaults'  => $this->localDefaults
+        );
+
+        $localConfigObj = new EtlConfiguration($localConfigFile, $this->baseDir, $this->logger, $options);
+        $localConfigObj->initialize();
+
+        return $localConfigObj;
+
+    }  // processLocalConfig()
+
+    /* ------------------------------------------------------------------------------------------
+     * Merge data from the specified local configuration object, either overwriting or
+     * merging data from local configuration objects into the current object.  Overrides
+     * Configuration::merge().
+     *
+     * @see Configuration::merge()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function merge(EtlConfiguration $localConfigObj, $overwrite = false)
+    {
+        parent::merge($localConfigObj, $overwrite);
+
+        // Merge everything back into the main object
+
+        foreach ( $localConfigObj->getDataEndpoints() as $key => $value ) {
+            if ( ! array_key_exists($key, $this->endpoints) ) {
+                $this->endpoints[$key] = $value;
+            }
+        }  // foreach ( $localConfigObj->getDataEndpoints() as $key => $value )
+
+        // Merge in sections from the local config. A local config may contain a duplicate
+        // section name, in which case we will merge the actions with the master
+        // config. Do not allow duplicate action names in the same section.
+
+        foreach ( $localConfigObj as $localSectionName => $localSectionActionOptions ) {
+
+            // It is recommended that action names are unique, but they don't need to
+            // be. If the same action name is found in a local config with the same
+            // pipeline name then use the $overwrite setting to handle it.
+
+            foreach ( $localSectionActionOptions as $localActionName => $localActionOptions ) {
+
+                // if ( array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
+
+                if ( $this->actionExists($localActionName, $localSectionName) ) {
+
+                    $msg = sprintf(
+                        "Duplicate action '%s' found in '%s' section '%s'",
+                        $localActionName,
+                        $this->filename,
+                        $localSectionName
+                    );
+
+                    // Since an individual action cannot be merged with a duplicate, if
+                    // the action name already exists and we are not overwriting then skip
+                    // it.
+
+                    if ( $overwrite ) {
+                        $msg .= ", replacing existing action.";
+                        $this->logger->info($msg);
+                    } else {
+                        $msg .= ", ignoring.";
+                        $this->logger->warning($msg);
+                        continue;
+                    }
+                }
+
+                $this->addAction($localSectionName, $localActionOptions);
+
+            }  // foreach ( $sectionActionOptions as $actionName => $options )
+
+        }  // foreach ( $localConfigObj->getSectionNames() as $sectionName )
+
+        return $this;
+
+    }  // merge()
+
+    /* ------------------------------------------------------------------------------------------
+     * Clean up intermediate information that we don't need to keep around after processing. This
+     * includes parsed and constructed JSON as well as defaults.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function cleanup()
+    {
+        parent::cleanup();
+        $this->parentDefaults = null;
+        $this->localDefaults = null;
+    }  // cleanup()
+
+    /* ------------------------------------------------------------------------------------------
+     * Apply the base path to all relative paths in the "paths" block.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function addBaseDirToPaths()
+    {
+        // Base paths are only supported in the main configuration file.
+
+        if ( $this->isLocalConfig ) {
+            return;
+        }
+
+        // The paths object must be present
+
+        if ( ! isset($this->parsedConfig->paths) ) {
+            $this->logAndThrowException("Required configuration 'paths' not found in config file");
+        } elseif ( ! is_object($this->parsedConfig->paths) ) {
+            $this->logAndThrowException("Configuration 'paths' must be an object");
+        }
+
+        foreach ( $this->parsedConfig->paths as $key => &$value ) {
+            $value = \xd_utilities\qualify_path($value, $this->baseDir);
+            $value = \xd_utilities\resolve_path($value);
+        }
+        unset($value); // Sever the reference with the last element
+
+        // Add the base directory to the paths configuration so it is easily accessible
+        $this->parsedConfig->paths->base_dir = $this->baseDir;
+
+        // Place the path block into the global defaults so it is automatically propogated to all
+        // actions when defaults are applied.
+
+        if ( ! isset($this->parsedConfig->defaults) ) {
+            $this->parsedConfig->defaults = new stdClass;
+            $this->parsedConfig->defaults->global = new stdClass;
+        } elseif ( ! isset($this->parsedConfig->defaults->global) ) {
+            $this->parsedConfig->defaults->global = new stdClass;
+        }
+
+        $this->parsedConfig->defaults->global->paths = $this->parsedConfig->paths;
+
+        // Save it for later and remove it from the config.
+
+        $this->paths = $this->parsedConfig->paths;
+        unset($this->parsedConfig->paths);
+
+    }  // addBaseDirToPaths()
+
+    /* ==========================================================================================
+     * Iterator implementation. Allow iteration over the list of sections.
+     * ==========================================================================================
+     */
+
+    public function current()
+    {
+        return current($this->actionOptions);
+    }  // current()
+
+    public function key()
+    {
+        return key($this->actionOptions);
+    }  // key()
+
+    public function next()
+    {
+        return next($this->actionOptions);
+    }  // next()
+
+    public function rewind()
+    {
+        return reset($this->actionOptions);
+    }  // rewind()
+
+    public function valid()
+    {
+        return false !== current($this->actionOptions);
+    }  // valid()
+
+    /* ------------------------------------------------------------------------------------------
+     * Add a new section to the internal data structures if it doesn't already exist or
+     * update the data associated with the section if it does exist (unless $overwrite ==
+     * false)
+     *
+     * @see Configuration::addSection()
      *
      * @param $name The name of the new section
      * @param $data The data associated with the new section
+     * @param $overwrite TRUE if any existing data for the given section should be overwritten
      *
      * @return This object for method chaining
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function addSection($name, $data = null)
+    protected function addSection($name, $data = null, $overwrite = true)
     {
-        if ( array_key_exists($name, $this->actionOptions) || in_array($name, $this->etlConfigReservedKeys) ) {
+        if ( in_array($name, $this->etlConfigReservedKeys) ) {
             return $this;
         }
 
-        $this->sectionNames[] = $name;
-        $this->actionOptions[$name] = array();
-        $this->enabledActionNames[$name] = array();
-        $this->configuredActionNames[$name] = array();
+        if ( ! $this->sectionExists($name) ) {
+            $this->actionOptions[$name] = array();
+        }
+
+        parent::addSection($name, $data, $overwrite);
 
         return $this;
+
     }  // addSection()
 
     /* ------------------------------------------------------------------------------------------
@@ -623,10 +600,12 @@ class EtlConfiguration extends Configuration
      *
      * @param $config Reference to the action configuration section
      * @param $sectionName The name of the section that this action belongs to.
+     *
+     * @return This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function addAction(stdClass &$config, $sectionName)
+    protected function registerAction(stdClass &$config, $sectionName)
     {
         // Verify the section name was provided
 
@@ -636,11 +615,11 @@ class EtlConfiguration extends Configuration
             $this->logAndThrowException("Action name not set");
         }
 
-        // Verify that the action name was not already provided for this section
+        // Verify that the action name was not already provided for **this section**.
 
         $actionName = $config->name;
 
-        if ( array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
+        if ( $this->actionExists($actionName, $sectionName) ) {
             $this->logAndThrowException(
                 "Action '$actionName' is already defined in section '$sectionName'"
             );
@@ -746,12 +725,25 @@ class EtlConfiguration extends Configuration
             }
         }  // else ( $config->enabled )
 
-        $this->actionOptions[$sectionName][$actionName] = $options;
-        $this->configuredActionNames[$sectionName][] = $actionName;
-        if ( $config->enabled ) {
-            $this->enabledActionNames[$sectionName][] = $actionName;
-        }
+        $this->addAction($sectionName, $options);
 
+        return $this;
+
+    }  // registerAction()
+
+    /* ------------------------------------------------------------------------------------------
+     * Add an action to the list of actions for the specified section.
+     *
+     * @param $sectionName The name of the section that we are adding the action to
+     * @param $options The options for the action
+     *
+     * @returns This object to support method chaining
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function addAction($sectionName, aOptions $options)
+    {
+        $this->actionOptions[$sectionName][$options->name] = $options;
     }  // addAction()
 
     /* ------------------------------------------------------------------------------------------
@@ -809,10 +801,21 @@ class EtlConfiguration extends Configuration
 
     public function getEnabledActionNames($sectionName)
     {
-        if ( ! array_key_exists($sectionName, $this->enabledActionNames) ) {
+        if ( ! $this->sectionExists($sectionName) ) {
             return false;
         }
-        return $this->enabledActionNames[$sectionName];
+
+        return array_reduce(
+            $this->actionOptions[$sectionName],
+            function ($carry, aOptions $item) {
+                if ( $item->enabled ) {
+                    array_push($carry, $item->name);
+                }
+                return $carry;
+            },
+            array()
+        );
+
     }  // getEnabledActionNames()
 
     /* ------------------------------------------------------------------------------------------
@@ -827,11 +830,10 @@ class EtlConfiguration extends Configuration
 
     private function findActionSections($actionName)
     {
-
         $sectionNameMatches = array();
 
-        foreach ( $this->configuredActionNames as $sectionName => $sectionActionNames ) {
-            if ( in_array($actionName, $sectionActionNames) ) {
+        foreach ( $this->actionOptions as $sectionName => $sectionActionOptions ) {
+            if ( array_key_exists($actionName, $sectionActionOptions) ) {
                 $sectionNameMatches[] = $sectionName;
             }
         }
@@ -839,6 +841,27 @@ class EtlConfiguration extends Configuration
         return ( 0 == count($sectionNameMatches) ? false : $sectionNameMatches );
 
     }  // findActionSections()
+
+    /* ------------------------------------------------------------------------------------------
+     * @param $actionName The name of the action to search for.
+     * @param $sectionName Optional section name to look for the action
+     *
+     * @return TRUE if the action exists in the specified section name, or any section if
+     *   no section name was provided. False otherwise.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    private function actionExists($actionName, $sectionName = null)
+    {
+        if ( null === $sectionName ) {
+            return ( false !== $this->findActionSections($actionName) );
+        } elseif ( ! $this->sectionExists($sectionName) ) {
+            return false;
+        } else {
+            return array_key_exists($actionName, $this->actionOptions[$sectionName]);
+        }
+
+    }  // actionExists()
 
     /* ------------------------------------------------------------------------------------------
      * Get the list of configured action names. This includes all actions that are properly
@@ -853,10 +876,12 @@ class EtlConfiguration extends Configuration
 
     public function getConfiguredActionNames($sectionName)
     {
-        if ( ! array_key_exists($sectionName, $this->configuredActionNames) ) {
+        if ( ! $this->sectionExists($sectionName) ) {
             return false;
         }
-        return $this->configuredActionNames[$sectionName];
+
+        return array_keys($this->actionOptions[$sectionName]);
+
     }  // getConfiguredActionNames()
 
     /* ------------------------------------------------------------------------------------------
@@ -872,10 +897,12 @@ class EtlConfiguration extends Configuration
 
     public function getDisabledActionNames($sectionName)
     {
-        if ( ! array_key_exists($sectionName, $this->configuredActionNames) ) {
+        if ( ! $this->sectionExists($sectionName) ) {
             return false;
         }
-        return  array_diff($this->configuredActionNames[$sectionName], $this->enabledActionNames[$sectionName]);
+
+        return array_diff(array_keys($this->actionOptions[$sectionName]), $this->getEnabledActionNames($sectionName));
+
     }  // getDisabledActionNames()
 
     /* ------------------------------------------------------------------------------------------
@@ -890,9 +917,10 @@ class EtlConfiguration extends Configuration
 
     public function getSectionActionOptions($sectionName)
     {
-        if ( ! array_key_exists($sectionName, $this->actionOptions) ) {
+        if ( ! $this->sectionExists($sectionName) ) {
             return false;
         }
+
         return $this->actionOptions[$sectionName];
 
     }  // getSectionActionOptions()
@@ -909,9 +937,10 @@ class EtlConfiguration extends Configuration
 
     public function getSectionActionNames($sectionName)
     {
-        if ( ! array_key_exists($sectionName, $this->actionOptions) ) {
+        if ( ! $this->sectionExists($sectionName) ) {
             return false;
         }
+
         return array_keys($this->actionOptions[$sectionName]);
 
     }  // getSectionActionNames()
@@ -936,19 +965,19 @@ class EtlConfiguration extends Configuration
     public function getActionOptions($actionName, $sectionName = null)
     {
         if ( null !== $sectionName ) {
-            if ( ! array_key_exists($sectionName, $this->actionOptions) ) {
+            if ( ! $this->sectionExists($sectionName) ) {
                 $this->logAndThrowException("Invalid section name '$sectionName'");
-            } elseif ( ! array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
+            } elseif ( ! $this->actionExists($actionName, $sectionName) ) {
                 $this->logAndThrowException("Action '$actionName' not found in section '$sectionName'");
             }
         } else {
             $sectionList = $this->findActionSections($actionName);
             if ( count($sectionList) > 1 ) {
-                $this->logAndThrowException(
-                    "Ambiguous action '$actionName' found in multiple sections '"
-                    . implode("', '", $sectionList)
-                    . "'"
-                );
+                $this->logAndThrowException(sprintf(
+                    "Ambiguous action '%s' found in multiple sections '%s'",
+                    $actionName,
+                    implode("', '", $sectionList)
+                ));
             } elseif ( false === $sectionList ) {
                 $this->logAndThrowException("Action '$actionName' not found");
             }

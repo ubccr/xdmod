@@ -1,12 +1,19 @@
 <?php
 /* ==========================================================================================
  * Read and parse a JSON configuration file containing keys with associated values
- * (scalar, object, array). Key transformers may also be added allowing us to dynamically
- * extend functionality and transform keys and their associated values. For example, a
- * comment transformer may strip comments from the file so downstream processing does not need
- * to deal with them or may provide the ability to reference keys within other files.
+ * (scalar, object, array). Values that are objects are considered to be fixed entities
+ * that define something in the configuration. Key transformers may also be added allowing
+ * us to dynamically extend functionality and transform keys and their associated
+ * values. For example, a comment transformer may strip comments from the file so
+ * downstream processing does not need to deal with them or may provide the ability to
+ * reference keys within other files.
  *
- * The process for parsing the configuration is as follows:
+ * No interpretation of the data is performed in this class. The file is simply parsed,
+ * transformed, and put into a structure with section (key) names and the data associated
+ * with each section. To interpret the data, a child class should override
+ * Configuration::interpretData().
+ *
+ * The process for applying transformers to the configuration is as follows:
  *
  * 1. Define key transformers that implement the `iConfigFileKeyTransformer` interface.
  *    Multiple transformers could be defined for the same key.
@@ -24,10 +31,38 @@
  *    4c. If a key transformer returns `false` do not process any other transformers.
  *    4d. Recursively traverse keys in the returned JSON and apply transformers to the result.
  *
+ * To make it easier to extend this class for task-specific configuration files, the
+ * following methods are available for overwriting by child classes. This allows
+ * additional processing and/or interpretation of the data.
+ *
+ * 1. preTransformTasks()
+ *
+ * Perform any pre-transformation tasks such as setting or adding key transformers
+ *
+ * 2. interpretData()
+ *
+ * Apply any logic to interpret the configuration data such as handling defaults,
+ * registering ETL actions, etc.
+ *
+ * 3. processLocalConfig()
+ *
+ * Local configuration files should be processed instantiating the appropriate class
+ * (typically the class used to process the main file) and passing the correct options.
+ *
+ * 4. merge()
+ *
+ * Merge data from local configuration files into the global namespace.
+ *
+ * 5. cleanup()
+ *
+ * Perform any necessary data structure cleanup.
+ *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2016-06-15
  *
  * @date 2017-04-11 - Added dynamic key transformers
+ *
+ * @date 2017-04-18 - Moved parsing of local configuration files into this class
  * ==========================================================================================
  */
 
@@ -65,12 +100,15 @@ class Configuration extends Loggable implements \Iterator
     // performing manipulations
     protected $transformedConfig = null;
 
-    // The names of all sections discovered in the config file
-    protected $sectionNames = array();
-
     // An associative array where keys are section names and values the data associated with that
     // section.
     protected $sectionData = array();
+
+    // TRUE if this is a local configuration file as opposed to the main configuration file
+    protected $isLocalConfig = false;
+
+    // Directory to look for local configuration files (e.g. sub-configs)
+    protected $localConfigDir = null;
 
     /* ------------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
@@ -79,11 +117,19 @@ class Configuration extends Loggable implements \Iterator
      * @param $baseDir Base directory for configuration files. Overrides the base dir provided in
      *   the top-level config file
      * @param $logger A PEAR Log object or null to use the null logger.
+     * @param $options An associative array of additional options passed from the parent. These
+     *   include:
+     *   local_config_dir: Directory to look for local configuration files
+     *   is_local_config: TRUE if this filename is a local config file as opposed to the main file
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($filename, $baseDir = null, Log $logger = null)
-    {
+    public function __construct(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
         parent::__construct($logger);
 
         if ( empty($filename) ) {
@@ -105,13 +151,16 @@ class Configuration extends Loggable implements \Iterator
             $this->filename = \xd_utilities\qualify_path($filename, $this->baseDir);
         }
 
+        if ( array_key_exists('local_config_dir', $options) && null !== $options['local_config_dir'] ) {
+            $this->localConfigDir = $options['local_config_dir'];
+        }
+
+        $this->isLocalConfig = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
+
+        // Clean up directory paths
         $this->filename = \xd_utilities\resolve_path($this->filename);
         $this->baseDir = \xd_utilities\resolve_path($this->baseDir);
-
-        // The comment transformer is the only default transformer, all others need to be added.
-
-        $this->addKeyTransformer(new CommentTransformer($this->logger));
-        $this->addKeyTransformer(new JsonReferenceTransformer($this->logger));
+        $this->localConfigDir = \xd_utilities\resolve_path($this->localConfigDir);
 
     }  // __construct()
 
@@ -122,9 +171,229 @@ class Configuration extends Loggable implements \Iterator
 
     public function initialize()
     {
-        $this->logger->info("Loading configuration file " . $this->filename);
+        $this->logger->info("Loading" . ( $this->isLocalConfig ? " local" : "" ) . " configuration file " . $this->filename);
+
+        // Parse the configuration file
+
         $this->parse();
+
+        // Perform any post-parsing tasks such as validation or manipulating the parsed
+        // data that must happen before transformation.
+
+        $this->preTransformTasks();
+
+        // Run the key transformers on the parsed data.
+
+        $this->transform();
+
+        // Add sections for each of the transformed keys
+
+        foreach ( $this->transformedConfig as $key => $value ) {
+            $this->addSection($key, $value);
+        }
+
+        // Perform local interpretation on the data and apply contextual meaning
+
+        $this->interpretData();
+
+        // Process any local configuration files.
+
+        if ( ! $this->isLocalConfig && null !== $this->localConfigDir ) {
+
+            if ( ! is_dir($this->localConfigDir) ) {
+                $this->logger->debug(sprintf("Local configuration directory '%s' not found", $this->localConfigDir));
+                return;
+            }
+
+            if ( false === ($dh = @opendir($this->localConfigDir)) ) {
+                $this->logAndThrowException(sprintf("Error opening configuration directory '%s'", $this->localConfigDir));
+            }
+
+            // Examine the subdirectory for .json files and parse each one, then merge the results back
+            // into this object
+
+            while ( false !== ( $file = readdir($dh) ) ) {
+
+                // Only process .json files
+
+                $len = strlen($file);
+                $pos = strrpos(strtolower($file), ".json");
+                if ( false === $pos || ($len - $pos) != 5 ) {
+                    continue;
+                }
+
+                $localConfigObj = $this->processLocalConfig($this->localConfigDir . "/" . $file);
+                $this->merge($localConfigObj);
+                $localConfigObj->cleanup();
+
+            }  //  while ( false !== ( $file = readdir($dh) ) )
+
+            closedir($dh);
+
+        }  // if ( null !== $confSubdirectory )
+
     }  // initialize()
+
+
+    /* ------------------------------------------------------------------------------------------
+     * Parse the configuration file.
+     *
+     * @param $force TRUE if the configuration file should be re-parsed.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    private function parse($force = false)
+    {
+        // Don't parse if the file has already been parsed unless we are forcing it.
+
+        if ( null !== $this->parsedConfig && ! $force ) {
+            return $this;
+        }
+
+        // Parse and decode the JSON configuration file
+
+        $options = new DataEndpointOptions(array(
+            'name' => "Configuration",
+            'path' => $this->filename,
+            'type' => "jsonfile"
+        ));
+
+        $jsonFile = DataEndpoint::factory($options, $this->logger);
+        $this->parsedConfig = $jsonFile->parse();
+
+        return $this;
+
+    }  // parse()
+
+    /* ------------------------------------------------------------------------------------------
+     * Perform any tasks that must happen after parsing but before we continue on to
+     * transformation. For example, in a configuration file we may want to apply a base
+     * path to some elements before transforming JSON reference pointers.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function preTransformTasks()
+    {
+        $this->addKeyTransformer(new CommentTransformer($this->logger));
+        $this->addKeyTransformer(new JsonReferenceTransformer($this->logger));
+        return $this;
+    }  //preTransformTasks()
+
+    /* ------------------------------------------------------------------------------------------
+     * Perform transformation by running any key transformers that have been added.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    private function transform()
+    {
+        // To keep the original parsed config we need to use unserialize(serialize()) to
+        // break the reference.
+
+        $tmp = unserialize(serialize($this->parsedConfig));
+        $this->transformedConfig = $this->processKeyTransformers($tmp);
+
+        return $this;
+
+    }  // transform()
+
+    /* ------------------------------------------------------------------------------------------
+     * Interpret the transformed data in the configuration file. By default no
+     * interpretation is performed by this class so child classes should override this
+     * method as needed.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function interpretData()
+    {
+        return $this;
+    }  // interpretData()
+
+    /* ------------------------------------------------------------------------------------------
+     * Given a path to a local configuration file, create a Configuration object and parse
+     * the file. This functionality is broken out so child classes can apply any necessary
+     * options and object types.
+     *
+     * @param string $localConfigFile The path to the local configuration file
+     *
+     * @return A Configuration object containing the parsed config.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function processLocalConfig($localConfigFile)
+    {
+        $options = array(
+            'local_config_dir' => $this->localConfigDir,
+            'is_local_config' => true
+        );
+
+        $localConfigObj = new Configuration($localConfigFile, $this->baseDir, $this->logger, $options);
+        $localConfigObj->initialize();
+
+        return $localConfigObj;
+
+    }  // processLocalConfig()
+
+    /* ------------------------------------------------------------------------------------------
+     * Merge data from the specified local configuration object, either overwriting or
+     * merging data from local configuration objects into the current object. If
+     * $overwrite is TRUE, overwrite data for a given key in this Configuration object
+     * with data found in a local configuration object, or create the key if it does not
+     * exist. If $overwrite is FALSE, create new keys as needed and if the key exists in
+     * this configuration and can be appended (i.e., is an array) then append the data
+     * found in the local configuration to the existing data. If the data cannot be
+     * appended (such as a scalar or an object) then overwrite it. This functionality is
+     * broken out in its own method so child classes can implement logic specific to their
+     * data if needed.
+     *
+     * @param Configuration $subConfigObj A configuration object generated from a
+     *   local config file
+     * @param bool $overwrite If TRUE, overwrite data (e.g. a key) in this Configuration
+     *   with data found in a local configuration.
+     *
+     * @return This object to support method chaining
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function merge(Configuration $localConfigObj, $overwrite = false)
+    {
+
+        // If overwriting or the key doesn't exist, set it. Otherwise if the value is an
+        // array append it. If not overwriting and the value is not an array silently skip
+        // it.
+
+        foreach ( $localConfigObj->getTransformedConfig() as $k => $v ) {
+            if ( $overwrite || ! isset($this->transformedConfig->$k) ) {
+                $this->transformedConfig->$k = $v;
+            } elseif ( is_array($this->transformedConfig->$k) ) {
+                array_push($this->transformedConfig->$k, $v);
+            } else {
+                $this->logger->debug("Skip duplicate key in local config (overwrite == false)");
+            }
+        }
+
+        foreach ( $localConfigObj->getSectionNames() as $sectionName ) {
+            $localConfigData = $localConfigObj->getSectionData($sectionName);
+            $myData = $this->getSectionData($sectionName);
+
+            if ( $overwrite || false == $myData ) {
+                $this->addSection($sectionName, $localConfigData);
+            } elseif ( is_array($myData) ) {
+                array_push($myData, $localConfigData);
+                $this->addSection($sectionName, $myData);
+            }
+        }
+
+        return $this;
+
+    }  // merge()
 
     /* ------------------------------------------------------------------------------------------
      * Clean up intermediate information that we don't need to keep around after processing. This
@@ -137,50 +406,6 @@ class Configuration extends Loggable implements \Iterator
         $this->parsedConfig = null;
         $this->transformedConfig = null;
     }  // cleanup()
-
-    /* ------------------------------------------------------------------------------------------
-     * Parse the configuration file.
-     *
-     * @param $force TRUE if the configuration file should be re-parsed.
-     *
-     * @throw Exception If the file is does not exist or is not readable
-     * @throw Exception If there is an error parsing the file
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function parse($force = false)
-    {
-        // Don't parse if the file has already been parsed unless we are forcing it.
-
-        if ( null !== $this->parsedConfig && ! $force ) {
-            return;
-        }
-
-        // --------------------------------------------------------------------------------
-        // Parse and decode the JSON configuration file
-
-        $opt = new DataEndpointOptions(array('name' => "Configuration",
-                                             'path' => $this->filename,
-                                             'type' => "jsonfile"));
-        $jsonFile = DataEndpoint::factory($opt, $this->logger);
-
-        $this->parsedConfig = $jsonFile->parse();
-
-        // To keep the original parsed config we need to use unserialize(serialize()) to
-        // break the reference
-
-        $tmp = unserialize(serialize($this->parsedConfig));
-        $this->transformedConfig = $this->processKeyTransformers($tmp);
-
-        // Process the constructed configuration to create sections
-
-        foreach ( $this->transformedConfig as $key => $value ) {
-            $this->addSection($key, $value);
-        }
-
-        return true;
-
-    }  // parse()
 
     /* ------------------------------------------------------------------------------------------
      * Compare object keys against the list of key transformers and recursively apply
@@ -280,27 +505,87 @@ class Configuration extends Loggable implements \Iterator
     }  // processKeyTransformers()
 
     /* ------------------------------------------------------------------------------------------
-     * Add a new section to the internal data structures if it doesn't already exist
+     * Get the list of section names.
+     *
+     * @return An array of section names
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getSectionNames()
+    {
+        return array_keys($this->sectionData);
+    }  // getSectionNames()
+
+    /* ------------------------------------------------------------------------------------------
+     * @param $name The name of the section to examine.
+     *
+     * @return TRUE if a section is defined
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function sectionExists($name)
+    {
+        return array_key_exists($name, $this->sectionData);
+    }  // sectionExists()
+
+    /* ------------------------------------------------------------------------------------------
+     * @param $name The name of the section to examine.
+     *
+     * @return TRUE if a section is defined
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getSectionData($name)
+    {
+        return ( $this->sectionExists($name)
+                 ? $this->sectionData[$name]
+                 : false
+            );
+    }  // getSectionData()
+
+    /* ------------------------------------------------------------------------------------------
+     * Add a new section to the internal data structures if it doesn't already exist or
+     * update the data associated with the section if it does exist (unless $overwrite ==
+     * false)
      *
      * @param $name The name of the new section
      * @param $data The data associated with the new section
+     * @param $overwrite TRUE if any existing data for the given section should be overwritten
      *
      * @return This object for method chaining
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function addSection($name, $data = null)
+    protected function addSection($name, $data = null, $overwrite = true)
     {
-        if ( in_array($name, $this->sectionNames) ) {
+        if ( ! $overwrite && $this->sectionExists($name) ) {
             return $this;
         }
 
-        $this->sectionNames[] = $name;
         $this->sectionData[$name] = $data;
 
         return $this;
 
     }  // addSection()
+
+    /* ------------------------------------------------------------------------------------------
+     * Remove a section from the internal data structures.
+     *
+     * @param $name The name of the section
+     *
+     * @return This object for method chaining
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function deleteSection($name)
+    {
+        if ( $this->sectionExists($name) ) {
+            unset($this->sectionData[$name]);
+        }
+
+        return $this;
+
+    }  // deleteSection()
 
     /* ==========================================================================================
      * Iterator implementation. Allow iteration over the list of sections.
@@ -408,9 +693,8 @@ class Configuration extends Loggable implements \Iterator
     /* ------------------------------------------------------------------------------------------
      * Delete a key handler and return it.
      *
-     * @param $key The key to delete (either an object or a class name with namespace)
-     * @param $when When the handler is executed (before or after parsed keys are added to the
-     *   configuration)
+     * @param (string || iConfigFileKeyTransformer) $transformer A key transformer object or class
+     *   name configuration)
      *
      * @return The callable key handler, or FALSE if no handler was defined.
      * ------------------------------------------------------------------------------------------
@@ -442,11 +726,6 @@ class Configuration extends Loggable implements \Iterator
 
     }  // deleteKeyHandler()
 
-    /* ==========================================================================================
-     * Accessors
-     * ==========================================================================================
-     */
-
     /* ------------------------------------------------------------------------------------------
      * Get the base directory for this configuration.
      *
@@ -470,45 +749,6 @@ class Configuration extends Loggable implements \Iterator
     {
         return $this->transformedConfig;
     }  // getTransformedConfig()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of section names.
-     *
-     * @return An array of section names
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getSectionNames()
-    {
-        return $this->sectionNames;
-    }  // getSectionNames()
-
-    /* ------------------------------------------------------------------------------------------
-     * @param $sectionName The name of the section to examine.
-     *
-     * @return TRUE if a section is defined
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function sectionExists($sectionName)
-    {
-        return in_array($sectionName, $this->sectionNames);
-    }  // getSectionNames()
-
-    /* ------------------------------------------------------------------------------------------
-     * @param $sectionName The name of the section to examine.
-     *
-     * @return TRUE if a section is defined
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getSectionData($sectionName)
-    {
-        return ( array_key_exists($sectionName, $this->sectionData)
-                 ? $this->sectionData[$sectionName]
-                 : false
-            );
-    }  // getSectionData()
 
     /* ------------------------------------------------------------------------------------------
      * Getter method for accessing data keys using object notation.
