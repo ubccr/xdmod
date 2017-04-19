@@ -47,7 +47,7 @@ class XdmodTestHelper
 
     private function processResponseHeader($curl, $headerline)
     {
-        $tokens = split(':', $headerline);
+        $tokens = explode(':', $headerline);
         if (count($tokens) == 2) {
             $this->responseHeaders[$tokens[0]] = $tokens[1];
         }

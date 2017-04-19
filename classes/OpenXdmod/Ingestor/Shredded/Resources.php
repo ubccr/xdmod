@@ -4,7 +4,7 @@ namespace OpenXdmod\Ingestor\Shredded;
 
 use PDODBSynchronizingIngestor;
 
-class Resource extends PDODBSynchronizingIngestor
+class Resources extends PDODBSynchronizingIngestor
 {
     public function __construct($dest_db, $src_db)
     {
@@ -20,4 +20,3 @@ class Resource extends PDODBSynchronizingIngestor
         );
     }
 }
-
