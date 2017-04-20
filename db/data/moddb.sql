@@ -37,4 +37,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO `schema_version_history` VALUES ('moddb', '6.6.0', NOW(), 'created', 'N/A');
+INSERT INTO `schema_version_history` VALUES ('moddb', '6.7.0', NOW(), 'created', 'N/A');

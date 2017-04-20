@@ -185,28 +185,6 @@ function quote($entity)
 }
 
 /**
- * Resolve a token?
- */
-function tokenResolver($input)
-{
-    $user = \xd_security\getLoggedInUser();
-
-    $mappings = array(
-        "username" => $user->getUsername()
-    );
-
-    $output = $input;
-
-    foreach ($mappings as $find => $replace) {
-        $output = str_replace("<$find>", $replace, $output);
-    }
-
-    $output = mysql_escape_string($output);
-
-    return $output;
-}
-
-/**
  * Remove an element from an array.
  */
 function remove_element_by_value(&$array, $value)
