@@ -27,8 +27,12 @@ class JsonReferenceWithMacroTransformer extends JsonReferenceTransformer impleme
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function qualifyPath($path, EtlConfiguration $config)
+    protected function qualifyPath($path, Configuration $config)
     {
+        if ( ! $localConfigObj instanceof EtlConfiguration ) {
+            $this-logAndThrowException("Local config object is not of type EtlConfiguration");
+        }
+
         $paths = $config->getPaths();
 
         if ( null !== $paths ) {
