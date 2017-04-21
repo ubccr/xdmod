@@ -11,7 +11,6 @@
             "/composer.json",
             "/composer.lock",
             "/docs",
-            "/etl",
             "/html/gui/js/modules/Module.template",
             "/logs",
             "/phpcs.xml",
@@ -29,6 +28,7 @@
         "data": [
             "classes",
             "db",
+            "etl",
             "external_libraries",
             "html",
             "libraries",
