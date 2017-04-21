@@ -19,7 +19,7 @@
  *
  * Transformers can be defined that will transform the values of matching keys.
  *
- * NOTE: The "defaults" and "global" sections are reserved and cannot be used except in
+ * NOTE: The "defaults" and "global" sections are reserved and cannot bes used except in
  *   the defaults block.
  *
  * @see Configuration
@@ -333,8 +333,12 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function merge(EtlConfiguration $localConfigObj, $overwrite = false)
+    protected function merge(Configuration $localConfigObj, $overwrite = false)
     {
+        if ( ! $localConfigObj instanceof EtlConfiguration ) {
+            $this-logAndThrowException("Local config object is not of type EtlConfiguration");
+        }
+
         parent::merge($localConfigObj, $overwrite);
 
         // Merge everything back into the main object
