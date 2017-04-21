@@ -27,6 +27,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*",
+        "ubccr/xdmod-test-artifacts": "@dev",
         "squizlabs/php_codesniffer": "2.8.0"
     },
     "repositories": [
@@ -368,6 +369,10 @@
                     "installer-name": "commons-logging"
                 }
             }
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/ubccr/xdmod-test-artifacts.git"
         }
     ],
     "extra": {
