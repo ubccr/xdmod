@@ -219,9 +219,12 @@ class EtlConfiguration extends Configuration
 
         foreach ( $etlSectionNames as $sectionName ) {
 
-            // If the section key doesn't contain an object or array, skip it.
-            if ( ! is_array($config->$sectionName) && ! is_object($config->$sectionName) ) {
-                continue;
+            // The value of each section must be an array of objects
+
+            if ( ! is_array($config->$sectionName) ) {
+                $this->logAndThrowException(
+                    sprintf("'%s', expected array of action objects, got %s", $sectionName, gettype($config->$sectionName))
+                );
             }
 
             foreach ( $config->$sectionName as &$actionConfig ) {

@@ -115,7 +115,7 @@ class Configuration extends Loggable implements \Iterator
      *
      * @param $filename Name of the JSON configuration file to parse
      * @param $baseDir Base directory for configuration files. Overrides the base dir provided in
-     *   the top-level config file
+     *   the top-level config file. If not set, use the same directory as the config file.
      * @param $logger A PEAR Log object or null to use the null logger.
      * @param $options An associative array of additional options passed from the parent. These
      *   include:

@@ -19,6 +19,8 @@ use ETL\Loggable;
 class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransformer
 {
     const REFERENCE_KEY = '$ref';
+    const LAST_ARRAY_ELEMENT_CHAR = '-';
+    const POINTER_CHAR = '/';
 
     /* ------------------------------------------------------------------------------------------
      * @see iConfigFileKeyTransformer::__construct()
@@ -115,7 +117,9 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
         }
 
         $key = null;
-        $value = $this->extractJsonFragment($contents, $fragment);
+
+        // No fragment means include the entire file
+        $value = ( '' == $fragment ? json_decode($contents) : $this->extractJsonFragment($contents, $fragment) );
 
         return true;
 
@@ -161,8 +165,10 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
             $this->logAndThrowException("Invalid JSON pointer: '$pointer'");
         }
 
-        if ( 0 !== strpos($pointer, '/') ) {
-            $this->logAndThrowException("JSON pointer must start with '/'");
+        if ( 0 !== strpos($pointer, self::POINTER_CHAR) ) {
+            $this->logAndThrowException(
+                sprintf("JSON pointer must start with '%s'", self::POINTER_CHAR)
+            );
         }
 
         // Validate the json
@@ -196,7 +202,7 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
             }
         );
 
-        return $this->traverseJson($jsonObj, $pointer, $pointerParts);
+        return $this->traverseJson($jsonObj, $pointer, $parts);
 
     }  // extractJsonFragment()
 

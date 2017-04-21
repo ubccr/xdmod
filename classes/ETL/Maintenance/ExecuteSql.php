@@ -95,6 +95,7 @@ class ExecuteSql extends aAction implements iAction
                 $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
             }
         }
+        unset($sqlFile); // Sever the reference with the last element
 
         $this->options->sql_file_list = $sqlFileList;
 
