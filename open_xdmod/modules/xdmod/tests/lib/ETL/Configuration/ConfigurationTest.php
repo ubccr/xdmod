@@ -84,4 +84,3 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($generated, $expected);
     }
 } // class ConfigurationTest
-?>

@@ -122,4 +122,3 @@ class Rfc6901Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($value, 'specialchar');
     }
 }  // class Rfc6901Test
-?>
