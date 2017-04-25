@@ -491,8 +491,6 @@
 
       <script type="text/javascript">
 
-         var isCallCached = false;
-         var consultCallCache = function() {};
          var xsedeProfilePrompt = function() {};
 
          <?php if (!$userLoggedIn): ?>
@@ -511,18 +509,6 @@
          });
          <?php else: ?>
          <?php
-            if (isset($_SESSION['cached_call']) && !empty($_SESSION['cached_call'])) {
-         ?>
-
-            isCallCached = true;
-            consultCallCache = function() { CCR.xdmod.ui.Viewer.<?php print $_SESSION['cached_call']; ?> }
-
-         <?php
-
-               unset($_SESSION['cached_call']);
-
-            }
-
             // ==============================================
 
             $profile_editor_init_flag = '';
@@ -593,17 +579,6 @@
          <input type="hidden" id="x-history-field" />
          <iframe id="x-history-frame"></iframe>
       </form>
-
-      <?php if (!$userLoggedIn): ?>
-      <!-- For caching calls (e.g. goToChart(...), made when an image thumbnail is clicked) -->
-      <form name="function_call_cacher" class="x-hidden" method="POST" action="index.php">
-         <input type="hidden" id="cached_call" name="cached_call" value="">
-      </form>
-      <?php endif; ?>
-
-      <div class="x-hidden">
-         <iframe name="pdf_target_frame"></iframe>
-      </div>
 
       <div id="viewer"> </div>
 

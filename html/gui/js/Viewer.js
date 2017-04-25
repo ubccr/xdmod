@@ -430,7 +430,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
             continue;
           }
           tabPanel.add(tabInstance);
-          if (tab.isDefault == true && !isCallCached) {
+          if (tab.isDefault) {
             tabToken = tabToken || mainTabToken + CCR.xdmod.ui.tokenDelimiter + tab.tab;
           }
         }
@@ -438,8 +438,6 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
         if (mainPanel.el) {
           mainPanel.el.unmask();
         }
-
-        consultCallCache();
 
         //Conditionally present the profile if an e-mail address has not been set
         xsedeProfilePrompt();
