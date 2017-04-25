@@ -792,7 +792,7 @@ $xsedeLogin = xd_utilities\getConfiguration('features', 'xsede') == 'on';
 
                                         <!-- ======================================= -->
 
-                                        <?php if ($xsedeLogin) : ?>
+                                        <?php if ($xsedeLogin || ($auth && $auth->isSamlConfigured())) : ?>
                                         <div id="panel_account_reset"
                                              style="position: absolute; top: 66px; left: 286px; visibility: hidden">
                                             <?php else : ?>
