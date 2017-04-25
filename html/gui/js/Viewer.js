@@ -421,18 +421,18 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
         var tabToken;
 
         for (var i = 0; i < tabs.length; i++) {
-          var tab = tabs[i];
-          tab.mainTabToken = mainTabToken;
-          tab.id = tab.tab;
+            var tab = tabs[i];
+            tab.mainTabToken = mainTabToken;
+            tab.id = tab.tab;
 
-          var tabInstance = CCR.getInstance(tab.javascriptReference, tab.javascriptClass, tab);
-          if (!tabInstance) {
-            continue;
-          }
-          tabPanel.add(tabInstance);
-          if (tab.isDefault) {
-            tabToken = tabToken || mainTabToken + CCR.xdmod.ui.tokenDelimiter + tab.tab;
-          }
+            var tabInstance = CCR.getInstance(tab.javascriptReference, tab.javascriptClass, tab);
+            if (!tabInstance) {
+                continue;
+            }
+            tabPanel.add(tabInstance);
+            if (tab.isDefault) {
+                tabToken = tabToken || mainTabToken + CCR.xdmod.ui.tokenDelimiter + tab.tab;
+            }
         }
 
         if (mainPanel.el) {
