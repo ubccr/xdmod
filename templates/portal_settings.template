@@ -64,11 +64,6 @@ version = "[:rest_version:]"
 ;         * Apereo CAS
 basic_auth = "[:rest_basic_auth:]"
 
-[auto_login]
-; tabs is a comma delimited list of tab ids that will trigger the login
-; page to show up if presented in an non-authenticated state.
-tabs = "[:auto_login_tabs:]"
-
 [mailer]
 sender_name = "[:mailer_sender_name:]"
 sender_email = "[:mailer_sender_email:]"
