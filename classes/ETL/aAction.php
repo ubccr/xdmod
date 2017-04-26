@@ -16,6 +16,8 @@ use Log;
 use ETL\EtlOverseerOptions;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
+use ETL\Configuration\Configuration;
+use ETL\Configuration\EtlConfiguration;
 
 abstract class aAction extends aEtlObject
 {
@@ -110,7 +112,7 @@ abstract class aAction extends aEtlObject
                     $this->options->paths->base_dir,
                     $logger
                 );
-                $this->parsedDefinitionFile->parse();
+                $this->parsedDefinitionFile->initialize();
                 $this->parsedDefinitionFile->cleanup();
             }
         }  // if ( null !== $this->options->definition_file )

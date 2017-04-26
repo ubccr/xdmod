@@ -17,6 +17,7 @@ namespace ETL;
 
 use \Exception;  // Base exception
 use Log;
+use ETL\Configuration\EtlConfiguration;
 
 class EtlOverseer extends Loggable implements iEtlOverseer
 {

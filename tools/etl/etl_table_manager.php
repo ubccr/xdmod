@@ -12,8 +12,7 @@ restore_exception_handler();
 
 use \Exception;
 use CCR\Log;
-use ETL\EtlConfiguration;
-use ETL\EtlConfigurationOptions;
+use ETL\Configuration\EtlConfiguration;
 use ETL\DbEntity\Table;
 use ETL\DbEntity\AggregationTable;
 

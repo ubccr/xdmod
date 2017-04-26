@@ -9,6 +9,7 @@
 
 namespace ETL;
 
+use ETL\Configuration\EtlConfiguration;
 use Exception;
 use stdClass;
 

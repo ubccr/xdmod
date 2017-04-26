@@ -254,5 +254,4 @@ class LockFile extends Loggable
         return false;
 
     }  // _cleanup()
-
 }  // class Lockfile

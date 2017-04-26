@@ -46,7 +46,7 @@ use ETL\aOptions;
 use ETL\aRdbmsDestinationAction;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\DataEndpoint\Mysql;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\Utilities;
 use ETL\DbEntity\Query;

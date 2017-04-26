@@ -19,7 +19,7 @@
 
 namespace ETL;
 
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\aOptions;
