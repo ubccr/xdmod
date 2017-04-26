@@ -1,3 +1,4 @@
+
 <?php
 /* ==========================================================================================
  * The PDO aggregator encapsulates functionality for aggregating from one table into another. This
@@ -62,9 +63,9 @@ namespace ETL\Aggregator;
 use ETL\aOptions;
 use ETL\EtlOverseerOptions;
 use ETL\DataEndpoint\Mysql;
-use ETL\DbEntity\AggregationTable;
-use ETL\DbEntity\Query;
-use ETL\DbEntity\Table;
+use ETL\DbModel\AggregationTable;
+use ETL\DbModel\Query;
+use ETL\DbModel\Table;
 use ETL\Utilities;
 use ETL\Configuration\EtlConfiguration;
 

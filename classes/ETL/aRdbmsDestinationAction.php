@@ -23,7 +23,7 @@ use ETL\Configuration\EtlConfiguration;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\aOptions;
-use ETL\DbEntity\Table;
+use ETL\DbModel\Table;
 
 use PHPSQLParser\PHPSQLParser;
 

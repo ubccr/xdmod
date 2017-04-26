@@ -1,8 +1,7 @@
 <?php
 /* ==========================================================================================
  * Class for managing table indexes in the data warehouse.  This is meant to be used as a component
- * of Table.  Note that triggers are created separately from the table definition and to alter a
- * trigger it must be dropped and re-created.
+ * of Table.
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2015-10-29
@@ -12,27 +11,16 @@
  * ==========================================================================================
  */
 
-namespace ETL\DbEntity;
+namespace ETL\DbModel;
 
 use \Log;
 use \stdClass;
 
-class Trigger extends aNamedEntity implements iTableItem
+class Index extends aNamedEntity implements iTableItem
 {
-    // The time that the trigger is fired (before, after)
-    private $time = null;
-
-    // The event that the trigger is fired on (insert, update, delete)
-    private $event = null;
-
-    // The table that the trigger is associated with
-    private $table = null;
-
-    // The body of the trigger
-    private $body = null;
-
-    // The trigger definer for ACL purposes
-    private $definer = null;
+    private $type = null;
+    private $is_unique = null;
+    private $columns = array();
 
     /* ------------------------------------------------------------------------------------------
      * @see iTableItem::__construct()
@@ -44,11 +32,11 @@ class Trigger extends aNamedEntity implements iTableItem
         parent::__construct($systemQuoteChar, $logger);
 
         if ( ! is_object($config) ) {
-            $msg = __CLASS__ . ": Argument is not an object";
+            $msg = __CLASS__ . ": Index definition must be an array or object";
             $this->logAndThrowException($msg);
         }
 
-        $requiredKeys = array("name", "time", "event", "table", "body");
+        $requiredKeys = array("columns");
         $this->verifyRequiredConfigKeys($requiredKeys, $config);
 
         $this->initialize($config);
@@ -56,7 +44,7 @@ class Trigger extends aNamedEntity implements iTableItem
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::initialize()
+     * @see aNamedEntity::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
@@ -66,10 +54,16 @@ class Trigger extends aNamedEntity implements iTableItem
             return true;
         }
 
+        if ( ! is_array($config->columns) || 0 == count($config->columns) ) {
+            $msg = "Index columns must be an non-empty array";
+            $this->logAndThrowException($msg);
+        }
+
+        if ( ! isset($config->name) ) {
+            $config->name = $this->generateIndexName($config->columns);
+        }
+
         foreach ( $config as $property => $value ) {
-            if ( $this->isComment($property) ) {
-                continue;
-            }
 
             if ( ! property_exists($this, $property) ) {
                 $msg = "Property '$property' in config is not supported";
@@ -85,54 +79,51 @@ class Trigger extends aNamedEntity implements iTableItem
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
-     * @return The time that the trigger will fire, null if not specified
+     * Auto-generate an index name based on the columns included in the index. If the length of the
+     * index name would be too large use a hash.
+     *
+     * @param $columns The array of index column names
+     *
+     * @return The generated index name
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getTime()
+    private function generateIndexName(array $columns)
     {
-        return $this->time;
-    }  // getTime()
+        $str = implode("_", $columns);
+        $name = ( strlen($str) <= 32 ? $str : md5($str) );
+        return "index_" . $name;
+    }  // generateIndexName()
 
     /* ------------------------------------------------------------------------------------------
-     * @return The trigger event, null if not specified
+     * @return The list of column names for this index
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getEvent()
+    public function getColumnNames()
     {
-        return $this->event;
-    }  // getEvent()
+        return $this->columns;
+    }  // getColumnNames()
 
     /* ------------------------------------------------------------------------------------------
-     * @return The table that the trigger is associated with, null if not specified
+     * @return The index type, or null if no type was specified.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getTable()
+    public function getType()
     {
-        return $this->table;
-    }  // getTable()
+        return $this->type;
+    }  // getType()
 
     /* ------------------------------------------------------------------------------------------
-     * @return The trigger body, null if not specified
+     * @return true if the index is unique, false if it is not, or null if not specified.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getBody()
+    public function isUnique()
     {
-        return $this->body;
-    }  // getBody()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The trigger definer, null if not specified
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getDefiner()
-    {
-        return $this->definer;
-    }  // getDefiner()
+        return $this->is_unique;
+    }  // isUnique()
 
     /* ------------------------------------------------------------------------------------------
      * @see iTableItem::compare()
@@ -141,37 +132,39 @@ class Trigger extends aNamedEntity implements iTableItem
 
     public function compare(iTableItem $cmp)
     {
-        if ( ! $cmp instanceof Trigger ) {
+        if ( ! $cmp instanceof Index ) {
             return 1;
         }
 
-        // Schemas are optional for the trigger
-
-        // Triggers are considered equal if all non-null properties are the same.
+        // Indexes are considered equal if all non-null properties are the same but only the name and
+        // columns are required but if the type and uniqueness are provided use those in the comparison
+        // as well.
 
         if ( $this->getName() != $cmp->getName()
-             || $this->getTime() != $cmp->getTime()
-             || $this->getEvent() != $cmp->getEvent()
-             || $this->getTable() != $cmp->getTable()
-             || $this->getBody() != $cmp->getBody() ) {
+             || $this->getColumnNames() != $cmp->getColumnNames() ) {
             return -1;
         }
 
         // The following properties have a default set by the database. If the property is not specified
         // a value will be provided when the database information schema is queried.
 
-        if ( ( null !== $this->getDefiner() && null !== $cmp->getDefiner() )
-             && $this->getDefiner() != $cmp->getDefiner() ) {
-            return -1;
+        if ( ( null !== $this->getType() && null !== $cmp->getType() )
+             && $this->getType() != $cmp->getType() ) {
+            return -11;
         }
 
         // The following properties do not have defaults set by the database and should be considered if
         // one of them is set.
 
-        if ( ( null !== $this->getSchema() || null !== $cmp->getSchema() )
-             && $this->getSchema() != $cmp->getSchema() ) {
-            return -1;
+        // By default a primary key in MySQL has the name PRIMARY and is unique
+
+        if ( "PRIMARY" != $this->getName() && "PRIMARY" != $cmp->getName()
+             && ( null !== $this->isUnique() && null !== $cmp->isUnique() )
+             && $this->isUnique() != $cmp->isUnique() ) {
+            return -111;
         }
+
+        return 0;
 
     }  // compare()
 
@@ -182,28 +175,21 @@ class Trigger extends aNamedEntity implements iTableItem
 
     public function getCreateSql($includeSchema = false)
     {
-        // Triggers queried from MySQL contain the begin/end but the body in the JSON may or may not.
+        // Primary keys always have an index name of "PRIMARY"
+        // See https://dev.mysql.com/doc/refman/5.7/en/create-table.html
 
-        $addBeginEnd = ( 0 !== strpos($this->body, "BEGIN") );
-        $name = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
-        $tableName = ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
-            $this->quote($this->table);
+        // Indexes may be created or altered in different ways (CREATE TABLE vs. ALTER TABLE) so we only
+        // return the essentials of the definition and let the Table class figure out the appropriate
+        // way to put them together.
+
         $parts = array();
-        $parts[] = "CREATE";
-        if ( null !== $this->definer ) {
-            $parts[] = "DEFINER = {$this->definer}";
+        $parts[] = (null !== $this->name && "PRIMARY" == $this->name
+                    ? "PRIMARY KEY"
+                    : ( null !== $this->is_unique && $this->is_unique ? "UNIQUE ": "") . "INDEX " . $this->getName(true) );
+        if ( null !== $this->type ) {
+            $parts[] = "USING {$this->type}";
         }
-        $parts[] = "TRIGGER $name";
-        $parts[] = $this->time;
-        $parts[] = $this->event;
-        $parts[] = "ON $tableName FOR EACH ROW\n";
-        if ( $addBeginEnd ) {
-            $parts[] = "BEGIN\n";
-        }
-        $parts[] = $this->body;
-        if ( $addBeginEnd ) {
-            $parts[] = "\nEND";
-        }
+        $parts[] = "(" . implode(", ", array_map(array($this, 'quote'), $this->columns)) . ")";
 
         return implode(" ", $parts);
 
@@ -226,21 +212,21 @@ class Trigger extends aNamedEntity implements iTableItem
 
     public function toJsonObj($succinct = false)
     {
-        // There is no succinct definition for a trigger
-
-        $data = new stdClass;
-        $data->name = $this->name;
-        if ( null !== $this->schema ) {
-            $data->schema = $this->schema;
+        if ( $succinct ) {
+            $data = $this->columns;
+        } else {
+            $data = new stdClass;
+            $data->name = $this->name;
+            $data->columns = $this->columns;
+            if ( null !== $this->type ) {
+                $data->type = $this->type;
+            }
+            if ( null !== $this->is_unique ) {
+                $data->is_unique = ( 1 == $this->is_unique);
+            }
         }
-        $data->time = $this->time;
-        $data->event = $this->event;
-        $data->table = $this->table;
-        // The body may contain newlines, these should be encoded.
-        $data->body = $this->body;
-        $data->definer = $this->definer;
 
         return $data;
 
     }  // toJsonObj()
-}  // class Trigger
+}  // class Index

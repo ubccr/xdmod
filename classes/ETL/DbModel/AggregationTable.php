@@ -13,7 +13,7 @@
  * ==========================================================================================
  */
 
-namespace ETL\DbEntity;
+namespace ETL\DbModel;
 
 use ETL\Utilities;
 use \Exception;

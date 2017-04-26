@@ -23,7 +23,7 @@
  * ==========================================================================================
  */
 
-namespace ETL\DbEntity;
+namespace ETL\DbModel;
 
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use \Log;

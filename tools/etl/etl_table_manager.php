@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env php
    <?php
    /**
@@ -13,8 +15,8 @@ restore_exception_handler();
 use \Exception;
 use CCR\Log;
 use ETL\Configuration\EtlConfiguration;
-use ETL\DbEntity\Table;
-use ETL\DbEntity\AggregationTable;
+use ETL\DbModel\Table;
+use ETL\DbModel\AggregationTable;
 
 $supportedFormats = array("json", "sql");
 

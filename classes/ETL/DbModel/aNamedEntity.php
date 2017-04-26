@@ -7,7 +7,7 @@
  * ==========================================================================================
  */
 
-namespace ETL\DbEntity;
+namespace ETL\DbModel;
 
 use ETL\aEtlObject;
 use ETL\DataEndpoint;

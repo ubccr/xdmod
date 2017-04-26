@@ -16,7 +16,7 @@ use ETL\DataEndpoint\Rest;
 use ETL\DataEndpoint\aRdbmsEndpoint;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
-use ETL\DbEntity\Query;
+use ETL\DbModel\Query;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\Utilities;

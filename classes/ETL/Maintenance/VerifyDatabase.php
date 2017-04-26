@@ -16,7 +16,7 @@ use ETL\aOptions;
 use ETL\iAction;
 use ETL\aAction;
 use ETL\DataEndpoint\iRdbmsEndpoint;
-use ETL\DbEntity\Query;
+use ETL\DbModel\Query;
 use \PDOException;
 use ETL\Utilities;
 use \Log;

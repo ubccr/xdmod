@@ -15,7 +15,7 @@ namespace ETL\Maintenance;
 
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
-use ETL\DbEntity\Table;
+use ETL\DbModel\Table;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\aRdbmsDestinationAction;

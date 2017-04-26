@@ -49,7 +49,7 @@ use ETL\DataEndpoint\Mysql;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\Utilities;
-use ETL\DbEntity\Query;
+use ETL\DbModel\Query;
 
 use CCR\DB\MySQLHelper;
 use PDOException;

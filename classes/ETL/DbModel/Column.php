@@ -11,7 +11,7 @@
  * ==========================================================================================
  */
 
-namespace ETL\DbEntity;
+namespace ETL\DbModel;
 
 use \Log;
 use \stdClass;

@@ -9,10 +9,10 @@
 
 namespace UnitTesting\ETL\Configuration;
 
-use ETL\DbEntity\Table;
-use ETL\DbEntity\Column;
-use ETL\DbEntity\Index;
-use ETL\DbEntity\Trigger;
+use ETL\DbModel\Table;
+use ETL\DbModel\Column;
+use ETL\DbModel\Index;
+use ETL\DbModel\Trigger;
 use ETL\Configuration\EtlConfiguration;
 
 class DbModelTest extends \PHPUnit_Framework_TestCase
