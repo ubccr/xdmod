@@ -302,13 +302,6 @@
             }
             print "CCR.xdmod.use_captcha = " . $useCaptcha .";";
             if (!$userLoggedIn) {
-               $tabs = "";
-               try {
-                  $tabs =  xd_utilities\getConfiguration('auto_login', 'tabs');
-               } catch (exception $ex) {
-                  print "console.warn(\"" . $ex->getMessage() . "\");\n";
-               }
-               print "CCR.xdmod.tabs ='". $tabs ."';\n";
                $auth = null;
                try {
                   $auth = new Authentication\SAML\XDSamlAuthentication();
@@ -495,18 +488,6 @@
 
          <?php if (!$userLoggedIn): ?>
          Ext.onReady(xdmodviewer.init, xdmodviewer);
-
-         Ext.onReady(function() {
-            CCR.xdmod.tabs = CCR.xdmod.tabs.split(',');
-            var hash = document.location.hash;
-            var hasHash = hash !== null && hash !== undefined && hash !== '';
-            if (hasHash) {
-               var token = CCR.xdmod.ui.Viewer.viewerInstance.tokenize(hash);
-               if (token && token.tab && CCR.xdmod.tabs.indexOf(token.tab) >= 0) {
-                  CCR.xdmod.ui.actionLogin();
-               }
-            }
-         });
          <?php else: ?>
          <?php
             // ==============================================

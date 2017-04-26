@@ -375,16 +375,8 @@ $xsedeLogin = xd_utilities\getConfiguration('features', 'xsede') == 'on';
 
                         presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, "login_response");
 
-                        var token = CCR.tokenize(parent.XDMoD.referer);
-
-                        if (token && token.tab && parent.CCR.xdmod.tabs.indexOf(token.tab) >= 0) {
-                            parent.location.href = '../../index.php' + token.raw;
-                            parent.location.hash = token.raw;
-                        }
-                        else{
-                            parent.location.href = '../../index.php';
-                            parent.location.hash = '';
-                        }
+                        parent.location.href = '../../index.php' + parent.XDMoD.referer;
+                        parent.location.hash = parent.XDMoD.referer;
                         parent.location.reload();
                     } else {
                         XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
