@@ -2695,7 +2695,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/xdmod-test-artifacts.git",
-                "reference": "5cd5bde2b2041e9d71532c3e5e9a8fbddeada679"
+                "reference": "f4a08a5244cf41d212e7655b4c87276fb04f2494"
             },
             "dist": {
                 "type": "zip",

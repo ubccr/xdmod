@@ -864,7 +864,7 @@ ORDER BY trigger_name ASC";
             return false;
         }
 
-        $tableName = ( $includeSchema ? $this->getFullName() : $this->getName() );
+        $tableName = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
 
         $sqlList = array();
         if ( 0 != count($alterList) ) {
