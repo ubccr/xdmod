@@ -361,8 +361,6 @@ class EtlConfiguration extends Configuration
 
             foreach ( $localSectionActionOptions as $localActionName => $localActionOptions ) {
 
-                // if ( array_key_exists($actionName, $this->actionOptions[$sectionName]) ) {
-
                 if ( $this->actionExists($localActionName, $localSectionName) ) {
 
                     $msg = sprintf(
