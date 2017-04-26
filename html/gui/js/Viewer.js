@@ -417,7 +417,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
 
         // DEFINE: the token that we came in with.
         var mainTabToken = 'main_tab_panel';
-        var token = CCR.tokenize(document.location.hash);
+          var token = CCR.tokenize(document.location.hash);
         var tabToken;
 
         for (var i = 0; i < tabs.length; i++) {
