@@ -5674,7 +5674,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     return true;
                 }
 
-                return h.call(this.scope || this, e, this.menu);
+                // Ensure that we only call the KeyNav handlers if this is a NavKey Press.
+                if (e.isNavKeyPress()) {
+                    return h.call(this.scope || this, e, this.menu);
+                }
+
+                return true;
             };
 
             /**
