@@ -1,3 +1,29 @@
+/* eslint no-underscore-dangle: [
+   "error",
+   {
+      "allow" : [
+         "_getPath",
+         "_processViewRequest",
+         "_copy",
+         "_createHistoryEntry",
+         "_createHistoryToken",
+         "_createHistoryTokenFromArray",
+         "_find",
+         "_fromArray",
+         "_generateURL",
+         "_generateView",
+         "_getParams",
+         "_makeRequest",
+         "_panelActivation",
+         "_performLoad",
+         "_retrieveSearchInfo",
+         "_truncatePath",
+         "_updateHistoryFromPanel",
+         "_upsertSearch"
+      ]
+   }
+] */
+
 // TODO: Move this someplace else, just here for testing...
 if (!String.prototype.trim) {
     String.prototype.trim = function () {
@@ -876,61 +902,39 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          *
          * @param panel
          **/
-        activate: function (panel) {
+        activate: function () {
+            Highcharts.setOptions({ global: { timezone: this.cachedHighChartTimezone } });
 
-            Highcharts.setOptions({global: {timezone: this.cachedHighChartTimezone}});
-
-            if (this.clearing) return;
-
-
-            var exists = CCR.exists;
-            var getParameter = CCR.getParameter;
-            var hash = document.location.hash;
-
-            var realmKey = 'realm';
-            var searchKey = 'recordid';
-            var jobKey = 'jobid';
-            var viewKey = 'infoid';
-            var timeSeriesKey = 'tsid';
-
-            var realm = getParameter(realmKey, hash);
-            var search = getParameter(searchKey, hash);
-            var job = getParameter(jobKey, hash);
-            var view = getParameter(viewKey, hash);
-            var timeSeries = getParameter(timeSeriesKey, hash);
-
-            var metricExplorerData = getParameter('job', hash);
-
-            if (exists(metricExplorerData)) {
-                this.fireEvent('create_history_entry', Ext.decode(window.atob(metricExplorerData)));
+            if (this.clearing) {
                 return;
             }
-            var hasRealm = exists(realm);
-            var hasSearch = exists(search);
-            var hasJob = exists(job);
-            var hasView = exists(view);
-            var hasTimeSeries = exists(timeSeries);
 
-            var path = this._getPath(window.location.hash);
-            var dtype = path && path.length > 0
-                    ? path[path.length - 1].dtype
-                    : this.currentNode && this.currentNode.attributes && this.currentNode.attributes.dtype
-                    ? this.currentNode.attributes.dtype
-                    : null;
-            var selectionModel = this.searchHistoryPanel.getSelectionModel();
+            var token = CCR.tokenize(Ext.History.getToken());
+            var params = Ext.urlDecode(token.params);
 
-            var isSelected = this._equals(path, this.currentNode, dtype) && selectionModel && exists(selectionModel.getSelectedNode());
+            if (params.job) {
+                this.fireEvent('create_history_entry', Ext.decode(window.atob(params.job)));
+                return;
+            }
 
-            if (hasRealm && !hasSearch && !hasJob && !hasView) {
-                this.fireEvent('process_realm_node', path, isSelected);
-            } else if (hasRealm && hasSearch && !hasJob && !hasView) {
-                this.fireEvent('process_search_node', path, isSelected);
-            } else if (hasRealm && hasSearch && hasJob && !hasView) {
-                this.fireEvent('process_job_node', path, isSelected, this._processViewRequest);
-            } else if (hasRealm && hasSearch && hasJob && hasView) {
-                this.fireEvent('process_view_node', path, isSelected);
-            } else if (hasRealm && hasSearch && hasJob && hasView && hasTimeSeries) {
-                this.fireEvent('process_view_node', path, isSelected);
+            if (!params.realm) {
+                return;
+            }
+
+            var path = this._getPath(token.raw);
+            var isSelected = this.compareNodePath(this.currentNode, path);
+
+            if (!isSelected) {
+                this.searchHistoryPanel.fireEvent('expand_node', path);
+                return;
+            }
+
+            if (params.realm && params.recordid && params.jobid) {
+                if (params.infoid) {
+                    this.fireEvent('process_view_node', path);
+                } else {
+                    this.fireEvent('process_job_node', path, this._processViewRequest);
+                }
             }
         }, // activate
 
@@ -968,38 +972,15 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         }, // clear_display
 
         /**
-         * Process the given path for a realm_node history event.
-         *
-         * @param {Array} path
-         * @param {Boolean} isSelected
-         */
-        process_realm_node: function (path, isSelected) {
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path);
-        }, // process_realm_node
-
-        /**
-         * Process the given path for a search node history event.
-         *
-         * @param {Array} path
-         * @param {Boolean} isSelected
-         */
-        process_search_node: function (path, isSelected) {
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path);
-        }, // process_search_node
-
-        /**
          * Process the given path for a job node history event.
          *
          * @param {Array} path
          * @param {Boolean} isSelected
          */
-        process_job_node: function (path, isSelected, callback) {
+        process_job_node: function (path, callback) {
             var self = this;
             var exists = CCR.exists;
             var isType = CCR.isType;
-
-            // ENSURE: that the job node is expanded.
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path, true);
 
             var hasCurrentNode = exists(this.currentNode);
             var hasAttributes = hasCurrentNode && exists(this.currentNode.attributes);
@@ -1103,16 +1084,10 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          * @param {Array} path
          * @param {Boolean} isSelected
          */
-        process_view_node: function (path, isSelected) {
+        process_view_node: function (path) {
             var exists = CCR.exists;
             var isType = CCR.isType;
             var self = this;
-
-            // ENSURE: that the view node is expanded before continuing.
-            if (!isSelected) {
-                this.searchHistoryPanel.fireEvent('expand_node', path, true);
-                return;
-            }
 
             var hasCurrentNode = exists(this.currentNode);
             var hasAttributes = hasCurrentNode && exists(this.currentNode.attributes);
@@ -1216,7 +1191,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
                 if (!exists(jobTab)) {
                     var jobPath = this._truncatePath('jobid', path);
-                    this.fireEvent('process_job_node', jobPath, true, processView);
+                    this.fireEvent('process_job_node', jobPath, processView);
                 } else {
                     processView.apply(this);
                 }
@@ -1760,65 +1735,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         return;
     }, // _replace
 
-    /**
-     * Will determine the two provided TreeNodes are 'equal' utilizing the
-     * custom 'dtype' attribute and it's value.
-     *
-     * @param {Ext.tree.TreeNode|Array} lhn
-     * @param {Ext.tree.TreeNode|Array} rhn
-     * @returns {boolean}
-     */
-    _equals: function (lhn, rhn, key) {
-        var exists = CCR.exists;
-        var isType = CCR.isType;
-
-        if (!exists(lhn) || !exists(rhn)) return false;
-
-        var lhnPath = isType(lhn, CCR.Types.Object)
-                ? this._getPath(lhn)
-                : isType(lhn, CCR.Types.Array)
-                ? lhn
-                : [];
-        var rhnPath = isType(rhn, CCR.Types.Object)
-                ? this._getPath(rhn)
-                : isType(rhn, CCR.Types.Array)
-                ? rhn
-                : [];
-        var keyProvided = exists(key);
-
-        var base = lhnPath.length >= rhnPath.length ? lhnPath : rhnPath;
-
-        var result = true;
-        for (var i = 0; i < base.length && result; i++) {
-            var lhnRecord = lhnPath[i];
-            var rhnRecord = rhnPath[i];
-
-            var bothValid = exists(lhnRecord) && exists(rhnRecord);
-
-            var keysMatch = bothValid &&
-                    exists(lhnRecord.dtype) &&
-                    exists(rhnRecord.dtype) &&
-                    lhnRecord.dtype === rhnRecord.dtype;
-
-            if (keyProvided && keysMatch) {
-                var valuesMatch = true;
-                if (keysMatch) {
-                    valuesMatch = lhnRecord.value == rhnRecord.value;
-                }
-                if (!valuesMatch) result = false;
-            } else if ( keyProvided && !keysMatch ){
-                result = false;
-            } else if (!keyProvided) {
-                var valuesMatch = true;
-                if (keysMatch) {
-                    valuesMatch = lhnRecord.value == rhnRecord.value;
-                }
-                if (!valuesMatch) result = false;
-            }
-
-        }
-         return result;
-    }, //_equals
 
     /**
      * Retrieve the value at the index provided from 'data'. This is done in a
@@ -1836,6 +1752,28 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
         return data[index];
     }, // _fromArray
+
+    /**
+     * Compare the given search history tree node with the provided path array.
+     * The path encoding from the _getPath function.
+     *
+     * @param Ext.tree.TreeNode node
+     * @param Array path
+     * @returns true if the path array matches the tree node, false otherwise
+     */
+    compareNodePath: function (node, path) {
+        var i;
+        var np;
+        for (np = node, i = path.length - 1; np && np.attributes && np.attributes.dtype; np = np.parentNode, --i) {
+            if (i < 0) {
+                return false;
+            }
+            if (path[i].dtype !== np.attributes.dtype || path[i].value !== String(np.attributes[np.attributes.dtype])) {
+                return false;
+            }
+        }
+        return i === -1;
+    },
 
     /**
      * Attempt to create a history entry ( node located in the Search History

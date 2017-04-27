@@ -32,6 +32,17 @@
   <script type="text/javascript" src="../gui/lib/extjs/adapter/ext/ext-base.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/ext-all-debug-w-comments.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/src/debug.js"></script>
+  <script type="text/javascript" src="../gui/lib/CheckColumn.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/ProgressBarPager.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
+  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGrid.js"></script>
+  <script type="text/javascript" src="../gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js"></script>
+  <script type="text/javascript" src="../gui/lib/groupdataview.js"></script>
+  <script type="text/javascript" src="../gui/lib/groupcombo.js"></script>
                                       
   <!-- Files to test
     These files must be the instrumented versions of the orignal code.
@@ -40,12 +51,31 @@
         npm install coverjs
         coverjs [SRC FILE] -o lib-cov
   -->
+  <script>
+Ext.ns('CCR', 'CCR.xdmod', 'CCR.xdmod.ui', 'XDMoD.REST');
+  </script>
   <script data-cover src="lib-cov/ChangeStack.js"></script>
   <script data-cover src="lib-cov/CCR.js"></script>
+
+  <script type="text/javascript" src="../gui/js/PortalModule.js"></script>
+  <script type="text/javascript" src="../gui/js/RealTimeValidatingTextField.js"></script>
+  <script type="text/javascript" src="../gui/js/plugins/CollapsedPanelTitlePlugin.js"></script>
+
+  <script data-cover type="text/javascript" src="lib-cov/JobViewer.js"></script>
+
+  <script type="text/javascript" src="../gui/js/modules/job_viewer/ChartPanel.js"></script>
+  <script type="text/javascript" src="../gui/js/modules/job_viewer/AnalyticChartPanel.js"></script>
+  <script type="text/javascript" src="../gui/js/modules/job_viewer/TimeSeriesStore.js"></script>
+  <script type="text/javascript" src="../gui/js/modules/job_viewer/SearchPanel.js"></script>
+  <script type="text/javascript" src="../gui/js/modules/job_viewer/SearchHistoryTree.js" ></script>
+  <script type="text/javascript" src="../gui/js/modules/job_viewer/SearchHistoryPanel.js"></script>
+  <script type="text/javascript" src="../gui/js/modules/job_viewer/JobPanel.js"></script>
+  <script type="text/javascript" src="../gui/js/modules/job_viewer/NestedViewPanel.js"></script>
 
   <!-- Test specification files -->
   <script src="spec/ChangeStackSpec.js"></script>
   <script src="spec/CCRTokenizeSpec.js"></script>
+  <script src="spec/JobViewerSpec.js"></script>
 
   <script>
     mocha.checkLeaks();

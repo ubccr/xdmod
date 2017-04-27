@@ -4,6 +4,9 @@
     },
     "globals": {
         "expect": false
+    },
+    "rules": {
+        "no-unused-expressions": "off"
     }
 }
 
