@@ -8,6 +8,8 @@
 
 require_once __DIR__ . '/../../configuration/linker.php';
 
+ini_set('memory_limit', '256M');
+
 use CCR\Log;
 use OpenXdmod\Build\Packager;
 
