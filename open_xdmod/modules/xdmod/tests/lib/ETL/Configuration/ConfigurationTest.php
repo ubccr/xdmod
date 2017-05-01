@@ -13,8 +13,8 @@ use ETL\Configuration\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "../../../../vendor/ubccr/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "../../../../vendor/ubccr/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
+    const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
+    const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
 
     /**
      * Test JSON parse errors
