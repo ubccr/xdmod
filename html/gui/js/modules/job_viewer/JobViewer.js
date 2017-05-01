@@ -929,7 +929,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 return;
             }
 
-            if (params.realm && params.recordid && params.jobid) {
+            if (params.recordid && params.jobid) {
                 if (params.infoid) {
                     this.fireEvent('process_view_node', path);
                 } else {
