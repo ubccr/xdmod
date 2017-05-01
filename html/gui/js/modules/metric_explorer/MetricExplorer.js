@@ -5527,6 +5527,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 'An error occurred while loading the chart.',
                 responseMessage
             );
+            this.chartViewPanel.getLayout().setActiveItem(this.highChartPanel.getId());
 
             this.unmask();
 
