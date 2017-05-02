@@ -393,8 +393,6 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
          */
         close_search: function (panel, reload) {
             if (CCR.exists(panel)) {
-                reload = reload || false;
-
                 // HIDE: this window.
                 panel.ownerCt.hide();
 

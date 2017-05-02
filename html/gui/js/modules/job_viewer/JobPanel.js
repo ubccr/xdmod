@@ -77,11 +77,6 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
                             collapsible: false
                         },
                         bubbleEvents : ['tabchange'],
-                        listeners  : {
-                            activate: function (panel) {
-                                console.log('Inner Tab activated...');
-                            }
-                        },
                         activeTab  : 0,
                         items      : []
                     },
@@ -166,7 +161,6 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
 
             if (replaceJobId) {
                 path = nodePath.concat(path.slice(-1 * (path.length - nodePath.length)));
-                /*jv._replace('jobid', nodeJobId, path);*/
             }
             if (panel.revert || replaceJobId) {
                 // just make sure the token is up to date.
@@ -177,17 +171,6 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
             }
             panel.revert = true;
         }, // activate
-
-        /**
-         * Event that's fired when this panel is no longer the active tab.
-         *
-         * @param panel
-         */
-        deactivate: function (panel) {
-
-            // TODO: implement what happens when this panel is removed from being the active tab.
-
-        }, // deactivate
 
         /**
          * Event that is fired after this component has been rendered to the
@@ -305,8 +288,6 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
         var found = this.find('id', this.ids.analyticsContainer);
         var analyticsPanel = isType(found, CCR.Types.Array) && found.length > 0 ? found[0] : null;
 
-        var tools = this._getTools();
-
         for (var i = 0; i < metrics.length; i++) {
 
             var metric = metrics[i];
@@ -345,27 +326,6 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
             analyticsPanel.add(container);
         }
     }, // _populateAnalytics
-
-    /**
-     * Helper function that returns a newly constructed array representation of
-     * this components 'tools'.
-     *
-     * @returns {*[]}
-     * @private
-     */
-    _getTools: function () {
-        return [{
-            id     : 'gear',
-            handler: function () {
-                Ext.Msg.alert('Message', 'The Settings tool was clicked.');
-            }
-        }, {
-            id     : 'close',
-            handler: function (e, target, panel) {
-                panel.ownerCt.remove(panel, true);
-            }
-        }];
-    }, // _getTools
 
     /**
      * Helper function that retrieves this panels active informational tab.
