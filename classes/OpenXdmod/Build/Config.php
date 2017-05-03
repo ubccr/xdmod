@@ -13,24 +13,81 @@ use CCR\Json;
  */
 class Config
 {
+
+    /**
+     * Name of the package.
+     *
+     * @var string
+     */
     private $name;
 
+    /**
+     * Version of the package.
+     *
+     * Typically a dotted
+     *
+     * @var string
+     */
     private $version;
 
+    /**
+     * RPM release version.
+     *
+     * @var string
+     */
     private $release;
 
+    /**
+     * Paths of files to include in the build.
+     *
+     * @var array
+     */
     private $fileIncludePaths;
 
+    /**
+     * File patterns to include in the build.
+     *
+     * @var array
+     */
     private $fileIncludePatterns;
 
+    /**
+     * File paths to exclude from the build.
+     *
+     * @var array
+     */
     private $fileExcludePaths;
 
+    /**
+     * File patterns to exclude from the build.
+     *
+     * @var array
+     */
     private $fileExcludePatterns;
 
+    /**
+     * File maps used to determine where files should be installed.
+     *
+     * @var array
+     */
     private $fileMaps;
 
+    /**
+     * Pre-build commands.
+     *
+     * @var array
+     */
     private $commandsPreBuild;
 
+    /**
+     * Factory method.
+     *
+     * @param string $file Path to JSON file containing configuration data.
+     *
+     * @return \OpenXdmod\Build\Config
+     *
+     * @see \OpenXdmod\Build\Config::constructor
+     */
     public static function createFromConfigFile($file)
     {
         $config = Json::loadFile($file);
@@ -228,6 +285,21 @@ class Config
         }
     }
 
+    /**
+     * Private constructor to enforce use of factory method.
+     *
+     * @param array $conf Configuration array.  Requires the following keys:
+     *   - name => Name of the package.
+     *   - version => Package version.
+     *   - release => RPM release tag.
+     *   - prerelease => Pre-release tag or false if not a pre-release.
+     *   - file_include_paths => File include paths.
+     *   - file_include_patterns => File include patterns.
+     *   - file_exclude_paths => File exclude paths.
+     *   - file_exclude_patterns => File exclude patterns.
+     *
+     * @see \OpenXdmod\Build\Config::createFromConfigFile
+     */
     private function __construct(array $conf)
     {
         $this->name    = $conf['name'];
@@ -244,46 +316,91 @@ class Config
         $this->commandsPreBuild = $conf['commands_pre_build'];
     }
 
+    /**
+     * Get the name of the package.
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * Get the version of the package.
+     *
+     * @return string
+     */
     public function getVersion()
     {
         return $this->version;
     }
 
+    /**
+     * Get the RPM release string.
+     *
+     * @return string
+     */
     public function getRelease()
     {
         return $this->release;
     }
 
+    /**
+     * Get the paths to be included in the build.
+     *
+     * @return array
+     */
     public function getFileIncludePaths()
     {
         return $this->fileIncludePaths;
     }
 
+    /**
+     * Get the file patterns to be included in the build.
+     *
+     * @return array
+     */
     public function getFileIncludePatterns()
     {
         return $this->fileIncludePatterns;
     }
 
+    /**
+     * Get the paths to be excluded from the build.
+     *
+     * @return array
+     */
     public function getFileExcludePaths()
     {
         return $this->fileExcludePaths;
     }
 
+    /**
+     * Get the file patterns to be excluded from the build.
+     *
+     * @return array
+     */
     public function getFileExcludePatterns()
     {
         return $this->fileExcludePatterns;
     }
 
+    /**
+     * Get the file maps for the build.
+     *
+     * @return array
+     */
     public function getFileMaps()
     {
         return $this->fileMaps;
     }
 
+    /**
+     * Get the pre-build commands.
+     *
+     * @return array
+     */
     public function getCommandsPreBuild()
     {
         return $this->commandsPreBuild;
