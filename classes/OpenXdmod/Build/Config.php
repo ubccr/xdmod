@@ -38,6 +38,13 @@ class Config
     private $release;
 
     /**
+     * Pre-release tag.
+     *
+     * @var string|bool
+     */
+    private $prerelease;
+
+    /**
      * Paths of files to include in the build.
      *
      * @var array
@@ -104,6 +111,10 @@ class Config
             $config['release'] = 1;
         }
 
+        if (!array_key_exists('prerelease', $config)) {
+            $config['prerelease'] = false;
+        }
+
         if (!isset($config['files'])) {
             throw new Exception("No files specified in '$file'");
         }
@@ -142,6 +153,7 @@ class Config
             'name'                  => $config['name'],
             'version'               => $config['version'],
             'release'               => $config['release'],
+            'prerelease'            => $config['prerelease'],
             'file_include_paths'    => $fileIncludePaths,
             'file_include_patterns' => $fileIncludePatterns,
             'file_exclude_paths'    => $fileExcludePaths,
@@ -305,6 +317,7 @@ class Config
         $this->name    = $conf['name'];
         $this->version = $conf['version'];
         $this->release = $conf['release'];
+        $this->prerelease = $conf['prerelease'];
 
         $this->fileIncludePaths    = $conf['file_include_paths'];
         $this->fileIncludePatterns = $conf['file_include_patterns'];
@@ -344,6 +357,36 @@ class Config
     public function getRelease()
     {
         return $this->release;
+    }
+
+    /**
+     * Check if this is a pre-release build.
+     *
+     * @return bool True if this is a pre-release build.
+     */
+    public function isPreRelease()
+    {
+        if ($this->prerelease === false) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Get the pre-release tag.
+     *
+     * @return string
+     *
+     * @throws Exception If this is not a pre-release build.
+     */
+    public function getPreRelease()
+    {
+        if ($this->prerelease === false) {
+            throw new Exception('This is not a pre-release build');
+        }
+
+        return $this->prerelease;
     }
 
     /**

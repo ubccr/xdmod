@@ -144,6 +144,10 @@ class Packager
 
         $packageName = $config->getName() . '-' . $config->getVersion();
 
+        if ($config->isPreRelease()) {
+            $packageName .= $config->getPreRelease();
+        }
+
         $logger = \Log::singleton('null');
 
         return new static(array(
@@ -431,7 +435,18 @@ class Packager
         if (is_file("$specfilename.in")) {
             $spec = file_get_contents("$specfilename.in");
             $spec = str_replace('__VERSION__', $this->config->getVersion(), $spec);
-            $spec = str_replace('__RELEASE__', $this->config->getRelease(), $spec);
+
+            if ($this->config->isPreRelease()) {
+                $prerelease = $this->config->getPreRelease();
+                $release = $this->config->getRelease() . '.' . $prerelease;
+
+                $spec = str_replace('__PRERELEASE__', $prerelease, $spec);
+                $spec = str_replace('__RELEASE__', $release, $spec);
+            } else {
+                $spec = str_replace('__PRERELEASE__', '', $spec);
+                $spec = str_replace('__RELEASE__', $this->config->getRelease(), $spec);
+            }
+
             file_put_contents($destFile, $spec);
 
             $this->logger->info("Generated spec file: $specfilename");
