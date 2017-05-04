@@ -20,7 +20,7 @@ namespace ETL\Aggregator;
 
 use ETL\aRdbmsDestinationAction;
 use ETL\EtlOverseerOptions;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\aOptions;
 use \Log;
 

@@ -5527,6 +5527,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 'An error occurred while loading the chart.',
                 responseMessage
             );
+            this.chartViewPanel.getLayout().setActiveItem(this.highChartPanel.getId());
 
             this.unmask();
 
@@ -5674,7 +5675,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     return true;
                 }
 
-                return h.call(this.scope || this, e, this.menu);
+                // Ensure that we only call the KeyNav handlers if this is a NavKey Press.
+                if (e.isNavKeyPress()) {
+                    return h.call(this.scope || this, e, this.menu);
+                }
+
+                return true;
             };
 
             /**

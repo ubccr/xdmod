@@ -56,7 +56,7 @@ interface iDataEndpoint
      * @return A handle to the underlying data access mechanism (file handle, database handle, etc.)
      * ------------------------------------------------------------------------------------------
      */
-   
+
     public function getHandle();
 
     /* ------------------------------------------------------------------------------------------
@@ -127,5 +127,4 @@ interface iDataEndpoint
      */
 
     public function __toString();
-
 }  // interface iDataEndpoint

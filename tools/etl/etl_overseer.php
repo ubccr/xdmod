@@ -18,8 +18,7 @@ use CCR\Log;
 use CCR\DB;
 use ETL\EtlOverseer;
 use ETL\iEtlOverseer;
-use ETL\EtlConfiguration;
-use ETL\EtlConfigurationOptions;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\Utilities;
 
@@ -391,6 +390,7 @@ try {
     $etlConfig = new EtlConfiguration(
         $scriptOptions['config-file'],
         $scriptOptions['base-dir'],
+        $logger,
         $scriptOptions['option-overrides']
     );
     $etlConfig->setLogger($logger);
