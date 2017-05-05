@@ -7,8 +7,8 @@ Vendor:        Center for Computational Research, University at Buffalo
 Packager:      Jeffrey T. Palmer <jtpalmer@buffalo.edu>
 Group:         Applications/Internet
 License:       LGPLv3+
-Source:        %{name}-%{version}.tar.gz
-BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Source:        %{name}-%{version}__PRERELEASE__.tar.gz
+BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{release}-XXXXXX)
 BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd
@@ -29,7 +29,7 @@ XDMoD presents resource utilization over set time periods and provides
 detailed interactive charts, graphs, and tables.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{version}__PRERELEASE__
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -39,7 +39,7 @@ DESTDIR=$RPM_BUILD_ROOT ./install \
     --libdir=%{_libdir}/%{name} \
     --sysconfdir=%{_sysconfdir}/%{name} \
     --datadir=%{_datadir}/%{name} \
-    --docdir=%{_docdir}/%{name}-%{version} \
+    --docdir=%{_docdir}/%{name}-%{version}__PRERELEASE__ \
     --logdir=%{_localstatedir}/log/%{name} \
     --httpdconfdir=%{_sysconfdir}/httpd/conf.d \
     --logrotatedconfdir=%{_sysconfdir}/logrotate.d \
@@ -60,7 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/%{name}-*
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
-%{_docdir}/%{name}-%{version}/
+%{_docdir}/%{name}-%{version}__PRERELEASE__/
 
 %attr(0775,root,apache) %dir %{_localstatedir}/log/%{name}
 

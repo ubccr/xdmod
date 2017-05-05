@@ -12,8 +12,9 @@
 namespace ETL\Aggregator;
 
 use ETL\iAction;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
+
 use Log;
 
 class DummyAggregator extends aAction implements iAction

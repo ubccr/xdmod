@@ -53,7 +53,7 @@ class DataWarehouseInitializer
      * @var array
      */
     protected $shreddedJobIngestors = array(
-        'Resource',
+        'Resources',
         'PI',
         'PIResource',
         'UserPIResource',

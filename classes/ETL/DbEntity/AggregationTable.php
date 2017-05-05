@@ -51,7 +51,7 @@ class AggregationTable extends Table
         parent::__construct($config, $systemQuoteChar, $logger);
 
         $this->setTablePrefix($config->name);
-     
+
         if ( isset($this->config->query) ) {
             $this->query = new Query($config->query);
         }
@@ -78,7 +78,7 @@ class AggregationTable extends Table
         }
 
         return parent::getName($quote);
-    
+
     }  // getName()
 
     /* ------------------------------------------------------------------------------------------
@@ -142,13 +142,13 @@ class AggregationTable extends Table
             $msg = "Aggregation unit cannot be empty or null";
             $this->logAndThrowException($msg);
         }
-    
+
         $this->aggregationUnit = $aggregationUnit;
 
         // Update the table name with the prefix + aggregation unit
-    
+
         $this->name = $this->getTablePrefix() . $aggregationUnit;
-    
+
         return $this;
     }  // setAggregationUnit()
 
@@ -177,7 +177,7 @@ class AggregationTable extends Table
         $data = parent::toJsonObj($succinct, $includeSchema);
 
         $data->query = $this->query->toJsonObj($succinct, $includeSchema);
-    
+
         return $data;
 
     }  // toJsonObj()
@@ -274,5 +274,4 @@ class AggregationTable extends Table
         return $newTable;
 
     }  // copyAndApplyVariables()
-
-}  // class AggregationTable 
+}  // class AggregationTable

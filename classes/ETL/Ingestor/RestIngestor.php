@@ -14,7 +14,7 @@ namespace ETL\Ingestor;
 
 use ETL\DataEndpoint\Rest;
 use ETL\DataEndpoint\aRdbmsEndpoint;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\DbEntity\Query;
 use ETL\aOptions;

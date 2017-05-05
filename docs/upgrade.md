@@ -93,6 +93,13 @@ merge any changes after running the upgrade script.
 
     # /opt/xdmod-new/bin/xdmod-upgrade
 
+6.5.0 to 6.6.0 Upgrade Notes
+----------------------------
+
+- This upgrade includes database schema changes.
+    - Modifies `moddb` schema.
+    - Modifies `modw` schema.
+
 6.0.0 to 6.5.0 Upgrade Notes
 ----------------------------
 

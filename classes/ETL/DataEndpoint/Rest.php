@@ -14,8 +14,7 @@ namespace ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use \Log;
 
-class Rest extends aDataEndpoint
-implements iDataEndpoint
+class Rest extends aDataEndpoint implements iDataEndpoint
 {
     // The base url for this endpoint
     protected $baseUrl = null;
@@ -118,5 +117,4 @@ implements iDataEndpoint
     {
         return "{$this->name} (" . get_class($this) . ", base_url = {$this->baseUrl})";
     }  // __toString()
-
 }  // class Rest

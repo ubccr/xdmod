@@ -13,7 +13,7 @@
 
 namespace ETL\Maintenance;
 
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\DbEntity\Table;
 use ETL\aOptions;

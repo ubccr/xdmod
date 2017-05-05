@@ -2688,12 +2688,35 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2015-07-26T08:59:42+00:00"
+        },
+        {
+            "name": "ubccr/xdmod-test-artifacts",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ubccr/xdmod-test-artifacts.git",
+                "reference": "5cd5bde2b2041e9d71532c3e5e9a8fbddeada679"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ubccr/xdmod-test-artifacts/zipball/5cd5bde2b2041e9d71532c3e5e9a8fbddeada679",
+                "reference": "5cd5bde2b2041e9d71532c3e5e9a8fbddeada679",
+                "shasum": ""
+            },
+            "type": "library",
+            "description": "Test artifacts for XDMoD and XDMoD submodules",
+            "support": {
+                "source": "https://github.com/ubccr/xdmod-test-artifacts/tree/master",
+                "issues": "https://github.com/ubccr/xdmod-test-artifacts/issues"
+            },
+            "time": "2017-04-21T18:47:07+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "openid/php-openid": 20
+        "openid/php-openid": 20,
+        "ubccr/xdmod-test-artifacts": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

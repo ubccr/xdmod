@@ -103,5 +103,4 @@ interface iTableItem
      */
 
     public function getAlterSql($includeSchema = false);
-
 }  // interface iTableItem

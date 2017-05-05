@@ -9,6 +9,8 @@
 
 namespace ETL;
 
+use ETL\Configuration\EtlConfiguration;
+
 interface iEtlOverseer
 {
     /* ------------------------------------------------------------------------------------------
@@ -51,11 +53,13 @@ interface iEtlOverseer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verifyActions(EtlConfiguration $config,
-                                  array $actionNameList,
-                                  array $actionObjectList = array(),
-                                  $sectionName = null,
-                                  $verifyDisabled = false);
+    public function verifyActions(
+        EtlConfiguration $config,
+        array $actionNameList,
+        array $actionObjectList = array(),
+        $sectionName = null,
+        $verifyDisabled = false
+    );
 
     /* ------------------------------------------------------------------------------------------
      * Verify that all enabled actions in the specified section are properly configured.
@@ -74,10 +78,12 @@ interface iEtlOverseer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verifySections(EtlConfiguration $config,
-                                   array $sectionNameList,
-                                   array $sectionActionObjectList = array(),
-                                   $verifyDisabled = false);
+    public function verifySections(
+        EtlConfiguration $config,
+        array $sectionNameList,
+        array $sectionActionObjectList = array(),
+        $verifyDisabled = false
+    );
 
     /* ------------------------------------------------------------------------------------------
      * Perform ingestion based on the overseer configuration file.
@@ -87,5 +93,4 @@ interface iEtlOverseer
      */
 
     public function execute(EtlConfiguration $config);
-
 }  // interface iEtlOverseer
