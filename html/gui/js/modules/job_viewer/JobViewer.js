@@ -909,7 +909,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 return;
             }
 
-            var token = CCR.tokenize(Ext.History.getToken());
+            var token = CCR.tokenize(document.location.hash);
             var params = Ext.urlDecode(token.params);
 
             if (params.job) {
@@ -920,9 +920,10 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             if (!params.realm) {
                 return;
             }
+            var selectionModel = this.searchHistoryPanel.getSelectionModel();
 
             var path = this._getPath(token.raw);
-            var isSelected = this.compareNodePath(this.currentNode, path);
+            var isSelected = this.compareNodePath(this.currentNode, path) && selectionModel && CCR.exists(selectionModel.getSelectedNode());
 
             if (!isSelected) {
                 this.searchHistoryPanel.fireEvent('expand_node', path);
