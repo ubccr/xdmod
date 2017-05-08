@@ -511,10 +511,6 @@ class pdoAggregator extends aAggregator
 
             $this->logger->debug("Discover table $fromTable");
 
-            /*
-              $firstTableDef = Table::discover($fromTable, $this->sourceEndpoint, null, $this->logger);
-            */
-
             $firstTableDef = new Table(null, null, $this->logger);
 
             // If we are in dryrun mode the table may not have been created yet but we still want to

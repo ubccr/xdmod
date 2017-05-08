@@ -29,23 +29,6 @@ use stdClass;
 
 class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlterableEntity
 {
-    /*
-    // Optional table comment
-    protected $comment = null;
-
-    // Optional table engine
-    protected $engine = null;
-
-    // Associative array where the keys are column names and the values are Column objects
-    protected $columns = array();
-
-    // Associative array where the keys are index names and the values are Index objects
-    protected $indexes = array();
-
-    // Associative array where the keys are trigger names and the values are Trigger objects
-    protected $triggers = array();
-    */
-
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
     private $localRequiredProperties = array(
@@ -145,77 +128,6 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
     }  // filterAndVerifyValue()
 
     /* ------------------------------------------------------------------------------------------
-     * @see Entity::initialize()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function initialize(stdClass $config, $force = false)
-    {
-        if ( $this->initialized && ! $force ) {
-            return true;
-        }
-
-        $this->initialized = false;
-
-        $this->name = $config->name;
-        $this->schema = ( isset($config->schema) ? $config->schema : null );
-        $this->comment = ( isset($config->comment) ? $config->comment : null );
-        $this->engine = ( isset($config->engine) ? $config->engine : null );
-
-        // Set columns. The value of columns key can be an array of column arrays (numeric keys), or an
-        // object containing multiple column objects. Both of these are iterables.
-
-        $columns = $config->columns;
-
-        foreach ( $columns as $key => $definition ) {
-
-            if ( is_object($definition) &&
-                 ! is_numeric($key)
-                 && ! isset($definition->name) ) {
-                // If the index name is not provided, allow shorthand for using the index key as the name
-                $definition->name = $key;
-            }
-
-            $this->addColumn($definition, true);
-
-        }  // foreach ( $columns as $key => $definition )
-
-
-        // Set indexes
-
-        if ( isset($config->indexes) ) {
-
-            $indexes =  $config->indexes;
-            foreach ( $indexes as $key => $definition ) {
-                $this->addIndex($definition);
-            }
-
-        }  // if ( isset($config->indexes) )
-
-
-        // Set triggers
-
-        if ( isset($config->triggers) ) {
-            $triggers =  $config->triggers;
-            foreach ( $triggers as $key => $definition ) {
-                // Default to the current table name and schema of the parent table.
-                if ( ! isset($definition->table) ) {
-                    $definition->table = $this->name;
-                }
-                if ( ! isset($definition->schema) ) {
-                    $definition->schema = $this->schema;
-                }
-                $this->addTrigger($definition);
-            }
-        }
-
-        $this->initialized = true;
-
-    }  // initialize()
-    */
-
-    /* ------------------------------------------------------------------------------------------
      * Verify the table by checking that any columns referenced in the indexes are present
      * in the column definitions.
      *
@@ -243,21 +155,6 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
         return true;
 
     }  // verify()
-
-    /* ------------------------------------------------------------------------------------------
-     * Use the MySQL information schema to build a Table object from an existing table.
-     *
-     * @param $tableName The name of the table to discover
-     * @param $endpoint The DataEndpoint used to connect to the database (provides schema)
-     * @param $systemQuoteChar The system quote character for the database that we are
-     *   interrogating. If NULL, the system quote character will be taken from the endpoint.
-     * @param $log The system logger
-     *
-     * @return A Table object constructed from the table definition in MySQL, or false if the table
-     *   name was not found.
-     * @throws Exception If there was an error querying or constructing the table
-     * ------------------------------------------------------------------------------------------
-     */
 
     /* ------------------------------------------------------------------------------------------
      * Discover a Table using the database information schema and populate this object
@@ -420,152 +317,6 @@ ORDER BY trigger_name ASC";
         return true;
 
     }  // discover()
-
-    /*
-    public static function discover(
-        $tableName,
-        iRdbmsEndpoint $endpoint,
-        $systemQuoteChar = null,
-        Log $logger = null
-    ) {
-        $schemaName = null;
-        $qualifiedTableName = null;
-
-        $systemQuoteChar = ( null === $systemQuoteChar
-                             ? $endpoint->getSystemQuoteChar()
-                             : $systemQuoteChar );
-
-        // If a schema was specified in the table name use it, otherwise use the default schema
-
-        if ( false === strpos($tableName, ".") ) {
-            $schemaName = $endpoint->getSchema();
-            $qualifiedTableName = $schemaName . "." . $tableName;
-        } else {
-            $qualifiedTableName = $tableName;
-            list($schemaName, $tableName) = explode(".", $tableName);
-        }
-
-        $params = array(':schema'    => $schemaName,
-                        ':tablename' => $tableName);
-
-        if ( null !== $logger ) {
-            $logger->debug("Discover table '$qualifiedTableName'");
-        }
-
-        // Query table properties
-
-        $sql = "SELECT
-engine, table_comment as comment
-FROM information_schema.tables
-WHERE table_schema = :schema
-AND table_name = :tablename";
-
-        try {
-            $result = $endpoint->getHandle()->query($sql, $params);
-            if ( count($result) > 1 ) {
-                $this->logAndThrowException("Multiple rows returned for table '$qualifiedTableName'");
-
-            }
-
-            // The table did not exist, return false
-
-            if ( 0 == count($result) ) {
-                return false;
-            }
-
-        } catch (Exception $e) {
-            $this->logAndThrowException("Error discovering table '$qualifiedTableName': " . $e->getMessage());
-        }
-
-        $row = array_shift($result);
-
-        $definition = (object) array(
-            'name'    => $tableName,
-            'schema'  => $schemaName,
-            'engine'  => $row['engine'],
-            'columns' => array(),
-            'comment' => $row['comment']
-        );
-
-        $newTable = new Table($definition, $systemQuoteChar, $logger);
-
-        // Query columns. Querying for the default needs some explaining. The information schema stores
-        // the default as null unless one was specifically provided so we need some logic to get things
-        // into the shape we want.
-
-        // SMG: We should do a better job of detecting equivalent columns. For example "int unsigned" is
-        // equivalent to "int(10) unsigned".
-
-        $sql = "SELECT
-column_name as name, column_type as type, is_nullable as nullable,
-column_default as " . $endpoint->quoteSystemIdentifier("default") . ",
-IF('' = extra, NULL, extra) as extra,
-IF('' = column_comment, NULL, column_comment) as " . $endpoint->quoteSystemIdentifier("comment") . "
-FROM information_schema.columns
-WHERE table_schema = :schema
-AND table_name = :tablename
-ORDER BY ordinal_position ASC";
-
-        try {
-            $result = $endpoint->getHandle()->query($sql, $params);
-            if ( 0 == count($result) ) {
-                $this->logAndThrowException("No columns returned for table '$qualifiedTableName'");
-            }
-        } catch (Exception $e) {
-            $this->logAndThrowException("Error discovering table '$qualifiedTableName' columns: " . $e->getMessage());
-        }
-
-        foreach ( $result as $row ) {
-            $newTable->addColumn((object) $row);
-        }
-
-        // Query indexes.
-
-        $sql = "SELECT
-index_name as name, index_type as " . $endpoint->quoteSystemIdentifier("type") . ", (non_unique = 0) as is_unique,
-GROUP_CONCAT(column_name ORDER BY seq_in_index ASC) as columns
-FROM information_schema.statistics
-WHERE table_schema = :schema
-AND table_name = :tablename
-GROUP BY index_name
-ORDER BY index_name ASC";
-
-        try {
-            $result = $endpoint->getHandle()->query($sql, $params);
-        } catch (Exception $e) {
-            $this->logAndThrowException("Error discovering table '$qualifiedTableName' indexes: " . $e->getMessage());
-        }
-
-        foreach ( $result as $row ) {
-            $row['columns'] = explode(",", $row['columns']);
-            $newTable->addIndex((object) $row);
-        }
-
-        // Query triggers
-
-        $sql = "SELECT
-trigger_name as name, action_timing as time, event_manipulation as event,
-event_object_schema as " . $endpoint->quoteSystemIdentifier("schema") . ", event_object_table as " . $endpoint->quoteSystemIdentifier("table") . ", definer,
-action_statement as body
-FROM information_schema.triggers
-WHERE event_object_schema = :schema
-and event_object_table = :tablename
-ORDER BY trigger_name ASC";
-
-        try {
-            $result = $endpoint->getHandle()->query($sql, $params);
-        } catch (Exception $e) {
-            $this->logAndThrowException("Error discovering table '$qualifiedTableName' triggers: " . $e->getMessage());
-        }
-
-        foreach ( $result as $row ) {
-            $newTable->addTrigger((object) $row);
-        }
-
-        return $newTable;
-
-    }  // discover()
-    */
 
     /* ------------------------------------------------------------------------------------------
      * Add a column to this table.

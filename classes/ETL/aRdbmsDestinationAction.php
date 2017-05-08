@@ -408,15 +408,6 @@ abstract class aRdbmsDestinationAction extends aAction
 
         $existingTable = new Table(null, $endpoint->getSystemQuoteChar(), $this->logger);
 
-        /*
-        $existingTable = Table::discover(
-            $table->getName(),
-            $endpoint,
-            $endpoint->getSystemQuoteChar(),
-            $this->logger
-        );
-        */
-
         // If no table with that name exists, create it. Otherwise check for differences and apply them.
 
         if ( false === $existingTable->discover($table->name, $endpoint) ) {

@@ -1,7 +1,7 @@
 <?php
 /* ==========================================================================================
- * Class for managing table indexes in the data warehouse.  This is meant to be used as a component
- * of Table.
+ * Class for managing table indexes in the data warehouse.  This is meant to be used as a
+ * component of Table.
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2015-10-29
@@ -52,10 +52,6 @@ class Index extends NamedEntity implements iEntity
     public function initialize(stdClass $config)
     {
         // Local verifications
-
-        if ( ! is_array($config->columns) ) {
-            $this->logAndThrowException("Columns must be an non-empty array");
-        }
 
         if ( ! isset($config->name) ) {
             $config->name = $this->generateIndexName($config->columns);

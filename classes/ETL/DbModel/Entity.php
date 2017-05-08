@@ -1,6 +1,5 @@
 <?php
 /* ==========================================================================================
-
  * Lightweight database model providing support for a set of pre-defined (property, value)
  * pairs and quoting. This class implements much of the functionality for handling
  * lightweight data objects. Properties are stored in an array and accessed using __get(),
@@ -14,7 +13,7 @@
  *         $this->verifyRequiredProperties()
  *             foreach ( $config as $name => $value ) {
  *                 $this->__set($name, $value)
- *                     $this->namme = $this->filterAndVerifyValue($value)
+ *                     $this->namme = $this->filterAndVerifyValue($value);
  *             }
  *
  * The general steps to follow when extending this class are:
@@ -23,11 +22,12 @@
  *    the additional properties that a child object implements and requires.
  * 2. In the child constructor, call mergeProperties() to merge local properties into a
  *    master list prior to calling the parent constructor. This will allow all locally
- *    defined properties to be merged up the chain of extended objects.
+ *    defined properties to be merged up the chain of extended objects and also preserve
+ *    the default values for the properties.
  * 3. Override filterAndVerifyValue() in the child class to handle properties defined by
  *    that class.
- * 4. In some cases initialize() may need to be overriden. For example, to set default
- *    values before calling parent::initialize() to set the values.
+ * 4. In some cases initialize() may need to be overriden. For example, to set an index
+ *    name before calling parent::initialize() to set the values.
  * 5. Entity::__set() provides a mechanism to easily set values. If the child class
  *    implements any non-scalar data members the __set() will need to be overriden to
  *    handle that data. For example, a Query defines a "joins" property that is an array
@@ -116,8 +116,9 @@ class Entity extends Loggable
 
     /* ------------------------------------------------------------------------------------------
      * Merge properties and required properties local to a child class into the master
-     * property list. This should be called in the child class constructor to merge any
-     * local properties defined.
+     * property list. Also keep a list of the default values for all properties. This
+     * should be called in the child class constructor to merge any local properties
+     * defined.
      *
      * @param array $localRequiredProperties Required properties from a child class
      * @param array $localProperties Locally defined properties from a child class
@@ -142,7 +143,6 @@ class Entity extends Loggable
      * 2. The __set() method is used to actually set the value of each property, verified
      *    and filtered values, and ensure only supported properties will be set. This is
      *     enforced by __set().
-     *
      * ------------------------------------------------------------------------------------------
      */
 

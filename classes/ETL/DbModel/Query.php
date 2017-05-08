@@ -32,33 +32,6 @@ class Query extends Entity implements iEntity
     // been processed by the overseer to include the values based on overseer options.
     protected $overseerRestrictionValues = array();
 
-    /*
-    // Records describing the fields used to populate the aggregation table
-    protected $records = array();
-
-    // A 2-element array containing the field names for start and end date/times. If present this
-    // query support restricting the query to a particular date range.
-    // protected $dateFields = null;
-
-    // Group by fields
-    protected $groupBys = array();
-
-    // Join tables. A single table generates the FROM clause while the rest are added as JOINS
-    protected $joins = array();
-
-    // Optional array of WHERE clauses
-    protected $where = array();
-
-    // Optional array of ORDER BY fields
-    protected $orderBys = array();
-
-    // Optional defined macros
-    protected $macros = array();
-
-    // Query hints (See http://dev.mysql.com/doc/refman/5.7/en/query-cache-in-select.html)
-    protected $queryHint = null;
-    */
-
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
     private $localRequiredProperties = array(
@@ -214,130 +187,6 @@ class Query extends Entity implements iEntity
     }  // verify()
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize internal data structures.
-     *
-     * @throws Exception if any query data was not
-     * int the correct format.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function initialize(stdClass $config)
-    {
-        if ( $this->initialized && ! $force ) {
-            return true;
-        }
-
-        $this->initialized = false;
-        $errorMsg = array();
-
-        if ( ! isset($config->records) ) {
-            $errorMsg[] = "records property not found";
-        } elseif ( ! is_object($config->records) ) {
-            $errorMsg[] = "records property must be an object";
-        }
-
-        if ( ! isset($config->joins) ) {
-            $errorMsg[] = "joins property not found";
-        } elseif ( ! is_array($config->joins) ) {
-            $errorMsg[] = "joins property must be an array";
-        } elseif ( 0 == count($config->joins) ) {
-            $errorMsg[] = "joins property must include as least one element";
-        }
-
-        if ( isset($config->groupby) ) {
-            if ( ! is_array($config->groupby) ) {
-                $errorMsg[] = "groupby property must be an array";
-            } elseif ( 0 == count($config->groupby) ) {
-                $errorMsg[] = "groupby property must include as least one element";
-            }
-        }
-
-        if ( isset($config->orderby) ) {
-            if ( ! is_array($config->orderby) ) {
-                $errorMsg[] = "orderby property must be an array";
-            } elseif ( 0 == count($config->orderby) ) {
-                $errorMsg[] = "orderby property must include as least one element";
-            }
-        }
-
-        if ( isset($config->where) && ! is_array($config->where) ) {
-            $errorMsg[] = "where property must be an array";
-        }
-
-        if ( isset($config->macros) && ! is_array($config->macros) ) {
-            $errorMsg[] = "macros property must be an array";
-        }
-
-        if ( isset($config->query_hint) && ! is_string($config->query_hint) ) {
-            $msg = "Query hints must be a string";
-            $this->logAndThrowException($msg);
-        }
-
-        if ( isset($config->overseer_restrictions) && ! is_object($config->overseer_restrictions) ) {
-            $msg = "ETL overseer restrictions must be an object";
-            $this->logger->logAndThrowException($msg);
-        }
-
-        if ( 0 != count($errorMsg) ) {
-            $msg = "Error in query definition (" . implode(", ", $errorMsg) . ")";
-            $this->logAndThrowException($msg);
-        }
-
-        // Set records. Each formula must match an existing column.
-
-        foreach ( $config->records as $column => $formula ) {
-            $this->addRecord($column, $formula);
-        }
-
-        // Set joins. A single join is required but more may be included
-
-        foreach ( $config->joins as $definition ) {
-            $this->addJoin($definition);
-        }
-
-        if ( isset($config->groupby) ) {
-            foreach ( $config->groupby as $groupby ) {
-                $this->addGroupBy($groupby);
-            }
-        }
-
-        // Set optional where clauses and macros
-
-        if ( isset($config->where) ) {
-            foreach ( $config->where as $where ) {
-                $this->addWhere($where);
-            }
-        }
-
-        if ( isset($config->orderby) ) {
-            foreach ( $config->orderby as $orderby ) {
-                $this->addOrderBy($orderby);
-            }
-        }
-
-        if ( isset($config->macros) ) {
-            foreach ( $config->macros as $macro ) {
-                $this->addMacro($macro);
-            }
-        }
-
-        if ( isset($config->query_hint) ) {
-            $this->setHint($config->query_hint);
-        }
-
-        if ( isset($config->overseer_restrictions) ) {
-            foreach ( $config->overseer_restrictions as $restriction => $template ) {
-                $this->addOverseerRestriction($restriction, $template);
-            }
-        }
-
-        return parent::initialize($config);
-
-    }  // initialize()
-    */
-
-    /* ------------------------------------------------------------------------------------------
      * Add (or overwrite) a record to this query.  Records map column names to values in the SELECT statement.
      *
      * @param $columnName The column that the formula will be associated with.
@@ -445,7 +294,6 @@ class Query extends Entity implements iEntity
             $this->logAndThrowException("Overseer restriction template must be a non-empty string");
         }
 
-        // $this->overseerRestrictions[$restriction] = $template;
         $this->properties['overseer_restrictions'][$restriction] = $template;
         return $this;
 
@@ -463,23 +311,6 @@ class Query extends Entity implements iEntity
     {
         return $this->properties['overseer_restrictions'];
     }  // getOverseerRestrictions()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all restrictions. Note that this does not remove them from the where clause if they
-     * have already been added.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    /*
-    public function deleteOverseerRestrictions()
-    {
-        $this->properties['overseer_restrictions'] = array();
-        $this->overseerRestrictionValues = array();
-        return $this;
-    }  // deleteOverseerRestrictions()
-    */
 
     /* ------------------------------------------------------------------------------------------
      * Add an overseer restriction value to this query. This is the template that has been processed
@@ -503,7 +334,6 @@ class Query extends Entity implements iEntity
         }
 
         $this->overseerRestrictionValues[$restriction] = $value;
-        // $this->properties['overseer_restrictions'][$restriction] = $value;
         return $this;
 
     }  // addOverseerRestrictionValue()
