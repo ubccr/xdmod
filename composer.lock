@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ceeef77ecbe7a0be2763939f54b3ba06",
+    "content-hash": "d0538f717752f90e1898bee194ced712",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -2695,12 +2695,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/xdmod-test-artifacts.git",
-                "reference": "f4a08a5244cf41d212e7655b4c87276fb04f2494"
+                "reference": "173dcefc611ba7eabd1aa9aa3c400372e7f9aaf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/xdmod-test-artifacts/zipball/5cd5bde2b2041e9d71532c3e5e9a8fbddeada679",
-                "reference": "5cd5bde2b2041e9d71532c3e5e9a8fbddeada679",
+                "url": "https://api.github.com/repos/ubccr/xdmod-test-artifacts/zipball/f4a08a5244cf41d212e7655b4c87276fb04f2494",
+                "reference": "173dcefc611ba7eabd1aa9aa3c400372e7f9aaf7",
                 "shasum": ""
             },
             "type": "library",
@@ -2709,7 +2709,7 @@
                 "source": "https://github.com/ubccr/xdmod-test-artifacts/tree/master",
                 "issues": "https://github.com/ubccr/xdmod-test-artifacts/issues"
             },
-            "time": "2017-04-21T18:47:07+00:00"
+            "time": "2017-04-26 17:59:22"
         }
     ],
     "aliases": [],
