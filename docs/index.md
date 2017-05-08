@@ -25,9 +25,9 @@ including job, user, or on a system-wide basis.
 
 The Open XDMoD portal provides a rich set of features accessible through
 an intuitive graphical interface, which is tailored to the role of the
-user.  Metrics provided include: number of jobs, CPUs consumed, wait
-time, and wall time, with minimum, maximum and the average of these
-metrics, in addition to many others.  Metrics are organized by a
+user.  Metrics provided include: number of jobs, CPU hours consumed,
+wait time, and wall time, with minimum, maximum and the average of
+these metrics, in addition to many others.  Metrics are organized by a
 customizable hierarchy appropriate for your organization.
 
 A version of Open XDMoD, namely [XDMoD](https://xdmod.ccr.buffalo.edu/),
