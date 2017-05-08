@@ -26,7 +26,7 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         // The test files need to be in the same location that the expected results were
         // generated from or paths stored in the expected result will not match!
 
-        mkdir(self::TMPDIR . '/etl.d', 0755, true);
+        @mkdir(self::TMPDIR . '/etl.d', 0755, true);
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_etl_config.json', self::TMPDIR . '/xdmod_etl_config.json');
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl.d/maintenance.json', self::TMPDIR . '/etl.d/maintenance.json');
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl.d/jobs_cloud.json', self::TMPDIR . '/etl.d/jobs_cloud.json');
