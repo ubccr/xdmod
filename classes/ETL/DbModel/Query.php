@@ -28,6 +28,8 @@ use Log;
 class Query extends Entity implements iEntity
 {
 
+    // The overseer restriction values for this query. These are the templates that have
+    // been processed by the overseer to include the values based on overseer options.
     protected $overseerRestrictionValues = array();
 
     /*
@@ -357,7 +359,7 @@ class Query extends Entity implements iEntity
             $this->logAndThrowException("Empty column name");
         }
 
-        if ( empty($formula) ) {
+        if ( null === $formula ) {
             $this->logAndThrowException(sprintf("Empty formula for column '%s'", $columnName));
         }
 
@@ -500,8 +502,8 @@ class Query extends Entity implements iEntity
             $this->logAndThrowException("Overseer restriction template must be a non-empty string");
         }
 
-        // $this->overseerRestrictionValues[$restriction] = $value;
-        $this->properties['overseer_restrictions'][$restriction] = $value;
+        $this->overseerRestrictionValues[$restriction] = $value;
+        // $this->properties['overseer_restrictions'][$restriction] = $value;
         return $this;
 
     }  // addOverseerRestrictionValue()
