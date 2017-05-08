@@ -187,11 +187,9 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def.json';
         $currentTable = new Table($config, '`', $this->logger);
         $currentTable->verify();
-        //        print print_r($currentTable->toStdClass(), true) . PHP_EOL;
         $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_2.json';
         $destTable = new Table($config, '`', $this->logger);
         $destTable->verify();
-        //        print print_r($destTable->toStdClass(), true) . PHP_EOL;
 
         $generated = $currentTable->getAlterSql($destTable);
         $generated = array_shift($generated);
@@ -357,8 +355,6 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $newQuery = new Query($obj, '"', $this->logger);
         $generated = $newQuery->getSql();
 
-        print print_r($obj, true) . PHP_EOL;
-
         $variableMap = array(
             'TIMEZONE' => 'America/New_York',
             'SOURCE_SCHEMA' => 'xras'
@@ -388,8 +384,6 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $obj = $table->toStdClass();
         $newTable = new Table($obj, '`', $this->logger);
         $generated = array_shift($newTable->getSql());
-
-        print print_r($obj, true) . PHP_EOL;
 
         $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def.sql'));
         $this->assertEquals($expected, $generated);
