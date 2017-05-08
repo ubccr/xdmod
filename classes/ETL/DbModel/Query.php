@@ -23,30 +23,14 @@
 namespace ETL\DbModel;
 
 use ETL\Utilities;
-use \Log;
-use \stdClass;
+use Log;
 
-class Query extends aNamedEntity
+class Query extends Entity implements iEntity
 {
-    // The list of ETL overseer restrictions supported by this query, as parsed from the query
-    // definition. Queries are not required to support restrictions and if a value for a restriction
-    // has not been set the restriction will not be applied. The ${VALUE} macro will be replaced by
-    // the value provided by the Overseer. For example:
-    //
-    // "source_query": {
-    //     "overseer_restrictions": {
-    //         "start_date": "jf.start_date >= ${VALUE}",
-    //         "end_date": "jf.end_date <= ${VALUE}",
-    //         "include_only_resource_codes": "jf.resource_id IN ${VALUE}",
-    //         "exclude_resource_codes": "jf.resource_id NOT IN ${VALUE}"
-    //      }
-    protected $overseerRestrictions = array();
 
-    // Optional array of WHERE clauses corresponding to restrictions provided by the ETL
-    // Overseer. These are intentionally kept separate from other query where clauses so we can
-    // operate on them independently.
     protected $overseerRestrictionValues = array();
 
+    /*
     // Records describing the fields used to populate the aggregation table
     protected $records = array();
 
@@ -71,69 +55,156 @@ class Query extends aNamedEntity
 
     // Query hints (See http://dev.mysql.com/doc/refman/5.7/en/query-cache-in-select.html)
     protected $queryHint = null;
+    */
+
+    // Properties required by this class. These will be merged with other required
+    // properties up the call chain. See @Entity::$requiredProperties
+    private $localRequiredProperties = array(
+        'records',
+        'joins'
+    );
+
+    // Properties provided by this class. These will be merged with other properties up
+    // the call chain. See @Entity::$properties
+    private $localProperties = array(
+        // Records describing the fields used to populate the aggregation table
+        'records'  => array(),
+
+        // Join tables. A single table generates the FROM clause while the rest are added as JOINS
+        'joins' => array(),
+
+        // Optional array of WHERE clauses
+        'where'   => array(),
+
+        // Optional array of GROUP BY clauses
+        'groupby'   => array(),
+
+        // Optional array of ORDER BY fields
+        'orderby'   => array(),
+
+        // Optional defined macros
+        'macros'     => array(),
+
+        // Query hints (See http://dev.mysql.com/doc/refman/5.7/en/query-cache-in-select.html)
+        'query_hint' => null,
+
+        // The list of ETL overseer restrictions supported by this query, as parsed from
+        // the query definition. Queries are not required to support restrictions and if a
+        // value for a restriction has not been set the restriction will not be
+        // applied. The ${VALUE} macro will be replaced by the value provided by the
+        // Overseer. For example:
+        //
+        // "source_query": {
+        //     "overseer_restrictions": {
+        //         "start_date": "jf.start_date >= ${VALUE}",
+        //         "end_date": "jf.end_date <= ${VALUE}",
+        //         "include_only_resource_codes": "jf.resource_id IN ${VALUE}",
+        //         "exclude_resource_codes": "jf.resource_id NOT IN ${VALUE}"
+        //      }
+        'overseer_restrictions' => array()
+    );
 
     /* ------------------------------------------------------------------------------------------
-     * Construct a table object from a JSON definition file or a definition object. The definition
-     * must contain, at a minimum, name and columns properties.
-     *
-     *  @param $config Mixed Either a filename for the JSON definition file or an object containing the
-     *   table definition
-     *
-     * Optional 2nd and 3rd arguments:
-     *
-     * @param $variableMap An associative array specifying variables that will be substituted in the
-     *   table DDL and the aggregation SELECT statement
-     * @param $macroDir The directory where macro files are found.
-     *
-     * @throw Exception If the argument is not a string or instance of stdClass
-     * @throw Exception If the table definition was incomplete
+     * @see iEntity::__construct()
      * ------------------------------------------------------------------------------------------
      */
 
     public function __construct($config, $systemQuoteChar = null, Log $logger = null)
     {
-        parent::__construct($systemQuoteChar, $logger);
-
-        if ( ! is_object($config) && is_string($config) ) {
-            $config = $this->parseJsonFile($config, "Query Definition");
-        } elseif ( ! $config instanceof stdClass) {
-            $msg = __CLASS__ . ": Argument is not a filename or object";
-            $this->logAndThrowException($msg);
-        }
-
-        // Support the query config directly or assigned to a "source_query" key
-
-        if ( isset($config->source_query) ) {
-            $config = $config->source_query;
-        }
-
-        // Check for required properties
-
-        $requiredKeys = array("records", "joins");
-        $this->verifyRequiredConfigKeys($requiredKeys, $config);
-
-        $this->initialize($config);
-
+        // Property merging is performed first so the values can be used in the constructor
+        parent::mergeProperties($this->localRequiredProperties, $this->localProperties);
+        parent::__construct($config, $systemQuoteChar, $logger);
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * Verify the table. This includes ensuring any index colums match column names.
-     *
-     * @param $destinationTable The table that data from this query will be placed into.
-
-     * @return true on success
-     * @throws Exception If there are errors during validation
+     * @see Entity::filterAndVerifyValue()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(Table $destinationTable)
+    protected function filterAndVerifyValue($property, $value)
     {
+        $value = parent::filterAndVerifyValue($property, $value);
+
+        if ( null === $value ) {
+            return $value;
+        }
+
+        switch ( $property ) {
+            case 'records':
+            case 'overseer_restrictions':
+                if ( ! is_object($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be an object, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
+
+            case 'where':
+            case 'groupby':
+            case 'orderby':
+            case 'macros':
+            case 'joins':
+                // Note that we are only checking that the value is an array here and not
+                // the array elements. That must come later.
+
+                if ( ! is_array($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be an array, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
+
+            case 'query_hint':
+                if ( ! is_string($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be a string, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
+
+            default:
+                break;
+        }  // switch ( $property )
+
+        return $value;
+
+    }  // filterAndVerifyValue()
+
+    /* ------------------------------------------------------------------------------------------
+     * Verify the query. Check that any columns referenced in the query are present in the
+     * destination table.
+     *
+     * @param Table $destinationTable The table that the query will be checked against.
+     *
+     * @see iEntity::verify()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function verify()
+    {
+        if ( 1 != func_num_args() ) {
+            $this->logAndThrowException(
+                sprintf('%s expected 1 argument, got %d', __FUNCTION__, func_num_args())
+            );
+        }
+
+        $destinationTable = func_get_arg(0);
+
+        if ( ! $destinationTable instanceof Table ) {
+            $this->logAndThrowException(
+                sprintf(
+                    '%s expected object of type Table, got %s',
+                    __FUNCTION__,
+                    ( is_object($destinationTable) ? get_class($destinationTable) : gettype($destinationTable) )
+                )
+            );
+        }
+
         $columnNames = $destinationTable->getColumnNames();
         $missingColumnNames = array_diff(array_keys($this->records), $columnNames);
 
         if ( 0 != count($missingColumnNames) ) {
-            $msg = "Columns in records not found in table: " . implode(", ", $missingColumnNames);
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Columns in records not found in table: " . implode(", ", $missingColumnNames));
         }
 
         return true;
@@ -148,13 +219,12 @@ class Query extends aNamedEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function initialize(stdClass $config, $force = false)
+    /*
+    public function initialize(stdClass $config)
     {
         if ( $this->initialized && ! $force ) {
             return true;
         }
-
-        // Check for required properties (records and join)
 
         $this->initialized = false;
         $errorMsg = array();
@@ -260,14 +330,13 @@ class Query extends aNamedEntity
             }
         }
 
-        $this->initialized = true;
-
-        return true;
+        return parent::initialize($config);
 
     }  // initialize()
+    */
 
     /* ------------------------------------------------------------------------------------------
-     * Add a record to this query.  Records map column names to values in the SELECT statement.
+     * Add (or overwrite) a record to this query.  Records map column names to values in the SELECT statement.
      *
      * @param $columnName The column that the formula will be associated with.
      * @param $formula The formula associated with the column.
@@ -283,32 +352,20 @@ class Query extends aNamedEntity
     public function addRecord($columnName, $formula)
     {
         // Note in PHP "" and "0" are both equal to 0 due to conversion comparing strings to integers.
-        if ( null === $formula || "" === $formula ) {
-            $msg = "Empty formula for column '$columnName' '$formula'";
-            $this->logAndThrowException($msg);
-        } elseif ( array_key_exists($columnName, $this->records) ) {
-            $msg = "Column '$columnName' already has a formula specified";
-            $this->logAndThrowException($msg);
+
+        if ( empty($columnName) ) {
+            $this->logAndThrowException("Empty column name");
         }
 
-        $this->records[$columnName] = $formula;
+        if ( empty($formula) ) {
+            $this->logAndThrowException(sprintf("Empty formula for column '%s'", $columnName));
+        }
+
+        $this->properties['records'][$columnName] = $formula;
 
         return $this;
 
     }  // addRecord()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of records.
-     *
-     * @return An associative array where the keys are column names and the values are records
-     *  for those columns.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getRecords()
-    {
-        return $this->records;
-    }  // getRecords()
 
     /* ------------------------------------------------------------------------------------------
      * Get a formula for the specified column.
@@ -321,28 +378,15 @@ class Query extends aNamedEntity
 
     public function getRecord($columnName)
     {
-        return ( array_key_exists($columnName, $this->records) ? $this->records[$columnName] : false );
+        return ( array_key_exists($columnName, $this->properties['records']) ? $this->properties['records'][$columnName] : false );
     }  // getRecord()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all records from this query.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteRecords()
-    {
-        $this->records = array();
-        return $this;
-    }  // deleteRecords()
 
     /* ------------------------------------------------------------------------------------------
      * Remove a column record if it exists and return the formula.
      *
      * @param $columnName The column to remove.
      *
-     * @return The formula for the specified column, or false if none exists.
+     * @return The formula for the specified column, or FALSE if none exists.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -350,100 +394,11 @@ class Query extends aNamedEntity
     {
         $record = $this->getRecord($columnName);
         if ( false !== $record ) {
-            unset($this->records[$columnName]);
+            unset($this->properties['records'][$columnName]);
         }
         return $record;
     }  // removeRecord()
 
-    /* ------------------------------------------------------------------------------------------
-     * Add a group by clause to this query.
-     *
-     * @param $groupBy An array containing the group by column names.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function addGroupBy($groupBy)
-    {
-        if ( empty($groupBy) || ! is_string($groupBy) ) {
-            $msg = "Cannot add an empty group by";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->groupBys[] = $groupBy;
-        return $this;
-    }  // addGroupBys()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of group by columns.
-     *
-     * @return An array of group by column names.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getGroupBys()
-    {
-        return $this->groupBys;
-    }  // getGroupBys()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all group bys from this query.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteGroupBys()
-    {
-        $this->groupBys = array();
-        return $this;
-    }  // deleteGroupBys()
-
-    /* ------------------------------------------------------------------------------------------
-     * Add a order by clause to this query.
-     *
-     * @param $orderBy An array containing the group by column names.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function addOrderBy($orderBy)
-    {
-        if ( empty($orderBy) || ! is_string($orderBy) ) {
-            $msg = "Cannot add an empty order by";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->orderBys[] = $orderBy;
-        return $this;
-    }  // addOrderBys()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of order by columns.
-     *
-     * @return An array of group by column names.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getOrderBys()
-    {
-        return $this->orderBys;
-    }  // getOrderBys()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all order bys from this query.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteOrderBys()
-    {
-        $this->orderBys = array();
-        return $this;
-    }  // deleteOrderBys()
 
     /* ------------------------------------------------------------------------------------------
      * Add a join clause for this query.
@@ -455,170 +410,16 @@ class Query extends aNamedEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function addJoin($definition)
+    public function addJoin($config)
     {
-        $item = ( $definition instanceof Join ? $definition : new Join($definition, $this->systemQuoteChar) );
+        $item = ( is_object($config) && $config instanceof Join
+                  ? $config
+                  : new Join($config, $this->systemQuoteChar, $this->logger) );
 
-        if ( ! ($item instanceof iTableItem) ) {
-            $msg = "Join does not implement interface iTableItem";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->joins[] = $item;
+        $this->properties['joins'][] = $item;
 
         return $this;
-    }  // setJoins()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of join clauses.
-     *
-     * @return An array of join clauses
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getJoins()
-    {
-        return $this->joins;
-    }  // getJoins()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all joins from this query.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteJoins()
-    {
-        $this->joins = array();
-        return $this;
-    }  // deleteJoins()
-
-    /* ------------------------------------------------------------------------------------------
-     * Add a where clause for this query, appending to any existing where clauses.
-     *
-     * @param $where An string containing a single where clause.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function addWhere($where)
-    {
-        if ( empty($where) || ! is_string($where) ) {
-            $msg = "WHERE clause is empty or not a string '$where'";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->where[] = $where;
-        return $this;
-
-    }  // addWhere()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of optional where clauses.
-     *
-     * @return An array of where clauses.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getWheres()
-    {
-        return $this->where;
-    }  // getWheres()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all wheres from this query.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteWheres()
-    {
-        $this->wheres = array();
-        return $this;
-    }  // deleteWheres()
-
-    /* ------------------------------------------------------------------------------------------
-     * Add a macro for this query, appending to any existing macros.
-     *
-     * @param $macro An object containing a single macro definition
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function addMacro(stdClass $macro)
-    {
-        $this->macros[] = $macro;
-        return $this;
-    }  // addMacro()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of optional macros.
-     *
-     * @return An array of macros.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getMacros()
-    {
-        return $this->macros;
-    }  // getMacros()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all macros from this query.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteMacros()
-    {
-        $this->macros = array();
-        return $this;
-    }  // deleteMacros()
-
-    /* ------------------------------------------------------------------------------------------
-     * Set a query hint string for the optimizer
-     *
-     * @param $hint The hint string
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function setHint($hint)
-    {
-        $this->queryHint = $hint;
-        return $this;
-    }  // setHint()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the query hints
-     *
-     * @return The query hint string
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getHint()
-    {
-        return $this->queryHint;
-    }  // getHint()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all hints from this query.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteHint()
-    {
-        $this->queryHint = null;
-        return $this;
-    }  // deleteHint()
+    }  // addJoin()
 
     /* ------------------------------------------------------------------------------------------
      * Add an overseer restriction template to this query based on the parsed query definition.
@@ -637,14 +438,13 @@ class Query extends aNamedEntity
     public function addOverseerRestriction($restriction, $template)
     {
         if ( ! is_string($restriction) || "" == $restriction ) {
-            $msg = "Overseer restriction key must be a non-empty string";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Overseer restriction key must be a non-empty string");
         } elseif ( ! is_string($template) || "" == $template ) {
-            $msg = "Overseer restriction template must be a non-empty string";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Overseer restriction template must be a non-empty string");
         }
 
-        $this->overseerRestrictions[$restriction] = $template;
+        // $this->overseerRestrictions[$restriction] = $template;
+        $this->properties['overseer_restrictions'][$restriction] = $template;
         return $this;
 
     }  // addOverseerRestriction()
@@ -659,7 +459,7 @@ class Query extends aNamedEntity
 
     public function getOverseerRestrictions()
     {
-        return $this->overseerRestrictions;
+        return $this->properties['overseer_restrictions'];
     }  // getOverseerRestrictions()
 
     /* ------------------------------------------------------------------------------------------
@@ -670,12 +470,14 @@ class Query extends aNamedEntity
      * ------------------------------------------------------------------------------------------
      */
 
+    /*
     public function deleteOverseerRestrictions()
     {
-        $this->overseerRestrictions = array();
+        $this->properties['overseer_restrictions'] = array();
         $this->overseerRestrictionValues = array();
         return $this;
     }  // deleteOverseerRestrictions()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * Add an overseer restriction value to this query. This is the template that has been processed
@@ -693,14 +495,13 @@ class Query extends aNamedEntity
     public function addOverseerRestrictionValue($restriction, $value)
     {
         if ( ! is_string($restriction) || "" == $restriction ) {
-            $msg = "Overseer restriction key must be a non-empty string";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Overseer restriction key must be a non-empty string");
         } elseif ( ! is_string($value) || "" == $value ) {
-            $msg = "Overseer restriction template must be a non-empty string";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Overseer restriction template must be a non-empty string");
         }
 
-        $this->overseerRestrictionValues[$restriction] = $value;
+        // $this->overseerRestrictionValues[$restriction] = $value;
+        $this->properties['overseer_restrictions'][$restriction] = $value;
         return $this;
 
     }  // addOverseerRestrictionValue()
@@ -733,11 +534,10 @@ class Query extends aNamedEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getSelectSql($includeSchema = true)
+    public function getSql($includeSchema = true)
     {
         if ( 0 == count($this->joins) ) {
-            $msg = "At least one join is required";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("At least one join is required");
         }
 
         // Use the records to generate the SELECT columns
@@ -745,32 +545,29 @@ class Query extends aNamedEntity
         $columnList = array();
         $thisObj = $this;
         foreach ( $this->records as $columnName => $formula ) {
-            if ( $this->isComment($columnName) ) {
-                continue;
-            }
 
-            /*
-             * For now, do not quote field names because we may have functions in the query. -smg
-             *
-             * $formula = implode(".", array_map(function($part) use ($thisObj) { return $thisObj->quote($part); }, explode(".", $formula)));
-             */
+            // Do not quote field names because we may have functions in the query. -smg
             $columnList[] = "$formula AS $columnName";
         }
 
         // Use the first join as the main FROM table, followined by other joins.
 
-        $joinList = array();
-        $joinList[] = "FROM " . $this->joins[0]->getCreateSql($includeSchema);
+        $myJoins = $this->joins;
 
-        for ($i = 1; $i < count($this->joins); $i++) {
-            if ( null === $this->joins[$i]->getOn() ) {
-                $msg = "Join clause for table '" . $this->joins[$i]->getName() . "' does not provide ON condition";
+        $joinList = array();
+        $joinList[] = "FROM " . $myJoins[0]->getSql($includeSchema);
+
+        for ($i = 1; $i < count($myJoins); $i++) {
+            if ( null === $myJoins[$i]->on ) {
+                $this->logger->debug(
+                    sprintf("Join clause for table '%s' does not provide ON condition", $myJoins[$i]->name)
+                );
             }
 
             // When we move to explictly marking the FROM clause this functionality may be moved
             // into the Join class
 
-            $joinType = $this->joins[$i]->getType();
+            $joinType = $myJoins[$i]->type;
 
             // Handle various join types. STRAIGHT_JOIN is a mysql enhancement.
 
@@ -782,7 +579,7 @@ class Query extends aNamedEntity
                 $joinStr = $joinType . " JOIN";
             }
 
-            $joinList[] = $joinStr . " " . $this->joins[$i]->getCreateSql($includeSchema);
+            $joinList[] = $joinStr . " " . $myJoins[$i]->getSql($includeSchema);
         }  // for ( $i = 1; $i < count($this->joins); $i++ )
 
         // Construct the SELECT statement
@@ -790,12 +587,12 @@ class Query extends aNamedEntity
         // Merge in where clauses along with any overseer restrictions provided
         $whereConditions = array_merge($this->where, $this->overseerRestrictionValues);
 
-        $sql = "SELECT" .( null !== $this->queryHint ? " " . $this->queryHint : "" ) . "\n" .
+        $sql = "SELECT" .( null !== $this->query_hint ? " " . $this->query_hint : "" ) . "\n" .
             implode(",\n", $columnList) . "\n" .
             implode("\n", $joinList) . "\n" .
             ( count($whereConditions) > 0 ? "WHERE " . implode("\nAND ", $whereConditions) . "\n" : "" ) .
-            ( count($this->groupBys) > 0 ? "GROUP BY " . implode(", ", $this->groupBys) : "" ) .
-            ( count($this->orderBys) > 0 ? "ORDER BY " . implode(", ", $this->orderBys) : "" );
+            ( count($this->groupby) > 0 ? "GROUP BY " . implode(", ", $this->groupby) : "" ) .
+            ( count($this->orderby) > 0 ? "ORDER BY " . implode(", ", $this->orderby) : "" );
 
         // If any macros have been defined, process those macros now. Since macros can contain variables
         // themselves, we will process the variables later.
@@ -808,53 +605,89 @@ class Query extends aNamedEntity
 
         return $sql;
 
-    }  // getSelectSql()
+    }  // getSql()
 
     /* ------------------------------------------------------------------------------------------
-     * Generate an object representation of this item suitable for encoding into JSON.
-     *
-     * @param $succinct true to use a succinct representation.
-     * @param $includeSchema true to include the schema in the table definition
-     *
-     * @return An object representation for this item suitable for encoding into JSON.
+     * iEntity::toStdClass()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function toJsonObj($succinct = false, $includeSchema = false)
+    public function toStdClass()
     {
-        $data = new stdClass;
-        $data->records = $this->records;
-        $data->joins = $this->joins;
+        $data = parent::toStdClass();
 
-        if ( count($this->groupBys) > 0 ) {
-            $data->groupbys = $this->groupBys;
-        }
-        if ( count($this->orderBys) > 0 ) {
-            $data->orderbys = $this->orderBys;
-        }
-        if ( count($this->where) > 0 ) {
-            $data->where = $this->where;
-        }
-        if ( count($this->macros) > 0 ) {
-            $data->macros = $this->macros;
+        // Overwrite arrays that are expected to be objects. If overseer_restrictions is
+        // an empty array Entity::_toStdClass() won't know that it should be an object.
+
+        if ( is_array($data->overseer_restrictions) ) {
+            $data->overseer_restrictions = (object) $data->overseer_restrictions;
         }
 
         return $data;
 
-    }  // toJsonObj()
+    }  // toStdClasS()
 
     /* ------------------------------------------------------------------------------------------
-     * Generate a JSON representation of this table.
-     *
-     * @param $succinct true if a succinct representation should be returned.
-     * @param $includeSchema true to include the schema in the table definition
-     *
-     * @return A JSON formatted string representing the tabe.
+     * @see Entity::__set()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function toJson($succinct = false, $includeSchema = false)
+    public function __set($property, $value)
     {
-        return json_encode($this->toJsonObj($succinct, $includeSchema));
-    }  // toJson()
+        // If we are not setting a property that is a special case, just call the main setter
+
+        $specialCaseProperties = array('joins', 'records', 'overseer_restrictions');
+
+        if ( ! in_array($property, $specialCaseProperties) ) {
+            parent::__set($property, $value);
+            return;
+        }
+
+        // Verify values prior to doing anything with them so we can make assumptions later.
+
+        $value = $this->filterAndVerifyValue($property, $value);
+
+        // Handle special cases.
+
+        switch ($property) {
+            case 'joins':
+                // Clear the array no matter what, that way NULL is handled properly.
+                $this->properties[$property] = array();
+                if ( null !== $value ) {
+                    foreach ( $value as $item ) {
+                        $this->properties[$property][] =
+                            ( is_object($item) && $item instanceof Join
+                              ? $item
+                              : new Join($item, $this->systemQuoteChar, $this->logger) );
+                    }
+                }
+                break;
+
+            case 'records':
+                // Clear the array no matter what, that way NULL is handled properly.
+                $this->properties[$property] = array();
+                if ( null !== $value ) {
+                    foreach ( $value as $column => $formula ) {
+                        // Provide a method for adding and verifying more complex information
+                        $this->addRecord($column, $formula);
+                    }
+                }
+                break;
+
+            case 'overseer_restrictions':
+                // Clear the array no matter what, that way NULL is handled properly.
+                $this->properties[$property] = array();
+                $this->overseerRestrictionValues = array();
+                if ( null !== $value ) {
+                    foreach ( $value as $restriction => $template ) {
+                        $this->addOverseerRestriction($restriction, $template);
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }  // switch($property)
+
+    }  // __set()
 }  // class Query

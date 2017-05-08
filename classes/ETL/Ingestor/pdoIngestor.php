@@ -199,7 +199,7 @@ class pdoIngestor extends aIngestor
 
         $this->availableSourceQueryFields =
             ( null !== $this->etlSourceQuery
-              ? array_keys($this->etlSourceQuery->getRecords())
+              ? array_keys($this->etlSourceQuery->records)
               : $this->getSqlColumnNames($this->sourceQueryString) );
 
         $this->destinationFieldMappings = $this->getDestinationFields();
@@ -234,7 +234,7 @@ class pdoIngestor extends aIngestor
             $etlTableKey = key($this->etlDestinationTableList);
 
             // We only need to parse the SQL if it has been provided as a string, otherwise use:
-            // array_keys($this->etlSourceQuery->getRecords());
+            // array_keys($this->etlSourceQuery->records);
 
             $this->destinationFieldMappings[$etlTableKey] =
                 array_combine($this->availableSourceQueryFields, $this->availableSourceQueryFields);
@@ -368,7 +368,7 @@ class pdoIngestor extends aIngestor
             $this->logAndThrowException($msg);
         }
 
-        $sql = $this->etlSourceQuery->getSelectSql();
+        $sql = $this->etlSourceQuery->getSql();
 
         if ( null !== $this->variableMap ) {
             $sql = Utilities::substituteVariables(
@@ -478,7 +478,7 @@ class pdoIngestor extends aIngestor
             foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
                 $qualifiedDestTableName = $etlTable->getFullName();
 
-                if ( "myisam" == strtolower($etlTable->getEngine()) ) {
+                if ( "myisam" == strtolower($etlTable->engine) ) {
                     $disableForeignKeys = true;
                     if ( $this->options->disable_keys ) {
                         $this->logger->info("Disable keys on $qualifiedDestTableName");
@@ -521,7 +521,7 @@ class pdoIngestor extends aIngestor
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
 
-            if ( "myisam" == strtolower($etlTable->getEngine()) ) {
+            if ( "myisam" == strtolower($etlTable->engine) ) {
                 $enableForeignKeys = true;
                 if ( $this->options->disable_keys ) {
                     $this->logger->info("Enable keys on $qualifiedDestTableName");
@@ -703,7 +703,7 @@ class pdoIngestor extends aIngestor
             } else {
                 $tmpTable = $etlTable->getSchema(true)
                     . "."
-                    . $this->destinationEndpoint->quoteSystemIdentifier("tmp_" . $etlTable->getName() . "_" . time());
+                    . $this->destinationEndpoint->quoteSystemIdentifier("tmp_" . $etlTable->name . "_" . time());
 
                 $destColumns = implode(',', $destColumnList);
                 $updateColumnList = array_map(

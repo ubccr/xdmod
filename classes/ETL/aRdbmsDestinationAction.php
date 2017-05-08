@@ -155,10 +155,10 @@ abstract class aRdbmsDestinationAction extends aAction
                 );
                 $this->logger->debug(
                     "Created ETL destination table object for table definition key '"
-                    . $etlTable->getName()
+                    . $etlTable->name
                     . "'"
                 );
-                $etlTable->setSchema($this->destinationEndpoint->getSchema());
+                $etlTable->schema = $this->destinationEndpoint->getSchema();
                 $tableName = $etlTable->getFullName();
 
                 if ( ! is_string($tableName) || empty($tableName) )
@@ -167,7 +167,7 @@ abstract class aRdbmsDestinationAction extends aAction
                     $this->logAndThrowException($msg);
                 }
 
-                $this->etlDestinationTableList[$etlTable->getName()] = $etlTable;
+                $this->etlDestinationTableList[$etlTable->name] = $etlTable;
             } catch (Exception $e) {
                 $this->logAndThrowException($e->getMessage() . " in file '" . $this->definitionFile . "'");
             }
@@ -224,7 +224,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
             try {
 
-                if ( false === $this->destinationEndpoint->tableExists($etlTable->getName(), $etlTable->getSchema()) ) {
+                if ( false === $this->destinationEndpoint->tableExists($etlTable->name, $etlTable->schema) ) {
                     $this->logger->info("Table does not exist: '$tableName', skipping.");
                     continue;
                 }
@@ -378,7 +378,7 @@ abstract class aRdbmsDestinationAction extends aAction
         $missingColumnNames = array_diff($sqlColumnNames, $tableColumnNames);
 
         if ( 0 != count($missingColumnNames) ) {
-            $msg = "The following columns from the SQL SELECT were not found in table definition for '{$table->getName()}': " .
+            $msg = "The following columns from the SQL SELECT were not found in table definition for '{$table->name}': " .
                 implode(", ", $missingColumnNames);
             $this->logAndThrowException($msg);
         }
@@ -406,20 +406,24 @@ abstract class aRdbmsDestinationAction extends aAction
     {
         // Check for an existing table with the same name
 
+        $existingTable = new Table(null, $endpoint->getSystemQuoteChar(), $this->logger);
+
+        /*
         $existingTable = Table::discover(
             $table->getName(),
             $endpoint,
             $endpoint->getSystemQuoteChar(),
             $this->logger
         );
+        */
 
         // If no table with that name exists, create it. Otherwise check for differences and apply them.
 
-        if ( false === $existingTable ) {
+        if ( false === $existingTable->discover($table->name, $endpoint) ) {
 
             $this->logger->notice("Table " . $table->getFullName() . " does not exist, creating.");
 
-            $sqlList = $table->getCreateSql();
+            $sqlList = $table->getSql();
 
             foreach ( $sqlList as $sql ) {
                 $this->logger->debug("Create table SQL " . $endpoint . ":\n$sql");

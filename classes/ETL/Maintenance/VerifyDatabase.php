@@ -140,10 +140,10 @@ class VerifyDatabase extends aAction implements iAction
                 $this->sourceEndpoint->getSystemQuoteChar(),
                 $this->logger
             );
-            $this->queryColumnNames = array_keys($sourceQuery->getRecords());
+            $this->queryColumnNames = array_keys($sourceQuery->records);
             $this->setOverseerRestrictionOverrides();
             $this->getEtlOverseerOptions()->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this);
-            $this->sqlQueryString = $sourceQuery->getSelectSql();
+            $this->sqlQueryString = $sourceQuery->getSql();
             $this->sqlQueryString = Utilities::substituteVariables(
                 $this->sqlQueryString,
                 $this->variableMap,

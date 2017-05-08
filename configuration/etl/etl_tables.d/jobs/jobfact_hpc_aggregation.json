@@ -3,6 +3,7 @@
 
     "table_definition": {
         "name": "jobfact_by_",
+        "table_prefix": "jobfact_by_",
         "engine": "MyISAM",
         "comment": "Jobfacts aggregated by ${AGGREGATION_UNIT}.",
         "columns": [

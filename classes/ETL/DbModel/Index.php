@@ -7,76 +7,116 @@
  * @date 2015-10-29
  *
  * @see Table
- * @see iTableItem
+ * @see iEntity
  * ==========================================================================================
  */
 
 namespace ETL\DbModel;
 
-use \Log;
-use \stdClass;
+use Log;
+use stdClass;
 
-class Index extends aNamedEntity implements iTableItem
+class Index extends NamedEntity implements iEntity
 {
-    private $type = null;
-    private $is_unique = null;
-    private $columns = array();
+    // Properties required by this class. These will be merged with other required
+    // properties up the call chain. See @Entity::$requiredProperties
+    private $localRequiredProperties = array(
+        'columns'
+    );
+
+    // Properties provided by this class. These will be merged with other properties up
+    // the call chain. See @Entity::$properties
+    private $localProperties = array(
+        'columns'   => array(),
+        'type'      => null,
+        'is_unique' => null
+    );
 
     /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::__construct()
+     * @see iEntity::__construct()
      * ------------------------------------------------------------------------------------------
      */
 
     public function __construct($config, $systemQuoteChar = null, Log $logger = null)
     {
-        parent::__construct($systemQuoteChar, $logger);
-
-        if ( ! is_object($config) ) {
-            $msg = __CLASS__ . ": Index definition must be an array or object";
-            $this->logAndThrowException($msg);
-        }
-
-        $requiredKeys = array("columns");
-        $this->verifyRequiredConfigKeys($requiredKeys, $config);
-
-        $this->initialize($config);
-
-    }  // __construct()
+        // Property merging is performed first so the values can be used in the constructor
+        parent::mergeProperties($this->localRequiredProperties, $this->localProperties);
+        parent::__construct($config, $systemQuoteChar, $logger);
+    }
 
     /* ------------------------------------------------------------------------------------------
      * @see aNamedEntity::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config)
     {
-        if ( $this->initialized && ! $force ) {
-            return true;
-        }
+        // Local verifications
 
-        if ( ! is_array($config->columns) || 0 == count($config->columns) ) {
-            $msg = "Index columns must be an non-empty array";
-            $this->logAndThrowException($msg);
+        if ( ! is_array($config->columns) ) {
+            $this->logAndThrowException("Columns must be an non-empty array");
         }
 
         if ( ! isset($config->name) ) {
             $config->name = $this->generateIndexName($config->columns);
         }
 
-        foreach ( $config as $property => $value ) {
-
-            if ( ! property_exists($this, $property) ) {
-                $msg = "Property '$property' in config is not supported";
-                $this->logAndThrowException($msg);
-            }
-
-            $this->$property = $value;
-
-        }  // foreach ( $config as $property => $value )
-
-        $this->initialized = true;
+        parent::initialize($config);
 
     }  // initialize()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see Entity::filterAndVerifyValue()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function filterAndVerifyValue($property, $value)
+    {
+        $value = parent::filterAndVerifyValue($property, $value);
+
+        if ( null === $value ) {
+            return $value;
+        }
+
+        switch ( $property ) {
+
+            case 'is_unique':
+                $origValue = $value;
+                $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                if ( null === $value ) {
+                    $this->logAndThrowException(
+                        sprintf("%s must be a boolean, '%s' given", $property, gettype($origValue))
+                    );
+                }
+                break;
+
+            case 'columns':
+                if ( ! is_array($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s must be an array, '%s' given", $property, gettype($value))
+                    );
+                } elseif ( 0 == count($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s must be an non-empty array", $property)
+                    );
+                }
+                break;
+
+            case 'type':
+                if ( ! is_string($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be a string, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
+
+            default:
+                break;
+        }  // switch ( $property )
+
+        return $value;
+
+    }  // filterAndVerifyValue()
 
     /* ------------------------------------------------------------------------------------------
      * Auto-generate an index name based on the columns included in the index. If the length of the
@@ -96,41 +136,11 @@ class Index extends aNamedEntity implements iTableItem
     }  // generateIndexName()
 
     /* ------------------------------------------------------------------------------------------
-     * @return The list of column names for this index
+     * @see iEntity::compare()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getColumnNames()
-    {
-        return $this->columns;
-    }  // getColumnNames()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The index type, or null if no type was specified.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getType()
-    {
-        return $this->type;
-    }  // getType()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return true if the index is unique, false if it is not, or null if not specified.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function isUnique()
-    {
-        return $this->is_unique;
-    }  // isUnique()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::compare()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function compare(iTableItem $cmp)
+    public function compare(iEntity $cmp)
     {
         if ( ! $cmp instanceof Index ) {
             return 1;
@@ -140,16 +150,14 @@ class Index extends aNamedEntity implements iTableItem
         // columns are required but if the type and uniqueness are provided use those in the comparison
         // as well.
 
-        if ( $this->getName() != $cmp->getName()
-             || $this->getColumnNames() != $cmp->getColumnNames() ) {
+        if ( $this->name != $cmp->name || $this->columns != $cmp->columns ) {
             return -1;
         }
 
         // The following properties have a default set by the database. If the property is not specified
         // a value will be provided when the database information schema is queried.
 
-        if ( ( null !== $this->getType() && null !== $cmp->getType() )
-             && $this->getType() != $cmp->getType() ) {
+        if ( ( null !== $this->type && null !== $cmp->type ) && $this->type != $cmp->type ) {
             return -11;
         }
 
@@ -158,9 +166,9 @@ class Index extends aNamedEntity implements iTableItem
 
         // By default a primary key in MySQL has the name PRIMARY and is unique
 
-        if ( "PRIMARY" != $this->getName() && "PRIMARY" != $cmp->getName()
-             && ( null !== $this->isUnique() && null !== $cmp->isUnique() )
-             && $this->isUnique() != $cmp->isUnique() ) {
+        if ( "PRIMARY" != $this->name && "PRIMARY" != $cmp->name
+             && ( null !== $this->is_unique && null !== $cmp->is_unique )
+             && $this->is_unique != $cmp->is_unique ) {
             return -111;
         }
 
@@ -169,11 +177,11 @@ class Index extends aNamedEntity implements iTableItem
     }  // compare()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::getCreateSql()
+     * @see iEntity::getSql()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getCreateSql($includeSchema = false)
+    public function getSql($includeSchema = false)
     {
         // Primary keys always have an index name of "PRIMARY"
         // See https://dev.mysql.com/doc/refman/5.7/en/create-table.html
@@ -183,50 +191,21 @@ class Index extends aNamedEntity implements iTableItem
         // way to put them together.
 
         $parts = array();
-        $parts[] = (null !== $this->name && "PRIMARY" == $this->name
-                    ? "PRIMARY KEY"
-                    : ( null !== $this->is_unique && $this->is_unique ? "UNIQUE ": "") . "INDEX " . $this->getName(true) );
-        if ( null !== $this->type ) {
-            $parts[] = "USING {$this->type}";
+        if ( null !== $this->name && "PRIMARY" == $this->name ) {
+            $parts[] = "PRIMARY KEY";
+        } else {
+            $parts[] = ( null !== $this->is_unique && $this->is_unique ? "UNIQUE ": "" )
+                . "INDEX "
+                . $this->getName(true);
         }
+
+        if ( null !== $this->type ) {
+            $parts[] = "USING " . $this->type;
+        }
+
         $parts[] = "(" . implode(", ", array_map(array($this, 'quote'), $this->columns)) . ")";
 
         return implode(" ", $parts);
 
-    }  // getCreateSql()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::getAlterSql()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getAlterSql($includeSchema = false)
-    {
-        return $this->getCreateSql($includeSchema);
-    }  // getAlterSql()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::toJsonObj()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function toJsonObj($succinct = false)
-    {
-        if ( $succinct ) {
-            $data = $this->columns;
-        } else {
-            $data = new stdClass;
-            $data->name = $this->name;
-            $data->columns = $this->columns;
-            if ( null !== $this->type ) {
-                $data->type = $this->type;
-            }
-            if ( null !== $this->is_unique ) {
-                $data->is_unique = ( 1 == $this->is_unique);
-            }
-        }
-
-        return $data;
-
-    }  // toJsonObj()
+    }  // getSql()
 }  // class Index

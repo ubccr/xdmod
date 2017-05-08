@@ -1,26 +1,27 @@
 <?php
 /* ==========================================================================================
- * Class for managing aggregation tables in the data warehouse.  An aggregation table combines a
- * Table with a query used to populate the table. The table name is generated using the table prefix
- * specified in the table definition along with an aggregation unit specified during the aggregation
- * process.
+ * Class for managing aggregation tables in the data warehouse.  An aggregation table
+ * combines a Table with a query used to populate the table. The table name is generated
+ * using the table prefix specified in the table definition along with an aggregation unit
+ * specified during the aggregation process.
  *
  * @see Table
  * @see Query
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
- * @date 2015-11-20
+ * @date 2017-04-29
  * ==========================================================================================
  */
 
 namespace ETL\DbModel;
 
 use ETL\Utilities;
-use \Exception;
-use \Log;
+use Log;
+use stdClass;
 
 class AggregationTable extends Table
 {
+    /*
     // Aggregation unit to use when generating the SQL to populate the table
     protected $aggregationUnit = null;
 
@@ -29,6 +30,38 @@ class AggregationTable extends Table
 
     // Query object for populating the table
     protected $query = null;
+    */
+
+    // Properties required by this class. These will be merged with other required
+    // properties up the call chain. See @Entity::$requiredProperties
+    private $localRequiredProperties = array(
+        'table_prefix'
+    );
+
+    // Properties provided by this class. These will be merged with other properties up
+    // the call chain. See @Entity::$properties
+    private $localProperties = array(
+        // Current aggregation unit to use when generating the SQL to populate the table
+        'aggregation_unit'  => null,
+
+        // Table prefix used to generate the name along with the aggregation unit
+        'table_prefix'   => null,
+
+        // Query object for populating the table with data
+        'query'  => null
+    );
+
+    /* ------------------------------------------------------------------------------------------
+     * @see iEntity::__construct()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function __construct($config, $systemQuoteChar = null, Log $logger = null)
+    {
+        // Property merging is performed first so the values can be used in the constructor
+        parent::mergeProperties($this->localRequiredProperties, $this->localProperties);
+        parent::__construct($config, $systemQuoteChar, $logger);
+    }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
      * Construct a table object from a JSON definition file or a definition object. The definition
@@ -45,7 +78,7 @@ class AggregationTable extends Table
      * @param $macroDir The directory where macro files are found.
      * ------------------------------------------------------------------------------------------
      */
-
+    /*
     public function __construct($config, $systemQuoteChar = null, Log $logger = null)
     {
         parent::__construct($config, $systemQuoteChar, $logger);
@@ -57,6 +90,65 @@ class AggregationTable extends Table
         }
 
     }  // __construct()
+    */
+
+    /* ------------------------------------------------------------------------------------------
+     * @see aNamedEntity::initialize()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function initialize(stdClass $config)
+    {
+        // Aggregation table definition files may include the query used to populate the
+        // aggregation table.
+
+        if ( isset($config->source_query) ) {
+            $this->query = $config->source_query;
+            unset($config->source_query);
+        }
+
+        parent::initialize($config);
+
+    }  // initialize()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see Entity::filterAndVerifyValue()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function filterAndVerifyValue($property, $value)
+    {
+        $value = parent::filterAndVerifyValue($property, $value);
+
+        if ( null === $value ) {
+            return $value;
+        }
+
+        switch ( $property ) {
+            case 'query':
+                if ( ! is_object($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be an object, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
+
+            case 'aggregation_unit':
+            case 'table_prefix':
+                if ( ! is_string($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be a string, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
+
+            default:
+                break;
+        }  // switch ( $property )
+
+        return $value;
+
+    }  // filterAndVerifyValue()
 
     /* ------------------------------------------------------------------------------------------
      * Return the table name.  This combines the prefix and aggregation unit and is set when the
@@ -69,7 +161,7 @@ class AggregationTable extends Table
      * @throw Exception if the aggregation unit has not been set
      * ------------------------------------------------------------------------------------------
      */
-
+    /*
     public function getName($quote = false)
     {
         if ( null === $this->aggregationUnit ) {
@@ -80,16 +172,19 @@ class AggregationTable extends Table
         return parent::getName($quote);
 
     }  // getName()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * @return The query object used to populate the aggregation table.
      * ------------------------------------------------------------------------------------------
      */
 
+    /*
     public function getQuery()
     {
         return $this->query;
     }  // getQuery()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * Set the table prefix used to generate the name of the aggregation table. This is typically
@@ -103,6 +198,7 @@ class AggregationTable extends Table
      * ------------------------------------------------------------------------------------------
      */
 
+    /*
     public function setTablePrefix($tablePrefix)
     {
         if ( empty($tablePrefix) ) {
@@ -113,16 +209,18 @@ class AggregationTable extends Table
         $this->tablePrefix = $tablePrefix;
         return $this;
     }  // setTablePrefix()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * @return The table prefix
      * ------------------------------------------------------------------------------------------
      */
-
+    /*
     public function getTablePrefix()
     {
         return $this->tablePrefix;
     }  // getTablePrefix()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * Set the aggregation unit used to generate the name of the aggregation table. This is typically
@@ -135,7 +233,7 @@ class AggregationTable extends Table
      * @throws Exception if the table prefix is empty or null
      * ------------------------------------------------------------------------------------------
      */
-
+    /*
     public function setAggregationUnit($aggregationUnit)
     {
         if ( empty($aggregationUnit) ) {
@@ -151,16 +249,18 @@ class AggregationTable extends Table
 
         return $this;
     }  // setAggregationUnit()
-
+    */
     /* ------------------------------------------------------------------------------------------
      * @return The aggregation unit
      * ------------------------------------------------------------------------------------------
      */
 
+    /*
     public function getAggregationUnit()
     {
         return $this->aggregationUnit;
     }  // getAggregationUnit()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * Generate an object representation of this item suitable for encoding into JSON.
@@ -172,30 +272,16 @@ class AggregationTable extends Table
      * ------------------------------------------------------------------------------------------
      */
 
-    public function toJsonObj($succinct = false, $includeSchema = false)
+    /*
+    public function toStdClass()
     {
-        $data = parent::toJsonObj($succinct, $includeSchema);
-
-        $data->query = $this->query->toJsonObj($succinct, $includeSchema);
+        $data = parent::toStdClass();
+        $data->query = $this->query->toStdClass();
 
         return $data;
 
-    }  // toJsonObj()
-
-    /* ------------------------------------------------------------------------------------------
-     * Generate a JSON representation of this table.
-     *
-     * @param $succinct true if a succinct representation should be returned.
-     * @param $includeSchema true to include the schema in the table definition
-     *
-     * @return A JSON formatted string representing the tabe.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function toJson($succinct = false, $includeSchema = false)
-    {
-        return json_encode($this->toJsonObj($succinct, $includeSchema));
-    }  // toJson()
+    }  // toStdClass()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * Aggregation tables support variables (e.g., ${AGGREGATION_UNIT) as defined by the aggregation
@@ -220,28 +306,31 @@ class AggregationTable extends Table
         $triggerJson = array();
 
         foreach ( $this->columns as $column ) {
-            $columnJson[] = $column->toJsonObj();
+            $columnJson[] = $column->toStdClass();
         }
         foreach ( $this->indexes as $index ) {
-            $indexJson[] = $index->toJsonObj();
+            $indexJson[] = $index->toStdClass();
         }
         foreach ( $this->triggers as $trigger ) {
-            $triggerJson[] = $trigger->toJsonObj();
+            $triggerJson[] = $trigger->toStdClass();
         }
 
         // Clone this object and clear the existing columns, indexes, and triggers. Add them using the
         // saved definitions after substitutions have been performed.
 
         $newTable = clone $this;
-        $newTable->deleteColumns()->deleteIndexes()->deleteTriggers();
+        // We can't set columns to null because it is a required column
+        $newTable->columns = array();
+        $newTable->indexes = array();
+        $newTable->triggers = array();
 
         foreach ( $columnJson as $def ) {
-            foreach ( $def as $key => &$value ) {
-                if ( null !== $variableMap ) {
+            if ( null !== $variableMap ) {
+                foreach ( $def as $key => &$value ) {
                     $value = Utilities::substituteVariables($value, $variableMap);
                 }
+                unset($value); // Sever the reference with the last element
             }
-            unset($value); // Sever the reference with the last element
 
             // Add the column, allowing duplicate column names to overwrite previous values. Without
             // overwrite turned on, the yearly aggregation tables with throw an exception and log a
@@ -252,26 +341,70 @@ class AggregationTable extends Table
         }
 
         foreach ( $indexJson as $def ) {
-            foreach ( $def as $key => &$value ) {
-                if ( null !== $variableMap ) {
+            if ( null !== $variableMap ) {
+                foreach ( $def as $key => &$value ) {
                     $value = Utilities::substituteVariables($value, $variableMap);
                 }
+                unset($value); // Sever the reference with the last element
             }
-            unset($value); // Sever the reference with the last element
             $newTable->addIndex($def);
         }
 
         foreach ( $triggerJson as $def ) {
-            foreach ( $def as $key => &$value ) {
-                if ( null !== $variableMap ) {
+            if ( null !== $variableMap ) {
+                foreach ( $def as $key => &$value ) {
                     $value = Utilities::substituteVariables($value, $variableMap);
                 }
+                unset($value); // Sever the reference with the last element
             }
-            unset($value); // Sever the reference with the last element
             $newTable->addTrigger($def);
         }
 
         return $newTable;
 
     }  // copyAndApplyVariables()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see Entity::__set()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function __set($property, $value)
+    {
+        // If we are not setting a property that is a special case, just call the main setter
+        $specialCaseProperties = array('aggregation_unit', 'query');
+
+        if ( ! in_array($property, $specialCaseProperties) ) {
+            parent::__set($property, $value);
+            return;
+        }
+
+        // Verify values prior to doing anything with them
+
+        $value = $this->filterAndVerifyValue($property, $value);
+
+        // Handle special cases.
+
+        switch ($property) {
+            case 'aggregation_unit':
+                parent::__set($property, $value);
+                // When setting the aggregation unit, update the table name to include it
+                $this->name = $this->table_prefix . $value;
+                break;
+
+            case 'query':
+                $this->properties[$property] = null;
+                if ( null !== $value ) {
+                    $query = ( is_object($value) && $value instanceof Query
+                               ? $value
+                               : new Query($value, $this->systemQuoteChar, $this->logger) );
+                    $this->properties[$property] = $query;
+                }
+                break;
+
+            default:
+                break;
+        }  // switch($property)
+
+    }  // __set()
 }  // class AggregationTable

@@ -1,10 +1,9 @@
 <?php
 /* ==========================================================================================
- * Class for managing tables in the data warehouse.  Table and column/index/trigger names are fully
- * escaped to support special characters. Functionality is provided for:
+ * Class for managing tables in the data warehouse.  Table and column/index/trigger names
+ * are fully escaped to support special characters. Functionality is provided for:
  *
  * 1. Creating table structure by parsing a JSON file
- *    - Both succinct (array-based) and verbose (object-based) definition formats are supported
  * 2. Discovering table structure from an existing MySQL database
  * 3. Comparing an existing (parsed) table definition with a discovered table and determining the
  *    proper actions needed to bring the existing table into line with the definition
@@ -12,28 +11,25 @@
  * 5. Generating an ALTER TABLE and DROP/CREATE TIGGER statements
  * 6. Generating a JSON representation of the table.
  *
- * The Table class makes use of the following classes that implement the iTableItem interface:
- *
+ * The Table class makes use of the following classes:
  * - Column
  * - Index
  * - Trigger
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
- * @date 2015-10-29
+ * @date 2017-04-28
  * ==========================================================================================
  */
 
 namespace ETL\DbModel;
 
 use ETL\DataEndpoint\iRdbmsEndpoint;
-use \Log;
-use \stdClass;
+use Log;
+use stdClass;
 
-class Table extends aNamedEntity
+class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlterableEntity
 {
-    // Optional filename to the definition file
-    protected $filename = null;
-
+    /*
     // Optional table comment
     protected $comment = null;
 
@@ -48,47 +44,43 @@ class Table extends aNamedEntity
 
     // Associative array where the keys are trigger names and the values are Trigger objects
     protected $triggers = array();
+    */
+
+    // Properties required by this class. These will be merged with other required
+    // properties up the call chain. See @Entity::$requiredProperties
+    private $localRequiredProperties = array(
+        'columns'
+    );
+
+    // Properties provided by this class. These will be merged with other properties up
+    // the call chain. See @Entity::$properties
+    private $localProperties = array(
+        // Optional table comment
+        'comment'  => null,
+
+        // Optional table engine
+        'engine'   => null,
+
+        // Associative array where the keys are column names and the values are Column objects
+        'columns'  => array(),
+
+        // Associative array where the keys are index names and the values are Index objects
+        'indexes'  => array(),
+
+        // Associative array where the keys are trigger names and the values are Trigger objects
+        'triggers' => array(),
+    );
 
     /* ------------------------------------------------------------------------------------------
-     * Construct a table object from a JSON definition file or a definition object. The definition
-     * must contain, at a minimum, name and columns properties.
-     *
-     * @param $config Mixed Either a filename for the JSON definition file or an object containing the
-     *   table definition
-     *
-     * @throw Exception If the argument is not a string or instance of stdClass
-     * @throw Exception If the table definition was incomplete
+     * @see iEntity::__construct()
      * ------------------------------------------------------------------------------------------
      */
 
     public function __construct($config, $systemQuoteChar = null, Log $logger = null)
     {
-        parent::__construct($systemQuoteChar, $logger);
-
-        // If an object was passed in of stdClass assume it is the table definition, otherwise assume it
-        // is a filename and parse it. I am intentionally not storing the config as a property so we
-        // don't need to carry it around if there are many of these objects.
-
-        if ( ! is_object($config) && is_string($config) ) {
-            $config = $this->parseJsonFile($config, "Table Definition");
-        } elseif ( ! $config instanceof stdClass) {
-            $msg = __CLASS__ . ": Argument is not a filename or object";
-            $this->logAndThrowException($msg);
-        }
-
-        // Support the table config directly or assigned to a "table_definition" key
-
-        if ( isset($config->table_definition) ) {
-            $config = $config->table_definition;
-        }
-
-        // Check for required properties
-
-        $requiredKeys = array("name", "columns");
-        $this->verifyRequiredConfigKeys($requiredKeys, $config);
-
-        $this->initialize($config);
-
+        // Property merging is performed first so the values can be used in the constructor
+        parent::mergeProperties($this->localRequiredProperties, $this->localProperties);
+        parent::__construct($config, $systemQuoteChar, $logger);
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -96,6 +88,68 @@ class Table extends aNamedEntity
      * ------------------------------------------------------------------------------------------
      */
 
+    public function initialize(stdClass $config)
+    {
+        // The table object only cares about the table definition but there may be other configuration keys present. Only continue on with the table definition.
+
+        if ( isset($config->table_definition) ) {
+            parent::initialize($config->table_definition);
+        } else {
+            parent::initialize($config);
+        }
+
+    }  // initialize()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see Entity::filterAndVerifyValue()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function filterAndVerifyValue($property, $value)
+    {
+        $value = parent::filterAndVerifyValue($property, $value);
+
+        if ( null === $value ) {
+            return $value;
+        }
+
+        switch ( $property ) {
+            case 'columns':
+            case 'indexes':
+            case 'triggers':
+                // Note that we are only checking that the value is an array here and not
+                // the array elements. That must come later.
+
+                if ( ! is_array($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s must be an array, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
+
+            case 'comment':
+            case 'engine':
+                if ( ! is_string($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be a string, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
+
+            default:
+                break;
+        }  // switch ( $property )
+
+        return $value;
+
+    }  // filterAndVerifyValue()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see Entity::initialize()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    /*
     public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
@@ -159,11 +213,14 @@ class Table extends aNamedEntity
         $this->initialized = true;
 
     }  // initialize()
+    */
 
     /* ------------------------------------------------------------------------------------------
-     * Verify the table. This includes ensuring any index colums match column names.
+     * Verify the table by checking that any columns referenced in the indexes are present
+     * in the column definitions.
      *
-     * @return true on success
+     * @see iEntity::verify()
+     *
      * @throws Exception If there are errors during validation
      * ------------------------------------------------------------------------------------------
      */
@@ -174,15 +231,16 @@ class Table extends aNamedEntity
 
         $columnNames = $this->getColumnNames();
 
-        foreach ( $this->getIndexes() as $index ) {
-            $indexColumns = $index->getColumnNames();
-            $missingColumnNames = array_diff($indexColumns, $columnNames);
+        foreach ( $this->indexes as $index ) {
+            $missingColumnNames = array_diff($index->columns, $columnNames);
             if ( 0 != count($missingColumnNames) ) {
-                $msg = "Columns in index '" . $index->getName() . "' not found in table definition: " .
-                    implode(", ", $missingColumnNames);
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException(
+                    sprintf("Columns in index '%s' not found in table definition: %s", $index->name, implode(", ", $missingColumnNames))
+                );
             }
-        }  // foreach ( $this->getIndexes() as $index )
+        }  // foreach ( $this->indexes as $index )
+
+        return true;
 
     }  // verify()
 
@@ -201,6 +259,169 @@ class Table extends aNamedEntity
      * ------------------------------------------------------------------------------------------
      */
 
+    /* ------------------------------------------------------------------------------------------
+     * Discover a Table using the database information schema and populate this object
+     * with the result. When creating a Table to be discovered, pass a NULL $config
+     * object to the constructor.
+     *
+     * @param string $source The name of the table to discover
+     * @param iRdbmsEndpoint $endpoint The DataEndpoint used to connect to the database
+     *   (provides schema)
+     *
+     * @see iDiscoverable::discover()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function discover($source)
+    {
+        if ( 2 != func_num_args() ) {
+            $this->logAndThrowException(
+                sprintf('%s expected 2 arguments, got %d', __FUNCTION__, func_num_args())
+            );
+        }
+
+        $endpoint = func_get_arg(1);
+
+        if ( ! $endpoint instanceof iRdbmsEndpoint ) {
+            $this->logAndThrowException(
+                sprintf(
+                    '%s expected object implementing iRdbmsEndpoint, got %s',
+                    __FUNCTION__,
+                    ( is_object($endpoint) ? get_class($endpoint) : gettype($endpoint) )
+                )
+            );
+        }
+
+        $this->resetPropertyValues();
+
+        $schemaName = null;
+        $qualifiedTableName = null;
+        $systemQuoteChar = $endpoint->getSystemQuoteChar();
+
+        // If a schema was specified in the table name use it, otherwise use the default schema
+
+        if ( false === strpos($source, ".") ) {
+            $schemaName = $endpoint->getSchema();
+            $qualifiedTableName = sprintf('%s.%s', $schemaName, $source);
+        } else {
+            $qualifiedTableName = $source;
+            list($schemaName, $source) = explode(".", $source);
+        }
+
+        $params = array(':schema'    => $schemaName,
+                        ':tablename' => $source);
+
+        $this->logger->debug("Discover table '$qualifiedTableName'");
+
+        // Query table properties
+
+        $sql = "SELECT
+engine, table_comment as comment
+FROM information_schema.tables
+WHERE table_schema = :schema
+AND table_name = :tablename";
+
+        try {
+            $result = $endpoint->getHandle()->query($sql, $params);
+            if ( count($result) > 1 ) {
+                $this->logAndThrowException("Multiple rows returned for table '$qualifiedTableName'");
+            }
+
+            // The table did not exist, return false
+
+            if ( 0 == count($result) ) {
+                return false;
+            }
+
+        } catch (Exception $e) {
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName': " . $e->getMessage());
+        }
+
+        $row = array_shift($result);
+
+        $this->name = $source;
+        $this->schema = $schemaName;
+        $this->engine = $row['engine'];
+        $this->comment = $row['comment'];
+
+        // Query columns. Querying for the default needs some explaining. The information schema stores
+        // the default as null unless one was specifically provided so we need some logic to get things
+        // into the shape we want.
+
+        // SMG: We should do a better job of detecting equivalent columns. For example "int unsigned" is
+        // equivalent to "int(10) unsigned".
+
+        $sql = "SELECT
+column_name as name, column_type as type, is_nullable as nullable,
+column_default as " . $endpoint->quoteSystemIdentifier("default") . ",
+IF('' = extra, NULL, extra) as extra,
+IF('' = column_comment, NULL, column_comment) as " . $endpoint->quoteSystemIdentifier("comment") . "
+FROM information_schema.columns
+WHERE table_schema = :schema
+AND table_name = :tablename
+ORDER BY ordinal_position ASC";
+
+        try {
+            $result = $endpoint->getHandle()->query($sql, $params);
+            if ( 0 == count($result) ) {
+                $this->logAndThrowException("No columns returned for table '$qualifiedTableName'");
+            }
+        } catch (Exception $e) {
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName' columns: " . $e->getMessage());
+        }
+
+        foreach ( $result as $row ) {
+            $this->addColumn((object) $row);
+        }
+
+        // Query indexes.
+
+        $sql = "SELECT
+index_name as name, index_type as " . $endpoint->quoteSystemIdentifier("type") . ", (non_unique = 0) as is_unique,
+GROUP_CONCAT(column_name ORDER BY seq_in_index ASC) as columns
+FROM information_schema.statistics
+WHERE table_schema = :schema
+AND table_name = :tablename
+GROUP BY index_name
+ORDER BY index_name ASC";
+
+        try {
+            $result = $endpoint->getHandle()->query($sql, $params);
+        } catch (Exception $e) {
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName' indexes: " . $e->getMessage());
+        }
+
+        foreach ( $result as $row ) {
+            $row['columns'] = explode(",", $row['columns']);
+            $this->addIndex((object) $row);
+        }
+
+        // Query triggers
+
+        $sql = "SELECT
+trigger_name as name, action_timing as time, event_manipulation as event,
+event_object_schema as " . $endpoint->quoteSystemIdentifier("schema") . ", event_object_table as " . $endpoint->quoteSystemIdentifier("table") . ", definer,
+action_statement as body
+FROM information_schema.triggers
+WHERE event_object_schema = :schema
+and event_object_table = :tablename
+ORDER BY trigger_name ASC";
+
+        try {
+            $result = $endpoint->getHandle()->query($sql, $params);
+        } catch (Exception $e) {
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName' triggers: " . $e->getMessage());
+        }
+
+        foreach ( $result as $row ) {
+            $this->addTrigger((object) $row);
+        }
+
+        return true;
+
+    }  // discover()
+
+    /*
     public static function discover(
         $tableName,
         iRdbmsEndpoint $endpoint,
@@ -242,8 +463,7 @@ AND table_name = :tablename";
         try {
             $result = $endpoint->getHandle()->query($sql, $params);
             if ( count($result) > 1 ) {
-                $msg = "Multiple rows returned for table";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Multiple rows returned for table '$qualifiedTableName'");
 
             }
 
@@ -254,19 +474,20 @@ AND table_name = :tablename";
             }
 
         } catch (Exception $e) {
-            $msg = "Error discovering table '$qualifiedTableName': " . $e->getMessage();
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName': " . $e->getMessage());
         }
 
         $row = array_shift($result);
 
-        $definition = array('name'    => $tableName,
-                            'schema'  => $schemaName,
-                            'engine'  => $row['engine'],
-                            'columns' => array(),
-                            'comment' => $row['comment'] );
+        $definition = (object) array(
+            'name'    => $tableName,
+            'schema'  => $schemaName,
+            'engine'  => $row['engine'],
+            'columns' => array(),
+            'comment' => $row['comment']
+        );
 
-        $newTable = new Table((object) $definition, $systemQuoteChar, $logger);
+        $newTable = new Table($definition, $systemQuoteChar, $logger);
 
         // Query columns. Querying for the default needs some explaining. The information schema stores
         // the default as null unless one was specifically provided so we need some logic to get things
@@ -288,12 +509,10 @@ ORDER BY ordinal_position ASC";
         try {
             $result = $endpoint->getHandle()->query($sql, $params);
             if ( 0 == count($result) ) {
-                $msg = "No columns returned";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("No columns returned for table '$qualifiedTableName'");
             }
         } catch (Exception $e) {
-            $msg = "Error discovering table '$qualifiedTableName': " . $e->getMessage();
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName' columns: " . $e->getMessage());
         }
 
         foreach ( $result as $row ) {
@@ -314,8 +533,7 @@ ORDER BY index_name ASC";
         try {
             $result = $endpoint->getHandle()->query($sql, $params);
         } catch (Exception $e) {
-            $msg = "Error discovering table '$qualifiedTableName': " . $e->getMessage();
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName' indexes: " . $e->getMessage());
         }
 
         foreach ( $result as $row ) {
@@ -337,8 +555,7 @@ ORDER BY trigger_name ASC";
         try {
             $result = $endpoint->getHandle()->query($sql, $params);
         } catch (Exception $e) {
-            $msg = "Error discovering table '$qualifiedTableName': " . $e->getMessage();
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName' triggers: " . $e->getMessage());
         }
 
         foreach ( $result as $row ) {
@@ -348,100 +565,40 @@ ORDER BY trigger_name ASC";
         return $newTable;
 
     }  // discover()
-
-    /* ------------------------------------------------------------------------------------------
-     * In addition to the table schema, set the schema on any triggers if they do not have one set.
-     * Since a table's schema is typically set after the table is constructed, entities that can
-     * maintain their own schema also need to be updated.
-     *
-     * @see aNamedEntity::setSchema()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function setSchema($schema)
-    {
-        parent::setSchema($schema);
-
-        foreach ( $this->triggers as $trigger ) {
-            if ( null === $trigger->getSchema() ) {
-                $trigger->setSchema($schema);
-            }
-        }
-
-        return $this;
-
-    }  // setSchema()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The engine for this table
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getEngine()
-    {
-        return $this->engine;
-    }  // getEngine()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The comment for this table
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getComment()
-    {
-        return $this->comment;
-    }  // geComment()
+    */
 
     /* ------------------------------------------------------------------------------------------
      * Add a column to this table.
      *
-     * @param $definition An array or object containing the column definition, or an instantiated
-     *   Column object to add
-     * @param $overwriteDuplicates true to allow overwriting of duplicate column names. If false, throw
+     * @param $config An object containing the column definition, or a Column object to add
+     * @param $overwriteDuplicates TRUE to allow overwriting of duplicate column names. If false, throw
      * an exception if a duplicate column is added.
      *
      * @return This object to support method chaining.
      *
-     * @throw Exception if the new item does not implement the iTableItem interface
-     * @throw Exception if the new item has the same name as an existing item
+     * @throw Exception if the new item has the same name as an existing item and
+     *   overwrite is not TRUE
      * ------------------------------------------------------------------------------------------
      */
 
-    public function addColumn($definition, $overwriteDuplicates = false)
+    public function addColumn($config, $overwriteDuplicates = false)
     {
-        $item = ( $definition instanceof Column ? $definition : new Column($definition, $this->getSystemQuoteChar()) );
+        $item = ( is_object($config) && $config instanceof Column
+                  ? $config
+                  : new Column($config, $this->systemQuoteChar, $this->logger) );
 
-        if ( ! ($item instanceof iTableItem) ) {
-            $msg = "Column does not implement interface iTableItem";
-            $this->logAndThrowException($msg);
-        }
-
-        $name = $item->getName();
-
-        if ( array_key_exists($name, $this->columns) && ! $overwriteDuplicates ) {
+        if ( array_key_exists($item->name, $this->columns) && ! $overwriteDuplicates ) {
             $this->logAndThrowException(
-                "Cannot add duplicate column '$name'",
+                sprintf("Cannot add duplicate column '%s'", $item->name),
                 array('log_level' => PEAR_LOG_WARNING)
             );
         }
 
-        $this->columns[ $name ] = $item;
+        $this->properties['columns'][$item->name] = $item;
 
         return $this;
 
     }  // addColumn()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of column objects.
-     *
-     * @return An array of Column objects.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getColumns()
-    {
-        return $this->columns;
-    }  // getColumns()
 
     /* ------------------------------------------------------------------------------------------
      * Get the list of column names.
@@ -460,73 +617,46 @@ ORDER BY trigger_name ASC";
      *
      * @param $name The column to retrieve.
      *
-     * @return The Column object with the specified name, or false if none exists.
+     * @return The Column object with the specified name or FALSE if the trigger does not exist
      * ------------------------------------------------------------------------------------------
      */
 
     public function getColumn($name)
     {
-        return ( array_key_exists($name, $this->columns) ? $this->columns[$name] : false );
+        return ( array_key_exists($name, $this->columns) ? $this->properties['columns'][$name] : false );
     }  // getColumn()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all columns from this Table.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteColumns()
-    {
-        $this->columns = array();
-        return $this;
-    }  // deleteColumns()
 
     /* ------------------------------------------------------------------------------------------
      * Add an index to this table.
      *
-     * @param $definition An array or object containing the index definition, or an instantiated
-     *   Index object to add
+     * @param $config An object containing the column definition, or a Column object to add
+     * @param $overwriteDuplicates TRUE to allow overwriting of duplicate column names. If false, throw
+     * an exception if a duplicate column is added.
      *
      * @return This object to support method chaining.
      *
-     * @throw Exception if the new item does not implement the iTableItem interface
+     * @throw Exception if the new item has the same name as an existing item and
+     *   overwrite is not TRUE
      * ------------------------------------------------------------------------------------------
      */
 
-    public function addIndex($definition)
+    public function addIndex($config, $overwriteDuplicates = false)
     {
-        $item = ( $definition instanceof Index ? $definition : new Index($definition, $this->getSystemQuoteChar()) );
+        $item = ( is_object($config) && $config instanceof Index
+                  ? $config
+                  : new Index($config, $this->systemQuoteChar, $this->logger) );
 
-        if ( ! ($item instanceof iTableItem) ) {
-            $msg = "Index does not implement interface iTableItem";
-            $this->logAndThrowException($msg);
+        if ( array_key_exists($item->name, $this->indexes) && ! $overwriteDuplicates ) {
+            $this->logAndThrowException(
+                sprintf("Cannot add duplicate index '%s'", $item->name)
+            );
         }
 
-        $name = $item->getName();
-
-        if ( array_key_exists($name, $this->indexes) ) {
-            $msg = "Cannot add duplicate index '$name'";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->indexes[ $name ] = $item;
+        $this->properties['indexes'][$item->name] = $item;
 
         return $this;
 
     }  // addIndex()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of index objects.
-     *
-     * @return An array of Index objects.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getIndexes()
-    {
-        return $this->indexes;
-    }  // getIndexes()
 
     /* ------------------------------------------------------------------------------------------
      * Get the list of column names.
@@ -545,66 +675,47 @@ ORDER BY trigger_name ASC";
      *
      * @param $name The name of the index to retrieve.
      *
-     * @return The Index object with the specified name.
+     * @return The Index object with the specified name or FALSE if the trigger does not exist
      * ------------------------------------------------------------------------------------------
      */
 
     public function getIndex($name)
     {
-        return ( array_key_exists($name, $this->indexes) ? $this->indexes[$name] : false );
+        return ( array_key_exists($name, $this->indexes) ? $this->properties['indexes'][$name] : false );
     }  // getIndex()
-
-    /* ------------------------------------------------------------------------------------------
-     * Remove all indexes from this Table.
-     *
-     * @return This object to support method chaining.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function deleteIndexes()
-    {
-        $this->indexes = array();
-        return $this;
-    }  // deleteIndexes()
 
     /* ------------------------------------------------------------------------------------------
      * Add a trigger to this table.
      *
-     * @param $definition An array or object containing the trigger definition, or an instantiated
-     *   Trigger object to add
+     * @param $config An object containing the column definition, or a Column object to add
+     * @param $overwriteDuplicates TRUE to allow overwriting of duplicate column names. If false, throw
+     * an exception if a duplicate column is added.
      *
      * @return This object to support method chaining.
      *
-     * @throw Exception if the new item does not implement the iTableItem interface
+     * @throw Exception if the new item has the same name as an existing item and
+     *   overwrite is not TRUE
      * ------------------------------------------------------------------------------------------
      */
 
-    public function addTrigger($definition)
+    public function addTrigger($config, $overwriteDuplicates = false)
     {
-        $item = ( $definition instanceof Trigger ? $definition : new Trigger($definition, $this->getSystemQuoteChar()) );
 
-        if ( ! ($item instanceof iTableItem) ) {
-            $msg = "Trigger does not implement interface iTableItem";
-            $this->logAndThrowException($msg);
+        $item = ( is_object($config) && $config instanceof Trigger
+                  ? $config
+                  : new Trigger($config, $this->systemQuoteChar, $this->logger) );
+
+        if ( array_key_exists($item->name, $this->triggers) && ! $overwriteDuplicates ) {
+            $this->logAndThrowException(
+                sprintf("Cannot add duplicate trigger '%s'", $item->name)
+            );
         }
 
-        $this->triggers[ $item->getName() ] = $item;
+        $this->properties['triggers'][$item->name] = $item;
 
         return $this;
 
     }  // addTrigger()
-
-    /* ------------------------------------------------------------------------------------------
-     * Get the list of trigger objects.
-     *
-     * @return An array of Trigger objects.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getTriggers()
-    {
-        return $this->triggers;
-    }  // getTriggers()
 
     /* ------------------------------------------------------------------------------------------
      * Get the list of trigger names.
@@ -623,42 +734,23 @@ ORDER BY trigger_name ASC";
      *
      * @param $name The trigger to retrieve.
      *
-     * @return The Trigger object with the specified name.
+     * @return The Trigger object with the specified name or FALSE if the trigger does not exist
      * ------------------------------------------------------------------------------------------
      */
 
     public function getTrigger($name)
     {
-        return ( array_key_exists($name, $this->triggers) ? $this->triggers[$name] : false );
+        return ( array_key_exists($name, $this->triggers) ? $this->properties['triggers'][$name] : false );
     }  // getTrigger()
 
     /* ------------------------------------------------------------------------------------------
-     * Remove all triggers from this Table.
-     *
-     * @return This object to support method chaining.
+     * @see iEntity::getSql()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function deleteTriggers()
+    public function getSql($includeSchema = true)
     {
-        $this->triggers = array();
-        return $this;
-    }  // deleteTriggers()
-
-    /* ------------------------------------------------------------------------------------------
-     * Generate an array containing all SQL statements or fragments required to create the item. Note
-     * that some items (such as triggers) may require multiple statements to alter them (e.g., DROP
-     * TRIGGER, CREATE TRIGGER).
-     *
-     * @param $includeSchema true to include the schema in the item name, if appropriate.
-     *
-     * @return An array comtaining the SQL required for creating this item.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getCreateSql($includeSchema = true)
-    {
-        if ( 0 == count($this->columns) ) {
+        if ( null === $this->name || 0 == count($this->columns) ) {
             return false;
         }
 
@@ -668,22 +760,22 @@ ORDER BY trigger_name ASC";
 
         $columnCreateList = array();
         foreach ( $this->columns as $name => $column ) {
-            $columnCreateList[$name] = $column->getCreateSql($includeSchema);
+            $columnCreateList[$name] = $column->getSql($includeSchema);
         }
 
         $indexCreateList = array();
         foreach ( $this->indexes as $name => $index ) {
-            $indexCreateList[$name] = $index->getCreateSql($includeSchema);
+            $indexCreateList[$name] = $index->getSql($includeSchema);
         }
 
         $triggerCreateList = array();
         foreach ( $this->triggers as $name => $trigger ) {
             // The table schema may have been set after the table was initially created. If the trigger
             // doesn't explicitly define a schema, default to the table's schema.
-            if ( null === $trigger->getSchema() ) {
-                $trigger->setSchema($this->getSchema());
+            if ( null === $trigger->schema ) {
+                $trigger->schema = $this->schema;
             }
-            $triggerCreateList[$name] = $trigger->getCreateSql($includeSchema);
+            $triggerCreateList[$name] = $trigger->getSql($includeSchema);
         }
 
         $tableName = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
@@ -703,23 +795,27 @@ ORDER BY trigger_name ASC";
 
         return $sqlList;
 
-    }  // getCreateSql()
+    }  // getSql()
 
     /* ------------------------------------------------------------------------------------------
-     * Generate an array containing all SQL statements or fragments required to alter the destination
-     * table to match this table. Note that some items (such as triggers) may require multiple
-     * statements to alter them (e.g., DROP TRIGGER, CREATE TRIGGER).
+     * @param Table $destination The desired Table definition
      *
-     * @param $destTable A Table object containing the defintion of the table as we would like it to
-     *   be.
-     * @param $includeSchema true to include the schema in the item name, if appropriate.
-     *
-     * @return An array comtaining the SQL required for altering this item.
+     * @see iAlterableEntity::getAlterSql()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getAlterSql(Table $destTable, $includeSchema = true)
+    public function getAlterSql($destination, $includeSchema = true)
     {
+        if ( ! $destination instanceof Table ) {
+            $this->logAndThrowException(
+                sprintf(
+                    '%s expected Table object, got %s',
+                    __FUNCTION__,
+                    ( is_object($destination) ? get_class($destination) : gettype($destination) )
+                )
+            );
+        }
+
         $alterList = array();
         $triggerList = array();
 
@@ -729,7 +825,7 @@ ORDER BY trigger_name ASC";
         // Process columns
 
         $currentColNames = $this->getColumnNames();
-        $destColNames = $destTable->getColumnNames();
+        $destColNames = $destination->getColumnNames();
 
         // Columns to be dropped, added, changed, or renamed
         $dropColNames = array_diff($currentColNames, $destColNames);
@@ -744,7 +840,7 @@ ORDER BY trigger_name ASC";
         // We can then construct the CHANGE COLUMN statement.
 
         foreach ( $addColNames as $index => $addName ) {
-            $hint = $destTable->getColumn($addName)->getHints();
+            $hint = $destination->getColumn($addName)->hints;
             if ( null !== $hint
                  && isset($hint->rename_from)
                  && false !== ( $hintIndex = array_search($hint->rename_from, $dropColNames) ) )
@@ -755,16 +851,16 @@ ORDER BY trigger_name ASC";
             }
         }  // foreach ( $addColNames as $addName )
 
-        if ( $this->engine != $destTable->getEngine() ) {
-            $alterList[] = "ENGINE = " . $destTable->getEngine();
+        if ( $this->engine != $destination->engine ) {
+            $alterList[] = "ENGINE = " . $destination->engine;
         }
 
-        if ( $this->comment != $destTable->getComment() ) {
-            $alterList[] = "COMMENT = '" . addslashes($destTable->getComment()) . "'";
+        if ( $this->comment != $destination->comment ) {
+            $alterList[] = "COMMENT = '" . addslashes($destination->comment) . "'";
         }
 
         foreach ( $addColNames as $name ) {
-            $alterList[] = "ADD COLUMN " . $destTable->getColumn($name)->getCreateSql($includeSchema);
+            $alterList[] = "ADD COLUMN " . $destination->getColumn($name)->getSql($includeSchema);
         }
 
         foreach ( $dropColNames as $name ) {
@@ -772,29 +868,29 @@ ORDER BY trigger_name ASC";
         }
 
         foreach ( $changeColNames as $name ) {
-            $destColumn = $destTable->getColumn($name);
+            $destColumn = $destination->getColumn($name);
             // Not all properties are required so a simple object comparison isn't possible
             if ( 0 == $destColumn->compare($this->getColumn($name)) ) {
                 continue;
             }
-            $alterList[] = "CHANGE COLUMN " . $destColumn->getName(true) . " " . $destColumn->getAlterSql($includeSchema);
+            $alterList[] = "CHANGE COLUMN " . $destColumn->getName(true) . " " . $destColumn->getSql($includeSchema);
         }
 
         foreach ( $renameColNames as $fromColumnName => $toColumnName ) {
-            $destColumn = $destTable->getColumn($toColumnName);
+            $destColumn = $destination->getColumn($toColumnName);
             $currentColumn = $this->getColumn($fromColumnName);
             // Not all properties are required so a simple object comparison isn't possible
             if ( 0 == $destColumn->compare($currentColumn) ) {
                 continue;
             }
-            $alterList[] = "CHANGE COLUMN " . $currentColumn->getName(true) . " " . $destColumn->getAlterSql($includeSchema);
+            $alterList[] = "CHANGE COLUMN " . $currentColumn->getName(true) . " " . $destColumn->getSql($includeSchema);
         }
 
         // --------------------------------------------------------------------------------
         // Processes indexes
 
         $currentIndexNames = $this->getIndexNames();
-        $destIndexNames = $destTable->getIndexNames();
+        $destIndexNames = $destination->getIndexNames();
 
         $dropIndexNames = array_diff($currentIndexNames, $destIndexNames);
         $addIndexNames = array_diff($destIndexNames, $currentIndexNames);
@@ -805,18 +901,18 @@ ORDER BY trigger_name ASC";
         }
 
         foreach ( $addIndexNames as $name ) {
-            $alterList[] = "ADD " . $destTable->getIndex($name)->getCreateSql($includeSchema);
+            $alterList[] = "ADD " . $destination->getIndex($name)->getSql($includeSchema);
         }
 
         // Altered indexes need to be dropped then added
         foreach ( $changeIndexNames as $name ) {
-            $destIndex = $destTable->getIndex($name);
+            $destIndex = $destination->getIndex($name);
             // Not all properties are required so a simple object comparison isn't possible
             if ( 0 == $destIndex->compare($this->getIndex($name)) ) {
                 continue;
             }
             $alterList[] = "DROP INDEX " . $destIndex->getName(true);
-            $alterList[] = "ADD " . $destIndex->getCreateSql($includeSchema);
+            $alterList[] = "ADD " . $destIndex->getSql($includeSchema);
         }
 
         // --------------------------------------------------------------------------------
@@ -824,10 +920,11 @@ ORDER BY trigger_name ASC";
 
         // The table schema may have been set after the table was initially created. If the trigger
         // doesn't explicitly define a schema, default to the table's schema.
+
         // if ( null === $trigger->getSchema() ) $trigger->setSchema($this->getSchema());
 
         $currentTriggerNames = $this->getTriggerNames();
-        $destTriggerNames = $destTable->getTriggerNames();
+        $destTriggerNames = $destination->getTriggerNames();
 
         $dropTriggerNames = array_diff($currentTriggerNames, $destTriggerNames);
         $addTriggerNames = array_diff($destTriggerNames, $currentTriggerNames);
@@ -842,7 +939,7 @@ ORDER BY trigger_name ASC";
         }
 
         foreach ( $changeTriggerNames as $name ) {
-            $destTrigger = $destTable->getTrigger($name);
+            $destTrigger = $destination->getTrigger($name);
             if ( 0 == $destTrigger->compare($this->getTrigger($name))) {
                 continue;
             }
@@ -850,11 +947,11 @@ ORDER BY trigger_name ASC";
             $triggerList[] = "DROP TRIGGER " .
                 ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
                 $this->quote($name) . ";";
-            $triggerList[] = $destTable->getTrigger($name)->getCreateSql($includeSchema);
+            $triggerList[] = $destination->getTrigger($name)->getSql($includeSchema);
         }
 
         foreach ( $addTriggerNames as $name ) {
-            $triggerList[] = $destTable->getTrigger($name)->getCreateSql($includeSchema);
+            $triggerList[] = $destination->getTrigger($name)->getSql($includeSchema);
         }
 
         // --------------------------------------------------------------------------------
@@ -882,63 +979,104 @@ ORDER BY trigger_name ASC";
 
     }  // getAlterSql()
 
+
     /* ------------------------------------------------------------------------------------------
-     * Generate an object representation of this item suitable for encoding into JSON.
-     *
-     * @param $includeSchema true to include the schema in the table definition
-     *
-     * @return An object representation for this item suitable for encoding into JSON.
+     * iEntity::toStdClass()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function toJsonObj($succinct = false, $includeSchema = false)
+    public function toStdClass()
     {
-        $data = new stdClass;
-        $data->name = $this->name;
-        if ( null !== $this->schema && $includeSchema ) {
-            $data->schema = $this->schema;
-        }
-        if ( null !== $this->engine ) {
-            $data->engine = $this->engine;
-        }
-        if ( null !== $this->comment && "" != $this->comment ) {
-            $data->comment = $this->comment;
-        }
+        $data = parent::toStdClass();
 
-        $columns = array();
-        foreach ( $this->columns as $column ) {
-            $columns[] = $column->toJsonObj($succinct);
-        }
-        $data->columns = $columns;
+        // When we add columns, indexes, and triggers to a table we add them as an
+        // associative array where the keys are the column names. When generating the
+        // config With string keys Entity::_toStdClass() will assume an object because the
+        // keys are strings so convert them to arrays here.
 
-        $indexes = array();
-        foreach ( $this->indexes as $index ) {
-            $indexes[] = $index->toJsonObj($succinct);
-        }
-        $data->indexes = $indexes;
-
-        $triggers = array();
-        foreach ( $this->triggers as $trigger ) {
-            $triggers[] = $trigger->toJsonObj($succinct);
-        }
-        $data->triggers = $triggers;
+        $data->columns = array_values((array) $data->columns);
+        $data->indexes = array_values((array) $data->indexes);
+        $data->triggers = array_values((array) $data->triggers);
 
         return $data;
 
-    }  // toJsonObj()
+    }  // toStdClass()
 
     /* ------------------------------------------------------------------------------------------
-     * Generate a JSON representation of this table.
-     *
-     * @param $succinct true if a succinct representation should be returned.
-     * @param $includeSchema true to include the schema in the table definition
-     *
-     * @return A JSON formatted string representing the tabe.
+     * @see Entity::__set()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function toJson($succinct = false, $includeSchema = false)
+    public function __set($property, $value)
     {
-        return json_encode($this->toJsonObj($succinct, $includeSchema));
-    }  // toJson()
+        // If we are not setting a property that is a special case, just call the main setter
+        $specialCaseProperties = array('columns', 'indexes', 'triggers');
+
+        if ( ! in_array($property, $specialCaseProperties) ) {
+            parent::__set($property, $value);
+            return;
+        }
+
+        // Verify values prior to doing anything with them
+
+        $value = $this->filterAndVerifyValue($property, $value);
+
+        // Handle special cases.
+
+        switch ($property) {
+            case 'columns':
+                $this->properties[$property] = array();
+                // Clear the array no matter what, that way NULL is handled properly.
+                if ( null !== $value ) {
+                    foreach ( $value as $item ) {
+                        $column = ( is_object($item) && $item instanceof Column
+                                    ? $item
+                                    : new Column($item, $this->systemQuoteChar, $this->logger) );
+                        $this->properties[$property][$column->name] = $column;
+                    }
+                }
+                break;
+
+            case 'indexes':
+                $this->properties[$property] = array();
+                // Clear the array no matter what, that way NULL is handled properly.
+                if ( null !== $value ) {
+                    foreach ( $value as $item ) {
+                        $index = ( is_object($item) && $item instanceof Index
+                                   ? $item
+                                   : new Index($item, $this->systemQuoteChar, $this->logger) );
+                        $this->properties[$property][$index->name] = $index;
+                    }
+                }
+                break;
+
+            case 'triggers':
+                $this->properties[$property] = array();
+                // Clear the array no matter what, that way NULL is handled properly.
+                if ( null !== $value ) {
+                    foreach ( $value as $item ) {
+                        if ( is_object($item) && $item instanceof Trigger ) {
+                            $this->properties[$property][$item->name] = $item;
+                        } else {
+                            if ( $item instanceof stdClass ) {
+                                // Default to the current table name and schema of the parent table.
+                                if ( ! isset($item->table) ) {
+                                    $item->table = $this->name;
+                                }
+                                if ( ! isset($item->schema) ) {
+                                    $item->schema = $this->schema;
+                                }
+                            }
+                            $trigger = new Trigger($item, $this->systemQuoteChar, $this->logger);
+                            $this->properties[$property][$trigger->name] = $trigger;
+                        }
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }  // switch($property)
+
+    }  // __set()
 }  // class Table

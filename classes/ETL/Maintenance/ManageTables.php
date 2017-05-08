@@ -103,8 +103,8 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
                 $this->destinationEndpoint->getSystemQuoteChar(),
                 $this->logger
             );
-            $etlTable->setSchema($this->destinationEndpoint->getSchema());
-            $this->etlDestinationTableList[$etlTable->getName()] = $etlTable;
+            $etlTable->schema = $this->destinationEndpoint->getSchema();
+            $this->etlDestinationTableList[$etlTable->name] = $etlTable;
         }
     }  // createDestinationTableObjects()
 

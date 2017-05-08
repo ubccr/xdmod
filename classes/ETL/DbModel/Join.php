@@ -1,193 +1,116 @@
 <?php
 /* ==========================================================================================
- * Class for managing table indexes in the data warehouse.  This is meant to be used as a component
- * of Table.
+ * Class for managing table join clauses in the data warehouse.  This is meant to be used
+ * as a component of Query.
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
- * @date 2015-10-29
+ * @date 2017-04-28
  *
- * @see Table
- * @see iTableItem
+ * @see Query
+ * @see iEntity
  * ==========================================================================================
  */
 
 namespace ETL\DbModel;
 
-use \Log;
-use \stdClass;
+use Log;
 
-class Join extends aNamedEntity implements iTableItem
+class Join extends SchemaEntity implements iEntity
 {
-    // NOTE: The join name is treated as the table.
+    // Properties required by this class. These will be merged with other required
+    // properties up the call chain. See @Entity::$requiredProperties
+    private $localRequiredProperties = array();
 
-    // Optional join type (e.g., "LEFT OUTER")
-    private $type = null;
-
-    // Alias for the joined table
-    private $alias = null;
-
-    // Optional ON clause
-    private $on = null;
+    // Properties provided by this class. These will be merged with other properties up
+    // the call chain. See @Entity::$properties
+    private $localProperties = array(
+        // Join type (e.g., "LEFT OUTER")
+        'type'  => null,
+        // Alias for the joined table
+        'alias' => null,
+        // Join ON clause (not needed for FROM)
+        'on'    => null
+    );
 
     /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::__construct()
+     * @see iEntity::__construct()
      * ------------------------------------------------------------------------------------------
      */
 
     public function __construct($config, $systemQuoteChar = null, Log $logger = null)
     {
-        parent::__construct($systemQuoteChar, $logger);
-
-        if ( ! is_object($config) ) {
-            $msg = __CLASS__ . ": Join definition must be an object";
-            $this->logAndThrowException($msg);
-        }
-
-        $requiredKeys = array("name");
-        $this->verifyRequiredConfigKeys($requiredKeys, $config);
-
-        $this->initialize($config);
-
+        // Property merging is performed first so the values can be used in the constructor
+        parent::mergeProperties($this->localRequiredProperties, $this->localProperties);
+        parent::__construct($config, $systemQuoteChar, $logger);
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see aNamedEntity::initialize()
+     * @see Entity::filterAndVerifyValueValue()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function initialize(stdClass $config, $force = false)
+    protected function filterAndVerifyValue($property, $value)
     {
-        if ( $this->initialized && ! $force ) {
-            return true;
+        $value = parent::filterAndVerifyValue($property, $value);
+
+        if ( null === $value ) {
+            return $value;
         }
 
-        foreach ( $config as $property => $value ) {
-            if ( $this->isComment($property) ) {
-                continue;
-            }
+        switch ( $property ) {
+            case 'type':
+            case 'alias':
+            case 'on':
+                if ( ! is_string($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be a string, '%s' given", $property, gettype($value))
+                    );
+                }
+                break;
 
-            if ( ! property_exists($this, $property) ) {
-                $msg = "Property '$property' in config is not supported";
-                $this->logAndThrowException($msg);
-            }
+            default:
+                break;
+        }  // switch ( $property )
 
-            $this->$property = $value;
-        }  // foreach ( $config as $property => $value )
-
-        $this->initialized = true;
-
-    }  // initialize()
+        return $value;
+    }  // filterAndVerifyValue()
 
     /* ------------------------------------------------------------------------------------------
-     * Return the optional ON clause for this join.
-     *
-     * @return The on clause, or null if no on clause was specified.
+     * @see iEntity::compare()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getType()
-    {
-        return $this->type;
-    }  // getType()
-
-    /* ------------------------------------------------------------------------------------------
-     * Return the optional alias for this table table.
-     *
-     * @return The alias, or null if no alias was specified.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getAlias()
-    {
-        return $this->alias;
-    }  // getAlias()
-
-    /* ------------------------------------------------------------------------------------------
-     * Return the optional ON clause for this join.
-     *
-     * @return The on clause, or null if no on clause was specified.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getOn()
-    {
-        return $this->on;
-    }  // getOn()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::compare()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function compare(iTableItem $cmp)
+    public function compare(iEntity $cmp)
     {
         if ( ! $cmp instanceof Join ) {
             return 1;
         }
 
-        return 0;
+        return ( $this == $cmp );
 
     }  // compare()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::getCreateSql()
+     * @see iEntity::getSql()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getCreateSql($includeSchema = false)
+    public function getSql($includeSchema = false)
     {
         $parts = array();
 
         // Allow subqueries to be included and not quoted
-        $quoteName = ( 0 !== strpos($this->getName(), '(') );
+        $quoteName = ( 0 !== strpos($this->name, '(') );
 
         $parts[] = ( null !== $this->schema && $includeSchema ? $this->getFullName() : $this->getName($quoteName) );
         if ( null !== $this->alias ) {
-            $parts[] = "AS {$this->alias}";
+            $parts[] = "AS " . $this->alias;
         }
         if ( null !== $this->on ) {
-            $parts[] = "ON {$this->on}";
+            $parts[] = "ON " . $this->on;
         }
 
         return implode(" ", $parts);
 
-    }  // getCreateSql()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::getAlterSql()
-     *
-     * There is no alter SQL for this item.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getAlterSql($includeSchema = false)
-    {
-        return "";
-    }  // getAlterSql()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::toJsonObj()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function toJsonObj($succinct = false)
-    {
-        $data = new stdClass;
-        $data->name = $this->name;
-        if ( null !== $this->schema ) {
-            $data->schema = $this->schema;
-        }
-        if ( null !== $this->type ) {
-            $data->type = $this->type;
-        }
-        if ( null !== $this->alias ) {
-            $data->alias = $this->alias;
-        }
-        if ( null !== $this->on ) {
-            $data->on = $this->on;
-        }
-
-        return $data;
-
-    }  // toJsonObj()
+    }  // getSql()
 }  // class Join

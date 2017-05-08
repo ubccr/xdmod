@@ -1,123 +1,99 @@
 <?php
 /* ==========================================================================================
- * Class for managing table columns in the data warehouse.  This is meant to be used as a component
- * of Table.
+ * Class for managing table columns in the data warehouse.  This is meant to be used as a
+ * component of Table.
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
- * @date 2015-10-29
+ * @date 2017-04-28
  *
  * @see Table
- * @see iTableItem
+ * @see iEntity
  * ==========================================================================================
  */
 
 namespace ETL\DbModel;
 
-use \Log;
-use \stdClass;
+use Log;
 
-class Column extends aNamedEntity implements iTableItem
+class Column extends NamedEntity implements iEntity
 {
-    // Column type (free-form string)
-    private $type = null;
+    // Properties required by this class. These will be merged with other required
+    // properties up the call chain. See @Entity::$requiredProperties
+    private $localRequiredProperties = array(
+        'type'
+    );
 
-    // true if the column is nullable
-    private $nullable = null;
-
-    // Column default
-    private $default = null;
-
-    // Column extra (see http://dev.mysql.com/doc/refman/5.7/en/create-table.html)
-    private $extra = null;
-
-    // Column comment
-    private $comment = null;
-
-    // Column hints objecct
-    private $hints = null;
+    // Properties provided by this class. These will be merged with other properties up
+    // the call chain. See @Entity::$properties
+    private $localProperties = array(
+        // Column type (free-form string)
+        'type'     => null,
+        // TRUE if the column is nullable
+        'nullable' => null,
+        // Column default
+        'default'  => null,
+         // Column extra (see http://dev.mysql.com/doc/refman/5.7/en/create-table.html)
+        'extra'    => null,
+        // The trigger definer for ACL purposes
+        'comment'   => null,
+        // Column hints object
+        'hints'     => null,
+        // The trigger definer for ACL purposes
+        'rename'    => null
+    );
 
     /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::__construct()
+     * @see iEntity::__construct()
      * ------------------------------------------------------------------------------------------
      */
 
     public function __construct($config, $systemQuoteChar = null, Log $logger = null)
     {
-        parent::__construct($systemQuoteChar, $logger);
-
-        if ( ! is_object($config) ) {
-            $msg = __CLASS__ . ": Column definition must be an object";
-            $this->logAndThrowException($msg);
-        }
-
-        $requiredKeys = array("name", "type");
-        $this->verifyRequiredConfigKeys($requiredKeys, $config);
-
-        $this->initialize($config);
-
+        // Property merging is performed first so the values can be used in the constructor
+        parent::mergeProperties($this->localRequiredProperties, $this->localProperties);
+        parent::__construct($config, $systemQuoteChar, $logger);
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see aNamedEntity::initialize()
+     * @see Entity::filterAndVerifyValue()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function initialize(stdClass $config, $force = false)
+    protected function filterAndVerifyValue($property, $value)
     {
-        if ( $this->initialized && ! $force ) {
-            return true;
+        $value = parent::filterAndVerifyValue($property, $value);
+
+        if ( null === $value ) {
+            return $value;
         }
 
-        foreach ( $config as $property => $value ) {
-            if ( $this->isComment($property) ) {
-                continue;
-            }
-
-            if ( ! property_exists($this, $property) ) {
-                $msg = "Property '$property' in config is not supported";
-                $this->logAndThrowException($msg);
-            }
-
-            $this->$property = $this->filterValue($property, $value);
-        }  // foreach ( $config as $property => $value )
-
-        $this->initialized = true;
-
-    }  // initialize()
-
-    /* ------------------------------------------------------------------------------------------
-     * Filter values based on the property. Some properties are true/false but may be specified as
-     * true, null, or YES depending on the input source. Other properties may be empty strings when
-     * discovered from the database which should be treated as null for our purposes
-     *
-     * @param $property The property we are filtering
-     * @param $value The value of the property as presented from the source (array, object, database)
-     *
-     * @return The filtered value
-     * ------------------------------------------------------------------------------------------
-     */
-
-    private function filterValue($property, $value)
-    {
         switch ( $property ) {
 
             case 'nullable':
-                // The config files use "NULL" and "NOT NULL" but the MySQL information schema uses "YES" and
-                // "NO"
-                $tmp = strtolower($value);
-                $tmp = ( "null" == $tmp ? true : $tmp );
+                $origValue = $value;
                 $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                if ( null === $value ) {
+                    $this->logAndThrowException(
+                        sprintf("%s must be a boolean, '%s' given", $property, gettype($origValue))
+                    );
+                }
                 break;
 
             case 'extra':
             case 'comment':
-                // If these values are empty they are considered null
-                $value = ( empty($value) ? null : $value );
+                if ( ! is_string($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be a string, '%s' given", $property, gettype($value))
+                    );
+                }
                 break;
 
             case 'type':
-                // MySQL stores the column type in lowercase
-                $value = strtolower($value);
+                if ( ! is_string($value) ) {
+                    $this->logAndThrowException(
+                        sprintf("%s name must be a string, '%s' given", $property, gettype($value))
+                    );
+                }
                 break;
 
             default:
@@ -125,75 +101,15 @@ class Column extends aNamedEntity implements iTableItem
         }  // switch ( $property )
 
         return $value;
-    }  // filterValue()
+
+    }  // filterAndVerifyValue()
 
     /* ------------------------------------------------------------------------------------------
-     * @return The type of this column
+     * @see iEntity::compare()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getType()
-    {
-        return $this->type;
-    }  // getType()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return true if this column is nullable, false if it is not, or null if the property is not
-     *   set.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function isNullable()
-    {
-        return $this->nullable;
-    }  // isNullable()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The default value for this column, or null if the property is not set.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getDefault()
-    {
-        return $this->default;
-    }  // getDefault()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The "extra" value for this column, or null if the property is not set.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getExtra()
-    {
-        return $this->extra;
-    }  // getExtra()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The comment for this column, or null if the property is not set.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getComment()
-    {
-        return $this->comment;
-    }  // getComment()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The hints for this column, or null if the property is not set.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getHints()
-    {
-        return $this->hints;
-    }  // getHints()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::compare()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function compare(iTableItem $cmp)
+    public function compare(iEntity $cmp)
     {
         if ( ! $cmp instanceof Column ) {
             return 1;
@@ -206,12 +122,8 @@ class Column extends aNamedEntity implements iTableItem
         // Note that the "enum" type will be handled in a special case below so only match types here
         // that are different and are not both enumerated.
 
-        if ( $this->getName() != $cmp->getName()
-             ||
-             ( $this->getType() != $cmp->getType()
-               && ! (0 === strpos($this->getType(), 'enum')
-                     && 0 === strpos($cmp->getType(), 'enum'))
-             )
+        if ( $this->name != $cmp->name
+             || ( $this->type != $cmp->type && ! (0 === strpos($this->type, 'enum') && 0 === strpos($cmp->type, 'enum')) )
            ) {
             return -1;
         }
@@ -219,15 +131,15 @@ class Column extends aNamedEntity implements iTableItem
         // Timestamp fields have special handling for default and extra fields.
         // See https://dev.mysql.com/doc/refman/5.5/en/timestamp-initialization.html
 
-        if ( "timestamp" == $this->getType() ) {
+        if ( "timestamp" == $this->type ) {
 
             // In the mode where a config file is compared to an existing database, the source is
             // considered the configuration while the destination is the database.
 
-            $srcDefault = $this->getDefault();
-            $destDefault = $cmp->getDefault();
-            $srcExtra = $this->getExtra();
-            $destExtra = $cmp->getExtra();
+            $srcDefault = $this->default;
+            $destDefault = $cmp->default;
+            $srcExtra = $this->extra;
+            $destExtra = $cmp->extra;
 
             // MySQL considers the following equivalent to CURRENT_TIMESTAMP and will convert them
             // automatically. Map them now so we don't get into an endless ALTER TABLE loop.
@@ -309,26 +221,24 @@ class Column extends aNamedEntity implements iTableItem
         } else {
             // The following properties do not have defaults set by the database and should be considered if
             // one of them is set.
-            if ( ( null !== $this->getDefault() || null !== $cmp->getDefault() )
-                 && $this->getDefault() != $cmp->getDefault() ) {
+            if ( ( null !== $this->default || null !== $cmp->default ) && $this->default != $cmp->default ) {
                 return -1;
             }
 
-            if ( ( null !== $this->getExtra() || null !== $cmp->getExtra() )
-                 && $this->getExtra() != $cmp->getExtra() ) {
+            if ( ( null !== $this->extra || null !== $cmp->extra ) && $this->extra != $cmp->extra ) {
                 return -1;
             }
-        } // else ( "timestamp" == $this->getType() )
+        } // else ( "timestamp" == $this->type )
 
         // The enum type may be formatted by the database to add spaces between parameter
         // values. Normalize the values before comparing.
 
-        if ( 0 === ($myStartPos = strpos($this->getType(), 'enum'))
-             && 0 === ($cmpStartPos = strpos($cmp->getType(), 'enum')) ) {
+        if ( 0 === ($myStartPos = strpos($this->type, 'enum'))
+             && 0 === ($cmpStartPos = strpos($cmp->type, 'enum')) ) {
             // Extract the enum value list and normalize it to include no spaces between values
-            $myType = substr($this->getType(), 4);
+            $myType = substr($this->type, 4);
             $myType = implode(',', preg_split('/\s*,\s*/', trim($myType, "() \t\n\r\0\x0B")));
-            $cmpType = substr($cmp->getType(), 4);
+            $cmpType = substr($cmp->type, 4);
             $cmpType = implode(',', preg_split('/\s*,\s*/', trim($cmpType, "() \t\n\r\0\x0B")));
             if ( $myType != $cmpType ) {
                 return -1;
@@ -338,16 +248,14 @@ class Column extends aNamedEntity implements iTableItem
         // The following properties have a default set by the database. If the property is not specified
         // a value will be provided when the database information schema is queried.
 
-        if ( ( null !== $this->isNullable() && null !== $cmp->isNullable() )
-             && $this->isNullable() != $cmp->isNullable() ) {
+        if ( ( null !== $this->nullable && null !== $cmp->nullable ) && $this->nullable != $cmp->nullable ) {
             return -1;
         }
 
         // The following properties do not have defaults set by the database and should be considered if
         // one of them is set.
 
-        if ( ( null !== $this->getComment() || null !== $cmp->getComment() )
-             && $this->getComment() != $cmp->getComment() ) {
+        if ( ( null !== $this->comment || null !== $cmp->comment ) && $this->comment != $cmp->comment ) {
             return -1;
         }
 
@@ -356,11 +264,11 @@ class Column extends aNamedEntity implements iTableItem
     }  // compare()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::getCreateSql()
+     * @see iEntity::getSql()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getCreateSql($includeSchema = false)
+    public function getSql($includeSchema = false)
     {
         // Name and type are required. null values are treated as not provided/specified.
 
@@ -417,61 +325,5 @@ class Column extends aNamedEntity implements iTableItem
 
         return implode(" ", $parts);
 
-    }  // getCreateSql()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::getAlterSql()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getAlterSql($includeSchema = false)
-    {
-        return $this->getCreateSql($includeSchema);
-    }  // getAlterSql()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see iTableItem::toJsonObj()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function toJsonObj($succinct = false)
-    {
-        if ( $succinct ) {
-
-            $data = array($this->name, $this->type);
-            if ( null !== $this->nullable ) {
-                $data[] = ( $this->nullable ? "null" : "not null" );
-            }
-            if ( null !== $this->default ) {
-                $data[] = $this->default;
-            }
-            if ( null !== $this->extra) {
-                $data[] = $this->extra;
-            }
-            if ( null !== $this->comment) {
-                $data[] = $this->comment;
-            }
-
-        } else {
-
-            $data = new stdClass;
-            $data->name = $this->name;
-            $data->type = $this->type;
-            if ( null !== $this->nullable ) {
-                $data->nullable = $this->nullable;
-            }
-            if ( null !== $this->default ) {
-                $data->default = $this->default;
-            }
-            if ( null !== $this->extra) {
-                $data->extra = $this->extra;
-            }
-            if ( null !== $this->comment) {
-                $data->comment = $this->comment;
-            }
-        }
-
-        return $data;
-
-    }  // toJsonObj()
+    }  // getSql()
 }  // class Column
