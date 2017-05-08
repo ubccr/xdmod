@@ -2,41 +2,43 @@
 title: Open XDMoD
 ---
 
-XDMoD (XD Metrics on Demand) is an NSF-funded open source tool designed
-to audit and facilitate the utilization of the XSEDE cyberinfrastructure
-by providing a wide range of metrics on XSEDE resources, including
-resource utilization, resource performance, and impact on scholarship
-and research.  The [XDMoD](https://xdmod.ccr.buffalo.edu/) framework is
-designed to meet the following objectives: (1) provide the user
-community with a tool to manage their allocations and optimize their
-resource utilization, (2) provide operational staff with the ability to
-monitor and tune resource performance, (3) provide management with a
-tool to monitor utilization, user base, and performance of resources,
-and (4) provide metrics to help measure scientific impact.  While
-initially focused on the XSEDE program, Open XDMoD has been created to
-be adaptable to any HPC environment.
+Open XDMoD is an open source tool to facilitate the management of high
+performance computing resources.   It is widely deployed at academic,
+industrial and governmental HPC centers.  Open XDMoD's management
+capabilities include monitoring standard metrics such as utilization,
+providing quality of service metrics designed to proactively identify
+underperforming system hardware and software, and reporting job level
+performance data for every job running on the HPC system without the
+need to recompile applications.  Open XDMoD is designed to meet the
+following objectives: (1) provide the user community with a tool to more
+effectively and efficiently use their allocations and optimize their use
+of HPC resources, (2) provide operational staff with the ability to
+monitor, diagnose, and tune system performance as well as measure the
+performance of all applications running on their system, (3) provide
+software developers with the ability to easily obtain detailed analysis
+of application performance to aid in optimizing code performance, (4)
+provide stakeholders with a diagnostic tool to facilitate HPC planning
+and analysis, and (5) provide metrics to help measure scientific impact.
+In addition, analyses of the operational characteristics of the HPC
+environment can be carried out at different levels of granularity,
+including job, user, or on a system-wide basis.
 
-The framework includes a computationally lightweight application kernel
-auditing system that utilizes performance kernels chosen from both
-low-level benchmarks and actual scientific and engineering applications
-to measure overall system performance from the user’s perspective.  This
-allows continuous resource monitoring to measure all aspects of system
-performance including file-system, processor, and memory performance,
-and network latency and bandwidth.  Current and past utilization
-metrics, coupled with application kernel-based performance analysis, can
-be used to help guide future cyberinfrastructure investment decisions,
-plan system upgrades, tune machine performance, improve user job
-throughput, and facilitate routine system operation and maintenance.
+The Open XDMoD portal provides a rich set of features accessible through
+an intuitive graphical interface, which is tailored to the role of the
+user.  Metrics provided include: number of jobs, CPUs consumed, wait
+time, and wall time, with minimum, maximum and the average of these
+metrics, in addition to many others.  Metrics are organized by a
+customizable hierarchy appropriate for your organization.
+
+A version of Open XDMoD, namely [XDMoD](https://xdmod.ccr.buffalo.edu/),
+was developed to monitor the NSF supported portfolio of supercomputers
+that fall under the [XSEDE](https://www.xsede.org/) program.
 
 This work was sponsored by NSF under grant numbers
-[ACI 1025159][nsf-1025159] and [ACI 1445806][nsf-1445806] for the
-development of technology audit service for XSEDE.
+[ACI 1025159][nsf-1025159] and [ACI 1445806][nsf-1445806].
 
 [nsf-1025159]: http://nsf.gov/awardsearch/showAward?AWD_ID=1025159
 [nsf-1445806]: http://nsf.gov/awardsearch/showAward?AWD_ID=1445806
-
-**NOTE**: Not all of the XDMoD features mentioned above are currently
-available in Open XDMoD.
 
 For more information, questions, or feedback send email to
 `ccr-xdmod-help` at `buffalo.edu`.
