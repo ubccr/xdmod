@@ -84,14 +84,16 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $table->verify();
 
         // SQL with no schema
-        $generated = array_shift($table->getSql(false));
+        $generated = $table->getSql(false);
+        $generated = array_shift($generated);
         $expected = "CREATE TABLE IF NOT EXISTS `table_no_schema` (
   `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment'
 );";
         $this->assertEquals($expected, $generated);
 
         // SQL with schema
-        $generated = array_shift($table->getSql());
+        $generated = $table->getSql();
+        $generated = array_shift($generated);
         $expected = "CREATE TABLE IF NOT EXISTS `my_schema`.`table_no_schema` (
   `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment'
 );";
@@ -285,7 +287,8 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $config = json_decode(file_get_contents($file));
         $table = new AggregationTable($config, '`', $this->logger);
         $table->aggregation_unit = $aggregationUnit;
-        $generated = array_shift($table->getSql());
+        $generated = $table->getSql();
+        $generated = array_shift($generated);
 
         // Process variables present in the SQL
         $variableMap = array(
@@ -384,7 +387,8 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         // Generate the stdclass and pass it back to generate the same table
         $obj = $table->toStdClass();
         $newTable = new Table($obj, '`', $this->logger);
-        $generated = array_shift($newTable->getSql());
+        $generated = $newTable->getSql();
+        $generated = array_shift($generated);
 
         $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def.sql'));
         $this->assertEquals($expected, $generated);
