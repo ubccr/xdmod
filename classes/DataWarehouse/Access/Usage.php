@@ -466,6 +466,7 @@ class Usage extends Common
             $usageShowGradient = \xd_utilities\array_get($this->request, 'show_gradient', 'y');
             $usageShowGradient = $usageShowGradient === 'true' || $usageShowGradient === 'y';
             $thumbnailRequested = \xd_utilities\array_get($this->request, 'thumbnail', 'n') === 'y';
+            $showTitle = \xd_utilities\array_get($this->request, 'show_title', 'y');
 
             // Generate the chart settings that will be returned with each chart.
             $usageChartSettings = array(
@@ -543,10 +544,6 @@ class Usage extends Common
                 // from this adapter, the chart's subtitle is placed in the title.
                 $usageChartSubtitle = $usageSubtitle !== null ? $usageSubtitle : $meChart['title']['text'];
 
-                // Only include the subtitle on the chart if the chart is not a
-                // thumbnail.
-                $meChart['subtitle']['text'] = $thumbnailRequested ? '' : $usageChartSubtitle;
-
                 // Generate the title and short title of this chart.
                 $usageChartShortTitle = $meRequestMetric->getLabel();
                 if ($usageTitle !== null) {
@@ -558,18 +555,39 @@ class Usage extends Common
                     }
                 }
 
-                // If a thumbnail was requested, do not use an in-chart title.
+                // If a thumbnail was requested, do not use an in-chart title or subtitle.
                 // Otherwise, use one.
                 if ($thumbnailRequested) {
                     $meChart['title']['text'] = '';
+                    $meChart['subtitle']['text'] = '';
                 } else {
                     // If a title was provided, display that. Otherwise, use the
                     // generated title.
                     $meChart['title']['text'] = $usageChartTitle;
+                    $meChart['subtitle']['text'] = $usageChartSubtitle;
                 }
 
                 // Set the title style.
                 $meChart['title']['style'] = $usageTitleStyle;
+
+                // If the "Show Title" checkbox on the Export Dialog has no been ticked,
+                // do not show a chart title. However, the Metric Explorer promotes the
+                // subtitle to the title if it exists and the title is not shown so mimic
+                // this behavior for consistency. See HighChart2::setChartTitleSubtitle()
+
+                if ( 'n' == $showTitle ) {
+                    // The subtitle text is empty for thumbnails but above it is set to
+                    // the value of the 'subtitle' parameter or the chart title if the
+                    // parameter isn't present. Keep this check in here in case that
+                    // changes.
+
+                    if ( isset($meChart['subtitle']['text']) && '' != $meChart['subtitle']['text'] ) {
+                        $meChart['title']['text'] = $meChart['subtitle']['text'];
+                        $meChart['subtitle']['text'] = '';
+                    } else {
+                        $meChart['title']['text'] = '';
+                    }
+                }
 
                 // Generate the expected IDs for the chart.
                 $usageMetric = $meRequest['data_series_unencoded'][0]['metric'];
