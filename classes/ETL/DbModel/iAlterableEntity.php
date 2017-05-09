@@ -32,5 +32,4 @@ interface iAlterableEntity
      */
 
     public function getAlterSql($destination, $includeSchema = true);
-
 }  // interface iAlterableEntity

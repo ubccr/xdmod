@@ -32,5 +32,4 @@ interface iDiscoverableEntity
      */
 
     public function discover($source);
-
 }  // interface iDiscoverableEntity
