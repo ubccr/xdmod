@@ -341,6 +341,7 @@ class Entity extends Loggable
      * ------------------------------------------------------------------------------------------
      */
 
+    // @codingStandardsIgnoreLine
     private function _toStdClass($value)
     {
         // Note that an empty stdClass will be treated as an array and must be overriden

@@ -30,10 +30,11 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
         $conf = array(
+            'db' => false,
             'mail' => false,
             'consoleLogLevel' => Log::WARNING
         );
-        $this->logger = Log::factory('DWI', $conf);
+        $this->logger = Log::factory('PHPUnit', $conf);
     }
 
     /**
