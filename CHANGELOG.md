@@ -1,7 +1,7 @@
 Open XDMoD Change Log
 =====================
 
-2017-04-?? v6.6.0
+2017-05-11 v6.6.0
 -----------------
 
 - Features
@@ -10,7 +10,8 @@ Open XDMoD Change Log
           ([\#60](https://github.com/ubccr/xdmod/pull/60))
           - Categories have taken the place of realms in the user interface
         - Improved support for browser client assets provided by modules
-          ([\#82](https://github.com/ubccr/xdmod/pull/82))
+          ([\#82](https://github.com/ubccr/xdmod/pull/82),
+           [\#113](https://github.com/ubccr/xdmod/pull/113))
         - Improved upgrade messaging
           ([\#86](https://github.com/ubccr/xdmod/pull/86))
     - ETLv2
@@ -34,9 +35,6 @@ Open XDMoD Change Log
            [\#92](https://github.com/ubccr/xdmod/pull/92))
 - Bug Fixes
     - General
-        - Fixed Metric Explorer's Y-axis context menu disappearing after
-          changing between linear and log scales
-          ([\#12](https://github.com/ubccr/xdmod/pull/12))
         - Fixed warning that could appear when using federated authentication
           ([\#19](https://github.com/ubccr/xdmod/pull/19))
         - Fixed unnecessary rounding in processor count statistics
@@ -52,6 +50,22 @@ Open XDMoD Change Log
           ([\#74](https://github.com/ubccr/xdmod/pull/74))
         - Fixed REST API throwing non-standard errors
           ([\#87](https://github.com/ubccr/xdmod/pull/87))
+        - Fixed display error with password reset form that occurred when using
+          federated authentication
+          ([\#108](https://github.com/ubccr/xdmod/pull/108))
+        - Fixed "Show chart title" option in Usage tab not working as expected
+          ([\#139](https://github.com/ubccr/xdmod/pull/139))
+    - Metric Explorer
+        - Fixed Y-axis context menu disappearing after
+          changing between linear and log scales
+          ([\#12](https://github.com/ubccr/xdmod/pull/12))
+        - Fixed typing certain characters causing chart options menu to close
+          when using Firefox
+          ([\#119](https://github.com/ubccr/xdmod/pull/119))
+        - Fixed chart errors not displaying if help graphic is active
+          ([\#121](https://github.com/ubccr/xdmod/pull/121))
+        - Fixed chart last modified time not updating
+          ([\#140](https://github.com/ubccr/xdmod/pull/140))
 - Miscellaneous
     - Performed work in anticipation of allocations/accounts data in Open XDMoD
       ([\#11](https://github.com/ubccr/xdmod/pull/11),
@@ -71,7 +85,8 @@ Open XDMoD Change Log
        [\#40](https://github.com/ubccr/xdmod/pull/40),
        [\#46](https://github.com/ubccr/xdmod/pull/46),
        [\#50](https://github.com/ubccr/xdmod/pull/50),
-       [\#66](https://github.com/ubccr/xdmod/pull/66))
+       [\#66](https://github.com/ubccr/xdmod/pull/66),
+       [\#98](https://github.com/ubccr/xdmod/pull/98))
     - Improved quality assurance
       ([\#21](https://github.com/ubccr/xdmod/pull/21),
        [\#27](https://github.com/ubccr/xdmod/pull/27),
@@ -89,7 +104,13 @@ Open XDMoD Change Log
       ([\#32](https://github.com/ubccr/xdmod/pull/32),
        [\#37](https://github.com/ubccr/xdmod/pull/37),
        [\#44](https://github.com/ubccr/xdmod/pull/44),
-       [\#71](https://github.com/ubccr/xdmod/pull/71))
+       [\#71](https://github.com/ubccr/xdmod/pull/71),
+       [\#103](https://github.com/ubccr/xdmod/pull/103),
+       [\#115](https://github.com/ubccr/xdmod/pull/115),
+       [\#123](https://github.com/ubccr/xdmod/pull/123),
+       [\#130](https://github.com/ubccr/xdmod/pull/130),
+       [\#132](https://github.com/ubccr/xdmod/pull/132),
+       [\#135](https://github.com/ubccr/xdmod/pull/135))
 
 2017-01-10 v6.5.0
 -----------------
