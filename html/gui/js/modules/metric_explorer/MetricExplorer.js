@@ -2285,6 +2285,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 index = this.queriesStore.indexOf(rec);
                 this.selectRowByIndex.call(this, index);
             } else {
+                // update the last-modified timestamp on the chart definition:
+                rec.set('ts', Date.now() / 1000);
                 this.queriesStore.save();
             }
             rec.stack.mark();
