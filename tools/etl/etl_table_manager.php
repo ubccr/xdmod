@@ -1,7 +1,5 @@
-
-
 #!/usr/bin/env php
-   <?php
+<?php
    /**
     * Perform ETL on federated resources.  This is different than the traditional ETL process in that
     * it uses a new mechanism for passing options to the ingesters and is (hopefully) more flexible.
