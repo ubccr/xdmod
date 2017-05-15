@@ -15,7 +15,7 @@ namespace ETL\Maintenance;
 
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
-use ETL\DbEntity\Table;
+use ETL\DbModel\Table;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\aRdbmsDestinationAction;
@@ -103,8 +103,8 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
                 $this->destinationEndpoint->getSystemQuoteChar(),
                 $this->logger
             );
-            $etlTable->setSchema($this->destinationEndpoint->getSchema());
-            $this->etlDestinationTableList[$etlTable->getName()] = $etlTable;
+            $etlTable->schema = $this->destinationEndpoint->getSchema();
+            $this->etlDestinationTableList[$etlTable->name] = $etlTable;
         }
     }  // createDestinationTableObjects()
 

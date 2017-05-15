@@ -13,7 +13,7 @@ namespace ETL;
 use Log;
 use Exception;
 use ETL\DataEndpoint\iDataEndpoint;
-use ETL\DbEntity\Query;
+use ETL\DbModel\Query;
 
 class EtlOverseerOptions extends Loggable
 {

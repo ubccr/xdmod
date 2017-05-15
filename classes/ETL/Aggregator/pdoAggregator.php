@@ -62,16 +62,16 @@ namespace ETL\Aggregator;
 use ETL\aOptions;
 use ETL\EtlOverseerOptions;
 use ETL\DataEndpoint\Mysql;
-use ETL\DbEntity\AggregationTable;
-use ETL\DbEntity\Query;
-use ETL\DbEntity\Table;
+use ETL\DbModel\AggregationTable;
+use ETL\DbModel\Query;
+use ETL\DbModel\Table;
 use ETL\Utilities;
 use ETL\Configuration\EtlConfiguration;
 
-use \Log;
-use \PDOException;
+use Log;
+use PDOException;
 use PDOStatement;
-use \PDO;
+use PDO;
 
 class pdoAggregator extends aAggregator
 {
@@ -106,8 +106,7 @@ class pdoAggregator extends aAggregator
      *
      * @param IngestorOptions $options Options specific to this Ingestor
      * @param EtlConfiguration $etlConfig Parsed configuration options for this ETL
-     * @param string $defaultTablePrefix Default table prefix as defined in the child class (e.g.,
-     *   "jobfact_by_")
+     * @param Log $logger PEAR Log object for system logging
      * ------------------------------------------------------------------------------------------
      */
 
@@ -208,14 +207,14 @@ class pdoAggregator extends aAggregator
         // but it doesn't matter because the naming will still be consistent.
 
         $columnNames = $this->etlDestinationTable->getColumnNames();
-        $missingColumnNames = array_diff($this->etlSourceQuery->getGroupBys(), $columnNames);
+        $missingColumnNames = array_diff($this->etlSourceQuery->groupby, $columnNames);
 
         if ( 0 != count($missingColumnNames) ) {
             $msg = "Columns in group by not found in table: " . implode(", ", $missingColumnNames);
             $this->logAndThrowException($msg);
         }
 
-        $missingColumnNames = array_diff(array_keys($this->etlSourceQuery->getRecords()), $columnNames);
+        $missingColumnNames = array_diff(array_keys($this->etlSourceQuery->records), $columnNames);
 
         if ( 0 != count($missingColumnNames) ) {
             $msg = "Columns in formulas not found in table: " . implode(", ", $missingColumnNames);
@@ -271,18 +270,18 @@ class pdoAggregator extends aAggregator
             $this->destinationEndpoint->getSystemQuoteChar(),
             $this->logger
         );
-        $this->etlDestinationTable->setSchema($this->destinationEndpoint->getSchema());
+        $this->etlDestinationTable->schema = $this->destinationEndpoint->getSchema();
 
         if ( isset($this->options->table_prefix) &&
-             $this->options->table_prefix != $this->etlDestinationTable->getTablePrefix() )
+             $this->options->table_prefix != $this->etlDestinationTable->table_prefix )
         {
             $msg =
                 "Overriding table prefix from " .
-                $this->etlDestinationTable->getTablePrefix()
+                $this->etlDestinationTable->table_prefix
                 . " to " .
                 $this->options->table_prefix;
             $this->logger->debug($msg);
-            $this->etlDestinationTable->setTablePrefix($this->options->table_prefix);
+            $this->etlDestinationTable->table_prefix = $this->options->table_prefix;
         }
 
         // Aggregation does not support multiple destination tables but we must still populate
@@ -302,7 +301,7 @@ class pdoAggregator extends aAggregator
     {
         // To support programmatic manipulation of the source Query object, save off the description
         // of the first join (from) table
-        $sourceJoins = $this->etlSourceQuery->getJoins();
+        $sourceJoins = $this->etlSourceQuery->joins;
         $this->etlSourceQueryOrigFromTable = array_shift($sourceJoins);
         $this->etlSourceQueryModified = false;
 
@@ -355,7 +354,7 @@ class pdoAggregator extends aAggregator
 
             $this->manageTable($substitutedEtlAggregationTable, $this->destinationEndpoint);
 
-            if ( $this->options->disable_keys && "myisam" == strtolower($etlTable->getEngine()) ) {
+            if ( $this->options->disable_keys && "myisam" == strtolower($etlTable->engine) ) {
                 $this->logger->info("Disable keys on $qualifiedDestTableName");
                 $sqlList[] = "ALTER TABLE $qualifiedDestTableName DISABLE KEYS";
             }
@@ -384,7 +383,7 @@ class pdoAggregator extends aAggregator
                 $sqlList[] = "OPTIMIZE TABLE $qualifiedDestTableName";
             }
 
-            if ( $this->options->disable_keys && "myisam" == strtolower($etlTable->getEngine()) ) {
+            if ( $this->options->disable_keys && "myisam" == strtolower($etlTable->engine) ) {
                 $sqlList[] = "ALTER TABLE $qualifiedDestTableName ENABLE KEYS";
             }
         }
@@ -463,7 +462,7 @@ class pdoAggregator extends aAggregator
 
         $firstTable = $this->etlSourceQueryOrigFromTable;
 
-        $tableName = $this->sourceEndpoint->quoteSystemIdentifier($firstTable->getName());
+        $tableName = $this->sourceEndpoint->quoteSystemIdentifier($firstTable->name);
 
         $aggregationPeriodQueryOptions = ( isset($this->parsedDefinitionFile->aggregation_period_query)
                                            ? $this->parsedDefinitionFile->aggregation_period_query
@@ -511,13 +510,14 @@ class pdoAggregator extends aAggregator
             );
 
             $this->logger->debug("Discover table $fromTable");
-            $firstTableDef = Table::discover($fromTable, $this->sourceEndpoint, null, $this->logger);
+
+            $firstTableDef = new Table(null, null, $this->logger);
 
             // If we are in dryrun mode the table may not have been created yet but we still want to
             // be able to display the generated queries so simply set the start and end day id
             // fields.
 
-            if ( false === $firstTableDef ) {
+            if ( false === $firstTableDef->discover($fromTable, $this->sourceEndpoint) ) {
                 if ( $this->getEtlOverseerOptions()->isDryrun() ) {
                     $startDayIdField = "start_day_id";
                     $endDayIdField = "end_day_id";
@@ -641,7 +641,7 @@ class pdoAggregator extends aAggregator
                 ),
                 'joins' => array(
                     (object) array(
-                        'name' => $firstTable->getName(),
+                        'name' => $firstTable->name,
                         'schema' => $this->sourceEndpoint->getSchema()
                     )
                 )
@@ -658,7 +658,7 @@ class pdoAggregator extends aAggregator
             $recordRangeQuery = new Query($query, $this->sourceEndpoint->getSystemQuoteChar());
             $this->getEtlOverseerOptions()->applyOverseerRestrictions($recordRangeQuery, $this->utilityEndpoint, $this);
 
-            $minMaxJoin = "( " . $recordRangeQuery->getSelectSql() . " ) record_ranges";
+            $minMaxJoin = "( " . $recordRangeQuery->getSql() . " ) record_ranges";
             $dateRangeRestrictionSql = "d.id BETWEEN record_ranges.start_period_id AND record_ranges.end_period_id";
 
         }  // else ( $this->getEtlOverseerOptions()->isForce() )
@@ -767,11 +767,11 @@ class pdoAggregator extends aAggregator
             // Remove the first join (from) and replace it with the temporary table that we are
             // going to create
 
-            $sourceJoins = $this->etlSourceQuery->getJoins();
+            $sourceJoins = $this->etlSourceQuery->joins;
             $firstJoin = array_shift($sourceJoins);
             $newFirstJoin = clone $firstJoin;
             $newFirstJoin->setName($tmpTableName);
-            $newFirstJoin->setSchema($this->sourceEndpoint->getSchema());
+            $newFirstJoin->schema = $this->sourceEndpoint->getSchema();
 
             $this->etlSourceQuery->deleteJoins();
             $this->etlSourceQuery->addJoin($newFirstJoin);
@@ -786,7 +786,7 @@ class pdoAggregator extends aAggregator
 
             // We are not optimizing but have previously, restore the original FROM clause
 
-            $sourceJoins = $this->etlSourceQuery->getJoins();
+            $sourceJoins = $this->etlSourceQuery->joins;
             array_shift($sourceJoins);
             $this->etlSourceQuery->deleteJoins();
             $this->etlSourceQuery->addJoin($this->etlSourceQueryOrigFromTable);
@@ -889,7 +889,7 @@ class pdoAggregator extends aAggregator
             $aggregationPeriodListOffset = 0;
             $done = false;
 
-            $sourceJoins = $this->etlSourceQuery->getJoins();
+            $sourceJoins = $this->etlSourceQuery->joins;
             $firstJoin = current($sourceJoins);
             $tmpTableAlias = $firstJoin->getAlias();
 
@@ -940,7 +940,7 @@ class pdoAggregator extends aAggregator
                 $origTableName =
                     $this->sourceEndpoint->getSchema(true)
                     . "."
-                    . $this->sourceEndpoint->quoteSystemIdentifier($this->etlSourceQueryOrigFromTable->getName());
+                    . $this->sourceEndpoint->quoteSystemIdentifier($this->etlSourceQueryOrigFromTable->name);
 
                 try {
                     // Use the where clause from the aggregation query to create the temporary table
@@ -1280,7 +1280,7 @@ class pdoAggregator extends aAggregator
 
         // *** Should this functionality be included in the Query itself? ***
 
-        $sourceRecords = $this->etlSourceQuery->getRecords();
+        $sourceRecords = $this->etlSourceQuery->records;
 
         $substitutedRecordNames = array();
         $duplicateRecords = array();
@@ -1307,18 +1307,18 @@ class pdoAggregator extends aAggregator
             }
         }
 
-        $this->selectSql = $this->etlSourceQuery->getSelectSql($includeSchema);
+        $this->selectSql = $this->etlSourceQuery->getSql($includeSchema);
 
         $this->insertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
             "("
-            . implode(",\n", array_keys($this->etlSourceQuery->getRecords()))
+            . implode(",\n", array_keys($this->etlSourceQuery->records))
             . ")\nVALUES\n("
-            . implode(",\n", Utilities::createPdoBindVarsFromArrayKeys($this->etlSourceQuery->getRecords()))
+            . implode(",\n", Utilities::createPdoBindVarsFromArrayKeys($this->etlSourceQuery->records))
             . ")";
 
         $this->optimizedInsertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
             "(" .
-            implode(",\n", array_keys($this->etlSourceQuery->getRecords()))
+            implode(",\n", array_keys($this->etlSourceQuery->records))
             . ")\n" .
             $this->selectSql;
 

@@ -120,7 +120,7 @@ abstract class aAggregator extends aRdbmsDestinationAction
                     // The aggregation unit must be set for the AggregationTable
 
                     foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
-                        $etlTable->setAggregationUnit($aggregationUnit);
+                        $etlTable->aggregation_unit = $aggregationUnit;
                     }
 
                     $this->variableMap['AGGREGATION_UNIT'] = $aggregationUnit;

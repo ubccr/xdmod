@@ -18,4 +18,11 @@
          stopOnSkipped="false"
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
          verbose="true">
+ <filter>
+        <blacklist>
+                <directory suffix=".php">/usr/share/pear</directory>
+                <directory suffix=".php">/usr/share/php</directory>
+                <directory suffix=".php">../../../../vendor</directory>
+       </blacklist>
+</filter>
 </phpunit>

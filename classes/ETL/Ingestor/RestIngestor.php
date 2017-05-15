@@ -16,7 +16,7 @@ use ETL\DataEndpoint\Rest;
 use ETL\DataEndpoint\aRdbmsEndpoint;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
-use ETL\DbEntity\Query;
+use ETL\DbModel\Query;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\Utilities;
@@ -256,7 +256,7 @@ class RestIngestor extends aIngestor implements iAction
 
         if ( null !== $this->etlSourceQuery ) {
 
-            $sql = $this->etlSourceQuery->getSelectSql();
+            $sql = $this->etlSourceQuery->getSql();
             if ( null !== $this->variableMap ) {
                 $sql = Utilities::substituteVariables(
                     $sql,
@@ -284,7 +284,7 @@ class RestIngestor extends aIngestor implements iAction
 
         $this->processParameters();
 
-        if ( "myisam" == strtolower($this->etlDestinationTable->getEngine()) ) {
+        if ( "myisam" == strtolower($this->etlDestinationTable->engine) ) {
             // Disable keys for faster inserts
             $qualifiedDestTableName = $this->etlDestinationTable->getFullName();
             $sqlList = array("ALTER TABLE $qualifiedDestTableName DISABLE KEYS");
@@ -302,7 +302,7 @@ class RestIngestor extends aIngestor implements iAction
 
     protected function performPostExecuteTasks($numRecordsProcessed)
     {
-        if ( "myisam" == strtolower($this->etlDestinationTable->getEngine()) ) {
+        if ( "myisam" == strtolower($this->etlDestinationTable->engine) ) {
             $qualifiedDestTableName = $this->etlDestinationTable->getFullName();
             $sqlList = array("ALTER TABLE $qualifiedDestTableName ENABLE KEYS");
             $this->executeSqlList($sqlList, $this->destinationEndpoint);
