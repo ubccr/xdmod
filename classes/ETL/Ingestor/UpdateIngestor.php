@@ -20,8 +20,7 @@ use ETL\aOptions;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 
-class UpdateIngestor extends aRdbmsDestinationAction
-implements iAction
+class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 {
     // Data parsed from the source JSON file or inline from the source_data definition
     protected $data = null;
@@ -47,50 +46,11 @@ implements iAction
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->etlOverseerOptions = $etlOptions;
-        }
-
-        $this->initialize();
-
-        parent::verify();
-
-        // The UpdateIngestor does not create the destination table so it must exist.
-
-        $tableName = $this->etlDestinationTable->getName();
-        $schema = $this->etlDestinationTable->getSchema();
-
-        if ( ! $this->destinationEndpoint->tableExists($tableName, $schema) ) {
-            $msg = "Destination table " . $this->etlDestinationTable->getFullName() . " must exist";
-            $this->logAndThrowException($msg);
-        }
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-
-    /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action. This should be called after the constructor and
-     * as part of the verification process.
-     *
-     * @throws Exception if any query data was not int the correct format.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
@@ -98,7 +58,7 @@ implements iAction
 
         $this->initialized = false;
 
-        parent::initialize();
+        parent::initialize($etlOverseerOptions);
 
         // This action only supports 1 destination table so use the first one and log a warning if
         // there are multiple.
@@ -141,7 +101,7 @@ implements iAction
             $msg = "'fields' key missing or not an array in 'source_data' block: " . $this->definitionFile;
             $this->logAndThrowException($msg);
         }
-        
+
         // 2. Create data & verify source. Data source is iteratable. Instantiate object based on columns and data.
         // 3. In execute()
         //    a. Construct prepared update statement
@@ -154,12 +114,12 @@ implements iAction
             $this->parsedDefinitionFile->update->set,
             $this->parsedDefinitionFile->update->where,
             $this->parsedDefinitionFile->source_data->fields
-            );
+        );
 
         $missingColumnNames = array_diff(
             array_unique($updateColumns),
             $this->etlDestinationTable->getColumnNames()
-            );
+        );
 
         if ( 0 != count($missingColumnNames) ) {
             $msg = "The following columns from the update configuration were not " .
@@ -169,19 +129,18 @@ implements iAction
         }
 
         // If the data is a string assume it is a filename, otherwise assume it is parsed JSON.
-        
+
         if ( is_string($this->parsedDefinitionFile->source_data->data) ) {
             $filename = $this->parsedDefinitionFile->source_data->data;
-            if ( 0 !== strpos($filename, "/") ) {
-                $filename = $this->options->paths->base_dir . "/$filename";
-            }
+            $filename = \xd_utilities\qualify_path($filename, $this->options->paths->base_dir);
+
             $this->logger->debug("Load data from '$filename'");
             $opt = new DataEndpointOptions(array('name' => "Configuration",
                                                  'path' => $filename,
                                                  'type' => "jsonfile"));
             $jsonFile = DataEndpoint::factory($opt, $this->logger);
             $this->data = $jsonFile->parse();
-        } else if ( is_array($this->parsedDefinitionFile->source_data->data) ) {
+        } elseif ( is_array($this->parsedDefinitionFile->source_data->data) ) {
             $this->data = $this->parsedDefinitionFile->source_data->data;
         } else {
             $msg = "Source data must be an inline array or a filename";
@@ -198,52 +157,89 @@ implements iAction
      * @see iAction::execute()
      * ------------------------------------------------------------------------------------------
      */
-  
-    public function execute(EtlOverseerOptions $etlOptions)
+
+    public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->etlOverseerOptions = $etlOptions;
         $numRecordsProcessed = 0;
         $numRecordsUpdated = 0;
 
         $time_start = microtime(true);
 
-        $this->verify($etlOptions);
+        $this->initialize($etlOverseerOptions);
+
+        // The UpdateIngestor does not create the destination table so it must exist.
+
+        $tableName = $this->etlDestinationTable->getName();
+        $schema = $this->etlDestinationTable->getSchema();
+
+        if ( ! $this->destinationEndpoint->tableExists($tableName, $schema) ) {
+            $msg = "Destination table " . $this->etlDestinationTable->getFullName() . " must exist";
+            if ( $this->getEtlOverseerOptions()->isDryrun() ) {
+                // In dry-run mode the table may not exist if a previous action in the pipeline created it
+                $this->logger->warning($msg);
+            } else {
+                $this->logAndThrowException($msg);
+            }
+        }
 
         // Note that the update ingestor does not manage or truncate tables.
 
-        $sql = "UPDATE " . $this->etlDestinationTable->getFullName() . " SET " .
-            implode(", ", array_map(function($s) { return "$s = ?"; }, $this->parsedDefinitionFile->update->set)) .
-            " WHERE " .
-            implode(" AND ", array_map(function($w) { return "$w = ?"; }, $this->parsedDefinitionFile->update->where));
-        
-        $this->logger->debug("Update query\n$sql"); 
-       
+        $sql = "UPDATE " . $this->etlDestinationTable->getFullName() . " SET "
+            . implode(
+                ", ",
+                array_map(
+                    function ($s) {
+                        return "$s = ?";
+                    },
+                    $this->parsedDefinitionFile->update->set
+                )
+            )
+            . " WHERE "
+            . implode(
+                " AND ",
+                array_map(
+                    function ($w) {
+                        return "$w = ?";
+                    },
+                    $this->parsedDefinitionFile->update->where
+                )
+            );
+
+        $this->logger->debug("Update query\n$sql");
+
         // The order and number of the fields must match the update statement
         $dataFields = array_merge($this->parsedDefinitionFile->update->set, $this->parsedDefinitionFile->update->where);
 
         // Set up the indexes that we will need in the correct order for each data record
         $fieldsToIndexes = array_flip($this->parsedDefinitionFile->source_data->fields);
         $dataIndexes = array_map(
-            function($field) use($fieldsToIndexes) { return $fieldsToIndexes[$field]; },
+            function ($field) use ($fieldsToIndexes) {
+                return $fieldsToIndexes[$field];
+            },
             $dataFields
-            );
-        
-        if ( ! $etlOptions->isDryrun() ) {
+        );
+
+        if ( ! $etlOverseerOptions->isDryrun() ) {
             try {
                 $updateStatement = $this->destinationHandle->prepare($sql);
-                
+
                 foreach ( $this->data as $record ) {
                     $row = array_map(
-                        function($index) use ($record) { return $record[$index]; },
+                        function ($index) use ($record) {
+                            return $record[$index];
+                        },
                         $dataIndexes
-                        );
+                    );
                     $updateStatement->execute($row);
                     $numRecordsUpdated += $updateStatement->rowCount();
                     $numRecordsProcessed++;
                 }
 
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($sql, $e, "Error updating " . $this->etlDestinationTable->getFullName());
+                $this->logAndThrowException(
+                    "Error updating " . $this->etlDestinationTable->getFullName(),
+                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                );
             }
         }
 
@@ -259,5 +255,4 @@ implements iAction
                                   'records_updated' => $numRecordsUpdated
                                   ));
     }  // execute()
-
 }  // class StructuredFileIngestor

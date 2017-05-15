@@ -1,0 +1,68 @@
+{
+    "table_definition": {
+        "name": "job_task_type",
+        "engine": "MyISAM",
+        "comment": "hpc, provisioning, boot, suspend, resume, etc.",
+        "columns": [
+            {
+                "name": "job_task_type_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "job_record_type_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null,
+                "comment": "Reference to record type for type-specific task events"
+            },
+            {
+                "name": "job_task_type",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Short version or abbrev"
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "description",
+                "type": "varchar(1024)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_job_record_type",
+                "columns": [
+                    "job_record_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "job_task_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    },
+
+    "#": "Define the mapping between the source value fields and the table columns.",
+    "destination_columns": ["job_task_type_id", "job_task_type", "display", "description"],
+    
+    "#": "Provide the raw source values.",
+    "source_values": [
+        [-1, "unknown",      "Unknown",           "Unknown" ],
+        [1,  "start",        "Job Start",         "Start of a job" ],
+        [2,  "end",          "Job End", "End of a job" ],
+        [3,  "intermediate", "Intermediate",   "Intermediate job reporting" ]
+    ]
+}

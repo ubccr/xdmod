@@ -38,38 +38,11 @@ abstract class aIngestor extends aRdbmsDestinationAction
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function verify(EtlOverseerOptions $etlOptions = null)
-    {
-
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->setEtlOverseerOptions($etlOptions);
-        }
-
-        $this->initialize();
-
-        parent::verify();
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-
-    /* ------------------------------------------------------------------------------------------
      * @see aAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
@@ -77,10 +50,7 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
         $this->initialized = false;
 
-        parent::initialize();
-
-        $this->variableMap['START_DATE'] = $this->etlOverseerOptions->getStartDate();
-        $this->variableMap['END_DATE'] = $this->etlOverseerOptions->getEndDate();
+        parent::initialize($etlOverseerOptions);
 
         $this->initialized = true;
 
@@ -93,15 +63,14 @@ abstract class aIngestor extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->setEtlOverseerOptions($etlOptions);
-        $inDryrunMode = $this->etlOverseerOptions->isDryrun();
-
-        $this->verify();
+        $inDryrunMode = $this->getEtlOverseerOptions()->isDryrun();
 
         $time_start = microtime(true);
         $totalRecordsProcessed = 0;
+
+        $this->initialize($etlOverseerOptions);
 
         // We could truncate tables after performPreExecuteTasks (where manageTables() is called),
         // but then if a table is truncated and modified the modification happens before the
@@ -113,19 +82,48 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
         if ( false !== $this->performPreExecuteTasks() ) {
 
-            foreach ( $etlOptions as $interval ) {
-                $this->logger->info("Process date interval (start: " .
-                                    $etlOptions->getCurrentStartDate() .
-                                    ", end: " .
-                                    $etlOptions->getCurrentEndDate() . ")");
+            // If this action supports chunking of the date range, use the chunked list
+            // otherwise use the entire date range.
 
-                $this->variableMap['START_DATE'] = $etlOptions->getCurrentStartDate();
-                $this->variableMap['END_DATE'] = $etlOptions->getCurrentEndDate();
+            if ( null !== $this->getEtlOverseerOptions()->getChunkSizeDays() && $this->supportDateRangeChunking ) {
+                $datePeriodChunkList = $etlOverseerOptions->getChunkedDatePeriods();
+                $this->logger->info("Breaking ETL period into " . count($datePeriodChunkList) . " chunks");
+            } else {
+                // Generate an array containing a single tuple. This may be (null, null)
+                // if no start/end date was provided.
+                $datePeriodChunkList = array(array( $this->currentStartDate, $this->currentEndDate ));
+            }
+
+            $numDateIntervals = count($datePeriodChunkList);
+            $intervalNum = 1;
+
+            foreach ( $datePeriodChunkList as $dateInterval ) {
+
+                // Set current start and end dates for use deeper down in the machinery.
+
+                $this->currentStartDate = $dateInterval[0];
+                $this->currentEndDate = $dateInterval[1];
+
+                $this->logger->info(
+                    "Process date interval ($intervalNum/$numDateIntervals) "
+                    . "(start: "
+                    . ( null === $this->currentStartDate ? "none" : $this->currentStartDate )
+                    . ", end: "
+                    . ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
+                    . ")"
+                );
+
+                $localVariableMap = array(
+                    'START_DATE' => $this->currentStartDate,
+                    'END_DATE' => $this->currentEndDate
+                );
+                $this->variableMap = array_merge($this->variableMap, $localVariableMap);
 
                 $numRecordsProcessed = $this->_execute();
                 $totalRecordsProcessed += $numRecordsProcessed;
+                $intervalNum++;
 
-            }  // foreach ( $etlOptions as $interval )
+            }  // foreach ( $datePeriodChunkList as $dateInterval )
 
             $this->performPostExecuteTasks($totalRecordsProcessed);
 
@@ -134,10 +132,12 @@ abstract class aIngestor extends aRdbmsDestinationAction
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $message = sprintf('%s: Rows Processed: %d records (Time Taken: %01.2f s)',
-                           get_class($this),
-                           $totalRecordsProcessed,
-                           $time);
+        $message = sprintf(
+            '%s: Rows Processed: %d records (Time Taken: %01.2f s)',
+            get_class($this),
+            $totalRecordsProcessed,
+            $time
+        );
         $this->logger->info($message);
 
         // NOTE: This is needed for the log summary.
@@ -185,5 +185,4 @@ abstract class aIngestor extends aRdbmsDestinationAction
      */
 
     abstract protected function _execute();
-
 }  // abstract class aIngestor

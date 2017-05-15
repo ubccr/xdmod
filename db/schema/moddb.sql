@@ -272,7 +272,6 @@ CREATE TABLE `Users` (
   `field_of_science` int(11) DEFAULT NULL,
   `token` varchar(32) DEFAULT NULL,
   `token_expiration` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `parent_user_id` int(11) NOT NULL,
   `user_type` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `person_id_idx` (`person_id`)

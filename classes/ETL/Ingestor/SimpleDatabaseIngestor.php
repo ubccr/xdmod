@@ -13,40 +13,28 @@ namespace ETL\Ingestor;
 use ETL\EtlOverseerOptions;
 use ETL\iAction;
 
-class SimpleDatabaseIngestor extends pdoIngestor
-implements iAction
+class SimpleDatabaseIngestor extends pdoIngestor implements iAction
 {
 
-    /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
-        if ( $this->isVerified() ) {
+        if ( $this->isInitialized() ) {
             return;
         }
 
-        $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->etlOverseerOptions = $etlOptions;
-        }
+        $this->initialized = false;
 
-        $this->initialize();
-
-        parent::verify();
+        parent::initialize($etlOverseerOptions);
 
         if ( ! isset($this->parsedDefinitionFile->source_table) ) {
-            $msg = "source_table not found in definition file";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("source_table not found in definition file");
         }
 
-        $this->verified = true;
+        $this->initialized = true;
 
         return true;
 
-    }  // verify()
+    }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
      * @see pdoIngestor::getSourceQueryString()
@@ -56,7 +44,7 @@ implements iAction
     public function getSourceQueryString()
     {
         $tableName = $this->parsedDefinitionFile->source_table;
-    
+
         $sourceTable = $this->sourceEndpoint->getSchema(true) . "." . $this->sourceEndpoint->quoteSystemIdentifier($tableName);
         $sourceColumnNames = $this->sourceEndpoint->getTableColumnNames($tableName);
 
@@ -65,7 +53,7 @@ implements iAction
         // in the source table.
 
         $optionalColumnNames = null;
-    
+
         if ( isset($this->parsedDefinitionFile->source_columns) ) {
             $optionalColumnNames = ( is_array($this->parsedDefinitionFile->source_columns)
                                      ? $this->parsedDefinitionFile->source_columns
@@ -85,7 +73,7 @@ implements iAction
                     $optionalColumnNames[] = "$src AS $dest";
                 }
             }
-      
+
         }  // if ( isset($this->options->columns) )
 
         // Copy all columns or a subset, as requested
@@ -93,11 +81,10 @@ implements iAction
         $columns = ( isset($this->parsedDefinitionFile->source_columns) ? $optionalColumnNames : $sourceColumnNames );
 
         $destColumnNames = array();
-    
+
         $sourceQuery = "SELECT " . implode(", ", $columns) . " FROM $sourceTable";
 
         return $sourceQuery;
 
     }  // getSourceQuery()
-
 }  // class SimpleDatabaseIngestor

@@ -27,6 +27,9 @@ abstract class aNamedEntity extends aEtlObject
 
     protected $systemQuoteChar = '`';
 
+    // Keys starting with this character are considered comments
+    const COMMENT_KEY = "#";
+
     /* ------------------------------------------------------------------------------------------
      * Construct a database entity object from a JSON definition file or a definition object.
      *
@@ -40,18 +43,6 @@ abstract class aNamedEntity extends aEtlObject
         parent::__construct($logger);
         $this->setSystemQuoteChar($systemQuoteChar);
     }  // __construct()
-
-    /* ------------------------------------------------------------------------------------------
-     * Initialize data for this item from a configuration object.
-     *
-     * @param $config A stdClass object representing the item
-     * @param $force Force a re-initialization even if the entity has previously been initialized
-     *
-     * @throw Exception If a property in the config file does not exist in the object.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    abstract protected function initialize(stdClass $config, $force = false);
 
     /* ------------------------------------------------------------------------------------------
      * Return the table name.
@@ -159,4 +150,17 @@ abstract class aNamedEntity extends aEtlObject
         return $this->systemQuoteChar . $identifier . $this->systemQuoteChar;
     }  // quote()
 
+    /* ------------------------------------------------------------------------------------------
+     * Identify commented out keys in JSON definition/specification files.
+     *
+     * @param $key The string to examine
+     *
+     * @return TRUE if the key is considered a comment, FALSE otherwise.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function isComment($key)
+    {
+        return ( 0 === strpos($key, self::COMMENT_KEY) );
+    }  // isComment()
 }  // abstract class aNamedEntity

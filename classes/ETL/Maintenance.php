@@ -64,7 +64,7 @@ class Maintenance
         if ( class_exists($className) ) {
             $action = new $className($options, $etlConfig, $logger);
         } else {
-            $msg = __CLASS__ . ": Error creating ingestor '{$options->name}', class '$className' not found";
+            $msg = __CLASS__ . ": Error creating action '{$options->name}', class '$className' not found";
             if ( null !== $logger ) {
                 $logger->err($msg);
             }

@@ -52,7 +52,7 @@ class Query extends aNamedEntity
 
     // A 2-element array containing the field names for start and end date/times. If present this
     // query support restricting the query to a particular date range.
-    protected $dateFields = null;
+    // protected $dateFields = null;
 
     // Group by fields
     protected $groupBys = array();
@@ -62,6 +62,9 @@ class Query extends aNamedEntity
 
     // Optional array of WHERE clauses
     protected $where = array();
+
+    // Optional array of ORDER BY fields
+    protected $orderBys = array();
 
     // Optional defined macros
     protected $macros = array();
@@ -93,7 +96,7 @@ class Query extends aNamedEntity
 
         if ( ! is_object($config) && is_string($config) ) {
             $config = $this->parseJsonFile($config, "Query Definition");
-        } else if ( ! $config instanceof stdClass) {
+        } elseif ( ! $config instanceof stdClass) {
             $msg = __CLASS__ . ": Argument is not a filename or object";
             $this->logAndThrowException($msg);
         }
@@ -145,7 +148,7 @@ class Query extends aNamedEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
             return true;
@@ -158,23 +161,31 @@ class Query extends aNamedEntity
 
         if ( ! isset($config->records) ) {
             $errorMsg[] = "records property not found";
-        } else if ( ! is_object($config->records) ) {
+        } elseif ( ! is_object($config->records) ) {
             $errorMsg[] = "records property must be an object";
         }
 
         if ( ! isset($config->joins) ) {
             $errorMsg[] = "joins property not found";
-        } else if ( ! is_array($config->joins) ) {
+        } elseif ( ! is_array($config->joins) ) {
             $errorMsg[] = "joins property must be an array";
-        } else if ( 0 == count($config->joins) ) {
+        } elseif ( 0 == count($config->joins) ) {
             $errorMsg[] = "joins property must include as least one element";
         }
 
         if ( isset($config->groupby) ) {
             if ( ! is_array($config->groupby) ) {
                 $errorMsg[] = "groupby property must be an array";
-            } else if ( 0 == count($config->groupby) ) {
+            } elseif ( 0 == count($config->groupby) ) {
                 $errorMsg[] = "groupby property must include as least one element";
+            }
+        }
+
+        if ( isset($config->orderby) ) {
+            if ( ! is_array($config->orderby) ) {
+                $errorMsg[] = "orderby property must be an array";
+            } elseif ( 0 == count($config->orderby) ) {
+                $errorMsg[] = "orderby property must include as least one element";
             }
         }
 
@@ -227,6 +238,12 @@ class Query extends aNamedEntity
             }
         }
 
+        if ( isset($config->orderby) ) {
+            foreach ( $config->orderby as $orderby ) {
+                $this->addOrderBy($orderby);
+            }
+        }
+
         if ( isset($config->macros) ) {
             foreach ( $config->macros as $macro ) {
                 $this->addMacro($macro);
@@ -269,7 +286,7 @@ class Query extends aNamedEntity
         if ( null === $formula || "" === $formula ) {
             $msg = "Empty formula for column '$columnName' '$formula'";
             $this->logAndThrowException($msg);
-        } else if ( array_key_exists($columnName, $this->records) ) {
+        } elseif ( array_key_exists($columnName, $this->records) ) {
             $msg = "Column '$columnName' already has a formula specified";
             $this->logAndThrowException($msg);
         }
@@ -379,9 +396,54 @@ class Query extends aNamedEntity
 
     public function deleteGroupBys()
     {
-        $this->groupbys = array();
+        $this->groupBys = array();
         return $this;
     }  // deleteGroupBys()
+
+    /* ------------------------------------------------------------------------------------------
+     * Add a order by clause to this query.
+     *
+     * @param $orderBy An array containing the group by column names.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function addOrderBy($orderBy)
+    {
+        if ( empty($orderBy) || ! is_string($orderBy) ) {
+            $msg = "Cannot add an empty order by";
+            $this->logAndThrowException($msg);
+        }
+
+        $this->orderBys[] = $orderBy;
+        return $this;
+    }  // addOrderBys()
+
+    /* ------------------------------------------------------------------------------------------
+     * Get the list of order by columns.
+     *
+     * @return An array of group by column names.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getOrderBys()
+    {
+        return $this->orderBys;
+    }  // getOrderBys()
+
+    /* ------------------------------------------------------------------------------------------
+     * Remove all order bys from this query.
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function deleteOrderBys()
+    {
+        $this->orderBys = array();
+        return $this;
+    }  // deleteOrderBys()
 
     /* ------------------------------------------------------------------------------------------
      * Add a join clause for this query.
@@ -577,7 +639,7 @@ class Query extends aNamedEntity
         if ( ! is_string($restriction) || "" == $restriction ) {
             $msg = "Overseer restriction key must be a non-empty string";
             $this->logAndThrowException($msg);
-        } else if ( ! is_string($template) || "" == $template ) {
+        } elseif ( ! is_string($template) || "" == $template ) {
             $msg = "Overseer restriction template must be a non-empty string";
             $this->logAndThrowException($msg);
         }
@@ -633,7 +695,7 @@ class Query extends aNamedEntity
         if ( ! is_string($restriction) || "" == $restriction ) {
             $msg = "Overseer restriction key must be a non-empty string";
             $this->logAndThrowException($msg);
-        } else if ( ! is_string($value) || "" == $value ) {
+        } elseif ( ! is_string($value) || "" == $value ) {
             $msg = "Overseer restriction template must be a non-empty string";
             $this->logAndThrowException($msg);
         }
@@ -683,7 +745,7 @@ class Query extends aNamedEntity
         $columnList = array();
         $thisObj = $this;
         foreach ( $this->records as $columnName => $formula ) {
-            if ( "#" == $columnName ) {
+            if ( $this->isComment($columnName) ) {
                 continue;
             }
 
@@ -700,13 +762,28 @@ class Query extends aNamedEntity
         $joinList = array();
         $joinList[] = "FROM " . $this->joins[0]->getCreateSql($includeSchema);
 
-        for ( $i = 1; $i < count($this->joins); $i++ ) {
+        for ($i = 1; $i < count($this->joins); $i++) {
             if ( null === $this->joins[$i]->getOn() ) {
                 $msg = "Join clause for table '" . $this->joins[$i]->getName() . "' does not provide ON condition";
             }
+
+            // When we move to explictly marking the FROM clause this functionality may be moved
+            // into the Join class
+
             $joinType = $this->joins[$i]->getType();
-            $joinList[] = ( null !== $joinType ? "$joinType " : "" ) . "JOIN " . $this->joins[$i]->getCreateSql($includeSchema);
-        }
+
+            // Handle various join types. STRAIGHT_JOIN is a mysql enhancement.
+
+            $joinStr = "JOIN";
+
+            if ( "STRAIGHT" == $joinType ) {
+                $joinStr = "STRAIGHT_JOIN";
+            } elseif (null !== $joinType) {
+                $joinStr = $joinType . " JOIN";
+            }
+
+            $joinList[] = $joinStr . " " . $this->joins[$i]->getCreateSql($includeSchema);
+        }  // for ( $i = 1; $i < count($this->joins); $i++ )
 
         // Construct the SELECT statement
 
@@ -717,12 +794,13 @@ class Query extends aNamedEntity
             implode(",\n", $columnList) . "\n" .
             implode("\n", $joinList) . "\n" .
             ( count($whereConditions) > 0 ? "WHERE " . implode("\nAND ", $whereConditions) . "\n" : "" ) .
-            ( count($this->groupBys) > 0 ? "GROUP BY " . implode(", ", $this->groupBys) : "" );
+            ( count($this->groupBys) > 0 ? "GROUP BY " . implode(", ", $this->groupBys) : "" ) .
+            ( count($this->orderBys) > 0 ? "ORDER BY " . implode(", ", $this->orderBys) : "" );
 
         // If any macros have been defined, process those macros now. Since macros can contain variables
         // themselves, we will process the variables later.
 
-        if ( count($this->macros) > 0 ) {
+        if (count($this->macros) > 0) {
             foreach ( $this->macros as $macro ) {
                 $sql = Utilities::processMacro($sql, $macro);
             }
@@ -751,6 +829,9 @@ class Query extends aNamedEntity
         if ( count($this->groupBys) > 0 ) {
             $data->groupbys = $this->groupBys;
         }
+        if ( count($this->orderBys) > 0 ) {
+            $data->orderbys = $this->orderBys;
+        }
         if ( count($this->where) > 0 ) {
             $data->where = $this->where;
         }
@@ -776,5 +857,4 @@ class Query extends aNamedEntity
     {
         return json_encode($this->toJsonObj($succinct, $includeSchema));
     }  // toJson()
-
 }  // class Query

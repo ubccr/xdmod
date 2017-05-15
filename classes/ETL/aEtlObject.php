@@ -23,9 +23,6 @@ abstract class aEtlObject extends Loggable
     // All ELT objects can be named
     protected $name = null;
 
-    // Flag indicating whether or not verification was performed on this action.
-    protected $verified = false;
-
     // Flag indicating whether or not initialization was performed on this action.
     protected $initialized = false;
 
@@ -70,16 +67,6 @@ abstract class aEtlObject extends Loggable
     }  // setName()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::isVerified()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function isVerified()
-    {
-        return $this->verified;
-    }  // isVerified()
-
-    /* ------------------------------------------------------------------------------------------
      * @return TRUE if initialization has been performed on this action.
      * ------------------------------------------------------------------------------------------
      */
@@ -98,14 +85,13 @@ abstract class aEtlObject extends Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify()
+    public function initialize()
     {
         if ( null === $this->name ) {
-            $msg = "Name is not set";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Name is not set");
         }
         return true;
-    }  // verify()
+    }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
      * Verify that the required keys are present in the object (e.g., configuration object or
@@ -174,5 +160,4 @@ abstract class aEtlObject extends Loggable
     {
         return $this->name . " (" . get_class($this) . ")";
     }  // __toString()
-
 }  // abstract class aEtlObject

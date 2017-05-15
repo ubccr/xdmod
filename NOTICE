@@ -150,3 +150,8 @@ Name:    EmailValidator
 License: MIT
 Author:  Eduardo Gulias Davis
 Link:    https://github.com/egulias/EmailValidator
+
+Name:    PDOOCI
+License: GPL 2.0
+Author:  Eustaquio Rangel
+Link:    https://github.com/taq/pdooci

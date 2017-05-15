@@ -34,7 +34,7 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
             ->setConstructorArgs(array($this->db))
-            ->setMethods(array('insertRow'))
+            ->setMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
 
         $shredder
@@ -42,7 +42,13 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
             ->method('insertRow')
             ->with($row);
 
+        $shredder
+            ->method('getResourceConfig')
+            ->willReturn(array());
+
         $shredder->setLogger(\Log::singleton('null'));
+
+        $shredder->setResource('testresource');
 
         $shredder->shredLine($line);
     }
@@ -91,7 +97,7 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
                     'job_id' => '4103947',
                     'job_id_raw' => '4103947',
                     'job_array_index' => -1,
-                    'cluster_name' => 'ub-hpc',
+                    'cluster_name' => 'testresource',
                     'partition_name' => 'general-compute',
                     'account_name' => 'anon',
                     'group_name' => 'anon',
@@ -122,7 +128,7 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
                     'job_id' => '4107166',
                     'job_id_raw' => '4107166',
                     'job_array_index' => -1,
-                    'cluster_name' => 'ub-hpc',
+                    'cluster_name' => 'testresource',
                     'partition_name' => 'general-compute',
                     'account_name' => 'dspumpkins',
                     'group_name' => 'dspumpkins',
@@ -153,7 +159,7 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
                     'job_id' => '4107219',
                     'job_id_raw' => '4107219',
                     'job_array_index' => -1,
-                    'cluster_name' => 'ub-hpc',
+                    'cluster_name' => 'testresource',
                     'partition_name' => 'general-compute',
                     'account_name' => 'anonacct',
                     'group_name' => 'anongroup',
@@ -184,7 +190,7 @@ class SlurmShredderTest extends \PHPUnit_Framework_TestCase
                     'job_id' => '5692623',
                     'job_id_raw' => '5692623',
                     'job_array_index' => -1,
-                    'cluster_name' => 'ub-hpc',
+                    'cluster_name' => 'testresource',
                     'partition_name' => '',
                     'account_name' => 'ccr',
                     'group_name' => 'na',

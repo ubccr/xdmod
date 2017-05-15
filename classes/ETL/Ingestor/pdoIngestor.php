@@ -1,32 +1,33 @@
 <?php
 /* ==========================================================================================
- * Ingestor using the PDO driver. The pdoIngestor is responsible for handling the bulk of
- * the operations necessary for ingesting data using PDO source and destination endpoints. The
- * aRdbmsDestinationAction class implements functionality specific to supporting a database
- * destination.
+ * Ingestor action using the PDO driver. The pdoIngestor is responsible for handling the bulk
+ * of the operations necessary for ingesting data using PDO source and destination
+ * endpoints. The aRdbmsDestinationAction class implements functionality specific to
+ * supporting a database destination.
  *
  * Optionally, the following methods may be overriden to perform additional actions or override
  * default actions:
  *
  * getDestinationFields() (if the fields could not be parsed from the source query)
- * getPreActionQueries()
- * getPostActionQueries()
- * getTruncateQueries()
+ * getSourceQueryString()
  *
- * The ingestion process is as follows:
+ * The overall ingestion process is as follows:
  *
- * 1. Collect and verify query information by calling methods in the extending class.
- * 2. Run pre-ingestion queries, if defined.
- * 3. Disable foreign keys on the database.
- * 4. Truncate the destination table using the truncate SQL provided by the child class or a simple
- *    TRUNCATE TABLE statement.
- * 5. Execute the query on the source database.
- * 6. Iterate over the result set, writing each row to a file that will be used in a "load data
- *    infile" statement to load the data, possibly to a database on another host.  The load is
- *    broken into chunks defined by MAX_ROWS_PER_INFILE.
- * 7. Run post-ingestion queries, if defined.
- * 8. Re-enable foreign keys on the database.
- * 9. Cleanup
+ * 1. Perform pre-execution tasks (aIngestor)
+ * 2. Perform a single-database (optimized) or multi-database ingest.
+ * 2a. A single-database ingest combines the source and insert queries into one operation and
+ *     executes entirely within the database. This can be used when the source and
+ *     destination are the same database and enjoys a small performance improvement.
+ * 2b. A multi-database ingest is used when the source and destination endpoints are not the
+ *     same, when a single source query is used to populate multiple destination tables, or
+ *     when data transformation is required. This uses a LOAD DATA INFILE statement for each
+ *     destination table. The general process is:
+ *     - Set up one INFILE for each target database table
+ *     - Extract the data from the source
+ *     - Optionally transform each source record (possibly into multiple records)
+ *     - Load the appropriate data into each INFILE
+ *     - Process the INFILES
+ * 3. Perform post-execution tasks (aIngestor)
  *
  * Notes:
  *
@@ -51,20 +52,26 @@ use ETL\Utilities;
 use ETL\DbEntity\Query;
 
 use CCR\DB\MySQLHelper;
-use \PDOException;
-use \PDO;
-use \Log;
+use PDOException;
+use PDO;
+use Log;
 
 class pdoIngestor extends aIngestor
 {
     // Maximum number of times to attempt to execute the source query
     const MAX_QUERY_ATTEMPTS = 3;
 
-    // Write a log message after processing this many source rows
-    const NUM_ROWS_PER_LOG_MSG = 100000;
+    // Write a log message after processing this many source records
+    const NUM_RECORDS_PER_LOG_MSG = 100000;
 
-    // Maximum number of rows to import at once
-    const MAX_ROWS_PER_INFILE = 250000;
+    // Maximum number of records to import at once
+    const MAX_RECORDS_PER_INFILE = 250000;
+
+    // The number of records per load file to use when calculating the write timeout
+    const NET_WRITE_TIMEOUT_RECORD_CHUNK = 250000;
+
+    // The number of seconds to allot per file per record chunk
+    const NET_WRITE_TIMEOUT_SECONDS_PER_FILE_CHUNK = 60;
 
     // ------------------------------------------------------------------------------------------
 
@@ -86,6 +93,17 @@ class pdoIngestor extends aIngestor
     // The list of field names in the source query
     protected $availableSourceQueryFields = null;
 
+    // Note these values are used so we don't have to escape quotes and such.
+
+    // Line separator for MySQL LOAD DATA INFILE LINES TERMINATED BY.
+    protected $lineSeparator = '\n';
+
+    // Field separator for MySQL LOAD DATA INFILE FIELDS TERMINATED BY.
+    protected $fieldSeparator = '\t';
+
+    // String enclosure for MySQL LOAD DATA INFILE ENCLOSED BY.
+    protected $stringEnclosure = '';
+
     /* ------------------------------------------------------------------------------------------
      * Set up data endpoints and other options.
      *
@@ -98,39 +116,24 @@ class pdoIngestor extends aIngestor
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        // Get the handles for the various database endpoints
+        // This action supports chunking of the ETL date period
 
-        $this->utilityEndpoint = $etlConfig->getDataEndpoint($this->options->utility);
-        if ( ! $this->utilityEndpoint instanceof iRdbmsEndpoint ) {
-            $this->utilityEndpoint = null;
-            $msg = "Utility endpoint does not implement of ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        $this->utilityHandle = $this->utilityEndpoint->getHandle();
+        $this->supportDateRangeChunking = true;
 
-        $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
-        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
-            $this->sourceEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
+        // Use ASCII group, record, and unit separators
 
-        if ( "mysql" == $this->destinationHandle->_db_engine ) {
-            $this->_dest_helper = MySQLHelper::factory($this->destinationHandle);
-        }
+        $this->lineSeparator = chr(0x1d);   // Group separator
+        $this->fieldSeparator = chr(0x1e);  // Record separator
+        $this->stringEnclosure = chr(0x1f); // Unit separator
 
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * Retrieve the query data and perform any necessary verification.
-     *
-     * @throws Exception if any query data was not int the correct format.
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
             return;
@@ -138,7 +141,23 @@ class pdoIngestor extends aIngestor
 
         $this->initialized = false;
 
-        parent::initialize();
+        parent::initialize($etlOverseerOptions);
+
+        // Get the handles for the various database endpoints
+
+        if ( ! $this->utilityEndpoint instanceof iRdbmsEndpoint ) {
+            $msg = "Utility endpoint does not implement of ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
+
+        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
+            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
+
+        if ( "mysql" == $this->destinationHandle->_db_engine ) {
+            $this->_dest_helper = MySQLHelper::factory($this->destinationHandle);
+        }
 
         // An individual action may override restrictions provided by the overseer.
         $this->setOverseerRestrictionOverrides();
@@ -149,23 +168,22 @@ class pdoIngestor extends aIngestor
 
         if ( null === $this->etlSourceQuery && isset($this->parsedDefinitionFile->source_query) ) {
             $this->logger->debug("Create ETL source query object");
-            $this->etlSourceQuery = new Query($this->parsedDefinitionFile->source_query,
-                                              $this->sourceEndpoint->getSystemQuoteChar(),
-                                              $this->logger);
+            $this->etlSourceQuery = new Query(
+                $this->parsedDefinitionFile->source_query,
+                $this->sourceEndpoint->getSystemQuoteChar(),
+                $this->logger
+            );
 
             // If supported by the source query, set the date ranges here. These will be overriden
             // in the _execute() function with the current start/end dates but are needed here to
             // parse the query.
 
-            $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+            $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
 
         }  // ( null === $this->etlSourceQuery )
 
         // By default, queries may include references to the schema names so they can be changed in the
         // config file.
-
-        $this->variableMap["UTILITY_SCHEMA"] = $this->utilityEndpoint->getSchema();
-        $this->variableMap["SOURCE_SCHEMA"] = $this->sourceEndpoint->getSchema();
 
         $this->sourceQueryString = $this->getSourceQueryString();
 
@@ -223,7 +241,7 @@ class pdoIngestor extends aIngestor
             $this->logger->debug("Destination fields parsed from source query (table definition key '$etlTableKey'): " .
                                  implode(", ", $this->destinationFieldMappings[$etlTableKey]));
             $this->fullSourceToDestinationMapping = true;
-        } else if ( count($this->etlDestinationTableList) > 1
+        } elseif ( count($this->etlDestinationTableList) > 1
                     && count($this->destinationFieldMappings) != count($this->etlDestinationTableList) )
         {
             if ( 0 == count($this->destinationFieldMappings) ) {
@@ -267,7 +285,13 @@ class pdoIngestor extends aIngestor
             $sourceQueryFields = $this->destinationFieldMappings[$etlTableKey];
             $missing = array_diff($sourceQueryFields, $this->availableSourceQueryFields);
             if ( 0  != count($missing) ) {
-                $missing = array_map(function($k, $v) { return "$k = $v";}, array_keys($missing), $missing);
+                $missing = array_map(
+                    function ($k, $v) {
+                        return "$k = $v";
+                    },
+                    array_keys($missing),
+                    $missing
+                );
                 $undefinedSourceQueryColumns[] = "Table '$etlTableKey' has undefined source query records for keys (" .
                     implode(", ", $missing) . ")";
             }
@@ -306,7 +330,7 @@ class pdoIngestor extends aIngestor
     {
         if ( ! isset($this->parsedDefinitionFile->destination_record_map) ) {
             return null;
-        } else if ( ! is_object($this->parsedDefinitionFile->destination_record_map) ) {
+        } elseif ( ! is_object($this->parsedDefinitionFile->destination_record_map) ) {
             $msg = "destination_fields must be an object where keys match table definition keys";
             $this->logAndThrowException($msg);
         }
@@ -317,7 +341,7 @@ class pdoIngestor extends aIngestor
             if ( ! is_object($fieldMap) ) {
                 $msg = "Destination field map for table '$etlTableKey' must be an object";
                 $this->logAndThrowException($msg);
-            } else if ( 0 == count(array_keys((array) $fieldMap)) ) {
+            } elseif ( 0 == count(array_keys((array) $fieldMap)) ) {
                 $msg = "destination_record_map for '$etlTableKey' is empty";
                 $this->logger->warning($msg);
             }
@@ -345,8 +369,14 @@ class pdoIngestor extends aIngestor
         }
 
         $sql = $this->etlSourceQuery->getSelectSql();
+
         if ( null !== $this->variableMap ) {
-            $sql = Utilities::substituteVariables($sql, $this->variableMap);
+            $sql = Utilities::substituteVariables(
+                $sql,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in source query"
+            );
         }
 
         return $sql;
@@ -379,6 +409,7 @@ class pdoIngestor extends aIngestor
 
             try {
 
+                $this->logger->debug("Source query " . $this->sourceEndpoint . ":\n" . $this->sourceQueryString);
                 $srcStatement = $this->sourceHandle->prepare($this->sourceQueryString);
 
                 $start = microtime(true);
@@ -389,8 +420,11 @@ class pdoIngestor extends aIngestor
 
                 // ER_LOCK_DEADLOCK: Deadlock found when trying to get lock; try restarting transaction
                 if ( $srcStatement->errorCode() != "40001" ) {
-                    $this->logAndThrowSqlException($this->sourceQueryString, $e, "Error querying source");
-                } else if ( $n_attempts > self::MAX_QUERY_ATTEMPTS ) {
+                    $this->logAndThrowException(
+                        "Error querying source",
+                        array('exception' => $e, 'sql' => $this->sourceQueryString, 'endpoint' => $this->sourceEndpoint)
+                    );
+                } elseif ( $n_attempts > self::MAX_QUERY_ATTEMPTS ) {
                     $msg = "Could not execute source query after " . self::MAX_QUERY_ATTEMPTS . " attempts. Exiting.";
                     $this->logAndThrowException($msg);
                 }
@@ -399,11 +433,11 @@ class pdoIngestor extends aIngestor
                     get_class($this)
                     . ': Query was cancelled by server with error '
                     . $srcStatement->errorCode() . '. Retries left = ' . (self::MAX_QUERY_ATTEMPTS - $n_attempts)
-                    );
+                );
             }
         }  // while (FALSE == $query_success)
 
-        // We can query the number of source rows if we are using a buffered query.
+        // We can query the number of source records if we are using a buffered query.
 
         if ( $this->options->buffered_query ) {
             $this->logger->debug("Source row count: " . $srcStatement->rowCount());
@@ -420,25 +454,12 @@ class pdoIngestor extends aIngestor
    * ------------------------------------------------------------------------------------------
    */
 
-  protected function performPreExecuteTasks() {
+    protected function performPreExecuteTasks() {
 
         // ------------------------------------------------------------------------------------------
         // Update the start/end dates for this query and get the source query string. It is important
         // to do it in the pre-execute stage because if we are chunking our ingest it will get
         // updated every time.
-
-        if ( null === $this->etlSourceQuery && isset($this->parsedDefinitionFile->source_query) ) {
-            $this->logger->info("Update source query date range");
-            // If supported by the source query, set the date ranges here
-
-            $startDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-            $endDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
-
-            if ( false === $this->etlSourceQuery->setDateRange($startDate, $endDate) ) {
-                $msg = "Ingestion date ranges not supported by source query";
-                $this->logger->info($msg);
-            }
-        }
 
         $this->sourceQueryString = $this->getSourceQueryString();
 
@@ -479,7 +500,7 @@ class pdoIngestor extends aIngestor
             $sqlList[] = "SET FOREIGN_KEY_CHECKS = 0";
         }
 
-        $this->executeSqlList($sqlList, $this->destinationHandle, "Pre-execute tasks");
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Pre-execute tasks");
 
         return true;
 
@@ -518,7 +539,7 @@ class pdoIngestor extends aIngestor
             $sqlList[] = "SET FOREIGN_KEY_CHECKS = 1";
         }
 
-        $this->executeSqlList($sqlList, $this->destinationHandle, "Post-execute tasks");
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Post-execute tasks");
 
         return true;
     }  // performPostExecuteTasks()
@@ -534,16 +555,14 @@ class pdoIngestor extends aIngestor
         // start/end date range here.
 
         if ( null !== $this->etlSourceQuery) {
-            $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+            $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
             $this->sourceQueryString = $this->getSourceQueryString();
         }
-
-        $this->logger->debug("Source query:\n" . $this->sourceQueryString);
 
         // ------------------------------------------------------------------------------------------
         // Main ingest
 
-        $totalRowsProcessed = 0;
+        $totalRecordsProcessed = 0;
 
         // If we can execute the ingestion query directly on the server instead of querying,
         // returning the data locally, chunking it into a file, and loading it on the remote server
@@ -554,12 +573,13 @@ class pdoIngestor extends aIngestor
 
         if ( $optimize ) {
             $this->logger->info("Allowing same-server SQL optimizations");
-            $totalRowsProcessed = $this->singleDatabaseIngest();
+            $totalRecordsProcessed = $this->singleDatabaseIngest();
         } else {
-            $totalRowsProcessed = $this->multiDatabaseIngest();
+            $this->logger->info("Using multi-database ingest");
+            $totalRecordsProcessed = $this->multiDatabaseIngest();
         }
 
-        return $totalRowsProcessed;
+        return $totalRecordsProcessed;
 
     }  // _execute()
 
@@ -574,7 +594,7 @@ class pdoIngestor extends aIngestor
      * NOTE: This method assumes that data is being mapped from one source table to one destination
      * table and all columns are being used.
      *
-     * @return The number of rows processed
+     * @return The number of records processed
      * ------------------------------------------------------------------------------------------
      */
 
@@ -602,22 +622,29 @@ class pdoIngestor extends aIngestor
             $sql = "REPLACE INTO $qualifiedDestTableName (" . implode(',', $destColumnList) . ")\n" . $this->sourceQueryString;
         } else {
             $destColumns = implode(',', $destColumnList);
-            $updateColumnList = array_map(function($s) { return "$s=VALUES($s)"; }, $destColumnList);
+            $updateColumnList = array_map(
+                function ($s) {
+                    return "$s=VALUES($s)";
+                },
+                $destColumnList
+            );
             $updateColumns = implode(',', $updateColumnList);
             $sql = "INSERT INTO $qualifiedDestTableName ($destColumns) " . $this->sourceQueryString
-                . " ON DUPLICATE KEY UPDATE $updateColumns";
+                . "\nON DUPLICATE KEY UPDATE $updateColumns";
         }
 
-        $this->logger->debug($sql);
+        $this->logger->debug("Single DB ingest SQL " . $this->destinationEndpoint . ":\n$sql");
 
-        if ( $this->etlOverseerOptions->isDryrun() ) {
+        if ( $this->getEtlOverseerOptions()->isDryrun() ) {
             return 0;
         }
 
-        $totalRowsProcessed = $this->destinationHandle->execute($sql);
-        $this->logger->info("Processed: $totalRowsProcessed (each replaced row counts as 2 records)");
+        $totalRecordsProcessed = $this->destinationHandle->execute($sql);
+        $this->logger->info(
+            sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
+        );
 
-        return $totalRowsProcessed;
+        return $totalRecordsProcessed;
 
     }  // singleDatabaseIngest()
 
@@ -627,7 +654,7 @@ class pdoIngestor extends aIngestor
      * the data, brining it back to this host, chunk it into a file, and run LOAD DATA INFILE to
      * load it into the database.
      *
-     * @return The number of rows processed
+     * @return The number of records processed
      * ------------------------------------------------------------------------------------------
      */
 
@@ -639,6 +666,7 @@ class pdoIngestor extends aIngestor
         $infileList = array();
         $outFdList = array();
         $loadStatementList = array();
+        $numDestinationTables = count($this->etlDestinationTableList);
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
@@ -649,8 +677,10 @@ class pdoIngestor extends aIngestor
                 continue;
             }
 
-            $infileName = tempnam(sys_get_temp_dir(),
-                                  sprintf('%s.data.ts_%s.%s', $etlTable->getFullName(false), time(), rand()));
+            $infileName = tempnam(
+                sys_get_temp_dir(),
+                sprintf('%s.data.ts_%s.%s', $etlTable->getFullName(false), time(), rand())
+            );
 
             $this->logger->debug("Using temporary file '$infileName' for destination table key '$etlTableKey'");
 
@@ -676,7 +706,12 @@ class pdoIngestor extends aIngestor
                     . $this->destinationEndpoint->quoteSystemIdentifier("tmp_" . $etlTable->getName() . "_" . time());
 
                 $destColumns = implode(',', $destColumnList);
-                $updateColumnList = array_map(function($s) { return "$s=VALUES($s)"; }, $destColumnList);
+                $updateColumnList = array_map(
+                    function ($s) {
+                        return "$s=VALUES($s)";
+                    },
+                    $destColumnList
+                );
                 $updateColumns = implode(',', $updateColumnList);
 
                 $loadStatement = "CREATE TABLE $tmpTable LIKE $qualifiedDestTableName; "
@@ -690,14 +725,15 @@ class pdoIngestor extends aIngestor
 
             }
 
-            $this->logger->debug("load statement for destination table key '$etlTableKey'\n$loadStatement");
+            $this->logger->debug("LOAD statement for destination table key '$etlTableKey' " . $this->destinationEndpoint . ":\n$loadStatement");
 
             $infileList[$etlTableKey] = $infileName;
             $loadStatementList[$etlTableKey] = $loadStatement;
 
         }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
 
-        if ( $this->etlOverseerOptions->isDryrun() ) {
+        if ( $this->getEtlOverseerOptions()->isDryrun() ) {
+            $this->logger->debug("Source query " . $this->sourceEndpoint . ":\n" . $this->sourceQueryString);
             // If this is DRYRUN mode clean up the files that tempnam() created
             foreach ( $infileList as $etlTableKey => $infileName ) {
                 @unlink($infileName);
@@ -722,20 +758,56 @@ class pdoIngestor extends aIngestor
             $pdo = $this->sourceHandle->handle();
             $originalBufferedQueryAttribute = $pdo->getAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY);
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+
+            // On a busy server, it is possible that the mysql server will close the
+            // connection on us if we are using an unbuffered query and the loading of the
+            // data takes longer than the net_write_timeout (See
+            // https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_net_write_timeout)
+            //
+            // This may happen using an unbuffered query because the server writes result
+            // data to the connection (presumably there is some buffer) and the client
+            // reads the data, transforms it, and adds it to a load file. When the number
+            // of records hits a threshold, the files are loaded and the process does not
+            // read from the connection during loading. If loading takes longer than the
+            // net_write_timeout, the server will close the connection on us. The client
+            // will read whatever is left in the result buffer and assume that all is well
+            // until another operation is attempted on the connection at which point we
+            // will get the ambiguous "MySQL server has gone away" error (see
+            // https://dev.mysql.com/doc/refman/5.7/en/gone-away.html).
+
+            $result = $this->sourceHandle->query(
+                "SHOW SESSION VARIABLES WHERE Variable_name = 'net_write_timeout'"
+            );
+
+            $currentTimeout = 0;
+            if ( 0 != count($result) ) {
+                $currentTimeout = $result[0]['Value'];
+                $this->logger->debug("Current net_write_timeout = $currentTimeout");
+            }
+
+            // Base the new timeout on the number of tables we are loading data into and the
+            // number of records that we are loading.
+
+            $newTimeout = $numDestinationTables
+                * (self::MAX_RECORDS_PER_INFILE / self::NET_WRITE_TIMEOUT_RECORD_CHUNK)
+                * self::NET_WRITE_TIMEOUT_SECONDS_PER_FILE_CHUNK;
+
+            if ( $newTimeout > $currentTimeout ) {
+                $sql = sprintf('SET SESSION net_write_timeout = %d', $newTimeout);
+                $this->executeSqlList(array($sql), $this->sourceEndpoint);
+            }
         }
 
-        // Create a file to be used with the "load data infile" statement. Note these values are
-        // used so we don't have to escape quotes and such.
+        // The number of source records processed during the load phase.
+        $numSourceRecordsProcessed = 0;
 
-        $fieldSep  = chr(30); // 0x1e record separator
-        $lineSep   = chr(29); // 0x1d group separator
-        $stringEnc = chr(31); // 0x1f unit separator
+        // Total number of records processed during the load phase. This may differ from
+        // the number of soruce records because the transform step may transform one
+        // record into multiple.
+        $totalRecordsProcessed = 0;
 
-        // Total number of rows processed for the ingestion
-        $totalRowsProcessed = 0;
-
-        // Number of rows in the current file
-        $numRowsInFile = 0;
+        // Number of records in the current load file
+        $numRecordsInFile = 0;
 
         $sourceStatement = $this->getSourceData();
 
@@ -777,90 +849,104 @@ class pdoIngestor extends aIngestor
         // actually *hinders* performance in the tests! This was verified with 4,195,524 and 124,120
         // rows.
 
-        while ( $srcRow = $sourceStatement->fetch(PDO::FETCH_ASSOC) ) {
+        while ( $srcRecord = $sourceStatement->fetch(PDO::FETCH_ASSOC) ) {
 
-            // Handle NULL and empty values in the source data set
+            $numSourceRecordsProcessed++;
 
-            foreach ( $srcRow as $key => &$value ) {
-                if ( 'order_id' == $key) {
-                    $value = $totalRowsProcessed;
-                } else if ( NULL === $value ) {
-                    $value = '\N';
-                } else if ( empty($value) ) {
-                    $value = $stringEnc . '' . $stringEnc;
-                }
-            }
+            // Note that an array of transformed records is returned because a single source
+            // record may be transformed into multiple records.
 
-            // Write the requested rows to the infile for each destination, performing any requested
-            // mapping.
+            $transformedRecords = $this->transform($srcRecord);
 
-            foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationFields ) {
+            foreach ( $transformedRecords as $record ) {
 
-                // In practice optimization when the entire source is mapped to the destination has
-                // little effect on performance for larger datasets, and even worsens performance by
-                // several seconds on datasets of 4+M. The majority of the execution time of the
-                // outer loop is spent waiting for the result (data) of the query.  Time saved here
-                // is likely spent waiting on the fetch() from the server. Verify by profiling the
-                // query and checking the time for the "Sending data" phase:
-                //
-                // set profiling=1;
-                // select ...
-                // show profile
+                // Write the requested records to the infile for each destination, performing
+                // any requested mapping.
 
-                $destRow = array();
+                foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationFields ) {
 
-                foreach ($destinationFields as $tableDestField => $sourceQueryField) {
-                    $destRow[$tableDestField] = $srcRow[$sourceQueryField];
-                }
+                    // In practice optimization when the entire source is mapped to the destination has
+                    // little effect on performance for larger datasets, and even worsens performance by
+                    // several seconds on datasets of 4+M. The majority of the execution time of the
+                    // outer loop is spent waiting for the result (data) of the query.  Time saved here
+                    // is likely spent waiting on the fetch() from the server. Verify by profiling the
+                    // query and checking the time for the "Sending data" phase:
+                    //
+                    // set profiling=1;
+                    // select ...
+                    // show profile
 
-                fwrite($outFdList[$etlTableKey], implode($fieldSep, $destRow) . $lineSep);
+                    $destRecord = array();
 
-            }  // foreach ($destinationFields as $destField)
-
-            $totalRowsProcessed++;
-            $numRowsInFile++;
-
-            // Periodically log the number of rows processed
-
-            if (0 == $totalRowsProcessed % self::NUM_ROWS_PER_LOG_MSG) {
-                $msg = sprintf('%s: Processed %d records', get_class($this), $totalRowsProcessed);
-                $this->logger->info($msg);
-            }
-
-            // If we've reached the maximum number of rows per chunk, load the data.
-
-            if ( $numRowsInFile == self::MAX_ROWS_PER_INFILE ) {
-                foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
-                    try {
-                        $this->_dest_helper->executeStatement($loadStatement);
-                        $this->logger->debug("Loaded $numRowsInFile records into '$etlTableKey'");
-
-                        // Clear the infile
-
-                        ftruncate($outFdList[$etlTableKey], 0);
-                        rewind($outFdList[$etlTableKey]);
+                    foreach ($destinationFields as $tableDestField => $sourceQueryField) {
+                        $destRecord[$tableDestField] = $record[$sourceQueryField];
                     }
-                    catch (Exception $e) {
-                        $msg = array('message'    => $e->getMessage(),
-                                     'stacktrace' => $e->getTraceAsString(),
-                                     'statement'  => $loadStatement
+
+                    fwrite($outFdList[$etlTableKey], implode($this->fieldSeparator, $destRecord) . $this->lineSeparator);
+
+                }  // foreach ($destinationFields as $destField)
+
+                $totalRecordsProcessed++;
+                $numRecordsInFile++;
+
+                // Periodically log the number of records processed
+
+                if (0 == $totalRecordsProcessed % self::NUM_RECORDS_PER_LOG_MSG) {
+                    $this->logger->info(
+                        sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
+                    );
+                }
+
+                // If we've reached the maximum number of records per chunk, load the data.
+
+                if ( $numRecordsInFile == self::MAX_RECORDS_PER_INFILE ) {
+                    $numFilesLoaded = 0;
+                    $loadFileStart = microtime(true);
+
+                    foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
+                        try {
+                            $this->_dest_helper->executeStatement($loadStatement);
+                            $this->logger->debug(
+                                sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
                             );
-                        $this->logger->err($msg);
-                        throw $e;
-                    }
-                }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
-                $numRowsInFile = 0;
-            }  // if ( $numRowsInFile == self::MAX_ROWS_PER_INFILE )
 
-        }  // while ( $srcRow = $srcStatement->fetch(...) )
+                            // Clear the infile
+
+                            ftruncate($outFdList[$etlTableKey], 0);
+                            rewind($outFdList[$etlTableKey]);
+                        }
+                        catch (Exception $e) {
+                            $msg = array('message'    => $e->getMessage(),
+                                         'stacktrace' => $e->getTraceAsString(),
+                                         'statement'  => $loadStatement
+                            );
+                            $this->logger->err($msg);
+                            throw $e;
+                        }
+                    }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
+
+                    $this->logger->debug(sprintf('Loaded %d files in %ds', $numFilesLoaded, microtime(true) - $loadFileStart));
+                    $loadFileStart = microtime(true);
+                    $numRecordsInFile = 0;
+
+                }  // if ( $numRecordsInFile == self::MAX_RECORDS_PER_INFILE )
+
+            } // foreach ( $record )
+
+        }  // while ( $srcRecord = $srcStatement->fetch(...) )
 
         // Process the final chunk.
 
-        if ( $numRowsInFile > 0 ) {
+        if ( $numRecordsInFile > 0 ) {
+            $numFilesLoaded = 0;
+            $loadFileStart = microtime(true);
+
             foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                 try {
                     $this->_dest_helper->executeStatement($loadStatement);
-                    $this->logger->debug("Loaded $numRowsInFile records into '$etlTableKey'");
+                    $this->logger->debug(
+                        sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
+                    );
                 }
                 catch (Exception $e) {
                     $msg = array('message'    => $e->getMessage(),
@@ -874,13 +960,17 @@ class pdoIngestor extends aIngestor
                 // Cleanup
 
                 fclose($outFdList[$etlTableKey]);
-                unlink($infileList[$etlTableKey]);
+                @unlink($infileList[$etlTableKey]);
 
             }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
-        }  // if ( $numRowsInFile)
 
-        $msg = sprintf('%s: Processed %d records', get_class($this), $totalRowsProcessed);
-        $this->logger->info($msg);
+            $this->logger->debug(sprintf('Loaded %d files in %ds', $numFilesLoaded, microtime(true) - $loadFileStart));
+
+        }  // if ( $numRecordsInFile)
+
+        $this->logger->info(
+            sprintf('%s: Processed %s records (%s source records)', get_class($this), number_format($totalRecordsProcessed), number_format($numSourceRecordsProcessed))
+        );
 
         // Return buffering to its original state.  This is a MySQL specific optimization.
 
@@ -890,9 +980,40 @@ class pdoIngestor extends aIngestor
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $originalBufferedQueryAttribute);
         }
 
-        return $totalRowsProcessed;
+        return $totalRecordsProcessed;
 
     }  // multiDatabaseIngest()
+
+    /* ------------------------------------------------------------------------------------------
+     * Perform a transformation on a single data record (row). Transformation may alter
+     * the values of the record and may create multiple records from a single record, but
+     * it should not modify the struture of the record itself (e.g., the keys). Because we
+     * support the ability to transform a single source record into multiple result
+     * records, an array of records is returned, even for a single result record.
+     *
+     * @param $record An associative array containing the source record
+     *
+     * @return An array of transformed records.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function transform(array $srcRecord)
+    {
+        foreach ( $srcRecord as $key => &$value ) {
+            if ( null === $value ) {
+                // Transform NULL values for MySQL LOAD FILE
+                $value = '\N';
+            } elseif ( empty($value) ) {
+                $value = $this->stringEnclosure . '' . $this->stringEnclosure;
+            } else {
+                // Handle proper escaping of backslashes to preserve source data containing them.
+                $value = str_replace('\\', '\\\\', $value);
+            }
+        }
+
+        return array($srcRecord);
+
+    }  // transform()
 
     /* ------------------------------------------------------------------------------------------
      * Determine if we can support optimizations for queries within a single database. Not only must
@@ -911,21 +1032,40 @@ class pdoIngestor extends aIngestor
             return false;
         }
 
+        // Automatically detect if a child class has extended the transform() method and
+        // force multi-database ingest.
+
+        try {
+            $reflector = new \ReflectionMethod($this, 'transform');
+            $prototype = $reflector->getPrototype();
+            $this->logger->debug(
+                $prototype->class . '::' . $prototype->name . '()'
+                . " overriden by "
+                . $reflector->class . '::' . $reflector->name . '()'
+            );
+            return false;
+        } catch ( \ReflectionException $e ) {
+            // Do nothing, transform() has not been overriden.
+        }
+
         // Same database type?
 
         if ( ! $this->sourceEndpoint->getType() == $this->destinationEndpoint->getType() ) {
+            $this->logger->debug("Source and destination endpoints are different types");
             return false;
         }
 
         // Endpoints on the same server?
 
         if ( ! $this->sourceEndpoint->isSameServer($this->destinationEndpoint) ) {
+            $this->logger->debug("Source and destination endpoints are on different servers");
             return false;
         }
 
         // Can't optimize more than 1 destination table
 
         if ( count($this->etlDestinationTableList) > 1 ) {
+            $this->logger->debug("Multiple destination tables being populated");
             return false;
         }
 
@@ -934,11 +1074,11 @@ class pdoIngestor extends aIngestor
         reset($this->destinationFieldMappings);
 
         if ( count($this->availableSourceQueryFields) != count(current($this->destinationFieldMappings)) ) {
+            $this->logger->debug("Mapping a subset of the source query fields");
             return false;
         }
 
         return true;
 
     }  // allowSingleDatabaseOptimization()
-
 }  // class pdoIngestor

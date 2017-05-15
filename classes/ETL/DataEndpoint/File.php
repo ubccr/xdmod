@@ -123,8 +123,6 @@ implements iDataEndpoint
 
     public function verify($dryrun = false, $leaveConnected = false)
     {
-        parent::verify();
-
         $readModes = array("r", "r+", "w+", "a+", "x+", "c+");
         $writeModes = array("r+", "w", "w+", "a", "a+", "x", "x+", "c", "c+");
 

@@ -1,6 +1,6 @@
 {
     "name": "xdmod",
-    "version": "6.5.0",
+    "version": "6.6.0",
     "release": "1.0",
     "files": {
         "include_paths": [
@@ -70,6 +70,7 @@
             "configuration/rest.d",
             "configuration/setup.json",
             "configuration/update_check.json",
+            "configuration/assets.json",
             "email_templates"
         ],
         "etc/httpd": {

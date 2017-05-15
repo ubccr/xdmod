@@ -17,8 +17,7 @@ namespace ETL\DbEntity;
 use \Log;
 use \stdClass;
 
-class Trigger extends aNamedEntity
-implements iTableItem
+class Trigger extends aNamedEntity implements iTableItem
 {
     // The time that the trigger is fired (before, after)
     private $time = null;
@@ -43,7 +42,7 @@ implements iTableItem
     public function __construct($config, $systemQuoteChar = null, Log $logger = null)
     {
         parent::__construct($systemQuoteChar, $logger);
-    
+
         if ( ! is_object($config) ) {
             $msg = __CLASS__ . ": Argument is not an object";
             $this->logAndThrowException($msg);
@@ -61,14 +60,14 @@ implements iTableItem
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize(stdClass $config, $force = false)
+    public function initialize(stdClass $config, $force = false)
     {
         if ( $this->initialized && ! $force ) {
             return true;
         }
 
         foreach ( $config as $property => $value ) {
-            if ( '#' == $property ) {
+            if ( $this->isComment($property) ) {
                 continue;
             }
 
@@ -78,13 +77,13 @@ implements iTableItem
             }
 
             $this->$property = $value;
-      
+
         }  // foreach ( $config as $property => $value )
 
         $this->initialized = true;
 
     }  // initialize()
- 
+
     /* ------------------------------------------------------------------------------------------
      * @return The time that the trigger will fire, null if not specified
      * ------------------------------------------------------------------------------------------
@@ -94,7 +93,7 @@ implements iTableItem
     {
         return $this->time;
     }  // getTime()
-  
+
     /* ------------------------------------------------------------------------------------------
      * @return The trigger event, null if not specified
      * ------------------------------------------------------------------------------------------
@@ -104,7 +103,7 @@ implements iTableItem
     {
         return $this->event;
     }  // getEvent()
-  
+
     /* ------------------------------------------------------------------------------------------
      * @return The table that the trigger is associated with, null if not specified
      * ------------------------------------------------------------------------------------------
@@ -114,7 +113,7 @@ implements iTableItem
     {
         return $this->table;
     }  // getTable()
-  
+
     /* ------------------------------------------------------------------------------------------
      * @return The trigger body, null if not specified
      * ------------------------------------------------------------------------------------------
@@ -124,7 +123,7 @@ implements iTableItem
     {
         return $this->body;
     }  // getBody()
-  
+
     /* ------------------------------------------------------------------------------------------
      * @return The trigger definer, null if not specified
      * ------------------------------------------------------------------------------------------
@@ -134,7 +133,7 @@ implements iTableItem
     {
         return $this->definer;
     }  // getDefiner()
-  
+
     /* ------------------------------------------------------------------------------------------
      * @see iTableItem::compare()
      * ------------------------------------------------------------------------------------------
@@ -244,5 +243,4 @@ implements iTableItem
         return $data;
 
     }  // toJsonObj()
-
 }  // class Trigger

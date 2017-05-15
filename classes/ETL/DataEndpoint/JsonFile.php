@@ -15,8 +15,7 @@ use \Log;
 use JsonSchema\Validator;
 use Symfony\Component\Process\ProcessBuilder;
 
-class JsonFile extends StructuredFile
-implements iDataEndpoint
+class JsonFile extends StructuredFile implements iDataEndpoint
 {
     /**
      * A JSON Schema describing each element in an array-based JSON file.
@@ -78,12 +77,17 @@ implements iDataEndpoint
                 $this->logAndThrowException("No valid filter options specified for '{$this->path}'.");
             }
 
-            // Run the filter process.
-            $filterProc = ProcessBuilder::create($filterProcArgs)->getProcess();
+            try {
+                // Run the filter process.
+                $filterProc = ProcessBuilder::create($filterProcArgs)->getProcess();
 
-            $filterProc->run();
-            if (! $filterProc->isSuccessful()) {
-                $this->logAndThrowException('Filter Error: ' . $filterProc->getErrorOutput());
+                $filterProc->run();
+                if (! $filterProc->isSuccessful()) {
+                    $this->logAndThrowException('Filter Error: ' . $filterProc->getErrorOutput());
+                }
+            } catch (Exception $e) {
+                $msg = "Filter Error (" . implode(", ", $filterProcArgs) . "): " . $e->getMessage();
+                $this->logAndThrowException($msg);
             }
 
             // Parse the filter process's output.
@@ -188,36 +192,36 @@ implements iDataEndpoint
         $message = "";
 
         switch ( $errorCode ) {
-        case JSON_ERROR_NONE:
-            $message = "No error has occurred";
-            break;
-        case JSON_ERROR_DEPTH:
-            $message = "The maximum stack depth has been exceeded";
-            break;
-        case JSON_ERROR_STATE_MISMATCH:
-            $message = "Invalid or malformed JSON";
-            break;
-        case JSON_ERROR_CTRL_CHAR:
-            $message = "  Control character error, possibly incorrectly encoded";
-            break;
-        case JSON_ERROR_SYNTAX:
-            $message = "Syntax error";
-            break;
-        case JSON_ERROR_UTF8:
-            $message = "Malformed UTF-8 characters, possibly incorrectly encoded";
-            break;
-        case JSON_ERROR_RECURSION:
-            $message = "One or more recursive references in the value to be encoded";
-            break;
-        case JSON_ERROR_INF_OR_NAN:
-            $message = "One or more NAN or INF values in the value to be encoded";
-            break;
-        case JSON_ERROR_UNSUPPORTED_TYPE:
-            $message = "A value of a type that cannot be encoded was given";
-            break;
-        default:
-            $message = "Unknown error";
-            break;
+            case JSON_ERROR_NONE:
+                $message = "No error has occurred";
+                break;
+            case JSON_ERROR_DEPTH:
+                $message = "The maximum stack depth has been exceeded";
+                break;
+            case JSON_ERROR_STATE_MISMATCH:
+                $message = "Invalid or malformed JSON";
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                $message = "  Control character error, possibly incorrectly encoded";
+                break;
+            case JSON_ERROR_SYNTAX:
+                $message = "Syntax error";
+                break;
+            case JSON_ERROR_UTF8:
+                $message = "Malformed UTF-8 characters, possibly incorrectly encoded";
+                break;
+            case JSON_ERROR_RECURSION:
+                $message = "One or more recursive references in the value to be encoded";
+                break;
+            case JSON_ERROR_INF_OR_NAN:
+                $message = "One or more NAN or INF values in the value to be encoded";
+                break;
+            case JSON_ERROR_UNSUPPORTED_TYPE:
+                $message = "A value of a type that cannot be encoded was given";
+                break;
+            default:
+                $message = "Unknown error";
+                break;
         }
 
         return $message;

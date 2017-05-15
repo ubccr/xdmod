@@ -513,7 +513,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 var disableNode = false;
 
                 for (var i = 0; i < CCR.xdmod.ui.disabledMenus.length && !disableNode; i++) {
-                    disableNode = n.attributes.group_by == CCR.xdmod.ui.disabledMenus[i].group_by && n.attributes.realm == CCR.xdmod.ui.disabledMenus[i].realm;
+                    disableNode = n.attributes.group_by == CCR.xdmod.ui.disabledMenus[i].group_by && n.attributes.category == CCR.xdmod.ui.disabledMenus[i].category;
                 }
 
                 if (disableNode) {
@@ -626,8 +626,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                         treeLoader.baseParams.query_group = 'tg_usage';
 
-                        if (node.attributes.realm) {
-                            treeLoader.baseParams.realm = node.attributes.realm;
+                        if (node.attributes.category) {
+                            treeLoader.baseParams.category = node.attributes.category;
                         }
 
                         if (node.attributes.group_by) {
@@ -681,7 +681,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             root: {
                 nodeType: 'async',
                 draggable: false,
-                id: 'realm_', //set this to 'realms' to put realms under nodes
+                id: 'category_', //set this to 'realms' to put realms under nodes
                 filter: false
             },
 

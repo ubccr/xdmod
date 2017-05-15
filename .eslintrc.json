@@ -1,66 +1,96 @@
 {
-  "env": {},
+  "extends": "airbnb-base/legacy",
+  "env": {
+    "browser": false,
+    "node": false
+  },
   "globals": {},
-  "extends": "eslint:recommended",
   "rules": {
-    "curly": 2,
-    "guard-for-in": 2,
-    "no-extend-native": 2,
-    "block-scoped-var": 1,
-    "no-use-before-define": 2,
-    "no-caller": 2,
-    "no-sequences": 2,
-    "no-new": 2,
-    "no-extra-parens": 1,
-    "dot-notation": [
-      1,
+    "curly": [
+      "error",
+      "all"
+    ],
+    "brace-style": [
+      "error",
+      "1tbs",
       {
-        "allowPattern": "^[a-z]+(_[a-z]+)+$"
+        "allowSingleLine": false
       }
     ],
     "no-implicit-coercion": [
-      2,
+      "error",
       {
         "boolean": true,
         "number": true,
         "string": false
       }
     ],
-    "no-multi-spaces": 2,
-    "key-spacing": [
-      2,
-      {
-        "beforeColon": false,
-        "afterColon": true
-      }
-    ],
-    "comma-spacing": [
-      2,
-      {
-        "before": false,
-        "after": true
-      }
-    ],
-    "semi-spacing": [
-      2,
-      {
-        "before": false,
-        "after": true
-      }
-    ],
-    "no-spaced-func": 2,
-    "no-trailing-spaces": 2,
-    "eol-last": 2,
-    "semi": 2,
-    "space-infix-ops": 2,
     "consistent-this": [
-      1,
+      "warn",
       "self"
     ],
-    "linebreak-style": [
-      2,
-      "unix"
+    "indent": [
+      "error",
+      4,
+      {
+        "SwitchCase": 1,
+        "VariableDeclarator": 1,
+        "outerIIFEBody": 1,
+        "FunctionDeclaration": {
+          "parameters": 1,
+          "body": 1
+        },
+        "FunctionExpression": {
+          "parameters": 1,
+          "body": 1
+        }
+      }
     ],
-    "keyword-spacing": 1
+    "func-names": "off",
+    "vars-on-top": "off",
+    "new-cap": [
+      "error",
+      {
+        "newIsCap": true,
+        "newIsCapExceptions": [],
+        "capIsNew": false,
+        "capIsNewExceptions": [
+          "Immutable.Map",
+          "Immutable.Set",
+          "Immutable.List"
+        ],
+        "properties": false
+      }
+    ],
+    "max-len": [
+      "error",
+      512,
+      4,
+      {
+        "ignoreUrls": true,
+        "ignoreComments": false,
+        "ignoreRegExpLiterals": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ],
+    "no-continue": "off",
+    "no-plusplus": "off",
+    "no-prototype-builtins": "off",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "ForOfStatement",
+        "message": "iterators/generators require regenerator-runtime, which is too heavyweight for this guide to allow them. Separately, loops should be avoided in favor of array iterations."
+      },
+      {
+        "selector": "LabeledStatement",
+        "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+      },
+      {
+        "selector": "WithStatement",
+        "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+      }
+    ]
   }
 }

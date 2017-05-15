@@ -710,8 +710,8 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         });
         var formItems = [
             {
-                fieldLabel: 'Realm',
-                name: 'realm',
+                fieldLabel: 'Category',
+                name: 'category',
                 xtype: 'combo',
                 mode: 'local',
                 editable: false,
@@ -723,7 +723,9 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                     data: realmData // data is local
                 }),
                 disabled: true,
-                value: this.record.data.realm,
+                value: XDMoD.Module.MetricExplorer.getCategoryForRealm(
+                    this.record.data.realm
+                ),
                 valueField: 'id',
                 displayField: 'id',
                 triggerAction: 'all'

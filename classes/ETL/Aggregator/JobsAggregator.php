@@ -17,8 +17,7 @@ namespace ETL\Aggregator;
 use ETL\iAction;
 use \PDOException;
 
-class JobsAggregator extends pdoAggregator
-implements iAction
+class JobsAggregator extends pdoAggregator implements iAction
 {
     // Name of the status table that we will be updating
     const STATUS_TABLE = "jobfactstatus";
@@ -52,8 +51,10 @@ implements iAction
                 return false;
             }
         } catch (PDOException $e ) {
-            $msg = "Error querying {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error querying {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint)
+            );
         }
 
         return parent::performPreAggregationUnitTasks($aggregationUnit);
@@ -88,11 +89,16 @@ implements iAction
             $whereClauses[] =  "resource_id IN (" . $this->resourceIdListString . ")";
         }
 
-        if ( $this->etlOverseerOptions->isForce() ) {
-            $qStartDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-            $qEndDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
-            $whereClauses[] = "end_time_ts BETWEEN UNIX_TIMESTAMP($qStartDate) AND UNIX_TIMESTAMP($qEndDate)";
-        }  // if ( $this->etlOverseerOptions->isForce() )
+        if ( $this->getEtlOverseerOptions()->isForce() ) {
+            if ( null !== $this->currentStartDate ) {
+                $qStartDate = $this->sourceEndpoint->quote($this->currentStartDate);
+                $whereClauses[] = "end_time_ts >= UNIX_TIMESTAMP($qStartDate)";
+            }
+            if ( null !== $this->currentEndDate ) {
+                $qEndDate = $this->sourceEndpoint->quote($this->currentEndDate);
+                $whereClauses[] = "end_time_ts <= UNIX_TIMESTAMP($qEndDate)";
+            }
+        }  // if ( $this->getEtlOverseerOptions()->isForce() )
 
         if ( 0 != count($whereClauses) ) {
             $sql .= " WHERE " . implode(" AND ", $whereClauses);
@@ -101,13 +107,15 @@ implements iAction
         $this->logger->debug($sql);
 
         try {
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
+            if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                 $numRows = $this->destinationHandle->execute($sql);
                 $this->logger->info("Updated $numRows rows");
             }
         } catch (PDOException $e ) {
-            $msg = "Error updating {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error updating {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+            );
         }
 
         return parent::performPostAggregationUnitTasks($aggregationUnit, $numAggregationPeriodsProcessed);
@@ -171,25 +179,32 @@ implements iAction
                 $whereClauses[] = "resource_id IN (" . $this->resourceIdListString . ")";
             }
 
-            if ( $this->etlOverseerOptions->isForce() ) {
-                $qStartDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-                $qEndDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
-                $whereClauses[] = "end_time_ts BETWEEN UNIX_TIMESTAMP($qStartDate) AND UNIX_TIMESTAMP($qEndDate)";
-            }  // if ( $this->etlOverseerOptions->isForce() )
+            if ( $this->getEtlOverseerOptions()->isForce() ) {
+                if ( null !== $this->currentStartDate ) {
+                    $qStartDate = $this->sourceEndpoint->quote($this->currentStartDate);
+                    $whereClauses[] = "end_time_ts >= UNIX_TIMESTAMP($qStartDate)";
+                }
+                if ( null !== $this->currentEndDate ) {
+                    $qEndDate = $this->sourceEndpoint->quote($this->currentEndDate);
+                    $whereClauses[] = "end_time_ts <= UNIX_TIMESTAMP($qEndDate)";
+                }
+            }  // if ( $this->getEtlOverseerOptions()->isForce() )
 
             // If we always run the full set of aggregation periods, this can be done once at the end...
 
-            $sql = "DELETE FROM {$sourceSchema}.{$tableName} WHERE " . implode(" AND " , $whereClauses);
+            $sql = "DELETE FROM {$sourceSchema}.{$tableName} WHERE " . implode(" AND ", $whereClauses);
             $this->logger->debug($sql);
 
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
+            if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                 $numRows = $this->destinationHandle->execute($sql);
                 $this->logger->info("Removed $numRows rows");
             }
 
         } catch (PDOException $e ) {
-            $msg = "Error cleaning {$sourceSchema}.{$tableName}";
-            $this->logAndThrowSqlException($sql, $e, $msg);
+            $this->logAndThrowException(
+                "Error cleaning {$sourceSchema}.{$tableName}",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+            );
         }
 
         return parent::performPostExecuteTasks($numRecordsProcessed);
@@ -231,19 +246,21 @@ implements iAction
         // If we are forcing aggregation for a specific period, simply select all periods that overlap
         // the specified date range
 
-        if ( $this->etlOverseerOptions->isForce() ) {
+        if ( $this->getEtlOverseerOptions()->isForce() ) {
 
-            $startDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentStartDate());
-            $endDate = $this->sourceEndpoint->quote($this->etlOverseerOptions->getCurrentEndDate());
+            $ranges = array();
 
-            if ( null !== $startDate && null !== $endDate ) {
-                $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate) " .
-                    "AND d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
-            } else if ( null !== $startDate ) {
-                $dateRangeSql = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate)";
-            } else if ( null !== $endDate ) {
-                $dateRangeSql = "d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
+            if ( null !== $this->currentStartDate ) {
+                $startDate = $this->sourceHandle->quote($this->currentStartDate);
+                $ranges[] = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate)";
             }
+
+            if ( null !== $this->currentEndDate ) {
+                $endDate = $this->sourceHandle->quote($this->currentEndDate);
+                $ranges[] = "d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
+            }
+
+            $dateRangeSql = implode(" AND ", $ranges);
 
         } else {
 
@@ -303,7 +320,7 @@ implements iAction
             $dateRangeSql = "d.${aggregationUnit}_end_ts >= js_limits.min_start " .
                 "AND d.${aggregationUnit}_start_ts <= js_limits.max_end";
 
-        }  // else ( $this->etlOverseerOptions->isForce() )
+        }  // else ( $this->getEtlOverseerOptions()->isForce() )
 
         // NOTE: The "ORDER BY 2 DESC, 3 DESC" is important because it allows most recent periods to be
         // aggregated first.
@@ -313,7 +330,7 @@ implements iAction
         $sql =
             "SELECT distinct
          d.id as period_id,
-         d.`year` as year_id,
+         d.`year` as year_value,
          d.`${aggregationUnit}` as period_value,
          d.${aggregationUnit}_start as period_start,
          d.${aggregationUnit}_end as period_end,
@@ -333,11 +350,14 @@ implements iAction
 
         try {
             $this->logger->debug("Select dirty aggregation periods:\n$sql");
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
+            if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                 $result = $this->utilityHandle->query($sql);
             }
         } catch (PDOException $e) {
-            $this->logAndThrowSqlException($sql, $e, "Error querying dirty date ids");
+            $this->logAndThrowException(
+                "Error querying aggregation dirty date ids",
+                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint)
+            );
         }
 
         return $result;
@@ -363,8 +383,6 @@ implements iAction
             return;
         }
 
-        $startDate = $this->etlOverseerOptions->getCurrentStartDate();
-        $endDate = $this->etlOverseerOptions->getCurrentEndDate();
         $utilitySchema = $this->utilityEndpoint->getSchema();
         $sourceSchema = $this->sourceEndpoint->getSchema();
 
@@ -377,11 +395,11 @@ implements iAction
             ( null !== $this->resourceIdListString ? " and resource_id IN (" . $this->resourceIdListString . ")" : "");
 
         $params = array(
-            ":startDate" => $startDate,
-            ":endDate" => $endDate
+            ":startDate" => $this->currentStartDate,
+            ":endDate" => $this->currentEndDate
             );
 
-        $this->logger->debug("Verify resource specs exist:\n$sql");
+        $this->logger->debug("Verify resource specs exist " . $this->sourceEndpoint . ":\n$sql");
         $result = $this->sourceHandle->query($sql, $params);
         if ( count($result) > 0 ) {
             $resources = array();
@@ -403,5 +421,4 @@ implements iAction
         $this->verifiedResourceSpecs = true;
 
     }  // checkResourceSpecs()
-
 }  // class JobsAggregator

@@ -226,8 +226,6 @@ class Slurm extends Shredder
             return;
         }
 
-        $date = substr($job['end_time'], 0, 10);
-
         // Convert datetime strings into unix timestamps.
         $dateKeys = array(
             'submit_time',
@@ -250,11 +248,7 @@ class Slurm extends Shredder
             $job[$key] = $this->parseTimeField($job[$key]);
         }
 
-        $job['cluster_name'] = $this->getResourceForNode(
-            $node,
-            $date,
-            $job['cluster_name']
-        );
+        $job['cluster_name'] = $this->getResource();
 
         $this->checkJobData($line, $job);
 

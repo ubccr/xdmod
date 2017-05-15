@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../../configuration/linker.php';
 require_once 'user_check.php';
 
 if (isset($_POST['direct_to'])) {
@@ -192,7 +193,6 @@ if (isset($_POST['direct_to'])) {
 
   <link rel="stylesheet" type="text/css" href="../gui/lib/extjs/examples/ux/css/ColumnHeaderGroup.css"/>
   <link rel="stylesheet" type="text/css" href="../gui/css/GroupTab.css"/>
-  <link rel="stylesheet" type="text/css" href="css/appKer.css"/>
 
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/ColumnHeaderGroup.js"></script>
   <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTabPanel.js"></script>
@@ -201,55 +201,12 @@ if (isset($_POST['direct_to'])) {
   <script type="text/javascript" src="../gui/js/ExportPanel.js"></script>
   <script type="text/javascript" src="../gui/js/PortalModule.js"></script>
 
-  <?php /* App Kernel files. */ ?>
-  <?php if (xd_utilities\getConfiguration('features', 'appkernels') == 'on'): ?>
-
-  <script type="text/javascript" src="js/Arr/SummaryStore.js"></script>
-  <script type="text/javascript" src="js/Arr/SummaryPortlet.js"></script>
-  <script type="text/javascript" src="js/Arr/ActiveTasksStore.js"></script>
-  <script type="text/javascript" src="js/Arr/ActiveTasksGrid.js"></script>
-
-  <script type="text/javascript" src="js/Arr/AppKerSuccessRateStore.js"></script>
-  <script type="text/javascript" src="js/Arr/AppKerSuccessRateGrid.js"></script>
-  <script type="text/javascript" src="js/Arr/AppKerSuccessRatePanel.js"></script>
-  <script type="text/javascript" src="js/Arr/AppKerPerformanceMapPanel.js"></script>
-
-  <script type="text/javascript" src="js/Arr/StatusPanel.js"></script>
-  <script type="text/javascript" src="js/Arr/ErrorMessageStore.js"></script>
-  <script type="text/javascript" src="js/Arr/ErrorMessagePanel.js"></script>
-  <script type="text/javascript" src="js/Arr/ControlRegionsPanel.js"></script>
-  <script type="text/javascript" src="js/Arr/SchedulePanel.js"></script>
-  <script type="text/javascript" src="js/Arr/AppKernelDashboardPanel.js"></script>
-  <script type="text/javascript" src="js/Arr/WalltimePanel.js"></script>
-  <script type="text/javascript" src="js/Arr/WalltimeNewEntryPanel.js"></script>
-  <script type="text/javascript" src="js/Arr/WalltimeEditEntryPanel.js"></script>
-
-  <script type="text/javascript" src="js/AppKernel/InstancePanel.js"></script>
-  <script type="text/javascript" src="js/AppKernel/InstanceWindow.js"></script>
-  <script type="text/javascript" src="js/Arr/ActiveTasksPanel.js"></script>
-  <script type="text/javascript" src="js/Arr/EditActiveTaskPanel.js"></script>
-  <script type="text/javascript" src="js/Arr/CreateSchedulePanel.js"></script>
-  <script type="text/javascript" src="js/Arr/EditSchedulePanel.js"></script>
-
-  <script type="text/javascript" src="js/Ingestion/AppKernelStore.js"></script>
-  <script type="text/javascript" src="js/Ingestion/AppKernelGrid.js"></script>
-  <?php endif; ?>
-
-  <!-- Open XDMoD Install List -->
-  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
-  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js"></script>
-  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js"></script>
-  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
-  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
-  <script type="text/javascript" src="../gui/lib/extjs/examples/ux/treegrid/TreeGrid.js"></script>
-  <script type="text/javascript" src="js/OpenXdmod/InstallsPanel.js"></script>
-
-  <script type="text/javascript" src="js/Ingestion/ReportsPanel.js"></script>
-
   <script type="text/javascript" src="js/Dashboard/Factory.js"></script>
   <script type="text/javascript" src="js/Dashboard/MenuStore.js"></script>
   <script type="text/javascript" src="js/Dashboard/FramePanel.js"></script>
   <script type="text/javascript" src="js/Dashboard/Viewport.js"></script>
+
+  <?php echo \OpenXdmod\Assets::generateAssetTags('internal_dashboard'); ?>
 
   <script type="text/javascript" src="js/dashboard.js"></script>
 

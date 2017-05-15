@@ -1,0 +1,61 @@
+{
+    "table_definition": {
+        "name": "countable_type",
+        "engine": "MyISAM",
+        "comment": "Types of things that are countable. Accelerators, databases, storage, etc.",
+        "columns": [
+            {
+                "name": "countable_type_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "unit_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null,
+                "comment": "Optional unit for this countable"
+            },
+            {
+                "name": "countable_type",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Short version or abbrev"
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "description",
+                "type": "varchar(1024)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "countable_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    },
+
+    "#": "Define the mapping between the source value fields and the table columns.",
+    "destination_columns": ["countable_type_id", "unit_id", "countable_type", "display", "description"],
+
+    "#": "Provide the raw source values.",
+    "source_values":[
+        [-1, null, "unknown",   "Unknown",   "Unknown" ],
+        [1,  null, "gpu",       "GPUs",      "GPUs" ],
+        [2,  null, "mic",       "MICs",      "MICs" ],
+        [3,  null, "database",  "Databases", "Databases" ],
+        [4,  2,    "storage",   "Storage",   "Storage" ]
+    ]
+}

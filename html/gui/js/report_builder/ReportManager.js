@@ -171,12 +171,10 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
 
         // Pass the reportCreator reference to the ChartDateEditor so
         // the ChartDateEditor knows what store to work with (during the
-        // logic associated with the 'Update' handler).  Same reasoning
-        // goes for the ReportEntryTypeMenu.
+        // logic associated with the 'Update' handler).
 
         this.reportCreator.on('show', function (p) {
             XDMoD.Reporting.Singleton.ChartDateEditor.setCreatorPanel(p);
-            XDMoD.Reporting.Singleton.ReportEntryTypeMenu.setCreatorPanel(p);
         });
 
         this.reportPreview = new XDMoD.ReportPreview({parent: this});

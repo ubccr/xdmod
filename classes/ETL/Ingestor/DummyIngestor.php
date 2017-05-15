@@ -15,42 +15,23 @@ use ETL\aOptions;
 use ETL\iAction;
 use ETL\EtlConfiguration;
 use ETL\EtlOverseerOptions;
-use \Log;
+use Log;
 
-class DummyIngestor
-implements iAction
+class DummyIngestor extends aAction implements iAction
 {
-    protected $options;
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
-        $this->options = $options;
+        parent::__construct($options, $etlConfig, $logger);
     }
-    public function execute(EtlOverseerOptions $etlOptions)
+
+    public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
         return true;
     }
-    public function verify(EtlOverseerOptions $etlConfig = null)
+
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
+        parent::initialize($etlOverseerOptions);
         return true;
-    }
-    public function getName()
-    {
-        return $this->options->name;
-    }
-    public function getClass()
-    {
-        return $this->options->class;
-    }
-    public function getOptions()
-    {
-        return $this->options;
-    }
-    public function isVerified()
-    {
-        return true;
-    }
-    public function __toString()
-    {
-        return $this->getName() . "(" . $this->getClass() . ")";
     }
 }  // class DummyIngestor

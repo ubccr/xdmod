@@ -35,19 +35,21 @@ class SgeShredderTest extends \PHPUnit_Framework_TestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Sge')
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow', 'hasResource'))
+            ->setMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
-
-        $shredder
-            ->method('hasResource')
-            ->willReturn(true);
 
         $shredder
             ->expects($this->once())
             ->method('insertRow')
             ->with($row);
 
+        $shredder
+            ->method('getResourceConfig')
+            ->willReturn(array());
+
         $shredder->setLogger(\Log::singleton('null'));
+
+        $shredder->setResource('testresource');
 
         $shredder->shredLine($line);
     }
@@ -114,7 +116,7 @@ class SgeShredderTest extends \PHPUnit_Framework_TestCase
                     'resource_list_s_cpu' => '36000',
                     'resource_list_s_rt' => '36000',
                     'resource_list_slots' => '1',
-                    'clustername' => null,
+                    'clustername' => 'testresource',
                 ),
             ),
         );

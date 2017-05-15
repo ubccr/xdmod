@@ -17,6 +17,8 @@
  * ${:PERIOD_SECONDS} The number of seconds in the current aggregation period being processed.
  * ${:PERIOD_VALUE} The value of the aggregation period within the year (e.g., day of year, month of year, etc.)
  * ${:PERIOD_ID} Identifier into the aggregation period tables (e.g., days, months, etc.)
+ * ${:PERIOD_START} Start datetime of the current period
+ * ${:PERIOD_END} End datetime of the current period
  * ${:PERIOD_START_TS} Start timestamp of the current period
  * ${:PERIOD_END_TS} End timestamp of the current period
  *
@@ -113,51 +115,91 @@ class pdoAggregator extends aAggregator
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        // Set up the handles to the various data sources and verify they are the correct type
-
-        $this->utilityEndpoint = $etlConfig->getDataEndpoint($this->options->utility);
-        if ( ! $this->utilityEndpoint instanceof Mysql ) {
-            $this->utilityEndpoint = null;
-            $msg = "Utility endpoint is not an instance of ETL\\DataEndpoint\\Mysql";
-            $this->logAndThrowException($msg);
-        }
-        $this->utilityHandle = $this->utilityEndpoint->getHandle();
-
-        $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
-        if ( ! $this->sourceEndpoint instanceof Mysql ) {
-            $this->sourceEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\Mysql";
-            $this->logAndThrowException($msg);
-        }
-        $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
+     * Initialize data required to perform the action.  Since this is an action of a target database
+     * we must parse the definition of the target table.
+     *
+     * @throws Exception if any query data was not
+     * int the correct format.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
-        if ( $this->isVerified() ) {
+        if ( $this->isInitialized() ) {
             return;
         }
 
-        $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->etlOverseerOptions = $etlOptions;
+        $this->initialized = false;
+
+        parent::initialize($etlOverseerOptions);
+
+        // Set up the handles to the various data sources and verify they are the correct type
+
+        if ( ! $this->utilityEndpoint instanceof Mysql ) {
+            $msg = "Utility endpoint is not an instance of ETL\\DataEndpoint\\Mysql";
+            $this->logAndThrowException($msg);
         }
 
-        $this->initialize();
+        if ( ! $this->sourceEndpoint instanceof Mysql ) {
+            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\Mysql";
+            $this->logAndThrowException($msg);
+        }
 
-        parent::verify();
+        if ( null === $this->etlSourceQuery ) {
+
+            if ( ! isset($this->parsedDefinitionFile->source_query) ) {
+                $msg = "Definition file does not contain a 'source_query' key";
+                $this->logAndThrowException($msg);
+            }
+
+            $this->logger->debug("Create ETL source query object");
+            $this->etlSourceQuery = new Query(
+                $this->parsedDefinitionFile->source_query,
+                $this->sourceEndpoint->getSystemQuoteChar()
+            );
+        }  // ( null === $this->etlSourceQuery )
+
+        // --------------------------------------------------------------------------------
+        // Create the list of supported macros. Macros starting with a colon (:) are PDO bind
+        // paramaters passed in the loop of dirty date ids. If this list is modified, be sure to update
+        // the documentation!
+
+        $localParameters = array(
+            ':YEAR_VALUE' => ":year_value",
+            // Number of seconds in the aggregation period
+            ':PERIOD_SECONDS' => ":period_seconds",
+            // Value of the period within the year (e.g., day of year, month of year, etc.)
+            ':PERIOD_VALUE' => ":period_value",
+            // Identifier into the aggregation period tables (e.g., days, months, etc.)
+            ':PERIOD_ID' => ":period_id",
+            // Start datetime of the period
+            ':PERIOD_START' => ":period_start",
+            // End datetime of the period
+            ':PERIOD_END' => ":period_end",
+            // Start timestamp of the period
+            ':PERIOD_START_TS' => ":period_start_ts",
+            // End timestamp of the period
+            ':PERIOD_END_TS' => ":period_end_ts",
+            // The day_id of the start of this period
+            ':PERIOD_START_DAY_ID' => ":period_start_day_id",
+            // The day_id of the end of this period
+            ':PERIOD_END_DAY_ID' => ":period_end_day_id"
+        );
+
+        $this->variableMap = array_merge($this->variableMap, $localParameters);
+
+        // An individual action may override restrictions provided by the overseer.
+        $this->setOverseerRestrictionOverrides();
+
+        $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
 
         if ( null === $this->etlSourceQuery ) {
             $msg = "ETL source query is not set";
             $this->logAndThrowException($msg);
-        } else if ( ! $this->etlSourceQuery instanceof Query ) {
+        } elseif ( ! $this->etlSourceQuery instanceof Query ) {
             $msg = "ETL source query is not an instance of Query";
             $this->logAndThrowException($msg);
         }
@@ -180,31 +222,22 @@ class pdoAggregator extends aAggregator
             $this->logAndThrowException($msg);
         }
 
-        $this->verified = true;
+        $this->initialized = true;
 
         return true;
 
-    }  // verify()
+    }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
+     * Override aRdbmsDestinationAction::createDestinationTableObjects() and use
+     * AggregationTable objects instead of Table objects for the destination tables.
      *
-     * Note: We do not use aRdbmsDestinationAction::initialize() because we cannot get the
-     *   aggregation table name without the aggregation unit.
-     *
-     * @throws Exception if any query data was not
-     * int the correct format.
+     * @see aRdbmsDestinationAction::createDestinationTableObjects()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function initialize()
+    protected function createDestinationTableObjects()
     {
-        if ( $this->isInitialized() ) {
-            return;
-        }
-
-        $this->initialized = false;
 
         // If the etlDestinationTable is set, it will not be generated in aRdbmsDestinationAction
 
@@ -233,9 +266,11 @@ class pdoAggregator extends aAggregator
         }
 
         $this->logger->debug("Create ETL destination aggregation table object");
-        $this->etlDestinationTable = new AggregationTable($this->parsedDefinitionFile->table_definition,
-                                                          $this->destinationEndpoint->getSystemQuoteChar(),
-                                                          $this->logger);
+        $this->etlDestinationTable = new AggregationTable(
+            $this->parsedDefinitionFile->table_definition,
+            $this->destinationEndpoint->getSystemQuoteChar(),
+            $this->logger
+        );
         $this->etlDestinationTable->setSchema($this->destinationEndpoint->getSchema());
 
         if ( isset($this->options->table_prefix) &&
@@ -254,57 +289,7 @@ class pdoAggregator extends aAggregator
         // the table list since it is used by methods upstream.
         $this->etlDestinationTableList[$this->parsedDefinitionFile->table_definition->name] = $this->etlDestinationTable;
 
-        parent::initialize();
-
-        if ( null === $this->etlSourceQuery ) {
-
-            if ( ! isset($this->parsedDefinitionFile->source_query) ) {
-                $msg = "Definition file does not contain a 'source_query' key";
-                $this->logAndThrowException($msg);
-            }
-
-            $this->logger->debug("Create ETL source query object");
-            $this->etlSourceQuery = new Query($this->parsedDefinitionFile->source_query,
-                                              $this->sourceEndpoint->getSystemQuoteChar());
-        }  // ( null === $this->etlSourceQuery )
-
-        // --------------------------------------------------------------------------------
-        // Create the list of supported macros. Macros starting with a colon (:) are PDO bind
-        // paramaters passed in the loop of dirty date ids. If this list is modified, be sure to update
-        // the documentation!
-
-        $parameters = array(
-            'UTILITY_SCHEMA' => $this->utilityEndpoint->getSchema(),
-            'SOURCE_SCHEMA' => $this->sourceEndpoint->getSchema(),
-            ':YEAR_VALUE' => ":year_value",
-            // Number of seconds in the aggregation period
-            ':PERIOD_SECONDS' => ":period_seconds",
-            // Value of the period within the year (e.g., day of year, month of year, etc.)
-            ':PERIOD_VALUE' => ":period_value",
-            // Identifier into the aggregation period tables (e.g., days, months, etc.)
-            ':PERIOD_ID' => ":period_id",
-            // Start timestamp of the period
-            ':PERIOD_START_TS' => ":period_start_ts",
-            // End timestamp of the period
-            ':PERIOD_END_TS' => ":period_end_ts",
-            // The day_id of the start of this period
-            ':PERIOD_START_DAY_ID' => ":period_start_day_id",
-            // The day_id of the end of this period
-            ':PERIOD_END_DAY_ID' => ":period_end_day_id"
-            );
-
-        $this->variableMap = array_merge($this->variableMap, $parameters);
-
-        // An individual action may override restrictions provided by the overseer.
-        $this->setOverseerRestrictionOverrides();
-
-        $this->etlOverseerOptions->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
-
-        $this->initialized = true;
-
-        return true;
-
-    }  // initialize()
+    }  // createDestinationTableObjects()
 
     /* ------------------------------------------------------------------------------------------
      * By default, there are no pre-execution tasks.
@@ -352,8 +337,6 @@ class pdoAggregator extends aAggregator
             return false;
         }
 
-        $this->variableMap["AGGREGATION_UNIT"] = $aggregationUnit;
-
         // --------------------------------------------------------------------------------
         // Create/alter the table for this aggregation unit. In dryrun mode, this simply prints out
         // debug information.
@@ -378,7 +361,7 @@ class pdoAggregator extends aAggregator
             }
         }
 
-        $this->executeSqlList($sqlList, $this->destinationHandle, "Pre-aggregation unit tasks");
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Pre-aggregation unit tasks");
 
         return true;
     }  // performPreAggregationUnitTasks()
@@ -398,17 +381,15 @@ class pdoAggregator extends aAggregator
             $qualifiedDestTableName = $etlTable->getFullName();
 
             if ( $numAggregationPeriodsProcessed > 0 ) {
-                $this->logger->info("Optimize $qualifiedDestTableName");
                 $sqlList[] = "OPTIMIZE TABLE $qualifiedDestTableName";
             }
 
             if ( $this->options->disable_keys && "myisam" == strtolower($etlTable->getEngine()) ) {
-                $this->logger->info("Enable keys on $qualifiedDestTableName");
                 $sqlList[] = "ALTER TABLE $qualifiedDestTableName ENABLE KEYS";
             }
         }
 
-        $this->executeSqlList($sqlList, $this->destinationHandle, "Post-aggregation unit tasks");
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Post-aggregation unit tasks");
 
         return true;
 
@@ -438,7 +419,10 @@ class pdoAggregator extends aAggregator
                 continue;
             }
         } catch (PDOException $e) {
-            $this->logAndThrowSqlException($sql, $e, "Error verifying aggregation unit table for '$aggregationUnit'");
+            $this->logAndThrowException(
+                "Error verifying aggregation unit table for '$aggregationUnit'",
+                array('exception' => $e, 'sql' => $sql)
+            );
         }
 
         return true;
@@ -485,9 +469,6 @@ class pdoAggregator extends aAggregator
                                            ? $this->parsedDefinitionFile->aggregation_period_query
                                            : null );
 
-        $startDate = $this->sourceHandle->quote($this->etlOverseerOptions->getCurrentStartDate());
-        $endDate = $this->sourceHandle->quote($this->etlOverseerOptions->getCurrentEndDate());
-
         // In addition to the start and end timestamp for each record, we calculate the ids of the
         // daily aggregation period for these times (start_day_id and end_day_id). This is defined as:
         //
@@ -521,17 +502,28 @@ class pdoAggregator extends aAggregator
         // Verify table fields exist for any conversions not provided
 
         if ( null === $startDayIdField || null === $endDayIdField ) {
-            $t = Utilities::substituteVariables($firstTable->getFullName(false), $this->variableMap);
-            $this->logger->debug("Discover $t");
-            $firstTableDef = Table::discover($t, $this->sourceEndpoint, null, $this->logger);
+
+            $fromTable = Utilities::substituteVariables(
+                $firstTable->getFullName(false),
+                $this->variableMap,
+                $this,
+                "Undefined macros found in FROM table name"
+            );
+
+            $this->logger->debug("Discover table $fromTable");
+            $firstTableDef = Table::discover($fromTable, $this->sourceEndpoint, null, $this->logger);
 
             // If we are in dryrun mode the table may not have been created yet but we still want to
             // be able to display the generated queries so simply set the start and end day id
             // fields.
 
-            if ( false === $firstTableDef && $this->etlOverseerOptions->isDryrun() ) {
-                $startDayIdField = "start_day_id";
-                $endDayIdField = "end_day_id";
+            if ( false === $firstTableDef ) {
+                if ( $this->getEtlOverseerOptions()->isDryrun() ) {
+                    $startDayIdField = "start_day_id";
+                    $endDayIdField = "end_day_id";
+                } else {
+                    $this->logAndThrowException("Table does not exist: $fromTable");
+                }
             } else {
 
                 $missing = array();
@@ -564,57 +556,67 @@ class pdoAggregator extends aAggregator
         $endDayIdToUnitId = null;
 
         switch ( $aggregationUnit ) {
-        case 'day':
-            // No conversion needed
-            $unitIdToStartDayId = "d.id";
-            $unitIdToEndDayId = "d.id";
-            $startDayIdToUnitId = $startDayIdField;
-            $endDayIdToUnitId = $endDayIdField;
-            break;
-        case 'month':
-            $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(concat(d.`year`, '-', d.`month`, '-01'))";
-            $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-', d.`month`, '-01'), interval 1 month), interval 1 day))";
-            $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000 + "
-                . "MONTH(date_add(concat(truncate($startDayIdField/100000, 0), '-01-01'), interval (mod($startDayIdField, 1000) - 1) day))";
-            $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000 + "
-                . "MONTH(date_add(concat(truncate($endDayIdField/100000, 0), '-01-01'), interval (mod($endDayIdField, 1000) - 1) day))";
-            break;
-        case 'quarter':
-            $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(date_add(concat(d.`year`, '-01-01'), interval (d.`quarter` - 1) quarter))";
-            $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-01-01'), interval d.`quarter` quarter), interval 1 day))";
-            $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000 + "
-                . "QUARTER(date_add(concat(truncate($startDayIdField/100000, 0), '-01-01'), interval (mod($startDayIdField, 1000) - 1) day))";
-            $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000 + "
-                . "QUARTER(date_add(concat(truncate($endDayIdField/100000, 0), '-01-01'), interval (mod($endDayIdField, 1000) - 1) day))";
-            break;
-        case 'year':
-            $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(concat(d.`year`, '-01-01'))";
-            $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-01-01'), interval 1 year), interval 1 day))";
-            $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000";
-            $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000";
-            break;
-        default:
-            // We should never get here because we are verifying the existance of the aggregation
-            // unit tables in performPreAggregationUnitTasks.
-            $msg = "Unsupported aggregation unit '$aggregationUnit'";
-            $this->logAndThrowException($msg);
-            break;
+            case 'day':
+                // No conversion needed
+                $unitIdToStartDayId = "d.id";
+                $unitIdToEndDayId = "d.id";
+                $startDayIdToUnitId = $startDayIdField;
+                $endDayIdToUnitId = $endDayIdField;
+                break;
+            case 'month':
+                $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(concat(d.`year`, '-', d.`month`, '-01'))";
+                $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-', d.`month`, '-01'), interval 1 month), interval 1 day))";
+                $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000 + "
+                    . "MONTH(date_add(concat(truncate($startDayIdField/100000, 0), '-01-01'), interval (mod($startDayIdField, 1000) - 1) day))";
+                $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000 + "
+                    . "MONTH(date_add(concat(truncate($endDayIdField/100000, 0), '-01-01'), interval (mod($endDayIdField, 1000) - 1) day))";
+                break;
+            case 'quarter':
+                $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(date_add(concat(d.`year`, '-01-01'), interval (d.`quarter` - 1) quarter))";
+                $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-01-01'), interval d.`quarter` quarter), interval 1 day))";
+                $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000 + "
+                    . "QUARTER(date_add(concat(truncate($startDayIdField/100000, 0), '-01-01'), interval (mod($startDayIdField, 1000) - 1) day))";
+                $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000 + "
+                    . "QUARTER(date_add(concat(truncate($endDayIdField/100000, 0), '-01-01'), interval (mod($endDayIdField, 1000) - 1) day))";
+                break;
+            case 'year':
+                $unitIdToStartDayId = "d.`year`*100000 + DAYOFYEAR(concat(d.`year`, '-01-01'))";
+                $unitIdToEndDayId = "d.`year`*100000 + DAYOFYEAR(date_sub(date_add(concat(d.`year`, '-01-01'), interval 1 year), interval 1 day))";
+                $startDayIdToUnitId = "truncate($startDayIdField/100000, 0)*100000";
+                $endDayIdToUnitId = "truncate($endDayIdField/100000, 0)*100000";
+                break;
+            default:
+                // We should never get here because we are verifying the existance of the aggregation
+                // unit tables in performPreAggregationUnitTasks.
+                $msg = "Unsupported aggregation unit '$aggregationUnit'";
+                $this->logAndThrowException($msg);
+                break;
         }  // switch ( $aggregationUnit )
 
-        if ( $this->etlOverseerOptions->isForce() ) {
+        if ( $this->getEtlOverseerOptions()->isForce() ) {
 
             // If we are forcing aggregation for a specific time period, simply select all
             // aggregation periods that overlap the specified date range.
 
+            if ( null === $this->currentStartDate && null === $this->currentEndDate ) {
+                $this->logger->warning("Forced aggregation with no start or end date!");
+            }
+
             $ranges = array();
 
-            if ( null !== $startDate ) {
+            if ( null !== $this->currentStartDate ) {
+                $startDate = $this->sourceHandle->quote($this->currentStartDate);
                 $ranges[] = "$startDate <= d.${aggregationUnit}_end";
-            } else if ( null !== $endDate ) {
+            }
+
+            if ( null !== $this->currentEndDate ) {
+                $endDate = $this->sourceHandle->quote($this->currentEndDate);
                 $ranges[] = "$endDate >= d.${aggregationUnit}_start";
             }
 
-            $dateRangeRestrictionSql = implode(" AND ", $ranges);
+            if ( 0 != count($ranges) ) {
+                $dateRangeRestrictionSql = implode(" AND ", $ranges);
+            }
 
         } else {
 
@@ -629,7 +631,8 @@ class pdoAggregator extends aAggregator
             // intensive for large number of records. The restrictions are specified in the
             // definition file.
             //
-            // For example, if a last_modified field is present then it can be used to determine records that need to be aggregated
+            // For example, if a last_modified field is present then it can be used to
+            // determine records that need to be aggregated
 
             $query = (object) array(
                 'records' => (object) array(
@@ -648,17 +651,17 @@ class pdoAggregator extends aAggregator
                 $query->overseer_restrictions = $aggregationPeriodQueryOptions->overseer_restrictions;
             } else {
                 $msg = "No restrictions on selection of periods to aggregate. "
-                     . "Re-aggregating all records in " . $sourceSchema . "." . $tableName;
+                    . "Re-aggregating all records in " . $sourceSchema . "." . $tableName;
                 $this->logger->notice($msg);
             }
 
             $recordRangeQuery = new Query($query, $this->sourceEndpoint->getSystemQuoteChar());
-            $this->etlOverseerOptions->applyOverseerRestrictions($recordRangeQuery, $this->utilityEndpoint, $this->overseerRestrictionOverrides);
+            $this->getEtlOverseerOptions()->applyOverseerRestrictions($recordRangeQuery, $this->utilityEndpoint, $this);
 
             $minMaxJoin = "( " . $recordRangeQuery->getSelectSql() . " ) record_ranges";
             $dateRangeRestrictionSql = "d.id BETWEEN record_ranges.start_period_id AND record_ranges.end_period_id";
 
-        }  // else ( $this->etlOverseerOptions->isForce() )
+        }  // else ( $this->getEtlOverseerOptions()->isForce() )
 
         // NOTE: The "ORDER BY 2 DESC, 3 DESC" is important because it allows most recent periods to
         // be aggregated first.
@@ -666,7 +669,7 @@ class pdoAggregator extends aAggregator
         $sql =
             "SELECT distinct
          d.id as period_id,
-         d.`year` as year_id,
+         d.`year` as year_value,
          d.`${aggregationUnit}` as period_value,
          d.${aggregationUnit}_start as period_start,
          d.${aggregationUnit}_end as period_end,
@@ -677,8 +680,8 @@ class pdoAggregator extends aAggregator
          $unitIdToStartDayId as period_start_day_id,
          $unitIdToEndDayId as period_end_day_id
        FROM {$utilitySchema}.${aggregationUnit}s d"
-            . (null !== $minMaxJoin ? ",\n$minMaxJoin" : "" ) . "
-       WHERE $dateRangeRestrictionSql
+            . (null !== $minMaxJoin ? ",\n$minMaxJoin" : "" )
+            . (null !== $dateRangeRestrictionSql ? "\nWHERE $dateRangeRestrictionSql" : "" ) . "
        ORDER BY 2 DESC, 3 DESC";
 
         // If we're running in DRYRUN mode return an empty array. This allows us to skip the aggregation
@@ -686,12 +689,15 @@ class pdoAggregator extends aAggregator
         $result = array();
 
         try {
-            $this->logger->debug("Select dirty aggregation periods:\n$sql");
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                $result = $this->utilityHandle->query($sql);
+            $this->logger->debug("Select dirty aggregation periods SQL " . $this->sourceEndpoint . ":\n$sql");
+            if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
+                $result = $this->sourceHandle->query($sql);
             }
         } catch (PDOException $e) {
-            $this->logAndThrowSqlException($sql, $e, "Error querying dirty date ids");
+            $this->logAndThrowException(
+                "Error querying dirty date ids",
+                array('exception' => $e, 'sql' => $sql)
+            );
         }
 
         return $result;
@@ -711,15 +717,14 @@ class pdoAggregator extends aAggregator
 
     protected function _execute($aggregationUnit)
     {
-        $startDate = $this->etlOverseerOptions->getCurrentStartDate();
-        $endDate = $this->etlOverseerOptions->getCurrentEndDate();
-
         $time_start = microtime(true);
 
-        $this->logger->info(array("message" => "aggregate start",
-                                  "unit" => $aggregationUnit,
-                                  "start_date" => $startDate,
-                                  "end_date" => $endDate));
+        $this->logger->info(array(
+            "message" => "aggregate start",
+            "unit" => $aggregationUnit,
+            "start_date" => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
+            "end_date" => ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
+        ));
 
         // Batching options
 
@@ -775,7 +780,7 @@ class pdoAggregator extends aAggregator
             }
             $this->etlSourceQueryModified = true;
 
-        } else if ( ! $enableBatchAggregation && $this->etlSourceQueryModified ) {
+        } elseif ( ! $enableBatchAggregation && $this->etlSourceQueryModified ) {
 
             $this->logger->info("[EXPERIMENTAL] Restore original first table");
 
@@ -812,7 +817,10 @@ class pdoAggregator extends aAggregator
             try {
                 $insertStmt =  $this->destinationHandle->prepare($this->optimizedInsertSql);
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($this->optimizedInsertSql, $e, "Error preparing optimized aggregation insert statement");
+                $this->logAndThrowException(
+                    "Error preparing optimized aggregation insert statement",
+                    array('exception' => $e, 'sql' => $this->optimizedInsertSql)
+                );
             }
 
             // Detect the bind variables used in the query so we can filter these later. PDO will
@@ -822,20 +830,26 @@ class pdoAggregator extends aAggregator
             preg_match_all($bindParamRegex, $this->optimizedInsertSql, $matches);
             $discoveredBindParams['insert'] = array_unique($matches[0]);
 
-            $this->logger->debug("Aggregation optimized insert query ($aggregationUnit)\n" . $this->optimizedInsertSql);
+            $this->logger->debug("Aggregation optimized INSERT SQL ($aggregationUnit) " . $this->destinationEndpoint . ":\n" . $this->optimizedInsertSql);
 
         } else {
 
             try {
                 $selectStmt =  $this->sourceHandle->prepare($this->selectSql);
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($this->selectSql, $e, "Error preparing aggregation select statement");
+                $this->logAndThrowException(
+                    "Error preparing aggregation select statement",
+                    array('exception' => $e, 'sql' => $this->selectSql)
+                );
             }
 
             try {
                 $insertStmt =  $this->destinationHandle->prepare($this->insertSql);
             } catch (PDOException $e) {
-                $this->logAndThrowSqlException($this->insertSql, $e, "Error preparing aggregation insert statement");
+                $this->logAndThrowException(
+                    "Error preparing aggregation insert statement",
+                    array('exception' => $e, 'sql' => $this->insertSql)
+                );
             }
 
             // Detect the bind variables used in the query so we can filter these later. PDO will
@@ -847,8 +861,8 @@ class pdoAggregator extends aAggregator
             preg_match_all($bindParamRegex, $this->insertSql, $matches);
             $discoveredBindParams['insert'] = $matches[0];
 
-            $this->logger->debug("Aggregation select query ($aggregationUnit)\n" . $this->selectSql);
-            $this->logger->debug("Aggregation insert query ($aggregationUnit)\n" . $this->$insertSql);
+            $this->logger->debug("Aggregation SELECT SQL ($aggregationUnit) " . $this->sourceEndpoint . ":\n" . $this->selectSql);
+            $this->logger->debug("Aggregation INSERT SQL ($aggregationUnit) " . $this->destinationEndpoint . ":\n" . $this->insertSql);
 
         }  // else ($optimize)
 
@@ -867,7 +881,8 @@ class pdoAggregator extends aAggregator
                 $selectStmt,
                 $insertStmt,
                 $discoveredBindParams,
-                $numAggregationPeriods);
+                $numAggregationPeriods
+            );
 
         } else {
 
@@ -886,25 +901,23 @@ class pdoAggregator extends aAggregator
 
                 $batchStartTime = microtime(true);
 
-                $dateIdSlice = array_slice($aggregationPeriodList, $aggregationPeriodListOffset, $batchSliceSize);
-                if ( count($dateIdSlice) == 0 ) {
+                $aggregationPeriodSlice = array_slice($aggregationPeriodList, $aggregationPeriodListOffset, $batchSliceSize);
+                if ( count($aggregationPeriodSlice) == 0 ) {
                     break;
                 }
 
                 // Is this the last slice?
-                $done = ( count($dateIdSlice) < $batchSliceSize );
+                $done = ( count($aggregationPeriodSlice) < $batchSliceSize );
 
                 // Find the min/max time range and day id for this slice so we know which jobs to
                 // include in the temporary table.
 
-                $firstSlice = current($dateIdSlice);
-                $lastSlice = end($dateIdSlice);
-                reset($dateIdSlice);
+                $firstSlice = current($aggregationPeriodSlice);
+                $lastSlice = end($aggregationPeriodSlice);
+                reset($aggregationPeriodSlice);
 
                 // Note that slices are ordered newest to oldest
 
-                $minPeriodSeconds = $lastSlice['period_start_ts'];
-                $maxPeriodSeconds = $firstSlice['period_end_ts'];
                 $minDayId = $lastSlice['period_start_day_id'];
                 $maxDayId = $firstSlice['period_end_day_id'];
                 $minPeriodId = $lastSlice['period_id'];
@@ -918,7 +931,10 @@ class pdoAggregator extends aAggregator
                     $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
                     $result = $this->sourceHandle->execute($sql);
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($sql, $e, "Error removing temporary batch aggregation table");
+                    $this->logAndThrowException(
+                        "Error removing temporary batch aggregation table",
+                        array('exception' => $e, 'sql' => $sql)
+                    );
                 }
 
                 $origTableName =
@@ -930,17 +946,52 @@ class pdoAggregator extends aAggregator
                     // Use the where clause from the aggregation query to create the temporary table
 
                     $whereClause = implode(" AND ", $this->etlSourceQuery->getWheres());
-                    $whereClause = Utilities::substituteVariables($whereClause, $this->variableMap);
+
+                    $whereClause = Utilities::substituteVariables(
+                        $whereClause,
+                        $this->variableMap,
+                        $this,
+                        "Undefined macros found in WHERE clause"
+                    );
 
                     // A subset of the bind variables are available. We should check to see if there
                     // are more that we can't handle.
 
-                    $availableParams = array(
-                        ":period_start_ts" => $minPeriodSeconds,
-                        ":period_end_ts" => $maxPeriodSeconds,
-                        ":period_start_day_id" => $minDayId,
-                        ":period_end_day_id" => $maxDayId
+                    // We are taking the WHERE clause from source query so we need to
+                    // support all bind parameters available to that query. Min and max
+                    // information will need to come from the last and first slice,
+                    // respecitively (see note below).
+
+                    $availableParamKeys = Utilities::createPdoBindVarsFromArrayKeys($firstSlice);
+
+                    // NOTE 1
+                    //
+                    // The aggregation periods are supplied in reverse order so newer
+                    // periods are processed first. This means we need to invert the
+                    // start/end slices.
+                    //
+                    // NOTE 2
+                    //
+                    // Since the WHERE clause was meant to be used with a SINGLE
+                    // aggregation period, parameters such as period_hours and
+                    // period_seconds are not summed and chosen arbitrarily from one of
+                    // the periods.  Similarly, period_id and period_value are chosen
+                    // arbitrarily.
+
+                    $availableParamValues = array_map(
+                        function ($k, $first, $last) {
+                            if ( false !== strpos($k, '_end') || false !== strpos($k, 'end_') ) {
+                                return $first;
+                            } else {
+                                return $last;
+                            }
+                        },
+                        array_keys($firstSlice),
+                        $firstSlice,
+                        $lastSlice
                     );
+
+                    $availableParams = array_combine($availableParamKeys, $availableParamValues);
 
                     $bindParams = array();
                     preg_match_all($bindParamRegex, $whereClause, $matches);
@@ -950,10 +1001,13 @@ class pdoAggregator extends aAggregator
                     $sql =
                         "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
                         . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
-                    $this->logger->debug("[EXPERIMENTAL] Batch temp table: $sql");
+                    $this->logger->debug("[EXPERIMENTAL] Batch temp table " . $this->sourceEndpoint . ": $sql");
                     $result = $this->sourceHandle->execute($sql, $usedParams);
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($sql, $e, "Error creating temporary batch aggregation table ");
+                    $this->logAndThrowException(
+                        "Error creating temporary batch aggregation table",
+                        array('exception' => $e, 'sql' => $sql)
+                    );
                 }
 
                 $this->logger->info("[EXPERIMENTAL] Setup for batch $minPeriodId - $maxPeriodId (day_id $minDayId - $maxDayId): "
@@ -961,16 +1015,19 @@ class pdoAggregator extends aAggregator
 
                 $this->processAggregationPeriods(
                     $aggregationUnit,
-                    $dateIdSlice,
+                    $aggregationPeriodSlice,
                     $selectStmt,
                     $insertStmt,
                     $discoveredBindParams,
                     $numAggregationPeriods,
-                    $aggregationPeriodListOffset);
+                    $aggregationPeriodListOffset
+                );
 
-                $this->logger->info("[EXPERIMENTAL] Total time for batch (day_id $minDayId - $maxDayId): "
-                                    . round((microtime(true) - $batchStartTime), 2) . "s "
-                                    . "(" . round((microtime(true) - $batchStartTime) / count($dateIdSlice), 3) . "s/period)");
+                $this->logger->info(
+                    "[EXPERIMENTAL] Total time for batch (day_id $minDayId - $maxDayId): "
+                    . round((microtime(true) - $batchStartTime), 2) . "s "
+                    . "(" . round((microtime(true) - $batchStartTime) / count($aggregationPeriodSlice), 3) . "s/period)"
+                );
 
                 $aggregationPeriodListOffset += $batchSliceSize;
 
@@ -980,7 +1037,10 @@ class pdoAggregator extends aAggregator
                 $sql = "DROP TEMPORARY TABLE IF EXISTS $tmpTableName";
                 $result = $this->sourceHandle->execute($sql);
             } catch (PDOException $e ) {
-                $this->logAndThrowSqlException($sql, $e, "Error removing temporary batch aggregation table");
+                $this->logAndThrowException(
+                    "Error removing temporary batch aggregation table",
+                    array('exception' => $e, 'sql' => $sql)
+                );
             }
 
         }  // else ( ! $enableBatchAggregation )
@@ -991,12 +1051,12 @@ class pdoAggregator extends aAggregator
         $this->logger->notice(array("message"      => "aggregate end",
                                     "unit"         => $aggregationUnit,
                                     "periods"      => $numAggregationPeriods,
-                                    "start_date"   => $startDate,
-                                    "end_date"     => $endDate,
+                                    "start_date"   => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
+                                    "end_date"     => ( null === $this->currentEndDate ? "none" : $this->currentEndDate ),
                                     "start_time"   => $time_start,
                                     "end_time"     => $time_end,
                                     "elapsed_time" => round($time, 5)
-                                  ));
+        ));
 
         return $numAggregationPeriods;
 
@@ -1032,57 +1092,43 @@ class pdoAggregator extends aAggregator
         PDOStatement $insertStmt,
         array $discoveredBindParams,
         $totalNumAggregationPeriods,
-        $aggregationPeriodOffset = 0)
-    {
-        if ( $this->etlOverseerOptions->isDryrun() ) {
+        $aggregationPeriodOffset = 0
+    ) {
+        if ( $this->getEtlOverseerOptions()->isDryrun() ) {
             return 0;
         }
 
         $optimize = $this->allowSingleDatabaseOptimization();
         $numPeriodsProcessed = 0;
 
-        foreach ($aggregationPeriodList as $date_result) {
+        foreach ($aggregationPeriodList as $aggregationPeriodInfo) {
             $dateIdStartTime = microtime(true);
             $numRecords = 0;
 
-            $period_id       = $date_result['period_id'];
-            $year_id         = $date_result['year_id'];
-            $period_value    = $date_result["period_value"];
-            $period_seconds  = $date_result["period_seconds"];
-            $period_start_ts = $date_result["period_start_ts"];
-            $period_end_ts   = $date_result["period_end_ts"];
-            $period_start_day_id = $date_result["period_start_day_id"];
-            $period_end_day_id   = $date_result["period_end_day_id"];
+            // Make all of the data for each aggregation period available to the
+            // query. Change the array keys into bind parameters.
 
-            // Generate a list of available parameters and prune these based on the parameters
-            // discovered in the SQL.
-
-            $availableParams = array(
-                ":period_id" => $period_id,
-                ":year_value" => $year_id,
-                ":period_value" => $period_value,
-                ":period_seconds" => $period_seconds,
-                ":period_start_ts" => $period_start_ts,
-                ":period_end_ts" => $period_end_ts,
-                ":period_start_day_id" => $period_start_day_id,
-                ":period_end_day_id" => $period_end_day_id
-                );
+            $availableParamKeys = Utilities::createPdoBindVarsFromArrayKeys($aggregationPeriodInfo);
+            $availableParams = array_combine($availableParamKeys, $aggregationPeriodInfo);
+            $periodId = $aggregationPeriodInfo['period_id'];
 
             // If we're not completely re-aggregating, delete existing entries from the aggregation table
             // matching the periods that we are aggregating. Be sure to restrict resources if necessary.
 
             if ( ! $this->options->truncate_destination ) {
                 try {
-                    // This will need to get switch back once we start using period_id rather than month_id, year_id, etc.
-                    // $deleteSql = "DELETE FROM {$this->qualifiedDestTableName} WHERE period_id = $period_id";
 
                     $restrictions = array();
 
                     if ( isset($this->parsedDefinitionFile->destination_query)
                          && isset($this->parsedDefinitionFile->destination_query->overseer_restrictions) )
                     {
-                        // Create a dummy query object with overseer restrictions so we can take
-                        // advantage of the ability to apply restrictions from the config file.
+                        // The destination query block allows us to specify overseer restrictions
+                        // that apply to operations on the destination table (e.g., deleting records
+                        // from the table during aggregation). Create a dummy query object using the
+                        // overseer restrictions from the destination_query block so we can apply
+                        // the same restrictions to the delete query as specified in the config
+                        // file.
 
                         $query = (object) array(
                             'records' => (object) array('junk' => 0),
@@ -1091,42 +1137,53 @@ class pdoAggregator extends aAggregator
                         );
 
                         $dummyQuery = new Query($query, $this->destinationEndpoint->getSystemQuoteChar(), $this->logger);
-                        $this->etlOverseerOptions->applyOverseerRestrictions($dummyQuery, $this->utilityEndpoint);
+                        $this->getEtlOverseerOptions()->applyOverseerRestrictions($dummyQuery, $this->utilityEndpoint, $this);
                         $restrictions = $dummyQuery->getOverseerRestrictionValues();
                     }  // if ( isset($this->parsedDefinitionFile->destination_query) ... )
 
                     foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
                         $qualifiedDestTableName = $etlTable->getFullName();
-                        $deleteSql = "DELETE FROM $qualifiedDestTableName WHERE {$aggregationUnit}_id = $period_id";
+
+                        // This will need to get switch back once we start using period_id rather than
+                        // month_id, year_id, etc.
+                        // $deleteSql = "DELETE FROM {$this->qualifiedDestTableName} WHERE period_id = $period_id";
+
+                        $deleteSql = "DELETE FROM $qualifiedDestTableName WHERE {$aggregationUnit}_id = $periodId";
 
                         if ( count($restrictions) > 0 ) {
                             $deleteSql .= " AND " . implode(" AND ", $dummyQuery->getOverseerRestrictionValues());
                         }
 
-                        $this->logger->debug($deleteSql);
+                        $this->logger->debug("Delete aggregation unit SQL " . $this->destinationEndpoint . ":\n$deleteSql");
                         $this->destinationHandle->execute($deleteSql);
                     }
 
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($deleteSql, $e, "Error removing existing aggregation data");
+                    $this->logAndThrowException(
+                        "Error removing existing aggregation data",
+                        array('exception' => $e, 'sql' => $deleteSql)
+                    );
                 }
             }  // if ( ! $this->options->truncate_destination )
 
             // Perform aggregation on this aggregation period
 
+            $this->logger->debug("Aggregating $aggregationUnit $periodId");
+
             if ( $optimize ) {
 
-
                 try {
-                    if ( ! $this->etlOverseerOptions->isDryrun() ) {
+                    if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                         $bindParams = array_intersect_key($availableParams, array_fill_keys($discoveredBindParams['insert'], 0));
                         $insertStmt->execute($bindParams);
                         $numRecords = $insertStmt->rowCount();
                     }
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($this->optimizedInsertSql, $e, "Error processing aggregation period");
+                    $this->logAndThrowException(
+                        "Error processing aggregation period",
+                        array('exception' => $e, 'sql' => $this->optimizedInsertSql)
+                    );
                 }
-
 
             } else {
 
@@ -1137,14 +1194,18 @@ class pdoAggregator extends aAggregator
                     $selectStmt->execute($bindParams);
                     $numRecords = $selectStmt->rowCount();
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($this->selectSql, $e, "Error selecting raw job data");
+                    $this->logAndThrowException(
+                        "Error selecting raw job data",
+                        array('exception' => $e, 'sql' => $this->selectSql)
+                    );
+
                 }
 
                 $msg = array(
                     "unit"        => $aggregationUnit,
                     "num_records" => $numRecords
                 );
-                $this->logger->debug(array_merge($msg, $date_result));
+                $this->logger->debug(array_merge($msg, $aggregationPeriodInfo));
 
                 // Insert the new rows.
 
@@ -1153,7 +1214,10 @@ class pdoAggregator extends aAggregator
                         $insertStmt->execute($row);
                     }
                 } catch (PDOException $e ) {
-                    $this->logAndThrowSqlException($this->insertSql, $e, "Error inserting aggregated data");
+                    $this->logAndThrowException(
+                        "Error inserting aggregated data",
+                        array('exception' => $e, 'sql' => $this->insertSql)
+                    );
                 }
 
             }  // else ( $optimize )
@@ -1161,10 +1225,12 @@ class pdoAggregator extends aAggregator
             $numPeriodsProcessed++;
             $this->logger->info("Aggregated $aggregationUnit ("
                                 . ( $numPeriodsProcessed + $aggregationPeriodOffset)
-                                . " of $totalNumAggregationPeriods) $period_id records = $numRecords, time = " .
+                                . "/"
+                                . $totalNumAggregationPeriods
+                                . ") $periodId records = $numRecords, time = " .
                                 round((microtime(true) - $dateIdStartTime), 2) . "s");
 
-        }  // foreach ($aggregationPeriodList as $date_result)
+        }  // foreach ($aggregationPeriodList as $aggregationPeriodInfo)
 
         return $numPeriodsProcessed;
 
@@ -1244,16 +1310,11 @@ class pdoAggregator extends aAggregator
         $this->selectSql = $this->etlSourceQuery->getSelectSql($includeSchema);
 
         $this->insertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
-            "(" .
-            implode(",\n", array_keys($this->etlSourceQuery->getRecords()))
-            . ")\nVALUES\n(" .
-            implode(",\n",
-                    array_map(function ($s) {
-                            return ":$s";
-                        },
-                        array_keys($this->etlSourceQuery->getRecords()))
-                ) .
-            ")";
+            "("
+            . implode(",\n", array_keys($this->etlSourceQuery->getRecords()))
+            . ")\nVALUES\n("
+            . implode(",\n", Utilities::createPdoBindVarsFromArrayKeys($this->etlSourceQuery->getRecords()))
+            . ")";
 
         $this->optimizedInsertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
             "(" .
@@ -1262,9 +1323,28 @@ class pdoAggregator extends aAggregator
             $this->selectSql;
 
         if ( null !== $this->variableMap ) {
-            $this->selectSql = Utilities::substituteVariables($this->selectSql, $this->variableMap);
-            $this->insertSql = Utilities::substituteVariables($this->insertSql, $this->variableMap);
-            $this->optimizedInsertSql = Utilities::substituteVariables($this->optimizedInsertSql, $this->variableMap);
+
+            $this->selectSql = Utilities::substituteVariables(
+                $this->selectSql,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in select SQL"
+            );
+
+            $this->insertSql = Utilities::substituteVariables(
+                $this->insertSql,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in insert SQL"
+            );
+
+            $this->optimizedInsertSql = Utilities::substituteVariables(
+                $this->optimizedInsertSql,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in optimized insert SQL"
+            );
+
         }
 
         // Put any records that we removed back into the Query
@@ -1276,5 +1356,4 @@ class pdoAggregator extends aAggregator
         return true;
 
     }  // buildSqlStatements()
-
 }  // class pdoAggregator

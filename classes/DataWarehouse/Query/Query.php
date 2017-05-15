@@ -21,6 +21,7 @@ class Query
     public $filterParameterDescriptions;
     private $pdoparams;
     private $pdoindex;
+    private $log;
 
     /**
      * Tracks whether or not role restrictions have been applied to this query.
@@ -118,7 +119,13 @@ class Query
 
         $this->roleParameterDescriptions = array();
         $this->filterParameterDescriptions = array();
-
+        $this->log = \CCR\Log::factory('xms.query', array(
+            'console' => false,
+            'db' => false,
+            'mail' => false,
+            'file' => LOG_DIR . '/query.log',
+            'fileLogLevel' => PEAR_LOG_DEBUG
+        ));
     }
 
 
@@ -229,6 +236,13 @@ class Query
     {
 
         $query_string = $this->getQueryString($limit);
+
+        $debug = \xd_utilities\filter_var(\xd_utilities\getConfiguration('general', 'sql_debug_mode'), FILTER_VALIDATE_BOOLEAN);
+        if ($debug == true) {
+            $class = get_class($this);
+            $this->log->debug(sprintf("%s: \n%s", $class, $query_string));
+        }
+
         $time_start = microtime(true);
         $results = DB::factory($this->_db_profile)->query($query_string, $this->pdoparams);
 

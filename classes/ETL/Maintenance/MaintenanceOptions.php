@@ -56,26 +56,26 @@ class MaintenanceOptions extends aOptions
 
         switch ( $property ) {
 
-        case 'enabled':
-        case 'stop_on_exception':
-        case 'truncate_destination':
-            $origValue = $value;
-            $value = \ETL\Utilities::filterBooleanVar($value);
-            if ( null === $value ) {
-                $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
-                throw new Exception($msg);
-            }
-            break;
+            case 'enabled':
+            case 'stop_on_exception':
+            case 'truncate_destination':
+                $origValue = $value;
+                $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                if ( null === $value ) {
+                    $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
+                    throw new Exception($msg);
+                }
+                break;
 
-        case 'paths':
-            if ( ! is_object($value) ) {
-                $msg = get_class($this) . ": paths must be an object";
-                throw new Exception($msg);
-            }
-            break;
+            case 'paths':
+                if ( ! is_object($value) ) {
+                    $msg = get_class($this) . ": paths must be an object";
+                    throw new Exception($msg);
+                }
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         $this->verifyProperty($property, $value);
@@ -83,5 +83,4 @@ class MaintenanceOptions extends aOptions
         $this->options[$property] = $value;
         return $this;
     }  // __set()
-
 }  // class MaintenanceOptions

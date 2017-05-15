@@ -9,8 +9,8 @@
 
 namespace ETL;
 
-use \Exception;
-use \stdClass;
+use Exception;
+use stdClass;
 
 class Utilities
 {
@@ -31,63 +31,93 @@ class Utilities
     }  // setEtlConfig
 
     /* ------------------------------------------------------------------------------------------
-     * Perform variable substitution on a stringusing the variable map. The variable map keys are the
-     * names of the variables WITHOUT the ${} wrapper, these will be added during the replace
-     * operation.
+     * Perform variable/macro substitution on a string using a variable map. The map keys
+     * are the names of the variables WITHOUT the ${} wrapper (e.g., a key of 'SCHEMA'
+     * matches the variable ${SCHEMA}) while the values are the destination strings.
+     * Optionally throw an exception if there are un-matched variables left in the string.
+     *
+     * NOTE: Map keys with a value of NULL are ignored.
      *
      * @param $string Target string containing variables
-     * @param $map Associative array containing the variable mappings.  The keys are the names of the
-     *   variables WITHOUT the ${} wrapper.
-     * @param $substitutedVariables An optional array that will be populated with the list of
-     *   variables names were substituted
-     * @param $unsubstitutedVariables An optional array that will be populated with the list of
-     *   variables names were NOT substituted
+     * @param $map Associative array containing the variable mappings. The keys are the
+     *   names of the variables WITHOUT the ${} wrapper.
+     * @param $logger An optional class that extends Loggable. If this is present then an
+     *   exception will be thrown if there are any unsubstituted variables present in the
+     *   string.
+     * @param $exceptionPrefix An optional string to use in the exception message
+     * @param $substitutionDetails An optional array that, if present, will be populated
+     *   with the macros that were substituted and those that were not substituted.
+     *
+     *   'substituted'   => An array of variables that were substituted
+     *   'unsubstituted' => An array of variables that were present in the string but not
+     *                      substituted
      *
      * @return The string with variables substituted.
+     *
+     * @throws An exception of $logger is not NULL and there are unsubstituted macros
+     *   found in the string
      * ------------------------------------------------------------------------------------------
      */
 
     public static function substituteVariables(
         $string,
         array $map,
-        array &$substitutedVariables = null,
-        array &$unsubstitutedVariables = null )
-    {
+        Loggable $logger = null,
+        $exceptionPrefix = null,
+        array $substitutionDetails = null
+    ) {
+
+        $exceptionForUnusedVariables = ( null !== $logger );
+        $trackDetails = ( null !== $substitutionDetails );
 
         // If we are not tracking the variables that have or have not been substituted, simply
         // perform a string replacement.
 
-        if ( null === $substitutedVariables && null == $unsubstitutedVariables ) {
+        if ( ! $exceptionForUnusedVariables && ! $trackDetails ) {
             foreach ( $map as $k => $v ) {
+                if ( null === $v ) {
+                    continue;
+                }
                 $string = str_replace('${' . $k . '}', $v, $string);
             }
         } else {
 
-            $localSubstituted = array();
-            $localUnsubstituted = array();
+            $substitutionDetails = array(
+                'unsubstituted' => array(),
+                'substituted'   => array()
+            );
 
-            // Track variables that have been substituted
+            // Perform the substitution and track variables that have been substituted
 
-            array_map(function ($v, $k) use (&$string, &$localSubstituted) {
+            array_map(
+                function ($v, $k) use (&$string, &$substitutionDetails) {
+                    if ( null === $v ) {
+                        return;
+                    }
                     $search = '${' . $k . '}';
                     if ( false !== strpos($string, $search) ) {
-                        $substituted[] = $k;
+                        $substitutionDetails['substituted'][] = $k;
                     }
                     $string = str_replace($search, $v, $string);
-                }, $map, array_keys($map));
+                },
+                $map,
+                array_keys($map)
+            );
 
             // If there are any variables left in the string, track them as unsubstituted.
 
-            if ( null !== $substitutedVariables ) {
-                $substitutedVariables = $localSubstituted;
+            $matches = array();
+            if ( 0 !== preg_match_all('/(\$\{.+\})/', $string, $matches ) ) {
+                $substitutionDetails['unsubstituted'] = array_shift($matches);
             }
 
-            if ( null !== $unsubstitutedVariables ) {
-                $matches = array();
-                if ( 0 !== preg_match_all('/(\$\{.+\})/', $string, $matches ) ) {
-                    $localUnsubstituted = array_shift($matches);
-                }
-                $unsubstitutedVariables = $localUnsubstituted;
+            $substitutionDetails['unsubstituted'] = array_unique($substitutionDetails['unsubstituted']);
+
+            if ( $exceptionForUnusedVariables && 0 != count($substitutionDetails['unsubstituted']) ) {
+                $logger->logAndThrowException(
+                    ( null !== $exceptionPrefix ? $exceptionPrefix . ": " : "Undefined macros found: " )
+                    . implode(", ", $substitutionDetails['unsubstituted'])
+                );
             }
 
         }  // else ( null === $substitutedVariables && null == $unsubstitutedVariables )
@@ -145,7 +175,7 @@ class Utilities
         if ( ! isset($paths->macro_dir) ) {
             $msg = __CLASS__ . ": ETL configuration paths.macro_dir is not set";
             throw new Exception($msg);
-        } else if ( ! is_dir($paths->macro_dir) ) {
+        } elseif ( ! is_dir($paths->macro_dir) ) {
             $msg = __CLASS__ . ": ETL configuration paths.macro_dir '{$paths->macro_dir}' is not a directory";
             throw new Exception($msg);
         }
@@ -172,7 +202,7 @@ class Utilities
         if ( ! is_file($filename) ) {
             $msg = __CLASS__ . ": Cannot load macro file '$filename'";
             throw new Exception($msg);
-        } else if ( 0 == filesize($filename) ) {
+        } elseif ( 0 == filesize($filename) ) {
             // No use processing an empty macro
             return;
         }
@@ -187,7 +217,7 @@ class Utilities
         $stripped = array();
 
         foreach ( explode("\n", $macro) as $line ) {
-            if ( 0 === strpos($line, "--") || 0 === strpos($line,  "#") ) {
+            if ( 0 === strpos($line, "--") || 0 === strpos($line, "#") ) {
                 continue;
             }
             $stripped[] = $line;
@@ -226,4 +256,50 @@ class Utilities
         return ( false === $value ? false : filter_var($value, $filter, $options) );
     }  // filterBooleanVar()
 
+    /* ------------------------------------------------------------------------------------------
+     * Generate an array of strings that can be used as PDO bind parameters (e.g., :var)
+     * using the keys from the source array.
+     *
+     * @param $source An associative array whose keys will be used to generate bind parameters
+     *
+     * @return An array containing the keys of $source pre-pended with ":"
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public static function createPdoBindVarsFromArrayKeys(array $source)
+    {
+        return array_map(
+            function ($key) {
+                return ":$key";
+            },
+            array_keys($source)
+        );
+    }  // createPdoBindVarsFromArrayKeys()
+
+    /* ------------------------------------------------------------------------------------------
+     * Given a list of variable names and a variable map, generate an array containing a
+     * list of all variables names present in the map with the valus quoted as appropriate
+     * for the specified data endpoint. Variables with a NULL value will be ignored.
+     *
+     * @param $variables An array of variable names to be quoted
+     * @param $variableMap An associative array of tuples (variable, value) used to map
+     *   variables to the given value
+     * @param $endpoint The DataEndpoint to use when quoting the variable valye
+     *
+     * @return An associative array of tuples (variable, quoted value)
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public static function quoteVariables(array $variables, array $variableMap, \ETL\DataEndpoint\iDataEndpoint $endpoint)
+    {
+        $localVariableMap = array();
+
+        foreach ( $variables as $var ) {
+            if ( array_key_exists($var, $variableMap) && null !== $variableMap[$var] ) {
+                $localVariableMap[$var] = $endpoint->quote($variableMap[$var]);
+            }
+        }
+
+        return $localVariableMap;
+    }  // quoteVariables()
 }  // class Utilities

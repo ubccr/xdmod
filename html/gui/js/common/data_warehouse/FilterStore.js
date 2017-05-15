@@ -39,6 +39,7 @@ XDMoD.DataWarehouse.createFilterStore = function(config) {
                 'value_id',
                 'value_name',
                 'dimension_id',
+                'categories',
                 'realms',
                 'checked'
             ]

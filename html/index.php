@@ -362,26 +362,18 @@
       <script type="text/javascript" src="gui/js/report_builder/ChartThumbPreview.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportExportMenu.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportCloneMenu.js"></script>
-      <?php endif; ?>
-      <script type="text/javascript" src="gui/js/report_builder/ReportEntryTypeMenu.js"></script>
-      <?php if ($userLoggedIn): ?>
       <script type="text/javascript" src="gui/js/report_builder/ChartDateEditor.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/Reporting.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportManager.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/AvailableCharts.js"></script>
-      <script type="text/javascript" src="gui/js/report_builder/ChartAnnotator.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/SaveReportAsDialog.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportCreatorGrid.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportCreator.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportsOverview.js"></script>
       <script type="text/javascript" src="gui/js/report_builder/ReportPreview.js"></script>
-
-      <script type="text/javascript" src="gui/js/report_builder/RoleBreakdownGrid.js"></script>
       <?php endif; ?>
 
       <?php if ($userLoggedIn): ?>
-      <link rel="stylesheet" type="text/css" href="gui/css/compliance.css" />
-
       <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
       <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
       <?php endif; ?>
@@ -443,12 +435,6 @@
 
       <script type="text/javascript" src="gui/js/ExportPanel.js"></script>
 
-      <?php if ($userLoggedIn): ?>
-      <!-- Custom query panel for one-off queries -->
-
-      <link rel="stylesheet" type="text/css" href="gui/css/Allocations.css" />
-      <?php endif; ?>
-
       <script type="text/javascript" src="gui/js/CaptchaField.js"></script>
       <?php if (!$userLoggedIn): ?>
       <script type="text/javascript" src="gui/js/SignUpDialog.js"></script>
@@ -457,7 +443,6 @@
       <?php if ($userLoggedIn): ?>
       <script type="text/javascript" src="gui/js/RealTimeValidatingTextField.js"></script>
       <?php endif; ?>
-      <!-- Modules -->
 
       <script type="text/javascript" src="gui/js/PortalModule.js"></script>
 
@@ -474,25 +459,6 @@
       <script type="text/javascript" src="gui/js/modules/metric_explorer/MetricExplorer.js"></script>
       <script type="text/javascript" src="gui/js/modules/metric_explorer/StatusButton.js"></script>
       <script type="text/javascript" src="gui/js/ChangeStack.js"></script>
-
-
-      <?php /* App Kernel modules. */ ?>
-      <?php if (xd_utilities\getConfiguration('features', 'appkernels') == 'on'): ?>
-
-      <script type="text/javascript" src="gui/js/modules/AppKernels.js"></script>
-      <script type="text/javascript" src="gui/js/modules/app_kernels/AppKernelViewer.js"></script>
-      <script type="text/javascript" src="gui/js/modules/app_kernels/AppKernelExplorer.js"></script>
-      <script type="text/javascript" src="gui/js/modules/app_kernels/AppKernelNotificationPanel.js"></script>
-
-      <?php endif; ?>
-
-      <?php /* Modules that are only part of XSEDE XDMoD. */ ?>
-      <?php if (xd_utilities\getConfiguration('features', 'xsede') == 'on'): ?>
-      <script type="text/javascript" src="gui/js/modules/Allocations.js"></script>
-      <script type="text/javascript" src="gui/js/modules/Compliance.js"></script>
-      <script type="text/javascript" src="gui/js/modules/CustomQueries.js"></script>
-      <script type="text/javascript" src="gui/js/modules/SciImpact.js"></script>
-      <?php endif; ?>
 
       <?php /* Single Job Viewer */ ?>
       <?php if (xd_utilities\getConfiguration('features', 'singlejobviewer') == 'on'): ?>
@@ -521,7 +487,7 @@
          require_once dirname(__FILE__).'/gaq.php';
       ?>
 
-
+      <?php echo \OpenXdmod\Assets::generateAssetTags('portal'); ?>
 
       <script type="text/javascript">
 
@@ -616,17 +582,6 @@
 
       <?php if ($userLoggedIn): ?>
       <script type="text/javascript">Ext.onReady(xdmodviewer.init, xdmodviewer);</script>
-      <?php endif; ?>
-
-      <?php /* App Kernel files. */ ?>
-      <?php if (xd_utilities\getConfiguration('features', 'appkernels') == 'on'): ?>
-      <?php if ($userLoggedIn): ?>
-      <script type="text/javascript" src="internal_dashboard/js/AppKernel/InstancePanel.js"></script>
-      <script type="text/javascript" src="internal_dashboard/js/AppKernel/InstanceWindow.js"></script>
-      <script type="text/javascript" src="internal_dashboard/js/AppKernel/InstanceStore.js"></script>
-      <script type="text/javascript" src="internal_dashboard/js/Arr/ErrorMessageStore.js"></script>
-      <script type="text/javascript" src="internal_dashboard/js/Arr/ErrorMessagePanel.js"></script>
-      <?php endif; ?>
       <?php endif; ?>
 
    </head>

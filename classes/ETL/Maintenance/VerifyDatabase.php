@@ -27,8 +27,7 @@ use PHPSQLParser\PHPSQLParser;
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
 
-class VerifyDatabase extends aAction
-implements iAction
+class VerifyDatabase extends aAction implements iAction
 {
     // Column names extracted from the query, used to verify macro expansions used in the line
     // messages are valid.
@@ -50,8 +49,7 @@ implements iAction
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
         if ( ! $options instanceof MaintenanceOptions ) {
-            $msg = __CLASS__ . ": Options is not an instance of MaintenanceOptions";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(__CLASS__ . ": Options is not an instance of MaintenanceOptions");
         }
 
         parent::__construct($options, $etlConfig, $logger);
@@ -62,147 +60,65 @@ implements iAction
         $requiredKeys = array("source", "definition_file");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
-        $this->sourceEndpoint = $etlConfig->getDataEndpoint($this->options->source);
-        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
-            $this->sourceEndpoint = null;
-            $msg = "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        $this->sourceHandle = $this->sourceEndpoint->getHandle();
-        $this->logger->debug("Source endpoint: " . $this->sourceEndpoint);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
-    {
-        if ( $this->isVerified() ) {
-            return;
-        }
-
-        $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->setEtlOverseerOptions($etlOptions);
-        }
-
-        $this->initialize();
-
-        // Verify that the response block and destination email are set
-
-        if (  ! isset($this->parsedDefinitionFile->verify_database) ) {
-            $msg = "Required key verify_database not found in definition file";
-            $this->logAndThrowException($msg);
-        }
-
-        $verifyConfig = $this->parsedDefinitionFile->verify_database;
-
-        if (  ! isset($verifyConfig->response) ) {
-            $msg = "Required key verify_database.response not found in definition file";
-            $this->logAndThrowException($msg);
-        }
-
-        if (  ! isset($verifyConfig->response->line) ) {
-            $msg = "Required key verify_database.response.line not found in definition file";
-            $this->logAndThrowException($msg);
-        }
-
-        // Verify that any fields referenced in the line response are valid column names
-
-        if ( preg_match_all('/\${(.+)}/U', $verifyConfig->response->line, $matches) > 0 ) {
-            array_shift($matches);
-            $missing = array_diff($matches[0], $this->queryColumnNames);
-            if ( 0 != count($missing) ) {
-                $msg = "The following column names were referenced in the line template but are "
-                    . "not present in the query: " . implode(", " , $missing);
-                $this->logAndThrowException($msg);
-            }
-        }
-
-        $this->verified = true;
-
-        return true;
-
-    }  // verify()
-
-    /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
-     *
-     * @throws Exception if any query data was not
-     * int the correct format.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function initialize()
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
+            $this->logger->debug("ALREADY INITIALIZED!");
             return;
         }
 
         $this->initialized = false;
 
-        $utilityEndpoint = $this->etlConfig->getDataEndpoint($this->options->utility);
-        $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
-        $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
-
         // These additional variables are available to the sql statement
 
-        $localVariableMap = array(
-            'UTILITY_SCHEMA' => $utilityEndpoint->getSchema(),
-            'SOURCE_SCHEMA' => $sourceEndpoint->getSchema(),
-            'START_DATE' =>  $sourceEndpoint->quote($this->etlOverseerOptions->getStartDate()),
-            'END_DATE' => $sourceEndpoint->quote($this->etlOverseerOptions->getEndDate())
-            );
+        parent::initialize($etlOverseerOptions);
 
-        if ( false !== $destinationEndpoint ) {
-            $localVariableMap['DESTINATION_SCHEMA'] = $destinationEndpoint->getSchema();
-        }
+        $varsToQuote = array(
+            'START_DATE',
+            'END_DATE',
+            'LAST_MODIFIED',
+            'LAST_MODIFIED_START_DATE',
+            'LAST_MODIFIED_END_DATE'
+        );
 
-        if ( $this->etlOverseerOptions->getNumberOfDays() ) {
-            $localVariableMap['NUMBER_OF_DAYS'] = $this->etlOverseerOptions->getNumberOfDays();
-        }
-
+        $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableMap, $this->sourceEndpoint);
         $this->variableMap = array_merge($this->variableMap, $localVariableMap);
 
         // Our source query can be either a query specified directly in the definition file, or a
         // more complex query defined in a separate file.
 
-        $substitutedVars = array();
-        $unsubstitutedVars = array();
-
         if ( ! isset($this->parsedDefinitionFile->source_query) ) {
-            $msg = "Required source_query key not found";
-            $this->logAndThrowException($msg);
-        } else if ( isset($this->parsedDefinitionFile->source_query->sql_file) ) {
+            $this->logAndThrowException("Required source_query key not found");
+        } elseif ( isset($this->parsedDefinitionFile->source_query->sql_file) ) {
 
             $sqlFile = $this->parsedDefinitionFile->source_query->sql_file;
             $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
-
             $this->logger->debug("Using SQL file: '$sqlFile'");
 
             if ( ! file_exists($sqlFile) ) {
-                $msg = "SQL file does not exist '$sqlFile'";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("SQL file does not exist '$sqlFile'");
             }
 
             $this->sqlQueryString = file_get_contents($sqlFile);
-            $this->sqlQueryString = Utilities::substituteVariables($this->sqlQueryString, $this->variableMap, $substitutedVars, $unsubstitutedVars);
-
-            if ( 0 != count($unsubstitutedVars) ) {
-                $msg = $this . " Unsubstituted variables found in source query: " . implode(",", $unsubstitutedVars);
-                $this->logger->warning($msg);
-            }
+            $this->sqlQueryString = Utilities::substituteVariables(
+                $this->sqlQueryString,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in source query"
+            );
 
             $parser = new PHPSQLParser($this->sqlQueryString);
             $parsedSql = $parser->parsed;
 
             if ( ! array_key_exists("SELECT", $parsedSql) ) {
-                $msg = "Select block not found in parsed SQL";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException("Select block not found in parsed SQL");
             }
 
             foreach ( $parsedSql['SELECT'] as $item ) {
@@ -219,19 +135,21 @@ implements iAction
 
         } else {
             $this->logger->debug("Create ETL source query object");
-            $sourceQuery = new Query($this->parsedDefinitionFile->source_query,
-                                     $this->sourceEndpoint->getSystemQuoteChar(),
-                                     $this->logger);
+            $sourceQuery = new Query(
+                $this->parsedDefinitionFile->source_query,
+                $this->sourceEndpoint->getSystemQuoteChar(),
+                $this->logger
+            );
             $this->queryColumnNames = array_keys($sourceQuery->getRecords());
             $this->setOverseerRestrictionOverrides();
-            $this->etlOverseerOptions->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this->overseerRestrictionOverrides);
+            $this->getEtlOverseerOptions()->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this);
             $this->sqlQueryString = $sourceQuery->getSelectSql();
-            $this->sqlQueryString = Utilities::substituteVariables($this->sqlQueryString, $this->variableMap, $substitutedVars, $unsubstitutedVars);
-
-            if ( 0 != count($unsubstitutedVars) ) {
-                $msg = $this . " Unsubstituted variables found in source query: " . implode(",", $unsubstitutedVars);
-                $this->logger->warning($msg);
-            }
+            $this->sqlQueryString = Utilities::substituteVariables(
+                $this->sqlQueryString,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in source query"
+            );
 
         } // else if ( ! isset($this->parsedDefinitionFile->source_query) )
 
@@ -247,20 +165,55 @@ implements iAction
                 continue;
             }
 
-            $substitutedVars = array();
-            $unsubstitutedVars = array();
-
             $this->emailConfiguration[$option] =  Utilities::substituteVariables(
                 $verifyConfig->response->$option,
                 $this->variableMap,
-                $substitutedVars,
-                $unsubstitutedVars);
+                $this,
+                "Undefined macros found in response $option"
+            );
 
-            if ( 0 != count($unsubstitutedVars) ) {
-                $msg = $this . " Unsubstituted variables found in response $option: " . implode(",", $unsubstitutedVars);
-                $this->logger->warning($msg);
-            }
         }  // if ( isset($verifyConfig->response->header) )
+
+        if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
+            $this->logAndThrowException(
+                "Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint"
+            );
+        }
+
+        // Verify that the response block and destination email are set
+
+        if ( ! isset($this->parsedDefinitionFile->verify_database) ) {
+            $this->logAndThrowException(
+                "Required key verify_database not found in definition file"
+            );
+        }
+
+        $verifyConfig = $this->parsedDefinitionFile->verify_database;
+
+        if ( ! isset($verifyConfig->response) ) {
+            $this->logAndThrowException(
+                "Required key verify_database.response not found in definition file"
+            );
+        }
+
+        if ( ! isset($verifyConfig->response->line) ) {
+            $this->logAndThrowException(
+                "Required key verify_database.response.line not found in definition file"
+            );
+        }
+
+        // Verify that any fields referenced in the line response are valid column names
+
+        if ( preg_match_all('/\${(.+)}/U', $verifyConfig->response->line, $matches) > 0 ) {
+            array_shift($matches);
+            $missing = array_diff($matches[0], $this->queryColumnNames);
+            if ( 0 != count($missing) ) {
+                $this->logAndThrowException(
+                    "The following column names were referenced in the line template but are "
+                    . "not present in the query: " . implode(", ", $missing)
+                );
+            }
+        }
 
         $this->initialized = true;
 
@@ -275,33 +228,31 @@ implements iAction
 
     public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->setEtlOverseerOptions($etlOverseerOptions);
-
-        $this->verify();
-
         $time_start = microtime(true);
+        $this->initialize($etlOverseerOptions);
 
-        $this->logger->debug("Executing SQL: " . $this->sqlQueryString);
+        $this->logger->debug("Executing SQL " . $this->sourceEndpoint . ":\n" . $this->sqlQueryString);
         $verifyConfig = $this->parsedDefinitionFile->verify_database;
         $lineTemplate = $verifyConfig->response->line;
         $lines = array();
 
         try {
-            if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                $result = $this->sourceEndpoint->getHandle()->query($this->sqlQueryString);
-                $this->logger->info(count($result) . " maches found");
+            if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
+                $result = $this->sourceHandle->query($this->sqlQueryString);
+                $this->logger->info(count($result) . " matches found");
                 if ( 0 != count($result) ) {
                     foreach ( $result as $row ) {
                         $line = Utilities::substituteVariables($lineTemplate, $row);
                         $this->logger->warning($line);
                         $lines[] = $line;
                     }
-                    // If there are result rows, generate an email replacing any row macros in the line template
                 }
             }
         } catch ( PDOException $e ) {
-            $msg = "Error executing sql: " . $e->getMessage();
-            $this->logAndThrowSqlException($this->sqlQueryString, $e);
+            $this->logAndThrowException(
+                "Error executing SQL",
+                array('exception' => $e, 'sql' => $this->sqlQueryString, 'endpoint' => $this->sourceEndpoint)
+            );
         }
 
         // How do we substitute variables in the header and footer?
@@ -322,5 +273,4 @@ implements iAction
                                     'elapsed_time' => round($time, 5)
                                   ));
     }  // execute()
-
 }  // class ExecuteSql

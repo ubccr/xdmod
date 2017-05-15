@@ -1,6 +1,117 @@
 Open XDMoD Change Log
 =====================
 
+2017-05-11 v6.6.0
+-----------------
+
+- Features
+    - General
+        - Added ability to group realms together under categories
+          ([\#60](https://github.com/ubccr/xdmod/pull/60))
+          - Categories have taken the place of realms in the user interface
+        - Improved support for browser client assets provided by modules
+          ([\#82](https://github.com/ubccr/xdmod/pull/82),
+           [\#113](https://github.com/ubccr/xdmod/pull/113))
+        - Improved upgrade messaging
+          ([\#86](https://github.com/ubccr/xdmod/pull/86))
+    - ETLv2
+        - Added per-pipeline ETL locks
+          ([\#10](https://github.com/ubccr/xdmod/pull/10))
+        - Enhanced multi-host aggregation
+          ([\#13](https://github.com/ubccr/xdmod/pull/13))
+        - Added read support for Oracle endpoints
+          ([\#34](https://github.com/ubccr/xdmod/pull/34))
+        - Improved support for running pipelines over all dates
+          ([\#77](https://github.com/ubccr/xdmod/pull/77))
+        - Improved transformation support
+          ([\#80](https://github.com/ubccr/xdmod/pull/80))
+        - Added a tool for comparing SQL tables
+          ([\#78](https://github.com/ubccr/xdmod/pull/78))
+        - Added other improvements
+          ([\#43](https://github.com/ubccr/xdmod/pull/43),
+           [\#45](https://github.com/ubccr/xdmod/pull/45),
+           [\#84](https://github.com/ubccr/xdmod/pull/84),
+           [\#90](https://github.com/ubccr/xdmod/pull/90),
+           [\#92](https://github.com/ubccr/xdmod/pull/92))
+- Bug Fixes
+    - General
+        - Fixed warning that could appear when using federated authentication
+          ([\#19](https://github.com/ubccr/xdmod/pull/19))
+        - Fixed unnecessary rounding in processor count statistics
+          ([\#25](https://github.com/ubccr/xdmod/pull/25))
+        - Fixed errors when attempting to preview an unsaved report
+          ([\#26](https://github.com/ubccr/xdmod/pull/26))
+        - Fixed aggregators excluding data on certain time boundaries
+          ([\#47](https://github.com/ubccr/xdmod/pull/47))
+        - Fixed handling of backslashes when using certain MySQL features
+          ([\#52](https://github.com/ubccr/xdmod/pull/52),
+           [\#53](https://github.com/ubccr/xdmod/pull/53))
+        - Fixed non-aggregate metrics being allowed in aggregate datasets
+          ([\#74](https://github.com/ubccr/xdmod/pull/74))
+        - Fixed REST API throwing non-standard errors
+          ([\#87](https://github.com/ubccr/xdmod/pull/87))
+        - Fixed display error with password reset form that occurred when using
+          federated authentication
+          ([\#108](https://github.com/ubccr/xdmod/pull/108))
+        - Fixed "Show chart title" option in Usage tab not working as expected
+          ([\#139](https://github.com/ubccr/xdmod/pull/139))
+    - Metric Explorer
+        - Fixed Y-axis context menu disappearing after
+          changing between linear and log scales
+          ([\#12](https://github.com/ubccr/xdmod/pull/12))
+        - Fixed typing certain characters causing chart options menu to close
+          when using Firefox
+          ([\#119](https://github.com/ubccr/xdmod/pull/119))
+        - Fixed chart errors not displaying if help graphic is active
+          ([\#121](https://github.com/ubccr/xdmod/pull/121))
+        - Fixed chart last modified time not updating
+          ([\#140](https://github.com/ubccr/xdmod/pull/140))
+- Miscellaneous
+    - Performed work in anticipation of allocations/accounts data in Open XDMoD
+      ([\#11](https://github.com/ubccr/xdmod/pull/11),
+       [\#50](https://github.com/ubccr/xdmod/pull/50))
+    - Performed work in anticipation of cloud data in Open XDMoD
+      ([\#68](https://github.com/ubccr/xdmod/pull/68),
+       [\#75](https://github.com/ubccr/xdmod/pull/75))
+    - Cleaned up old and/or unused code
+      ([\#54](https://github.com/ubccr/xdmod/pull/54),
+       [\#55](https://github.com/ubccr/xdmod/pull/55),
+       [\#56](https://github.com/ubccr/xdmod/pull/56),
+       [\#57](https://github.com/ubccr/xdmod/pull/57),
+       [\#73](https://github.com/ubccr/xdmod/pull/73),
+       [\#88](https://github.com/ubccr/xdmod/pull/88))
+    - Improved logging
+      ([\#29](https://github.com/ubccr/xdmod/pull/29),
+       [\#40](https://github.com/ubccr/xdmod/pull/40),
+       [\#46](https://github.com/ubccr/xdmod/pull/46),
+       [\#50](https://github.com/ubccr/xdmod/pull/50),
+       [\#66](https://github.com/ubccr/xdmod/pull/66),
+       [\#98](https://github.com/ubccr/xdmod/pull/98))
+    - Improved quality assurance
+      ([\#21](https://github.com/ubccr/xdmod/pull/21),
+       [\#27](https://github.com/ubccr/xdmod/pull/27),
+       [\#28](https://github.com/ubccr/xdmod/pull/28),
+       [\#35](https://github.com/ubccr/xdmod/pull/35),
+       [\#41](https://github.com/ubccr/xdmod/pull/41),
+       [\#48](https://github.com/ubccr/xdmod/pull/48),
+       [\#58](https://github.com/ubccr/xdmod/pull/58),
+       [\#67](https://github.com/ubccr/xdmod/pull/67),
+       [\#76](https://github.com/ubccr/xdmod/pull/76),
+       [\#79](https://github.com/ubccr/xdmod/pull/79),
+       [\#93](https://github.com/ubccr/xdmod/pull/93),
+       [\#94](https://github.com/ubccr/xdmod/pull/94))
+    - Improved documentation
+      ([\#32](https://github.com/ubccr/xdmod/pull/32),
+       [\#37](https://github.com/ubccr/xdmod/pull/37),
+       [\#44](https://github.com/ubccr/xdmod/pull/44),
+       [\#71](https://github.com/ubccr/xdmod/pull/71),
+       [\#103](https://github.com/ubccr/xdmod/pull/103),
+       [\#115](https://github.com/ubccr/xdmod/pull/115),
+       [\#123](https://github.com/ubccr/xdmod/pull/123),
+       [\#130](https://github.com/ubccr/xdmod/pull/130),
+       [\#132](https://github.com/ubccr/xdmod/pull/132),
+       [\#135](https://github.com/ubccr/xdmod/pull/135))
+
 2017-01-10 v6.5.0
 -----------------
 

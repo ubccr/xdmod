@@ -1,57 +1,60 @@
 <?php
-/* 
+/* ==========================================================================================
  * @author Amin Ghadersohi
  * @date 2010-Jul-07
  *
- * The top interface for dbs using pdo driver
+ * The top interface for dbs using pdo driver, providing all of the necerssary
+ * functionality unless overrides are needed.
  *
  * Changelog
  *
  * 2015-12-15 Steve Gallo <smgallo@buffalo.edu>
  * - Added prepare()
  * - Moved empty query check from individual calls to prepare() since they all call it anyway
+ *
+ * 2017-01-12 Steve Gallo <smgallo@buffalo.edu>
+ * - Added generateDsn()
+ * - Renamed destroy() to disconnect()
+ * - Cleaned up connect()
+ * - Renamed $dsn_override to $dsn_extra to allow extra parameters to be added
+ * ==========================================================================================
  */
 
 namespace CCR\DB;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
-/*
- * @class PDODB
- * The implementation of the interface iDatabase based on PDO
- */
-
-class PDODB
-implements iDatabase
+class PDODB implements iDatabase
 {
-    public $_db_engine = NULL;
-    public $_db_host = NULL;
-    public $_db_port = NULL;
-    public $_db_name = NULL;
-    public $_db_username = NULL;
-    public $_db_password = NULL;
 
-    public $_dsn_override = NULL;
+    // Database connection parameters. Be aware that these are accessed directly
+    // throughout the ETLv1 code and in the ETLv2 pdoIngester.php
+    public $_db_engine = null;
+    public $_db_host = null;
+    public $_db_port = null;
+    public $_db_name = null;
+    public $_db_username = null;
+    public $_db_password = null;
 
-    protected $_dbh = NULL;
+    // Optional extra parameters to be added to the DSN
+    public $dsn_extra = null;
 
-    protected static $_debug_mode = false;
-    protected static $_queries = array();
-    protected static $_params = array();
+    // Generated DSN
+    protected $dsn = null;
+
+    // Handle to the PDO instance
+    protected $_dbh = null;
+
+    protected static $debug_mode = false;
+    protected static $queries = array();
+    protected static $params = array();
 
     // --------------------------------------------------------------------------------
-    // Constructor
-    //
-    // @param $db_engine PDO database engine name
-    // @param $db_host Database hostname
-    // @param $db_port Database port
-    // @param $db_name Database name
-    // @param $db_username Database username
-    // @param $db_password Database user password
+    // @see iDatabase::__construct()
     // --------------------------------------------------------------------------------
 
-    public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password, $dsn_override = NULL)
+    public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password, $dsn_extra = null)
     {
         $this->_db_engine = $db_engine;
         $this->_db_host = $db_host;
@@ -59,57 +62,47 @@ implements iDatabase
         $this->_db_name = $db_name;
         $this->_db_username = $db_username;
         $this->_db_password = $db_password;
-        $this->_dsn_override = $dsn_override;
+        $this->dsn_extra = $dsn_extra;
     } // __construct()
 
     // --------------------------------------------------------------------------------
-
-    function __destruct()
-    {
-        $this->destroy();
-    }
-    
+    // Perform any necessary cleanup when the object is destroyed
     // --------------------------------------------------------------------------------
 
-    public function disconnect()
+    public function __destruct()
     {
-        if (NULL !== $this->_dbh)
-            $this->_dbh->close();
+        $this->disconnect();
     }
 
     // --------------------------------------------------------------------------------
-    // Connect to the database using PDO
-    //
-    // @throws PDOException if an error ocurred connecting to the database
-    //
-    // @returns An instance of the PDO database handle
+    // See iDatabase::connect()
     // --------------------------------------------------------------------------------
 
     public function connect()
     {
-        if (NULL === $this->_dbh) {
-            try {
-                $dsn = (NULL !== $this->_dsn_override) ? $this->_dsn_override : $this->_db_engine . ':host=' . $this->_db_host . ';port=' . $this->_db_port . ';dbname=' . $this->_db_name;
-
-                $this->_dbh = new PDO($dsn, $this->_db_username, $this->_db_password);
-                $this->_dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            } catch (Exception $err) {
-                throw $err;
-            }
+        if ( null !== $this->_dbh) {
+            return $this->_dbh;
         }
+
+        $this->dsn = $this->generateDsn();
+        $this->_dbh = new PDO($this->dsn, $this->_db_username, $this->_db_password);
+        $this->_dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
         return $this->_dbh;
     } // connect()
 
     // --------------------------------------------------------------------------------
+    // See iDatabase::disconnect()
+    // --------------------------------------------------------------------------------
 
-    public function destroy()
+    public function disconnect()
     {
-        $this->_dbh = NULL;
+        $this->_dbh = null;
     }
 
+
     // --------------------------------------------------------------------------------
-    // @returns The database handle
+    // @see iDatabase::handle()
     // --------------------------------------------------------------------------------
 
     public function handle()
@@ -117,8 +110,37 @@ implements iDatabase
         return $this->connect();
     }
 
+    // ------------------------------------------------------------------------------------------
+    // Generate a standard PDO DSN. This method may be overriden by a child class if needed.
+    //
+    // @return A PDO connection DSN
+    // ------------------------------------------------------------------------------------------
+
+    protected function generateDsn()
+    {
+        $dsn = $this->_db_engine
+            . ':host=' . $this->_db_host
+            . ( null !== $this->_db_port ? ';port=' . $this->_db_port : '' )
+            . ';dbname=' . $this->_db_name;
+
+        if ( null !== $this->dsn_extra ) {
+            $dsn .= ( 0 !== strpos($this->dsn_extra, ';') ? ';' : '' ) . $this->dsn_extra;
+        }
+
+        return $dsn;
+    }  // generateDsn()
+
+    // ------------------------------------------------------------------------------------------
+    // @return The generated DSN, or NULL of no DSN has been generated.
+    // ------------------------------------------------------------------------------------------
+
+    public function getDsn()
+    {
+        return $this->dsn;
+    }  // getDsn()
+
     // --------------------------------------------------------------------------------
-    // @see Database::query()
+    // @see iDatabase::query()
     // --------------------------------------------------------------------------------
 
     public function query($query, array $params = array(), $returnStatement = false)
@@ -126,12 +148,14 @@ implements iDatabase
         $stmt = $this->prepare($query);
 
         try {
-            if ( $this->debugging() ) $this->debug($query, $params);
+            if ( $this->debugging() ) {
+                $this->debug($query, $params);
+            }
         } catch (Exception $e) {
             // TODO: setup the logger and log this.
         }
-      
-        if (FALSE === $stmt->execute($params)) {
+
+        if (false === $stmt->execute($params)) {
             list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
@@ -143,20 +167,22 @@ implements iDatabase
     } // query()
 
     // --------------------------------------------------------------------------------
-    // @see Database::execute()
+    // @see iDatabase::execute()
     // --------------------------------------------------------------------------------
 
     public function execute($query, array $params = array())
     {
         $stmt = $this->prepare($query);
-      
+
         try {
-            if ( $this->debugging() ) $this->debug($query, $params);
+            if ( $this->debugging() ) {
+                $this->debug($query, $params);
+            }
         } catch (Exception $e) {
             // TODO: setup the logger and log this.
         }
 
-        if (FALSE === $stmt->execute($params)) {
+        if (false === $stmt->execute($params)) {
             list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
@@ -166,50 +192,36 @@ implements iDatabase
     } // execute()
 
     // --------------------------------------------------------------------------------
-    // Prepare a query for execution and return the prepared statement.
-    //
-    // @param $query The query string
-    //
-    // @throws Exception if the query string is empty
-    // @throws Exception if there was an error preparing the query
-    //
-    // @return The prepared PDOStatement
+    // @see iDatabase::prepare()
     // --------------------------------------------------------------------------------
-  
+
     public function prepare($query)
     {
         if (empty($query)) {
             throw new Exception("No query string provided");
         }
-      
+
         return $this->handle()->prepare($query);
 
     }  // prepare()
 
     // --------------------------------------------------------------------------------
-    // Perform an INSERT command
-    //
-    // @param $statement The insert statement / command
-    // @param $params An array of values with as many elements as there are bound
-    //                parameters in the SQL statement being executed.
-    //
-    // @throws Exception if the statement string is empty
-    // @throws PDOException if table does not exist or other db errors
-    //
-    // @returns An integer referring to the id associated with the recently inserted record
+    // @see iDatabase::insert()
     // --------------------------------------------------------------------------------
 
     public function insert($statement, $params = array())
     {
         $stmt = $this->prepare($statement);
-      
+
         try {
-            if ( $this->debugging() ) $this->debug($statement, $params);
+            if ( $this->debugging() ) {
+                $this->debug($statement, $params);
+            }
         } catch (Exception $e) {
             // TODO: setup the logger and log this.
         }
-      
-        if (FALSE === $stmt->execute($params)) {
+
+        if (false === $stmt->execute($params)) {
             list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
@@ -219,28 +231,22 @@ implements iDatabase
     } // insert()
 
     // --------------------------------------------------------------------------------
-    // Get the number of rows in a table
-    //
-    // @param $schema the schema the table belongs to
-    // @param $table the name of the table to count rows for
-    //
-    // @throws Exception if the table parameter is empty
-    // @throws PDOException if table does not exist or other db errors
-
-    // @returns the number of rows in the table
+    // @see iDatabase::getRowCount()
     // --------------------------------------------------------------------------------
 
     public function getRowCount($schema, $table)
     {
         if (empty($table)) {
-            throw new Exception("PDODB::getRowCount:: No table string provided");
+            throw new Exception(__CLASS__ . ": No table string provided");
         }
 
         $full_tablename = (empty($schema) ? '' : $schema . '.') . $table;
         $query = "select count(*) as count_result from $full_tablename";
 
         try {
-            if ( $this->debugging() ) $this->debug($query, array());
+            if ( $this->debugging() ) {
+                $this->debug($query, array());
+            }
         } catch (Exception $e) {
             // TODO: setup the logger and log this.
         }
@@ -299,25 +305,25 @@ implements iDatabase
     public static function debugInfo()
     {
         return array(
-            "queries" => PDODB::$_queries,
-            "params" => PDODB::$_params
+            "queries" => PDODB::$queries,
+            "params" => PDODB::$params
         );
     }
 
     public static function debugOn()
     {
-        PDODB::$_debug_mode = true;
+        PDODB::$debug_mode = true;
     }
 
     public static function debugOff()
     {
-        PDODB::$_debug_mode = false;
+        PDODB::$debug_mode = false;
     }
 
     public static function resetDebugInfo()
     {
-        unset($GLOBALS['PDODB::$_queries']);
-        unset($GLOBALS['PDODB::$_params']);
+        unset($GLOBALS['PDODB::$queries']);
+        unset($GLOBALS['PDODB::$params']);
     }
 
     private function debugging()
@@ -326,16 +332,16 @@ implements iDatabase
 
         try {
             $sql_debug_mode = \xd_utilities\getConfiguration('general', 'sql_debug_mode');
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
 
-
-        return  $sql_debug_mode || PDODB::$_debug_mode;
+        return  $sql_debug_mode || PDODB::$debug_mode;
     }
 
     private function debug($query, $params)
     {
-        PDODB::$_queries[] = trim(preg_replace("(\s+)"," ", $query));
-        PDODB::$_params[] = PDODB::protectParams($params);
+        PDODB::$queries[] = trim(preg_replace("(\s+)", " ", $query));
+        PDODB::$params[] = PDODB::protectParams($params);
     }
 
     private static function protectParams($params)
@@ -349,4 +355,4 @@ implements iDatabase
         }
         return $params;
     }
-}
+}  // class PDODB

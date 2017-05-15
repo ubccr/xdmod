@@ -534,15 +534,13 @@ CREATE TABLE `peopleonaccount` (
   `resource_id` int(11) NOT NULL,
   `person_id` int(11) NOT NULL,
   `allocationstate_id` int(11) NOT NULL,
-  `min_activity_time` datetime DEFAULT NULL,
-  `min_activity_time_ts` int(11) DEFAULT NULL,
   `start_time` datetime NOT NULL,
   `start_time_ts` int(11) DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
   `end_time_ts` int(11) DEFAULT NULL,
   `comments` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `aggregation_index` (`resource_id`,`account_id`,`person_id`,`start_time_ts`,`end_time_ts`,`allocationstate_id`,`min_activity_time_ts`)
+  KEY `aggregation_index` (`resource_id`,`account_id`,`person_id`,`start_time_ts`,`end_time_ts`,`allocationstate_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `peopleunderpi`;

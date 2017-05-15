@@ -27,8 +27,7 @@ use PHPSQLParser\exceptions\UnsupportedFeatureException;
 // exceptions we must do the same and reference the global \Exception when we throw one.
 use Exception;
 
-class ExecuteSql extends aAction
-implements iAction
+class ExecuteSql extends aAction implements iAction
 {
     // Delimiter for SQL scripts that contain multiple statements
     const DEFAULT_MULTI_STATEMENT_DELIMITER = '//';
@@ -68,22 +67,41 @@ implements iAction
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * @see iAction::verify()
+     * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function verify(EtlOverseerOptions $etlOptions = null)
+    public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
-        if ( $this->isVerified() ) {
+        if ( $this->isInitialized() ) {
             return;
         }
 
-        $this->verified = false;
-        if ( null !== $etlOptions ) {
-            $this->etlOverseerOptions = $etlOptions;
+        $this->initialized = false;
+
+        parent::initialize($etlOverseerOptions);
+
+        // Apply a base path to each SQL file, if needed
+
+        // aOptions uses __get() to access object properties so we can't use indirect
+        // modification. Fetching the value and then replacing it after modificaiton solves this issue.
+
+        $sqlFileList  = $this->options->sql_file_list;
+
+        foreach ( $sqlFileList as &$sqlFile ) {
+            if ( is_object($sqlFile) && isset($sqlFile->sql_file) ) {
+                $sqlFile->sql_file = $this->options->applyBasePath("paths->sql_dir", $sqlFile->sql_file);
+            } else {
+                $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
+            }
         }
 
-        $this->initialize();
+        $this->options->sql_file_list = $sqlFileList;
+
+        if ( ! $this->destinationEndpoint instanceof iRdbmsEndpoint ) {
+            $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
+            $this->logAndThrowException($msg);
+        }
 
         // Verify that each sql file exists and is readable
 
@@ -103,51 +121,24 @@ implements iAction
             if ( ! file_exists($filename) ) {
                 $msg = "SQL file does not exist '$filename'";
                 $this->logAndThrowException($msg);
-            } else if ( ! is_readable($filename) ) {
+            } elseif ( ! is_readable($filename) ) {
                 $msg = "SQL file is not readable '$filename'";
                 $this->logAndThrowException($msg);
             }
         }  // foreach ( $this->sqlScriptFiles as $sqlFile )
 
-        $this->verified = true;
+        // The SQL statements expect these variables to be quoted if they exist
 
-        return true;
+        $varsToQuote = array(
+            'START_DATE',
+            'END_DATE',
+            'LAST_MODIFIED',
+            'LAST_MODIFIED_START_DATE',
+            'LAST_MODIFIED_END_DATE'
+        );
 
-    }  // verify()
-
-    /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
-     *
-     * @throws Exception if any query data was not
-     * int the correct format.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function initialize()
-    {
-        if ( $this->isInitialized() ) {
-            return;
-        }
-
-        $this->initialized = false;
-
-        // Apply a base path to each SQL file, if needed
-
-        // aOptions uses __get() to access object properties so we can't use indirect
-        // modification. Fetching the value and then replacing it after modificaiton solves this issue.
-
-        $sqlFileList  = $this->options->sql_file_list;
-
-        foreach ( $sqlFileList as &$sqlFile ) {
-            if ( is_object($sqlFile) && isset($sqlFile->sql_file) ) {
-                $sqlFile->sql_file = $this->options->applyBasePath("paths->sql_dir", $sqlFile->sql_file);
-            } else {
-                $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
-            }
-        }
-
-        $this->options->sql_file_list = $sqlFileList;
+        $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableMap, $this->destinationEndpoint);
+        $this->variableMap = array_merge($this->variableMap, $localVariableMap);
 
         $this->initialized = true;
 
@@ -162,32 +153,8 @@ implements iAction
 
     public function execute(EtlOverseerOptions $etlOverseerOptions)
     {
-        $this->etlOverseerOptions = $etlOverseerOptions;
-
-        $this->verify();
-
         $time_start = microtime(true);
-
-        $utilityEndpoint = $this->etlConfig->getDataEndpoint($this->options->utility);
-        $sourceEndpoint = $this->etlConfig->getDataEndpoint($this->options->source);
-        $destinationEndpoint = $this->etlConfig->getDataEndpoint($this->options->destination);
-
-        if ( ! $destinationEndpoint instanceof iRdbmsEndpoint ) {
-            $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
-        }
-        $this->logger->debug("Destination endpoint: " . $destinationEndpoint);
-
-        // These variables are available to the sql statement
-
-        $localVariableMap = array(
-            'UTILITY_SCHEMA' => $utilityEndpoint->getSchema(),
-            'SOURCE_SCHEMA' => $sourceEndpoint->getSchema(),
-            'DESTINATION_SCHEMA' => $destinationEndpoint->getSchema(),
-            'START_DATE' =>  $destinationEndpoint->quote($etlOverseerOptions->getStartDate()),
-            'END_DATE' => $destinationEndpoint->quote($etlOverseerOptions->getEndDate())
-            );
-        $this->variableMap = array_merge($this->variableMap, $localVariableMap);
+        $this->initialize($etlOverseerOptions);
 
         foreach ( $this->options->sql_file_list as $sqlFile ) {
             $delimiter = self::DEFAULT_MULTI_STATEMENT_DELIMITER;
@@ -206,12 +173,18 @@ implements iAction
             $this->logger->info("Processing SQL file '$filename' with delimiter '$delimiter'");
 
             $sqlFileContents = file_get_contents($filename);
-            $sqlFileContents = Utilities::substituteVariables($sqlFileContents, $this->variableMap);
+            $sqlFileContents = Utilities::substituteVariables(
+                $sqlFileContents,
+                $this->variableMap,
+                $this,
+                "Undefined macros found in SQL"
+            );
 
             // Split the file on the delimiter and execute each statement. PDO without mysqlnd drivers
             // does not support multiple SQL statements in a single query.
 
             $sqlStatementList = explode($delimiter, $sqlFileContents);
+            $numSqlStatements = count($sqlStatementList);
             $numStatementsProcessed = 0;
 
             foreach ($sqlStatementList as $sql) {
@@ -241,20 +214,23 @@ implements iAction
                     continue;
                 }
 
-                $this->logger->debug("Executing SQL: $sql");
                 $sqlStartTime = microtime(true);
-
+                $numRowsAffected = 0;
                 try {
-                    if ( ! $this->etlOverseerOptions->isDryrun() ) {
-                        $destinationEndpoint->getHandle()->execute($sql);
+                    $this->logger->info("Executing statement (" . ($numStatementsProcessed + 1) . "/$numSqlStatements)");
+                    $this->logger->debug("Executing SQL " . $this->destinationEndpoint . ":\n$sql");
+                    if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
+                        $numRowsAffected = $this->destinationHandle->execute($sql);
                     }
                 } catch ( PDOException $e ) {
-                    $msg = "Error executing sql: " . $e->getMessage();
-                    $this->logAndThrowSqlException($sql, $e);
+                    $this->logAndThrowException(
+                        "Error executing SQL",
+                        array('exception' => $e, 'sql' => $this->sqlQueryString, 'endpoint' => $this->sourceEndpoint)
+                    );
                 }
 
                 $time = microtime(true) - $sqlStartTime;
-                $this->logger->debug("Elapsed time: " . round($time, 5));
+                $this->logger->debug("Affected $numRowsAffected rows. Elapsed time: " . round($time, 5));
 
                 $numStatementsProcessed++;
 
@@ -272,5 +248,4 @@ implements iAction
                                     'elapsed_time' => round($time, 5)
                                   ));
     }  // execute()
-
 }  // class ExecuteSql

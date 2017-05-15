@@ -15,14 +15,10 @@ env:
         - TEST_SUITE=unit
         - TEST_SUITE=build
 
-matrix:
-    allow_failures:
-        - env: TEST_SUITE=style
-
 # Add dependency directories to the Travis cache
 cache:
     directories:
-        - node_modules
+        - $HOME/.npm
         - $HOME/.composer/cache
         - /tmp/pear/cache
 

@@ -34,19 +34,14 @@ implements iDataEndpoint
 
         $requiredKeys = array("base_url");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
-        
+
         $this->baseUrl = $options->base_url;
 
-        // If a sleep time is specified convert it to microseconds
-
-        // $msg = "sleep_seconds is a non-numeric value, ignoring";
-        // $this->logger->warning($msg);
-          
         if ( null !== $options->sleep_seconds && is_numeric($options->sleep_seconds) ) {
             $seconds = (float) $options->sleep_seconds;
             $this->sleepMicroseconds = $seconds * 1000000;
         }
-    
+
         $this->key = md5(implode($this->keySeparator, array($this->type, $this->name, $this->baseUrl)));
 
     }  // __construct()
@@ -79,7 +74,7 @@ implements iDataEndpoint
 
         $this->handle = curl_init($this->baseUrl);
         curl_setopt($this->handle, CURLOPT_RETURNTRANSFER, true);
-    
+
         return $this->handle;
     }  // connect()
 
