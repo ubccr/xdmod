@@ -225,6 +225,7 @@
       <script type="text/javascript" src="gui/js/ContainerMask.js"></script>
        <script type="text/javascript" src="gui/js/ContainerBodyMask.js"></script>
 
+      <link rel="stylesheet" type="text/css" href="gui/css/MetricExplorer.css" />
       <link rel="stylesheet" type="text/css" href="gui/css/common.css" />
       <!--[if lte IE 9]>
       <link rel="stylesheet" type="text/css" href="gui/css/common_ie9.css" />
