@@ -1,25 +1,3 @@
-// TODO: Move this someplace else, just here for testing...
-if (!String.prototype.trim) {
-    String.prototype.trim = function () {
-        return this.replace(/^\s+|\s+$/g, '');
-    };
-}
-
-var exceptionhandler = function (proxy, type, action, exception, response) {
-    switch (response.status) {
-        case 403:
-        case 500:
-            var details = Ext.decode(response.responseText);
-            Ext.Msg.alert("Error " + response.status + " " + response.statusText, details.message);
-            break;
-        case 401:
-            // Do nothing
-            break;
-        default:
-            Ext.Msg.alert(response.status + ' ' + response.statusText, response.responseText);
-    }
-};
-
 /*
  * JobViewer panel
  * @author Joe White
@@ -134,7 +112,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     apply: function (lhs, rhs) {
         if (typeof lhs === 'object' && typeof rhs === 'object') {
             var results = {};
-            for (var property in lhs) {
+            var property;
+            for (property in lhs) {
                 if (lhs.hasOwnProperty(property)) {
                     results[property] = lhs[property];
                 }
@@ -151,7 +130,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             return results;
         }
         return lhs;
-    },// apply
+    }, // apply
 
     /**
      * Helper function that handles setting up this components toolbar.
@@ -185,7 +164,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             text: 'Search',
             iconCls: 'search',
             tooltip: 'Search for some subset of jobs',
-            handler: function (b) {
+            handler: function (/*b*/) {
                 self.searchWindow.show();
             }
         });
@@ -211,7 +190,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             jobViewer: this,
             region: 'center',
             listeners: {
-                data_loaded: function (data) {
+                data_loaded: function (/* data */) {
                     self.treeLoaded = true;
                     if (self.historyEventWaiting) {
                         self.createHistoryCallback.call(self.createHistoryCallbackScope, self.createHistoryCallbackData);
@@ -251,9 +230,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 self.searchHistoryPanel
             ],
             listeners: {
-                collapse: function (p) {
-
-                },
                 expand: function (p) {
                     if (p.pinned) {
                         p.getTool('pin').hide();
@@ -268,7 +244,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 id: 'pin',
                 qtip: 'Prevent auto hiding of the Search History',
                 hidden: false,
-                handler: function (ev, toolEl, p, tc) {
+                handler: function (ev, toolEl, p /*, tc*/) {
                     p.pinned = true;
                     if (p.collapsed) {
                         p.expand(false);
@@ -280,7 +256,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 id: 'unpin',
                 qtip: 'Allow auto hiding of the Search History',
                 hidden: true,
-                handler: function (ev, toolEl, p, tc) {
+                handler: function (ev, toolEl, p /*, tc */) {
                     p.pinned = false;
                     p.getTool('pin').show();
                     p.getTool('unpin').hide();
@@ -316,7 +292,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         // RETURN: an array of the top level components. To be used as the
         //         'items' for another component with a border layout.
         return new Array(
-                searchHistory,// WEST
+                searchHistory, // WEST
                 viewPanel     // CENTER
         );
     }, // setupComponents
@@ -347,7 +323,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         } else if (val > 1024.0) {
             outval = (val / 1024.0).toPrecision(precision) + " Ki" + units;
         } else {
-            outval = (1.0 * val).toPrecision(precision) + " " + units;
+            outval = Number(val).toPrecision(precision) + " " + units;
         }
 
         return outval;
@@ -391,7 +367,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         if (minutes > 0) {
             return plural(minutes, "minute", 0) + plural(s % 60, "second", 1);
         }
-        ;
         return plural(s, "second", 0);
     }, // humanTime
 
@@ -676,9 +651,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                              * @param {Array} records
                              * @param {Object} options
                              */
-                            load: function (store, records, options) {
-                                var exists = CCR.exists;
-
+                            load: function (store, records /*, options */) {
                                 for (var i = 0; i < records.length; i++) {
                                     var record = records[i];
 
@@ -700,7 +673,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                             "width": 250,
                             "sortable": true,
                             "dataIndex": "key",
-                            renderer: function (value, metadata, record, rowIndex, colIndex, store) {
+                            renderer: function (value, metadata, record /*, rowIndex, colIndex, store */) {
                                 var help = record.get('documentation');
                                 metadata.attr = 'ext:qtip="' + help + '"';
                                 return value;
@@ -724,7 +697,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                         }
                     ],
                     view: new Ext.grid.GroupingView({
-                        forceFit:true,
+                        forceFit: true,
                         groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
                     })
                 });
@@ -851,8 +824,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                         if (success) {
                             parent.fireEvent('update_analytics', data.data, true);
                         }
-                    },
-                    failure: function (data) {
                     }
                 });
                 break;
@@ -876,12 +847,13 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          *
          * @param panel
          **/
-        activate: function (panel) {
+        activate: function (/* panel */) {
 
             Highcharts.setOptions({global: {timezone: this.cachedHighChartTimezone}});
 
-            if (this.clearing) return;
-
+            if (this.clearing) {
+                return;
+            }
 
             var exists = CCR.exists;
             var getParameter = CCR.getParameter;
@@ -954,7 +926,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             var analytics = Ext.getCmp(this.analyticsContainerId);
 
             // IF: the analytics is showing then hide it.
-            if (analytics && !analytics.hidden) analytics.hide();
+            if (analytics && !analytics.hidden) {
+                analytics.hide();
+            }
 
             // REMOVE: all of the tabs.
             tabs.removeAll();
@@ -974,7 +948,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          * @param {Boolean} isSelected
          */
         process_realm_node: function (path, isSelected) {
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path);
+            if (!isSelected) {
+                this.searchHistoryPanel.fireEvent('expand_node', path);
+            }
         }, // process_realm_node
 
         /**
@@ -984,7 +960,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          * @param {Boolean} isSelected
          */
         process_search_node: function (path, isSelected) {
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path);
+            if (!isSelected) {
+                this.searchHistoryPanel.fireEvent('expand_node', path);
+            }
         }, // process_search_node
 
         /**
@@ -999,7 +977,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             var isType = CCR.isType;
 
             // ENSURE: that the job node is expanded.
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path, true);
+            if (!isSelected) {
+                this.searchHistoryPanel.fireEvent('expand_node', path, true);
+            }
 
             var hasCurrentNode = exists(this.currentNode);
             var hasAttributes = hasCurrentNode && exists(this.currentNode.attributes);
@@ -1035,8 +1015,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                     // Set the tab panel to be active since a new tab is to be added.
                                     Ext.getCmp('info_display_container').getLayout().setActiveItem(1);
                                 },
-                                close: function(p) {
-                                    if(Ext.getCmp('info_display').items.length == 1) {
+                                close: function(/* p */) {
+                                    if (Ext.getCmp('info_display').items.length == 1) {
                                         // The only tab left is about to close. Set the assist image to be active
                                         Ext.getCmp('info_display_container').getLayout().setActiveItem(0);
                                     }
@@ -1069,12 +1049,13 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                     var tab;
                                     for (var i = 0; i < views.length; i++) {
                                         var view = views[i];
-                                        view['jobid'] = jobId;
+                                        view.jobid = jobId;
 
-                                        var dtype = view['dtype'];
+                                        var dtype = view.dtype;
                                         var id = view[dtype];
 
 
+                                        New Error introduced;
                                         var jobPath = self._copy(path, [], true);
                                         jobPath[jobPath.length] = {dtype: dtype, value: id};
 
@@ -1083,13 +1064,17 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
                                         if (!viewsExists) {
                                             tab = self._generateView(view, jobPath, view.text, jobTab);
-                                            if (exists(tab)) jobTabs.add(tab);
+                                            if (exists(tab)) {
+                                                jobTabs.add(tab);
+                                            }
                                         }
                                     }
                                 }
-                                if (isType(callback, CCR.Types.Function)) callback.apply(self);
+                                if (isType(callback, CCR.Types.Function)) {
+                                    callback.apply(self);
+                                }
                             }
-                        })
+                        });
                     }
                 }
 
