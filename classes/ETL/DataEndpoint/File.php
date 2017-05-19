@@ -52,8 +52,6 @@ class File extends aDataEndpoint implements iDataEndpoint
             $this->path = \xd_utilities\qualify_path($options->path, $options->paths->data_dir);
         }
 
-        // $this->path = $options->applyBasePath("paths->data_dir", $options->path);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
