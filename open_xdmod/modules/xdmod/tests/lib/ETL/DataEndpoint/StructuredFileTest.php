@@ -432,5 +432,4 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
         $generated = $file->parse();
 
     }  // testSchemaValidationFailure()
-
 }  // class StructuredFileTest
