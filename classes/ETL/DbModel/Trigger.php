@@ -114,14 +114,14 @@ class Trigger extends SchemaEntity implements iEntity
         // a value will be provided when the database information schema is queried.
 
         if ( ( null !== $this->definer && null !== $cmp->definer ) && $this->definer != $cmp->definer ) {
-            return -1;
+            return -2;
         }
 
         // The following properties do not have defaults set by the database and should be considered if
         // one of them is set.
 
         if ( ( null !== $this->schema || null !== $cmp->schema ) && $this->schema != $cmp->schema ) {
-            return -1;
+            return -3;
         }
 
     }  // compare()

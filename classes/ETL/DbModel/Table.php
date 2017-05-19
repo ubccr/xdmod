@@ -624,6 +624,7 @@ ORDER BY trigger_name ASC";
             if ( 0 == $destColumn->compare($this->getColumn($name)) ) {
                 continue;
             }
+
             $alterList[] = "CHANGE COLUMN " . $destColumn->getName(true) . " " . $destColumn->getSql($includeSchema);
         }
 
