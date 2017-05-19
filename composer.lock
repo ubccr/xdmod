@@ -2695,12 +2695,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/xdmod-test-artifacts.git",
-                "reference": "173dcefc611ba7eabd1aa9aa3c400372e7f9aaf7"
+                "reference": "aa431c5969c30511a8dbe56f758a43543406c2a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/xdmod-test-artifacts/zipball/f4a08a5244cf41d212e7655b4c87276fb04f2494",
-                "reference": "173dcefc611ba7eabd1aa9aa3c400372e7f9aaf7",
+                "url": "https://api.github.com/repos/ubccr/xdmod-test-artifacts/zipball/aa431c5969c30511a8dbe56f758a43543406c2a0",
+                "reference": "aa431c5969c30511a8dbe56f758a43543406c2a0",
                 "shasum": ""
             },
             "type": "library",
