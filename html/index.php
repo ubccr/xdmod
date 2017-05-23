@@ -458,6 +458,8 @@
       <?php if (xd_utilities\getConfiguration('features', 'singlejobviewer') == 'on'): ?>
       <script type="text/javascript" src="gui/js/modules/job_viewer/JobViewer.js"></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/ChartPanel.js"></script>
+      <script type="text/javascript" src="gui/js/modules/job_viewer/ChartTab.js"></script>
+      <script type="text/javascript" src="gui/js/modules/job_viewer/GanttChart.js"></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/AnalyticChartPanel.js"></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/TimeSeriesStore.js"></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/SearchPanel.js"></script>

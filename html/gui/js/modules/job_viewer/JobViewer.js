@@ -834,6 +834,19 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                     dataUrl: url
                 });
                 break;
+            case 'ganttchart':
+                tab = new XDMoD.Module.JobViewer.GanttChart({
+                    id: chartId,
+                    title: title,
+                    url: base,
+                    baseParams: this._getParams(path),
+                    historyToken: '#' + this.module_id + '?' + this._createHistoryTokenFromArray(path),
+                    path: path,
+                    dtypes: [],
+                    dtype: dtype,
+                    dtypeValue: id
+                });
+                break;
             case 'timeline':
             case 'timeseries':
                 var tsid = this._find('tsid', 'tsid', path);
