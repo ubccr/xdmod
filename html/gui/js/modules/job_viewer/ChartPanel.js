@@ -214,6 +214,13 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             this.options.chart.height = adjHeight;
         }, // resize
 
+        destroy: function () {
+            if (this.chart) {
+                this.chart.destroy();
+                this.chart = null;
+            }
+        },
+
         /**
          *
          * @param panel
@@ -319,6 +326,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                     this.jobTab.fireEvent("display_help", panel.helptext);
                 }
             }
+
+            if (panel.chart) {
+                panel.chart.destroy();
+            }
             panel.chart = new Highcharts.Chart(chartOptions);
             if (!record) {
                 panel.chart.showLoading();
@@ -368,11 +379,7 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                     return;
                 }
                 var record = tor.getAt(0);
-                if (CCR.exists(record) &&
-                   CCR.exists(self.chart)) {
-                    self.chart = null;
-                    self.fireEvent('load_record', self, record);
-                } else if (CCR.exists(record)) {
+                if (CCR.exists(record)) {
                     self.fireEvent('load_record', self, record);
                 }
             });

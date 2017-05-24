@@ -129,6 +129,9 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 this.chartOptions.chart.options.colors = [seriesColor];
             }
 
+            if (this.chart) {
+                this.chart.destroy();
+            }
             this.chart = new Highcharts.Chart(this.chartOptions);
             if (CCR.exists(this.chart.series)
                 && CCR.exists(this.chart.series[0])
@@ -203,6 +206,13 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 this.chart.redraw();
             }
         }, // reset
+
+        destroy: function () {
+            if (this.chart) {
+                this.chart.destroy();
+                this.chart = null;
+            }
+        },
 
         /**
          * Attempt to resize this components HighCharts instance such that it
