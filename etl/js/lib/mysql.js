@@ -104,7 +104,7 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
 			'PRIMARY KEY (_id)'
 		];
 		
-		var ret = [ 'CREATE TABLE IF NOT EXISTS ' + this.name + '(\n' + allDims.join(',\n    ') + '\n) engine = myisam' ];
+    var ret = ['CREATE TABLE IF NOT EXISTS ' + this.name + '(\n' + allDims.join(',\n    ') + '\n) engine = myisam'];
 
         if(this.triggers) {
             var verbs = { before: "BEFORE", after: "AFTER" };
@@ -119,7 +119,7 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
                         stmt += "DROP TRIGGER IF EXISTS " + triggername + "$$\n";
                         stmt += "USE `"+this.meta.schema+"`$$\n";
                         stmt += "CREATE TRIGGER " + triggername + "\n";
-                        stmt += verbs[verb] + " " + nouns[noun] + " ON `" + this.name + "`\n";
+                        stmt += verbs[verb] + ' ' + nouns[noun] + ' ON `' + this.name + '`\n';
                         stmt += "FOR EACH ROW\nBEGIN\n";
                         stmt += this.triggers[action];
                         stmt += "END$$\nDELIMITER ;\n";
@@ -190,7 +190,7 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
 		];
 		allDims.push( this.meta.extras.join(',\n    '), '    PRIMARY KEY (_id)'/*, 'KEY version_index (_version)'*/);
 
-		var ret = 'CREATE TABLE IF NOT EXISTS ' + this.name + '_errors (' + allDims.join(',\n    ') + '\n) engine = myisam';
+    var ret = 'CREATE TABLE IF NOT EXISTS ' + this.name + '_errors (' + allDims.join(',\n    ') + '\n) engine = myisam';
 		
 		return ret;
 	}
