@@ -241,9 +241,9 @@ class ExternalProcess extends \php_user_filter
             throw new \Exception($errorMessage);
         }
 
+        fclose($this->pipes[0]);
         fclose($this->pipes[1]);
         fclose($this->pipes[2]);
-        fclose($this->pipes[3]);
         proc_close($this->filterResource);
         fclose($this->tmpResource);
 

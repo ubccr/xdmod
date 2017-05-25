@@ -627,6 +627,8 @@ function resolve_path($path)
  * @param array $propertyList The list of required properties
  * @param array $missing Optional reference to an array that will contain a list of the
  *   missing properties.
+ *
+ * @return TRUE if the object contains all of the required properties, FALSE otherwise.
  */
 
 function verify_required_object_properties(\stdClass $obj, array $propertyList, array &$missing = null)
@@ -646,7 +648,7 @@ function verify_required_object_properties(\stdClass $obj, array $propertyList, 
 /**
  * Verify the types of object properties, optionally skipping properties that are not
  * present in the object.  Property types must match the PHP is_*() methods (e.g.,
- * is_int(), is_object(), is_string()) and will silently be skipped if a function
+ * is_int(), is_object(), is_string()) and will generate a warning message a function
  * corresponding to the specified type does not exist.
  *
  * @param stdClass $obj The object to examine
@@ -654,7 +656,7 @@ function verify_required_object_properties(\stdClass $obj, array $propertyList, 
  *   the values are property types.
  * @param array $messages Optional reference to an array that will contain a list of
  *   messages regarding the property types.
- * @param int $skipMissingProperties If set to FALSE, properties that are not present in
+ * @param boolean $skipMissingProperties If set to FALSE, properties that are not present in
  *   the object generate an error. If set to TRUE missing properties are silently skipped,
  *
  * @return TRUE if all properties were present and their type checks passed, FALSE
@@ -677,7 +679,9 @@ function verify_object_property_types(
             continue;
         }
         $func = 'is_' . $type;
-        if ( function_exists($func) && ! $func($obj->$p) ) {
+        if ( ! function_exists($func) ) {
+            $messages[] = sprintf("Unsupported type %s given for property '%s'", $type, $p);
+        } elseif ( ! $func($obj->$p) ) {
             $messages[] = sprintf("'%s' must be a %s, %s given", $p, $type, gettype($obj->$p));
         }
     }

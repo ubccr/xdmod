@@ -546,7 +546,7 @@ function compareTableData(
 
     if ( null === $comparisonColumn ) {
         $comparisonColumn = $firstCol;
-        print "WARNING: No non-nlullable columns, potential for false positives." . PHP_EOL;
+        print "WARNING: No non-nullable columns, potential for false positives." . PHP_EOL;
     }
 
     // Determine the columns to compute the percent error for, if any.

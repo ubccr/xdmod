@@ -21,7 +21,7 @@ abstract class aStructuredFile extends File
     const DEFAULT_READ_BYTES = 4096;
 
     /**
-     * The path to a JSON Schema describing each record the JSON file.
+     * Optional path to a schema describing each record the structured file.
      *
      * This is null if no schema was provided.
      *
