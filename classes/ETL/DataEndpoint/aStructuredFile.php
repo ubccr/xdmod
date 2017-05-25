@@ -165,7 +165,6 @@ abstract class aStructuredFile extends File
             if ( ! is_object($config) ) {
                 $this->logger->warning(sprintf(
                     "Filter config must be an object, '%s' given. Skipping.",
-                    $filterKey,
                     gettype($config)
                 ));
                 continue;
