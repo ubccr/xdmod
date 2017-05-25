@@ -154,7 +154,7 @@ class Index extends NamedEntity implements iEntity
         // a value will be provided when the database information schema is queried.
 
         if ( ( null !== $this->type && null !== $cmp->type ) && $this->type != $cmp->type ) {
-            return -11;
+            return -2;
         }
 
         // The following properties do not have defaults set by the database and should be considered if
@@ -165,7 +165,7 @@ class Index extends NamedEntity implements iEntity
         if ( "PRIMARY" != $this->name && "PRIMARY" != $cmp->name
              && ( null !== $this->is_unique && null !== $cmp->is_unique )
              && $this->is_unique != $cmp->is_unique ) {
-            return -111;
+            return -3;
         }
 
         return 0;

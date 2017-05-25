@@ -1,0 +1,267 @@
+<?php
+/* ==========================================================================================
+ * PHP stream filter implementation allowing data to be passed through an external process
+ * (e.g., jq, awk, sed) for processing. The external application MUST support reading from
+ * standard input and writing to standard output.
+ *
+ * Stream filters are added to a file handle and intercept data that is read from the file
+ * (using standard file functions such as fread()). Filters process the data and pass it
+ * along to the next filter and eventually to the application that requested the
+ * data. This is transparent to the application that is operating on the file
+ * handle. Stream filters must extend the php_user_filter class.
+ *
+ * @see http://php.net/manual/en/stream.filters.php
+ * @see http://php.net/manual/en/class.php-user-filter.php
+ * ==========================================================================================
+ */
+
+namespace ETL\DataEndpoint\Filter;
+
+use Log;
+
+class ExternalProcess extends \php_user_filter
+{
+    /**
+     * Filter name, used when registering the stream filter.
+     */
+
+    const NAME = 'xdmod.external_process';
+
+    /**
+     * Number of bytes to read and write to the application pipes at once
+     */
+
+    const READ_SIZE = 1024;
+
+    /**
+     * The name of the filter, populated by PHP
+     *
+     * @var string
+     */
+
+    public $filtername = null;
+
+    /**
+     * The parameters passed to this filter by stream_filter_prepend() or
+     * stream_filter_append(), set by PHP. This is expected to be an object with the
+     * following properties:
+     *
+     * path: The path to the external application. If a relative path is given, regular
+     *       shell $PATH rules apply.
+     * arguments: Optional argument string to be passed to the application
+     * logger: Optional logger for displying error messages
+     *
+     * @var stdClass
+     */
+
+    public $params = null;
+
+    /**
+     * An array containing file descriptors connected to the application.
+     * 0: application stdin
+     * 1: application stdout
+     * 2: application stdout
+     *
+     * @var array
+     */
+
+    private $pipes = null;
+
+    /**
+     * File handle returned by proc_open()
+     *
+     * @var resource
+     */
+
+    private $filterResource = null;
+
+    /**
+     * Temporary resource used when creating new buckets
+     *
+     * @var resource
+     */
+
+    private $tmpResource = null;
+
+    /**
+     * The command that was executed, including arguments.
+     *
+     * @var string
+     */
+
+    private $command = null;
+
+    /** ------------------------------------------------------------------------------------------
+     * Called when applying the filter. Move data from the input buckets to the output
+     * buckets, filtering along the way.
+     *
+     * @param $in A resource pointing to a bucket brigade which contains one or more
+     *   bucket objects containing data to be filtered.
+     * @param $out A resource pointing to a second bucket brigade into which your modified
+     *   buckets should be placed.
+     * @param $consumed A reference to a value that should be incremented by the length of
+     *   the data which your filter reads in and alters. In most cases this means you will
+     *   increment consumed by $bucket->datalen for each $bucket.
+     * @param $closing Set to TRUE if the stream is in the process of closing (and
+     *   therefore this is the last pass through the filterchain).
+     *
+     * @return PSFS_PASS_ON If data has been copied to the $out brigade
+     * @return PSFS_FEED_ME If the filter was successful but did not copy data to the $out brigade,
+     * @return PSFS_ERR_FATAL On error.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function filter($in, $out, &$consumed, $closing)
+    {
+        $retval = PSFS_FEED_ME;
+
+        // Process all of the incoming buckets and write their data to the process
+        // input pipe.
+
+        while ( $bucket = stream_bucket_make_writeable($in) ) {
+            $consumed += $bucket->datalen;
+            fwrite($this->pipes[0], $bucket->data);
+        }
+
+        // Process any data that may have came out of the pipe and send it to the out
+        // brigade.
+
+        while ( ! feof($this->pipes[1]) && '' !=  ($data = fread($this->pipes[1], self::READ_SIZE)) ) {
+            stream_bucket_append($out, stream_bucket_new($this->tmpResource, $data));
+            $retval = PSFS_PASS_ON;
+        }
+
+        if ( $closing ) {
+
+            // Close the process's input file so it can finish up
+
+            @fclose($this->pipes[0]);
+
+            // Process all data left on the pipe from the process
+
+            while ( ! feof($this->pipes[1]) ) {
+                $data = fread($this->pipes[1], self::READ_SIZE);
+                if ( 0 != strlen($data) ) {
+                    stream_bucket_append($out, stream_bucket_new($this->tmpResource, $data));
+                }
+            }
+
+            $retval = PSFS_PASS_ON;
+
+        }  // if ($closing)
+
+        return $retval;
+    }  // filter()
+
+    /** -----------------------------------------------------------------------------------------
+     * Perform setup on filter instantiation. This includes setting up the external filter
+     * application and opening read and write pipes to the application.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function onCreate()
+    {
+        // Verify parameters
+
+        if ( ! is_object($this->params) || ! isset($this->params->path) ) {
+            fwrite(STDERR, __CLASS__ . ": Path parameter not set\n");
+            return false;
+        }
+
+        if ( isset($this->params->logger) && ! $this->params->logger instanceof Log ) {
+            fwrite(STDERR, "Invalid logger, expected Log and got " . gettype($this->params->logger) . "\n");
+            return false;
+        }
+
+        $arguments = ( isset($this->params->arguments) ? " " . $this->params->arguments : "" );
+        $this->command = $this->params->path . $arguments;
+
+        // stream_bucket_new() needs somewhere to store temporary data but the
+        // documentation doesn't give any details:
+        // http://php.net/manual/en/function.stream-bucket-new.php
+
+        if ( false === ($this->tmpResource = @fopen('php://temp', 'w+')) ) {
+            $this->logError($errorMessage);
+            return false;
+        }
+
+        // Start the process and open read and write pipes so we can interact with it. If
+        // there is an error running the external process (e.g., bad arguments or syntax)
+        // it may not manifest immediately because the process may take some time to set
+        // up. We will need to check the exit status using proc_get_status().
+
+        $this->filterResource = @proc_open(
+            $this->command,
+            array(
+                0 => array('pipe', 'r'),
+                1 => array('pipe', 'w'),
+                2 => array('pipe', 'w')
+            ),
+            $this->pipes
+        );
+
+        if ( false === $this->filterResource ) {
+            $this->logError($errorMessage);
+            return false;
+        }
+
+        // Set the output from the application to non-blocking mode or the fread() in
+        // filter() may block while waiting for the external process to provide data
+        // resulting in a deadlock.
+
+        stream_set_blocking($this->pipes[1], false);
+        stream_set_blocking($this->pipes[2], false);
+
+        return true;
+
+    }  // onCreate()
+
+    /** -----------------------------------------------------------------------------------------
+     * Cleanup after the filter is closed.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function onClose()
+    {
+        // There is difficulty detecting if there is an error running the external
+        // process. By the time the process executes and fails, it is entirely possible
+        // that all data could be written to the process before we can discover that it
+        // has a non-zero exit status.
+
+        $status = proc_get_status($this->filterResource);
+
+        // While the process is running the exit status is shown as -1
+
+        if ( ! in_array($status['exitcode'], array(-1, 0)) ) {
+            $errorMessage = 'Error executing external filter process: ';
+            while ( ! feof($this->pipes[2]) ) {
+                $errorMessage .= fgets($this->pipes[2]);
+            }
+            $this->logError($errorMessage);
+            throw new \Exception($errorMessage);
+        }
+
+        fclose($this->pipes[0]);
+        fclose($this->pipes[1]);
+        fclose($this->pipes[2]);
+        proc_close($this->filterResource);
+        fclose($this->tmpResource);
+
+    } // onClose()
+
+    /** -----------------------------------------------------------------------------------------
+     * Log error messages to stderr or the logger if it has been provided.
+     *
+     * @param string $message The log message
+     * ------------------------------------------------------------------------------------------
+     */
+
+    private function logError($message)
+    {
+        if ( isset($this->params->logger) ) {
+            $this->params->logger->err($message);
+        } else {
+            fwrite(STDERR, $message . PHP_EOL);
+        }
+    }  // logError()
+}  // class ExternalProcess

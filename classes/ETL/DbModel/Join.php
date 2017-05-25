@@ -86,7 +86,11 @@ class Join extends SchemaEntity implements iEntity
             return 1;
         }
 
-        return ( $this == $cmp );
+        if ( $this == $cmp ) {
+            return 0;
+        } else {
+            return -1;
+        }
 
     }  // compare()
 
