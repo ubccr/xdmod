@@ -85,7 +85,7 @@ abstract class aStructuredFile extends File
         $messages = array();
         $propertyTypes = array(
             'record_schema_path' => 'string',
-            'filters'            => 'object',
+            'filters'            => 'array',
             'record_separator'   => 'string',
             'field_separator'    => 'string'
         );
@@ -160,11 +160,11 @@ abstract class aStructuredFile extends File
 
         $fd = $this->connect();
 
-        foreach ( $this->filterDefinitions as $filterKey => $config ) {
+        foreach ( $this->filterDefinitions as $config ) {
 
             if ( ! is_object($config) ) {
                 $this->logger->warning(sprintf(
-                    "Filter config for '%s' must be an object, '%s' given. Skipping.",
+                    "Filter config must be an object, '%s' given. Skipping.",
                     $filterKey,
                     gettype($config)
                 ));
@@ -172,9 +172,9 @@ abstract class aStructuredFile extends File
             }
 
             $messages = array();
-            $properties = array('type' => 'string');
+            $properties = array('name' => 'string', 'type' => 'string');
             if ( ! \xd_utilities\verify_object_property_types($config, $properties, $messages) ) {
-                $this->logAndThrowException("Filters must specify a type: " . implode(', ', $messages));
+                $this->logAndThrowException("Filter missing required properties: " . implode(', ', $messages));
             }
 
             // Include the logger for better error logging
@@ -185,7 +185,7 @@ abstract class aStructuredFile extends File
                     $properties = array('path' => 'string');
                     if ( ! \xd_utilities\verify_object_property_types($config, $properties, $messages) ) {
                         $this->logger->warning(
-                            sprintf("Skipping filter '%s': %s", $filterKey, implode(", ", $messages))
+                            sprintf("Skipping filter '%s': %s", $config->name, implode(", ", $messages))
                         );
                         continue;
                     }
@@ -197,7 +197,7 @@ abstract class aStructuredFile extends File
                         $error = error_get_last();
                         $this->logAndThrowException("Error adding stream filter: " . $error['message']);
                     }
-                    $this->filterList[$filterKey] = $config;
+                    $this->filterList[$config->name] = $config;
                     break;
                 default:
                     $this->logger->warning(

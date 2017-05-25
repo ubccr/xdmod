@@ -210,9 +210,9 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
             'name' => 'xdmod_va_users.json',
             'path' => $path,
             'type' => 'jsonfile',
-            // Filters should be an object
-            'filters' => array(
-                (object) array(
+            // Filters should be an array
+            'filters' => (object) array(
+                'jq' => (object) array(
                     'path' => 'jq',
                     'arguments' => "'map({ name: .organizations[].name})|unique'"
                 )
@@ -237,9 +237,10 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
             'name' => 'xdmod_va_users.json',
             'path' => $path,
             'type' => 'jsonfile',
-            'filters' => (object) array(
-                'jq' => (object) array(
-                    // Need a filter type
+            'filters' => array(
+                (object) array(
+                    // Need a filter type 'type' => 'external'
+                    'name' => 'jq',
                     'path' => 'jq',
                     'arguments' => "'map({ name: .organizations[].name}) | unique'"
                 )
@@ -267,9 +268,10 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
             'name' => 'xdmod_va_users.json',
             'path' => $path,
             'type' => 'jsonfile',
-            'filters' => (object) array(
-                'jq' => (object) array(
+            'filters' => array(
+                (object) array(
                     'type' => 'external',
+                    'name' => 'jq',
                     'path' => 'jq',
                     // The single quotes should be included IN the string, an exception will be thrown
                     'arguments' => 'map({ name: .organizations[].name})|unique'
@@ -299,9 +301,10 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
             'name' => 'xdmod_va_users.json',
             'path' => $path,
             'type' => 'jsonfile',
-            'filters' => (object) array(
-                'jq' => (object) array(
+            'filters' => array(
+                (object) array(
                     'type' => 'external',
+                    'name' => 'jq',
                     'path' => 'jq',
                     // Retrive the list of unique org names as a list of objects
                     'arguments' => "'map({ name: .organizations[].name})|unique'"
@@ -348,9 +351,10 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
             'path' => $path,
             'type' => 'jsonfile',
             'record_separator' => "\n",
-            'filters' => (object) array(
-                'jq' => (object) array(
+            'filters' => array(
+                (object) array(
                     'type' => 'external',
+                    'name' => 'jq',
                     'path' => 'jq',
                     // Retrieve the instance type object from each record. Note the -c to
                     // preserve the newline as record separator
