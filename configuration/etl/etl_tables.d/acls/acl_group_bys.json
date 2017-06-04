@@ -32,13 +32,13 @@
       },
       {
         "name": "visible",
-        "type": "boolean",
+        "type": "tinyint(1)",
         "nullable": false,
         "default": true
       },
       {
         "name": "enabled",
-        "type": "boolean",
+        "type": "tinyint(1)",
         "nullable": false,
         "default": true
       }

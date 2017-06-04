@@ -17,119 +17,23 @@
             }
         },
         "acls-import": {
-            "namespace": "ETL\\Ingestor",
-            "class": "StructuredFileIngestor",
-            "options_class": "IngestorOptions"
-        }
-    },
-    "#": "",
-    "acls-import": [
-        {
-            "name": "acls.import.xdmod.module_version",
-            "description": "Imports the module version record for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/module-versions.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.module",
-            "description": "Imports the module record for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/module.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.module_version_update",
-            "description": "Updating module_version with our module_id",
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
-            "class": "ExecuteSql",
-            "sql_file_list": [
-                "acls/xdmod/update_module_version.sql"
-            ],
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.realms",
-            "description": "Imports the realm records for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/realms.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.hierarchies",
-            "description": "Imports the hierarchy records for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/hierarchies.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.acl_types",
-            "description": "Imports the Acl Type records for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/acl-types.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.acls",
-            "description": "Imports the acls records for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/acls.json",
-            "enabled": true
-        },
+            "class": "ExecuteSql"
+        }
+    },
+    "acls-import": [
         {
             "name": "acls.import.xdmod.user_acls",
             "description": "Imports the records that relate which Users should have which Acls for xdmod",
-            "namespace": "ETL\\Maintenance",
-            "options_class": "MaintenanceOptions",
-            "class": "ExecuteSql",
             "sql_file_list": [
                 "acls/xdmod/user_acls.sql"
             ],
             "enabled": true
         },
         {
-            "name": "acls.import.xdmod.group_bys",
-            "description": "Imports the Group By records for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/group-bys.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.statistics",
-            "description": "Imports the Statistic records for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/statistics.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.tabs",
-            "description": "Imports the Tab records for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/tabs.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.acl_tabs",
-            "description": "Imports the records that relate which Acls have access to which Tabs for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/acl-tabs.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.acl_group_bys",
-            "description": "Imports the records that relate which Acls have access to which Group Bys for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/acl-group-bys.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.statistics_hierarchy",
-            "description": "Imports the records for which statistics participate in which hierarchy and at which level for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/statistics-hierarchy.json",
-            "enabled": true
-        },
-        {
-            "name": "acls.import.xdmod.acl_hierarchies",
-            "description": "Imports the records for which acls participate in which hierarchy and at which level for xdmod",
-            "definition_file": "../etl_data.d/acls/xdmod/acl-hierarchies.json",
-            "enabled": true
-        },
-        {
             "name": "acls.import.xdmod.user_acl_group_by_parameters",
             "description": "Imports the records which denote a value to use for a particular User / Acl / Group By combination for xdmod",
-            "class": "ExecuteSql",
-            "namespace": "ETL\\Maintenance",
-            "options_class": "MaintenanceOptions",
             "sql_file_list": [
                 {
                     "sql_file": "acls/xdmod/user_acl_group_by_parameters.sql"

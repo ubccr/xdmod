@@ -32,7 +32,7 @@
       },
       {
         "name": "enabled",
-        "type": "boolean",
+        "type": "tinyint(1)",
         "nullable": false,
         "default": false
       }

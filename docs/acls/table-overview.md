@@ -42,7 +42,7 @@ other things, groups of users.
 ## Group Bys (group_bys)
 This table tracks which group bys the system currently supports. Group Bys are 
 used by the underlying datawarehouse query system to determine how and by what
-a particular realm can be grouped and or filtered.  
+a particular realm can be grouped and or filtered.
 
 ## Statistics (statistics)
 This table tracks which statistics the system currently supports. Statistics 
@@ -57,9 +57,6 @@ at which tabs a user should be seeing based on their assigned acls.
 ## Acl Hierarchies (acl_hierarchies)
 This table is for tracking which, if any, acls participate in a given hierarchy.
 The 'level' column provides for an explicit ordering of the associated acls.  
-
-## Statistics Hierarchies (statistics_hierarchy)
-This table is much like acl_hierarchies except for statistics.
 
 ## User Acls (user_acls)
 It is within this table that a users relation to a set of acls is captured and as such 

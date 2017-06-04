@@ -24,6 +24,13 @@ class Config implements ArrayAccess
     private $sections = array();
 
     /**
+     * Config data by module by section
+     *
+     * @var array
+     **/
+    private $moduleSections = array();
+
+    /**
      * Private constructor for factory pattern.
      */
     private function __construct()
@@ -84,6 +91,19 @@ class Config implements ArrayAccess
     }
 
     /**
+     * Attempt to retrieve the configuration data for the specified section.
+     *
+     * @param string $section the section to retrieve
+     **/
+    public function getModuleSection($section)
+    {
+        if (!isset($this->moduleSections[$section])) {
+            $this->moduleSections[$section] = $this->loadModuleSection($section);
+        }
+        return $this->moduleSections[$section];
+    }
+
+    /**
      * Load a config section from a file.
      *
      * @param string $section The name of the config section.
@@ -104,6 +124,83 @@ class Config implements ArrayAccess
         }
 
         return $data;
+    }
+
+    /**
+     * Load a section in a module aware fashion. This means that the section
+     * data is returned for each module that is currently installed.
+     *
+     * @param string $section
+     *
+     * @return mixed
+     **/
+    private function loadModuleSection($section)
+    {
+        $results = array();
+
+        $file = $this->getFilePath($section);
+
+        $data = Json::loadFile($file);
+
+        $results[DEFAULT_MODULE_NAME] = $data;
+
+        $partialFiles = $this->getPartialFilePaths($section);
+
+        foreach($partialFiles as $file) {
+            $module = $this->getModule(pathinfo($file, PATHINFO_FILENAME));
+
+            $partialData = Json::loadFile($file);
+            if (isset($results[$module]) && is_array($results[$module])) {
+                $results[$module] = array_merge($results[$module], $this->sanitizeKeys($partialData));
+            } else {
+                $results[$module] = $this->sanitizeKeys($partialData);
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Attempt to retrieve the module name from a specified file name.
+     * This works by splitting on any one of the following characters:
+     * '.', '_', '-' and returning the first value of the split.
+     * Example: 'supremm-single-job-viewer.json'
+     * Result:  'supremm'
+     *
+     * @param string $fileName the file name to be parsed.
+     *
+     * @return string
+     **/
+    private function getModule($fileName)
+    {
+        $results = preg_split('/[._-]/', $fileName);
+        return $results[0];
+    }
+
+    /**
+     * Attempt to walk the provided array and if there are any keys with that
+     * start with a '+' character, replace that key with that keys value minus
+     * the '+' character.
+     *
+     * @param array $data the data whose keys will be sanitized
+     *
+     * @return array
+     **/
+    private function sanitizeKeys($data)
+    {
+        $results = array();
+
+        foreach($data as $key => $value) {
+            $hasPlus = substr($key, 0, 1) === '+';
+            $newKey = false === $hasPlus ? $key : substr($key, 1);
+            if (is_array($value) && $this->isAssocArray($value)) {
+                $results[$newKey] = $this->sanitizeKeys($value);
+            } else {
+                $results[$newKey] = $value;
+            }
+        }
+
+        return $results;
     }
 
     /**

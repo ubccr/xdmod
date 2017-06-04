@@ -25,20 +25,4 @@ class TestHelper
         $method->setAccessible(true);
         return $method;
     }
-
-    /**
-     * Unlock and return a protected or private function on a class or object.
-     *
-     * Some properties may not be designed to be used externally. Use with caution!
-     *
-     * @param mixed  $classOrObject A class or object with a property to unlock.
-     * @param string $propertyName  The name of the property to unlock.
-     * @return ReflectionProperty   A reflection of the unlocked property.
-     **/
-    public static function unlockProperty($classOrObject, $propertyName)
-    {
-        $property = new \ReflectionProperty($classOrObject, $propertyName);
-        $property->setAccessible(true);
-        return $property;
-    }
 }

@@ -28,7 +28,7 @@
       },
       {
         "name": "filter_override",
-        "type": "boolean",
+        "type": "tinyint(1)",
         "nullable": false,
         "default": false
       }
