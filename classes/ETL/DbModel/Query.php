@@ -424,7 +424,7 @@ class Query extends Entity implements iEntity
             implode("\n", $joinList) .
             ( count($whereConditions) > 0 ? "\nWHERE " . implode("\nAND ", $whereConditions) : "" ) .
             ( count($this->groupby) > 0 ? "\nGROUP BY " . implode(", ", $this->groupby) : "" ) .
-            ( count($this->orderby) > 0 ? "\nORDER BY " . implode(", ", $this->orderby) : "" ) . "\n";
+            ( count($this->orderby) > 0 ? "\nORDER BY " . implode(", ", $this->orderby) : "" );
 
         // If any macros have been defined, process those macros now. Since macros can contain variables
         // themselves, we will process the variables later.
