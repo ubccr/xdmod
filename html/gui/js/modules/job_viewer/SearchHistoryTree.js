@@ -155,21 +155,6 @@ XDMoD.Module.JobViewer.SearchHistoryTree = Ext.extend(Ext.tree.TreePanel, {
     }, // _success
 
     /**
-     * Helper function that is meant to be used as a default failure callback
-     * for an Ext.Ajax.request.
-     *
-     * @param response
-     * @param callback
-     * @param callbackArgs
-     * @private
-     */
-    _failure: function (response, callback, callbackArgs) {
-        if (response) {
-
-        }
-    }, // _failure
-
-    /**
      * Helper method that enables the tree to interact with a normal REST
      * backend. It also provides our XDMoD.REST.token as an additional query
      * param.
@@ -198,7 +183,6 @@ XDMoD.Module.JobViewer.SearchHistoryTree = Ext.extend(Ext.tree.TreePanel, {
                 scope.handleResponse.call(scope, response);
             },
             failure: function (response) {
-                self._failure.call(self, response);
                 response.argument =  {node: node, callback: callback, scope: scope};
                 scope.handleFailure.call(scope, response);
             }

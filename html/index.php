@@ -459,7 +459,6 @@
       <script type="text/javascript" src="gui/js/modules/job_viewer/JobViewer.js"></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/ChartPanel.js"></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/AnalyticChartPanel.js"></script>
-      <script type="text/javascript" src="gui/js/modules/job_viewer/TimeSeriesStore.js"></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/SearchPanel.js"></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/SearchHistoryTree.js" ></script>
       <script type="text/javascript" src="gui/js/modules/job_viewer/SearchHistoryPanel.js"></script>

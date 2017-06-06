@@ -24,28 +24,6 @@
    }
 ] */
 
-// TODO: Move this someplace else, just here for testing...
-if (!String.prototype.trim) {
-    String.prototype.trim = function () {
-        return this.replace(/^\s+|\s+$/g, '');
-    };
-}
-
-var exceptionhandler = function (proxy, type, action, exception, response) {
-    switch (response.status) {
-        case 403:
-        case 500:
-            var details = Ext.decode(response.responseText);
-            Ext.Msg.alert("Error " + response.status + " " + response.statusText, details.message);
-            break;
-        case 401:
-            // Do nothing
-            break;
-        default:
-            Ext.Msg.alert(response.status + ' ' + response.statusText, response.responseText);
-    }
-};
-
 /*
  * JobViewer panel
  * @author Joe White
@@ -53,7 +31,6 @@ var exceptionhandler = function (proxy, type, action, exception, response) {
  *
  */
 XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
-    INSTANCE: null,
 
     // PORTAL MODULE PROPERTIES ===============================================
     title: 'Job Viewer',
@@ -64,9 +41,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
     // PROPERTIES =============================================================
     token: XDMoD.REST.token, /*NOTE: This is populated via PHP. So will this render only once? */
-    timeSeriesURL: '/rest/supremm/explorer/hctimeseries/',
-    optionWhiteList: ['host'],
-    storePropertyWhiteList: ['jobid'],
 
     children_ids: ['nodeid', 'cpuid'],
 
@@ -78,23 +52,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     tabpanel_id: 'info_display',
     analyticsContainerId: 'analytics_container',
     treeLoaded: false,
-    parameters: ['realm', 'recordid', 'jobid', 'jobid', 'infoid', 'tsid'],
     rest: {
         warehouse: 'warehouse'
     },
-
-    // DATA STORES ============================================================
-    timeseriesstore: null,
-    memusedstore: null,
-    simdinsstore: null,
-    membwstore: null,
-    lnetstore: null,
-    ib_lnetstore: null,
-    accountdatastore: null,
-    acctstore: null,
-    mdatastore: null,
-    jobrecordstore: null,
-    store: null,
 
     /**
      * This tabs constructor, here we take care to setup everything this tab
@@ -107,7 +67,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         // ROUTE: the unused toolbar events to a special no-opt function.
         //        Just to be sure that it doesn't go somewhere it's not
         //        supposed to.
-        this.on('role_selection_change', this.noOpt);
         this.on('duration_change', this.noOpt);
         this.on('export_option_selected', this.noOpt);
         this.on('print_clicked', this.noOpt);
@@ -133,8 +92,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         // SETUP: toolbar items.a
         self.setupToolbar();
 
-        this.loading = false;
-
         /*
          * The timezone setting for highcharts is a global option that applies
          * to all charts in the browser window. Individual charts in the job viewer
@@ -146,38 +103,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         this.cachedHighChartTimezone = null;
 
     }, // initComponent
-
-    /**
-     * Apply implements an immutable merge (ie. returns a new object containing
-     * the properties of both objects.) of two javascript objects,
-     * lhs ( left hand side) and rhs ( right hand side). A property that exists
-     * in both lhs and rhs will default to the value of rhs.
-     *
-     * @param {object} lhs Left hand side of the merge.
-     * @param {object} rhs Right hand side of the merge.
-     *
-     **/
-    apply: function (lhs, rhs) {
-        if (typeof lhs === 'object' && typeof rhs === 'object') {
-            var results = {};
-            for (var property in lhs) {
-                if (lhs.hasOwnProperty(property)) {
-                    results[property] = lhs[property];
-                }
-            }
-            for (property in rhs) {
-                if (rhs.hasOwnProperty(property)) {
-                    var rhsExists = rhs[property] !== undefined
-                            && rhs[property] !== null;
-                    if (rhsExists) {
-                        results[property] = rhs[property];
-                    }
-                }
-            }
-            return results;
-        }
-        return lhs;
-    },// apply
 
     /**
      * Helper function that handles setting up this components toolbar.
@@ -277,9 +202,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 self.searchHistoryPanel
             ],
             listeners: {
-                collapse: function (p) {
-
-                },
                 expand: function (p) {
                     if (p.pinned) {
                         p.getTool('pin').hide();
@@ -501,25 +423,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     }, // noOpt
 
     /**
-     * Helper function that retrieves the requested parameter from the provided
-     * source string via the provided name.
-     *
-     * @param name that will be used when looking for the the parameter in
-     *             source.
-     * @param source that will be used to search for parameter 'name'.
-     * @returns {String} an empty string if not found, else the value of the
-     *                   parameter.
-     */
-    getParameterByName: function (name, source) {
-        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-                results = regex.exec(source);
-        return results === null
-                ? ""
-                : decodeURIComponent(results[1].replace(/\+/g, " "));
-    }, // getParameterByName
-
-    /**
      * Generate a URL based on the provided base path. This URL will include
      * the required XDMoD REST token.
      *
@@ -703,8 +606,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                              * @param {Object} options
                              */
                             load: function (store, records, options) {
-                                var exists = CCR.exists;
-
                                 for (var i = 0; i < records.length; i++) {
                                     var record = records[i];
 
@@ -877,8 +778,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                         if (success) {
                             parent.fireEvent('update_analytics', data.data, true);
                         }
-                    },
-                    failure: function (data) {
                     }
                 });
                 break;
@@ -1681,7 +1580,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         var exists = CCR.exists;
 
         var jobId = this._find('jobid', 'jobid', this.currentNode);
-        var title = this._find('text', 'jobid', this.currentNode);
 
         jobId = isType(jobId, CCR.Types.Number) ? jobId : isType(jobId, CCR.Types.String) ? parseInt(jobId) : 0;
 
@@ -1713,29 +1611,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             }
         }
     }, // _processViewRequest
-
-    /**
-     * Replace the property found in the paths' array of objects
-     * with the provided value if found.
-     *
-     * @param {String} property
-     * @param {*} value
-     * @param {Array} path
-     * @private
-     */
-    _replace: function (property, value, path) {
-        var isType = CCR.isType;
-        if (!isType(path, CCR.Types.Array)) return;
-        for (var i = 0; i < path.length; i++) {
-            var entry = path[i];
-            if (entry.dtype === property) {
-                entry.value = value;
-                return;
-            }
-        }
-        return;
-    }, // _replace
-
 
     /**
      * Retrieve the value at the index provided from 'data'. This is done in a

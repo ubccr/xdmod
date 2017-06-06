@@ -157,7 +157,6 @@ XDMoD.Module.JobViewer.SearchHistoryPanel = Ext.extend(XDMoD.Module.JobViewer.Se
             if (exists(node)) {
 
                 var dtype = node.attributes['dtype'];
-                var text = node.attributes['text'];
                 var value = node.attributes[dtype];
 
                 var title;
@@ -269,17 +268,6 @@ XDMoD.Module.JobViewer.SearchHistoryPanel = Ext.extend(XDMoD.Module.JobViewer.Se
         }, // contextmenu
 
         /**
-         * Fired when a node is 'expanded'. Ignores the root node.
-         *
-         * @param {Ext.tree.TreeNode} node
-         */
-        expandnode: function (node) {
-            if (node.getDepth() !== 0) {
-
-            }
-        }, // expandnode
-
-        /**
          * Not to be confused with 'expandnode'. This event is triggered when
          * a third party is requesting a node to be expanded. Not when it has
          * been expanded.
@@ -300,7 +288,6 @@ XDMoD.Module.JobViewer.SearchHistoryPanel = Ext.extend(XDMoD.Module.JobViewer.Se
             if (this.loaded) {
                 this.expansionWaiting = this._handleExpandNode(path, select);
                 if (this.expansionWaiting) this.expansionPath = path;
-                if (!this.expansionWaiting) this.jobViewer.loading = false;
             } else {
                 this.expansionWaiting = true;
                 this.expansionPath = path;

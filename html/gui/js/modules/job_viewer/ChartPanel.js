@@ -177,7 +177,6 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
 
             this.setHighchartTimezone();
 
-            reload = reload || false;
             // This is here so that when the chart is / panel is loaded
             // via one of it's child nodes that it triggers a re-load.
             if (reload === true) {
