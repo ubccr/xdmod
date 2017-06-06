@@ -421,10 +421,10 @@ class Query extends Entity implements iEntity
 
         $sql = "SELECT" .( null !== $this->query_hint ? " " . $this->query_hint : "" ) . "\n" .
             implode(",\n", $columnList) . "\n" .
-            implode("\n", $joinList) . "\n" .
-            ( count($whereConditions) > 0 ? "WHERE " . implode("\nAND ", $whereConditions) . "\n" : "" ) .
-            ( count($this->groupby) > 0 ? "GROUP BY " . implode(", ", $this->groupby) : "" ) .
-            ( count($this->orderby) > 0 ? "ORDER BY " . implode(", ", $this->orderby) : "" );
+            implode("\n", $joinList) .
+            ( count($whereConditions) > 0 ? "\nWHERE " . implode("\nAND ", $whereConditions) : "" ) .
+            ( count($this->groupby) > 0 ? "\nGROUP BY " . implode(", ", $this->groupby) : "" ) .
+            ( count($this->orderby) > 0 ? "\nORDER BY " . implode(", ", $this->orderby) : "" ) . "\n";
 
         // If any macros have been defined, process those macros now. Since macros can contain variables
         // themselves, we will process the variables later.
