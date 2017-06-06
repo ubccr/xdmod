@@ -68,6 +68,10 @@ class Utilities
         array $substitutionDetails = null
     ) {
 
+        if ( null === $string ) {
+            return $string;
+        }
+
         $exceptionForUnusedVariables = ( null !== $logger );
         $trackDetails = ( null !== $substitutionDetails );
 

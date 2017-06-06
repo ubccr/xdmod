@@ -169,8 +169,8 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 
         // The UpdateIngestor does not create the destination table so it must exist.
 
-        $tableName = $this->etlDestinationTable->getName();
-        $schema = $this->etlDestinationTable->getSchema();
+        $tableName = $this->etlDestinationTable->name;
+        $schema = $this->etlDestinationTable->schema;
 
         if ( ! $this->destinationEndpoint->tableExists($tableName, $schema) ) {
             $msg = "Destination table " . $this->etlDestinationTable->getFullName() . " must exist";

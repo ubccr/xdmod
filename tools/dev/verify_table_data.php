@@ -248,7 +248,6 @@ try {
 $success = true;
 
 foreach ($scriptOptions['compare-tables'] as $table ) {
-
     list($srcTable, $destTable) = $table;
     $retval = compareTables($srcTable, $destTable);
     $success = $success && $retval;
@@ -308,6 +307,11 @@ function compareTables($srcTable, $destTable)
 
     $srcTableColumns = getTableColumns($srcTable, $srcSchema, $scriptOptions['exclude-columns']);
     $destTableColumns = getTableColumns($destTable, $destSchema, $scriptOptions['exclude-columns']);
+
+    if ( false === $srcTableColumns || false === $destTableColumns ) {
+        return false;
+    }
+
     $numSrcColumns = count($srcTableColumns);
     $numDestColumns = count($destTableColumns);
 
@@ -427,7 +431,7 @@ ORDER BY ordinal_position ASC";
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if ( 0 == count($result) ) {
         $logger->err("Table '$tableName' does not exist");
-        exit();
+        return false;
     }
 
     $retval = array();
@@ -529,6 +533,22 @@ function compareTableData(
         }
     }
 
+    // Find the first non-nullable column to use for the comparison. Otherwise, a column
+    // might have a valid value of NULL and give false positives.
+
+    $comparisonColumn = null;
+    foreach ( $destTableColumnInfo as $colName => $colInfo ) {
+        if ( 'NO' == $colInfo['is_nullable'] ) {
+            $comparisonColumn = $colName;
+            break;
+        }
+    }
+
+    if ( null === $comparisonColumn ) {
+        $comparisonColumn = $firstCol;
+        print "WARNING: No non-nullable columns, potential for false positives." . PHP_EOL;
+    }
+
     // Determine the columns to compute the percent error for, if any.
 
     foreach ( $scriptOptions['pct-error-columns'] as $column ) {
@@ -589,7 +609,7 @@ function compareTableData(
     );
 
     $where = array(
-        "dest.$firstCol IS NULL"
+        "dest.$comparisonColumn IS NULL"
     );
 
     if ( 0 != count($scriptOptions['wheres']) ) {

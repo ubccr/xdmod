@@ -71,6 +71,48 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
+* Thu May 11 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 6.6.0-1.0
+- Features
+    - General
+        - Added ability to group realms together under categories
+          - Categories have taken the place of realms in the user interface
+        - Improved support for browser client assets provided by modules
+        - Improved upgrade messaging
+    - ETLv2
+        - Added per-pipeline ETL locks
+        - Enhanced multi-host aggregation
+        - Added read support for Oracle endpoints
+        - Improved support for running pipelines over all dates
+        - Improved transformation support
+        - Added a tool for comparing SQL tables
+        - Added other improvements
+- Bug Fixes
+    - General
+        - Fixed warning that could appear when using federated authentication
+        - Fixed unnecessary rounding in processor count statistics
+        - Fixed errors when attempting to preview an unsaved report
+        - Fixed aggregators excluding data on certain time boundaries
+        - Fixed handling of backslashes when using certain MySQL features
+        - Fixed non-aggregate metrics being allowed in aggregate datasets
+        - Fixed REST API throwing non-standard errors
+        - Fixed display error with password reset form that occurred when using
+          federated authentication
+        - Fixed "Show chart title" option in Usage tab not working as expected
+    - Metric Explorer
+        - Fixed Y-axis context menu disappearing after
+          changing between linear and log scales
+        - Fixed typing certain characters causing chart options menu to close
+          when using Firefox
+        - Fixed chart errors not displaying if help graphic is active
+        - Fixed chart last modified time not updating
+- Miscellaneous
+    - Performed work in anticipation of allocations/accounts data in Open XDMoD
+    - Performed work in anticipation of cloud data in Open XDMoD
+    - Cleaned up old and/or unused code
+    - Improved logging
+    - Improved quality assurance
+    - Improved documentation
+
 * Tue Jan 10 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 6.5.0-1.0
 - Features
     - General

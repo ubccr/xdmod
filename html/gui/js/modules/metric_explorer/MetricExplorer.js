@@ -2285,6 +2285,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 index = this.queriesStore.indexOf(rec);
                 this.selectRowByIndex.call(this, index);
             } else {
+                // update the last-modified timestamp on the chart definition:
+                rec.set('ts', Date.now() / 1000);
                 this.queriesStore.save();
             }
             rec.stack.mark();
@@ -4957,15 +4959,31 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 header: 'Chart Name',
                 id: 'name',
                 dataIndex: 'name',
-                editor: new Ext.form.TextField({}),
+                renderer: function (name, metaData/* record, rowIndex, colIndex, store */) {
+                    // if the name is (~arbitrarily) long, place it in a tooltip. This length is relative
+                    // to the width of the GridPanel.
+                    if (name.length > 73) {
+                        /* eslint-disable no-param-reassign */
+                        metaData.attr += 'ext:qtip="' + name + '"';
+                        /* eslint-enable no-param-reassign */
+                    }
+                    return name;
+                },
                 sortable: true
             }, {
                 header: 'Last Modified',
-                width: 180,
+                width: 140,
                 dataIndex: 'ts',
+                align: 'center',
                 renderer: function(ts, metaData, record /*, rowIndex, colIndex, store*/ ) {
-                    var saveText = record.stack && !record.stack.isMarked() ? " - <b>Unsaved</b>" : "";
-                    return Ext.util.Format.date(new Date(ts * 1000).toString(), 'Y-m-d H:i:s') + saveText;
+                    // if unsaved chart record, display icon and tooltip:
+                    if (record.stack && !record.stack.isMarked()) {
+                        /* eslint-disable no-param-reassign */
+                        metaData.css = 'metric-explorer-dirty-chart-record';
+                        metaData.attr += 'ext:qtip="Unsaved Chart"';
+                        /* eslint-enable no-param-reassign */
+                    }
+                    return Ext.util.Format.date(new Date(ts * 1000).toString(), 'Y-m-d H:i:s');
                 },
                 sortable: true
             }], //columns
