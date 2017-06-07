@@ -1,10 +1,11 @@
 <?php
 
-/* ==========================================================================================
- * Abstract class for defining general option sets to the ETL process. All option sets have an
- * optional list of required options and the list of options themselves. Options may have any name
- * and value and options that are listed as required may not have a value that is NULL or an empty
- * string.
+/** =========================================================================================
+ * Abstract class for defining general option sets to the ETL process. All option sets
+ * have an optional list of required options and the list of options themselves. Options
+ * may have any name and value and options that are listed as required may not have a
+ * value that is NULL or an empty string. Implementing the Iterator interface allows us to
+ * treat the $options array of this class as public propertes and iterate over them.
  *
  * A verification method checks for the existnace of all required options and a generic getter
  * method returns a requested option, or NULL if it does not exist. It is expected that extending
@@ -23,7 +24,7 @@ use \Exception;
 // Extending stdClass allows us to use aOptions with when a general class is used, such as verifying
 // required keys in an aOptions class or a standard parsed JSON object.
 
-abstract class aOptions extends \stdClass
+abstract class aOptions extends \stdClass implements \Iterator
 {
     // The list of required options. These options cannot be set to NULL or an empty string.
     protected $requiredOptions = array(
@@ -308,4 +309,59 @@ abstract class aOptions extends \stdClass
         } // else ( 1 == count($parts) )
 
     }  // applyBasePath()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see Iterator::current()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function current()
+    {
+        if ( ! $this->valid() ) {
+            return false;
+        }
+        return current($this->options);
+    }  // current()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see Iterator::key()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function key()
+    {
+        return key($this->options);
+    }  // key()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see Iterator::next()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function next()
+    {
+        next($this->options);
+    }  // next()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see Iterator::rewind()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function rewind()
+    {
+        reset($this->options);
+    }  // rewind()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see Iterator::valid()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function valid()
+    {
+        // Note that we can't check for values that are FALSE because that is a valid
+        // data value.
+        return null !== key($this->options);
+    }  // valid()
 }  // class aOptions
