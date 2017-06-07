@@ -286,6 +286,63 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testFilterSyntaxError()
 
     /**
+     * Test unknown filter executable.
+     *
+     * @expectedException Exception
+     */
+
+    public function testInvalidFilter()
+    {
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/empty.json';
+        $config = array(
+            'name' => 'empty.json',
+            'path' => $path,
+            'type' => 'jsonfile',
+            'filters' => array(
+                (object) array(
+                    'type' => 'external',
+                    'name' => 'unknown',
+                    'path' => 'gobbledygook'
+                )
+            )
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $file->parse();
+
+    }  // testInvalidFilter()
+
+    /**
+     * Test parsing of an empty file.
+     */
+
+    public function testEmptyFile()
+    {
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/empty.json';
+        $config = array(
+            'name' => 'empty.json',
+            'path' => $path,
+            'type' => 'jsonfile',
+            'filters' => array(
+                (object) array(
+                    'type' => 'external',
+                    'name' => 'jq',
+                    'path' => 'jq',
+                    'arguments' => "'.'"
+                )
+            )
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $this->assertFalse($file->parse());
+
+    }  // testEmptyFile()
+
+    /**
      * Test parsing a simple JSON file containing an array of objects filtered through an
      * external process.
      */
