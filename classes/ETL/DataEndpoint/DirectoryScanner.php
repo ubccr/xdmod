@@ -488,28 +488,32 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 
             if ( null !== $this->directoryPattern || null !== $this->filePattern ) {
 
+                // PHP 5.3 does not allow us to reference the object in the callback
+                $dirPattern = $this->directoryPattern;
+                $filePattern = $this->filePattern;
+
                 $this->logger->info(
                     sprintf(
                         "Applying pattern filters: (directory: %s, file: %s)",
-                        ( null === $this->directoryPattern ? "null" : $this->directoryPattern ),
-                        ( null === $this->filePattern ? "null" : $this->filePattern )
+                        ( null === $dirPattern ? "null" : $dirPattern ),
+                        ( null === $filePattern ? "null" : $filePattern )
                     )
                 );
 
                 try {
                     $patternCallbackIterator = new \CallbackFilterIterator(
                         $iterator,
-                        function ($current, $key, $iterator) {
+                        function ($current, $key, $iterator) use ($dirPattern, $filePattern) {
                             if (
-                                null !== $this->directoryPattern
-                                && ! preg_match($this->directoryPattern, $current->getPath())
+                                null !== $dirPattern
+                                && ! preg_match($dirPattern, $current->getPath())
                             ) {
                                 return false;
                             }
 
                             if (
-                                null !== $this->filePattern
-                                 && ! preg_match($this->filePattern, $current->getFilename())
+                                null !== $filePattern
+                                 && ! preg_match($filePattern, $current->getFilename())
                             ) {
                                 return false;
                             }
@@ -532,6 +536,7 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 
             if ( null !== $this->lastModifiedStartTimestamp || null !== $this->lastModifiedEndTimestamp ) {
 
+                // PHP 5.3 does not allow us to reference the object in the callback
                 $lmStartTs = $this->lastModifiedStartTimestamp;
                 $lmEndTs = $this->lastModifiedEndTimestamp;
 
