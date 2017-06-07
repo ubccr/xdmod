@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d0538f717752f90e1898bee194ced712",
+    "content-hash": "ceeef77ecbe7a0be2763939f54b3ba06",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -2688,35 +2688,12 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2015-07-26T08:59:42+00:00"
-        },
-        {
-            "name": "ubccr/xdmod-test-artifacts",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ubccr/xdmod-test-artifacts.git",
-                "reference": "aa431c5969c30511a8dbe56f758a43543406c2a0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/xdmod-test-artifacts/zipball/aa431c5969c30511a8dbe56f758a43543406c2a0",
-                "reference": "aa431c5969c30511a8dbe56f758a43543406c2a0",
-                "shasum": ""
-            },
-            "type": "library",
-            "description": "Test artifacts for XDMoD and XDMoD submodules",
-            "support": {
-                "source": "https://github.com/ubccr/xdmod-test-artifacts/tree/master",
-                "issues": "https://github.com/ubccr/xdmod-test-artifacts/issues"
-            },
-            "time": "2017-04-26 17:59:22"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "openid/php-openid": 20,
-        "ubccr/xdmod-test-artifacts": 20
+        "openid/php-openid": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
