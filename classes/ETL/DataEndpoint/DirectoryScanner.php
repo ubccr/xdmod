@@ -388,9 +388,8 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
             // use CallbackFilterIterator after RecursiveIteratorIterator depending on the
             // situation.
             //
-            // We want to be able to filter on the path and file separately so we are
-            // using an instance of RecursiveCallbackFilterIterator to do this instead of
-            // RecursiveRegexIterator (directories) and RegexIterator.
+            // We want to be able to filter on the path and file separately so we are using an
+            // instance of CallbackFilterIterator to do this instead of RegexIterator.
             //
             // RecursiveDirectoryIterator provides a mechanism to recursively iterate over
             // directories and the files that they contain. It does not iterate beyond the
@@ -416,9 +415,8 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
             // paths that it returns, but note that the regex applies to the full path,
             // not just the name of the file itself.
             //
-            // Note that we want to be able to filter on the path and file separately and
-            // are using the RecursiveCallbackFilterIterator to do this instead of
-            // RecursiveRegexIterator and RegexIterator.
+            // Note that we want to be able to filter on the path and file separately and are using
+            // the CallbackFilterIterator to do this instead of RegexIterator.
 
             // We are conditionally creating multiple iterators that will consume earlier
             // iterators. Keep track of the current iterator.
@@ -721,10 +719,7 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
             // By default the key is the path and the value is an SplFileInfo object.
             // http://php.net/manual/en/class.splfileinfo.php
 
-            return $this->initializeCurrentFileIterator(
-                $this->handle->key(),
-                $this->handle->current()->getExtension()
-            );
+            return $this->initializeCurrentFileIterator($this->handle->key());
 
         } else {
 
@@ -740,10 +735,7 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 
                 $this->handle->next();
 
-                while (
-                    $this->handle->valid() &&
-                    ! $this->initializeCurrentFileIterator($this->handle->key(), $this->handle->current()->getExtension())
-                ) {
+                while ($this->handle->valid() && ! $this->initializeCurrentFileIterator($this->handle->key()) ) {
                     $this->handle->next();
                 }
 
@@ -759,14 +751,20 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
      * handler's valid() metbod will return FALSE.
      *
      * @param string $filename The filename that we are initializing
-     * @param string $extension The extension of the filename
      *
      * @returns boolean The value of valid() for the current file handler.
      * ------------------------------------------------------------------------------------------
      */
 
-    private function initializeCurrentFileIterator($filename, $extension)
+    private function initializeCurrentFileIterator($filename)
     {
+        // SplFileInfo::getExtension() is not defined until PHP 5.3.6
+
+        $extension = '';
+        if ( false !== ($pos = strrpos($filename, '.')) ) {
+            $extension = substr($filename, $pos + 1);
+        }
+
         $this->logger->debug(
             sprintf('Scanning file: %s (%s)', $filename, $extension)
         );
