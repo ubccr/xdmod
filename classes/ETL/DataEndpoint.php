@@ -29,15 +29,18 @@ class DataEndpoint
     const TYPE_ORACLE = "oracle";
     const TYPE_FILE = "file";
     const TYPE_JSONFILE = "jsonfile";
+    const TYPE_DIRECTORY_SCANNER = "directoryscanner";
     const TYPE_REST = "rest";
 
-    private static $supportedTypes =
-        array(self::TYPE_MYSQL,
-              self::TYPE_ORACLE,
-              self::TYPE_POSTGRES,
-              self::TYPE_FILE,
-              self::TYPE_JSONFILE,
-              self::TYPE_REST);
+    private static $supportedTypes = array(
+        self::TYPE_MYSQL,
+        self::TYPE_ORACLE,
+        self::TYPE_POSTGRES,
+        self::TYPE_FILE,
+        self::TYPE_JSONFILE,
+        self::TYPE_DIRECTORY_SCANNER,
+        self::TYPE_REST
+    );
 
     private static $classmap = array(
         self::TYPE_MYSQL => 'ETL\DataEndpoint\Mysql',
@@ -45,8 +48,9 @@ class DataEndpoint
         self::TYPE_ORACLE => 'ETL\DataEndpoint\Oracle',
         self::TYPE_FILE => 'ETL\DataEndpoint\File',
         self::TYPE_JSONFILE => 'ETL\DataEndpoint\JsonFile',
+        self::TYPE_DIRECTORY_SCANNER => 'ETL\DataEndpoint\DirectoryScanner',
         self::TYPE_REST => 'ETL\DataEndpoint\Rest'
-        );
+    );
 
     /* ------------------------------------------------------------------------------------------
      * Private constructor ensures the singleton can't be instantiated.
