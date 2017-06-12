@@ -1017,9 +1017,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                     // Set the tab panel to be active since a new tab is to be added.
                                     Ext.getCmp('info_display_container').getLayout().setActiveItem(1);
                                 },
-                                close: function(p) {
-                                    if(Ext.getCmp('info_display').items.length == 1) {
-                                        // The only tab left is about to close. Set the assist image to be active
+                                destroy: function () {
+                                    if (Ext.getCmp('info_display').items.length < 1) {
+                                        // All tabs have been destroyed. Set the assist image to be active
                                         Ext.getCmp('info_display_container').getLayout().setActiveItem(0);
                                     }
                                 }
