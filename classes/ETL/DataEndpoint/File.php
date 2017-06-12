@@ -12,6 +12,10 @@ use Log;
 class File extends aDataEndpoint implements iDataEndpoint
 {
 
+    // The ENDPOINT_NAME constant defines the name for this endpoint that should be used
+    // in configuration files. It also allows us to implement auto-discovery.
+    const ENDPOINT_NAME = 'file';
+
     // The path to the file.
     protected $path = null;
 

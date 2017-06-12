@@ -22,6 +22,14 @@ use Log;
 
 class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 {
+    /** -----------------------------------------------------------------------------------------
+     * The ENDPOINT_NAME constant defines the name for this endpoint that should be used
+     * in configuration files. It also allows us to implement auto-discovery.
+     *
+     * @const string
+     */
+
+    const ENDPOINT_NAME = 'directoryscanner';
 
     /** -----------------------------------------------------------------------------------------
      * Numeric key to use for the default file extension handler. This should be the only

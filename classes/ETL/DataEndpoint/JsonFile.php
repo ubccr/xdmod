@@ -19,6 +19,15 @@ use JsonSchema\Constraints\Factory;
 class JsonFile extends aStructuredFile implements iStructuredFile
 {
     /** -----------------------------------------------------------------------------------------
+     * The ENDPOINT_NAME constant defines the name for this endpoint that should be used
+     * in configuration files. It also allows us to implement auto-discovery.
+     *
+     * @const string
+     */
+
+    const ENDPOINT_NAME = 'jsonfile';
+
+    /** -----------------------------------------------------------------------------------------
      * @see iDataEndpoint::__construct()
      * ------------------------------------------------------------------------------------------
      */
