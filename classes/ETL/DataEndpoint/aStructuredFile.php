@@ -51,13 +51,6 @@ abstract class aStructuredFile extends File
     protected $recordList = array();
 
     /**
-     * The iterator position in the record list.
-     *
-     * @var int
-     */
-    private $recordListPosition = 0;
-
-    /**
      * Character used to separate records in the input file, defaults to NULL.
      *
      * @var string
@@ -387,48 +380,51 @@ abstract class aStructuredFile extends File
         if ( ! $this->valid() ) {
             return false;
         }
-        return $this->recordList[$this->recordListPosition];
-    }
+        return current($this->recordList);
+    }  // current()
 
     /** -----------------------------------------------------------------------------------------
-     * @see Iterator::current()
+     * @see Iterator::key()
      * ------------------------------------------------------------------------------------------
      */
 
     public function key()
     {
-        return $this->recordListPosition;
-    }
+        return key($this->recordList);
+    }  // key()
 
     /** -----------------------------------------------------------------------------------------
-     * @see Iterator::current()
+     * @see Iterator::next()
      * ------------------------------------------------------------------------------------------
      */
 
     public function next()
     {
-        $this->recordListPosition++;
-    }
+        next($this->recordList);
+    }  // next()
 
     /** -----------------------------------------------------------------------------------------
-     * @see Iterator::current()
+     * @see Iterator::rewind()
      * ------------------------------------------------------------------------------------------
      */
 
     public function rewind()
     {
-        $this->recordListPosition = 0;
-    }
+        reset($this->recordList);
+    }  // rewind()
 
     /** -----------------------------------------------------------------------------------------
-     * @see Iterator::current()
+     * @see Iterator::valid()
      * ------------------------------------------------------------------------------------------
      */
 
     public function valid()
     {
-        return isset($this->recordList[$this->recordListPosition]);
-    }
+        // return isset($this->recordList[$this->recordListPosition]);
+        // Note that we can't check for values that are FALSE because that is a valid
+        // data value.
+        return null !== key($this->recordList);
+    }  // valid()
 
     /** -----------------------------------------------------------------------------------------
      * @see Countable::count()
@@ -438,7 +434,7 @@ abstract class aStructuredFile extends File
     public function count()
     {
         return count($this->recordList);
-    }
+    }  // count()
 
     /** -----------------------------------------------------------------------------------------
      * Decodes a data string into a PHP object and add it to the record list.

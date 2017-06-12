@@ -138,10 +138,6 @@ class File extends aDataEndpoint implements iDataEndpoint
         $readModes = array("r", "r+", "w+", "a+", "x+", "c+");
         $writeModes = array("r+", "w", "w+", "a", "a+", "x", "x+", "c", "c+");
 
-        if ( ! is_string($this->path) ) {
-            $this->logAndThrowException("Path '" . $this->path . "' is not a string");
-        }
-
         if ( ! in_array($this->mode, array_merge($readModes, $writeModes)) ) {
             $this->logAndThrowException("Unsupported mode '" . $this->mode . "'");
         }
@@ -170,6 +166,6 @@ class File extends aDataEndpoint implements iDataEndpoint
 
     public function __toString()
     {
-        return sprintf('%s (class=%s, path=%s)', $this->name, get_class($this), $this->path);
+        return sprintf('%s (name=%s, path=%s)', get_class($this), $this->name, $this->path);
     }  // __toString()
 }  // class File

@@ -48,8 +48,19 @@ abstract class aDataEndpoint extends aEtlObject
         $requiredKeys = array("name", "type");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
+        $messages = array();
+        $propertyTypes = array(
+            'name' => 'string',
+            'type' => 'string'
+        );
+
+        if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
+            $this->logAndThrowException("Error verifying options: " . implode(", ", $messages));
+        }
+
         $this->type = $options->type;
         $this->setName($options->name);
+
     }  // __construct()
 
     // ------------------------------------------------------------------------------------------
