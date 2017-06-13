@@ -39,16 +39,16 @@ $recipient
 
 // -------------------
 
-$mail = ZendMailWrapper::init();
+$mail = MailWrapper::init();
 $mail->setFrom($mailer_sender, 'XDMoD');
-$mail->setSubject("$page_title: Password Reset");
-$mail->addTo($recipient);
+$mail->Subject = "$page_title: Password Reset";
+$mail->addAddress($recipient);
 
 // -------------------
 
 $message = MailTemplates::passwordReset($user_to_email);
 
-$mail->setBodyText($message);
+$mail->Body = $message;
 
 // -----------------------------
 
@@ -59,7 +59,7 @@ try {
 }
 catch (Exception $e) {
     $returnData['success'] = false;
-    $returnData['message'] = $e->getMessage();
+    $returnData['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
     $returnData['status']  = 'failure';
 }
 

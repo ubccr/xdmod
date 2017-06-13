@@ -87,22 +87,21 @@ $pdo->execute(
 );
 
 // Create email.
-
-$mail = ZendMailWrapper::init();
+$mail = MailWrapper::init();
 
 $recipient
     = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
     ? xd_utilities\getConfiguration('general', 'debug_recipient')
     : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-$mail->addTo($recipient);
+$mail->addAddress($recipient);
 
 // Original sender's e-mail must be in the "From" field for the XDMoD
 // Request Tracker to function
 $mail->setFrom($_POST['email']);
-$mail->setReplyTo($_POST['email']);
+$mail->addReplyTo($_POST['email']);
 
 $title = xd_utilities\getConfiguration('general', 'title');
-$mail->setSubject("[$title] A visitor has signed up");
+$mail->Subject = "[$title] A visitor has signed up";
 
 $time_requested = date('D, F j, Y \a\t g:i A');
 $organization   = ORGANIZATION_NAME;
@@ -124,7 +123,7 @@ Affiliation with $organization:
 {$_POST['additional_information']}
 
 EOMSG;
-$mail->setBodyText($message);
+$mail->Body = $message;
 
 // Send email.
 
@@ -136,7 +135,7 @@ try {
 }
 catch (Exception $e) {
     $response['success'] = false;
-    $response['message'] = $e->getMessage();
+    $response['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
 }
 
 echo json_encode($response);

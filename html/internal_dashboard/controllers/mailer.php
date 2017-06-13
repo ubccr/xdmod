@@ -88,23 +88,23 @@ switch ($operation) {
 
         $response['success'] = true;
 
-        $mail = ZendMailWrapper::init();
+        $mail = MailWrapper::init();
 
         $title = \xd_utilities\getConfiguration('general', 'title');
-        $mail->setSubject("[$title] $subject");
+        $mail->Subject = "[$title] $subject";
 
         // Send a copy of the email to the contact page recipient.
         $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
-        $mail->addTo($contact, 'Undisclosed Recipients');
+        $mail->addAddress($contact, 'Undisclosed Recipients');
         $mail->setFrom($contact, $title);
 
         $bcc_emails = explode(',', $target_addresses);
 
         foreach ($bcc_emails as $b) {
-            $mail->addBcc($b);
+            $mail->AddBCC($b);
         }
 
-        $mail->setBodyText($message);
+        $mail->Body = $message;
 
         $response['status'] = $mail->send();
 

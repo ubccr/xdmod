@@ -136,23 +136,23 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
-        $mail = ZendMailWrapper::init();
+        $mail = MailWrapper::init();
 
         $recipient
         = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
         ? xd_utilities\getConfiguration('general', 'debug_recipient')
         : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-        $mail->addTo($recipient);
+        $mail->addAddress($recipient);
         if ($error) {
-            $mail->setSubject("[xdmod] Error Creating federated user");
+            $mail->Subject = "[xdmod] Error Creating federated user";
         } else {
-            $mail->setSubject("[xdmod] New ". ($linked ? "linked": "unlinked") ." federated user created");
+            $mail->Subject = "[xdmod] New ". ($linked ? "linked": "unlinked") ." federated user created";
         }
 
         $userEmail = $user->getEmailAddress();
         if ($userEmail != NO_EMAIL_ADDRESS_SET) {
             $mail->setFrom($userEmail);
-            $mail->setReplyTo($userEmail);
+            $mail->addReplyTo($userEmail);
         }
 
         $body = "The following person has had an account created on XDMoD:\n\n" .
@@ -164,12 +164,12 @@ class XDSamlAuthentication
         "Additional SAML Attributes ----------------------------------\n\n" .
         print_r($samlAttributes, true);
 
-        $mail->setBodyText($body);
+        $mail->Body = $body;
         try {
             $mail->send();
             return true;
         } catch (Exception $e) {
-            return $e->getMessage();
+            return $e->getMessage() . "\n" . $mail->ErrorInfo;
         }
     }
 }

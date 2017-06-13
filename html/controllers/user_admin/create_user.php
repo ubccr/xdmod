@@ -109,18 +109,18 @@ try {
 
     // -------------------
 
-    $mail = ZendMailWrapper::init();
+    $mail = MailWrapper::init();
 
     $mail->setFrom($mailer_sender, 'XDMoD');
 
-    $mail->setSubject("$page_title: Account Created");
+    $mail->Subject = "$page_title: Account Created";
 
     $recipient
         = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
         ? xd_utilities\getConfiguration('general', 'debug_recipient')
         : $_POST['email_address'];
 
-    $mail->addTo($recipient);
+    $mail->addAddress($recipient);
 
     // -------------------
 
@@ -134,14 +134,14 @@ try {
     $message .= $site_address."user_manual\n\n";
     $message .= "The XDMoD Team";
 
-    $mail->setBodyText($message);
+    $mail->Body = $message;
 
     // -------------------
 
     $mail->send();
 }
 catch (Exception $e) {
-    \xd_response\presentError($e->getMessage());
+    \xd_response\presentError($e->getMessage() . "\n" . $mail->ErrorInfo);
 }
 
 // -----------------------------
