@@ -176,18 +176,18 @@ class DataEndpoint
                             $logger->warning(
                                 sprintf(
                                     "%s Endpoint with name '%s' already exists, skipping",
-                                    static::class,
+                                    __CLASS__,
                                     $name
                                 )
                             );
                         }
 
-                    } else if ( null !== $logger ) {
+                    } elseif ( null !== $logger ) {
 
                         $logger->warning(
                             sprintf(
                                 "%s Class '%s' does not define %s, skipping",
-                                static::class,
+                                __CLASS__,
                                 $r->getName(),
                                 self::$endpointNameConstant
                             )
@@ -225,7 +225,7 @@ class DataEndpoint
         // If the type is defined and has a mapping to an implementation, create a class for the type.
 
         if ( ! array_key_exists($options->type, self::$endpointClassMap) ) {
-            $msg = sprintf("%s: Undefined data endpoint type: '%s'", static::class, $options->type);
+            $msg = sprintf("%s: Undefined data endpoint type: '%s'", __CLASS__, $options->type);
             if ( null !== $logger ) {
                 $logger->err($msg);
             }
@@ -238,7 +238,7 @@ class DataEndpoint
         $endpoint = new $className($options, $logger);
 
         if ( ! $endpoint instanceof iDataEndpoint ) {
-            $msg = sprintf("%s: %s does not implement iDataEndpoint", static::class, $className);
+            $msg = sprintf("%s: %s does not implement iDataEndpoint", __CLASS__, $className);
             if ( null !== $logger ) {
                 $logger->err($msg);
             }
