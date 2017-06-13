@@ -150,8 +150,14 @@ class DataEndpoint
             // Discover the class name based on the file name. The file name is expected
             // to be named <class>.<extension>
 
-            $extension = $fileInfo->getExtension();
+            // SplFileInfo::getExtension() is not defined until PHP 5.3.6
+
             $filename = $fileInfo->getFilename();
+            $extension = '';
+            if ( false !== ($pos = strrpos($filename, '.')) ) {
+                $extension = substr($filename, $pos + 1);
+            }
+
             // Handle the case where there is no extension
             $length =  ( strlen($extension) > 0 ? -1 * (strlen($extension) + 1) : strlen($filename) );
             $className = substr($filename, 0, $length);
