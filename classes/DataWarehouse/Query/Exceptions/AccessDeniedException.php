@@ -7,22 +7,20 @@ namespace DataWarehouse\Query\Exceptions;
  */
 class AccessDeniedException extends QueryException
 {
-	/**
-	 * The message used by this exception if none is provided.
-	 */
-	const defaultMessage = 'The role to which you are assigned does not have access to the information you requested.';
+    /**
+     * The message used by this exception if none is provided.
+     */
+    const DEFAULT_MESSAGE = 'The role to which you are assigned does not have access to the information you requested.';
 
-	/**
+    /**
      * The code used by this exception if none is provided.
      */
-	const defaultCode = \XDError::QueryAccessDenied;
+    const DEFAULT_CODE = \XDError::QueryAccessDenied;
 
-    public function __construct($message = self::defaultMessage, $code = self::defaultCode, \Exception $previous = null)
-	{
-		parent::__construct($message, $code, $previous);
+    public function __construct($message = self::DEFAULT_MESSAGE, $code = self::DEFAULT_CODE, \Exception $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
 
-		$this->httpCode = 403;
-	}
+        $this->httpCode = 403;
+    }
 }
-
-?>
