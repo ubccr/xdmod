@@ -43,16 +43,16 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
     public function testSystemUsernameAccess()
     {
         $defaultJson = <<<EOF
-        {
-            "public_user": "true",
-            "realm": "Jobs",
-            "group_by": "username",
-            "statistic": "job_count",
-            "start_date": "2017-05-01",
-            "end_date": "2017-05-31",
-            "operation": "get_charts",
-            "controller_module": "user_interface"
-        }
+{
+    "public_user": "true",
+    "realm": "Jobs",
+    "group_by": "username",
+    "statistic": "job_count",
+    "start_date": "2017-05-01",
+    "end_date": "2017-05-31",
+    "operation": "get_charts",
+    "controller_module": "user_interface"
+}
 EOF;
 
         $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($defaultJson, true));
