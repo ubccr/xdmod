@@ -36,4 +36,35 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue(count($tabdata) > 0);
         }
     }
+
+    /*
+     * Check that the System Username plots are not available to the public user
+     */
+    public function testSystemUsernameAccess()
+    {
+        $defaultJson = <<<EOF
+        {
+            "public_user": "true",
+            "realm": "Jobs",
+            "group_by": "username",
+            "statistic": "job_count",
+            "start_date": "2017-05-01",
+            "end_date": "2017-05-31",
+            "operation": "get_charts",
+            "controller_module": "user_interface"
+        }
+EOF;
+
+        $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($defaultJson, true));
+
+        $expectedErrorMessage = <<<EOF
+Your user account does not have permission to view the requested data.  If you
+believe that you should be able to see this information, then please select
+"Submit Support Request" in the "Contact Us" menu to request access.
+EOF;
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals($response[1]['http_code'], 403);
+        $this->assertEquals($response[0]['message'], $expectedErrorMessage);
+    }
 }
