@@ -87,8 +87,9 @@ $pdo->execute(
 );
 
 // Create email.
-$mail = MailWrapper::init();
-
+$mail = new PHPMailer();
+$mail->isSendMail();
+$mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
 $recipient
     = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
     ? xd_utilities\getConfiguration('general', 'debug_recipient')

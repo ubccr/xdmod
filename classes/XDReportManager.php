@@ -2045,8 +2045,9 @@ class XDReportManager
         $frequency = '',
         $additional_config = array()
     ) {
-        $mail = MailWrapper::init();
-
+        $mail = new PHPMailer();
+        $mail->isSendMail();
+        $mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
         $mailer_sender = xd_utilities\getConfiguration('mailer', 'sender_email');
 
         $mail->setFrom($mailer_sender, 'XDMoD');

@@ -88,8 +88,9 @@ switch ($operation) {
 
         $response['success'] = true;
 
-        $mail = MailWrapper::init();
-
+        $mail = new PHPMailer();
+        $mail->isSendMail();
+        $mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
         $title = \xd_utilities\getConfiguration('general', 'title');
         $mail->Subject = "[$title] $subject";
 
@@ -101,7 +102,7 @@ switch ($operation) {
         $bcc_emails = explode(',', $target_addresses);
 
         foreach ($bcc_emails as $b) {
-            $mail->AddBCC($b);
+            $mail->addBCC($b);
         }
 
         $mail->Body = $message;

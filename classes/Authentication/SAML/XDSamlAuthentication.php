@@ -96,11 +96,15 @@ class XDSamlAuthentication
             $newUser->setUserType(FEDERATED_USER_TYPE);
             try {
                 $newUser->saveUser();
+            } catch(Exception $e) {
+                error_log('User creation failed: ' . $e->getMessage());
+                throw new Exception('User creation failed: ' . $e->getMessage());
+            }
+            try {
                 self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != -2));
                 return $newUser;
             } catch (Exception $e) {
-                self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != -2), true);
-                return "EXCEPTION";
+                return false;
             }
         }
         return false;
@@ -136,7 +140,9 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
-        $mail = MailWrapper::init();
+        $mail = new PHPMailer();
+        $mail->isSendMail();
+        $mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
 
         $recipient
         = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
@@ -146,7 +152,7 @@ class XDSamlAuthentication
         if ($error) {
             $mail->Subject = "[xdmod] Error Creating federated user";
         } else {
-            $mail->Subject = "[xdmod] New ". ($linked ? "linked": "unlinked") ." federated user created";
+            $mail->Subject = "[xdmod] New " . ($linked ? "linked": "unlinked") . " federated user created";
         }
 
         $userEmail = $user->getEmailAddress();
@@ -159,17 +165,23 @@ class XDSamlAuthentication
         "Person Details ----------------------------------\n\n" .
         "\nName:                     " . $user->getFormalName(true) .
         "\nUserame:                  " . $user->getUsername() .
-        "\nE-Mail:                   " . $userEmail .
-        "\n\n" .
-        "Additional SAML Attributes ----------------------------------\n\n" .
-        print_r($samlAttributes, true);
+        "\nE-Mail:                   " . $userEmail ;
+
+        if(!empty($samlAttributes)){
+            $body = $body . "\n\n" .
+                "Additional SAML Attributes ----------------------------------\n\n" .
+                print_r($samlAttributes, true);
+        }
 
         $mail->Body = $body;
         try {
-            $mail->send();
-            return true;
+            if(!$mail->send()){
+                error_log("Mail failed to send to: " . $userEmail . "\n" . $mail->ErrorInfo);
+            }
         } catch (Exception $e) {
-            return $e->getMessage() . "\n" . $mail->ErrorInfo;
+            error_log("Mail failed to send." . $mail->ErrorInfo);
+            throw new Exception('Error sending mail to: ' . $userEmail . "\n" . $e->getMessage() . "\n" . "Mail failed to send: " . $mail->ErrorInfo);
         }
+        return true;
     }
 }

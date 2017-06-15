@@ -1,0 +1,35 @@
+MAILTO=ccr-xdmod-cron@buffalo.edu
+PATH=/data/www/xdmod/bin:/user/xdmod/.npm-packages/bin:/user/xdmod/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# m h  dom mon dow   command
+
+# Maintenance cron jobs.
+
+## Update metrics-dev Open XDMoD portal.
+0 0 * * * /data/www/xdmod/bin/update-portal.sh
+
+## Update composer.
+0 23 * * * /data/www/xdmod/bin/composer self-update >/dev/null 2>&1
+
+# Open XDMoD cron jobs.
+
+## Check for updates (monthly).
+0 1 1 * * /data/www/xdmod/xdmod-root/lib/update_check.php >/dev/null
+
+## Every morning at 3:00 AM -- run the report scheduler.
+0 3 * * * /usr/bin/php /data/www/xdmod/xdmod-root/lib/report_schedule_manager.php >/dev/null
+
+# Open XDMoD Application Kernels cron jobs.
+
+## Application kernels report generator.
+0 5 * * * /usr/bin/php /data/www/xdmod/xdmod-root/lib/appkernel_reports_manager.php >/dev/null
+
+## AK ingestion
+30 1 * * * /data/www/xdmod/xdmod-root/bin/xdmod-akrr-ingestor -q -l load -c -r >/dev/null
+
+# AKRR
+50 23 * * * /data/www/xdmod/akrr/bin/restart.sh
+33 * * * * /data/www/xdmod/akrr/bin/checknrestart.sh
+
+# SUPReMM ingest and aggregation
+30 6,9 * * * /data/www/xdmod/xdmod-root/bin/aggregate_supremm.sh

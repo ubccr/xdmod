@@ -72,7 +72,9 @@ $recipient
   ? xd_utilities\getConfiguration('general', 'debug_recipient')
   : xd_utilities\getConfiguration('general', 'contact_page_recipient');
 
-$mail = MailWrapper::init();
+$mail = new PHPMailer();
+$mail->isSendMail();
+$mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
 
 switch ($reason) {
   case 'wishlist':
@@ -116,7 +118,9 @@ catch (Exception $e) {
 
 // =====================================================
 
-$mail = MailWrapper::init();
+$mail = new PHPMailer();
+$mail->isSendMail();
+$mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
 $mail->setFrom($mailer_sender, 'XDMoD');
 $mail->Subject = "Thank you for your $message_type.";
 $mail->addAddress($_POST['email']);
