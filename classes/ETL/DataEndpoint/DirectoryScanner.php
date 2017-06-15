@@ -448,20 +448,20 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 
         try {
             $flattenedIterator = new \RecursiveIteratorIterator($iterator);
+
+            if ( null !== $this->maxRecursionDepth ) {
+                $this->logger->debug(
+                    sprintf("Set max recursion depth: %d", $this->maxRecursionDepth)
+                );
+                $flattenedIterator->setMaxDepth($this->maxRecursionDepth);
+            }
+
+            $iterator = $flattenedIterator;
         }  catch ( Exception $e ) {
             $this->logAndThrowException(
                 sprintf("Error creating RecursiveIteratorIterator: %s", $e->getMessage())
             );
         }
-
-        if ( null !== $this->maxRecursionDepth ) {
-            $this->logger->debug(
-                sprintf("Set max recursion depth: %d", $this->maxRecursionDepth)
-            );
-            $flattenedIterator->setMaxDepth($this->maxRecursionDepth);
-        }
-
-        $iterator = $flattenedIterator;
 
         // Filter out directories "." and "..". This and other filters could be
         // included in a single CallbackFilterIterator bit I've decided to keep them
@@ -476,10 +476,7 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
             $dotDirFilterIterator = new \CallbackFilterIterator(
                 $iterator,
                 function ($current, $key, $iterator) {
-                    if ( $iterator->isDot() ) {
-                        return false;
-                    }
-                    return true;
+                    return ( ! $iterator->isDot() );
                 }
             );
             $iterator = $dotDirFilterIterator;

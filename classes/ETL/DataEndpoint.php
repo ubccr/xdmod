@@ -18,31 +18,31 @@ use Log;
 class DataEndpoint
 {
     /**
-     * Namesapce, relative to the current namespace, where data endpoint classes are
+     * Namespace, relative to the current namespace, where data endpoint classes are
      * defined. This is used to automatically search for defined endpoints.
      *
-     * @var string
+     * @const string
      */
 
-    private static $dataEndpointRelativeNs = 'DataEndpoint';
+    const DATA_ENDPOINT_RELATIVE_NS = 'DataEndpoint';
 
     /**
      * Fully namespaced interface that all data endpoints must implement
      *
-     * @var string
+     * @const string
      */
 
-    private static $dataEndpointRequiredInterface = 'ETL\\DataEndpoint\\iDataEndpoint';
+    const DATA_ENDPOINT_REQUIRED_INTERFACE = 'ETL\\DataEndpoint\\iDataEndpoint';
 
     /**
      * The name of the constant expected to be defined in all data endpoint classes. This
      * is used to identify the name that will be used to refer to the endpoint in
      * configuration files.
      *
-     * @var string
+     * @const string
      */
 
-    private static $endpointNameConstant = 'ENDPOINT_NAME';
+    const ENDPOINT_NAME_CONSTANT = 'ENDPOINT_NAME';
 
     /**
      * Associative array where the keys are data endpoint names and the values are fully
@@ -90,11 +90,13 @@ class DataEndpoint
     }  // getDataEndpointInfo()
 
     /** -----------------------------------------------------------------------------------------
-     * Discover the list of currently supported data endpoints and constuct a list mapping
-     * their names to the classes that implement them.  All data endpoints must implement
-     * the interface specified in self::$dataEndpointRequiredInterface.  By automatically
-     * discovering the data endpoints we do not need to modify this file when new
-     * endpoints are created.
+     * Discover the list of currently supported data endpoints and construct a list
+     * mapping their names to the classes that implement them.  All data endpoints must
+     * implement the interface specified in self::DATA_ENDPOINT_REQUIRED_INTERFACE and
+     * also define a constant referenced by self::ENDPOINT_NAME_CONSTANT that is set to
+     * the name of the endpoint (e.g., const ENDPOINT_NAME = 'file.json'.  By
+     * automatically discovering the data endpoints we do not need to modify this file
+     * when new endpoints are created.
      *
      * @param boolean $force Set to TRUE to force re-discovery of endpoints
      * @param Log $logger A PEAR Log object or null to use the null logger.
@@ -114,7 +116,9 @@ class DataEndpoint
         // file resides represent sub-namespaces.
 
         // The endpoint directory is relative to the directory where this file is found
-        $endpointDir =  dirname(__FILE__) . '/' . strtr(self::$dataEndpointRelativeNs, '\\', '/');
+        $endpointDir =  dirname(__FILE__)
+            . DIRECTORY_SEPARATOR
+            . strtr(self::DATA_ENDPOINT_RELATIVE_NS, '\\', DIRECTORY_SEPARATOR);
         $endpointDirLength = strlen($endpointDir);
 
         // Recursively traverse the directory where the endpoints live and discover any
@@ -136,13 +140,13 @@ class DataEndpoint
             // Set up an array so we can programmatically construct the namespace based on
             // the path to the class file
 
-            $constructedNamespace = array(__NAMESPACE__, self::$dataEndpointRelativeNs);
+            $constructedNamespace = array(__NAMESPACE__, self::DATA_ENDPOINT_RELATIVE_NS);
 
             // Construct any additional sub-namespaces for subdirectories discovered under
             // the endpoint namespace (e.g. the subdirectory DataEndpoint/Filters
             // translates to the namespace DataEndpoint\Filters.
 
-            $subDirNs = strtr(substr($fileInfo->getPath(), $endpointDirLength + 1), '/', '\\');
+            $subDirNs = strtr(substr($fileInfo->getPath(), $endpointDirLength + 1), DIRECTORY_SEPARATOR, '\\');
             if ( "" !== $subDirNs) {
                 $constructedNamespace[] = $subDirNs;
             }
@@ -171,11 +175,11 @@ class DataEndpoint
                 // Ensure that the class is not abstract and implements the required
                 // interface
 
-                if ( ! $r->isAbstract() && $r->implementsInterface(self::$dataEndpointRequiredInterface) ) {
+                if ( ! $r->isAbstract() && $r->implementsInterface(self::DATA_ENDPOINT_REQUIRED_INTERFACE) ) {
 
-                    if ( $r->hasConstant(self::$endpointNameConstant) ) {
+                    if ( $r->hasConstant(self::ENDPOINT_NAME_CONSTANT) ) {
 
-                        $name = $r->getConstant(self::$endpointNameConstant);
+                        $name = $r->getConstant(self::ENDPOINT_NAME_CONSTANT);
                         if ( ! array_key_exists($name, self::$endpointClassMap) ) {
                             self::$endpointClassMap[$name] = $r->getName();
                         } elseif ( null !== $logger ) {
@@ -195,7 +199,7 @@ class DataEndpoint
                                 "%s Class '%s' does not define %s, skipping",
                                 __CLASS__,
                                 $r->getName(),
-                                self::$endpointNameConstant
+                                self::ENDPOINT_NAME_CONSTANT
                             )
                         );
 
@@ -215,7 +219,7 @@ class DataEndpoint
      *   parsed from the ETL config.
      * @param Log $logger A PEAR Log object or null to use the null logger.
      *
-     * @return A data endpoint object implementing the iDataEndpoint interface.
+     * @return iDataEndpoint A data endpoint object implementing the iDataEndpoint interface.
      *
      * @throws Exception If required options were not provided
      * @throws Exception If the requested class could not be found
