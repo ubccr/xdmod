@@ -94,7 +94,7 @@ class DataEndpoint
      * mapping their names to the classes that implement them.  All data endpoints must
      * implement the interface specified in self::DATA_ENDPOINT_REQUIRED_INTERFACE and
      * also define a constant referenced by self::ENDPOINT_NAME_CONSTANT that is set to
-     * the name of the endpoint (e.g., const ENDPOINT_NAME = 'file.json'.  By
+     * the name of the endpoint (e.g., const ENDPOINT_NAME = 'file.json').  By
      * automatically discovering the data endpoints we do not need to modify this file
      * when new endpoints are created.
      *
