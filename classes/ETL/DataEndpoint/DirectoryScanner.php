@@ -22,6 +22,14 @@ use Log;
 
 class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 {
+    /** -----------------------------------------------------------------------------------------
+     * The ENDPOINT_NAME constant defines the name for this endpoint that should be used
+     * in configuration files. It also allows us to implement auto-discovery.
+     *
+     * @const string
+     */
+
+    const ENDPOINT_NAME = 'directoryscanner';
 
     /** -----------------------------------------------------------------------------------------
      * Numeric key to use for the default file extension handler. This should be the only
@@ -174,8 +182,6 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
         // Save values from the options to local properties
 
         foreach ( $options as $property => $value ) {
-
-            // $this->logger->debug("OPT: $property => " . print_r($value, true));
 
             // Skip null values and use property defaults
 
@@ -376,75 +382,72 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
     {
         // The first time a connection is made the endpoint handle should be set.
 
-        if ( null === $this->handle ) {
+        if ( null !== $this->handle ) {
+            return $this->handle;
+        }
 
-            // The PHP docs on SPL iterators at http://php.net/manual/en/spl.iterators.php
-            // are sparse so these are some notes on usage of RecursiveDirectoryIterator,
-            // RecursiveIteratorIterator, and filtering.
-            //
-            // A note on recursive iterators: If a directory doesn't match the filter
-            // (i.e., it returns FALSE) then the directory will not be recursed
-            // into. Rather than using RecursiveCallbackFilterIterator it may be better to
-            // use CallbackFilterIterator after RecursiveIteratorIterator depending on the
-            // situation.
-            //
-            // We want to be able to filter on the path and file separately so we are using an
-            // instance of CallbackFilterIterator to do this instead of RegexIterator.
-            //
-            // RecursiveDirectoryIterator provides a mechanism to recursively iterate over
-            // directories and the files that they contain. It does not iterate beyond the
-            // *root* directory automatically. For this we need to roll our own or use
-            // RecursiveIteratorIterator.
-            //
-            // RecursiveRegexIterator can be attached to the RecursiveDirectoryIterator to
-            // filter paths. Note that if a directory doesn't match the regex it will not
-            // be recursed into so this is not well suited for regexes that should be
-            // applied to files.
-            //
-            // RecursiveCallbackFilterIterator needs to operate on a RecursiveIterator so
-            // it cannot be applied to a RecursiveIteratorIterator, use
-            // CallbackFilterIterator on a RecursiveIteratorIterator.
-            //
-            // RecursiveIteratorIterator operates on classes implementing
-            // RecursiveIterator and will handle the recursion into the children.  The
-            // mode can be specified as LEAVES_ONLY (default), SELF_FIRST, CHILD_FIRST.
-            // Note that LEAVES_ONLY will include "." and ".." directories so these will
-            // need to be filtered out AFTER applying this iterator.
-            //
-            // RegexIterator can be attached to RecursiveIteratorIterator to filter the
-            // paths that it returns, but note that the regex applies to the full path,
-            // not just the name of the file itself.
-            //
-            // Note that we want to be able to filter on the path and file separately and are using
-            // the CallbackFilterIterator to do this instead of RegexIterator.
+        // The PHP docs on SPL iterators at http://php.net/manual/en/spl.iterators.php
+        // are sparse so these are some notes on usage of RecursiveDirectoryIterator,
+        // RecursiveIteratorIterator, and filtering.
+        //
+        // A note on recursive iterators: If a directory doesn't match the filter
+        // (i.e., it returns FALSE) then the directory will not be recursed
+        // into. Rather than using RecursiveCallbackFilterIterator it may be better to
+        // use CallbackFilterIterator after RecursiveIteratorIterator depending on the
+        // situation.
+        //
+        // We want to be able to filter on the path and file separately so we are using an
+        // instance of CallbackFilterIterator to do this instead of RegexIterator.
+        //
+        // RecursiveDirectoryIterator provides a mechanism to recursively iterate over
+        // directories and the files that they contain. It does not iterate beyond the
+        // *root* directory automatically. For this we need to roll our own or use
+        // RecursiveIteratorIterator.
+        //
+        // RecursiveRegexIterator can be attached to the RecursiveDirectoryIterator to
+        // filter paths. Note that if a directory doesn't match the regex it will not
+        // be recursed into so this is not well suited for regexes that should be
+        // applied to files.
+        //
+        // RecursiveCallbackFilterIterator needs to operate on a RecursiveIterator so
+        // it cannot be applied to a RecursiveIteratorIterator, use
+        // CallbackFilterIterator on a RecursiveIteratorIterator.
+        //
+        // RecursiveIteratorIterator operates on classes implementing
+        // RecursiveIterator and will handle the recursion into the children.  The
+        // mode can be specified as LEAVES_ONLY (default), SELF_FIRST, CHILD_FIRST.
+        // Note that LEAVES_ONLY will include "." and ".." directories so these will
+        // need to be filtered out AFTER applying this iterator.
+        //
+        // RegexIterator can be attached to RecursiveIteratorIterator to filter the
+        // paths that it returns, but note that the regex applies to the full path,
+        // not just the name of the file itself.
+        //
+        // Note that we want to be able to filter on the path and file separately and are using
+        // the CallbackFilterIterator to do this instead of RegexIterator.
 
-            // We are conditionally creating multiple iterators that will consume earlier
-            // iterators. Keep track of the current iterator.
+        // We are conditionally creating multiple iterators that will consume earlier
+        // iterators. Keep track of the current iterator.
 
-            $iterator = null;
+        $iterator = null;
 
-            $this->logger->debug(
-                sprintf("Connecting directory scanner to %s", $this->path)
+        $this->logger->debug(
+            sprintf("Connecting directory scanner to %s", $this->path)
+        );
+
+        try {
+            $directoryIterator = new \RecursiveDirectoryIterator($this->path);
+            $iterator = $directoryIterator;
+        } catch ( Exception $e ) {
+            $this->logAndThrowException(
+                sprintf("Error opening directory '%s': %s", $this->path, $e->getMessage())
             );
+        }
 
-            try {
-                $directoryIterator = new \RecursiveDirectoryIterator($this->path);
-                $iterator = $directoryIterator;
-            } catch ( Exception $e ) {
-                $this->logAndThrowException(
-                    sprintf("Error opening directory '%s': %s", $this->path, $e->getMessage())
-                );
-            }
+        // Apply the recursion iterator that will traverse the directory iterator
 
-            // Apply the recursion iterator that will traverse the directory iterator
-
-            try {
-                $flattenedIterator = new \RecursiveIteratorIterator($iterator);
-            }  catch ( Exception $e ) {
-                $this->logAndThrowException(
-                    sprintf("Error creating RecursiveIteratorIterator: %s", $e->getMessage())
-                );
-            }
+        try {
+            $flattenedIterator = new \RecursiveIteratorIterator($iterator);
 
             if ( null !== $this->maxRecursionDepth ) {
                 $this->logger->debug(
@@ -454,130 +457,131 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
             }
 
             $iterator = $flattenedIterator;
+        }  catch ( Exception $e ) {
+            $this->logAndThrowException(
+                sprintf("Error creating RecursiveIteratorIterator: %s", $e->getMessage())
+            );
+        }
 
-            // Filter out directories "." and "..". This and other filters could be
-            // included in a single CallbackFilterIterator bit I've decided to keep them
-            // split out for readability, debugging, and error reporting.
+        // Filter out directories "." and "..". This and other filters could be
+        // included in a single CallbackFilterIterator bit I've decided to keep them
+        // split out for readability, debugging, and error reporting.
 
-            // For the CallbackFilter classes, the types of the callback parameters depend
-            // on the flags passed to RecursiveDirectoryIterator::__construct(). In our
-            // case, $current is a SplFileInfo object and the key is the fill path to the
-            // file.
+        // For the CallbackFilter classes, the types of the callback parameters depend
+        // on the flags passed to RecursiveDirectoryIterator::__construct(). In our
+        // case, $current is a SplFileInfo object and the key is the fill path to the
+        // file.
+
+        try {
+            $dotDirFilterIterator = new \CallbackFilterIterator(
+                $iterator,
+                function ($current, $key, $iterator) {
+                    return ( ! $iterator->isDot() );
+                }
+            );
+            $iterator = $dotDirFilterIterator;
+        }  catch ( Exception $e ) {
+            $this->logAndThrowException(
+                sprintf("Error applying dot directory filters: %s", $e->getMessage())
+            );
+        }
+
+        // We do not want to return directories as part of the traversal so we need to
+        // apply directory/file patterns and other checks AFTER traversing the
+        // directory tree. Otherwise, directories may be inadvertantly filtered and
+        // the files missed.
+
+        if ( null !== $this->directoryPattern || null !== $this->filePattern ) {
+
+            // PHP 5.3 does not allow us to reference the object in the callback
+            $dirPattern = $this->directoryPattern;
+            $filePattern = $this->filePattern;
+
+            $this->logger->info(
+                sprintf(
+                    "Applying pattern filters: (directory: %s, file: %s)",
+                    ( null === $dirPattern ? "null" : $dirPattern ),
+                    ( null === $filePattern ? "null" : $filePattern )
+                )
+            );
 
             try {
-                $dotDirFilterIterator = new \CallbackFilterIterator(
+                $patternCallbackIterator = new \CallbackFilterIterator(
                     $iterator,
-                    function ($current, $key, $iterator) {
-                        if ( $iterator->isDot() ) {
+                    function ($current, $key, $iterator) use ($dirPattern, $filePattern) {
+                        if (
+                            null !== $dirPattern
+                            && ! preg_match($dirPattern, $current->getPath())
+                        ) {
                             return false;
                         }
+
+                        if (
+                            null !== $filePattern
+                            && ! preg_match($filePattern, $current->getFilename())
+                        ) {
+                            return false;
+                        }
+
                         return true;
                     }
                 );
-                $iterator = $dotDirFilterIterator;
+                $iterator = $patternCallbackIterator;
             }  catch ( Exception $e ) {
                 $this->logAndThrowException(
-                    sprintf("Error applying dot directory filters: %s", $e->getMessage())
-                );
-            }
-
-            // We do not want to return directories as part of the traversal so we need to
-            // apply directory/file patterns and other checks AFTER traversing the
-            // directory tree. Otherwise, directories may be inadvertantly filtered and
-            // the files missed.
-
-            if ( null !== $this->directoryPattern || null !== $this->filePattern ) {
-
-                // PHP 5.3 does not allow us to reference the object in the callback
-                $dirPattern = $this->directoryPattern;
-                $filePattern = $this->filePattern;
-
-                $this->logger->info(
                     sprintf(
-                        "Applying pattern filters: (directory: %s, file: %s)",
-                        ( null === $dirPattern ? "null" : $dirPattern ),
-                        ( null === $filePattern ? "null" : $filePattern )
+                        "Error applying pattern filters (directory: %s, file: %s): %s",
+                        ( null === $this->directoryPattern ? "null" : $this->directoryPattern ),
+                        ( null === $this->filePattern ? "null" : $this->filePattern ),
+                        $e->getMessage()
                     )
                 );
-
-                try {
-                    $patternCallbackIterator = new \CallbackFilterIterator(
-                        $iterator,
-                        function ($current, $key, $iterator) use ($dirPattern, $filePattern) {
-                            if (
-                                null !== $dirPattern
-                                && ! preg_match($dirPattern, $current->getPath())
-                            ) {
-                                return false;
-                            }
-
-                            if (
-                                null !== $filePattern
-                                 && ! preg_match($filePattern, $current->getFilename())
-                            ) {
-                                return false;
-                            }
-
-                            return true;
-                        }
-                    );
-                    $iterator = $patternCallbackIterator;
-                }  catch ( Exception $e ) {
-                    $this->logAndThrowException(
-                        sprintf(
-                            "Error applying pattern filters (directory: %s, file: %s): %s",
-                            ( null === $this->directoryPattern ? "null" : $this->directoryPattern ),
-                            ( null === $this->filePattern ? "null" : $this->filePattern ),
-                            $e->getMessage()
-                        )
-                    );
-                }
             }
-
-            if ( null !== $this->lastModifiedStartTimestamp || null !== $this->lastModifiedEndTimestamp ) {
-
-                // PHP 5.3 does not allow us to reference the object in the callback
-                $lmStartTs = $this->lastModifiedStartTimestamp;
-                $lmEndTs = $this->lastModifiedEndTimestamp;
-
-                $this->logger->info(
-                    sprintf(
-                        "Applying mtime filter: (start: %s, end: %s)",
-                        ( null === $lmStartTs ? "null" : $lmStartTs ),
-                        ( null === $lmEndTs ? "null" : $lmEndTs )
-                    )
-                );
-
-                try {
-                    $callbackIterator = new \CallbackFilterIterator(
-                        $iterator,
-                        function ($current, $key, $iterator) use ($lmStartTs, $lmEndTs) {
-                            if ( null !== $lmStartTs && null !== $lmEndTs ) {
-                                return $current->getMTime() >= $lmStartTs && $current->getMTime() <= $lmEndTs;
-                            } elseif ( null !== $lmStartTs ) {
-                                return $current->getMTime() >= $lmStartTs;
-                            } elseif ( null !== $lmEndTs ) {
-                                return $current->getMTime() <= $lmEndTs;
-                            } else {
-                                return false;
-                            }
-                        }
-                    );
-                    $iterator = $callbackIterator;
-                }  catch ( Exception $e ) {
-                    $this->logAndThrowException(
-                        sprintf(
-                            "Error applying last modified filter (start: %s, end: %s): %s",
-                            ( null === $this->lastModifiedStartTimestamp ? "null" : $this->lastModifiedStartTimestamp ),
-                            ( null === $this->lastModifiedEndTimestamp ? "null" : $this->lastModifiedEndTimestamp ),
-                            $e->getMessage()
-                        )
-                    );
-                }
-            }
-
-            $this->handle = $iterator;
         }
+
+        if ( null !== $this->lastModifiedStartTimestamp || null !== $this->lastModifiedEndTimestamp ) {
+
+            // PHP 5.3 does not allow us to reference the object in the callback
+            $lmStartTs = $this->lastModifiedStartTimestamp;
+            $lmEndTs = $this->lastModifiedEndTimestamp;
+
+            $this->logger->info(
+                sprintf(
+                    "Applying mtime filter: (start: %s, end: %s)",
+                    ( null === $lmStartTs ? "null" : $lmStartTs ),
+                    ( null === $lmEndTs ? "null" : $lmEndTs )
+                )
+            );
+
+            try {
+                $callbackIterator = new \CallbackFilterIterator(
+                    $iterator,
+                    function ($current, $key, $iterator) use ($lmStartTs, $lmEndTs) {
+                        if ( null !== $lmStartTs && null !== $lmEndTs ) {
+                            return $current->getMTime() >= $lmStartTs && $current->getMTime() <= $lmEndTs;
+                        } elseif ( null !== $lmStartTs ) {
+                            return $current->getMTime() >= $lmStartTs;
+                        } elseif ( null !== $lmEndTs ) {
+                            return $current->getMTime() <= $lmEndTs;
+                        } else {
+                            return false;
+                        }
+                    }
+                );
+                $iterator = $callbackIterator;
+            }  catch ( Exception $e ) {
+                $this->logAndThrowException(
+                    sprintf(
+                        "Error applying last modified filter (start: %s, end: %s): %s",
+                        ( null === $this->lastModifiedStartTimestamp ? "null" : $this->lastModifiedStartTimestamp ),
+                        ( null === $this->lastModifiedEndTimestamp ? "null" : $this->lastModifiedEndTimestamp ),
+                        $e->getMessage()
+                    )
+                );
+            }
+        }
+
+        $this->handle = $iterator;
 
         // Rewind the handle so it is ready to use.
         $this->handle->rewind();

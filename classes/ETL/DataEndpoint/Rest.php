@@ -12,10 +12,15 @@
 namespace ETL\DataEndpoint;
 
 use ETL\DataEndpoint\DataEndpointOptions;
-use \Log;
+use Log;
 
 class Rest extends aDataEndpoint implements iDataEndpoint
 {
+    // The ENDPOINT_NAME constant defines the name for this endpoint that should be used
+    // in configuration files. It also allows us to implement auto-discovery.
+
+    const ENDPOINT_NAME = 'rest';
+
     // The base url for this endpoint
     protected $baseUrl = null;
 
