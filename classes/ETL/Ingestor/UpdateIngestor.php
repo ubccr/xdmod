@@ -139,7 +139,8 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
                                                  'path' => $filename,
                                                  'type' => "jsonfile"));
             $jsonFile = DataEndpoint::factory($opt, $this->logger);
-            $this->data = $jsonFile->parse();
+            $jsonFile->parse();
+            $this->data = $jsonFile;
         } elseif ( is_array($this->parsedDefinitionFile->source_data->data) ) {
             $this->data = $this->parsedDefinitionFile->source_data->data;
         } else {
