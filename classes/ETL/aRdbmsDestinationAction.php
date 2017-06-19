@@ -1,7 +1,8 @@
 <?php
-/* ==========================================================================================
- * Most ETL processes culminate in the addition of data to an RDMBS. This class encapsulates methods
- * and properties common to all actions on a database destination. These include:
+/** =========================================================================================
+ * Most ETL processes write their data into an RDMBS. This class encapsulates methods and
+ * properties common to all actions that deposit data into an RDBMS destination. These
+ * include:
  *
  * 1. Verifying the destination endpoint
  * 2. Parsing the table definition file
@@ -34,16 +35,18 @@ use Log;
 
 abstract class aRdbmsDestinationAction extends aAction
 {
-    // Path to the JSON configuration file containing ETL table and source query configurations, among
-    // other things.
 
-    // The stdClass representing a parsed definition file
+    /** -----------------------------------------------------------------------------------------
+     * An array of one or more Table objects representing the destination tables supported
+     * by this action, The keys are the table names.
+     *
+     * @var array
+     * ------------------------------------------------------------------------------------------
+     */
 
-    // A list of one or more Table objects representing the ETL destination tables supported by this
-    // action where the keys are the table names
     protected $etlDestinationTableList = array();
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see aAction::__construct()
      * ------------------------------------------------------------------------------------------
      */
@@ -57,12 +60,13 @@ abstract class aRdbmsDestinationAction extends aAction
 
     }  // __construct()
 
-    /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
+    /** -----------------------------------------------------------------------------------------
+     * Initialize data required to perform the action.  Since this is an action of a
+     * target database we must parse the definition of the target table.
      *
-     * @throws Exception if any query data was not
-     * int the correct format.
+     * @param EtlOverseerOptions $etloverseeroptions The options provided to the overseer.
+     *
+     * @throws Exception if any query data was not in the correct format.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -78,8 +82,9 @@ abstract class aRdbmsDestinationAction extends aAction
 
         if ( ! $this->destinationEndpoint instanceof iRdbmsEndpoint ) {
             $this->destinationEndpoint = null;
-            $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint"
+            );
         }
 
         // Create the objects representing the destination tables. This method can be
@@ -89,15 +94,15 @@ abstract class aRdbmsDestinationAction extends aAction
         $this->createDestinationTableObjects();
 
         if ( 0 == count($this->etlDestinationTableList) ) {
-            $msg = "No ETL destination tables defined";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("No ETL destination tables defined");
         }
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
 
             if ( ! $etlTable instanceof Table ) {
-                $msg = "ETL destination table with key '$etlTableKey' is not an instance of Table";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException(
+                    sprintf("ETL destination table with key '%s' is not an instance of Table", $etlTableKey)
+                );
             }
 
             $etlTable->verify();
@@ -109,19 +114,20 @@ abstract class aRdbmsDestinationAction extends aAction
 
     }  // initialize()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Populate the $etlDestinationTableList with Table objects representing the tables
      * described in the table definition configuration block from the definition file. If
      * another type of table object is needed (e.g., AggregationTable for aggregation
-     * actions, then this method can be overriden.
+     * actions) then this method can be overriden.
+     *
+     * @return int The number of table definitions processed.
      * ------------------------------------------------------------------------------------------
      */
 
     protected function createDestinationTableObjects()
     {
         if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
-            $msg = "Definition file does not contain a 'table_definition' key";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
         }
 
         // A table definition can be either:
@@ -154,39 +160,35 @@ abstract class aRdbmsDestinationAction extends aAction
                     $this->logger
                 );
                 $this->logger->debug(
-                    "Created ETL destination table object for table definition key '"
-                    . $etlTable->name
-                    . "'"
+                    sprintf("Created ETL destination table object for table definition key '%s'", $etlTable->name)
                 );
                 $etlTable->schema = $this->destinationEndpoint->getSchema();
                 $tableName = $etlTable->getFullName();
 
-                if ( ! is_string($tableName) || empty($tableName) )
-                {
-                    $msg = "Destination table name must be a non-empty string";
-                    $this->logAndThrowException($msg);
+                if ( ! is_string($tableName) || empty($tableName) ) {
+                    $this->logAndThrowException("Destination table name must be a non-empty string");
                 }
 
                 $this->etlDestinationTableList[$etlTable->name] = $etlTable;
             } catch (Exception $e) {
-                $this->logAndThrowException($e->getMessage() . " in file '" . $this->definitionFile . "'");
+                $this->logAndThrowException(sprintf("%s in file '%s'", $e->getMessage(), $this->definitionFile));
             }
 
         }  // foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition )
 
-        if ( 0 == count($this->etlDestinationTableList) ) {
-            $msg = "No table definitions specified";
-            $this->logAndThrowException($msg);
+        $numTableDefinitions = count($this->etlDestinationTableList);
+        if ( 0 == $numTableDefinitions ) {
+            $this->logAndThrowException("No table definitions specified");
         }
 
+        return $numTableDefinitions;
     }  // createDestinationTableObjects()
 
-    /* ------------------------------------------------------------------------------------------
-     * Truncate the destination table. Note that performTruncateDestinationTasks() will be called to
-     * do the actual work.
+    /** -----------------------------------------------------------------------------------------
+     * Truncate records from the destination table. Note that
+     * performTruncateDestinationTasks() will be called to do the actual work.
      *
-     * @return TRUE on success
-     * @throws Exception If any operations failed
+     * @return bool TRUE on success
      * ------------------------------------------------------------------------------------------
      */
 
@@ -196,21 +198,19 @@ abstract class aRdbmsDestinationAction extends aAction
             return;
         }
 
-        // Truncate the old table, if requested. If queries are provided use them, otherwise truncate
-        // the table.
+        // Truncate the old table, if requested. If queries are provided use them,
+        // otherwise truncate the table.
 
         return $this->performTruncateDestinationTasks();
 
     }  // truncateDestination()
 
-    /* ------------------------------------------------------------------------------------------
-     * The default task for truncating the destination table is executing a single TRUNCATE statement
-     * on the table. If other actions are required, this method should be extended. Note that DELETE
-     * triggers will not fire when the table is truncated.
+    /** -----------------------------------------------------------------------------------------
+     * The default task for truncating the destination table is executing a single
+     * TRUNCATE statement on the table. If other actions are required, this method should
+     * be extended. Note that DELETE triggers will not fire when the table is truncated.
      *
      * NOTE: This method must check if we are in DRYRUN mode before executing any tasks.
-     *
-     * @see iIngestor::truncateDestinationTasks()
      * ------------------------------------------------------------------------------------------
      */
 
@@ -253,15 +253,15 @@ abstract class aRdbmsDestinationAction extends aAction
 
     }  // performTruncateDestinationTasks()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Execute a list of SQL statements on the specified database handle, throwing an exception if
      * there was an error.
      *
-     * @param $sqlList An array of SQL statements to execute
-     * @param $endpoint An endpoint implementing iDataEndpoint
-     * @param $msgPrefix String to prefix log messages with
+     * @param array $sqlList The list of SQL statements to execute
+     * @param iDataEndpoint $endpoint An endpoint implementing iDataEndpoint
+     * @param string $msgPrefix Log message with prefix
      *
-     * @return TRUE on success
+     * @return bool TRUE on success
      *
      * @throws Exception If there was an error executing a statement
      * ------------------------------------------------------------------------------------------
@@ -283,7 +283,7 @@ abstract class aRdbmsDestinationAction extends aAction
             }
             catch (PDOException $e) {
                 $this->logAndThrowException(
-                    "Error executing " . ( "" != $msgPrefix ? "$msgPrefix " : "" ) . "SQL",
+                    sprintf("Error executing %s SQL", ( "" != $msgPrefix ? "$msgPrefix " : "" )),
                     array('exception' => $e, 'sql' => $sql, 'endpoint' => $endpoint)
                 );
             }
@@ -293,15 +293,17 @@ abstract class aRdbmsDestinationAction extends aAction
 
     }  // executeSqlList()
 
-    /* ------------------------------------------------------------------------------------------
-     * Parse an SQL statement to retrieve column names, tables used, etc.
-     * @ See https://code.google.com/p/php-sql-parser/
+    /** -----------------------------------------------------------------------------------------
+     * Parse an SQL statement to retrieve column names, tables used, etc. This uses the
+     * Google SQL parser.
      *
-     * @param $sql The SQL statement to parse
+     * @see https://code.google.com/p/php-sql-parser/
      *
-     * @return An associative array containing the parsed SQL
+     * @param string $sql The SQL statement to parse
      *
-     * @throws Exception If the SQL was empty
+     * @return array An associative array containing the parsed SQL
+     *
+     * @throws Exception If $sql was empty
      * ------------------------------------------------------------------------------------------
      */
 
@@ -316,15 +318,15 @@ abstract class aRdbmsDestinationAction extends aAction
 
     } // parseSql()
 
-    /* ------------------------------------------------------------------------------------------
-     * Parse an SQL SELECT statement and return the selected colum names.
-     * @ See https://code.google.com/p/php-sql-parser/
+    /** -----------------------------------------------------------------------------------------
+     * Parse an SQL SELECT statement and return the fields (columns) that are being queried.
+     * @see https://code.google.com/p/php-sql-parser/
      *
-     * @param $sql The SQL statement to parse
+     * @param string $sql The SQL statement to parse
      *
-     * @return An array containing the parsed column names
+     * @return array A lit of the parsed fieldnames
      *
-     * @throws Exception If the SQL was empty
+     * @throws Exception If $sql was empty
      * @throws Exception If there was no SELECT clause detected
      * ------------------------------------------------------------------------------------------
      */
@@ -334,8 +336,7 @@ abstract class aRdbmsDestinationAction extends aAction
         $parsedSql = $this->parseSql($sql);
 
         if ( ! array_key_exists("SELECT", $parsedSql) ) {
-            $msg = "Select block not found in parsed SQL";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Select block not found in parsed SQL");
         }
 
         $columnNames = array();
@@ -343,7 +344,8 @@ abstract class aRdbmsDestinationAction extends aAction
         foreach ( $parsedSql['SELECT'] as $item ) {
             if ( array_key_exists('alias', $item)
                  && $item['alias']['as']
-                 && array_key_exists('name', $item['alias']) ) {
+                 && array_key_exists('name', $item['alias'])
+            ) {
                 $columnNames[] = $item['alias']['name'];
             } else {
                 $pos = strrpos($item['base_expr'], ".");
@@ -355,19 +357,18 @@ abstract class aRdbmsDestinationAction extends aAction
 
     } // getSqlColumnNames()
 
-    /* ------------------------------------------------------------------------------------------
-     * Compare the columns from the table object to those parsed from the SQL SELECT clause and verify
-     * that all of the parsed SQL columns are present in the table object. If the table object
-     * contains all columns parsed from SELECT clause of the SQL statement return the list of parsed
-     * column names, otherwise throw an exception.
+    /** -----------------------------------------------------------------------------------------
+     * Compare the fields from the table object to those parsed from the SQL SELECT
+     * statement and verify that all of the parsed SQL fields are present in the table
+     * object. If the table object contains all columns parsed from SELECT clause of the
+     * SQL statement return the list of parsed column names, otherwise throw an exception.
      *
-     * @param $sql The SQL statement to parse.
-     * @param $table A Table object containing a table definition
+     * @param string $sql The SQL statement to parse.
+     * @param Table $table An object containing the table definition
      *
-     * @return An array containing all columns in the SELECT clause of the $sql parameter.
+     * @return array A list of all field names found in $sql
      *
-     * @throws Exception If any of the columns from the SQL SELECT clause were not found in the Table
-     *   object
+     * @throws Exception If any of the fields from $sql were not found in the table object
      * ------------------------------------------------------------------------------------------
      */
 
@@ -378,27 +379,30 @@ abstract class aRdbmsDestinationAction extends aAction
         $missingColumnNames = array_diff($sqlColumnNames, $tableColumnNames);
 
         if ( 0 != count($missingColumnNames) ) {
-            $msg = "The following columns from the SQL SELECT were not found in table definition for '{$table->name}': " .
-                implode(", ", $missingColumnNames);
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                sprintf(
+                    "The following columns from the SQL SELECT were not found in table definition for '%s': %s",
+                    $table->name,
+                    implode(", ", $missingColumnNames)
+                )
+            );
         }
 
         return $sqlColumnNames;
 
     } // verifySqlColumns()
 
-    /* ------------------------------------------------------------------------------------------
-     * Manage an ETL tables. Based on the table object, create a new table or alter an existing table
-     * to bring it in line with the configuration in the table object. If we are in dryrun mode, do
-     * not perform any actions, only logging.
+    /** -----------------------------------------------------------------------------------------
+     * Manage an ETL table in a data endpoint to bring it in line with the structure
+     * specified in the table object. This includes creating a new table or alter an
+     * existing table.  If we are in dryrun mode, do not perform any actions, only
+     * logging.
      *
-     * @param $table A Table object
-     * @param $endpoint The destination data endpoint where the table will be created
+     * @param Table $table An object describing the desired table structure
+     * @param iDataEndpoint $endpoint The destination data endpoint where the table will
+     *   be created/altered
      *
-     * @return The Table object generated from the table configuration file
-     *
-     * @throws Exception If any query data was not int the correct format.
-     * @throws Exception If the ETLOverseerOptions have not been set.
+     * @return Table The table object to support method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -412,12 +416,12 @@ abstract class aRdbmsDestinationAction extends aAction
 
         if ( false === $existingTable->discover($table->name, $endpoint) ) {
 
-            $this->logger->notice("Table " . $table->getFullName() . " does not exist, creating.");
+            $this->logger->notice(sprintf("Table %s does not exist, creating.", $table->getFullName()));
 
             $sqlList = $table->getSql();
 
             foreach ( $sqlList as $sql ) {
-                $this->logger->debug("Create table SQL " . $endpoint . ":\n$sql");
+                $this->logger->debug(sprintf("Create table SQL %s:\n%s", $endpoint, $sql));
                 if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                     $endpoint->getHandle()->execute($sql);
                 }
@@ -428,10 +432,10 @@ abstract class aRdbmsDestinationAction extends aAction
             $sqlList = $existingTable->getAlterSql($table);
 
             if ( false !== $sqlList ) {
-                $this->logger->notice("Altering table " . $existingTable->getFullName());
+                $this->logger->notice(sprintf("Altering table %s", $existingTable->getFullName()));
 
                 foreach ( $sqlList as $sql ) {
-                    $this->logger->debug("Alter table SQL " . $endpoint . ":\n$sql");
+                    $this->logger->debug(sprintf("Alter table SQL %s:\n%s", $endpoint, $sql));
                     if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                         $endpoint->getHandle()->execute($sql);
                     }
