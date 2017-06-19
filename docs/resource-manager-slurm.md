@@ -7,14 +7,9 @@ Helper Script
 
 Open XDMoD includes a helper script to pull data from Slurm's `sacct`
 into Open XDMoD's shredder system. This script can be used in place of
-the shredder to import data. To shred data for all Slurm clusters, use
-this command:
-
-    $ xdmod-slurm-helper
-
-If you have multiple Slurm clusters, but only want to shred data from
-one of them, then use this command with the name of a single cluster
-that would be used with `sacct`'s `--clusters` option:
+the shredder to import data. To shred data for a Slurm cluster use this
+command with the name of a single cluster that would be used with
+`sacct`'s `--clusters` option:
 
     $ xdmod-slurm-helper -r mycluster
 

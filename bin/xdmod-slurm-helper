@@ -242,7 +242,7 @@ function getSacctCmdArgs(
         $args[] = '--clusters';
         $args[] = $shredder->getResource();
     } else {
-        $args[] = '--allclusters';
+        throw new Exception('Shredder resource not set.');
     }
 
     $utc = new DateTimeZone('UTC');
@@ -321,14 +321,9 @@ Usage: xdmod-slurm-helper [-v] [-r resource]
         Output warning level logging.
 
     -r, --resource *resource*
-        Shred accounting data for only the specified cluster.  This
-        value will be passed to the sacct --clusters option.  If
-        this option is not specified all clusters will be shredded using
-        the sacct --allclusters option.  You should consistently
-        always or never use this option if you are not explicitly
-        specifying a time range since the cluster name is used to
-        determine the date range.  Unlike the sacct command, only one
-        cluster should be specified.
+        Shred accounting data for the specified cluster.  This value
+        will be passed to the sacct --clusters option.  Unlike the sacct
+        command, only one cluster should be specified.
 
     --start-time *datetime*
         Specify the start date and time to shred from sacct  The
