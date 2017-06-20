@@ -1,5 +1,7 @@
 <?php
 
+use CCR;
+
 class MailWrapper
 {
 
