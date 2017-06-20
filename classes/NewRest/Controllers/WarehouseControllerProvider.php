@@ -637,8 +637,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new BadRequestException('params parameter must be valid JSON');
         }
 
-        if (isset($params['resource_id']) && isset($params['local_job_id'])) {
-            return $this->_getJobByLocalJobId($app, $user, $realm, $params['resource_id'], $params['local_job_id']);
+        if ( (isset($params['resource_id']) && isset($params['local_job_id'])) || isset($params['jobref']) ) {
+            return $this->getJobByPrimaryKey($app, $user, $realm, $params);
         } else {
             $startDate = $this->getStringParam($request, 'start_date', true);
             $endDate = $this->getStringParam($request, 'end_date', true);
@@ -1982,23 +1982,31 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Attempts to retrieve job information given the provided resource / localjob id's.
+     * Attempts to retrieve job information given the provided resource &
+     * localjob id or by the db primary key (called jobref here to avoid end user
+     * confusion between this internal identifier and the job id provided
+     * by the resource-manager).
      *
      * @param Application $app
      * @param \XDUser $user
      * @param string $realm
-     * @param int $resourceId
-     * @param int $localJobId
+     * @param array $searchparams
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \DataWarehouse\Query\Exceptions\AccessDeniedException
      * @throws BadRequestException
      */
-    private function _getJobByLocalJobId(Application $app, \XDUser $user, $realm, $resourceId, $localJobId)
+    private function getJobByPrimaryKey(Application $app, \XDUser $user, $realm, $searchparams)
     {
-        $params = array(
-            new \DataWarehouse\Query\Model\Parameter("resource_id", "=", $resourceId),
-            new \DataWarehouse\Query\Model\Parameter("local_job_id", "=", $localJobId)
-        );
+        if (isset($searchparams['jobref'])) {
+            $params = array(
+                new \DataWarehouse\Query\Model\Parameter('_id', '=', $searchparams['jobref'])
+            );
+        } else {
+            $params = array(
+                new \DataWarehouse\Query\Model\Parameter("resource_id", "=", $searchparams['resource_id']),
+                new \DataWarehouse\Query\Model\Parameter("local_job_id", "=", $searchparams['local_job_id'])
+            );
+        }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
         $query = new $QueryClass($params, "brief");

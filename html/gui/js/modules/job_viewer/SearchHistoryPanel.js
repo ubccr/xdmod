@@ -232,6 +232,23 @@ XDMoD.Module.JobViewer.SearchHistoryPanel = Ext.extend(XDMoD.Module.JobViewer.Se
                         );
                         break;
                     case 'jobid':
+                        title = 'Job Actions';
+                        items.push({
+                            text: 'Get shareable link',
+                            iconCls: 'save_as',
+                            id: 'job-viewer-search-history-context-get-url',
+                            handler: function () {
+                                var params = self.getParams(node);
+                                Ext.Msg.show({
+                                    title: 'URL for ' + node.attributes.text,
+                                    msg: '<p>' + window.location.protocol + '//' + window.location.host + '/#job_viewer?action=show&realm=' + params.realm + '&jobref=' + params.jobid + '<br /><br /></p>' +
+                                         '<p>Note that this link does not change the access permissions on the job data. XDMoD users must already have permission to be able to view the job via this link.</p>',
+                                    buttons: Ext.Msg.OK,
+                                    minWidth: 650,
+                                    icon: Ext.MessageBox.INFO
+                                });
+                            }
+                        });
                         break;
                     case 'infoid':
                         break;
@@ -261,7 +278,7 @@ XDMoD.Module.JobViewer.SearchHistoryPanel = Ext.extend(XDMoD.Module.JobViewer.Se
                         target: 'job-viewer-search-history-context-edit-search',
                         text: hasSearchTerms ?
                             'Edit the selected searches parameters and or selected jobs.' :
-                            'Edit Search is not currently supported for Metric Explorer Searches.'
+                            'Edit Search is not currently supported for searches created from the Metric Explorer or via a sharable link.'
                     });
                 }
 
