@@ -87,9 +87,10 @@ $pdo->execute(
 );
 
 // Create email.
-$mail = new PHPMailer();
-$mail->isSendMail();
-$mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
+$sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
+
+$mail = MailWrapper::initPHPMailer($sender);
+
 $recipient
     = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
     ? xd_utilities\getConfiguration('general', 'debug_recipient')
@@ -136,7 +137,7 @@ try {
 }
 catch (Exception $e) {
     $response['success'] = false;
-    $response['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
+    $response['message'] = $e->getMessage();
 }
 
 echo json_encode($response);

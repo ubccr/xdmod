@@ -88,9 +88,9 @@ switch ($operation) {
 
         $response['success'] = true;
 
-        $mail = new PHPMailer();
-        $mail->isSendMail();
-        $mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
+        $sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
+
+        $mail = MailWrapper::initPHPMailer($sender);
         $title = \xd_utilities\getConfiguration('general', 'title');
         $mail->Subject = "[$title] $subject";
 

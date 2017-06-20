@@ -98,12 +98,13 @@ class XDSamlAuthentication
                 $newUser->saveUser();
             } catch(Exception $e) {
                 error_log('User creation failed: ' . $e->getMessage());
-                throw new Exception('User creation failed: ' . $e->getMessage());
+                return false;
             }
             try {
                 self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != -2));
                 return $newUser;
             } catch (Exception $e) {
+                error_log("Error notifying " . $newUser->getEmailAddress() . ": " . $e->getMessage());
                 return false;
             }
         }
@@ -140,9 +141,9 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
-        $mail = new PHPMailer();
-        $mail->isSendMail();
-        $mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
+        $sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
+
+        $mail = MailWrapper::initPHPMailer($sender);
 
         $recipient
         = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
@@ -167,21 +168,14 @@ class XDSamlAuthentication
         "\nUserame:                  " . $user->getUsername() .
         "\nE-Mail:                   " . $userEmail ;
 
-        if(!empty($samlAttributes)){
+        if(count($samlAttributes) != 0) {
             $body = $body . "\n\n" .
                 "Additional SAML Attributes ----------------------------------\n\n" .
                 print_r($samlAttributes, true);
         }
 
         $mail->Body = $body;
-        try {
-            if(!$mail->send()){
-                error_log("Mail failed to send to: " . $userEmail . "\n" . $mail->ErrorInfo);
-            }
-        } catch (Exception $e) {
-            error_log("Mail failed to send." . $mail->ErrorInfo);
-            throw new Exception('Error sending mail to: ' . $userEmail . "\n" . $e->getMessage() . "\n" . "Mail failed to send: " . $mail->ErrorInfo);
-        }
-        return true;
+
+        $mail->send();
     }
 }

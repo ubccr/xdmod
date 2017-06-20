@@ -25,7 +25,6 @@ if ($user_to_email == NULL) {
 // -----------------------------
 
 $page_title = xd_utilities\getConfiguration('general', 'title');
-$mailer_sender = xd_utilities\getConfiguration('mailer', 'sender_email');
 
 $recipient
     = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
@@ -34,10 +33,10 @@ $recipient
 
 // -------------------
 
-$mail = new PHPMailer();
-$mail->isSendMail();
-$mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
-$mail->setFrom($mailer_sender, 'XDMoD');
+$sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
+
+$mail = MailWrapper::initPHPMailer($sender);
+$mail->setFrom($sender, 'XDMoD');
 $mail->Subject = "$page_title: Password Reset";
 $mail->addAddress($recipient);
 

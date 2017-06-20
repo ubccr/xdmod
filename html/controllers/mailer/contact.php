@@ -65,16 +65,14 @@ if ($captcha_private_key !== '' && !isset($_SESSION['xdUser'])) {
 
 // ----------------------------------------------------------
 
-$mailer_sender = xd_utilities\getConfiguration('mailer', 'sender_email');
+$sender = strtolower(xd_utilities\getConfiguration('mailer', 'sender_email'));
 
 $recipient
   = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
   ? xd_utilities\getConfiguration('general', 'debug_recipient')
   : xd_utilities\getConfiguration('general', 'contact_page_recipient');
 
-$mail = new PHPMailer();
-$mail->isSendMail();
-$mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
+$mail = MailWrapper::initPHPMailer($sender);
 
 switch ($reason) {
   case 'wishlist':
@@ -118,10 +116,8 @@ catch (Exception $e) {
 
 // =====================================================
 
-$mail = new PHPMailer();
-$mail->isSendMail();
-$mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
-$mail->setFrom($mailer_sender, 'XDMoD');
+$mail = MailWrapper::initPHPMailer($sender);
+$mail->setFrom($sender, 'XDMoD');
 $mail->Subject = "Thank you for your $message_type.";
 $mail->addAddress($_POST['email']);
 

@@ -105,14 +105,12 @@ try {
 
     $page_title = xd_utilities\getConfiguration('general', 'title');
     $site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
-    $mailer_sender = xd_utilities\getConfiguration('mailer', 'sender_email');
+    $sender = xd_utilities\getConfiguration('mailer', 'sender_email');
 
     // -------------------
 
-    $mail = new PHPMailer();
-    $mail->isSendMail();
-    $mail->Sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
-    $mail->setFrom($mailer_sender, 'XDMoD');
+    $mail = MailWrapper::initPHPMailer($sender);
+    $mail->setFrom($sender, 'XDMoD');
 
     $mail->Subject = "$page_title: Account Created";
 
