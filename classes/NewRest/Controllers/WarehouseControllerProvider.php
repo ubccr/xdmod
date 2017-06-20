@@ -116,13 +116,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 "type" => "utf8-text",
                 "leaf" => true
             ),
-        \DataWarehouse\Query\RawQueryTypes::PEERS =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS,
-                "dtype" => "infoid",
-                "text" => "Peers",
-                "leaf" => false
-            ),
         \DataWarehouse\Query\RawQueryTypes::EXECUTABLE =>
             array(
                 "infoid" => \DataWarehouse\Query\RawQueryTypes::EXECUTABLE,
@@ -135,6 +128,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
                                     environment.",
                 "type" => "nested",
                 "leaf" => true),
+        \DataWarehouse\Query\RawQueryTypes::PEERS =>
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS,
+                "dtype" => "infoid",
+                "text" => "Peers",
+                'url' => '/rest/v1.0/warehouse/search/jobs/peers',
+                'documentation' => 'Shows the list of other HPC jobs that ran concurrently using the same shared hardware resources.',
+                'type' => 'ganttchart',
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS =>
             array(
                 "infoid" => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS,
@@ -1324,6 +1327,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
             case 'analytics':
                 $results = $this->_getJobData($app, $user, $realm, $jobId, $action, $actionName);
                 break;
+            case 'peers':
+                $start = $this->getIntParam($request, 'start', true);
+                $limit = $this->getIntParam($request, 'limit', true);
+                $results = $this->getJobPeers($app, $user, $realm, $jobId, $start, $limit);
+                break;
             case 'executable':
                 $results = $this->_getJobExecutable($app, $user, $realm, $jobId, $action, $actionName);
                 break;
@@ -1350,6 +1358,83 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         return $results;
+    }
+
+    /**
+     * Return data about a job's peers.
+     *
+     * @param Application $app The router application.
+     * @param XDUser $user the logged in user.
+     * @param $realm data realm.
+     * @param $jobId the unique identifier for the job.
+     * @param $start the start offset (for store paging).
+     * @param $limit the number of records to return (for store paging).
+     * @return json in Extjs.store parsable format.
+     */
+    protected function getJobPeers(Application $app, XDUser $user, $realm, $jobId, $start, $limit)
+    {
+        $jobdata = $this->_getJobDataSet($user, $realm, $jobId, 'internal');
+        if (!$jobdata->hasResults()) {
+            throw new NotFoundException();
+        }
+        $jobresults = $jobdata->getResults();
+        $thisjob = $jobresults[0];
+
+        $i = 0;
+
+        $result = array(
+            'series' => array(
+                array(
+                    'name' => 'Walltime',
+                    'data' => array(
+                        array(
+                            'x' => $i++,
+                            'low' => $thisjob['start_time_ts'] * 1000.0,
+                            'high' => $thisjob['end_time_ts'] * 1000.0
+                        )
+                    )
+                ),
+                array(
+                    'name' => 'Walltime',
+                    'data' => array()
+                )
+            ),
+            'categories' => array(
+                'Current'
+            ),
+            'schema' => array(
+                'timezone' => $thisjob['timezone'],
+                'ref' => array(
+                    'realm' => $realm,
+                    'jobid' => $jobId,
+                    "text" => $thisjob['resource'] . '-' . $thisjob['local_job_id']
+                )
+            )
+        );
+
+        $dataset = $this->_getJobDataSet($user, $realm, $jobId, 'peers');
+        foreach ($dataset->getResults() as $index => $jobpeer) {
+            if ( ($index >= $start) && ($index < ($start + $limit))) {
+                $result['series'][1]['data'][] = array(
+                    'x' => $i++,
+                    'low' => $jobpeer['start_time_ts'] * 1000.0,
+                    'high' => $jobpeer['end_time_ts'] * 1000.0,
+                    'ref' => array(
+                        'realm' => $realm,
+                        'jobid' => $jobpeer['jobid'],
+                        'local_job_id' => $jobpeer['local_job_id'],
+                        'resource' => $jobpeer['resource']
+                    )
+                );
+                $result['categories'][] = $jobpeer['resource'] . '-' . $jobpeer['local_job_id'];
+            }
+        }
+
+        return  $app->json(array(
+            'success' => true,
+            'data' => array($result),
+            'total' => count($dataset->getResults())
+        ));
     }
 
     /**
@@ -1570,19 +1655,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
                     $tsid['type'] = "timeseries";
                     $tsid['dtype'] = "tsid";
                     $result[] = $tsid;
-                }
-                return $app->json(array('success' => true, "results" => $result));
-                break;
-            case "" . \DataWarehouse\Query\RawQueryTypes::PEERS:
-                $dataset = $this->_getJobDataSet($user, $realm, $jobId, "peers");
-                $result = array();
-                foreach ($dataset->getResults() as $jobpeer) {
-                    $result[] = array(
-                        "text" => $jobpeer['resource'] . '-' . $jobpeer['local_job_id'],
-                        "dtype" => "peerid",
-                        "peerid" => $jobpeer['jobid'],
-                        "qtip" => "Job Owner: " . $jobpeer['name'],
-                        "leaf" => true);
                 }
                 return $app->json(array('success' => true, "results" => $result));
                 break;
