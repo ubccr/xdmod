@@ -1,6 +1,6 @@
 <?php
 
-use CCR;
+namespace CCR;
 
 class MailWrapper
 {
