@@ -1360,6 +1360,17 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $results;
     }
 
+    /**
+     * Return data about a job's peers.
+     *
+     * @param Application $app The router application.
+     * @param XDUser $user the logged in user.
+     * @param $realm data realm.
+     * @param $jobId the unique identifier for the job.
+     * @param $start the start offset (for store paging).
+     * @param $limit the number of records to return (for store paging).
+     * @return json in Extjs.store parsable format.
+     */
     protected function getJobPeers(Application $app, XDUser $user, $realm, $jobId, $start, $limit)
     {
         $jobdata = $this->_getJobDataSet($user, $realm, $jobId, 'internal');

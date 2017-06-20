@@ -66,9 +66,13 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
 
             var i;
             for (i = 0; i < record.data.series.length; i++) {
-                record.data.series[i].events = {
-                    click: clickEvent
-                };
+                if (i > 0) {
+                    // Only add clicks for the other peer jobs not this job.
+                    record.data.series[i].cursor = 'pointer';
+                    record.data.series[i].events = {
+                        click: clickEvent
+                    };
+                }
                 this.chart.addSeries(record.data.series[i], false);
             }
 
