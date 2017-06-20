@@ -1,0 +1,15 @@
+language: none
+build:
+    pre_ci_boot:
+        image_name: tas-tools-ext-01.ccr.xdmod.org/centos7-xdmod6.6.0
+        image_tag: version1
+        pull: true
+        options: "--user root -e HOME=/root"
+    ci:
+        - composer install
+        - ~/bin/buildrpm xdmod
+        - rpm -Uvh --oldpackage ~/rpmbuild/RPMS/*/*.rpm
+        - ~/bin/services start
+        - cp ~/assets/secrets open_xdmod/modules/xdmod/integration_tests/.secrets
+        - composer --dev install
+        - cd open_xdmod/modules/xdmod/integration_tests && /usr/bin/env PATH=$SHIPPABLE_BUILD_DIR/vendor/bin:$PATH ./runtests.sh
