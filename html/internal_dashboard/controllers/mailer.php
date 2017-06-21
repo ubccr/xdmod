@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../../configuration/linker.php';
 
+use CCR\MailWrapper;
 use CCR\DB;
 use Xdmod\EmailTemplate;
 
@@ -88,16 +89,14 @@ switch ($operation) {
 
         $response['success'] = true;
 
-        $sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
-
-        $mail = MailWrapper::initPHPMailer($sender);
         $title = \xd_utilities\getConfiguration('general', 'title');
+        $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
+
+        $mail = MailWrapper::initPHPMailer($contact, $title);
         $mail->Subject = "[$title] $subject";
 
         // Send a copy of the email to the contact page recipient.
-        $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
         $mail->addAddress($contact, 'Undisclosed Recipients');
-        $mail->setFrom($contact, $title);
 
         $bcc_emails = explode(',', $target_addresses);
 

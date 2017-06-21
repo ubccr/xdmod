@@ -1,5 +1,7 @@
 <?php
 
+use CCR\MailWrapper;
+
 // Operation: user_admin->create_user
 
 $creator = \xd_security\assertDashboardUserLoggedIn();
@@ -105,12 +107,10 @@ try {
 
     $page_title = xd_utilities\getConfiguration('general', 'title');
     $site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
-    $sender = xd_utilities\getConfiguration('mailer', 'sender_email');
 
     // -------------------
 
-    $mail = MailWrapper::initPHPMailer($sender);
-    $mail->setFrom($sender, 'XDMoD');
+    $mail = MailWrapper::initPHPMailer(\xd_utilities\getConfiguration('mailer', 'sender_email'), 'XDMoD');
 
     $mail->Subject = "$page_title: Account Created";
 

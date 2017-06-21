@@ -1,5 +1,7 @@
 <?php
 
+use CCR\MailWrapper;
+
 // Operation: user_admin->pass_reset
 
 $params = array('uid' => RESTRICTION_UID);
@@ -33,10 +35,7 @@ $recipient
 
 // -------------------
 
-$sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
-
-$mail = MailWrapper::initPHPMailer($sender);
-$mail->setFrom($sender, 'XDMoD');
+$mail = MailWrapper::initPHPMailer(\xd_utilities\getConfiguration('mailer', 'sender_email'), 'XDMoD');
 $mail->Subject = "$page_title: Password Reset";
 $mail->addAddress($recipient);
 

@@ -2,6 +2,7 @@
 
 namespace Authentication\SAML;
 
+use CCR\MailWrapper;
 use \Exception;
 
 class XDSamlAuthentication
@@ -141,9 +142,8 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
-        $sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
 
-        $mail = MailWrapper::initPHPMailer($sender);
+        $mail = MailWrapper::initPHPMailer($userEmail, \xd_utilities\getConfiguration('general', 'title'));
 
         $recipient
         = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
@@ -158,7 +158,6 @@ class XDSamlAuthentication
 
         $userEmail = $user->getEmailAddress();
         if ($userEmail != NO_EMAIL_ADDRESS_SET) {
-            $mail->setFrom($userEmail);
             $mail->addReplyTo($userEmail);
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+use CCR\MailWrapper;
+
 // Operation: mailer->contact
 
 $response = array();
@@ -65,14 +67,12 @@ if ($captcha_private_key !== '' && !isset($_SESSION['xdUser'])) {
 
 // ----------------------------------------------------------
 
-$sender = strtolower(xd_utilities\getConfiguration('mailer', 'sender_email'));
-
 $recipient
   = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
   ? xd_utilities\getConfiguration('general', 'debug_recipient')
   : xd_utilities\getConfiguration('general', 'contact_page_recipient');
 
-$mail = MailWrapper::initPHPMailer($sender);
+$mail = MailWrapper::initPHPMailer($_POST['email']);
 
 switch ($reason) {
   case 'wishlist':
@@ -92,7 +92,6 @@ $mail->addAddress($recipient);
 //$mail->setFrom($mailer_sender, 'XDMoD');
 
 //Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
-$mail->setFrom($_POST['email']);
 $mail->addReplyTo($_POST['email']);
 
 $timestamp = date('m/d/Y, g:i:s A', $_POST['timestamp']);
@@ -116,8 +115,7 @@ catch (Exception $e) {
 
 // =====================================================
 
-$mail = MailWrapper::initPHPMailer($sender);
-$mail->setFrom($sender, 'XDMoD');
+$mail = MailWrapper::initPHPMailer(\xd_utilities\getConfiguration('mailer', 'sender_email'), 'XDMoD');
 $mail->Subject = "Thank you for your $message_type.";
 $mail->addAddress($_POST['email']);
 

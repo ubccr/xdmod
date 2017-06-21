@@ -1,5 +1,6 @@
 <?php
 
+use CCR\MailWrapper;
 use CCR\DB;
 
 // Operation: mailer->sign_up
@@ -87,9 +88,8 @@ $pdo->execute(
 );
 
 // Create email.
-$sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
 
-$mail = MailWrapper::initPHPMailer($sender);
+$mail = MailWrapper::initPHPMailer($_POST['email']);
 
 $recipient
     = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
@@ -99,7 +99,6 @@ $mail->addAddress($recipient);
 
 // Original sender's e-mail must be in the "From" field for the XDMoD
 // Request Tracker to function
-$mail->setFrom($_POST['email']);
 $mail->addReplyTo($_POST['email']);
 
 $title = xd_utilities\getConfiguration('general', 'title');

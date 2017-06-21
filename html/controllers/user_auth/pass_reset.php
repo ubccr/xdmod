@@ -1,5 +1,7 @@
 <?php
 
+use CCR\MailWrapper;
+
 // Operation: user_auth->pass_reset
 
 //require_once dirname(__FILE__).'/../../../classes/MailTemplates.php';
@@ -38,10 +40,7 @@ $recipient
 
 // -------------------
 
-$sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
-
-$mail = MailWrapper::initPHPMailer($sender);
-$mail->setFrom($sender, 'XDMoD');
+$mail = MailWrapper::initPHPMailer(\xd_utilities\getConfiguration('mailer', 'sender_email'), 'XDMoD');
 $mail->Subject = "$page_title: Password Reset";
 $mail->addAddress($recipient);
 

@@ -1,5 +1,6 @@
 <?php
 
+use CCR\MailWrapper;
 use CCR\DB;
 use CCR\Log;
 use DataWarehouse\Access\Usage;
@@ -2045,11 +2046,8 @@ class XDReportManager
         $frequency = '',
         $additional_config = array()
     ) {
-        $sender = strtolower(\xd_utilities\getConfiguration('mailer', 'sender_email'));
 
-        $mail = MailWrapper::initPHPMailer($sender);
-
-        $mail->setFrom($sender, 'XDMoD');
+        $mail = MailWrapper::initPHPMailer(xd_utilities\getConfiguration('mailer', 'sender_email'), 'XDMoD');
 
         $frequency = (!empty($frequency)) ? ' '.$frequency : $frequency;
 
