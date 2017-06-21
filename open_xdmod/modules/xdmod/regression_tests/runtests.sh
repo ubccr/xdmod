@@ -10,8 +10,7 @@ then
     false
 fi
 
-#PHPUNITARGS=""
-PHPUNITARGS="--stop-on-error --stop-on-failure"
+PHPUNITARGS=""
 if [ "$1" = "coverage" ];
 then
     PHPUNITARGS="${PHPUNITARGS} --coverage-html ../../../../html/phpunit"
@@ -26,6 +25,3 @@ if [ ! -x "$phpunit" ]; then
 fi
 
 $phpunit ${PHPUNITARGS} .
-exit $?
-
-#phpunit `dirname $0`

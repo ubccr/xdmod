@@ -104,7 +104,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         if(!empty($envUserrole)){
             self::$helper->authenticate($envUserrole);
         }
-        $envBaseDir = getenv('REG_TEST_REGEX');
+        $envBaseDir = getenv('REG_TEST_BASE');
         if(!empty($envBaseDir)){
             self::$baseDir = $envBaseDir;
         }
@@ -113,15 +113,17 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         if(!empty($envRegex)){
             self::$replaceRegex = explode(',', $envRegex);
         }
-        $envReplace = getenv('REG_TEST_REGEX');
+        $envReplace = getenv('REG_TEST_REPLACE');
         if(!empty($envReplace)){
             self::$replacements = explode(',', $envReplace);
         }
         $envFormat = getenv('REG_TEST_FORMAT');
+        if(empty($envFormat)){
+            $envFormat = 'csv';
+        }
         $expectedEndpoint = getenv('REG_TEST_ALT_EXPECTED');
-
         if(empty($expectedEndpoint)){
-            $expectedEndpoint = parse_url(self::$helper->getSiteurl(), PHP_URL_HOST);
+            $expectedEndpoint = 'reference';
         }
 
         $testData = array();
@@ -144,15 +146,15 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     $testReqData,
                     null
                 );
-                $expectedHostFile = self::$baseDir .
+                $expectedFile = self::$baseDir .
                     '/expected/' .
                     $expectedEndpoint .
                     '/' . $testName .
                     '/' . $k .
                     '-' . (empty($envUserrole) ? 'public' : $envUserrole) .
                     '.csv';
-                if (file_exists($expectedHostFile) ) {
-                    $testCase[2] = file_get_contents($expectedHostFile);
+                if (file_exists($expectedFile) ) {
+                    $testCase[2] = file_get_contents($expectedFile);
                 }
                 $testData[] = $testCase;
             }
