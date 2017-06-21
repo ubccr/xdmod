@@ -14,43 +14,6 @@ if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
 }
 
-/*
-var referenceRequest = {
-    'public_user': 'false',
-    'realm': 'Jobs',
-    'group_by': 'nodecount',
-    'statistic': 'job_count',
-    'start_date': '2017-04-01',
-    'end_date': '2017-04-30',
-    'timeframe_label': 'Previous+month',
-    'scale': '1',
-    'aggregation_unit': 'Auto',
-    'dataset_type': 'aggregate',
-    'thumbnail': 'n',
-    'query_group': 'tg_usage',
-    'display_type': 'h_bar',
-    'combine_type': 'stack',
-    'limit': '10',
-    'offset': '0',
-    'log_scale': 'n',
-    'show_guide_lines': 'y',
-    'show_trend_line': 'n',
-    'show_error_bars': 'n',
-    'show_aggregate_labels': 'n',
-    'show_error_labels': 'n',
-    'hide_tooltip': 'false',
-    'show_title': 'y',
-    'width': '916',
-    'height': '484',
-    'legend_type': 'bottom_center',
-    'font_size': '3',
-    'drilldowns': '[object+Object]',
-    'resource': '1',
-    'format': 'csv',
-    'inline': 'n',
-    'operation': 'get_data'
-    */
-
 var referenceRequest = {
     public_user: 'true',
     realm: 'Accounts',
