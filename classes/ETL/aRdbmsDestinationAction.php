@@ -47,6 +47,27 @@ abstract class aRdbmsDestinationAction extends aAction
     protected $etlDestinationTableList = array();
 
     /** -----------------------------------------------------------------------------------------
+     * A 2-dimensional associative array where the keys are ETL table names and the values
+     * are a mapping between ETL table columns (keys) and source query columns (values).
+     *
+     * @var array
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $destinationFieldMappings = array();
+
+    /** -----------------------------------------------------------------------------------------
+     * Set to TRUE to indicate a destination field mapping was not specified in the
+     * configuration file and was auto-generated using all source query columns.  This can
+     * be used for optimizations later.
+     *
+     * @var boolean
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $fullSourceToDestinationMapping = false;
+
+    /** -----------------------------------------------------------------------------------------
      * @see aAction::__construct()
      * ------------------------------------------------------------------------------------------
      */
@@ -61,10 +82,7 @@ abstract class aRdbmsDestinationAction extends aAction
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a
-     * target database we must parse the definition of the target table.
-     *
-     * @param EtlOverseerOptions $etloverseeroptions The options provided to the overseer.
+     * @see iAction::initialize()
      *
      * @throws Exception if any query data was not in the correct format.
      * ------------------------------------------------------------------------------------------
@@ -133,13 +151,10 @@ abstract class aRdbmsDestinationAction extends aAction
         // A table definition can be either:
         //
         // (1) A single table definition object (current default for a single destination
-        // table) or (2) An array of one or more table definitions (how we will initially
-        // handle multiple destination tables).
-        //
-        // In the future, we will support an object with key value pairs where the key is
-        // the table name and the value is the definition object. In the mean time, we
-        // will generate this format here so the rest of the code does not need to change
-        // later.
+        // table) or (2) An array of one or more table definitions. Both are stored
+        // internally as an associative array where the key is the name of the table. We
+        // could also represent multiple tables using the name as the key but I can't
+        // think of a current use case where we would need to do this
 
         // Normalize the table definition into a set of key-value pairs where the key is the
         // table name and the value is the definition object.
@@ -163,15 +178,15 @@ abstract class aRdbmsDestinationAction extends aAction
                     sprintf("Created ETL destination table object for table definition key '%s'", $etlTable->name)
                 );
                 $etlTable->schema = $this->destinationEndpoint->getSchema();
-                $tableName = $etlTable->getFullName();
 
-                if ( ! is_string($tableName) || empty($tableName) ) {
+                if ( ! is_string($etlTable->name) || empty($etlTable->name) ) {
                     $this->logAndThrowException("Destination table name must be a non-empty string");
                 }
 
                 $this->etlDestinationTableList[$etlTable->name] = $etlTable;
             } catch (Exception $e) {
                 $this->logAndThrowException(sprintf("%s in file '%s'", $e->getMessage(), $this->definitionFile));
+                continue;
             }
 
         }  // foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition )
@@ -183,6 +198,227 @@ abstract class aRdbmsDestinationAction extends aAction
 
         return $numTableDefinitions;
     }  // createDestinationTableObjects()
+
+    /** -----------------------------------------------------------------------------------------
+     * Parse and verify the mapping between source record fields and destination table
+     * fields. If a mapping has not been provided, generate one automatically. The
+     * destination field map specifies a mapping from source record fields to destination
+     * table fields for one or more destination tables.
+     *
+     * Use Cases:
+     *
+     * 1. There are >= 1 destination tables and no destination field map
+     *
+     * Automatically create the destination field map by mapping source fields to
+     * destination table fields **where the fields match, excluding non-matching fields.**
+     * Log a warning for any fields that do not match.
+     *
+     * 2. There are >= 1 destination tables and a destination field map is specified.
+     *
+     * Verify that the destination fields specified in the mapping are valid fields for
+     * the destination table that they references. Also verify that the source fields are
+     * valid. It is not required that all source fields are mapped to destination fields
+     * but care should be exercised that resonable defaults are specified in the table
+     * definitions.
+     *
+     * @param array An array containing the fields available from the source record
+     *
+     * @return array | null A 2-dimensional array where the keys match etl table
+     *   definitions and values map table columns (destination) to query result columns
+     *   (source), or null if no destination record map was specified.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function parseDestinationFieldMap(array $sourceFields)
+    {
+        $this->destinationFieldMappings = array();
+
+        if ( ! isset($this->parsedDefinitionFile->destination_record_map) ) {
+
+            $this->destinationFieldMappings = $this->generateDestinationFieldMap($sourceFields);
+
+        } elseif ( ! is_object($this->parsedDefinitionFile->destination_record_map) ) {
+
+            $this->logAndThrowException("destination_record_map must be an object");
+
+        } else {
+
+            foreach ( $this->parsedDefinitionFile->destination_record_map as $etlTableKey => $fieldMap ) {
+
+                if ( ! is_object($fieldMap) ) {
+                    $this->logAndThrowException(
+                        sprintf("destination_record_map for table '%s' must be an object", $etlTableKey)
+                    );
+                } elseif ( 0 == count(array_keys((array) $fieldMap)) ) {
+                    $this->logger->warning(
+                        sprintf("destination_record_map for table '%s' is empty", $etlTableKey)
+                    );
+                }
+
+                // Convert the field map from an object to an associative array where keys
+                // are destination table columns and values are source record fields
+                $this->destinationFieldMappings[$etlTableKey] = (array) $fieldMap;
+
+            }
+        }
+
+        $success = true;
+        $success &= $this->verifyDestinationMapKeys();
+        $success &= $this->verifyDestinationMapValues($sourceFields);
+
+        return $success;
+
+    }  // parseDestinationFieldMap()
+
+    /** -----------------------------------------------------------------------------------------
+     * Generate a destination field map for each destination table based on the
+     * intersection of the source record fields and table fields. Only fields common to
+     * both source and destination are mapped.
+     *
+     * @param array An array containing the fields available from the source record
+     *
+     * @return array A 2-dimensional array where the keys match ETL table names and values
+     *  are a 2-dimensional array mapping destination table fields to source record
+     *  fields.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function generateDestinationFieldMap(array $sourceFields)
+    {
+        $destinationFieldMap = array();
+
+        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
+            $availableTableFields = $etlTable->getColumnNames();
+
+            // Map common fields, log fields that are not mapped
+
+            $commonFields = array_intersect($availableTableFields, $sourceFields);
+            $unmappedSourceFields = array_diff($sourceFields, $availableTableFields);
+
+            $destinationFieldMap[$etlTableKey] = array_combine($commonFields, $commonFields);
+
+            if ( 0 != count($unmappedSourceFields) ) {
+                $this->logger->debug(
+                    sprintf(
+                        "The following source record fields were not mapped for table %s: (%s)",
+                        $etlTableKey,
+                        implode(", ", $unmappedSourceFields)
+                    )
+                );
+            }
+        }
+
+        return $destinationFieldMap;
+
+    }  // generateDestinationFieldMap()
+
+    /** -----------------------------------------------------------------------------------------
+     * Verify that the destination map keys are valid table fields. Remember that the
+     * destination record map translates source (query, structured file, etc.) fields to
+     * destination table fields. The keys in the map must be valid destination table
+     * fields.
+     *
+     * @return bool TRUE on success
+     *
+     * @throws Exception If a key is not a valid table field.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function verifyDestinationMapKeys()
+    {
+        // For each table field specified in the destination table field mapping, verify
+        // that it is present in one of the destination table definitions.
+
+        $undefinedFields = array();
+
+        foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationTableMap ) {
+            if ( ! array_key_exists($etlTableKey, $this->etlDestinationTableList) ) {
+                $this->logAndThrowException(
+                    sprintf("Unknown table '%s' referenced in destination_record_map", $etlTableKey)
+                );
+            }
+            $availableTableFields = $this->etlDestinationTableList[$etlTableKey]->getColumnNames();
+            // Remember that the keys in the field map are table field names
+            $destinationTableFields = array_keys($destinationTableMap);
+            $missing = array_diff($destinationTableFields, $availableTableFields);
+
+            if ( 0  != count($missing) ) {
+                $undefinedFields[] = sprintf(
+                    "Table '%s' has undefined table columns/keys (%s)",
+                    $etlTableKey,
+                    implode(",", $missing)
+                );
+            }
+        }
+
+        if ( 0 != count($undefinedFields) ) {
+            $this->logAndThrowException(
+                sprintf(
+                    "Undefined keys (destination table fields) in ETL destination_record_map: (%s)",
+                    implode(", ", $undefinedFields)
+                )
+            );
+        }
+
+        return true;
+
+    }  // verifyDestinationMapKeys()
+
+    /** -----------------------------------------------------------------------------------------
+     * Verify that the destination map values are valid source record fields. Remember that the
+     * destination record map translates source (query, structured file, etc.) fields to
+     * destination table fields. The values in the map must be valid source record fields.
+     *
+     * @param array An array containing the fields available from the source record
+     *
+     * @return bool TRUE on success
+     *
+     * @throws Exception If a value is not a valid source record field.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function verifyDestinationMapValues(array $sourceFields)
+    {
+        $undefinedFields = array();
+
+        foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationTableMap ) {
+            if ( ! array_key_exists($etlTableKey, $this->etlDestinationTableList) ) {
+                $this->logAndThrowException(
+                    sprintf("Unknown table '%s' referenced in destination_record_map", $etlTableKey)
+                );
+            }
+
+            $missing = array_diff($destinationTableMap, $sourceFields);
+
+            if ( 0  != count($missing) ) {
+                $missing = array_map(
+                    function ($k, $v) {
+                        return "$k = $v";
+                    },
+                    array_keys($missing),
+                    $missing
+                );
+                $undefinedFields[] = sprintf(
+                    "Table '%s' has undefined source query fields for keys (%s)",
+                    $etlTableKey,
+                    implode(",", $missing)
+                );
+            }
+
+        }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
+
+        if ( 0 != count($undefinedFields) ) {
+            $this->logAndThrowException(
+                sprintf(
+                    "Undefined values (source record fields) in ETL destination_record_map: (%s)",
+                    implode(", ", $undefinedFields)
+                )
+            );
+        }
+
+        return true;
+
+    }  // verifyDestinationMapValues()
 
     /** -----------------------------------------------------------------------------------------
      * Truncate records from the destination table. Note that

@@ -105,28 +105,6 @@ class pdoIngestor extends aIngestor
     const NET_WRITE_TIMEOUT_SECONDS_PER_FILE_CHUNK = 60;
 
     /** -----------------------------------------------------------------------------------------
-     * A 2-dimensional associative array where the keys are ETL table definition keys and
-     * the values are a mapping between ETL table columns (keys) and source query columns
-     * (values).
-     *
-     * @var array
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected $destinationFieldMappings = array();
-
-    /** -----------------------------------------------------------------------------------------
-     * Set to TRUE to indicate a destination field mapping was not specified in the
-     * configuration file and was auto-generated using all source query columns.  This can
-     * be used for optimizations later.
-     *
-     * @var boolean
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected $fullSourceToDestinationMapping = false;
-
-    /** -----------------------------------------------------------------------------------------
      * Query used for extracting data from the source endpoint.
      *
      * @var string | null
@@ -145,15 +123,14 @@ class pdoIngestor extends aIngestor
     protected $etlSourceQuery = null;
 
     /** -----------------------------------------------------------------------------------------
-     * An array containing the field names extracted from the source query
+     * An array containing the field names available from the source record (query,
+     * structured file, etc.)
      *
      * @var array | null
      * ------------------------------------------------------------------------------------------
      */
 
-    protected $availableSourceQueryFields = null;
-
-    // Note these values are used so we don't have to escape quotes and such.
+    protected $sourceRecordFields = null;
 
     /** -----------------------------------------------------------------------------------------
      * Line separator for MySQL LOAD DATA INFILE LINES TERMINATED BY.
@@ -184,6 +161,8 @@ class pdoIngestor extends aIngestor
 
     /** -----------------------------------------------------------------------------------------
      * General setup.
+     *
+     * @see iAction::__construct()
      *
      * @param aOptions $options Options specific to this Ingestor
      * @param EtlConfiguration $etlConfig Parsed configuration options for this ETL
@@ -225,11 +204,21 @@ class pdoIngestor extends aIngestor
         // Get the handles for the various database endpoints
 
         if ( ! $this->utilityEndpoint instanceof iRdbmsEndpoint ) {
-            $this->logAndThrowException("Utility endpoint does not implement of ETL\\DataEndpoint\\iRdbmsEndpoint");
+            $this->logAndThrowException(
+                sprintf(
+                    "Utility endpoint %s does not implement ETL\\DataEndpoint\\iRdbmsEndpoint",
+                    get_class($this->utilityEndpoint)
+                )
+            );
         }
 
         if ( ! $this->sourceEndpoint instanceof iRdbmsEndpoint ) {
-            $this->logAndThrowException("Source endpoint is not an instance of ETL\\DataEndpoint\\iRdbmsEndpoint");
+            $this->logAndThrowException(
+                sprintf(
+                    "Source endpoint %s does not implement ETL\\DataEndpoint\\iRdbmsEndpoint",
+                    get_class($this->sourceEndpoint)
+                )
+            );
         }
 
         if ( "mysql" == $this->destinationHandle->_db_engine ) {
@@ -277,163 +266,18 @@ class pdoIngestor extends aIngestor
         // Get the list of available source query fields. If we have described the source query in
         // the JSON config, use the record keys otherwise we need to parse the SQL string.
 
-        $this->availableSourceQueryFields =
+        $this->sourceRecordFields =
             ( null !== $this->etlSourceQuery
               ? array_keys($this->etlSourceQuery->records)
               : $this->getSqlColumnNames($this->sourceQueryString) );
 
-        $this->destinationFieldMappings = $this->getDestinationFields();
-
-        // Generate and verify destination fields.
-        //
-        // Use Cases:
-        //
-        // >= 1 table & mismatch in # tables vs # dest fields = error
-        // 1 table & 0 field list = create destination fields from query
-        // 1 table & 1 field list = verify columns
-        // >= 1 table & # tables = # dest fields = verify columns
-        //
-        // 1. If a single destination table definition has been provided and destination fields have
-        // not been defined, create the destination fields assuming all of the columns from the
-        // query will be used.
-        //
-        // 2. If multiple destination tables have been defined the destination fields must be
-        // provided in the configuration or a subclass. Verify that the number of tables and
-        // destination field lists match.
-        //
-        // 3. Verify that all destination field mappings are valid.
-
-        if ( 1 == count($this->etlDestinationTableList)
-             && 0 == count($this->destinationFieldMappings) )
-        {
-            // Use all of the source columns as destination fields. Check that the all of the
-            // parsed columns are found in the table definition. If not, throw an error and the
-            // developer will need to provide them.
-
-            reset($this->etlDestinationTableList);
-            $etlTableKey = key($this->etlDestinationTableList);
-
-            // We only need to parse the SQL if it has been provided as a string, otherwise use:
-            // array_keys($this->etlSourceQuery->records);
-
-            $this->destinationFieldMappings[$etlTableKey] =
-                array_combine($this->availableSourceQueryFields, $this->availableSourceQueryFields);
-            $this->logger->debug("Destination fields parsed from source query (table definition key '$etlTableKey'): " .
-                                 implode(", ", $this->destinationFieldMappings[$etlTableKey]));
-            $this->fullSourceToDestinationMapping = true;
-        } elseif ( count($this->etlDestinationTableList) > 1
-                    && count($this->destinationFieldMappings) != count($this->etlDestinationTableList) )
-        {
-            if ( 0 == count($this->destinationFieldMappings) ) {
-                $msg = "destination_field_map must be defined when > 1 table definitions are provided";
-            } else {
-                $msg = "Destination fields missing for destination tables (" .
-                    implode(",", array_diff(array_keys($this->etlDestinationTableList), array_keys($this->destinationFieldMappings))) .
-                    ")";
-            }
-            $this->logAndThrowException($msg);
-        }
-
-        // Ensure that the keys in the destination record map match a defined table
-
-        foreach ( array_keys($this->destinationFieldMappings) as $destinationTableKey ) {
-            if ( ! array_key_exists($destinationTableKey, $this->etlDestinationTableList) ) {
-                $this->logAndThrowException(
-                    sprintf("Destination record map references undefined table: %s", $destinationTableKey)
-                );
-            }
-        }
-
-        // Verify that the destination column keys match the table columns and the values match a
-        // column in the query.
-
-        $undefinedDestinationTableColumns = array();
-        $undefinedSourceQueryColumns = array();
-
-        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
-            $availableTableFields = $etlTable->getColumnNames();
-
-            // Ensure destination table columns exist (keys)
-
-            $destinationTableMap = array_keys($this->destinationFieldMappings[$etlTableKey]);
-            $missing = array_diff($destinationTableMap, $availableTableFields);
-            if ( 0  != count($missing) ) {
-                $undefinedDestinationTableColumns[] = "Table '$etlTableKey' has undefined table columns/keys (" .
-                    implode(",", $missing) . ")";
-            }
-
-            // Ensure source query columns exist (values)
-            $sourceQueryFields = $this->destinationFieldMappings[$etlTableKey];
-            $missing = array_diff($sourceQueryFields, $this->availableSourceQueryFields);
-            if ( 0  != count($missing) ) {
-                $missing = array_map(
-                    function ($k, $v) {
-                        return "$k = $v";
-                    },
-                    array_keys($missing),
-                    $missing
-                );
-                $undefinedSourceQueryColumns[] = "Table '$etlTableKey' has undefined source query records for keys (" .
-                    implode(", ", $missing) . ")";
-            }
-
-        }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
-
-        if ( 0 != count($undefinedDestinationTableColumns) || 0 != count($undefinedSourceQueryColumns) ) {
-            $msg = "Undefined keys or values in ETL destination_record_map. ";
-            if ( 0 != count($undefinedDestinationTableColumns) ) {
-                $msg .= implode("; ", $undefinedDestinationTableColumns) . ", ";
-            }
-            if ( 0 != count($undefinedSourceQueryColumns) ) {
-                $msg .= implode("; ", $undefinedSourceQueryColumns);
-            }
-            $this->logAndThrowException($msg);
-        }
+        $this->parseDestinationFieldMap($this->sourceRecordFields);
 
         $this->initialized = true;
 
         return true;
 
     } // initialize()
-
-    /** -----------------------------------------------------------------------------------------
-     * By default, we will attempt to parse the destination fields from the source query unless this
-     * method returns a non-null value. Child classes may override this method if parsing the source
-     * query is not appropriate.
-     *
-     * @return array | null A 2-dimensional array where the keys match etl table
-     *   definitions and values map table columns (destination) to query result columns
-     *   (source), or null if no destination record map was specified.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function getDestinationFields()
-    {
-        if ( ! isset($this->parsedDefinitionFile->destination_record_map) ) {
-            return null;
-        } elseif ( ! is_object($this->parsedDefinitionFile->destination_record_map) ) {
-            $this->logAndThrowException("destination_fields must be an object where keys match table definition keys");
-        }
-
-        $destinationFieldMappings = array();
-
-        foreach ( $this->parsedDefinitionFile->destination_record_map as $etlTableKey => $fieldMap ) {
-            if ( ! is_object($fieldMap) ) {
-                $this->logAndThrowException(
-                    sprintf("Destination field map for table '%s' must be an object", $etlTableKey)
-                );
-            } elseif ( 0 == count(array_keys((array) $fieldMap)) ) {
-                $this->logger->warning(
-                    sprintf("destination_record_map for '%s' is empty", $etlTableKey)
-                );
-            }
-            // Convert the field map from an object to an associative array. Keys are table columns
-            // (destination) and values are query result columns (source)
-            $destinationFieldMappings[$etlTableKey] = (array) $fieldMap;
-        }
-
-        return $destinationFieldMappings;
-    }  // getDestinationFields()
 
     /** -----------------------------------------------------------------------------------------
      * Get the query to be run against the source data endpoint that will be used to
@@ -1175,7 +1019,7 @@ class pdoIngestor extends aIngestor
 
         reset($this->destinationFieldMappings);
 
-        if ( count($this->availableSourceQueryFields) != count(current($this->destinationFieldMappings)) ) {
+        if ( count($this->sourceRecordFields) != count(current($this->destinationFieldMappings)) ) {
             $this->logger->debug("Mapping a subset of the source query fields");
             return false;
         }
