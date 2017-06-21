@@ -159,7 +159,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         }
         if(empty($testData)){
             $this->markTestIncomplete(
-              'No input, please run assets/scripts/maketest.js'
+                'No input, please run assets/scripts/maketest.js'
             );
         }
         return $testData;
