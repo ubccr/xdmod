@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -e
+
+if [ ! -e ../integration_tests/.secrets ];
+then
+    echo "ERROR missing .secrets file." >&2
+    echo >&2
+    cat README.md >&2
+    false
+fi
+
+#PHPUNITARGS=""
+PHPUNITARGS="--stop-on-error --stop-on-failure"
+if [ "$1" = "coverage" ];
+then
+    PHPUNITARGS="${PHPUNITARGS} --coverage-html ../../../../html/phpunit"
+fi
+
+cd $(dirname $0)
+phpunit="../../../../vendor/bin/phpunit"
+
+if [ ! -x "$phpunit" ]; then
+    echo phpunit not found, run \"composer install\" 1>&2
+    exit 127
+fi
+
+$phpunit ${PHPUNITARGS} .
+exit $?
+
+#phpunit `dirname $0`
