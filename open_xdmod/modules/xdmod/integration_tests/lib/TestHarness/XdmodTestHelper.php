@@ -11,6 +11,8 @@ class XdmodTestHelper
     private $cookie;
     private $verbose;
     private $curl;
+    private $cookiefile;
+    private $userrole = 'public';
 
     public function __construct($config = array())
     {
@@ -34,8 +36,8 @@ class XdmodTestHelper
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
 
-        $cookiefile = tempnam(sys_get_temp_dir(), "xdmodtestcookies.");
-        curl_setopt($this->curl, CURLOPT_COOKIEFILE, $cookiefile);
+        $this->cookiefile = tempnam(sys_get_temp_dir(), "xdmodtestcookies.");
+        curl_setopt($this->curl, CURLOPT_COOKIEFILE, $this->cookiefile);
 
         if (isset($config['decodetextasjson'])) {
             $this->decodeTextAsJson = true;
@@ -113,11 +115,17 @@ class XdmodTestHelper
         if (! isset($this->config['role'][$userrole])) {
             throw new \Exception("User role $userrole not defined in .secrets file");
         }
-
+        $this->userrole = $userrole;
         $this->setauthvariables(null);
         $authresult = $this->post("rest/auth/login", null, $this->config['role'][$userrole]);
         $authtokens = $authresult[0]['results'];
         $this->setauthvariables($authtokens['token']);
+    }
+
+    public function logout()
+    {
+        $logoutResult = $this->post("rest/auth/logout", null, null);
+        $this->setauthvariables(null);
     }
 
     private function docurl()
@@ -194,5 +202,15 @@ class XdmodTestHelper
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
 
         return $this->docurl();
+    }
+    public function getSiteurl(){
+        return $this->siteurl;
+    }
+    public function getUserrole(){
+        return $this->userrole;
+    }
+    public function __destruct() {
+        curl_close($this->curl);
+        unlink($this->cookiefile);
     }
 }
