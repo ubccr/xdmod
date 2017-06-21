@@ -39,14 +39,12 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
 
             var clickEvent = function (evt) {
                 var info = {
+                    action: 'show',
                     title: 'Peers of ' + record.data.schema.ref.text,
                     realm: evt.point.ref.realm,
-                    text: evt.point.category,
-                    job_id: evt.point.ref.jobid,
-                    local_job_id: evt.point.ref.local_job_id,
-                    resource: evt.point.ref.resource
+                    jobref: evt.point.ref.jobid
                 };
-                Ext.History.add('job_viewer?job=' + window.btoa(JSON.stringify(info)));
+                Ext.History.add('job_viewer?' + Ext.urlEncode(info));
             };
 
             while (this.chart.series.length > 0) {
