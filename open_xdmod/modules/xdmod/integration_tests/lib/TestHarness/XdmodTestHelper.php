@@ -209,9 +209,8 @@ class XdmodTestHelper
     public function getUserrole(){
         return $this->userrole;
     }
-    function __destruct() {
-       curl_close($this->curl);
-       unlink($this->cookiefile);
-   }
+    public function __destruct() {
+        curl_close($this->curl);
+        unlink($this->cookiefile);
+    }
 }
-

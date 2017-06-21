@@ -67,7 +67,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 }
                 file_put_contents($outputDir . $aggUnit . '-' . self::$helper->getUserrole() . '.csv', $csvdata);
                 $this->markTestSkipped(
-                  'Created Expected output for ' . $fullTestName
+                    'Created Expected output for ' . $fullTestName
                 );
                 return;
             }
@@ -174,13 +174,9 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         }
         return $csv;
     }
-    private function combine_array(&$row, $key, $header) {
-      $row = array_combine($header, $row);
-    }
     private function getAssocCSV($csv){
-        #$csv = array_walk($csv, array($this, 'combine_array'), $header);
-        array_walk($csv, function(&$a) use ($csv) {
-          $a = array_combine($csv[0], $a);
+        array_walk($csv, function (&$a) use ($csv) {
+            $a = array_combine($csv[0], $a);
         });
         return $csv;
     }
