@@ -18,20 +18,36 @@ use Log;
 
 class LockFile extends Loggable
 {
-    // Process ID of the current process
+    /**
+     * Current process PID
+     *
+     * @var integer|null
+     */
+
     protected $pid = null;
 
-    // Directory where lock files are stored, read from the configuration file
+    /**
+     * Directory where lock files are stored, read from the configuration file
+     *
+     * @var string|null
+     */
+
     protected $lockDir = null;
 
-    // Optional prefix for lock files, read from the configuration file
+
+    /**
+     * Optional prefix for lock files, read from the configuration file
+     *
+     * @var string|null
+     */
+
     protected $lockFilePrefix = null;
 
-    /* ------------------------------------------------------------------------------------------
-     * Set the provided logger or instantiate a null logger if one was not provided.  The null handler
-     * consumes log events and does nothing with them.
+    /** -----------------------------------------------------------------------------------------
+     * Set the provided logger or instantiate a null logger if one was not provided.  The
+     * null handler consumes log events and does nothing with them.
      *
-     * @param $logger A PEAR Log object or null to use the null logger.
+     * @param Log $logger A PEAR Log object or null to use the null logger.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -41,8 +57,7 @@ class LockFile extends Loggable
 
         if ( null === $lockDir || "" === $lockDir ) {
             $lockDir = getcwd();
-            $msg = "Empty lock directory specified, using current directory '$lockDir'";
-            $this->logger->info($msg);
+            $this->logger->info("Empty lock directory specified, using current directory: $lockDir");
         }
 
         $this->lockDir = $lockDir;
@@ -53,19 +68,20 @@ class LockFile extends Loggable
             $this->logger->info("Creating lock directory '" . $this->lockDir . "'");
             if ( false === @mkdir($this->lockDir) ) {
                 $error = error_get_last();
-                $msg = "Error creating lock directory '" . $this->lockDir . "': " . $error['message'];
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException(
+                    sprintf("Error opening lock directory '%s': %s", $this->lockDir, $error['message'])
+                );
             }
         }  // if ( ! is_dir($this->lockDir) )
 
     }  // __construct()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Generate a lock file name.
      *
-     * @param $pid An optional PID to use rather than the current PID
+     * @param integer $pid An optional PID to use rather than the current PID
      *
-     * @return A fully qualified path to the lock file.
+     * @return string A fully qualified path to the lock file.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -79,12 +95,12 @@ class LockFile extends Loggable
         );
     }  // generateLockfileName()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Check if the specified process is running.
      *
-     * @param $pid PID to check
+     * @param integer $pid PID to check
      *
-     * @return TRUE if a process with the specified PID is is running, FALSE otherwise.
+     * @return boolean TRUE if a process with the specified PID is is running, FALSE otherwise.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -101,13 +117,13 @@ class LockFile extends Loggable
 
     }  // isProcessRunning()
 
-    /* ------------------------------------------------------------------------------------------
-     * Generate a lock file for the current process and action list. If any of the actions are
-     * present in any other lock files, we cannot generate the lock.
+    /** -----------------------------------------------------------------------------------------
+     * Generate a lock file for the current process and action list. If any of the actions
+     * are present in any other lock files, we cannot generate the lock.
      *
-     * @param $actionList An array of action names to be executed by this ETL process.
+     * @param array $actionList A list of action names to be executed by this ETL process.
      *
-     * @return TRUE if the lock was generated, FALSE otherwise.
+     * @return boolean TRUE if the lock was generated, FALSE otherwise.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -119,8 +135,9 @@ class LockFile extends Loggable
 
         if ( false === ($dh = opendir($this->lockDir)) ) {
             $error = error_get_last();
-            $msg = "Error opening lock directory '" . $this->lockDir . "': " . $error['message'];
-            $this->logger->warning($msg);
+            $this->logger->warning(
+                sprintf("Error opening lock directory '%s': %s", $this->lockDir, $error['message'])
+            );
             return false;
         }
 
@@ -141,8 +158,13 @@ class LockFile extends Loggable
             $pid = array_shift($lockFileActionList);
             $actionIntersection = array_intersect($lockFileActionList, $actionList);
             if ( 0 != count($actionIntersection) ) {
-                $msg = "Cannot obtain lock. Process '$pid' already running and executing overlapping actions (" . implode(", ", $actionIntersection) . ")";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException(
+                    sprintf(
+                        "Cannot obtain lock. Process '%d' already running and executing overlapping actions (%s)",
+                        $pid,
+                        implode(", ", $actionIntersection)
+                    )
+                );
             }
         }  // while ( ($file = readdir($dh) ) !== false )
 
@@ -154,8 +176,9 @@ class LockFile extends Loggable
 
         if ( false === @file_put_contents($lockFile, $contents) ) {
             $error = error_get_last();
-            $msg = "Error creating lock file '$lockFile': " . $error['message'];
-            $this->logger->warning($msg);
+            $this->logger->warning(
+                sprintf("Error creating lock file '%s': %s", $lockFile, $error['message'])
+            );
             return false;
         }
 
@@ -163,12 +186,12 @@ class LockFile extends Loggable
 
     }  // lock()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Release the lock for the specified PID.
      *
-     * @param $pid PID to check, NULL to use the PID of the current process.
+     * @param integer $pid PID to check, NULL to use the PID of the current process.
      *
-     * @return TRUE if the lock was released, FALSE otherwise.
+     * @return boolean TRUE if the lock was released, FALSE otherwise.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -182,16 +205,16 @@ class LockFile extends Loggable
         if ( file_exists($lockFile) ) {
 
             if ( ! $isRunning ) {
-                $msg = "Process '$pid' is not running";
-                $this->logger->warning($msg);
+                $this->logger->warning("Process '$pid' is not running");
             }
 
             $this->logger->info("Releasing lock '$lockFile'");
 
             if ( false === @unlink($lockFile) ) {
                 $error = error_get_last();
-                $msg = "Error removing lock file '$lockFile': " . $error['message'];
-                $this->logger->warning($msg);
+                $this->logger->warning(
+                    sprintf("Error creating lock file '%s': %s", $lockFile, $error['message'])
+                );
                 return false;
             }
 
@@ -201,10 +224,10 @@ class LockFile extends Loggable
 
     }  // unlock()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Clean up any lock files that do not have corresponding running processes.
      *
-     * @return TRUE on success, FALSE if there was an error.
+     * @return boolean TRUE on success, FALSE if there was an error.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -213,8 +236,9 @@ class LockFile extends Loggable
 
         if ( false === ($dh = opendir($this->lockDir)) ) {
             $error = error_get_last();
-            $msg = "Error opening lock directory '" . $this->lockDir . "': " . $error['message'];
-            $this->logger->warning($msg);
+            $this->logger->warning(
+                sprintf("Error opening lock directory '%s': %s", $this->lockDir, $error['message'])
+            );
             return false;
         }
 
@@ -232,16 +256,17 @@ class LockFile extends Loggable
 
     }  // cleanup()
 
-    /* ------------------------------------------------------------------------------------------
-     * Check that the process associated with the lock file is running, if not then clean up the
-     * lock file.
+    /** -----------------------------------------------------------------------------------------
+     * Check that the process associated with the lock file is running, if not then clean
+     * up the lock file.
      *
-     * @param $file Lock file to check
+     * @param string $file Name of the lock file to check
      *
-     * @return TRUE if the lock was released, FALSE otherwise.
+     * @return boolean TRUE if the lock was released, FALSE otherwise.
      * ------------------------------------------------------------------------------------------
      */
 
+    // @codingStandardsIgnoreLine
     private function _cleanup($file)
     {
         $contents = explode(PHP_EOL, file_get_contents($file));
