@@ -35,19 +35,19 @@ $recipient
 
 // -------------------
 
-$mail = MailWrapper::initPHPMailer(\xd_utilities\getConfiguration('mailer', 'sender_email'), 'XDMoD');
-$mail->Subject = "$page_title: Password Reset";
-$mail->addAddress($recipient);
-
-// -------------------
-
-$message = MailTemplates::passwordReset($user_to_email);
-
-$mail->Body = $message;
-
-// -------------------
-
 try {
+    $mail = MailWrapper::initPHPMailer(null, 'XDMoD');
+    $mail->Subject = "$page_title: Password Reset";
+    $mail->addAddress($recipient);
+
+    // -------------------
+
+    $message = MailTemplates::passwordReset($user_to_email);
+
+    $mail->Body = $message;
+
+    // -------------------
+
     $mail->send();
     $returnData['success'] = true;
     $returnData['status'] = "Password reset e-mail sent to user {$user_to_email->getUsername()}";

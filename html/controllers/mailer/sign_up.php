@@ -89,20 +89,12 @@ $pdo->execute(
 
 // Create email.
 
-$mail = MailWrapper::initPHPMailer($_POST['email']);
-
 $recipient
     = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
     ? xd_utilities\getConfiguration('general', 'debug_recipient')
     : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-$mail->addAddress($recipient);
-
-// Original sender's e-mail must be in the "From" field for the XDMoD
-// Request Tracker to function
-$mail->addReplyTo($_POST['email']);
 
 $title = xd_utilities\getConfiguration('general', 'title');
-$mail->Subject = "[$title] A visitor has signed up";
 
 $time_requested = date('D, F j, Y \a\t g:i A');
 $organization   = ORGANIZATION_NAME;
@@ -124,13 +116,23 @@ Affiliation with $organization:
 {$_POST['additional_information']}
 
 EOMSG;
-$mail->Body = $message;
-
-// Send email.
 
 $response = array();
 
 try {
+    $mail = MailWrapper::initPHPMailer($_POST['email']);
+
+    $mail->addAddress($recipient);
+
+    // Original sender's e-mail must be in the "From" field for the XDMoD
+    // Request Tracker to function
+    $mail->addReplyTo($_POST['email']);
+
+    $mail->Subject = "[$title] A visitor has signed up";
+
+    $mail->Body = $message;
+
+   // Send email.
     $mail->send();
     $response['success'] = true;
 }

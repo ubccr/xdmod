@@ -2047,15 +2047,11 @@ class XDReportManager
         $additional_config = array()
     ) {
 
-        $mail = MailWrapper::initPHPMailer(xd_utilities\getConfiguration('mailer', 'sender_email'), 'XDMoD');
-
         $frequency = (!empty($frequency)) ? ' '.$frequency : $frequency;
 
         $subject_suffix = (APPLICATION_ENV == 'dev') ? '[Dev]' : '';
 
         $destination_email_address = $this->getReportUserEmailAddress($report_id);
-
-        $mail->addAddress($destination_email_address);
 
         $report_owner = $this->getReportUserName($report_id);
 
@@ -2079,19 +2075,23 @@ class XDReportManager
                 break;
         }
 
-        $mail->Subject =
-            "Your$frequency " . $templateConfig['subject'] . " $subject_suffix";
-        $mail->Body = $templateConfig['message'];
-
-        if ($include_attachment) {
-            $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
-            $attachment_file_name
-                = $this->getReportName($report_id, true)
-                . '.' . $report_format;
-            $mail->addAttachment($report_file, $attachment_file_name, 'base64', self::$_header_map[$report_format], 'inline');
-        }
-
         try {
+            $mail = MailWrapper::initPHPMailer(null, 'XDMoD');
+
+            $mail->addAddress($destination_email_address);
+
+            $mail->Subject =
+                "Your$frequency " . $templateConfig['subject'] . " $subject_suffix";
+            $mail->Body = $templateConfig['message'];
+
+            if ($include_attachment) {
+                $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
+                $attachment_file_name
+                    = $this->getReportName($report_id, true)
+                    . '.' . $report_format;
+                $mail->addAttachment($report_file, $attachment_file_name, 'base64', self::$_header_map[$report_format], 'inline');
+            }
+
             $mail->send();
         }
         catch (Exception $e) {

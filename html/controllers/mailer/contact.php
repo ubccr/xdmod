@@ -72,8 +72,6 @@ $recipient
   ? xd_utilities\getConfiguration('general', 'debug_recipient')
   : xd_utilities\getConfiguration('general', 'contact_page_recipient');
 
-$mail = MailWrapper::initPHPMailer($_POST['email']);
-
 switch ($reason) {
   case 'wishlist':
     $subject = "[WISHLIST] Feature request sent from a portal visitor";
@@ -86,14 +84,6 @@ switch ($reason) {
     break;
 }
 
-$mail->Subject = $subject;
-$mail->addAddress($recipient);
-
-//$mail->setFrom($mailer_sender, 'XDMoD');
-
-//Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
-$mail->addReplyTo($_POST['email']);
-
 $timestamp = date('m/d/Y, g:i:s A', $_POST['timestamp']);
 
 $message = "Below is a $message_type from '{$_POST['name']}' ({$_POST['email']}):\n\n";
@@ -101,9 +91,19 @@ $message .= $_POST['message'];
 $message .="\n------------------------\n\nSession Tracking Data:\n\n  ";
 $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $timestamp";
 
-$mail->Body = $message;
-
 try {
+    $mail = MailWrapper::initPHPMailer($_POST['email']);
+
+    $mail->Subject = $subject;
+    $mail->addAddress($recipient);
+
+    //$mail->setFrom($mailer_sender, 'XDMoD');
+
+    //Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
+    $mail->addReplyTo($_POST['email']);
+
+    $mail->Body = $message;
+
     $mail->send();
 }
 catch (Exception $e) {
@@ -115,12 +115,6 @@ catch (Exception $e) {
 
 // =====================================================
 
-$mail = MailWrapper::initPHPMailer(\xd_utilities\getConfiguration('mailer', 'sender_email'), 'XDMoD');
-$mail->Subject = "Thank you for your $message_type.";
-$mail->addAddress($_POST['email']);
-
-// -------------------
-
 $message
     = "Hello, {$_POST['name']}\n\n"
     . "This e-mail is to inform you that the XDMoD Portal Team has received your $message_type, and will\n"
@@ -129,11 +123,15 @@ $message
     . "Center for Computational Research\n"
     . "University at Buffalo, SUNY\n";
 
-$mail->Body = $message;
-
 // -------------------
 
 try {
+    $mail = MailWrapper::initPHPMailer(null, 'XDMoD');
+    $mail->Subject = "Thank you for your $message_type.";
+    $mail->addAddress($_POST['email']);
+
+    $mail->Body = $message;
+
     $mail->send();
 }
 catch (Exception $e) {

@@ -142,8 +142,9 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
+        $userEmail = $user->getEmailAddress();
 
-        $mail = MailWrapper::initPHPMailer($userEmail, \xd_utilities\getConfiguration('general', 'title'));
+        $mail = MailWrapper::initPHPMailer($userEmail);
 
         $recipient
         = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
@@ -156,7 +157,6 @@ class XDSamlAuthentication
             $mail->Subject = "[xdmod] New " . ($linked ? "linked": "unlinked") . " federated user created";
         }
 
-        $userEmail = $user->getEmailAddress();
         if ($userEmail != NO_EMAIL_ADDRESS_SET) {
             $mail->addReplyTo($userEmail);
         }
