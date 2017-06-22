@@ -386,95 +386,17 @@ class pdoIngestor extends aIngestor
 
     protected function performPreExecuteTasks() {
 
-        // ------------------------------------------------------------------------------------------
+        parent::performPreExecuteTasks();
+
         // Update the start/end dates for this query and get the source query string. It
         // is important to do it in the pre-execute stage because if we are chunking our
         // ingest it will get updated every time.
 
         $this->sourceQueryString = $this->getSourceQueryString();
 
-        // ------------------------------------------------------------------------------------------
-        // ETL table management. We can extract the table name, schema, and column names from this
-        // object.
-
-        $sqlList = array();
-        $disableForeignKeys = false;
-
-        try {
-
-            // Bring the destination table in line with the configuration if necessary.  Note that
-            // manageTable() is DRYRUN aware.
-
-            foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
-                $qualifiedDestTableName = $etlTable->getFullName();
-
-                if ( "myisam" == strtolower($etlTable->engine) ) {
-                    $disableForeignKeys = true;
-                    if ( $this->options->disable_keys ) {
-                        $this->logger->info("Disable keys on $qualifiedDestTableName");
-                        $sqlList[] = "ALTER TABLE $qualifiedDestTableName DISABLE KEYS";
-                    }
-                }
-
-                $this->manageTable($etlTable, $this->destinationEndpoint);
-
-            }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
-
-        } catch ( Exception $e ) {
-            $this->logAndThrowException(
-                sprintf("Error managing ETL table for '%s': %s", $this->getName(), $e->getMessage())
-            );
-        }
-
-        if ( $disableForeignKeys ) {
-            // See http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_foreign_key_checks
-            $sqlList[] = "SET FOREIGN_KEY_CHECKS = 0";
-        }
-
-        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Pre-execute tasks");
-
         return true;
 
     }  // performPreExecuteTasks()
-
-    /** -----------------------------------------------------------------------------------------
-     * Perform post-execution tasks such as re-enabling foreign key constraints and
-     * analyzing or optimizing the table.
-     *
-     * @see iAction::performPostExecuteTasks()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function performPostExecuteTasks($numRecordsProcessed)
-    {
-        $sqlList = array();
-        $enableForeignKeys = false;
-
-        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
-            $qualifiedDestTableName = $etlTable->getFullName();
-
-            if ( "myisam" == strtolower($etlTable->engine) ) {
-                $enableForeignKeys = true;
-                if ( $this->options->disable_keys ) {
-                    $this->logger->info("Enable keys on $qualifiedDestTableName");
-                    $sqlList[] = "ALTER TABLE $qualifiedDestTableName ENABLE KEYS";
-                }
-            }
-
-            if ( $numRecordsProcessed > 0 ) {
-                $sqlList[] = "ANALYZE TABLE $qualifiedDestTableName";
-            }
-        }
-
-        if ( $enableForeignKeys ) {
-            // See http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_foreign_key_checks
-            $sqlList[] = "SET FOREIGN_KEY_CHECKS = 1";
-        }
-
-        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Post-execute tasks");
-
-        return true;
-    }  // performPostExecuteTasks()
 
     /** ------------------------------------------------------------------------------------------
      * @see iAction::execute()

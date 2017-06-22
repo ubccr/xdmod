@@ -290,17 +290,20 @@ class pdoAggregator extends aAggregator
 
     }  // createDestinationTableObjects()
 
-    /* ------------------------------------------------------------------------------------------
-     * By default, there are no pre-execution tasks.
+    /** -----------------------------------------------------------------------------------------
+     * Note that we are not calling aRdbmsDestinationAction::performPreExecuteTasks()
+     * because we cannot properly manage the aggregation tables without knowing the
+     * aggregation unit or applying variable substitutions. Tables will be managed in
+     * performPreAggregationUnitTasks() instead.
      *
-     * @see aAggregator::performPreExecuteTasks()
+     * @see aAction::performPreExecuteTasks()
      * ------------------------------------------------------------------------------------------
      */
 
     protected function performPreExecuteTasks()
     {
-        // To support programmatic manipulation of the source Query object, save off the description
-        // of the first join (from) table
+        // To support programmatic manipulation of the source Query object, save off the
+        // description of the first join (from) table
         $sourceJoins = $this->etlSourceQuery->joins;
         $this->etlSourceQueryOrigFromTable = array_shift($sourceJoins);
         $this->etlSourceQueryModified = false;
@@ -308,14 +311,13 @@ class pdoAggregator extends aAggregator
         return true;
     }  // performPreExecuteTasks()
 
-    /* ------------------------------------------------------------------------------------------
-     * By default, there are no pre-execution tasks.
-     *
-     * @see aAggregator::performPostExecuteTasks()
+    /** -----------------------------------------------------------------------------------------
+     * @see performPostAggregationUnitTasks()
+     * @see aAction::performPostExecuteTasks()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function performPostExecuteTasks($numRecordsProcessed)
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
     {
         return true;
     }  // performPostExecuteTasks()

@@ -35,7 +35,6 @@ use Log;
 
 abstract class aRdbmsDestinationAction extends aAction
 {
-
     /** -----------------------------------------------------------------------------------------
      * An array of one or more Table objects representing the destination tables supported
      * by this action, The keys are the table names.
@@ -488,6 +487,95 @@ abstract class aRdbmsDestinationAction extends aAction
         }  // foreach ( $this->etlDestinationTableList as $etlTable )
 
     }  // performTruncateDestinationTasks()
+
+    /** -----------------------------------------------------------------------------------------
+     * Manage destination tables and disable foreign keys if needed.
+     *
+     * @see aAction::performPreExecuteTasks()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function performPreExecuteTasks()
+    {
+        $sqlList = array();
+        $disableForeignKeys = false;
+
+        try {
+
+            // Bring the destination table in line with the configuration if necessary.  Note that
+            // manageTable() is DRYRUN aware so we don't need to handle that here.
+
+            foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
+                $qualifiedDestTableName = $etlTable->getFullName();
+
+                if ( "myisam" == strtolower($etlTable->engine) ) {
+                    $disableForeignKeys = true;
+                    if ( $this->options->disable_keys ) {
+                        $this->logger->info("Disable keys on $qualifiedDestTableName");
+                        $sqlList[] = "ALTER TABLE $qualifiedDestTableName DISABLE KEYS";
+                    }
+                }
+
+                $this->manageTable($etlTable, $this->destinationEndpoint);
+
+            }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
+
+        } catch ( Exception $e ) {
+            $this->logAndThrowException(
+                sprintf("Error managing ETL table for '%s': %s", $this->getName(), $e->getMessage())
+            );
+        }
+
+        if ( $disableForeignKeys ) {
+            // See http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_foreign_key_checks
+            $sqlList[] = "SET FOREIGN_KEY_CHECKS = 0";
+        }
+
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Pre-execute tasks");
+
+        return true;
+
+    }  // performPreExecuteTasks()
+
+    /** -----------------------------------------------------------------------------------------
+     * Perform post-execution tasks such as re-enabling foreign key constraints and
+     * analyzing or optimizing the table.
+     *
+     * @see aAction::performPostExecuteTasks()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
+    {
+        $sqlList = array();
+        $enableForeignKeys = false;
+
+        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
+            $qualifiedDestTableName = $etlTable->getFullName();
+
+            if ( "myisam" == strtolower($etlTable->engine) ) {
+                $enableForeignKeys = true;
+                if ( $this->options->disable_keys ) {
+                    $this->logger->info("Enable keys on $qualifiedDestTableName");
+                    $sqlList[] = "ALTER TABLE $qualifiedDestTableName ENABLE KEYS";
+                }
+            }
+
+            if ( null !== $numRecordsProcessed && $numRecordsProcessed > 0 ) {
+                $sqlList[] = "ANALYZE TABLE $qualifiedDestTableName";
+            }
+        }
+
+        if ( $enableForeignKeys ) {
+            // See http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_foreign_key_checks
+            $sqlList[] = "SET FOREIGN_KEY_CHECKS = 1";
+        }
+
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Post-execute tasks");
+
+        return true;
+
+    }  // performPostExecuteTasks()
 
     /** -----------------------------------------------------------------------------------------
      * Execute a list of SQL statements on the specified database handle, throwing an exception if
