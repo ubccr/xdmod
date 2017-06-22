@@ -188,7 +188,11 @@ class LockFile extends Loggable
         // always has to be done manually." because the OS releases the lock automatically
         // when the file is closed.
 
-        flock($fp, LOCK_EX);
+        if ( ! flock($fp, LOCK_EX | LOCK_NB) ) {
+            $this->logAndThrowException(
+                sprintf("Unexpected failure to obtain lock for process %d on file %s", $this->pid, $lockFile)
+            );
+        }
         fwrite($fp, $contents);
         fflush($fp);
 
