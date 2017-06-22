@@ -1,10 +1,9 @@
 <?php
-
 /* ==========================================================================================
- * Handling of ETL lock files. In order to allow multiple ETL processes to be run concurrently, the
- * lock files are not solely pid-based, but also take into account the actions that are being
- * executed. This allows multiple etl pipelines to be executed concurrently as long as the actions
- * being performed do not overlap.
+ * Manage ETL lock files. In order to allow multiple ETL processes to be run concurrently,
+ * the lock files are not solely pid-based, but also take into account the actions that
+ * are being executed. This allows multiple ETL pipelines to be executed concurrently as
+ * long as the actions being performed do not overlap.
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2016-12-19
@@ -13,7 +12,7 @@
 
 namespace ETL;
 
-use \Exception;
+use Exception;
 use Log;
 
 class LockFile extends Loggable
@@ -34,7 +33,6 @@ class LockFile extends Loggable
 
     protected $lockDir = null;
 
-
     /**
      * Optional prefix for lock files, read from the configuration file
      *
@@ -42,6 +40,22 @@ class LockFile extends Loggable
      */
 
     protected $lockFilePrefix = null;
+
+    /**
+     * File handle to the current lockfile
+     *
+     * @var resource|null
+     */
+
+    protected $lockFileHandle = null;
+
+    /**
+     * Path to the current lockfile
+     *
+     * @var string|null
+     */
+
+    protected $lockFile = null;
 
     /** -----------------------------------------------------------------------------------------
      * Set the provided logger or instantiate a null logger if one was not provided.  The
@@ -69,7 +83,7 @@ class LockFile extends Loggable
             if ( false === @mkdir($this->lockDir) ) {
                 $error = error_get_last();
                 $this->logAndThrowException(
-                    sprintf("Error opening lock directory '%s': %s", $this->lockDir, $error['message'])
+                    sprintf("Error creating lock directory '%s': %s", $this->lockDir, $error['message'])
                 );
             }
         }  // if ( ! is_dir($this->lockDir) )
@@ -96,28 +110,6 @@ class LockFile extends Loggable
     }  // generateLockfileName()
 
     /** -----------------------------------------------------------------------------------------
-     * Check if the specified process is running.
-     *
-     * @param integer $pid PID to check
-     *
-     * @return boolean TRUE if a process with the specified PID is is running, FALSE otherwise.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function isProcessRunning($pid = null)
-    {
-        $pid = ( null === $pid ? $this->pid : $pid );
-        $pidList = explode(PHP_EOL, shell_exec("ps -A | awk '{print $1}'"));
-
-        if ( in_array($pid, $pidList) ) {
-            return true;
-        }
-
-        return false;
-
-    }  // isProcessRunning()
-
-    /** -----------------------------------------------------------------------------------------
      * Generate a lock file for the current process and action list. If any of the actions
      * are present in any other lock files, we cannot generate the lock.
      *
@@ -141,8 +133,13 @@ class LockFile extends Loggable
             return false;
         }
 
+        // Cleanup any lockfiles not associated with a running process
+
         while ( ($file = readdir($dh) ) !== false ) {
             if ( '.' == $file || '..' == $file ) {
+                continue;
+            } elseif ( null !== $this->lockFilePrefix && 0 !== strpos($file, $this->lockFilePrefix) ) {
+                // If the prefix is set, the file must match the prefix
                 continue;
             }
 
@@ -150,9 +147,11 @@ class LockFile extends Loggable
 
             // If the proecess is not running, remove this lock file and continue to the next.
 
-            if ( $this->_cleanup($file) ) {
+            if ( $this->unlock($file) ) {
                 continue;
             }
+
+            // Ensure that there are no overlapping actions with a running ETL process
 
             $lockFileActionList = explode(PHP_EOL, file_get_contents($file));
             $pid = array_shift($lockFileActionList);
@@ -174,7 +173,7 @@ class LockFile extends Loggable
 
         $contents = implode(PHP_EOL, array_merge(array($this->pid), $actionList));
 
-        if ( false === @file_put_contents($lockFile, $contents) ) {
+        if ( false === ($fp = @fopen($lockFile, 'w')) ) {
             $error = error_get_last();
             $this->logger->warning(
                 sprintf("Error creating lock file '%s': %s", $lockFile, $error['message'])
@@ -182,101 +181,80 @@ class LockFile extends Loggable
             return false;
         }
 
+        // Obtain an advisory lock. This advisory will be memoved if the process dies or
+        // the file is closed. This appears to be contrary to the PHP docs at
+        // http://php.net/manual/en/function.flock.php stating "5.3.2 The automatic
+        // unlocking when the file's resource handle is closed was removed. Unlocking now
+        // always has to be done manually." because the OS releases the lock automatically
+        // when the file is closed.
+
+        flock($fp, LOCK_EX);
+        fwrite($fp, $contents);
+        fflush($fp);
+
+        $this->lockFile = $lockFile;
+        $this->lockFileHandle = $fp;
+
         return true;
 
     }  // lock()
 
     /** -----------------------------------------------------------------------------------------
-     * Release the lock for the specified PID.
+     * Release the specified lock file. If no file is specified, release then lockfile for
+     * the current current process.
      *
-     * @param integer $pid PID to check, NULL to use the PID of the current process.
+     * @param string $file The name of the file to release, or NULL to release the current
+     *   lockfile.
      *
      * @return boolean TRUE if the lock was released, FALSE otherwise.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function unlock($pid = null)
+    public function unlock($file = null)
     {
-        $lockFile = $this->generateLockfileName($pid);
-        $isRunning = $this->isProcessRunning($pid);
 
-        $pid = ( null === $pid ? $this->pid : $pid );
+        if ( null === $file && null !== $this->lockFile ) {
 
-        if ( file_exists($lockFile) ) {
+            @flock($this->lockFileHandle, LOCK_UN);
+            @fclose($this->lockFileHandle);
+            $file = $this->lockFile;
+            $this->lockFileHandle = null;
+            $this->lockFile = null;
 
-            if ( ! $isRunning ) {
-                $this->logger->warning("Process '$pid' is not running");
-            }
+        } elseif ( null !== $file ) {
 
-            $this->logger->info("Releasing lock '$lockFile'");
-
-            if ( false === @unlink($lockFile) ) {
+            if ( false === ($fp = @fopen($file, 'r')) ) {
                 $error = error_get_last();
                 $this->logger->warning(
-                    sprintf("Error creating lock file '%s': %s", $lockFile, $error['message'])
+                    sprintf("Error opening file '%s': %s", $file, $error['message'])
                 );
                 return false;
             }
 
-        }  // if ( file_exists($lockFile) )
+            if ( flock($fp, LOCK_EX | LOCK_NB) ) {
+                $pid = trim(fgets($fp));
+                $this->logger->warning("Process '$pid' is not running, releasing lock file.");
+                flock($fp, LOCK_UN);
+                fclose($fp);
+            } else {
+                fclose($fp);
+                return false;
+            }
+        }
 
+        // Guard against the case that someone calls unlock() before lock()
+
+        if ( null !== $file ) {
+            $this->logger->info("Releasing lock file '$file'");
+            if ( null !== $file && false === @unlink($file) ) {
+                $error = error_get_last();
+                $this->logger->warning(
+                    sprintf("Error removing lock file '%s': %s", $file, $error['message'])
+                );
+                return false;
+            }
+        }
         return true;
 
     }  // unlock()
-
-    /** -----------------------------------------------------------------------------------------
-     * Clean up any lock files that do not have corresponding running processes.
-     *
-     * @return boolean TRUE on success, FALSE if there was an error.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function cleanup()
-    {
-
-        if ( false === ($dh = opendir($this->lockDir)) ) {
-            $error = error_get_last();
-            $this->logger->warning(
-                sprintf("Error opening lock directory '%s': %s", $this->lockDir, $error['message'])
-            );
-            return false;
-        }
-
-        while ( ($file = readdir($dh) ) !== false ) {
-            if ( '.' == $file || '..' == $file ) {
-                continue;
-            }
-            $file = $this->lockDir . '/' . $file;
-            $this->_cleanup($file);
-        } // while ( ($file = readdir($dh) ) !== false )
-
-        closedir($dh);
-
-        return true;
-
-    }  // cleanup()
-
-    /** -----------------------------------------------------------------------------------------
-     * Check that the process associated with the lock file is running, if not then clean
-     * up the lock file.
-     *
-     * @param string $file Name of the lock file to check
-     *
-     * @return boolean TRUE if the lock was released, FALSE otherwise.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    // @codingStandardsIgnoreLine
-    private function _cleanup($file)
-    {
-        $contents = explode(PHP_EOL, file_get_contents($file));
-        $pid = array_shift($contents);
-
-        if ( ! $this->isProcessRunning($pid) ) {
-            return $this->unlock($pid);
-        }
-
-        return false;
-
-    }  // _cleanup()
 }  // class Lockfile
