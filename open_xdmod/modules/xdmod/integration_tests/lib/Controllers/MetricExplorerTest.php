@@ -14,7 +14,7 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDwDescripter()
     {
-        $this->helper->authenticate('po');
+        $this->helper->authenticate('cd');
 
         $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
 
@@ -47,6 +47,59 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
         // note - not authenticated
 
         $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals($response[1]['http_code'], 401);
+    }
+
+    /**
+     * Checks that the filters work correctly
+     */
+    public function testGetDimensionFilters()
+    {
+        $this->helper->authenticate('usr');
+
+        $params = array(
+            'operation' => 'get_dimension',
+            'dimension_id' => 'username',
+            'realm' => 'Jobs',
+            'public_user' => false,
+            'start' => '',
+            'limit' => '10',
+            'selectedFilterIds' => ''
+        );
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals($response[0]['totalCount'], 1);
+
+        $this->helper->logout();
+
+        $this->helper->authenticate('cd');
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertGreaterThan(1, $response[0]['totalCount']);
+        $totalUsers = $response[0]['totalCount'];
+
+        $this->helper->logout();
+
+        $this->helper->authenticate('pi');
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertGreaterThan(1, $response[0]['totalCount']);
+        $this->assertLessThan($totalUsers, $response[0]['totalCount']);
+
+        $this->helper->logout();
+
+        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals($response[1]['http_code'], 401);

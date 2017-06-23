@@ -1,13 +1,13 @@
 #!/bin/sh
 
-set -e
+PHPUNITARGS="$@"
 
-if [ ! -e .secrets ];
-then
-    echo "ERROR missing .secrets file." >&2
-    echo >&2
-    cat README.md >&2
-    false
+cd $(dirname $0)
+phpunit="$(readlink -f ../../../../vendor/bin/phpunit)"
+
+if [ ! -x "$phpunit" ]; then
+    echo phpunit not found, run \"composer install\" 1>&2
+    exit 127
 fi
 
-phpunit `dirname $0`
+$phpunit ${PHPUNITARGS} .
