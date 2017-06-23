@@ -15,6 +15,7 @@ use CCR\DB\MySQLHelper;
 use CCR\Log;
 use Xdmod\Version;
 use OpenXdmod\Migration\MigrationFactory;
+use OpenXdmod\Setup\Console;
 
 // Disable memory limit.
 ini_set('memory_limit', -1);
@@ -25,7 +26,7 @@ ini_set('memory_limit', -1);
  * @var array
  */
 $supportedUpgrades = array(
-    '6.7.0' => '7.0.0',
+    '6.6.0' => '7.0.0',
 );
 
 /**
@@ -58,6 +59,8 @@ function main()
 {
     global $argv, $logger, $supportedUpgrades, $installedVersion;
 
+    $interactiveMode = true;
+
     $opts = array(
         array('h', 'help'),
         array('v', 'verbose'),
@@ -66,6 +69,7 @@ function main()
         array('',  'config-files'),
         array('',  'databases'),
         array('',  'current-version:'),
+        array('',  'batch-mode'),
     );
 
     $shortOptions = implode(
@@ -121,6 +125,9 @@ function main()
                 break;
             case 'current-version':
                 $configFileVersion = $value;
+                break;
+            case 'batch-mode':
+                $interactiveMode = false;
                 break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
@@ -183,10 +190,15 @@ function main()
         exit(1);
     }
 
-    displayWarning($configFileVersion, $installedVersion);
-    $response = readline('Are you sure you want to continue (yes/no): ');
-    if ($response != 'yes') {
-        exit;
+    $console = Console::factory();
+    $console->setInteractive($interactiveMode);
+
+    if ($interactiveMode) {
+        displayWarning($configFileVersion, $installedVersion);
+        $response = readline('Are you sure you want to continue (yes/no): ');
+        if ($response != 'yes') {
+            exit;
+        }
     }
 
     while (isset($supportedUpgrades[$configFileVersion])) {
@@ -294,6 +306,11 @@ Usage: xdmod-upgrade [-v]
         databases that you are upgrading.  This option is necessary when
         the version number in portal_settings.ini does not match the
         version of your config files and databases.
+
+    --batch-mode
+        Automatically run the upgrade process without any interactive
+        prompts. WARNING THIS WILL UPDATE THE FILES AND DATABASE WITHOUT
+        ANY OTHER CONFIRMATION PROMPTS.
 
 EOF;
 }

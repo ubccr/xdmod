@@ -13,6 +13,7 @@ build:
         - ~/bin/buildrpm xdmod
         - rpm -Uvh --oldpackage ~/rpmbuild/RPMS/*/*.rpm
         - ~/bin/services start
+        - xdmod-upgrade --batch-mode | col -bx
         - cp ~/assets/secrets open_xdmod/modules/xdmod/integration_tests/.secrets
         - composer --dev install
         - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/results.xml
