@@ -916,6 +916,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          * @param panel
          **/
         activate: function () {
+            if (!this.loadMask) {
+                this.loadMask = new Ext.LoadMask(this.id);
+            }
             Highcharts.setOptions({ global: { timezone: this.cachedHighChartTimezone } });
 
             if (this.clearing) {
@@ -926,6 +929,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             var params = Ext.urlDecode(token.params);
 
             if (params.job) {
+                this.loadMask.show();
                 this.fireEvent('create_history_entry', Ext.decode(window.atob(params.job)));
                 return;
             }
@@ -935,9 +939,12 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             }
 
             if (params.action) {
+                this.loadMask.show();
                 this.fireEvent('run_search_action', params);
                 return;
             }
+
+            this.loadMask.hide();
 
             var selectionModel = this.searchHistoryPanel.getSelectionModel();
 
@@ -1379,6 +1386,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                             title: 'No results',
                             msg: 'No jobs were found that meet the requested search parameters.',
                             buttons: Ext.Msg.OK,
+                            fn: Ext.History.add(self.module_id + '?realm=' + searchparams.realm),
                             icon: Ext.MessageBox.INFO
                         });
                         return;
@@ -1407,6 +1415,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                         title: 'Error ' + response.status + ' ' + response.statusText,
                         msg: message,
                         buttons: Ext.Msg.OK,
+                        fn: Ext.History.add(self.module_id + '?realm=' + searchparams.realm),
                         icon: Ext.MessageBox.ERROR
                     });
                 }
