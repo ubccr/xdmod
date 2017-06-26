@@ -22,7 +22,7 @@ class MailWrapper
         try {
             $mail->setFrom($address, $name);
         } catch(phpmailerException $e) {
-            error_log($e->getMessage);
+            error_log($e->getMessage());
             throw $e;
         }
 
