@@ -42,7 +42,7 @@ try {
 
     // -------------------
 
-    $message = MailTemplates::passwordReset($user_to_email);
+    $message = MailWrapper::passwordReset($user_to_email);
 
     $mail->Body = $message;
 

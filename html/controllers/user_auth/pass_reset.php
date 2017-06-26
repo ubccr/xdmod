@@ -4,7 +4,7 @@ use CCR\MailWrapper;
 
 // Operation: user_auth->pass_reset
 
-//require_once dirname(__FILE__).'/../../../classes/MailTemplates.php';
+//require_once dirname(__FILE__).'/../../../classes/MailWrapper.php';
 
 $isValid = isset($_POST['email']) && xd_security\isEmailValid($_POST['email']);
 
@@ -47,7 +47,7 @@ try {
 
     // -------------------
 
-    $message = MailTemplates::passwordReset($user_to_email);
+    $message = MailWrapper::passwordReset($user_to_email);
 
     $mail->Body = $message;
 

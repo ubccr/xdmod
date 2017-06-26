@@ -48,11 +48,11 @@ switch ($operation) {
             'version'              => $version,
             'contact_email'        => $contact_email,
             'organization'         => ORGANIZATION_NAME,
-            'maintainer_signature' => MailTemplates::getMaintainerSignature(),
+            'maintainer_signature' => MailWrapper::getMaintainerSignature(),
             'date'                 => date('l, j F'),
-            'site_title'           => MailTemplates::getSiteTitle(),
+            'site_title'           => MailWrapper::getSiteTitle(),
             'site_address'         => $site_address,
-            'product_name'         => MailTemplates::getProductName(),
+            'product_name'         => MailWrapper::getProductName(),
         ));
 
         $response['success'] = true;

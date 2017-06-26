@@ -2060,7 +2060,7 @@ class XDReportManager
                 $include_attachment
                     = ($additional_config['failed_compliance'] > 0
                         || $additional_config['proposed_requirements'] > 0);
-                $templateConfig = MailTemplates::complianceReport(
+                $templateConfig = MailWrapper::complianceReport(
                     $report_owner,
                     $additional_config['custom_message']
                 );
@@ -2068,7 +2068,7 @@ class XDReportManager
 
             default:
                 $include_attachment = true;
-                $templateConfig = MailTemplates::customReport(
+                $templateConfig = MailWrapper::customReport(
                     $report_owner,
                     $frequency
                 );
