@@ -92,7 +92,7 @@ $message .="\n------------------------\n\nSession Tracking Data:\n\n  ";
 $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $timestamp";
 
 try {
-    $mail = MailWrapper::initPHPMailer($_POST['email']);
+    $mail = MailWrapper::initPHPMailer($_POST['email'], $_POST['name']);
 
     $mail->Subject = $subject;
     $mail->addAddress($recipient);
@@ -100,7 +100,7 @@ try {
     //$mail->setFrom($mailer_sender, 'XDMoD');
 
     //Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
-    $mail->addReplyTo($_POST['email']);
+    $mail->addReplyTo($_POST['email'], $_POST['name']);
 
     $mail->Body = $message;
 
@@ -126,7 +126,7 @@ $message
 // -------------------
 
 try {
-    $mail = MailWrapper::initPHPMailer(null, 'XDMoD');
+    $mail = MailWrapper::initPHPMailer();
     $mail->Subject = "Thank you for your $message_type.";
     $mail->addAddress($_POST['email']);
 

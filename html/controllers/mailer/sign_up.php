@@ -119,14 +119,16 @@ EOMSG;
 
 $response = array();
 
+$name = $_POST['last_name'] . ', ' . $_POST['first_name'];
+
 try {
-    $mail = MailWrapper::initPHPMailer($_POST['email']);
+    $mail = MailWrapper::initPHPMailer($_POST['email'], $name);
 
     $mail->addAddress($recipient);
 
     // Original sender's e-mail must be in the "From" field for the XDMoD
     // Request Tracker to function
-    $mail->addReplyTo($_POST['email']);
+    $mail->addReplyTo($_POST['email'], $name);
 
     $mail->Subject = "[$title] A visitor has signed up";
 

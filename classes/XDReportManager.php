@@ -2076,7 +2076,7 @@ class XDReportManager
         }
 
         try {
-            $mail = MailWrapper::initPHPMailer(null, 'XDMoD');
+            $mail = MailWrapper::initPHPMailer();
 
             $mail->addAddress($destination_email_address);
 

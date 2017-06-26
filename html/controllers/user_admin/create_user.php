@@ -110,7 +110,7 @@ try {
 
     // -------------------
 
-    $mail = MailWrapper::initPHPMailer(null, 'XDMoD');
+    $mail = MailWrapper::initPHPMailer();
 
     $mail->Subject = "$page_title: Account Created";
 

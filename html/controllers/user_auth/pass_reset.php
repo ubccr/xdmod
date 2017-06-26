@@ -41,7 +41,7 @@ $recipient
 // -------------------
 
 try {
-    $mail = MailWrapper::initPHPMailer(null, 'XDMoD');
+    $mail = MailWrapper::initPHPMailer();
     $mail->Subject = "$page_title: Password Reset";
     $mail->addAddress($recipient);
 
