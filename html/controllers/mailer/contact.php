@@ -97,8 +97,6 @@ try {
     $mail->Subject = $subject;
     $mail->addAddress($recipient);
 
-    //$mail->setFrom($mailer_sender, 'XDMoD');
-
     //Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
     $mail->addReplyTo($_POST['email'], $_POST['name']);
 
