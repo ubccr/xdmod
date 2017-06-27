@@ -34,12 +34,14 @@ class LockFile extends Loggable
     protected $lockDir = null;
 
     /**
-     * Optional prefix for lock files, read from the configuration file
+     * Prefix for lock files. This is set to a reasonable default initially, but can be
+     * overriden by passing a value to the constructor. Pass an empty string for no
+     * prefix.
      *
-     * @var string|null
+     * @var string
      */
 
-    protected $lockFilePrefix = null;
+    protected $lockFilePrefix = 'etlv2_';
 
     /**
      * File handle to the current lockfile
@@ -70,13 +72,16 @@ class LockFile extends Loggable
         parent::__construct($logger);
 
         if ( null === $lockDir || "" === $lockDir ) {
-            $lockDir = getcwd();
-            $this->logger->info("Empty lock directory specified, using current directory: $lockDir");
+            $lockDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'xdmod';
+            $this->logger->info("Empty lock directory specified, using temp directory: $lockDir");
         }
 
         $this->lockDir = $lockDir;
         $this->pid = getmypid();
-        $this->lockFilePrefix = $lockPrefix;
+
+        if ( null !== $lockPrefix ) {
+            $this->lockFilePrefix = $lockPrefix;
+        }
 
         if ( ! is_dir($this->lockDir) ) {
             $this->logger->info("Creating lock directory '" . $this->lockDir . "'");
@@ -104,7 +109,7 @@ class LockFile extends Loggable
         return sprintf(
             '%s/%s%d',
             $this->lockDir,
-            ( null !== $this->lockFilePrefix ? $this->lockFilePrefix : "" ),
+            $this->lockFilePrefix,
             ( null !== $pid ? $pid : $this->pid )
         );
     }  // generateLockfileName()
@@ -138,8 +143,8 @@ class LockFile extends Loggable
         while ( ($file = readdir($dh) ) !== false ) {
             if ( '.' == $file || '..' == $file ) {
                 continue;
-            } elseif ( null !== $this->lockFilePrefix && 0 !== strpos($file, $this->lockFilePrefix) ) {
-                // If the prefix is set, the file must match the prefix
+            } elseif ( '' != $this->lockFilePrefix && 0 !== strpos($file, $this->lockFilePrefix) ) {
+                // If set, the file must match the prefix
                 continue;
             }
 
