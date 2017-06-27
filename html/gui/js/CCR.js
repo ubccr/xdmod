@@ -293,7 +293,7 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
 /**
  * The maximum length of a full name.
  */
-XDMoD.constants.maxNameLength = 100;
+XDMoD.constants.maxNameLength = 130;
 
 /**
  * The maximum length of a first name.
