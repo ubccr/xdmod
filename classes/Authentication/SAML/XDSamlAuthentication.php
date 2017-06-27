@@ -145,23 +145,6 @@ class XDSamlAuthentication
         $userEmail = $user->getEmailAddress();
         $userName = $user->getFormalName();
 
-        $mail = MailWrapper::initPHPMailer($userEmail, $userName);
-
-        $recipient
-        = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-        ? xd_utilities\getConfiguration('general', 'debug_recipient')
-        : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-        $mail->addAddress($recipient);
-        if ($error) {
-            $mail->Subject = "[xdmod] Error Creating federated user";
-        } else {
-            $mail->Subject = "[xdmod] New " . ($linked ? "linked": "unlinked") . " federated user created";
-        }
-
-        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
-            $mail->addReplyTo($userEmail, $userName);
-        }
-
         $body = "The following person has had an account created on XDMoD:\n\n" .
         "Person Details ----------------------------------\n\n" .
         "\nName:                     " . $user->getFormalName(true) .
@@ -174,7 +157,24 @@ class XDSamlAuthentication
                 print_r($samlAttributes, true);
         }
 
-        $mail->Body = $body;
+        $shouldAddReply = false;
+
+        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
+            $shouldAddReply = true;
+        }
+
+        $recipient
+        = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
+        ? xd_utilities\getConfiguration('general', 'debug_recipient')
+        : xd_utilities\getConfiguration('general', 'contact_page_recipient');
+
+        if ($error) {
+            $subject = "[xdmod] Error Creating federated user";
+        } else {
+            $subject = "[xdmod] New " . ($linked ? "linked": "unlinked") . " federated user created";
+        }
+
+        $mail = MailWrapper::initPHPMailer($properties = array('body'=>$body, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>$userEmail, 'fromName'=>$userName, 'ifReplyAddress'=>$shouldAddReply));
 
         $mail->send();
     }

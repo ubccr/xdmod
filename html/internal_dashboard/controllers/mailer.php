@@ -92,19 +92,17 @@ switch ($operation) {
         $title = \xd_utilities\getConfiguration('general', 'title');
         $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
 
-        $mail = MailWrapper::initPHPMailer($contact, $title);
-        $mail->Subject = "[$title] $subject";
-
+        $Subject = "[$title] $subject";
         // Send a copy of the email to the contact page recipient.
-        $mail->addAddress($contact, 'Undisclosed Recipients');
+        $address = ($contact, 'Undisclosed Recipients');
+
+        $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$Subject, 'toAddress'=>$address, 'fromAddress'=>$contact, 'fromName'=>$title, 'ifReplyAddress'=>false));
 
         $bcc_emails = explode(',', $target_addresses);
 
         foreach ($bcc_emails as $b) {
             $mail->addBCC($b);
         }
-
-        $mail->Body = $message;
 
         $response['status'] = $mail->send();
 

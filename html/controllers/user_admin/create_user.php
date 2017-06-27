@@ -110,19 +110,6 @@ try {
 
     // -------------------
 
-    $mail = MailWrapper::initPHPMailer();
-
-    $mail->Subject = "$page_title: Account Created";
-
-    $recipient
-        = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-        ? xd_utilities\getConfiguration('general', 'debug_recipient')
-        : $_POST['email_address'];
-
-    $mail->addAddress($recipient);
-
-    // -------------------
-
     $message = "Welcome to the $page_title.  Your account has been created.\n\n";
     $message .= "Your username is: ".$_POST['username']."\n\n";
     $message .= "Please visit the following page to create your password:\n\n";
@@ -133,9 +120,14 @@ try {
     $message .= $site_address."user_manual\n\n";
     $message .= "The XDMoD Team";
 
-    $mail->Body = $message;
+    $recipient
+        = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
+        ? xd_utilities\getConfiguration('general', 'debug_recipient')
+        : $_POST['email_address'];
 
-    // -------------------
+    $subject = "$page_title: Account Created";
+
+    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false));
 
     $mail->send();
 }

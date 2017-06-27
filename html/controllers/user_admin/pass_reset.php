@@ -36,15 +36,9 @@ $recipient
 // -------------------
 
 try {
-    $mail = MailWrapper::initPHPMailer();
-    $mail->Subject = "$page_title: Password Reset";
-    $mail->addAddress($recipient);
-
-    // -------------------
-
+    $subject = "$page_title: Password Reset";
     $message = MailWrapper::passwordReset($user_to_email);
-
-    $mail->Body = $message;
+    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false));
 
     // -------------------
 

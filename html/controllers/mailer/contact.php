@@ -92,16 +92,8 @@ $message .="\n------------------------\n\nSession Tracking Data:\n\n  ";
 $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $timestamp";
 
 try {
-    $mail = MailWrapper::initPHPMailer($_POST['email'], $_POST['name']);
-
-    $mail->Subject = $subject;
-    $mail->addAddress($recipient);
-
     //Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
-    $mail->addReplyTo($_POST['email'], $_POST['name']);
-
-    $mail->Body = $message;
-
+    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>$_POST['email'], 'fromName'=>$_POST['name'], 'ifReplyAddress'=>true));
     $mail->send();
 }
 catch (Exception $e) {
@@ -119,15 +111,12 @@ $message
     . "be in touch with you as soon as possible.\n\n"
     . MailTemplates::getMaintainerSignature();
 
+$Subject = "Thank you for your $message_type.";
+
 // -------------------
 
 try {
-    $mail = MailWrapper::initPHPMailer();
-    $mail->Subject = "Thank you for your $message_type.";
-    $mail->addAddress($_POST['email']);
-
-    $mail->Body = $message;
-
+    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$Subject, 'toAddress'=>$_POST['email'], 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false));
     $mail->send();
 }
 catch (Exception $e) {

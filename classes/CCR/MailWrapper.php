@@ -7,18 +7,25 @@ use Xdmod\EmailTemplate;
 class MailWrapper
 {
 
-    public static function initPHPMailer($fromEmail = null, $fromName = null)
+    public static function initPHPMailer($properties)
     {
         $mail = new \PHPMailer(true);
         $mail->isSendMail();
         $address =  \xd_utilities\getConfiguration('mailer', 'sender_email');
         $mail->Sender = $address;
+        $mail->Body = $properties['body'];
+        $mail->Subject = $properties['subject'];
+        $mail->addAddress($properties['toAddress']);
 
-        if($fromEmail !== null) {
-            $address = $fromEmail;
-            $name = $fromName;
+        if($properties['fromAddress'] !== null) {
+            $address = $properties['fromAddress'];
+            $name = $properties['fromName'];
         } else {
             $name = \xd_utilities\getConfiguration('general', 'title');
+        }
+
+        if($properties['ifReplyAddress'] === true) {
+            $mail->addReplyTo($address, $name);
         }
 
         try {
