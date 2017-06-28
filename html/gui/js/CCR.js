@@ -303,7 +303,7 @@ XDMoD.constants.maxLastNameLength = 50;
 /**
  * The maximum length of a full name.
  */
-XDMoD.constants.maxNameLength = XDMoD.constants.maxFirstNameLength + XDMoD.constants.maxLastNameLength + 1;
+XDMoD.constants.maxNameLength = XDMoD.constants.maxFirstNameLength + XDMoD.constants.maxLastNameLength;
 
 /**
  * The minimum length of an email address.
