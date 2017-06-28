@@ -12,10 +12,10 @@ set -o pipefail
 
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
-    rpm -qa | grep ^xdmod | xargs rpm --erase 
+    rpm -qa | grep ^xdmod | xargs yum -y remove
     rm -rf /etc/xdmod
     rm -rf /var/lib/mysql
-    rpm -ivh ~/rpmbuild/RPMS/*/*.rpm
+    yum -y localinstall ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do 
