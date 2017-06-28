@@ -88,6 +88,11 @@ answerQuestion {DB Admin Username} root
 providePassword {DB Admin Password:} {}
 confirmFileWrite yes
 enterToContinue
+set timeout 120
+provideInput {Do you want to see the output*} {no}
+provideInput {Do you want to see the output*} {no}
+provideInput {Do you want to see the output*} {no}
+set timeout 10
 
 selectMenuOption 3
 provideInput {Organization Name:} Screwdriver 
