@@ -174,7 +174,7 @@ class XDSamlAuthentication
             $subject = "[xdmod] New " . ($linked ? "linked": "unlinked") . " federated user created";
         }
 
-        $mail = MailWrapper::initPHPMailer($properties = array('body'=>$body, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>$userEmail, 'fromName'=>$userName, 'ifReplyAddress'=>$shouldAddReply));
+        $mail = MailWrapper::initPHPMailer($properties = array('body'=>$body, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>$userEmail, 'fromName'=>$userName, 'ifReplyAddress'=>$shouldAddReply, 'bcc'=>false));
 
         $mail->send();
     }

@@ -83,7 +83,6 @@ switch ($operation) {
 
         break;
     case 'send_plain_mail':
-        $target_addresses = \xd_security\assertParameterSet('target_addresses');
         $message = \xd_security\assertParameterSet('message', '/.*/', false);
         $subject = \xd_security\assertParameterSet('subject');
 
@@ -96,13 +95,7 @@ switch ($operation) {
         // Send a copy of the email to the contact page recipient.
         $address = ($contact, 'Undisclosed Recipients');
 
-        $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$Subject, 'toAddress'=>$address, 'fromAddress'=>$contact, 'fromName'=>$title, 'ifReplyAddress'=>false));
-
-        $bcc_emails = explode(',', $target_addresses);
-
-        foreach ($bcc_emails as $b) {
-            $mail->addBCC($b);
-        }
+        $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$Subject, 'toAddress'=>$address, 'fromAddress'=>$contact, 'fromName'=>$title, 'ifReplyAddress'=>false, 'bcc'=>true));
 
         $response['status'] = $mail->send();
 

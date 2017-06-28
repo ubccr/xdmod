@@ -28,6 +28,14 @@ class MailWrapper
             $mail->addReplyTo($address, $name);
         }
 
+        if($properties['bcc'] === true) {
+            $target_addresses = \xd_security\assertParameterSet('target_addresses');
+            $bcc_emails = explode(',', $target_addresses);
+            foreach($bcc_emails as $b) {
+                addingBcc($mail, $b);
+            }
+        }
+
         try {
             $mail->setFrom($address, $name);
         } catch(phpmailerException $e) {
@@ -36,6 +44,10 @@ class MailWrapper
         }
 
         return $mail;
+    }
+
+    public function addingBcc($mail, $b) {
+        $mail->addBCC($b);
     }
 
     /**

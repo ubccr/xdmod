@@ -2079,7 +2079,7 @@ class XDReportManager
             $subject =
                 "Your$frequency " . $templateConfig['subject'] . " $subject_suffix";
 
-            $mail = MailWrapper::initPHPMailer($properties = array('body'=>$templateConfig['message'], 'subject'=>$subject, 'toAddress'=>$destination_email_address, 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false));
+            $mail = MailWrapper::initPHPMailer($properties = array('body'=>$templateConfig['message'], 'subject'=>$subject, 'toAddress'=>$destination_email_address, 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false, 'bcc'=>false));
 
             if ($include_attachment) {
                 $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
