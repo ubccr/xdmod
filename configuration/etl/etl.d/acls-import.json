@@ -1,0 +1,45 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Database",
+                    "config": "database",
+                    "schema": "moddb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
+        },
+        "acls-import": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql"
+        }
+    },
+    "acls-import": [
+        {
+            "name": "acls.import.xdmod.user_acls",
+            "description": "Imports the records that relate which Users should have which Acls for xdmod",
+            "sql_file_list": [
+                "acls/xdmod/user_acls.sql"
+            ],
+            "enabled": true
+        },
+        {
+            "name": "acls.import.xdmod.user_acl_group_by_parameters",
+            "description": "Imports the records which denote a value to use for a particular User / Acl / Group By combination for xdmod",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/user_acl_group_by_parameters.sql"
+                }
+            ],
+            "enabled": true
+        }
+    ]
+}

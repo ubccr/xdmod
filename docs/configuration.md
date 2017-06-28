@@ -43,6 +43,37 @@ has privileges to create databases and users.  If you don't want to use
 this process and would prefer to manually create the databases, see the
 [Database Guide](databases.html).
 
+#### Acl Database Setup
+Will create the tables required by the Acl framework. This is done via execution
+of the script:
+  - bin/acl-xdmod-management. 
+Should the table structures require additional changes after modifying the 
+appropriate configuration files located in 
+etc/etl/etl_tables.d/acls/xdmod/<table>.json this script should be executed to
+migrate the changes to the database.
+
+#### Acl Database Population
+After the tables required for the Acl framework have been created two scripts
+will be executed to populate them. 
+
+The first is:
+  - bin/acl-config
+  
+this script validates and utilizes the information contained in the following 
+files:
+  - etc/datawarehouse.json
+  - etc/datawarehouse.d/*.json
+  - etc/roles.json
+  - etc/roles.d/*.json
+  - etc/hierarchies.json
+  - etc/hierarchies.d/*.json
+  
+The second script is:
+  - bin/acl-import
+  
+this script executes a series of sql statements that are stored in 
+etc/etl/etl_sql.d/acls/xdmod/\*.sql.
+
 ### Organization Settings
 
 The organization settings require a name and abbreviation for your

@@ -1,0 +1,85 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../configuration/linker.php';
+
+ini_set('memory_limit', -1);
+
+use CCR\Log;
+use OpenXdmod\Setup\AclEtl;
+
+try {
+    main();
+} catch (Exception $e) {
+    do {
+        $msg = $e->getMessage();
+        $stacktrace = $e->getTraceAsString();
+
+        fwrite(STDERR, "$msg\n");
+        fwrite(STDERR, "$stacktrace\n");
+    } while ($e = $e->getPrevious());
+    exit(1);
+}
+
+function main()
+{
+    $params = array();
+    $opts = array(
+        'c::' => 'config_file::',
+        'p:' => 'section:',
+        'v' => 'verbose',
+        'g' => 'debug',
+        'h' => 'help'
+    );
+
+    $args = getopt(
+        implode('', array_keys($opts)),
+        array_values($opts)
+    );
+
+    foreach ($args as $key => $value) {
+        if (is_array($value)) {
+            fwrite(STDERR, "Multiple values not allowed for '$key'\n");
+            exit(1);
+        }
+
+        switch ($key) {
+            case 'c':
+            case 'config_file':
+                $params['config_file'] = $value;
+                break;
+            case 'p':
+            case 'section':
+                $params['section'] = $value;
+                break;
+            case 'v':
+            case 'verbose':
+                $params['log_level'] = 'info';
+                break;
+            case 'g':
+            case 'debug':
+                $params['log_level'] = 'debug';
+                break;
+            case 'h':
+            case 'help':
+                displayHelp();
+                exit(0);
+        }
+    }
+
+    $aclEtl = new AclEtl($params);
+    $aclEtl->execute();
+}
+
+function displayHelp()
+{
+    $msg = <<<EOF
+Usage acl-etl [options]
+
+    -c | --config_file [file]    the config file to use during the etl operation.
+    -p | --section     [section] the section that should be executed.
+    -v | --verbose               output additional information during processing.
+    -g | --debug                 output debug information during processing.
+EOF;
+    echo "$msg\n";
+}
