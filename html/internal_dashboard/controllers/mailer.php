@@ -95,7 +95,7 @@ switch ($operation) {
         // Send a copy of the email to the contact page recipient.
         $address = ($contact, 'Undisclosed Recipients');
 
-        $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$Subject, 'toAddress'=>$address, 'fromAddress'=>$contact, 'fromName'=>$title, 'ifReplyAddress'=>false, 'bcc'=>true));
+        $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$Subject, 'toAddress'=>$address, 'fromAddress'=>$contact, 'fromName'=>$title, 'ifReplyAddress'=>false, 'bcc'=>true, 'attachment'=>false, 'fileName'=>'', 'attachment_file_name'=>'', 'type'=>''));
 
         $response['status'] = $mail->send();
 

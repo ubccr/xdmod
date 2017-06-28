@@ -125,7 +125,7 @@ $subject = "[$title] A visitor has signed up";
 
 try {
     // Original sender's e-mail must be in the "From" field for the XDMoD Request Tracker to function
-    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>$_POST['email'], 'fromName'=>$name, 'ifReplyAddress'=>true, 'bcc'=>false));
+    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>$_POST['email'], 'fromName'=>$name, 'ifReplyAddress'=>true, 'bcc'=>false, 'attachment'=>false, 'fileName'=>'', 'attachment_file_name'=>'', 'type'=>''));
 
     // Send email.
     $mail->send();

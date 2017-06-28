@@ -36,6 +36,10 @@ class MailWrapper
             }
         }
 
+        if($properties['attachment'] === true) {
+           $mail->addAttachment($properties['fileName'], $properties['attachment_file_name'], 'base64', $properties['type'], 'inline');
+        }
+
         try {
             $mail->setFrom($address, $name);
         } catch(phpmailerException $e) {
