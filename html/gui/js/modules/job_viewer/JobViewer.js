@@ -834,6 +834,19 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                     dataUrl: url
                 });
                 break;
+            case 'ganttchart':
+                tab = new XDMoD.Module.JobViewer.GanttChart({
+                    id: chartId,
+                    title: title,
+                    url: base,
+                    baseParams: this._getParams(path),
+                    historyToken: '#' + this.module_id + '?' + this._createHistoryTokenFromArray(path),
+                    path: path,
+                    dtypes: [],
+                    dtype: dtype,
+                    dtypeValue: id
+                });
+                break;
             case 'timeline':
             case 'timeseries':
                 var tsid = this._find('tsid', 'tsid', path);
@@ -903,6 +916,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          * @param panel
          **/
         activate: function () {
+            if (!this.loadMask) {
+                this.loadMask = new Ext.LoadMask(this.id);
+            }
             Highcharts.setOptions({ global: { timezone: this.cachedHighChartTimezone } });
 
             if (this.clearing) {
@@ -913,6 +929,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             var params = Ext.urlDecode(token.params);
 
             if (params.job) {
+                this.loadMask.show();
                 this.fireEvent('create_history_entry', Ext.decode(window.atob(params.job)));
                 return;
             }
@@ -920,6 +937,15 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             if (!params.realm) {
                 return;
             }
+
+            if (params.action) {
+                this.loadMask.show();
+                this.fireEvent('run_search_action', params);
+                return;
+            }
+
+            this.loadMask.hide();
+
             var selectionModel = this.searchHistoryPanel.getSelectionModel();
 
             var path = this._getPath(token.raw);
@@ -1337,6 +1363,63 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 this.createHistoryCallbackData = data;
                 this.createHistoryCallbackScope = this;
             }
+        },
+
+        /**
+         * Run a job search and save the first result in the search history
+         */
+        run_search_action: function (searchparams) {
+            var self = this;
+
+            Ext.Ajax.request({
+                url: XDMoD.REST.url + '/' + this.rest.warehouse + '/search/jobs',
+                method: 'GET',
+                params: {
+                    token: XDMoD.REST.token,
+                    realm: searchparams.realm,
+                    params: JSON.stringify(searchparams)
+                },
+                success: function (response) {
+                    var data = JSON.parse(response.responseText);
+                    if (data.success === false || data.totalCount < 1) {
+                        Ext.Msg.show({
+                            title: 'No results',
+                            msg: 'No jobs were found that meet the requested search parameters.',
+                            buttons: Ext.Msg.OK,
+                            fn: Ext.History.add(self.module_id + '?realm=' + searchparams.realm),
+                            icon: Ext.MessageBox.INFO
+                        });
+                        return;
+                    }
+                    var historyEntry = {
+                        title: searchparams.title || 'Linked Search',
+                        realm: searchparams.realm,
+                        text: data.results[0].text,
+                        job_id: data.results[0].jobid,
+                        local_job_id: data.results[0].local_job_id
+                    };
+                    self.fireEvent('create_history_entry', historyEntry);
+                },
+                failure: function (response) {
+                    var message;
+                    try {
+                        var result = JSON.parse(response.responseText);
+                        if (result.message) {
+                            message = result.message;
+                        }
+                    } catch (e) {
+                        message = 'Error processing request';
+                    }
+
+                    Ext.Msg.show({
+                        title: 'Error ' + response.status + ' ' + response.statusText,
+                        msg: message,
+                        buttons: Ext.Msg.OK,
+                        fn: Ext.History.add(self.module_id + '?realm=' + searchparams.realm),
+                        icon: Ext.MessageBox.ERROR
+                    });
+                }
+            });
         },
 
         /**
