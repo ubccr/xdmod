@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../../configuration/linker.php';
 
+use CCR\MailWrapper;
 use CCR\DB;
 use Xdmod\EmailTemplate;
 
@@ -88,23 +89,22 @@ switch ($operation) {
 
         $response['success'] = true;
 
-        $mail = ZendMailWrapper::init();
-
         $title = \xd_utilities\getConfiguration('general', 'title');
-        $mail->setSubject("[$title] $subject");
+        $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
+
+        $mail = MailWrapper::initPHPMailer($contact, $title);
+        $mail->Subject = "[$title] $subject";
 
         // Send a copy of the email to the contact page recipient.
-        $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
-        $mail->addTo($contact, 'Undisclosed Recipients');
-        $mail->setFrom($contact, $title);
+        $mail->addAddress($contact, 'Undisclosed Recipients');
 
         $bcc_emails = explode(',', $target_addresses);
 
         foreach ($bcc_emails as $b) {
-            $mail->addBcc($b);
+            $mail->addBCC($b);
         }
 
-        $mail->setBodyText($message);
+        $mail->Body = $message;
 
         $response['status'] = $mail->send();
 

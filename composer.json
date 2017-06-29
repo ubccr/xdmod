@@ -8,7 +8,6 @@
         "symfony/process": "~2.0",
         "sencha/extjs-gpl": "3.4.*",
         "highsoft/highcharts": "^4.2.5",
-        "zendframework/zendframework-minimal": "^1.12.0",
         "moment/moment-min-file": "^2.13.0",
         "moment/moment-timezone-min-file": "^0.5.4",
         "jquery/jquery-min-file": "^1.12.4",
@@ -23,7 +22,8 @@
         "apache/commons-digester": "^1.7",
         "apache/commons-logging": "^1.0.4",
         "egulias/email-validator": "^1.2",
-        "taq/pdooci": "^1.0"
+        "taq/pdooci": "^1.0",
+        "phpmailer/phpmailer": "^5.2"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*",

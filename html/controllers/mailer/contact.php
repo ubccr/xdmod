@@ -1,5 +1,7 @@
 <?php
 
+use CCR\MailWrapper;
+
 // Operation: mailer->contact
 
 $response = array();
@@ -65,14 +67,10 @@ if ($captcha_private_key !== '' && !isset($_SESSION['xdUser'])) {
 
 // ----------------------------------------------------------
 
-$mailer_sender = xd_utilities\getConfiguration('mailer', 'sender_email');
-
 $recipient
   = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
   ? xd_utilities\getConfiguration('general', 'debug_recipient')
   : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-
-$mail = ZendMailWrapper::init();
 
 switch ($reason) {
   case 'wishlist':
@@ -86,15 +84,6 @@ switch ($reason) {
     break;
 }
 
-$mail->setSubject($subject);
-$mail->addTo($recipient);
-
-//$mail->setFrom($mailer_sender, 'XDMoD');
-
-//Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
-$mail->setFrom($_POST['email']);
-$mail->setReplyTo($_POST['email']);
-
 $timestamp = date('m/d/Y, g:i:s A', $_POST['timestamp']);
 
 $message = "Below is a $message_type from '{$_POST['name']}' ({$_POST['email']}):\n\n";
@@ -102,26 +91,27 @@ $message .= $_POST['message'];
 $message .="\n------------------------\n\nSession Tracking Data:\n\n  ";
 $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $timestamp";
 
-$mail->setBodyText($message);
-
 try {
+    $mail = MailWrapper::initPHPMailer($_POST['email'], $_POST['name']);
+
+    $mail->Subject = $subject;
+    $mail->addAddress($recipient);
+
+    //Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
+    $mail->addReplyTo($_POST['email'], $_POST['name']);
+
+    $mail->Body = $message;
+
     $mail->send();
 }
 catch (Exception $e) {
     $response['success'] = false;
-    $response['message'] = $e->getMessage();
+    $response['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
     echo json_encode($response);
     exit;
 }
 
 // =====================================================
-
-$mail = ZendMailWrapper::init();
-$mail->setFrom($mailer_sender, 'XDMoD');
-$mail->setSubject("Thank you for your $message_type.");
-$mail->addTo($_POST['email']);
-
-// -------------------
 
 $message
     = "Hello, {$_POST['name']}\n\n"
@@ -131,16 +121,20 @@ $message
     . "Center for Computational Research\n"
     . "University at Buffalo, SUNY\n";
 
-$mail->setBodyText($message);
-
 // -------------------
 
 try {
+    $mail = MailWrapper::initPHPMailer();
+    $mail->Subject = "Thank you for your $message_type.";
+    $mail->addAddress($_POST['email']);
+
+    $mail->Body = $message;
+
     $mail->send();
 }
 catch (Exception $e) {
     $response['success'] = false;
-    $response['message'] = $e->getMessage();
+    $response['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
     echo json_encode($response);
     exit;
 }
