@@ -1,9 +1,34 @@
 <?php
-/* ------------------------------------------------------------------------------------------
- * Component tests for ETL StructuredFile DataEndpoints
+/** -----------------------------------------------------------------------------------------
+ * Component tests for ETL StructuredFile DataEndpoints. The following tests are
+ * implemented:
+ *
+ * #1: Parsing a simple JSON file containing an array of objects.
+ * #2: Parsing a simple JSON file containing multiple objects, each on a single line,
+ *     separated by a newline.
+ * #3: Error reporting when config is not valid.
+ * #4: Error reporting when a filter type is not provided.
+ * #5: Filter syntax error.
+ * #6: Unknown filter executable.
+ * #7: Parsing of an empty file.
+ * #8: Parsing a simple JSON file containing an array of objects filtered through an
+ *     external process.
+ * #9: Parsing a simple JSON file containing multiple records separated by a newline and
+ *     filtered through an external process.
+ * #10: Successful JSON schema validation.
+ * #11: Failed JSON schema validation.
+ * #12: Parse JSON object, no field names specified (already tested by #1, #2).
+ * #13: Parse JSON array of objects, subset of field names specified.
+ * #14: Parse JSON array of objects, extra field names specified (expect null values).
+ * #15: Parse JSON 2d array, no header row, no field names (excpect Exception).
+ * #16: Parse JSON 2d array, no header row, with field names.
+ * #17: Parse JSON 2d array, with header row.
+ * #18: Parse JSON 2d array, with header row and field names subset.
+ * #19: Parse JSON 2d array, with header row, subset of field names specified with extra
+ *      field (expect null values).
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
- * @date 2017-05-15
+ * @date 2017-06-29
  * ------------------------------------------------------------------------------------------
  */
 
@@ -34,7 +59,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // __construct()
 
     /**
-     * Test parsing a simple JSON file containing an array of objects.
+     * Test #1: Parsing a simple JSON file containing an array of objects.
      */
 
     public function testParseJsonFileArray()
@@ -110,8 +135,8 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testParseJsonFileArray()
 
     /**
-     * Test parsing a simple JSON file containing multiple objects, each on a single line,
-     * separated by a newline.
+     * Test #2: Parsing a simple JSON file containing multiple objects, each on a single
+     * line, separated by a newline.
      */
 
     public function testParseJsonFileRecords()
@@ -198,7 +223,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test error reporting when config is not valid.
+     * Test #3: Error reporting when config is not valid.
      *
      * @expectedException Exception
      */
@@ -225,7 +250,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testInvalidFilterConfig()
 
     /**
-     * Test error reporting when a filter type is not provided.
+     * Test #4: Error reporting when a filter type is not provided.
      *
      * @expectedException Exception
      */
@@ -256,7 +281,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testMissingFilterType()
 
     /**
-     * Test filter syntax error.
+     * Test #5: Filter syntax error.
      *
      * @expectedException Exception
      */
@@ -286,7 +311,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testFilterSyntaxError()
 
     /**
-     * Test unknown filter executable.
+     * Test #6: Unknown filter executable.
      *
      * @expectedException Exception
      */
@@ -315,7 +340,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testInvalidFilter()
 
     /**
-     * Test parsing of an empty file.
+     * Test #7: Parsing of an empty file.
      */
 
     public function testEmptyFile()
@@ -343,8 +368,8 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testEmptyFile()
 
     /**
-     * Test parsing a simple JSON file containing an array of objects filtered through an
-     * external process.
+     * Test #8: Parsing a simple JSON file containing an array of objects filtered through
+     * an external process.
      */
 
     public function testParseJsonFileFilteredArray()
@@ -379,8 +404,8 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testParseJsonFileFilteredArray()
 
     /**
-     * Test parsing a simple JSON file containing multiple records separated by a newline
-     * and filtered through an external process.
+     * Test #9: Parsing a simple JSON file containing multiple records separated by a
+     * newline and filtered through an external process.
      */
 
     public function testParseJsonFileFilteredRecords()
@@ -432,7 +457,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testParseJsonFileFilteredRecords()
 
     /**
-     * Test successful JSON schema validation.
+     * Test #10: Successful JSON schema validation.
      */
 
     public function testSchemaValidationSuccess()
@@ -472,7 +497,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testSchemaValidationSuccess()
 
     /**
-     * Test failed JSON schema validation.
+     * Test #11: Failed JSON schema validation.
      *
      * @expectedException Exception
      */
@@ -493,4 +518,263 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
         $generated = $file->parse();
 
     }  // testSchemaValidationFailure()
+
+    /**
+     * Test #13: Parse JSON array of objects, subset of field names specified.
+     */
+
+    public function testParseJsonArrayOfObjectsWithFieldNameSubset()
+    {
+        $expected = array(
+            (object) array(
+                'first_name' => 'Helen',
+                'last_name' => 'Green'
+            ),
+            (object) array(
+                'first_name' => 'Dorothy',
+                'last_name' => 'Green'
+            ),
+             (object) array(
+                'first_name' => 'Mario',
+                'last_name' => 'Johnson'
+            )
+        );
+
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_va_users.json';
+        $config = array(
+            'name' => 'xdmod_va_users.json',
+            'path' => $path,
+            'type' => 'jsonfile',
+            // Only return these fields
+            'field_names' => array('first_name', 'last_name')
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $file->parse();
+
+        foreach ($file as $index => $record) {
+            $this->assertEquals($expected[$index], $record);
+        }
+    }  // testParseJsonArrayOfObjectsWithFieldNameSubset()
+
+    /**
+     * Test #14: Parse JSON array of objects, extra field names specified (expect null
+     * values).
+     */
+
+    public function testParseJsonArrayOfObjectsWithExtraFieldName()
+    {
+        $expected = array(
+            (object) array(
+                'first_name' => 'Helen',
+                'last_name' => 'Green',
+                'extra' => null
+            ),
+            (object) array(
+                'first_name' => 'Dorothy',
+                'last_name' => 'Green',
+                'extra' => null
+            ),
+             (object) array(
+                'first_name' => 'Mario',
+                'last_name' => 'Johnson',
+                'extra' => null
+            )
+        );
+
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_va_users.json';
+        $config = array(
+            'name' => 'xdmod_va_users.json',
+            'path' => $path,
+            'type' => 'jsonfile',
+            // Only return these fields
+            'field_names' => array('first_name', 'last_name', 'extra')
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $file->parse();
+
+        foreach ($file as $index => $record) {
+            $this->assertEquals($expected[$index], $record);
+        }
+    }  // testParseJsonArrayOfObjectsWithExtraFieldName()
+
+    /**
+     * Test #15: Parse JSON 2d array, no header row, no field names (excpect Exception).
+     *
+     * @expectedException Exception
+     */
+
+    public function testParseJsonArrayNoHeaderNoFieldNames()
+    {
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/event_types_no_header.json';
+        $config = array(
+            'name' => 'event_types_no_header.json',
+            'path' => $path,
+            'type' => 'jsonfile'
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $file->parse();
+
+    }  // testParseJsonArrayNoHeaderNoFieldNames()
+
+    /**
+     * Test #16: Parse JSON 2d array, no header row, with field names.
+     */
+
+    public function testParseJsonArrayNoHeaderWithFieldNames()
+    {
+        $expected = array(
+            array(
+                'field1' => -1,
+                'field2' => 'unknown',
+                'field3' => 'Unknown',
+                'field4' => 'Unknown event type'
+            ),
+            array(
+                'field1' => 1,
+                'field2' => 'request-start',
+                'field3' => 'Request Start',
+                'field4' => 'Request to start instance'
+            )
+        );
+
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/event_types_no_header.json';
+        $config = array(
+            'name' => 'event_types_no_header.json',
+            'path' => $path,
+            'type' => 'jsonfile',
+            'field_names' => array('field1', 'field2', 'field3', 'field4')
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $file->parse();
+
+        foreach ($file as $index => $record) {
+            $this->assertEquals($expected[$index], $record);
+        }
+    }  // testParseJsonArrayNoHeaderWithFieldNames()
+
+    /**
+     * Test #17: Parse JSON 2d array, with header row.
+     */
+
+    public function testParseJsonArrayWithHeader()
+    {
+        $expected = array(
+            array(
+                'event_type_id' => -1,
+                'event_type' => 'unknown',
+                'display' => 'Unknown',
+                'description' => 'Unknown event type'
+            ),
+            array(
+                'event_type_id' => 1,
+                'event_type' => 'request-start',
+                'display' => 'Request Start',
+                'description' => 'Request to start instance'
+            )
+        );
+
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/event_types_with_header.json';
+        $config = array(
+            'name' => 'event_types_with_header.json',
+            'path' => $path,
+            'type' => 'jsonfile',
+            'header_record' => true
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $file->parse();
+
+        foreach ($file as $index => $record) {
+            $this->assertEquals($expected[$index], $record);
+        }
+    }  // testParseJsonArrayWithHeader()
+
+    /**
+     * Test #18: Parse JSON 2d array, with header row and field names subset.
+     */
+
+    public function testParseJsonArrayWithHeaderAndFieldNames()
+    {
+        $expected = array(
+            array(
+                'event_type_id' => -1,
+                'display' => 'Unknown'
+            ),
+            array(
+                'event_type_id' => 1,
+                'display' => 'Request Start'
+            )
+        );
+
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/event_types_with_header.json';
+        $config = array(
+            'name' => 'event_types_with_header.json',
+            'path' => $path,
+            'type' => 'jsonfile',
+            'header_record' => true,
+            'field_names' => array('event_type_id', 'display')
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $file->parse();
+
+        foreach ($file as $index => $record) {
+            $this->assertEquals($expected[$index], $record);
+        }
+    }  // testParseJsonArrayWithHeaderAndFieldNames()
+
+    /**
+     * Test #19: Parse JSON 2d array, with header row, subset of field names specified
+     * with extra field (expect null values).
+     */
+
+    public function testParseJsonArrayWithHeaderAndExtraFieldNames()
+    {
+        $expected = array(
+            array(
+                'event_type_id' => -1,
+                'display' => 'Unknown',
+                'extra' => null
+            ),
+            array(
+                'event_type_id' => 1,
+                'display' => 'Request Start',
+                'extra' => null
+            )
+        );
+
+        $path = self::TEST_ARTIFACT_INPUT_PATH . '/event_types_with_header.json';
+        $config = array(
+            'name' => 'event_types_with_header.json',
+            'path' => $path,
+            'type' => 'jsonfile',
+            'header_record' => true,
+            'field_names' => array('event_type_id', 'display', 'extra')
+        );
+
+        $options = new DataEndpointOptions($config);
+        $file = DataEndpoint::factory($options, $this->logger);
+        $file->verify();
+        $file->parse();
+
+        foreach ($file as $index => $record) {
+            $this->assertEquals($expected[$index], $record);
+        }
+    }  // testParseJsonArrayWithHeaderAndExtraFieldNames()
 }  // class StructuredFileTest

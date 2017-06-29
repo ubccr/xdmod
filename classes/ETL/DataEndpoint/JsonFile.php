@@ -73,7 +73,12 @@ class JsonFile extends aStructuredFile implements iStructuredFile
             );
         }
 
-        if ( is_array($decoded) ) {
+        // If we have decoded an array of records (either arrays or objects) then merge
+        // them onto the record list. Be careful that we have not decoded a single record
+        // that is an array, as this should simply be appended on to the end of the record
+        // list.
+
+        if ( is_array($decoded) && (is_array(current($decoded)) || is_object(current($decoded))) ) {
             $this->recordList = array_merge($this->recordList, $decoded);
         } else {
             $this->recordList[] = $decoded;
@@ -145,6 +150,86 @@ class JsonFile extends aStructuredFile implements iStructuredFile
         return true;
 
     }  // verifyData()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see aStructuredFile::setExistingRecordFieldNames()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function setExistingRecordFieldNames()
+    {
+        // If there are no records in the file then we don't need to set the existing
+        // field names.
+
+        if ( 0 == count($this->recordList) ) {
+            return;
+        }
+
+        // Determine the record names based on the structure of the JSON that we are
+        // parsing.
+
+        reset($this->recordList);
+        $record = current($this->recordList);
+
+        if ( is_array($record) ) {
+
+            if ( $this->hasHeaderRecord ) {
+
+                // If we have a header record skip the first record and use its values as
+                // the field names
+
+                $this->existingRecordFieldNames = array_shift($this->recordList);
+
+            } elseif ( null !== $this->requestedRecordFieldNames ) {
+
+                // If there is no header record and the requested field names have been
+                // provided, use them as the existing field names.  If a subsequent record
+                // contains fewer fields return NULL values for those fields, if a
+                // subsequent record contains more fields ignore them.
+
+                $this->existingRecordFieldNames = $this->requestedRecordFieldNames;
+
+            } else {
+                $this->logAndThrowException("Record field names must be specified for JSON array records");
+            }
+
+        } elseif ( is_object($record) ) {
+
+            // Pull the record field names from the object keys
+
+            $this->existingRecordFieldNames = array_keys(get_object_vars($record));
+
+        } else {
+            $this->logAndThrowException(
+                sprintf("Unsupported record type in %s. Got %s, expected array or object", $this->path, gettype($record))
+            );
+        }
+
+        // If no field names were requested, return all existing fields
+
+        if ( null === $this->requestedRecordFieldNames ) {
+            $this->requestedRecordFieldNames = $this->existingRecordFieldNames;
+        }
+
+    }  // setRecordFieldNames()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see aStructuredFile::createReturnRecord()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function createReturnRecord($record)
+    {
+        $arrayRecord = parent::createReturnRecord($record);
+
+        // If the original record is a stdClass object, be sure to maintain its type.
+
+        if ( is_object($record) ) {
+            return (object) $arrayRecord;
+        } else {
+            return $arrayRecord;
+        }
+    }  // createReturnRecord()
 
     /** -----------------------------------------------------------------------------------------
      * Implementation of json_last_error_msg() for pre PHP 5.5 systems.

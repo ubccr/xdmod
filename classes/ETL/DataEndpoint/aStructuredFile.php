@@ -64,6 +64,44 @@ abstract class aStructuredFile extends File
      */
     protected $fieldSeparator = null;
 
+    /**
+     * TRUE if the file is expected to have a header record, FALSE otherwise.
+     *
+     * @var boolean
+     */
+    protected $hasHeaderRecord = false;
+
+    /**
+     * An array of field names to return. If this is a subset of the fields present in the
+     * record, then return only the fields requested. If there are requested fields that
+     * are not present in the record return NULL for those fields. If NULL, return all
+     * existing record fields.
+     *
+     * @var array|null
+     */
+    protected $requestedRecordFieldNames = null;
+
+    /**
+     * An array of field names corresponding to the data in the file. File formats may
+     * interpret this differently, but all implementations are expected to return data for
+     * all fields specified here. If a field does not exist in the data, its value
+     * expected to be NULL.
+     *
+     * @var array|null
+     */
+    protected $existingRecordFieldNames = null;
+
+    /**
+     * A flag indicating whether or not records should be returned exactly as they were
+     * found in the data file. When set to FALSE, records are normalized into an
+     * associative array (or other Traversable entity) containing only the fields that
+     * were requested. If set to TRUE, the normalization step is skipped and the raw
+     * record is returned.
+     *
+     * @var boolean
+     */
+    protected $recordPassthrough = false;
+
     /** -----------------------------------------------------------------------------------------
      * @see iDataEndpoint::__construct()
      * ------------------------------------------------------------------------------------------
@@ -80,7 +118,10 @@ abstract class aStructuredFile extends File
             'record_schema_path' => 'string',
             'filters'            => 'array',
             'record_separator'   => 'string',
-            'field_separator'    => 'string'
+            'field_separator'    => 'string',
+            'header_record'      => 'bool',
+            'field_names'        => 'array',
+            'record_passthrough' => 'bool'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
@@ -112,6 +153,18 @@ abstract class aStructuredFile extends File
             $this->filterDefinitions = $options->filters;
         }
 
+        if ( isset($options->header_record) ) {
+            $this->hasHeaderRecord = $options->header_record;
+        }
+
+        if ( isset($options->field_names) ) {
+            $this->requestedRecordFieldNames = $options->field_names;
+        }
+
+        if ( isset($options->record_passthrough) ) {
+            $this->recordPassthrough = $options->record_passthrough;
+        }
+
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
@@ -125,6 +178,10 @@ abstract class aStructuredFile extends File
         $this->attachFilters();
         $numBytesRead = $this->parseFile($this->path);
         $this->verifyData();
+
+        // Determine the record field names. This is specific to the type of structured
+        // data that we are parsing.
+        $this->setExistingRecordFieldNames();
 
         $this->rewind();
         return $this->current();
@@ -341,13 +398,33 @@ abstract class aStructuredFile extends File
     }
 
     /** -----------------------------------------------------------------------------------------
-     * @see iStructuredFile::getRecordFieldNames()
+     * @see iStructuredFile::hasHeaderRecord()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getRecordFieldNames()
+    public function hasHeaderRecord()
     {
-        return array();
+        return $this->hasHeaderRecord;
+    }
+
+    /** -----------------------------------------------------------------------------------------
+     * @see iStructuredFile::getRequestedRecordFieldNames()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getRequestedRecordFieldNames()
+    {
+        return $this->requestedRecordFieldNames;
+    }
+
+    /** -----------------------------------------------------------------------------------------
+     * @see iStructuredFile::getExistingRecordFieldNames()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getExistingRecordFieldNames()
+    {
+        return $this->existingRecordFieldNames;
     }
 
     /** -----------------------------------------------------------------------------------------
@@ -361,16 +438,50 @@ abstract class aStructuredFile extends File
     }
 
     /** -----------------------------------------------------------------------------------------
-     * @see iStructuredFile::getRecordsDefinition()
+     * Construct a Traversable return record. The return record must contain all of the
+     * requested field names (keys) along with their values or NULL if a value is not
+     * present for that field.
+     *
+     * Be careful to maintain the type of the record so we do not break functionality
+     * downstream that relies on it.  For example, when parsing a JSON configuration file
+     * we must maintain the stdClass type and not blindly convert it to an associative
+     * array.  The child class can re-implement this method as needed.
+     *
+     * @return array A record that includes all of the data for the requested fields
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getRecordsDefinition()
+    protected function createReturnRecord($record)
     {
-        return array();
-    }
+        // Create an associative array with existing field names as keys and the
+        // associated record field values. Since the expected fields can be set using a
+        // header row, we will need to handle the case where subsequent records could
+        // contain more or fewer fields than the header record.
 
-    /** -----------------------------------------------------------------------------------------
+        if ( is_object($record) ) {
+            $arrayRecord = get_object_vars($record);
+        } else {
+            $numExistingRecords = count($this->existingRecordFieldNames);
+            if ( count($record) < $numExistingRecords ) {
+                $record = array_pad($record, $numExistingRecords, null);
+            }
+            $arrayRecord = array_combine($this->existingRecordFieldNames, array_slice($record, 0, $numExistingRecords));
+        }
+
+        // Create an iterable template where the keys are all of the requested fields with
+        // NULL values. Merge the data record into the template so that the NULL values in
+        // the template are overwritten with the record values where the fields
+        // match.
+
+        $dataTemplate = array_fill_keys($this->requestedRecordFieldNames, null);
+
+        return array_merge($dataTemplate, array_intersect_key($arrayRecord, $dataTemplate));
+    }  // createReturnRecord()
+
+     /** -----------------------------------------------------------------------------------------
+     * Return the current record as a Traversable entity such as an associative array or
+     * stdClass where the keys are field names.
+     *
      * @see Iterator::current()
      * ------------------------------------------------------------------------------------------
      */
@@ -379,11 +490,17 @@ abstract class aStructuredFile extends File
     {
         if ( ! $this->valid() ) {
             return false;
+        } elseif ( $this->recordPassthrough ) {
+            return current($this->recordList);
         }
-        return current($this->recordList);
+
+        // The return record must be Traversable.
+
+        return $this->createReturnRecord(current($this->recordList));
+
     }  // current()
 
-    /** -----------------------------------------------------------------------------------------
+   /** -----------------------------------------------------------------------------------------
      * @see Iterator::key()
      * ------------------------------------------------------------------------------------------
      */
@@ -457,4 +574,17 @@ abstract class aStructuredFile extends File
      */
 
     abstract protected function verifyData();
+
+    /** -----------------------------------------------------------------------------------------
+     * Set the existing field names for the records in a file. How the field names are
+     * determined is specific to the file type. For example, the fields can be inferred
+     * from a CSV/TSV file with a header or a JSON file representing data as objects but
+     * must be specified for CSV/TSV without a header or for a JSON file containing
+     * records as arrays.
+     *
+     * @return array The list of record field names.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    abstract protected function setExistingRecordFieldNames();
 }  // abstract class aStructuredFile
