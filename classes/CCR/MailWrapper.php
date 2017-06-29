@@ -54,6 +54,15 @@ class MailWrapper
         $mail->addBCC($b);
     }
 
+    public function sendMail($properties) {
+        $mail = MailWrapper::initPHPMailer($properties);
+        if($mail->send()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Get the maintainer's signature to use for emails.
      *

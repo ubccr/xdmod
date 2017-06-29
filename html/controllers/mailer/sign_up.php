@@ -123,12 +123,23 @@ $name = $_POST['last_name'] . ', ' . $_POST['first_name'];
 
 $subject = "[$title] A visitor has signed up";
 
+$properties = array(
+    'body'=>$message,
+    'subject'=>$subject,
+    'toAddress'=>$recipient,
+    'fromAddress'=>$_POST['email'],
+    'fromName'=>$name,
+    'ifReplyAddress'=>true,
+    'bcc'=>false,
+    'attachment'=>false,
+    'fileName'=>'',
+    'attachment_file_name'=>'',
+    'type'=>''
+);
+
 try {
     // Original sender's e-mail must be in the "From" field for the XDMoD Request Tracker to function
-    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>$_POST['email'], 'fromName'=>$name, 'ifReplyAddress'=>true, 'bcc'=>false, 'attachment'=>false, 'fileName'=>'', 'attachment_file_name'=>'', 'type'=>''));
-
-    // Send email.
-    $mail->send();
+    MailWrapper::sendMail($properties);
     $response['success'] = true;
 }
 catch (Exception $e) {

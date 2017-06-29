@@ -92,9 +92,22 @@ $message .="\n------------------------\n\nSession Tracking Data:\n\n  ";
 $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $timestamp";
 
 try {
-    //Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
-    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>$_POST['email'], 'fromName'=>$_POST['name'], 'ifReplyAddress'=>true, 'bcc'=>false, 'attachment'=>false, 'fileName'=>'', 'attachment_file_name'=>'', 'type'=>''));
-    $mail->send();
+    //Original sender's e-mail must be in the 'fromAddress' field for the XDMoD Request Tracker to function
+    $properties = array(
+        'body'=>$message,
+        'subject'=>$subject,
+        'toAddress'=>$recipient,
+        'fromAddress'=>$_POST['email'],
+        'fromName'=>$_POST['name'],
+        'ifReplyAddress'=>true,
+        'bcc'=>false,
+        'attachment'=>false,
+        'fileName'=>'',
+        'attachment_file_name'=>'',
+        'type'=>''
+    );
+
+    MailWrapper::sendmail($properties);
 }
 catch (Exception $e) {
     $response['success'] = false;
@@ -116,8 +129,21 @@ $Subject = "Thank you for your $message_type.";
 // -------------------
 
 try {
-    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$Subject, 'toAddress'=>$_POST['email'], 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false, 'bcc'=>false, 'attachment'=>false, 'fileName'=>'', 'attachment_file_name'=>'', 'type'=>''));
-    $mail->send();
+    $properties = array(
+        'body'=>$message,
+        'subject'=>$Subject,
+        'toAddress'=>$_POST['email'],
+        'fromAddress'=>null,
+        'fromName'=>null,
+        'ifReplyAddress'=>false,
+        'bcc'=>false,
+        'attachment'=>false,
+        'fileName'=>'',
+        'attachment_file_name'=>'',
+        'type'=>''
+    );
+
+    MailWrapper::sendMail($properties);
 }
 catch (Exception $e) {
     $response['success'] = false;

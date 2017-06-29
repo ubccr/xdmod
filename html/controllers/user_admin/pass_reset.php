@@ -38,11 +38,23 @@ $recipient
 try {
     $subject = "$page_title: Password Reset";
     $message = MailWrapper::passwordReset($user_to_email);
-    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false, 'bcc'=>false, 'attachment'=>false, 'fileName'=>'', 'attachment_file_name'=>'', 'type'=>''));
 
-    // -------------------
+    $properties = array(
+        'body'=>$message,
+        'subject'=>$subject,
+        'toAddress'=>$recipient,
+        'fromAddress'=>null,
+        'fromName'=>null,
+        'ifReplyAddress'=>false,
+        'bcc'=>false,
+        'attachment'=>false,
+        'fileName'=>'',
+        'attachment_file_name'=>'',
+        'type'=>''
+    );
 
-    $mail->send();
+    MailWrapper::sendMail($properties);
+
     $returnData['success'] = true;
     $returnData['status'] = "Password reset e-mail sent to user {$user_to_email->getUsername()}";
     $returnData['message'] = $returnData['status'];

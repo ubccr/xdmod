@@ -127,9 +127,21 @@ try {
 
     $subject = "$page_title: Account Created";
 
-    $mail = MailWrapper::initPHPMailer($properties = array('body'=>$message, 'subject'=>$subject, 'toAddress'=>$recipient, 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false, 'bcc'=>false, 'attachment'=>false, 'fileName'=>'', 'attachment_file_name'=>'', 'type'=>''));
+    $properties = array(
+        'body'=>$message,
+        'subject'=>$subject,
+        'toAddress'=>$recipient,
+        'fromAddress'=>null,
+        'fromName'=>null,
+        'ifReplyAddress'=>false,
+        'bcc'=>false,
+        'attachment'=>false,
+        'fileName'=>'',
+        'attachment_file_name'=>'',
+        'type'=>''
+    );
 
-    $mail->send();
+    MailWrapper::sendMail($properties);
 }
 catch (Exception $e) {
     \xd_response\presentError($e->getMessage());

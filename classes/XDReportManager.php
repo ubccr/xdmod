@@ -2089,17 +2089,21 @@ class XDReportManager
 
             $reportType = self::$_header_map[$report_format];
 
-            $mail = MailWrapper::initPHPMailer($properties = array('body'=>$templateConfig['message'], 'subject'=>$subject, 'toAddress'=>$destination_email_address, 'fromAddress'=>null, 'fromName'=>null, 'ifReplyAddress'=>false, 'bcc'=>false, 'attachment'=>$include_attachment, 'fileName'=>$report_file, 'attachment_file_name'=>$attachment_file_name, 'type'=>$reportType));
+            $properties = array(
+                'body'=>$templateConfig['message'],
+                'subject'=>$subject,
+                'toAddress'=>$destination_email_address,
+                'fromAddress'=>null,
+                'fromName'=>null,
+                'ifReplyAddress'=>false,
+                'bcc'=>false,
+                'attachment'=>$include_attachment,
+                'fileName'=>$report_file,
+                'attachment_file_name'=>$attachment_file_name,
+                'type'=>$reportType
+            );
 
-//            if ($include_attachment) {
-//                $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
-//                $attachment_file_name
-//                    = $this->getReportName($report_id, true)
-//                    . '.' . $report_format;
-//                $mail->addAttachment($report_file, $attachment_file_name, 'base64', self::$_header_map[$report_format], 'inline');
-//            }
-
-            $mail->send();
+            MailWrapper::sendMail($properties);
         }
         catch (Exception $e) {
             return false;
