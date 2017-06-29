@@ -15,6 +15,7 @@ require_once($baseDir . '/vendor/autoload.php');
 // Register a custom autoloader for XDMoD components.
 $include_path  = ini_get('include_path');
 $include_path .= ":" . $baseDir . '/classes';
+$include_path .= ":" . $baseDir . '/classes/CCR';
 $include_path .= ":" . $baseDir . '/classes/DB';
 $include_path .= ":" . $baseDir . '/classes/DB/TACCStatsIngestors';
 $include_path .= ":" . $baseDir . '/classes/DB/TGcDBIngestors';
@@ -32,6 +33,8 @@ $include_path .= ":" . $baseDir . '/external_libraries/Zend/library';
 $include_path .= ":" . $baseDir . '/libraries/HighRoller_1.0.5';
 
 ini_alter('include_path', $include_path);
+
+use CCR\Log;
 
 function xdmodAutoload($className)
 {
@@ -89,6 +92,7 @@ class HttpCodeMessages
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
         302 => 'Found',
+        //302 => 'Found' . $include_path .= ":" . $baseDir . '/classes/DB',
         303 => 'See Other',
         304 => 'Not Modified',
         305 => 'Use Proxy',
@@ -136,10 +140,10 @@ class HttpCodeMessages
  */
 function handle_uncaught_exception($exception)
 {
-   $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
+  $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
    $logConf = array('mode' => 0644);
-   $logger = Log::factory('file', $logfile, 'exception', $logConf);
+   $logger = XDLog::factory($logfile, $logConf);
 
    $logger->log('Exception Code: '.$exception->getCode(), PEAR_LOG_ERR);
    $logger->log('Message: '.$exception->getMessage(), PEAR_LOG_ERR);
