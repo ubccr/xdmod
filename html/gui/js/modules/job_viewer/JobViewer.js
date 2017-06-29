@@ -1,3 +1,29 @@
+/* eslint no-underscore-dangle: [
+   "error",
+   {
+      "allow" : [
+         "_getPath",
+         "_processViewRequest",
+         "_copy",
+         "_createHistoryEntry",
+         "_createHistoryToken",
+         "_createHistoryTokenFromArray",
+         "_find",
+         "_fromArray",
+         "_generateURL",
+         "_generateView",
+         "_getParams",
+         "_makeRequest",
+         "_panelActivation",
+         "_performLoad",
+         "_retrieveSearchInfo",
+         "_truncatePath",
+         "_updateHistoryFromPanel",
+         "_upsertSearch"
+      ]
+   }
+] */
+
 // TODO: Move this someplace else, just here for testing...
 if (!String.prototype.trim) {
     String.prototype.trim = function () {
@@ -808,6 +834,19 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                     dataUrl: url
                 });
                 break;
+            case 'ganttchart':
+                tab = new XDMoD.Module.JobViewer.GanttChart({
+                    id: chartId,
+                    title: title,
+                    url: base,
+                    baseParams: this._getParams(path),
+                    historyToken: '#' + this.module_id + '?' + this._createHistoryTokenFromArray(path),
+                    path: path,
+                    dtypes: [],
+                    dtype: dtype,
+                    dtypeValue: id
+                });
+                break;
             case 'timeline':
             case 'timeseries':
                 var tsid = this._find('tsid', 'tsid', path);
@@ -876,61 +915,53 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          *
          * @param panel
          **/
-        activate: function (panel) {
+        activate: function () {
+            if (!this.loadMask) {
+                this.loadMask = new Ext.LoadMask(this.id);
+            }
+            Highcharts.setOptions({ global: { timezone: this.cachedHighChartTimezone } });
 
-            Highcharts.setOptions({global: {timezone: this.cachedHighChartTimezone}});
-
-            if (this.clearing) return;
-
-
-            var exists = CCR.exists;
-            var getParameter = CCR.getParameter;
-            var hash = document.location.hash;
-
-            var realmKey = 'realm';
-            var searchKey = 'recordid';
-            var jobKey = 'jobid';
-            var viewKey = 'infoid';
-            var timeSeriesKey = 'tsid';
-
-            var realm = getParameter(realmKey, hash);
-            var search = getParameter(searchKey, hash);
-            var job = getParameter(jobKey, hash);
-            var view = getParameter(viewKey, hash);
-            var timeSeries = getParameter(timeSeriesKey, hash);
-
-            var metricExplorerData = getParameter('job', hash);
-
-            if (exists(metricExplorerData)) {
-                this.fireEvent('create_history_entry', Ext.decode(window.atob(metricExplorerData)));
+            if (this.clearing) {
                 return;
             }
-            var hasRealm = exists(realm);
-            var hasSearch = exists(search);
-            var hasJob = exists(job);
-            var hasView = exists(view);
-            var hasTimeSeries = exists(timeSeries);
 
-            var path = this._getPath(window.location.hash);
-            var dtype = path && path.length > 0
-                    ? path[path.length - 1].dtype
-                    : this.currentNode && this.currentNode.attributes && this.currentNode.attributes.dtype
-                    ? this.currentNode.attributes.dtype
-                    : null;
+            var token = CCR.tokenize(document.location.hash);
+            var params = Ext.urlDecode(token.params);
+
+            if (params.job) {
+                this.loadMask.show();
+                this.fireEvent('create_history_entry', Ext.decode(window.atob(params.job)));
+                return;
+            }
+
+            if (!params.realm) {
+                return;
+            }
+
+            if (params.action) {
+                this.loadMask.show();
+                this.fireEvent('run_search_action', params);
+                return;
+            }
+
+            this.loadMask.hide();
+
             var selectionModel = this.searchHistoryPanel.getSelectionModel();
 
-            var isSelected = this._equals(path, this.currentNode, dtype) && selectionModel && exists(selectionModel.getSelectedNode());
+            var path = this._getPath(token.raw);
+            var isSelected = this.compareNodePath(this.currentNode, path) && selectionModel && CCR.exists(selectionModel.getSelectedNode());
 
-            if (hasRealm && !hasSearch && !hasJob && !hasView) {
-                this.fireEvent('process_realm_node', path, isSelected);
-            } else if (hasRealm && hasSearch && !hasJob && !hasView) {
-                this.fireEvent('process_search_node', path, isSelected);
-            } else if (hasRealm && hasSearch && hasJob && !hasView) {
-                this.fireEvent('process_job_node', path, isSelected, this._processViewRequest);
-            } else if (hasRealm && hasSearch && hasJob && hasView) {
-                this.fireEvent('process_view_node', path, isSelected);
-            } else if (hasRealm && hasSearch && hasJob && hasView && hasTimeSeries) {
-                this.fireEvent('process_view_node', path, isSelected);
+            if (!isSelected) {
+                this.searchHistoryPanel.fireEvent('expand_node', path);
+                return;
+            }
+
+            if (params.recordid && params.jobid) {
+                if (params.infoid) {
+                    this.fireEvent('process_view_node', path);
+                } else {
+                    this.fireEvent('process_job_node', path, this._processViewRequest);
+                }
             }
         }, // activate
 
@@ -968,38 +999,15 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         }, // clear_display
 
         /**
-         * Process the given path for a realm_node history event.
-         *
-         * @param {Array} path
-         * @param {Boolean} isSelected
-         */
-        process_realm_node: function (path, isSelected) {
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path);
-        }, // process_realm_node
-
-        /**
-         * Process the given path for a search node history event.
-         *
-         * @param {Array} path
-         * @param {Boolean} isSelected
-         */
-        process_search_node: function (path, isSelected) {
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path);
-        }, // process_search_node
-
-        /**
          * Process the given path for a job node history event.
          *
          * @param {Array} path
          * @param {Boolean} isSelected
          */
-        process_job_node: function (path, isSelected, callback) {
+        process_job_node: function (path, callback) {
             var self = this;
             var exists = CCR.exists;
             var isType = CCR.isType;
-
-            // ENSURE: that the job node is expanded.
-            if (!isSelected) this.searchHistoryPanel.fireEvent('expand_node', path, true);
 
             var hasCurrentNode = exists(this.currentNode);
             var hasAttributes = hasCurrentNode && exists(this.currentNode.attributes);
@@ -1035,9 +1043,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                     // Set the tab panel to be active since a new tab is to be added.
                                     Ext.getCmp('info_display_container').getLayout().setActiveItem(1);
                                 },
-                                close: function(p) {
-                                    if(Ext.getCmp('info_display').items.length == 1) {
-                                        // The only tab left is about to close. Set the assist image to be active
+                                destroy: function () {
+                                    if (Ext.getCmp('info_display').items.length < 1) {
+                                        // All tabs have been destroyed. Set the assist image to be active
                                         Ext.getCmp('info_display_container').getLayout().setActiveItem(0);
                                     }
                                 }
@@ -1103,16 +1111,10 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          * @param {Array} path
          * @param {Boolean} isSelected
          */
-        process_view_node: function (path, isSelected) {
+        process_view_node: function (path) {
             var exists = CCR.exists;
             var isType = CCR.isType;
             var self = this;
-
-            // ENSURE: that the view node is expanded before continuing.
-            if (!isSelected) {
-                this.searchHistoryPanel.fireEvent('expand_node', path, true);
-                return;
-            }
 
             var hasCurrentNode = exists(this.currentNode);
             var hasAttributes = hasCurrentNode && exists(this.currentNode.attributes);
@@ -1216,7 +1218,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
                 if (!exists(jobTab)) {
                     var jobPath = this._truncatePath('jobid', path);
-                    this.fireEvent('process_job_node', jobPath, true, processView);
+                    this.fireEvent('process_job_node', jobPath, processView);
                 } else {
                     processView.apply(this);
                 }
@@ -1361,6 +1363,63 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 this.createHistoryCallbackData = data;
                 this.createHistoryCallbackScope = this;
             }
+        },
+
+        /**
+         * Run a job search and save the first result in the search history
+         */
+        run_search_action: function (searchparams) {
+            var self = this;
+
+            Ext.Ajax.request({
+                url: XDMoD.REST.url + '/' + this.rest.warehouse + '/search/jobs',
+                method: 'GET',
+                params: {
+                    token: XDMoD.REST.token,
+                    realm: searchparams.realm,
+                    params: JSON.stringify(searchparams)
+                },
+                success: function (response) {
+                    var data = JSON.parse(response.responseText);
+                    if (data.success === false || data.totalCount < 1) {
+                        Ext.Msg.show({
+                            title: 'No results',
+                            msg: 'No jobs were found that meet the requested search parameters.',
+                            buttons: Ext.Msg.OK,
+                            fn: Ext.History.add(self.module_id + '?realm=' + searchparams.realm),
+                            icon: Ext.MessageBox.INFO
+                        });
+                        return;
+                    }
+                    var historyEntry = {
+                        title: searchparams.title || 'Linked Search',
+                        realm: searchparams.realm,
+                        text: data.results[0].text,
+                        job_id: data.results[0].jobid,
+                        local_job_id: data.results[0].local_job_id
+                    };
+                    self.fireEvent('create_history_entry', historyEntry);
+                },
+                failure: function (response) {
+                    var message;
+                    try {
+                        var result = JSON.parse(response.responseText);
+                        if (result.message) {
+                            message = result.message;
+                        }
+                    } catch (e) {
+                        message = 'Error processing request';
+                    }
+
+                    Ext.Msg.show({
+                        title: 'Error ' + response.status + ' ' + response.statusText,
+                        msg: message,
+                        buttons: Ext.Msg.OK,
+                        fn: Ext.History.add(self.module_id + '?realm=' + searchparams.realm),
+                        icon: Ext.MessageBox.ERROR
+                    });
+                }
+            });
         },
 
         /**
@@ -1760,65 +1819,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         return;
     }, // _replace
 
-    /**
-     * Will determine the two provided TreeNodes are 'equal' utilizing the
-     * custom 'dtype' attribute and it's value.
-     *
-     * @param {Ext.tree.TreeNode|Array} lhn
-     * @param {Ext.tree.TreeNode|Array} rhn
-     * @returns {boolean}
-     */
-    _equals: function (lhn, rhn, key) {
-        var exists = CCR.exists;
-        var isType = CCR.isType;
-
-        if (!exists(lhn) || !exists(rhn)) return false;
-
-        var lhnPath = isType(lhn, CCR.Types.Object)
-                ? this._getPath(lhn)
-                : isType(lhn, CCR.Types.Array)
-                ? lhn
-                : [];
-        var rhnPath = isType(rhn, CCR.Types.Object)
-                ? this._getPath(rhn)
-                : isType(rhn, CCR.Types.Array)
-                ? rhn
-                : [];
-        var keyProvided = exists(key);
-
-        var base = lhnPath.length >= rhnPath.length ? lhnPath : rhnPath;
-
-        var result = true;
-        for (var i = 0; i < base.length && result; i++) {
-            var lhnRecord = lhnPath[i];
-            var rhnRecord = rhnPath[i];
-
-            var bothValid = exists(lhnRecord) && exists(rhnRecord);
-
-            var keysMatch = bothValid &&
-                    exists(lhnRecord.dtype) &&
-                    exists(rhnRecord.dtype) &&
-                    lhnRecord.dtype === rhnRecord.dtype;
-
-            if (keyProvided && keysMatch) {
-                var valuesMatch = true;
-                if (keysMatch) {
-                    valuesMatch = lhnRecord.value == rhnRecord.value;
-                }
-                if (!valuesMatch) result = false;
-            } else if ( keyProvided && !keysMatch ){
-                result = false;
-            } else if (!keyProvided) {
-                var valuesMatch = true;
-                if (keysMatch) {
-                    valuesMatch = lhnRecord.value == rhnRecord.value;
-                }
-                if (!valuesMatch) result = false;
-            }
-
-        }
-         return result;
-    }, //_equals
 
     /**
      * Retrieve the value at the index provided from 'data'. This is done in a
@@ -1836,6 +1836,28 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
         return data[index];
     }, // _fromArray
+
+    /**
+     * Compare the given search history tree node with the provided path array.
+     * The path encoding from the _getPath function.
+     *
+     * @param Ext.tree.TreeNode node
+     * @param Array path
+     * @returns true if the path array matches the tree node, false otherwise
+     */
+    compareNodePath: function (node, path) {
+        var i;
+        var np;
+        for (np = node, i = path.length - 1; np && np.attributes && np.attributes.dtype; np = np.parentNode, --i) {
+            if (i < 0) {
+                return false;
+            }
+            if (path[i].dtype !== np.attributes.dtype || path[i].value !== String(np.attributes[np.attributes.dtype])) {
+                return false;
+            }
+        }
+        return i === -1;
+    },
 
     /**
      * Attempt to create a history entry ( node located in the Search History

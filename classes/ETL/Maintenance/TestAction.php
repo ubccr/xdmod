@@ -17,7 +17,7 @@ namespace ETL\Maintenance;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\aAction;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use Log;
 

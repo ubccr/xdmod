@@ -9,6 +9,7 @@
 
 namespace ETL;
 
+use ETL\Configuration\EtlConfiguration;
 use Exception;
 use stdClass;
 
@@ -66,6 +67,10 @@ class Utilities
         $exceptionPrefix = null,
         array $substitutionDetails = null
     ) {
+
+        if ( null === $string ) {
+            return $string;
+        }
 
         $exceptionForUnusedVariables = ( null !== $logger );
         $trackDetails = ( null !== $substitutionDetails );

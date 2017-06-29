@@ -10,13 +10,13 @@
 
 namespace ETL\Maintenance;
 
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\aAction;
 use ETL\DataEndpoint\iRdbmsEndpoint;
-use ETL\DbEntity\Query;
+use ETL\DbModel\Query;
 use \PDOException;
 use ETL\Utilities;
 use \Log;
@@ -140,10 +140,10 @@ class VerifyDatabase extends aAction implements iAction
                 $this->sourceEndpoint->getSystemQuoteChar(),
                 $this->logger
             );
-            $this->queryColumnNames = array_keys($sourceQuery->getRecords());
+            $this->queryColumnNames = array_keys($sourceQuery->records);
             $this->setOverseerRestrictionOverrides();
             $this->getEtlOverseerOptions()->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this);
-            $this->sqlQueryString = $sourceQuery->getSelectSql();
+            $this->sqlQueryString = $sourceQuery->getSql();
             $this->sqlQueryString = Utilities::substituteVariables(
                 $this->sqlQueryString,
                 $this->variableMap,

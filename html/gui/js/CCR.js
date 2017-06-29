@@ -291,11 +291,6 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
 // by both the browser client and the server.
 
 /**
- * The maximum length of a full name.
- */
-XDMoD.constants.maxNameLength = 100;
-
-/**
  * The maximum length of a first name.
  */
 XDMoD.constants.maxFirstNameLength = 50;
@@ -304,6 +299,11 @@ XDMoD.constants.maxFirstNameLength = 50;
  * The maximum length of a last name.
  */
 XDMoD.constants.maxLastNameLength = 50;
+
+/**
+ * The maximum length of a full name.
+ */
+XDMoD.constants.maxNameLength = XDMoD.constants.maxFirstNameLength + XDMoD.constants.maxLastNameLength;
 
 /**
  * The minimum length of an email address.
@@ -1357,94 +1357,33 @@ CCR.getParameter = function (name, source) {
             ? ""
             : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
+/*
+ * Process the location hash string. The string should have the form:
+ *  PATH?PARAMS
+ *
+ * with an optional # prefix. PATH is a ':' delimited path leading to a component of the form
+ *   ROOT:TAB:SUBTAB
+ *
+ *  If the path only contains one entry then it is treated as
+ *   TAB
+ */
 CCR.tokenize = function (hash) {
-    var exists = CCR.exists;
-    var root, tab, params;
+    var matches = hash.match(/^#?(([^:\\?]*):?([^:\\?]*):?([^:\\?]*)\??(.*))/);
 
-    function select(value, delimiter, index) {
-        if (exists(value) && exists(delimiter) && exists(index) &&
-                exists(value.indexOf) && typeof index === 'number' &&
-                index >= 0 && value.indexOf(delimiter) >= 0) {
-            return value.split(delimiter)[index];
-        } else {
-            return value;
-        }
+    var tokens = {
+        raw: hash,
+        content: matches[1],
+        root: matches[2],
+        tab: matches[3],
+        subtab: matches[4],
+        params: matches[5]
+    };
+    if (tokens.tab === '') {
+        // Support for legacy path syntax
+        tokens.tab = tokens.root;
+        tokens.root = '';
     }
-
-    function first(value, delimiter) {
-        return select(value, delimiter, 0);
-    }
-
-    function second(value, delimiter) {
-        return select(value, delimiter, 1);
-    }
-
-    if (exists(hash)) {
-        var tabDelimIndex = hash.indexOf(CCR.xdmod.ui.tokenDelimiter);
-        var paramDelimIndex = hash.indexOf('?');
-        var equalIndex = hash.indexOf('=');
-
-        var result = {
-            raw: hash,
-            content: second(hash, '#')
-        };
-
-        if (tabDelimIndex >= 0 && paramDelimIndex >= 0) {
-
-            // We have a well formed hash: parent:child?name=value...
-            root = first(
-                    first(result.content, CCR.xdmod.ui.tokenDelimiter)
-                    , '?'
-            );
-
-            tab = first(
-                    second(result.content, CCR.xdmod.ui.tokenDelimiter),
-                    '?'
-            );
-
-            params = second(result.content, '?');
-
-            if (params === result.content) {
-                params = '';
-            }
-
-            result['root'] = root;
-            result['tab'] = tab;
-            result['params'] = params;
-        } else if (tabDelimIndex < 0 && paramDelimIndex < 0 && equalIndex >= 0) {
-
-            // We have a hash that looks like: name=value
-            result['root'] = '';
-            result['tab'] = '';
-            result['params'] = result.content;
-        } else if (tabDelimIndex < 0 && paramDelimIndex < 0) {
-            result['root'] = '';
-            result['tab'] = result.content;
-            result['params'] = '';
-        } else if (tabDelimIndex >= 0 && paramDelimIndex < 0) {
-
-            // We have a hash that looks like: parent:child
-            root = first(result.content, CCR.xdmod.ui.tokenDelimiter);
-            tab = second(result.content, CCR.xdmod.ui.tokenDelimiter);
-            params = '';
-
-            result['root'] = root;
-            result['tab'] = tab;
-            result['params'] = params;
-        } else if (tabDelimIndex < 0 && paramDelimIndex >= 0) {
-
-            // We have a hash that looks like: child?name=value
-            root = '';
-            tab = first(result.content, '?');
-            params = second(result.content, '?');
-
-            result['root'] = root;
-            result['tab'] = tab;
-            result['params'] = params;
-        }
-        return result;
-    }
-    return {};
+    return tokens;
 };
 
 /**

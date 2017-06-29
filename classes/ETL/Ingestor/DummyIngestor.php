@@ -13,7 +13,7 @@ namespace ETL\Ingestor;
 
 use ETL\aOptions;
 use ETL\iAction;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use Log;
 

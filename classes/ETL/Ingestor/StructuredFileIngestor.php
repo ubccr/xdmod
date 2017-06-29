@@ -13,12 +13,12 @@ namespace ETL\Ingestor;
 use stdClass;
 
 use ETL\iAction;
-use ETL\EtlConfiguration;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\aRdbmsDestinationAction;
 use ETL\aOptions;
-use ETL\DataEndpoint\StructuredFile;
-use \Log;
+use ETL\DataEndpoint\iStructuredFile;
+use Log;
 
 class StructuredFileIngestor extends aIngestor implements iAction
 {
@@ -52,7 +52,6 @@ class StructuredFileIngestor extends aIngestor implements iAction
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
         parent::__construct($options, $etlConfig, $logger);
-
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -82,8 +81,8 @@ class StructuredFileIngestor extends aIngestor implements iAction
             $this->sourceEndpoint = null;
             $this->sourceHandle = null;
         } elseif ( $this->options->source !== null && ! $this->options->ignore_source ) {
-            if ( ! $this->sourceEndpoint instanceof StructuredFile ) {
-                $msg = "Source is not an instance of ETL\\DataEndpoint\\StructuredFile";
+            if ( ! $this->sourceEndpoint instanceof iStructuredFile ) {
+                $msg = "Source is not an instance of ETL\\DataEndpoint\\iStructuredFile";
                 $this->logAndThrowException($msg);
             }
         }
@@ -143,12 +142,19 @@ class StructuredFileIngestor extends aIngestor implements iAction
     /**
      * @see aIngestor::_execute()
      */
+
+    // @codingStandardsIgnoreLine
     protected function _execute()
     {
         $destColumns = $this->executionData['destColumns'];
         $destColumnsToSourceKeys = $this->executionData['destColumnsToSourceKeys'];
         $sourceValues = $this->executionData['sourceValues'];
         $customInsertValuesComponents = $this->executionData['customInsertValuesComponents'];
+
+        // If no data was provided in the file, use the StructuredFile endpoint
+        if ( null === $sourceValues ) {
+            $sourceValues = $this->sourceEndpoint;
+        }
 
         $numColumns = count($destColumns);
         $numRecords = count($sourceValues);
@@ -230,10 +236,17 @@ class StructuredFileIngestor extends aIngestor implements iAction
             $destColumns = array_keys($destColumnsToSourceKeys);
         }
 
+        // The StructuredFile data endpoint now implements the Iterator interface. Storing
+        // source values directly in the definition file will be deprecated in the future
+        // in favor of maintaing a separate data file with a reference to that file in the
+        // definition.
+
+        $sourceValues = null;
+
         // If a source data endpoint was given, use it. Otherwise, use data
         // values specified in the definition file.
-        if ($this->sourceEndpoint) {
-            $sourceValues = $this->sourceEndpoint->parse();
+        if ( null !== $this->sourceEndpoint) {
+            $this->sourceEndpoint->parse();
         } else {
             $sourceValues = $this->parsedDefinitionFile->source_values;
         }

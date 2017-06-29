@@ -73,7 +73,7 @@ class Log
 
         $loggers = self::getLoggers($ident, $conf);
 
-        $logger = \Log::singleton('composite');
+        $logger = \Log::factory('composite');
 
         foreach ($loggers as $childLogger) {
             $logger->addChild($childLogger);

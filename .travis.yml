@@ -9,11 +9,16 @@ php:
 env:
     global:
         - NODE_VERSION=6
+        - XDMOD_TEST_ARTIFACTS_MIRROR="$HOME/xdmod-test-artifacts.git"
     matrix:
         - TEST_SUITE=syntax
         - TEST_SUITE=style
         - TEST_SUITE=unit
         - TEST_SUITE=build
+matrix:
+    exclude:
+        - php: '5.4'
+          env: TEST_SUITE=style
 
 # Add dependency directories to the Travis cache
 cache:
@@ -21,6 +26,7 @@ cache:
         - $HOME/.npm
         - $HOME/.composer/cache
         - /tmp/pear/cache
+        - $XDMOD_TEST_ARTIFACTS_MIRROR
 
 # Delegate the installation step to the custom Travis installation script
 install: ./.travis.install.sh

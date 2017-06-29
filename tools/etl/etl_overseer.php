@@ -18,8 +18,7 @@ use CCR\Log;
 use CCR\DB;
 use ETL\EtlOverseer;
 use ETL\iEtlOverseer;
-use ETL\EtlConfiguration;
-use ETL\EtlConfigurationOptions;
+use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\Utilities;
 
@@ -53,8 +52,10 @@ $scriptOptions = array(
     'list-actions'      => false,
     // List available aggregators
     'list-aggregators'  => false,
-    // List available data endpoints
-    'list-endpoints'    => false,
+    // List the available data endpoint types (e.g., classes)
+    'list-endpoint-types'    => false,
+    // List endpoints that have been configured
+    'list-configured-endpoints'    => false,
     // List available ETL groups
     'list-groups'       => false,
     // List available Ingestors
@@ -391,6 +392,7 @@ try {
     $etlConfig = new EtlConfiguration(
         $scriptOptions['config-file'],
         $scriptOptions['base-dir'],
+        $logger,
         $scriptOptions['option-overrides']
     );
     $etlConfig->setLogger($logger);
@@ -489,7 +491,18 @@ if ( $showList ) {
                 }
                 break;
 
-            case 'list-endpoints':
+            case 'list-endpoint-types':
+                \ETL\DataEndpoint::discover(false, $logger);
+                $endpointInfo = \ETL\DataEndpoint::getDataEndpointInfo(false, $logger);
+                $headings = array("Name", "Class");
+                print implode(LIST_SEPARATOR, $headings) . "\n";
+                ksort($endpointInfo);
+                foreach ( $endpointInfo as $name => $class) {
+                    print "$name\t$class\n";
+                }
+                break;
+
+            case 'list-configured-endpoints':
                 $endpoints = $etlConfig->getDataEndpoints();
 
                 $endpointSummary = array();
@@ -643,7 +656,7 @@ Usage: {$argv[0]}
     -k, --chunk-size {none, day, week, month, year}
     Break up ingestion into chunks of this size. Helps to make more recent data available faster. [default year]
 
-    -l, --list {resources, sections, actions, endpoints} | <etl_section_name>
+    -l, --list {resources, sections, actions, endpoint-types, configured-endpoints} | <etl_section_name>
     List available actions in the specified section, resources, data endpoints, or sections. If a section name is provided list all actions in that section.
 
     -m, --last-modified-start-date

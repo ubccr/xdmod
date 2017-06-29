@@ -116,13 +116,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 "type" => "utf8-text",
                 "leaf" => true
             ),
-        \DataWarehouse\Query\RawQueryTypes::PEERS =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS,
-                "dtype" => "infoid",
-                "text" => "Peers",
-                "leaf" => false
-            ),
         \DataWarehouse\Query\RawQueryTypes::EXECUTABLE =>
             array(
                 "infoid" => \DataWarehouse\Query\RawQueryTypes::EXECUTABLE,
@@ -135,6 +128,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
                                     environment.",
                 "type" => "nested",
                 "leaf" => true),
+        \DataWarehouse\Query\RawQueryTypes::PEERS =>
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS,
+                "dtype" => "infoid",
+                "text" => "Peers",
+                'url' => '/rest/v1.0/warehouse/search/jobs/peers',
+                'documentation' => 'Shows the list of other HPC jobs that ran concurrently using the same shared hardware resources.',
+                'type' => 'ganttchart',
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS =>
             array(
                 "infoid" => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS,
@@ -634,8 +637,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new BadRequestException('params parameter must be valid JSON');
         }
 
-        if (isset($params['resource_id']) && isset($params['local_job_id'])) {
-            return $this->_getJobByLocalJobId($app, $user, $realm, $params['resource_id'], $params['local_job_id']);
+        if ( (isset($params['resource_id']) && isset($params['local_job_id'])) || isset($params['jobref']) ) {
+            return $this->getJobByPrimaryKey($app, $user, $realm, $params);
         } else {
             $startDate = $this->getStringParam($request, 'start_date', true);
             $endDate = $this->getStringParam($request, 'end_date', true);
@@ -1324,6 +1327,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
             case 'analytics':
                 $results = $this->_getJobData($app, $user, $realm, $jobId, $action, $actionName);
                 break;
+            case 'peers':
+                $start = $this->getIntParam($request, 'start', true);
+                $limit = $this->getIntParam($request, 'limit', true);
+                $results = $this->getJobPeers($app, $user, $realm, $jobId, $start, $limit);
+                break;
             case 'executable':
                 $results = $this->_getJobExecutable($app, $user, $realm, $jobId, $action, $actionName);
                 break;
@@ -1350,6 +1358,83 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         return $results;
+    }
+
+    /**
+     * Return data about a job's peers.
+     *
+     * @param Application $app The router application.
+     * @param XDUser $user the logged in user.
+     * @param $realm data realm.
+     * @param $jobId the unique identifier for the job.
+     * @param $start the start offset (for store paging).
+     * @param $limit the number of records to return (for store paging).
+     * @return json in Extjs.store parsable format.
+     */
+    protected function getJobPeers(Application $app, XDUser $user, $realm, $jobId, $start, $limit)
+    {
+        $jobdata = $this->_getJobDataSet($user, $realm, $jobId, 'internal');
+        if (!$jobdata->hasResults()) {
+            throw new NotFoundException();
+        }
+        $jobresults = $jobdata->getResults();
+        $thisjob = $jobresults[0];
+
+        $i = 0;
+
+        $result = array(
+            'series' => array(
+                array(
+                    'name' => 'Walltime',
+                    'data' => array(
+                        array(
+                            'x' => $i++,
+                            'low' => $thisjob['start_time_ts'] * 1000.0,
+                            'high' => $thisjob['end_time_ts'] * 1000.0
+                        )
+                    )
+                ),
+                array(
+                    'name' => 'Walltime',
+                    'data' => array()
+                )
+            ),
+            'categories' => array(
+                'Current'
+            ),
+            'schema' => array(
+                'timezone' => $thisjob['timezone'],
+                'ref' => array(
+                    'realm' => $realm,
+                    'jobid' => $jobId,
+                    "text" => $thisjob['resource'] . '-' . $thisjob['local_job_id']
+                )
+            )
+        );
+
+        $dataset = $this->_getJobDataSet($user, $realm, $jobId, 'peers');
+        foreach ($dataset->getResults() as $index => $jobpeer) {
+            if ( ($index >= $start) && ($index < ($start + $limit))) {
+                $result['series'][1]['data'][] = array(
+                    'x' => $i++,
+                    'low' => $jobpeer['start_time_ts'] * 1000.0,
+                    'high' => $jobpeer['end_time_ts'] * 1000.0,
+                    'ref' => array(
+                        'realm' => $realm,
+                        'jobid' => $jobpeer['jobid'],
+                        'local_job_id' => $jobpeer['local_job_id'],
+                        'resource' => $jobpeer['resource']
+                    )
+                );
+                $result['categories'][] = $jobpeer['resource'] . '-' . $jobpeer['local_job_id'];
+            }
+        }
+
+        return  $app->json(array(
+            'success' => true,
+            'data' => array($result),
+            'total' => count($dataset->getResults())
+        ));
     }
 
     /**
@@ -1570,19 +1655,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
                     $tsid['type'] = "timeseries";
                     $tsid['dtype'] = "tsid";
                     $result[] = $tsid;
-                }
-                return $app->json(array('success' => true, "results" => $result));
-                break;
-            case "" . \DataWarehouse\Query\RawQueryTypes::PEERS:
-                $dataset = $this->_getJobDataSet($user, $realm, $jobId, "peers");
-                $result = array();
-                foreach ($dataset->getResults() as $jobpeer) {
-                    $result[] = array(
-                        "text" => $jobpeer['resource'] . '-' . $jobpeer['local_job_id'],
-                        "dtype" => "peerid",
-                        "peerid" => $jobpeer['jobid'],
-                        "qtip" => "Job Owner: " . $jobpeer['name'],
-                        "leaf" => true);
                 }
                 return $app->json(array('success' => true, "results" => $result));
                 break;
@@ -1910,23 +1982,31 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Attempts to retrieve job information given the provided resource / localjob id's.
+     * Attempts to retrieve job information given the provided resource &
+     * localjob id or by the db primary key (called jobref here to avoid end user
+     * confusion between this internal identifier and the job id provided
+     * by the resource-manager).
      *
      * @param Application $app
      * @param \XDUser $user
      * @param string $realm
-     * @param int $resourceId
-     * @param int $localJobId
+     * @param array $searchparams
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \DataWarehouse\Query\Exceptions\AccessDeniedException
      * @throws BadRequestException
      */
-    private function _getJobByLocalJobId(Application $app, \XDUser $user, $realm, $resourceId, $localJobId)
+    private function getJobByPrimaryKey(Application $app, \XDUser $user, $realm, $searchparams)
     {
-        $params = array(
-            new \DataWarehouse\Query\Model\Parameter("resource_id", "=", $resourceId),
-            new \DataWarehouse\Query\Model\Parameter("local_job_id", "=", $localJobId)
-        );
+        if (isset($searchparams['jobref'])) {
+            $params = array(
+                new \DataWarehouse\Query\Model\Parameter('_id', '=', $searchparams['jobref'])
+            );
+        } else {
+            $params = array(
+                new \DataWarehouse\Query\Model\Parameter("resource_id", "=", $searchparams['resource_id']),
+                new \DataWarehouse\Query\Model\Parameter("local_job_id", "=", $searchparams['local_job_id'])
+            );
+        }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
         $query = new $QueryClass($params, "brief");

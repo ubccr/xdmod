@@ -10,10 +10,18 @@
 namespace ETL\DataEndpoint;
 
 use ETL\DataEndpoint\DataEndpointOptions;
-use \Log;
+use Log;
 
 class Mysql extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
+    /** -----------------------------------------------------------------------------------------
+     * The ENDPOINT_NAME constant defines the name for this endpoint that should be used
+     * in configuration files. It also allows us to implement auto-discovery.
+     *
+     * @const string
+     */
+
+    const ENDPOINT_NAME = 'mysql';
 
     /* ------------------------------------------------------------------------------------------
      * @see iDataEndpoint::__construct()

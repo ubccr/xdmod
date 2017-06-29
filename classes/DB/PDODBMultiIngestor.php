@@ -231,8 +231,20 @@ class PDODBMultiIngestor implements Ingestor
                 && $sourceRows % 250000 == 0
                 || $rowsTotal == $sourceRows
             ) {
+                // From https://dev.mysql.com/doc/refman/5.5/en/load-data.html
+                //
+                // The server uses the character set indicated by the
+                // character_set_database system variable to interpret the information in
+                // the file. **SET NAMES and the setting of character_set_client do not
+                // affect interpretation of input**. If the contents of the input file use
+                // a character set that differs from the default, it is usually preferable
+                // to specify the character set of the file by using the CHARACTER SET
+                // clause.
+
                 $load_statement = 'load data local infile \'' . $infile_name
                     . '\' replace into table ' . $this->_insert_table
+                    // Only set the character set for XRAS ingestors to minimize potential impact
+                    . ( 0 === strpos(get_class($this), 'XRAS') ? ' character set \'utf8mb4\'' : '' )
                     . ' fields terminated by 0x1e optionally enclosed by 0x1f'
                     . ' lines terminated by 0x1d ('
                     . implode(',', $this->_insert_fields) . ')';
@@ -320,7 +332,7 @@ class PDODBMultiIngestor implements Ingestor
             'records_examined' => $rowsTotal,
             'records_loaded'   => $sourceRows,
         ));
- 
+
     }
 
     public function setLogger(Log $logger)
@@ -353,7 +365,7 @@ class PDODBMultiIngestor implements Ingestor
         $primarykeys = $stmt->fetchAll();
 
         $constraints = array();
-        foreach($primarykeys as $keydata) 
+        foreach($primarykeys as $keydata)
         {
             $constraints[] = sprintf(" b.%s = c.%s ", $keydata['COLUMN_NAME'], $keydata['COLUMN_NAME']);
         }
@@ -468,4 +480,3 @@ class PDODBMultiIngestor implements Ingestor
         }
     }
 }
-

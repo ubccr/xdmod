@@ -1,0 +1,20 @@
+language: none
+env:
+    - XDMOD_TEST_MODE=fresh_install
+    - XDMOD_TEST_MODE=upgrade
+build:
+    cache: true
+    cache_dir_list:
+        - /root/.composer
+    pre_ci_boot:
+        image_name: tas-tools-ext-01.ccr.xdmod.org/centos7-xdmod6.6.0
+        image_tag: version4
+        pull: true
+        options: "--user root -e HOME=/root"
+    ci:
+        - composer install --no-progress
+        - ~/bin/buildrpm xdmod
+        - ./open_xdmod/modules/xdmod/integration_tests/scripts/bootstrap.sh
+        - composer install --no-progress
+        - cp ~/assets/secrets open_xdmod/modules/xdmod/integration_tests/.secrets
+        - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/results.xml

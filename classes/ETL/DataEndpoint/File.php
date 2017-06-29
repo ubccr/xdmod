@@ -7,20 +7,20 @@
 namespace ETL\DataEndpoint;
 
 use ETL\DataEndpoint\DataEndpointOptions;
-use \Log;
+use Log;
 
-class File extends aDataEndpoint
-implements iDataEndpoint
+class File extends aDataEndpoint implements iDataEndpoint
 {
+
+    // The ENDPOINT_NAME constant defines the name for this endpoint that should be used
+    // in configuration files. It also allows us to implement auto-discovery.
+    const ENDPOINT_NAME = 'file';
 
     // The path to the file.
     protected $path = null;
 
     // File mode. See http://php.net/manual/en/function.fopen.php
-    protected $mode = null;
-
-    // The default directory for files that do not specify a full path
-    protected $data_dir = null;
+    protected $mode = 'r';
 
     /* ------------------------------------------------------------------------------------------
      * @see iDataEndpoint::__construct()
@@ -34,37 +34,32 @@ implements iDataEndpoint
         $requiredKeys = array("path");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
-        // Default to read-only mode
-        $this->mode = ( null === $options->mode || "" == $options->mode ? "r" : $options->mode );
+        $messages = array();
+        $propertyTypes = array(
+            'path' => 'string',
+            'mode' => 'string'
+        );
+
+        if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
+            $this->logAndThrowException("Error verifying options: " . implode(", ", $messages));
+        }
+
+        if ( isset($options->mode) ) {
+            $this->mode = $options->mode;
+        }
+
+        $this->path = $options->path;
 
         $this->key = md5(implode($this->keySeparator, array($this->type, $this->path, $this->mode)));
 
-        $this->path = $options->applyBasePath("paths->data_dir", $options->path);
+        if ( isset($options->paths->data_dir) ) {
+            $this->path = \xd_utilities\qualify_path($options->path, $options->paths->data_dir);
+        }
 
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
-     * Set the value of the path for this endpoint.
-     *
-     * @param $path The path to the file for this endpoint
-     *
-     * @return This object to support method chaining
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function setPath($path)
-    {
-        if ( ! is_string($path) ) {
-            $msg = "Path must be a string";
-            $this->logAndThrowException($msg);
-        }
-
-        return $this;
-
-    }  // setPath()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return The path to this file
+     * @see iFile::getPath()
      * ------------------------------------------------------------------------------------------
      */
 
@@ -74,7 +69,19 @@ implements iDataEndpoint
     } // getPath()
 
     /* ------------------------------------------------------------------------------------------
-     * @see aDataEndpoint::connect()
+     * @see iFile::getMode()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getMode()
+    {
+
+
+        return $this->mode;
+    } // getMode()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see iDataEndpoint::connect()
      * ------------------------------------------------------------------------------------------
      */
 
@@ -82,11 +89,18 @@ implements iDataEndpoint
     {
         // The first time a connection is made the endpoint handle should be set.
 
-        $this->handle = @fopen($this->path, $this->mode);
-        if ( false === $this->handle ) {
-            $error = error_get_last();
-            $msg = "Error opening file '{$this->path}': " . $error['message'];
-            $this->logAndThrowException($msg);
+        if ( null === $this->handle ) {
+
+            $this->handle = @fopen($this->path, $this->mode);
+
+            if ( false === $this->handle ) {
+                $this->handle = null;
+                $error = error_get_last();
+                $this->logAndThrowException(
+                    sprintf("Error opening file '%s': %s", $this->path, $error['message'])
+                );
+            }
+
         }
 
         return $this->handle;
@@ -94,23 +108,25 @@ implements iDataEndpoint
     }  // connect()
 
     /* ------------------------------------------------------------------------------------------
-     * @see aDataEndpoint::disconnect()
+     * @see iDataEndpoint::disconnect()
      * ------------------------------------------------------------------------------------------
      */
 
     public function disconnect()
     {
-        if ( null === $this->handle ) {
-            return true;
+        if ( null !== $this->handle ) {
+
+            if ( false === @fclose($this->handle) ) {
+                $error = error_get_last();
+                $msg = "Error closing file '{$this->path}': " . $error['message'];
+                $this->logAndThrowException(
+                    sprintf("Error closing file '%s': %s", $this->path, $error['message'])
+                );
+            }
+
+            $this->handle = null;
+
         }
-    
-        if ( false === @fclose($this->handle) ) {
-            $error = error_get_last();
-            $msg = "Error closing file '{$this->path}': " . $error['message'];
-            $this->logAndThrowException($msg);
-        }
-    
-        $this->handle = null;
 
         return true;
 
@@ -126,22 +142,20 @@ implements iDataEndpoint
         $readModes = array("r", "r+", "w+", "a+", "x+", "c+");
         $writeModes = array("r+", "w", "w+", "a", "a+", "x", "x+", "c", "c+");
 
-        if ( ! is_string($this->path) ) {
-            $msg =  "Path '" . $this->path . "' is not a string";
-            $this->logAndThrowException($msg);
+        if ( ! in_array($this->mode, array_merge($readModes, $writeModes)) ) {
+            $this->logAndThrowException("Unsupported mode '" . $this->mode . "'");
         }
 
-        if ( ! in_array($this->mode, array_merge($readModes, $writeModes)) ) {
-            $msg = "Unsupported mode '{$this->mode}'";
-            $this->logAndThrowException($msg);
+        if ( ! is_file($this->path) ) {
+            $this->logAndThrowException("Path '" . $this->path . "' is not a file");
         }
-        
+
         if ( in_array($this->mode, $readModes) && ! is_readable($this->path) ) {
-            $msg = "File '{$this->path}' is not readable";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Path '" . $this->path . "' is not readable");
         }
 
         $fh = $this->connect();
+
         if ( ! $leaveConnected ) {
             $this->disconnect();
         }
@@ -149,4 +163,13 @@ implements iDataEndpoint
         return true;
     }  // verify()
 
+    /* ------------------------------------------------------------------------------------------
+     * @see iDataEndpoint::__toString()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function __toString()
+    {
+        return sprintf('%s (name=%s, path=%s)', get_class($this), $this->name, $this->path);
+    }  // __toString()
 }  // class File

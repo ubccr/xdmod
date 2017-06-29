@@ -11,8 +11,7 @@ namespace ETL\Ingestor;
 
 use ETL\iAction;
 
-class DatabaseIngestor extends pdoIngestor
-implements iAction
+class DatabaseIngestor extends pdoIngestor implements iAction
 {
 
 }  // class DatabaseIngestor

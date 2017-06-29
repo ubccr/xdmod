@@ -199,6 +199,7 @@ may be found [here][repo-format]. Once you have made the desired changes, run
     - Ubuntu 16.04
       - `php-curl`
       - `php-gmp`
+      - `php-zip`
   - [Composer](https://getcomposer.org/)
   - [PEAR](https://pear.php.net/)
   - [PEAR Log Module](https://pear.php.net/package/Log/)
