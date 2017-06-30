@@ -58,6 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %{_bindir}/%{name}-*
+%{_bindir}/acl-*
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
 %{_docdir}/%{name}-%{version}__PRERELEASE__/

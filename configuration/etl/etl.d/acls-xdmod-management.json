@@ -1,0 +1,42 @@
+{
+  "#": "Setup of Acl Tables",
+  "defaults": {
+    "acls-xdmod-management": {
+      "namespace": "ETL\\Maintenance",
+      "options_class": "MaintenanceOptions",
+      "endpoints": {
+        "destination": {
+          "type": "mysql",
+          "name": "Database",
+          "config": "database",
+          "schema": "moddb"
+        }
+      }
+    }
+  },
+  "acls-xdmod-management": [
+    {
+      "#": "AclTableManagement should always be run after any changes have been made to the files ( tables ) found below.",
+      "name": "AclTableManagement",
+      "class": "ManageTables",
+      "description": "Manage the various Acl related tables.",
+      "definition_file_list": [
+        "acls/modules.json",
+        "acls/module_versions.json",
+        "acls/realms.json",
+        "acls/hierarchies.json",
+        "acls/acl_types.json",
+        "acls/acls.json",
+        "acls/group_bys.json",
+        "acls/statistics.json",
+        "acls/acl_hierarchies.json",
+        "acls/user_acls.json",
+        "acls/acl_group_bys.json",
+        "acls/tabs.json",
+        "acls/acl_tabs.json",
+        "acls/user_acl_group_by_parameters.json"
+      ],
+      "enabled": true
+    }
+  ]
+}
