@@ -1,5 +1,7 @@
 <?php
 
+use CCR\MailWrapper;
+
 // Operation: user_auth->pass_reset
 
 //require_once dirname(__FILE__).'/../../../classes/MailTemplates.php';
@@ -30,7 +32,6 @@ $user_to_email = XDUser::getUserByID($user_to_email);
 // -----------------------------
 
 $page_title = xd_utilities\getConfiguration('general', 'title');
-$mailer_sender = xd_utilities\getConfiguration('mailer', 'sender_email');
 
 $recipient
     = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
@@ -39,27 +40,26 @@ $recipient
 
 // -------------------
 
-$mail = ZendMailWrapper::init();
-$mail->setFrom($mailer_sender, 'XDMoD');
-$mail->setSubject("$page_title: Password Reset");
-$mail->addTo($recipient);
-
-// -------------------
-
-$message = MailTemplates::passwordReset($user_to_email);
-
-$mail->setBodyText($message);
-
-// -----------------------------
-
 try {
+    $mail = MailWrapper::initPHPMailer();
+    $mail->Subject = "$page_title: Password Reset";
+    $mail->addAddress($recipient);
+
+    // -------------------
+
+    $message = MailTemplates::passwordReset($user_to_email);
+
+    $mail->Body = $message;
+
+    // -----------------------------
+
     $status = $mail->send();
     $returnData['success'] = true;
     $returnData['status']  = 'success';
 }
 catch (Exception $e) {
     $returnData['success'] = false;
-    $returnData['message'] = $e->getMessage();
+    $returnData['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
     $returnData['status']  = 'failure';
 }
 

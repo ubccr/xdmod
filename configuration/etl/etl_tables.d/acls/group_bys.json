@@ -1,0 +1,40 @@
+{
+  "table_definition": {
+    "name": "group_bys",
+    "engine": "InnoDB",
+    "comment": "Tracks which `group_bys` are available to the system",
+    "columns": [
+      {
+        "name": "group_by_id",
+        "type": "int(11)",
+        "nullable": false,
+        "extra": "auto_increment"
+      },
+      {
+        "name": "module_id",
+        "type": "int(11)",
+        "nullable": false
+      },
+      {
+        "name": "realm_id",
+        "type": "int(11)",
+        "nullable": false
+      },
+      {
+        "name": "name",
+        "type": "varchar(255)",
+        "nullable": false
+      }
+    ],
+    "indexes": [
+      {
+        "name": "PRIMARY",
+        "columns": [
+          "group_by_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ]
+  }
+}

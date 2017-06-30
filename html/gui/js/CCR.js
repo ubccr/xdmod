@@ -291,11 +291,6 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
 // by both the browser client and the server.
 
 /**
- * The maximum length of a full name.
- */
-XDMoD.constants.maxNameLength = 100;
-
-/**
  * The maximum length of a first name.
  */
 XDMoD.constants.maxFirstNameLength = 50;
@@ -304,6 +299,11 @@ XDMoD.constants.maxFirstNameLength = 50;
  * The maximum length of a last name.
  */
 XDMoD.constants.maxLastNameLength = 50;
+
+/**
+ * The maximum length of a full name.
+ */
+XDMoD.constants.maxNameLength = XDMoD.constants.maxFirstNameLength + XDMoD.constants.maxLastNameLength;
 
 /**
  * The minimum length of an email address.

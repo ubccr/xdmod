@@ -1,5 +1,6 @@
 <?php
 
+use CCR\MailWrapper;
 use CCR\DB;
 use CCR\Log;
 use DataWarehouse\Access\Usage;
@@ -2045,19 +2046,12 @@ class XDReportManager
         $frequency = '',
         $additional_config = array()
     ) {
-        $mail = ZendMailWrapper::init();
-
-        $mailer_sender = xd_utilities\getConfiguration('mailer', 'sender_email');
-
-        $mail->setFrom($mailer_sender, 'XDMoD');
 
         $frequency = (!empty($frequency)) ? ' '.$frequency : $frequency;
 
         $subject_suffix = (APPLICATION_ENV == 'dev') ? '[Dev]' : '';
 
         $destination_email_address = $this->getReportUserEmailAddress($report_id);
-
-        $mail->addTo($destination_email_address);
 
         $report_owner = $this->getReportUserName($report_id);
 
@@ -2081,28 +2075,23 @@ class XDReportManager
                 break;
         }
 
-        $mail->setSubject(
-            "Your$frequency " . $templateConfig['subject'] . " $subject_suffix"
-        );
-
-        $mail->setBodyText($templateConfig['message']);
-
-        if ($include_attachment) {
-            $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
-
-            $attachment_file_name
-                = $this->getReportName($report_id, true)
-                . '.' . $report_format;
-
-            $at = $mail->createAttachment(file_get_contents($report_file));
-
-            $at->type        = self::$_header_map[$report_format];
-            $at->disposition = Zend_Mime::DISPOSITION_INLINE;
-            $at->encoding    = Zend_Mime::ENCODING_BASE64;
-            $at->filename    = $attachment_file_name;
-        }
-
         try {
+            $mail = MailWrapper::initPHPMailer();
+
+            $mail->addAddress($destination_email_address);
+
+            $mail->Subject =
+                "Your$frequency " . $templateConfig['subject'] . " $subject_suffix";
+            $mail->Body = $templateConfig['message'];
+
+            if ($include_attachment) {
+                $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
+                $attachment_file_name
+                    = $this->getReportName($report_id, true)
+                    . '.' . $report_format;
+                $mail->addAttachment($report_file, $attachment_file_name, 'base64', self::$_header_map[$report_format], 'inline');
+            }
+
             $mail->send();
         }
         catch (Exception $e) {
