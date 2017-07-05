@@ -96,15 +96,12 @@ try {
     $properties = array(
         'body'=>$message,
         'subject'=>$subject,
-        'toAddress'=>$recipient,
+        'toAddress'=>array([
+            'address'=>$recipient
+        ]),
         'fromAddress'=>$_POST['email'],
         'fromName'=>$_POST['name'],
-        'ifReplyAddress'=>true,
-        'bcc'=>false,
-        'attachment'=>false,
-        'fileName'=>'',
-        'attachment_file_name'=>'',
-        'type'=>''
+        'ifReplyAddress'=>true
     );
 
     MailWrapper::sendmail($properties);
@@ -132,15 +129,9 @@ try {
     $properties = array(
         'body'=>$message,
         'subject'=>$Subject,
-        'toAddress'=>$_POST['email'],
-        'fromAddress'=>null,
-        'fromName'=>null,
-        'ifReplyAddress'=>false,
-        'bcc'=>false,
-        'attachment'=>false,
-        'fileName'=>'',
-        'attachment_file_name'=>'',
-        'type'=>''
+        'toAddress'=>array([
+            'address'=>$_POST['email']
+        ])
     );
 
     MailWrapper::sendMail($properties);

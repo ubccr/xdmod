@@ -123,22 +123,19 @@ $name = $_POST['last_name'] . ', ' . $_POST['first_name'];
 
 $subject = "[$title] A visitor has signed up";
 
+// Original sender's e-mail must be in the "fromAddress" field for the XDMoD Request Tracker to function
 $properties = array(
     'body'=>$message,
     'subject'=>$subject,
-    'toAddress'=>$recipient,
+    'toAddress'=>array([
+        'address'=>$recipient
+    ]),
     'fromAddress'=>$_POST['email'],
     'fromName'=>$name,
-    'ifReplyAddress'=>true,
-    'bcc'=>false,
-    'attachment'=>false,
-    'fileName'=>'',
-    'attachment_file_name'=>'',
-    'type'=>''
+    'ifReplyAddress'=>true
 );
 
 try {
-    // Original sender's e-mail must be in the "From" field for the XDMoD Request Tracker to function
     MailWrapper::sendMail($properties);
     $response['success'] = true;
 }

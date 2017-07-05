@@ -177,15 +177,12 @@ class XDSamlAuthentication
         $properties = array(
             'body'=>$body,
             'subject'=>$subject,
-            'toAddress'=>$recipient,
+            'toAddress'=>array([
+                'address'=>$recipient
+            ]),
             'fromAddress'=>$userEmail,
             'fromName'=>$userName,
-            'ifReplyAddress'=>$shouldAddReply,
-            'bcc'=>false,
-            'attachment'=>false,
-            'fileName'=>'',
-            'attachment_file_name'=>'',
-            'type'=>''
+            'ifReplyAddress'=>$shouldAddReply
         );
 
         MailWrapper::sendMail($properties);

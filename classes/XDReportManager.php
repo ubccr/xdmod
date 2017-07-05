@@ -2060,7 +2060,8 @@ class XDReportManager
                 $include_attachment
                     = ($additional_config['failed_compliance'] > 0
                         || $additional_config['proposed_requirements'] > 0);
-                $templateConfig = MailWrapper::complianceReport(
+                $templateConfig = MailWrapper::sendTemplate(
+                    'compliance_report',
                     $report_owner,
                     $additional_config['custom_message']
                 );
@@ -2068,7 +2069,8 @@ class XDReportManager
 
             default:
                 $include_attachment = true;
-                $templateConfig = MailWrapper::customReport(
+                $templateConfig = MailWrapper::sendTemplate(
+                    'custom_report',
                     $report_owner,
                     $frequency
                 );
@@ -2092,15 +2094,16 @@ class XDReportManager
             $properties = array(
                 'body'=>$templateConfig['message'],
                 'subject'=>$subject,
-                'toAddress'=>$destination_email_address,
-                'fromAddress'=>null,
-                'fromName'=>null,
-                'ifReplyAddress'=>false,
-                'bcc'=>false,
-                'attachment'=>$include_attachment,
-                'fileName'=>$report_file,
-                'attachment_file_name'=>$attachment_file_name,
-                'type'=>$reportType
+                'toAddress'=>array([
+                    'address'=>$destination_email_address
+                ]),
+                'attachment'=>array([
+                    'fileName'=>$report_file,
+                    'attachment_file_name'=>$attachment_file_name,
+                    'encoding'=>'base64',
+                    'type'=>$reportType,
+                    'disposition'=>'inline'
+                ])
             );
 
             MailWrapper::sendMail($properties);

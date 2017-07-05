@@ -98,15 +98,12 @@ switch ($operation) {
         $properties = array(
             'body'=>$message,
             'subject'=>$Subject,
-            'toAddress'=>$address,
+            'toAddress'=>array([
+                'address'=>$address
+            ]),
             'fromAddress'=>$contact,
             'fromName'=>$title,
-            'ifReplyAddress'=>false,
-            'bcc'=>true,
-            'attachment'=>false,
-            'fileName'=>'',
-            'attachment_file_name'=>'',
-            'type'=>''
+            'bcc'=>true
         );
 
         $response['status'] = MailWrapper::sendMail($properties);

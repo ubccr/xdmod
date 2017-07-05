@@ -41,21 +41,15 @@ $recipient
 // -------------------
 
 try {
-    $message = MailWrapper::passwordReset($user_to_email);
+    $message = MailWrapper::sendTemplate('password_reset', $user_to_email);
     $subject = "$page_title: Password Reset";
 
     $properties = array(
         'body'=>$message,
         'subject'=>$subject,
-        'toAddress'=>$recipient,
-        'fromAddress'=>null,
-        'fromName'=>null,
-        'ifReplyAddress'=>false,
-        'bcc'=>false,
-        'attachment'=>false,
-        'fileName'=>'',
-        'attachment_file_name'=>'',
-        'type'=>''
+        'toAddress'=>array([
+            'address'=>$recipient
+        ])
     );
 
     $status = MailWrapper::sendMail($properties);

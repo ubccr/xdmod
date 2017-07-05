@@ -15,29 +15,34 @@ class MailWrapper
         $mail->Sender = $address;
         $mail->Body = $properties['body'];
         $mail->Subject = $properties['subject'];
-        $mail->addAddress($properties['toAddress']);
 
-        if($properties['fromAddress'] !== null) {
+        for($i = 0; $i < count($properties['toAddress']); $i += 1) {
+            $mail->addAddress($properties['toAddress'][$i]['address']);
+        }
+
+        if(!empty($properties['fromAddress'])) {
             $address = $properties['fromAddress'];
             $name = $properties['fromName'];
         } else {
             $name = \xd_utilities\getConfiguration('general', 'title');
         }
 
-        if($properties['ifReplyAddress'] === true) {
+        if(!empty($properties['ifReplyAddress'])) {
             $mail->addReplyTo($address, $name);
         }
 
-        if($properties['bcc'] === true) {
+        if(!empty($properties['bcc'])) {
             $target_addresses = \xd_security\assertParameterSet('target_addresses');
             $bcc_emails = explode(',', $target_addresses);
             foreach($bcc_emails as $b) {
-                addingBcc($mail, $b);
+                $mail->addBCC($b);
             }
         }
 
-        if($properties['attachment'] === true) {
-           $mail->addAttachment($properties['fileName'], $properties['attachment_file_name'], 'base64', $properties['type'], 'inline');
+        if(!empty($properties['attachment'])) {
+           for($i = 0; $i < count($properties['attachment']); $i += 1) {
+               $mail->addAttachment($properties['attachment'][$i]['fileName'], $properties['attachment'][$i]['attachment_file_name'], $properties['attachment'][$i]['encoding'], $properties['attachment'][$i]['type'], $properties['attachment'][$i]['disposition']);
+           }
         }
 
         try {
@@ -48,10 +53,6 @@ class MailWrapper
         }
 
         return $mail;
-    }
-
-    public function addingBcc($mail, $b) {
-        $mail->addBCC($b);
     }
 
     public function sendMail($properties) {
@@ -121,75 +122,65 @@ class MailWrapper
         return $title;
     }
 
-    public static function passwordReset($user)
+    public function sendTemplate($templateType, $contents, $frequency = '')
     {
-        $username = $user->getUsername();
+        $template = new EmailTemplate($templateType);
 
-        $rid = md5($username . $user->getPasswordLastUpdatedTimestamp());
+        if($templateType === 'password_reset') {
+            $username = $contents->getUsername();
+            $rid = md5($username . $contents->getPasswordLastUpdatedTimestamp());
 
-        $site_address
+            $site_address
             = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
 
-        $resetUrl = "${site_address}password_reset.php?rid=$rid";
+            $resetUrl = "${site_address}password_reset.php?rid=$rid";
 
-        $template = new EmailTemplate('password_reset');
+            $template->apply(array(
+                'first_name'           => $contents->getFirstName(),
+                'username'             => $username,
+                'reset_url'            => $resetUrl,
+                'maintainer_signature' => MailWrapper::getMaintainerSignature()
+            ));
 
-        $template->apply(array(
-            'first_name'           => $user->getFirstName(),
-            'username'             => $username,
-            'reset_url'            => $resetUrl,
-            'maintainer_signature' => static::getMaintainerSignature(),
-        ));
+            return $template->getContents();
 
-        return $template->getContents();
-    }
+        /**
+-       * Gets used by reports built and sent via the Report Generator, as
+-       * well as those reports built and sent via the report scheduler
+-       */
+        } elseif($templateType === 'custom_report') {
+            $frequency = trim($frequency);
+            $frequency
+                = !empty($frequency)
+                ? ' ' . $frequency
+                : $frequency;
 
-    /**
-     * Gets used by reports built and sent via the Report Generator, as
-     * well as those reports built and sent via the report scheduler
-     */
-    public static function customReport($recipient_name, $frequency = '')
-    {
-        $frequency = trim($frequency);
+            $template->apply(array(
+                'recipient_name'       => $contents,
+                'frequency'            => $frequency,
+                'site_title'           => MailWrapper::getSiteTitle(),
+                'maintainer_signature' => MailWrapper::getMaintainerSignature()
+            ));
 
-        $frequency
-            = !empty($frequency)
-            ? ' ' . $frequency
-            : $frequency;
+            return array(
+                'subject' => 'XDMoD Report',
+                'message' => $template->getContents(),
+            );
 
-        $template = new EmailTemplate('custom_report');
+        /**
+-       * Gets used by reports built and sent via XDComplianceReport
+-       */
+        } elseif($templateType === 'compliance_report') {
+            $template->apply(array(
+                'recipient_name'         => $contents,
+                'additional_information' => $frequency,
+                'maintainer_signature'   => MailWrapper::getMaintainerSignature()
+            ));
 
-        $template->apply(array(
-            'recipient_name'       => $recipient_name,
-            'frequency'            => $frequency,
-            'site_title'           => static::getSiteTitle(),
-            'maintainer_signature' => static::getMaintainerSignature(),
-        ));
-
-        return array(
-            'subject' => 'XDMoD Report',
-            'message' => $template->getContents(),
-        );
-    }
-
-    /**
-     * Gets used by reports built and sent via XDComplianceReport
-     */
-    public static function complianceReport(
-        $recipient_name,
-        $additional_information = ''
-    ) {
-        $template = new EmailTemplate('compliance_report');
-
-        $template->apply(array(
-            'recipient_name'         => $recipient_name,
-            'additional_information' => $additional_information,
-            'maintainer_signature'   => static::getMaintainerSignature(),
-        ));
-
-        return array(
-            'subject' => 'XDMoD Compliance Report',
-            'message' => $template->getContents(),
-        );
+            return array(
+                'subject' => 'XDMoD Compliance Report',
+                'message' => $template->getContents(),
+            );
+        }
     }
 }
