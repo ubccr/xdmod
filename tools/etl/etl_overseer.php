@@ -393,7 +393,7 @@ try {
         $scriptOptions['config-file'],
         $scriptOptions['base-dir'],
         $logger,
-        $scriptOptions['option-overrides']
+        array('option_overrides' => $scriptOptions['option-overrides'])
     );
     $etlConfig->setLogger($logger);
     $etlConfig->initialize();
