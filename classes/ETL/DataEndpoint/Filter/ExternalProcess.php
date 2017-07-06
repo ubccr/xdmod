@@ -176,6 +176,10 @@ class ExternalProcess extends \php_user_filter
         $arguments = ( isset($this->params->arguments) ? " " . $this->params->arguments : "" );
         $this->command = $this->params->path . $arguments;
 
+        if ( isset($this->params->logger) ) {
+            $this->params->logger->debug(sprintf("Creating filter %s: %s", self::NAME, $this->command));
+        }
+
         // stream_bucket_new() needs somewhere to store temporary data but the
         // documentation doesn't give any details:
         // http://php.net/manual/en/function.stream-bucket-new.php

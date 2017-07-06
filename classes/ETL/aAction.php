@@ -106,7 +106,6 @@ abstract class aAction extends aEtlObject
             // has already been set by a child constructor leave it alone.
 
             if ( null === $this->parsedDefinitionFile ) {
-                $this->logger->info("Parse definition file: '" . $this->definitionFile . "'");
                 $this->parsedDefinitionFile = new Configuration(
                     $this->definitionFile,
                     $this->options->paths->base_dir,
