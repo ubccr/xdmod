@@ -41,18 +41,31 @@ $recipient
 // -------------------
 
 try {
-    $message = MailWrapper::sendTemplate('password_reset', $user_to_email);
     $subject = "$page_title: Password Reset";
 
+    $username = $user_to_email->getUsername();
+    $rid = md5($username . $user_to_email->getPasswordLastUpdatedTimestamp());
+
+    $site_address
+        = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
+    $resetUrl = "${site_address}password_reset.php?rid=$rid";
+
+    $props = array(
+        'first_name'           => $user_to_email->getFirstName(),
+        'username'             => $username,
+        'reset_url'            => $resetUrl,
+        'maintainer_signature' => MailWrapper::getMaintainerSignature()
+    );
+
     $properties = array(
-        'body'=>$message,
+        'body'=>'',
         'subject'=>$subject,
         'toAddress'=>array([
             'address'=>$recipient
         ])
     );
 
-    $status = MailWrapper::sendMail($properties);
+    MailWrapper::sendTemplate('password_reset', $props, $properties);
     $returnData['success'] = true;
     $returnData['status']  = 'success';
 }

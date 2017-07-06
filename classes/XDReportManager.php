@@ -2055,31 +2055,52 @@ class XDReportManager
 
         $report_owner = $this->getReportUserName($report_id);
 
+        $templateType = '';
+
         switch ($this->getReportDerivation($report_id)) {
             case 'Monthly Compliance Report':
                 $include_attachment
                     = ($additional_config['failed_compliance'] > 0
                         || $additional_config['proposed_requirements'] > 0);
-                $templateConfig = MailWrapper::sendTemplate(
-                    'compliance_report',
-                    $report_owner,
-                    $additional_config['custom_message']
+
+                $props = array(
+                    'recipient_name'         => $report_owner,
+                    'additional_information' => $additional_config['custom message'],
+                    'maintainer_signature'   => MailWrapper::getMaintainerSignature()
                 );
+
+                $templateType = 'compliance_report';
                 break;
 
             default:
                 $include_attachment = true;
-                $templateConfig = MailWrapper::sendTemplate(
-                    'custom_report',
-                    $report_owner,
-                    $frequency
+
+                $frequency = trim($frequency);
+                $frequency
+                    = !empty($frequency)
+                    ? ' ' . $frequency
+                    : $frequency;
+
+                $props = array(
+                    'recipient_name'       => $report_owner,
+                    'frequency'            => $frequency,
+                    'site_title'           => MailWrapper::getSiteTitle(),
+                    'maintainer_signature' => MailWrapper::getMaintainerSignature()
                 );
+
+                $templateType = 'custom_report';
+
                 break;
         }
 
         try {
-            $subject =
-                "Your$frequency " . $templateConfig['subject'] . " $subject_suffix";
+            $subjectType = '';
+            if($templateType === 'custom_report') {
+                $subjectType = 'XDMoD Report';
+            } else {
+                $subjectType = 'XDMoD Compliance Report';
+            }
+            $subject = "Your$frequency " . $subjectType . " $subject_suffix";
 
             $attachment_file_name = '';
             if($include_attachment) {
@@ -2092,7 +2113,7 @@ class XDReportManager
             $reportType = self::$_header_map[$report_format];
 
             $properties = array(
-                'body'=>$templateConfig['message'],
+                'body'=>'',
                 'subject'=>$subject,
                 'toAddress'=>array([
                     'address'=>$destination_email_address
@@ -2105,8 +2126,7 @@ class XDReportManager
                     'disposition'=>'inline'
                 ])
             );
-
-            MailWrapper::sendMail($properties);
+            MailWrapper::sendTemplate($templateType, $props, $properties);
         }
         catch (Exception $e) {
             return false;
