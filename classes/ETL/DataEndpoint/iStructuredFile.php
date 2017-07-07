@@ -41,20 +41,22 @@ interface iStructuredFile extends iFile, \Iterator, \Countable
 
     /** -----------------------------------------------------------------------------------------
      * @return array The list of field names that will be returned for each record. These
-     * are set via the field_names option to the StructuredFile endpoint.
+     * are set via the field_names option to the StructuredFile endpoint or based on the
+     * fields found in the record if field_names is not set. They may be the same as the
+     * discovered fields, a subset, or a superset.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getRequestedRecordFieldNames();
+    public function getRecordFieldNames();
 
     /** -----------------------------------------------------------------------------------------
-     * @return array The list of field names that are present for a record. These are
-     * either specified or auto-discovered (via a header record or record object keys, for
-     * example).
+     * @return array The list of field names that were discovered a record. These are
+     * auto-discovered (via a header record or the object keys of the first record, for
+     * example) or specified via the field_names option.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getExistingRecordFieldNames();
+    public function getDiscoveredRecordFieldNames();
 
     /** -----------------------------------------------------------------------------------------
      * @return array An associative array of filter configuration objects to be applied to

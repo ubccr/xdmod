@@ -73,6 +73,15 @@ class JsonFile extends aStructuredFile implements iStructuredFile
             );
         }
 
+        // If we parsed an empty array or object do not include it as a record.
+
+        if (
+            (is_array($decoded) && 0 == count($decoded)) ||
+            (is_object($decoded) && 0 == count(get_object_vars($decoded)))
+        ) {
+            return true;
+        }
+
         // If we have decoded an array of records (either arrays or objects) then merge
         // them onto the record list. Be careful that we have not decoded a single record
         // that is an array, as this should simply be appended on to the end of the record
@@ -152,13 +161,13 @@ class JsonFile extends aStructuredFile implements iStructuredFile
     }  // verifyData()
 
     /** -----------------------------------------------------------------------------------------
-     * @see aStructuredFile::setExistingRecordFieldNames()
+     * @see aStructuredFile::discoverRecordFieldNames()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function setExistingRecordFieldNames()
+    protected function discoverRecordFieldNames()
     {
-        // If there are no records in the file then we don't need to set the existing
+        // If there are no records in the file then we don't need to set the discovered
         // field names.
 
         if ( 0 == count($this->recordList) ) {
@@ -178,16 +187,16 @@ class JsonFile extends aStructuredFile implements iStructuredFile
                 // If we have a header record skip the first record and use its values as
                 // the field names
 
-                $this->existingRecordFieldNames = array_shift($this->recordList);
+                $this->discoveredRecordFieldNames = array_shift($this->recordList);
 
-            } elseif ( null !== $this->requestedRecordFieldNames ) {
+            } elseif ( 0 !== count($this->requestedRecordFieldNames) ) {
 
                 // If there is no header record and the requested field names have been
-                // provided, use them as the existing field names.  If a subsequent record
-                // contains fewer fields return NULL values for those fields, if a
+                // provided, use them as the discovered field names.  If a subsequent
+                // record contains fewer fields return NULL values for those fields, if a
                 // subsequent record contains more fields ignore them.
 
-                $this->existingRecordFieldNames = $this->requestedRecordFieldNames;
+                $this->discoveredRecordFieldNames = $this->requestedRecordFieldNames;
 
             } else {
                 $this->logAndThrowException("Record field names must be specified for JSON array records");
@@ -197,7 +206,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile
 
             // Pull the record field names from the object keys
 
-            $this->existingRecordFieldNames = array_keys(get_object_vars($record));
+            $this->discoveredRecordFieldNames = array_keys(get_object_vars($record));
 
         } else {
             $this->logAndThrowException(
@@ -205,10 +214,10 @@ class JsonFile extends aStructuredFile implements iStructuredFile
             );
         }
 
-        // If no field names were requested, return all existing fields
+        // If no field names were requested, return all discovered fields
 
-        if ( null === $this->requestedRecordFieldNames ) {
-            $this->requestedRecordFieldNames = $this->existingRecordFieldNames;
+        if ( 0 == count($this->requestedRecordFieldNames) ) {
+            $this->requestedRecordFieldNames = $this->discoveredRecordFieldNames;
         }
 
     }  // setRecordFieldNames()

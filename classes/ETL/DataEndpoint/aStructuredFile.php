@@ -69,17 +69,17 @@ abstract class aStructuredFile extends File
      *
      * @var boolean
      */
-    protected $hasHeaderRecord = false;
+    protected $hasHeaderRecord = true;
 
     /**
      * An array of field names to return. If this is a subset of the fields present in the
      * record, then return only the fields requested. If there are requested fields that
      * are not present in the record return NULL for those fields. If NULL, return all
-     * existing record fields.
+     * discovered record fields.
      *
-     * @var array|null
+     * @var array
      */
-    protected $requestedRecordFieldNames = null;
+    protected $requestedRecordFieldNames = array();
 
     /**
      * An array of field names corresponding to the data in the file. File formats may
@@ -87,9 +87,9 @@ abstract class aStructuredFile extends File
      * all fields specified here. If a field does not exist in the data, its value
      * expected to be NULL.
      *
-     * @var array|null
+     * @var array
      */
-    protected $existingRecordFieldNames = null;
+    protected $discoveredRecordFieldNames = array();
 
     /**
      * A flag indicating whether or not records should be returned exactly as they were
@@ -174,14 +174,14 @@ abstract class aStructuredFile extends File
 
     public function parse()
     {
-        $this->logger->info("Parsing " . $this->path);
+        $this->logger->debug("Parsing " . $this->path);
         $this->attachFilters();
         $numBytesRead = $this->parseFile($this->path);
         $this->verifyData();
 
         // Determine the record field names. This is specific to the type of structured
         // data that we are parsing.
-        $this->setExistingRecordFieldNames();
+        $this->discoverRecordFieldNames();
 
         $this->rewind();
         return $this->current();
@@ -240,7 +240,7 @@ abstract class aStructuredFile extends File
                     }
                     $filterName = 'xdmod.external_process';
                     $resource = @stream_filter_prepend($fd, $filterName, STREAM_FILTER_READ, $config);
-                    $this->logger->debug(sprintf("Adding filter %s to stream", $filterName));
+                    $this->logger->debug(sprintf("Adding filter %s to stream: %s", $filterName, $config->path));
 
                     if ( false === $resource ) {
                         $error = error_get_last();
@@ -408,23 +408,23 @@ abstract class aStructuredFile extends File
     }
 
     /** -----------------------------------------------------------------------------------------
-     * @see iStructuredFile::getRequestedRecordFieldNames()
+     * @see iStructuredFile::getRecordFieldNames()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getRequestedRecordFieldNames()
+    public function getRecordFieldNames()
     {
         return $this->requestedRecordFieldNames;
     }
 
     /** -----------------------------------------------------------------------------------------
-     * @see iStructuredFile::getExistingRecordFieldNames()
+     * @see iStructuredFile::getDiscoveredRecordFieldNames()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getExistingRecordFieldNames()
+    public function getDiscoveredRecordFieldNames()
     {
-        return $this->existingRecordFieldNames;
+        return $this->discoveredRecordFieldNames;
     }
 
     /** -----------------------------------------------------------------------------------------
@@ -453,7 +453,7 @@ abstract class aStructuredFile extends File
 
     protected function createReturnRecord($record)
     {
-        // Create an associative array with existing field names as keys and the
+        // Create an associative array with discovered field names as keys and the
         // associated record field values. Since the expected fields can be set using a
         // header row, we will need to handle the case where subsequent records could
         // contain more or fewer fields than the header record.
@@ -461,11 +461,11 @@ abstract class aStructuredFile extends File
         if ( is_object($record) ) {
             $arrayRecord = get_object_vars($record);
         } else {
-            $numExistingRecords = count($this->existingRecordFieldNames);
-            if ( count($record) < $numExistingRecords ) {
-                $record = array_pad($record, $numExistingRecords, null);
+            $numDiscoveredRecords = count($this->discoveredRecordFieldNames);
+            if ( count($record) < $numDiscoveredRecords ) {
+                $record = array_pad($record, $numDiscoveredRecords, null);
             }
-            $arrayRecord = array_combine($this->existingRecordFieldNames, array_slice($record, 0, $numExistingRecords));
+            $arrayRecord = array_combine($this->discoveredRecordFieldNames, array_slice($record, 0, $numDiscoveredRecords));
         }
 
         // Create an iterable template where the keys are all of the requested fields with
@@ -576,7 +576,7 @@ abstract class aStructuredFile extends File
     abstract protected function verifyData();
 
     /** -----------------------------------------------------------------------------------------
-     * Set the existing field names for the records in a file. How the field names are
+     * Set the discovered field names for the records in a file. How the field names are
      * determined is specific to the file type. For example, the fields can be inferred
      * from a CSV/TSV file with a header or a JSON file representing data as objects but
      * must be specified for CSV/TSV without a header or for a JSON file containing
@@ -586,5 +586,5 @@ abstract class aStructuredFile extends File
      * ------------------------------------------------------------------------------------------
      */
 
-    abstract protected function setExistingRecordFieldNames();
+    abstract protected function discoverRecordFieldNames();
 }  // abstract class aStructuredFile
