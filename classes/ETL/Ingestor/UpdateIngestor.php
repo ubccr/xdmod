@@ -19,17 +19,20 @@ use ETL\aRdbmsDestinationAction;
 use ETL\aOptions;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
+use ETL\DataEndpoint\iStructuredFile;
 
 class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 {
-    // Data parsed from the source JSON file or inline from the source_data definition
-    protected $data = null;
+    /**
+     * This action does not (yet) support multiple destination tables. If multiple
+     * destination tables are present, store the first here and use it.
+     *
+     * @var Table
+     */
 
-    // This action does not (yet) support multiple destination tables. If multiple destination
-    // tables are present, store the first here and use it.
     protected $etlDestinationTable = null;
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::__construct()
      * ------------------------------------------------------------------------------------------
      */
@@ -39,13 +42,12 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         parent::__construct($options, $etlConfig, $logger);
 
         if ( ! $options instanceof IngestorOptions ) {
-            $msg = "Options is not an instance of IngestorOptions";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Options is not an instance of IngestorOptions");
         }
 
     }  // __construct()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
@@ -60,6 +62,16 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 
         parent::initialize($etlOverseerOptions);
 
+        if ( ! $this->sourceEndpoint instanceof iStructuredFile ) {
+            $this->logAndThrowException(
+                sprintf(
+                    "Source endpoint %s does not implement %s",
+                    get_class($this->sourceEndpoint),
+                    "ETL\\DataEndpoint\\iStructuredFile"
+                )
+            );
+        }
+
         // This action only supports 1 destination table so use the first one and log a warning if
         // there are multiple.
 
@@ -67,53 +79,42 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         $this->etlDestinationTable = current($this->etlDestinationTableList);
         $etlTableKey = key($this->etlDestinationTableList);
         if ( count($this->etlDestinationTableList) > 1 ) {
-            $msg = $this . " does not support multiple ETL destination tables, using first table with key: '$etlTableKey'";
-            $logger->warning($msg);
+            $logger->warning(
+                sprintf(
+                    "%s does not support multiple ETL destination tables, using first table with key: '%s'",
+                    $this,
+                    $etlTableKey
+                )
+            );
         }
 
-        // Verify that we have a properly formatted "source_data" and "update" property
+        // Verify that we have a properly "update" property
 
-        $requiredKeys = array('source_data', 'update');
+        $requiredKeys = array(
+            'update' => 'object'
+        );
 
-        foreach ( $requiredKeys as $key ) {
-            if ( ! isset($this->parsedDefinitionFile->$key) ) {
-                $msg = "'$key' key missing in definition file: " . $this->definitionFile;
-                $this->logAndThrowException($msg);
-            }
+        if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile, $requiredKeys, $messages) ) {
+            $this->logAndThrowException(sprintf("Definition file error: %s", implode(', ', $messages)));
         }
 
-        if ( ! isset($this->parsedDefinitionFile->update->set) || ! is_array($this->parsedDefinitionFile->update->set) ) {
-            $msg = "'set' key missing or not an array in 'update' block: " . $this->definitionFile;
-            $this->logAndThrowException($msg);
-        }
+        $requiredKeys = array(
+            'set'   => 'array',
+            'where' => 'array'
+        );
 
-        if ( ! isset($this->parsedDefinitionFile->update->where) || ! is_array($this->parsedDefinitionFile->update->where) ) {
-            $msg = "'where' key missing or not an array in 'update' block: " . $this->definitionFile;
-            $this->logAndThrowException($msg);
+        if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile->update, $requiredKeys, $messages) ) {
+            $this->logAndThrowException(
+                sprintf("Error verifying definition file 'update' section: %s", implode(', ', $messages))
+            );
         }
-
-        if ( ! isset($this->parsedDefinitionFile->source_data->data) ) {
-            $msg = "'data' key missing in in 'source_data' block: " . $this->definitionFile;
-            $this->logAndThrowException($msg);
-        }
-
-        if ( ! isset($this->parsedDefinitionFile->source_data->fields) || ! is_array($this->parsedDefinitionFile->source_data->fields) ) {
-            $msg = "'fields' key missing or not an array in 'source_data' block: " . $this->definitionFile;
-            $this->logAndThrowException($msg);
-        }
-
-        // 2. Create data & verify source. Data source is iteratable. Instantiate object based on columns and data.
-        // 3. In execute()
-        //    a. Construct prepared update statement
-        //    b. Iterate over data source and execute statement
 
         // Merge source data fields with update set and where fields and ensure that they exist in
         // the table definition
 
         $updateColumns = array_merge(
             $this->parsedDefinitionFile->update->set,
-            $this->parsedDefinitionFile->update->where,
-            $this->parsedDefinitionFile->source_data->fields
+            $this->parsedDefinitionFile->update->where
         );
 
         $missingColumnNames = array_diff(
@@ -122,30 +123,13 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         );
 
         if ( 0 != count($missingColumnNames) ) {
-            $msg = "The following columns from the update configuration were not " .
-                "found in table " . $this->etlDestinationTable->getFullName() . ": " .
-                implode(", ", $missingColumnNames);
-            $this->logAndThrowException($msg);
-        }
-
-        // If the data is a string assume it is a filename, otherwise assume it is parsed JSON.
-
-        if ( is_string($this->parsedDefinitionFile->source_data->data) ) {
-            $filename = $this->parsedDefinitionFile->source_data->data;
-            $filename = \xd_utilities\qualify_path($filename, $this->options->paths->base_dir);
-
-            $this->logger->debug("Load data from '$filename'");
-            $opt = new DataEndpointOptions(array('name' => "Configuration",
-                                                 'path' => $filename,
-                                                 'type' => "jsonfile"));
-            $jsonFile = DataEndpoint::factory($opt, $this->logger);
-            $jsonFile->parse();
-            $this->data = $jsonFile;
-        } elseif ( is_array($this->parsedDefinitionFile->source_data->data) ) {
-            $this->data = $this->parsedDefinitionFile->source_data->data;
-        } else {
-            $msg = "Source data must be an inline array or a filename";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                sprintf(
+                    "The following columns from the update configuration were not found in table '%s': %s",
+                    $this->etlDestinationTable->getFullName(),
+                    implode(", ", $missingColumnNames)
+                )
+            );
         }
 
         $this->initialized = true;
@@ -154,7 +138,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 
     }  // initialize()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::execute()
      * ------------------------------------------------------------------------------------------
      */
@@ -185,52 +169,62 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 
         // Note that the update ingestor does not manage or truncate tables.
 
-        $sql = "UPDATE " . $this->etlDestinationTable->getFullName() . " SET "
-            . implode(
-                ", ",
-                array_map(
-                    function ($s) {
-                        return "$s = ?";
-                    },
-                    $this->parsedDefinitionFile->update->set
-                )
+        $sql = sprintf(
+            "UPDATE %s SET %s WHERE %s",
+            $this->etlDestinationTable->getFullName(),
+            implode(
+                ', ',
+                array_map(function ($s) {
+                    return "$s = ?";
+                }, $this->parsedDefinitionFile->update->set)
+            ),
+            implode(
+                ' AND ',
+                array_map(function ($w) {
+                    return "$w = ?";
+                }, $this->parsedDefinitionFile->update->where)
             )
-            . " WHERE "
-            . implode(
-                " AND ",
-                array_map(
-                    function ($w) {
-                        return "$w = ?";
-                    },
-                    $this->parsedDefinitionFile->update->where
-                )
-            );
+        );
 
         $this->logger->debug("Update query\n$sql");
 
-        // The order and number of the fields must match the update statement
-        $dataFields = array_merge($this->parsedDefinitionFile->update->set, $this->parsedDefinitionFile->update->where);
+        // The order and number of the fields must match the placeholders update statement
 
-        // Set up the indexes that we will need in the correct order for each data record
-        $fieldsToIndexes = array_flip($this->parsedDefinitionFile->source_data->fields);
-        $dataIndexes = array_map(
-            function ($field) use ($fieldsToIndexes) {
-                return $fieldsToIndexes[$field];
-            },
-            $dataFields
+        $queryDataFields = array_merge(
+            $this->parsedDefinitionFile->update->set,
+            $this->parsedDefinitionFile->update->where
         );
+
+        // Verify that all of the required fields are present in the data
+
+        $firstRecord = $this->sourceEndpoint->parse();
+        if ( ! is_array($firstRecord) ) {
+            $this->logAndThrowException("The current implementation of %s only supports array records", $this);
+        }
+
+        $missing = array_diff($queryDataFields, $this->sourceEndpoint->getRecordFieldNames());
+        if ( 0 != count($missing) ) {
+            $this->logAndThrowException(
+                sprintf(
+                    "These fields are required by the update but are not present in the source data: %s",
+                    implode(', ', $missing)
+                )
+            );
+        }
 
         if ( ! $etlOverseerOptions->isDryrun() ) {
             try {
                 $updateStatement = $this->destinationHandle->prepare($sql);
 
-                foreach ( $this->data as $record ) {
+                foreach ( $this->sourceEndpoint as $record ) {
+
                     $row = array_map(
-                        function ($index) use ($record) {
-                            return $record[$index];
+                        function ($field) use ($record) {
+                            return $record[$field];
                         },
-                        $dataIndexes
+                        $queryDataFields
                     );
+
                     $updateStatement->execute($row);
                     $numRecordsUpdated += $updateStatement->rowCount();
                     $numRecordsProcessed++;

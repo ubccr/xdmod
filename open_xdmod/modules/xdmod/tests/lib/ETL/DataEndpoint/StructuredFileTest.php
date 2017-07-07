@@ -615,7 +615,8 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
         $config = array(
             'name' => 'event_types_no_header.json',
             'path' => $path,
-            'type' => 'jsonfile'
+            'type' => 'jsonfile',
+            'header_record' => false
         );
 
         $options = new DataEndpointOptions($config);
@@ -651,6 +652,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
             'name' => 'event_types_no_header.json',
             'path' => $path,
             'type' => 'jsonfile',
+            'header_record' => false,
             'field_names' => array('field1', 'field2', 'field3', 'field4')
         );
 
