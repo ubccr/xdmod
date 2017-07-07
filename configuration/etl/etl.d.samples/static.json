@@ -9,13 +9,27 @@
         "class": "StructuredFileIngestor",
         "definition_file": "static/job_times.json",
         "enabled": true,
-        "truncate_destination": true
+        "truncate_destination": true,
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "Job times bucket",
+                "path": "static/job_times.json"
+            }
+        }
     },{
         "name": "ProcessorBucketsIngestor",
         "description": "Processor bucket ingestor",
         "class": "StructuredFileIngestor",
         "definition_file": "static/processor_buckets.json",
         "enabled": true,
-        "truncate_destination": true
+        "truncate_destination": true,
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "Processor bucket",
+                "path": "static/processor_buckets.json"
+            }
+        }
     }]
 }
