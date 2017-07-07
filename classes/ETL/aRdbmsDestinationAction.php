@@ -104,6 +104,10 @@ abstract class aRdbmsDestinationAction extends aAction
             );
         }
 
+        if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
+            $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
+        }
+
         // Create the objects representing the destination tables. This method can be
         // overriden in the case of an aggregator to use AggregationTable objects instead
         // of Table objects.
@@ -143,10 +147,6 @@ abstract class aRdbmsDestinationAction extends aAction
 
     protected function createDestinationTableObjects()
     {
-        if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
-            $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
-        }
-
         // A table definition can be either:
         //
         // (1) A single table definition object (current default for a single destination
@@ -250,7 +250,7 @@ abstract class aRdbmsDestinationAction extends aAction
                     );
                 } elseif ( 0 == count(array_keys((array) $fieldMap)) ) {
                     $this->logger->warning(
-                        sprintf("destination_record_map for table '%s' is empty", $etlTableKey)
+                        sprintf("%s: destination_record_map for table '%s' is empty", $this, $etlTableKey)
                     );
                 }
 
@@ -272,7 +272,7 @@ abstract class aRdbmsDestinationAction extends aAction
     /** -----------------------------------------------------------------------------------------
      * Generate a destination field map for each destination table based on the
      * intersection of the source record fields and table fields. Only fields common to
-     * both source and destination are mapped.
+     * both source and destination are mapped with unknown fields logged as warnings.
      *
      * @param array An array containing the fields available from the source record
      *
@@ -285,26 +285,76 @@ abstract class aRdbmsDestinationAction extends aAction
     protected function generateDestinationFieldMap(array $sourceFields)
     {
         $destinationFieldMap = array();
+        $fieldMapDebugOutput = '';
+        $numSourceFields = count($sourceFields);
+
+        $this->logger->debug(
+            sprintf(
+                "Auto-generating destination_field_map from %d source fields: %s",
+                $numSourceFields,
+                implode(', ', $sourceFields)
+            )
+        );
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
+
             $availableTableFields = $etlTable->getColumnNames();
 
-            // Map common fields, log fields that are not mapped
+            $this->logger->debug(
+                sprintf("Available fields for table key '%s': %s", $etlTableKey, implode(', ', $availableTableFields))
+            );
+
+            if ( 0 == $numSourceFields ) {
+                $destinationFieldMap[$etlTableKey] = array();
+                continue;
+            }
+
+            // Map common fields and log warnings for fields that are not mapped
 
             $commonFields = array_intersect($availableTableFields, $sourceFields);
             $unmappedSourceFields = array_diff($sourceFields, $availableTableFields);
 
             $destinationFieldMap[$etlTableKey] = array_combine($commonFields, $commonFields);
 
+            // Generate a more succinct representation of the field map
+
+            $fieldMapDebugOutput .= sprintf(
+                "Table: %s%s",
+                $etlTableKey,
+                array_reduce(
+                    $commonFields,
+                    function($carry, $item) {
+                        $carry .= sprintf("%s  %s -> %s", PHP_EOL, $item, $item);
+                        return $carry;
+                    },
+                    ''
+                )
+            );
+
             if ( 0 != count($unmappedSourceFields) ) {
-                $this->logger->debug(
+                $this->logger->warning(
                     sprintf(
-                        "The following source record fields were not mapped for table %s: (%s)",
+                        "%s: The following source record fields were not mapped for table '%s': (%s)",
+                        $this,
                         $etlTableKey,
-                        implode(", ", $unmappedSourceFields)
+                        implode(', ', $unmappedSourceFields)
                     )
                 );
             }
+        }
+
+        if ( 0 == count($sourceFields) ) {
+            $this->logger->debug(
+                sprintf(
+                    "Generated empty destination_field_map for table keys: %s",
+                    implode(', ', array_keys($destinationFieldMap))
+                )
+            );
+
+        } else {
+            $this->logger->debug(
+                sprintf("Generated destination_field_map:\n%s", $fieldMapDebugOutput)
+            );
         }
 
         return $destinationFieldMap;
@@ -316,6 +366,9 @@ abstract class aRdbmsDestinationAction extends aAction
      * destination record map translates source (query, structured file, etc.) fields to
      * destination table fields. The keys in the map must be valid destination table
      * fields.
+     *
+     * Note that when a destination map is auto-generated, source fields not found in the
+     * destination are not added.
      *
      * @return bool TRUE on success
      *
@@ -354,7 +407,7 @@ abstract class aRdbmsDestinationAction extends aAction
             $this->logAndThrowException(
                 sprintf(
                     "Undefined keys (destination table fields) in ETL destination_record_map: (%s)",
-                    implode(", ", $undefinedFields)
+                    implode(', ', $undefinedFields)
                 )
             );
         }
@@ -410,7 +463,7 @@ abstract class aRdbmsDestinationAction extends aAction
             $this->logAndThrowException(
                 sprintf(
                     "Undefined values (source record fields) in ETL destination_record_map: (%s)",
-                    implode(", ", $undefinedFields)
+                    implode(', ', $undefinedFields)
                 )
             );
         }
@@ -707,7 +760,7 @@ abstract class aRdbmsDestinationAction extends aAction
                 sprintf(
                     "The following columns from the SQL SELECT were not found in table definition for '%s': %s",
                     $table->name,
-                    implode(", ", $missingColumnNames)
+                    implode(', ', $missingColumnNames)
                 )
             );
         }
