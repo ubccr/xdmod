@@ -1,0 +1,8 @@
+[
+    ["asset_type_id", "asset_type", "display", "description"],
+    [-1, "unknown",      "Unknown",          "Unknown" ],
+    [1,  "vol-ebs",      "EBS Volume",       "EBS Volume" ],
+    [2,  "vol-instance", "Instance Volume",  "Instance Store Volume" ],
+    [3,  "ip",           "IP",               "IP Address" ],
+    [4,  "s3-bucket",    "S3 Bucket",        "S3 Bucket" ]
+]

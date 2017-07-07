@@ -1,0 +1,7 @@
+[
+    ["job_task_type_id", "job_task_type", "display", "description"],
+    [-1, "unknown",      "Unknown",           "Unknown" ],
+    [1,  "start",        "Job Start",         "Start of a job" ],
+    [2,  "end",          "Job End", "End of a job" ],
+    [3,  "intermediate", "Intermediate",   "Intermediate job reporting" ]
+]

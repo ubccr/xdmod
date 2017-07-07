@@ -53,18 +53,5 @@
             }
         ],
         "triggers": []
-    },
-
-    "#": "Define the mapping between the source value fields and the table columns.",
-    "destination_columns": ["asset_type_id", "asset_type", "display", "description"],
-    
-    "#": "Provide the raw source values.",
-    "source_values": [
-        [-1, "unknown",      "Unknown",          "Unknown" ],
-        [1,  "vol-ebs",      "EBS Volume",       "EBS Volume" ],
-        [2,  "vol-instance", "Instance Volume",  "Instance Store Volume" ],
-        [3,  "ip",           "IP",               "IP Address" ],
-        [4,  "s3-bucket",    "S3 Bucket",        "S3 Bucket" ]
-    ]
-
+    }
 }
