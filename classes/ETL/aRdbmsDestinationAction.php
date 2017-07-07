@@ -323,7 +323,7 @@ abstract class aRdbmsDestinationAction extends aAction
                 $etlTableKey,
                 array_reduce(
                     $commonFields,
-                    function($carry, $item) {
+                    function ($carry, $item) {
                         $carry .= sprintf("%s  %s -> %s", PHP_EOL, $item, $item);
                         return $carry;
                     },
