@@ -772,11 +772,13 @@ class pdoAggregator extends aAggregator
             $sourceJoins = $this->etlSourceQuery->joins;
             $firstJoin = array_shift($sourceJoins);
             $newFirstJoin = clone $firstJoin;
-            $newFirstJoin->setName($tmpTableName);
+            // $newFirstJoin->setName($tmpTableName);
+            $newFirstJoin->name = $tmpTableName;
             $newFirstJoin->schema = $this->sourceEndpoint->getSchema();
 
-            $this->etlSourceQuery->deleteJoins();
-            $this->etlSourceQuery->addJoin($newFirstJoin);
+            // $this->etlSourceQuery->deleteJoins();
+            $this->etlSourceQuery->joins = array($newFirstJoin);
+            // $this->etlSourceQuery->addJoin($newFirstJoin);
             foreach ( $sourceJoins as $join ) {
                 $this->etlSourceQuery->addJoin($join);
             }
@@ -790,8 +792,9 @@ class pdoAggregator extends aAggregator
 
             $sourceJoins = $this->etlSourceQuery->joins;
             array_shift($sourceJoins);
-            $this->etlSourceQuery->deleteJoins();
-            $this->etlSourceQuery->addJoin($this->etlSourceQueryOrigFromTable);
+            // $this->etlSourceQuery->deleteJoins();
+            $this->etlSourceQuery->joins = array($this->etlSourceQueryOrigFromTable);
+            // $this->etlSourceQuery->addJoin($this->etlSourceQueryOrigFromTable);
             foreach ( $sourceJoins as $join ) {
                 $this->etlSourceQuery->addJoin($join);
             }
@@ -893,7 +896,7 @@ class pdoAggregator extends aAggregator
 
             $sourceJoins = $this->etlSourceQuery->joins;
             $firstJoin = current($sourceJoins);
-            $tmpTableAlias = $firstJoin->getAlias();
+            $tmpTableAlias = $firstJoin->alias;
 
             while ( ! $done ) {
 
@@ -947,7 +950,7 @@ class pdoAggregator extends aAggregator
                 try {
                     // Use the where clause from the aggregation query to create the temporary table
 
-                    $whereClause = implode(" AND ", $this->etlSourceQuery->getWheres());
+                    $whereClause = implode(" AND ", $this->etlSourceQuery->where);
 
                     $whereClause = Utilities::substituteVariables(
                         $whereClause,
