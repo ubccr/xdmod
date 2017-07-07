@@ -214,5 +214,6 @@ abstract class aAggregator extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
+    // @codingStandardsIgnoreLine
     abstract protected function _execute($aggregationUnit);
 }  // abstract class Aggregator

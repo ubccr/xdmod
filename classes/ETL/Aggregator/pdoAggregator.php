@@ -717,6 +717,7 @@ class pdoAggregator extends aAggregator
      * ------------------------------------------------------------------------------------------
      */
 
+    // @codingStandardsIgnoreLine
     protected function _execute($aggregationUnit)
     {
         $time_start = microtime(true);
