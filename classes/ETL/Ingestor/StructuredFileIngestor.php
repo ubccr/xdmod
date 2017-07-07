@@ -146,8 +146,8 @@ class StructuredFileIngestor extends aIngestor implements iAction
                     function ($destField) {
                         return "$destField = COALESCE(VALUES($destField), $destField)";
                     },
-                    array_keys($destFieldToSourceFieldMap))
-                )
+                    array_keys($destFieldToSourceFieldMap)
+                ))
             );
 
             try {
