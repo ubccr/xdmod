@@ -96,9 +96,9 @@ try {
     $properties = array(
         'body'=>$message,
         'subject'=>$subject,
-        'toAddress'=>array([
-            'address'=>$recipient
-        ]),
+        'toAddress'=>[
+            ['address'=>$recipient]
+        ],
         'fromAddress'=>$_POST['email'],
         'fromName'=>$_POST['name'],
         'ifReplyAddress'=>true
