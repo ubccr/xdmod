@@ -55,7 +55,7 @@ try {
 }
 catch (Exception $e) {
     $returnData['success'] = false;
-    $returnData['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
+    $returnData['message'] = $e->getMessage();
 }
 
 xd_controller\returnJSON($returnData);
