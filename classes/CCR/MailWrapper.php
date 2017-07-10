@@ -16,13 +16,13 @@ class MailWrapper
         $mail->Body = $properties['body'];
         $mail->Subject = $properties['subject'];
 
-        for($i = 0; $i < count($properties['toAddress']); $i += 1) {
-            if(!empty($properties['toAddress'][$i]['name'])) {
-                $mail->addAddress($properties['toAddress'][$i]['address'], $properties['toAddress'][$i]['name']);
-            } else {
-                $mail->addAddress($properties['toAddress'][$i]['address']);
-            }
-        }
+        foreach($properties['toAddress'] as $entry) {
+	        if(!empty($entry['name'])) {
+                $mail->addAddress($entry['address'], $entry['name']);
+	        } else {
+		        $mail->addAddress($entry['address']);
+	        }
+	    }
 
         if(!empty($properties['fromAddress'])) {
             $address = $properties['fromAddress'];
