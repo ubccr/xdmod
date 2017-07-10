@@ -97,10 +97,11 @@ switch ($operation) {
         $properties = array(
             'body'=>$message,
             'subject'=>$Subject,
-            'toAddress'=>array([
-                'address'=>$contact,
-                'name'=>'Undisclosed Recipients'
-            ]),
+            'toAddress'=>array(
+                array('address'=>$contact,
+                    'name'=>'Undisclosed Recipients'
+                )
+            ),
             'fromAddress'=>$contact,
             'fromName'=>$title,
             'bcc'=>true

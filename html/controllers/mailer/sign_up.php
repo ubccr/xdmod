@@ -127,9 +127,9 @@ $subject = "[$title] A visitor has signed up";
 $properties = array(
     'body'=>$message,
     'subject'=>$subject,
-    'toAddress'=>array([
-        'address'=>$recipient
-    ]),
+    'toAddress'=>array(
+        array('address'=>$recipient)
+    ),
     'fromAddress'=>$_POST['email'],
     'fromName'=>$name,
     'ifReplyAddress'=>true

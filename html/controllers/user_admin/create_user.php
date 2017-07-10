@@ -130,9 +130,9 @@ try {
     $properties = array(
         'body'=>$message,
         'subject'=>$subject,
-        'toAddress'=>array([
-            'address'=>$recipient
-        ])
+        'toAddress'=>array(
+            array('address'=>$recipient)
+        )
     );
 
     MailWrapper::sendMail($properties);

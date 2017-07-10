@@ -131,7 +131,8 @@ try {
         'subject'=>$Subject,
         'toAddress'=>array(
             array('address'=>$_POST['email'])
-        );
+        )
+    );
 
     MailWrapper::sendMail($properties);
 }

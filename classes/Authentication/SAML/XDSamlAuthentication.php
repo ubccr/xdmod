@@ -177,9 +177,9 @@ class XDSamlAuthentication
         $properties = array(
             'body'=>$body,
             'subject'=>$subject,
-            'toAddress'=>array([
-                'address'=>$recipient
-            ]),
+            'toAddress'=>array(
+                array('address'=>$recipient)
+            ),
             'fromAddress'=>$userEmail,
             'fromName'=>$userName,
             'ifReplyAddress'=>$shouldAddReply

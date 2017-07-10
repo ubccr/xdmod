@@ -55,9 +55,9 @@ try {
     $properties = array(
         'body'=>'',
         'subject'=>$subject,
-        'toAddress'=>array([
-            'address'=>$recipient
-        ])
+        'toAddress'=>array(
+            array('address'=>$recipient)
+        )
     );
 
     MailWrapper::sendTemplate('password_reset', $props, $properties);

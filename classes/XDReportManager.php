@@ -2115,16 +2115,17 @@ class XDReportManager
             $properties = array(
                 'body'=>'',
                 'subject'=>$subject,
-                'toAddress'=>array([
-                    'address'=>$destination_email_address
-                ]),
-                'attachment'=>array([
-                    'fileName'=>$report_file,
-                    'attachment_file_name'=>$attachment_file_name,
-                    'encoding'=>'base64',
-                    'type'=>$reportType,
-                    'disposition'=>'inline'
-                ])
+                'toAddress'=>array(
+                    array('address'=>$destination_email_address)
+                ),
+                'attachment'=>array(
+                    array('fileName'=>$report_file,
+                        'attachment_file_name'=>$attachment_file_name,
+                        'encoding'=>'base64',
+                        'type'=>$reportType,
+                        'disposition'=>'inline'
+                    )
+                )
             );
             MailWrapper::sendTemplate($templateType, $props, $properties);
         }
