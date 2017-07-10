@@ -129,9 +129,9 @@ try {
     $properties = array(
         'body'=>$message,
         'subject'=>$Subject,
-        'toAddress'=>array([
-            'address'=>$_POST['email']
-        ])
+        'toAddress'=>array(
+            ['address'=>$_POST['email']]
+        )
     );
 
     MailWrapper::sendMail($properties);

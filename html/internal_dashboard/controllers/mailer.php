@@ -93,13 +93,13 @@ switch ($operation) {
 
         $Subject = "[$title] $subject";
         // Send a copy of the email to the contact page recipient.
-        $address = ($contact, 'Undisclosed Recipients');
 
         $properties = array(
             'body'=>$message,
             'subject'=>$Subject,
             'toAddress'=>array([
-                'address'=>$address
+                'address'=>$contact,
+                'name'=>'Undisclosed Recipients'
             ]),
             'fromAddress'=>$contact,
             'fromName'=>$title,

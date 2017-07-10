@@ -17,7 +17,11 @@ class MailWrapper
         $mail->Subject = $properties['subject'];
 
         for($i = 0; $i < count($properties['toAddress']); $i += 1) {
-            $mail->addAddress($properties['toAddress'][$i]['address']);
+            if(!empty($properties['toAddress'][$i]['name'])) {
+                $mail->addAddress($properties['toAddress'][$i]['address'], $properties['toAddress'][$i]['name']);
+            } else {
+                $mail->addAddress($properties['toAddress'][$i]['address']);
+            }
         }
 
         if(!empty($properties['fromAddress'])) {
