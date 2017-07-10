@@ -40,9 +40,9 @@ class MailWrapper
         }
 
         if(!empty($properties['attachment'])) {
-           for($i = 0; $i < count($properties['attachment']); $i += 1) {
-               $mail->addAttachment($properties['attachment'][$i]['fileName'], $properties['attachment'][$i]['attachment_file_name'], $properties['attachment'][$i]['encoding'], $properties['attachment'][$i]['type'], $properties['attachment'][$i]['disposition']);
-           }
+            for($i = 0; $i < count($properties['attachment']); $i += 1) {
+                $mail->addAttachment($properties['attachment'][$i]['fileName'], $properties['attachment'][$i]['attachment_file_name'], $properties['attachment'][$i]['encoding'], $properties['attachment'][$i]['type'], $properties['attachment'][$i]['disposition']);
+            }
         }
 
         try {
