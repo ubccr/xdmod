@@ -106,7 +106,7 @@ try {
 }
 catch (Exception $e) {
     $response['success'] = false;
-    $response['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
+    $response['message'] = $e->getMessage();
     echo json_encode($response);
     exit;
 }
@@ -134,7 +134,7 @@ try {
 }
 catch (Exception $e) {
     $response['success'] = false;
-    $response['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
+    $response['message'] = $e->getMessage();
     echo json_encode($response);
     exit;
 }
