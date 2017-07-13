@@ -29,7 +29,6 @@ $include_path .= ":" . $baseDir . '/classes/REST';
 $include_path .= ":" . $baseDir . '/classes/User';
 $include_path .= ":" . $baseDir . '/classes/ReportTemplates';
 $include_path .= ":" . $baseDir . '/classes/AppKernel';
-$include_path .= ":" . $baseDir . '/external_libraries/Zend/library';
 $include_path .= ":" . $baseDir . '/libraries/HighRoller_1.0.5';
 
 ini_alter('include_path', $include_path);

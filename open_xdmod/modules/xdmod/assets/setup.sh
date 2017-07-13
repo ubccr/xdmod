@@ -7,12 +7,6 @@ assets_dir="$(
 module_dir="$assets_dir/.."
 xdmod_dir="$module_dir/../../.."
 
-echo Removing existing dependencies
-rm -rf $xdmod_dir/external_libraries
-
-echo Creating directory for external libraries
-mkdir $xdmod_dir/external_libraries
-
 echo Installing composer managed dependencies
 cd $xdmod_dir
 composer install --no-dev
