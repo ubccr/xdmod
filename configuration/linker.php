@@ -142,7 +142,7 @@ function handle_uncaught_exception($exception)
   $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
    $logConf = array('mode' => 0644);
-   $logger = XDLog::factory($logfile, $logConf);
+   $logger = Log::factory($logfile, $logConf);
 
    $logger->log('Exception Code: '.$exception->getCode(), PEAR_LOG_ERR);
    $logger->log('Message: '.$exception->getMessage(), PEAR_LOG_ERR);
