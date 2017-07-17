@@ -11,10 +11,15 @@ class MailWrapper
     {
         $mail = new \PHPMailer(true);
         $mail->isSendMail();
-        $address =  \xd_utilities\getConfiguration('mailer', 'sender_email');
+        $address = \xd_utilities\getConfiguration('mailer', 'sender_email');
         $mail->Sender = $address;
         $mail->Body = $properties['body'];
-        $mail->Subject = $properties['subject'];
+
+        if(!empty($properties['subject'])) {
+            $mail->Subject = $properties['subject'];
+        } else {
+            throw new \Exception('There is no subject');
+        }
 
         foreach($properties['toAddress'] as $entry) {
             if(!empty($entry['name'])) {
@@ -28,11 +33,11 @@ class MailWrapper
             $address = $properties['fromAddress'];
             $name = $properties['fromName'];
         } else {
-            $name = \xd_utilities\getConfiguration('general', 'title');
+            $name = MailWrapper::getSiteTitle();
         }
 
         if(!empty($properties['ifReplyAddress'])) {
-            $mail->addReplyTo($address, $name);
+            $mail->addReplyTo($properties['ifReplyAddress'], $name);
         }
 
         if(!empty($properties['bcc'])) {
@@ -97,7 +102,7 @@ class MailWrapper
      */
     public static function getProductName()
     {
-        $name = 'Open XDMoD';
+        $name = MailWrapper::getSiteTitle();
         try {
             if (\xd_utilities\getConfiguration('features', 'xsede') == 'on') {
                 $name = 'XDMoD';
@@ -114,22 +119,16 @@ class MailWrapper
      * software product, see getProductName.
      *
      * @return string The custom title of this site if configured.
-     *                Otherwise, "Open XDMoD".
      */
     public static function getSiteTitle()
     {
-        $title = 'Open XDMoD';
-        try {
-            $title = \xd_utilities\getConfiguration('general', 'title');
-        } catch (Exception $e) {
-        }
-        return $title;
+        return \xd_utilities\getConfiguration('general', 'title');
     }
 
-    public function sendTemplate($templateType, $prop, $properties)
+    public function sendTemplate($templateType, $properties)
     {
         $template = new EmailTemplate($templateType);
-        $template->apply($prop);
+        $template->apply($properties);
         $properties['body'] = MailWrapper::decideTemplate($templateType, $template);
         MailWrapper::sendmail($properties);
     }
@@ -140,15 +139,15 @@ class MailWrapper
             return $templates->getContents();
 
         /**
--       * Gets used by reports built and sent via the Report Generator, as
--       * well as those reports built and sent via the report scheduler
--       */
+        * Gets used by reports built and sent via the Report Generator, as
+        * well as those reports built and sent via the report scheduler
+        */
         } elseif($templateType === 'custom_report') {
             return $templates->getContents();
 
         /**
--       * Gets used by reports built and sent via XDComplianceReport
--       */
+        * Gets used by reports built and sent via XDComplianceReport
+        */
         } elseif($templateType === 'compliance_report') {
             return $templates->getContents();
         }

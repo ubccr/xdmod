@@ -157,12 +157,6 @@ class XDSamlAuthentication
                 print_r($samlAttributes, true);
         }
 
-        $shouldAddReply = false;
-
-        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
-            $shouldAddReply = true;
-        }
-
         $recipient
         = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
         ? xd_utilities\getConfiguration('general', 'debug_recipient')
@@ -181,9 +175,12 @@ class XDSamlAuthentication
                 array('address'=>$recipient)
             ),
             'fromAddress'=>$userEmail,
-            'fromName'=>$userName,
-            'ifReplyAddress'=>$shouldAddReply
+            'fromName'=>$userName
         );
+
+        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
+            $properties['ifReplyAddress'] = \xd_utilities\getConfiguration('mailer', 'sender_email');
+        }
 
         MailWrapper::sendMail($properties);
     }

@@ -93,7 +93,7 @@ $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $ti
 
 try {
     //Original sender's e-mail must be in the 'fromAddress' field for the XDMoD Request Tracker to function
-    $properties = array(
+    MailWrapper::sendmail(array(
         'body'=>$message,
         'subject'=>$subject,
         'toAddress'=>array(
@@ -101,10 +101,8 @@ try {
         ),
         'fromAddress'=>$_POST['email'],
         'fromName'=>$_POST['name'],
-        'ifReplyAddress'=>true
-    );
-
-    MailWrapper::sendmail($properties);
+        'ifReplyAddress'=>\xd_utilities\getConfiguration('mailer', 'sender_email')
+    ));
 }
 catch (Exception $e) {
     $response['success'] = false;
@@ -119,22 +117,20 @@ $message
     = "Hello, {$_POST['name']}\n\n"
     . "This e-mail is to inform you that the XDMoD Portal Team has received your $message_type, and will\n"
     . "be in touch with you as soon as possible.\n\n"
-    . MailTemplates::getMaintainerSignature();
+    . MailWrapper::getMaintainerSignature();
 
 $Subject = "Thank you for your $message_type.";
 
 // -------------------
 
 try {
-    $properties = array(
+    MailWrapper::sendMail(array(
         'body'=>$message,
         'subject'=>$Subject,
         'toAddress'=>array(
             array('address'=>$_POST['email'])
         )
-    );
-
-    MailWrapper::sendMail($properties);
+    ));
 }
 catch (Exception $e) {
     $response['success'] = false;

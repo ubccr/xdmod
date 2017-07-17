@@ -92,22 +92,20 @@ switch ($operation) {
         $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
 
         $Subject = "[$title] $subject";
+
         // Send a copy of the email to the contact page recipient.
-
-        $properties = array(
-            'body'=>$message,
-            'subject'=>$Subject,
-            'toAddress'=>array(
-                array('address'=>$contact,
-                    'name'=>'Undisclosed Recipients'
-                )
-            ),
-            'fromAddress'=>$contact,
-            'fromName'=>$title,
-            'bcc'=>true
-        );
-
-        $response['status'] = MailWrapper::sendMail($properties);
+        $response['status'] = MailWrapper::sendMail(array(
+                                  'body'=>$message,
+                                  'subject'=>$Subject,
+                                  'toAddress'=>array(
+                                      array('address'=>$contact,
+                                            'name'=>'Undisclosed Recipients'
+                                      )
+                                  ),
+                                  'fromAddress'=>$contact,
+                                  'fromName'=>$title,
+                                  'bcc'=>true
+                              ));
 
         break;
     default:

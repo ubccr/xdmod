@@ -4,8 +4,6 @@ use CCR\MailWrapper;
 
 // Operation: user_auth->pass_reset
 
-//require_once dirname(__FILE__).'/../../../classes/MailWrapper.php';
-
 $isValid = isset($_POST['email']) && xd_security\isEmailValid($_POST['email']);
 
 if (!$isValid) {
@@ -50,22 +48,19 @@ try {
         = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
     $resetUrl = "${site_address}password_reset.php?rid=$rid";
 
-    $props = array(
-        'first_name'           => $user_to_email->getFirstName(),
-        'username'             => $username,
-        'reset_url'            => $resetUrl,
-        'maintainer_signature' => MailWrapper::getMaintainerSignature()
-    );
-
-    $properties = array(
-        'body'=>'',
-        'subject'=>$subject,
-        'toAddress'=>array(
-            array('address'=>$recipient)
+    MailWrapper::sendTemplate(
+        'password_reset',
+        array(
+            'first_name'           => $user_to_email->getFirstName(),
+            'username'             => $username,
+            'reset_url'            => $resetUrl,
+            'maintainer_signature' => MailWrapper::getMaintainerSignature(),
+            'subject'=>$subject,
+            'toAddress'=>array(
+                array('address'=>$recipient)
+            )
         )
     );
-
-    MailWrapper::sendTemplate('password_reset', $props, $properties);
     $returnData['success'] = true;
     $returnData['status']  = 'success';
 }
