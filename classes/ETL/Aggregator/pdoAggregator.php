@@ -773,13 +773,10 @@ class pdoAggregator extends aAggregator
             $sourceJoins = $this->etlSourceQuery->joins;
             $firstJoin = array_shift($sourceJoins);
             $newFirstJoin = clone $firstJoin;
-            // $newFirstJoin->setName($tmpTableName);
             $newFirstJoin->name = $tmpTableName;
             $newFirstJoin->schema = $this->sourceEndpoint->getSchema();
 
-            // $this->etlSourceQuery->deleteJoins();
             $this->etlSourceQuery->joins = array($newFirstJoin);
-            // $this->etlSourceQuery->addJoin($newFirstJoin);
             foreach ( $sourceJoins as $join ) {
                 $this->etlSourceQuery->addJoin($join);
             }
@@ -793,9 +790,7 @@ class pdoAggregator extends aAggregator
 
             $sourceJoins = $this->etlSourceQuery->joins;
             array_shift($sourceJoins);
-            // $this->etlSourceQuery->deleteJoins();
             $this->etlSourceQuery->joins = array($this->etlSourceQueryOrigFromTable);
-            // $this->etlSourceQuery->addJoin($this->etlSourceQueryOrigFromTable);
             foreach ( $sourceJoins as $join ) {
                 $this->etlSourceQuery->addJoin($join);
             }
