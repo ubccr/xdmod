@@ -91,7 +91,6 @@ class HttpCodeMessages
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
         302 => 'Found',
-        //302 => 'Found' . $include_path .= ":" . $baseDir . '/classes/DB',
         303 => 'See Other',
         304 => 'Not Modified',
         305 => 'Use Proxy',
