@@ -1,5 +1,7 @@
 <?php
 
+namespace CCR;
+
 use CCR\MailWrapper;
 use CCR\DB;
 use CCR\Log;
@@ -129,7 +131,8 @@ class XDReportManager
             );
         }
 
-        $this->_pdo->execute("
+        $this->_pdo->execute(
+            "
             UPDATE Reports SET
                 name            = :report_name,
                 title           = :report_title,
@@ -153,20 +156,20 @@ class XDReportManager
                 'schedule'        => $this->_report_schedule,
                 'delivery'        => $this->_report_delivery,
                 'report_id'       => $this->_report_id,
-           )
+            )
         );
     }
 
     private function _fontWrapper($text, $font_name, $font_size = 12)
     {
-     return '<span style="font-family: ' . strtolower($font_name)
-        . '; font-size: ' . $font_size . 'px">' . $text . '</span>';
+        return '<span style="font-family: ' . strtolower($font_name)
+            . '; font-size: ' . $font_size . 'px">' . $text . '</span>';
 
     }
 
     public static function sanitizeFilename($filename)
     {
-        $filename = preg_replace('/[^a-zA-Z0-9-_\. ]/','', $filename);
+        $filename = preg_replace('/[^a-zA-Z0-9-_\. ]/', '', $filename);
         $filename = strtolower(str_replace(" ", "_", $filename));
 
         return (empty($filename) == true) ? 'xdmod_report' : $filename;
@@ -226,10 +229,10 @@ class XDReportManager
 
             $chartSlot[$suffix] = array(
                 'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->_fontWrapper($report_data['general']['title'], $report_font, 22) . '<br />' : '',
-                'header_text'                    => $this->_fontWrapper($report_data['general']['header'],       $report_font, 12),
-                'footer_text'                    => $this->_fontWrapper($report_data['general']['footer'],       $report_font, 12),
-                'chart_title_' . $suffix         => $this->_fontWrapper($report_chart['chart_title'],            $report_font, 16),
-                'chart_drill_details_' . $suffix => $this->_fontWrapper($report_chart['chart_drill_details'],    $report_font, 12),
+                'header_text'                    => $this->_fontWrapper($report_data['general']['header'], $report_font, 12),
+                'footer_text'                    => $this->_fontWrapper($report_data['general']['footer'], $report_font, 12),
+                'chart_title_' . $suffix         => $this->_fontWrapper($report_chart['chart_title'], $report_font, 16),
+                'chart_drill_details_' . $suffix => $this->_fontWrapper($report_chart['chart_drill_details'], $report_font, 12),
                 'chart_timeframe_' . $suffix     => $this->_fontWrapper($report_chart['chart_date_description'], $report_font, 14),
                 'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
             );
@@ -437,8 +440,8 @@ class XDReportManager
 
             $reportBreakdown[] = array(
                 'role'        => \xd_roles\getFormalRoleNameFromIdentifier(
-                                     $r['active_role']
-                                 ),
+                    $r['active_role']
+                ),
                 'num_reports' => $r['num_reports']
             );
         }
@@ -773,7 +776,7 @@ class XDReportManager
             }
         }
 
-        return NULL;
+        return null;
     }
 
     public function removeReportCharts($report_id)
@@ -804,7 +807,9 @@ class XDReportManager
         $result = $this->_pdo->query($query, array('report_id' => $report_id));
 
         foreach ($result as $r) {
-            if (is_null($r['blob_timestamp'])) { continue; }
+            if (is_null($r['blob_timestamp'])) {
+                continue;
+            }
 
             list($blob_start, $blob_end) = explode(',', $r['blob_timestamp']);
 
@@ -1182,18 +1187,20 @@ class XDReportManager
         }
     }
 
-    private function _ripTransform (&$arr, $item)
+    private function _ripTransform(&$arr, $item)
     {
         if (is_array($arr) && isset($arr[$item])) {
             unset($arr[$item]);
-            if (count($arr) == 1) $arr = array_pop($arr);
+            if (count($arr) == 1) {
+                $arr = array_pop($arr);
+            }
         }
     }
 
     public function fetchChartBlob(
         $type,
         $insertion_rank,
-        $chart_id_cache_file = NULL
+        $chart_id_cache_file = null
     ) {
         $pdo = DB::factory('database');
         $trace = "";
@@ -1424,7 +1431,7 @@ class XDReportManager
         }
     }
 
-    private function getChartData($chart_id, $overrides) 
+    private function getChartData($chart_id, $overrides)
     {
         $arg_set = explode("&", $chart_id);
         $query_params = array();
@@ -1445,7 +1452,7 @@ class XDReportManager
                 'function' => 'get_data' ),
             'data_explorer' => array(
                 'class' => '\DataWarehouse\Access\DataExplorer',
-                'function' => 'get_ak_plot'), 
+                'function' => 'get_ak_plot'),
             'custom_query' => array(
                 'class' => '\DataWarehouse\Access\CustomQuery',
                 'function' => 'get_data'
@@ -1461,7 +1468,7 @@ class XDReportManager
                 $c = new $supportedControllers[$module]['class']($callargs);
                 $response = $c->$operation($this->_user);
             }
-            else 
+            else
             {
                 $usageAdapter = new Usage($callargs);
                 $response = $usageAdapter->getCharts($this->_user);
@@ -1636,9 +1643,9 @@ class XDReportManager
     private function writeXMLConfiguration(
         $outputdir,
         $report_id,
-        $export_format = NULL
+        $export_format = null
     ) {
-        $dom = new DOMDocument("1.0");
+        $dom = new \DOMDocument("1.0");
 
         $nodeRoot = $dom->createElement("Report");
         $dom->appendChild($nodeRoot);
@@ -1671,7 +1678,7 @@ class XDReportManager
             $dom,
             $nodeRoot,
             "Format",
-            ($export_format != NULL)
+            ($export_format != null)
             ? $export_format
             : $this->getReportFormat($report_id)
         );
@@ -1834,9 +1841,9 @@ class XDReportManager
             return $response;
         }
 
-        $base_path = xd_utilities\getConfiguration('reporting', 'base_path');
+        $base_path = \xd_utilities\getConfiguration('reporting', 'base_path');
 
-        $report_format = ($export_format != NULL) ? $export_format : $this->getReportFormat($report_id);
+        $report_format = ($export_format != null) ? $export_format : $this->getReportFormat($report_id);
 
         $report_font = $this->getReportFont($report_id);
 
@@ -2082,12 +2089,12 @@ class XDReportManager
 
         try {
             $attachment_file_name = '';
-                if($include_attachment) {
+            if($include_attachment) {
                     $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
                     $attachment_file_name
                         = $this->getReportName($report_id, true)
                         . '.' . $report_format;
-                }
+            }
             $reportType = self::$_header_map[$report_format];
 
             if($templateType === 'custom_report') {
@@ -2230,4 +2237,3 @@ class XDReportManager
         return new $templateClass($user, $r);
     }
 }
-

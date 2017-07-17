@@ -1,5 +1,7 @@
 <?php
-   
+
+use CCR\XDReportManager;
+
    try {
 
       $user = \xd_security\getLoggedInUser();

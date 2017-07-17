@@ -1,5 +1,7 @@
 <?php
 
+use CCR\XDReportManager;
+
    \xd_security\assertParametersSet(array(
       'template_id',
       'resource_provider'
