@@ -255,6 +255,8 @@
             ]
         },
         "pub": {
+            "display": "Public User",
+            "type": "data",
             "permitted_modules": [
                 {
                     "name": "tg_summary",
@@ -342,30 +344,40 @@
             ]
         },
         "usr": {
+            "display": "User",
+            "type": "data",
             "dimensions": [
                 "person"
             ],
             "extends": "default"
         },
         "cd": {
+            "display": "Center Director",
+            "type": "feature",
             "dimensions": [
                 "provider"
             ],
             "extends": "default"
         },
         "pi": {
+            "display": "Principal Investigator",
+            "type": "data",
             "dimensions": [
                 "pi"
             ],
             "extends": "default"
         },
         "cs": {
+            "display": "Center Staff",
+            "type": "data",
             "dimensions": [
                 "provider"
             ],
             "extends": "default"
         },
         "mgr": {
+            "display": "Manager",
+            "type": "data",
             "dimensions": [
                 "person"
             ],

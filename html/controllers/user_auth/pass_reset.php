@@ -59,7 +59,7 @@ try {
 }
 catch (Exception $e) {
     $returnData['success'] = false;
-    $returnData['message'] = $e->getMessage() . "\n" . $mail->ErrorInfo;
+    $returnData['message'] = $e->getMessage();
     $returnData['status']  = 'failure';
 }
 

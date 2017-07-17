@@ -21,7 +21,8 @@
         "exclude_patterns": [
             "#/\\.#",
             "#xdmod-.*\\.rpm$#",
-            "#xdmod-.*\\.tar\\.gz$#"
+            "#xdmod-.*\\.tar\\.gz$#",
+            "#^\\/configuration\\/.+\\..+\\.template$#"
         ]
     },
     "file_maps": {
@@ -70,6 +71,10 @@
             "configuration/setup.json",
             "configuration/update_check.json",
             "configuration/assets.json",
+            "configuration/modules.json",
+            "configuration/hierarchies.json",
+            {"configuration/hierarchies.d/xdmod.json": "hierarchies.d/xdmod.json"},
+            {"configuration/modules.d/xdmod.json": "modules.d/xdmod.json"},
             "email_templates"
         ],
         "etc/httpd": {

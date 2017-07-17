@@ -200,12 +200,10 @@ class ExecuteSql extends aAction implements iAction
                 // Remove comments from the SQL before executing for clarity.
 
                 $commentPatterns = array(
-                    // Inline or multi-line C-style comments. The U (ungreedy) is needed!
-                    '/\/\*(.|[\r\n])*\*\//U',
                     // Hash-style comments
-                    '/#.*[\r\n]+/',
+                    '/^\s*#.*[\r\n]+/',
                     // Standard SQL comments.
-                    '/-- ?.*[\r\n]+/'
+                    '/^\s*-- ?.*[\r\n]+/'
                     );
                 $sql = preg_replace($commentPatterns, "", $sql);
 

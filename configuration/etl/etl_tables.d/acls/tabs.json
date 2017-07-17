@@ -1,0 +1,39 @@
+{
+    "table_definition": {
+        "name": "tabs",
+        "engine": "InnoDB",
+        "comment": "Tracks which `tabs` are available to the system",
+        "columns": [
+            {
+                "name": "tab_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "module_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "parent_tab_id",
+                "type": "int(11)"
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "tab_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}
