@@ -160,7 +160,7 @@ class XDReportManager
         );
     }
 
-    private function _fontWrapper($text, $font_name, $font_size = 12)
+    private function fontWrapper($text, $font_name, $font_size = 12)
     {
         return '<span style="font-family: ' . strtolower($font_name)
             . '; font-size: ' . $font_size . 'px">' . $text . '</span>';
@@ -228,12 +228,12 @@ class XDReportManager
             }
 
             $chartSlot[$suffix] = array(
-                'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->_fontWrapper($report_data['general']['title'], $report_font, 22) . '<br />' : '',
-                'header_text'                    => $this->_fontWrapper($report_data['general']['header'], $report_font, 12),
-                'footer_text'                    => $this->_fontWrapper($report_data['general']['footer'], $report_font, 12),
-                'chart_title_' . $suffix         => $this->_fontWrapper($report_chart['chart_title'], $report_font, 16),
-                'chart_drill_details_' . $suffix => $this->_fontWrapper($report_chart['chart_drill_details'], $report_font, 12),
-                'chart_timeframe_' . $suffix     => $this->_fontWrapper($report_chart['chart_date_description'], $report_font, 14),
+                'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->fontWrapper($report_data['general']['title'], $report_font, 22) . '<br />' : '',
+                'header_text'                    => $this->fontWrapper($report_data['general']['header'], $report_font, 12),
+                'footer_text'                    => $this->fontWrapper($report_data['general']['footer'], $report_font, 12),
+                'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], $report_font, 16),
+                'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], $report_font, 12),
+                'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], $report_font, 14),
                 'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
             );
 
@@ -405,7 +405,7 @@ class XDReportManager
         );
     }
 
-    private function _getParameterIn($param, $haystack)
+    private function getParameterIn($param, $haystack)
     {
         $num_matches = preg_match("/$param=(.+)/", $haystack, $matches);
 
@@ -473,7 +473,7 @@ class XDReportManager
         $chartEntries = array();
 
         foreach ($results as $entry) {
-            $timeframe_type = $this->_getParameterIn(
+            $timeframe_type = $this->getParameterIn(
                 'timeframe_label',
                 $entry['chart_id']
             );
@@ -551,7 +551,7 @@ class XDReportManager
         return $Entries;
     }
 
-    private function _generateUID()
+    private function generateUID()
     {
         list($usec, $sec) = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
@@ -666,7 +666,7 @@ class XDReportManager
                 . ';'
                 . $entry['ordering']
                 . '&dc='
-                . $this->_generateUID()
+                . $this->generateUID()
                 . '&token=';
 
             $chart_data['ordering'] = $entry['ordering'];
@@ -1121,7 +1121,7 @@ class XDReportManager
         return $results[0]['charts_per_page'];
     }
 
-    private function _generateCachedFilename(
+    private function generateCachedFilename(
         $insertion_rank,
         $volatile = false,
         $base_name_only = false
@@ -1132,7 +1132,7 @@ class XDReportManager
                 ? $insertion_rank['did']
                 : '';
 
-            $this->_ripTransform($insertion_rank, 'did');
+            $this->ripTransform($insertion_rank, 'did');
 
             if (
                 is_array($insertion_rank)
@@ -1187,7 +1187,7 @@ class XDReportManager
         }
     }
 
-    private function _ripTransform(&$arr, $item)
+    private function ripTransform(&$arr, $item)
     {
         if (is_array($arr) && isset($arr[$item])) {
             unset($arr[$item]);
@@ -1207,7 +1207,7 @@ class XDReportManager
 
         switch ($type) {
             case 'volatile':
-                $temp_file = $this->_generateCachedFilename(
+                $temp_file = $this->generateCachedFilename(
                     $insertion_rank,
                     true
                 );
@@ -1272,7 +1272,7 @@ class XDReportManager
                 exit;
                 break;
             case 'chart_pool':
-                $this->_ripTransform($insertion_rank, 'did');
+                $this->ripTransform($insertion_rank, 'did');
 
                 $iq = $pdo->query(
                     "
@@ -1291,7 +1291,7 @@ class XDReportManager
                     . " insertion_rank = $insertion_rank";
                 break;
             case 'cached':
-                $temp_file = $this->_generateCachedFilename($insertion_rank);
+                $temp_file = $this->generateCachedFilename($insertion_rank);
 
                 if (file_exists($temp_file)) {
                     print file_get_contents($temp_file);
@@ -1340,8 +1340,8 @@ class XDReportManager
         $image_data = $iq[0]['image_data'];
         $chart_id   = $iq[0]['chart_id'];
 
-        $active_start = $this->_getParameterIn('start_date', $chart_id);
-        $active_end   = $this->_getParameterIn('end_date', $chart_id);
+        $active_start = $this->getParameterIn('start_date', $chart_id);
+        $active_end   = $this->getParameterIn('end_date', $chart_id);
 
         if (isset($iq[0]['chart_date_description'])) {
             list($active_start, $active_end)
@@ -1351,7 +1351,7 @@ class XDReportManager
         // Timeframe determination
 
         if ($type == 'chart_pool' || $type == 'volatile') {
-            $timeframe_type = $this->_getParameterIn(
+            $timeframe_type = $this->getParameterIn(
                 'timeframe_label',
                 $chart_id
             );
@@ -1503,7 +1503,7 @@ class XDReportManager
 
         switch ($type) {
             case 'volatile':
-                $temp_file = $this->_generateCachedFilename(
+                $temp_file = $this->generateCachedFilename(
                     $insertion_rank,
                     true,
                     true
