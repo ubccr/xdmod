@@ -136,7 +136,7 @@ class MailWrapper
         }
 
         if(!empty($properties['bcc'])) {
-           $bcc_emails = explode(',', $properties['bcc']);
+            $bcc_emails = explode(',', $properties['bcc']);
             foreach($bcc_emails as $b) {
                 $mail->addBCC($b);
             }
