@@ -2122,9 +2122,7 @@ class XDReportManager
                     'additional_information' => $additional_config['custom message'],
                     'maintainer_signature'=>MailWrapper::getMaintainerSignature(),
                     'subject'=>"Your$frequency " . 'XDMoD Compliance Report' . " $subject_suffix",
-                    'toAddress'=>array(
-                        array('address'=>$destination_email_address)
-                    ),
+                    'toAddress'=>$destination_email_address,
                     'attachment'=>array(
                         array('fileName'=>$report_file,
                               'attachment_file_name'=>$attachment_file_name,

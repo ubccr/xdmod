@@ -21,13 +21,7 @@ class MailWrapper
             throw new \Exception('There is no subject');
         }
 
-        foreach($properties['toAddress'] as $entry) {
-            if(!empty($entry['name'])) {
-                $mail->addAddress($entry['address'], $entry['name']);
-            } else {
-                $mail->addAddress($entry['address']);
-            }
-        }
+        MailWrapper::addAddresses($mail, $properties);
 
         if(!empty($properties['fromAddress'])) {
             $address = $properties['fromAddress'];
@@ -38,13 +32,6 @@ class MailWrapper
 
         if(!empty($properties['ifReplyAddress'])) {
             $mail->addReplyTo($properties['ifReplyAddress'], $name);
-        }
-
-        if(!empty($properties['bcc'])) {
-            $bcc_emails = explode(',', $properties['bcc']);
-            foreach($bcc_emails as $b) {
-                $mail->addBCC($b);
-            }
         }
 
         if(!empty($properties['attachment'])) {
@@ -122,6 +109,38 @@ class MailWrapper
     public static function getSiteTitle()
     {
         return \xd_utilities\getConfiguration('general', 'title');
+    }
+
+    public function addAddresses($mail, $properties)
+    {
+        if(empty($properties['toAddress'])) {
+            $recipient
+                = (\xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
+                ? \xd_utilities\getConfiguration('general', 'debug_recipient')
+                : \xd_utilities\getConfiguration('general', 'contact_page_recipient');
+            $mail->addAddress($recipient);
+        } elseif(is_string($properties['toAddress'])) {
+            if(!empty($properties['toName'])) {
+                $mail->addAddress($properties['toAddress'], $properties['toName']);
+            } else {
+                $mail->addAddress($properties['toAddress']);
+            }
+        } elseif(is_array($properties['toAddress'])) {
+            foreach($properties['toAddress'] as $entry) {
+                if(!empty($entry['name'])) {
+                    $mail->addAddress($entry['address'], $entry['name']);
+                } else {
+                    $mail->addAddress($entry['address']);
+                }
+            }
+        }
+
+        if(!empty($properties['bcc'])) {
+           $bcc_emails = explode(',', $properties['bcc']);
+            foreach($bcc_emails as $b) {
+                $mail->addBCC($b);
+            }
+        }
     }
 
     public function sendTemplate($templateType, $properties)

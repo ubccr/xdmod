@@ -156,11 +156,6 @@ class XDSamlAuthentication
                 print_r($samlAttributes, true);
         }
 
-        $recipient
-        = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-        ? xd_utilities\getConfiguration('general', 'debug_recipient')
-        : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-
         if ($error) {
             $subject = "[xdmod] Error Creating federated user";
         } else {
@@ -170,9 +165,6 @@ class XDSamlAuthentication
         $properties = array(
             'body'=>$body,
             'subject'=>$subject,
-            'toAddress'=>array(
-                array('address'=>$recipient)
-            ),
             'fromAddress'=>$userEmail,
             'fromName'=>$user->getFormalName()
         );

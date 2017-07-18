@@ -29,17 +29,17 @@ $user_to_email = XDUser::getUserByID($user_to_email);
 
 // -----------------------------
 
-$page_title = xd_utilities\getConfiguration('general', 'title');
+$page_title = \xd_utilities\getConfiguration('general', 'title');
 
 $recipient
-    = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-    ? xd_utilities\getConfiguration('general', 'debug_recipient')
+    = (\xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
+    ? \xd_utilities\getConfiguration('general', 'debug_recipient')
     : $user_to_email->getEmailAddress();
 
 // -------------------
 
 try {
-    $rid = md5($username . $user_to_email->getPasswordLastUpdatedTimestamp());
+    $rid = md5($user_to_email->getUsername() . $user_to_email->getPasswordLastUpdatedTimestamp());
 
     $site_address
         = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
@@ -53,9 +53,7 @@ try {
             'reset_url'            => $resetUrl,
             'maintainer_signature' => MailWrapper::getMaintainerSignature(),
             'subject'=>"$page_title: Password Reset",
-            'toAddress'=>array(
-                array('address'=>$recipient)
-            )
+            'toAddress'=>$recipient
         )
     );
     $returnData['success'] = true;

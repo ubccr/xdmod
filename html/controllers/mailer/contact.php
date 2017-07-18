@@ -67,11 +67,6 @@ if ($captcha_private_key !== '' && !isset($_SESSION['xdUser'])) {
 
 // ----------------------------------------------------------
 
-$recipient
-  = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-  ? xd_utilities\getConfiguration('general', 'debug_recipient')
-  : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-
 switch ($reason) {
   case 'wishlist':
     $subject = "[WISHLIST] Feature request sent from a portal visitor";
@@ -96,13 +91,11 @@ try {
     MailWrapper::sendmail(array(
         'body'=>$message,
         'subject'=>$subject,
-        'toAddress'=>array(
-            array('address'=>$recipient)
-        ),
         'fromAddress'=>$_POST['email'],
         'fromName'=>$_POST['name'],
         'ifReplyAddress'=>\xd_utilities\getConfiguration('mailer', 'sender_email')
-    ));
+        )
+    );
 }
 catch (Exception $e) {
     $response['success'] = false;
@@ -125,10 +118,9 @@ try {
     MailWrapper::sendMail(array(
         'body'=>$message,
         'subject'=>"Thank you for your $message_type.",
-        'toAddress'=>array(
-            array('address'=>$_POST['email'])
+        'toAddress'=>$_POST['email']
         )
-    ));
+    );
 }
 catch (Exception $e) {
     $response['success'] = false;

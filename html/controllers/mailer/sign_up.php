@@ -89,11 +89,6 @@ $pdo->execute(
 
 // Create email.
 
-$recipient
-    = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-    ? xd_utilities\getConfiguration('general', 'debug_recipient')
-    : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-
 $title = xd_utilities\getConfiguration('general', 'title');
 
 $time_requested = date('D, F j, Y \a\t g:i A');
@@ -124,9 +119,6 @@ try {
     MailWrapper::sendMail(array(
         'body'=>$message,
         'subject'=>"[$title] A visitor has signed up",
-        'toAddress'=>array(
-            array('address'=>$recipient)
-        ),
         'fromAddress'=>$_POST['email'],
         'fromName'=>$_POST['last_name'] . ', ' . $_POST['first_name'],
         'ifReplyAddress'=>\xd_utilities\getConfiguration('mailer', 'sender_email')

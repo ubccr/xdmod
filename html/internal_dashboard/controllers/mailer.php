@@ -97,11 +97,8 @@ switch ($operation) {
         $response['status'] = MailWrapper::sendMail(array(
                                   'body'=>$message,
                                   'subject'=>$Subject,
-                                  'toAddress'=>array(
-                                      array('address'=>$contact,
-                                            'name'=>'Undisclosed Recipients'
-                                      )
-                                  ),
+                                  'toAddress'=>$contact,
+                                  'toName'=>'Undisclosed Recipients',
                                   'fromAddress'=>$contact,
                                   'fromName'=>$title,
                                   'bcc'=>\xd_security\assertParameterSet('target_addresses')

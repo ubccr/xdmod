@@ -128,10 +128,9 @@ try {
     MailWrapper::sendMail(array(
         'body'=>$message,
         'subject'=>"$page_title: Account Created",
-        'toAddress'=>array(
-            array('address'=>$recipient)
+        'toAddress'=>$recipient
         )
-    ));
+    );
 }
 catch (Exception $e) {
     \xd_response\presentError($e->getMessage());
