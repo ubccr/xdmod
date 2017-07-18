@@ -1,0 +1,17 @@
+{
+  "env": {
+    "mocha": true,
+    "node": true,
+    "es6": true 
+  },
+  "globals": {
+    "expect": false,
+    "browser": false,
+    "testHelpers": false,
+    "$": false
+  },
+  "rules": {
+    "class-methods-use-this": [0],
+    "no-underscore-dangle": [0]
+  }
+}
