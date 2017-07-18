@@ -119,14 +119,12 @@ $message
     . "be in touch with you as soon as possible.\n\n"
     . MailWrapper::getMaintainerSignature();
 
-$Subject = "Thank you for your $message_type.";
-
 // -------------------
 
 try {
     MailWrapper::sendMail(array(
         'body'=>$message,
-        'subject'=>$Subject,
+        'subject'=>"Thank you for your $message_type.",
         'toAddress'=>array(
             array('address'=>$_POST['email'])
         )

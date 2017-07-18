@@ -36,9 +36,6 @@ $recipient
 // -------------------
 
 try {
-    $subject = "$page_title: Password Reset";
-
-    $username = $user_to_email->getUsername();
     $rid = md5($username . $user_to_email->getPasswordLastUpdatedTimestamp());
 
     $site_address
@@ -49,10 +46,10 @@ try {
         'password_reset',
         array(
             'first_name'           => $user_to_email->getFirstName(),
-            'username'             => $username,
+            'username'             => $user_to_email->getUsername(),
             'reset_url'            => $resetUrl,
             'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-            'subject'=>$subject,
+            'subject'=>"$page_title: Password Reset",
             'toAddress'=>array(
                 array('address'=>$recipient)
             )

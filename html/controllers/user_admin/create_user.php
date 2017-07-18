@@ -125,11 +125,9 @@ try {
         ? xd_utilities\getConfiguration('general', 'debug_recipient')
         : $_POST['email_address'];
 
-    $subject = "$page_title: Account Created";
-
     MailWrapper::sendMail(array(
         'body'=>$message,
-        'subject'=>$subject,
+        'subject'=>"$page_title: Account Created",
         'toAddress'=>array(
             array('address'=>$recipient)
         )

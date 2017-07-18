@@ -41,8 +41,7 @@ class MailWrapper
         }
 
         if(!empty($properties['bcc'])) {
-            $target_addresses = \xd_security\assertParameterSet('target_addresses');
-            $bcc_emails = explode(',', $target_addresses);
+            $bcc_emails = explode(',', $properties['bcc']);
             foreach($bcc_emails as $b) {
                 $mail->addBCC($b);
             }

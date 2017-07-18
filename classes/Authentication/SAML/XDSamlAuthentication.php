@@ -143,7 +143,6 @@ class XDSamlAuthentication
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
         $userEmail = $user->getEmailAddress();
-        $userName = $user->getFormalName();
 
         $body = "The following person has had an account created on XDMoD:\n\n" .
         "Person Details ----------------------------------\n\n" .
@@ -175,7 +174,7 @@ class XDSamlAuthentication
                 array('address'=>$recipient)
             ),
             'fromAddress'=>$userEmail,
-            'fromName'=>$userName
+            'fromName'=>$user->getFormalName()
         );
 
         if ($userEmail != NO_EMAIL_ADDRESS_SET) {

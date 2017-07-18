@@ -104,7 +104,7 @@ switch ($operation) {
                                   ),
                                   'fromAddress'=>$contact,
                                   'fromName'=>$title,
-                                  'bcc'=>true
+                                  'bcc'=>\xd_security\assertParameterSet('target_addresses')
                               ));
 
         break;
