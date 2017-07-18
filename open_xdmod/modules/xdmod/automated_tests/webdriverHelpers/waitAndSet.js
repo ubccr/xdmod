@@ -1,17 +1,4 @@
 /**
- * The default validation function that is to be used if one is not provided by
- * the user.
- *
- * @param {*} expected - the right hand side of the simple equality statement.
- *                       ie. the value that the selector was set to.
- * @param {*} actual   - the left hand side of the simple equality statement.
- *                       ie. the value that was retrieved from the selector.
- **/
-var DEFAULT_VALIDATE_FUNCTION = function(expected, actual) {
-  expect(actual).to.equal(expected);
-};
-
-/**
  * Wait for the element identified by the provided selector to be visible and
  * then set it's value to the provided value. To more accurately simulate a user
  * setting a value the click argument defaults to true. Also, as a simple sanity
@@ -39,27 +26,27 @@ var DEFAULT_VALIDATE_FUNCTION = function(expected, actual) {
  *                   ] - The function that will be used to validate the value retrieved
  *                       from the selector if the validate argument is true.
  **/
-module.exports = function waitAndSet(selector, value, ms, click, validate, validateFunc) {
-  ms = ms || 5000;
-  click = click !== undefined ? click : true;
-  validate = validate !== undefined ? validate : true;
-  validateFunc = typeof validateFunc === 'function' ? validateFunc : DEFAULT_VALIDATE_FUNCTION;
+// eslint-disable-next-line consistent-return
+module.exports = function waitAndSet(selector, value, ms, click, validate) {
+    var timeOut = ms || 5000;
+    var thisClick = click !== undefined ? click : true;
+    var thisValidate = validate !== undefined ? validate : true;
 
-  if (click === true && validate === true) {
-        this.waitForVisible(selector, ms);
+    if (thisClick === true && thisValidate === true) {
+        this.waitForVisible(selector, timeOut);
         this.click(selector);
-        this.setValue(selector, value);
-        return this.getValue(selector)
-  } else if (click === true && validate === false) {
-        this.waitForVisible(selector, ms);
-        this.click(selector);
-        return this.setValue(selector, value);
-  } else if (click === false && validate === true) {
-        this.waitForVisible(selector, ms);
         this.setValue(selector, value);
         return this.getValue(selector);
-  } else if (click === false && validate === false) {
-        this.waitForVisible(selector, ms);
+    } else if (thisClick === true && thisValidate === false) {
+        this.waitForVisible(selector, timeOut);
+        this.click(selector);
         return this.setValue(selector, value);
-  }
+    } else if (thisClick === false && thisValidate === true) {
+        this.waitForVisible(selector, timeOut);
+        this.setValue(selector, value);
+        return this.getValue(selector);
+    } else if (thisClick === false && thisValidate === false) {
+        this.waitForVisible(selector, timeOut);
+        return this.setValue(selector, value);
+    }
 };

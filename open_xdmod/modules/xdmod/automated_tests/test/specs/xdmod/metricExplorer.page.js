@@ -73,7 +73,6 @@ class MetricExplorer {
     clear() {
         browser.refresh();
         browser.waitForVisible('#logout_link', 3000);
-        // expect(browser.isVisible("#metric_explorer .x-grid-empty")).to.equal(false, "Empty chart not visible");
     }
     generateTitle(size) {
         var result = '';
@@ -100,12 +99,10 @@ class MetricExplorer {
         browser.waitForLoadedThenClick(this.selectors.options.button);
         browser.waitForLoadedThenClick(this.selectors.options.title);
         var cursorPosition = browser.execute('return document.getElementById("me_chart_title").selectionStart;');
-        // expect(cursorPosition.state).to.equal("success");
         expect(cursorPosition._status).to.equal(0);
         expect(cursorPosition.value).to.equal(this.originalTitle.length, 'Cursor Position not at end');
         browser.keys('Arrow_Up');
         var newPosition = browser.execute('return document.getElementById("me_chart_title").selectionStart;');
-        // expect(newPosition.state).to.equal("success");
         expect(newPosition._status).to.equal(0);
         expect(newPosition.value).to.equal(0, 'Cursor Position not at begining');
         browser.waitAndClick(this.selectors.options.button);
@@ -176,6 +173,8 @@ class MetricExplorer {
         var res1 = browser.getValue(this.selectors.options.title);
         expect(res1).to.be.a('string');
         var res2 = browser.execute(function (text) {
+            // TODO: Fix this withOut having to use EXT if Possible
+            // eslint-disable-next-line no-undef
             return Ext.util.Format.htmlDecode(text);
         }, res1);
         expect(res2.value).to.equal(this.newTitle);
@@ -187,7 +186,6 @@ class MetricExplorer {
             // this gets the buttons, however, not able to get just the yes button
             // $$(".x-window-dlg .x-toolbar-cell:not(.x-hide-offsets) table");
         browser.waitForVisible('.x-window-dlg .x-toolbar-cell:not(.x-hide-offsets) table');
-        browser.getHTML('.x-window-dlg .x-toolbar-cell:not(.x-hide-offsets) table')[0];
         var $yesButton = cheerio.load(browser.getHTML('.x-window-dlg .x-toolbar-cell:not(.x-hide-offsets) table')[0]);
         this.selectors.deleteChart = '#' + $yesButton('table').attr('id');
     }
@@ -263,4 +261,3 @@ class MetricExplorer {
 }
 
 module.exports = new MetricExplorer();
-

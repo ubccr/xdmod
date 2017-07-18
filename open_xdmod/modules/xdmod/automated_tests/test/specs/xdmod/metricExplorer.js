@@ -59,9 +59,9 @@ describe('Metric Explorer', function metricExplorer() {
             }
         }
     };
-    var loginName = testHelpers.auth.roles.po.username;
-    var loginPassword = testHelpers.auth.roles.po.password;
-    var displayName = testHelpers.auth.roles.po.display;
+    var loginName = testHelpers.auth.roles.centerdirector.username;
+    var loginPassword = testHelpers.auth.roles.centerdirector.password;
+    var displayName = testHelpers.auth.roles.centerdirector.display;
     logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
     describe('Select Tab', function xdmod() {
         it('Selected', function meSelect() {
@@ -76,6 +76,7 @@ describe('Metric Explorer', function metricExplorer() {
         });
         it('Instructions look the same as previous run', function () {
             browser.waitForVisible(me.selectors.catalog.container, 10000);
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "instructions")
         });
         it('Has three toolbars', function meConfirmToolbars() {
@@ -104,8 +105,9 @@ describe('Metric Explorer', function metricExplorer() {
         });
         it('Scratchpad looks the same as previous run', function () {
             browser.waitForChart();
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.01.source")
-            browser.pause(5000);
+            // browser.pause(5000);
         });
 
         it("'Add Data' again via toolbar", function meAddData2() {
@@ -124,8 +126,9 @@ describe('Metric Explorer', function metricExplorer() {
         });
         it('Chart looks the same as previous run', function () {
             browser.waitForChart();
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.undo.02.aggregate")
-            browser.pause(3000);
+            // browser.pause(3000);
         });
         it('Undo Scratch Pad second source', function meUndoScratchPad() {
             browser.waitAndClick(me.undo($container));
@@ -133,9 +136,10 @@ describe('Metric Explorer', function metricExplorer() {
             browser.waitAndClick('.xtb-text.logo93');
         });
         it('Chart looks the same as previous run', function () {
-            // browser.waitForChart();
+            browser.waitForChart();
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.undo.02.source")
-            browser.pause(3000);
+            // browser.pause(3000);
         });
         /*
         it("Swap the X and Y axis", function(){
@@ -146,22 +150,25 @@ describe('Metric Explorer', function metricExplorer() {
             me.attemptDeleteScratchpad(cheerio);
         });
         it('Chart looks the same as previous run', function () {
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.delete.confirm")
-            browser.pause(1000);
+            // browser.pause(1000);
         });
         it('Delete Scratchpad Chart', function meValidateDeletedScratchPad() {
             browser.waitAndClick(me.selectors.deleteChart);
         });
         it('Chart looks the same as previous run', function () {
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.delete.complete")
-            browser.pause(1000);
+            // browser.pause(1000);
         });
         it('Open load chart dialog', function meLoadChart() {
             browser.click(me.selectors.load.button());
         });
         it('Load chart dialog looks the same as previous run', function () {
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "load.dialog")
-            browser.pause(1000);
+            // browser.pause(1000);
         });
         it('Open chart from load dialog', function meOpenChart() {
             // TODO:  Need to make sure to select the same chart every time, not just the first for screenshots
@@ -169,15 +176,17 @@ describe('Metric Explorer', function metricExplorer() {
             browser.waitForChart();
         });
         it('Loaded chart looks the same as previous run', function () {
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "load.chart")
-            browser.pause(1000);
+            // browser.pause(1000);
         });
         it('Open Chart Options', function meChartOptions() {
             browser.waitAndClick(me.selectors.options.button);
         });
         it('Chart options looks the same as previous run', function () {
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "chart.options")
-            browser.pause(1000);
+            // browser.pause(1000);
         });
         it('Show Trend Line via Chart Options', function meAddTrendLine() {
             browser.waitAndClick(me.selectors.options.trendLine);
@@ -193,8 +202,9 @@ describe('Metric Explorer', function metricExplorer() {
             browser.waitForChart();
         });
         it('Undo Trend Line looks the same as previous run', function () {
+            // TODO: Determine Pass case for this without using screenshot
             // browser.takeScreenshot(moduleName, me.selectors.container, "saved.chart.undo.trendline")
-            browser.pause(2000);
+            // browser.pause(2000);
         });
     });
     describe('Context Menu', function contextMenu() {
@@ -233,10 +243,8 @@ describe('Metric Explorer', function metricExplorer() {
 
         describe('Add Data Menu', function () {
             actions.chart.contextMenu.addData();
-            actions.chart.contextMenu.addData();
         });
         describe('Add Filter Menu', function () {
-            actions.chart.contextMenu.addFilter();
             actions.chart.contextMenu.addFilter();
         });
         describe('Legend Menus', function () {
@@ -248,9 +256,8 @@ describe('Metric Explorer', function metricExplorer() {
                 actions.chart.contextMenu.open();
                 actions.chart.contextMenu.legend();
                 it('legend Items set Properly', function () {
-                    browser.waitForVisible('#metric-explorer-chartoptions-legend-options .x-menu-item-checked', 2000);
+                    browser.waitForVisible('#metric-explorer-chartoptions-legend-options', 2000);
                     var legendText = browser.getText('#metric-explorer-chartoptions-legend-options .x-menu-item-checked');
-                    // TODO: figure out why the line above was written and why it fails
                     expect(legendText).to.equal('Bottom Center (Default)', 'Loaded chart has non default legend');
                 });
             });
@@ -283,6 +290,7 @@ describe('Metric Explorer', function metricExplorer() {
                 expect(execReturn).to.equal(false);
             });
             it('Chart looks the same as previous run', function () {
+                // TODO: Determine Pass case for this without using screenshot
                 // browser.takeScreenshot(moduleName, me.selectors.container, "pie.loaded");
             });
             it("Select the 'Data' toolbar button", function selectData() {
@@ -333,6 +341,7 @@ describe('Metric Explorer', function metricExplorer() {
                 expect(execReturn.value).to.equal(false);
             });
             it('Chart looks the same as previous run', function () {
+                // TODO: Determine Pass case for this without using screenshot
                 // browser.takeScreenshot(moduleName, me.selectors.container, "highcharts.loaded")
             });
         }); // Should start with a dataset.

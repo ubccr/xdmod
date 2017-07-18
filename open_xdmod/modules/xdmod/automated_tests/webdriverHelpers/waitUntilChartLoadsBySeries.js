@@ -6,9 +6,9 @@
  *  @param {Number}  [ms=9000]       - Milliseconds to wait for the element to
  **/
 module.exports = function waitUntilChartLoadsBySeries(series, ms) {
-  ms = ms || 9000;
-  return this.waitForVisible(
+    var timeOut = ms || 9000;
+    return this.waitForVisible(
     "//*[local-name() = 'svg']//*[local-name() = 'g' and contains(@class, 'highcharts-axis')]//*[local-name() = 'tspan' and text()[contains(., '" + series + "')]]",
-    ms
+    timeOut
   );
 };

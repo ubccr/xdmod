@@ -1,7 +1,7 @@
 var logIn = require('./loginPage.page.js');
-var loginName = testHelpers.auth.roles.po.username;
-var loginPassword = testHelpers.auth.roles.po.password;
-var displayName = testHelpers.auth.roles.po.display;
+var loginName = testHelpers.auth.roles.centerdirector.username;
+var loginPassword = testHelpers.auth.roles.centerdirector.password;
+var displayName = testHelpers.auth.roles.centerdirector.display;
 var Abt = require('./about.page.js');
 
 describe('About', function about() {
@@ -98,4 +98,3 @@ describe('About', function about() {
     logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
     logIn.logout();
 });
-

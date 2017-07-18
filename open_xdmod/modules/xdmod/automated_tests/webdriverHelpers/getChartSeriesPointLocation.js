@@ -16,26 +16,24 @@
  *                      left: <number>
  *                    }
  **/
-module.exports = function getChartSeriesPointLocation(
-  containerId,
-  seriesIndex,
-  pointIndex) {
-  seriesIndex = seriesIndex !== undefined ? seriesIndex : 0;
-  pointIndex = pointIndex !== undefined ? pointIndex : 0;
-  return this.execute(function(containerId, seriesIndex, pointIndex) {
+module.exports = function getChartSeriesPointLocation(containerId, seriesIndex, pointIndex) {
+    var thisSeriesIndex = (seriesIndex !== undefined) ? seriesIndex : 0;
+    var thisPointIndex = (pointIndex !== undefined) ? pointIndex : 0;
+    return this.execute(function (innerContainerId, innerSeriesIndex, innerPointIndex) {
+        // TODO: Fix this withOut having to use EXT if Possible
+        // eslint-disable-next-line no-undef
+        var cmp = Ext.getCmp(innerContainerId);
+        var axes = cmp.chart.axes;
+        var xAxis = axes[0];
+        var yAxis = axes[1];
+        var series = cmp.chart.series[innerSeriesIndex];
+        var point = series.data[innerPointIndex];
+        var top = yAxis.toPixels(point.options.y);
+        var left = xAxis.toPixels(point.options.x);
 
-    var cmp = Ext.getCmp(containerId);
-    var axes = cmp.chart.axes;
-    var xAxis = axes[0];
-    var yAxis = axes[1];
-    var series = cmp.chart.series[seriesIndex];
-    var point = series.data[pointIndex];
-    var top = yAxis.toPixels(point.options.y);
-    var left = xAxis.toPixels(point.options.x);
-
-    return {
-      top: Number(top.toFixed(0)),
-      left: Number(left.toFixed(0))
-    };
-  }, containerId, seriesIndex, pointIndex);
+        return {
+            top: Number(top.toFixed(0)),
+            left: Number(left.toFixed(0))
+        };
+    }, containerId, thisSeriesIndex, thisPointIndex);
 };

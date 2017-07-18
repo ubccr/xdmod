@@ -2,9 +2,10 @@
   "env": {
     "mocha": true,
     "node": true,
-    "es6": true 
+    "es6": true
   },
   "globals": {
+    "require": false,
     "expect": false,
     "browser": false,
     "testHelpers": false,

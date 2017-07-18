@@ -1,7 +1,7 @@
 var logIn = require('./loginPage.page.js');
-var loginName = testHelpers.auth.roles.po.username;
-var loginPassword = testHelpers.auth.roles.po.password;
-var displayName = testHelpers.auth.roles.po.display;
+var loginName = testHelpers.auth.roles.centerdirector.username;
+var loginPassword = testHelpers.auth.roles.centerdirector.password;
+var displayName = testHelpers.auth.roles.centerdirector.display;
 var mTb = require('./mainToolbar.page.js');
 var mainTab;
 
@@ -18,6 +18,8 @@ describe('Main Toolbar', function () {
     describe('Contact Us', function () {
         for (var type in mTb.contactTypes) {
             if (mTb.contactTypes.hasOwnProperty(type)) {
+                // TODO: Fix this with Page Objects?
+                // eslint-disable-next-line no-loop-func
                 it(type, function () {
                     mTb.contactFunc(type);
                 });
@@ -27,6 +29,8 @@ describe('Main Toolbar', function () {
     describe('Help', function () {
         for (var type in mTb.helpTypes) {
             if (mTb.helpTypes.hasOwnProperty(type)) {
+                // TODO: Fix this with Page Objects?
+                // eslint-disable-next-line no-loop-func
                 it(type, function () {
                     mTb.helpFunc(type, mainTab);
                     browser.pause(1500);

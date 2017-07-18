@@ -13,12 +13,12 @@ class About {
     checkTab(name) {
         browser.waitForLoadedThenClick(this.navEntry(name), 50000);
         $(this.container).waitForText(50000);
+        // TODO: Determine Pass case for this without using screenshot
         // browser.takeScreenshot(name.replace(' ',''), this.center, "xdmod");
     }
 
     checkRoadmap() {
         browser.waitForLoadedThenClick(this.navEntry('Roadmap'));
-        browser.pause(20000);
         browser.waitForExist('iframe#about_roadmap', 30000);
         browser.frame('about_roadmap', function (err, result) {
             expect(err).to.be.a('undefined');

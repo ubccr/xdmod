@@ -2,9 +2,9 @@ var logIn = require('./loginPage.page.js');
 var rg = require('./reportGenerator.page.js');
 
 describe('Report Generator', function reportGenerator() {
-    var loginName = testHelpers.auth.roles.po.username;
-    var loginPassword = testHelpers.auth.roles.po.password;
-    var displayName = testHelpers.auth.roles.po.display;
+    var loginName = testHelpers.auth.roles.centerdirector.username;
+    var loginPassword = testHelpers.auth.roles.centerdirector.password;
+    var displayName = testHelpers.auth.roles.centerdirector.display;
     logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
     var columnIndex = 1;
     var reportName = 'TAS Report 1';
