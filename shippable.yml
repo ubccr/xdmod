@@ -20,3 +20,4 @@ build:
         - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/results.xml
     on_failure:
         - cat /var/log/xdmod/*
+        
