@@ -32,8 +32,6 @@ $include_path .= ":" . $baseDir . '/libraries/HighRoller_1.0.5';
 
 ini_alter('include_path', $include_path);
 
-use CCR\Log;
-
 function xdmodAutoload($className)
 {
     $pathList = explode(":", ini_get('include_path'));
@@ -140,7 +138,7 @@ function handle_uncaught_exception($exception)
     $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
     $logConf = array('mode' => 0644);
-    $logger = Log::factory('file', $logfile, 'exception', $logConf);
+    $logger = \Log::factory('file', $logfile, 'exception', $logConf);
 
     $logger->log('Exception Code: '.$exception->getCode(), PEAR_LOG_ERR);
     $logger->log('Message: '.$exception->getMessage(), PEAR_LOG_ERR);
