@@ -2,7 +2,6 @@
 
 namespace CCR;
 
-require_once 'System.php';
 require_once 'Log.php';
 
 use xd_utilities;
