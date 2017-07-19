@@ -1,0 +1,8 @@
+[
+    ["countable_type_id", "unit_id", "countable_type", "display", "description"],
+    [-1, null, "unknown",   "Unknown",   "Unknown" ],
+    [1,  null, "gpu",       "GPUs",      "GPUs" ],
+    [2,  null, "mic",       "MICs",      "MICs" ],
+    [3,  null, "database",  "Databases", "Databases" ],
+    [4,  2,    "storage",   "Storage",   "Storage" ]
+]

@@ -631,8 +631,12 @@ function resolve_path($path)
  * @return TRUE if the object contains all of the required properties, FALSE otherwise.
  */
 
-function verify_required_object_properties(\stdClass $obj, array $propertyList, array &$missing = null)
+function verify_required_object_properties($obj, array $propertyList, array &$missing = null)
 {
+    if ( ! is_object($obj) ) {
+        throw new Exception(sprintf("First argument must be an object, %s given", gettype($obj)));
+    }
+
     $missing = array();
 
     foreach ( $propertyList as $p ) {
@@ -664,11 +668,15 @@ function verify_required_object_properties(\stdClass $obj, array $propertyList, 
  */
 
 function verify_object_property_types(
-    \stdClass $obj,
+    $obj,
     array $propertyList,
     array &$messages = null,
     $skipMissingProperties = false
 ) {
+    if ( ! is_object($obj) ) {
+        throw new Exception(sprintf("First argument must be an object, %s given", gettype($obj)));
+    }
+
     $messages = array();
 
     foreach ( $propertyList as $p => $type ) {

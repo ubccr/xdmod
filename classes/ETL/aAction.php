@@ -106,7 +106,6 @@ abstract class aAction extends aEtlObject
             // has already been set by a child constructor leave it alone.
 
             if ( null === $this->parsedDefinitionFile ) {
-                $this->logger->info("Parse definition file: '" . $this->definitionFile . "'");
                 $this->parsedDefinitionFile = new Configuration(
                     $this->definitionFile,
                     $this->options->paths->base_dir,
@@ -401,5 +400,30 @@ abstract class aAction extends aEtlObject
         return $this;
     }
 
-    abstract public function execute(EtlOverseerOptions $etlOverseerOptions);
+    /** -----------------------------------------------------------------------------------------
+     * Perform any pre-execution tasks. For example, disabling table keys on MyISAM
+     * tables, or other setup tasks.
+     *
+     * NOTE: This method must check if we are in DRYRUN mode before executing any tasks.
+     *
+     * @return true on success
+     * ------------------------------------------------------------------------------------------
+     */
+
+    abstract protected function performPreExecuteTasks();
+
+    /** -----------------------------------------------------------------------------------------
+     * Perform any post-execution tasks. For example, enabling table keys on MyISAM
+     * tables, or tracking table history.
+     *
+     * NOTE: This method must check if we are in DRYRUN mode before executing any tasks.
+     *
+     * @param integer|null $numRecordsProcessed The number of records processed during
+     *   execution, or NULL if it is not used by this action.
+     *
+     * @return true on success
+     * ------------------------------------------------------------------------------------------
+     */
+
+    abstract protected function performPostExecuteTasks($numRecordsProcessed = null);
 }  // abstract class aAction

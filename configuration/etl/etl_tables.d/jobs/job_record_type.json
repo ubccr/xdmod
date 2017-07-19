@@ -38,17 +38,5 @@
             }
         ],
         "triggers": []
-    },
-
-    "#": "Define the mapping between the source value fields and the table columns.",
-    "destination_columns": ["job_record_type_id", "job_record_type", "display", "description"],
-    
-    "#": "Provide the raw source values.",
-    "source_values": [
-        [-1, "unknown",     "Unknown",     "Unknown" ],
-        [1,  "hpc",         "HPC",         "HPC Job" ],
-        [2,  "reservation", "Reservation", "HPC Reservation" ],
-        [3,  "array",       "Job Array",   "HPC Job Array" ],
-        [4,  "cloud",       "Cloud",       "Cloud Job" ]
-    ]
+    }
 }

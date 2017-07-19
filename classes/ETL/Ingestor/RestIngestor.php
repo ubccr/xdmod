@@ -218,25 +218,14 @@ class RestIngestor extends aIngestor implements iAction
     }  // initialize()
 
     /* ------------------------------------------------------------------------------------------
-     * @see aIngestor::performPreExecuteTasks()
+     * @see aAction::performPreExecuteTasks()
      * ------------------------------------------------------------------------------------------
      */
 
     protected function performPreExecuteTasks()
     {
-        // ------------------------------------------------------------------------------------------
-        // This is not yet updated to fully support multiple ETL destination tables.
 
-        try {
-
-            // Bring the destination table in line with the configuration if necessary.
-            // manageTable() is DRYRUN aware.
-
-            $this->manageTable($this->etlDestinationTable, $this->destinationEndpoint);
-
-        } catch ( Exception $e ) {
-            $this->logAndThrowException("Error managing ETL table for " . $this->getName() . ": " . $e->getMessage());
-        }
+        parent::performPreExecuteTasks();
 
         $this->destinationTableColumnNames = $this->etlDestinationTable->getColumnNames();
 
@@ -284,32 +273,9 @@ class RestIngestor extends aIngestor implements iAction
 
         $this->processParameters();
 
-        if ( "myisam" == strtolower($this->etlDestinationTable->engine) ) {
-            // Disable keys for faster inserts
-            $qualifiedDestTableName = $this->etlDestinationTable->getFullName();
-            $sqlList = array("ALTER TABLE $qualifiedDestTableName DISABLE KEYS");
-            $this->executeSqlList($sqlList, $this->destinationEndpoint);
-        }
-
         return true;
 
     }  // performPreExecuteTasks()
-
-    /* ------------------------------------------------------------------------------------------
-     * @see aIngestor::performPostExecuteTasks()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function performPostExecuteTasks($numRecordsProcessed)
-    {
-        if ( "myisam" == strtolower($this->etlDestinationTable->engine) ) {
-            $qualifiedDestTableName = $this->etlDestinationTable->getFullName();
-            $sqlList = array("ALTER TABLE $qualifiedDestTableName ENABLE KEYS");
-            $this->executeSqlList($sqlList, $this->destinationEndpoint);
-        }
-
-        return true;
-    }  // performPostExecuteTasks()
 
     /* ------------------------------------------------------------------------------------------
      * @see aIngestor::_execute()

@@ -175,32 +175,6 @@ abstract class aAggregator extends aRdbmsDestinationAction
     }  // execute()
 
     /* ------------------------------------------------------------------------------------------
-     * Perform any pre-execution tasks. For example, disabling table keys on MyISAM tables, or other
-     * setup tasks.
-     *
-     * NOTE: This method must check if we are in DRYRUN mode before executing any tasks.
-     *
-     * @return true on success
-     * ------------------------------------------------------------------------------------------
-     */
-
-    abstract protected function performPreExecuteTasks();
-
-    /* ------------------------------------------------------------------------------------------
-     * Perform any post-execution tasks. For example, enabling table keys on MyISAM tables, or
-     * tracking table history.
-     *
-     * NOTE: This method must check if we are in DRYRUN mode before executing any tasks.
-     *
-     * @param $numRecordsProcessed The number of records processed during this period.
-     *
-     * @return true on success
-     * ------------------------------------------------------------------------------------------
-     */
-
-    abstract protected function performPostExecuteTasks($numRecordsProcessed);
-
-    /* ------------------------------------------------------------------------------------------
      * Perform any pre-aggregation unit tasks. This are performed prior to aggregating each
      * aggregation unit (e.g., day, month, quarter) and might be verifying that a status table
      * contains the correct columns or that the date tables for the aggregation unit exist.
@@ -240,5 +214,6 @@ abstract class aAggregator extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
+    // @codingStandardsIgnoreLine
     abstract protected function _execute($aggregationUnit);
 }  // abstract class Aggregator

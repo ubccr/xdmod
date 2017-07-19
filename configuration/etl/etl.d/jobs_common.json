@@ -49,7 +49,14 @@
             "class": "StructuredFileIngestor",
             "definition_file": "jobs/countable_type.json",
             "enabled": true,
-            "truncate_destination": true
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Countable types",
+                    "path": "jobs/countable_type.json"
+                }
+            }
         },
         {
             "name": "JobRecordTypeIngestor",
@@ -57,7 +64,14 @@
             "class": "StructuredFileIngestor",
             "definition_file": "jobs/job_record_type.json",
             "enabled": true,
-            "truncate_destination": true
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Job record types",
+                    "path": "jobs/job_record_type.json"
+                }
+            }
         },
         {
             "name": "JobTaskTypeIngestor",
@@ -65,7 +79,14 @@
             "class": "StructuredFileIngestor",
             "definition_file": "jobs/job_task_type.json",
             "enabled": true,
-            "truncate_destination": true
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Job task types",
+                    "path": "jobs/job_task_type.json"
+                }
+            }
         },
         {
             "name": "UnitIngestor",
@@ -73,7 +94,14 @@
             "class": "StructuredFileIngestor",
             "definition_file": "jobs/unit.json",
             "enabled": true,
-            "truncate_destination": true
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Units of measure",
+                    "path": "jobs/unit.json"
+                }
+            }
         },
         {
             "name": "SubmissionVenueIngestor",
@@ -81,7 +109,14 @@
             "class": "StructuredFileIngestor",
             "definition_file": "jobs/submission_venue.json",
             "enabled": true,
-            "truncate_destination": true
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Submission venues",
+                    "path": "jobs/submission_venue.json"
+                }
+            }
         }
     ]
 

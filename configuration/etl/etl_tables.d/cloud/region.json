@@ -39,13 +39,5 @@
             }
         ],
         "triggers": []
-    },
-
-    "#": "Define the mapping between the source value fields and the table columns.",
-    "destination_columns": ["region_id", "region", "display", "description"],
-    
-    "#": "Provide the raw source values.",
-    "source_values": [
-        [-1, "unknown",            "Unknown",               "Unknown region" ]
-    ]
+    }
 }
