@@ -2083,7 +2083,6 @@ class XDReportManager
                     : $frequency;
 
                 $templateType = 'custom_report';
-
                 break;
         }
 
@@ -2097,40 +2096,29 @@ class XDReportManager
             }
             $reportType = self::$_header_map[$report_format];
 
+            $properties = array(
+                'recipient_name'       => $report_owner,
+                'maintainer_signature' => MailWrapper::getMaintainerSignature(),
+                'toAddress'            => $destination_email_address,
+                'attachment' => array(
+                    array('fileName'             => $report_file,
+                          'attachment_file_name' => $attachment_file_name,
+                          'encoding'             => 'base64',
+                          'type'                 => $reportType,
+                          'disposition'          => 'inline'
+                    )
+                )
+            );
+
             if($templateType === 'custom_report') {
-                $properties = array(
-                    'recipient_name'       => $report_owner,
-                    'frequency'            => $frequency,
-                    'site_title'           => MailWrapper::getSitetitle(),
-                    'maintainer_signature' => MailWrapper::getmaintainerSignature(),
-                    'subject'              => "Your$frequency " . 'XDMoD Report' . " $subject_suffix",
-                    'toAddress'            => $destination_email_address,
-                    'attachment' => array(
-                        array('fileName'             => $report_file,
-                              'attachment_file_name' => $attachment_file_name,
-                              'encoding'             => 'base64',
-                              'type'                 => $reportType,
-                              'disposition'          => 'inline'
-                        )
-                    )
-                );
+                $properties['frequency'] = $frequency;
+                $properties['site_title'] = MailWrapper::getSiteTitle();
+                $properties['subject'] = "Your$frequency " . 'XDMoD Report' . " $subject_suffix";
             } else {
-                $properties = array(
-                    'recipient_name'         => $report_owner,
-                    'additional_information' => $additional_config['custom message'],
-                    'maintainer_signature'   => MailWrapper::getMaintainerSignature(),
-                    'subject'                => "Your$frequency " . 'XDMoD Compliance Report' . " $subject_suffix",
-                    'toAddress'              => $destination_email_address,
-                    'attachment' => array(
-                        array('fileName'             => $report_file,
-                              'attachment_file_name' => $attachment_file_name,
-                              'encoding'             => 'base64',
-                              'type'                 => $reportType,
-                              'disposition'          => 'inline'
-                        )
-                    )
-                );
+                $properties['additional_information'] = $additional_config['custom message'];
+                $properties['subject'] = "Your$frequency " . 'XDMoD Compliance Report' . " $subject_suffix";
             }
+
             MailWrapper::sendTemplate($templateType, $properties);
         }
         catch (Exception $e) {
