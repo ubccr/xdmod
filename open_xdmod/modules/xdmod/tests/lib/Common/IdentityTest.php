@@ -23,7 +23,7 @@ class IdentityTest extends \PHPUnit_Framework_TestCase
 
     public function errorHandler($errno, $errstr, $errfile, $errline)
     {
-        throw new \BadMethodCallException(
+        throw new \InvalidArgumentException(
             sprintf(
                 'Missing argument. %s %s %s %s',
                 $errno,
