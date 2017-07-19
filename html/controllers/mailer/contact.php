@@ -91,9 +91,10 @@ try {
     MailWrapper::sendmail(array(
         'body'=>$message,
         'subject'=>$subject,
+        'toAddress'=>\xd_utilities\getConfiguration('general', 'contact_page_recipient'),
         'fromAddress'=>$_POST['email'],
         'fromName'=>$_POST['name'],
-        'ifReplyAddress'=>\xd_utilities\getConfiguration('mailer', 'sender_email')
+        'replyAddress'=>\xd_utilities\getConfiguration('mailer', 'sender_email')
         )
     );
 }

@@ -120,15 +120,10 @@ try {
     $message .= $site_address."user_manual\n\n";
     $message .= "The XDMoD Team";
 
-    $recipient
-        = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-        ? xd_utilities\getConfiguration('general', 'debug_recipient')
-        : $_POST['email_address'];
-
     MailWrapper::sendMail(array(
         'body'=>$message,
         'subject'=>"$page_title: Account Created",
-        'toAddress'=>$recipient
+        'toAddress'=>$_POST['email_address']
         )
     );
 }

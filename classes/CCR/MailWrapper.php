@@ -30,8 +30,8 @@ class MailWrapper
             $name = MailWrapper::getSiteTitle();
         }
 
-        if(!empty($properties['ifReplyAddress'])) {
-            $mail->addReplyTo($properties['ifReplyAddress'], $name);
+        if(!empty($properties['replyAddress'])) {
+            $mail->addReplyTo($properties['replyAddress'], $name);
         }
 
         if(!empty($properties['attachment'])) {
@@ -113,24 +113,22 @@ class MailWrapper
 
     public function addAddresses($mail, $properties)
     {
-        if(empty($properties['toAddress'])) {
-            $recipient
-                = (\xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-                ? \xd_utilities\getConfiguration('general', 'debug_recipient')
-                : \xd_utilities\getConfiguration('general', 'contact_page_recipient');
-            $mail->addAddress($recipient);
-        } elseif(is_string($properties['toAddress'])) {
-            if(!empty($properties['toName'])) {
-                $mail->addAddress($properties['toAddress'], $properties['toName']);
-            } else {
-                $mail->addAddress($properties['toAddress']);
-            }
-        } elseif(is_array($properties['toAddress'])) {
-            foreach($properties['toAddress'] as $entry) {
-                if(!empty($entry['name'])) {
-                    $mail->addAddress($entry['address'], $entry['name']);
+        if(\xd_utilities\getConfiguration('general', 'debug_mode') == 'on') {
+            $mail->addAddress(\xd_utilities\getConfiguration('general', 'debug_recipient'));
+        } else {
+            if(is_string($properties['toAddress'])) {
+                if(!empty($properties['toName'])) {
+                    $mail->addAddress($properties['toAddress'], $properties['toName']);
                 } else {
-                    $mail->addAddress($entry['address']);
+                    $mail->addAddress($properties['toAddress']);
+                }
+            } elseif(is_array($properties['toAddress'])) {
+                foreach($properties['toAddress'] as $entry) {
+                    if(!empty($entry['name'])) {
+                        $mail->addAddress($entry['address'], $entry['name']);
+                    } else {
+                        $mail->addAddress($entry['address']);
+                    }
                 }
             }
         }

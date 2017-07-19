@@ -142,13 +142,11 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
-        $userEmail = $user->getEmailAddress();
-
         $body = "The following person has had an account created on XDMoD:\n\n" .
         "Person Details ----------------------------------\n\n" .
         "\nName:                     " . $user->getFormalName(true) .
         "\nUserame:                  " . $user->getUsername() .
-        "\nE-Mail:                   " . $userEmail ;
+        "\nE-Mail:                   " . $user->getEmailAddress();
 
         if(count($samlAttributes) != 0) {
             $body = $body . "\n\n" .
@@ -157,20 +155,21 @@ class XDSamlAuthentication
         }
 
         if ($error) {
-            $subject = "[xdmod] Error Creating federated user";
+            $subject = "[" . MailWrapper::getSiteTitle() . "] Error Creating federated user";
         } else {
-            $subject = "[xdmod] New " . ($linked ? "linked": "unlinked") . " federated user created";
+            $subject = "[" . MailWrapper::getSiteTitle() . "] New " . ($linked ? "linked": "unlinked") . " federated user created";
         }
 
         $properties = array(
             'body'=>$body,
             'subject'=>$subject,
-            'fromAddress'=>$userEmail,
+            'toAddress'=>\xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+            'fromAddress'=>$user->getEmailAddress(),
             'fromName'=>$user->getFormalName()
         );
 
-        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
-            $properties['ifReplyAddress'] = \xd_utilities\getConfiguration('mailer', 'sender_email');
+        if ($user->getEmailAddress() != NO_EMAIL_ADDRESS_SET) {
+            $properties['replyAddress'] = \xd_utilities\getConfiguration('mailer', 'sender_email');
         }
 
         MailWrapper::sendMail($properties);

@@ -28,11 +28,6 @@ if ($user_to_email == NULL) {
 
 $page_title = xd_utilities\getConfiguration('general', 'title');
 
-$recipient
-    = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-    ? xd_utilities\getConfiguration('general', 'debug_recipient')
-    : $user_to_email->getEmailAddress();
-
 // -------------------
 
 try {
@@ -50,7 +45,7 @@ try {
             'reset_url'            => $resetUrl,
             'maintainer_signature' => MailWrapper::getMaintainerSignature(),
             'subject'=>"$page_title: Password Reset",
-            'toAddress'=>$recipient
+            'toAddress'=>$user_to_email->getEmailAddress()
         )
     );
 
