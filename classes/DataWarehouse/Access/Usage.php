@@ -483,10 +483,9 @@ class Usage extends Common
                 'show_aggregate_labels' =>  \xd_utilities\array_get($this->request, 'show_aggregate_labels', $usageGroupByObject->getDefaultShowAggregateLabels()),
                 'show_error_labels' =>      \xd_utilities\array_get($this->request, 'show_error_labels', $usageGroupByObject->getDefaultShowErrorLabels()),
                 'hide_tooltip' =>           \xd_utilities\array_get($this->request, 'hide_tooltip', false),
-                'enable_errors' =>          \xd_utilities\array_get($this->request, 'enable_errors', $usageGroupByObject->getDefaultEnableErrors()),
+                'enable_errors' =>          'n',
                 'enable_trend_line' =>      \xd_utilities\array_get($this->request, 'enable_trend_line', $usageGroupByObject->getDefaultEnableTrendLine()),
             );
-            $usageChartSettingsJson = json_encode($usageChartSettings);
 
             $usageSubnotes = array();
             if ($usageGroupBy === 'resource' || array_key_exists('resource', $this->request)) {
@@ -521,6 +520,11 @@ class Usage extends Common
 
                 // Get the statistic object used by this chart request.
                 $meRequestMetric = $usageRealmAggregateClass::getStatistic($meRequest['data_series_unencoded'][0]['metric']);
+
+                $errorstat = 'sem_' . $meRequest['data_series_unencoded'][0]['metric'];
+                if (in_array($errorstat, array_keys($usageRealmAggregateClass::getRegisteredStatistics())) ) {
+                    $usageChartSettings['enable_errors'] = 'y';
+                }
 
                 // Get the chart object from the response.
                 $meChart = &$meResponseContent['data'][0];
@@ -816,6 +820,10 @@ class Usage extends Common
                     }
                 });
 
+                if ('n' == $usageGroupByObject->getDefaultEnableErrors()) {
+                    $usageChartSettings['enable_errors'] = 'n';
+                }
+
                 // Create a Usage-style chart.
                 $usageChart = array(
                     'hc_jsonstore' => $meChart,
@@ -838,7 +846,7 @@ class Usage extends Common
                     'realm' => $usageRealm,
                     'start_date' => $this->request['start_date'],
                     'end_date' => $this->request['end_date'],
-                    'chart_settings' => $usageChartSettingsJson,
+                    'chart_settings' => json_encode($usageChartSettings),
                     'show_gradient' => $usageShowGradient,
                     'final_width' => $usageWidth,
                     'final_height' => $usageHeight - 4,
