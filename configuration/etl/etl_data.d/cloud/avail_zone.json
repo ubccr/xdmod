@@ -1,0 +1,4 @@
+[
+    ["avail_zone_id", "avail_zone", "display", "description"],
+    [-1, "unknown",            "Unknown",               "Unknown availability zone" ]
+]

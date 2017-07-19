@@ -453,10 +453,14 @@ ORDER BY ordinal_position ASC";
 
 function getTableRows($table, $schema)
 {
-    global $dbh, $logger;
+    global $dbh, $logger, $scriptOptions;
     $tableName = "`$schema`.`$table`";
 
-    $sql = "SELECT COUNT(*) AS table_rows FROM $tableName";
+    $sql = "SELECT COUNT(*) AS table_rows FROM $tableName src";
+
+    if ( 0 != count($scriptOptions['wheres']) ) {
+        $sql .= ' WHERE ' . implode(' AND ', $scriptOptions['wheres']);
+    }
 
     try {
         $stmt = $dbh->prepare($sql);

@@ -140,7 +140,7 @@ try {
     $mail->send();
 }
 catch (Exception $e) {
-    \xd_response\presentError($e->getMessage() . "\n" . $mail->ErrorInfo);
+    \xd_response\presentError($e->getMessage());
 }
 
 // -----------------------------

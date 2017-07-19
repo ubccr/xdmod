@@ -125,7 +125,7 @@ class EtlConfiguration extends Configuration
         if ( array_key_exists('option_overrides', $options) && null !== $options['option_overrides'] ) {
             if ( ! is_array($options['option_overrides']) ) {
                 $this->logAndThrowException("Option overrides must be an array");
-            } else {
+            } elseif ( 0 !== count($options['option_overrides']) ) {
                 $this->optionOverrides = $options['option_overrides'];
             }
         }

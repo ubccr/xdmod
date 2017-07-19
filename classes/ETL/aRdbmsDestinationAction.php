@@ -1,7 +1,8 @@
 <?php
-/* ==========================================================================================
- * Most ETL processes culminate in the addition of data to an RDMBS. This class encapsulates methods
- * and properties common to all actions on a database destination. These include:
+/** =========================================================================================
+ * Most ETL processes write their data into an RDMBS. This class encapsulates methods and
+ * properties common to all actions that deposit data into an RDBMS destination. These
+ * include:
  *
  * 1. Verifying the destination endpoint
  * 2. Parsing the table definition file
@@ -34,16 +35,38 @@ use Log;
 
 abstract class aRdbmsDestinationAction extends aAction
 {
-    // Path to the JSON configuration file containing ETL table and source query configurations, among
-    // other things.
+    /** -----------------------------------------------------------------------------------------
+     * An array of one or more Table objects representing the destination tables supported
+     * by this action, The keys are the table names.
+     *
+     * @var array
+     * ------------------------------------------------------------------------------------------
+     */
 
-    // The stdClass representing a parsed definition file
-
-    // A list of one or more Table objects representing the ETL destination tables supported by this
-    // action where the keys are the table names
     protected $etlDestinationTableList = array();
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
+     * A 2-dimensional associative array where the keys are ETL table names and the values
+     * are a mapping between ETL table columns (keys) and source query columns (values).
+     *
+     * @var array
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $destinationFieldMappings = array();
+
+    /** -----------------------------------------------------------------------------------------
+     * Set to TRUE to indicate a destination field mapping was not specified in the
+     * configuration file and was auto-generated using all source query columns.  This can
+     * be used for optimizations later.
+     *
+     * @var boolean
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $fullSourceToDestinationMapping = false;
+
+    /** -----------------------------------------------------------------------------------------
      * @see aAction::__construct()
      * ------------------------------------------------------------------------------------------
      */
@@ -57,12 +80,10 @@ abstract class aRdbmsDestinationAction extends aAction
 
     }  // __construct()
 
-    /* ------------------------------------------------------------------------------------------
-     * Initialize data required to perform the action.  Since this is an action of a target database
-     * we must parse the definition of the target table.
+    /** -----------------------------------------------------------------------------------------
+     * @see iAction::initialize()
      *
-     * @throws Exception if any query data was not
-     * int the correct format.
+     * @throws Exception if any query data was not in the correct format.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -78,8 +99,13 @@ abstract class aRdbmsDestinationAction extends aAction
 
         if ( ! $this->destinationEndpoint instanceof iRdbmsEndpoint ) {
             $this->destinationEndpoint = null;
-            $msg = "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                "Destination endpoint does not implement ETL\\DataEndpoint\\iRdbmsEndpoint"
+            );
+        }
+
+        if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
+            $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
         }
 
         // Create the objects representing the destination tables. This method can be
@@ -89,15 +115,15 @@ abstract class aRdbmsDestinationAction extends aAction
         $this->createDestinationTableObjects();
 
         if ( 0 == count($this->etlDestinationTableList) ) {
-            $msg = "No ETL destination tables defined";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("No ETL destination tables defined");
         }
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
 
             if ( ! $etlTable instanceof Table ) {
-                $msg = "ETL destination table with key '$etlTableKey' is not an instance of Table";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException(
+                    sprintf("ETL destination table with key '%s' is not an instance of Table", $etlTableKey)
+                );
             }
 
             $etlTable->verify();
@@ -109,31 +135,25 @@ abstract class aRdbmsDestinationAction extends aAction
 
     }  // initialize()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Populate the $etlDestinationTableList with Table objects representing the tables
      * described in the table definition configuration block from the definition file. If
      * another type of table object is needed (e.g., AggregationTable for aggregation
-     * actions, then this method can be overriden.
+     * actions) then this method can be overriden.
+     *
+     * @return int The number of table definitions processed.
      * ------------------------------------------------------------------------------------------
      */
 
     protected function createDestinationTableObjects()
     {
-        if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
-            $msg = "Definition file does not contain a 'table_definition' key";
-            $this->logAndThrowException($msg);
-        }
-
         // A table definition can be either:
         //
         // (1) A single table definition object (current default for a single destination
-        // table) or (2) An array of one or more table definitions (how we will initially
-        // handle multiple destination tables).
-        //
-        // In the future, we will support an object with key value pairs where the key is
-        // the table name and the value is the definition object. In the mean time, we
-        // will generate this format here so the rest of the code does not need to change
-        // later.
+        // table) or (2) An array of one or more table definitions. Both are stored
+        // internally as an associative array where the key is the name of the table. We
+        // could also represent multiple tables using the name as the key but I can't
+        // think of a current use case where we would need to do this
 
         // Normalize the table definition into a set of key-value pairs where the key is the
         // table name and the value is the definition object.
@@ -154,39 +174,309 @@ abstract class aRdbmsDestinationAction extends aAction
                     $this->logger
                 );
                 $this->logger->debug(
-                    "Created ETL destination table object for table definition key '"
-                    . $etlTable->name
-                    . "'"
+                    sprintf("Created ETL destination table object for table definition key '%s'", $etlTable->name)
                 );
                 $etlTable->schema = $this->destinationEndpoint->getSchema();
-                $tableName = $etlTable->getFullName();
 
-                if ( ! is_string($tableName) || empty($tableName) )
-                {
-                    $msg = "Destination table name must be a non-empty string";
-                    $this->logAndThrowException($msg);
+                if ( ! is_string($etlTable->name) || empty($etlTable->name) ) {
+                    $this->logAndThrowException("Destination table name must be a non-empty string");
                 }
 
                 $this->etlDestinationTableList[$etlTable->name] = $etlTable;
             } catch (Exception $e) {
-                $this->logAndThrowException($e->getMessage() . " in file '" . $this->definitionFile . "'");
+                $this->logAndThrowException(sprintf("%s in file '%s'", $e->getMessage(), $this->definitionFile));
+                continue;
             }
 
         }  // foreach ( $tableDefinitionList as $etlTableKey => $tableDefinition )
 
-        if ( 0 == count($this->etlDestinationTableList) ) {
-            $msg = "No table definitions specified";
-            $this->logAndThrowException($msg);
+        $numTableDefinitions = count($this->etlDestinationTableList);
+        if ( 0 == $numTableDefinitions ) {
+            $this->logAndThrowException("No table definitions specified");
         }
 
+        return $numTableDefinitions;
     }  // createDestinationTableObjects()
 
-    /* ------------------------------------------------------------------------------------------
-     * Truncate the destination table. Note that performTruncateDestinationTasks() will be called to
-     * do the actual work.
+    /** -----------------------------------------------------------------------------------------
+     * Parse and verify the mapping between source record fields and destination table
+     * fields. If a mapping has not been provided, generate one automatically. The
+     * destination field map specifies a mapping from source record fields to destination
+     * table fields for one or more destination tables.
      *
-     * @return TRUE on success
-     * @throws Exception If any operations failed
+     * Use Cases:
+     *
+     * 1. There are >= 1 destination tables and no destination field map
+     *
+     * Automatically create the destination field map by mapping source fields to
+     * destination table fields **where the fields match, excluding non-matching fields.**
+     * Log a warning for any fields that do not match.
+     *
+     * 2. There are >= 1 destination tables and a destination field map is specified.
+     *
+     * Verify that the destination fields specified in the mapping are valid fields for
+     * the destination table that they references. Also verify that the source fields are
+     * valid. It is not required that all source fields are mapped to destination fields
+     * but care should be exercised that resonable defaults are specified in the table
+     * definitions.
+     *
+     * @param array An array containing the fields available from the source record
+     *
+     * @return array | null A 2-dimensional array where the keys match etl table
+     *   definitions and values map table columns (destination) to query result columns
+     *   (source), or null if no destination record map was specified.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function parseDestinationFieldMap(array $sourceFields)
+    {
+        $this->destinationFieldMappings = array();
+
+        if ( ! isset($this->parsedDefinitionFile->destination_record_map) ) {
+
+            $this->destinationFieldMappings = $this->generateDestinationFieldMap($sourceFields);
+
+        } elseif ( ! is_object($this->parsedDefinitionFile->destination_record_map) ) {
+
+            $this->logAndThrowException("destination_record_map must be an object");
+
+        } else {
+
+            foreach ( $this->parsedDefinitionFile->destination_record_map as $etlTableKey => $fieldMap ) {
+
+                if ( ! is_object($fieldMap) ) {
+                    $this->logAndThrowException(
+                        sprintf("destination_record_map for table '%s' must be an object", $etlTableKey)
+                    );
+                } elseif ( 0 == count(array_keys((array) $fieldMap)) ) {
+                    $this->logger->warning(
+                        sprintf("%s: destination_record_map for table '%s' is empty", $this, $etlTableKey)
+                    );
+                }
+
+                // Convert the field map from an object to an associative array where keys
+                // are destination table columns and values are source record fields
+                $this->destinationFieldMappings[$etlTableKey] = (array) $fieldMap;
+
+            }
+        }
+
+        $success = true;
+        $success &= $this->verifyDestinationMapKeys();
+        $success &= $this->verifyDestinationMapValues($sourceFields);
+
+        return $success;
+
+    }  // parseDestinationFieldMap()
+
+    /** -----------------------------------------------------------------------------------------
+     * Generate a destination field map for each destination table based on the
+     * intersection of the source record fields and table fields. Only fields common to
+     * both source and destination are mapped with unknown fields logged as warnings.
+     *
+     * @param array An array containing the fields available from the source record
+     *
+     * @return array A 2-dimensional array where the keys match ETL table names and values
+     *  are a 2-dimensional array mapping destination table fields to source record
+     *  fields.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function generateDestinationFieldMap(array $sourceFields)
+    {
+        $destinationFieldMap = array();
+        $fieldMapDebugOutput = '';
+        $numSourceFields = count($sourceFields);
+
+        $this->logger->debug(
+            sprintf(
+                "Auto-generating destination_field_map from %d source fields: %s",
+                $numSourceFields,
+                implode(', ', $sourceFields)
+            )
+        );
+
+        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
+
+            $availableTableFields = $etlTable->getColumnNames();
+
+            $this->logger->debug(
+                sprintf("Available fields for table key '%s': %s", $etlTableKey, implode(', ', $availableTableFields))
+            );
+
+            if ( 0 == $numSourceFields ) {
+                $destinationFieldMap[$etlTableKey] = array();
+                continue;
+            }
+
+            // Map common fields and log warnings for fields that are not mapped
+
+            $commonFields = array_intersect($availableTableFields, $sourceFields);
+            $unmappedSourceFields = array_diff($sourceFields, $availableTableFields);
+
+            $destinationFieldMap[$etlTableKey] = array_combine($commonFields, $commonFields);
+
+            // Generate a more succinct representation of the field map
+
+            $fieldMapDebugOutput .= sprintf(
+                "Table: %s%s",
+                $etlTableKey,
+                array_reduce(
+                    $commonFields,
+                    function ($carry, $item) {
+                        $carry .= sprintf("%s  %s -> %s", PHP_EOL, $item, $item);
+                        return $carry;
+                    },
+                    ''
+                )
+            );
+
+            if ( 0 != count($unmappedSourceFields) ) {
+                $this->logger->warning(
+                    sprintf(
+                        "%s: The following source record fields were not mapped for table '%s': (%s)",
+                        $this,
+                        $etlTableKey,
+                        implode(', ', $unmappedSourceFields)
+                    )
+                );
+            }
+        }
+
+        if ( 0 == count($sourceFields) ) {
+            $this->logger->debug(
+                sprintf(
+                    "Generated empty destination_field_map for table keys: %s",
+                    implode(', ', array_keys($destinationFieldMap))
+                )
+            );
+
+        } else {
+            $this->logger->debug(
+                sprintf("Generated destination_field_map:\n%s", $fieldMapDebugOutput)
+            );
+        }
+
+        return $destinationFieldMap;
+
+    }  // generateDestinationFieldMap()
+
+    /** -----------------------------------------------------------------------------------------
+     * Verify that the destination map keys are valid table fields. Remember that the
+     * destination record map translates source (query, structured file, etc.) fields to
+     * destination table fields. The keys in the map must be valid destination table
+     * fields.
+     *
+     * Note that when a destination map is auto-generated, source fields not found in the
+     * destination are not added.
+     *
+     * @return bool TRUE on success
+     *
+     * @throws Exception If a key is not a valid table field.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function verifyDestinationMapKeys()
+    {
+        // For each table field specified in the destination table field mapping, verify
+        // that it is present in one of the destination table definitions.
+
+        $undefinedFields = array();
+
+        foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationTableMap ) {
+            if ( ! array_key_exists($etlTableKey, $this->etlDestinationTableList) ) {
+                $this->logAndThrowException(
+                    sprintf("Unknown table '%s' referenced in destination_record_map", $etlTableKey)
+                );
+            }
+            $availableTableFields = $this->etlDestinationTableList[$etlTableKey]->getColumnNames();
+            // Remember that the keys in the field map are table field names
+            $destinationTableFields = array_keys($destinationTableMap);
+            $missing = array_diff($destinationTableFields, $availableTableFields);
+
+            if ( 0  != count($missing) ) {
+                $undefinedFields[] = sprintf(
+                    "Table '%s' has undefined table columns/keys (%s)",
+                    $etlTableKey,
+                    implode(",", $missing)
+                );
+            }
+        }
+
+        if ( 0 != count($undefinedFields) ) {
+            $this->logAndThrowException(
+                sprintf(
+                    "Undefined keys (destination table fields) in ETL destination_record_map: (%s)",
+                    implode(', ', $undefinedFields)
+                )
+            );
+        }
+
+        return true;
+
+    }  // verifyDestinationMapKeys()
+
+    /** -----------------------------------------------------------------------------------------
+     * Verify that the destination map values are valid source record fields. Remember that the
+     * destination record map translates source (query, structured file, etc.) fields to
+     * destination table fields. The values in the map must be valid source record fields.
+     *
+     * @param array An array containing the fields available from the source record
+     *
+     * @return bool TRUE on success
+     *
+     * @throws Exception If a value is not a valid source record field.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function verifyDestinationMapValues(array $sourceFields)
+    {
+        $undefinedFields = array();
+
+        foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationTableMap ) {
+            if ( ! array_key_exists($etlTableKey, $this->etlDestinationTableList) ) {
+                $this->logAndThrowException(
+                    sprintf("Unknown table '%s' referenced in destination_record_map", $etlTableKey)
+                );
+            }
+
+            $missing = array_diff($destinationTableMap, $sourceFields);
+
+            if ( 0  != count($missing) ) {
+                $missing = array_map(
+                    function ($k, $v) {
+                        return "$k = $v";
+                    },
+                    array_keys($missing),
+                    $missing
+                );
+                $undefinedFields[] = sprintf(
+                    "Table '%s' has undefined source query fields for keys (%s)",
+                    $etlTableKey,
+                    implode(",", $missing)
+                );
+            }
+
+        }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
+
+        if ( 0 != count($undefinedFields) ) {
+            $this->logAndThrowException(
+                sprintf(
+                    "Undefined values (source record fields) in ETL destination_record_map: (%s)",
+                    implode(', ', $undefinedFields)
+                )
+            );
+        }
+
+        return true;
+
+    }  // verifyDestinationMapValues()
+
+    /** -----------------------------------------------------------------------------------------
+     * Truncate records from the destination table. Note that
+     * performTruncateDestinationTasks() will be called to do the actual work.
+     *
+     * @return bool TRUE on success
      * ------------------------------------------------------------------------------------------
      */
 
@@ -196,21 +486,19 @@ abstract class aRdbmsDestinationAction extends aAction
             return;
         }
 
-        // Truncate the old table, if requested. If queries are provided use them, otherwise truncate
-        // the table.
+        // Truncate the old table, if requested. If queries are provided use them,
+        // otherwise truncate the table.
 
         return $this->performTruncateDestinationTasks();
 
     }  // truncateDestination()
 
-    /* ------------------------------------------------------------------------------------------
-     * The default task for truncating the destination table is executing a single TRUNCATE statement
-     * on the table. If other actions are required, this method should be extended. Note that DELETE
-     * triggers will not fire when the table is truncated.
+    /** -----------------------------------------------------------------------------------------
+     * The default task for truncating the destination table is executing a single
+     * TRUNCATE statement on the table. If other actions are required, this method should
+     * be extended. Note that DELETE triggers will not fire when the table is truncated.
      *
      * NOTE: This method must check if we are in DRYRUN mode before executing any tasks.
-     *
-     * @see iIngestor::truncateDestinationTasks()
      * ------------------------------------------------------------------------------------------
      */
 
@@ -253,15 +541,104 @@ abstract class aRdbmsDestinationAction extends aAction
 
     }  // performTruncateDestinationTasks()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
+     * Manage destination tables and disable foreign keys if needed.
+     *
+     * @see aAction::performPreExecuteTasks()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function performPreExecuteTasks()
+    {
+        $sqlList = array();
+        $disableForeignKeys = false;
+
+        try {
+
+            // Bring the destination table in line with the configuration if necessary.  Note that
+            // manageTable() is DRYRUN aware so we don't need to handle that here.
+
+            foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
+                $qualifiedDestTableName = $etlTable->getFullName();
+
+                if ( "myisam" == strtolower($etlTable->engine) ) {
+                    $disableForeignKeys = true;
+                    if ( $this->options->disable_keys ) {
+                        $this->logger->info("Disable keys on $qualifiedDestTableName");
+                        $sqlList[] = "ALTER TABLE $qualifiedDestTableName DISABLE KEYS";
+                    }
+                }
+
+                $this->manageTable($etlTable, $this->destinationEndpoint);
+
+            }  // foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable )
+
+        } catch ( Exception $e ) {
+            $this->logAndThrowException(
+                sprintf("Error managing ETL table for '%s': %s", $this->getName(), $e->getMessage())
+            );
+        }
+
+        if ( $disableForeignKeys ) {
+            // See http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_foreign_key_checks
+            $sqlList[] = "SET FOREIGN_KEY_CHECKS = 0";
+        }
+
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Pre-execute tasks");
+
+        return true;
+
+    }  // performPreExecuteTasks()
+
+    /** -----------------------------------------------------------------------------------------
+     * Perform post-execution tasks such as re-enabling foreign key constraints and
+     * analyzing or optimizing the table.
+     *
+     * @see aAction::performPostExecuteTasks()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
+    {
+        $sqlList = array();
+        $enableForeignKeys = false;
+
+        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
+            $qualifiedDestTableName = $etlTable->getFullName();
+
+            if ( "myisam" == strtolower($etlTable->engine) ) {
+                $enableForeignKeys = true;
+                if ( $this->options->disable_keys ) {
+                    $this->logger->info("Enable keys on $qualifiedDestTableName");
+                    $sqlList[] = "ALTER TABLE $qualifiedDestTableName ENABLE KEYS";
+                }
+            }
+
+            if ( null !== $numRecordsProcessed && $numRecordsProcessed > 0 ) {
+                $sqlList[] = "ANALYZE TABLE $qualifiedDestTableName";
+            }
+        }
+
+        if ( $enableForeignKeys ) {
+            // See http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_foreign_key_checks
+            $sqlList[] = "SET FOREIGN_KEY_CHECKS = 1";
+        }
+
+        $this->executeSqlList($sqlList, $this->destinationEndpoint, "Post-execute tasks");
+
+        return true;
+
+    }  // performPostExecuteTasks()
+
+    /** -----------------------------------------------------------------------------------------
      * Execute a list of SQL statements on the specified database handle, throwing an exception if
      * there was an error.
      *
-     * @param $sqlList An array of SQL statements to execute
-     * @param $endpoint An endpoint implementing iDataEndpoint
-     * @param $msgPrefix String to prefix log messages with
+     * @param array $sqlList The list of SQL statements to execute
+     * @param iDataEndpoint $endpoint An endpoint implementing iDataEndpoint
+     * @param string $msgPrefix Log message with prefix
      *
-     * @return TRUE on success
+     * @return bool TRUE on success
      *
      * @throws Exception If there was an error executing a statement
      * ------------------------------------------------------------------------------------------
@@ -283,7 +660,7 @@ abstract class aRdbmsDestinationAction extends aAction
             }
             catch (PDOException $e) {
                 $this->logAndThrowException(
-                    "Error executing " . ( "" != $msgPrefix ? "$msgPrefix " : "" ) . "SQL",
+                    sprintf("Error executing %s SQL", ( "" != $msgPrefix ? "$msgPrefix " : "" )),
                     array('exception' => $e, 'sql' => $sql, 'endpoint' => $endpoint)
                 );
             }
@@ -293,15 +670,17 @@ abstract class aRdbmsDestinationAction extends aAction
 
     }  // executeSqlList()
 
-    /* ------------------------------------------------------------------------------------------
-     * Parse an SQL statement to retrieve column names, tables used, etc.
-     * @ See https://code.google.com/p/php-sql-parser/
+    /** -----------------------------------------------------------------------------------------
+     * Parse an SQL statement to retrieve column names, tables used, etc. This uses the
+     * Google SQL parser.
      *
-     * @param $sql The SQL statement to parse
+     * @see https://code.google.com/p/php-sql-parser/
      *
-     * @return An associative array containing the parsed SQL
+     * @param string $sql The SQL statement to parse
      *
-     * @throws Exception If the SQL was empty
+     * @return array An associative array containing the parsed SQL
+     *
+     * @throws Exception If $sql was empty
      * ------------------------------------------------------------------------------------------
      */
 
@@ -316,15 +695,15 @@ abstract class aRdbmsDestinationAction extends aAction
 
     } // parseSql()
 
-    /* ------------------------------------------------------------------------------------------
-     * Parse an SQL SELECT statement and return the selected colum names.
-     * @ See https://code.google.com/p/php-sql-parser/
+    /** -----------------------------------------------------------------------------------------
+     * Parse an SQL SELECT statement and return the fields (columns) that are being queried.
+     * @see https://code.google.com/p/php-sql-parser/
      *
-     * @param $sql The SQL statement to parse
+     * @param string $sql The SQL statement to parse
      *
-     * @return An array containing the parsed column names
+     * @return array A lit of the parsed fieldnames
      *
-     * @throws Exception If the SQL was empty
+     * @throws Exception If $sql was empty
      * @throws Exception If there was no SELECT clause detected
      * ------------------------------------------------------------------------------------------
      */
@@ -334,8 +713,7 @@ abstract class aRdbmsDestinationAction extends aAction
         $parsedSql = $this->parseSql($sql);
 
         if ( ! array_key_exists("SELECT", $parsedSql) ) {
-            $msg = "Select block not found in parsed SQL";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Select block not found in parsed SQL");
         }
 
         $columnNames = array();
@@ -343,7 +721,8 @@ abstract class aRdbmsDestinationAction extends aAction
         foreach ( $parsedSql['SELECT'] as $item ) {
             if ( array_key_exists('alias', $item)
                  && $item['alias']['as']
-                 && array_key_exists('name', $item['alias']) ) {
+                 && array_key_exists('name', $item['alias'])
+            ) {
                 $columnNames[] = $item['alias']['name'];
             } else {
                 $pos = strrpos($item['base_expr'], ".");
@@ -355,19 +734,18 @@ abstract class aRdbmsDestinationAction extends aAction
 
     } // getSqlColumnNames()
 
-    /* ------------------------------------------------------------------------------------------
-     * Compare the columns from the table object to those parsed from the SQL SELECT clause and verify
-     * that all of the parsed SQL columns are present in the table object. If the table object
-     * contains all columns parsed from SELECT clause of the SQL statement return the list of parsed
-     * column names, otherwise throw an exception.
+    /** -----------------------------------------------------------------------------------------
+     * Compare the fields from the table object to those parsed from the SQL SELECT
+     * statement and verify that all of the parsed SQL fields are present in the table
+     * object. If the table object contains all columns parsed from SELECT clause of the
+     * SQL statement return the list of parsed column names, otherwise throw an exception.
      *
-     * @param $sql The SQL statement to parse.
-     * @param $table A Table object containing a table definition
+     * @param string $sql The SQL statement to parse.
+     * @param Table $table An object containing the table definition
      *
-     * @return An array containing all columns in the SELECT clause of the $sql parameter.
+     * @return array A list of all field names found in $sql
      *
-     * @throws Exception If any of the columns from the SQL SELECT clause were not found in the Table
-     *   object
+     * @throws Exception If any of the fields from $sql were not found in the table object
      * ------------------------------------------------------------------------------------------
      */
 
@@ -378,27 +756,30 @@ abstract class aRdbmsDestinationAction extends aAction
         $missingColumnNames = array_diff($sqlColumnNames, $tableColumnNames);
 
         if ( 0 != count($missingColumnNames) ) {
-            $msg = "The following columns from the SQL SELECT were not found in table definition for '{$table->name}': " .
-                implode(", ", $missingColumnNames);
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException(
+                sprintf(
+                    "The following columns from the SQL SELECT were not found in table definition for '%s': %s",
+                    $table->name,
+                    implode(', ', $missingColumnNames)
+                )
+            );
         }
 
         return $sqlColumnNames;
 
     } // verifySqlColumns()
 
-    /* ------------------------------------------------------------------------------------------
-     * Manage an ETL tables. Based on the table object, create a new table or alter an existing table
-     * to bring it in line with the configuration in the table object. If we are in dryrun mode, do
-     * not perform any actions, only logging.
+    /** -----------------------------------------------------------------------------------------
+     * Manage an ETL table in a data endpoint to bring it in line with the structure
+     * specified in the table object. This includes creating a new table or alter an
+     * existing table.  If we are in dryrun mode, do not perform any actions, only
+     * logging.
      *
-     * @param $table A Table object
-     * @param $endpoint The destination data endpoint where the table will be created
+     * @param Table $table An object describing the desired table structure
+     * @param iDataEndpoint $endpoint The destination data endpoint where the table will
+     *   be created/altered
      *
-     * @return The Table object generated from the table configuration file
-     *
-     * @throws Exception If any query data was not int the correct format.
-     * @throws Exception If the ETLOverseerOptions have not been set.
+     * @return Table The table object to support method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -412,12 +793,12 @@ abstract class aRdbmsDestinationAction extends aAction
 
         if ( false === $existingTable->discover($table->name, $endpoint) ) {
 
-            $this->logger->notice("Table " . $table->getFullName() . " does not exist, creating.");
+            $this->logger->notice(sprintf("Table %s does not exist, creating.", $table->getFullName()));
 
             $sqlList = $table->getSql();
 
             foreach ( $sqlList as $sql ) {
-                $this->logger->debug("Create table SQL " . $endpoint . ":\n$sql");
+                $this->logger->debug(sprintf("Create table SQL %s:\n%s", $endpoint, $sql));
                 if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                     $endpoint->getHandle()->execute($sql);
                 }
@@ -428,10 +809,10 @@ abstract class aRdbmsDestinationAction extends aAction
             $sqlList = $existingTable->getAlterSql($table);
 
             if ( false !== $sqlList ) {
-                $this->logger->notice("Altering table " . $existingTable->getFullName());
+                $this->logger->notice(sprintf("Altering table %s", $existingTable->getFullName()));
 
                 foreach ( $sqlList as $sql ) {
-                    $this->logger->debug("Alter table SQL " . $endpoint . ":\n$sql");
+                    $this->logger->debug(sprintf("Alter table SQL %s:\n%s", $endpoint, $sql));
                     if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                         $endpoint->getHandle()->execute($sql);
                     }

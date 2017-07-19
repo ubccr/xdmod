@@ -38,15 +38,5 @@
             }
         ],
         "triggers": []
-    },
-
-    "#": "Define the mapping between the source value fields and the table columns.",
-    "destination_columns": ["submission_venue_id", "submission_venue", "display", "description"],
-    
-    "#": "Provide the raw source values.",
-    "source_values": [
-        [-1, "unknown", "Unknown",  "Unknown" ],
-        [1,  "cli",     "CLI",      "Command Line Interface" ],
-        [2,  "gateway", "Gateway",  "Science Gateway" ]
-    ]
+    }
 }

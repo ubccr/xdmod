@@ -45,17 +45,5 @@
             }
         ],
         "triggers": []
-    },
-
-    "#": "Define the mapping between the source value fields and the table columns.",
-    "destination_columns": ["countable_type_id", "unit_id", "countable_type", "display", "description"],
-
-    "#": "Provide the raw source values.",
-    "source_values":[
-        [-1, null, "unknown",   "Unknown",   "Unknown" ],
-        [1,  null, "gpu",       "GPUs",      "GPUs" ],
-        [2,  null, "mic",       "MICs",      "MICs" ],
-        [3,  null, "database",  "Databases", "Databases" ],
-        [4,  2,    "storage",   "Storage",   "Storage" ]
-    ]
+    }
 }

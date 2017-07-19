@@ -147,7 +147,7 @@ class JobsAggregator extends pdoAggregator implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function performPostExecuteTasks($numRecordsProcessed)
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
     {
         $sourceSchema = $this->sourceEndpoint->getSchema(true);
         $tableName = $this->destinationEndpoint->quoteSystemIdentifier(self::STATUS_TABLE);

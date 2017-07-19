@@ -15,9 +15,9 @@ use ETL\aOptions;
 use ETL\iAction;
 use ETL\aAction;
 use ETL\DataEndpoint\iRdbmsEndpoint;
-use \PDOException;
+use PDOException;
 use ETL\Utilities;
-use \Log;
+use Log;
 
 use PHPSQLParser\PHPSQLParser;
 use PHPSQLParser\PHPSQLCreator;
@@ -146,6 +146,26 @@ class ExecuteSql extends aAction implements iAction
         return true;
 
     }  // initialize()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see aAction::performPreExecuteTasks()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function performPreExecuteTasks()
+    {
+        return true;
+    } // performPreExecuteTasks()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see aAction::performPostExecuteTasks()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
+    {
+        return true;
+    }  // performPostExecuteTasks()
 
     /* ------------------------------------------------------------------------------------------
      * @see iAction::execute()
