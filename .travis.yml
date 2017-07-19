@@ -22,7 +22,7 @@ env:
         - TEST_SUITE=build
 matrix:
     exclude:
-        - php: '5.3.3'
+        - php: '5.4'
           env: TEST_SUITE=style
         - php: '7.0'
           env: TEST_SUITE=style
