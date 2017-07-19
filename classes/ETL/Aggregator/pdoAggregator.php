@@ -290,17 +290,20 @@ class pdoAggregator extends aAggregator
 
     }  // createDestinationTableObjects()
 
-    /* ------------------------------------------------------------------------------------------
-     * By default, there are no pre-execution tasks.
+    /** -----------------------------------------------------------------------------------------
+     * Note that we are not calling aRdbmsDestinationAction::performPreExecuteTasks()
+     * because we cannot properly manage the aggregation tables without knowing the
+     * aggregation unit or applying variable substitutions. Tables will be managed in
+     * performPreAggregationUnitTasks() instead.
      *
-     * @see aAggregator::performPreExecuteTasks()
+     * @see aAction::performPreExecuteTasks()
      * ------------------------------------------------------------------------------------------
      */
 
     protected function performPreExecuteTasks()
     {
-        // To support programmatic manipulation of the source Query object, save off the description
-        // of the first join (from) table
+        // To support programmatic manipulation of the source Query object, save off the
+        // description of the first join (from) table
         $sourceJoins = $this->etlSourceQuery->joins;
         $this->etlSourceQueryOrigFromTable = array_shift($sourceJoins);
         $this->etlSourceQueryModified = false;
@@ -308,14 +311,13 @@ class pdoAggregator extends aAggregator
         return true;
     }  // performPreExecuteTasks()
 
-    /* ------------------------------------------------------------------------------------------
-     * By default, there are no pre-execution tasks.
-     *
-     * @see aAggregator::performPostExecuteTasks()
+    /** -----------------------------------------------------------------------------------------
+     * @see performPostAggregationUnitTasks()
+     * @see aAction::performPostExecuteTasks()
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function performPostExecuteTasks($numRecordsProcessed)
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
     {
         return true;
     }  // performPostExecuteTasks()
@@ -715,6 +717,7 @@ class pdoAggregator extends aAggregator
      * ------------------------------------------------------------------------------------------
      */
 
+    // @codingStandardsIgnoreLine
     protected function _execute($aggregationUnit)
     {
         $time_start = microtime(true);
@@ -770,11 +773,10 @@ class pdoAggregator extends aAggregator
             $sourceJoins = $this->etlSourceQuery->joins;
             $firstJoin = array_shift($sourceJoins);
             $newFirstJoin = clone $firstJoin;
-            $newFirstJoin->setName($tmpTableName);
+            $newFirstJoin->name = $tmpTableName;
             $newFirstJoin->schema = $this->sourceEndpoint->getSchema();
 
-            $this->etlSourceQuery->deleteJoins();
-            $this->etlSourceQuery->addJoin($newFirstJoin);
+            $this->etlSourceQuery->joins = array($newFirstJoin);
             foreach ( $sourceJoins as $join ) {
                 $this->etlSourceQuery->addJoin($join);
             }
@@ -788,8 +790,7 @@ class pdoAggregator extends aAggregator
 
             $sourceJoins = $this->etlSourceQuery->joins;
             array_shift($sourceJoins);
-            $this->etlSourceQuery->deleteJoins();
-            $this->etlSourceQuery->addJoin($this->etlSourceQueryOrigFromTable);
+            $this->etlSourceQuery->joins = array($this->etlSourceQueryOrigFromTable);
             foreach ( $sourceJoins as $join ) {
                 $this->etlSourceQuery->addJoin($join);
             }
@@ -891,7 +892,7 @@ class pdoAggregator extends aAggregator
 
             $sourceJoins = $this->etlSourceQuery->joins;
             $firstJoin = current($sourceJoins);
-            $tmpTableAlias = $firstJoin->getAlias();
+            $tmpTableAlias = $firstJoin->alias;
 
             while ( ! $done ) {
 
@@ -945,7 +946,7 @@ class pdoAggregator extends aAggregator
                 try {
                     // Use the where clause from the aggregation query to create the temporary table
 
-                    $whereClause = implode(" AND ", $this->etlSourceQuery->getWheres());
+                    $whereClause = implode(" AND ", $this->etlSourceQuery->where);
 
                     $whereClause = Utilities::substituteVariables(
                         $whereClause,

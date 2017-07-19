@@ -50,20 +50,5 @@
             }
         ],
         "triggers": []
-    },
-
-    "#": "Define the mapping between the source value fields and the table columns.",
-    "destination_columns": ["id", "min_duration", "max_duration", "description"],
-
-    "#": "Provide the raw source values.",
-    "source_values": [
-        [ 0, 0, 0, "0 - 1s" ],
-        [ 1, 1, 29, "1 - 30s" ],
-        [ 2, 30, 1799, "30s - 30min" ],
-        [ 3, 1800, 3599, "30 - 60min" ],
-        [ 4, 3600, 17999, "1 - 5hr" ],
-        [ 5, 18000, 35999, "5 - 10hr" ],
-        [ 6, 36000, 64799, "10 - 18hr" ],
-        [ 7, 64800, 2147483647, "18+hr" ]
-    ]
+    }
 }

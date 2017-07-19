@@ -1,0 +1,9 @@
+[
+    ["unit_id", "unit", "display", "description"],
+    [-1, "unknown",   "Unknown",  "Unknown" ],
+    [1,  "megabytes", "MB",  "Megabytes" ],
+    [2,  "gigabytes", "GB",  "Gigabytes" ],
+    [3,  "terabytes", "TB",  "Terabytes" ],
+    [4,  "petabytes", "PB",  "Petabytes" ],
+    [5,  "sus",       "SUs", "Service Units" ]
+]

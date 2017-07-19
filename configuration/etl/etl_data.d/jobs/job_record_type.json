@@ -1,0 +1,9 @@
+[
+    ["job_record_type_id", "job_record_type", "display", "description"],
+    [-1, "unknown",     "Unknown",     "Unknown" ],
+    [1,  "hpc",         "HPC",         "HPC Job" ],
+    [2,  "reservation", "Reservation", "HPC Reservation" ],
+    [3,  "array",       "Job Array",   "HPC Job Array" ],
+    [4,  "cloud",       "Cloud",       "Cloud Job" ]
+]
+
