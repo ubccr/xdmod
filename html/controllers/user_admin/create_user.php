@@ -105,8 +105,8 @@ try {
 
     // =============================
 
-    $page_title = xd_utilities\getConfiguration('general', 'title');
-    $site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
+    $page_title = MailWrapper::getSiteTitle();
+    $site_address = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
 
     // -------------------
 
@@ -121,9 +121,9 @@ try {
     $message .= "The XDMoD Team";
 
     MailWrapper::sendMail(array(
-        'body'=>$message,
-        'subject'=>"$page_title: Account Created",
-        'toAddress'=>$_POST['email_address']
+        'body'      => $message,
+        'subject'   => "$page_title: Account Created",
+        'toAddress' => $_POST['email_address']
         )
     );
 }

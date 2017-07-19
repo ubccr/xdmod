@@ -47,8 +47,8 @@ try {
             'username'             => $user_to_email->getUsername(),
             'reset_url'            => $resetUrl,
             'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-            'subject'=>"$page_title: Password Reset",
-            'toAddress'=>$user_to_email->getEmailAddress()
+            'subject'              => "$page_title: Password Reset",
+            'toAddress'            => $user_to_email->getEmailAddress()
         )
     );
     $returnData['success'] = true;

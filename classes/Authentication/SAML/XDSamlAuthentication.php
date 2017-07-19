@@ -142,11 +142,14 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
+        $siteTitle = MailWrapper::getSiteTitle();
+        $userEmail = $user->getEmailAddress();
+
         $body = "The following person has had an account created on XDMoD:\n\n" .
         "Person Details ----------------------------------\n\n" .
         "\nName:                     " . $user->getFormalName(true) .
         "\nUserame:                  " . $user->getUsername() .
-        "\nE-Mail:                   " . $user->getEmailAddress();
+        "\nE-Mail:                   " . $userEmail;
 
         if(count($samlAttributes) != 0) {
             $body = $body . "\n\n" .
@@ -155,20 +158,20 @@ class XDSamlAuthentication
         }
 
         if ($error) {
-            $subject = "[" . MailWrapper::getSiteTitle() . "] Error Creating federated user";
+            $subject = "[" . $siteTitle . "] Error Creating federated user";
         } else {
-            $subject = "[" . MailWrapper::getSiteTitle() . "] New " . ($linked ? "linked": "unlinked") . " federated user created";
+            $subject = "[" . $siteTitle . "] New " . ($linked ? "linked": "unlinked") . " federated user created";
         }
 
         $properties = array(
-            'body'=>$body,
-            'subject'=>$subject,
-            'toAddress'=>\xd_utilities\getConfiguration('general', 'contact_page_recipient'),
-            'fromAddress'=>$user->getEmailAddress(),
-            'fromName'=>$user->getFormalName()
+            'body'        => $body,
+            'subject'     => $subject,
+            'toAddress'   => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+            'fromAddress' => $userEmail,
+            'fromName'    => $user->getFormalName()
         );
 
-        if ($user->getEmailAddress() != NO_EMAIL_ADDRESS_SET) {
+        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
             $properties['replyAddress'] = \xd_utilities\getConfiguration('mailer', 'sender_email');
         }
 

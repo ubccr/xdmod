@@ -26,12 +26,14 @@ if ($user_to_email == NULL) {
 
 // -----------------------------
 
-$page_title = xd_utilities\getConfiguration('general', 'title');
+$page_title = MailWrapper::getSiteTitle();
 
 // -------------------
 
 try {
-    $rid = md5($user_to_email->getUsername() . $user_to_email->getPasswordLastUpdatedTimestamp());
+    $userName = $user_to_email->getUsername();
+
+    $rid = md5($userName . $user_to_email->getPasswordLastUpdatedTimestamp());
 
     $site_address
         = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
@@ -41,16 +43,16 @@ try {
         'password_reset',
         array(
             'first_name'           => $user_to_email->getFirstName(),
-            'username'             => $user_to_email->getUsername(),
+            'username'             => $userName,
             'reset_url'            => $resetUrl,
             'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-            'subject'=>"$page_title: Password Reset",
-            'toAddress'=>$user_to_email->getEmailAddress()
+            'subject'              => "$page_title: Password Reset",
+            'toAddress'            => $user_to_email->getEmailAddress()
         )
     );
 
     $returnData['success'] = true;
-    $returnData['status'] = "Password reset e-mail sent to user {$user_to_email->getUsername()}";
+    $returnData['status'] = "Password reset e-mail sent to user {$userName}";
     $returnData['message'] = $returnData['status'];
 }
 catch (Exception $e) {

@@ -111,6 +111,11 @@ class MailWrapper
         return \xd_utilities\getConfiguration('general', 'title');
     }
 
+    /**
+     * Adds addresses to which mail is being sent given as either a string or an array
+     *
+     * Checks first to see if debug mode is on
+     */
     public function addAddresses($mail, $properties)
     {
         if(\xd_utilities\getConfiguration('general', 'debug_mode') == 'on') {

@@ -89,12 +89,12 @@ $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $ti
 try {
     //Original sender's e-mail must be in the 'fromAddress' field for the XDMoD Request Tracker to function
     MailWrapper::sendmail(array(
-        'body'=>$message,
-        'subject'=>$subject,
-        'toAddress'=>\xd_utilities\getConfiguration('general', 'contact_page_recipient'),
-        'fromAddress'=>$_POST['email'],
-        'fromName'=>$_POST['name'],
-        'replyAddress'=>\xd_utilities\getConfiguration('mailer', 'sender_email')
+        'body'         => $message,
+        'subject'      => $subject,
+        'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+        'fromAddress'  => $_POST['email'],
+        'fromName'     => $_POST['name'],
+        'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
         )
     );
 }
@@ -117,9 +117,9 @@ $message
 
 try {
     MailWrapper::sendMail(array(
-        'body'=>$message,
-        'subject'=>"Thank you for your $message_type.",
-        'toAddress'=>$_POST['email']
+        'body'      => $message,
+        'subject'   => "Thank you for your $message_type.",
+        'toAddress' => $_POST['email']
         )
     );
 }

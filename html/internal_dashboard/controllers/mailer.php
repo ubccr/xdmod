@@ -83,25 +83,19 @@ switch ($operation) {
 
         break;
     case 'send_plain_mail':
-        $message = \xd_security\assertParameterSet('message', '/.*/', false);
-        $subject = \xd_security\assertParameterSet('subject');
-
         $response['success'] = true;
 
-        $title = \xd_utilities\getConfiguration('general', 'title');
-        $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
-
-        $Subject = "[$title] $subject";
+        $title = MailWrapper::getSiteTitle();
 
         // Send a copy of the email to the contact page recipient.
         $response['status'] = MailWrapper::sendMail(array(
-                                  'body'=>$message,
-                                  'subject'=>$Subject,
-                                  'toAddress'=>$contact,
-                                  'toName'=>'Undisclosed Recipients',
-                                  'fromAddress'=>$contact,
-                                  'fromName'=>$title,
-                                  'bcc'=>\xd_security\assertParameterSet('target_addresses')
+                                  'body'        => \xd_security\assertParameterSet('message', '/.*/', false),
+                                  'subject'     => "[$title] " . \xd_security\assertParameterSet('subject'),
+                                  'toAddress'   => $contact,
+                                  'toName'      => 'Undisclosed Recipients',
+                                  'fromAddress' => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+                                  'fromName'    => $title,
+                                  'bcc'         => \xd_security\assertParameterSet('target_addresses')
                               ));
 
         break;
