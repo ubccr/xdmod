@@ -110,4 +110,58 @@ EOF;
         $this->assertEquals($response[1]['http_code'], 403);
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
     }
+
+    public function testAggregateView()
+    {
+         $defaultJson = <<<EOF
+{
+    "public_user": "true",
+    "realm": "Jobs",
+    "group_by": "none",
+    "statistic": "avg_wallduration_hours",
+    "start_date": "2016-01-01",
+    "end_date": "2017-12-31",
+    "operation": "get_charts",
+    "timeframe_label": "User Defined",
+    "scale": "1",
+    "aggregation_unit": "Auto",
+    "dataset_type": "aggregate",
+    "thumbnail": "n",
+    "query_group": "tg_usage",
+    "display_type": "line",
+    "combine_type": "side",
+    "limit": "10",
+    "offset": "0",
+    "log_scale": "n",
+    "show_guide_lines": "y",
+    "show_trend_line": "n",
+    "show_error_bars": "n",
+    "show_aggregate_labels": "n",
+    "show_error_labels": "n",
+    "hide_tooltip": "false",
+    "show_title": "y",
+    "width": "1377",
+    "height": "590",
+    "legend_type": "bottom_center",
+    "font_size": "3",
+    "interactive_elements": "y",
+    "controller_module": "user_interface"
+}
+EOF;
+        $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($defaultJson, true));
+
+        $this->assertEquals($response[1]['content_type'], 'text/plain; charset=UTF-8');
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+
+        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
+
+        $this->assertCount(1, $dataseries);
+        $this->assertArrayHasKey('data', $dataseries[0]);
+        $this->assertCount(1, $dataseries[0]['data']);
+        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
+
+        $this->assertEquals(1.79457892, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+    }
 }
