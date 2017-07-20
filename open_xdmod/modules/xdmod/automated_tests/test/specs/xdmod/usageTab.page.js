@@ -1,3 +1,4 @@
+/* eslint-env node, es6 */
 class Usage {
     constructor() {
         this.tab = '#main_tab_panel__tg_usage';
