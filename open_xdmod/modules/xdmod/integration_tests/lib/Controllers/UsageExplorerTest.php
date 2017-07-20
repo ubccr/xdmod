@@ -164,4 +164,79 @@ EOF;
 
         $this->assertEquals(1.79457892, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
     }
+
+    /**
+     * @dataProvider errorBarDataProvider
+     */
+    public function testErrorBars($input, $expected)
+    {
+        $response = $this->helper->post('/controllers/user_interface.php', null, $input);
+
+        $this->assertEquals($response[1]['content_type'], 'text/plain; charset=UTF-8');
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+
+        $this->assertArrayHasKey('chart_settings', $plotdata['data'][0]);
+
+        $settings = json_decode($plotdata['data'][0]['chart_settings'], true);
+
+        $this->assertArrayHasKey('enable_errors', $settings);
+        $this->assertEquals($expected, $settings['enable_errors']);
+    }
+
+    public function errorBarDataProvider()
+    {
+        $baseJson = <<<EOF
+{
+    "public_user": "true",
+    "realm": "Jobs",
+    "group_by": "none",
+    "statistic": "avg_wallduration_hours",
+    "start_date": "2016-12-25",
+    "end_date": "2017-01-02",
+    "operation": "get_charts",
+    "timeframe_label": "User Defined",
+    "scale": "1",
+    "aggregation_unit": "Auto",
+    "dataset_type": "timeseries",
+    "thumbnail": "n",
+    "query_group": "tg_usage",
+    "display_type": "line",
+    "combine_type": "side",
+    "limit": "10",
+    "offset": "0",
+    "log_scale": "n",
+    "show_guide_lines": "y",
+    "show_trend_line": "n",
+    "show_error_bars": "n",
+    "show_aggregate_labels": "n",
+    "show_error_labels": "y",
+    "hide_tooltip": "false",
+    "show_title": "y",
+    "width": "1377",
+    "height": "590",
+    "legend_type": "bottom_center",
+    "font_size": "3",
+    "interactive_elements": "y",
+    "controller_module": "user_interface"
+}
+EOF;
+        $baseSettings = json_decode($baseJson, true);
+
+        $ret = array(
+            array($baseSettings, 'y')
+        );
+
+        $baseSettings['statistic'] = 'job_count';
+        $ret[] = array($baseSettings, 'n');
+
+        $baseSettings['statistic'] = 'avg_node_hours';
+        $ret[] = array($baseSettings, 'y');
+
+        $baseSettings['group_by'] = 'nsfdirectorate';
+        $ret[] = array($baseSettings, 'n');
+
+        return $ret;
+    }
 }
