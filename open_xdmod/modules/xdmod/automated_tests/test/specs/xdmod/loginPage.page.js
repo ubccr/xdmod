@@ -1,3 +1,4 @@
+/* eslint-env node, es6 */
 class LoginPage {
     login(title, theUrl, loginName, loginPassword, displayName) {
         describe('General', function () {
