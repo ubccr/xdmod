@@ -1079,8 +1079,6 @@ class XDUser {
          ':id' => $this->_id,
       ));
 
-      unset($this);
-
    }//removeUser
 
    // ---------------------------
