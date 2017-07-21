@@ -59,6 +59,7 @@ describe('Metric Explorer', function metricExplorer() {
             }
         }
     };
+    var chartName = 'ME autotest chart ' + Date.now();
     var loginName = testHelpers.auth.roles.centerdirector.username;
     var loginPassword = testHelpers.auth.roles.centerdirector.password;
     var displayName = testHelpers.auth.roles.centerdirector.display;
@@ -67,17 +68,23 @@ describe('Metric Explorer', function metricExplorer() {
         it('Selected', function meSelect() {
             browser.waitForLoadedThenClick(me.selectors.tab);
             browser.waitForVisible(me.selectors.container, 3000);
+            browser.waitForVisible(me.selectors.catalog.container, 10000);
             $container = cheerio.load(browser.getHTML(me.selectors.container));
+        });
+    });
+    describe('Create and save a chart', function () {
+        it('Add data via metric catalog', function () {
+            me.createNewChart(chartName, 'Timeseries', 'Line');
+            me.setDateRange('2016-12-30', '2017-01-02');
+            me.addDataViaCatalog('Jobs', 'Node Hours: Total', 'None');
+            me.checkChart(chartName, 'Node Hours: Total', 'Screwdriver');
+            me.saveChanges();
+            me.clear();
         });
     });
     describe('Basic Scenarios', function basicScenarios() {
         it('Has Instructions', function meConfirmInstructions() {
-            testHelpers.instructions(browser, 'metricExplorer', me.selectors.container);
-        });
-        it('Instructions look the same as previous run', function () {
-            browser.waitForVisible(me.selectors.catalog.container, 10000);
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "instructions")
+            me.verifyInstructions();
         });
         it('Has three toolbars', function meConfirmToolbars() {
             expect($container('.x-toolbar').length).to.equal(3);
@@ -101,84 +108,48 @@ describe('Metric Explorer', function metricExplorer() {
         it("'Add Data' via toolbar", function meAddData1() {
             // click on CPU Hours: Total
             me.addDataViaMenu('.ext-el-mask-msg', '3');
-            browser.waitAndClick('#adp_submit_button');
+            me.addDataSeriesByDefinition();
         });
-        it('Scratchpad looks the same as previous run', function () {
-            browser.waitForChart();
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.01.source")
-            // browser.pause(5000);
+        it('Chart contains correct information', function () {
+            me.checkChart('untitled query 1', 'CPU Hours: Total', 'Screwdriver');
         });
 
         it("'Add Data' again via toolbar", function meAddData2() {
-            me.addDataViaToolbar();
+            me.waitForChartToChange(me.addDataViaToolbar);
         });
-        it('Chart looks the same as previous run', function () {
-            browser.waitForChart();
-            // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.02.sources")
+        it('Chart contains correct information', function () {
+            me.checkChart('untitled query 1', 'CPU Hour', ['Screwdriver [CPU Hours: Total]', 'Screwdriver [CPU Hours: Per Job]']);
         });
+
         it('Switch to aggregate chart (expect incompatible metric error)', function () {
-            me.switchToAggregate();
-            // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.02.aggregate")
+            me.waitForChartToChange(me.switchToAggregate);
+        });
+        it('Check that error message is displayed', function () {
+            me.checkChart('An error occurred while loading the chart.');
         });
         it('Undo Scratch Pad switch to aggregate', function () {
-            me.undoAggregateOrTrendLine($container);
+            me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
         });
-        it('Chart looks the same as previous run', function () {
-            browser.waitForChart();
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.undo.02.aggregate")
-            // browser.pause(3000);
+        it('Check first undo works', function () {
+            me.checkChart('untitled query 1', 'CPU Hour', ['Screwdriver [CPU Hours: Total]', 'Screwdriver [CPU Hours: Per Job]']);
         });
         it('Undo Scratch Pad second source', function meUndoScratchPad() {
-            browser.waitAndClick(me.undo($container));
-                // The mouse stays and causes a hover, lets move the mouse somewhere else
-            browser.waitAndClick('.xtb-text.logo93');
+            me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
         });
-        it('Chart looks the same as previous run', function () {
-            browser.waitForChart();
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.undo.02.source")
-            // browser.pause(3000);
+        it('Check second undo works', function () {
+            me.checkChart('untitled query 1', 'CPU Hours: Total', 'Screwdriver');
         });
-        /*
-        it("Swap the X and Y axis", function(){
-            me.axisSwap()
-        });
-        */
         it('Attempt Delete Scratchpad Chart', function meDeleteScratchPad() {
-            me.attemptDeleteScratchpad(cheerio);
+            me.attemptDeleteScratchpad();
         });
         it('Chart looks the same as previous run', function () {
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.delete.confirm")
-            // browser.pause(1000);
-        });
-        it('Delete Scratchpad Chart', function meValidateDeletedScratchPad() {
-            browser.waitAndClick(me.selectors.deleteChart);
-        });
-        it('Chart looks the same as previous run', function () {
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "scratchpad.delete.complete")
-            // browser.pause(1000);
-        });
-        it('Open load chart dialog', function meLoadChart() {
-            browser.click(me.selectors.load.button());
-        });
-        it('Load chart dialog looks the same as previous run', function () {
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "load.dialog")
-            // browser.pause(1000);
+            me.verifyInstructions();
         });
         it('Open chart from load dialog', function meOpenChart() {
-            // TODO:  Need to make sure to select the same chart every time, not just the first for screenshots
-            browser.waitAndClick(me.selectors.load.chartNum(0));
-            browser.waitForChart();
+            me.loadExistingChartByName(chartName);
         });
         it('Loaded chart looks the same as previous run', function () {
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "load.chart")
-            // browser.pause(1000);
+            me.checkChart(chartName, 'Node Hours: Total', 'Screwdriver');
         });
         it('Open Chart Options', function meChartOptions() {
             browser.waitAndClick(me.selectors.options.button);
@@ -189,22 +160,20 @@ describe('Metric Explorer', function metricExplorer() {
             // browser.pause(1000);
         });
         it('Show Trend Line via Chart Options', function meAddTrendLine() {
-            browser.waitAndClick(me.selectors.options.trendLine);
-            browser.waitAndClick(me.selectors.options.button);
+            me.waitForChartToChange(function () {
+                browser.waitAndClick(me.selectors.options.trendLine);
+                browser.waitAndClick(me.selectors.options.button);
+                browser.waitForInvisible(me.selectors.options.trendLine);
+            });
         });
         it('Trend Line looks the same as previous run', function () {
-            browser.waitForChart();
-            // browser.takeScreenshot(moduleName, me.selectors.container, "chart.trendline")
-            browser.pause(3000);
+            me.checkChart(chartName, 'Node Hours: Total', ['Screwdriver', 'Trend Line: Screwdriver (-17,225.81x +56,410.55),R-Squared=0.85']);
         });
         it('Undo Trend Line', function meUndoTrendLine() {
-            me.undoAggregateOrTrendLine($container);
-            browser.waitForChart();
+            me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
         });
         it('Undo Trend Line looks the same as previous run', function () {
-            // TODO: Determine Pass case for this without using screenshot
-            // browser.takeScreenshot(moduleName, me.selectors.container, "saved.chart.undo.trendline")
-            // browser.pause(2000);
+            me.checkChart(chartName, 'Node Hours: Total', 'Screwdriver');
         });
     });
     describe('Context Menu', function contextMenu() {
@@ -216,10 +185,7 @@ describe('Metric Explorer', function metricExplorer() {
         });
 
         it('Attempt Delete Scratchpad Chart', function meDeleteScratchPad() {
-            me.attemptDeleteScratchpad(cheerio);
-        });
-        it('Delete Scratchpad Chart', function meValidateDeletedScratchPad() {
-            browser.waitAndClick(me.selectors.deleteChart);
+            me.attemptDeleteScratchpad();
         });
 
         it('Set a known start date', function meSetStartEnd() {
