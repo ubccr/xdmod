@@ -91,13 +91,12 @@ switch ($operation) {
         $response['status'] = MailWrapper::sendMail(array(
                                   'body'        => \xd_security\assertParameterSet('message', '/.*/', false),
                                   'subject'     => "[$title] " . \xd_security\assertParameterSet('subject'),
-                                  'toAddress'   => $contact,
+                                  'toAddress'   => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
                                   'toName'      => 'Undisclosed Recipients',
                                   'fromAddress' => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
                                   'fromName'    => $title,
                                   'bcc'         => \xd_security\assertParameterSet('target_addresses')
                               ));
-
         break;
     default:
         $response['success'] = false;

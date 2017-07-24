@@ -2094,7 +2094,6 @@ class XDReportManager
                         = $this->getReportName($report_id, true)
                         . '.' . $report_format;
             }
-            $reportType = self::$_header_map[$report_format];
 
             $properties = array(
                 'recipient_name'       => $report_owner,
@@ -2104,7 +2103,7 @@ class XDReportManager
                     array('fileName'             => $report_file,
                           'attachment_file_name' => $attachment_file_name,
                           'encoding'             => 'base64',
-                          'type'                 => $reportType,
+                          'type'                 => self::$_header_map[$report_format],
                           'disposition'          => 'inline'
                     )
                 )
