@@ -60,14 +60,8 @@ fi
 # Perform a test set based on the value of $TEST_SUITE.
 build_exit_value=0
 if [ "$TEST_SUITE" = "syntax" ]; then
-    for file in "${php_files_changed[@]}"; do
+    for file in "${php_files_changed[@]}" "${php_files_added[@]}"; do
         php -l "$file" >/dev/null
-        if [ $? != 0 ]; then
-            build_exit_value=2
-        fi
-    done
-    for file in "${js_files_changed[@]}"; do
-        eslint --no-eslintrc "$file"
         if [ $? != 0 ]; then
             build_exit_value=2
         fi
