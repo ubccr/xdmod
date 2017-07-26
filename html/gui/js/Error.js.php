@@ -1,6 +1,8 @@
 <?php
-  require_once('../../../configuration/linker.php');
-  \xd_response\useDynamicJavascriptHeaders();
+
+require_once('../../../configuration/linker.php');
+\xd_response\useDynamicJavascriptHeaders();
+
 ?>
 /**
  * Error.js.php
@@ -12,7 +14,7 @@
 Ext.namespace('XDMoD.Error');
 
 <?php
-  foreach (XDError::getErrorCodes() as $errorName => $errorCode) {
+
+foreach (XDError::getErrorCodes() as $errorName => $errorCode) {
     echo "XDMoD.Error.$errorName = $errorCode;\n";
-  }
-?>
+}
