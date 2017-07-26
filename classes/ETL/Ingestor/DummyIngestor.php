@@ -37,9 +37,11 @@ class DummyIngestor extends aAction implements iAction
 
     protected function performPreExecuteTasks()
     {
+        return true;
     }
 
     protected function performPostExecuteTasks($numRecordsProcessed = null)
     {
+        return true;
     }
 }  // class DummyIngestor
