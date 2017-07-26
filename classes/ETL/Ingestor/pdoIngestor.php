@@ -403,6 +403,7 @@ class pdoIngestor extends aIngestor
      * ------------------------------------------------------------------------------------------
      */
 
+    // @codingStandardsIgnoreLine
     protected function _execute()
     {
         // Since the overseer may split the ingestion period up into chunks. Apply the current
@@ -840,7 +841,7 @@ class pdoIngestor extends aIngestor
 
         if ( ! $this->options->buffered_query && $this->sourceEndpoint instanceof Mysql ) {
             $this->logger->info(
-                sprintf("Returning buffered query mode to: %s". ($originalBufferedQueryAttribute ? "true" : "false"))
+                sprintf("Returning buffered query mode to: %s", ($originalBufferedQueryAttribute ? "true" : "false"))
             );
             $pdo = $this->sourceHandle->handle();
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $originalBufferedQueryAttribute);

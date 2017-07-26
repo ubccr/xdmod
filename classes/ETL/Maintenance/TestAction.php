@@ -90,4 +90,14 @@ class TestAction extends aAction implements iAction
     {
         return true;
     }
+
+    protected function performPreExecuteTasks()
+    {
+        return true;
+    }
+
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
+    {
+        return true;
+    }
 }  // class TestAction

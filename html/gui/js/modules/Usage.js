@@ -512,8 +512,10 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                 var disableNode = false;
 
+                var matchkey;
                 for (var i = 0; i < CCR.xdmod.ui.disabledMenus.length && !disableNode; i++) {
-                    disableNode = n.attributes.group_by == CCR.xdmod.ui.disabledMenus[i].group_by && n.attributes.category == CCR.xdmod.ui.disabledMenus[i].category;
+                    matchkey = CCR.xdmod.ui.disabledMenus[i].category ? 'category' : 'realm';
+                    disableNode = n.attributes.group_by === CCR.xdmod.ui.disabledMenus[i].group_by && n.attributes[matchkey] === CCR.xdmod.ui.disabledMenus[i][matchkey];
                 }
 
                 if (disableNode) {

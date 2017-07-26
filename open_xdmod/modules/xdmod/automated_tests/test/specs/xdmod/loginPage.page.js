@@ -1,3 +1,4 @@
+/* eslint-env node, es6 */
 class LoginPage {
     login(title, theUrl, loginName, loginPassword, displayName) {
         describe('General', function () {
@@ -23,6 +24,12 @@ class LoginPage {
                 $('#txt_login_username input').setValue(loginName);
                 $('#txt_login_password input').setValue(loginPassword);
                 $('#btn_sign_in .x-btn-mc').click();
+
+                // Per: http://webdriver.io/api/protocol/frame.html#Usage
+                // Resetting the server to the page's default content
+                // This was causing issues with running the tests under
+                // Ubuntu 16.04:Firefox
+                browser.frame();
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForExist(60000);
