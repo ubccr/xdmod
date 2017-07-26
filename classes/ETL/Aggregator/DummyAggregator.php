@@ -34,4 +34,12 @@ class DummyAggregator extends aAction implements iAction
         parent::initialize($etlOverseerOptions);
         return true;
     }
+
+    protected function performPreExecuteTasks()
+    {
+    }
+
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
+    {
+    }
 }  // class DummyAggregator

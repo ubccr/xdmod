@@ -221,6 +221,26 @@ class VerifyDatabase extends aAction implements iAction
 
     }  // initialize()
 
+    /** -----------------------------------------------------------------------------------------
+     * @see aAction::performPreExecuteTasks()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function performPreExecuteTasks()
+    {
+        return true;
+    } // performPreExecuteTasks()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see aAction::performPostExecuteTasks()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function performPostExecuteTasks($numRecordsProcessed = null)
+    {
+        return true;
+    }  // performPostExecuteTasks()
+
     /* ------------------------------------------------------------------------------------------
      * @see iAction::execute()
      * ------------------------------------------------------------------------------------------
