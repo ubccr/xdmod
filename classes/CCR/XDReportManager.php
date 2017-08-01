@@ -126,7 +126,7 @@ class XDReportManager
     public function saveThisReport()
     {
         if (!isset($this->_report_id)) {
-            throw new Exception(
+            throw new \Exception(
                 "configureSelectedReport() must be called first"
             );
         }
@@ -275,7 +275,7 @@ class XDReportManager
     public function insertThisReport($report_derivation_method = 'Manual')
     {
         if (!isset($this->_report_id)) {
-            throw new Exception(
+            throw new \Exception(
                 "configureSelectedReport() must be called first"
             );
         }
@@ -1332,7 +1332,7 @@ class XDReportManager
         }
 
         if (count($iq) == 0) {
-            throw new Exception(
+            throw new \Exception(
                 "No ($type) chart entry could be located ($trace)"
             );
         }
@@ -1559,7 +1559,7 @@ class XDReportManager
         }
 
         if (count($iq) == 0) {
-            throw new Exception("Unable to target chart entry");
+            throw new \Exception("Unable to target chart entry");
         }
 
         $chart_id = $iq[0]['chart_id'];
@@ -1813,7 +1813,7 @@ class XDReportManager
         $bytes = file_put_contents($report_filename, $dom->saveXML() . "\n");
 
         if ($bytes === false) {
-            throw new Exception("Failed to write report XML definition file");
+            throw new \Exception("Failed to write report XML definition file");
         }
 
         return $report_filename;
@@ -1851,15 +1851,15 @@ class XDReportManager
         $template_path = tempnam(sys_get_temp_dir(), $report_id . '-');
 
         if ($template_path === false) {
-            throw new Exception("Failed to create temporary file");
+            throw new \Exception("Failed to create temporary file");
         }
 
         if (!unlink($template_path)) {
-            throw new Exception("Failed to remove file '$template_path'");
+            throw new \Exception("Failed to remove file '$template_path'");
         }
 
         if (!mkdir($template_path, 0777)) {
-            throw new Exception("Failed to create directory '$template_path'");
+            throw new \Exception("Failed to create directory '$template_path'");
         }
 
         // Copy all report templates into this working directory
@@ -1872,7 +1872,7 @@ class XDReportManager
             $dest = $template_path . '/' . pathinfo($path, PATHINFO_BASENAME);
 
             if (!copy($path, $dest)) {
-                throw new Exception("Failed to copy '$path' to '$dest'");
+                throw new \Exception("Failed to copy '$path' to '$dest'");
             }
         }
 
@@ -1901,7 +1901,7 @@ class XDReportManager
             $msg = "There was a problem building the report.  "
                 . "See $template_path/$log_file for details or contact "
                 . "support with that file name.";
-            throw new Exception($msg);
+            throw new \Exception($msg);
         }
 
         return array(
@@ -2120,7 +2120,7 @@ class XDReportManager
 
             MailWrapper::sendTemplate($templateType, $properties);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             return false;
         }
 
@@ -2181,7 +2181,7 @@ class XDReportManager
         );
 
         if (count($results) == 0) {
-            throw new Exception(
+            throw new \Exception(
                 'No report template could be found having the id you specified'
             );
         }
@@ -2194,7 +2194,7 @@ class XDReportManager
             . $results[0]['template'] . '.php';
 
         if (!file_exists($template_definition_file)) {
-            throw new Exception(
+            throw new \Exception(
                 "Report template definition could not be located"
             );
         }
