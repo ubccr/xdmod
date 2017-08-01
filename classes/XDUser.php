@@ -14,7 +14,7 @@ use Models\Services\Acls;
 class XDUser
 {
 
-    private $_pdo;                       // PDO Handle (set in __construct)
+    private $_pdo;                       //  PDO Handle (set in __construct)
 
     private $_id;
     private $_account_is_active;

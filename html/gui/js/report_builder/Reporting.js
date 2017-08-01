@@ -479,7 +479,7 @@ CCR.xdmod.ReportCheckbox = Ext.extend(Ext.form.Checkbox,  {
       };
 
       Ext.apply(this, {
-         id: 'available_for_report_checkbox',
+          id: 'available_for_report_checkbox',
          boxLabel: 'Available For Report'
 
       });//Ext.apply

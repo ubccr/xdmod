@@ -1,4 +1,4 @@
--- Create the public user if it doesn't already exist
+--  Create the public user if it doesn't already exist
 INSERT INTO Users(username, email_address, first_name, last_name, time_created, time_last_updated, account_is_active, person_id, organization_id, field_of_science, user_type)
 SELECT inc.*
 FROM (

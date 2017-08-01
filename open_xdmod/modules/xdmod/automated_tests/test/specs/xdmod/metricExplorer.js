@@ -440,10 +440,9 @@ describe('Metric Explorer', function metricExplorer() {
 
         it('Select "Available For Report"', function shouldBeEnabled() {
             var isSelected = browser.isSelected(me.selectors.availableForReport);
-            console.log("isSelected: " + isSelected);
             if (isSelected === false) {
                 browser.waitForLoadedThenClick(me.selectors.availableForReport, 5000);
-                var  nowSelected = browser.isSelected(me.selectors.availableForReport);
+                var nowSelected = browser.isSelected(me.selectors.availableForReport);
                 expect(nowSelected).to.equal(true);
             }
         });
