@@ -422,5 +422,58 @@ describe('Metric Explorer', function metricExplorer() {
             });
         });
     });
+
+    describe('Available For Report', function availableForReport() {
+        var chartTitle = '';
+        it('Start with the scratchpad', function startWithScratchPad() {
+            me.clear();
+            browser.waitForChart();
+        });
+        it('Select the first saved chart', function selectFirstSavedChart() {
+            browser.waitForLoadedThenClick(me.selectors.load.button());
+            browser.waitForLoadedThenClick(me.selectors.load.firstSaved);
+            browser.waitForVisible(me.selectors.chart.title, 5000);
+            var title = browser.getText(me.selectors.chart.title);
+            expect(title).to.be.a('string');
+            chartTitle = title;
+        });
+
+        it('Select "Available For Report"', function shouldBeEnabled() {
+            var isSelected = browser.isSelected(me.selectors.availableForReport);
+            console.log("isSelected: " + isSelected);
+            if (isSelected === false) {
+                browser.waitForLoadedThenClick(me.selectors.availableForReport, 5000);
+                var  nowSelected = browser.isSelected(me.selectors.availableForReport);
+                expect(nowSelected).to.equal(true);
+            }
+        });
+        it('Select the Report Generator tab', function selectReportGenerator() {
+            browser.waitForLoadedThenClick('#main_tab_panel__report_generator');
+            browser.waitForVisible('#report_generator', 3000);
+        });
+        it('Check that the last entry has the same title as the one we just made available for report', function titleIsTheSame() {
+            browser.waitForVisible('#chart_pool_panel div.x-grid3-row-last span.chart_title');
+            var text = browser.getText('#chart_pool_panel div.x-grid3-row-last span.chart_title');
+            expect(text.trim()).to.equal(chartTitle.trim());
+        });
+        it('Select the Metric Explorer Tab again', function selectTabAgain() {
+            browser.waitForLoadedThenClick(me.selectors.tab);
+            browser.waitForVisible(me.selectors.container, 3000);
+            $container = cheerio.load(browser.getHTML(me.selectors.container));
+        });
+        it('Select the first saved chart again', function selectFirstChartAgain() {
+            browser.waitForChart();
+            browser.click(me.selectors.load.button());
+            browser.waitAndClick(me.selectors.load.firstSaved);
+            browser.waitForVisible(me.selectors.chart.title, 5000);
+            var title = browser.getText(me.selectors.chart.title);
+            expect(title).to.be.a('string');
+            expect(title).to.equal(chartTitle);
+        });
+        it('uncheck available for report', function uncheckAvailableForReport() {
+            browser.waitForLoadedThenClick(me.selectors.availableForReport, 5000);
+            browser.isSelected(me.selectors.availableForReport);
+        });
+    });
     logIn.logout();
 });

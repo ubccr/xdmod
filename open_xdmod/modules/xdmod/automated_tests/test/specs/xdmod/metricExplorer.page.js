@@ -14,6 +14,7 @@ class MetricExplorer {
                 }
             },
             container: '#metric_explorer',
+            availableForReport: '#available_for_report_checkbox',
             load: {
                 button: function meLoadButtonId() {
                     return 'button=Load Chart';
