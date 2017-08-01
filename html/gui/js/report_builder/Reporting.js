@@ -429,11 +429,12 @@ CCR.xdmod.ReportCheckbox = Ext.extend(Ext.form.Checkbox,  {
 
       };
 
+      var action = checked ? '/add' : '/remove';
       this.fireEvent('toggled_checkbox', checked ? 'add_to_queue' : 'remove_from_queue');
 
       conn.request({
 
-         url: 'controllers/chart_pool.php',
+         url: XDMoD.REST.url + '/charts/pools' + action,
          params: objParams,
          method: 'POST',
 
