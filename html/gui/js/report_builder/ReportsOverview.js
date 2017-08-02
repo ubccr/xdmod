@@ -629,9 +629,15 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          var selected = queueGrid.getSelectionModel().getSelections();
          var arrLength = selected.length;
+         var arrNames = new Array();
 
          Ext.each(selected, function(selection) {
-             self.parent.buildReport(selection.data.report_name, selection.data.report_id, self, build_only, format, arrLength);
+             arrNames.push(selection.data.report_name);
+         })
+
+         Ext.each(selected, function(selection) {
+
+             self.parent.buildReport(selection.data.report_name, selection.data.report_id, self, build_only, format, arrLength, arrNames);
          });
 
       };//sendReport

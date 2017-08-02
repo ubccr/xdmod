@@ -15,7 +15,8 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
         target_child,
         build_only,
         format,
-        arrLength
+        arrLength,
+        arrNames
     ) {
         if (format == undefined) { format = 'pdf'; }
 
@@ -39,8 +40,6 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
             Ext.encode({name: report_name, action: action, format: format})
         );
 
-        console.log(arrLength);
-
         var activity = '';
         if (arrLength == 1) {
             activity = build_only ?
@@ -50,9 +49,14 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                 'Preparing report for download' : 'Generating and sending reports';
         }
 
+        var listNames = '';
+        for (i = 0; i < arrNames.length; i++) {
+            listNames = listNames + '<br />' + arrNames[i];
+        }
+
         target_child.showMask(
-            '<center>' + activity +
-            '<br /><img src="gui/images/progbar_2.gif">' +
+            '<center>' + activity + '<b>' + listNames +
+            '<br /></b><img src="gui/images/progbar_2.gif">' +
             '<br />Please Wait</center>'
         );
 
