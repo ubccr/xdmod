@@ -23,7 +23,7 @@ capabilities provided as optional modules, please visit
 
 ## Support
 
-Support is available by emailing ccr-xdmod-help@buffalo.edu. Please include the following in your support request. Failure to include this information may delay support.
+Support is available by emailing ccr-xdmod-help@buffalo.edu. Please include the following in your support request. Failure to include this information may delay support. See the [Open XDMoD Support](http://open.xdmod.org/support.html) page for additional information.
 
 - Open XDMoD version number
 - Operating system and version where Open XDMoD is installed
