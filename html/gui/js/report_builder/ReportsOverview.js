@@ -127,7 +127,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
       var adjustButtonAccessibilty = function(selectionModel, rowIndex, record) {
 
          var selectedRows = selectionModel.getSelections();
-         console.log(selectedRows);
+
          if (selectedRows.length != 0) {
 
             mnuNewBasedOn.setSelectedReport(record.data.report_name);
@@ -628,8 +628,10 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
       var sendReport = function(build_only, format) {
 
          var selected = queueGrid.getSelectionModel().getSelections();
+         var arrLength = selected.length;
+
          Ext.each(selected, function(selection) {
-             self.parent.buildReport(selection.data.report_name, selection.data.report_id, self, build_only, format);
+             self.parent.buildReport(selection.data.report_name, selection.data.report_id, self, build_only, format, arrLength);
          });
 
       };//sendReport
