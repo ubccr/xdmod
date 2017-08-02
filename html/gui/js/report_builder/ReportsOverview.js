@@ -127,20 +127,20 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
       var adjustButtonAccessibilty = function(selectionModel, rowIndex, record) {
 
          var selectedRows = selectionModel.getSelections();
-
-         if (selectedRows.length == 1) {
+         console.log(selectedRows);
+         if (selectedRows.length != 0) {
 
             mnuNewBasedOn.setSelectedReport(record.data.report_name);
 
          }
 
-         mnuNewBasedOn.toggleReportSelection(selectedRows.length == 1);
+         mnuNewBasedOn.toggleReportSelection(selectedRows.length != 0);
 
          btnNewBasedOn.setDisabled(selectedRows.length != 1);
          btnEditReport.setDisabled(selectedRows.length != 1);
          btnPreviewReport.setDisabled(selectedRows.length != 1);
 
-         mnuSendReport.setDisabled(selectedRows.length != 1);
+         mnuSendReport.setDisabled(selectedRows.length == 0);
          mnuDownloadReport.setDisabled(selectedRows.length != 1);
 
          btnSendReport.setVisible(false);
@@ -229,7 +229,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var queueGrid = new Ext.grid.GridPanel({
+      var queueGrid = new Ext.grid.EditorGridPanel({
 
          store: this.reportStore,
          //id: 'reportPool_queueGrid' + Ext.id(),
@@ -246,13 +246,13 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          loadMask: true,
 
          columns: [
-            //checkBoxSelMod,
             {header: 'ID', width: 10, dataIndex: 'report_id', sortable: false, hidden: true},
             {header: 'Name', width: 200, dataIndex: 'report_name', sortable: true},
             {header: 'Derived From', width: 100, dataIndex: 'creation_method', sortable: true},
             {header: 'Schedule', width: 70, dataIndex: 'report_schedule', sortable: true},
             {header: 'Delivery Format', width: 70, dataIndex: 'report_format', sortable: true, renderer: reportFormatColumnRenderer},
-            {header: '# Charts', width: 70, dataIndex: 'chart_count', sortable: true, renderer: numChartsColumnRenderer}
+            {header: '# Charts', width: 70, dataIndex: 'chart_count', sortable: true, renderer: numChartsColumnRenderer},
+            checkBoxSelMod
          ]
 
       });//queueGrid
@@ -627,9 +627,10 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       var sendReport = function(build_only, format) {
 
-         var rowData = queueGrid.getSelectionModel().getSelected().data;
-
-         self.parent.buildReport(rowData.report_name, rowData.report_id, self, build_only, format);
+         var selected = queueGrid.getSelectionModel().getSelections();
+         Ext.each(selected, function(selection) {
+             self.parent.buildReport(selection.data.report_name, selection.data.report_id, self, build_only, format);
+         });
 
       };//sendReport
 
