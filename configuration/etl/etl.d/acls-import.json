@@ -24,6 +24,14 @@
     },
     "acls-import": [
         {
+            "name": "acls.import.xdmod.public_user",
+            "description": "Imports the Public User if it does not already exist.",
+            "sql_file_list": [
+                "acls/xdmod/create_public_user.sql"
+            ],
+            "enabled": true
+        },
+        {
             "name": "acls.import.xdmod.user_acls",
             "description": "Imports the records that relate which Users should have which Acls for xdmod",
             "sql_file_list": [
