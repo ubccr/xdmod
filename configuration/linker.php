@@ -7,31 +7,26 @@ require_once($dir . '/constants.php');
 
 // ---------------------------
 
-// Load the autoloader for dependencies managed by Composer.
-require_once($baseDir . '/vendor/autoload.php');
+// Load linker configuration.
+require_once("$baseDir/classes/CCR/Json.php");
+require_once("$baseDir/classes/Xdmod/Config.php");
+$config = Xdmod\Config::factory();
+$linkerConfig = $config['linker'];
 
-// ---------------------------
+// Load configured autoloaders.
+foreach ($linkerConfig['autoloaders'] as $autoloaderPath) {
+    require_once("$baseDir/$autoloaderPath");
+}
 
-// Register a custom autoloader for XDMoD components.
+// Update PHP's include path to include certain XDMoD directories.
 $include_path  = ini_get('include_path');
-$include_path .= ":" . $baseDir . '/classes';
-$include_path .= ":" . $baseDir . '/classes/DB';
-$include_path .= ":" . $baseDir . '/classes/DB/TACCStatsIngestors';
-$include_path .= ":" . $baseDir . '/classes/DB/TGcDBIngestors';
-$include_path .= ":" . $baseDir . '/classes/DB/POPSIngestors';
-$include_path .= ":" . $baseDir . '/classes/DB/XRASIngestors';
-$include_path .= ":" . $baseDir . '/classes/DB/Aggregators';
-$include_path .= ":" . $baseDir . '/classes/DB/DBModel';
-$include_path .= ":" . $baseDir . '/classes/DB/TimePeriodGenerators';
-$include_path .= ":" . $baseDir . '/classes/ExtJS';
-$include_path .= ":" . $baseDir . '/classes/REST';
-$include_path .= ":" . $baseDir . '/classes/User';
-$include_path .= ":" . $baseDir . '/classes/ReportTemplates';
-$include_path .= ":" . $baseDir . '/classes/AppKernel';
-$include_path .= ":" . $baseDir . '/libraries/HighRoller_1.0.5';
+foreach ($linkerConfig['include_dirs'] as $includeDirPath) {
+    $include_path .= ":$baseDir/$includeDirPath";
+}
 
 ini_alter('include_path', $include_path);
 
+// Register a custom autoloader for XDMoD components.
 function xdmodAutoload($className)
 {
     $pathList = explode(":", ini_get('include_path'));
@@ -207,8 +202,6 @@ function global_uncaught_exception_handler($exception)
 set_exception_handler('global_uncaught_exception_handler');
 
 // Configurable constants ---------------------------
-
-$config = Xdmod\Config::factory();
 
 $org = $config['organization'];
 define('ORGANIZATION_NAME', $org['name']);
