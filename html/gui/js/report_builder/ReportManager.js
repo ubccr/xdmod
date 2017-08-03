@@ -10,17 +10,17 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
     },
 
     buildReport: function (
-        report_name,
-        report_id,
-        target_child,
-        build_only,
+        reportName,
+        reportId,
+        targetChild,
+        buildOnly,
         format,
         arrLength,
         arrNames
     ) {
         if (format == undefined) { format = 'pdf'; }
 
-        if (build_only) {
+        if (buildOnly) {
             XDMoD.TrackEvent(
                 'Report Generator',
                 'Attempting to build and download report'
@@ -31,30 +31,30 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                 'Attempting to build and send report'
             );
         }
-
-        var action = build_only ? 'downloading' : 'sending';
+        // eslint-disable-next-line camelcase
+        var action = buildOnly ? 'downloading' : 'sending';
 
         XDMoD.TrackEvent(
             'Report Generator',
             'Building report',
-            Ext.encode({name: report_name, action: action, format: format})
+            Ext.encode({name: reportName, action: action, format: format})
         );
 
         var activity = '';
-        if (arrLength == 1) {
-            activity = build_only ?
+        if (arrLength === 1) {
+            activity = buildOnly ?
                 'Preparing report for download' : 'Generating and sending report';
         } else {
-            activity = build_only ?
+            activity = buildOnly ?
                 'Preparing report for download' : 'Generating and sending reports';
         }
 
         var listNames = '';
-        for (i = 0; i < arrNames.length; i++) {
+        for (var i = 0; i < arrNames.length; i++) {
             listNames = listNames + '<br />' + arrNames[i];
         }
 
-        target_child.showMask(
+        targetChild.showMask(
             '<center>' + activity + '<b>' + listNames +
             '<br /></b><img src="gui/images/progbar_2.gif">' +
             '<br />Please Wait</center>'
@@ -71,8 +71,8 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
 
             params: {
                 operation: 'send_report',
-                report_id: report_id,
-                build_only: build_only,
+                report_id: reportId,
+                build_only: buildOnly,
                 export_format: format
             },
 
@@ -89,11 +89,11 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                     XDMoD.TrackEvent(
                         'Report Generator',
                         'Building of report complete',
-                        Ext.encode({name: report_name, format: format})
+                        Ext.encode({name: reportName, format: format})
                     );
 
                     var location = 'controllers/report_builder.php/' +
-                        responseData.report_name +
+                        responseData.reportName +
                         '?operation=download_report&report_loc=' +
                         responseData.report_loc + '&format=' + format;
 
@@ -105,7 +105,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                         '</div>' +
                         '</center>';
 
-                    if (responseData.build_only) {
+                    if (responseData.buildOnly) {
                         var w = new Ext.Window({
                             title: 'Report Built',
                             width: 220,
@@ -161,17 +161,17 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                         w.show();
                     }
 
-                    target_child.showMask(activeTemplate);
+                    targetChild.showMask(activeTemplate);
 
                     // Hide / dismiss the mask after 3 seconds ...
-                    (function () { target_child.hideMask(); }).defer(3000);
+                    (function () { targetChild.hideMask(); }).defer(3000);
                 } else {
                     CCR.xdmod.ui.presentFailureResponse(response, {
                         title: 'Report Manager',
                         wrapperMessage: 'There was a problem trying to prepare the report.'
                     });
 
-                    target_child.hideMask();
+                    targetChild.hideMask();
                 }
             }
         });
