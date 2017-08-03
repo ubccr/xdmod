@@ -4678,6 +4678,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 text: pmi,
                 xtype: 'menuitem',
                 menu: new Ext.menu.Menu({
+                    id: 'me_new_chart_submenu_' + pmi.replace(/\s/g, '_'),
                     ignoreParentClicks: true,
                     items: this.getDisplayTypeItems(undefined,
                         'menuitem',
@@ -4698,6 +4699,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             iconCls: 'new_ue',
             scope: this,
             menu: new Ext.menu.Menu({
+                id: 'me_new_chart_menu',
                 ignoreParentClicks: true,
                 items: newChartMenuItems
             })

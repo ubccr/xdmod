@@ -8,6 +8,11 @@ class MetricExplorer {
             tab: '#main_tab_panel__metric_explorer',
             startDate: '#metric_explorer input[id^=start_field_ext]',
             endDate: '#metric_explorer input[id^=end_field_ext]',
+            toolbar: {
+                buttonByName: function (name) {
+                    return '//div[@id="metric_explorer"]//table[@class="x-toolbar-ct"]//button[text()="' + name + '"]/ancestor::node()[5]';
+                }
+            },
             container: '#metric_explorer',
             load: {
                 button: function meLoadButtonId() {
@@ -17,6 +22,43 @@ class MetricExplorer {
                 chartNum: function meChartByIndex(number) {
                     var mynumber = number + 1;
                     return '.x-menu-floating:not(.x-hide-offsets) .x-grid3-body > div:nth-child(' + mynumber + ')';
+                },
+                dialog: '//div[contains(@class,"x-grid3-header-inner")]//div[contains(@class,"x-grid3-hd-name") and text() = "Chart Name"]/ancestor::node()[8]',
+                chartByName: function (name) {
+                    return module.exports.selectors.load.dialog + '//div[contains(@class,"x-grid3-cell-inner") and text() = "' + name + '"]';
+                }
+            },
+            newChart: {
+                topMenuByText: function (name) {
+                    return '//div[@id="me_new_chart_menu"]//span[@class="x-menu-item-text" and text() = "' + name + '"]';
+                },
+                subMenuByText: function (topText, name) {
+                    return '//div[@id="me_new_chart_submenu_' + topText + '"]//span[@class="x-menu-item-text" and contains(text(),"' + name + '")]';
+                },
+                modalDialog: {
+                    box: '//span[@class="x-window-header-text" and text() = "New Chart"]/ancestor::node()[5]',
+                    textBox: function () {
+                        return module.exports.selectors.newChart.modalDialog.box + '//input[contains(@class,"x-form-text")]';
+                    },
+                    checkBox: function () {
+                        return module.exports.selectors.newChart.modalDialog.box + '//input[contains(@class,"x-form-checkbox")]';
+                    },
+                    ok: function () {
+                        return module.exports.selectors.newChart.modalDialog.box + '//button[text() = "Ok"]';
+                    },
+                    cancel: function () {
+                        return module.exports.selectors.newChart.modalDialog.box + '//button[text() = "Cancel"]';
+                    }
+                }
+            },
+            dataSeriesDefinition: {
+                dialogBox: '//div[contains(@class,"x-panel-header")]/span[@class="x-panel-header-text" and contains(text(),"Data Series Definition")]/ancestor::node()[4]',
+                addButton: '#adp_submit_button'
+            },
+            deleteChart: {
+                dialogBox: '//div[contains(@class,"x-window-header")]/span[@class="x-window-header-text" and contains(text(),"Delete Selected Chart")]/ancestor::node()[5]',
+                buttonByLabel: function (label) {
+                    return module.exports.selectors.deleteChart.dialogBox + '//button[text()="' + label + '"]';
                 }
             },
             addData: {
@@ -33,7 +75,6 @@ class MetricExplorer {
                     }
                 }
             },
-            deleteChart: '',
             options: {
                 aggregate: '#aggregate_cb',
                 button: '#metric_explorer button.chartoptions',
@@ -42,7 +83,16 @@ class MetricExplorer {
                 title: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] #me_chart_title'
             },
             chart: {
-                svg: '#metric_explorer > div > .x-panel-body-noborder > .x-panel-noborder svg',
+                svg: '//div[@id="metric_explorer"]//div[@class="highcharts-container"]//*[local-name() = "svg"]',
+                titleByText: function (title) {
+                    return module.exports.selectors.chart.svg + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
+                },
+                yAxisTitle: function () {
+                    return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-axis")]/*[name() = "text" and contains(@class,"highcharts-yaxis-title")]';
+                },
+                legend: function () {
+                    return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-legend-item")]/*[name()="text"]';
+                },
                 title: '#hc-panelmetric_explorer svg .undefinedtitle',
                 titleInput: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] input[type=text]',
                 titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
@@ -58,7 +108,19 @@ class MetricExplorer {
             },
             catalog: {
                 container: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder)',
-                tree: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder) .x-tree-root-ct'
+                tree: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder) .x-tree-root-ct',
+                rootNodeByName: function (name) {
+                    return '//div[@id="metric_explorer"]//div[@class="x-tree-root-node"]/li/div[contains(@class,"x-tree-node-el")]//span[text() = "' + name + '"]';
+                },
+                nodeByPath: function (topname, childname) {
+                    return module.exports.selectors.catalog.rootNodeByName(topname) + '/ancestor::node()[3]//span[text() = "' + childname + '"]';
+                },
+                addToChartMenu: {
+                    container: '//span[@class="x-menu-text"]/span[contains(text(),"Add To Chart:")]/ancestor::node()[3]',
+                    itemByName: function (name) {
+                        return module.exports.selectors.catalog.addToChartMenu.container + '//span[@class="x-menu-item-text" and text() = "' + name + '"]';
+                    }
+                }
             },
             buttonMenu: {
                 firstLevel: '.x-menu-floating:not(.x-hide-offsets)'
@@ -69,6 +131,39 @@ class MetricExplorer {
         return '#' + $container('button.x-btn-text-icon')
             .closest('table')
             .attr('id');
+    }
+    createNewChart(chartName, datasetType, plotType) {
+        browser.waitForChart();
+        browser.click(this.selectors.toolbar.buttonByName('New Chart'));
+        browser.waitAndClick(this.selectors.newChart.topMenuByText(datasetType));
+        browser.waitAndClick(this.selectors.newChart.subMenuByText(datasetType, plotType));
+        browser.waitForVisible(this.selectors.newChart.modalDialog.box);
+        browser.setValue(this.selectors.newChart.modalDialog.textBox(), chartName);
+        browser.click(this.selectors.newChart.modalDialog.ok());
+        browser.waitForInvisible(this.selectors.newChart.modalDialog.box);
+        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForVisible('//div[@class="x-grid-empty"]/b[text()="No data is available for viewing"]');
+    }
+    setDateRange(start, end) {
+        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitAndClick(this.selectors.startDate);
+        browser.setValue(this.selectors.startDate, start);
+        browser.waitAndClick(this.selectors.endDate);
+        browser.setValue(this.selectors.endDate, end);
+        browser.click(this.selectors.toolbar.buttonByName('Refresh'));
+        browser.waitUntilNotExist('.ext-el-mask');
+    }
+    addDataViaCatalog(realm, statistic, groupby) {
+        browser.waitForVisible(this.selectors.catalog.container, 10000);
+        browser.waitUntilAnimEndAndClick(this.selectors.catalog.rootNodeByName(realm));
+        browser.waitUntilAnimEndAndClick(this.selectors.catalog.nodeByPath(realm, statistic));
+        browser.waitForVisible(this.selectors.catalog.addToChartMenu.container);
+        browser.waitAndClick(this.selectors.catalog.addToChartMenu.itemByName(groupby));
+        browser.waitForChart();
+    }
+    saveChanges() {
+        browser.click(this.selectors.toolbar.buttonByName('Save'));
+        browser.waitAndClick('//span[@class="x-menu-item-text" and contains(text(),"Save Changes")]');
     }
     clear() {
         browser.refresh();
@@ -113,6 +208,73 @@ class MetricExplorer {
         browser.waitAndClick(this.selectors.addData.button);
         browser.waitAndClick(this.selectors.buttonMenu.firstLevel + ' ul li:nth-child(3)');
         browser.waitAndClick(this.selectors.addData.secondLevel + ' ul li:nth-child(' + n + ')');
+        browser.waitForVisible(this.selectors.dataSeriesDefinition.dialogBox);
+    }
+    addDataSeriesByDefinition() {
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
+        browser.waitForInvisible(this.selectors.dataSeriesDefinition.dialogBox);
+    }
+    loadExistingChartByName(name) {
+        browser.waitForVisible(this.selectors.toolbar.buttonByName('Load Chart'));
+        browser.click(this.selectors.toolbar.buttonByName('Load Chart'));
+        browser.waitForVisible(this.selectors.load.dialog);
+        browser.waitAndClick(this.selectors.load.chartByName(name));
+        browser.waitForInvisible(this.selectors.load.dialog);
+    }
+    checkChart(chartTitle, yAxisLabel, legend) {
+        browser.waitForVisible(this.selectors.chart.titleByText(chartTitle));
+
+        if (yAxisLabel) {
+            browser.waitForExist(this.selectors.chart.yAxisTitle());
+            var yAxisElems = browser.elements(this.selectors.chart.yAxisTitle());
+            if (typeof yAxisLabel === 'string') {
+                expect(yAxisElems.value.length).to.equal(1);
+                expect(browser.elementIdText(yAxisElems.value[0].ELEMENT).value).to.equal(yAxisLabel);
+            } else {
+                expect(yAxisElems.value.length).to.equal(yAxisLabel.length);
+                for (let i = 0; i < legend.length; i++) {
+                    expect(browser.elementIdText(yAxisElems.value[i].ELEMENT).value).to.equal(yAxisLabel[i]);
+                }
+            }
+        }
+
+        if (legend) {
+            browser.waitForExist(this.selectors.chart.legend());
+            var legendElems = browser.elements(this.selectors.chart.legend());
+            if (typeof legend === 'string') {
+                expect(legendElems.value.length).to.equal(1);
+                expect(browser.elementIdText(legendElems.value[0].ELEMENT).value).to.equal(legend);
+            } else {
+                expect(legendElems.value.length).to.equal(legend.length);
+                for (let i = 0; i < legend.length; i++) {
+                    expect(browser.elementIdText(legendElems.value[i].ELEMENT).value).to.equal(legend[i]);
+                }
+            }
+        }
+    }
+    /**
+     * Call the action function then wait until the current loaded Highcharts chart
+     * disappears. This function should only be called if there is an active highcharts
+     * chart and the action should result in a chart change.
+     *
+     * @params function() action
+     */
+    waitForChartToChange(action) {
+        var elem = browser.elements(this.selectors.chart.svg);
+        if (arguments.length > 1) {
+            action.apply(this, [].slice.call(arguments, 1));
+        } else {
+            action.call(this);
+        }
+        try {
+            let i = 0;
+            while (browser.elementIdDisplayed(elem.value[0].ELEMENT) && i < 20) {
+                browser.pause(100);
+                i++;
+            }
+        } catch (err) {
+            // OK the element has gone away
+        }
     }
     setTitleWithOptionsMenu(title) {
         browser.waitForChart();
@@ -136,6 +298,10 @@ class MetricExplorer {
         expect(titleValue).to.equal(this.newTitle);
         browser.waitAndClick(this.selectors.chart.titleOkButton);
         browser.waitForChart();
+    }
+    verifyInstructions() {
+        browser.waitForVisible('//div[@id="metric_explorer"]//div[@class="x-grid-empty"]//b[text()="No data is available for viewing"]');
+        testHelpers.instructions(browser, 'metricExplorer', this.selectors.container);
     }
     setChartTitleViaChart(title) {
         browser.waitForChart();
@@ -181,13 +347,12 @@ class MetricExplorer {
         browser.waitForChart();
         browser.waitAndClick(this.selectors.options.button);
     }
-    attemptDeleteScratchpad(cheerio) {
-        browser.waitAndClick('.x-btn-text.delete2');
-            // this gets the buttons, however, not able to get just the yes button
-            // $$(".x-window-dlg .x-toolbar-cell:not(.x-hide-offsets) table");
-        browser.waitForVisible('.x-window-dlg .x-toolbar-cell:not(.x-hide-offsets) table');
-        var $yesButton = cheerio.load(browser.getHTML('.x-window-dlg .x-toolbar-cell:not(.x-hide-offsets) table')[0]);
-        this.selectors.deleteChart = '#' + $yesButton('table').attr('id');
+    attemptDeleteScratchpad() {
+        browser.waitAndClick(this.selectors.toolbar.buttonByName('Delete'));
+        browser.waitForVisible(this.selectors.deleteChart.dialogBox);
+        browser.waitAndClick(this.selectors.deleteChart.buttonByLabel('Yes'));
+        browser.waitForInvisible(this.selectors.deleteChart.dialogBox);
+        browser.waitUntilNotExist('#ext-el-mask');
     }
     actionLoadChart(chartNumber) {
         browser.pause(3000);
@@ -201,7 +366,7 @@ class MetricExplorer {
         browser.waitAndClick(this.selectors.buttonMenu.firstLevel + ' ul li:nth-child(3)');
         // click on CPU Hours: Per Job
         browser.waitAndClick(this.selectors.addData.secondLevel + ' ul li:nth-child(2)');
-        browser.waitAndClick('#adp_submit_button');
+        this.addDataSeriesByDefinition();
     }
     genericStartingPoint() {
         browser.waitAndClick(this.selectors.addData.button);
@@ -209,8 +374,7 @@ class MetricExplorer {
         browser.waitAndClick(this.selectors.buttonMenu.firstLevel + ' ul li:nth-child(3)');
             // click on CPU Hours: Total
         browser.waitAndClick(this.selectors.addData.secondLevel + ' ul li:nth-child(3)', 1000);
-        // browser.waitAndClick("#adp_submit_button", 4000)
-        browser.click('#adp_submit_button');
+        this.addDataSeriesByDefinition();
     }
     confirmChartTitleChange(largeTitle) {
         browser.waitForChart();
@@ -223,16 +387,15 @@ class MetricExplorer {
     }
 
     switchToAggregate() {
-        browser.pause(3000);
         browser.waitAndClick(this.selectors.options.button);
         browser.waitAndClick(this.selectors.options.aggregate);
-        browser.waitForChart();
+        browser.waitAndClick('.xtb-text.logo93');
+        browser.waitForInvisible(this.selectors.options.aggregate);
+        browser.waitUntilNotExist('.ext-el-mask');
     }
 
     undoAggregateOrTrendLine($container) {
-        browser.pause(3000);
         browser.waitAndClick(this.undo($container));
-        browser.pause(3000);
             // The mouse stays and causes a hover, lets move the mouse somewhere else
         browser.waitAndClick('.xtb-text.logo93');
     }
