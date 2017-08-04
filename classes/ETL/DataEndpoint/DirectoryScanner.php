@@ -221,6 +221,10 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                         $this->logger->info(
                             sprintf("%s: Relative path provided, absolute path recommended", $this)
                         );
+                        $this->logger->info(
+                            sprintf("Qualifying relative path %s with %s", $this->path, $options->paths->data_dir)
+                        );
+                        $this->path = \xd_utilities\qualify_path($this->path, $options->paths->data_dir);
                     }
                     break;
 
@@ -449,7 +453,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
         );
 
         try {
-            $directoryIterator = new \RecursiveDirectoryIterator($this->path);
+            $directoryIterator = new \RecursiveDirectoryIterator($this->path, \FilesystemIterator::FOLLOW_SYMLINKS);
             $iterator = $directoryIterator;
         } catch ( Exception $e ) {
             $this->logAndThrowException(
@@ -523,7 +527,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                     $iterator,
                     function ($current, $key, $iterator) use ($dirPattern, $filePattern) {
 
-                        // Return TRUE only if both directory and file patterns match
+                        // Return TRUE only if both directory and file patterns match.
 
                         if ( null !== $dirPattern ) {
                             if ( false === ($match = @preg_match($dirPattern, $current->getPath())) ) {
@@ -1061,7 +1065,11 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             $this->valid();
         }
 
-        return $this->currentFileIterator->supportsComplexDataRecords();
+        return (
+            null === $this->currentFileIterator
+            ? false
+            : $this->currentFileIterator->supportsComplexDataRecords()
+        );
 
     }  // supportsComplexDataRecords()
 
