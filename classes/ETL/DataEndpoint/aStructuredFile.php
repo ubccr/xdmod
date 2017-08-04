@@ -446,7 +446,7 @@ abstract class aStructuredFile extends File
      * downstream that relies on it.  For example, when parsing a JSON configuration file
      * we must maintain the stdClass type and not blindly convert it to an associative
      * array.  The child class can re-implement this method as needed.
-     *
+
      * @return array A record that includes all of the data for the requested fields
      * ------------------------------------------------------------------------------------------
      */
@@ -473,10 +473,21 @@ abstract class aStructuredFile extends File
         // the template are overwritten with the record values where the fields
         // match.
 
+        // This should be created once when we determine the requested field names...
         $dataTemplate = array_fill_keys($this->requestedRecordFieldNames, null);
 
         return array_merge($dataTemplate, array_intersect_key($arrayRecord, $dataTemplate));
     }  // createReturnRecord()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see iStructuredFile::supportsComplexDataRecords()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function supportsComplexDataRecords()
+    {
+        return ( $this instanceof iComplexDataRecords );
+    }  // supportsComplexDataRecords()
 
      /** -----------------------------------------------------------------------------------------
      * Return the current record as a Traversable entity such as an associative array or
