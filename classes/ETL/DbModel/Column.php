@@ -154,11 +154,27 @@ class Column extends NamedEntity implements iEntity
                 $srcExtra = str_ireplace($search, "CURRENT_TIMESTAMP", $srcExtra);
             }  // if ( null !== $srcExtra)
 
-            // If no DEFAULT and no EXTRA is provided, MySQL will use:
+            // If no DEFAULT and no EXTRA is provided MySQL will use:
             // DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             //
             // If no DEFAULT is provided but an EXTRA is provided the default will be 0 unless
             // the collumn is nullable, then it will be NULL.
+            //
+            // **WARNING**
+            //
+            // Having multime TIMESTAMP columns in the same table may result in unexpected behavior
+            // for the 2nd or following columns.
+            //
+            // See:
+            // https://dev.mysql.com/doc/refman/5.5/en/timestamp-initialization.html
+            // http://jasonbos.co/two-timestamp-columns-in-mysql
+            //
+            // One TIMESTAMP column in a table can have the current timestamp as the default value
+            // for initializing the column, as the auto-update value, or both. It is not possible to
+            // have the current timestamp be the default value for one column and the auto-update
+            // value for another column.   to specify automatic initialization or updating for a
+            // different TIMESTAMP column, you must suppress the automatic properties for the first
+            // one.
 
             if ( ( (null === $srcDefault && null === $srcExtra)
                    || ('current_timestamp' === strtolower($srcDefault) && 'on update current_timestamp' === strtolower($srcExtra)) )

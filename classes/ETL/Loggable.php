@@ -50,6 +50,20 @@ class Loggable
     }  // setLogger()
 
     /* ------------------------------------------------------------------------------------------
+     * Set the logger for this object.
+     *
+     * @param Log $logger A logger class
+     *
+     * @return This object for method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getLogger()
+    {
+        return $this->logger;
+    }  // getLogger()
+
+    /* ------------------------------------------------------------------------------------------
      * Helper function to log errors in a consistent format and provide a mechanism to
      * supply additional, optional, parameters for greater detail.
      *
@@ -70,7 +84,7 @@ class Loggable
     public function logAndThrowException($message, array $options = null)
     {
         $logMessage = array();
-        $message = "{$this}: " . ( is_string($message) ? "'$message'" : "''" );
+        $message = "{$this}: " . ( is_string($message) ? $message : "" );
         $logLevel = PEAR_LOG_ERR;
 
         if ( null !== $options ) {

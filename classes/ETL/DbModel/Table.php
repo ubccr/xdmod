@@ -621,8 +621,12 @@ ORDER BY trigger_name ASC";
         foreach ( $changeColNames as $name ) {
             $destColumn = $destination->getColumn($name);
             // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == $destColumn->compare($this->getColumn($name)) ) {
+            if ( 0 == ($compareCode = $destColumn->compare($this->getColumn($name))) ) {
                 continue;
+            } else {
+                $this->logger->debug(
+                    sprintf("Column comparison for '%s' returned %d", $name, $compareCode)
+                );
             }
 
             $alterList[] = "CHANGE COLUMN " . $destColumn->getName(true) . " " . $destColumn->getSql($includeSchema);
@@ -632,8 +636,12 @@ ORDER BY trigger_name ASC";
             $destColumn = $destination->getColumn($toColumnName);
             $currentColumn = $this->getColumn($fromColumnName);
             // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == $destColumn->compare($currentColumn) ) {
+            if ( 0 == ($compareCode = $destColumn->compare($currentColumn)) ) {
                 continue;
+            } else {
+                $this->logger->debug(
+                    sprintf("Column comparison for '%s' returned %d", $fromColumnName, $compareCode)
+                );
             }
             $alterList[] = "CHANGE COLUMN " . $currentColumn->getName(true) . " " . $destColumn->getSql($includeSchema);
         }
