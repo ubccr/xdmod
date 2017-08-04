@@ -7,24 +7,35 @@ require_once($dir . '/constants.php');
 
 // ---------------------------
 
-// Load linker configuration.
+// If present, load linker configuration from linker.json and linker.d.
 require_once("$baseDir/classes/CCR/Json.php");
 require_once("$baseDir/classes/Xdmod/Config.php");
 $config = Xdmod\Config::factory();
-$linkerConfig = $config['linker'];
+try {
+    $linkerConfig = $config['linker'];
+} catch (Exception $e) {
+    $configDir = $config->getConfigDirPath();
+    echo "Could not find valid \"linker.json\" or \"linker.d\" files in \"$configDir\".\n";
+    echo "Please set up valid linker configuration files and try again.\n";
+    exit(1);
+}
 
 // Load configured autoloaders.
-foreach ($linkerConfig['autoloaders'] as $autoloaderPath) {
-    require_once("$baseDir/$autoloaderPath");
+if (isset($linkerConfig['autoloaders'])) {
+    foreach ($linkerConfig['autoloaders'] as $autoloaderPath) {
+        require_once("$baseDir/$autoloaderPath");
+    }
 }
 
 // Update PHP's include path to include certain XDMoD directories.
-$include_path  = ini_get('include_path');
-foreach ($linkerConfig['include_dirs'] as $includeDirPath) {
-    $include_path .= ":$baseDir/$includeDirPath";
-}
+if (isset($linkerConfig['include_dirs'])) {
+    $include_path  = ini_get('include_path');
+    foreach ($linkerConfig['include_dirs'] as $includeDirPath) {
+        $include_path .= ":$baseDir/$includeDirPath";
+    }
 
-ini_alter('include_path', $include_path);
+    ini_alter('include_path', $include_path);
+}
 
 // Register a custom autoloader for XDMoD components.
 function xdmodAutoload($className)
