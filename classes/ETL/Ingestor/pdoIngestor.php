@@ -540,14 +540,13 @@ class pdoIngestor extends aIngestor
         // is possible that a table definition is provided but no data is mapped to it.
 
         foreach ( $this->destinationFieldMappings as $etlTableKey => $destFieldToSourceFieldMap ) {
+
+            // The destination map is parsed in aRdbmsDestinationAction::parseDestinationFieldMap()
+            // and any table with no mapping is not included. Keys are also verified to match a
+            // destionation table name.
+
             $etlTable = $this->etlDestinationTableList[$etlTableKey];
             $qualifiedDestTableName = $etlTable->getFullName();
-
-            // If there are no source query columns mapped to this table, skip it.
-
-            if ( 0 == count($destFieldToSourceFieldMap) ) {
-                continue;
-            }
 
             $infileName = tempnam(
                 sys_get_temp_dir(),
