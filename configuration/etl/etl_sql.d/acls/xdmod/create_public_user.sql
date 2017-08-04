@@ -15,11 +15,11 @@ FROM (
         0        AS field_of_science,
         ut.id    AS user_type
     FROM UserTypes ut
-    WHERE ut.type = 'Internal'
+    WHERE BINARY ut.type = BINARY 'Internal'
 ) inc
 LEFT JOIN Users cur
-     ON cur.username = inc.username AND
-        cur.email_address = inc.email_address
+     ON BINARY cur.username      = BINARY inc.username      AND
+        BINARY cur.email_address = BINARY inc.email_address
 WHERE cur.id IS NULL;
 
 -- Create the association between the public user and the public acl.
@@ -30,8 +30,8 @@ FROM (
         u.id     AS user_id,
         a.acl_id AS acl_id
      FROM Users u, acls a
-     WHERE u.username = 'Public User' AND
-           a.name = 'pub'
+     WHERE BINARY u.username = BINARY 'Public User' AND
+           BINARY a.name     = BINARY 'pub'
 ) inc
 LEFT JOIN user_acls cur
      ON cur.user_id = inc.user_id AND
