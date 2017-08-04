@@ -135,6 +135,10 @@ abstract class aAggregator extends aRdbmsDestinationAction
 
                     $this->truncateDestination();
 
+                    $this->logger->debug(
+                        sprintf("Available Variables: %s", $this->getVariableMapDebugString())
+                    );
+
                     // Perform the dirty work
 
                     $numAggregationPeriodsProcessed = $this->_execute($aggregationUnit);

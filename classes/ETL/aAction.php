@@ -268,6 +268,28 @@ abstract class aAction extends aEtlObject
     }  // getVariableMap()
 
     /* ------------------------------------------------------------------------------------------
+     * @return A string representation of the variable map suitable for debugging output.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected function getVariableMapDebugString()
+    {
+        $map = $this->variableMap;
+        ksort($map);
+
+        return implode(
+            ', ',
+            array_map(
+                function ($k, $v) {
+                    return "$k='$v'";
+                },
+                array_keys($map),
+                $map
+            )
+        );
+    }  // getVariableMapDebugString()
+
+    /* ------------------------------------------------------------------------------------------
      * Set the variable to value map to be used when substituting variables in strings.
      *
      * @param $map An array containing the updated variable map
@@ -319,6 +341,30 @@ abstract class aAction extends aEtlObject
             $this->variableMap['LAST_MODIFIED_END_DATE'] = $value;
         }
 
+        // If resource codes have been passed into the overseer, make the first resource id
+        // available as a macro. Useful for ingesting log data for a specific resource.
+
+        if (
+            null !== ( $value = $this->etlOverseerOptions->getIncludeOnlyResourceCodes() )
+            && is_array($value)
+            && 0 != count($value)
+        ) {
+            $resourceCode = current($value);
+            $resourceId = $this->etlOverseerOptions->getResourceIdFromCode($resourceCode);
+            if ( count($value) > 1 ) {
+                $this->logger->info(
+                    sprintf(
+                        "%d resources specified for inclusion, using first for RESOURCE macro: %s (id=%d)",
+                        count($value),
+                        $resourceCode,
+                        $resourceId
+                    )
+                );
+            }
+            $this->variableMap['RESOURCE'] = $resourceCode;
+            $this->variableMap['RESOURCE_ID'] = $resourceId;
+        }
+
         // Set the default time zone and make it available as a variable
         $this->variableMap['TIMEZONE'] = date_default_timezone_get();
 
@@ -339,6 +385,7 @@ abstract class aAction extends aEtlObject
 
         return $this;
     }  // initializeVariableMap()
+
 
     /* ------------------------------------------------------------------------------------------
      * Initialize the utility endpoint based on the options provided for this action
