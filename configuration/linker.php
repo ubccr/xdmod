@@ -7,31 +7,37 @@ require_once($dir . '/constants.php');
 
 // ---------------------------
 
-// Load the autoloader for dependencies managed by Composer.
-require_once($baseDir . '/vendor/autoload.php');
+// If present, load linker configuration from linker.json and linker.d.
+require_once("$baseDir/classes/CCR/Json.php");
+require_once("$baseDir/classes/Xdmod/Config.php");
+$config = Xdmod\Config::factory();
+try {
+    $linkerConfig = $config['linker'];
+} catch (Exception $e) {
+    $configDir = $config->getConfigDirPath();
+    echo "Could not find valid \"linker.json\" or \"linker.d\" files in \"$configDir\".\n";
+    echo "Please set up valid linker configuration files and try again.\n";
+    exit(1);
+}
 
-// ---------------------------
+// Load configured autoloaders.
+if (isset($linkerConfig['autoloaders'])) {
+    foreach ($linkerConfig['autoloaders'] as $autoloaderPath) {
+        require_once("$baseDir/$autoloaderPath");
+    }
+}
+
+// Update PHP's include path to include certain XDMoD directories.
+if (isset($linkerConfig['include_dirs'])) {
+    $include_path  = ini_get('include_path');
+    foreach ($linkerConfig['include_dirs'] as $includeDirPath) {
+        $include_path .= ":$baseDir/$includeDirPath";
+    }
+
+    ini_alter('include_path', $include_path);
+}
 
 // Register a custom autoloader for XDMoD components.
-$include_path  = ini_get('include_path');
-$include_path .= ":" . $baseDir . '/classes';
-$include_path .= ":" . $baseDir . '/classes/DB';
-$include_path .= ":" . $baseDir . '/classes/DB/TACCStatsIngestors';
-$include_path .= ":" . $baseDir . '/classes/DB/TGcDBIngestors';
-$include_path .= ":" . $baseDir . '/classes/DB/POPSIngestors';
-$include_path .= ":" . $baseDir . '/classes/DB/XRASIngestors';
-$include_path .= ":" . $baseDir . '/classes/DB/Aggregators';
-$include_path .= ":" . $baseDir . '/classes/DB/DBModel';
-$include_path .= ":" . $baseDir . '/classes/DB/TimePeriodGenerators';
-$include_path .= ":" . $baseDir . '/classes/ExtJS';
-$include_path .= ":" . $baseDir . '/classes/REST';
-$include_path .= ":" . $baseDir . '/classes/User';
-$include_path .= ":" . $baseDir . '/classes/ReportTemplates';
-$include_path .= ":" . $baseDir . '/classes/AppKernel';
-$include_path .= ":" . $baseDir . '/libraries/HighRoller_1.0.5';
-
-ini_alter('include_path', $include_path);
-
 function xdmodAutoload($className)
 {
     $pathList = explode(":", ini_get('include_path'));
@@ -207,8 +213,6 @@ function global_uncaught_exception_handler($exception)
 set_exception_handler('global_uncaught_exception_handler');
 
 // Configurable constants ---------------------------
-
-$config = Xdmod\Config::factory();
 
 $org = $config['organization'];
 define('ORGANIZATION_NAME', $org['name']);
