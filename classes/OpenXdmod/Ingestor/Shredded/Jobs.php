@@ -39,12 +39,14 @@ class Jobs extends PDODBMultiIngestor
                 timelimit,
                 node_list
             FROM shredded_job
+            WHERE start_time > 0
+              AND end_time > 0
         ';
 
         $sql = 'SELECT MAX(id) AS max_id FROM staging_job';
         list($row) = $dest_db->query($sql);
         if ($row['max_id'] != null) {
-            $src_query .= 'WHERE shredded_job_id > ' . $row['max_id'];
+            $src_query .= 'AND shredded_job_id > ' . $row['max_id'];
         }
 
         parent::__construct(
