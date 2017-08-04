@@ -31,6 +31,21 @@ class Utilities
         self::$etlConfig = $config;
     }  // setEtlConfig
 
+    /**
+     * Determine if a string contains a variable or macro.  A variable or macro is a string wrapped
+     * in ${}. For example, ${RESOURCE}.
+     *
+     * *
+     * @param string $string The string to check
+     *
+     * @return boolean TRUE if $string contains a variable or macro.
+     */
+
+    public static function containsVariable($string)
+    {
+        return 1 === preg_match('/\$\{.+\}/', $string);
+    }  // containsVariable()
+
     /* ------------------------------------------------------------------------------------------
      * Perform variable/macro substitution on a string using a variable map. The map keys
      * are the names of the variables WITHOUT the ${} wrapper (e.g., a key of 'SCHEMA'
