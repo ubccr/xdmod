@@ -2055,44 +2055,80 @@ class XDReportManager
 
         $report_owner = $this->getReportUserName($report_id);
 
+        $templateType = '';
+
         switch ($this->getReportDerivation($report_id)) {
             case 'Monthly Compliance Report':
                 $include_attachment
                     = ($additional_config['failed_compliance'] > 0
                         || $additional_config['proposed_requirements'] > 0);
-                $templateConfig = MailTemplates::complianceReport(
-                    $report_owner,
-                    $additional_config['custom_message']
-                );
+
+                $templateType = 'compliance_report';
                 break;
 
             default:
                 $include_attachment = true;
-                $templateConfig = MailTemplates::customReport(
-                    $report_owner,
-                    $frequency
-                );
+
+                $frequency = trim($frequency);
+                $frequency
+                    = !empty($frequency)
+                    ? ' ' . $frequency
+                    : $frequency;
+
+                $templateType = 'custom_report';
+
                 break;
         }
 
         try {
-            $mail = MailWrapper::initPHPMailer();
+            $attachment_file_name = '';
+                if($include_attachment) {
+                    $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
+                    $attachment_file_name
+                        = $this->getReportName($report_id, true)
+                        . '.' . $report_format;
+                }
+            $reportType = self::$_header_map[$report_format];
 
-            $mail->addAddress($destination_email_address);
-
-            $mail->Subject =
-                "Your$frequency " . $templateConfig['subject'] . " $subject_suffix";
-            $mail->Body = $templateConfig['message'];
-
-            if ($include_attachment) {
-                $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
-                $attachment_file_name
-                    = $this->getReportName($report_id, true)
-                    . '.' . $report_format;
-                $mail->addAttachment($report_file, $attachment_file_name, 'base64', self::$_header_map[$report_format], 'inline');
+            if($templateType === 'custom_report') {
+                $properties = array(
+                    'recipient_name'=>$report_owner,
+                    'frequency'=>$frequency,
+                    'site_title'=>MailWrapper::getSitetitle(),
+                    'maintainer_signature'=>MailWrapper::getmaintainerSignature(),
+                    'subject'=>"Your$frequency " . 'XDMoD Report' . " $subject_suffix",
+                    'toAddress'=>array(
+                        array('address'=>$destination_email_address)
+                    ),
+                    'attachment'=>array(
+                        array('fileName'=>$report_file,
+                              'attachment_file_name'=>$attachment_file_name,
+                              'encoding'=>'base64',
+                              'type'=>$reportType,
+                              'disposition'=>'inline'
+                        )
+                    )
+                );
+            } else {
+                $properties = array(
+                    'recipient_name'=>$report_owner,
+                    'additional_information' => $additional_config['custom message'],
+                    'maintainer_signature'=>MailWrapper::getMaintainerSignature(),
+                    'subject'=>"Your$frequency " . 'XDMoD Compliance Report' . " $subject_suffix",
+                    'toAddress'=>array(
+                        array('address'=>$destination_email_address)
+                    ),
+                    'attachment'=>array(
+                        array('fileName'=>$report_file,
+                              'attachment_file_name'=>$attachment_file_name,
+                              'encoding'=>'base64',
+                              'type'=>$reportType,
+                              'disposition'=>'inline'
+                        )
+                    )
+                );
             }
-
-            $mail->send();
+            MailWrapper::sendTemplate($templateType, $properties);
         }
         catch (Exception $e) {
             return false;
