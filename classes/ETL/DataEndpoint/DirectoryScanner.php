@@ -211,10 +211,12 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                         $this->logger->info(
                             sprintf("%s: Relative path provided, absolute path recommended", $this)
                         );
-                        $this->logger->info(
-                            sprintf("Qualifying relative path %s with %s", $this->path, $options->paths->data_dir)
-                        );
-                        $this->path = \xd_utilities\qualify_path($this->path, $options->paths->data_dir);
+                        if ( isset($options->paths->data_dir) ) {
+                            $this->logger->info(
+                                sprintf("Qualifying relative path %s with %s", $this->path, $options->paths->data_dir)
+                            );
+                            $this->path = \xd_utilities\qualify_path($this->path, $options->paths->data_dir);
+                        }
                     }
                     break;
 
