@@ -139,7 +139,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
           btnPreviewReport.setDisabled(selectedRows.length !== 1);
 
           mnuSendReport.setDisabled(selectedRows.length === 0);
-          mnuDownloadReport.setDisabled(selectedRows.length !== 1);
+          mnuDownloadReport.setDisabled(selectedRows.length === 0);
 
           btnSendReport.setVisible(false);
           mnuSendReport.setVisible(true);

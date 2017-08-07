@@ -11,16 +11,16 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
 
     buildReport: function (
         reportName,
-        reportId,
-        targetChild,
-        buildOnly,
+        report_id,
+        target_child,
+        build_only,
         format,
         arrLength,
         arrNames
     ) {
         if (format == undefined) { format = 'pdf'; }
 
-        if (buildOnly) {
+        if (build_only) {
             XDMoD.TrackEvent(
                 'Report Generator',
                 'Attempting to build and download report'
@@ -31,8 +31,8 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                 'Attempting to build and send report'
             );
         }
-        // eslint-disable-next-line camelcase
-        var action = buildOnly ? 'downloading' : 'sending';
+
+        var action = build_only ? 'downloading' : 'sending';
 
         XDMoD.TrackEvent(
             'Report Generator',
@@ -42,19 +42,19 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
 
         var activity = '';
         if (arrLength === 1) {
-            activity = buildOnly ?
+            activity = build_only ?
                 'Preparing report for download' : 'Generating and sending report';
         } else {
-            activity = buildOnly ?
-                'Preparing report for download' : 'Generating and sending reports';
+            activity = build_only ?
+                'Preparing reports for download' : 'Generating and sending reports';
         }
 
         var listNames = '';
-        for (var i = 0; i < arrNames.length; i++) {
+        for (i = 0; i < arrNames.length; i++) {
             listNames = listNames + '<br />' + arrNames[i];
         }
 
-        targetChild.showMask(
+        target_child.showMask(
             '<center>' + activity + '<b>' + listNames +
             '<br /></b><img src="gui/images/progbar_2.gif">' +
             '<br />Please Wait</center>'
@@ -71,8 +71,8 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
 
             params: {
                 operation: 'send_report',
-                report_id: reportId,
-                build_only: buildOnly,
+                report_id: report_id,
+                build_only: build_only,
                 export_format: format
             },
 
@@ -105,7 +105,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                         '</div>' +
                         '</center>';
 
-                    if (responseData.buildOnly) {
+                    if (responseData.build_only) {
                         var w = new Ext.Window({
                             title: 'Report Built',
                             width: 220,
@@ -144,7 +144,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                                         }),
                                         new Ext.Button({
                                             region: 'south',
-                                            text: 'View Report',
+                                            text: 'View Report: ' + reportName,
                                             handler: function () {
                                                 XDMoD.TrackEvent(
                                                     'Report Generator',
@@ -161,17 +161,17 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                         w.show();
                     }
 
-                    targetChild.showMask(activeTemplate);
+                    target_child.showMask(activeTemplate);
 
                     // Hide / dismiss the mask after 3 seconds ...
-                    (function () { targetChild.hideMask(); }).defer(3000);
+                    (function () { target_child.hideMask(); }).defer(3000);
                 } else {
                     CCR.xdmod.ui.presentFailureResponse(response, {
                         title: 'Report Manager',
                         wrapperMessage: 'There was a problem trying to prepare the report.'
                     });
 
-                    targetChild.hideMask();
+                    target_child.hideMask();
                 }
             }
         });
