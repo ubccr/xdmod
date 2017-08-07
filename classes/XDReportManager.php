@@ -2082,12 +2082,12 @@ class XDReportManager
 
         try {
             $attachment_file_name = '';
-                if($include_attachment) {
-                    $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
-                    $attachment_file_name
-                        = $this->getReportName($report_id, true)
-                        . '.' . $report_format;
-                }
+            if($include_attachment) {
+                $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
+                $attachment_file_name
+                    = $this->getReportName($report_id, true)
+                    . '.' . $report_format;
+            }
             $reportType = self::$_header_map[$report_format];
 
             if($templateType === 'custom_report') {
