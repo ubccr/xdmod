@@ -26,7 +26,7 @@ if ($user_to_email == NULL) {
 
 // -----------------------------
 
-$page_title = MailWrapper::getSiteTitle();
+$page_title = \xd_utilities\getConfiguration('general', 'title');
 
 // -------------------
 

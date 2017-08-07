@@ -1,7 +1,5 @@
 <?php
 
-namespace CCR;
-
 use CCR\MailWrapper;
 use CCR\DB;
 use CCR\Log;
@@ -2111,7 +2109,7 @@ class XDReportManager
 
             if($templateType === 'custom_report') {
                 $properties['frequency'] = $frequency;
-                $properties['site_title'] = MailWrapper::getSiteTitle();
+                $properties['site_title'] = \xd_utilities\getConfiguration('general', 'title');
                 $properties['subject'] = "Your$frequency " . 'XDMoD Report' . " $subject_suffix";
             } else {
                 $properties['additional_information'] = $additional_config['custom message'];

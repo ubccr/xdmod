@@ -1,7 +1,5 @@
 <?php
 
-use CCR\XDReportManager;
-
 \xd_security\assertParametersSet(array(
     'report_loc',
     'format'

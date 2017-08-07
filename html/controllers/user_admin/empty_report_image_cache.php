@@ -1,7 +1,5 @@
 <?php
 
-use CCR\XDReportManager;
-
    // Operation: user_admin->empty_report_image_cache
 
    \xd_security\assertDashboardUserLoggedIn();

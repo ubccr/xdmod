@@ -105,7 +105,7 @@ try {
 
     // =============================
 
-    $page_title = MailWrapper::getSiteTitle();
+    $page_title = \xd_utilities\getConfiguration('general', 'title');
     $site_address = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
 
     // -------------------

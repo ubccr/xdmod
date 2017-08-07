@@ -12,7 +12,6 @@ require_once dirname(__FILE__) . '/../configuration/linker.php';
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use NewRest\Utilities\Authentication;
-use CCR\XDReportManager;
 
 $emptyBlobs = array('fa0a056630132658467089d779e0e177', '02477ed21bfccd97c1dc2b18d5f1916a');
 

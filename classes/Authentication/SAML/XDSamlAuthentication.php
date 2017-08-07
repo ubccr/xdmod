@@ -142,7 +142,7 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
-        $siteTitle = MailWrapper::getSiteTitle();
+        $siteTitle = \xd_utilities\getConfiguration('general', 'title');
         $userEmail = $user->getEmailAddress();
 
         $body = "The following person has had an account created on XDMoD:\n\n" .

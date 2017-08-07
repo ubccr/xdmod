@@ -27,7 +27,7 @@ class MailWrapper
             $address = $properties['fromAddress'];
             $name = $properties['fromName'];
         } else {
-            $name = MailWrapper::getSiteTitle();
+            $name = \xd_utilities\getConfiguration('general', 'title');
         }
 
         if(!empty($properties['replyAddress'])) {
@@ -50,13 +50,9 @@ class MailWrapper
         return $mail;
     }
 
-    public function sendMail($properties) {
+    public static function sendMail($properties) {
         $mail = MailWrapper::initPHPMailer($properties);
-        if($mail->send()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $mail->send();
     }
 
     /**
@@ -82,13 +78,13 @@ class MailWrapper
      * Get the product name for this instance of XDMoD.
      *
      * This refers to the name of this software. For the name of this instance
-     * of this software, see getSiteTitle.
+     * of this software, see 'title' in config file.
      *
      * @return string The product name for this instance of XDMoD.
      */
     public static function getProductName()
     {
-        $name = MailWrapper::getSiteTitle();
+        $name = \xd_utilities\getConfiguration('general', 'title');
         try {
             if (\xd_utilities\getConfiguration('features', 'xsede') == 'on') {
                 $name = 'XDMoD';
@@ -96,19 +92,6 @@ class MailWrapper
         } catch (Exception $e) {
         }
         return $name;
-    }
-
-    /**
-     * Get the name of this instance of XDMoD.
-     *
-     * This refers to the title of this instance of XDMoD. For the name of this
-     * software product, see getProductName.
-     *
-     * @return string The custom title of this site if configured.
-     */
-    public static function getSiteTitle()
-    {
-        return \xd_utilities\getConfiguration('general', 'title');
     }
 
     /**
@@ -150,27 +133,8 @@ class MailWrapper
     {
         $template = new EmailTemplate($templateType);
         $template->apply($properties);
-        $properties['body'] = MailWrapper::decideTemplate($templateType, $template);
+
+        $properties['body'] = $template->getContents();
         MailWrapper::sendmail($properties);
-    }
-
-    public function decideTemplate($templateType, $templates)
-    {
-        if($templateType === 'password_reset') {
-            return $templates->getContents();
-
-        /**
-        * Gets used by reports built and sent via the Report Generator, as
-        * well as those reports built and sent via the report scheduler
-        */
-        } elseif($templateType === 'custom_report') {
-            return $templates->getContents();
-
-        /**
-        * Gets used by reports built and sent via XDComplianceReport
-        */
-        } elseif($templateType === 'compliance_report') {
-            return $templates->getContents();
-        }
     }
 }

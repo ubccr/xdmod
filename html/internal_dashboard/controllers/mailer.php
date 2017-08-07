@@ -50,7 +50,7 @@ switch ($operation) {
             'organization'         => ORGANIZATION_NAME,
             'maintainer_signature' => MailWrapper::getMaintainerSignature(),
             'date'                 => date('l, j F'),
-            'site_title'           => MailWrapper::getSiteTitle(),
+            'site_title'           => \xd_utilities\getConfiguration('general', 'title'),
             'site_address'         => $site_address,
             'product_name'         => MailWrapper::getProductName(),
         ));
@@ -85,7 +85,7 @@ switch ($operation) {
     case 'send_plain_mail':
         $response['success'] = true;
 
-        $title = MailWrapper::getSiteTitle();
+        $title = \xd_utilities\getConfiguration('general', 'title');
 
         // Send a copy of the email to the contact page recipient.
         $response['status'] = MailWrapper::sendMail(array(

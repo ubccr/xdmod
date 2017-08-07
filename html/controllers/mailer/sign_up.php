@@ -116,7 +116,7 @@ $response = array();
 try {
     MailWrapper::sendMail(array(
         'body'         => $message,
-        'subject'      => "[" . MailWrapper::getSiteTitle() . "] A visitor has signed up",
+        'subject'      => "[" . \xd_utilities\getConfiguration('general', 'title') . "] A visitor has signed up",
         'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
         'fromAddress'  => $_POST['email'],
         'fromName'     => $_POST['last_name'] . ', ' . $_POST['first_name'],
