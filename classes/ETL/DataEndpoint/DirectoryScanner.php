@@ -32,16 +32,6 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     const ENDPOINT_NAME = 'directoryscanner';
 
     /** -----------------------------------------------------------------------------------------
-     * Numeric key to use for the default file extension handler. This should be the only
-     * numeric key used.
-     *
-     * @var integer
-     * ------------------------------------------------------------------------------------------
-     */
-
-    const DEFAULT_HANDLER_KEY = 0;
-
-    /** -----------------------------------------------------------------------------------------
      * The directory path that we will be scanning. This should be a fully qualified path.
      *
      * @var string
