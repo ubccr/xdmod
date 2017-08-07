@@ -42,36 +42,34 @@ class JsonPointerTest extends \PHPUnit_Framework_TestCase
         $fileContents = file_get_contents($file);
         $json = json_decode($fileContents);
 
-        $jsonPointer = new JsonPointer($this->logger);
-
         // Whole document
         $pointer = '';
-        $generated = $jsonPointer->extractFragment($fileContents, $pointer);
+        $generated = JsonPointer::extractFragment($fileContents, $pointer);
         $this->assertEquals($json, $generated);
 
         // Scalar value
         $pointer = '/key_one/name';
-        $generated = $jsonPointer->extractFragment($fileContents, $pointer);
+        $generated = JsonPointer::extractFragment($fileContents, $pointer);
         $this->assertEquals($json->key_one->name, $generated);
 
         // Object value
         $pointer = '/key_one';
-        $generated = $jsonPointer->extractFragment($fileContents, $pointer);
+        $generated = JsonPointer::extractFragment($fileContents, $pointer);
         $this->assertEquals($json->key_one, $generated);
 
         // Array value
         $pointer = '/key_two';
-        $generated = $jsonPointer->extractFragment($fileContents, $pointer);
+        $generated = JsonPointer::extractFragment($fileContents, $pointer);
         $this->assertEquals($json->key_two, $generated);
 
         // First element of an array
         $pointer = '/key_two/0';
-        $generated = $jsonPointer->extractFragment($fileContents, $pointer);
+        $generated = JsonPointer::extractFragment($fileContents, $pointer);
         $this->assertEquals($json->key_two[0], $generated);
 
         // Last element of an array
         $pointer = '/key_two/-';
-        $generated = $jsonPointer->extractFragment($fileContents, $pointer);
+        $generated = JsonPointer::extractFragment($fileContents, $pointer);
         $this->assertEquals(end($json->key_two), $generated);
 
     }  // testJsonPointer()
