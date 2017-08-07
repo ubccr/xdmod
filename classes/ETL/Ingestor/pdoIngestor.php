@@ -801,6 +801,7 @@ class pdoIngestor extends aIngestor
 
                             ftruncate($outFdList[$etlTableKey], 0);
                             rewind($outFdList[$etlTableKey]);
+                            $numFilesLoaded++;
                         }
                         catch (Exception $e) {
                             $msg = array('message'    => $e->getMessage(),
@@ -850,6 +851,7 @@ class pdoIngestor extends aIngestor
 
                 fclose($outFdList[$etlTableKey]);
                 @unlink($infileList[$etlTableKey]);
+                $numFilesLoaded++;
 
             }  // foreach ( $loadStatementList as $etlTableKey => $loadStatement )
 

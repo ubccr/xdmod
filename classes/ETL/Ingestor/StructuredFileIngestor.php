@@ -257,8 +257,8 @@ class StructuredFileIngestor extends aIngestor implements iAction
             // Verify the parameters are scalars
 
             foreach ( $parameters as $index => $value ) {
-                if ( ! is_scalar($value) ) {
-                    $sourcefield = $destinationFieldIdToSourceFieldMap[$etlTableKey][$index];
+                if ( null !== $value && ! is_scalar($value) ) {
+                    $sourceField = $destinationFieldIdToSourceFieldMap[$etlTableKey][$index];
                     $invalidSourceValues[$etlTableKey][$sourceField] = $value;
                 }
             }
