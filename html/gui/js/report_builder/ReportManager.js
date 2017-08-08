@@ -37,7 +37,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
         XDMoD.TrackEvent(
             'Report Generator',
             'Building report',
-            Ext.encode({name: reportName, action: action, format: format})
+            Ext.encode({ name: reportName, action: action, format: format })
         );
 
         var activity = '';
@@ -89,7 +89,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                     XDMoD.TrackEvent(
                         'Report Generator',
                         'Building of report complete',
-                        Ext.encode({name: reportName, format: format})
+                        Ext.encode({ name: reportName, format: format })
                     );
 
                     var location = 'controllers/report_builder.php/' +

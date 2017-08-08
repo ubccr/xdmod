@@ -151,21 +151,21 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          var exceptionDetails = eReport.isExceptionReport(record.data.creation_method);
 
-          if (selectedRows.length === 1 && exceptionDetails !== false) {
-            mnuNewBasedOn.toggleReportSelection(exceptionDetails.canDeriveFrom);
-            btnEditReport.setDisabled(!exceptionDetails.canEdit);
-            btnPreviewReport.setDisabled(!exceptionDetails.canPreview);
+           if (selectedRows.length === 1 && exceptionDetails !== false) {
+              mnuNewBasedOn.toggleReportSelection(exceptionDetails.canDeriveFrom);
+              btnEditReport.setDisabled(!exceptionDetails.canEdit);
+              btnPreviewReport.setDisabled(!exceptionDetails.canPreview);
 
-            if (!exceptionDetails.multiFormat) {
+              if (!exceptionDetails.multiFormat) {
 
                btnSendReport.setVisible(true);
                mnuSendReport.setVisible(false);
 
                btnDownloadReport.setVisible(true);
                mnuDownloadReport.setVisible(false);
-            }
+             }
 
-         }
+          }
 
       };//adjustButtonAccessibilty
 
@@ -227,19 +227,19 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
        var queueGrid = new Ext.grid.EditorGridPanel({
 
-         store: this.reportStore,
+           store: this.reportStore,
          //id: 'reportPool_queueGrid' + Ext.id(),
 
-         viewConfig: {
-            emptyText: reportsEmptyText,
-            forceFit: true
+           viewConfig: {
+             emptyText: reportsEmptyText,
+             forceFit: true
          },
 
-         autoScroll: true,
+           autoScroll: true,
 
-          enableHdMenu: false,
-          selModel: checkBoxSelMod,
-          loadMask: true,
+           enableHdMenu: false,
+           selModel: checkBoxSelMod,
+           loadMask: true,
 
            columns: [
             { header: 'ID', width: 10, dataIndex: 'report_id', sortable: false, hidden: true },
@@ -249,9 +249,9 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
             { header: 'Delivery Format', width: 70, dataIndex: 'report_format', sortable: true, renderer: reportFormatColumnRenderer },
             { header: '# Charts', width: 70, dataIndex: 'chart_count', sortable: true, renderer: numChartsColumnRenderer }
            // checkBoxSelMod
-         ]
+           ]
 
-      });//queueGrid
+       });//queueGrid
 
       queueGrid.getSelectionModel().on('rowselect', function(sm, row_index, rec) {
          XDMoD.TrackEvent('Report Generator (My Reports)', 'Selected Report', Ext.encode({report_name: rec.data.report_name}));
@@ -631,9 +631,9 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
            });
 
            Ext.each(selected, function (selection) {
-              self.parent.buildReport(selection.data.report_name, selection.data.report_id, self, build_only, format, arrLength, arrNames);
-          });
-       }; //sendReport
+               self.parent.buildReport(selection.data.report_name, selection.data.report_id, self, build_only, format, arrLength, arrNames);
+           });
+       };// sendReport
 
        // ----------------------------------------------------
 
@@ -838,8 +838,8 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          items:[ queueGrid ],
 
          plugins: [
-            new Ext.ux.plugins.ContainerMask({ masked:false }),
-            new XDMoD.Plugins.ContextSensitiveHelper('report+generator')
+             new Ext.ux.plugins.ContainerMask({ masked: false }),
+             new XDMoD.Plugins.ContextSensitiveHelper('report+generator')
          ],
 
          tbar: {
