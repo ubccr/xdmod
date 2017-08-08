@@ -40,6 +40,10 @@ class MailWrapper
             }
         }
 
+        if(!empty($properties['ishtml'])) {
+            $mail->isHTML($properties['ishtml']);
+        }
+
         try {
             $mail->setFrom($address, $name);
         } catch(phpmailerException $e) {
