@@ -296,7 +296,12 @@ class Config implements ArrayAccess
                 // If the key starts with a "+", merge the values.
 
                 $mainKey   = substr($key, 1);
-                $mainValue = $data[$mainKey];
+                if (array_key_exists($mainKey, $data)){
+                    $mainValue = $data[$mainKey];
+                }
+                else {
+                    $mainValue = null;
+                }
 
                 if (!is_array($mainValue)) {
                     $msg
