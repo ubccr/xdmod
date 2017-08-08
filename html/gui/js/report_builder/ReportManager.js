@@ -50,7 +50,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
         }
 
         var listNames = '';
-        for (i = 0; i < arrNames.length; i++) {
+        for (var i = 0; i < arrNames.length; i++) {
             listNames = listNames + '<br />' + arrNames[i];
         }
 
