@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e69f43312f7e5324e8721e046641c525",
+    "content-hash": "ec2ce725ac524aca28212c946f30d53e",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -133,27 +133,6 @@
             "homepage": "https://xalan.apache.org/xalan-j"
         },
         {
-            "name": "carlo/jquery-base64-file",
-            "version": "1.0",
-            "dist": {
-                "type": "file",
-                "url": "https://github.com/carlo/jquery-base64/raw/master/jquery.base64.js",
-                "reference": null,
-                "shasum": "7f0ba311c1676b1b730b29b06e1a9e9e55760acc"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "base64"
-            },
-            "license": [
-                "MIT"
-            ],
-            "homepage": "https://github.com/carlo/jquery-base64"
-        },
-        {
             "name": "composer/installers",
             "version": "v1.3.0",
             "source": {
@@ -266,6 +245,27 @@
                 "zikula"
             ],
             "time": "2017-04-24T06:37:16+00:00"
+        },
+        {
+            "name": "davidchambers/Base64.js-file",
+            "version": "1.0",
+            "dist": {
+                "type": "file",
+                "url": "https://raw.githubusercontent.com/davidchambers/Base64.js/master/base64.min.js",
+                "reference": null,
+                "shasum": "c4f3f169f0ea49756e9ffcd308abfc4f3baeb165"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "vanilla-plugin",
+            "extra": {
+                "installer-name": "base64"
+            },
+            "license": [
+                "Apache 2.0 and WTFPL"
+            ],
+            "homepage": "https://github.com/davidchambers/Base64.js"
         },
         {
             "name": "doctrine/lexer",

@@ -129,17 +129,7 @@
          ExtJS::loadSupportScripts('gui/lib');
       ?>
        <script type="text/javascript" src="gui/lib/ext-oldie-history-patch.js"></script>
-       <script type="text/javascript" src="gui/lib/jquery/jquery-1.12.4.min.js"></script>
-       <?php if ($userLoggedIn): ?>
-       <script type="text/javascript" src="gui/lib/jquery-plugins/base64/jquery.base64.js"></script>
-       <?php endif; ?>
-        <script type="text/javascript">
-         <?php if ($userLoggedIn): ?>
-         if (!window.btoa) { window.btoa = $.base64.encode }
-         if (!window.atob) { window.atob = $.base64.decode }
-         <?php endif; ?>
-        jQuery.noConflict();
-        </script>
+       <script type="text/javascript" src="gui/lib/base64/base64.min.js"></script>
 
       <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
 

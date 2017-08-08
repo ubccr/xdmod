@@ -2,9 +2,9 @@
 
 	header('Content-type: application/x-javascript');
 	@require_once '../../../configuration/linker.php';
-	
+
 	$tech_support_recipient = xd_utilities\getConfiguration('general', 'tech_support_recipient');
-		
+
 ?>
 
 var active_panel = 'panel_login';
@@ -13,31 +13,31 @@ var divTag = document.createElement("div");
     divTag.id = 'login_status';
     divTag.className ='login_status';
 
-var messageType = {"PROCESS" : 0, "ERROR" : 1, "SUCCESS" : 2}; 
+var messageType = {"PROCESS" : 0, "ERROR" : 1, "SUCCESS" : 2};
 
 var login_failed_attempts = 0;
 var login_failed_limit = 3;
 
-// ------------------------------------ 
+// ------------------------------------
 
 function processEmailRequest() {
 
-	var email_address = jQuery.trim(document.webapp_passreset.tg_email.value).replace(/\s+/g, " ");
-       
+	var email_address = document.webapp_passreset.tg_email.value.trim().replace(/\s+/g, " ");
+
 	if (email_address.length == 0){
-		presentMessage('E-mail address required', messageType.ERROR, 'mailer'); 
+		presentMessage('E-mail address required', messageType.ERROR, 'mailer');
 		return;
 	}
 
 	$.post(
-	
-		"controllers/user_auth.php", 
+
+		"controllers/user_auth.php",
 		{"operation": "pass_reset", "email" : email_address},
-    
+
     	function(data){
-			
+
 			var json = eval('(' + data + ')');
-			
+
 			if (json.status == "success")
 				presentMessage('An e-mail has been sent.', messageType.SUCCESS, 'mailer');
 			else if (json.status == 'invalid_email_address')
@@ -48,39 +48,39 @@ function processEmailRequest() {
 				presentMessage('Contact <a href="mailto:<?php print $tech_support_recipient; ?>">tech support</a>', messageType.ERROR, 'mailer');
 			else
 				presentMessage(json.status, messageType.ERROR, 'mailer');
-			
+
 		}
-		
+
 	);
 
 }//processEmailRequest
 
-// ------------------------------------ 
+// ------------------------------------
 
 function transitionTo(target) {
 
 	$('#' + active_panel).fadeOut('slow', function() {
 		active_panel = target;
 		$('#' + target).fadeIn('slow', function() {
-			
+
 			if (target == 'panel_login'){
-			
-				if($('#tg_user').val().length == 0) 
+
+				if($('#tg_user').val().length == 0)
 					$('#tg_user').focus();
 				else
 					$('#tg_pass').focus();
-			
+
 			}
-				
+
 			if (target == 'panel_emailpass')
 				$('#tg_email').focus();
-			
+
 		});
 	});
-	
+
 }//transitionTo
 
-// ------------------------------------ 
+// ------------------------------------
 
 function keypressed(event, obj) {
 	if(event.keyCode == '13') {
@@ -89,13 +89,13 @@ function keypressed(event, obj) {
 		if (obj.id == 'tg_email') document.getElementById('btn_send_mail').click();
 	}
 }
- 
-// ------------------------------------ 
+
+// ------------------------------------
 
 function checkFields() {
 
-	var tg_user = jQuery.trim(document.webapp_login.tg_user.value);
-	var tg_pass = jQuery.trim(document.webapp_login.tg_pass.value);
+	var tg_user = document.webapp_login.tg_user.value.trim();
+	var tg_pass = document.webapp_login.tg_pass.value.trim();
 
 	if (tg_user.length == 0){ presentMessage('Username required', messageType.ERROR); return; }
 	if (tg_pass.length == 0){ presentMessage('Password required', messageType.ERROR); return; }
@@ -107,14 +107,14 @@ function checkFields() {
 // ------------------------------------
 
 function preAuthorize(user, pass) {
-	
+
 	$.post("controllers/user_auth.php", { "operation": "login", "username" : user, "password" : pass },
 		function(data){
 
 			var json = eval('(' + data + ')');
-			
+
 			if (json.status == "success"){
-				
+
 				if (json.account_is_active == "true") {
 					presentMessage('Welcome, ' + json.first_name, messageType.SUCCESS);
 					setTimeout('invokeRedirect()', 2000);
@@ -122,7 +122,7 @@ function preAuthorize(user, pass) {
 				else{
 					presentMessage('This account has been disabled.', messageType.ERROR);
 				}
-				
+
 			}
 			else
 				presentMessage('Login Failed', messageType.ERROR);
@@ -145,8 +145,8 @@ function presentMessage(message, type, target) {
 	if (type == messageType.SUCCESS) divTag.className = (target == null) ? 'login_check_success' : 'email_check_success';
 	if (type == messageType.ERROR) divTag.className = (target == null) ? 'login_check_fail' : 'email_check_fail';
 
-	if (message == 'Login Failed') login_failed_attempts++;		
-	
+	if (message == 'Login Failed') login_failed_attempts++;
+
 	divTag.innerHTML = message;
 
 	if (target == null)
@@ -159,26 +159,26 @@ function presentMessage(message, type, target) {
 
 }//presentMessage
 
-// ------------------------------------ 
+// ------------------------------------
 
 function restoreState(target) {
-	
+
 	if (target == null){
-	
+
 		$('#tg_user').removeAttr('disabled');
 		$('#tg_pass').removeAttr('disabled');
 		$('#tg_user').focus();
-		
+
 		if(divTag.innerHTML == 'Password required' || divTag.innerHTML == 'Login Failed')
 			$('#tg_pass').focus();
-		
+
 		$('#btn_login').fadeIn('slow', null);
-	
+
 		if (login_failed_attempts == login_failed_limit){
 			login_failed_attempts = 0;
 			transitionTo('panel_emailpass');
 		}
-		
+
 	}
 	else {
 		$('.mailer .control_layer #login_status').remove();
