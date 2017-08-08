@@ -223,7 +223,7 @@ function processHierarchies($db, $hierarchies)
        WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN hierarchies cur
-        ON BINARY cur.module_id = BINARY inc.module_id AND
+        ON cur.module_id        = inc.module_id AND
            BINARY cur.name      = BINARY inc.name
     WHERE cur.hierarchy_id IS NULL;
 SQL;
@@ -1341,11 +1341,11 @@ FROM (
         :group_by_name AS name
     FROM modules m, realms r
     WHERE BINARY m.name      = BINARY :module_name AND
-          BINARY r.module_id = BINARY m.module_id  AND
+          r.module_id        =  m.module_id        AND
           BINARY r.name      = BINARY :realm_name
 ) inc
 LEFT JOIN group_bys cur
-    ON cur.module_id       = inc.module_id    AND
+    ON cur.module_id        = inc.module_id   AND
        cur.realm_id         = inc.realm_id    AND
        BINARY cur.name      = BINARY inc.name
 WHERE cur.group_by_id IS  NULL;
