@@ -278,8 +278,9 @@ class Pbs extends Shredder
     {
         $this->logger->debug("Parsing id_string '$id'");
 
-        // id_string is formatted as "sequence_number.hostname".
-        list($sequence, $host) = explode('.', $id, 2);
+        // id_string may be formatted as
+        // "sequence_number.hostname" or "sequence_number"
+        $sequence = strtok($id, '.');
 
         $jobId = $index = null;
 
@@ -303,7 +304,6 @@ class Pbs extends Shredder
         }
 
         return array(
-            'host'            => $host,
             'job_id'          => $jobId,
             'job_array_index' => $index,
         );
