@@ -132,22 +132,22 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
               mnuNewBasedOn.setSelectedReport(record.data.report_name);
           }
 
-          mnuNewBasedOn.toggleReportSelection(selectedRows.length !== 0);
+         mnuNewBasedOn.toggleReportSelection(selectedRows.length !== 0);
 
-          btnNewBasedOn.setDisabled(selectedRows.length !== 1);
-          btnEditReport.setDisabled(selectedRows.length !== 1);
-          btnPreviewReport.setDisabled(selectedRows.length !== 1);
+         btnNewBasedOn.setDisabled(selectedRows.length !== 1);
+         btnEditReport.setDisabled(selectedRows.length !== 1);
+         btnPreviewReport.setDisabled(selectedRows.length != 1);
 
-          mnuSendReport.setDisabled(selectedRows.length === 0);
-          mnuDownloadReport.setDisabled(selectedRows.length === 0);
+         mnuSendReport.setDisabled(selectedRows.length === 0);
+         mnuDownloadReport.setDisabled(selectedRows.length === 0);
 
-          btnSendReport.setVisible(false);
-          mnuSendReport.setVisible(true);
+         btnSendReport.setVisible(false);
+         mnuSendReport.setVisible(true);
 
-          btnDownloadReport.setVisible(false);
-          mnuDownloadReport.setVisible(true);
+         btnDownloadReport.setVisible(false);
+         mnuDownloadReport.setVisible(true);
 
-          btnDeleteReport.setDisabled(selectedRows.length === 0);
+         btnDeleteReport.setDisabled(selectedRows.length === 0);
 
          var exceptionDetails = eReport.isExceptionReport(record.data.creation_method);
 
