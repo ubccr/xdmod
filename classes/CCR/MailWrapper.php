@@ -54,6 +54,11 @@ class MailWrapper
         return $mail;
     }
 
+    /**
+     * Composes an email, then sends it and checks if email did/didn't send
+     *
+     * Throws Exception if send() returns false
+     */
     public static function sendMail($properties) {
         $mail = MailWrapper::initPHPMailer($properties);
         if(!$mail->send()){
