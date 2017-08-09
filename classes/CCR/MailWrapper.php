@@ -56,7 +56,9 @@ class MailWrapper
 
     public static function sendMail($properties) {
         $mail = MailWrapper::initPHPMailer($properties);
-        return $mail->send();
+        if(!$mail->send()){
+            throw new \Exception($mail->ErrorInfo);
+        }
     }
 
     /**
