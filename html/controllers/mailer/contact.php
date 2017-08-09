@@ -117,7 +117,7 @@ $message
     = "Hello, {$_POST['name']}\n\n"
     . "This e-mail is to inform you that the XDMoD Portal Team has received your $message_type, and will\n"
     . "be in touch with you as soon as possible.\n\n"
-    . \xd_utilities\getConfiguration('general', 'maintainer_email_signature');
+    . MailTemplates::getMaintainerSignature();
 
 // -------------------
 
