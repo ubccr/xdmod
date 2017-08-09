@@ -134,8 +134,8 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          mnuNewBasedOn.toggleReportSelection(selectedRows.length !== 0);
 
-         btnNewBasedOn.setDisabled(selectedRows.length !== 1);
-         btnEditReport.setDisabled(selectedRows.length !== 1);
+         btnNewBasedOn.setDisabled(selectedRows.length != 1);
+         btnEditReport.setDisabled(selectedRows.length != 1);
          btnPreviewReport.setDisabled(selectedRows.length != 1);
 
          mnuSendReport.setDisabled(selectedRows.length === 0);
@@ -147,7 +147,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          btnDownloadReport.setVisible(false);
          mnuDownloadReport.setVisible(true);
 
-         btnDeleteReport.setDisabled(selectedRows.length === 0);
+         btnDeleteReport.setDisabled(selectedRows.length == 0);
 
          var exceptionDetails = eReport.isExceptionReport(record.data.creation_method);
 
@@ -231,9 +231,9 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          //id: 'reportPool_queueGrid' + Ext.id(),
 
            viewConfig: {
-             emptyText: reportsEmptyText,
-             forceFit: true
-         },
+               emptyText: reportsEmptyText,
+               forceFit: true
+           },
 
            autoScroll: true,
 
@@ -251,7 +251,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
            // checkBoxSelMod
            ]
 
-       });//queueGrid
+       });// queueGrid
 
       queueGrid.getSelectionModel().on('rowselect', function(sm, row_index, rec) {
          XDMoD.TrackEvent('Report Generator (My Reports)', 'Selected Report', Ext.encode({report_name: rec.data.report_name}));
