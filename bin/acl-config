@@ -220,11 +220,11 @@ function processHierarchies($db, $hierarchies)
            :name       AS name,
            :display    AS display
        FROM modules m
-       WHERE m.name = :module_name
+       WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN hierarchies cur
-        ON cur.module_id = inc.module_id AND
-           cur.name      = inc.name
+        ON cur.module_id        = inc.module_id AND
+           BINARY cur.name      = BINARY inc.name
     WHERE cur.hierarchy_id IS NULL;
 SQL;
     $log->debug($query);
@@ -353,11 +353,11 @@ SELECT inc.*
           :installed_on        AS installed_on,
           NOW()                AS last_modified_on) inc
     LEFT JOIN module_versions cur
-      ON cur.module_id = inc.module_id         AND
-         cur.version_major = inc.version_major AND
-         cur.version_minor = inc.version_minor AND
-         cur.version_patch = inc.version_patch AND
-         cur.version_pre_release = inc.version_pre_release
+      ON BINARY cur.module_id     = BINARY inc.module_id     AND
+         BINARY cur.version_major = BINARY inc.version_major AND
+         BINARY cur.version_minor = BINARY inc.version_minor AND
+         BINARY cur.version_patch = BINARY inc.version_patch AND
+         BINARY cur.version_pre_release = BINARY inc.version_pre_release
   WHERE cur.module_version_id IS NULL;
 SQL;
 
@@ -388,11 +388,11 @@ SQL;
         $query = <<<SQL
     SELECT mv.module_version_id
     FROM module_versions mv
-    WHERE mv.module_id = :module_id AND
-      mv.version_major = :version_major AND
-      mv.version_minor = :version_minor AND
-      mv.version_patch = :version_patch AND
-      mv.version_pre_release = :version_pre_release
+    WHERE BINARY mv.module_id =     BINARY :module_id     AND
+          BINARY mv.version_major = BINARY :version_major AND
+          BINARY mv.version_minor = BINARY :version_minor AND
+          BINARY mv.version_patch = BINARY :version_patch AND
+          BINARY mv.version_pre_release = :version_pre_release
 SQL;
 
         $results = $db->query(
@@ -436,8 +436,8 @@ function createModule($db, $name, $display, $enabled)
                :display AS display,
                :enabled AS enabled ) inc
     LEFT JOIN modules cur
-        ON cur.name = inc.name AND
-            cur.display = inc.display
+        ON BINARY cur.name    = BINARY inc.name    AND
+           BINARY cur.display = BINARY inc.display
     WHERE cur.module_id IS NULL
 SQL;
 
@@ -464,8 +464,8 @@ SQL;
         $select = <<<SQL
     SELECT m.module_id
     FROM modules m
-    WHERE m.name = :name AND
-          m.display = :display
+    WHERE BINARY m.name    = BINARY :name    AND
+          BINARY m.display = BINARY :display
 SQL;
         $results = $db->query(
             $select,
@@ -498,8 +498,8 @@ function associateModuleAndVersion($db, $moduleId, $moduleVersionId)
     $exists = <<<SQL
     SELECT m.module_id
     FROM modules m
-    WHERE m.module_id = :module_id AND
-          m.current_version_id = :current_version_id
+    WHERE BINARY m.module_id          = BINARY :module_id AND
+          BINARY m.current_version_id = BINARY :current_version_id
 SQL;
     $params = array(
         ':module_id' => $moduleId,
@@ -524,7 +524,7 @@ SQL;
     $query = <<<SQL
     UPDATE modules
     SET current_version_id = :current_version_id
-    WHERE module_id = :module_id
+    WHERE BINARY module_id = BINARY :module_id
 SQL;
 
     $log->debug($query);
@@ -669,11 +669,11 @@ FROM (
         :display       AS display,
         :enabled       AS enabled
     FROM modules m
-    WHERE m.name = :module_name
+    WHERE BINARY m.name = BINARY :module_name
  ) inc
 LEFT JOIN acls cur
   ON cur.acl_type_id = inc.acl_type_id AND
-     cur.name        = inc.name
+     BINARY cur.name = BINARY inc.name
 WHERE cur.acl_id IS NULL;
 SQL;
         $params = array(
@@ -694,10 +694,10 @@ FROM (
         :display       AS display,
         :enabled       AS enabled
     FROM modules m
-    WHERE m.name = :module_name
+    WHERE BINARY m.name = BINARY :module_name
  ) inc
 LEFT JOIN acls cur
-  ON cur.name        = inc.name
+  ON BINARY cur.name        = BINARY inc.name
 WHERE cur.acl_id IS NULL;
 SQL;
         $params = array(
@@ -725,9 +725,9 @@ SQL;
     FROM acls a
         JOIN modules m
             ON a.module_id = m.module_id
-    WHERE m.name    = :module_name AND
-          a.name    = :name        AND
-          a.display = :display
+    WHERE BINARY m.name    = BINARY :module_name AND
+          BINARY a.name    = BINARY :name        AND
+          BINARY a.display = BINARY :display
 SQL;
         $record = $db->query(
             $query,
@@ -778,12 +778,12 @@ function processAclType($db, $module, $type)
             :acl_type_name    AS name,
             :acl_type_display AS display
         FROM modules m
-        WHERE m.name = :module_name
+        WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN acl_types cur
         ON cur.module_id = inc.module_id AND
-           cur.name      = inc.name      AND
-           cur.display   = inc.display
+           BINARY cur.name      = BINARY inc.name      AND
+           BINARY cur.display   = BINARY inc.display
     WHERE cur.acl_type_id IS NULL;
 SQL;
     $aclTypeDisplay = ucfirst($type);
@@ -807,9 +807,9 @@ SQL;
     FROM acl_types at
         JOIN modules m
             ON at.module_id = m.module_id
-    WHERE m.name     = :module_name    AND
-          at.name    = :acl_type_name  AND
-          at.display = :acl_type_display
+    WHERE BINARY m.name     = BINARY :module_name    AND
+          BINARY at.name    = BINARY :acl_type_name  AND
+          BINARY at.display = BINARY :acl_type_display
 SQL;
         $results = $db->query($query, $params);
         $log->info("   Retrieved acl type for $type");
@@ -849,15 +849,15 @@ function processAclHierarchy($db, $module, $acl, array $hierarchies) {
             :level           AS level,
             :filter_override AS filter_override
         FROM acls a, hierarchies h, modules m
-        WHERE a.module_id = m.module_id  AND
-              h.module_id = m.module_id  AND
-              m.name      = :module_name AND
-              a.name      = :acl_name
+        WHERE a.module_id        = m.module_id         AND
+              h.module_id        = m.module_id         AND
+              BINARY m.name      = BINARY :module_name AND
+              BINARY a.name      = BINARY :acl_name
     ) inc
     LEFT JOIN acl_hierarchies cur
-        ON cur.acl_id = inc.acl_id AND
-           cur.hierarchy_id = inc.hierarchy_id AND
-           cur.level        = inc.level
+        ON cur.acl_id              = inc.acl_id       AND
+           cur.hierarchy_id        = inc.hierarchy_id AND
+           BINARY cur.level        = BINARY inc.level
     WHERE cur.acl_hierarchy_id IS NULL;
 SQL;
 
@@ -957,11 +957,11 @@ function createTab($db, $module, $tab)
             m.module_id AS module_id,
             :name       AS name
         FROM modules m
-        WHERE m.name = :module_name
+        WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN tabs cur
-        ON cur.module_id = inc.module_id AND
-            cur.name      = inc.name
+        ON        cur.module_id = inc.module_id   AND
+           BINARY cur.name      = BINARY inc.name
     WHERE cur.tab_id IS NULL;
 SQL;
 
@@ -990,8 +990,8 @@ SQL;
     FROM tabs t
         JOIN modules m
             ON t.module_id = m.module_id
-    WHERE m.name = :module_name AND
-        t.name = :name
+    WHERE BINARY m.name = BINARY :module_name AND
+          BINARY t.name = BINARY :name
 SQL;
         $params = array(
             ':module_name' => $module,
@@ -1038,8 +1038,8 @@ function relateAclAndTab($db, $aclName, $tabName)
             a.acl_id AS acl_id,
             t.tab_id AS tab_id
         FROM acls a, tabs t
-        WHERE a.name = :acl_name AND
-              t.name = :tab_name
+        WHERE BINARY a.name = BINARY :acl_name AND
+              BINARY t.name = BINARY :tab_name
 
     ) inc
     LEFT JOIN acl_tabs cur
@@ -1122,16 +1122,16 @@ FROM (
         :visible       AS visible,
         :enabled       AS enabled
     FROM acls a, group_bys gb, statistics s, modules m, realms r
-    WHERE m.name       = :module_name    AND
-          r.module_id  = m.module_id     AND
-          r.name       = :realm_name     AND
-          gb.module_id = m.module_id     AND
-          gb.realm_id  = r.realm_id      AND
-          s.module_id  = m.module_id     AND
-          s.realm_id   = r.realm_id      AND
-          a.name       = :acl_name       AND
-          gb.name      = :group_by_name  AND
-          s.name       = :statistic_name
+    WHERE BINARY m.name       = BINARY :module_name    AND
+          BINARY r.name       = BINARY :realm_name     AND
+          BINARY a.name       = BINARY :acl_name       AND
+          BINARY gb.name      = BINARY :group_by_name  AND
+          BINARY s.name       = BINARY :statistic_name AND
+          r.module_id         = m.module_id            AND
+          gb.module_id        = m.module_id            AND
+          gb.realm_id         = r.realm_id             AND
+          s.module_id         = m.module_id            AND
+          s.realm_id          = r.realm_id
 ) inc
 LEFT JOIN acl_group_bys cur
     ON cur.realm_id    = inc.realm_id      AND
@@ -1238,13 +1238,13 @@ function processRealms($db, $moduleName, array $realms)
     foreach ($realms as $realm => $realmData) {
         $log->notice("Processing Realm: $realm");
 
-        createRealm($db, $moduleName, $realm);
+        createRealm($db, $moduleName, strtolower($realm));
 
         $groupBys = $realmData['group_bys'];
         $statistics = $realmData['statistics'];
 
-        createGroupBys($db, $moduleName, $realm, $groupBys);
-        createStatistics($db, $moduleName, $realm, $statistics);
+        createGroupBys($db, $moduleName, strtolower($realm), $groupBys);
+        createStatistics($db, $moduleName, strtolower($realm), $statistics);
     }
 }
 
@@ -1277,11 +1277,11 @@ function createRealm($db, $moduleName, $realmName)
             m.module_id AS module_id,
             :realm_name AS name
         FROM modules m
-        WHERE m.name = :module_name
+        WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN realms cur
-        ON cur.module_id = inc.module_id AND
-           cur.name      = inc.name
+        ON cur.module_id        = inc.module_id   AND
+           BINARY cur.name      = BINARY inc.name
     WHERE cur.realm_id IS NULL;
 SQL;
 
@@ -1340,14 +1340,14 @@ FROM (
         r.realm_id     AS realm_id,
         :group_by_name AS name
     FROM modules m, realms r
-    WHERE m.name      = :module_name AND
-          r.module_id = m.module_id  AND
-          r.name      = :realm_name
+    WHERE BINARY m.name      = BINARY :module_name AND
+          r.module_id        =  m.module_id        AND
+          BINARY r.name      = BINARY :realm_name
 ) inc
 LEFT JOIN group_bys cur
-    ON cur.module_id = inc.module_id AND
-       cur.realm_id  = inc.realm_id  AND
-       cur.name      = inc.name
+    ON cur.module_id        = inc.module_id   AND
+       cur.realm_id         = inc.realm_id    AND
+       BINARY cur.name      = BINARY inc.name
 WHERE cur.group_by_id IS  NULL;
 SQL;
     if (!$dryRun) {
@@ -1414,14 +1414,14 @@ FROM (
         r.realm_id      AS realm_id,
         :statistic_name AS name
     FROM modules m, realms r
-    WHERE m.name = :module_name     AND
-          r.module_id = m.module_id AND
-          r.name = :realm_name
+    WHERE BINARY m.name = BINARY :module_name  AND
+          BINARY r.name = BINARY :realm_name   AND
+          r.module_id   = m.module_id
 ) inc
 LEFT JOIN statistics cur
-    ON cur.module_id = inc.module_id AND
-       cur.realm_id  = inc.realm_id  AND
-       cur.name      = inc.name
+    ON cur.module_id        = inc.module_id   AND
+       cur.realm_id         = inc.realm_id    AND
+       BINARY cur.name      = BINARY inc.name
 WHERE
     cur.statistic_id IS NULL;
 SQL;
