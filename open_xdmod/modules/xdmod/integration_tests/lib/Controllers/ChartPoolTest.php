@@ -174,6 +174,34 @@ class ChartPoolTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test to ensure that a public ( non-authenticated ) user is not able to
+     * add a chart to a chart pool.
+     **/
+    public function testPublicUserCannotAddChart()
+    {
+        $this->addChart($this->baseParams, 401, array(
+            'success' => false,
+            'message' => function ($value) {
+                return strpos($value, 'Not Authorized') >=0;
+            }
+        ));
+    }
+
+    /**
+     * Test to ensure that a public ( non-authenticated ) user is not able to
+     * remove a chart from a chart pool.
+     **/
+    public function testPublicUserCannotRemoveChart()
+    {
+        $this->removeChart($this->baseParams, 401, array(
+            'success' => false,
+            'message' => function ($value) {
+                return strpos($value, 'Not Authorized') >=0;
+            }
+        ));
+    }
+
+    /**
      * Data provider function for the test function testMissingFieldsForAdd.
      *
      * @returns array in the format:
