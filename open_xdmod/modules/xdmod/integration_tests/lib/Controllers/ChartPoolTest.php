@@ -8,7 +8,35 @@ class ChartPoolTest extends \PHPUnit_Framework_TestCase
         $this->helper = new \TestHarness\XdmodTestHelper();
         $this->baseUrl = 'rest/v1.0/charts/pools';
         $this->baseParams = array(
-            'chart_id' => 'controller_module=metric_explorer&aggregation_unit=Auto&data_series=%5B%7B%22id%22%3A0.65108459233306%2C%22metric%22%3A%22avg_node_hours%22%2C%22category%22%3A%22%22%2C%22realm%22%3A%22Jobs%22%2C%22group_by%22%3A%22jobsize%22%2C%22x_axis%22%3Afalse%2C%22log_scale%22%3Afalse%2C%22has_std_err%22%3Afalse%2C%22std_err%22%3Afalse%2C%22std_err_labels%22%3A%22%22%2C%22value_labels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3A%22value_desc%22%2C%22filters%22%3A%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D%2C%22ignore_global%22%3Afalse%2C%22long_legend%22%3Atrue%2C%22trend_line%22%3Afalse%2C%22color%22%3A%22auto%22%2C%22shadow%22%3Afalse%2C%22visibility%22%3Anull%2C%22z_index%22%3A0%2C%22enabled%22%3Atrue%7D%5D&defaultDatasetConfig=%7B%7D&end_date=2015-05-31&featured=false&font_size=3&format=hc_jsonstore&global_filters=%7B%22data%22%3A%5B%7B%22id%22%3A%22provider%3D1%22%2C%22value_id%22%3A%221%22%2C%22value_name%22%3A%22CCR%22%2C%22dimension_id%22%3A%22provider%22%2C%22categories%22%3A%22%22%2C%22realms%22%3A%5B%22SUPREMM%22%5D%2C%22checked%22%3Atrue%7D%5D%2C%22total%22%3A1%7D&hide_tooltip=false&legend=%7B%7D&legend_type=bottom_center&limit=10&operation=get_data&share_y_axis=false&showContextMenu=y&show_filters=true&show_guide_lines=y&show_remainder=false&show_warnings=true&start=0&start_date=2015-05-01&swap_xy=false&timeframe_label=User Defined&timeseries=y&title=query 1&trendLineEnabled=&x_axis=%7B%7D&y_axis=%7B%7D',
+            'chart_id' => 'controller_module=metric_explorer&aggregation_unit=Au'.
+                          'to&data_series=%5B%7B%22id%22%3A0.65108459233306%2C%2'.
+                          '2metric%22%3A%22avg_node_hours%22%2C%22category%22%3A'.
+                          '%22%22%2C%22realm%22%3A%22Jobs%22%2C%22group_by%22%3A'.
+                          '%22jobsize%22%2C%22x_axis%22%3Afalse%2C%22log_scale%2'.
+                          '2%3Afalse%2C%22has_std_err%22%3Afalse%2C%22std_err%22'.
+                          '%3Afalse%2C%22std_err_labels%22%3A%22%22%2C%22value_l'.
+                          'abels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C'.
+                          '%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%'.
+                          '2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3'.
+                          'A%22value_desc%22%2C%22filters%22%3A%7B%22data%22%3A%'.
+                          '5B%5D%2C%22total%22%3A0%7D%2C%22ignore_global%22%3Afa'.
+                          'lse%2C%22long_legend%22%3Atrue%2C%22trend_line%22%3Af'.
+                          'alse%2C%22color%22%3A%22auto%22%2C%22shadow%22%3Afals'.
+                          'e%2C%22visibility%22%3Anull%2C%22z_index%22%3A0%2C%22'.
+                          'enabled%22%3Atrue%7D%5D&defaultDatasetConfig=%7B%7D&e'.
+                          'nd_date=2015-05-31&featured=false&font_size=3&format='.
+                          'hc_jsonstore&global_filters=%7B%22data%22%3A%5B%7B%22'.
+                          'id%22%3A%22provider%3D1%22%2C%22value_id%22%3A%221%22'.
+                          '%2C%22value_name%22%3A%22CCR%22%2C%22dimension_id%22%'.
+                          'A%22provider%22%2C%22categories%22%3A%22%22%2C%22real'.
+                          'ms%22%3A%5B%22SUPREMM%22%5D%2C%22checked%22%3Atrue%7D'.
+                          '%5D%2C%22total%22%3A1%7D&hide_tooltip=false&legend=%7'.
+                          'B%7D&legend_type=bottom_center&limit=10&operation=get'.
+                          '_data&share_y_axis=false&showContextMenu=y&show_filte'.
+                          'rs=true&show_guide_lines=y&show_remainder=false&show_'.
+                          'warnings=true&start=0&start_date=2015-05-01&swap_xy=f'.
+                          'alse&timeframe_label=User Defined&timeseries=y&title='.
+                          'query 1&trendLineEnabled=&x_axis=%7B%7D&y_axis=%7B%7D',
             'chart_drill_details' => '',
             'chart_date_desc' => '2015-05-01 to 2015-05-31',
             'chart_title' => 'query 1',
