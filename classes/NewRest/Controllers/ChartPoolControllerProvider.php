@@ -27,6 +27,8 @@ class ChartPoolControllerProvider extends BaseControllerProvider
 
     public function addToQueue(Request $request, Application $app)
     {
+        $this->authorize($request, array('usr'));
+
         $result = array();
 
         $user = $this->getUserFromRequest($request);
@@ -49,6 +51,8 @@ class ChartPoolControllerProvider extends BaseControllerProvider
 
     public function removeFromQueue(Request $request, Application $app)
     {
+        $this->authorize($request, array('usr'));
+
         $result = array();
 
         $user = $this->getUserFromRequest($request);
