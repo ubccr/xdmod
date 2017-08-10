@@ -5,8 +5,15 @@ namespace IntegrationTests\Controllers;
 class ChartPoolTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp() {
+
+        // A helper class that encapsulates such things as logging in / out etc.
         $this->helper = new \TestHarness\XdmodTestHelper();
+
+        // The base url that will be used during the testst.
         $this->baseUrl = 'rest/v1.0/charts/pools';
+
+        // the base set of request parameters that will be used during the
+        // testing.
         $this->baseParams = array(
             'chart_id' => 'controller_module=metric_explorer&aggregation_unit=Au'.
                           'to&data_series=%5B%7B%22id%22%3A0.65108459233306%2C%2'.
@@ -111,6 +118,7 @@ class ChartPoolTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the happy path of adding / removing a chart.
      *
      * @dataProvider enumUserRoles
      **/
@@ -165,6 +173,15 @@ class ChartPoolTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Data provider function for the test function testMissingFieldsForAdd.
+     *
+     * @returns array in the format:
+     *     array(
+     *         array('<field>', '<acl>'),
+     *         array('<field>', '<acl>')
+     *     )
+     **/
     public function enumMissingFieldsForAdd()
     {
         $fields = array('chart_id', 'chart_drill_details', 'chart_date_desc');
@@ -181,6 +198,15 @@ class ChartPoolTest extends \PHPUnit_Framework_TestCase
         return $results;
     }
 
+    /**
+     * Data provider for the test function testMissingFieldsForRemove
+     *
+     * @returns array in the format:
+     *     array(
+     *         array('<field>', '<acl>'),
+     *         array('<field>', '<acl>')
+     *     )
+     **/
     public function enumMissingFieldsForRemove()
     {
         $fields = array('chart_id');
@@ -197,6 +223,16 @@ class ChartPoolTest extends \PHPUnit_Framework_TestCase
         return $results;
     }
 
+    /**
+     * Data Provider for the functions:
+     *     - testAddingAndRemovingChartShouldBeValid
+     *     - testAddingADuplicateChartIdShouldError
+     * @returns array in the format:
+     *     array(
+     *         array('<acl>'),
+     *         array('<acl>')
+     *     )
+     **/
     public function enumUserRoles()
     {
         return array(
@@ -206,16 +242,50 @@ class ChartPoolTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Convenience function that encapsulates the action of adding a chart as
+     * well as the assertions for said action.
+     *
+     * @param array $params
+     * @param int   $expectedHttpCode
+     * @param array $expectedResults
+     **/
     private function addChart($params, $expectedHttpCode, array $expectedResults)
     {
         $this->postChartRequest('/add', $params, $expectedHttpCode, $expectedResults);
     }
 
+    /**
+     * Convenience function that encapsulates the action of removing a chart as
+     * well as the assertions for said action.
+     *
+     * @param array $params
+     * @param int   $expectedHttpCode
+     * @param array $expectedResults
+     **/
     private function removeChart($params, $expectedHttpCode, array $expectedResults)
     {
         $this->postChartRequest('/remove', $params, $expectedHttpCode, $expectedResults);
     }
 
+    /**
+     * A convenience function that encapsulates issuing a POST request to the
+     * endpoint identified by the provided $urlFragment. It supplies $params
+     * to the POST request and provides the following assertions:
+     *     - the content_type of the response is 'application/json'
+     *     - the http_code of the response is equal to $expectedHttpCode
+     *     - for each key => value pair in $expectedResults
+     *         - that the key is present in the returned json.
+     *         - that, if the value is:
+     *             - a function utilize the results of $value($data[$key])
+     *             - a string then utilize the $value as is.
+     *         - that the $value is equal to $data[$key]
+     *
+     * @param string $urlFragment
+     * @param array  $params
+     * @param int    $expectedHttpCode
+     * @param array  $expectedResults
+     **/
     private function postChartRequest($urlFragment, $params, $expectedHttpCode, array $expectedResults)
     {
         $request = $this->helper->post($this->baseUrl . $urlFragment, null, $params);
