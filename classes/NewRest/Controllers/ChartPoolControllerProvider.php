@@ -41,7 +41,7 @@ class ChartPoolControllerProvider extends BaseControllerProvider
 
         $chart_pool = new XDChartPool($user);
 
-        $chart_pool->addChartToQueue($chartId,$chartTitle, $chartDrillDetails, $chartDateDesc);
+        $chart_pool->addChartToQueue($chartId, $chartTitle, $chartDrillDetails, $chartDateDesc);
 
         $result['success'] = true;
         $result['action'] = 'add';
@@ -73,4 +73,3 @@ class ChartPoolControllerProvider extends BaseControllerProvider
         return $app->json($result);
     }
 }
-
