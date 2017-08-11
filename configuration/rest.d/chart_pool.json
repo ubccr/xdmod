@@ -1,0 +1,6 @@
+{
+  "chart_pool": {
+    "prefix": "charts/pools",
+    "controller": "NewRest\\Controllers\\ChartPoolControllerProvider"
+  }
+}

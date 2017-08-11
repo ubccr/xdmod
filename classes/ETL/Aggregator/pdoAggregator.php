@@ -417,12 +417,11 @@ class pdoAggregator extends aAggregator
             $tableFullName =  $utilitySchema . "." . $tableName;
             if ( false === $this->utilityEndpoint->tableExists($tableName, $utilitySchema) ) {
                 $this->logger->info("Table does not exist: '$tableFullName', skipping.");
-                continue;
             }
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "Error verifying aggregation unit table for '$aggregationUnit'",
-                array('exception' => $e, 'sql' => $sql)
+                array('exception' => $e)
             );
         }
 
