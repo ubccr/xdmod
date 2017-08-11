@@ -91,6 +91,40 @@ class PbsShredderTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
 
+            // PBS/TORQUE format without host in ID string.
+            array(
+                // @codingStandardsIgnoreLine
+                '12/21/2009 15:27:00;E;6;user=jonesm group=ccrstaff jobname=impi-hybrid queue=ccr ctime=1261424924 qtime=1261424924 etime=1261424924 start=1261425023 owner=jonesm@edge.ccr.buffalo.edu exec_host=i02n33/7+i02n33/6+i02n33/5+i02n33/4+i02n33/3+i02n33/2+i02n33/1+i02n33/0+i02n32/7+i02n32/6+i02n32/5+i02n32/4+i02n32/3+i02n32/2+i02n32/1+i02n32/0+i02n31/7+i02n31/6+i02n31/5+i02n31/4+i02n31/3+i02n31/2+i02n31/1+i02n31/0+i02n30/7+i02n30/6+i02n30/5+i02n30/4+i02n30/3+i02n30/2+i02n30/1+i02n30/0 Resource_List.neednodes=4:ppn=8 Resource_List.nodect=4 Resource_List.nodes=4:ppn=8 Resource_List.pcput=144:00:00 Resource_List.walltime=04:00:00 session=5510 end=1261427220 Exit_status=0 resources_used.cput=00:00:00 resources_used.mem=15240kb resources_used.vmem=350936kb resources_used.walltime=00:36:37',
+                array(
+                    'job_id'                  => '6',
+                    'host'                    => 'testresource',
+                    'queue'                   => 'ccr',
+                    'user'                    => 'jonesm',
+                    'groupname'               => 'ccrstaff',
+                    'ctime'                   => '1261424924',
+                    'qtime'                   => '1261424924',
+                    'start'                   => '1261425023',
+                    'end'                     => '1261427220',
+                    'etime'                   => '1261424924',
+                    'exit_status'             => '0',
+                    'session'                 => '5510',
+                    'jobname'                 => 'impi-hybrid',
+                    'owner'                   => 'jonesm@edge.ccr.buffalo.edu',
+                    'resources_used_vmem'     => 359358464,
+                    'resources_used_mem'      => 15605760,
+                    'resources_used_walltime' => 2197,
+                    'resources_used_nodes'    => 4,
+                    'resources_used_cpus'     => 32,
+                    'resources_used_cput'     => 0,
+                    'resource_list_nodes'     => '4:ppn=8',
+                    'resource_list_neednodes' => '4:ppn=8',
+                    'resource_list_pcput'     => 518400,
+                    'resource_list_walltime'  => 14400,
+                    'resource_list_nodect'    => '4',
+                    'node_list'               => 'i02n33,i02n32,i02n31,i02n30',
+                ),
+            ),
+
             // TORQUE 5.0.1 format.
             array(
                 '11/09/2014 23:59:51;E;6464684.anonhost;user=anonuser group=anongroup jobname=anonjob queue=default ctime=1415579756 qtime=1415579756 etime=1415579756 start=1415589841 owner=anon@n180 exec_host=n404/2+n404/3+n404/4+n404/5 Resource_List.mem=1993mb Resource_List.ncpus=1 Resource_List.neednodes=1:ppn=4:avx Resource_List.nodect=1 Resource_List.nodes=1:ppn=4:avx Resource_List.walltime=24:00:00 session=100966 end=1415599191 Exit_status=1 resources_used.cput=10:16:36 resources_used.mem=167864kb resources_used.vmem=622552kb resources_used.walltime=02:35:49 account=anonaccount',
