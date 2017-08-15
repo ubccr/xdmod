@@ -165,7 +165,7 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
      * @param iRdbmsEndpoint $endpoint The DataEndpoint used to connect to the database
      *   (provides schema)
      *
-     * @see iDiscoverable::discover()
+     * @see iDiscoverableEntity::discover()
      * ------------------------------------------------------------------------------------------
      */
 
