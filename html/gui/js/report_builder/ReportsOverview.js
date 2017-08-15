@@ -128,20 +128,18 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          var selectedRows = selectionModel.getSelections();
 
-         if (selectedRows.length == 1) {
+          if (selectedRows.length !== 0) {
+              mnuNewBasedOn.setSelectedReport(record.data.report_name);
+          }
 
-            mnuNewBasedOn.setSelectedReport(record.data.report_name);
-
-         }
-
-         mnuNewBasedOn.toggleReportSelection(selectedRows.length == 1);
+         mnuNewBasedOn.toggleReportSelection(selectedRows.length !== 0);
 
          btnNewBasedOn.setDisabled(selectedRows.length != 1);
          btnEditReport.setDisabled(selectedRows.length != 1);
          btnPreviewReport.setDisabled(selectedRows.length != 1);
 
-         mnuSendReport.setDisabled(selectedRows.length != 1);
-         mnuDownloadReport.setDisabled(selectedRows.length != 1);
+         mnuSendReport.setDisabled(selectedRows.length === 0);
+         mnuDownloadReport.setDisabled(selectedRows.length === 0);
 
          btnSendReport.setVisible(false);
          mnuSendReport.setVisible(true);
@@ -153,23 +151,21 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          var exceptionDetails = eReport.isExceptionReport(record.data.creation_method);
 
-         if (selectedRows.length == 1 && exceptionDetails !== false) {
+           if (selectedRows.length === 1 && exceptionDetails !== false) {
+              mnuNewBasedOn.toggleReportSelection(exceptionDetails.canDeriveFrom);
+              btnEditReport.setDisabled(!exceptionDetails.canEdit);
+              btnPreviewReport.setDisabled(!exceptionDetails.canPreview);
 
-            mnuNewBasedOn.toggleReportSelection(exceptionDetails.canDeriveFrom);
-            btnEditReport.setDisabled(!exceptionDetails.canEdit);
-            btnPreviewReport.setDisabled(!exceptionDetails.canPreview);
-
-            if (!exceptionDetails.multiFormat) {
+              if (!exceptionDetails.multiFormat) {
 
                btnSendReport.setVisible(true);
                mnuSendReport.setVisible(false);
 
                btnDownloadReport.setVisible(true);
                mnuDownloadReport.setVisible(false);
+             }
 
-            }
-
-         }
+          }
 
       };//adjustButtonAccessibilty
 
@@ -229,33 +225,33 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var queueGrid = new Ext.grid.GridPanel({
+       var queueGrid = new Ext.grid.EditorGridPanel({
 
-         store: this.reportStore,
+           store: this.reportStore,
          //id: 'reportPool_queueGrid' + Ext.id(),
 
-         viewConfig: {
-            emptyText: reportsEmptyText,
-            forceFit: true
-         },
+           viewConfig: {
+               emptyText: reportsEmptyText,
+               forceFit: true
+           },
 
-         autoScroll: true,
+           autoScroll: true,
 
-         enableHdMenu: false,
-         selModel : checkBoxSelMod,
-         loadMask: true,
+           enableHdMenu: false,
+           selModel: checkBoxSelMod,
+           loadMask: true,
 
-         columns: [
-            //checkBoxSelMod,
-            {header: 'ID', width: 10, dataIndex: 'report_id', sortable: false, hidden: true},
-            {header: 'Name', width: 200, dataIndex: 'report_name', sortable: true},
-            {header: 'Derived From', width: 100, dataIndex: 'creation_method', sortable: true},
-            {header: 'Schedule', width: 70, dataIndex: 'report_schedule', sortable: true},
-            {header: 'Delivery Format', width: 70, dataIndex: 'report_format', sortable: true, renderer: reportFormatColumnRenderer},
-            {header: '# Charts', width: 70, dataIndex: 'chart_count', sortable: true, renderer: numChartsColumnRenderer}
-         ]
+           columns: [
+            { header: 'ID', width: 10, dataIndex: 'report_id', sortable: false, hidden: true },
+            { header: 'Name', width: 200, dataIndex: 'report_name', sortable: true },
+            { header: 'Derived From', width: 100, dataIndex: 'creation_method', sortable: true },
+            { header: 'Schedule', width: 70, dataIndex: 'report_schedule', sortable: true },
+            { header: 'Delivery Format', width: 70, dataIndex: 'report_format', sortable: true, renderer: reportFormatColumnRenderer },
+            { header: '# Charts', width: 70, dataIndex: 'chart_count', sortable: true, renderer: numChartsColumnRenderer }
+           // checkBoxSelMod
+           ]
 
-      });//queueGrid
+       });// queueGrid
 
       queueGrid.getSelectionModel().on('rowselect', function(sm, row_index, rec) {
          XDMoD.TrackEvent('Report Generator (My Reports)', 'Selected Report', Ext.encode({report_name: rec.data.report_name}));
@@ -625,13 +621,19 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var sendReport = function(build_only, format) {
+       var sendReport = function (build_only, format) {
+           var selected = queueGrid.getSelectionModel().getSelections();
+           var arrLength = selected.length;
+           var arrNames = [];
 
-         var rowData = queueGrid.getSelectionModel().getSelected().data;
+           Ext.each(selected, function (selection) {
+               arrNames.push(selection.data.report_name);
+           });
 
-         self.parent.buildReport(rowData.report_name, rowData.report_id, self, build_only, format);
-
-      };//sendReport
+           Ext.each(selected, function (selection) {
+               self.parent.buildReport(selection.data.report_name, selection.data.report_id, self, build_only, format, arrLength, arrNames);
+           });
+       };// sendReport
 
        // ----------------------------------------------------
 
@@ -836,8 +838,8 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          items:[ queueGrid ],
 
          plugins: [
-            new Ext.ux.plugins.ContainerMask ({ masked:false }),
-            new XDMoD.Plugins.ContextSensitiveHelper('report+generator')
+             new Ext.ux.plugins.ContainerMask({ masked: false }),
+             new XDMoD.Plugins.ContextSensitiveHelper('report+generator')
          ],
 
          tbar: {

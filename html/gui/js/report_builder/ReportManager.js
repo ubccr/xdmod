@@ -10,11 +10,13 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
     },
 
     buildReport: function (
-        report_name,
+        reportName,
         report_id,
         target_child,
         build_only,
-        format
+        format,
+        arrLength,
+        arrNames
     ) {
         if (format == undefined) { format = 'pdf'; }
 
@@ -35,15 +37,26 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
         XDMoD.TrackEvent(
             'Report Generator',
             'Building report',
-            Ext.encode({name: report_name, action: action, format: format})
+            Ext.encode({ name: reportName, action: action, format: format })
         );
 
-        var activity = build_only ?
-            'Preparing report for download' : 'Generating and sending report';
+        var activity = '';
+        if (arrLength === 1) {
+            activity = build_only ?
+                'Preparing report for download' : 'Generating and sending report';
+        } else {
+            activity = build_only ?
+                'Preparing reports for download' : 'Generating and sending reports';
+        }
+
+        var listNames = '';
+        for (var i = 0; i < arrNames.length; i++) {
+            listNames = listNames + '<br />' + arrNames[i];
+        }
 
         target_child.showMask(
-            '<center>' + activity + '<br /><b>' + report_name +
-            '</b><br /><img src="gui/images/progbar_2.gif">' +
+            '<center>' + activity + '<b>' + listNames +
+            '<br /></b><img src="gui/images/progbar_2.gif">' +
             '<br />Please Wait</center>'
         );
 
@@ -76,11 +89,11 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                     XDMoD.TrackEvent(
                         'Report Generator',
                         'Building of report complete',
-                        Ext.encode({name: report_name, format: format})
+                        Ext.encode({ name: reportName, format: format })
                     );
 
                     var location = 'controllers/report_builder.php/' +
-                        responseData.report_name +
+                        responseData.reportName +
                         '?operation=download_report&report_loc=' +
                         responseData.report_loc + '&format=' + format;
 
@@ -131,7 +144,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                                         }),
                                         new Ext.Button({
                                             region: 'south',
-                                            text: 'View Report',
+                                            text: 'View Report: ' + reportName,
                                             handler: function () {
                                                 XDMoD.TrackEvent(
                                                     'Report Generator',
