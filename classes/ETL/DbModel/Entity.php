@@ -70,8 +70,7 @@ class Entity extends Loggable
     private $defaultPropertyValues = array();
 
     // Character used to quote system identifiers. Mysql uses a backtick while postgres
-    // and oracle use a single quote. This is set as a static variable so we can use it in
-    // static scope in Table::discover()
+    // and oracle use a single quote.
     protected $systemQuoteChar = '`';
 
     /* ------------------------------------------------------------------------------------------

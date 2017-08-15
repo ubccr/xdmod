@@ -36,8 +36,6 @@ $scriptOptions = array(
     'output-file'       => null,
     // Output format (json or sql)
     'output-format'     => 'json',
-    // Succinct or verbose mode
-    'succinct-mode'     => false,
     // Table definition file
     'table-config'      => null,
     // Key name that the table definition will be included under
@@ -57,7 +55,6 @@ $options = array(
     'i'   => 'include-schema',
     'k:'  => 'table-key:',
     'o:'  => 'operation:',
-    's'   => 'succinct',
     't:'  => 'table-config:',
     'v:'  => 'verbosity:',
     'x:'  => 'output-format:'
@@ -101,11 +98,6 @@ foreach ($args as $arg => $value) {
         case 'o':
         case 'operation':
             $scriptOptions['operation'] = $value;
-            break;
-
-        case 's':
-        case 'succinct':
-            $scriptOptions['succinct-mode'] = true;
             break;
 
         case 't':
@@ -202,11 +194,8 @@ $parsedTable = null;
 
 if ( null !== $scriptOptions['table-config'] ) {
     try {
-        // $parsedTable = new AggregationTable($scriptOptions['table-config']);
         $parsedTable = new Table($scriptOptions['table-config']);
-        $parsedTable->setSchema($dataEndpoint->getSchema());
-        // print_r($table);
-        // print_r($table->getCreateSql());
+        $parsedTable->schema = $dataEndpoint->getSchema();
         $parsedTable->verify();
     } catch ( Exception $e) {
         exit($e->getMessage() . "\n");
@@ -217,7 +206,8 @@ $discoveredTable = null;
 
 if ( null !== $scriptOptions['discover-table'] ) {
     try {
-        $discoveredTable = Table::discover($scriptOptions['discover-table'], $dataEndpoint);
+        $discoveredTable = new Table(null, $dataEndpoint->getSystemQuoteChar(), $logger);
+        $discoveredTable->discover($scriptOptions['discover-table'], $dataEndpoint);
         if ( false === $discoveredTable ) {
             $msg = "Table '" . $scriptOptions['discover-table'] . "'  not found using endpoint $dataEndpoint\n";
             exit($msg);
@@ -239,7 +229,7 @@ switch ( $scriptOptions['operation'] ) {
         if ( null !== $discoveredTable ) {
             $outputStr = "";
             if ( "json" == $scriptOptions['output-format'] ) {
-                $obj = $discoveredTable->toJsonObj($scriptOptions['succinct-mode'], $scriptOptions['include-schema']);
+                $obj = $discoveredTable->toStdClass();
                 if ( null !== $scriptOptions['table-key'] ) {
                     $tableKey = $scriptOptions['table-key'];
                     $retval = new stdClass;
@@ -249,7 +239,7 @@ switch ( $scriptOptions['operation'] ) {
                 $outputStr = json_encode($obj);
             } else {
                 $outputStr = "DELIMITER ;;\n" .
-                    implode("\n;;\n", $discoveredTable->getCreateSql($scriptOptions['include-schema'])) .
+                    implode("\n;;\n", $discoveredTable->getSql($scriptOptions['include-schema'])) .
                     "\n;;";
             }
         }
@@ -258,7 +248,7 @@ switch ( $scriptOptions['operation'] ) {
     case 'dump-parsed':
         if ( null !== $parsedTable ) {
             if ( "json" == $scriptOptions['output-format'] ) {
-                $obj = $parsedTable->toJsonObj($scriptOptions['succinct-mode'], $scriptOptions['include-schema']);
+                $obj = $parsedTable->toStdClass();
                 if ( null !== $scriptOptions['table-key'] ) {
                     $tableKey = $scriptOptions['table-key'];
                     $retval = new stdClass;
@@ -268,7 +258,7 @@ switch ( $scriptOptions['operation'] ) {
                 $outputStr = json_encode($obj);
             } else {
                 $outputStr = "DELIMITER ;;\n" .
-                    implode("\n;;\n", $parsedTable->getCreateSql($scriptOptions['include-schema'])) .
+                    implode("\n;;\n", $parsedTable->getSql($scriptOptions['include-schema'])) .
                     "\n;;";
             }
         }
@@ -349,9 +339,6 @@ function usage_and_exit($msg = null)
         dump-discovered - Dump the discovered table
         dump-parsed - Dump the parsed table
         dump-alter - Dump the alter SQL to bring the discovered table in line with the parsed table
-
-        -s, --succinct
-        Dump JSON in succinct format
 
         -t, --table-config <file>
         Table definition file to parse
