@@ -11,7 +11,7 @@
         "moment/moment-min-file": "^2.13.0",
         "moment/moment-timezone-min-file": "^0.5.4",
         "jquery/jquery-min-file": "^1.12.4",
-        "carlo/jquery-base64-file": "^1.0",
+        "davidchambers/Base64.js-file": "^1.0",
         "tildeio/rsvpjs-min-file": "^3.0.18",
         "jaspersoft/jasperreports-library-jar": "^3.7.6",
         "apache/xalan-j-2jars": "^2.7.1",
@@ -162,15 +162,15 @@
         {
             "type": "package",
             "package": {
-                "name": "carlo/jquery-base64-file",
+                "name": "davidchambers/Base64.js-file",
                 "type": "vanilla-plugin",
                 "version": "1.0",
-                "license": "MIT",
-                "homepage": "https://github.com/carlo/jquery-base64",
+                "license": "Apache 2.0 and WTFPL",
+                "homepage": "https://github.com/davidchambers/Base64.js",
                 "dist": {
-                    "url": "https://github.com/carlo/jquery-base64/raw/master/jquery.base64.js",
+                    "url": "https://raw.githubusercontent.com/davidchambers/Base64.js/master/base64.min.js",
                     "type": "file",
-                    "shasum": "7f0ba311c1676b1b730b29b06e1a9e9e55760acc"
+                    "shasum": "c4f3f169f0ea49756e9ffcd308abfc4f3baeb165"
                 },
                 "require": {
                     "composer/installers": "~1.0"
@@ -378,10 +378,8 @@
                 "moment/moment-min-file",
                 "moment/moment-timezone-min-file",
                 "jquery/jquery-min-file",
-                "tildeio/rsvpjs-min-file"
-            ],
-            "html/gui/lib/jquery-plugins/{$name}": [
-                "carlo/jquery-base64-file"
+                "tildeio/rsvpjs-min-file",
+                "davidchambers/Base64.js-file"
             ],
             "external_libraries/{$name}": [
                 "zendframework/zendframework-minimal"

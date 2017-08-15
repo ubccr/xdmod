@@ -1469,7 +1469,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }; //baseChartOptions
 
                                 var chartOptions = r.get('hc_jsonstore');
-                                jQuery.extend(true, chartOptions, baseChartOptions);
+                                chartOptions = XDMoD.utils.extend(true, chartOptions, baseChartOptions);
 
                                 chartOptions.exporting.enabled = false;
                                 chartOptions.credits.enabled = false;
@@ -2651,7 +2651,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                             var chartOptions = r.get('hc_jsonstore');
 
-                            jQuery.extend(true, chartOptions, baseChartOptions);
+                            chartOptions = XDMoD.utils.extend(true, chartOptions, baseChartOptions);
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 

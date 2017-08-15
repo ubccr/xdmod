@@ -75,8 +75,8 @@ where denoted. These software products are free for commercial use.
   available under the [MIT License][mit].
 - [reCAPTCHA PHP Library](https://developers.google.com/recaptcha/old/docs/php),
   which is available under the [MIT License][mit].
-- [jquery-base64](https://github.com/carlo/jquery-base64), which is available
-  under the [MIT License][mit].
+- [Base64.js](https://github.com/davidchambers/Base64.js), which is available
+  under the [MIT License][mit] and [WTFPL][wtfpl].
 - \*[Ext.ux.form.GroupComboBox](https://www.sencha.com/forum/showthread.php?45412-Ext-ux-form-GroupComboBox),
   which is available under a "BSD" license (it is not clear which BSD license
   is being referred to).
@@ -100,3 +100,4 @@ where denoted. These software products are free for commercial use.
 [lgpl3]:        http://www.gnu.org/licenses/lgpl-3.0.txt
 [agpl]:         http://www.gnu.org/licenses/agpl-3.0.txt
 [apache2]:      http://www.apache.org/licenses/LICENSE-2.0
+[wtfpl]:        http://www.wtfpl.net/txt/copying/

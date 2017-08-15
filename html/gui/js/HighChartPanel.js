@@ -14,7 +14,7 @@ CCR.xdmod.ui.HighChartPanel = function (config) {
 }; // CCR.xdmod.ui.HighChartPanel
 
 
-// Set options globally for all charts instantiated afterwards: 
+// Set options globally for all charts instantiated afterwards:
 Highcharts.setOptions ({
     lang: {
         // commas for thousands separators
@@ -85,7 +85,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
                     if (t.getCount() <= 0) {
                         return;
                     }
-                    this.chartOptions = jQuery.extend(true, {}, this.baseChartOptions, t.getAt(0).data);
+                    this.chartOptions = XDMoD.utils.extend(true, {}, this.baseChartOptions, t.getAt(0).data);
 
                     this.chartOptions.exporting.enabled = (this.exporting === true);
                     this.chartOptions.credits.enabled = (this.credits === true);
@@ -124,9 +124,9 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
         }
         var finalChartOptions = {};
         if (chartOptions) {
-            jQuery.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
+            finalChartOptions = XDMoD.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
         } else {
-            jQuery.extend(true, finalChartOptions, this.baseChartOptions, this.chartOptions);
+            finalChartOptions = XDMoD.extend(true, finalChartOptions, this.baseChartOptions, this.chartOptions);
         }
         this.chart = new Highcharts.Chart(finalChartOptions);
     },
