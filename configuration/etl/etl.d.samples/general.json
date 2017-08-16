@@ -20,7 +20,7 @@
 
         "#": "Global options are lowest priority and applied to all actions if not already defined",
 
-        "global" : {
+        "global": {
             "endpoints": {
                 "utility": {
                     "#": "Endpoint type is used to instantiate the correct endpoint.",
@@ -47,7 +47,7 @@
                     "name": "Federated OSG",
                     "config": "datawarehouse",
                     "schema": "federated_osg"
-                },
+                }
             }
         },
 
@@ -62,21 +62,19 @@
 
     "#": "Define a pipeline as an array of action definition objects",
 
-    "ingestors": [
-        {
-            "#": "Ingest select fields from the XDCSB organization table, altering the field names.",
+    "ingestors": [{
+        "#": "Ingest select fields from the XDCSB organization table, altering the field names.",
 
-            "name": "xdcdb-orgs",
-            "description": "Ingest select fields from the XDCSB organization",
-            "class": "SimpleDatabaseIngestor",
+        "name": "xdcdb-orgs",
+        "description": "Ingest select fields from the XDCSB organization",
+        "class": "SimpleDatabaseIngestor",
 
-            "#": "Definition of the destination table as well as specification of the source table.",
-            "definition_file": "organizations.json",
+        "#": "Definition of the destination table as well as specification of the source table.",
+        "definition_file": "organizations.json",
 
-            "enabled": true,
+        "enabled": true,
 
-            "#": "Always truncate the existing table before ingesting",
-            "truncate_destination": true
-        }
-    ]
+        "#": "Always truncate the existing table before ingesting",
+        "truncate_destination": true
+    }]
 }
