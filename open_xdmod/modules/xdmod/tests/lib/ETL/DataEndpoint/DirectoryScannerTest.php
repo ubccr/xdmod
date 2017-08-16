@@ -51,7 +51,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
             'recursion_depth' => '2',
             'last_modified_start' => 10,
             'last_modified_end' => 10,
-            'handlers' => (object) array (
+            'handler' => (object) array(
                 'type' => 'jsonfile',
                 'record_separator' => "\n"
             )
@@ -73,11 +73,9 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
             'name' => 'Not a directory',
             'type' => 'directoryscanner',
             'path' => '/dev/null',
-            'handlers' => array(
-                (object) array (
-                    'type' => 'jsonfile',
-                    'record_separator' => "\n"
-                )
+            'handler' => (object) array(
+                'type' => 'jsonfile',
+                'record_separator' => "\n"
             )
         );
         $options = new DataEndpointOptions($config);
@@ -97,11 +95,9 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
             'name' => 'Euca files',
             'type' => 'directoryscanner',
             'path' => self::TEST_ARTIFACT_INPUT_PATH . '/directory_scanner',
-            'handlers' => array(
-                (object) array (
-                    'type' => 'jsonfile',
-                    'record_separator' => "\n"
-                )
+            'handler' => (object) array(
+                'type' => 'jsonfile',
+                'record_separator' => "\n"
             )
         );
         $options = new DataEndpointOptions($config);
@@ -109,9 +105,11 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         $scanner->verify();
         $scanner->connect();
 
-        // The directory isn't scanned until we iterate over it.
+        // The directory is scanned when connect() is called but each file isn't processed
+        // until we iterate over it.
 
         foreach ( $scanner as $key => $val ) {
+            $this->logger->info($key);
         }
 
         // One file in the directory contains no data.
@@ -135,12 +133,10 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
             'path' => self::TEST_ARTIFACT_INPUT_PATH,
             'directory_pattern' => '/_scanner/',
             'file_pattern' => '/euca.*\.json/',
-            'handlers' => array(
-                (object) array (
-                    'extension' => '.json',
-                    'type' => 'jsonfile',
-                    'record_separator' => "\n"
-                )
+            'handler' => (object) array(
+                'extension' => '.json',
+                'type' => 'jsonfile',
+                'record_separator' => "\n"
             )
         );
         $options = new DataEndpointOptions($config);
@@ -148,7 +144,9 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         $scanner->verify();
         $scanner->connect();
 
-        // The directory isn't scanned until we iterate over it.
+        // The directory is scanned when connect() is called but each file isn't processed
+        // until we iterate over it.
+
         foreach ( $scanner as $key => $val ) {
         }
 
@@ -181,12 +179,10 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
             'file_pattern' => '/euca.*\.json/',
             'last_modified_start' => $startDate,
             'last_modified_end' => $endDate,
-            'handlers' => array(
-                (object) array (
-                    'extension' => '.json',
-                    'type' => 'jsonfile',
-                    'record_separator' => "\n"
-                )
+            'handler' => (object) array(
+                'extension' => '.json',
+                'type' => 'jsonfile',
+                'record_separator' => "\n"
             )
         );
         $options = new DataEndpointOptions($config);
@@ -194,7 +190,9 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         $scanner->verify();
         $scanner->connect();
 
-        // The directory isn't scanned until we iterate over it.
+        // The directory is scanned when connect() is called but each file isn't processed
+        // until we iterate over it.
+
         foreach ( $scanner as $key => $val ) {
         }
 

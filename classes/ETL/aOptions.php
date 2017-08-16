@@ -55,7 +55,7 @@ abstract class aOptions extends \stdClass implements \Iterator
         "description" => null,
 
         // TRUE if this aggregator is enabled
-        "enabled" => false,
+        "enabled" => true,
 
         // Object containing path information for the various directories used by the ETL process (table
         // configs, data, etc.)
