@@ -162,7 +162,7 @@ class Column extends NamedEntity implements iEntity
             //
             // **WARNING**
             //
-            // Having multime TIMESTAMP columns in the same table may result in unexpected behavior
+            // Having multiple TIMESTAMP columns in the same table may result in unexpected behavior
             // for the 2nd or following columns.
             //
             // See:
