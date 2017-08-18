@@ -254,27 +254,21 @@ class EtlOverseer extends Loggable implements iEtlOverseer
         // initialization may need to connect to a data endpoint to obtain the handle so these need
         // to be done first.
 
-        try {
-            if ( ! $this->verifiedDataEndpoints ) {
-                $leaveConnected = ( $this->etlOverseerOptions->isDryrun() ? false : true );
-                $this->verifyDataEndpoints($etlConfig, $leaveConnected);
-            }
+        if ( ! $this->verifiedDataEndpoints ) {
+            $leaveConnected = ( $this->etlOverseerOptions->isDryrun() ? false : true );
+            $this->verifyDataEndpoints($etlConfig, $leaveConnected);
+        }
 
-            // Verify actions that were specified directly on the command line
-            $actionNames = $this->etlOverseerOptions->getActionNames();
-            if ( count($actionNames) > 0 ) {
-                $this->standaloneActions = $this->verifyActions($etlConfig, $actionNames);
-            }
+        // Verify actions that were specified directly on the command line
+        $actionNames = $this->etlOverseerOptions->getActionNames();
+        if ( count($actionNames) > 0 ) {
+            $this->standaloneActions = $this->verifyActions($etlConfig, $actionNames);
+        }
 
-            // Verify sections that were specified as part of a pipeline
-            $sectionNames = $this->etlOverseerOptions->getSectionNames();
-            if ( count($sectionNames) > 0 ) {
-                $this->sectionActions = $this->verifySections($etlConfig, $sectionNames);
-            }
-        } catch ( Exception $e ) {
-            $msg = get_class($this) . ": Verification error: " . $e->getMessage();
-            $this->logger->err($msg);
-            return;
+        // Verify sections that were specified as part of a pipeline
+        $sectionNames = $this->etlOverseerOptions->getSectionNames();
+        if ( count($sectionNames) > 0 ) {
+            $this->sectionActions = $this->verifySections($etlConfig, $sectionNames);
         }
 
         // Generate a list of individual actions that will be executed so we can store them in the
