@@ -4,7 +4,7 @@
  * File endpoints that recursively scans a directory for files and instantiates Structured
  * File endpoint each file in a directory (or subdirectory) matching a set of optionally
  * specified criteria. It supports file name pattern matching and last modified dates. The
- * Directory Scanner implements the Iterator interface and iteration spans the union of
+ * Directory Scanner implements the Iterator interface adepnd iteration spans the union of
  * the records in each of the files. For example, if 2 files are found in a directory then
  * the Directory Scanner iterator will span all of the records in both files.
  *
@@ -20,7 +20,7 @@ use ETL\DataEndpoint\StructuredFile;
 use Exception;
 use Log;
 
-class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
+class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComplexDataRecords
 {
     /** -----------------------------------------------------------------------------------------
      * The ENDPOINT_NAME constant defines the name for this endpoint that should be used
@@ -32,16 +32,6 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
     const ENDPOINT_NAME = 'directoryscanner';
 
     /** -----------------------------------------------------------------------------------------
-     * Numeric key to use for the default file extension handler. This should be the only
-     * numeric key used.
-     *
-     * @var integer
-     * ------------------------------------------------------------------------------------------
-     */
-
-    const DEFAULT_HANDLER_KEY = 0;
-
-    /** -----------------------------------------------------------------------------------------
      * The directory path that we will be scanning. This should be a fully qualified path.
      *
      * @var string
@@ -51,7 +41,7 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
     protected $path = null;
 
     /** -----------------------------------------------------------------------------------------
-     * An optional regex that files must match to be identified by the scanner. This
+     * An optional PCRE that files must match to be identified by the scanner. This
      * applies to the file portion of the path only.
      *
      * @var string | null
@@ -61,7 +51,7 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
     protected $filePattern = null;
 
     /** -----------------------------------------------------------------------------------------
-     * An optional regex that directories must match to be identified by the scanner.
+     * An optional PCRE that directories must match to be identified by the scanner.
      *
      * @var string | null
      * ------------------------------------------------------------------------------------------
@@ -71,7 +61,9 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 
     /** -----------------------------------------------------------------------------------------
      * The maximum depth that we will recurse into the directory hierarchy. -1 indicates
-     * no limit.
+     * no limit. The depth is calculated relative to the original path. For example, if the path
+     * is /data/lives/here then all files in /data/lives/here are considered a depth of 1, files
+     * in /data/lives/here/raw are a depth of 2, etc.
      *
      * @var integer | null
      * ------------------------------------------------------------------------------------------
@@ -100,19 +92,14 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
     protected $lastModifiedEndTimestamp = null;
 
     /** -----------------------------------------------------------------------------------------
-     * An array containing handler templates for various file types, which will be
-     * augmented with the file name and path when the handler is instantiated. If a single
-     * handler with no extension specified then it will be used for all files. If multiple
-     * handlers are specified it is required that they also specify a file extension
-     * (string) to determine which hanbdler gets applied to apply to a particular
-     * file. When multiple handlers are specified, an extension of NULL indicates a
-     * catch-all handler.
+     * A handler template that will be used to instantiate the handler for each file matched
+     * by the directory scanner. The file name will be injected into the template.
      *
-     * @var array
+     * @var object | null
      * ------------------------------------------------------------------------------------------
      */
 
-    protected $handlerTemplateList = array();
+    protected $handlerTemplate = null;
 
     /** -----------------------------------------------------------------------------------------
      * The name of the current file that we are parsing.
@@ -131,6 +118,34 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
      */
 
     private $currentFileIterator = null;
+
+    /** -----------------------------------------------------------------------------------------
+     * The name of the first file that was parsed. This allows us to reset the iterator witout
+     * re-parsing the first file.
+     *
+     * @var string
+     * ------------------------------------------------------------------------------------------
+     */
+
+    private $firstFilename = null;
+
+    /** -----------------------------------------------------------------------------------------
+     * The iterator for the first file that was parsed. This allows us to reset the iterator witout
+     * re-parsing the first file.
+     *
+     * @var Iterator
+     * ------------------------------------------------------------------------------------------
+     */
+
+    private $firstFileIterator = null;
+
+    /**
+     * The first record parsed from the first file.
+     *
+     * @var mixed
+     */
+
+    private $firstRecord = null;
 
     /** -----------------------------------------------------------------------------------------
      * The number of files that have been scanned so far. Note that an empty file
@@ -161,13 +176,13 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
     {
         parent::__construct($options, $logger);
 
-        $requiredKeys = array('path', 'handlers');
+        $requiredKeys = array('path', 'handler');
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         $messages = array();
         $propertyTypes = array(
             'path'                => 'string',
-            'handlers'            => 'array',
+            'handler'             => 'object',
             'file_pattern'        => 'string',
             'directory_pattern'   => 'string',
             'recursion_depth'     => 'int',
@@ -196,6 +211,12 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
                         $this->logger->info(
                             sprintf("%s: Relative path provided, absolute path recommended", $this)
                         );
+                        if ( isset($options->paths->data_dir) ) {
+                            $this->logger->info(
+                                sprintf("Qualifying relative path %s with %s", $this->path, $options->paths->data_dir)
+                            );
+                            $this->path = \xd_utilities\qualify_path($this->path, $options->paths->data_dir);
+                        }
                     }
                     break;
 
@@ -231,44 +252,33 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
                     }
                     break;
 
+                case 'handler':
+                    $validEndpoints = \ETL\DataEndpoint::getDataEndpointNames();
+                    if ( ! isset($value->type) ) {
+                        $this->logAndThrowException("Handler does not specify endpoint type");
+                    } elseif ( ! in_array($value->type, $validEndpoints) ) {
+                        $this->logAndThrowException(
+                            sprintf(
+                                "Unknown handler type '%s'. Valid types are: %s",
+                                $value->type,
+                                implode(', ', $validEndpoints)
+                            )
+                        );
+                    } else {
+                        $this->handlerTemplate = $value;
+
+                        // If the paths block has been set in the options, add it to the handler template
+                        // so it can take advantage of the paths passed down from the configuration.
+
+                        if ( isset($options->paths) ) {
+                            $this->handlerTemplate->paths = $options->paths;
+                        }
+                    }
+                    break;
+
                 default:
                     break;
             }
-        }
-
-        $numHandlers = count($options->handlers);
-
-        if ( 0 == $numHandlers ) {
-            $this->logAndThrowException("At least 1 handler must be specified");
-        }
-
-        $numDefaultHandlers = 0;
-
-        foreach ( $options->handlers as $handler ) {
-            if ( isset($handler->extension) ) {
-                // Normalize the extension to not contain a period
-                $ext = $handler->extension;
-                if ( 0 === strrpos($ext, '.') ) {
-                    $ext = substr($ext, 1);
-                }
-                $this->logger->debug(
-                    sprintf("%s: Adding handler for file extension '%s'", $this, $ext)
-                );
-                $this->handlerTemplateList[$ext] = $handler;
-            } else {
-                // Assign a default handler.
-                $this->logger->debug(
-                    sprintf("%s: Adding default file handler", $this)
-                );
-                $this->handlerTemplateList[self::DEFAULT_HANDLER_KEY] = $handler;
-                $numDefaultHandlers++;
-            }
-        }
-
-        if ( $numDefaultHandlers > 1 ) {
-            $this->logAndThrowException(
-                sprintf("%d default handlers specified, only 1 is allowed", $numDefaultHandlers)
-            );
         }
 
         $this->key = md5(implode($this->keySeparator, array($this->type, $this->path, $this->name)));
@@ -339,16 +349,15 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
     }  // getLastModifiedEndTime()
 
     /** -----------------------------------------------------------------------------------------
-     * @return array The list of handler templates. If more than one items is in the list
-     * the keys will be strings represneting the file extensions matching the template
-     * with an index of 0 for the catch-all handler.
+     * @return object The handler template that will be used to create a configuration for the
+     * file handlers.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getHandlerTemplateList()
+    public function getHandlerTemplate()
     {
-        return $this->handlerTemplateList;
-    }  // getHandlerTemplateList()
+        return $this->handlerTemplate;
+    }  // getHandlerTemplate()
 
     /** -----------------------------------------------------------------------------------------
      * @return integer The number of files scanned so far.
@@ -436,7 +445,7 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
         );
 
         try {
-            $directoryIterator = new \RecursiveDirectoryIterator($this->path);
+            $directoryIterator = new \RecursiveDirectoryIterator($this->path, \FilesystemIterator::FOLLOW_SYMLINKS);
             $iterator = $directoryIterator;
         } catch ( Exception $e ) {
             $this->logAndThrowException(
@@ -509,18 +518,37 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
                 $patternCallbackIterator = new \CallbackFilterIterator(
                     $iterator,
                     function ($current, $key, $iterator) use ($dirPattern, $filePattern) {
-                        if (
-                            null !== $dirPattern
-                            && ! preg_match($dirPattern, $current->getPath())
-                        ) {
-                            return false;
+
+                        // Return TRUE only if both directory and file patterns match.
+
+                        if ( null !== $dirPattern ) {
+                            if ( false === ($match = @preg_match($dirPattern, $current->getPath())) ) {
+                                $err = error_get_last();
+                                $this->logAndThrowException(
+                                    sprintf(
+                                        "Error matching directory pattern '%s': %s",
+                                        $dirPattern,
+                                        $err['message']
+                                    )
+                                );
+                            } elseif ( ! $match ) {
+                                return false;
+                            }
                         }
 
-                        if (
-                            null !== $filePattern
-                            && ! preg_match($filePattern, $current->getFilename())
-                        ) {
-                            return false;
+                        if ( null !== $filePattern ) {
+                            if ( false === ($match = @preg_match($filePattern, $current->getFilename())) ) {
+                                $err = error_get_last();
+                                $this->logAndThrowException(
+                                    sprintf(
+                                        "Error matching file pattern '%s': %s",
+                                        $filePattern,
+                                        $err['message']
+                                    )
+                                );
+                            } elseif ( ! $match ) {
+                                return false;
+                            }
                         }
 
                         return true;
@@ -638,12 +666,17 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
      * be a valid value for the iterator, This is why valid() MUST be called before current().
      *
      * @see Iterator::current()
+     * @see current()
      * ------------------------------------------------------------------------------------------
      */
 
     public function current()
     {
-        return $this->currentFileIterator->current();
+        if ( null === $this->currentFileIterator ) {
+            return false;
+        } else {
+            return $this->currentFileIterator->current();
+        }
     }  // current()
 
     /** -----------------------------------------------------------------------------------------
@@ -651,12 +684,17 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
      * are processing in that file.
      *
      * @see Iterator::key()
+     * @see key()
      * ------------------------------------------------------------------------------------------
      */
 
     public function key()
     {
-        return sprintf("%s[%s]", $this->currentFilename, $this->currentFileIterator->key());
+        if ( null === $this->currentFileIterator ) {
+            return null;
+        } else {
+            return sprintf("%s[%s]", $this->currentFilename, $this->currentFileIterator->key());
+        }
     }  // key()
 
     /** -----------------------------------------------------------------------------------------
@@ -669,13 +707,16 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 
     public function next()
     {
-        $this->currentFileIterator->next();
+        if ( null !== $this->currentFileIterator ) {
+            $this->currentFileIterator->next();
+        }
     }  // next()
 
     /** -----------------------------------------------------------------------------------------
      * Note that calling rewind() rewinds the entire directory scan, not the current file. After
      * rewinding the directory scan, reset any pointers and call valid() to ensure that we are
-     * pointing at the first record in the first non-empty file.
+     * pointing at the first record in the first non-empty file. The side effect of this is that we
+     * must re-parse the first non-empty file.
      *
      * @see Iterator::rewind()
      * ------------------------------------------------------------------------------------------
@@ -685,8 +726,20 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
     {
         $this->handle->rewind();
         $this->numFilesScanned = 0;
-        $this->currentFileIterator = null;
-        $this->valid();
+        $this->numRecordsParsed = 0;
+
+        // If we have already parsed the first file, reset the current file to the first file so
+        // we don't need to re-parse the file.
+
+        if ( null !== $this->firstFileIterator ) {
+            $this->currentFileIterator = $this->firstFileIterator;
+            $this->currentFilename = $this->firstFilename;
+            $this->currentFileIterator->rewind();
+        } else {
+            $this->currentFileIterator = null;
+            $this->valid();
+        }
+
     }  // rewind()
 
     /** -----------------------------------------------------------------------------------------
@@ -728,31 +781,57 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
             // By default the key is the path and the value is an SplFileInfo object.
             // http://php.net/manual/en/class.splfileinfo.php
 
-            return $this->initializeCurrentFileIterator($this->handle->key());
+            $this->logger->debug("Initializing first file iterator");
 
-        } else {
+            $this->initializeCurrentFileIterator($this->handle->key());
 
-            // If there are records available in the current file, return TRUE. If not, we will need
-            // to move on to the next file.
+            // Save the first file iterator so we don't need to re-parse the first file on rewind
 
-            if ( $this->currentFileIterator->valid() ) {
-                return true;
-            } else {
+            $this->firstFileIterator = $this->currentFileIterator;
+            $this->firstFilename = $this->currentFilename;
 
-                // Since a file could be empty, move on to the next file if we initialize a file
-                // that contains no valid records.
+        } elseif ( ! $this->currentFileIterator->valid() ) {
 
+            // If there are no records available in the current file we will need to move on to the
+            // next file. Since a file could be empty, move on to the next file if we initialize a
+            // file that contains no valid records.
+
+            $this->logger->debug("Current file iterator no longer valid, checking next iterator.");
+            $this->handle->next();
+
+            while ($this->handle->valid() && ! $this->initializeCurrentFileIterator($this->handle->key()) ) {
                 $this->handle->next();
-
-                while ($this->handle->valid() && ! $this->initializeCurrentFileIterator($this->handle->key()) ) {
-                    $this->handle->next();
-                }
-
-                return $this->currentFileIterator->valid();
             }
+
         }
 
+        return $this->currentFileIterator->valid();
+
     }  // valid()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see Countable::count()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function count()
+    {
+        return $this->numRecordsParsed;
+    }  // count()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see iFile::getMode()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getMode()
+    {
+        if ( null === $this->currentFileIterator ) {
+            return null;
+        } else {
+            return $this->currentFileIterator->getMode();
+        }
+    } // getMode()
 
     /** -----------------------------------------------------------------------------------------
      * Set up the internal file iterator for the specified file. This will create a handler based on
@@ -761,32 +840,18 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
      *
      * @param string $filename The filename that we are initializing
      *
-     * @returns boolean The value of valid() for the current file handler.
+     * @return boolean The value of valid() for the current file handler.
      * ------------------------------------------------------------------------------------------
      */
 
     private function initializeCurrentFileIterator($filename)
     {
-        // SplFileInfo::getExtension() is not defined until PHP 5.3.6
+        $this->logger->info(sprintf('Scanning file: %s', $filename));
 
-        $extension = '';
-        if ( false !== ($pos = strrpos($filename, '.')) ) {
-            $extension = substr($filename, $pos + 1);
-        }
+        // NOTE: We are cloning the handler template because it is an object and will be passed
+        // by reference otherwise and we do not want to modify the template itself.
 
-        $this->logger->debug(
-            sprintf('Scanning file: %s (%s)', $filename, $extension)
-        );
-
-        // Use the file extension and use it to look up a handler. If no extension was found, use
-        // the default handler. NOTE: We are cloning the handler template because it is an object
-        // and will be passed by reference otherwise.
-
-        if ( array_key_exists($extension, $this->handlerTemplateList) ) {
-            $handlerConfig = clone $this->handlerTemplateList[$extension];
-        } else {
-            $handlerConfig = clone $this->handlerTemplateList[self::DEFAULT_HANDLER_KEY];
-        }
+        $handlerConfig = clone $this->handlerTemplate;
 
         // Inject the current file data into the handler config and parse the file
 
@@ -802,12 +867,20 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
         }
 
         $fileHandler->verify();
-        $fileHandler->parse();
+        $record = $fileHandler->parse();
+
+        // Save the first record parsed from the first file so we can return it from parse()
+
+        if ( null === $this->firstRecord ) {
+            $this->firstRecord = $record;
+        }
 
         $this->currentFileIterator = $fileHandler;
         $this->currentFilename = $filename;
         $this->numFilesScanned++;
         $this->numRecordsParsed += $fileHandler->count();
+
+        $this->logger->info(sprintf('Found %d records', $fileHandler->count()));
 
         return $this->currentFileIterator->valid();
 
@@ -820,6 +893,247 @@ class DirectoryScanner extends aDataEndpoint implements iDataEndpoint, \Iterator
 
     public function __toString()
     {
-        return sprintf('%s (name=%s, path=%s)', get_class($this), $this->name, $this->path);
+        $handlerString = (
+            null !== $this->handlerTemplate
+            ? sprintf(', handler=%s', $this->handlerTemplate->type)
+            : ""
+        );
+
+        return sprintf('%s (name=%s, path=%s%s)', get_class($this), $this->name, $this->path, $handlerString);
     }  // __toString()
+
+    /** -----------------------------------------------------------------------------------------
+     * If parse() has been called we can pull the value of record separator from the file handler,
+     * otherwise check the handler template.
+     *
+     * @see iStructuredFile::getRecordSeparator()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getRecordSeparator()
+    {
+        if ( null !== $this->currentFileIterator ) {
+            return $this->currentFileIterator->getRecordSeparator();
+        } else {
+            return (
+                isset($this->handlerTemplate->record_separator)
+                ? $this->handlerTemplate->record_separator
+                : null
+            );
+        }
+    }  // getRecordSeparator()
+
+    /** -----------------------------------------------------------------------------------------
+     * If parse() has been called we can pull the value of field separatp from the file handler,
+     * otherwise check the handler template.
+     *
+     * @see iStructuredFile::getFieldSeparator()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getFieldSeparator()
+    {
+        if ( null !== $this->currentFileIterator ) {
+            return $this->currentFileIterator->getFieldSeparator();
+        } else {
+            return (
+                isset($this->handlerTemplate->field_separator)
+                ? $this->handlerTemplate->field_separator
+                : null
+            );
+        }
+    }  // getFieldSeparator()
+
+    /** -----------------------------------------------------------------------------------------
+     * If parse() has been called we can pull the value of header record from the file handler,
+     * otherwise check the handler template.
+     *
+     * @see iStructuredFile::hasHeaderRecord()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function hasHeaderRecord()
+    {
+        if ( null !== $this->currentFileIterator ) {
+            return $this->currentFileIterator->getRecordFieldNames();
+        } else {
+            return (
+                isset($this->handlerTemplate->header_record)
+                ? $this->handlerTemplate->header_record
+                : true
+            );
+        }
+    }  // hasHeaderRecord()
+
+    /** -----------------------------------------------------------------------------------------
+     * If parse() has been called we can pull the field names from the file handler, otherwise
+     * check the handler template.
+     *
+     * @see iStructuredFile::getRecordFieldNames()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getRecordFieldNames()
+    {
+        if ( null !== $this->currentFileIterator ) {
+            return $this->currentFileIterator->getRecordFieldNames();
+        } else {
+            return (
+                isset($this->handlerTemplate->field_names)
+                ? $this->handlerTemplate->field_names
+                : null
+            );
+        }
+    }  //getRecordFieldNames()
+
+    /** -----------------------------------------------------------------------------------------
+     * If parse() has been called we can pull the discovered field names from the file handler,
+     * otherwise return NULL.
+     *
+     * @see iStructuredFile::getDiscoveredRecordFieldNames()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getDiscoveredRecordFieldNames()
+    {
+        if ( null !== $this->currentFileIterator ) {
+            return $this->currentFileIterator->getDiscoveredRecordFieldNames();
+        } else {
+            return null;
+        }
+    } // getDiscoveredRecordFieldNames()
+
+    /** -----------------------------------------------------------------------------------------
+     * If parse() has been called we can pull the attached filter list from the file handler,
+     * otherwise return an empty array().
+     *
+     * @see iStructuredFile::getAttachedFilters()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getAttachedFilters()
+    {
+        if ( null !== $this->currentFileIterator ) {
+            return $this->currentFileIterator->getAttachedFilters();
+        } else {
+            return array();
+        }
+    }  // getAttachedFilters()
+
+    /** -----------------------------------------------------------------------------------------
+     * For a structured file endpoint, parse() must be called prior to iterating over the
+     * data, but the DirectoryScanner endpoint will automatically handle this when it
+     * initializes each file handler. This method is for compatibility with
+     * iStructuredFile behavior.
+     *
+     * @see iStructuredFile::parse()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function parse()
+    {
+        // If current file iterator is NULL then initialize it
+
+        if ( null === $this->currentFileIterator ) {
+            $this->valid();
+        }
+
+        return $this->firstRecord;
+
+    }  // parse()
+
+    /** -----------------------------------------------------------------------------------------
+     * This class does not support complex data records directly, but relies on the handler.
+     *
+     * @see iStructuredFile::supportsComplexDataRecords()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function supportsComplexDataRecords()
+    {
+        // If current file iterator is NULL then initialize it
+
+        if ( null === $this->currentFileIterator ) {
+            $this->valid();
+        }
+
+        return (
+            null === $this->currentFileIterator
+            ? false
+            : $this->currentFileIterator->supportsComplexDataRecords()
+        );
+
+    }  // supportsComplexDataRecords()
+
+    /** -----------------------------------------------------------------------------------------
+     * This class does not support complex data records directly, but relies on the handler so
+     * pass all iComplexDataRecords methods through to the handler if it supports them.
+     *
+     * @see iComplexDataRecords::validateDestinationMapSourceFields()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function validateDestinationMapSourceFields(array $destinationTableMap)
+    {
+        if ( $this->supportsComplexDataRecords() ) {
+            return $this->currentFileIterator->validateDestinationMapSourceFields(
+                $destinationTableMap
+            );
+        } else {
+            $this->logAndThrowException(
+                sprintf(
+                    "Handler endpoint '%s' does not support complex data records",
+                    $this->currentFileIterator
+                )
+            );
+        }
+    }  // validateDestinationMapSourceFields()
+
+    /** -----------------------------------------------------------------------------------------
+     * This class does not support complex data records directly, but relies on the handler so
+     * pass all iComplexDataRecords methods through to the handler if it supports them.
+     *
+     * @see iComplexDataRecords::isComplexSourceField()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function isComplexSourceField($sourceField)
+    {
+        if ( $this->supportsComplexDataRecords() ) {
+            return $this->currentFileIterator->isComplexSourceField($sourceField);
+        } else {
+            $this->logAndThrowException(
+                sprintf(
+                    "Handler endpoint '%s' does not support complex data records",
+                    $this->currentFileIterator
+                )
+            );
+        }
+    }  // isComplexSourceField()
+
+    /** -----------------------------------------------------------------------------------------
+     * This class does not support complex data records directly, but relies on the handler so
+     * pass all iComplexDataRecords methods through to the handler if it supports them.
+     *
+     * @see iComplexDataRecords::evaluateComplexSourceField()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function evaluateComplexSourceField($sourceField, $record, $invalidRefValue = null)
+    {
+        if ( $this->supportsComplexDataRecords() ) {
+            return $this->currentFileIterator->evaluateComplexSourceField(
+                $sourceField,
+                $record,
+                $invalidRefValue
+            );
+        } else {
+            $this->logAndThrowException(
+                sprintf(
+                    "Handler endpoint '%s' does not support complex data records",
+                    $this->currentFileIterator
+                )
+            );
+        }
+    }  // evaluateComplexSourceField()
 }  // class DirectoryScanner

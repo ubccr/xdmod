@@ -9,6 +9,7 @@ namespace ETL\DataEndpoint;
 
 use Exception;
 use Log;
+use ETL\JsonPointer;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint\Filter\ExternalProcess;
 
@@ -16,7 +17,7 @@ use JsonSchema\Validator;
 use JsonSchema\SchemaStorage;
 use JsonSchema\Constraints\Factory;
 
-class JsonFile extends aStructuredFile implements iStructuredFile
+class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataRecords
 {
     /** -----------------------------------------------------------------------------------------
      * The ENDPOINT_NAME constant defines the name for this endpoint that should be used
@@ -239,6 +240,70 @@ class JsonFile extends aStructuredFile implements iStructuredFile
             return $arrayRecord;
         }
     }  // createReturnRecord()
+
+    /** -----------------------------------------------------------------------------------------
+     * Validate the source record fields in the destination field map.
+     * aRdbmsDestinationAction::verifyDestinationMapSourceFields() has a hook to allow the
+     * verification of the source record fields to be handled by the source endpoint if it
+     * implements iValidateDestinationMapSourceFields.  Since a JSON file may contain a complex
+     * object with nested objects and arrays we allow the destination field map to specify JSON
+     * pointers in addition to the source field names themselves.
+     *
+     * NOTE: We will only check that a JSON pointer is correctly formatted, not that it correctly
+     * addresses the data since we do not have access to the records at this time.
+     *
+     * @see iComplexDataRecords::validateDestinationMapSourceFields()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function validateDestinationMapSourceFields(array $destinationTableMap)
+    {
+        $sourceRecordFields = $this->getRecordFieldNames();
+        $missing = array();
+
+        foreach ( $destinationTableMap as $destField => $sourceField ) {
+            // If the source field matches a field in the source record or it is a valid JSON
+            // pointer and the first tiken matches a field in the source record.
+            if (
+                in_array($sourceField, $sourceRecordFields) ||
+                (
+                    JsonPointer::isValidPointer($sourceField)
+                    && in_array(JsonPointer::getFirstToken($sourceField), $sourceRecordFields)
+                )
+            ) {
+                continue;
+            }
+
+            $missing[$destField] = $sourceField;
+        }
+
+        return $missing;
+
+    }  // validateDestinationMapSourceFields()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see iComplexDataRecords::isComplexSourceField()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function isComplexSourceField($sourceField)
+    {
+        return JsonPointer::isValidPointer($sourceField);
+    }  // isComplexSourceField()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see iComplexDataRecords::evaluateComplexSourceField()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function evaluateComplexSourceField($sourceField, $record, $invalidRefValue = null)
+    {
+        try {
+            return JsonPointer::extractFragment($record, $sourceField);
+        } catch ( Exception $e ) {
+            return $invalidRefValue;
+        }
+    }  // evaluateComplexSourceField()
 
     /** -----------------------------------------------------------------------------------------
      * Implementation of json_last_error_msg() for pre PHP 5.5 systems.
