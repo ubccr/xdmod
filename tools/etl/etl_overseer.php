@@ -398,7 +398,10 @@ try {
     $etlConfig->setLogger($logger);
     $etlConfig->initialize();
 } catch ( Exception $e ) {
-    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+    $msg = sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString());
+    $logger->err($msg);
+    fwrite(STDERR, $msg . PHP_EOL);
+    exit(1);
 }
 
 Utilities::setEtlConfig($etlConfig);
@@ -421,8 +424,10 @@ if ( count($scriptOptions['process-sections']) > 0 ) {
     }
 
     if ( count($missing) > 0 ) {
-        fwrite(STDERR, "Unknown sections: " . implode(", ", $missing) . "\n");
-        exit();
+        $msg = sprintf("Unknown sections: %s", implode(", ", $missing));
+        $logger->err($msg);
+        fwrite(STDERR, $msg . PHP_EOL);
+        exit(1);
     }
 }  // if ( count($scriptOptions['process-sections'] > 0) )
 
@@ -430,9 +435,15 @@ if ( count($scriptOptions['process-sections']) > 0 ) {
 // List any requested resources. After listing, exit.
 
 if ( false === ($utilityEndpoint = $etlConfig->getGlobalEndpoint('utility')) ) {
-    $msg = "Global utility endpoint not defined, cannot query database for resource code mapping";
-    exit("$msg\n". $e->getTraceAsString() . "\n");
-    throw new Exception($msg);
+    $msg = sprintf(
+        "%s%s%s",
+        "Global utility endpoint not defined, cannot query database for resource code mapping",
+        PHP_EOL,
+        $e->getTraceAsString()
+    );
+    $logger->err($msg);
+    fwrite(STDERR, $msg . PHP_EOL);
+    exit(1);
 }
 $utilitySchema = $utilityEndpoint->getSchema();
 
@@ -455,7 +466,10 @@ if ( $showList ) {
                 try {
                     $result = $utilityEndpoint->getHandle()->query($sql);
                 } catch (Exception $e) {
-                    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+                    $msg = sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString());
+                    $logger->err($msg);
+                    fwrite(STDERR, $msg . PHP_EOL);
+                    exit(1);
                 }
                 $headings = array("Resource Code","Start Date","End Date");
                 print implode(LIST_SEPARATOR, $headings) . "\n";
@@ -550,7 +564,7 @@ if ( $showList ) {
                 break;
         }
     }
-    exit();
+    exit(0);
 }  // if ( $showList )
 
 // ------------------------------------------------------------------------------------------
@@ -560,7 +574,10 @@ if ( $showList ) {
 try {
     $result = $utilityEndpoint->getHandle()->query("SELECT id, code from {$utilitySchema}.resourcefact");
 } catch (Exception $e) {
-    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+    $msg = sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString());
+    $logger->err($msg);
+    fwrite(STDERR, $msg . PHP_EOL);
+    exit(1);
 }
 $scriptOptions['resource-code-map'] = array();
 
@@ -571,7 +588,10 @@ foreach ( $result as $row ) {
 try {
     $overseerOptions = new EtlOverseerOptions($scriptOptions, $logger);
 } catch ( Exception $e ) {
-    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+    $msg = sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString());
+    $logger->err($msg);
+    fwrite(STDERR, $msg . PHP_EOL);
+    exit(1);
 }
 
 // If nothing was requested, exit.
@@ -590,14 +610,19 @@ if ( count($scriptOptions['process-sections']) == 0 &&
 $overseer = new EtlOverseer($overseerOptions, $logger);
 if ( ! ($overseer instanceof iEtlOverseer ) )
 {
-    $msg = "EtlOverseer is not an instance of iEtlOverseer";
-    exit($msg);
+    $msg = sprintf("EtlOverseer (%s) is not an instance of iEtlOverseer", get_class($overseer));
+    $logger->err($msg);
+    fwrite(STDERR, $msg . PHP_EOL);
+    exit(1);
 }
 
 try {
     $overseer->execute($etlConfig);
 } catch ( Exception $e ) {
-    exit($e->getMessage() . "\n" . $e->getTraceAsString() . "\n");
+    $msg = sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString());
+    $logger->err($msg);
+    fwrite(STDERR, $msg . PHP_EOL);
+    exit(1);
 }
 
 // NOTE: "process_end_time" is needed for log summary."
