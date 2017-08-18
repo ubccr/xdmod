@@ -13,7 +13,7 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
     private $users;
 
     /**
-     * @var array of acls to use during the authorization attempts.
+     * @var array  of acls to use during the authorization attempts.
      */
     private $requestedAcls;
 
