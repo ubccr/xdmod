@@ -10,6 +10,9 @@
 require __DIR__ . '/../../configuration/linker.php';
 restore_exception_handler();
 
+// Disable PHP's memory limit.
+ini_set('memory_limit', -1);
+
 // Character to use when separating list output
 const LIST_SEPARATOR = "\t";
 
