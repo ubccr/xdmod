@@ -8,37 +8,6 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var array of mock XDUser classes
-     */
-    private $users;
-
-    /**
-     * @var array  of acls to use during the authorization attempts.
-     */
-    private $requestedAcls;
-
-    public function __construct($name = null, array $data = array(), $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        $this->users = array(
-            $this->createUser(array(STATUS_MANAGER_ROLE, 'usr'), STATUS_MANAGER_ROLE),
-            $this->createUser(array('cd', 'usr'), 'cd'),
-            $this->createUser(array('pi', 'usr'), 'pi'),
-            $this->createUser(array('usr'), 'usr'),
-            $this->createUser(array('usr', SAB_MEMBER), SAB_MEMBER),
-            $this->createUser(array('pub'), 'pub')
-        );
-
-        $this->requestedAcls = array(
-            array(STATUS_MANAGER_ROLE),
-            array('cd'),
-            array('pi'),
-            array('usr'),
-            array(SAB_MEMBER)
-        );
-    }
-
-    /**
      * @dataProvider generateUserDataSet
      * @param mixed $user
      * @param array $requestedAcl
@@ -123,54 +92,42 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
         $accessDeniedException = 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException';
         $unauthorizedException = 'Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException';
 
-        $defaultMessage = Authorization::_DEFAULT_MESSAGE;
-        $notASABMember = $defaultMessage . "\n[ Not a SAB Member ]";
-        $notAManager = $defaultMessage . "\n[ Not a Manager ]";
-        $notACenterDirector = $defaultMessage . "\n [ Not a Center Director ]";
-        $notAuthorized = $defaultMessage . " [ Not Authorized ]";
+        $notAuthorized = Authorization::_DEFAULT_MESSAGE . " [ Not Authorized ]";
 
         $tests = array(
             array($mgr, null, null, null),
             array($mgr, ROLE_ID_MANAGER, null, null),
-            array($mgr, STATUS_CENTER_DIRECTOR_ROLE, $accessDeniedException, $notACenterDirector),
-            array($mgr, SAB_MEMBER, null, null),
-            // This should not be the expected behavior
-            array($mgr, STATUS_MANAGER_ROLE, $accessDeniedException, $notAuthorized),
 
             array($cd, null, null, null),
+            array($cd, ROLE_ID_CENTER_DIRECTOR, null, null),
             array($cd, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized),
-            // This should not be the expected behavior
-            array($cd, STATUS_CENTER_DIRECTOR_ROLE, $accessDeniedException, $notAuthorized),
-            array($cd, STATUS_MANAGER_ROLE, $accessDeniedException, $notAManager),
-            array($cd, SAB_MEMBER, $accessDeniedException, $notASABMember),
 
             array($pi, null, null, null),
-            array($pi, 'pi', null, null),
-            array($pi, STATUS_CENTER_DIRECTOR_ROLE, $accessDeniedException, $notACenterDirector),
+            array($pi, ROLE_ID_PRINCIPAL_INVESTIGATOR, null, null),
+            array($pi, ROLE_ID_USER, null, null),
             array($pi, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized),
-            array($pi, STATUS_MANAGER_ROLE, $accessDeniedException, $notAManager),
-            array($pi, SAB_MEMBER, $accessDeniedException, $notASABMember),
+            array($pi, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized),
 
             array($usr, null, null, null),
-            array($usr, 'usr', null, null),
-            array($usr, STATUS_CENTER_DIRECTOR_ROLE, $accessDeniedException, $notACenterDirector),
+            array($usr, ROLE_ID_USER, null, null),
             array($usr, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized),
-            array($usr, STATUS_MANAGER_ROLE, $accessDeniedException, $notAManager),
-            array($usr, SAB_MEMBER, $accessDeniedException, $notASABMember),
+            array($usr, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized),
+            array($usr, ROLE_ID_PRINCIPAL_INVESTIGATOR, $accessDeniedException, $notAuthorized),
 
             array($sab, null, null, null),
             array($sab, 'sab', null, null),
-            array($sab, STATUS_CENTER_DIRECTOR_ROLE, $accessDeniedException, $notACenterDirector),
+            array($sab, ROLE_ID_USER, null, null),
             array($sab, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized),
-            array($sab, STATUS_MANAGER_ROLE, $accessDeniedException, $notAManager),
-            // This should not be the expected behavior
-            array($sab, SAB_MEMBER, $accessDeniedException, $notAuthorized),
+            array($sab, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized),
+            array($sab, ROLE_ID_PRINCIPAL_INVESTIGATOR, $accessDeniedException, $notAuthorized),
 
             array($pub, null, $unauthorizedException, $notAuthorized),
-            array($pub, STATUS_CENTER_DIRECTOR_ROLE, $unauthorizedException, $notACenterDirector),
+            array($pub, ROLE_ID_PUBLIC, null, null),
+            array($pub, ROLE_ID_USER, $unauthorizedException, $notAuthorized),
+            array($pub, ROLE_ID_CENTER_DIRECTOR, $unauthorizedException, $notAuthorized),
             array($pub, ROLE_ID_MANAGER, $unauthorizedException, $notAuthorized),
-            array($pub, STATUS_MANAGER_ROLE, $unauthorizedException, $notAManager),
-            array($pub, SAB_MEMBER, $unauthorizedException, $notASABMember)
+            array($pub, ROLE_ID_PRINCIPAL_INVESTIGATOR, $unauthorizedException, $notAuthorized)
+
         );
         return $tests;
     }
