@@ -34,7 +34,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
     const KEY_PREFIX = 'prefix';
 
-    const DEFAULT_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure. [ Not Authorized ]';
+    const EXCEPTION_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure. [ Not Authorized ]';
 
     protected $prefix;
 
@@ -270,14 +270,14 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         // is that the user is not a public user.
         $isPublicUser = $user->isPublicUser();
         if (empty($requirements) && $isPublicUser) {
-            throw new UnauthorizedHttpException('xdmod', self::DEFAULT_MESSAGE);
+            throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
         $authorized = $user->hasAcls($requirements);
         if ($authorized === false && !$isPublicUser) {
-            throw new AccessDeniedHttpException(self::DEFAULT_MESSAGE);
+            throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
         } elseif ($authorized === false && $isPublicUser) {
-            throw new UnauthorizedHttpException('xdmod', self::DEFAULT_MESSAGE);
+            throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
         // Return the successfully-authorized user.
