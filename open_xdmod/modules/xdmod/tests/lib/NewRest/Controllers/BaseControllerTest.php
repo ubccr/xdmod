@@ -7,6 +7,8 @@ use NewRest\Controllers\BaseControllerProvider;
 class BaseControllerTest extends \PHPUnit_Framework_TestCase
 {
 
+    const _DEFAULT_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
+
     /**
      * @dataProvider generateUserDataSet
      * @param mixed $user
@@ -92,7 +94,7 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
         $accessDeniedException = 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException';
         $unauthorizedException = 'Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException';
 
-        $notAuthorized = Authorization::_DEFAULT_MESSAGE . " [ Not Authorized ]";
+        $notAuthorized = self::_DEFAULT_MESSAGE . " [ Not Authorized ]";
 
         $tests = array(
             array($mgr, null, null, null),
