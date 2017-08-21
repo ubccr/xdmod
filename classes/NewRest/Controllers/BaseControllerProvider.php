@@ -34,7 +34,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
     const KEY_PREFIX = 'prefix';
 
-    const EXCEPTION_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure. [ Not Authorized ]';
+    const EXCEPTION_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
 
     protected $prefix;
 
