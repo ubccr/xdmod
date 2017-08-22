@@ -1,9 +1,3 @@
-
-// Monkey patching in Date.now in case it's not here already
-// This is for IE8-. In IE9+ ( even IE9 w/ IE8 compatability mode on ) this works
-// just fine.
-Date.now = Date.now || function () { return +new Date; };
-
 // JavaScript Document
 Ext.namespace('CCR', 'CCR.xdmod', 'CCR.xdmod.ui', 'CCR.xdmod.ui.dd', 'XDMoD', 'XDMoD.constants', 'XDMoD.Module', 'XDMoD.regex', 'XDMoD.validator', 'XDMoD.utils', 'CCR.xdmod.reporting');
 
@@ -195,6 +189,8 @@ XDMoD.GlobalToolbar.Contact = function () {
                 break;
             case 'Submit Support Request':
                 new XDMoD.SupportDialog().show();
+                break;
+            default:
                 break;
         }
     };
@@ -497,9 +493,8 @@ CCR.xdmod.ui.login_prompt = null;
 
 CCR.xdmod.ui.createUserManualLink = function (tags) {
 
-    return '<div style="background-image: url(\'gui/images/user_manual.png\'); background-repeat: no-repeat; height: 36px; padding-left: 40px; padding-top: 10px">' +
-        'For more information, please refer to the <a href="javascript:void(0)" onClick="CCR.xdmod.ui.userManualNav(\'' + tags + '\')">User Manual</a>' +
-        '</div>';
+    return '<div style="background-image: url(\'gui/images/user_manual.png\'); background-repeat: no-repeat; height: 36px; padding-left: 40px; padding-top: 10px">' + 'For more information, please refer to the <a href="javascript:void(0)" onClick="CCR.xdmod.ui.userManualNav(\'' + tags + '\')">User Manual</a>' +
+    '</div>';
 
 }; //CCR.xdmod.ui.createUserManualLink
 
@@ -567,7 +562,7 @@ CCR.safelyDecodeJSONResponse = function (response) {
     try {
         responseObject = Ext.decode(response.responseText);
     }
-    catch (e) { }
+    catch (e) {}
 
     return responseObject;
 };
@@ -584,7 +579,7 @@ CCR.checkDecodedJSONResponseSuccess = function (responseObject) {
     try {
         responseSuccessful = responseObject.success === true;
     }
-    catch (e) { }
+    catch (e) {}
 
     return responseSuccessful;
 };
@@ -929,7 +924,7 @@ CCR.xdmod.ui.FadeInWindow = Ext.extend(Ext.Window, { //experimental
     }
 });
 
-function switchLoginView() {
+CCR.xdmod.ui.switchLoginView = function() {
     CCR.xdmod.ui.actionLogin(null, null, true);
 }
 
@@ -948,7 +943,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         name: 'username',
         listeners: {
             keydown: function (a, e) {
-                if (e.getCharCode() == 13) this.focus();
+                if (e.getCharCode() == 13) { 
+                    this.focus();
+                }
             },
             keyup: function (a) {
                 var currentValue = a.getValue();
@@ -974,7 +971,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         name: 'password',
         listeners: {
             keydown: function (a, e) {
-                if (e.getCharCode() == 13) this.focus();
+                if (e.getCharCode() == 13) {
+                    this.focus();
+                } 
                 a.el.dom.type = 'password';
             },
             keyup: function (a) {
@@ -1113,15 +1112,16 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:switchLoginView()">Click here</a> to log in with your local account instead.</span>'
     }];
 
-    var loginItems, title;
+    var loginItems;
+    var title;
 
     if (!forceLocalView) {
         if (CCR.xdmod.features.xsede) {
             loginItems = xsedeLoginItems;
-            title = 'Sign in with Globus'
+            title = 'Sign in with Globus';
         } else if (CCR.xdmod.isFederationConfigured) {
             loginItems = federatedLoginItems;
-            title = 'Sign in with Federation'
+            title = 'Sign in with Federation';
         } else {
             loginItems = stdLoginItems;
             title = 'Sign in locally';
@@ -1161,7 +1161,9 @@ CCR.xdmod.ui.forgot_password = function () {
         name: 'fpemail',
         listeners: {
             keydown: function (a, e) {
-                if (e.getCharCode() === 13) this.focus();
+                if (e.getCharCode() === 13) {
+                    this.focus();
+                }
             },
             keyup: function (a) {
                 var currentValue = a.getValue();
@@ -1191,7 +1193,7 @@ CCR.xdmod.ui.forgot_password = function () {
                 email: txtEmailAddress.getValue()
             };
 
-            var conn = new Ext.data.Connection;
+            var conn = new Ext.data.Connection();
             conn.request({
                 url: '/controllers/user_auth.php',
                 params: objParams,
