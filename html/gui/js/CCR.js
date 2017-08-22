@@ -931,7 +931,7 @@ CCR.xdmod.ui.FadeInWindow = Ext.extend(Ext.Window, { //experimental
 
 CCR.xdmod.ui.switchLoginView = function () {
     CCR.xdmod.ui.actionLogin(null, null, true);
-}
+};
 
 CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
     XDMoD.TrackEvent("Portal", "Sign In link clicked");
@@ -948,13 +948,14 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         name: 'username',
         listeners: {
             keydown: function (a, e) {
-                if (e.getCharCode() == 13) { 
+                if (e.getCharCode() === 13) {
                     this.focus();
                 }
             },
             keyup: function (a) {
                 var currentValue = a.getValue();
                 if (a.prevValue !== currentValue) {
+                    // eslint-disable-next-line no-use-before-define
                     a.prevValue = currentValue;
                 }
             }
@@ -970,19 +971,22 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         name: 'password',
         listeners: {
             keydown: function (a, e) {
-                if (e.getCharCode() == 13) {
+                if (e.getCharCode() === 13) {
                     this.focus();
-                } 
+                }
+                // eslint-disable-next-line no-use-before-define
                 a.el.dom.type = 'password';
             },
             keyup: function (a) {
                 var currentValue = a.getValue();
                 if (a.prevValue !== currentValue) {
+                    // eslint-disable-next-line no-use-before-define
                     a.prevValue = currentValue;
                 }
             },
             change: function (a) {
                 if (a.isEmpty()) {
+                    // eslint-disable-next-line no-use-before-define
                     a.el.dom.type = 'text';
                 }
             }
@@ -1019,11 +1023,13 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
                 params: restArgs,
                 callback: function (options, success, response) {
                     var data = CCR.safelyDecodeJSONResponse(response);
-                    if (success) {
-                        success = CCR.checkDecodedJSONResponseSuccess(data);
-                    }
+                    var response;
 
                     if (success) {
+                        response = CCR.checkDecodedJSONResponseSuccess(data);
+                    }
+
+                    if (response) {
                         XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
 
                         XDMoD.REST.token = data.results.token;
@@ -1043,25 +1049,20 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
                             '<br /><a href="mailto:' + CCR.xdmod.support_email + '?subject=Problem Logging In">' + CCR.xdmod.support_email + '</a>'
                         );
 
-                        presentLoginResponse(
-                            message,
-                            false,
-                            'login_response',
-                            function () {
-                                txtLoginPassword.focus(true);
-                            }
-                        );//presentLoginResponse
-                    } // if(success)
+                        presentLoginResponse(message, false, 'login_response', function () {
+                            txtLoginPassword.focus(true);
+                        });
+                    }
                 }
             });
         }
     }), {
-            xtype: 'tbtext',
-            id: 'login_response'
-        }, {
-            xtype: 'tbtext',
-            html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Click here</a> to reset your password.</span>'
-        }];
+        xtype: 'tbtext',
+        id: 'login_response'
+    }, {
+        xtype: 'tbtext',
+        html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Click here</a> to reset your password.</span>'
+    }];
 
     var xsedeLoginItems = [new Ext.Button({
         text: '<img src="/gui/images/globus_login.png" style="margin-top:-0.1em"> Log in with Globus',
@@ -1149,6 +1150,7 @@ CCR.xdmod.ui.forgot_password = function () {
             keyup: function (a) {
                 var currentValue = a.getValue();
                 if (a.prevValue !== currentValue) {
+                    // eslint-disable-next-line no-use-before-define
                     a.prevValue = currentValue;
                 }
             }
@@ -1195,7 +1197,8 @@ CCR.xdmod.ui.forgot_password = function () {
                             break;
                         }
                     } else {
-                        presentLoginResponse('There was a problem connecting to the portal service provider.', false, 'reset_response');
+                        presentLoginResponse('There was a problem connecting to the portal service provider.', 
+                            false, 'reset_response');
                     }
                     txtEmailAddress.focus();
                 }
