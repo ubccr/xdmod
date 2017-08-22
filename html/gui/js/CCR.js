@@ -929,7 +929,7 @@ CCR.xdmod.ui.FadeInWindow = Ext.extend(Ext.Window, { //experimental
     }
 });
 
-function switchLoginView () {
+function switchLoginView() {
     CCR.xdmod.ui.actionLogin(null, null, true);
 }
 
@@ -947,10 +947,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         enableKeyEvents: true,
         name: 'username',
         listeners: {
-            'keydown': function (a, e) {
+            keydown: function (a, e) {
                 if (e.getCharCode() == 13) this.focus();
             },
-            'keyup': function (a) {
+            keyup: function (a) {
                 var currentValue = a.getValue();
                 if (a.prevValue !== currentValue) {
                     a.prevValue = currentValue;
@@ -973,17 +973,17 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         id: 'txt_login_password',
         name: 'password',
         listeners: {
-            'keydown': function (a, e) {
+            keydown: function (a, e) {
                 if (e.getCharCode() == 13) this.focus();
                 a.el.dom.type = 'password';
             },
-            'keyup': function (a) {
+            keyup: function (a) {
                 var currentValue = a.getValue();
                 if (a.prevValue !== currentValue) {
                     a.prevValue = currentValue;
                 }
             },
-            'change': function (a) {
+            change: function (a) {
                 if (a.isEmpty()) {
                     a.el.dom.type = 'text';
                 }
@@ -1003,22 +1003,22 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         cls: 'xsede_button',
         handler: function () {
             if (txtLoginUsername.getValue().length === 0) {
-                presentLoginResponse('You must specify a username.', false, "login_response", function () {
+                presentLoginResponse('You must specify a username.', false, 'login_response', function () {
                     txtLoginUsername.focus();
                 });
                 return;
             }
 
             if (txtLoginPassword.getValue().length === 0) {
-                presentLoginResponse('You must specify a password.', false, "login_response", function () {
+                presentLoginResponse('You must specify a password.', false, 'login_response', function () {
                     txtLoginPassword.focus();
                 });
                 return;
             }
 
             var restArgs = {
-                'username': txtLoginUsername.getValue(),
-                'password': txtLoginPassword.getValue()
+                username: txtLoginUsername.getValue(),
+                password: txtLoginPassword.getValue()
             };
 
             Ext.Ajax.request({
@@ -1037,7 +1037,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
                         XDMoD.REST.token = data.results.token;
                         XDMoD.TrackEvent('Login Window', 'Login from public session', '(Token: ' + XDMoD.REST.token + ')', true);
 
-                        presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, "login_response");
+                        presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
 
                         parent.location.href = '../../index.php' + parent.XDMoD.referer;
                         parent.location.hash = parent.XDMoD.referer;
@@ -1054,7 +1054,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
                         presentLoginResponse(
                             message,
                             false,
-                            "login_response",
+                            'login_response',
                             function () {
                                 txtLoginPassword.focus(true);
                             }
@@ -1116,8 +1116,16 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
     var loginItems, title;
 
     if (!forceLocalView) {
-        loginItems = CCR.xdmod.features.xsede ? xsedeLoginItems : CCR.xdmod.isFederationConfigured ? federatedLoginItems : stdLoginItems;
-        title = CCR.xdmod.features.xsede ? 'Sign in with Globus' : CCR.xdmod.isFederationConfigured ? 'Sign in with Federation' : 'Sign in locally'
+        if (CCR.xdmod.features.xsede) {
+            loginItems = xsedeLoginItems;
+            title = 'Sign in with Globus'
+        } else if (CCR.xdmod.isFederationConfigured) {
+            loginItems = federatedLoginItems;
+            title = 'Sign in with Federation'
+        } else {
+            loginItems = stdLoginItems;
+            title = 'Sign in locally';
+        }
     } else {
         loginItems = stdLoginItems;
         title = 'Sign in locally';
@@ -1152,10 +1160,10 @@ CCR.xdmod.ui.forgot_password = function () {
         id: 'txt_email_address',
         name: 'fpemail',
         listeners: {
-            'keydown': function (a, e) {
+            keydown: function (a, e) {
                 if (e.getCharCode() === 13) this.focus();
             },
-            'keyup': function (a) {
+            keyup: function (a) {
                 var currentValue = a.getValue();
                 if (a.prevValue !== currentValue) {
                     a.prevValue = currentValue;
@@ -1194,23 +1202,23 @@ CCR.xdmod.ui.forgot_password = function () {
 
                         switch (json.status) {
                             case 'invalid_email_address':
-                                presentLoginResponse('A valid e-mail address must be specified.', false, "reset_response"); reset_response
+                                presentLoginResponse('A valid e-mail address must be specified.', false, 'reset_response');
                                 break;
                             case 'no_user_mapping':
-                                presentLoginResponse('No XDMoD user could be associated with this e-mail address.', false, "reset_response");
+                                presentLoginResponse('No XDMoD user could be associated with this e-mail address.', false, 'reset_response');
                                 break;
                             case 'multiple_accounts_mapped':
-                                presentLoginResponse('Multiple XDMoD accounts are associated with this e-mail address.', false, "reset_response");
+                                presentLoginResponse('Multiple XDMoD accounts are associated with this e-mail address.', false, 'reset_response');
                                 break;
                             case 'success':
-                                presentLoginResponse('Password reset instructions have been sent to this e-mail address.', true, "reset_response");
+                                presentLoginResponse('Password reset instructions have been sent to this e-mail address.', true, 'reset_response');
                                 break;
                             default:
-                                presentLoginResponse('An unknown error occured.', false, "reset_response");
+                                presentLoginResponse('An unknown error occured.', false, 'reset_response');
                             break;
                         }
                     } else {
-                        presentLoginResponse('There was a problem connecting to the portal service provider.', false, "reset_response");
+                        presentLoginResponse('There was a problem connecting to the portal service provider.', false, 'reset_response');
                     }
                     txtEmailAddress.focus();
                 }
