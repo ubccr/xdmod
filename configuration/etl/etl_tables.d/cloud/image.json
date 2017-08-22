@@ -1,31 +1,58 @@
 {
+    "#": "Images are specific to a resource",
+
     "table_definition": {
         "name": "image",
         "engine": "MyISAM",
-        "comment": "Cloud instances",
+        "comment": "Images used by cloud instances",
         "columns": [
             {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
                 "name": "image_id",
-                "type": "int(11)",
+                "type": "int(11) unsigned",
                 "nullable": false,
-                "extra": "auto_increment"
+                "extra": "auto_increment",
+                "comment": "Auto-increment relative to resource_id. Unknown = 1"
             },
             {
                 "name": "image",
                 "type": "varchar(64)",
-                "nullable": false
+                "nullable": false,
+                "default": "Unknown"
             }
         ],
+
+        "#": "Note that the primary key is (resource, image) rather than image_id so we can",
+        "#": "take advantage of ON DUPLICATE KEY UPDATE to update existing entries and still use",
+        "#": "auto_increment for new entries.",
+
         "indexes": [
             {
                 "name": "PRIMARY",
                 "columns": [
+                    "resource_id",
+                    "image"
+                ],
+                "is_unique": true
+            },
+            {
+                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
+                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
+                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
+                "#": "useful when you want to put data into ordered groups.",
+                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
+
+                "name": "autoincrement_key",
+                "columns": [
+                    "resource_id",
                     "image_id"
                 ],
-                "type": "BTREE",
                 "is_unique": true
             }
-        ],
-        "triggers": []
+        ]
     }
 }

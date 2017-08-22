@@ -1,19 +1,19 @@
 {
-    "#": "Event types are global to all cloud resources",
+    "#": "Record types are global to all cloud resources",
 
     "table_definition": {
-        "name": "event_type",
+        "name": "record_type",
         "engine": "MyISAM",
-        "comment": "Event type: start, stop, attach, detach, etc.",
+        "comment": "Record type: accounting, administrative, derived, etc.",
         "columns": [
             {
-                "name": "event_type_id",
+                "name": "record_type_id",
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "Unknown = -1 for global dimensions"
             },
             {
-                "name": "event_type",
+                "name": "record_type",
                 "type": "varchar(64)",
                 "nullable": false,
                 "comment": "Short version or abbrev"
@@ -35,14 +35,14 @@
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "event_type_id"
+                    "record_type_id"
                 ],
                 "is_unique": true
             },
             {
-                "name": "event_type",
+                "name": "record_type",
                 "columns": [
-                    "event_type"
+                    "record_type"
                 ],
                 "is_unique": true
             }

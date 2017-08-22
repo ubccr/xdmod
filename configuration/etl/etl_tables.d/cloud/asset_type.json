@@ -1,4 +1,6 @@
 {
+    "#": "Asset types are global to all cloud resources",
+
     "table_definition": {
         "name": "asset_type",
         "engine": "MyISAM",
@@ -7,7 +9,8 @@
             {
                 "name": "asset_type_id",
                 "type": "int(11)",
-                "nullable": false
+                "nullable": false,
+                "comment": "Unknown = -1 for global dimensions"
             },
             {
                 "name": "asset_type",
@@ -31,27 +34,32 @@
                 "name": "unit_id",
                 "type": "int(11)",
                 "nullable": true,
-                "default": null
+                "default": null,
+                "comment": "Unknown = -1"
             }
         ],
         "indexes": [
-            {
-                "name": "fk_unit",
-                "columns": [
-                    "unit_id"
-                ],
-                "type": "BTREE",
-                "is_unique": false
-            },
             {
                 "name": "PRIMARY",
                 "columns": [
                     "asset_type_id"
                 ],
-                "type": "BTREE",
                 "is_unique": true
+            },
+            {
+                "name": "asset_type",
+                "columns": [
+                    "asset_type"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "fk_unit",
+                "columns": [
+                    "unit_id"
+                ],
+                "is_unique": false
             }
-        ],
-        "triggers": []
+        ]
     }
 }

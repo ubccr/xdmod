@@ -5,6 +5,11 @@
         "comment": "Additional instance information",
         "columns": [
             {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
                 "name": "event_id",
                 "type": "bigint(20) unsigned",
                 "nullable": false
@@ -12,23 +17,30 @@
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
-                "nullable": false,
-                "default": -1
+                "nullable": false
             },
             {
                 "name": "image_id",
                 "type": "int(11)",
-                "nullable": true,
-                "default": -1
+                "nullable": false
             },
             {
                 "name": "host_id",
                 "type": "int(11)",
                 "nullable": true,
-                "default": -1
+                "default": null
             }
         ],
         "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "event_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
             {
                 "name": "fk_instance",
                 "columns": [
@@ -38,14 +50,21 @@
                 "is_unique": false
             },
             {
-                "name": "PRIMARY",
+                "name": "fk_image",
                 "columns": [
-                    "event_id"
+                    "image_id"
                 ],
                 "type": "BTREE",
-                "is_unique": true
+                "is_unique": false
+            },
+            {
+                "name": "fk_host",
+                "columns": [
+                    "host_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
             }
-        ],
-        "triggers": []
+        ]
     }
 }

@@ -1,49 +1,74 @@
 {
+    "#": "Events are spcific to a resource",
+
     "table_definition": {
         "name": "event",
         "engine": "MyISAM",
         "comment": "Events on an instance",
         "columns": [
             {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
                 "name": "event_id",
                 "type": "bigint(20) unsigned",
                 "nullable": false,
-                "comment": "Generated during intermediate ingest"
+                "comment": "Generated during intermediate ingest, relative to the resource."
+            },
+            {
+                "name": "instance_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Optional instance event is associated with. Unknown = 1"
+            },
+            {
+                "name": "event_time_utc",
+                "type": "datetime",
+                "nullable": false,
+                "default": "0000-00-00 00:00:00"
             },
             {
                 "name": "event_type_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1
+                "default": -1,
+                "comment": "Unknown = -1 for global dimensions"
             },
             {
-                "name": "event_time",
-                "type": "timestamp",
+                "name": "record_type_id",
+                "type": "int(11)",
                 "nullable": false,
-                "default": "CURRENT_TIMESTAMP"
+                "default": -1,
+                "comment": "Unknown = -1 for global dimensions"
             },
             {
-                "name": "instance_id",
+                "name": "host_id",
                 "type": "int(11) unsigned",
-                "nullable": true,
-                "default": null,
-                "comment": "Optional instance event is associated with"
-            },
-            {
-                "name": "inferred",
-                "type": "int(1) unsigned",
-                "nullable": true,
-                "default": 0,
-                "comment": "Not explicitly provided by source but inferred from other data"
+                "nullable": false,
+                "comment": "Host where the event occured. Unknown = 1"
             }
         ],
         "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "event_id",
+                    "instance_id",
+                    "event_time_utc",
+                    "event_type_id",
+                    "host_id"
+                ],
+                "is_unique": true
+            },
             {
                 "name": "fk_event_type",
                 "columns": [
                     "event_type_id"
                 ],
-                "type": "BTREE",
                 "is_unique": false
             },
             {
@@ -51,18 +76,8 @@
                 "columns": [
                     "instance_id"
                 ],
-                "type": "BTREE",
                 "is_unique": false
-            },
-            {
-                "name": "PRIMARY",
-                "columns": [
-                    "event_id"
-                ],
-                "type": "BTREE",
-                "is_unique": true
             }
-        ],
-        "triggers": []
+        ]
     }
 }

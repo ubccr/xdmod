@@ -47,7 +47,6 @@
                 "type": "BTREE",
                 "is_unique": true
             }
-        ],
-        "triggers": []
+        ]
     }
 }

@@ -1,9 +1,16 @@
 {
+    "#": "Associate resource-specific events to assets",
+
     "table_definition": {
-        "name": "asset_event",
+        "name": "event_asset",
         "engine": "MyISAM",
         "comment": "Assets associated with an event",
         "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
             {
                 "name": "event_id",
                 "type": "bigint(20) unsigned",
@@ -19,20 +26,19 @@
             {
                 "name": "fk_event",
                 "columns": [
+                    "resource_id",
                     "event_id"
                 ],
-                "type": "BTREE",
                 "is_unique": false
             },
             {
                 "name": "fk_asset",
                 "columns": [
+                    "resource_id",
                     "asset_id"
                 ],
-                "type": "BTREE",
                 "is_unique": false
             }
-        ],
-        "triggers": []
+        ]
     }
 }

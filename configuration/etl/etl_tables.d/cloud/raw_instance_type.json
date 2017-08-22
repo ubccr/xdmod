@@ -1,0 +1,71 @@
+{
+    "#": "Note that some log entries do not have an instance type so all fields are nullable",
+    "#": "and will be filtered out when ingesting into the final table.",
+
+    "table_definition": {
+        "name": "raw_instance_type",
+        "engine": "MyISAM",
+        "comment": "Raw instance type data parsed from log files.",
+        "columns": [
+            {
+                "name": "instance_type",
+                "type": "varchar(64)",
+                "nullable": true,
+                "comment": "Short version or abbrev"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Resource to which this type belongs"
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": true,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "description",
+                "type": "varchar(1024)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "num_cores",
+                "type": "int(11)",
+                "nullable": true,
+                "default": 0
+            },
+            {
+                "name": "memory_mb",
+                "type": "int(11)",
+                "nullable": true,
+                "default": 0
+            },
+            {
+                "name": "disk_gb",
+                "type": "int(11)",
+                "nullable": true,
+                "default": 0,
+                "comment": "Disk size configured in image"
+            },
+            {
+                "name": "start_time",
+                "type": "datetime",
+                "nullable": true,
+                "default": "0000-00-00 00:00:00",
+                "comment": "First time this configuration was encountered, defaults to unknown."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "resource_id",
+                "columns": [
+                    "resource_id"
+                ],
+                "is_unique": false
+            }
+        ]
+    }
+}

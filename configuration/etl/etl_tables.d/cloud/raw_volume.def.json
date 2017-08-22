@@ -1,0 +1,25 @@
+{
+    "#": "Load raw block devices from transformed Euca event log files",
+
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud/raw_volume.json#/table_definition"
+        }
+    ],
+
+    "destination_record_map": {
+        "raw_volume": {
+            "resource_id": "${RESOURCE_ID}",
+            "provider_instance_identifier": "instance_id",
+            "provider_account_number": "account_number",
+            "event_time_utc": "event_time",
+            "provider_volume_identifier": "id",
+            "provider_account_name": "account",
+            "provider_user": "user",
+            "attach_time_utc": "attach_time",
+            "create_time_utc": "create_time",
+            "disk_gb": "size",
+            "type": "backing"
+        }
+    }
+}

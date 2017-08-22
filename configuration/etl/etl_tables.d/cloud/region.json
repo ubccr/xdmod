@@ -1,13 +1,22 @@
 {
+    "#": "Regions are specific to a resource",
+
     "table_definition": {
         "name": "region",
         "engine": "MyISAM",
         "comment": "Cloud regions",
         "columns": [
             {
-                "name": "region_id",
-                "type": "int(11)",
+                "name": "resource_id",
+                "type": "int(11) unsigned",
                 "nullable": false
+            },
+            {
+                "name": "region_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "Auto-increment relative to resource_id. We do not have unknown assets."
             },
             {
                 "name": "region",
@@ -32,12 +41,25 @@
             {
                 "name": "PRIMARY",
                 "columns": [
+                    "resource_id",
+                    "region"
+                ],
+                "is_unique": true
+            },
+            {
+                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
+                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
+                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
+                "#": "useful when you want to put data into ordered groups.",
+                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
+
+                "name": "autoincrement_key",
+                "columns": [
+                    "resource_id",
                     "region_id"
                 ],
-                "type": "BTREE",
                 "is_unique": true
             }
-        ],
-        "triggers": []
+        ]
     }
 }

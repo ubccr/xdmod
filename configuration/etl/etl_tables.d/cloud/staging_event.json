@@ -1,0 +1,132 @@
+{
+    "table_definition": {
+        "name": "staging_event",
+        "engine": "MyISAM",
+        "comment": "Staged events with some ids.",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "event_id",
+                "type": "bigint(20) unsigned",
+                "extra": "auto_increment",
+                "nullable": false,
+                "comment": "Auto-increment relative to resource_id. Unknown = 1"
+            },
+            {
+                "name": "instance_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Optional instance the event is associated with. Unknown = 1"
+            },
+            {
+                "name": "event_time_utc",
+                "type": "datetime",
+                "nullable": false,
+                "default": "0000-00-00 00:00:00",
+                "comment": "The time of the event in UTC."
+            },
+            {
+                "name": "event_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "record_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "account_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Optional account the event is associated with. Unknown = 1"
+            },
+            {
+                "name": "host_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Host where the event occured. Unknown = 1"
+            },
+            {
+                "name": "instance_type_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Instance type for the event. Unknown = 1"
+            },
+            {
+                "name": "image_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Image associated with the event. Unknown = 1"
+            },
+            {
+                "name": "event_data",
+                "type": "varchar(256)",
+                "nullable": true,
+                "default": null,
+                "comment": "Additional data specific to an event (e.g., volume, IP address, etc.)"
+            },
+            {
+                "name": "root_volume_type_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Asset type of the root volume as defined by the instance type. Unknown = 1"
+            }
+        ],
+
+        "#": "Note that the primary key is (resource, instance, event_time, event_type, ...) rather than",
+        "#": "event_id so we can take advantage of ON DUPLICATE KEY UPDATE to update existing entries",
+        "#": "and still use auto_increment for new entries.",
+
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "instance_id",
+                    "event_time_utc",
+                    "event_type_id",
+                    "record_type_id",
+                    "account_id",
+                    "host_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
+                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
+                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
+                "#": "useful when you want to put data into ordered groups.",
+                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
+
+                "name": "increment_key",
+                "columns": [
+                    "resource_id",
+                    "event_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "event_data",
+                "columns": [
+                    "event_data"
+                ],
+                "is_unique": false
+            }
+        ]
+    }
+}
