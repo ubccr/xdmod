@@ -25,7 +25,7 @@ class XDSamlAuthentication
             try {
                 $authSource = \xd_utilities\getConfiguration('authentication', 'source');
             } catch (Exception $e) {
-                $authSource = 'xdmod-sp';
+                $authSource = null;
             }
             if (!is_null($authSource) && array_search($authSource, $this->_sources) !== false) {
                 $this->_as = new \SimpleSAML_Auth_Simple($authSource);
@@ -78,7 +78,6 @@ class XDSamlAuthentication
             }
             $emailAddress = !empty($samlAttrs['email_address'][0]) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
             $personId = \DataWarehouse::getPersonIdByUsername($thisUserName);
-
             if (!isset($samlAttrs["first_name"])) {
                 $samlAttrs["first_name"] = array("UNKNOWN");
             }

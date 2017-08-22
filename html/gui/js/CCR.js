@@ -1023,13 +1023,13 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
                 params: restArgs,
                 callback: function (options, success, response) {
                     var data = CCR.safelyDecodeJSONResponse(response);
-                    var response;
+                    var decodedResponse;
 
                     if (success) {
-                        response = CCR.checkDecodedJSONResponseSuccess(data);
+                        decodedResponse = CCR.checkDecodedJSONResponseSuccess(data);
                     }
 
-                    if (response) {
+                    if (decodedResponse) {
                         XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
 
                         XDMoD.REST.token = data.results.token;
@@ -1194,11 +1194,10 @@ CCR.xdmod.ui.forgot_password = function () {
                                 break;
                             default:
                                 presentLoginResponse('An unknown error occured.', false, 'reset_response');
-                            break;
+                                break;
                         }
                     } else {
-                        presentLoginResponse('There was a problem connecting to the portal service provider.', 
-                            false, 'reset_response');
+                        presentLoginResponse('There was a problem connecting to the portal service provider.', false, 'reset_response');
                     }
                     txtEmailAddress.focus();
                 }
