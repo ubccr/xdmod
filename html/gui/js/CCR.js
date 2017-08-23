@@ -945,21 +945,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         height: 22,
         id: 'txt_login_username',
         enableKeyEvents: true,
-        name: 'username',
-        listeners: {
-            keydown: function (a, e) {
-                if (e.getCharCode() === 13) {
-                    this.focus();
-                }
-            },
-            keyup: function (a) {
-                var currentValue = a.getValue();
-                if (a.prevValue !== currentValue) {
-                    // eslint-disable-next-line no-use-before-define
-                    a.prevValue = currentValue;
-                }
-            }
-        }
+        name: 'username'
     });
 
     var txtLoginPassword = new Ext.form.TextField({
@@ -968,29 +954,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         height: 22,
         enableKeyEvents: true,
         id: 'txt_login_password',
-        name: 'password',
-        listeners: {
-            keydown: function (a, e) {
-                if (e.getCharCode() === 13) {
-                    this.focus();
-                }
-                // eslint-disable-next-line no-use-before-define
-                a.el.dom.type = 'password';
-            },
-            keyup: function (a) {
-                var currentValue = a.getValue();
-                if (a.prevValue !== currentValue) {
-                    // eslint-disable-next-line no-use-before-define
-                    a.prevValue = currentValue;
-                }
-            },
-            change: function (a) {
-                if (a.isEmpty()) {
-                    // eslint-disable-next-line no-use-before-define
-                    a.el.dom.type = 'text';
-                }
-            }
-        }
+        name: 'password'
     });
 
     var stdLoginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
@@ -1076,7 +1040,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         html: '<span style="background-color: #e8e8e8 color: #000">You must have a valid XSEDE account to log in.</span>'
     }, {
         xtype: 'tbtext',
-        html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:switchLoginView()">Click here</a> to log in with your local account instead.</span>'
+        html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.switchLoginView()">Click here</a> to log in with your local account instead.</span>'
     }];
 
     var federatedLoginItems = [new Ext.Button({
@@ -1091,7 +1055,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         html: '<span style="background-color: #e8e8e8 color: #000">You must have a valid Federation account to log in.</span>'
     }, {
         xtype: 'tbtext',
-        html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:switchLoginView()">Click here</a> to log in with your local account instead.</span>'
+        html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.switchLoginView()">Click here</a> to log in with your local account instead.</span>'
     }];
 
     var loginItems;
@@ -1140,21 +1104,7 @@ CCR.xdmod.ui.forgot_password = function () {
         height: 22,
         enableKeyEvents: true,
         id: 'txt_email_address',
-        name: 'fpemail',
-        listeners: {
-            keydown: function (a, e) {
-                if (e.getCharCode() === 13) {
-                    this.focus();
-                }
-            },
-            keyup: function (a) {
-                var currentValue = a.getValue();
-                if (a.prevValue !== currentValue) {
-                    // eslint-disable-next-line no-use-before-define
-                    a.prevValue = currentValue;
-                }
-            }
-        }
+        name: 'fpemail'
     });
 
     var panelItems = [{
