@@ -68,6 +68,8 @@ class HostListParser
     {
         $this->logger->debug("Expanding host list '$hostList'");
 
+        // Hosts that have been parsed.
+        $hosts = array();
         // If the host list does not contain brackets it is sufficient
         // to split the host list string on commas.
         $hostListContainsBrackets
@@ -75,60 +77,64 @@ class HostListParser
             || strpos($hostList, ']') !== false;
 
         if (!$hostListContainsBrackets) {
-            return explode(',', $hostList);
+            $hosts = explode(',', $hostList);
         }
+        else {
 
-        // Copy list string to use in error messages.
-        $this->hostList = $hostList;
+            // Copy list string to use in error messages.
+            $this->hostList = $hostList;
 
-        // Append comma to simplify logic inside loop.
-        $hostList .= ',';
+            // Append comma to simplify logic inside loop.
+            $hostList .= ',';
 
-        // Hosts that have been parsed.
-        $hosts = array();
+            // Current bracket nesting level.
+            $bracketLevel = 0;
 
-        // Current bracket nesting level.
-        $bracketLevel = 0;
+            // Current part being parsed.
+            $part = '';
 
-        // Current part being parsed.
-        $part = '';
+            for ($i = 0; $i < strlen($hostList); ++$i) {
+                $c = substr($hostList, $i, 1);
 
-        for ($i = 0; $i < strlen($hostList); ++$i) {
-            $c = substr($hostList, $i, 1);
+                if ($c === ',' && $bracketLevel === 0) {
+                    if ($part !== '') {
+                        $hosts = array_merge($hosts, $this->expandPart($part));
+                    }
 
-            if ($c === ',' && $bracketLevel === 0) {
-                if ($part !== '') {
-                    $hosts = array_merge($hosts, $this->expandPart($part));
+                    $part = '';
+                } else {
+                    $part .= $c;
                 }
 
-                $part = '';
-            } else {
-                $part .= $c;
+                if ($c === '[') {
+                    $bracketLevel += 1;
+                } elseif ($c === ']') {
+                    $bracketLevel -= 1;
+                }
+
+                if ($bracketLevel > 1) {
+                    $msg = "Nested brackets in host list '$this->hostList'";
+                    throw new Exception($msg);
+                }
+
+                if ($bracketLevel < 0) {
+                    $msg = "Unbalanced brackets in host list '$this->hostList'";
+                    throw new Exception($msg);
+                }
             }
 
-            if ($c === '[') {
-                $bracketLevel += 1;
-            } elseif ($c === ']') {
-                $bracketLevel -= 1;
-            }
-
-            if ($bracketLevel > 1) {
-                $msg = "Nested brackets in host list '$this->hostList'";
-                throw new Exception($msg);
-            }
-
-            if ($bracketLevel < 0) {
+            if ($bracketLevel > 0) {
                 $msg = "Unbalanced brackets in host list '$this->hostList'";
                 throw new Exception($msg);
             }
         }
 
-        if ($bracketLevel > 0) {
-            $msg = "Unbalanced brackets in host list '$this->hostList'";
-            throw new Exception($msg);
-        }
-
-        return $hosts;
+        // incase of an empty hostlist or a hostlist that has some spaces
+        // around the name, trim them and filter out anything that is empty
+        $hosts = array_map('trim', $hosts);
+        return array_filter($hosts, function ($value) {
+            return '' !== $value;
+        });
     }
 
     /**
