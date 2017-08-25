@@ -268,7 +268,7 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
             }
         });
     }
-
+    
     return {
         text: 'Help',
         tooltip: 'Help',
@@ -933,7 +933,7 @@ CCR.xdmod.ui.switchLoginView = function () {
     CCR.xdmod.ui.actionLogin(null, null, true);
 };
 
-CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
+CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     XDMoD.TrackEvent("Portal", "Sign In link clicked");
 
     //reset referer
@@ -1028,14 +1028,17 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Click here</a> to reset your password.</span>'
     }];
 
-    var federatedLoginItems = [new Ext.Button({
+    var federatedLoginItems = [ {
+        xtype: 'tbtext',
+        html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>'
+    }/*, new Ext.Button({
         text: 'Log in',
         autoHeight: true,
         cls: 'xsede_button',
         handler: function () {
             window.location = '/simplesaml/module.php/core/as_login.php?AuthId=xdmod-sp&ReturnTo=/gui/general/login.php';
         }
-    }), {
+    })*/, {
         xtype: 'tbtext',
         html: '<span style="background-color: #e8e8e8 color: #000">You must have a valid Federation account to log in.</span>'
     }, {
@@ -1046,19 +1049,14 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
     var loginItems;
     var title;
 
-    if (!forceLocalView) {
-        if (CCR.xdmod.isFederationConfigured) {
-            loginItems = federatedLoginItems;
-            title = 'Sign in with Federation';
-        } else {
-            loginItems = stdLoginItems;
-            title = 'Sign in locally';
-        }
+    if (!showLocalLogin && CCR.xdmod.isFederationConfigured) {
+        loginItems = federatedLoginItems;
+        title = 'Sign in with Federation';
     } else {
         loginItems = stdLoginItems;
         title = 'Sign in locally';
     }
-
+  
     CCR.xdmod.ui.login_prompt = new Ext.Window({
         title: title,
         width: 320,
