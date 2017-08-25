@@ -71,6 +71,32 @@ class HostListTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
+                '',
+                array()
+            ),
+            array(
+                ' ',
+                array()
+            ),
+            array(
+                '       ',
+                array()
+            ),
+            array(
+                ',',
+                array()
+            ),
+            array(
+                ' , ',
+                array()
+            ),
+            array(
+                'd07n04s01 ',
+                array(
+                    'd07n04s01',
+                )
+            ),
+            array(
                 'd07n04s01',
                 array(
                     'd07n04s01',
