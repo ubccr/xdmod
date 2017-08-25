@@ -16,20 +16,13 @@ class LoginPage {
             it('Click the login link', function clickLogin() {
                 browser.waitUntilNotExist('.ext-el-mask-msg');
                 $('a[href*=actionLogin]').click();
+                $('a[href*=switchLoginView]').click();
             });
             it('Should Login', function doLogin() {
-                $('.x-window-header-text=Welcome To XDMoD').waitForExist(20000);
-                $('#wnd_login iframe').waitForExist(20000);
-                browser.frame($('#wnd_login iframe').value);
+                $('.x-window-header-text=Sign in Locally').waitForExist(20000);
                 $('#txt_login_username input').setValue(loginName);
                 $('#txt_login_password input').setValue(loginPassword);
                 $('#btn_sign_in .x-btn-mc').click();
-
-                // Per: http://webdriver.io/api/protocol/frame.html#Usage
-                // Resetting the server to the page's default content
-                // This was causing issues with running the tests under
-                // Ubuntu 16.04:Firefox
-                browser.frame();
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForExist(60000);

@@ -1028,21 +1028,6 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
         html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Click here</a> to reset your password.</span>'
     }];
 
-    var xsedeLoginItems = [new Ext.Button({
-        text: '<img src="/gui/images/globus_login.png" style="margin-top:-0.1em"> Log in with Globus',
-        autoHeight: true,
-        cls: 'xsede_button',
-        handler: function () {
-            window.location = '/simplesaml/module.php/core/as_login.php?AuthId=xdmod-sp&ReturnTo=/gui/general/login.php';
-        }
-    }), {
-        xtype: 'tbtext',
-        html: '<span style="background-color: #e8e8e8 color: #000">You must have a valid XSEDE account to log in.</span>'
-    }, {
-        xtype: 'tbtext',
-        html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.switchLoginView()">Click here</a> to log in with your local account instead.</span>'
-    }];
-
     var federatedLoginItems = [new Ext.Button({
         text: 'Log in',
         autoHeight: true,
@@ -1062,10 +1047,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, forceLocalView) {
     var title;
 
     if (!forceLocalView) {
-        if (CCR.xdmod.features.xsede) {
-            loginItems = xsedeLoginItems;
-            title = 'Sign in with Globus';
-        } else if (CCR.xdmod.isFederationConfigured) {
+        if (CCR.xdmod.isFederationConfigured) {
             loginItems = federatedLoginItems;
             title = 'Sign in with Federation';
         } else {

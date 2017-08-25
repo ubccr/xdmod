@@ -48,7 +48,6 @@ class XDSamlAuthentication
     public function getXdmodAccount()
     {
         $samlAttrs = $this->_as->getAttributes();
-
         if (!isset($samlAttrs["username"])) {
             $thisUserName = null;
         } else {
