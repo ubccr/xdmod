@@ -310,8 +310,8 @@
                   // This will catch when a configuration directory does not exist if it is set in the environment level
                }
                if ($auth && $auth->isSamlConfigured()) {
-                  print "CCR.xdmod.isFederationConfigured = true;";
-                  print "CCR.xdmod.federationLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";  
+                    print "CCR.xdmod.isFederationConfigured = true;";
+                    print "CCR.xdmod.federationLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";
                } else {
                   print "CCR.xdmod.isFederationConfigured = false;";
                }
