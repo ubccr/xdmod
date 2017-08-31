@@ -1027,17 +1027,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Click here</a> to reset your password.</span>'
     }];
 
-    var federatedLoginItems = [ {
+    var federatedLoginItems = [{
         xtype: 'tbtext',
         html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>'
-    }/*, new Ext.Button({
-        text: 'Log in',
-        autoHeight: true,
-        cls: 'xsede_button',
-        handler: function () {
-            window.location = '/simplesaml/module.php/core/as_login.php?AuthId=xdmod-sp&ReturnTo=/gui/general/login.php';
-        }
-    })*/, {
+    }, {
         xtype: 'tbtext',
         html: '<span style="background-color: #e8e8e8 color: #000">You must have a valid Federation account to log in.</span>'
     }, {
@@ -1071,7 +1064,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             }
         }
     });
-
+    
     CCR.xdmod.ui.login_prompt.show(animateTarget);
     CCR.xdmod.ui.login_prompt.center();
 }; //actionLogin
