@@ -268,10 +268,6 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
             }
         });
     }
-<<<<<<< HEAD
-=======
-    
->>>>>>> 1197b86e69ebc6198bb2d4264a5196a57a6d60b2
     return {
         text: 'Help',
         tooltip: 'Help',
