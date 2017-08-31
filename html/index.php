@@ -311,6 +311,7 @@
                }
                if ($auth && $auth->isSamlConfigured()) {
                   print "CCR.xdmod.isFederationConfigured = true;";
+                  print "CCR.xdmod.federationLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";  
                } else {
                   print "CCR.xdmod.isFederationConfigured = false;";
                }

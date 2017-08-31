@@ -23,8 +23,6 @@ if ($auth && $auth->isSamlConfigured()) {
     }
 }
 // Used for Federated login or samlErrors
-if (!empty($formal_name) || $samlError) {
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -111,7 +109,3 @@ if (!empty($formal_name) || $samlError) {
 
 <?php
     }
-    exit();
-}
-$xsedeLogin = xd_utilities\getConfiguration('features', 'xsede') == 'on';
-?>
