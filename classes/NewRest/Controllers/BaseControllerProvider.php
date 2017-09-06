@@ -34,6 +34,8 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
     const KEY_PREFIX = 'prefix';
 
+    const EXCEPTION_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
+
     protected $prefix;
 
     /**
@@ -253,42 +255,29 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                            'authorized'. If not specified, then only
      *                            whether or not the user is logged in will
      *                            be checked.
-     * @param bool $blacklist if set to true than the requirements parameter is
-     *                        treated as a blacklist. Meaning that if any of
-     *                        the requirements are found in a users' roles
-     *                        than they are not authorized. The default value
-     *                        is false.
      * @return \XDUser The user that was checked and is authorized according to
      *                the given parameters.
      *
      * @throws  Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      *          Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
-    public function authorize(Request $request, array $requirements = array(), $blacklist = false)
+    public function authorize(Request $request, array $requirements = array())
     {
+
+        $user = $this->getUserFromRequest($request);
+
         // If role requirements were not given, then the only check to perform
         // is that the user is not a public user.
-        if (empty($requirements)) {
-            $requirements = array(ROLE_ID_PUBLIC);
-            $blacklist = true;
+        $isPublicUser = $user->isPublicUser();
+        if (empty($requirements) && $isPublicUser) {
+            throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
-        // Attempt to authorize the user.
-        $user = $this->getUserFromRequest($request);
-        list($success, $message) = Authorization::isAuthorized($user, $requirements, $blacklist);
-
-        // If authorization was not successful, throw an exception.
-        //
-        // If the user was not logged in, respond with a 401 HTTP error code
-        // to indicate that they could try again while logged in. Otherwise,
-        // respond with a 403 to indicate that what they asked for is off
-        // limits with their current permissions.
-        if (!$success) {
-            if ($user->isPublicUser()) {
-                throw new UnauthorizedHttpException('xdmod', $message); // 401 from framework
-            } else {
-                throw new AccessDeniedHttpException($message); // 403 from framework
-            }
+        $authorized = $user->hasAcls($requirements);
+        if ($authorized === false && !$isPublicUser) {
+            throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
+        } elseif ($authorized === false && $isPublicUser) {
+            throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
         // Return the successfully-authorized user.
