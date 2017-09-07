@@ -16,10 +16,10 @@ if ($auth && $auth->isSamlConfigured()) {
             \XDSessionManager::recordLogin($xdmodUser);
             $formal_name = $xdmodUser->getFormalName();
         } else {
-            $samlError = $xdmodUser ? $xdmodUser : "INACTIVE";
+            $samlError = "INACTIVE";
         }
     } else {
-        $samlError = $xdmodUser ? $xdmodUser : null;
+        $samlError = null;
     }
 }
 // Used for Federated login or samlErrors
