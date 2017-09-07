@@ -1048,7 +1048,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         loginItems = stdLoginItems;
         title = 'Sign in locally';
     }
-  
+
     CCR.xdmod.ui.login_prompt = new Ext.Window({
         title: title,
         width: 320,
@@ -1064,7 +1064,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             }
         }
     });
-    
+
     CCR.xdmod.ui.login_prompt.show(animateTarget);
     CCR.xdmod.ui.login_prompt.center();
 }; //actionLogin
