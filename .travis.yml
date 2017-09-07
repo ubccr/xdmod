@@ -1,13 +1,9 @@
 # Use container-based environment for quicker initialization
 sudo: false
 
-# Since we still support CentOS 6 we need to be able to test 5.3.3
-dist: precise
-
 # Specify the build matrix
 language: php
 php:
-    - '5.3.3'
     - '5.4'
     - '7.0'
     - '7.1.6'
@@ -22,8 +18,6 @@ env:
         - TEST_SUITE=build
 matrix:
     exclude:
-        - php: '5.4'
-          env: TEST_SUITE=style
         - php: '7.0'
           env: TEST_SUITE=style
         - php: '7.1.6'
