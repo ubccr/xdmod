@@ -1,8 +1,10 @@
 <?php
 
    // Operation: user_admin->update_user
-	
-   $params = array('uid' => RESTRICTION_UID);
+
+use Models\Services\Acls;
+
+$params = array('uid' => RESTRICTION_UID);
 
    $isValid = xd_security\secureCheck($params, 'POST');
 	
@@ -54,21 +56,15 @@
          xd_controller\returnJSON($returnData);
       }
 
-   	if (isset($_POST['roles'])) {
+   	if (isset($_POST['acls'])) {
    	
-         $role_config = json_decode($_POST['roles'], true);
-   	  
-         if (isset($role_config['mainRoles'])){
-   
-            if (!in_array(ROLE_ID_MANAGER, $role_config['mainRoles'])) {
-               $returnData['success'] = false;
-               $returnData['status'] = 'You are not allowed to revoke manager access from yourself.';
-               xd_controller\returnJSON($returnData);
-            }
-   
+         $role_config = json_decode($_POST['acls'], true);
+         if (!in_array(ROLE_ID_MANAGER, $role_config)) {
+             $returnData['success'] = false;
+             $returnData['status'] = 'You are not allowed to revoke manager access from yourself.';
+             xd_controller\returnJSON($returnData);
          }
-         
-      }//if (isset($_POST['roles'])) 
+      }//if (isset($_POST['acls']))
 
    } 
 
@@ -104,8 +100,22 @@
 
 
 // ===========================================
+    if (isset($_POST['acls'])) {
+       $acls = json_decode($_POST['acls'], true);
+       $user_to_update->setAcls(array());
+       foreach ($acls as $aclName => $centers) {
+           $acl = Acls::getAclByName($aclName);
+           $user_to_update->addAcl($acl);
 
-	if (isset($_POST['roles'])) {
+           if (count($centers) > 0) {
+               foreach ($centers as $center) {
+                   $user_to_update->addAclOrganization($aclName, $center);
+               }
+           }
+       }
+    }
+
+	/*if (isset($_POST['roles'])) {
 	
 	  $role_config = json_decode($_POST['roles'], true);
 	  
@@ -228,7 +238,7 @@
 
 	  }  
 	  
-	}//if (isset($_POST['roles'])) {
+	}//if (isset($_POST['roles'])) {*/
    
    // -----------------------------
        

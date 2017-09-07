@@ -18,30 +18,11 @@ $creator = \xd_security\assertDashboardUserLoggedIn();
 
 // -----------------------------
 
-if (isset($_POST['roles'])) {
-    $role_config = json_decode($_POST['roles'], true);
-
-    //FB::log($role_config);
-
-    $required_role_config_items = array(
-        'mainRoles',
-        'primaryRole',
-        'centerDirectorSites',
-        'primaryCenterDirectorSite',
-        'centerStaffSites',
-        'primaryCenterStaffSite',
-    );
-
-    $diff = array_diff($required_role_config_items, array_keys($role_config));
-
-    if (count($diff) > 0) {
-        $required_params = implode(', ', $diff);
-        \xd_response\presentError("Role config items required: $required_params");
-    }
-
+if (isset($_POST['acls'])) {
+    $acls = json_decode($_POST['acls'], true);
 }
 else {
-    \xd_response\presentError("Role information is required");
+    \xd_response\presentError("Acl information is required");
 }
 
 try {
@@ -59,44 +40,21 @@ try {
         $_POST['first_name'],
         '',
         $_POST['last_name'],
-        $role_config['mainRoles'],
-        $role_config['primaryRole'],
+        array_keys($acls),
+        null,
         NULL,
         $_POST['assignment']
     );
-
     $newuser->setUserType($_POST['user_type']);
-
     $newuser->saveUser();
-
     // =============================
-
-    $centerDirectorConfig = array();
-
-    foreach ($role_config['centerDirectorSites'] as $cdSite) {
-        $primary = ($cdSite == $role_config['primaryCenterDirectorSite']);
-        $centerDirectorConfig[$cdSite] = array(
-            'active'  => $primary,
-            'primary' => $primary,
-        );
+    foreach($acls as $acl => $centers) {
+        if (count($centers) > 0) {
+            foreach($centers as $center) {
+                $newuser->addAclOrganization($acl, $center);
+            }
+        }
     }
-
-    $newuser->setOrganizations($centerDirectorConfig, ROLE_ID_CENTER_DIRECTOR);
-
-    // -----------------------------
-
-    $centerStaffConfig = array();
-
-    foreach ($role_config['centerStaffSites'] as $csSite) {
-        $primary = ($csSite == $role_config['primaryCenterStaffSite']);
-        $centerStaffConfig[$csSite] = array(
-            'active' => $primary,
-            'primary' => $primary,
-        );
-    }//foreach
-
-    $newuser->setOrganizations($centerStaffConfig, ROLE_ID_CENTER_STAFF);
-
     // =============================
 
     if (isset($_POST['institution']) && $_POST['institution'] != -1) {

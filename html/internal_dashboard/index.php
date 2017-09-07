@@ -156,6 +156,7 @@ if (isset($_POST['direct_to'])) {
   <!-- User Management Panel -->
 
   <script type="text/javascript" src="js/admin_panel/RoleGrid.js"></script>
+  <script type="text/javascript" src="js/admin_panel/AclGrid.js"></script>
   <script type="text/javascript" src="js/admin_panel/SectionNewUser.js"></script>
   <script type="text/javascript" src="js/admin_panel/SectionExistingUsers.js"></script>
   <script type="text/javascript" src="js/admin_panel/AdminPanel.js"></script>

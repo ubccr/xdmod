@@ -3,6 +3,7 @@
 require_once dirname(__FILE__).'/../../../configuration/linker.php';
 
 use CCR\DB;
+use Models\Services\Users;
 
 @session_start();
 
@@ -97,9 +98,7 @@ switch($operation) {
 
      $context_filter = isset($_REQUEST['context_filter']) ? $_REQUEST['context_filter'] : '';
 
-     $query = \xd_dashboard\deriveUserEnumerationQuery($group_filter, $role_filter, $context_filter);
-
-     $results = $pdo->query($query, array(':filter' => $context_filter));
+     $results = Users::getUsers($group_filter, $role_filter, $context_filter);
 
      $response['success'] = true;
      $response['count'] = count($results);

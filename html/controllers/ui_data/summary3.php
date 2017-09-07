@@ -1,5 +1,8 @@
 <?php
 
+use Models\Services\Acls;
+use User\Roles;
+
 @session_start();
 @set_time_limit(0);
 
@@ -64,8 +67,13 @@ try {
             throw $e;
         }
     }
-
-    $summaryCharts = $logged_in_user->getMostPrivilegedRole()->getSummaryCharts();
+    $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($logged_in_user);
+    $summaryCharts = array_map(
+        function($chart) {
+            return json_encode($chart);
+        },
+        Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_charts')
+    );
 
     foreach ($summaryCharts as $i => $summaryChart) {
         $summaryChartObject = json_decode($summaryChart);

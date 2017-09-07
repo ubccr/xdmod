@@ -186,10 +186,13 @@ SQL;
 
         $sql = <<<SQL
 SELECT
-  a.*
+  a.*,
+  INSTR(aclt.name, 'requires_center') > 0 AS requires_center
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
+  JOIN acl_types aclt
+    ON aclt.acl_type_id = a.acl_type_id
 WHERE ua.user_id = :user_id
 SQL;
         return $db->query($sql, array('user_id' => $userId));
@@ -779,5 +782,61 @@ SQL;
             }, array());
         }
         return array();
+    }
+
+    public static function getMostPrivilegedAcl(XDUser $user, $moduleName = DEFAULT_MODULE_NAME, $aclHierarchyName = 'acl_hierarchy')
+    {
+        if (null == $user->getUserID()) {
+            throw new Exception('A valid user id must be supplied.');
+        }
+
+        $query = <<<SQL
+SELECT DISTINCT
+  a.*,
+  aclp.abbrev organization,
+  aclp.id     organization_id
+FROM acls a
+  JOIN user_acls ua
+    ON a.acl_id = ua.acl_id
+  LEFT JOIN (
+    SELECT
+      ah.acl_id,
+      ah.level
+    FROM acl_hierarchies ah
+      JOIN hierarchies h
+        ON ah.hierarchy_id = h.hierarchy_id
+      JOIN modules m
+        ON h.module_id = m.module_id
+    WHERE h.name = :acl_hierarchy_name
+          AND m.name = :module_name
+          AND m.enabled = TRUE
+  ) aclh
+    ON aclh.acl_id = ua.acl_id
+  LEFT JOIN (
+    SELECT
+      uagbp.acl_id,
+      o.abbrev,
+      o.id
+    FROM modw.organization o
+      JOIN user_acl_group_by_parameters uagbp
+        ON o.id = uagbp.value
+    ) aclp
+    ON aclp.acl_id = ua.acl_id
+WHERE ua.user_id = :user_id
+ORDER BY COALESCE(aclh.level, 0) DESC
+LIMIT 1
+SQL;
+        $db = DB::factory('database');
+        $rows = $db->query($query, array(
+            ':module_name' => $moduleName,
+            ':acl_hierarchy_name' => $aclHierarchyName,
+            ':user_id' => $user->getUserID()
+        ));
+
+        if (count($rows) > 0) {
+            return new Acl($rows[0]);
+        }
+
+        return null;
     }
 }
