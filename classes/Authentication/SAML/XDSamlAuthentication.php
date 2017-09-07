@@ -112,7 +112,7 @@ class XDSamlAuthentication
         return false;
     }
 
-    public function getLoginLink()
+    public function getLoginLink($returnTo = null)
     {
         if ($this->isSamlConfigured()) {
             $idpAuth = \SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler()->getList();
@@ -132,7 +132,7 @@ class XDSamlAuthentication
                 );
             }
             return array(
-                    'url' => $this->_as->getLoginUrl(),
+                    'url' => $this->_as->getLoginUrl($returnTo),
                     'organization' => $orgDisplay,
                     'icon' => $icon
                 );
