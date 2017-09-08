@@ -1046,9 +1046,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         title = 'Sign in with Federation';
     } else {
         loginItems = stdLoginItems;
-        title = 'Sign in locally';
+        title = 'Sign in Locally';
     }
-  
+
     CCR.xdmod.ui.login_prompt = new Ext.Window({
         title: title,
         width: 320,
@@ -1064,7 +1064,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             }
         }
     });
-    
+
     CCR.xdmod.ui.login_prompt.show(animateTarget);
     CCR.xdmod.ui.login_prompt.center();
 }; //actionLogin
