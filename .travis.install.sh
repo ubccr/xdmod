@@ -5,6 +5,7 @@ curl https://getcomposer.org/download/1.5.1/composer.phar > $composerpath
 chmod +x $composerpath
 
 # Install Composer dependencies.
+composer config -g -- disable-tls true
 composer install
 
 # Install PEAR dependencies.
