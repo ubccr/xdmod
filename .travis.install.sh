@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-copmoserpath=`which composer`
+composerpath=`which composer`
 curl https://getcomposer.org/download/1.5.1/composer.phar > $composerpath
 chmod +x $composerpath
 
