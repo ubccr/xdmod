@@ -15,8 +15,7 @@ if "$using_php_533"; then
     # of Composer pre-installed on Travis systems (1.0.0) doesn't support
     # selecting an update channel. Then, we use this version to rollback to
     # the latest stable version.
-    composer self-update
-    composer self-update --stable
+    composer self-update 1.4.3
 fi
 
 # Install Composer dependencies.
