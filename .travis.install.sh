@@ -5,7 +5,7 @@ curl https://getcomposer.org/download/1.5.1/composer.phar > $composerpath
 chmod +x $composerpath
 
 # Install Composer dependencies.
-find /home/travis/.phpenv/versions/5.3.3 -name php_openssl\* | xargs ls -l
+find /home/travis/.phpenv/versions/ -name php_openssl\* | xargs ls -l
 composer config -g -- disable-tls true
 composer install
 
