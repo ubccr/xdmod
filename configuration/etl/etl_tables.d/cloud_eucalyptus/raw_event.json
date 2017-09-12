@@ -1,10 +1,12 @@
 {
+    "#": "Raw event information from the Eucalyptus log files.",
+
     "#": "Note that almost any field in the raw event logs can be NULL so most fields are nullable.",
     "#": "These will be stored here and filtered out later. For example, several events with type",
     "#": "REQUEST_START have no instance id",
 
     "table_definition": {
-        "name": "raw_event",
+        "name": "eucalyptus_raw_event",
         "engine": "MyISAM",
         "comment": "Raw events from the log file.",
         "columns": [

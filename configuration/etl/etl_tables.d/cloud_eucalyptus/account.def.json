@@ -1,34 +1,35 @@
 {
-    "#": "Load unique hosts into the dimension table. Do not load unknown hosts as these are",
+    "#": "Load unique accounts into the dimension table. Do not load unknown accounts as these are",
     "#": "handled by a separate action",
 
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud/host.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_common/account.json#/table_definition"
         }
     ],
 
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "hostname": "raw.hostname"
+            "provider_account": "raw.provider_account",
+            "display": "raw.provider_account"
         },
 
         "joins": [
             {
-                "name": "raw_event",
+                "name": "eucalyptus_raw_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             }
         ],
 
         "where": [
-            "hostname IS NOT NULL"
+            "provider_account IS NOT NULL"
         ],
 
         "groupby": [
             "resource_id",
-            "hostname"
+            "provider_account"
         ]
     }
 }

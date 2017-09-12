@@ -4,7 +4,7 @@
 
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud/instance_type.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_common/instance_type.json#/table_definition"
         }
     ],
 
@@ -13,7 +13,7 @@
     "#": "start_time = IF(start_time < VALUES(start_time), start_time, VALUES(start_time) but ETLv2",
     "#": "does not support explicitly setting that clause at this time. We solve this with a join",
     "#": "to the existing instance types and calculating the earliest start time.",
-    
+
     "source_query": {
         "records": {
             "instance_type": "raw.instance_type",
@@ -28,7 +28,7 @@
 
         "joins": [
             {
-                "name": "raw_instance_type",
+                "name": "eucalyptus_raw_instance_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             },{

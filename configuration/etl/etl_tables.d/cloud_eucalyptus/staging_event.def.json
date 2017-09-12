@@ -1,7 +1,7 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud/staging_event.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_eucalyptus/staging_event.json#/table_definition"
         }
     ],
 
@@ -32,7 +32,7 @@
 
         "joins": [
             {
-                "name": "raw_event",
+                "name": "eucalyptus_raw_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             },

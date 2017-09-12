@@ -1,9 +1,9 @@
 {
     "#": "Add IP addresses to the assets based on REQUEST_IP_ATTACH events",
-    
+
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud/asset.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_common/asset.json#/table_definition"
         }
     ],
 
@@ -18,7 +18,7 @@
 
         "joins": [
             {
-                "name": "staging_event",
+                "name": "eucalyptus_staging_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "staging"
             },

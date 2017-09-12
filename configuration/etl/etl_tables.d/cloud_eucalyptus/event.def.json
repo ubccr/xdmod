@@ -1,31 +1,31 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud/instance_data.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_common/instance_data.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud/event.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_common/event.json#/table_definition"
         }
     ],
 
     "source_query": {
         "records": {
-            "event_id": "raw.event_id",
-            "resource_id": "raw.resource_id",
-            "instance_id": "raw.instance_id",
-            "instance_type_id": "raw.instance_type_id",
-            "event_time_utc": "raw.event_time_utc",
-            "event_type_id": "raw.event_type_id",
-            "record_type_id": "raw.record_type_id",
-            "image_id": "raw.image_id",
-            "host_id": "raw.host_id"
+            "event_id": "staging.event_id",
+            "resource_id": "staging.resource_id",
+            "instance_id": "staging.instance_id",
+            "instance_type_id": "staging.instance_type_id",
+            "event_time_utc": "staging.event_time_utc",
+            "event_type_id": "staging.event_type_id",
+            "record_type_id": "staging.record_type_id",
+            "image_id": "staging.image_id",
+            "host_id": "staging.host_id"
         },
 
         "joins": [
             {
-                "name": "staging_event",
+                "name": "eucalyptus_staging_event",
                 "schema": "${SOURCE_SCHEMA}",
-                "alias": "raw"
+                "alias": "staging"
             }
         ]
     },

@@ -1,7 +1,7 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud/asset.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_common/asset.json#/table_definition"
         }
     ],
 
@@ -17,7 +17,7 @@
 
         "joins": [
             {
-                "name": "raw_volume",
+                "name": "eucalyptus_raw_volume",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             },

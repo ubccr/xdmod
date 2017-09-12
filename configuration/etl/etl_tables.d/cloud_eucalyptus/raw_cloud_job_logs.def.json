@@ -4,17 +4,17 @@
 
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud/raw_event.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_eucalyptus/raw_event.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud/raw_instance_type.json#/table_definition"
+            "$ref": "etl_tables.d/cloud_eucalyptus/raw_instance_type.json#/table_definition"
         }
     ],
 
     "#": "Note that JSON pointers are used below to access data in nested JSON objects",
-    
+
     "destination_record_map": {
-        "raw_event": {
+        "eucalyptus_raw_event": {
             "event_type": "event_type",
             "record_type": "record_type",
             "event_time_utc": "event_time",
@@ -28,7 +28,7 @@
             "first_volume": "/block_devices/0/id",
             "root_volume_type": "root_type"
         },
-        "raw_instance_type": {
+        "eucalyptus_raw_instance_type": {
             "instance_type": "/instance_type/name",
             "resource_id": "${RESOURCE_ID}",
             "display": "/instance_type/name",
