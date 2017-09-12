@@ -32,7 +32,6 @@ class LoginPage {
     logout() {
         describe('Logout', function logout() {
             it('Click the logout link', function clickLogout() {
-                console.error('Herpagerp')
                 browser.pause(3000);
                 $('#logout_link').waitForVisible();
                 $('#logout_link').click();
