@@ -969,7 +969,8 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         }, {
             xtype: 'tbtext',
             html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.switchLoginView()">Click here</a> to log in with your local account instead.</span>'
-        }];;
+        }];
+
         title = 'Sign in with Federation';
     } else {
         loginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
@@ -983,19 +984,19 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
                     });
                     return;
                 }
-    
+
                 if (txtLoginPassword.getValue().length === 0) {
                     presentLoginResponse('You must specify a password.', false, 'login_response', function () {
                         txtLoginPassword.focus();
                     });
                     return;
                 }
-    
+
                 var restArgs = {
                     username: txtLoginUsername.getValue(),
                     password: txtLoginPassword.getValue()
                 };
-    
+                
                 Ext.Ajax.request({
                     url: '/rest/v0.1/auth/login',
                     method: 'POST',
@@ -1010,12 +1011,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     
                         if (decodedResponse) {
                             XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
-    
                             XDMoD.REST.token = data.results.token;
                             XDMoD.TrackEvent('Login Window', 'Login from public session', '(Token: ' + XDMoD.REST.token + ')', true);
-    
                             presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
-    
                             parent.location.href = '../../index.php' + parent.XDMoD.referer;
                             parent.location.hash = parent.XDMoD.referer;
                             parent.location.reload();
@@ -1042,6 +1040,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             xtype: 'tbtext',
             html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Click here</a> to reset your password.</span>'
         }];
+
         title = 'Sign in Locally';
     }
 
