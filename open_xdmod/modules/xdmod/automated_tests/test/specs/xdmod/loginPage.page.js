@@ -19,9 +19,8 @@ class LoginPage {
                 $('a[href*=switchLoginView]').click();
             });
             it('Should Login', function doLogin() {
-                $('.x-window-header-text=Sign in Locally').waitForExist(20000);
-                $('#txt_login_username input').setValue(loginName);
-                $('#txt_login_password input').setValue(loginPassword);
+                $('#txt_login_username').setValue(loginName);
+                $('#txt_login_password').setValue(loginPassword);
                 $('#btn_sign_in .x-btn-mc').click();
             });
             it('Display Logged in Users Name', function () {
@@ -33,7 +32,8 @@ class LoginPage {
     logout() {
         describe('Logout', function logout() {
             it('Click the logout link', function clickLogout() {
-                browser.pause(1000);
+                console.error('Herpagerp')
+                browser.pause(3000);
                 $('#logout_link').waitForVisible();
                 $('#logout_link').click();
             });

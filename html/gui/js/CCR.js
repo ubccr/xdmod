@@ -959,7 +959,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     var stdLoginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
         text: 'Log in locally',
         autoHeight: true,
-        cls: 'xsede_button',
+        id: 'btn_sign_in',
         handler: function () {
             if (txtLoginUsername.getValue().length === 0) {
                 presentLoginResponse('You must specify a username.', false, 'login_response', function () {
@@ -1085,7 +1085,6 @@ CCR.xdmod.ui.forgot_password = function () {
     }, txtEmailAddress, new Ext.Button({
         text: 'Reset My Password',
         autoHeight: true,
-        cls: 'xsede_button',
         handler: function () {
             var objParams = {
                 operation: 'pass_reset',
