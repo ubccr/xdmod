@@ -267,11 +267,18 @@ class pdoIngestor extends aIngestor
         // the JSON config, use the record keys otherwise we need to parse the SQL string. It is
         // expected that the source record fields are in the same order as they are in the SQL
         // query.
+        //
+        // NOTE: The SQL parser can fail on complex queries or those containing a UNION. In this
+        // case, allow the child class should also set the source field records in
+        // getSourceQueryString().
 
-        $this->sourceRecordFields =
-            ( null !== $this->etlSourceQuery
-              ? array_keys($this->etlSourceQuery->records)
-              : $this->getSqlColumnNames($this->sourceQueryString) );
+        if ( null === $this->sourceRecordFields ) {
+            $this->sourceRecordFields = (
+                null !== $this->etlSourceQuery
+                ? array_keys($this->etlSourceQuery->records)
+                : $this->getSqlColumnNames($this->sourceQueryString)
+            );
+        }
 
         $this->parseDestinationFieldMap($this->sourceRecordFields);
 
@@ -413,8 +420,13 @@ class pdoIngestor extends aIngestor
 
         if ( null !== $this->etlSourceQuery) {
             $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
-            $this->sourceQueryString = $this->getSourceQueryString();
         }
+
+        // Re-generate the source query string taking into account overseer restrictions, or in the
+        // case where a child class overrides getSourceQueryString() allow any updated macros to be
+        // re-applied.
+
+        $this->sourceQueryString = $this->getSourceQueryString();
 
         // ------------------------------------------------------------------------------------------
         // Main ingest
@@ -531,6 +543,7 @@ class pdoIngestor extends aIngestor
     {
         // Set up one infile and output file descriptor for each destination
 
+        $ingestStart = microtime(true);
         $infileList = array();
         $outFdList = array();
         $loadStatementList = array();
@@ -861,10 +874,11 @@ class pdoIngestor extends aIngestor
 
         $this->logger->info(
             sprintf(
-                '%s: Processed %s records (%s source records)',
+                '%s: Processed %s records (%s source records) in %ds',
                 get_class($this),
                 number_format($totalRecordsProcessed),
-                number_format($numSourceRecordsProcessed)
+                number_format($numSourceRecordsProcessed),
+                microtime(true) - $ingestStart
             )
         );
 
