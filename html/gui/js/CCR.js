@@ -965,16 +965,16 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>'
         }, {
             xtype: 'tbtext',
-            html: '<span style="background-color: #e8e8e8 color: #000">You must have a valid Federation account to log in.</span>'
+            html: '<span style="background-color: #e8e8e8 color: #000">You must have a valid account to log in.</span>'
         }, {
             xtype: 'tbtext',
-            html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.switchLoginView()">Click here</a> to log in with your local account instead.</span>'
+            html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.switchLoginView()">Use local account</a></span>'
         }];
 
-        title = 'Sign in with Federation';
+        title = 'Sign in with a linked Account';
     } else {
         loginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
-            text: 'Log in locally',
+            text: 'Log in',
             autoHeight: true,
             id: 'btn_sign_in',
             handler: function () {
@@ -1038,10 +1038,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             id: 'login_response'
         }, {
             xtype: 'tbtext',
-            html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Click here</a> to reset your password.</span>'
+            html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot Password?</a></span>'
         }];
 
-        title = 'Sign in Locally';
+        title = 'Sign in with a local Account';
     }
 
     CCR.xdmod.ui.login_prompt = new Ext.Window({
