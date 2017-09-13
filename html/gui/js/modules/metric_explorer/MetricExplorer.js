@@ -2236,7 +2236,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         }
 
-        this.chartNameTextbox.setValue(queryName);
+        this.chartNameTextbox.setValue(Ext.util.Format.htmlDecode(queryName));
         this.chartOptionsButton.setText(truncateText(queryName, XDMoD.Module.MetricExplorer.CHART_OPTIONS_MAX_TEXT_LENGTH));
         this.chartOptionsButton.setTooltip(queryName);
     }, //createQueryFunc
@@ -3361,15 +3361,17 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                             return;
                         }
 
+                        var newHtml = Ext.util.Format.htmlEncode(newValue);
+
                         XDMoD.TrackEvent('Metric Explorer', 'Updated the Chart Name', Ext.encode({
                             original_name: oldValue,
                             new_name: newValue
                         }));
 
                         if (this.currentQueryRecord) {
-                            this.chartOptionsButton.setText(truncateText(newValue, XDMoD.Module.MetricExplorer.CHART_OPTIONS_MAX_TEXT_LENGTH));
-                            this.chartOptionsButton.setTooltip(newValue);
-                            this.currentQueryRecord.set('name', newValue);
+                            this.chartOptionsButton.setText(truncateText(newHtml, XDMoD.Module.MetricExplorer.CHART_OPTIONS_MAX_TEXT_LENGTH));
+                            this.chartOptionsButton.setTooltip(newHtml);
+                            this.currentQueryRecord.set('name', newHtml);
                             this.currentQueryRecord.stack.add(this.currentQueryRecord.data);
                         }
                     } // change
@@ -4881,7 +4883,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             XDMoD.TrackEvent('Metric Explorer', 'Selected chart from list', r.data.name);
             Ext.menu.MenuMgr.hideAll();
 
-            this.chartNameTextbox.setValue(r.data.name);
+            this.chartNameTextbox.setValue(Ext.util.Format.htmlDecode(r.data.name));
             this.chartOptionsButton.setText(truncateText(r.data.name, XDMoD.Module.MetricExplorer.CHART_OPTIONS_MAX_TEXT_LENGTH));
             this.chartOptionsButton.setTooltip(r.data.name);
 
@@ -6292,7 +6294,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     }
                 }
                 this.currentQueryRecord.endEdit();
-                this.chartNameTextbox.setValue(chartData.name);
+                this.chartNameTextbox.setValue(Ext.util.Format.htmlDecode(chartData.name));
                 this.chartOptionsButton.setText(truncateText(chartData.name, XDMoD.Module.MetricExplorer.CHART_OPTIONS_MAX_TEXT_LENGTH));
                 this.chartOptionsButton.setTooltip(chartData.name);
                 this.loadQuery(JSON.parse(chartData.config), true);
