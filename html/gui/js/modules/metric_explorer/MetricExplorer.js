@@ -3355,26 +3355,26 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                  */
                 change: function(textbox, newValue, oldValue) {
 
-                        var isValid = this.chartNameTextbox.validate();
-                        if (!isValid) {
-                            this.chartNameTextbox.focus();
-                            return;
-                        }
+                    var isValid = this.chartNameTextbox.validate();
+                    if (!isValid) {
+                        this.chartNameTextbox.focus();
+                        return;
+                    }
 
-                        var newHtml = Ext.util.Format.htmlEncode(newValue);
+                    var newHtml = Ext.util.Format.htmlEncode(newValue);
 
-                        XDMoD.TrackEvent('Metric Explorer', 'Updated the Chart Name', Ext.encode({
-                            original_name: oldValue,
-                            new_name: newValue
-                        }));
+                    XDMoD.TrackEvent('Metric Explorer', 'Updated the Chart Name', Ext.encode({
+                        original_name: oldValue,
+                        new_name: newValue
+                    }));
 
-                        if (this.currentQueryRecord) {
-                            this.chartOptionsButton.setText(truncateText(newHtml, XDMoD.Module.MetricExplorer.CHART_OPTIONS_MAX_TEXT_LENGTH));
-                            this.chartOptionsButton.setTooltip(newHtml);
-                            this.currentQueryRecord.set('name', newHtml);
-                            this.currentQueryRecord.stack.add(this.currentQueryRecord.data);
-                        }
-                    } // change
+                    if (this.currentQueryRecord) {
+                        this.chartOptionsButton.setText(truncateText(newHtml, XDMoD.Module.MetricExplorer.CHART_OPTIONS_MAX_TEXT_LENGTH));
+                        this.chartOptionsButton.setTooltip(newHtml);
+                        this.currentQueryRecord.set('name', newHtml);
+                        this.currentQueryRecord.stack.add(this.currentQueryRecord.data);
+                    }
+                } // change
             }
         });
         // ---------------------------------------------------------
