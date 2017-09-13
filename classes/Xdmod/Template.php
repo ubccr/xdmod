@@ -102,11 +102,13 @@ class Template
     public function apply(array $items)
     {
         foreach ($items as $param => $value) {
-            $this->contents = preg_replace(
-                "/\[:$param:\]/",
-                $value,
-                $this->contents
-            );
+            if(is_string($param) && is_string($value)) {
+                $this->contents = preg_replace(
+                    "/\[:$param:\]/",
+                    $value,
+                    $this->contents
+                );
+            }
         }
     }
 

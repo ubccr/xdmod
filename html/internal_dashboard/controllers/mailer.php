@@ -48,11 +48,11 @@ switch ($operation) {
             'version'              => $version,
             'contact_email'        => $contact_email,
             'organization'         => ORGANIZATION_NAME,
-            'maintainer_signature' => MailTemplates::getMaintainerSignature(),
+            'maintainer_signature' => MailWrapper::getMaintainerSignature(),
             'date'                 => date('l, j F'),
-            'site_title'           => MailTemplates::getSiteTitle(),
+            'site_title'           => \xd_utilities\getConfiguration('general', 'title'),
             'site_address'         => $site_address,
-            'product_name'         => MailTemplates::getProductName(),
+            'product_name'         => MailWrapper::getProductName(),
         ));
 
         $response['success'] = true;
@@ -83,31 +83,20 @@ switch ($operation) {
 
         break;
     case 'send_plain_mail':
-        $target_addresses = \xd_security\assertParameterSet('target_addresses');
-        $message = \xd_security\assertParameterSet('message', '/.*/', false);
-        $subject = \xd_security\assertParameterSet('subject');
-
         $response['success'] = true;
 
         $title = \xd_utilities\getConfiguration('general', 'title');
-        $contact = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
-
-        $mail = MailWrapper::initPHPMailer($contact, $title);
-        $mail->Subject = "[$title] $subject";
 
         // Send a copy of the email to the contact page recipient.
-        $mail->addAddress($contact, 'Undisclosed Recipients');
-
-        $bcc_emails = explode(',', $target_addresses);
-
-        foreach ($bcc_emails as $b) {
-            $mail->addBCC($b);
-        }
-
-        $mail->Body = $message;
-
-        $response['status'] = $mail->send();
-
+        $response['status'] = MailWrapper::sendMail(array(
+                                  'body'        => \xd_security\assertParameterSet('message', '/.*/', false),
+                                  'subject'     => "[$title] " . \xd_security\assertParameterSet('subject'),
+                                  'toAddress'   => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+                                  'toName'      => 'Undisclosed Recipients',
+                                  'fromAddress' => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+                                  'fromName'    => $title,
+                                  'bcc'         => \xd_security\assertParameterSet('target_addresses')
+                              ));
         break;
     default:
         $response['success'] = false;
