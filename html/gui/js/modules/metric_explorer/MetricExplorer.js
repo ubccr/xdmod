@@ -4968,7 +4968,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     // to the width of the GridPanel.
                     if (name.length > 73) {
                         /* eslint-disable no-param-reassign */
-                        metaData.attr += 'ext:qtip="' + name + '"';
+                        metaData.attr += 'ext:qtip="' + Ext.util.Format.htmlEncode(name) + '"';
                         /* eslint-enable no-param-reassign */
                     }
                     return name;
