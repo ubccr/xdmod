@@ -491,7 +491,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
             var getData = sm.getSelections();
 
-            if (getData.length >= 2) {
+            if (getData.length >= 1) {
 
                var chartEditorConfigs = [];
 
