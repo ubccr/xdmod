@@ -1290,9 +1290,9 @@ class ReportGenerator {
             return 1;
         } else if (browser.isSelected(this.selectors.reportEditor.chartLayout.twoChartsPerPageRadioButton())) {
             return 2;
-        } else {
-            throw new Error('No charts per page option selected');
         }
+
+        throw new Error('No charts per page option selected');
     }
 
     /**
