@@ -3,7 +3,6 @@ const usagePage = require('./usageTab.page.js');
 const reportGeneratorPage = require('./reportGenerator.page.js');
 
 describe('Report Generator', function () {
-
     // These dates correspond to the dates of the test job data.
     const startDate = '2016-12-20';
     const endDate = '2017-01-01';
@@ -27,7 +26,8 @@ describe('Report Generator', function () {
     const previousQuarter = new Date();
     previousQuarter.setDate(1);
     const currentMonth = previousQuarter.getMonth();
-    previousQuarter.setMonth(currentMonth - 3 - currentMonth % 3);
+    const monthModThree = currentMonth % 3;
+    previousQuarter.setMonth(currentMonth - 3 - monthModThree);
     const previousQuarterStartDate = previousQuarter.toISOString().substr(0, 10);
     previousQuarter.setMonth(previousQuarter.getMonth() + 3);
     previousQuarter.setDate(0);
@@ -702,7 +702,7 @@ describe('Report Generator', function () {
             reportGeneratorPage.getMyReportsRows()[0].click();
         });
         it('Preview selected report', function () {
-            reportGeneratorPage.previewSelectedReports()
+            reportGeneratorPage.previewSelectedReports();
         });
         it('Return to reports overview', function () {
             reportGeneratorPage.returnToReportsOverview();

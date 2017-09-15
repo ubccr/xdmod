@@ -9,5 +9,5 @@
 
 module.exports = function waitForAllInvisible(selector, ms) {
     var timeOut = ms || 1000;
-    browser.waitUntil(() => $$(selector).filter(el => el.isVisible()).length === 0);
+    browser.waitUntil(() => $$(selector).filter(el => el.isVisible()).length === 0, timeOut);
 };

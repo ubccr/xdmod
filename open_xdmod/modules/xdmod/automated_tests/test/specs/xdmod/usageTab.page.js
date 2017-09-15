@@ -178,7 +178,7 @@ class Usage {
      */
     selectChildTreeNode(topName, childName) {
         if (!this.isTreeNodeExpanded(topName)) {
-            this.expandTreeNode(name);
+            this.expandTreeNode(topName);
         }
         browser.waitUntilAnimEndAndClick(this.treeNodeByPath(topName, childName));
         browser.waitForAllInvisible(this.mask, 5000);

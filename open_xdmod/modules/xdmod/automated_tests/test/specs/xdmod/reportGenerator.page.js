@@ -338,164 +338,164 @@ class ReportGenerator {
         this.tabName = 'Report Generator';
 
         this.selectors = {
-            tab: () => `//div[${classContains("x-tab-panel-header")}]//span[${classContains("x-tab-strip-text")} and text()="${this.tabName}"]`,
+            tab: () => `//div[${classContains('x-tab-panel-header')}]//span[${classContains('x-tab-strip-text')} and text()="${this.tabName}"]`,
             panel: () => '//div[@id="report_generator"]',
-            mask: () => `//div[${classContains("ext-el-mask")}]`,
+            mask: () => `//div[${classContains('ext-el-mask')}]`,
             myReports: {
-                panel: () => this.selectors.panel() + `//div[${classContains("report_overview")}]`,
+                panel: () => this.selectors.panel() + `//div[${classContains('report_overview')}]`,
                 toolbar: {
-                    panel: () => this.selectors.myReports.panel() + `//div[${classContains("x-panel-tbar")}]`,
+                    panel: () => this.selectors.myReports.panel() + `//div[${classContains('x-panel-tbar')}]`,
                     selectButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Select"]',
-                    selectMenu: () => `//div[${classContains("x-menu-floating")}]`,
+                    selectMenu: () => `//div[${classContains('x-menu-floating')}]`,
                     selectAllReportsButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="All Reports"]/ancestor::a',
                     selectNoReportsButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="No Reports"]/ancestor::a',
                     invertSelectionButton: () => this.selectors.myReports.toolbar.selectMenu() + '//span[text()="Invert Selection"]/ancestor::a',
                     newButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New"]',
                     newBasedOnButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="New Based On"]',
-                    newBasedOnMenu: () => `//div[${classContains("x-menu-floating")} and .//img[${classContains("btn_selected_report")} or ${classContains("btn_report_template")}]]`,
-                    newBasedOnRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[not(${classContains("x-menu-sep-li")})]`,
-                    newBasedOnTemplateRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains("btn_report_template")}]]`,
-                    newBasedOnReportRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains("btn_selected_report")}]]`,
+                    newBasedOnMenu: () => `//div[${classContains('x-menu-floating')} and .//img[${classContains('btn_selected_report')} or ${classContains('btn_report_template')}]]`,
+                    newBasedOnRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[not(${classContains('x-menu-sep-li')})]`,
+                    newBasedOnTemplateRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains('btn_report_template')}]]`,
+                    newBasedOnReportRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains('btn_selected_report')}]]`,
                     newBasedOnTemplate: name => this.selectors.myReports.toolbar.newBasedOnTemplateRows() + `//a[.//b[text()="${name}"]]`,
                     newBasedOnReport: name => this.selectors.myReports.toolbar.newBasedOnReportRows() + `//a[./img[.//b[text()="${name}"]]`,
                     editButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Edit"]',
                     previewButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Preview"]',
                     sendNowButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Send Now"]',
-                    sendNowAsPdfButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="As PDF"]/ancestor::a`,
-                    sendNowAsWordDocumentButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="As Word Document"]/ancestor::a`,
+                    sendNowAsPdfButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="As PDF"]/ancestor::a`,
+                    sendNowAsWordDocumentButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="As Word Document"]/ancestor::a`,
                     downloadButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Download"]',
-                    downloadAsPdfButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="As PDF"]/ancestor::a`,
-                    downloadAsWordDocumentButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="As Word Document"]/ancestor::a`,
+                    downloadAsPdfButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="As PDF"]/ancestor::a`,
+                    downloadAsWordDocumentButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="As Word Document"]/ancestor::a`,
                     deleteButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Delete"]'
                 },
                 reportList: {
-                    panel: () => this.selectors.myReports.panel() + `//div[${classContains("x-panel-body-noheader")}]`,
-                    rows: () => this.selectors.myReports.reportList.panel() + `//div[${classContains("x-grid3-row")}]`,
-                    rowByIndex: index => this.selectors.myReports.reportList.panel() + `//div[${classContains("x-grid3-row")} and position()=${index}]`
+                    panel: () => this.selectors.myReports.panel() + `//div[${classContains('x-panel-body-noheader')}]`,
+                    rows: () => this.selectors.myReports.reportList.panel() + `//div[${classContains('x-grid3-row')}]`,
+                    rowByIndex: index => this.selectors.myReports.reportList.panel() + `//div[${classContains('x-grid3-row')} and position()=${index}]`
                 }
             },
             reportPreview: {
-                panel: () => this.selectors.panel() + `//div[${classContains("report_preview")}]`,
+                panel: () => this.selectors.panel() + `//div[${classContains('report_preview')}]`,
                 toolbar: {
-                    panel: () => this.selectors.reportPreview.panel() + `//div[${classContains("x-panel-tbar")}]`,
+                    panel: () => this.selectors.reportPreview.panel() + `//div[${classContains('x-panel-tbar')}]`,
                     sendNowButton: () => this.selectors.reportPreview.toolbar.panel() + '//button[text()="Send Now"]',
                     downloadButton: () => this.selectors.reportPreview.toolbar.panel() + '//button[text()="Download"]',
-                    returnToReportsOverviewButton: () => this.selectors.reportPreview.toolbar.panel() + `//button[${classContains("btn_return_to_previous")}]`
+                    returnToReportsOverviewButton: () => this.selectors.reportPreview.toolbar.panel() + `//button[${classContains('btn_return_to_previous')}]`
                 }
             },
             reportEditor: {
-                panel: () => this.selectors.panel() + `//div[${classContains("report_edit")}]`,
+                panel: () => this.selectors.panel() + `//div[${classContains('report_edit')}]`,
                 toolbar: {
-                    panel: () => this.selectors.reportEditor.panel() + `//div[${classContains("x-panel-tbar")} and .//button[text()="Save"]]`,
+                    panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel-tbar')} and .//button[text()="Save"]]`,
                     saveButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Save"]',
                     saveAsButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Save As"]',
                     previewButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Preview"]',
                     sendNowButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Send Now"]',
                     downloadButton: () => this.selectors.reportEditor.toolbar.panel() + '//button[text()="Download"]',
-                    returnToMyReportsButton: () => this.selectors.reportEditor.toolbar.panel() + `//button[${classContains("btn_return_to_overview")}]`
+                    returnToMyReportsButton: () => this.selectors.reportEditor.toolbar.panel() + `//button[${classContains('btn_return_to_overview')}]`
                 },
                 generalInformation: {
-                    panel: () => this.selectors.reportEditor.panel() + `//div[${classContains("x-panel")} and .//span[text()="General Information"]]`,
+                    panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel')} and .//span[text()="General Information"]]`,
                     fileNameInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_name"]',
                     reportTitleInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_title"]',
                     headerTextInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_header"]',
                     footerTextInput: () => this.selectors.reportEditor.generalInformation.panel() + '//input[@name="report_footer"]'
                 },
                 chartLayout: {
-                    panel: () => this.selectors.reportEditor.panel() + `//div[${classContains("x-panel")} and .//span[text()="Chart Layout"]]`,
+                    panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel')} and .//span[text()="Chart Layout"]]`,
                     oneChartPerPageRadioButton: () => this.selectors.reportEditor.chartLayout.panel() + '//input[@value="1_up"]',
                     twoChartsPerPageRadioButton: () => this.selectors.reportEditor.chartLayout.panel() + '//input[@value="2_up"]'
                 },
                 scheduling: {
-                    panel: () => this.selectors.reportEditor.panel() + `//div[${classContains("x-panel")} and .//span[text()="Scheduling"]]`,
+                    panel: () => this.selectors.reportEditor.panel() + `//div[${classContains('x-panel')} and .//span[text()="Scheduling"]]`,
                     scheduleInput: () => this.selectors.reportEditor.scheduling.panel() + '//input[@name="report_generator_report_schedule"]',
-                    scheduleOption: name => `//div[${classContains("x-combo-list-item")} and text()="${name}"]`,
+                    scheduleOption: name => `//div[${classContains('x-combo-list-item')} and text()="${name}"]`,
                     deliveryFormatInput: () => this.selectors.reportEditor.scheduling.panel() + '//div[./label[text()="Delivery Format:"]]//input',
-                    deliveryFormatOption: name => `//div[${classContains("x-combo-list-item")} and text()="${name}"]`
+                    deliveryFormatOption: name => `//div[${classContains('x-combo-list-item')} and text()="${name}"]`
                 },
                 includedCharts: {
                     panel: () => this.selectors.reportEditor.panel() + '//div[@id="ReportCreatorGrid"]',
                     toolbar: {
-                        panel: () => this.selectors.reportEditor.includedCharts.panel() + `//div[${classContains("x-panel-tbar")}]`,
+                        panel: () => this.selectors.reportEditor.includedCharts.panel() + `//div[${classContains('x-panel-tbar')}]`,
                         selectButton: () => this.selectors.reportEditor.includedCharts.toolbar.panel() + '//button[text()="Select"]',
-                        selectAllChartsButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="All Charts"]/ancestor::a`,
-                        selectNoChartsButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="No Charts"]/ancestor::a`,
-                        invertSelectionButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="Invert Selection"]/ancestor::a`,
+                        selectAllChartsButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="All Charts"]/ancestor::a`,
+                        selectNoChartsButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="No Charts"]/ancestor::a`,
+                        invertSelectionButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="Invert Selection"]/ancestor::a`,
                         editTimeframeButton: () => this.selectors.reportEditor.includedCharts.toolbar.panel() + '//button[text()="Edit Timeframe of Selected Charts"]',
                         removeButton: () => this.selectors.reportEditor.includedCharts.toolbar.panel() + '//button[text()="Remove"]'
                     },
                     chartList: {
                         panel: () => this.selectors.reportEditor.includedCharts.panel() + '//div[@class="x-panel-body" and .//div[text()="Chart"]]',
-                        rows: () => this.selectors.reportEditor.includedCharts.chartList.panel() + `//div[${classContains("x-grid3-row")}]`
+                        rows: () => this.selectors.reportEditor.includedCharts.chartList.panel() + `//div[${classContains('x-grid3-row')}]`
                     }
-                },
+                }
             },
             availableCharts: {
                 panel: () => this.selectors.panel() + '//div[@id="chart_pool_panel"]',
                 toolbar: {
                     panel: () => this.selectors.availableCharts.panel() + '//div[@class="x-panel-tbar"]',
                     selectButton: () => this.selectors.availableCharts.toolbar.panel() + '//button[text()="Select"]',
-                    selectAllChartsButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="All Charts"]/ancestor::a`,
-                    selectNoChartsButton: () => `//div[${classContains("x-menu-floating")}]//span[text()="No Charts"]/ancestor::a`,
-                    invertSelectionButton: () => `//div[${classContains("x-menu-floating")}]//a[.//span[text()="Invert Selection"]]`,
+                    selectAllChartsButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="All Charts"]/ancestor::a`,
+                    selectNoChartsButton: () => `//div[${classContains('x-menu-floating')}]//span[text()="No Charts"]/ancestor::a`,
+                    invertSelectionButton: () => `//div[${classContains('x-menu-floating')}]//a[.//span[text()="Invert Selection"]]`,
                     deleteButton: () => this.selectors.availableCharts.toolbar.panel() + '//button[text()="Delete"]'
                 },
                 chartList: {
                     panel: () => this.selectors.availableCharts.panel() + '//div[@class="x-panel-body" and .//div[text()="Chart"]]',
-                    rows: () => this.selectors.availableCharts.chartList.panel() + `//div[${classContains("x-grid3-row")}]`
+                    rows: () => this.selectors.availableCharts.chartList.panel() + `//div[${classContains('x-grid3-row')}]`
                 }
             },
             message: {
                 window: () => '//div[@id="report_generator_message"]',
-                titleElement: () => this.selectors.message.window() + `//span[${classContains("x-window-header-text")}]`,
+                titleElement: () => this.selectors.message.window() + `//span[${classContains('x-window-header-text')}]`,
                 textElement: () => this.selectors.message.window() + '//b'
             },
             deleteSelectedReports: {
-                window: () => `//div[${classContains("x-window")} and .//span[text()="Delete Selected Report" or text()="Delete Selected Reports"]]`,
+                window: () => `//div[${classContains('x-window')} and .//span[text()="Delete Selected Report" or text()="Delete Selected Reports"]]`,
                 yesButton: () => this.selectors.deleteSelectedReports.window() + '//button[text()="Yes"]',
                 noButton: () => this.selectors.deleteSelectedReports.window() + '//button[text()="No"]'
             },
             unsavedChanges: {
-                window: () => `//div[${classContains("x-window")} and .//span[text()="Unsaved Changes"]]`,
+                window: () => `//div[${classContains('x-window')} and .//span[text()="Unsaved Changes"]]`,
                 yesButton: () => this.selectors.unsavedChanges.window() + '//button[text()="Yes"]',
                 noButton: () => this.selectors.unsavedChanges.window() + '//button[text()="No"]',
                 cancelButton: () => this.selectors.unsavedChanges.window() + '//button[text()="Cancel"]'
             },
             deleteSelectedCharts: {
-                window: () => `//div[${classContains("x-window")} and .//span[text()="Delete Selected Chart" or text()="Delete Selected Charts"]]`,
+                window: () => `//div[${classContains('x-window')} and .//span[text()="Delete Selected Chart" or text()="Delete Selected Charts"]]`,
                 yesButton: () => this.selectors.deleteSelectedCharts.window() + '//button[text()="Yes"]',
                 noButton: () => this.selectors.deleteSelectedCharts.window() + '//button[text()="No"]'
             },
             removeSelectedCharts: {
-                window: () => `//div[${classContains("x-window")} and .//span[text()="Remove Selected Chart" or text()="Remove Selected Charts"]]`,
+                window: () => `//div[${classContains('x-window')} and .//span[text()="Remove Selected Chart" or text()="Remove Selected Charts"]]`,
                 yesButton: () => this.selectors.removeSelectedCharts.window() + '//button[text()="Yes"]',
                 noButton: () => this.selectors.removeSelectedCharts.window() + '//button[text()="No"]'
             },
             saveReportAs: {
-                window: () => `//div[${classContains("x-window")} and .//span[text()="Save Report As"]]`,
+                window: () => `//div[${classContains('x-window')} and .//span[text()="Save Report As"]]`,
                 fileNameInput: () => this.selectors.saveReportAs.window() + '//input[@name="report_name"]',
                 saveButton: () => this.selectors.saveReportAs.window() + '//button[text()="Save"]',
                 closeButton: () => this.selectors.saveReportAs.window() + '//button[text()="Close"]'
             },
             reportBuilt: {
-                window: () => `//div[${classContains("x-window")} and .//span[text()="Report Built"]]`,
+                window: () => `//div[${classContains('x-window')} and .//span[text()="Report Built"]]`,
                 viewReportButton: () => this.selectors.reportBuilt.window() + '//button[text()="View Report"]',
-                closeButton: () => this.selectors.reportBuilt.window() + `//div[${classContains("x-tool-close")}]`
+                closeButton: () => this.selectors.reportBuilt.window() + `//div[${classContains('x-tool-close')}]`
             },
             editChartTimeframe: {
-                window: () => `//div[${classContains("chart_date_editor")}]`,
+                window: () => `//div[${classContains('chart_date_editor')}]`,
                 specificRadioButton: () => this.selectors.editChartTimeframe.window() + '//input[@name="report_creator_chart_entry" and @value="Specific"]',
                 periodicRadioButton: () => this.selectors.editChartTimeframe.window() + '//input[@name="report_creator_chart_entry" and @value="Periodic"]',
                 periodicInput: () => this.selectors.editChartTimeframe.window() + '//table[contains(@class,"menu")]//button',
-                periodicOption: name => `//div[${classContains("x-menu-floating")}]//a[starts-with(text(),"${name}")]`,
+                periodicOption: name => `//div[${classContains('x-menu-floating')}]//a[starts-with(text(),"${name}')]`,
                 startDateInput: () => this.selectors.editChartTimeframe.window() + '//input[@id="report_generator_edit_date_start_date_field"]',
                 endDateInput: () => this.selectors.editChartTimeframe.window() + '//input[@id="report_generator_edit_date_end_date_field"]',
-                updateButton: () => this.selectors.editChartTimeframe.window() + `//button[${classContains("chart_date_editor_update_button")}]`,
-                cancelButton: () => this.selectors.editChartTimeframe.window() + `//button[${classContains("chart_date_editor_cancel_button")}]`,
-                errorMessage: () => this.selectors.editChartTimeframe.window() + `//div[${classContains("overlay_message")}]`
+                updateButton: () => this.selectors.editChartTimeframe.window() + `//button[${classContains('chart_date_editor_update_button')}]`,
+                cancelButton: () => this.selectors.editChartTimeframe.window() + `//button[${classContains('chart_date_editor_cancel_button')}]`,
+                errorMessage: () => this.selectors.editChartTimeframe.window() + `//div[${classContains('overlay_message')}]`
             },
             // The mask with the check mark image that is displayed after a report is ready for download or has been emailed.
-            checkmarkMask: () => `//div[${classContains("ext-el-mask-msg")} and .//img[@src="gui/images/checkmark.png"]]`
+            checkmarkMask: () => `//div[${classContains('ext-el-mask-msg')} and .//img[@src="gui/images/checkmark.png"]]`
         };
     }
 
@@ -522,7 +522,7 @@ class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     isNewBasedOnEnabled() {
-        const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton()  + `/ancestor::table[${classContains("x-btn")}]`).filter(button => button.isVisible());
+        const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
         expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
         return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
     }
@@ -533,7 +533,7 @@ class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     isEditSelectedReportsEnabled() {
-        return browser.getAttribute(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains("x-btn")}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
+        return browser.getAttribute(this.selectors.myReports.toolbar.editButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -542,7 +542,7 @@ class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     isPreviewSelectedReportsEnabled() {
-        return browser.getAttribute(this.selectors.myReports.toolbar.previewButton() + `/ancestor::table[${classContains("x-btn")}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
+        return browser.getAttribute(this.selectors.myReports.toolbar.previewButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -553,7 +553,7 @@ class ReportGenerator {
     isSendSelectedReportsEnabled() {
         // There are two separate "Send Now" buttons in the "My Reports" panel.
         // Only one should be visible at a time.
-        const visibleButtons = $$(this.selectors.myReports.toolbar.sendNowButton() + `/ancestor::table[${classContains("x-btn")}]`).filter(button => button.isVisible());
+        const visibleButtons = $$(this.selectors.myReports.toolbar.sendNowButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
         expect(visibleButtons.length, 'One "Send Now" button is visible').to.be.equal(1);
         return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
     }
@@ -564,7 +564,7 @@ class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     isDownloadSelectedReportsEnabled() {
-        const visibleButtons = $$(this.selectors.myReports.toolbar.downloadButton() + `/ancestor::table[${classContains("x-btn")}]`).filter(button => button.isVisible());
+        const visibleButtons = $$(this.selectors.myReports.toolbar.downloadButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
         expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
         return visibleButtons[0].getAttribute('class').match(/(^| )x-item-disabled($| )/) === null;
     }
@@ -575,7 +575,7 @@ class ReportGenerator {
      * @return {Boolean} True if the button is enabled.
      */
     isDeleteSelectedReportsEnabled() {
-        return browser.getAttribute(this.selectors.myReports.toolbar.deleteButton() + `/ancestor::table[${classContains("x-btn")}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
+        return browser.getAttribute(this.selectors.myReports.toolbar.deleteButton() + `/ancestor::table[${classContains('x-btn')}]`, 'class').match(/(^| )x-item-disabled($| )/) === null;
     }
 
     /**
@@ -859,7 +859,7 @@ class ReportGenerator {
         this.waitForMyReportsPanelVisible();
         // There are two separate "New Based On" buttons.  Only one should be
         // visible at a time.
-        const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton()  + `/ancestor::table[${classContains("x-btn")}]`).filter(button => button.isVisible());
+        const visibleButtons = $$(this.selectors.myReports.toolbar.newBasedOnButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
         expect(visibleButtons.length, 'One "New Based On" button is visible').to.be.equal(1);
         visibleButtons[0].click();
         // Ext.Button ignores clicks for 250ms after the menu is hidden so pause
@@ -876,7 +876,7 @@ class ReportGenerator {
      */
     getReportTemplateNames() {
         browser.waitForVisible(this.selectors.myReports.toolbar.newBasedOnTemplateRows());
-        return $$(this.selectors.myReports.toolbar.newBasedOnTemplateRows()).map(row => row.$(`//a[./img[${classContains("btn_report_template")}]]//b`).getText());
+        return $$(this.selectors.myReports.toolbar.newBasedOnTemplateRows()).map(row => row.$(`//a[./img[${classContains('btn_report_template')}]]//b`).getText());
     }
 
     /**
@@ -969,7 +969,7 @@ class ReportGenerator {
         this.waitForMyReportsPanelVisible();
         // There are two separate "Send Now" buttons in the "My Reports" panel.
         // Only one should be visible at a time.
-        const visibleButtons = $$(this.selectors.myReports.toolbar.sendNowButton()  + `/ancestor::table[${classContains("x-btn")}]`).filter(button => button.isVisible());
+        const visibleButtons = $$(this.selectors.myReports.toolbar.sendNowButton() + `/ancestor::table[${classContains('x-btn')}]`).filter(button => button.isVisible());
         expect(visibleButtons.length, 'One "Send Now" button is visible').to.be.equal(1);
         visibleButtons[0].click();
     }
@@ -1087,7 +1087,7 @@ class ReportGenerator {
      *
      * @param {String} reportName The new file name to give the report (optional).
      */
-    saveReportAs(reportName=undefined) {
+    saveReportAs(reportName = undefined) {
         this.waitForReportEditorPanelVisible();
         browser.click(this.selectors.reportEditor.toolbar.saveAsButton());
         this.waitForSaveReportAsWindowVisible();
@@ -1104,7 +1104,7 @@ class ReportGenerator {
      *   does not return until the confirmation message is no longer
      *   visible.
      */
-    confirmSaveReportAs(expectError=false) {
+    confirmSaveReportAs(expectError = false) {
         this.waitForSaveReportAsWindowVisible();
         browser.click(this.selectors.saveReportAs.saveButton());
 
@@ -1337,7 +1337,7 @@ class ReportGenerator {
     }
 
     /**
-     * Get the delivery format ("PDF" or "Word Document") of the report
+     * Get the delivery format ('PDF" or "Word Document') of the report
      * currently being edited.
      *
      * @return {String}
@@ -1348,7 +1348,7 @@ class ReportGenerator {
     }
 
     /**
-     * Set the delivery format ("PDF" or "Word Document") of the report
+     * Set the delivery format ('PDF" or "Word Document') of the report
      * currently being edited.
      *
      * @param {String} format

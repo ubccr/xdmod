@@ -54,7 +54,10 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './test/specs/**/*.js'
+        //'./test/specs/**/*.js'
+        //'./test/specs/xdmod/metricExplorer.js',
+        './test/specs/xdmod/reportGenerator.js'
+        //'./test/specs/xdmod/usageTab.js'
     ],
 
     // Patterns to exclude.
@@ -117,7 +120,7 @@ exports.config = {
     //
     // Set a base URL in order to shorten url command calls. If your url parameter starts
     // with '/', the base url gets prepended.
-    baseUrl: 'https://tas-reference-dbs.ccr.xdmod.org',
+    baseUrl: 'http://localhost:8082',
     //
     // Default timeout for all waitForXXX commands.
     waitforTimeout: 10000,
@@ -163,7 +166,8 @@ exports.config = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: 100000
+        timeout: 100000,
+        bail: true
     },
     //
     // =====
