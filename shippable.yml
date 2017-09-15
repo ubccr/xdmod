@@ -6,9 +6,10 @@ build:
     cache: true
     cache_dir_list:
         - /root/.composer
+        - /root/.npm
     pre_ci_boot:
         image_name: tas-tools-ext-01.ccr.xdmod.org/centos7-xdmod6.6.0
-        image_tag: version4
+        image_tag: version6
         pull: true
         options: "--user root -e HOME=/root"
     ci:
@@ -22,5 +23,7 @@ build:
         - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
         - ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/componentresults.xml
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
+        - cp ~/assets/secrets.json open_xdmod/modules/xdmod/automated_tests/.secrets.json
+        - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
     on_failure:
         - cat /var/log/xdmod/*
