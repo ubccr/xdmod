@@ -11,15 +11,15 @@ describe('Usage', function () {
         end: '2017-01-02'
     };
     describe('(Center Director)', function xdmod() {
-        it('Selected', function () {
-            browser.waitForLoadedThenClick(usg.tab).call();
+        it('Select "Usage" tab', function () {
+            usg.selectTab();
             browser.waitForChart();
             browser.waitForExist(usg.chartByTitle('CPU Hours: Total'));
         });
         it('Set a known start and end date', function meSetStartEnd() {
-            browser.setValue(usg.startField, baselineDate.start);
-            browser.setValue(usg.endField, baselineDate.end);
-            browser.click(usg.refreshButton);
+            usg.setStartDate(baselineDate.start);
+            usg.setEndDate(baselineDate.end);
+            usg.refresh();
             browser.waitForExist(usg.chartXAxisLabelByName(baselineDate.start));
         });
         it('Select Job Size Min', function () {
@@ -37,14 +37,14 @@ describe('Usage', function () {
     logIn.logout();
     describe('(Public User)', function () {
         it('Selected', function () {
-            browser.waitForLoadedThenClick(usg.tab).call();
+            usg.selectTab();
             browser.waitForChart();
             browser.waitForExist(usg.chartByTitle('CPU Hours: Total'));
         });
         it('Set a known start and end date', function meSetStartEnd() {
-            browser.setValue(usg.startField, baselineDate.start);
-            browser.setValue(usg.endField, baselineDate.end);
-            browser.click(usg.refreshButton);
+            usg.setStartDate(baselineDate.start);
+            usg.setEndDate(baselineDate.end);
+            usg.refresh();
             browser.waitForExist(usg.chartXAxisLabelByName(baselineDate.start));
         });
         it('View Job Size Min', function () {
