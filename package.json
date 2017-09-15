@@ -2,9 +2,7 @@
     "name": "xdmod",
     "version": "7.0.0",
     "description": "An open framework for collecting and analyzing HPC metrics.",
-    "dependencies": {
-        "lint-diff": "https://github.com/jpwhite4/lint-diff/tarball/master"
-    },
+    "dependencies": {},
     "devDependencies": {
         "eslint": "^3.16.1",
         "eslint-config-airbnb-base": "^11.1.0",
