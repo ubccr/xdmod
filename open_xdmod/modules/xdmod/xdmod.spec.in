@@ -93,7 +93,6 @@ rm -rf $RPM_BUILD_ROOT
 - Bug Fixes
     - General
         - Fixed various compatibility issues with PHP 7
-        - Fixed handling of "%" characters in Metric Explorer options when using Firefox
         - Fixed handling of 4-byte UTF-8 characters during XRAS ingestion
         - Improved handling of invalid start and end dates received by API
         - Fixed validation of length of names in contact forms
@@ -102,6 +101,10 @@ rm -rf $RPM_BUILD_ROOT
     - Job Viewer
         - Fixed directions not always appearing when all jobs are closed
         - Fixed memory leak
+        - Fixed duplicate search nodes being created when opening jobs from Metric Explorer charts with "\#" in the title
+    - Metric Explorer
+        - Fixed handling of "%" characters in Metric Explorer options when using Firefox
+        - Fixed XSS vulnerability involving chart names
     - Usage
         - Fixed error bars option being enabled when error bars are not available
         - Fixed metrics appearing to be available to users that do not have access
