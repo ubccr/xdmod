@@ -98,6 +98,7 @@ rm -rf $RPM_BUILD_ROOT
         - Improved handling of invalid start and end dates received by API
         - Fixed validation of length of names in contact forms
         - Improved handling of jobs with "0" start or end time
+        - Fixed case where About tab would display a blank page when loaded using Chrome
     - Job Viewer
         - Fixed directions not always appearing when all jobs are closed
         - Fixed memory leak
