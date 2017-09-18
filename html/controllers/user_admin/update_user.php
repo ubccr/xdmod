@@ -60,9 +60,9 @@ $params = array('uid' => RESTRICTION_UID);
    	
          $role_config = json_decode($_POST['acls'], true);
          if (!in_array(ROLE_ID_MANAGER, $role_config)) {
-             $returnData['success'] = false;
-             $returnData['status'] = 'You are not allowed to revoke manager access from yourself.';
-             xd_controller\returnJSON($returnData);
+                $returnData['success'] = false;
+                $returnData['status'] = 'You are not allowed to revoke manager access from yourself.';
+                xd_controller\returnJSON($returnData);
          }
       }//if (isset($_POST['acls']))
 
@@ -101,18 +101,18 @@ $params = array('uid' => RESTRICTION_UID);
 
 // ===========================================
     if (isset($_POST['acls'])) {
-       $acls = json_decode($_POST['acls'], true);
-       $user_to_update->setAcls(array());
-       foreach ($acls as $aclName => $centers) {
-           $acl = Acls::getAclByName($aclName);
-           $user_to_update->addAcl($acl);
+        $acls = json_decode($_POST['acls'], true);
+        $user_to_update->setAcls(array());
+        foreach ($acls as $aclName => $centers) {
+            $acl = Acls::getAclByName($aclName);
+            $user_to_update->addAcl($acl);
 
-           if (count($centers) > 0) {
-               foreach ($centers as $center) {
-                   $user_to_update->addAclOrganization($aclName, $center);
-               }
-           }
-       }
+            if (count($centers) > 0) {
+                foreach ($centers as $center) {
+                    $user_to_update->addAclOrganization($aclName, $center);
+                }
+            }
+        }
     }
 
 	/*if (isset($_POST['roles'])) {

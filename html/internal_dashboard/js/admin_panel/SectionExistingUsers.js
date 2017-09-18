@@ -560,7 +560,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         userManagementAction({
                             operation: 'update_user',
                             uid: selected_user_id,
-                            email_address: document.getElementById("existingUserEmail").value,
+                            email_address: document.getElementById('existingUserEmail').value,
                             is_active: (action == 'Enable') ? 'y' : 'n'
                         });
                     }
@@ -660,18 +660,19 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         });
 
         // ------------------------------------------
-
-        var roleGridClickHandler = function () {
-            var sel_roles = roleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(sel_roles.itemExists('cc') == -1);
-            saveIndicator.show();
-        };
-
+        /* eslint-disable no-use-before-define */
         var roleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment',
             selectionChangeHandler: roleGridClickHandler,
             border: false
         });
+
+        var roleGridClickHandler = function () {
+            var selRoles = roleGrid.getSelectedAcls();
+            cmbInstitution.setDisabled(selRoles.itemExists('cc') == -1);
+            saveIndicator.show();
+        };
+        /* eslint-enable no-use-before-define */
 
         // ------------------------------------------
 
@@ -786,7 +787,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 }
 
                 var populatedAcls = {};
-                for ( var i = 0; i < acls.length; i++) {
+                for (var i = 0; i < acls.length; i++) {
                     var acl = acls[i];
                     if (!populatedAcls.hasOwnProperty(acl)) {
                         populatedAcls[acl] = roleGrid.getCenters(acl);
@@ -1157,7 +1158,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                          * }
                          */
                         roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
-                        for ( var acl in json.user_information.acls) {
+                        for (var acl in json.user_information.acls) {
                             if (json.user_information.acls.hasOwnProperty(acl)) {
                                 var centers = json.user_information.acls[acl];
                                 roleGrid.setCenterConfig(acl, centers);

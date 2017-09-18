@@ -409,9 +409,10 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             win.show();
         };
 
+        /* eslint-disable no-use-before-define */
         var roleGridClickHandler = function () {
-            var sel_roles = newUserRoleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(sel_roles.itemExists('cc') == -1);
+            var selRoles = newUserRoleGrid.getSelectedAcls();
+            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
         };
 
         var newUserRoleGrid = new XDMoD.Admin.AclGrid({
@@ -421,6 +422,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             height: 200,
             selectionChangeHandler: roleGridClickHandler
         });
+        /* eslint-enable no-use-before-define */
 
         this.setCallback = function (callback) {
             account_creation_callback = callback;
@@ -499,7 +501,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     return;
                 }
 
-                if ((acls.indexOf('usr') >= 0 || acls.indexOf('pi')  >= 0) && missingMappedUser) {
+                if ((acls.indexOf('usr') >= 0 || acls.indexOf('pi') >= 0) && missingMappedUser) {
                     cmbUserMapping.addClass('admin_panel_invalid_text_entry');
 
                     CCR.xdmod.ui.userManagementMessage('This user must be mapped to a XSEDE Account<br>(Using the drop-down list)', false);
@@ -513,7 +515,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     return;
                 }
 
-                if (acls.indexOf('cc')  >= 0 && missingMappedUser) {
+                if (acls.indexOf('cc') >= 0 && missingMappedUser) {
                     cmbInstitution.addClass('admin_panel_invalid_text_entry');
                     CCR.xdmod.ui.userManagementMessage('An institution must be specified for a user having a role of Campus Champion.', false);
                     return;
@@ -527,7 +529,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
 
                 var populatedAcls = {};
                 // populate centers for any of the selected acls that have them
-                for ( var i = 0; i < acls.length; i++) {
+                for (var i = 0; i < acls.length; i++) {
                     var acl = acls[i];
                     populatedAcls[acl] = newUserRoleGrid.getCenters(acl);
                 }
