@@ -105,7 +105,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                var selectedRows = selectionModel.getSelections();
 
                btnDeleteCharts.setDisabled(selectedRows.length == 0);
-               btnBatchTimeframeEdit.setDisabled(selectedRows.length < 2);
+               btnTimeFrameEdit.setDisabled(selectedRows.length < 1);
 
             },
 
@@ -114,7 +114,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                var selectedRows = selectionModel.getSelections();
 
                btnDeleteCharts.setDisabled(selectedRows.length == 0);
-               btnBatchTimeframeEdit.setDisabled(selectedRows.length < 2);
+               btnTimeFrameEdit.setDisabled(selectedRows.length < 1);
 
             }
 
@@ -518,7 +518,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var btnBatchTimeframeEdit = new Ext.Button({
+      var btnTimeFrameEdit = new Ext.Button({
           iconCls: 'btn_timeframe_edit',
           text: 'Edit Timeframe of Selected Chart(s)',
           disabled: true,
@@ -531,7 +531,8 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
                   if (getData.length >= 2) {
                       batchEditChartTimeframes(getData);
-                  } else {       
+                  } else {
+                    var chartEditorConfigs = [];
                     var select = getData[0]; 
                     var dates = resolveDateEndpointsFromChartEntryConfig(select.data);
     
@@ -637,7 +638,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
       self.initGridFunctions = function() {
 
          btnDeleteCharts.setDisabled(true);
-         btnBatchTimeframeEdit.setDisabled(true);
+         btnTimeFrameEdit.setDisabled(true);
 
       };
 
@@ -654,7 +655,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
                btnSelectMenu,
                '-',
-               btnBatchTimeframeEdit,
+               btnTimeFrameEdit,
                '->',
                btnDeleteCharts
 
