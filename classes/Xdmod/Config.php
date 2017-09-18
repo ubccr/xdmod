@@ -161,11 +161,14 @@ class Config implements ArrayAccess
     }
 
     /**
-     * Attempt to retrieve the module name from a specified file name.
-     * This works by splitting on any one of the following characters:
-     * '.', '_', '-' and returning the first value of the split.
-     * Example: 'supremm-single-job-viewer.json'
-     * Result:  'supremm'
+     * Attempt to retrieve the module name from a specified file name.  This is done by first
+     * removing the file extension (typically ".json") and then checking for a submodule delimiter
+     * (:) and returning the portion of the filename before the delimiter, or the filename if
+     * no delimiter was present.
+     *
+     * For example:
+     * value-analytics.json will return "value-analytics"
+     * supremm:job-viewer.json will return "supremm"
      *
      * @param string $fileName the file name to be parsed.
      *
@@ -173,8 +176,19 @@ class Config implements ArrayAccess
      **/
     private function getModule($fileName)
     {
-        $results = preg_split('/[._-]/', $fileName);
-        return $results[0];
+        // Remove the extension (which _should_ be .json but could be capitalized)
+        if ( false !== ($extIndex = strrpos($fileName, '.')) ) {
+            $results = substr($fileName, 0, strlen($fileName) - $extIndex);
+        } else {
+            $results = $fileName;
+        }
+
+        // If there is a sub-module delimiter then take the portion before
+        if ( false !== ($index = strpos($results, ':')) ) {
+            $results = substr($results, 0, $index);
+        }
+
+        return $results;
     }
 
     /**

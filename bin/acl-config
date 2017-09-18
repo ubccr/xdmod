@@ -148,9 +148,8 @@ function main()
 
     // Datawarehouse Retrieval
     $datawarehouseSource = $config->getModuleSection('datawarehouse');
-
     foreach ($modules as $module => $moduleData) {
-        if (null !== $datawarehouseSource[$module]['realms']) {
+        if ( isset($datawarehouseSource[$module]['realms']) ) {
             $dwSource= $datawarehouseSource[$module]['realms'];
             foreach ($dwSource as $realmDisplay => $dwData) {
                 $groupBys = null !== $dwData['group_bys'] ? $dwData['group_bys'] : null;
@@ -168,16 +167,17 @@ function main()
 
     $db = null;
 
-    if (!$dryRun) {
-        $log->notice("*** Conducting Database Verification...");
-        if (!verifyDatabase()) {
-            $log->err("Unable to connect to the database, please check the following: \n\t - settings for 'database' in portal_settings.ini are correct.\n\t - the database identified by the 'database' section of portal_settings.ini is running, accepting connections, and that the user specified has connection privileges.");
-            exit(1);
-        }
-        $log->notice("*** Database Verification Passed!");
+    // The database connection will always be needed, even during dry-run because there are
+    // informational queries that will be executed even though information is not being changed.
 
-        $db = DB::factory('database');
+    $log->debug("*** Conducting Database Verification...");
+    if (!verifyDatabase()) {
+        $log->err("Unable to connect to the database, please check the following: \n\t - settings for 'database' in portal_settings.ini are correct.\n\t - the database identified by the 'database' section of portal_settings.ini is running, accepting connections, and that the user specified has connection privileges.");
+        exit(1);
     }
+    $log->debug("*** Database Verification Passed!");
+
+    $db = DB::factory('database');
 
     // Process the modules into the database
     processModules($db, $modules);
@@ -206,7 +206,7 @@ function main()
  *
  * @return void
  **/
-function processHierarchies($db, $hierarchies)
+function processHierarchies(iDatabase $db, $hierarchies)
 {
     global $dryRun, $log;
     $log->notice("Processing Hierarchies...");
@@ -229,7 +229,10 @@ function processHierarchies($db, $hierarchies)
 SQL;
     $log->debug($query);
 
-    $statement = $db->prepare($query);
+    if ( ! $dryRun ) {
+        $statement = $db->prepare($query);
+        $log->debug($query);
+    }
 
     $inserted = 0;
     $processed = 0;
@@ -283,7 +286,7 @@ SQL;
  *
  * @return void
  **/
-function processResult($db, $module, $moduleData, $modules)
+function processResult(iDatabase $db, $module, $moduleData, $modules)
 {
 
     global $log;
@@ -314,14 +317,14 @@ function processResult($db, $module, $moduleData, $modules)
 /**
  * Attempt to create the module version defined by the provided information.
  *
- * @param iDatabase|null $db          the db. null in the case of a dryRun.
- * @param integer        $moduleId    the module id
- * @param string         $installedOn the date this module version was created.
- * @param array          $version     the version information
+ * @param iDatabase $db          the db. null in the case of a dryRun.
+ * @param integer   $moduleId    the module id
+ * @param string    $installedOn the date this module version was created.
+ * @param array     $version     the version information
  *
  * @return integer|null
  **/
-function createModuleVersion($db, $moduleId, $installedOn, array $version)
+function createModuleVersion(iDatabase $db, $moduleId, $installedOn, array $version)
 {
     global $log, $dryRun;
 
@@ -332,7 +335,7 @@ function createModuleVersion($db, $moduleId, $installedOn, array $version)
 
     $moduleVersion = "$major.$minor.$patch $preRelease";
 
-    
+
 
     $query = <<<SQL
 INSERT INTO module_versions (
@@ -417,14 +420,14 @@ SQL;
 /**
  * Attempt to create a Module defined by the provided information.
  *
- * @param iDatabase|null $db      the database to use. null if dryRun is true.
- * @param string         $name    the internal name of the module
- * @param string         $display the value that should be displayed to users.
- * @param boolean        $enabled whether or not the module is enabled.
+ * @param iDatabase $db      the database to use. null if dryRun is true.
+ * @param string    $name    the internal name of the module
+ * @param string    $display the value that should be displayed to users.
+ * @param boolean   $enabled whether or not the module is enabled.
  *
  * @return integer|null
  **/
-function createModule($db, $name, $display, $enabled)
+function createModule(iDatabase $db, $name, $display, $enabled)
 {
     global $dryRun, $log;
 
@@ -484,14 +487,14 @@ SQL;
 /**
  * Attempt to associate the provided module w/ the provided module version.
  *
- * @param iDatabase|null $db              the database to be used in the
- *                                        operation. null if dryRun is true.
- * @param integer        $moduleId        the id of the module in question
- * @param integer        $moduleVersionId the id of the version in question
+ * @param iDatabase $db              the database to be used in the
+ *                                   operation. null if dryRun is true.
+ * @param integer   $moduleId        the id of the module in question
+ * @param integer   $moduleVersionId the id of the version in question
  *
  * @return void
  **/
-function associateModuleAndVersion($db, $moduleId, $moduleVersionId)
+function associateModuleAndVersion(iDatabase $db, $moduleId, $moduleVersionId)
 {
     global $dryRun, $log;
 
@@ -541,13 +544,13 @@ SQL;
 /**
  * Process the provided array of modules into the database.
  *
- * @param iDatabase|null $db the database that will be used while processing the
- *                           provided modules
+ * @param iDatabase $db the database that will be used while processing the
+ *                      provided modules
  * @param array[] $modules   the modules to be inserted into the database.
  *
  * @return void
  **/
-function processModules($db, array $modules)
+function processModules(iDatabase $db, array $modules)
 {
     global $dryRun, $log;
 
@@ -595,15 +598,15 @@ function processModules($db, array $modules)
  *         - group_by  ( associated with module and realm)
  *         - statistic ( associated with module and realm)
  *
- * @param iDatabase|null $db     the database to use when processing the provided
- *                               acls
- * @param string         $module the module to use when processing the provided acls
- * @param array          $realms the realm to use when processing the provided acls
- * @param array          $acls   the array of acls to be processed into the provided
- *                               db.
+ * @param iDatabase $db     the database to use when processing the provided
+ *                          acls
+ * @param string    $module the module to use when processing the provided acls
+ * @param array     $realms the realm to use when processing the provided acls
+ * @param array     $acls   the array of acls to be processed into the provided
+ *                          db.
  * @return void
  **/
-function processAcls($db, $module, array $realms, array $acls)
+function processAcls(iDatabase $db, $module, array $realms, array $acls)
 {
     global $dryRun, $log;
 
@@ -637,20 +640,20 @@ function processAcls($db, $module, array $realms, array $acls)
 /**
  * Process a single Acl into the database represented by $db.
  *
- * @param iDatabase|null $db          the database to use when processing this
- *                                    acl.
- * @param string         $module      the name of the module this acl is
- *                                    associated with.
- * @param string         $name        the internal name for this acl.
- * @param string         $display     the external name for this acl.
- * @param string         $type        the type of acl this is. Optional.
- * @param array          $hierarchies the hierarchy information associated
- *                                    with this acl. Optional.
+ * @param iDatabase $db          the database to use when processing this
+ *                               acl.
+ * @param string    $module      the name of the module this acl is
+ *                               associated with.
+ * @param string    $name        the internal name for this acl.
+ * @param string    $display     the external name for this acl.
+ * @param string    $type        the type of acl this is. Optional.
+ * @param array     $hierarchies the hierarchy information associated
+ *                               with this acl. Optional.
  *
  * @return int|null null if the acl was not able to be created or the acl_id if
  *                       it was created or exists.
  **/
-function processAcl($db, $module, $name, $display, $type = null, $hierarchies = null)
+function processAcl(iDatabase $db, $module, $name, $display, $type = null, $hierarchies = null)
 {
     global $dryRun, $log;
     $msg = "[Module: $module, Name: $name, Display: $display, Type: $type]";
@@ -763,7 +766,7 @@ SQL;
  * @throws Exception if there is a problem encountered executing any of the
  *                   sql queries.
  **/
-function processAclType($db, $module, $type)
+function processAclType(iDatabase $db, $module, $type)
 {
     global $dryRun, $log;
 
@@ -834,7 +837,7 @@ SQL;
  * @throws Exception if there is an exception encountered while attempting to execute
  *                   the sql required to process these acl hierarchy records.
  **/
-function processAclHierarchy($db, $module, $acl, array $hierarchies) {
+function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies) {
     global $dryRun, $log;
 
     $log->notice("Processing Acl Hierarchy Records...");
@@ -861,7 +864,11 @@ function processAclHierarchy($db, $module, $acl, array $hierarchies) {
     WHERE cur.acl_hierarchy_id IS NULL;
 SQL;
 
-    $statement = $db->prepare($query);
+    if ( ! $dryRun ) {
+        $statement = $db->prepare($query);
+        $log->debug($query);
+    }
+
     $log->debug($statement);
     $inserted = 0;
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
@@ -909,15 +916,15 @@ SQL;
 /**
  * Attempt to process the provided tabs and relate them to the provided acl.
  *
- * @param iDatabase|null $db     the database to be used during these operations.
- * @param string         $module the module name associated with these tabs / acl.
- * @param string         $acl    the acl that these tabs should be associated with.
- * @param array          $tabs   the tabs that should be created / associated with
- *                               the provided acl.
+ * @param iDatabase $db     the database to be used during these operations.
+ * @param string    $module the module name associated with these tabs / acl.
+ * @param string    $acl    the acl that these tabs should be associated with.
+ * @param array     $tabs   the tabs that should be created / associated with
+ *                          the provided acl.
  *
  * @return void
  **/
-function processTabs($db, $module, $acl, array $tabs)
+function processTabs(iDatabase $db, $module, $acl, array $tabs)
 {
     global $dryRun, $log;
 
@@ -935,19 +942,19 @@ function processTabs($db, $module, $acl, array $tabs)
  * Attempt to create a database representation of the provided tab information
  * that is related to the provided module.
  *
- * @param iDatabase|null $db     the database the tab is to be created in.
- * @param string         $module the module name the tab is to be associated with.
- * @param string         $tab    the name to use when creating said tab.
+ * @param iDatabase $db     the database the tab is to be created in.
+ * @param string    $module the module name the tab is to be associated with.
+ * @param string    $tab    the name to use when creating said tab.
  *
  * @return int|null null if the tab could not be created. int if the tab was
  *                       created or already existed.
  **/
-function createTab($db, $module, $tab)
+function createTab(iDatabase $db, $module, $tab)
 {
     global $dryRun, $log;
     $msg = "name: $tab";
 
-    
+
 
     $query =<<<SQL
     INSERT INTO tabs(module_id, name)
@@ -1018,15 +1025,15 @@ SQL;
  * Attempt to create a relation between the acl identified by the provided
  * aclName and the tab identified by the provided tabName.
  *
- * @param iDatabase|null $db      the database to use when creating the relation.
- * @param string         $aclName the name of the acl to use when creating the
- *                                relation.
- * @param string         $tabName the name of the tab to use when creating the
- *                                relation.
+ * @param iDatabase $db      the database to use when creating the relation.
+ * @param string    $aclName the name of the acl to use when creating the
+ *                           relation.
+ * @param string    $tabName the name of the tab to use when creating the
+ *                           relation.
  *
  * @return void
  **/
-function relateAclAndTab($db, $aclName, $tabName)
+function relateAclAndTab(iDatabase $db, $aclName, $tabName)
 {
     global $dryRun, $log;
 
@@ -1080,23 +1087,23 @@ SQL;
  * array. These are used for authorizing an acl to have access to a selected
  * group by and associated set of statistics for a given module / realm.
  *
- * @param iDatabase|null $db               the database to use when processing these
- *                                         query descriptors.
- * @param string         $module           the name of the module to associate these
- *                                         query descriptors with.
- * @param string         $acl              the name of the acl to associate these
- *                                         query
- * @param array          $realms           an array of realm names to validate
- *                                         'realm' values found in the
- *                                         queryDescriptors array.
- * @param array          $queryDescriptors an array containing a set of information
- *                                         from datawarehouse.json ( group_bys and
- *                                         statistics ) that will be used to create
- *                                         the descriptors.
+ * @param iDatabase $db               the database to use when processing these
+ *                                    query descriptors.
+ * @param string    $module           the name of the module to associate these
+ *                                    query descriptors with.
+ * @param string    $acl              the name of the acl to associate these
+ *                                    query
+ * @param array     $realms           an array of realm names to validate
+ *                                    'realm' values found in the
+ *                                    queryDescriptors array.
+ * @param array     $queryDescriptors an array containing a set of information
+ *                                    from datawarehouse.json ( group_bys and
+ *                                    statistics ) that will be used to create
+ *                                    the descriptors.
  *
  * @return void
  **/
-function processQueryDescriptors($db, $module, $acl, array $realms, array $queryDescriptors)
+function processQueryDescriptors(iDatabase $db, $module, $acl, array $realms, array $queryDescriptors)
 {
     global $dryRun, $log;
 
@@ -1224,14 +1231,14 @@ SQL;
  * Attempt to process the provided realms into the database identified by
  * the provided $db.
  *
- * @param iDatabase|null $db         the database that will be used to create
- *                                   these realms. null if dryRun is true.
- * @param string         $moduleName the module to associate these realms with.
- * @param array          $realms     the realms to be created.
+ * @param iDatabase $db         the database that will be used to create
+ *                              these realms. null if dryRun is true.
+ * @param string    $moduleName the module to associate these realms with.
+ * @param array     $realms     the realms to be created.
  *
  * @return void
  **/
-function processRealms($db, $moduleName, array $realms)
+function processRealms(iDatabase $db, $moduleName, array $realms)
 {
     global $dryRun, $log;
 
@@ -1252,14 +1259,14 @@ function processRealms($db, $moduleName, array $realms)
  * Attempt to create a realm with the provided realmName associated with the
  * module associated with the provided moduleName.
  *
- * @param iDatabase|null $db         the database to be used when creating the realm
- * @param string         $moduleName the name of the module to associate this realm
- *                                   with.
- * @param string         $realmName  the name that this realm should be created with.
+ * @param iDatabase $db         the database to be used when creating the realm
+ * @param string    $moduleName the name of the module to associate this realm
+ *                              with.
+ * @param string    $realmName  the name that this realm should be created with.
  *
  * @return void
  **/
-function createRealm($db, $moduleName, $realmName)
+function createRealm(iDatabase $db, $moduleName, $realmName)
 {
     global $dryRun, $log;
 
@@ -1313,17 +1320,17 @@ SQL;
 /**
  * Attempt to create a database record for each entry in the groupBys array.
  *
- * @param iDatabase|null $db         the database to be used when creating the group
- *                                   bys.
- * @param string         $moduleName the name of the module to associate with the
- *                                   group bys.
- * @param string         $realmName  the name of the realm to associate with the
- *                                   group bys.
- * @param array          $groupBys   the group bys that are to be created.
+ * @param iDatabase $db         the database to be used when creating the group
+ *                              bys.
+ * @param string    $moduleName the name of the module to associate with the
+ *                              group bys.
+ * @param string    $realmName  the name of the realm to associate with the
+ *                              group bys.
+ * @param array     $groupBys   the group bys that are to be created.
  *
  * @return void
  **/
-function createGroupBys($db, $moduleName, $realmName, array $groupBys)
+function createGroupBys(iDatabase $db, $moduleName, $realmName, array $groupBys)
 {
     global $dryRun, $log;
 
@@ -1388,16 +1395,16 @@ SQL;
 /**
  * Attempt to create a database record for each entry in the statistics array.
  *
- * @param iDatabase|null $db         the database to use when creating the statistics
- * @param string         $moduleName the name of the module to associate the
- *                                   statistics with
- * @param string         $realmName  the name of the realm to associate the
- *                                   statistics with
- * @param array          $statistics the statistics to be created
+ * @param iDatabase $db         the database to use when creating the statistics
+ * @param string    $moduleName the name of the module to associate the
+ *                              statistics with
+ * @param string    $realmName  the name of the realm to associate the
+ *                              statistics with
+ * @param array     $statistics the statistics to be created
  *
  * @return void
  **/
-function createStatistics($db, $moduleName, $realmName, array $statistics)
+function createStatistics(iDatabase $db, $moduleName, $realmName, array $statistics)
 {
     global $dryRun, $log;
 
