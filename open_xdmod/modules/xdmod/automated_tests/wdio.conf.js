@@ -206,7 +206,7 @@ exports.config = {
     mochaOpts: {
         ui: 'bdd',
         timeout: 100000,
-        bail: 1
+        bail: true
     },
     //
     // =====
