@@ -72,7 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
-* ??? ??? ?? 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 7.0.0-1.0
+* Thu Sep 21 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 7.0.0-1.0
 - Features
     - General
         - Enhanced authorization framework

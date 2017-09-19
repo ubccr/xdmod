@@ -1,7 +1,7 @@
 Open XDMoD Change Log
 =====================
 
-## 2017-0?-?? v7.0.0
+## 2017-09-21 v7.0.0
 
 - Features
     - General
