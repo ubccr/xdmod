@@ -532,20 +532,18 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                   if (getData.length >= 2) {
                       batchEditChartTimeframes(getData);
                   } else {
-                    var chartEditorConfigs = [];
                     var select = getData[0]; 
                     var dates = resolveDateEndpointsFromChartEntryConfig(select.data);
     
-                    chartEditorConfigs.push({
+                    var config = {
                         chart_id: select.data.chart_id,
                         type: select.data.timeframe_type,
                         window: select.data.timeframe_type,
                         start: dates.start_date,
                         end: dates.end_date
-        
-                    });
+                    };
 
-                    XDMoD.Reporting.Singleton.ChartDateEditor.present(chartEditorConfigs, '', '', false);
+                    XDMoD.Reporting.Singleton.ChartDateEditor.present(config, 'report_generator_included_charts_store', select.id, false);
                   }
               } else {
                   Ext.MessageBox.show({

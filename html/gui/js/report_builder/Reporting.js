@@ -293,12 +293,12 @@ XDMoD.Reporting.chartDetailsRenderer = function(val, metaData, record, rowIndex,
 
       var display_type = '';
 
-      var timeframe_selector = '<a id="report_generator_timeframe_selector_img" style="text-decoration: none" href="javascript:void(0)" ' +
+      var timeframe_selector = '<a style="text-decoration: none" href="javascript:void(0)" ' +
                                'onClick="XDMoD.Reporting.Singleton.ChartDateEditor.present(' + editorConfig + ', \'' + [store.storeId, record.id].join('\', \'') + '\')">' +
                                '<img title="Change Timeframe" src="gui/images/date_edit.png"></a>' + reset_link;
 
-     chart_entry_timeframe = '<div style="margin-top: 2px"><a id="report_generator_timeframe_selector" href="javascript:void(0)" onClick="XDMoD.Reporting.Singleton.ChartDateEditor.present(' + editorConfig + ', \'' + [store.storeId, record.id].join('\', \'') + '\')">' +
-                              entryData.chart_date_description + '</a></div>';
+     chart_entry_timeframe = '<div style="margin-top: 2px">' +
+                              entryData.chart_date_description + '</div>';
 
       /*
       viewSelector = '<div>';
