@@ -14,12 +14,12 @@ class LoginPage {
         });
         describe('Login', function login() {
             it('Click the login link', function clickLogin() {
-                browser.waitUntilNotExist('.ext-el-mask-msg');
+                browser.waitForInvisible('.ext-el-mask-msg');
                 $('a[href*=actionLogin]').click();
             });
             it('Should Login', function doLogin() {
-                $('.x-window-header-text=Welcome To XDMoD').waitForExist(20000);
-                $('#wnd_login iframe').waitForExist(20000);
+                $('.x-window-header-text=Welcome To XDMoD').waitForVisible(20000);
+                $('#wnd_login iframe').waitForVisible(20000);
                 browser.frame($('#wnd_login iframe').value);
                 $('#txt_login_username input').setValue(loginName);
                 $('#txt_login_password input').setValue(loginPassword);
@@ -32,7 +32,7 @@ class LoginPage {
                 browser.frame();
             });
             it('Display Logged in Users Name', function () {
-                $('#welcome_message').waitForExist(60000);
+                $('#welcome_message').waitForVisible(60000);
                 expect($('#welcome_message').getText()).to.equal(displayName);
             });
         });
@@ -45,8 +45,8 @@ class LoginPage {
                 $('#logout_link').click();
             });
             it('Display Logged out State', function clickLogout() {
-                browser.waitUntilNotExist('.ext-el-mask-msg');
-                $('a[href*=actionLogin]').waitForExist();
+                browser.waitForInvisible('.ext-el-mask-msg');
+                $('a[href*=actionLogin]').waitForVisible();
             });
         });
 /*
