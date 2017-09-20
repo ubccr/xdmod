@@ -207,14 +207,28 @@ class HighChart2
         return $pointInterval * 24 * 3600 * 1000;
     } // getPointInterval()
 
-    // ---------------------------------------------------------
-    // setDuration()
-    //
-    // Format and adjust start and end date for chart, given
-    // selected aggregation unit.
-    //
-    // Note: Data related
-    // ---------------------------------------------------------
+    /**
+     * Format and adjust start and end date for chart, given selected aggregation unit.
+     *
+     * The XDMoD UI presents data aggregated at particular units (day, month, quarter, year). It is
+     * sometimes necessary to adjust the user-specified start or end date to align with aggregation
+     * unit boundaries as we do not display partial aggregation units (the user must switch to a
+     * finer-grained unit for this). This means that the start date may need to be adjusted to the
+     * start of the unit that it falls into, similarly the end date may need to be adjusted to align
+     * with the end date of the unit. For example, viewing a monthly aggregation unit the date range
+     * 2017-1-15 - 2017-08-20 must be adjusted to 2017-01-01 - 2017-08-31 to include entire months
+     * since that is the data that will be returned.  NOTE: For end dates in the future, do not
+     * automatically adjust the end date because XDMoD does not currently support future data.
+     *
+     * @param string $startDate            Start date for the plot in a valid PHP format
+     * @param string $endDate              End date for the plot in a valid PHP format
+     * @param string $aggregationUnit      Selected aggregation unit (month, year, etc.)
+     * @param string $min_aggregation_unit The smallest aggregation unit allowed when automatically
+     *                                     determining the unit or null if no limit.
+     *
+     * @return Nothing
+     */
+
     public function setDuration($startDate, $endDate, $aggregationUnit, $min_aggregation_unit = null)
     {
         $this->_aggregationUnit = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName(
@@ -226,6 +240,7 @@ class HighChart2
 
         $s = new \DateTime($startDate);
         $e = new \DateTime($endDate);
+
         switch($this->_aggregationUnit)
         {
             case 'Month':
@@ -256,12 +271,22 @@ class HighChart2
             default:
             case 'Day':
             case 'day':
-                //no need to adjust
+                // no need to adjust
                 break;
         }
 
+        // XDMoD does not currently handle future data, so if the end date is the current day or in
+        // the future (e.g., we are looking at a "month to date" plot or the user has entered a
+        // future date), adjust the end date to the end of the current day rather than the end of
+        // the last aggregation period so the date is not misleading to the user.
+
         $this->_startDate = $startDate;
-        $this->_endDate = $endDate;
+        $this->_endDate = (
+            strtotime($endDate) >= mktime(23, 59, 59)
+            ? date('Y-m-d', mktime(23, 59, 59))
+            : $endDate
+        );
+
     } // setDuration()
 
     // ---------------------------------------------------------
