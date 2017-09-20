@@ -32,7 +32,7 @@ WHERE
 
 UPDATE
 ${DESTINATION_SCHEMA}.account a
-JOIN ${DESTINATION_SCHEMA}.raw_volume v
+JOIN ${DESTINATION_SCHEMA}.eucalyptus_raw_volume v
   ON v.provider_account_number = a.provider_account AND v.resource_id = a.resource_id
 SET a.display = v.provider_account_name
 //
