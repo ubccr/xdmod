@@ -41,7 +41,8 @@
                 "source": {
                     "type": "directoryscanner",
                     "name": "Eucalyptus event logs",
-                    "path": "cloud_eucalyptus/ccr-cbls-2",
+                    "#": "Relative paths are searched in $BASEDIR/etl_data.d",
+                    "path": "/path/to/eucalyptus/log/files",
                     "directory_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}/",
                     "file_pattern": "/acct\\.json/",
                     "#": "Recursion depth is relative to the path",
