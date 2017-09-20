@@ -245,10 +245,12 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
         }
 
         if (chart_config.type && chart_config.type.toLowerCase() === 'user defined') {
+            // eslint-disable-next-line
             rdoGrpTimeframeMode.items.get(0).setValue(true);
             this.start_date_field.setValue(chart_config.start);
             this.end_date_field.setValue(chart_config.end);
         } else {
+            // eslint-disable-next-line
             rdoGrpTimeframeMode.items.get(1).setValue(true);
             this.mnuPeriodicTimeframe.setText(chart_config.window);
         }
