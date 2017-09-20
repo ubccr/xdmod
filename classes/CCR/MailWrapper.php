@@ -146,6 +146,6 @@ class MailWrapper
         $template->apply($properties);
 
         $properties['body'] = $template->getContents();
-        MailWrapper::sendmail($properties);
+        MailWrapper::sendMail($properties);
     }
 }
