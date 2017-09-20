@@ -244,13 +244,13 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
 
         }
 
-        if (chart_config.type && chart_config.type.toLowerCase() == 'user defined') {
-           rdoGrpTimeframeMode.items.get(0).setValue(true);
-           this.start_date_field.setValue(chart_config.start);
-           this.end_date_field.setValue(chart_config.end);
+        if (chart_config.type && chart_config.type.toLowerCase() === 'user defined') {
+            rdoGrpTimeframeMode.items.get(0).setValue(true);
+            this.start_date_field.setValue(chart_config.start);
+            this.end_date_field.setValue(chart_config.end);
         } else {
-           rdoGrpTimeframeMode.items.get(1).setValue(true);
-           this.mnuPeriodicTimeframe.setText(chart_config.window);
+            rdoGrpTimeframeMode.items.get(1).setValue(true);
+            this.mnuPeriodicTimeframe.setText(chart_config.window);
         }
       };//present
 
