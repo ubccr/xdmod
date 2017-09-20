@@ -217,8 +217,12 @@ class HighChart2
      * start of the unit that it falls into, similarly the end date may need to be adjusted to align
      * with the end date of the unit. For example, viewing a monthly aggregation unit the date range
      * 2017-1-15 - 2017-08-20 must be adjusted to 2017-01-01 - 2017-08-31 to include entire months
-     * since that is the data that will be returned.  NOTE: For end dates in the future, do not
-     * automatically adjust the end date because XDMoD does not currently support future data.
+     * since that is the data that will be returned.
+     *
+     * NOTE: XDMoD does not currently provide data for the future. For end dates that fall on the
+     * current date or in the future, do not automatically adjust the date to the end of the
+     * aggregation period that it falls into. Rather, adjust it to the end of the current day as
+     * this is the data that will be displayed.
      *
      * @param string $startDate            Start date for the plot in a valid PHP format
      * @param string $endDate              End date for the plot in a valid PHP format
