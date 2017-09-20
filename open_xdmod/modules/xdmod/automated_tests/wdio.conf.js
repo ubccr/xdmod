@@ -117,7 +117,7 @@ exports.config = {
     //
     // Set a base URL in order to shorten url command calls. If your url parameter starts
     // with '/', the base url gets prepended.
-    baseUrl: 'https://tas-reference-dbs.ccr.xdmod.org',
+    baseUrl: 'https://metrics-dev.ccr.buffalo.edu:9011',
     //
     // Default timeout for all waitForXXX commands.
     waitforTimeout: 10000,

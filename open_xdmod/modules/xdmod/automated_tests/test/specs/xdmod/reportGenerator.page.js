@@ -237,7 +237,7 @@ class IncludedChart {
         this.selectors = {
             titleAndDrillDetails: baseSelector + '/div[position()=4]/span',
             dateDescription: baseSelector + '/div[position()=6]/',
-            timeframeEditIcon: baseSelector + '/div[position()=5]/a[position=1]'
+            timeframeEditIcon: baseSelector + '/div[position()=5]/a[position=1]',
             timeframeType: baseSelector + '/div[position()=7]/span',
             timeframeResetIcon: baseSelector + '/div[position()=5]/a[position=2]'
         };
