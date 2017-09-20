@@ -93,6 +93,12 @@ merge any changes after running the upgrade script.
 
     # /opt/xdmod-new/bin/xdmod-upgrade
 
+6.6.0 to 7.0.0 Upgrade Notes
+----------------------------
+
+- This upgrade includes database schema changes.
+    - Modifies `moddb` schema to remove unused tables and add new ACL tables.
+
 6.5.0 to 6.6.0 Upgrade Notes
 ----------------------------
 
