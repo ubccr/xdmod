@@ -60,3 +60,7 @@ defaults:
 # Build settings
 markdown: kramdown
 theme_subdir: "/xdmod-jekyll-theme"
+gems:
+  - jekyll-redirect-from
+whitelist:
+  - jekyll-redirect-from
