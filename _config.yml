@@ -33,7 +33,7 @@ version_list:
 
 defaults:
     -
-       scope:
+        scope:
             path: "7.0"
             type: "pages"
         values:
