@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 Ext.namespace('XDMoD');
 
 XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {

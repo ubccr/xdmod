@@ -6,10 +6,12 @@
   },
   "globals": {},
   "rules": {
+    "camelcase" : "off",
     "curly": [
       "error",
       "all"
     ],
+    "dot-notation": "warn",
     "brace-style": [
       "error",
       "1tbs",
@@ -91,6 +93,7 @@
         "selector": "WithStatement",
         "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
       }
-    ]
+    ],
+    "no-use-before-define": "warn"
   }
 }
