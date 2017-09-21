@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 Ext.namespace('XDMoD');
 
 XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
@@ -105,7 +107,6 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                var selectedRows = selectionModel.getSelections();
 
                btnDeleteCharts.setDisabled(selectedRows.length == 0);
-               // eslint-disable-next-line
                btnTimeFrameEdit.setDisabled(selectedRows.length < 1);
 
             },
@@ -115,7 +116,6 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                var selectedRows = selectionModel.getSelections();
 
                btnDeleteCharts.setDisabled(selectedRows.length == 0);
-               // eslint-disable-next-line
                btnTimeFrameEdit.setDisabled(selectedRows.length < 1);
 
             }
