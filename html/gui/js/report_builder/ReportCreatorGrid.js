@@ -485,31 +485,29 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-    var batchEditChartTimeframes = function (selections) {
-        var chartEditorConfigs = [];
+        var batchEditChartTimeframes = function (selections) {
+            var chartEditorConfigs = [];
 
-        for (var i = 0; i < selections.length; i++) {
+            for (var i = 0; i < selections.length; i++) {
+                var dates = resolveDateEndpointsFromChartEntryConfig(selections[i].data);
 
-            var dates = resolveDateEndpointsFromChartEntryConfig(selections[i].data);
+                chartEditorConfigs.push({
 
-            chartEditorConfigs.push({
+                    chart_id: selections[i].data.chart_id,
+                    type: selections[i].data.timeframe_type,
+                    window: selections[i].data.timeframe_type,
+                    start: dates.start_date,
+                    end: dates.end_date
 
-                chart_id: selections[i].data.chart_id,
-                type: selections[i].data.timeframe_type,
-                window: selections[i].data.timeframe_type,
-                start: dates.start_date,
-                end: dates.end_date
+                });
 
-            });
+                var trackingConfig = XDMoD.Reporting.GetTrackingConfigFromRecord(selections[i]);
+                XDMoD.TrackEvent('Report Generator (Report Editor)', 'Selected Chart for batch timeframe edit', Ext.encode(trackingConfig));
+            }
 
-            var trackingConfig = XDMoD.Reporting.GetTrackingConfigFromRecord(selections[i]);
-            XDMoD.TrackEvent('Report Generator (Report Editor)', 'Selected Chart for batch timeframe edit', Ext.encode(trackingConfig));
-
-        }//for
-
-        XDMoD.TrackEvent('Report Generator (Report Editor)', 'Clicked on the Edit Timeframe of Selected Charts button');
-        XDMoD.Reporting.Singleton.ChartDateEditor.present(chartEditorConfigs, '', '', true);
-    };//batchEditChartTimeframes
+            XDMoD.TrackEvent('Report Generator (Report Editor)', 'Clicked on the Edit Timeframe of Selected Charts button');
+            XDMoD.Reporting.Singleton.ChartDateEditor.present(chartEditorConfigs, '', '', true);
+        };
 
       // ----------------------------------------------------
 
@@ -520,32 +518,30 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var btnTimeFrameEdit = new Ext.Button({
+       var btnTimeFrameEdit = new Ext.Button({
           iconCls: 'btn_timeframe_edit',
           text: 'Edit Timeframe of Selected Chart(s)',
           disabled: true,
 
           handler: function () {
               var sm = queueGrid.getSelectionModel();
-
               if (sm.hasSelection()) {
                   var getData = sm.getSelections();
-
                   if (getData.length >= 2) {
                       batchEditChartTimeframes(getData);
                   } else {
-                    var select = getData[0]; 
-                    var dates = resolveDateEndpointsFromChartEntryConfig(select.data);
-    
-                    var config = {
-                        chart_id: select.data.chart_id,
-                        type: select.data.timeframe_type,
-                        window: select.data.timeframe_type,
-                        start: dates.start_date,
-                        end: dates.end_date
-                    };
+                      var select = getData[0];
+                      var dates = resolveDateEndpointsFromChartEntryConfig(select.data);
 
-                    XDMoD.Reporting.Singleton.ChartDateEditor.present(config, 'report_generator_included_charts_store', select.id, false);
+                      var config = {
+                          chart_id: select.data.chart_id,
+                          type: select.data.timeframe_type,
+                          window: select.data.timeframe_type,
+                          start: dates.start_date,
+                          end: dates.end_date
+                      };
+
+                      XDMoD.Reporting.Singleton.ChartDateEditor.present(config, 'report_generator_included_charts_store', select.id, false);
                   }
               } else {
                   Ext.MessageBox.show({
@@ -556,7 +552,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                   });
               }
           }
-      });
+       });
 
       var btnSelectMenu = new Ext.Button({
 
@@ -641,7 +637,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
          btnTimeFrameEdit.setDisabled(true);
 
       };
-
+      
       // ----------------------------------------------------
 
       Ext.apply(this, {
@@ -652,13 +648,11 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
          tbar: {
             items: [
-
                btnSelectMenu,
                '-',
                btnTimeFrameEdit,
                '->',
                btnDeleteCharts
-
             ]
          },
 
