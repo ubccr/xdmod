@@ -25,6 +25,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://open.xdmod.org" # the base hostname & protocol for your site
 github_username: ubccr
 github_url: https://github.com/ubccr/xdmod
+xdmod_module_name: ""
 latest_version: "7.0"
 version_list:
     - "7.0"
