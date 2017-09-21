@@ -244,7 +244,7 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
 
         }
 
-        if (chart_config.type.toLowerCase() == 'user defined') {
+        if (chart_config.type && chart_config.type.toLowerCase() === 'user defined') {
 
            rdoGrpTimeframeMode.items.get(0).setValue(true);
 
