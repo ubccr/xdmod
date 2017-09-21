@@ -1,3 +1,5 @@
+/* eslint-disable indent no-use-before-define*/
+
 Ext.namespace('XDMoD.Reporting');
 
 // XDMoD.Reporting.ChartDateEditor
@@ -244,7 +246,6 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
 
         }
 
-        /* eslint-disable */
         if (chart_config.type && chart_config.type.toLowerCase() === 'user defined') {
             rdoGrpTimeframeMode.items.get(0).setValue(true);
             this.start_date_field.setValue(chart_config.start);
@@ -253,7 +254,6 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
             rdoGrpTimeframeMode.items.get(1).setValue(true);
             this.mnuPeriodicTimeframe.setText(chart_config.window);
         }
-        /* eslinit-enable */
         
       };//present
 

@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+
 Ext.namespace('XDMoD');
 
 XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
@@ -105,7 +107,6 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                var selectedRows = selectionModel.getSelections();
 
                btnDeleteCharts.setDisabled(selectedRows.length == 0);
-               //eslint-disable-next-line
                btnTimeFrameEdit.setDisabled(selectedRows.length < 1);
 
             },
@@ -115,7 +116,6 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                var selectedRows = selectionModel.getSelections();
 
                btnDeleteCharts.setDisabled(selectedRows.length == 0);
-               //eslint-disable-next-line
                btnTimeFrameEdit.setDisabled(selectedRows.length < 1);
 
             }
@@ -483,7 +483,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
         };//resolveDateEndpointsFromChartEntryConfig
 
-    // ----------------------------------------------------
+      // ----------------------------------------------------
 
         var batchEditChartTimeframes = function (selections) {
             var chartEditorConfigs = [];
@@ -518,7 +518,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var btnTimeFrameEdit = new Ext.Button({
+       var btnTimeFrameEdit = new Ext.Button({
           iconCls: 'btn_timeframe_edit',
           text: 'Edit Timeframe of Selected Chart(s)',
           disabled: true,
@@ -552,7 +552,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
                   });
               }
           }
-      });
+       });
 
       var btnSelectMenu = new Ext.Button({
 
@@ -632,10 +632,12 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
       // ----------------------------------------------------
 
       self.initGridFunctions = function() {
+
          btnDeleteCharts.setDisabled(true);
          btnTimeFrameEdit.setDisabled(true);
-      };
 
+      };
+      
       // ----------------------------------------------------
 
       Ext.apply(this, {
@@ -648,7 +650,7 @@ XDMoD.ReportCreatorGrid = Ext.extend(Ext.Panel,  {
             items: [
                btnSelectMenu,
                '-',
-                btnTimeFrameEdit,
+               btnTimeFrameEdit,
                '->',
                btnDeleteCharts
             ]

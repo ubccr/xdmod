@@ -1,3 +1,5 @@
+/* eslint-disable indent*/
+
 Ext.namespace('XDMoD.Reporting', 'XDMoD.Reporting.Singleton');
 
 XDMoD.Reporting.GetTrackingConfigFromRecord = function(record_ref) {
