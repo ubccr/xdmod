@@ -1,6 +1,52 @@
 Open XDMoD Change Log
 =====================
 
+## 2017-09-21 v7.0.0
+
+- Features
+    - General
+        - Enhanced authorization framework ([\#97](https://github.com/ubccr/xdmod/pull/97), [\#146](https://github.com/ubccr/xdmod/pull/146), [\#206](https://github.com/ubccr/xdmod/pull/206))
+        - Improved login prompt to automatically appear when an unauthenticated user attempts to access any private tab ([\#110](https://github.com/ubccr/xdmod/pull/110))
+        - Improved design of Metric Explorer Load Chart menu ([\#144](https://github.com/ubccr/xdmod/pull/144))
+        - Re-enabled aggregate mode for "Wall Hours: Per Job" metric ([\#186](https://github.com/ubccr/xdmod/pull/186))
+        - Added quarterly report template for center directors ([\#199](https://github.com/ubccr/xdmod/pull/199))
+        - Improved support for third-party PHP libraries used by modules ([\#205](https://github.com/ubccr/xdmod/pull/205))
+    - ETLv2
+        - Added support for RFC-6901 JSON References ([\#100](https://github.com/ubccr/xdmod/pull/100), [\#166](https://github.com/ubccr/xdmod/pull/166))
+        - Added file directory data endpoint ([\#154](https://github.com/ubccr/xdmod/pull/154))
+        - Improved support for `order_id` columns in Open XDMoD database ([\#201](https://github.com/ubccr/xdmod/pull/201))
+        - Refactored various components to support new features ([\#138](https://github.com/ubccr/xdmod/pull/138), [\#145](https://github.com/ubccr/xdmod/pull/145), [\#151](https://github.com/ubccr/xdmod/pull/151), [\#167](https://github.com/ubccr/xdmod/pull/167), [\#174](https://github.com/ubccr/xdmod/pull/174), [\#180](https://github.com/ubccr/xdmod/pull/180), [\#196](https://github.com/ubccr/xdmod/pull/196))
+    - Job Viewer
+        - Added Gantt chart view of job peers ([\#153](https://github.com/ubccr/xdmod/pull/153), [\#164](https://github.com/ubccr/xdmod/pull/164))
+        - Added ability to link directly to jobs ([\#156](https://github.com/ubccr/xdmod/pull/156))
+        - Improved user feedback while job data is loading ([\#168](https://github.com/ubccr/xdmod/pull/168))
+- Bug Fixes
+    - General
+        - Fixed various compatibility issues with PHP 7 ([\#101](https://github.com/ubccr/xdmod/pull/101), [\#183](https://github.com/ubccr/xdmod/pull/183))
+        - Fixed handling of 4-byte UTF-8 characters during XRAS ingestion ([\#122](https://github.com/ubccr/xdmod/pull/122))
+        - Improved handling of invalid start and end dates received by API ([\#160](https://github.com/ubccr/xdmod/pull/160))
+        - Fixed validation of length of names in contact forms ([\#175](https://github.com/ubccr/xdmod/pull/175))
+        - Improved handling of jobs with "0" start or end time ([\#197](https://github.com/ubccr/xdmod/pull/197))
+        - Fixed case where About tab would display a blank page when loaded using Chrome ([\#232](https://github.com/ubccr/xdmod/pull/232))
+    - Job Viewer
+        - Fixed directions not always appearing when all jobs are closed ([\#155](https://github.com/ubccr/xdmod/pull/155))
+        - Fixed memory leak ([\#149](https://github.com/ubccr/xdmod/pull/149))
+        - Fixed duplicate search nodes being created when opening jobs from Metric Explorer charts with "\#" in the title ([\#236](https://github.com/ubccr/xdmod/pull/236))
+    - Metric Explorer
+        - Fixed handling of "%" characters in Metric Explorer options when using Firefox ([\#114](https://github.com/ubccr/xdmod/pull/114))
+        - Fixed XSS vulnerability involving chart names ([\#239](https://github.com/ubccr/xdmod/pull/239))
+    - Usage
+        - Fixed error bars option being enabled when error bars are not available ([\#188](https://github.com/ubccr/xdmod/pull/188))
+        - Fixed metrics appearing to be available to users that do not have access ([\#189](https://github.com/ubccr/xdmod/pull/189))
+- Miscellaneous
+    - Moved Node.js ETL framework to Open XDMoD repository ([\#106](https://github.com/ubccr/xdmod/pull/106))
+    - Fixed build script running out of memory allocated by PHP ([\#118](https://github.com/ubccr/xdmod/pull/118))
+    - Performed work in anticipation of federated instances ([\#148](https://github.com/ubccr/xdmod/pull/148))
+    - Improved development workflow ([\#124](https://github.com/ubccr/xdmod/pull/124), [\#157](https://github.com/ubccr/xdmod/pull/157), [\#195](https://github.com/ubccr/xdmod/pull/195))
+    - Improved quality assurance ([\#107](https://github.com/ubccr/xdmod/pull/107), [\#116](https://github.com/ubccr/xdmod/pull/116), [\#134](https://github.com/ubccr/xdmod/pull/134), [\#143](https://github.com/ubccr/xdmod/pull/143), [\#150](https://github.com/ubccr/xdmod/pull/150), [\#163](https://github.com/ubccr/xdmod/pull/163), [\#165](https://github.com/ubccr/xdmod/pull/165), [\#169](https://github.com/ubccr/xdmod/pull/169), [\#173](https://github.com/ubccr/xdmod/pull/173), [\#184](https://github.com/ubccr/xdmod/pull/184), [\#185](https://github.com/ubccr/xdmod/pull/185), [\#187](https://github.com/ubccr/xdmod/pull/187), [\#190](https://github.com/ubccr/xdmod/pull/190), [\#193](https://github.com/ubccr/xdmod/pull/193), [\#194](https://github.com/ubccr/xdmod/pull/194), [\#198](https://github.com/ubccr/xdmod/pull/198), [\#212](https://github.com/ubccr/xdmod/pull/212), [\#235](https://github.com/ubccr/xdmod/pull/235))
+    - Cleaned up old and/or unused code ([\#104](https://github.com/ubccr/xdmod/pull/104), [\#105](https://github.com/ubccr/xdmod/pull/105), [\#109](https://github.com/ubccr/xdmod/pull/109), [\#112](https://github.com/ubccr/xdmod/pull/112), [\#117](https://github.com/ubccr/xdmod/pull/117), [\#128](https://github.com/ubccr/xdmod/pull/128), [\#158](https://github.com/ubccr/xdmod/pull/158), [\#159](https://github.com/ubccr/xdmod/pull/159), [\#182](https://github.com/ubccr/xdmod/pull/182), [\#191](https://github.com/ubccr/xdmod/pull/191), [\#213](https://github.com/ubccr/xdmod/pull/213))
+    - Improved documentation ([\#161](https://github.com/ubccr/xdmod/pull/161), [\#202](https://github.com/ubccr/xdmod/pull/202), [\#203](https://github.com/ubccr/xdmod/pull/203), [\#229](https://github.com/ubccr/xdmod/pull/229), [\#247](https://github.com/ubccr/xdmod/pull/247))
+
 2017-05-11 v6.6.0
 -----------------
 
