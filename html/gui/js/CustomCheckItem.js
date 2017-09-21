@@ -31,4 +31,5 @@ CCR.xdmod.ui.CustomCheckItem = Ext.extend(Ext.menu.CheckItem, {
     }
 });
 
+
 Ext.reg('customcheckitem', CCR.xdmod.ui.CustomCheckItem);
