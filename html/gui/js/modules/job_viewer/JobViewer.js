@@ -16,7 +16,6 @@
          "_makeRequest",
          "_panelActivation",
          "_performLoad",
-         "_retrieveSearchInfo",
          "_truncatePath",
          "_updateHistoryFromPanel",
          "_upsertSearch"
@@ -1884,7 +1883,17 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             local_job_id: jobLocalId
         };
 
-        var searchPromise = this._retrieveSearchInfo(realm, searchTitle);
+        var searchPromise = this._makeRequest(
+            'GET',
+            XDMoD.REST.url + '/' + this.rest.warehouse + '/search/history',
+            null,
+            {
+                realm: realm,
+                title: searchTitle,
+                token: XDMoD.REST.token
+            }
+        );
+
         searchPromise.then(function (results) {
             var data = results.data;
             var recordId = data.recordid;
@@ -1940,35 +1949,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             CCR.error('Error', 'Unable to complete the requested operation: ' + message);*/
         });
     }, // _createHistoryEntry
-
-    /**
-     * A helper function that, given a realm and search title, will handle
-     * making the correct REST call to retrieve the information ( if any ) about
-     * the uniquely identified search. This will be provided via a Promise so
-     * the caller will need to call:
-     *
-     * _retrieveSearchInfo(realm, title).then( function(results) {
-     *   ... processing logic goes here ...
-     * }).catch( function(errorResponse) {
-     *   ... error logic goes here ...
-     * });
-     *
-     *
-     * @param realm used to help uniquely identify the search to return.
-     * @param title used to help uniquely identify the search to return.
-     * @returns {Promise}
-     * @private
-     */
-    _retrieveSearchInfo: function (realm, title) {
-        /*'/rest/datawarehouse/search/info'*/
-        var url = XDMoD.REST.url + '/' + this.rest.warehouse + '/search/history';
-        var encoded = CCR.encode({
-            realm: realm,
-            title: title
-        });
-        url += ('?' + encoded + '&token=' + XDMoD.REST.token);
-        return this._makeRequest('GET', url);
-    }, // _retrieveSearchInfo
 
     /**
      * Attempts to execute an 'upsert' ( either an update or an insert depending
