@@ -1,4 +1,11 @@
-/* eslint-disable indent: 0, no-use-before-define: 1, no-trailing-spaces: 1*/
+/** eslint {
+*   "rules" : {
+*       "indent": 0,
+*       "no-trailing-spaces": 1,
+*       "no-use-before-define": 1
+*   }
+* }
+*/
 
 Ext.namespace('XDMoD.Reporting');
 
