@@ -1,4 +1,6 @@
 /* eslint-env node, es6 */
+var xdmod = require('./xdmod.page.js');
+
 class Usage {
     constructor() {
         this.tab = '#main_tab_panel__tg_usage';
@@ -40,10 +42,7 @@ class Usage {
      * Select the "Usage" tab by clicking it.
      */
     selectTab() {
-        expect(browser.isVisible(this.tab), '"Usage" tab (the actual tab, not necessarily the panel) is visible').to.be.true;
-        browser.click(this.tab);
-        browser.waitForVisible(this.panel);
-        browser.waitForAllInvisible(this.mask, 5000);
+        xdmod.selectTab('tg_usage');
     }
 
     /**

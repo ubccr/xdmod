@@ -17,6 +17,8 @@ function classContains(className) {
     return `contains(concat(" ",normalize-space(@class)," ")," ${className} ")`;
 }
 
+var xdmod = require('./xdmod.page.js');
+
 /**
  * A single row in the list of reports.
  */
@@ -736,6 +738,13 @@ class ReportGenerator {
     getAvailableCharts() {
         this.waitForAvailableChartsPanelVisible();
         const selector = this.selectors.availableCharts.chartList.rows();
+        var elemCount = browser.elements(selector).length;
+        var lastCount = -1;
+        while (elemCount !== lastCount) {
+            lastCount = elemCount;
+            browser.pause(100);
+            elemCount = browser.elements(selector).length;
+        }
         return $$(selector).map((element, i) => new AvailableChart(`${selector}[${i + 1}]`));
     }
 
@@ -763,11 +772,7 @@ class ReportGenerator {
      * Select the "Report Generator" tab by clicking it.
      */
     selectTab() {
-        const tab = $(this.selectors.tab());
-        expect(tab.isVisible(), '"Report Generator" tab (the actual tab, not necessarily the panel) is visible').to.be.true;
-        tab.click();
-        browser.waitForVisible(this.selectors.panel());
-        browser.waitForAllInvisible(this.selectors.mask(), 5000);
+        xdmod.selectTab('report_generator');
     }
 
     /**

@@ -34,6 +34,8 @@ class LoginPage {
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForVisible(60000);
                 expect($('#welcome_message').getText()).to.equal(displayName);
+
+                $('#main_tab_panel__about_xdmod').waitForVisible();
             });
         });
     }
