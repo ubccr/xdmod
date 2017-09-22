@@ -422,7 +422,7 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
             self.hide(); 
         }
       });//btnCancel
-       
+  
       // -------------------------------------------------------------------
 
       var btnUpdate = new Ext.Button({
