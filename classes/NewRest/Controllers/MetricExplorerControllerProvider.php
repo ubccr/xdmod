@@ -120,6 +120,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
 
                 foreach ($data as &$query) {
                     $this->removeRoleFromQuery($user, $query);
+                    $query['name'] = htmlspecialchars($query['name'], ENT_COMPAT, 'UTF-8', false);
                 }
 
                 $payload['data'] = $data;
@@ -171,6 +172,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
 
                 if (isset($query)) {
                     $payload['data'] = $query;
+                    $payload['data']['name'] = htmlspecialchars($query['name'], ENT_COMPAT, 'UTF-8', false);
                     $payload['success'] = true;
                     $statusCode = 200;
                 } else {
