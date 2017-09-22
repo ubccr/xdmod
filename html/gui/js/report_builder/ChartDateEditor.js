@@ -414,7 +414,7 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
       };//presentOverlay
 
       // -------------------------------------------------------------------
-      /* eslint-disable */
+
       var btnCancel = new Ext.Button({
         iconCls: 'chart_date_editor_cancel_button',
         text: 'Cancel',
@@ -422,7 +422,7 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
             self.hide(); 
         }
       });//btnCancel
-      /* eslint-enable */
+
 
       // -------------------------------------------------------------------
 
