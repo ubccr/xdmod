@@ -291,26 +291,30 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
 
     global $log;
 
-    $acls = $moduleData['acls'];
-    $realms = $moduleData['realms'];
+    // Data for a module may contain a list of ACLs, a list of Realms and the access that is
+    // granted, or both.
+
+    $acls = ( isset($moduleData['acls']) ? $moduleData['acls'] : null );
+    $realms = ( isset($moduleData['realms']) ? $moduleData['realms'] : null );
 
     $log->info("Processing Module: $module");
 
     if ($modules === null) {
         $log->err("Unable to process $module, missing module information. Is there a $module.json file in CONF_DIR/datawarehouse.d?");
         return;
-    } else if ($realms !== null) {
+    }
+
+    if ($realms !== null) {
         processRealms($db, $module, $realms);
     } else {
         $log->warning("No realm information for module $module skipping...");
     }
 
-    if ($acls == null) {
-        $log->err("Unable to process $module, missing role information. Is there a $module.json file in CONF_DIR/modules.d?");
-    } else if ($acls !== null && $realms !== null) {
-        processAcls($db, $module, $realms, $acls);
+    if ($acls !== null) {
+        processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls);
     } else {
-        $log->warning("No acl or realm information for module $module skipping...");
+        $log->err("Unable to process $module, missing acl information. Is there a $module.json file in CONF_DIR/modules.d?");
+        $log->warning("No acl information for module $module skipping...");
     }
 }
 
@@ -611,8 +615,10 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls)
     global $dryRun, $log;
 
     foreach ($acls as $acl => $aclData) {
-        $permittedModules = $aclData['permitted_modules'];
-        $queryDescriptors = $aclData['query_descripters'];
+        // Don't assume that there are query descriptors or permitted modules. For example, an ACL
+        // may only be granting access to one or the other.
+        $permittedModules = ( isset($aclData['permitted_modules']) ? $aclData['permitted_modules'] : null );
+        $queryDescriptors = ( isset($aclData['query_descripters']) ? $aclData['query_descripters'] : null );
         $display = isset($aclData['display']) ? $aclData['display'] : $acl;
         $type = isset($aclData['type']) ? $aclData['type'] : null;
         $hierarchies = isset($aclData['hierarchies'])
@@ -1605,8 +1611,8 @@ function verifyConfigData()
             $data = $config[$section];
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch(Exception $e) {
-            $log->err("[FAIL] Unable to load section $section");
-            $invalid []= $section;
+            $log->err("[FAIL] Unable to load section: '$section' ");
+            $invalid[] = $section;
         }
     }
 
