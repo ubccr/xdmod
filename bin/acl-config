@@ -313,7 +313,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
     if ($acls !== null) {
         processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls);
     } else {
-        $log->err("Unable to process $module, missing role information. Is there a $module.json file in CONF_DIR/modules.d?");
+        $log->err("Unable to process $module, missing acl information. Is there a $module.json file in CONF_DIR/modules.d?");
         $log->warning("No acl information for module $module skipping...");
     }
 }
