@@ -5,6 +5,7 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
+
 - Open XDMoD only supports upgrading to a new version from the version
   that directly precedes it.  If you need to upgrade from an older
   version you must upgrade through all the intermediate versions or
