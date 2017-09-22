@@ -125,7 +125,7 @@ to:
   *  `openssl req -newkey rsa:2048 -new -x509 -days 3652 -nodes -out /etc/xdmod/simplesamlphp/cert/xdmod-idp.crt -keyout /etc/xdmod/simplesamlphp/cert/xdmod-idp.pem`
 *  Create /etc/xdmod/simplesamlphp/metadata/saml20-idp-hosted.php with content like the following (you will want to change the auth if you changed it in authsources.php)
 
-*Note: if you have not changed your SIMPLESAMLPHP_CONFIG_DIR these files will need to be located in `/usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/{% raw % }{cert,config,metadata}{% endraw %}`*
+*Note: if you have not changed your SIMPLESAMLPHP_CONFIG_DIR these files will need to be located in `/usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/{% raw %}{cert,config,metadata}{% endraw %}`*
 
 ```php
 <?php
