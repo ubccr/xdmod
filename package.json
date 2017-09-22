@@ -2,9 +2,11 @@
     "name": "xdmod",
     "version": "7.0.0",
     "description": "An open framework for collecting and analyzing HPC metrics.",
-    "dependencies": {},
+    "dependencies": {
+        "jslint": "^0.11.0"
+    },
     "devDependencies": {
-        "eslint": "^3.16.1",
+        "eslint": "^4.7.2",
         "eslint-config-airbnb-base": "^11.1.0",
         "eslint-plugin-import": "^2.2.0",
         "jsonlint": "^1.6.2"
