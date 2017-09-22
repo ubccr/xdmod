@@ -254,7 +254,7 @@ XDMoD.Reporting.ChartDateEditor = Ext.extend(Ext.Window,  {
             rdoGrpTimeframeMode.items.get(1).setValue(true);
             this.mnuPeriodicTimeframe.setText(chart_config.window);
         }
-        
+
       };//present
 
       // ---------------------------
