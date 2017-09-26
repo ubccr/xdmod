@@ -33,11 +33,16 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
 
 			if($group_by_instance->getAvailableOnDrilldown() !== false && array_search($statistic_name,$permitted_stats) !== false)
 			{
-				$drill_target_group_bys[] = $group_by_name.'-'.$group_by_instance->getLabel();
+				$drill_target_group_bys[] = array($group_by_name, $group_by_instance->getLabel());
 			}			
 		}
 		
-		sort($drill_target_group_bys);
+        usort(
+            $drill_target_group_bys,
+            function ($a, $b) {
+                return strcmp($a[0], $b[0]);
+            }
+        );
 		return $drill_target_group_bys;
 	}
 

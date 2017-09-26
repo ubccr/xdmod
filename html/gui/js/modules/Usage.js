@@ -82,8 +82,6 @@ Ext.apply(XDMoD.Module.Usage, {
             return;
         }
 
-        groupByNameAndUnit = groupByNameAndUnit.split('-');
-
         if (groupByNameAndUnit.length < 2) return;
 
         var groupByName = groupByNameAndUnit[0];

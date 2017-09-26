@@ -754,24 +754,25 @@ class Usage extends Common
                     // If this is not a trend line series and not a thumbnail,
                     // fill in the drilldown function.
                     if (!$isTrendLineSeries && !$thumbnailRequested) {
-                        $drillDowns = json_encode(implode(',', $user->getMostPrivilegedRole()->getQueryDescripters(
+                        $drillDowns = json_encode($user->getMostPrivilegedRole()->getQueryDescripters(
                             'tg_usage',
                             $usageRealm,
                             $usageGroupBy,
                             $meRequestMetric->getAlias()->getName()
-                        )->getDrillTargets($meRequestMetric->getAlias())));
+                        )->getDrillTargets($meRequestMetric->getAlias()));
                         $usageGroupByUnit = $usageGroupByObject->getUnit();
 
                         if ($meRequestIsTimeseries) {
                             $drilldownDetails = $meDataSeries['drilldown'];
                             $drilldownId = $drilldownDetails['id'];
                             $drilldownLabel = json_encode($drilldownDetails['label']);
+                            $groupByNameAndUnit = json_encode(array($usageGroupBy, $usageGroupByUnit));
                             $drilldownFunction = "function(event) {
                                 this.ts = this.x;
                                 XDMoD.Module.Usage.drillChart(
                                     this,
                                     $drillDowns,
-                                    '${usageGroupBy}-${usageGroupByUnit}',
+                                    $groupByNameAndUnit,
                                     '$drilldownId',
                                     $drilldownLabel,
                                     'none',
@@ -786,7 +787,7 @@ class Usage extends Common
                                 XDMoD.Module.Usage.drillChart(
                                     this,
                                     $drillDowns,
-                                    '${usageGroupBy}-${usageGroupByUnit}',
+                                    $groupByNameAndUnit,
                                     id,
                                     label,
                                     'none',
