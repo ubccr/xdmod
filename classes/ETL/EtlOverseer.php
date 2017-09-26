@@ -344,6 +344,7 @@ class EtlOverseer extends Loggable implements iEtlOverseer
      * ------------------------------------------------------------------------------------------
      */
 
+     // @codingStandardsIgnoreLine
     private function _execute($actionName, iAction $actionObj)
     {
         $this->logger->info(array(
