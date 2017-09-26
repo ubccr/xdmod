@@ -424,10 +424,12 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($user);
     }
 
+    /**
+     * @expectedException Exception
+     */
     public function testGetUserByUserNameNull()
     {
         $user = XDUser::getUserByUserName(null);
-        $this->assertNull($user);
     }
 
     /**
