@@ -3189,7 +3189,20 @@ SQL;
         throw new Exception("User \"$username\" not found");
     } // getUserByUserName
 
-    public function addAclOrganization($aclName, $organization)
+    /**
+     * Attempt to make a relationship between the provided acl and organization
+     * identifier. These relationships are generally used when a user needs to
+     * have the data XDMoD is providing to them filtered by a particular
+     * organization.
+     *
+     * @param string $aclName        the name of the acl that should have a
+     *                               relationship created for it with the
+     *                               provided organization.
+     * @param string $organizationId the name of the organization
+     * @throws Exception if this user has not been saved yet
+     * @throws Exception if the provided acl cannot be found.
+     */
+    public function addAclOrganization($aclName, $organizationId)
     {
         if (empty($this->_id)) {
             throw new \Exception("This user must be saved prior to calling this function.");
@@ -3236,7 +3249,7 @@ SQL;
         $this->_pdo->execute($populateUserAclGroupByParameters, array(
             ':user_id' => $this->_id,
             ':acl_id'  => $acl->getAclId(),
-            ':value'   => $organization
+            ':value'   => $organizationId
         ));
     } // addAclOrganization
 }//XDUser
