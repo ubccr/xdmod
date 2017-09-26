@@ -953,7 +953,8 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         height: 22,
         enableKeyEvents: true,
         id: 'txt_login_password',
-        name: 'password'
+        name: 'password',
+        inputType: 'password'
     });
 
     var loginItems = [];
