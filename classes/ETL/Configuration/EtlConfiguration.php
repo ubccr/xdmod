@@ -238,8 +238,8 @@ class EtlConfiguration extends Configuration
         }  // foreach ( $etlSectionNames as $typeName )
 
         // --------------------------------------------------------------------------------
-        // Register the global default endpoints (the overseer script needs access to the utility
-        // endpoint) but note that individual actions may define their own.
+        // Register the global default endpoints but note that individual actions may still define
+        // their own. We should not verify these unless they are actually used by an enabled action.
 
         $this->endpoints = array();
 

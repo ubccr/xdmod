@@ -59,15 +59,18 @@ class EtlOverseer extends Loggable implements iEtlOverseer
 
         $this->verifiedDataEndpoints = false;
 
-        // This is a quick hack to only verify endpoints used by the actions that we are
-        // processing. The actions are not instantiated at this point because we need to verify the
-        // endpoints first.
+        // Generate a list of data endpoints that are used by enabled actions so we can verify them
+        // prior to executing the actions. The actions are not instantiated at this point because we
+        // need to verify the endpoints first.
 
         $usedEndpointKeys = array();
 
         foreach ( $this->etlOverseerOptions->getActionNames() as $actionName ) {
             list($sectionName, $actionName) = $this->parseSectionFromActionName($actionName);
             $options = $etlConfig->getActionOptions($actionName, $sectionName);
+            if ( ! $options->enabled ) {
+                continue;
+            }
             $usedEndpointKeys[] = $options->utility;
             $usedEndpointKeys[] = $options->source;
             $usedEndpointKeys[] = $options->destination;
@@ -75,6 +78,9 @@ class EtlOverseer extends Loggable implements iEtlOverseer
         foreach ( $this->etlOverseerOptions->getSectionNames() as $sectionName ) {
             foreach ( $etlConfig->getSectionActionNames($sectionName) as $actionName ) {
                 $options = $etlConfig->getActionOptions($actionName, $sectionName);
+                if ( ! $options->enabled ) {
+                    continue;
+                }
                 $usedEndpointKeys[] = $options->utility;
                 $usedEndpointKeys[] = $options->source;
                 $usedEndpointKeys[] = $options->destination;
@@ -87,6 +93,9 @@ class EtlOverseer extends Loggable implements iEtlOverseer
 
         foreach ( $usedEndpointKeys as $endpointKey ) {
             if ( false === ($endpoint = $etlConfig->getDataEndpoint($endpointKey)) ) {
+                $this->logger->warning(
+                    sprintf("Could not retrieve data endpoint object with key %s, skipping", $endpointKey)
+                );
                 continue;
             }
 
