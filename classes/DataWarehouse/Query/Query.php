@@ -4,6 +4,7 @@ namespace DataWarehouse\Query;
 use Exception;
 
 use CCR\DB;
+use CCR\DB\PDODB;
 use FilterListHelper;
 use Xdmod\Config;
 
@@ -237,7 +238,7 @@ class Query
 
         $query_string = $this->getQueryString($limit);
 
-        $debug = \xd_utilities\filter_var(\xd_utilities\getConfiguration('general', 'sql_debug_mode'), FILTER_VALIDATE_BOOLEAN);
+        $debug = PDODB::debugging();
         if ($debug == true) {
             $class = get_class($this);
             $this->log->debug(sprintf("%s: \n%s", $class, $query_string));

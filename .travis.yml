@@ -11,17 +11,6 @@ env:
     global:
         - NODE_VERSION=6
         - XDMOD_TEST_ARTIFACTS_MIRROR="$HOME/xdmod-test-artifacts.git"
-    matrix:
-        - TEST_SUITE=syntax
-        - TEST_SUITE=style
-        - TEST_SUITE=unit
-        - TEST_SUITE=build
-matrix:
-    exclude:
-        - php: '7.0'
-          env: TEST_SUITE=style
-        - php: '7.1.6'
-          env: TEST_SUITE=style
 
 # Add dependency directories to the Travis cache
 cache:

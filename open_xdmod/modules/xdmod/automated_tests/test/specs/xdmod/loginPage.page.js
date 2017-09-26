@@ -5,7 +5,6 @@ class LoginPage {
             it('Verify Logo and Title', function () {
                 browser.url(theUrl);
                 expect(browser.getTitle()).to.equal(title);
-                 // $(this.logo).waitForVisible(2000);
                 $('#logo').waitForVisible(2000);
                 var logoSize = browser.getElementSize('#logo');
                 expect(logoSize.width).to.equal(93);
@@ -14,7 +13,7 @@ class LoginPage {
         });
         describe('Login', function login() {
             it('Click the login link', function clickLogin() {
-                browser.waitUntilNotExist('.ext-el-mask-msg');
+                browser.waitForInvisible('.ext-el-mask-msg');
                 $('a[href*=actionLogin]').click();
                 $('a[href*=switchLoginView]').click();
             });
@@ -24,7 +23,7 @@ class LoginPage {
                 $('#btn_sign_in .x-btn-mc').click();
             });
             it('Display Logged in Users Name', function () {
-                $('#welcome_message').waitForExist(60000);
+                $('#welcome_message').waitForVisible(60000);
                 expect($('#welcome_message').getText()).to.equal(displayName);
             });
         });
@@ -37,16 +36,10 @@ class LoginPage {
                 $('#logout_link').click();
             });
             it('Display Logged out State', function clickLogout() {
-                browser.waitUntilNotExist('.ext-el-mask-msg');
-                $('a[href*=actionLogin]').waitForExist();
+                browser.waitForInvisible('.ext-el-mask-msg');
+                $('a[href*=actionLogin]').waitForVisible();
             });
         });
-/*
-        describe("Update Screenshot Repository", function screenshots() {
-            it("Should upload screenshots", function screenshotsSync() {
-                //return browser.sync();
-            });
-        });*/
     }
 }
 module.exports = new LoginPage();

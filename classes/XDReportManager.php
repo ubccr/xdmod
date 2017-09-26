@@ -124,12 +124,13 @@ class XDReportManager
     public function saveThisReport()
     {
         if (!isset($this->_report_id)) {
-            throw new Exception(
+            throw new \Exception(
                 "configureSelectedReport() must be called first"
             );
         }
 
-        $this->_pdo->execute("
+        $this->_pdo->execute(
+            "
             UPDATE Reports SET
                 name            = :report_name,
                 title           = :report_title,
@@ -153,20 +154,20 @@ class XDReportManager
                 'schedule'        => $this->_report_schedule,
                 'delivery'        => $this->_report_delivery,
                 'report_id'       => $this->_report_id,
-           )
+            )
         );
     }
 
-    private function _fontWrapper($text, $font_name, $font_size = 12)
+    private function fontWrapper($text, $font_name, $font_size = 12)
     {
-     return '<span style="font-family: ' . strtolower($font_name)
-        . '; font-size: ' . $font_size . 'px">' . $text . '</span>';
+        return '<span style="font-family: ' . strtolower($font_name)
+            . '; font-size: ' . $font_size . 'px">' . $text . '</span>';
 
     }
 
     public static function sanitizeFilename($filename)
     {
-        $filename = preg_replace('/[^a-zA-Z0-9-_\. ]/','', $filename);
+        $filename = preg_replace('/[^a-zA-Z0-9-_\. ]/', '', $filename);
         $filename = strtolower(str_replace(" ", "_", $filename));
 
         return (empty($filename) == true) ? 'xdmod_report' : $filename;
@@ -225,12 +226,12 @@ class XDReportManager
             }
 
             $chartSlot[$suffix] = array(
-                'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->_fontWrapper($report_data['general']['title'], $report_font, 22) . '<br />' : '',
-                'header_text'                    => $this->_fontWrapper($report_data['general']['header'],       $report_font, 12),
-                'footer_text'                    => $this->_fontWrapper($report_data['general']['footer'],       $report_font, 12),
-                'chart_title_' . $suffix         => $this->_fontWrapper($report_chart['chart_title'],            $report_font, 16),
-                'chart_drill_details_' . $suffix => $this->_fontWrapper($report_chart['chart_drill_details'],    $report_font, 12),
-                'chart_timeframe_' . $suffix     => $this->_fontWrapper($report_chart['chart_date_description'], $report_font, 14),
+                'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->fontWrapper($report_data['general']['title'], $report_font, 22) . '<br />' : '',
+                'header_text'                    => $this->fontWrapper($report_data['general']['header'], $report_font, 12),
+                'footer_text'                    => $this->fontWrapper($report_data['general']['footer'], $report_font, 12),
+                'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], $report_font, 16),
+                'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], $report_font, 12),
+                'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], $report_font, 14),
                 'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
             );
 
@@ -272,7 +273,7 @@ class XDReportManager
     public function insertThisReport($report_derivation_method = 'Manual')
     {
         if (!isset($this->_report_id)) {
-            throw new Exception(
+            throw new \Exception(
                 "configureSelectedReport() must be called first"
             );
         }
@@ -402,7 +403,7 @@ class XDReportManager
         );
     }
 
-    private function _getParameterIn($param, $haystack)
+    private function getParameterIn($param, $haystack)
     {
         $num_matches = preg_match("/$param=(.+)/", $haystack, $matches);
 
@@ -437,8 +438,8 @@ class XDReportManager
 
             $reportBreakdown[] = array(
                 'role'        => \xd_roles\getFormalRoleNameFromIdentifier(
-                                     $r['active_role']
-                                 ),
+                    $r['active_role']
+                ),
                 'num_reports' => $r['num_reports']
             );
         }
@@ -470,7 +471,7 @@ class XDReportManager
         $chartEntries = array();
 
         foreach ($results as $entry) {
-            $timeframe_type = $this->_getParameterIn(
+            $timeframe_type = $this->getParameterIn(
                 'timeframe_label',
                 $entry['chart_id']
             );
@@ -548,7 +549,7 @@ class XDReportManager
         return $Entries;
     }
 
-    private function _generateUID()
+    private function generateUID()
     {
         list($usec, $sec) = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
@@ -663,7 +664,7 @@ class XDReportManager
                 . ';'
                 . $entry['ordering']
                 . '&dc='
-                . $this->_generateUID()
+                . $this->generateUID()
                 . '&token=';
 
             $chart_data['ordering'] = $entry['ordering'];
@@ -773,7 +774,7 @@ class XDReportManager
             }
         }
 
-        return NULL;
+        return null;
     }
 
     public function removeReportCharts($report_id)
@@ -804,7 +805,9 @@ class XDReportManager
         $result = $this->_pdo->query($query, array('report_id' => $report_id));
 
         foreach ($result as $r) {
-            if (is_null($r['blob_timestamp'])) { continue; }
+            if (is_null($r['blob_timestamp'])) {
+                continue;
+            }
 
             list($blob_start, $blob_end) = explode(',', $r['blob_timestamp']);
 
@@ -1116,7 +1119,7 @@ class XDReportManager
         return $results[0]['charts_per_page'];
     }
 
-    private function _generateCachedFilename(
+    private function generateCachedFilename(
         $insertion_rank,
         $volatile = false,
         $base_name_only = false
@@ -1127,7 +1130,7 @@ class XDReportManager
                 ? $insertion_rank['did']
                 : '';
 
-            $this->_ripTransform($insertion_rank, 'did');
+            $this->ripTransform($insertion_rank, 'did');
 
             if (
                 is_array($insertion_rank)
@@ -1182,25 +1185,27 @@ class XDReportManager
         }
     }
 
-    private function _ripTransform (&$arr, $item)
+    private function ripTransform(&$arr, $item)
     {
         if (is_array($arr) && isset($arr[$item])) {
             unset($arr[$item]);
-            if (count($arr) == 1) $arr = array_pop($arr);
+            if (count($arr) == 1) {
+                $arr = array_pop($arr);
+            }
         }
     }
 
     public function fetchChartBlob(
         $type,
         $insertion_rank,
-        $chart_id_cache_file = NULL
+        $chart_id_cache_file = null
     ) {
         $pdo = DB::factory('database');
         $trace = "";
 
         switch ($type) {
             case 'volatile':
-                $temp_file = $this->_generateCachedFilename(
+                $temp_file = $this->generateCachedFilename(
                     $insertion_rank,
                     true
                 );
@@ -1265,7 +1270,7 @@ class XDReportManager
                 exit;
                 break;
             case 'chart_pool':
-                $this->_ripTransform($insertion_rank, 'did');
+                $this->ripTransform($insertion_rank, 'did');
 
                 $iq = $pdo->query(
                     "
@@ -1284,7 +1289,7 @@ class XDReportManager
                     . " insertion_rank = $insertion_rank";
                 break;
             case 'cached':
-                $temp_file = $this->_generateCachedFilename($insertion_rank);
+                $temp_file = $this->generateCachedFilename($insertion_rank);
 
                 if (file_exists($temp_file)) {
                     print file_get_contents($temp_file);
@@ -1325,7 +1330,7 @@ class XDReportManager
         }
 
         if (count($iq) == 0) {
-            throw new Exception(
+            throw new \Exception(
                 "No ($type) chart entry could be located ($trace)"
             );
         }
@@ -1333,8 +1338,8 @@ class XDReportManager
         $image_data = $iq[0]['image_data'];
         $chart_id   = $iq[0]['chart_id'];
 
-        $active_start = $this->_getParameterIn('start_date', $chart_id);
-        $active_end   = $this->_getParameterIn('end_date', $chart_id);
+        $active_start = $this->getParameterIn('start_date', $chart_id);
+        $active_end   = $this->getParameterIn('end_date', $chart_id);
 
         if (isset($iq[0]['chart_date_description'])) {
             list($active_start, $active_end)
@@ -1344,7 +1349,7 @@ class XDReportManager
         // Timeframe determination
 
         if ($type == 'chart_pool' || $type == 'volatile') {
-            $timeframe_type = $this->_getParameterIn(
+            $timeframe_type = $this->getParameterIn(
                 'timeframe_label',
                 $chart_id
             );
@@ -1424,7 +1429,7 @@ class XDReportManager
         }
     }
 
-    private function getChartData($chart_id, $overrides) 
+    private function getChartData($chart_id, $overrides)
     {
         $arg_set = explode("&", $chart_id);
         $query_params = array();
@@ -1445,7 +1450,7 @@ class XDReportManager
                 'function' => 'get_data' ),
             'data_explorer' => array(
                 'class' => '\DataWarehouse\Access\DataExplorer',
-                'function' => 'get_ak_plot'), 
+                'function' => 'get_ak_plot'),
             'custom_query' => array(
                 'class' => '\DataWarehouse\Access\CustomQuery',
                 'function' => 'get_data'
@@ -1461,7 +1466,7 @@ class XDReportManager
                 $c = new $supportedControllers[$module]['class']($callargs);
                 $response = $c->$operation($this->_user);
             }
-            else 
+            else
             {
                 $usageAdapter = new Usage($callargs);
                 $response = $usageAdapter->getCharts($this->_user);
@@ -1496,7 +1501,7 @@ class XDReportManager
 
         switch ($type) {
             case 'volatile':
-                $temp_file = $this->_generateCachedFilename(
+                $temp_file = $this->generateCachedFilename(
                     $insertion_rank,
                     true,
                     true
@@ -1552,7 +1557,7 @@ class XDReportManager
         }
 
         if (count($iq) == 0) {
-            throw new Exception("Unable to target chart entry");
+            throw new \Exception("Unable to target chart entry");
         }
 
         $chart_id = $iq[0]['chart_id'];
@@ -1636,9 +1641,9 @@ class XDReportManager
     private function writeXMLConfiguration(
         $outputdir,
         $report_id,
-        $export_format = NULL
+        $export_format = null
     ) {
-        $dom = new DOMDocument("1.0");
+        $dom = new \DOMDocument("1.0");
 
         $nodeRoot = $dom->createElement("Report");
         $dom->appendChild($nodeRoot);
@@ -1671,7 +1676,7 @@ class XDReportManager
             $dom,
             $nodeRoot,
             "Format",
-            ($export_format != NULL)
+            ($export_format != null)
             ? $export_format
             : $this->getReportFormat($report_id)
         );
@@ -1806,7 +1811,7 @@ class XDReportManager
         $bytes = file_put_contents($report_filename, $dom->saveXML() . "\n");
 
         if ($bytes === false) {
-            throw new Exception("Failed to write report XML definition file");
+            throw new \Exception("Failed to write report XML definition file");
         }
 
         return $report_filename;
@@ -1834,9 +1839,9 @@ class XDReportManager
             return $response;
         }
 
-        $base_path = xd_utilities\getConfiguration('reporting', 'base_path');
+        $base_path = \xd_utilities\getConfiguration('reporting', 'base_path');
 
-        $report_format = ($export_format != NULL) ? $export_format : $this->getReportFormat($report_id);
+        $report_format = ($export_format != null) ? $export_format : $this->getReportFormat($report_id);
 
         $report_font = $this->getReportFont($report_id);
 
@@ -1844,15 +1849,15 @@ class XDReportManager
         $template_path = tempnam(sys_get_temp_dir(), $report_id . '-');
 
         if ($template_path === false) {
-            throw new Exception("Failed to create temporary file");
+            throw new \Exception("Failed to create temporary file");
         }
 
         if (!unlink($template_path)) {
-            throw new Exception("Failed to remove file '$template_path'");
+            throw new \Exception("Failed to remove file '$template_path'");
         }
 
         if (!mkdir($template_path, 0777)) {
-            throw new Exception("Failed to create directory '$template_path'");
+            throw new \Exception("Failed to create directory '$template_path'");
         }
 
         // Copy all report templates into this working directory
@@ -1865,7 +1870,7 @@ class XDReportManager
             $dest = $template_path . '/' . pathinfo($path, PATHINFO_BASENAME);
 
             if (!copy($path, $dest)) {
-                throw new Exception("Failed to copy '$path' to '$dest'");
+                throw new \Exception("Failed to copy '$path' to '$dest'");
             }
         }
 
@@ -1894,7 +1899,7 @@ class XDReportManager
             $msg = "There was a problem building the report.  "
                 . "See $template_path/$log_file for details or contact "
                 . "support with that file name.";
-            throw new Exception($msg);
+            throw new \Exception($msg);
         }
 
         return array(
@@ -2055,46 +2060,65 @@ class XDReportManager
 
         $report_owner = $this->getReportUserName($report_id);
 
+        $templateType = '';
+
         switch ($this->getReportDerivation($report_id)) {
             case 'Monthly Compliance Report':
                 $include_attachment
                     = ($additional_config['failed_compliance'] > 0
                         || $additional_config['proposed_requirements'] > 0);
-                $templateConfig = MailTemplates::complianceReport(
-                    $report_owner,
-                    $additional_config['custom_message']
-                );
+
+                $templateType = 'compliance_report';
                 break;
 
             default:
                 $include_attachment = true;
-                $templateConfig = MailTemplates::customReport(
-                    $report_owner,
-                    $frequency
-                );
+
+                $frequency = trim($frequency);
+                $frequency
+                    = !empty($frequency)
+                    ? ' ' . $frequency
+                    : $frequency;
+
+                $templateType = 'custom_report';
                 break;
         }
 
         try {
-            $mail = MailWrapper::initPHPMailer();
-
-            $mail->addAddress($destination_email_address);
-
-            $mail->Subject =
-                "Your$frequency " . $templateConfig['subject'] . " $subject_suffix";
-            $mail->Body = $templateConfig['message'];
-
-            if ($include_attachment) {
-                $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
-                $attachment_file_name
-                    = $this->getReportName($report_id, true)
-                    . '.' . $report_format;
-                $mail->addAttachment($report_file, $attachment_file_name, 'base64', self::$_header_map[$report_format], 'inline');
+            $attachment_file_name = '';
+            if($include_attachment) {
+                    $report_format = pathinfo($report_file, PATHINFO_EXTENSION);
+                    $attachment_file_name
+                        = $this->getReportName($report_id, true)
+                        . '.' . $report_format;
             }
 
-            $mail->send();
+            $properties = array(
+                'recipient_name'       => $report_owner,
+                'maintainer_signature' => MailWrapper::getMaintainerSignature(),
+                'toAddress'            => $destination_email_address,
+                'attachment' => array(
+                    array('fileName'             => $report_file,
+                          'attachment_file_name' => $attachment_file_name,
+                          'encoding'             => 'base64',
+                          'type'                 => self::$_header_map[$report_format],
+                          'disposition'          => 'inline'
+                    )
+                )
+            );
+
+            if($templateType === 'custom_report') {
+                $properties['frequency'] = $frequency;
+                $properties['site_title'] = \xd_utilities\getConfiguration('general', 'title');
+                $properties['subject'] = "Your$frequency " . 'XDMoD Report' . " $subject_suffix";
+            } else {
+                $properties['additional_information'] = $additional_config['custom message'];
+                $properties['subject'] = "Your$frequency " . 'XDMoD Compliance Report' . " $subject_suffix";
+            }
+
+            MailWrapper::sendTemplate($templateType, $properties);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             return false;
         }
 
@@ -2155,7 +2179,7 @@ class XDReportManager
         );
 
         if (count($results) == 0) {
-            throw new Exception(
+            throw new \Exception(
                 'No report template could be found having the id you specified'
             );
         }
@@ -2168,7 +2192,7 @@ class XDReportManager
             . $results[0]['template'] . '.php';
 
         if (!file_exists($template_definition_file)) {
-            throw new Exception(
+            throw new \Exception(
                 "Report template definition could not be located"
             );
         }
@@ -2194,4 +2218,3 @@ class XDReportManager
         return new $templateClass($user, $r);
     }
 }
-

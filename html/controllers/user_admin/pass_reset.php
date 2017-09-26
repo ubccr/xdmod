@@ -26,31 +26,33 @@ if ($user_to_email == NULL) {
 
 // -----------------------------
 
-$page_title = xd_utilities\getConfiguration('general', 'title');
-
-$recipient
-    = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-    ? xd_utilities\getConfiguration('general', 'debug_recipient')
-    : $user_to_email->getEmailAddress();
+$page_title = \xd_utilities\getConfiguration('general', 'title');
 
 // -------------------
 
 try {
-    $mail = MailWrapper::initPHPMailer();
-    $mail->Subject = "$page_title: Password Reset";
-    $mail->addAddress($recipient);
+    $userName = $user_to_email->getUsername();
 
-    // -------------------
+    $rid = md5($userName . $user_to_email->getPasswordLastUpdatedTimestamp());
 
-    $message = MailTemplates::passwordReset($user_to_email);
+    $site_address
+        = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
+    $resetUrl = "${site_address}password_reset.php?rid=$rid";
 
-    $mail->Body = $message;
+    MailWrapper::sendTemplate(
+        'password_reset',
+        array(
+            'first_name'           => $user_to_email->getFirstName(),
+            'username'             => $userName,
+            'reset_url'            => $resetUrl,
+            'maintainer_signature' => MailWrapper::getMaintainerSignature(),
+            'subject'              => "$page_title: Password Reset",
+            'toAddress'            => $user_to_email->getEmailAddress()
+        )
+    );
 
-    // -------------------
-
-    $mail->send();
     $returnData['success'] = true;
-    $returnData['status'] = "Password reset e-mail sent to user {$user_to_email->getUsername()}";
+    $returnData['status'] = "Password reset e-mail sent to user {$userName}";
     $returnData['message'] = $returnData['status'];
 }
 catch (Exception $e) {

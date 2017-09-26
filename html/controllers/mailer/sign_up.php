@@ -89,13 +89,6 @@ $pdo->execute(
 
 // Create email.
 
-$recipient
-    = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-    ? xd_utilities\getConfiguration('general', 'debug_recipient')
-    : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-
-$title = xd_utilities\getConfiguration('general', 'title');
-
 $time_requested = date('D, F j, Y \a\t g:i A');
 $organization   = ORGANIZATION_NAME;
 
@@ -119,23 +112,16 @@ EOMSG;
 
 $response = array();
 
-$name = $_POST['last_name'] . ', ' . $_POST['first_name'];
-
+// Original sender's e-mail must be in the "fromAddress" field for the XDMoD Request Tracker to function
 try {
-    $mail = MailWrapper::initPHPMailer($_POST['email'], $name);
-
-    $mail->addAddress($recipient);
-
-    // Original sender's e-mail must be in the "From" field for the XDMoD
-    // Request Tracker to function
-    $mail->addReplyTo($_POST['email'], $name);
-
-    $mail->Subject = "[$title] A visitor has signed up";
-
-    $mail->Body = $message;
-
-   // Send email.
-    $mail->send();
+    MailWrapper::sendMail(array(
+        'body'         => $message,
+        'subject'      => "[" . \xd_utilities\getConfiguration('general', 'title') . "] A visitor has signed up",
+        'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+        'fromAddress'  => $_POST['email'],
+        'fromName'     => $_POST['last_name'] . ', ' . $_POST['first_name'],
+        'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
+    ));
     $response['success'] = true;
 }
 catch (Exception $e) {

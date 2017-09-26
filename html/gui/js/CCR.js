@@ -1533,10 +1533,14 @@ CCR.getParameter = function (name, source) {
  *   TAB
  */
 CCR.tokenize = function (hash) {
-    var matches = hash.match(/^#?(([^:\\?]*):?([^:\\?]*):?([^:\\?]*)\??(.*))/);
+    var raw = (typeof hash !== 'string')
+      ? String(hash)
+      : hash;
+
+    var matches = raw.match(/^#?(([^:\\?]*):?([^:\\?]*):?([^:\\?]*)\??(.*))/);
 
     var tokens = {
-        raw: hash,
+        raw: raw,
         content: matches[1],
         root: matches[2],
         tab: matches[3],

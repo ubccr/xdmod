@@ -72,6 +72,55 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
+* Fri Sep 22 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 7.0.0-1.1
+- Bug Fixes
+    - Build
+        - Fixed version of Java used during build process
+* Thu Sep 21 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 7.0.0-1.0
+- Features
+    - General
+        - Enhanced authorization framework
+        - Improved login prompt to automatically appear when an unauthenticated user attempts to access any private tab
+        - Improved design of Metric Explorer Load Chart menu
+        - Re-enabled aggregate mode for "Wall Hours: Per Job" metric
+        - Added quarterly report template for center directors
+        - Improved support for third-party PHP libraries used by modules
+    - ETLv2
+        - Added support for RFC-6901 JSON References
+        - Added file directory data endpoint
+        - Improved support for `order_id` columns in Open XDMoD database
+        - Refactored various components to support new features
+    - Job Viewer
+        - Added Gantt chart view of job peers
+        - Added ability to link directly to jobs
+        - Improved user feedback while job data is loading
+- Bug Fixes
+    - General
+        - Fixed various compatibility issues with PHP 7
+        - Fixed handling of 4-byte UTF-8 characters during XRAS ingestion
+        - Improved handling of invalid start and end dates received by API
+        - Fixed validation of length of names in contact forms
+        - Improved handling of jobs with "0" start or end time
+        - Fixed case where About tab would display a blank page when loaded using Chrome
+    - Job Viewer
+        - Fixed directions not always appearing when all jobs are closed
+        - Fixed memory leak
+        - Fixed duplicate search nodes being created when opening jobs from Metric Explorer charts with "\#" in the title
+    - Metric Explorer
+        - Fixed handling of "%" characters in Metric Explorer options when using Firefox
+        - Fixed XSS vulnerability involving chart names
+    - Usage
+        - Fixed error bars option being enabled when error bars are not available
+        - Fixed metrics appearing to be available to users that do not have access
+- Miscellaneous
+    - Moved Node.js ETL framework to Open XDMoD repository
+    - Fixed build script running out of memory allocated by PHP
+    - Performed work in anticipation of federated instances
+    - Improved development workflow
+    - Improved quality assurance
+    - Cleaned up old and/or unused code
+    - Improved documentation
+
 * Thu May 11 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 6.6.0-1.0
 - Features
     - General

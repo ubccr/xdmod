@@ -105,21 +105,8 @@ try {
 
     // =============================
 
-    $page_title = xd_utilities\getConfiguration('general', 'title');
-    $site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
-
-    // -------------------
-
-    $mail = MailWrapper::initPHPMailer();
-
-    $mail->Subject = "$page_title: Account Created";
-
-    $recipient
-        = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-        ? xd_utilities\getConfiguration('general', 'debug_recipient')
-        : $_POST['email_address'];
-
-    $mail->addAddress($recipient);
+    $page_title = \xd_utilities\getConfiguration('general', 'title');
+    $site_address = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
 
     // -------------------
 
@@ -133,11 +120,12 @@ try {
     $message .= $site_address."user_manual\n\n";
     $message .= "The XDMoD Team";
 
-    $mail->Body = $message;
-
-    // -------------------
-
-    $mail->send();
+    MailWrapper::sendMail(array(
+        'body'      => $message,
+        'subject'   => "$page_title: Account Created",
+        'toAddress' => $_POST['email_address']
+        )
+    );
 }
 catch (Exception $e) {
     \xd_response\presentError($e->getMessage());

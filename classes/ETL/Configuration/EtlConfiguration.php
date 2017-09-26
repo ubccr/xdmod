@@ -688,11 +688,14 @@ class EtlConfiguration extends Configuration
         // Set up the options with whatever was included in the config. The factory and implementation
         // classes will check for required parameters.
 
-        // Register the endpoints. Endpoints are global and only one endpoint will be created for each
-        // unique key. We need to register the endpoints first because the actions will need the keys
-        // when they are executed.
+        // Actions are enabled by default and do not require the "enabled" key, but it may still be
+        // specified in the config.
 
-        if ( $config->enabled ) {
+        if ( ! isset($config->enabled) || $config->enabled ) {
+
+            // Register the endpoints. Endpoints are global and only one endpoint will be created
+            // for each unique key. We need to register the endpoints first because the actions will
+            // need the keys when they are executed.
 
             $endpointKey = self::DATA_ENDPOINT_KEY;
             foreach ($config->$endpointKey as $endpointName => $endpointConfig) {
@@ -722,7 +725,7 @@ class EtlConfiguration extends Configuration
                 }
             }
         } else {
-            // For actions that are not configured, set minimal information needed for listing actions
+            // For actions that are not enabled, set minimal information needed for listing actions
             $options->enabled = false;
             $options->name = $config->name;
             if ( isset($config->description) ) {

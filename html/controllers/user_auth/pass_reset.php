@@ -4,8 +4,6 @@ use CCR\MailWrapper;
 
 // Operation: user_auth->pass_reset
 
-//require_once dirname(__FILE__).'/../../../classes/MailTemplates.php';
-
 $isValid = isset($_POST['email']) && xd_security\isEmailValid($_POST['email']);
 
 if (!$isValid) {
@@ -31,29 +29,28 @@ $user_to_email = XDUser::getUserByID($user_to_email);
 
 // -----------------------------
 
-$page_title = xd_utilities\getConfiguration('general', 'title');
-
-$recipient
-    = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-    ? xd_utilities\getConfiguration('general', 'debug_recipient')
-    : $user_to_email->getEmailAddress();
+$page_title = \xd_utilities\getConfiguration('general', 'title');
 
 // -------------------
 
 try {
-    $mail = MailWrapper::initPHPMailer();
-    $mail->Subject = "$page_title: Password Reset";
-    $mail->addAddress($recipient);
+    $rid = md5($user_to_email->getUsername() . $user_to_email->getPasswordLastUpdatedTimestamp());
 
-    // -------------------
+    $site_address
+        = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
+    $resetUrl = "${site_address}password_reset.php?rid=$rid";
 
-    $message = MailTemplates::passwordReset($user_to_email);
-
-    $mail->Body = $message;
-
-    // -----------------------------
-
-    $status = $mail->send();
+    MailWrapper::sendTemplate(
+        'password_reset',
+        array(
+            'first_name'           => $user_to_email->getFirstName(),
+            'username'             => $user_to_email->getUsername(),
+            'reset_url'            => $resetUrl,
+            'maintainer_signature' => MailWrapper::getMaintainerSignature(),
+            'subject'              => "$page_title: Password Reset",
+            'toAddress'            => $user_to_email->getEmailAddress()
+        )
+    );
     $returnData['success'] = true;
     $returnData['status']  = 'success';
 }

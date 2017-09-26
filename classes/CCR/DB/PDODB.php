@@ -148,7 +148,7 @@ class PDODB implements iDatabase
         $stmt = $this->prepare($query);
 
         try {
-            if ( $this->debugging() ) {
+            if ( static::debugging() ) {
                 $this->debug($query, $params);
             }
         } catch (Exception $e) {
@@ -175,7 +175,7 @@ class PDODB implements iDatabase
         $stmt = $this->prepare($query);
 
         try {
-            if ( $this->debugging() ) {
+            if ( static::debugging() ) {
                 $this->debug($query, $params);
             }
         } catch (Exception $e) {
@@ -214,7 +214,7 @@ class PDODB implements iDatabase
         $stmt = $this->prepare($statement);
 
         try {
-            if ( $this->debugging() ) {
+            if ( static::debugging() ) {
                 $this->debug($statement, $params);
             }
         } catch (Exception $e) {
@@ -244,7 +244,7 @@ class PDODB implements iDatabase
         $query = "select count(*) as count_result from $full_tablename";
 
         try {
-            if ( $this->debugging() ) {
+            if ( static::debugging() ) {
                 $this->debug($query, array());
             }
         } catch (Exception $e) {
@@ -310,11 +310,23 @@ class PDODB implements iDatabase
         );
     }
 
+    /**
+     * Enable SQL debugging.
+     *
+     * NOTE: For SQL debugging to be enabled, general debugging must be enabled
+     * in the config file.
+     */
     public static function debugOn()
     {
         PDODB::$debug_mode = true;
     }
 
+    /**
+     * Disable SQL debugging.
+     *
+     * NOTE: This will not disable SQL debugging if SQL debugging has been
+     * enabled in the config file.
+     */
     public static function debugOff()
     {
         PDODB::$debug_mode = false;
@@ -326,12 +338,36 @@ class PDODB implements iDatabase
         unset($GLOBALS['PDODB::$params']);
     }
 
-    private function debugging()
+    /**
+     * Determine if SQL debugging is enabled.
+     *
+     * First, this checks if general debugging is enabled. If not enabled,
+     * then SQL debugging cannot be enabled.
+     *
+     * This then checks if SQL debugging has been enabled either by the config
+     * file or by code. If any method reports that SQL debugging is enabled,
+     * then SQL debugging is considered enabled.
+     *
+     * @return boolean True if enabled, false if disabled.
+     */
+    public static function debugging()
     {
+        $generalDebugEnabled = \xd_utilities\filter_var(
+            \xd_utilities\getConfiguration('general', 'debug_mode'),
+            FILTER_VALIDATE_BOOLEAN
+        );
+
+        if (!$generalDebugEnabled) {
+            return false;
+        }
+
         $sql_debug_mode = false;
 
         try {
-            $sql_debug_mode = \xd_utilities\getConfiguration('general', 'sql_debug_mode');
+            $sql_debug_mode = \xd_utilities\filter_var(
+                \xd_utilities\getConfiguration('general', 'sql_debug_mode'),
+                FILTER_VALIDATE_BOOLEAN
+            );
         } catch (Exception $e) {
         }
 

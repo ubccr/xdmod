@@ -142,31 +142,14 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
+        $siteTitle = \xd_utilities\getConfiguration('general', 'title');
         $userEmail = $user->getEmailAddress();
-        $userName = $user->getFormalName();
-
-        $mail = MailWrapper::initPHPMailer($userEmail, $userName);
-
-        $recipient
-        = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-        ? xd_utilities\getConfiguration('general', 'debug_recipient')
-        : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-        $mail->addAddress($recipient);
-        if ($error) {
-            $mail->Subject = "[xdmod] Error Creating federated user";
-        } else {
-            $mail->Subject = "[xdmod] New " . ($linked ? "linked": "unlinked") . " federated user created";
-        }
-
-        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
-            $mail->addReplyTo($userEmail, $userName);
-        }
 
         $body = "The following person has had an account created on XDMoD:\n\n" .
         "Person Details ----------------------------------\n\n" .
         "\nName:                     " . $user->getFormalName(true) .
         "\nUserame:                  " . $user->getUsername() .
-        "\nE-Mail:                   " . $userEmail ;
+        "\nE-Mail:                   " . $userEmail;
 
         if(count($samlAttributes) != 0) {
             $body = $body . "\n\n" .
@@ -174,8 +157,24 @@ class XDSamlAuthentication
                 print_r($samlAttributes, true);
         }
 
-        $mail->Body = $body;
+        if ($error) {
+            $subject = "[" . $siteTitle . "] Error Creating federated user";
+        } else {
+            $subject = "[" . $siteTitle . "] New " . ($linked ? "linked": "unlinked") . " federated user created";
+        }
 
-        $mail->send();
+        $properties = array(
+            'body'        => $body,
+            'subject'     => $subject,
+            'toAddress'   => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+            'fromAddress' => $userEmail,
+            'fromName'    => $user->getFormalName()
+        );
+
+        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
+            $properties['replyAddress'] = \xd_utilities\getConfiguration('mailer', 'sender_email');
+        }
+
+        MailWrapper::sendMail($properties);
     }
 }
