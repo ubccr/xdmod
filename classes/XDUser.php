@@ -392,6 +392,9 @@ class XDUser
         if (null === self::$_publicUser) {
             self::$_publicUser = self::getUserByUserName('Public User');
         }
+        if (null === self::$_publicUser) {
+            throw new Exception('Public User not found');
+        }
         return self::$_publicUser;
     }//getPublicUser
 
