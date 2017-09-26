@@ -754,12 +754,12 @@ class Usage extends Common
                     // If this is not a trend line series and not a thumbnail,
                     // fill in the drilldown function.
                     if (!$isTrendLineSeries && !$thumbnailRequested) {
-                        $drillDowns = implode(',', $user->getMostPrivilegedRole()->getQueryDescripters(
+                        $drillDowns = json_encode(implode(',', $user->getMostPrivilegedRole()->getQueryDescripters(
                             'tg_usage',
                             $usageRealm,
                             $usageGroupBy,
                             $meRequestMetric->getAlias()->getName()
-                        )->getDrillTargets($meRequestMetric->getAlias()));
+                        )->getDrillTargets($meRequestMetric->getAlias())));
                         $usageGroupByUnit = $usageGroupByObject->getUnit();
 
                         if ($meRequestIsTimeseries) {
@@ -770,7 +770,7 @@ class Usage extends Common
                                 this.ts = this.x;
                                 XDMoD.Module.Usage.drillChart(
                                     this,
-                                    '$drillDowns',
+                                    $drillDowns,
                                     '${usageGroupBy}-${usageGroupByUnit}',
                                     '$drilldownId',
                                     $drilldownLabel,
@@ -785,7 +785,7 @@ class Usage extends Common
                                 var label = this.drilldown.label;
                                 XDMoD.Module.Usage.drillChart(
                                     this,
-                                    '$drillDowns',
+                                    $drillDowns,
                                     '${usageGroupBy}-${usageGroupByUnit}',
                                     id,
                                     label,
