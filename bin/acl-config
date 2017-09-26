@@ -403,7 +403,6 @@ function createModuleVersion(iDatabase $db, $moduleId, $installedOn, array $vers
     $moduleVersion = "$major.$minor.$patch $preRelease";
 
 
-
     $query = <<<SQL
 INSERT INTO module_versions (
   module_id,
