@@ -961,7 +961,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     var title;
 
     if (!showLocalLogin && CCR.xdmod.isFederationConfigured) {
-        var style = 'border: 1.33px; border-style: ridge; border-radius: 4px; padding: 5px; margin: 2.5px';
+        var style = 'border: 1.33px; border-style: ridge; border-radius: 4px; padding: 5px; margin: 2.5px; box-shadow: 0.5px 1.5px';
         loginItems = [{
             xtype: 'tbtext',
             html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here." style="' + style + '"</img></a>'
