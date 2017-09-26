@@ -784,6 +784,32 @@ SQL;
         return array();
     }
 
+    /**
+     * Attempt to retrieve the "most privileged" acl for the provided user.
+     * "most privileged" in this context is the acl that fulfills the following
+     * requirements:
+     *   - The user provided has a relation to said acl.
+     *   - The acl was added by the module identified by the parameter
+     *     '$moduleName'.
+     *   - The acl has takes part in a relationship with the acl hierarchy
+     *     identified by the parameter '$aclHierarchyName'.
+     *   - Of all acls that fit the previous requirements, it must also be the
+     *     one that has the highest 'level' value. This corresponds to the
+     *     'value' column of acl_hierarchies table and the
+     *     roles.json:<acl>:hierarchies:level property.
+     *
+     * @param XDUser $user             the user for whom the most privileged acl
+     *                                 is to be returned.
+     * @param string $moduleName       the module that is used to constrain the
+     *                                 most privileged acl search. ( optional )
+     * @param string $aclHierarchyName the name of the acl hierarchy to
+     *                                 constrain the most privileged acl search.
+     *                                 (optional)
+     * @return Acl|null If the user does not have an acl that satisfies the
+     *                  constraints then null will be returned. Else, the acl
+     *                  is returned as an instantiated Acl object.
+     * @throws Exception if the user does not have a user id.
+     */
     public static function getMostPrivilegedAcl(XDUser $user, $moduleName = DEFAULT_MODULE_NAME, $aclHierarchyName = 'acl_hierarchy')
     {
         if (null == $user->getUserID()) {
