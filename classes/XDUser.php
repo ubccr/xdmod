@@ -392,9 +392,6 @@ class XDUser
         if (null === self::$_publicUser) {
             self::$_publicUser = self::getUserByUserName('Public User');
         }
-        if (null === self::$_publicUser) {
-            throw new Exception('Public User not found');
-        }
         return self::$_publicUser;
     }//getPublicUser
 
@@ -3171,13 +3168,15 @@ SQL;
      * @param string $username the identifier to use when attempting to retrieve
      * the XDUser instance.
      *
-     * @return null|XDUser null if the user cannot be found or if null is provided
-     * as the username, else an instantiated XDUser instance.
+     * @return XDUser An instantiated XDUser instance.
+     *
+     * @throws Exception If the user cannot be found or if null is provided as
+     * the username.
      **/
     public static function getUserByUserName($username)
     {
         if (null === $username) {
-            return null;
+            throw new Exception('No username provided');
         }
 
         // Note: due to the complexity of getUserById ( and it being the sole
@@ -3195,6 +3194,6 @@ SQL;
             $uid = $row[0]['id'];
             return self::getUserByID($uid);
         }
-        return null;
+        throw new Exception("User \"$username\" not found");
     } // getUserByUserName
 }//XDUser
