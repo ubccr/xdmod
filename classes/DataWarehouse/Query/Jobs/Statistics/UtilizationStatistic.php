@@ -15,12 +15,10 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance)
     {
-
         if ($query_instance->getQueryType() == 'aggregate') {
             $date_table_start_ts = $query_instance->_start_date_ts;
             $date_table_end_ts   = $query_instance->_end_date_ts;
-        }
-        else {
+        } else {
             $agg_unit = $query_instance->getAggregationUnit()->getUnitName();
             $date_table = $query_instance->getDateTable();
             $date_table_start_ts = new TableField(
@@ -34,30 +32,28 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
         }
 
         parent::__construct(
-            "
-                100.0 * (
-                    COALESCE(
-                        SUM(jf.cpu_time / 3600.0)
-                        /
-                        (
-                            SELECT SUM( ra.percent * inner_days.hours * rs.processors / 100.0 )
-                            FROM modw.resourcespecs rs,
-                                 modw.resource_allocated ra,
-                                 modw.days inner_days
-                            WHERE
-                                inner_days.day_middle_ts BETWEEN ra.start_date_ts AND coalesce(ra.end_date_ts, 2147483647) AND
-                                inner_days.day_middle_ts BETWEEN rs.start_date_ts AND coalesce(rs.end_date_ts, 2147483647) AND
-                                inner_days.day_middle_ts BETWEEN $date_table_start_ts AND $date_table_end_ts AND
-                                ra.resource_id = rs.resource_id
-                                AND FIND_IN_SET(
-                                    rs.resource_id,
-                                    GROUP_CONCAT(DISTINCT jf.resource_id)
-                                ) <> 0
-                        ),
-                        0
-                    )
+            "100.0 * (
+                COALESCE(
+                    SUM(jf.cpu_time / 3600.0)
+                    /
+                    (
+                        SELECT SUM( ra.percent * inner_days.hours * rs.processors / 100.0 )
+                        FROM modw.resourcespecs rs,
+                             modw.resource_allocated ra,
+                             modw.days inner_days
+                        WHERE
+                            inner_days.day_middle_ts BETWEEN ra.start_date_ts AND COALESCE(ra.end_date_ts, 2147483647) AND
+                            inner_days.day_middle_ts BETWEEN rs.start_date_ts AND COALESCE(rs.end_date_ts, 2147483647) AND
+                            inner_days.day_middle_ts BETWEEN $date_table_start_ts AND $date_table_end_ts AND
+                            ra.resource_id = rs.resource_id
+                            AND FIND_IN_SET(
+                                rs.resource_id,
+                                GROUP_CONCAT(DISTINCT jf.task_resource_id)
+                            ) <> 0
+                    ),
+                    0
                 )
-            ",
+            )",
             'utilization',
             ORGANIZATION_NAME . ' Utilization',
             '%',
@@ -81,4 +77,3 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
             . " their system specifications, over time.";
     }
 }
-

@@ -27,7 +27,7 @@ class NormalizedAverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs
                         WHERE
                             FIND_IN_SET(
                                 rrf.resource_id,
-                                GROUP_CONCAT(DISTINCT jf.resource_id)
+                                GROUP_CONCAT(DISTINCT jf.task_resource_id)
                             ) <> 0
                             AND ' . $query_instance->getAggregationUnit()->getUnitName().'_end_ts >= rrf.start_date_ts
                             AND (

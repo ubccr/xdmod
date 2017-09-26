@@ -12,7 +12,7 @@ class JobCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.job_count), 0)',
+            'COALESCE(SUM(jf.ended_job_count), 0)',
             'job_count',
             'Number of Jobs Ended',
             'Number of Jobs',

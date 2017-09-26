@@ -18,7 +18,7 @@ class Raw extends \DataWarehouse\Query\Query
         $start_date,
         $end_date,
         $db_profile = 'datawarehouse',
-        $db_tablename = 'jobfact',
+        $db_tablename = 'job_tasks',
         array $parameters = array(),
         array $parameterDescriptions = array(),
         $single_stat = false
@@ -52,7 +52,7 @@ class Raw extends \DataWarehouse\Query\Query
         $this->addTable($resourcefactTable);
 
         $this->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition(
-            new \DataWarehouse\Query\Model\TableField($dataTable, "resource_id"),
+            new \DataWarehouse\Query\Model\TableField($dataTable, "task_resource_id"),
             '=',
             new \DataWarehouse\Query\Model\TableField($resourcefactTable, "id")
         ));

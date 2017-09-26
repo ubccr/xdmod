@@ -50,7 +50,7 @@ class NodeUtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
                                 AND ra.resource_id = rs.resource_id
                                 AND FIND_IN_SET(
                                         rs.resource_id,
-                                        GROUP_CONCAT(DISTINCT jf.resource_id)
+                                        GROUP_CONCAT(DISTINCT jf.task_resource_id)
                                     ) <> 0
                         ),
                         0
@@ -77,4 +77,3 @@ class NodeUtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
 
     }
 }
-
