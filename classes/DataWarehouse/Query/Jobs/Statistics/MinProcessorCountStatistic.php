@@ -16,11 +16,11 @@ class MinProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
             'COALESCE(
                 MIN(
                     CASE WHEN
-                        jf.processors = 0
+                        jf.processor_count = 0
                     THEN
                         NULL
                     ELSE
-                        jf.processors
+                        jf.processor_count
                     END
                 )
             , 0)',

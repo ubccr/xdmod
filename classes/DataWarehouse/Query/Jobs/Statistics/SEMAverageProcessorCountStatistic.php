@@ -12,7 +12,7 @@ class SEMAverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statis
 {
     public function __construct($query_instance = null)
     {
-        $job_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'job_count' : 'running_job_count';
+        $job_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'ended_job_count' : 'running_job_count';
         parent::__construct(
             'COALESCE(
                 SQRT(
