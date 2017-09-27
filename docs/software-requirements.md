@@ -20,7 +20,8 @@ Open XDMoD requires the following software:
     - [PEAR MDB2 Package][pear-mdb2]
     - [PEAR MDB2 MySQL Driver][pear-mdb2-mysql]
 - [Java][] including the [JDK][]
-- [PhantomJS][]
+- [PhantomJS][] 2.1+
+- [ghostscript][] 9+
 - [cron][]
 - [logrotate][]
 - [MTA][] with `sendmail` compatibility (e.g. [postfix][], [exim][] or
@@ -44,6 +45,7 @@ Open XDMoD requires the following software:
 [java]:            http://java.com/
 [jdk]:             http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [phantomjs]:       http://phantomjs.org/
+[ghostscript]:     https://www.ghostscript.com/
 [cron]:            https://en.wikipedia.org/wiki/Cron
 [logrotate]:       http://linux.die.net/man/8/logrotate
 [mta]:             http://en.wikipedia.org/wiki/Mail_transfer_agent
@@ -66,7 +68,8 @@ available from these distributions.
                       php5-mcrypt libgmp-dev php5-gmp php-pear \
                       php-log php-mdb2 php-mdb2-driver-mysql \
                       default-jre-headless openjdk-7-jdk phantomjs \
-                      mysql-server mysql-client cron logrotate
+                      mysql-server mysql-client cron logrotate \
+                      ghostscript
 
 ### CentOS 7 / RHEL 7
 
@@ -88,7 +91,8 @@ repositories.
                   gmp-devel php-gmp php-pdo php-xml php-pear-Log \
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   java-1.7.0-openjdk java-1.7.0-openjdk-devel \
-                  mariadb-server mariadb cronie logrotate
+                  mariadb-server mariadb cronie logrotate \
+                  ghostscript
 
 **NOTE**: Neither the CentOS repositories nor EPEL include PhantomJS,
 so that must be installed manually.  Packages are available for
@@ -139,6 +143,8 @@ database.
 
 ### PhantomJS
 
+The recommended version is 2.1.1.
+
 If you are running PhantomJS 1.4 or earlier you will also need [Xvfb][]
 running on port 99.
 
@@ -163,7 +169,7 @@ This will start Xvfb when your system boots.  To start Xvfb manually:
 SELinux security policy.  You will need to disable SELinux or create a
 custom policy.
 
-#### Creating a custom SELinux Policy for PhantomJS
+#### Creating a custom SELinux Policy for PhantomJS and ghostscript
 
 If you have already tried to generate a report and got an error with phantom JS you can use the [audit2allow][centosselinux] command to generate a policy for you
 
