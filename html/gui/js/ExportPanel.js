@@ -57,10 +57,10 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
         this.lastformatSetting = this.formatTypeCombo.getValue();
 
         if(allow) {
-            this.formatTypeCombo.store.loadData(CCR.xdmod.ui.ExportPanel.format_types);
+            this.formatTypeCombo.store.loadData(this.format_types);
             this.settings.format = cachedFormat;
         } else {
-            this.formatTypeCombo.store.loadData(CCR.xdmod.ui.ExportPanel.format_types_noimg);
+            this.formatTypeCombo.store.loadData(this.format_types_noimg);
             this.settings.format = cachedFormat;
         }
         this.formatTypeCombo.setValue(this.settings.format);
@@ -86,6 +86,19 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
         }
     },
     initComponent: function () {
+
+        this.format_types = CCR.xdmod.ui.ExportPanel.format_types;
+        this.format_types_noimg = CCR.xdmod.ui.ExportPanel.format_types_noimg;
+
+        if (this.config && this.config.allowedExports) {
+            var allowedExports = this.config.allowedExports;
+            this.format_types = CCR.xdmod.ui.ExportPanel.format_types.filter(function (ftype) {
+                return allowedExports.includes(ftype[0]);
+            });
+            this.format_types_noimg = CCR.xdmod.ui.ExportPanel.format_types_noimg.filter(function (ftype) {
+                return allowedExports.includes(ftype[0]);
+            });
+        }
 
         this.settings = { format: 'png', showtitle: true, height: 484, width: 916, font_size: 0, scale: 1};
         this.template = 'medium';
@@ -236,7 +249,7 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
                     'id',
                     'text'
                 ],
-                data: CCR.xdmod.ui.ExportPanel.format_types
+                data: this.format_types
             }),
             disabled: false,
             value: this.settings.format,
