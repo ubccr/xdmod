@@ -87,6 +87,9 @@ class MetricExplorer {
                 titleByText: function (title) {
                     return module.exports.selectors.chart.svg + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
                 },
+                credits: function () {
+                    return module.exports.selectors.chart.svg + '/*[name()="text"]/*[name()="tspan" and contains(text(),"Powered by XDMoD")]';
+                },
                 yAxisTitle: function () {
                     return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-axis")]/*[name() = "text" and contains(@class,"highcharts-yaxis-title")]';
                 },
@@ -107,6 +110,8 @@ class MetricExplorer {
                 axis: '#metric_explorer .highcharts-yaxis-labels'
             },
             catalog: {
+                panel: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//span[text()="Metric Catalog"]/ancestor::node()[2]',
+                collapseButton: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//span[text()="Metric Catalog"]/ancestor::node()[2]//div[contains(@class,"x-tool-collapse-west")]',
                 container: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder)',
                 tree: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder) .x-tree-root-ct',
                 rootNodeByName: function (name) {
@@ -141,8 +146,8 @@ class MetricExplorer {
         browser.setValue(this.selectors.newChart.modalDialog.textBox(), chartName);
         browser.click(this.selectors.newChart.modalDialog.ok());
         browser.waitForInvisible(this.selectors.newChart.modalDialog.box);
-        browser.waitUntilNotExist('.ext-el-mask');
         browser.waitForVisible('//div[@class="x-grid-empty"]/b[text()="No data is available for viewing"]');
+        browser.waitUntilNotExist('.ext-el-mask');
     }
     setDateRange(start, end) {
         browser.waitUntilNotExist('.ext-el-mask');
@@ -221,8 +226,23 @@ class MetricExplorer {
         browser.waitAndClick(this.selectors.load.chartByName(name));
         browser.waitForInvisible(this.selectors.load.dialog);
     }
-    checkChart(chartTitle, yAxisLabel, legend) {
+    checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
         browser.waitForVisible(this.selectors.chart.titleByText(chartTitle));
+        var selToCheck;
+        if (isValidChart) {
+            selToCheck = this.selectors.chart.credits();
+        } else {
+            selToCheck = this.selectors.chart.titleByText(chartTitle);
+        }
+        browser.waitForVisible(selToCheck);
+        for (let i = 0; i < 100; i++) {
+            try {
+                browser.click(selToCheck);
+                break;
+            } catch (e) {
+                browser.waitForExist('.ext-el-mask', 9000, true);
+            }
+        }
 
         if (yAxisLabel) {
             browser.waitForExist(this.selectors.chart.yAxisTitle());
@@ -389,7 +409,15 @@ class MetricExplorer {
     switchToAggregate() {
         browser.waitAndClick(this.selectors.options.button);
         browser.waitAndClick(this.selectors.options.aggregate);
-        browser.waitAndClick('.xtb-text.logo93');
+        browser.waitForVisible('.xtb-text.logo93');
+        for (let i = 0; i < 100; i++) {
+            try {
+                browser.click('.xtb-text.logo93');
+                break;
+            } catch (e) {
+                browser.waitUntilNotExist('.ext-el-mask');
+            }
+        }
         browser.waitForInvisible(this.selectors.options.aggregate);
         browser.waitUntilNotExist('.ext-el-mask');
     }

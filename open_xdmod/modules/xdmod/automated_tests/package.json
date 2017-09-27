@@ -25,6 +25,8 @@
   },
   "repository": "https://github.com/ubccr/xdmod",
   "devDependencies": {
+    "wdio-chromedriver-service": "^0.1.1",
+    "wdio-junit-reporter": "^0.3.1",
     "wdio-sauce-service": "^0.4.0",
     "wdio-selenium-standalone-service": "0.0.9",
     "wdio-spec-reporter": "^0.1.0"
