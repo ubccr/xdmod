@@ -1,6 +1,12 @@
 Open XDMoD Change Log
 =====================
 
+## 2017-09-27 v7.0.1
+
+- Bug Fixes
+    - General
+        - Fixed compatibility with PHP 5.3.3 ([\#269](https://github.com/ubccr/xdmod/pull/269))
+
 ## 2017-09-21 v7.0.0
 
 - Features
