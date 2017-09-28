@@ -68,6 +68,8 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
         this.imageExportAllowed = allow;
     },
     setupDisplay: function(format_type) {
+        // Define which fields are to be shown for each export type. (Note that the xml
+        // and csv exports have no fields shown).
         var fieldSettings = {
             width_inches: ['pdf'],
             height_inches: ['pdf'],

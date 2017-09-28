@@ -273,7 +273,7 @@ EOC;
     $process = proc_open($command, $descriptor_spec, $pipes);
 
     if (!is_resource($process)) {
-        throw new \Exception('Unable to create gs subprocess');
+        throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
     }
 
     fwrite($pipes[0], getPdfMark($docmeta));
@@ -288,8 +288,7 @@ EOC;
     $return_value = proc_close($process);
 
     if ($return_value != 0) {
-        $msg = "gs returned $return_value, stdout: $out stderr: $err";
-        throw new \Exception($msg);
+        throw new \Exception("$command returned $return_value, stdout: $out stderr: $err");
     }
 
     return $out;
