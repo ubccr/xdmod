@@ -1139,7 +1139,8 @@ CCR.xdmod.ui.forgot_password = function () {
                 XDMoD.TrackEvent('Forgot Password Window', 'Closed Window');
             }
         },
-        items: panelItems
+        items: panelItems,
+        bodyStyle: 'margin: 2.5px'
     });
     CCR.xdmod.ui.forgot_password_prompt.show();
     CCR.xdmod.ui.forgot_password_prompt.center();
