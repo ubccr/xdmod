@@ -178,7 +178,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     reset: function () {
         this.ccInclude.reset();
     },
-    getCenters(acl) {
+    getCenters: function(acl) {
         if (this.aclCenters.hasOwnProperty(acl)) {
             return this.aclCenters[acl];
         }

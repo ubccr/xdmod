@@ -669,7 +669,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var roleGridClickHandler = function () {
             var selRoles = roleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(selRoles.itemExists('cc') == -1);
+            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
             saveIndicator.show();
         };
         /* eslint-enable no-use-before-define */
