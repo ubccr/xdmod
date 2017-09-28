@@ -239,4 +239,81 @@ EOF;
 
         return $ret;
     }
+
+    /**
+     * @dataProvider exportDataProvider
+     */
+    public function testExport($chartConfig, $expectedMimeType, $expectedFinfo)
+    {
+        $response = $this->helper->post('/controllers/user_interface.php', null, $chartConfig);
+
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $this->assertEquals($expectedMimeType, $response[1]['content_type']);
+
+        // Check the mime type of the file is correct.
+        $finfo = finfo_open(FILEINFO_MIME);
+        $this->assertEquals($expectedFinfo, finfo_buffer($finfo, $response[0]));
+    }
+
+    public function exportDataProvider()
+    {
+        $baseJson = <<<EOF
+{
+    "public_user": "true",
+    "realm": "Jobs",
+    "group_by": "none",
+    "statistic": "active_person_count",
+    "start_date": "2016-12-20",
+    "end_date": "2017-01-05",
+    "timeframe_label": "User Defined",
+    "scale": "2.5",
+    "aggregation_unit": "Auto",
+    "dataset_type": "timeseries",
+    "thumbnail": "n",
+    "query_group": "tg_usage",
+    "display_type": "line",
+    "combine_type": "stack",
+    "limit": "10",
+    "offset": "0",
+    "log_scale": "n",
+    "show_guide_lines": "y",
+    "show_trend_line": "n",
+    "show_error_bars": "n",
+    "show_aggregate_labels": "n",
+    "show_error_labels": "n",
+    "hide_tooltip": "false",
+    "show_title": "y",
+    "width": "540",
+    "height": "288",
+    "legend_type": "bottom_center",
+    "font_size": "13",
+    "format": "pdf",
+    "inline": "n",
+    "operation": "get_data"
+}
+EOF;
+
+        $baseSettings = json_decode($baseJson, true);
+
+        $ret = array(
+            array($baseSettings, 'application/pdf', 'application/pdf; charset=binary'),
+        );
+
+        $baseSettings['scale'] = '1';
+        $baseSettings['font_size'] = '3';
+        $baseSettings['format'] = 'png';
+        $ret[] = array($baseSettings, 'image/png', 'image/png; charset=binary');
+
+        $baseSettings['format'] = 'svg';
+        $ret[] = array($baseSettings, 'image/svg+xml', 'text/plain; charset=utf-8');
+
+        $baseSettings['format'] = 'csv';
+        $ret[] = array($baseSettings, 'application/xls', 'text/plain; charset=us-ascii');
+
+        $baseSettings['format'] = 'xml';
+        $ret[] = array($baseSettings, 'text/xml', 'application/xml; charset=us-ascii');
+
+        return $ret;
+    }
 }

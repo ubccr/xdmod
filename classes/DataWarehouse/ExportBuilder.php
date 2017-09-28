@@ -74,6 +74,10 @@ class ExportBuilder
             'render_as'   => 'image/eps',
             'destination' => 'attachment',
         ) ,
+        'pdf' => array(
+            'render_as'   => 'application/pdf',
+            'destination' => 'attachment'
+        ),
         'svg' => array(
             'render_as'   => 'image/svg+xml',
             'destination' => 'attachment',
