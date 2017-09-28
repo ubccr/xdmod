@@ -26,8 +26,8 @@ ini_set('memory_limit', -1);
  * @var array
  */
 $supportedUpgrades = array(
-    '6.6.0' => '7.0.0',
     '7.0.0' => '7.0.1',
+    '7.0.1' => '7.1.0',
 );
 
 /**
@@ -315,4 +315,3 @@ Usage: xdmod-upgrade [-v]
 
 EOF;
 }
-
