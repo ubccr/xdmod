@@ -185,7 +185,7 @@ class ExternalProcess extends \php_user_filter
         // http://php.net/manual/en/function.stream-bucket-new.php
 
         if ( false === ($this->tmpResource = @fopen('php://temp', 'w+')) ) {
-            $errorMessage = '';
+            $errorMessage = 'Could not open php://temp for writing';
             if ( null !== ($err = error_get_last()) ) {
                 $errorMessage = $err['message'];
             }
@@ -209,7 +209,7 @@ class ExternalProcess extends \php_user_filter
         );
 
         if ( false === $this->filterResource ) {
-            $errorMessage = '';
+            $errorMessage = 'Error executing command: ' . $this->command;
             if ( null !== ($err = error_get_last()) ) {
                 $errorMessage = $err['message'];
             }
