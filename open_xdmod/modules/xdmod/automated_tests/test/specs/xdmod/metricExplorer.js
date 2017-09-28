@@ -163,7 +163,7 @@ describe('Metric Explorer', function metricExplorer() {
         it('Show Trend Line via Chart Options', function meAddTrendLine() {
             me.waitForChartToChange(function () {
                 browser.waitAndClick(me.selectors.options.trendLine);
-                browser.waitAndClick(me.selectors.options.button);
+                me.clickSelectorAndWaitForMask(me.selectors.options.button);
                 browser.waitForInvisible(me.selectors.options.trendLine);
             });
         });
