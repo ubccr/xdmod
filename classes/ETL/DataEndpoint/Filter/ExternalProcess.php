@@ -185,6 +185,10 @@ class ExternalProcess extends \php_user_filter
         // http://php.net/manual/en/function.stream-bucket-new.php
 
         if ( false === ($this->tmpResource = @fopen('php://temp', 'w+')) ) {
+            $errorMessage = '';
+            if ( null !== ($err = error_get_last()) ) {
+                $errorMessage = $err['message'];
+            }
             $this->logError($errorMessage);
             return false;
         }
@@ -205,6 +209,10 @@ class ExternalProcess extends \php_user_filter
         );
 
         if ( false === $this->filterResource ) {
+            $errorMessage = '';
+            if ( null !== ($err = error_get_last()) ) {
+                $errorMessage = $err['message'];
+            }
             $this->logError($errorMessage);
             return false;
         }
