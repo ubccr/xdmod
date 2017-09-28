@@ -789,6 +789,9 @@ SQL;
 
     $aclId = null;
     $inserted = $db->execute($query, $params);
+
+    // If the insert was not successful ( and it didn't error out ), then the
+    // record already exists, take the appropriate steps.
     if ($inserted === 0) {
         $log->notice("[ALREADY EXISTS] Acl $msg");
         $query = <<<SQL

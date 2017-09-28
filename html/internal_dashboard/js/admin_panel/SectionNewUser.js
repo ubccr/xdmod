@@ -496,7 +496,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 var acls = newUserRoleGrid.getSelectedAcls();
                 var missingMappedUser = cmbUserMapping.getValue().length === 0;
 
-                if (!acls.length > 0) {
+                if (acls.length <= 0) {
                     CCR.xdmod.ui.userManagementMessage('This user must have at least one role.', false);
                     return;
                 }

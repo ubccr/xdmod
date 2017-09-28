@@ -70,6 +70,9 @@ try {
     $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($logged_in_user);
     $summaryCharts = array_map(
         function ($chart) {
+            if (!isset($chart['preset'])) {
+                $chart['preset'] = true;
+            }
             return json_encode($chart);
         },
         Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_charts')

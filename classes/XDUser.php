@@ -3211,7 +3211,7 @@ SQL;
         $acl = Acls::getAclByName($aclName);
 
         if ( null == $acl) {
-            throw new Exception("Unable to retrieve acl for: $aclName");
+            throw new \Exception("Unable to retrieve acl for: $aclName");
         }
 
 
