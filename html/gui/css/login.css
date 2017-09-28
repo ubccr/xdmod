@@ -155,14 +155,3 @@ a:hover{
 	position: relative;
 	top: 5px;
 }
-
-/* --------------------------- */
-
-#federatedLoginLink {
-	border: 1.33px; 
-	border-style: ridge; 
-	border-radius: 4px; 
-	padding: 5px; 
-	margin: 2.5px; 
-	box-shadow: 0.5px 1.5px;
-}
