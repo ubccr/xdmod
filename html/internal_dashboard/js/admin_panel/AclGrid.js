@@ -122,7 +122,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             root: 'acls',
             fields: ['acl', 'acl_id', 'include', 'requires_center'],
             listeners: {
-                load: function (store, records, options) {
+                load: function (dashboardStore, records) {
                     for (var i = 0; i < records.length; i++) {
                         var record = records[i];
                         if (record.data.requires_center === true &&
@@ -286,7 +286,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             }
         });
 
-        grid.store.on('load', function (store, records, options) {
+        grid.store.on('load', function (store, records) {
             for (var i = 0; i < records.length; i++) {
                 var record = records[i];
                 var found = self.selected.indexOf(record.data.id) >= 0;
