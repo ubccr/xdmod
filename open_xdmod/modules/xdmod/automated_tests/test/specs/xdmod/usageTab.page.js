@@ -33,6 +33,15 @@ class Usage {
         this.durationButton = this.panel + '//button[contains(@class,"custom_date")]';
         this.durationMenu = '//div[contains(@class,"x-menu-floating")]';
         this.durationMenuItem = name => `${this.durationMenu}//li/a[./span[text()="${name}"]]`;
+        this.extAlertByTitle = function (title) {
+            return "//div[contains(@class, 'x-window')]//span[contains(@class, 'x-window-header-text') and contains(text(), '" + title + "')]";
+        };
+        this.extAlertByTitleButton = function (title, button) {
+            return this.extAlertByTitle(title) + "/ancestor::div[contains(@class, 'x-window x-window-plain')]//div[contains(@class, 'x-window-bl')]//button[contains(text(), '" + button + "')]";
+        };
+        this.getExtAlertTextByTitle = function (title) {
+            return this.extAlertByTitle(title) + "/ancestor::div[contains(@class, 'x-window x-window-plain')]//span[contains(@class, 'ext-mb-text')]";
+        };
     }
 
     checkLegendText(text) {
