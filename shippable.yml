@@ -8,7 +8,7 @@ build:
         - /root/.composer
         - /root/.npm
     pre_ci_boot:
-        image_name: tas-tools-ext-01.ccr.xdmod.org/centos7-xdmod6.6.0
+        image_name: tas-tools-ext-01.ccr.xdmod.org/centos7-xdmod7.0.1
         image_tag: version6
         pull: true
         options: "--user root -e HOME=/root"
