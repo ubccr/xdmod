@@ -1548,7 +1548,7 @@ function verifyJsonSyntax()
                 if ($fileInfo->isDot()) {
                     continue;
                 }
-                if ($fileInfo->getExtension() === 'json') {
+                if (pathinfo($fileInfo->getFilename(), PATHINFO_EXTENSION) === 'json') {
                     $fileName = $fileInfo->getFilename();
                     $filePath = $confPath.DIRECTORY_SEPARATOR.$fileName;
                     $fileParts = explode(DIRECTORY_SEPARATOR, $filePath);

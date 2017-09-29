@@ -73,6 +73,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
+* Wed Sep 27 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 7.0.1-1.0
+- Bug Fixes
+    - General
+        - Fixed compatibility with PHP 5.3.3
 * Fri Sep 22 2017 Jeffrey T. Palmer <jtpalmer@buffalo.edu> 7.0.0-1.1
 - Bug Fixes
     - Build
