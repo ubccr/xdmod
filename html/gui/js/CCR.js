@@ -961,11 +961,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     var title;
 
     if (!showLocalLogin && CCR.xdmod.isFederationConfigured) {
-        var style = 'border: 1.33px; border-style: ridge; border-radius: 4px; padding: 5px; margin: 2.5px; box-shadow: 0.5px 1.5px';
-
         loginItems = [{
             xtype: 'tbtext',
-            html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here." style="' + style + '"</img></a>'
+            html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>',
+            id: 'federatedLoginLink'
         }, {
             xtype: 'tbtext',
             html: '<span style="background-color: #e8e8e8; color: #000; margin:2.5px">You must have a valid account to log in.</span>'
@@ -973,7 +972,6 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             xtype: 'tbtext',
             html: '<span style="padding-right: 4px; padding-top: 9px; margin:2.5px"><a href="javascript:CCR.xdmod.ui.switchLoginView()">Use local account</a></span>'
         }];
-
         title = 'Sign in with a linked Account';
     } else {
         loginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
@@ -1050,7 +1048,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     CCR.xdmod.ui.login_prompt = new Ext.Window({
         title: title,
         width: 320,
-        height: 132,
+        height: 140,
         modal: true,
         animate: true,
         resizable: false,
@@ -1060,7 +1058,8 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             close: function () {
                 XDMoD.TrackEvent('Login Window', 'Closed Window');
             }
-        }
+        },
+        id: 'login_window'
     });
 
     CCR.xdmod.ui.login_prompt.show(animateTarget);
@@ -1130,7 +1129,7 @@ CCR.xdmod.ui.forgot_password = function () {
     CCR.xdmod.ui.forgot_password_prompt = new Ext.Window({
         title: 'Forgot your password?',
         width: 320,
-        height: 132,
+        height: 140,
         modal: true,
         draggable: false,
         resizable: false,
@@ -1140,7 +1139,7 @@ CCR.xdmod.ui.forgot_password = function () {
             }
         },
         items: panelItems,
-        bodyStyle: 'margin: 2.5px'
+        bodyStyle: 'margin: 2.5px;'
     });
     CCR.xdmod.ui.forgot_password_prompt.show();
     CCR.xdmod.ui.forgot_password_prompt.center();

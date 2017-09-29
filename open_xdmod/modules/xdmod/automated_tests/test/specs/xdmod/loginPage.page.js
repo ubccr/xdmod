@@ -15,12 +15,16 @@ class LoginPage {
             it('Click the login link', function clickLogin() {
                 browser.waitForInvisible('.ext-el-mask-msg');
                 $('a[href*=actionLogin]').click();
-                $('a[href*=switchLoginView]').click();
+                if ($('a[href*=switchLoginView]').length > 0) {
+                    $('a[href*=switchLoginView]').click();
+                }
             });
             it('Should Login', function doLogin() {
+                browser.waitForVisible('#login_window');
                 $('#txt_login_username').setValue(loginName);
                 $('#txt_login_password').setValue(loginPassword);
                 $('#btn_sign_in .x-btn-mc').click();
+                browser.waitForInvisible('#login_window');
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForVisible(60000);
@@ -33,7 +37,7 @@ class LoginPage {
     logout() {
         describe('Logout', function logout() {
             it('Click the logout link', function clickLogout() {
-                browser.pause(3000);
+                browser.pause(1000);
                 $('#logout_link').waitForVisible();
                 $('#logout_link').click();
             });
