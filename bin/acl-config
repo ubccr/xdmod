@@ -1314,7 +1314,7 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
     foreach ($realms as $realm => $realmData) {
         $log->notice("Processing Realm: $realm for Module: $moduleName");
 
-        createRealm($db, $moduleName, strtolower($realm));
+        createRealm($db, $moduleName, $realm);
 
         $groupBys = $realmData['group_bys'];
         $statistics = $realmData['statistics'];
@@ -1328,30 +1328,31 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
  * Attempt to create a realm with the provided realmName associated with the
  * module associated with the provided moduleName.
  *
- * @param iDatabase $db         the database to be used when creating the realm
- * @param string    $moduleName the name of the module to associate this realm
- *                              with.
- * @param string    $realmName  the name that this realm should be created with.
+ * @param iDatabase $db            the database to be used when creating the realm
+ * @param string    $moduleName    the name of the module to associate this realm
+ *                                 with.
+ * @param string    $realmDisplay  the name that this realm should be created with.
  *
  * @return void
  **/
-function createRealm(iDatabase $db, $moduleName, $realmName)
+function createRealm(iDatabase $db, $moduleName, $realmDisplay)
 {
     global $dryRun, $log;
 
-    $realmName = strtolower($realmName);
+    $realmName = strtolower($realmDisplay);
 
-    $log->notice("*** Creating Realm ($realmName)...");
+    $log->notice("*** Creating Realm ($realmDisplay)...");
 
-    $successMsg = "[SUCCESS] Created Realm: $realmName for Module: $moduleName";
+    $successMsg = "[SUCCESS] Created Realm: $realmDisplay for Module: $moduleName";
 
     $query = <<<SQL
-    INSERT INTO realms(module_id, name)
+    INSERT INTO realms(module_id, name, display)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id AS module_id,
-            :realm_name AS name
+            :realm_name AS name,
+            :realm_display AS display
         FROM modules m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
@@ -1362,6 +1363,7 @@ SQL;
 
     $params = array(
         ':realm_name' => $realmName,
+        ':realm_display' => $realmDisplay,
         ':module_name' => $moduleName
     );
 
@@ -1379,7 +1381,7 @@ SQL;
     );
 
     if ($inserted === 0) {
-        $log->info("[ALREADY EXISTS] Realm $realmName for Module $moduleName");
+        $log->info("[ALREADY EXISTS] Realm $realmDisplay for Module $moduleName");
     } elseif ($inserted === 1) {
         $log->info($successMsg);
     }

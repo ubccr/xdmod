@@ -418,7 +418,7 @@ SELECT DISTINCT
   a.name,
   CASE WHEN agb.enabled = TRUE THEN NULL ELSE CONCAT('group_by_',r.name,'_',gb.name) END AS id,
   CASE WHEN agb.enabled = TRUE THEN NULL ELSE gb.name END as group_by,
-  CASE WHEN agb.enabled = TRUE THEN NULL ELSE r.name END as realm
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE r.display END as realm
 FROM acl_group_bys agb
   JOIN acls a
     ON a.acl_id = agb.acl_id
@@ -445,15 +445,8 @@ SQL;
 
         $previousName = null;
         foreach ($rows as $row) {
-            $name = $row['name'];
-            if ($name != $previousName) {
-                $previousName = $name;
-            }
-            if (!isset($results[$name])) {
-                $results[$name] = array();
-            }
             if ($row['id'] != null) {
-                $results[$name] [] = array(
+                $results[] = array(
                     'id' => $row['id'],
                     'group_by' => $row['group_by'],
                     'realm' => $row['realm']

@@ -55,9 +55,8 @@ describe('Usage', function () {
             // The click should do nothing and the chart should remain unchanged
             // since nothing should happen, there is no action to wait for, so we
             // have to pause for a bit
-            browser.waitForExist(usg.extAlertByTitle('Error'));
-            expect(browser.getText(usg.getExtAlertTextByTitle('Error'))).to.include('does not have permission');
-            browser.waitForLoadedThenClick(usg.extAlertByTitleButton('Error', 'OK'));
+            browser.pause(500);
+            browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)'));
         });
     });
 });
