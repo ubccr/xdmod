@@ -251,7 +251,7 @@ use Models\Services\Realms;
                $user->hasAcl(ROLE_ID_CENTER_DIRECTOR) &&
                true //($user->getPromoter(ROLE_ID_CENTER_DIRECTOR, $user->getActiveRole()->getActiveCenter()) == -1)
          ) ? 'true' : 'false';
-         $realms = array_reduce(Realms::getRealms(), function($carry, Realm $item) {
+         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
              $carry []= $item->getName();
              return $carry;
          }, array());

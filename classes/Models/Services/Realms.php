@@ -15,5 +15,4 @@ class Realms
             return $carry;
         }, array());
     }
-
 }
