@@ -14,17 +14,19 @@ class LoginPage {
         describe('Login', function login() {
             it('Click the login link', function clickLogin() {
                 browser.waitForInvisible('.ext-el-mask-msg');
-                $('a[href*=actionLogin]').click();
-                if ($('a[href*=switchLoginView]').length > 0) {
-                    $('a[href*=switchLoginView]').click();
+                browser.waitAndClick('a[href*=actionLogin]');
+                const isFederatedLogin = browser.isExisting('//span[contains(@class,"x-window-header") and text() = "Sign in with a linked Account"]/ancestor::node()[5]');
+                
+                if (isFederatedLogin) {
+                    browser.waitAndClick('a[href*=switchLoginView]');
                 }
             });
             it('Should Login', function doLogin() {
-                browser.waitForVisible('#login_window');
+                browser.waitForVisible('//span[contains(@class,"x-window-header") and text() = "Sign in with a local Account"]/ancestor::node()[5]');
                 $('#txt_login_username').setValue(loginName);
                 $('#txt_login_password').setValue(loginPassword);
                 $('#btn_sign_in .x-btn-mc').click();
-                browser.waitForInvisible('#login_window');
+                browser.waitForInvisible('//span[contains(@class,"x-window-header") and text() = "Sign in with a local Account"]/ancestor::node()[5]');
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForVisible(60000);

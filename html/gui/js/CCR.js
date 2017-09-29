@@ -1058,8 +1058,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
             close: function () {
                 XDMoD.TrackEvent('Login Window', 'Closed Window');
             }
-        },
-        id: 'login_window'
+        }
     });
 
     CCR.xdmod.ui.login_prompt.show(animateTarget);
@@ -1138,8 +1137,7 @@ CCR.xdmod.ui.forgot_password = function () {
                 XDMoD.TrackEvent('Forgot Password Window', 'Closed Window');
             }
         },
-        items: panelItems,
-        bodyStyle: 'margin: 2.5px;'
+        items: panelItems
     });
     CCR.xdmod.ui.forgot_password_prompt.show();
     CCR.xdmod.ui.forgot_password_prompt.center();
