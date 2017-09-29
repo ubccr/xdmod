@@ -30,7 +30,7 @@ FROM (
         u.id     AS user_id,
         a.acl_id AS acl_id
      FROM Users u, acls a
-     WHERE BINARY u.username = BINARY 'Public User' AND
+     WHERE BINARY u.username = BINARY 'Public' AND
            BINARY a.name     = BINARY 'pub'
 ) inc
 LEFT JOIN user_acls cur
