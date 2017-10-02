@@ -16,5 +16,6 @@ then
 fi
 
 pushd `dirname $0`
+npm set progress=false
 npm install
 npm test 2> >(grep -v depcrecated >&2)
