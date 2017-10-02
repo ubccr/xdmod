@@ -95,9 +95,6 @@ Ext.apply(XDMoD.Module.Usage, {
         }));
 
         function drillDown(drillDown) {
-
-            var drillDown = drillDown.split('-'); // only one drilldown per chart right now;
-
             var drillDownGroupByName = drillDown[0];
             var drillDownGroupByLabel = drillDown[1];
 

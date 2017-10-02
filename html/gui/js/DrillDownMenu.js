@@ -52,7 +52,7 @@ Ext.extend(CCR.xdmod.ui.DrillDownMenu, Ext.menu.Menu, {
                     items.push(
                         new Ext.menu.Item({
                             scope: this,
-                            drillDown: gbd.join('-'),
+                            drillDown: gbd,
                             paramLabel: gbd[1],
                             text: gbd[1],
                             iconCls: 'drill',
