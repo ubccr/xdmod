@@ -62,7 +62,7 @@ FROM (
     true as is_primary,
     true as is_active
   FROM Users u, Roles r
-  WHERE     BINARY u.username = BINARY 'Public User'
+  WHERE     BINARY u.username = BINARY 'Public'
         AND BINARY r.abbrev   = BINARY 'pub'
 ) inc
 LEFT JOIN UserRoles cur
