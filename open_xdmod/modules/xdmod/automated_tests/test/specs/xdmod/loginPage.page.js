@@ -15,18 +15,18 @@ class LoginPage {
             it('Click the login link', function clickLogin() {
                 browser.waitForInvisible('.ext-el-mask-msg');
                 browser.waitAndClick('a[href*=actionLogin]');
-                const isFederatedLogin = browser.isExisting('//span[contains(@class,"x-window-header") and text() = "Sign in with a linked Account"]/ancestor::node()[5]');
-                
+                const isFederatedLogin = browser.isExisting('a[href*=switchLoginView]');
+
                 if (isFederatedLogin) {
                     browser.waitAndClick('a[href*=switchLoginView]');
                 }
             });
             it('Should Login', function doLogin() {
-                browser.waitForVisible('//span[contains(@class,"x-window-header") and text() = "Sign in with a local Account"]/ancestor::node()[5]');
+                browser.waitForVisible('//span[contains(@class,"x-window-header")]');
                 $('#txt_login_username').setValue(loginName);
                 $('#txt_login_password').setValue(loginPassword);
                 $('#btn_sign_in .x-btn-mc').click();
-                browser.waitForInvisible('//span[contains(@class,"x-window-header") and text() = "Sign in with a local Account"]/ancestor::node()[5]');
+                browser.waitForInvisible('//span[contains(@class,"x-window-header")]');
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForVisible(60000);
