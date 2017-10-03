@@ -754,12 +754,19 @@ class Usage extends Common
                     // If this is not a trend line series and not a thumbnail,
                     // fill in the drilldown function.
                     if (!$isTrendLineSeries && !$thumbnailRequested) {
-                        $drillDowns = json_encode($user->getMostPrivilegedRole()->getQueryDescripters(
-                            'tg_usage',
-                            $usageRealm,
-                            $usageGroupBy,
-                            $meRequestMetric->getAlias()->getName()
-                        )->getDrillTargets($meRequestMetric->getAlias()));
+                        $drillDowns = json_encode(
+                            array_map(
+                                function ($drillTarget) {
+                                    return explode('-', $drillTarget, 2);
+                                },
+                                $user->getMostPrivilegedRole()->getQueryDescripters(
+                                    'tg_usage',
+                                    $usageRealm,
+                                    $usageGroupBy,
+                                    $meRequestMetric->getAlias()->getName()
+                                )->getDrillTargets($meRequestMetric->getAlias())
+                            )
+                        );
                         $usageGroupByUnit = $usageGroupByObject->getUnit();
 
                         if ($meRequestIsTimeseries) {
