@@ -24,6 +24,6 @@ build:
         - ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/componentresults.xml
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - cp ~/assets/secrets.json open_xdmod/modules/xdmod/automated_tests/.secrets.json
-        - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults || rm shippable/testresults/WDIO*.xml
+        - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
     on_failure:
         - cat /var/log/xdmod/*
