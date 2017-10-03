@@ -59,3 +59,8 @@
 #federatedLoginLink img:hover {
 	background-color: #0574d4;
 }
+
+#txt_login_username, #txt_login_password {
+	padding: 2.5px;
+	margin-left: 2.5px;
+}
