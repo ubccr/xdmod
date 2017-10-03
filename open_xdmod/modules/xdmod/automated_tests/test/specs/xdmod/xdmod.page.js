@@ -8,7 +8,7 @@ class XDMoD {
         var tab = '#main_tab_panel__' + tabId;
         var panel = '//div[@id="' + tabId + '"]';
 
-        expect(browser.isVisible(tab)).to.be.true;
+        browser.waitForVisible(tab);
         for (let i = 0; i < 100; i++) {
             try {
                 browser.click(tab);

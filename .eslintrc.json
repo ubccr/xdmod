@@ -6,10 +6,12 @@
   },
   "globals": {},
   "rules": {
+    "camelcase" : "off",
     "curly": [
       "error",
       "all"
     ],
+    "dot-notation": "warn",
     "brace-style": [
       "error",
       "1tbs",

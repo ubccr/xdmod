@@ -1033,6 +1033,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                     } else {
 
                         var jobTab = new XDMoD.Module.JobViewer.JobPanel({
+                            itemId: 'jobid_' + jobId.toString(),
                             jobViewer: self,
                             jobId: jobId,
                             title: title,
