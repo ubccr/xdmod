@@ -46,3 +46,16 @@
 .win_splash_login_prompt .x-btn-bc{
 	background-position: 0 -18px;
 }
+
+#federatedLoginLink img {
+	border: 1.33px; 
+	border-style: ridge; 
+	border-radius: 4px; 
+	padding: 5px; 
+	margin: 2.5px; 
+	box-shadow: 0.5px 1.5px 0.25px 0.25px;
+}
+
+#federatedLoginLink img:hover {
+	background-color: #0574d4;
+}
