@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
 if [ "$1" = "--headless" ];
 then
@@ -16,4 +17,4 @@ fi
 
 pushd `dirname $0`
 npm install
-npm test
+npm test 2> >(grep -v depcrecated >&2)

@@ -147,16 +147,16 @@ class MetricExplorer {
         browser.click(this.selectors.newChart.modalDialog.ok());
         browser.waitForInvisible(this.selectors.newChart.modalDialog.box);
         browser.waitForVisible('//div[@class="x-grid-empty"]/b[text()="No data is available for viewing"]');
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
     }
     setDateRange(start, end) {
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
         browser.waitAndClick(this.selectors.startDate);
         browser.setValue(this.selectors.startDate, start);
         browser.waitAndClick(this.selectors.endDate);
         browser.setValue(this.selectors.endDate, end);
         browser.click(this.selectors.toolbar.buttonByName('Refresh'));
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
     }
     addDataViaCatalog(realm, statistic, groupby) {
         browser.waitForVisible(this.selectors.catalog.container, 10000);
@@ -240,7 +240,7 @@ class MetricExplorer {
                 browser.click(selToCheck);
                 break;
             } catch (e) {
-                browser.waitForExist('.ext-el-mask', 9000, true);
+                browser.waitForAllInvisible('.ext-el-mask');
             }
         }
 
@@ -372,7 +372,7 @@ class MetricExplorer {
         browser.waitForVisible(this.selectors.deleteChart.dialogBox);
         browser.waitAndClick(this.selectors.deleteChart.buttonByLabel('Yes'));
         browser.waitForInvisible(this.selectors.deleteChart.dialogBox);
-        browser.waitUntilNotExist('#ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
     }
     actionLoadChart(chartNumber) {
         browser.pause(3000);
@@ -409,23 +409,15 @@ class MetricExplorer {
     switchToAggregate() {
         browser.waitAndClick(this.selectors.options.button);
         browser.waitAndClick(this.selectors.options.aggregate);
-        browser.waitForVisible('.xtb-text.logo93');
-        for (let i = 0; i < 100; i++) {
-            try {
-                browser.click('.xtb-text.logo93');
-                break;
-            } catch (e) {
-                browser.waitUntilNotExist('.ext-el-mask');
-            }
-        }
+        this.clickLogoAndWaitForMask();
         browser.waitForInvisible(this.selectors.options.aggregate);
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
     }
 
     undoAggregateOrTrendLine($container) {
         browser.waitAndClick(this.undo($container));
             // The mouse stays and causes a hover, lets move the mouse somewhere else
-        browser.waitAndClick('.xtb-text.logo93');
+        this.clickLogoAndWaitForMask();
     }
 
     clickFirstDataPoint() {
@@ -448,6 +440,27 @@ class MetricExplorer {
         expect(browser.getValue(this.meselectors.options.title)).to.be.a('string');
         var chartTitle = browser.getValue(this.meselectors.options.title);
         return (chartTitle);
+    }
+
+    /**
+     * Best effort to try to wait until the load mask has been and gone.
+     */
+    clickSelectorAndWaitForMask(selector) {
+        browser.waitForVisible(selector);
+        browser.waitForAllInvisible('.ext-el-mask');
+
+        for (let i = 0; i < 100; i++) {
+            try {
+                browser.click(selector);
+                break;
+            } catch (e) {
+                browser.waitForAllInvisible('.ext-el-mask');
+            }
+        }
+    }
+
+    clickLogoAndWaitForMask() {
+        this.clickSelectorAndWaitForMask('.xtb-text.logo93');
     }
 }
 

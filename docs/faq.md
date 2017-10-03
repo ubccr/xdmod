@@ -127,3 +127,10 @@ As of Open XDMoD 7.0 any job with a start or end time equal to 0 will not be
 ingested into the data warehouse and will not contribute to the job count or
 any other metrics.  Previous versions of Open XDMoD did include these jobs
 which resulted in inaccurate results.
+
+### Why do I see the error message "User "Public User" not found" instead of the portal?
+
+This indicates that the data needed by the new ACL system introduced in 7.0.0 is
+not present.  This is typically caused by failing to migrate the Open XDMoD
+database from 6.6.0 to 7.0.0.  The `xdmod-upgrade` script must be executed
+after upgrading the Open XDMoD RPM or source installation.

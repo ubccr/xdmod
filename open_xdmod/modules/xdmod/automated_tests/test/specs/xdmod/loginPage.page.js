@@ -46,6 +46,7 @@ class LoginPage {
             it('Display Logged out State', function clickLogout() {
                 browser.waitForInvisible('.ext-el-mask-msg');
                 $('a[href*=actionLogin]').waitForVisible();
+                $('#main_tab_panel__about_xdmod').waitForVisible();
             });
         });
     }
