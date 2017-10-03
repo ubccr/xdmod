@@ -944,7 +944,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         height: 22,
         id: 'txt_login_username',
         enableKeyEvents: true,
-        name: 'username'
+        name: 'username',
+        style: {
+            padding: '2.5px'
+        }
     });
 
     var txtLoginPassword = new Ext.form.TextField({
@@ -954,7 +957,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         enableKeyEvents: true,
         id: 'txt_login_password',
         name: 'password',
-        inputType: 'password'
+        inputType: 'password',
+        style: {
+            padding: '2.5px'
+        }
     });
 
     var loginItems = [];

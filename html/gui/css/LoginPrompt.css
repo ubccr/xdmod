@@ -53,5 +53,9 @@
 	border-radius: 4px; 
 	padding: 5px; 
 	margin: 2.5px; 
-	box-shadow: 0.5px 1.5px;
+	box-shadow: 0.5px 1.5px 0.25px 0.25px;
+}
+
+#federatedLoginLink img:hover {
+	background-color: #0574d4;
 }
