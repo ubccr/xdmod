@@ -60,7 +60,9 @@
 	background-color: #0574d4;
 }
 
-#txt_login_username, #txt_login_password {
+#txt_login_username, #txt_login_password input {
 	padding: 2.5px;
 	margin-left: 2.5px;
+	width: 184px;
+	height: 22px;
 }
