@@ -928,15 +928,14 @@ CCR.xdmod.ui.FadeInWindow = Ext.extend(Ext.Window, { //experimental
     }
 });
 
-CCR.xdmod.ui.switchLoginView = function () {
-    CCR.xdmod.ui.actionLogin(null, null, true);
-};
-
 CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     XDMoD.TrackEvent("Portal", "Sign In link clicked");
 
     //reset referer
     XDMoD.referer = document.location.hash;
+
+    // TODO: Actually get this from config
+    showLocalLogin = true;
 
     var txtLoginUsername = new Ext.form.TextField({
         emptyText: 'Your Username',
@@ -944,117 +943,126 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         height: 22,
         id: 'txt_login_username',
         enableKeyEvents: true,
-        name: 'username'
+        name: 'username',
+        fieldLabel: 'Username'
     });
 
-    /* var txtLoginPassword = new Ext.form.TextField({
+    var txtLoginPassword = new Ext.form.TextField({
         emptyText: 'Your Password',
         width: 184,
         height: 22,
         enableKeyEvents: true,
         id: 'txt_login_password',
         name: 'password',
-        inputType: 'password'
-    }); */
-
-    var txtLoginPassword = {
-        xtype: 'tbtext',
-        id: 'txt_login_password',
-        html: '<input type="password" placeholder="Your Password"></input>'
-    };
+        inputType: 'password',
+        fieldLabel: 'Password'
+    });
 
     var loginItems = [];
-    var title;
+    var accountName = CCR.xdmod.federationLoginLink.organization.en !== 'Federation' ? CCR.xdmod.federationLoginLink.organization.en : CCR.xdmod.org_name; 
+
+    var federatedLoginItems = [{
+        xtype: 'tbtext',
+        html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>',
+        id: 'federatedLoginLink'
+    }];
+
+    var localLoginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
+        text: 'Sign in',
+        autoHeight: true,
+        id: 'btn_sign_in',
+        handler: function () {
+            if (txtLoginUsername.getValue().length === 0) {
+                presentLoginResponse('You must specify a username.', false, 'login_response', function () {
+                    txtLoginUsername.focus();
+                });
+                return;
+            }
+
+            if (txtLoginPassword.getValue().length === 0) {
+                presentLoginResponse('You must specify a password.', false, 'login_response', function () {
+                    txtLoginPassword.focus();
+                });
+                return;
+            }
+
+            var restArgs = {
+                username: txtLoginUsername.getValue(),
+                password: txtLoginPassword.getValue()
+            };
+
+            Ext.Ajax.request({
+                url: '/rest/v0.1/auth/login',
+                method: 'POST',
+                params: restArgs,
+                callback: function (options, success, response) {
+                    var data = CCR.safelyDecodeJSONResponse(response);
+                    var decodedResponse;
+
+                    if (success) {
+                        decodedResponse = CCR.checkDecodedJSONResponseSuccess(data);
+                    }
+
+                    if (decodedResponse) {
+                        XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
+                        XDMoD.REST.token = data.results.token;
+                        XDMoD.TrackEvent('Login Window', 'Login from public session', '(Token: ' + XDMoD.REST.token + ')', true);
+                        presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
+                        parent.location.href = '../../index.php' + parent.XDMoD.referer;
+                        parent.location.hash = parent.XDMoD.referer;
+                        parent.location.reload();
+                    } else {
+                        XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
+                        var message = data.message || 'There was an error encountered while logging in. Please try again.';
+                        message = Ext.util.Format.htmlEncode(message);
+                        message = message.replace(
+                            CCR.xdmod.support_email,
+                            '<br /><a href="mailto:' + CCR.xdmod.support_email + '?subject=Problem Logging In">' + CCR.xdmod.support_email + '</a>'
+                        );
+
+                        presentLoginResponse(message, false, 'login_response', function () {
+                            txtLoginPassword.focus(true);
+                        });
+                    }
+                }
+            });
+        }
+    }), {
+        xtype: 'tbtext',
+        id: 'login_response'
+    }, {
+        xtype: 'tbtext',
+        html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot Your Password?</a>',
+        id: 'forgot_password_link'
+    }];
+
+    var federatedLoginFrm = new Ext.form.FormPanel({
+        id: 'federated_login_form',
+        title: 'Sign in with ' + accountName + ':',
+        items: federatedLoginItems
+    });
+
+    var localLoginFrm = new Ext.form.FormPanel({
+        id: 'local_login_form',
+        title: 'Sign in with a local Account:',
+        items: localLoginItems
+    });
+
+    var title = 'Sign into XDMoD';
 
     if (!showLocalLogin && CCR.xdmod.isFederationConfigured) {
-        loginItems = [{
-            xtype: 'tbtext',
-            html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>',
-            id: 'federatedLoginLink'
-        }, {
-            xtype: 'tbtext',
-            html: '<span style="background-color: #e8e8e8; color: #000; margin:2.5px">You must have a valid account to log in.</span>'
-        }, {
-            xtype: 'tbtext',
-            html: '<span style="padding-right: 4px; padding-top: 9px; margin:2.5px"><a href="javascript:CCR.xdmod.ui.switchLoginView()">Use local account</a></span>'
-        }];
-        title = 'Sign in with a linked Account';
+        loginItems.push(federatedLoginFrm);
+    } else if (showLocalLogin && CCR.xdmod.isFederationConfigured) {
+        loginItems.push(federatedLoginFrm);
+        loginItems.push(localLoginFrm);
     } else {
-        loginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
-            text: 'Log in',
-            autoHeight: true,
-            id: 'btn_sign_in',
-            handler: function () {
-                if (txtLoginUsername.getValue().length === 0) {
-                    presentLoginResponse('You must specify a username.', false, 'login_response', function () {
-                        txtLoginUsername.focus();
-                    });
-                    return;
-                }
-
-                if (txtLoginPassword.getValue().length === 0) {
-                    presentLoginResponse('You must specify a password.', false, 'login_response', function () {
-                        txtLoginPassword.focus();
-                    });
-                    return;
-                }
-
-                var restArgs = {
-                    username: txtLoginUsername.getValue(),
-                    password: txtLoginPassword.getValue()
-                };
-
-                Ext.Ajax.request({
-                    url: '/rest/v0.1/auth/login',
-                    method: 'POST',
-                    params: restArgs,
-                    callback: function (options, success, response) {
-                        var data = CCR.safelyDecodeJSONResponse(response);
-                        var decodedResponse;
-
-                        if (success) {
-                            decodedResponse = CCR.checkDecodedJSONResponseSuccess(data);
-                        }
-
-                        if (decodedResponse) {
-                            XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
-                            XDMoD.REST.token = data.results.token;
-                            XDMoD.TrackEvent('Login Window', 'Login from public session', '(Token: ' + XDMoD.REST.token + ')', true);
-                            presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
-                            parent.location.href = '../../index.php' + parent.XDMoD.referer;
-                            parent.location.hash = parent.XDMoD.referer;
-                            parent.location.reload();
-                        } else {
-                            XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
-                            var message = data.message || 'There was an error encountered while logging in. Please try again.';
-                            message = Ext.util.Format.htmlEncode(message);
-                            message = message.replace(
-                                CCR.xdmod.support_email,
-                                '<br /><a href="mailto:' + CCR.xdmod.support_email + '?subject=Problem Logging In">' + CCR.xdmod.support_email + '</a>'
-                            );
-
-                            presentLoginResponse(message, false, 'login_response', function () {
-                                txtLoginPassword.focus(true);
-                            });
-                        }
-                    }
-                });
-            }
-        }), {
-            xtype: 'tbtext',
-            id: 'login_response'
-        }, {
-            xtype: 'tbtext',
-            html: '<span style="padding-right: 4px; padding-top: 9px"><a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot Password?</a></span>'
-        }];
-
-        title = 'Sign in with a local Account';
+        loginItems.push(localLoginFrm);
     }
 
     CCR.xdmod.ui.login_prompt = new Ext.Window({
         title: title,
-        width: 320,
-        height: 140,
+        autoWidth: true,
+        autoHeight: true,
         modal: true,
         animate: true,
         resizable: false,
@@ -1073,18 +1081,16 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
 
 CCR.xdmod.ui.forgot_password = function () {
     var txtEmailAddress = new Ext.form.TextField({
-        emptyText: 'Your Email Address',
+        emptyText: 'yourname@example.edu',
         width: 184,
         height: 22,
         enableKeyEvents: true,
         id: 'txt_email_address',
-        name: 'fpemail'
+        name: 'fpemail',
+        fieldLabel: 'Email Address'
     });
 
-    var panelItems = [{
-        xtype: 'tbtext',
-        html: '<span style="background-color: #e8e8e8 color: #000">Enter the email address associated with your account to reset your password: </span>'
-    }, txtEmailAddress, new Ext.Button({
+    var panelItems = [txtEmailAddress, new Ext.Button({
         text: 'Reset My Password',
         autoHeight: true,
         handler: function () {
@@ -1131,10 +1137,16 @@ CCR.xdmod.ui.forgot_password = function () {
         id: 'reset_response'
     }];
 
+    var forgotPasswordFrm = new Ext.form.FormPanel({
+        id: 'forgot_password_form',
+        items: panelItems,
+        title: 'To reset password, enter the address associated with your account.'
+    });
+
     CCR.xdmod.ui.forgot_password_prompt = new Ext.Window({
         title: 'Forgot your password?',
-        width: 320,
-        height: 140,
+        autoWidth: true,
+        autoHeight: true,
         modal: true,
         draggable: false,
         resizable: false,
@@ -1143,7 +1155,7 @@ CCR.xdmod.ui.forgot_password = function () {
                 XDMoD.TrackEvent('Forgot Password Window', 'Closed Window');
             }
         },
-        items: panelItems
+        items: forgotPasswordFrm
     });
     CCR.xdmod.ui.forgot_password_prompt.show();
     CCR.xdmod.ui.forgot_password_prompt.center();
