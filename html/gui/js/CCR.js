@@ -947,7 +947,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         name: 'username'
     });
 
-    var txtLoginPassword = new Ext.form.TextField({
+    /* var txtLoginPassword = new Ext.form.TextField({
         emptyText: 'Your Password',
         width: 184,
         height: 22,
@@ -955,7 +955,13 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         id: 'txt_login_password',
         name: 'password',
         inputType: 'password'
-    });
+    }); */
+
+    var txtLoginPassword = {
+        xtype: 'tbtext',
+        id: 'txt_login_password',
+        html: '<input type="password" placeholder="Your Password"></input>'
+    };
 
     var loginItems = [];
     var title;
