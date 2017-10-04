@@ -12,6 +12,7 @@ class XDMoD {
         for (let i = 0; i < 100; i++) {
             try {
                 browser.click(tab);
+                break;
             } catch (e) {
                 browser.waitForAllInvisible(this.selectors.mask, 5000);
             }

@@ -96,6 +96,9 @@ class MetricExplorer {
                 legend: function () {
                     return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-legend-item")]/*[name()="text"]';
                 },
+                seriesMarkers: function (seriesId) {
+                    return module.exports.selectors.chart.svg + '//*[local-name() = "g" and contains(@class, "highcharts-series-' + seriesId.toString() + '") and contains(@class, "highcharts-markers")]/*[local-name() = "path"]';
+                },
                 title: '#hc-panelmetric_explorer svg .undefinedtitle',
                 titleInput: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] input[type=text]',
                 titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
@@ -149,6 +152,11 @@ class MetricExplorer {
         browser.waitForVisible('//div[@class="x-grid-empty"]/b[text()="No data is available for viewing"]');
         browser.waitForAllInvisible('.ext-el-mask');
     }
+    waitForLoaded() {
+        browser.waitForVisible(this.selectors.container, 3000);
+        browser.waitForVisible(this.selectors.catalog.container, 10000);
+        browser.waitUntilAnimEnd(this.selectors.catalog.collapseButton);
+    }
     setDateRange(start, end) {
         browser.waitForAllInvisible('.ext-el-mask');
         browser.waitAndClick(this.selectors.startDate);
@@ -163,7 +171,7 @@ class MetricExplorer {
         browser.waitUntilAnimEndAndClick(this.selectors.catalog.rootNodeByName(realm));
         browser.waitUntilAnimEndAndClick(this.selectors.catalog.nodeByPath(realm, statistic));
         browser.waitForVisible(this.selectors.catalog.addToChartMenu.container);
-        browser.waitAndClick(this.selectors.catalog.addToChartMenu.itemByName(groupby));
+        browser.waitUntilAnimEndAndClick(this.selectors.catalog.addToChartMenu.itemByName(groupby));
         browser.waitForChart();
     }
     saveChanges() {
@@ -421,25 +429,12 @@ class MetricExplorer {
     }
 
     clickFirstDataPoint() {
-        var seriesIndex = 0;
-        var pointIndex = 0;
-        browser.moveToObject('#hc-panelmetric_explorer', 0, 0);
-        var pointLocation = browser.getChartSeriesPointLocation('hc-panelmetric_explorer', seriesIndex, pointIndex).value;
-        expect(pointLocation.left).to.be.a('number');
-        expect(pointLocation.top).to.be.a('number');
-        browser.moveTo(null, pointLocation.left, pointLocation.top);
-        browser.buttonDown();
-        browser.buttonUp();
-        browser.execute('return document.querySelectorAll("svg g.highcharts-series-group g.highcharts-markers.highcharts-tracker path")[' + seriesIndex + '];').click();
-        browser.pause(10000);
-    }
-    saveChartTitle() {
-        browser.pause(5000);
-        browser.waitForLoadedThenClick(this.meselectors.options.button);
-        browser.waitForVisible(this.meselectors.options.title, 30000);
-        expect(browser.getValue(this.meselectors.options.title)).to.be.a('string');
-        var chartTitle = browser.getValue(this.meselectors.options.title);
-        return (chartTitle);
+        var elems = browser.elements(this.selectors.chart.seriesMarkers(0));
+        // Data points are returned in reverse order.
+        // for some unknown reason the first point click gets intercepted by the series
+        // menu.
+        elems.value[0].click();
+        elems.value[elems.value.length - 1].click();
     }
 
     /**

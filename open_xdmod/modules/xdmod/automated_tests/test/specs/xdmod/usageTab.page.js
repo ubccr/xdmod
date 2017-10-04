@@ -43,6 +43,7 @@ class Usage {
      */
     selectTab() {
         xdmod.selectTab('tg_usage');
+        browser.waitForVisible(this.chart);
     }
 
     /**
