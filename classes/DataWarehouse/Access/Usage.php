@@ -754,24 +754,32 @@ class Usage extends Common
                     // If this is not a trend line series and not a thumbnail,
                     // fill in the drilldown function.
                     if (!$isTrendLineSeries && !$thumbnailRequested) {
-                        $drillDowns = implode(',', $user->getMostPrivilegedRole()->getQueryDescripters(
-                            'tg_usage',
-                            $usageRealm,
-                            $usageGroupBy,
-                            $meRequestMetric->getAlias()->getName()
-                        )->getDrillTargets($meRequestMetric->getAlias()));
+                        $drillDowns = json_encode(
+                            array_map(
+                                function ($drillTarget) {
+                                    return explode('-', $drillTarget, 2);
+                                },
+                                $user->getMostPrivilegedRole()->getQueryDescripters(
+                                    'tg_usage',
+                                    $usageRealm,
+                                    $usageGroupBy,
+                                    $meRequestMetric->getAlias()->getName()
+                                )->getDrillTargets($meRequestMetric->getAlias())
+                            )
+                        );
                         $usageGroupByUnit = $usageGroupByObject->getUnit();
 
                         if ($meRequestIsTimeseries) {
                             $drilldownDetails = $meDataSeries['drilldown'];
                             $drilldownId = $drilldownDetails['id'];
                             $drilldownLabel = json_encode($drilldownDetails['label']);
+                            $groupByNameAndUnit = json_encode(array($usageGroupBy, $usageGroupByUnit));
                             $drilldownFunction = "function(event) {
                                 this.ts = this.x;
                                 XDMoD.Module.Usage.drillChart(
                                     this,
-                                    '$drillDowns',
-                                    '${usageGroupBy}-${usageGroupByUnit}',
+                                    $drillDowns,
+                                    $groupByNameAndUnit,
                                     '$drilldownId',
                                     $drilldownLabel,
                                     'none',
@@ -785,8 +793,8 @@ class Usage extends Common
                                 var label = this.drilldown.label;
                                 XDMoD.Module.Usage.drillChart(
                                     this,
-                                    '$drillDowns',
-                                    '${usageGroupBy}-${usageGroupByUnit}',
+                                    $drillDowns,
+                                    $groupByNameAndUnit,
                                     id,
                                     label,
                                     'none',
