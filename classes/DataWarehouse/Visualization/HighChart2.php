@@ -392,7 +392,7 @@ class HighChart2
             'color'=> '#5078a0',
             'fontSize' => (12 + $font_size).'px'
         );
-        $this->_chart['subtitle']['y'] = 30 + $font_size;
+        $this->_chart['subtitle']['y'] = 28 + (2 * $font_size);
     } // setSubtitle()
 
     // ---------------------------------------------------------
