@@ -359,7 +359,14 @@ describe('Report Generator', function () {
             });
             it('Check available charts', function () {
                 reportGeneratorPage.selectTab();
-                const charts = reportGeneratorPage.getAvailableCharts();
+                var charts;
+                for (let i = 0; i < 100; i++) {
+                    charts = reportGeneratorPage.getAvailableCharts();
+                    if (charts.length === (index + 1)) {
+                        break;
+                    }
+                    browser.pause(20);
+                }
                 expect(charts.length, `${index + 1} chart(s) in the list of available charts`).to.be.equal(index + 1);
 
                 for (let i = 0; i <= index; ++i) {
