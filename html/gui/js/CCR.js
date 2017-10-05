@@ -1034,6 +1034,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         xtype: 'tbtext',
         html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot Your Password?</a>',
         id: 'forgot_password_link'
+    }, {
+        xtype: 'tbtext',
+        html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+        id: 'sign_up_link'
     }];
 
     var federatedLoginFrm = new Ext.form.FormPanel({

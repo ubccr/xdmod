@@ -76,6 +76,6 @@
 	 background-color: #e8e8e8;
  }
  
- #login_response, #forgot_password_link {
+ #login_response, #forgot_password_link, #sign_up_link {
 	 margin: 2.5px 0px 2.5px 0px;
  }
