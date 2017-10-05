@@ -3205,7 +3205,7 @@ SQL;
     public function addAclOrganization($aclName, $organizationId)
     {
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling this function.");
+            throw new \Exception("This user must be saved prior to calling " . __FUNCTION__ . ".");
         }
 
         $acl = Acls::getAclByName($aclName);

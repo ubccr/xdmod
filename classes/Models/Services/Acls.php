@@ -805,7 +805,7 @@ SQL;
      */
     public static function getMostPrivilegedAcl(XDUser $user, $moduleName = DEFAULT_MODULE_NAME, $aclHierarchyName = 'acl_hierarchy')
     {
-        if (null == $user->getUserID()) {
+        if (null === $user->getUserID()) {
             throw new Exception('A valid user id must be supplied.');
         }
 
