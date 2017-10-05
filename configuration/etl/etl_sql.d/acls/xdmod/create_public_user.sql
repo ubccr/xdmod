@@ -15,7 +15,7 @@ FROM (
         0        AS field_of_science,
         ut.id    AS user_type
     FROM UserTypes ut
-    WHERE BINARY ut.type = BINARY 'Internal'
+    WHERE BINARY ut.type LIKE BINARY 'Internal%'
 ) inc
 LEFT JOIN Users cur
      ON BINARY cur.username      = BINARY inc.username      AND
