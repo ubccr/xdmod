@@ -313,3 +313,5 @@ configuration/aggregation_meta/
 # eclipse project files
 /.project
 
+# External QA assets
+/.qa/
