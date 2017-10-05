@@ -15,11 +15,6 @@ class LoginPage {
             it('Click the login link', function clickLogin() {
                 browser.waitForInvisible('.ext-el-mask-msg');
                 browser.waitAndClick('a[href*=actionLogin]');
-                const isFederatedLogin = browser.isExisting('a[href*=switchLoginView]');
-
-                if (isFederatedLogin) {
-                    browser.waitAndClick('a[href*=switchLoginView]');
-                }
             });
             it('Should Login', function doLogin() {
                 browser.waitForVisible('//span[contains(@class,"x-window-header")]');

@@ -1036,7 +1036,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         id: 'forgot_password_link'
     }, {
         xtype: 'tbtext',
-        html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+        html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t Have an Account?</a>',
         id: 'sign_up_link'
     }];
 
