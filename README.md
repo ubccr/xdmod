@@ -87,6 +87,10 @@ Development on Open XDMoD and its modules can be started using either
 easy to transition from a Repo workflow to a pure Git workflow. If you
 don't want to install yet another tool, using Git will work just fine.
 
+Whichever tool you choose, we recommend keeping your various repository
+clones inside a dedicated directory on your local system. This will make
+it easier to [use quality assurance tools locally][xdmod-qa].
+
 Before starting with either, however, you will want to fork any repositories
 you are interested in working on. Simply visit the repositories' pages on GitHub
 and click the Fork button. Once you have finished working on a feature or bug
@@ -196,6 +200,12 @@ files to `.repo/local_manifests` that will extend the main manifest file being
 used. More information about the manifest file format and local manifest files
 may be found [here][repo-format]. Once you have made the desired changes, run
 `repo sync` to pull the changes in.
+
+### Installing Quality Assurance Tools
+
+If you wish to locally install and use the quality assurance tools that will
+be used to check your code, you can do so by following the instructions on the
+[Open XDMoD QA repository page][xdmod-qa].
 
 ## Building
 
@@ -341,4 +351,5 @@ See the [license page on the Open XDMoD website][license-page] for details.
 [license-page]: http://open.xdmod.org/notices.html
 [repo]: https://code.google.com/p/git-repo/
 [repo-format]: https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.txt
+[xdmod-qa]: https://github.com/ubccr/xdmod-qa
 [xdmod-repo-manifest]: https://github.com/ubccr/xdmod-repo-manifest
