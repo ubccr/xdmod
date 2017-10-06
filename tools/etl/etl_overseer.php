@@ -16,7 +16,7 @@ ini_set('memory_limit', -1);
 // Character to use when separating list output
 const LIST_SEPARATOR = "\t";
 
-use \Exception;
+use Exception;
 use CCR\Log;
 use CCR\DB;
 use ETL\EtlOverseer;

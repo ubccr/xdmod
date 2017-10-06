@@ -417,7 +417,7 @@ class pdoAggregator extends aAggregator
             $tableFullName =  $utilitySchema . "." . $tableName;
             if ( false === $this->utilityEndpoint->tableExists($tableName, $utilitySchema) ) {
                 $this->logger->info("Table does not exist: '$tableFullName', skipping.");
-                continue;
+                return false;
             }
         } catch (PDOException $e) {
             $this->logAndThrowException(
