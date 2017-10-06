@@ -67,6 +67,9 @@ class IngestorOptions extends aOptions
             // http://dev.mysql.com/doc/refman/5.7/en/alter-table.html
             "disable_keys" => false,
 
+            // Perform an ANALYZE TABLE following ingestion
+            "analyze_table" => true,
+
             // A list of the only resources that should be included for this action. This is mainly
             // used for actions that are resource-specific, but it is up to the action to heed this
             // setting.
