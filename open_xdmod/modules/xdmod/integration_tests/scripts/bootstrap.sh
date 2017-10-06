@@ -15,7 +15,8 @@ then
     rpm -qa | grep ^xdmod | xargs yum -y remove
     rm -rf /etc/xdmod
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
-    yum -y localinstall ~/rpmbuild/RPMS/*/*.rpm
+    yum -y remove java-1.7.0-openjdk java-1.7.0-openjdk-devel
+    yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do 
@@ -29,7 +30,7 @@ fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
-    rpm -Uvh ~/rpmbuild/RPMS/*/*.rpm
+    yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     xdmod-upgrade --batch-mode | col -b
 fi

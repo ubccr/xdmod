@@ -6,8 +6,8 @@ Open XDMoD requires the following software:
 
 - [Apache][]
     - [mod_rewrite][]
-- [MySQL][] 5.1 or 5.5
-- [PHP][] 5.3+
+- [MariaDB][]/[MySQL][] 5.5.3+
+- [PHP][] 5.4+
     - [PDO][]
     - [MySQL PDO Driver][pdo-mysql]
     - [GD][php-gd]
@@ -19,7 +19,7 @@ Open XDMoD requires the following software:
     - [PEAR Log Package][pear-log]
     - [PEAR MDB2 Package][pear-mdb2]
     - [PEAR MDB2 MySQL Driver][pear-mdb2-mysql]
-- [Java][] including the [JDK][]
+- [Java][] 1.8 including the [JDK][]
 - [PhantomJS][] 2.1+
 - [ghostscript][] 9+
 - [cron][]
@@ -29,6 +29,7 @@ Open XDMoD requires the following software:
 
 [apache]:          http://httpd.apache.org/
 [mod_rewrite]:     http://httpd.apache.org/docs/current/mod/mod_rewrite.html
+[mariadb]:         https://mariadb.org/
 [mysql]:           http://mysql.com/
 [php]:             http://php.net/
 [pdo]:             http://php.net/manual/en/book.pdo.php
@@ -57,35 +58,18 @@ Linux Distribution Packages
 ---------------------------
 
 Open XDMoD can be run on any Linux distribution, but has been tested on
-Ubuntu 14.04 and CentOS 7.
+CentOS 7.
 
 Most of the requirements can be installed with the package managers
 available from these distributions.
 
-### Ubuntu 14.04
-
-    # apt-get install apache2 php5 php5-cli php5-mysql php5-gd \
-                      php5-mcrypt libgmp-dev php5-gmp php-pear \
-                      php-log php-mdb2 php-mdb2-driver-mysql \
-                      default-jre-headless openjdk-7-jdk phantomjs \
-                      mysql-server mysql-client cron logrotate \
-                      ghostscript
-
-### CentOS 7 / RHEL 7
+### CentOS 7
 
 **NOTE**: The package list below includes packages included with
 [EPEL](http://fedoraproject.org/wiki/EPEL).  This repository can be
 added with this command for CentOS 7:
 
     # yum install epel-release
-
-And for RHEL 7:
-
-    # yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-
-**NOTE**: Users of RHEL will need to enable the `optional`
-(rhel-7-server-optional-rpms) and `extras` (rhel-7-server-extras-rpms)
-repositories.
 
     # yum install httpd php php-cli php-mysql php-gd php-mcrypt \
                   gmp-devel php-gmp php-pdo php-xml php-pear-Log \
@@ -128,7 +112,7 @@ network access.
 
 ### MySQL
 
-MySQL 5.5 is currently recommended for use with Open XDMoD.
+MySQL 5.5.3+ is currently required for use with Open XDMoD.
 
 Some versions of MySQL have binary logging enabled by default.  This can
 be an issue during the setup process if the user specified to create the
@@ -144,26 +128,6 @@ database.
 ### PhantomJS
 
 The recommended version is 2.1.1.
-
-If you are running PhantomJS 1.4 or earlier you will also need [Xvfb][]
-running on port 99.
-
-On Ubuntu 12.04 (and other operating systems using [Upstart][]), create
-a file `/etc/init/xvfb.conf` containing the following:
-
-    description "Xvfb X Server"
-    start on (net-device-up
-              and local-filesystems
-              and runlevel [2345])
-    stop on runlevel [016]
-    exec su -s /bin/sh -c 'exec "$0" "$@"' daemon -- /usr/bin/Xvfb :99 -screen 0 1024x768x24
-
-This will start Xvfb when your system boots.  To start Xvfb manually:
-
-    # service xvfb start
-
-[xvfb]:    http://www.x.org/archive/current/doc/man/man1/Xvfb.1.xhtml
-[upstart]: http://upstart.ubuntu.com/
 
 **NOTE**: PhantomJS does not work properly with the default CentOS
 SELinux security policy.  You will need to disable SELinux or create a
