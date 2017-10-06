@@ -171,6 +171,9 @@ foreach ($args as $arg => $value) {
                 case 'month':
                     $scriptOptions['chunk-size-days'] = 30;
                     break;
+                case 'quarter':
+                    $scriptOptions['chunk-size-days'] = 91;
+                    break;
                 case 'year':
                     $scriptOptions['chunk-size-days'] = 365;
                     break;
@@ -683,7 +686,7 @@ Usage: {$argv[0]}
     -g, --group
     Process the specified ETL group. May use multiple times.
 
-    -k, --chunk-size {none, day, week, month, year}
+    -k, --chunk-size {none, day, week, month, quarter, year}
     Break up ingestion into chunks of this size. Helps to make more recent data available faster. [default year]
 
     -l, --list {resources, sections, actions, endpoint-types, configured-endpoints} | <etl_section_name>
