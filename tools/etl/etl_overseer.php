@@ -16,7 +16,7 @@ ini_set('memory_limit', -1);
 // Character to use when separating list output
 const LIST_SEPARATOR = "\t";
 
-use \Exception;
+use Exception;
 use CCR\Log;
 use CCR\DB;
 use ETL\EtlOverseer;
@@ -170,6 +170,9 @@ foreach ($args as $arg => $value) {
                     break;
                 case 'month':
                     $scriptOptions['chunk-size-days'] = 30;
+                    break;
+                case 'quarter':
+                    $scriptOptions['chunk-size-days'] = 91;
                     break;
                 case 'year':
                     $scriptOptions['chunk-size-days'] = 365;
@@ -683,7 +686,7 @@ Usage: {$argv[0]}
     -g, --group
     Process the specified ETL group. May use multiple times.
 
-    -k, --chunk-size {none, day, week, month, year}
+    -k, --chunk-size {none, day, week, month, quarter, year}
     Break up ingestion into chunks of this size. Helps to make more recent data available faster. [default year]
 
     -l, --list {resources, sections, actions, endpoint-types, configured-endpoints} | <etl_section_name>
