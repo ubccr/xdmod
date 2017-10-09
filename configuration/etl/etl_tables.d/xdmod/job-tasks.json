@@ -9,6 +9,11 @@
             "nullable": false,
             "comment": "Job record this task falls under"
         }, {
+            "name": "job_id",
+            "type": "bigint(20) unsigned",
+            "nullable": false,
+            "comment": "Unique job_id"
+        }, {
             "name": "creation_time",
             "type": "datetime",
             "nullable": false,
@@ -18,6 +23,18 @@
             "type": "varchar(128)",
             "nullable": true,
             "comment": "Job or vm instance identifier from resource manager"
+        }, {
+            "name": "local_job_array_index",
+            "type": "int(11) unsigned",
+            "nullable": true,
+            "default": null,
+            "comment": "Job Array index id"
+        }, {
+            "name": "local_job_id_raw",
+            "type": "int(11) unsigned",
+            "nullable": true,
+            "default": null,
+            "comment": "Resource where the task executed"
         }, {
             "name": "resource_id",
             "type": "int(11) unsigned",
@@ -169,7 +186,8 @@
             "name": "PRIMARY",
             "columns": [
                 "job_record_id",
-                "creation_time"
+                "creation_time",
+                "job_id"
             ],
             "type": "BTREE",
             "is_unique": true
