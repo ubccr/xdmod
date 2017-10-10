@@ -383,6 +383,12 @@ class Lsf extends Shredder
             $job['exec_hosts']
         );
 
+        // Remove any duplicates from the host list and re-index keys.
+        $job['exec_hosts'] = array_values(array_unique($job['exec_hosts']));
+
+        // Override "num_ex_hosts" with the number of distinct hosts.
+        $job['num_ex_hosts'] = count($job['exec_hosts']);
+
         return $job;
     }
 
