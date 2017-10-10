@@ -262,7 +262,7 @@ class LsfShredderTest extends \PHPUnit_Framework_TestCase
                     'job_file' => '1389642318.404717',
                     'num_asked_hosts' => '0',
                     'asked_hosts' => array(),
-                    'num_ex_hosts' => '8',
+                    'num_ex_hosts' => '4',
                     'exec_hosts' => array('host1', 'host2', 'host3', 'host4'),
                     'j_status' => '64',
                     'host_factor' => '60.0',
