@@ -33,6 +33,7 @@ Email `ccr-xdmod-help` at `buffalo.edu` for support.  Please include the followi
 - Operating system and version where Open XDMoD is installed
 - The output of `xdmod-check-config`
 - PHP and MySQL version (e.g, the output from `php --version`, `mysql --version`, and the SQL command `SHOW VARIABLES LIKE "%version%";`)
+- The output of `php -i`
 - A description of the problem you are experiencing
 - Detailed steps to reproduce the problem
 
