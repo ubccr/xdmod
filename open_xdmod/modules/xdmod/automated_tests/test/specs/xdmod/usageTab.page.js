@@ -8,6 +8,9 @@ class Usage {
         this.endField = '#tg_usage input[id^=end_field_ext]';
         this.legendText = 'g.highcharts-legend-item';
         this.refreshButton = '//div[@id="tg_usage"]//button[text()="Refresh"]/ancestor::node()[5]';
+        this.toolbar = {
+            exportButton: '//div[@id="tg_usage"]//button[text()="Export"]/ancestor::node()[5]'
+        };
         this.panel = '//div[@id="tg_usage"]';
         this.availableForReportCheckbox = '//div[@id="tg_usage"]//label[text()="Available For Report"]/parent::node()/input[@type="checkbox"]';
         this.mask = '.ext-el-mask';
@@ -43,6 +46,7 @@ class Usage {
      */
     selectTab() {
         xdmod.selectTab('tg_usage');
+        browser.waitForVisible(this.chart);
     }
 
     /**

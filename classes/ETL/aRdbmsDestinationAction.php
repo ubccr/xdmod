@@ -650,7 +650,11 @@ abstract class aRdbmsDestinationAction extends aAction
                 }
             }
 
-            if ( null !== $numRecordsProcessed && $numRecordsProcessed > 0 ) {
+            if (
+                null !== $numRecordsProcessed &&
+                $numRecordsProcessed > 0 &&
+                $this->options->analyze_table
+            ) {
                 $sqlList[] = "ANALYZE TABLE $qualifiedDestTableName";
             }
         }
@@ -691,7 +695,9 @@ abstract class aRdbmsDestinationAction extends aAction
             try {
                 $this->logger->debug($sql);
                 if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
+                    $start = microtime(true);
                     $endpoint->getHandle()->execute($sql);
+                    $this->logger->debug(sprintf('Completed in %fs', round(microtime(true) - $start, 5)));
                 }
             }
             catch (PDOException $e) {

@@ -11,6 +11,7 @@ env:
     global:
         - NODE_VERSION=6
         - XDMOD_TEST_ARTIFACTS_MIRROR="$HOME/xdmod-test-artifacts.git"
+        - XDMOD_IS_CORE=true
 
 # Add dependency directories to the Travis cache
 cache:
@@ -20,8 +21,11 @@ cache:
         - /tmp/pear/cache
         - $XDMOD_TEST_ARTIFACTS_MIRROR
 
-# Delegate the installation step to the custom Travis installation script
-install: ./.travis.install.sh
+# Obtain the shared QA assets before using them.
+before_install: git clone --depth=1 --branch="v1" https://github.com/ubccr/xdmod-qa.git .qa
 
-# Delegate the build step to the custom Travis build script
-script: ./.travis.build.sh
+# Delegate the installation step to the shared Travis installation script
+install: .qa/travis/install.sh
+
+# Delegate the build step to the shared Travis build script
+script: .qa/travis/build.sh

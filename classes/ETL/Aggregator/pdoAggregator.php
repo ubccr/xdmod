@@ -193,8 +193,6 @@ class pdoAggregator extends aAggregator
         // An individual action may override restrictions provided by the overseer.
         $this->setOverseerRestrictionOverrides();
 
-        $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
-
         if ( null === $this->etlSourceQuery ) {
             $msg = "ETL source query is not set";
             $this->logAndThrowException($msg);
@@ -202,6 +200,8 @@ class pdoAggregator extends aAggregator
             $msg = "ETL source query is not an instance of Query";
             $this->logAndThrowException($msg);
         }
+
+        $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
 
         // Group by fields must match existing column names. Variables are not substituted at this point
         // but it doesn't matter because the naming will still be consistent.
@@ -381,7 +381,7 @@ class pdoAggregator extends aAggregator
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
 
-            if ( $numAggregationPeriodsProcessed > 0 ) {
+            if ( $numAggregationPeriodsProcessed > 0 && $this->options->analyze_table ) {
                 $sqlList[] = "OPTIMIZE TABLE $qualifiedDestTableName";
             }
 
@@ -417,7 +417,7 @@ class pdoAggregator extends aAggregator
             $tableFullName =  $utilitySchema . "." . $tableName;
             if ( false === $this->utilityEndpoint->tableExists($tableName, $utilitySchema) ) {
                 $this->logger->info("Table does not exist: '$tableFullName', skipping.");
-                continue;
+                return false;
             }
         } catch (PDOException $e) {
             $this->logAndThrowException(
@@ -1002,7 +1002,9 @@ class pdoAggregator extends aAggregator
                     $sql =
                         "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
                         . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
-                    $this->logger->debug("[EXPERIMENTAL] Batch temp table " . $this->sourceEndpoint . ": $sql");
+                    $this->logger->debug(
+                        sprintf("[EXPERIMENTAL] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
+                    );
                     $result = $this->sourceHandle->execute($sql, $usedParams);
                 } catch (PDOException $e ) {
                     $this->logAndThrowException(

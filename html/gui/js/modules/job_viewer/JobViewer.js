@@ -61,6 +61,16 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     // PORTAL MODULE TOOLBAR CONFIG ===========================================
     usesToolbar: true,
 
+    toolbarItems: {
+        exportMenu: {
+            enable: true,
+            config: {
+                allowedExports: ['png', 'svg', 'csv', 'pdf']
+            }
+        },
+        printButton: true
+    },
+
     // PROPERTIES =============================================================
     token: XDMoD.REST.token, /*NOTE: This is populated via PHP. So will this render only once? */
     timeSeriesURL: '/rest/supremm/explorer/hctimeseries/',
@@ -96,20 +106,27 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     store: null,
 
     /**
+     * Find the active sub tab under the job tabs
+     * @returns the component or false if non found
+     */
+    getActiveJobSubPanel: function () {
+        var activeJobPanels = Ext.getCmp(this.tabpanel_id).getActiveTab().findByType('tabpanel');
+        if (activeJobPanels.length < 1) {
+            return false;
+        }
+        return activeJobPanels[0].getActiveTab();
+    },
+
+    /**
      * This tabs constructor, here we take care to setup everything this tab
      * will need throughout it's lifecycle.
      */
     initComponent: function () {
-        var self = this;
-
-
         // ROUTE: the unused toolbar events to a special no-opt function.
         //        Just to be sure that it doesn't go somewhere it's not
         //        supposed to.
         this.on('role_selection_change', this.noOpt);
         this.on('duration_change', this.noOpt);
-        this.on('export_option_selected', this.noOpt);
-        this.on('print_clicked', this.noOpt);
 
         this.addEvents(
                 'record_loaded',
@@ -123,14 +140,12 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         // SETUP: the components for this tab and add them to this tabs 'items'
         // property.
         Ext.apply(this, {
-            items: this.setupComponents()
+            items: this.setupComponents(),
+            customOrder: this.getToolbarConfig()
         });
 
         // Make sure to call the superclasses initComponent ( constructor )
         XDMoD.Module.JobViewer.superclass.initComponent.apply(this, arguments);
-
-        // SETUP: toolbar items.a
-        self.setupToolbar();
 
         this.loading = false;
 
@@ -181,7 +196,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     /**
      * Helper function that handles setting up this components toolbar.
      */
-    setupToolbar: function () {
+    getToolbarConfig: function () {
         var self = this;
 
         var searchPanel = new XDMoD.Module.JobViewer.SearchPanel({
@@ -215,9 +230,16 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             }
         });
 
-        this.getTopToolbar().insert(0, searchButton);
-        this.getTopToolbar().insert(1, '->');
-    }, // setupToolbar
+        return [
+            searchButton,
+            {
+                item: ' ',
+                separator: false
+            },
+            XDMoD.ToolbarItem.EXPORT_MENU,
+            XDMoD.ToolbarItem.PRINT_BUTTON
+        ];
+    },
 
     /**
      * Build the components that will make up this tabs UI. Return an array of the top level components for display in a
@@ -916,6 +938,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
          **/
         activate: function () {
             if (!this.loadMask) {
+                this.getExportMenu().setDisabled(true);
+                this.getPrintButton().setDisabled(true);
                 this.loadMask = new Ext.LoadMask(this.id);
             }
             Highcharts.setOptions({ global: { timezone: this.cachedHighChartTimezone } });
@@ -956,6 +980,8 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             }
 
             if (params.recordid && params.jobid) {
+                this.getExportMenu().setDisabled(!params.tsid);
+                this.getPrintButton().setDisabled(!params.tsid);
                 if (params.infoid) {
                     this.fireEvent('process_view_node', path);
                 } else {
@@ -996,6 +1022,20 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
             this.clearing = false;
         }, // clear_display
+
+        export_option_selected: function (exportParams) {
+            var chartPanel = this.getActiveJobSubPanel();
+            if (chartPanel) {
+                chartPanel.fireEvent('export_option_selected', exportParams);
+            }
+        },
+
+        print_clicked: function () {
+            var chartPanel = this.getActiveJobSubPanel();
+            if (chartPanel) {
+                chartPanel.fireEvent('print_clicked');
+            }
+        },
 
         /**
          * Process the given path for a job node history event.

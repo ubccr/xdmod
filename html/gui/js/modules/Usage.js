@@ -82,8 +82,6 @@ Ext.apply(XDMoD.Module.Usage, {
             return;
         }
 
-        groupByNameAndUnit = groupByNameAndUnit.split('-');
-
         if (groupByNameAndUnit.length < 2) return;
 
         var groupByName = groupByNameAndUnit[0];
@@ -97,9 +95,6 @@ Ext.apply(XDMoD.Module.Usage, {
         }));
 
         function drillDown(drillDown) {
-
-            var drillDown = drillDown.split('-'); // only one drilldown per chart right now;
-
             var drillDownGroupByName = drillDown[0];
             var drillDownGroupByLabel = drillDown[1];
 
