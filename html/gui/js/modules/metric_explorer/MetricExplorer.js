@@ -4202,6 +4202,10 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             this.saveQuery();
         }, this);
 
+        this.filtersStore.on('clear', function () {
+            this.saveQuery();
+        }, this);
+
         this.filtersStore.on('update', function(t, record, op) {
             record.commit(true);
             this.saveQuery();
