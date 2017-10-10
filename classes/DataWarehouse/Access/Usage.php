@@ -768,12 +768,12 @@ class Usage extends Common
                             )
                         );
                         $usageGroupByUnit = $usageGroupByObject->getUnit();
+                        $groupByNameAndUnit = json_encode(array($usageGroupBy, $usageGroupByUnit));
 
                         if ($meRequestIsTimeseries) {
                             $drilldownDetails = $meDataSeries['drilldown'];
                             $drilldownId = $drilldownDetails['id'];
                             $drilldownLabel = json_encode($drilldownDetails['label']);
-                            $groupByNameAndUnit = json_encode(array($usageGroupBy, $usageGroupByUnit));
                             $drilldownFunction = "function(event) {
                                 this.ts = this.x;
                                 XDMoD.Module.Usage.drillChart(
