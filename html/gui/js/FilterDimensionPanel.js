@@ -316,7 +316,7 @@ Ext.extend(CCR.xdmod.ui.FilterDimensionPanel, Ext.Panel, {
                         // store. If it does not have one, create one for
                         // purposes of disabling this filter.
                         var filterValue = record.value_id;
-                        var viewRecordIndex = store.find('id', filterValue);
+                        var viewRecordIndex = store.findExact('id', filterValue);
                         var viewRecord;
                         if (viewRecordIndex >= 0) {
                             viewRecord = store.getAt(viewRecordIndex);
