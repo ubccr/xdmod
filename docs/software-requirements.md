@@ -4,7 +4,7 @@ title: Software Requirements
 
 Open XDMoD requires the following software:
 
-- [Apache][]
+- [Apache][] 2.4
     - [mod_rewrite][]
 - [MariaDB][]/[MySQL][] 5.5.3+
 - [PHP][] 5.4+
