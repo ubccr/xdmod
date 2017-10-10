@@ -17,11 +17,9 @@ class LoginPage {
                 browser.waitAndClick('a[href*=actionLogin]');
             });
             it('Should Login', function doLogin() {
-                browser.waitForVisible('//span[contains(@class,"x-window-header")]');
                 $('#txt_login_username').setValue(loginName);
                 $('#txt_login_password').setValue(loginPassword);
                 $('#btn_sign_in .x-btn-mc').click();
-                browser.waitForInvisible('//span[contains(@class,"x-window-header")]');
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForVisible(60000);
