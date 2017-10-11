@@ -106,7 +106,7 @@ function main()
     $blacklist = array('default');
 
     // the sections of roles.json that we want to process.
-    $sections = array('permitted_modules', 'query_descripters', 'display', 'type');
+    $sections = array('permitted_modules', 'query_descripters', 'display', 'type', 'hierarchies');
 
     // the ultimate destination for the parsed information from
     // roles/datawarehouse
