@@ -745,7 +745,7 @@ SQL;
                 ':display' => $display
             )
         );
-        $aclId =  $record[0]['acl_id'];
+        $aclId =  count($record) > 0 ? $record[0]['acl_id'] : null;
     } elseif ($inserted === 1 ) {
         $log->info("[SUCCESS] Inserted $msg");
         $aclId = $db->handle()->lastInsertId();
@@ -877,12 +877,12 @@ SQL;
     $log->debug($statement);
     $inserted = 0;
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
-        if (null === $hierarchyInfo['level']) {
+        if (!isset($hierarchyInfo['level'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No level present.");
             continue;
         }
 
-        if (null === $hierarchyInfo['filter_override']) {
+        if (!isset($hierarchyInfo['filter_override'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No filter_override present.");
             continue;
         }
