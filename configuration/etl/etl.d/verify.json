@@ -1,0 +1,32 @@
+{
+    "defaults": {
+
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+
+        "verify-dw": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions"
+        }
+    },
+
+    "#": "Perform verification of ingested data",
+
+    "verify-dw": [
+        {
+            "name": "VerifyXdmodJobIngestion",
+            "description": "Check that jobs have been ingested into XDMoD recently",
+            "class": "VerifyDatabase",
+            "#": "Table definition relative to paths.table_config_dir if path not specified",
+            "definition_file": "verify/verify_xdmod_dw_job_ingest.json"
+        }
+    ]
+}
