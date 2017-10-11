@@ -115,6 +115,7 @@
 
       <link rel="shortcut icon" href="gui/icons/favicon_static.ico" />
       <script type="text/javascript" src="gui/lib/oldie-console-patch.js"></script>
+      <script type="text/javascript" src="gui/lib/oldie-array-includes-polyfill.js"></script>
       <?php if (!$userLoggedIn): ?>
       <script type="text/javascript">
          /**
