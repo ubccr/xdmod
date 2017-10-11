@@ -959,13 +959,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     });
 
     var loginItems = [];
-    var accountName = CCR.xdmod.federationLoginLink.organization.en !== 'Federation' ? CCR.xdmod.federationLoginLink.organization.en : CCR.xdmod.org_name; 
-
-    var federatedLoginItems = [{
-        xtype: 'tbtext',
-        html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>',
-        id: 'federatedLoginLink'
-    }];
+    var accountName = CCR.xdmod.federationLoginLink && CCR.xdmod.federationLoginLink.organization.en !== 'Federation' ? CCR.xdmod.federationLoginLink.organization.en : CCR.xdmod.org_name; 
 
     var localLoginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
         text: 'Sign in',
@@ -1040,11 +1034,15 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
         id: 'sign_up_link'
     }];
 
-    var federatedLoginFrm = new Ext.form.FormPanel({
+    var federatedLoginFrm = CCR.xdmod.isFederationConfigured ? new Ext.form.FormPanel({
         id: 'federated_login_form',
         title: 'Sign in with ' + accountName + ':',
-        items: federatedLoginItems
-    });
+        items: [{
+            xtype: 'tbtext',
+            html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>',
+            id: 'federatedLoginLink'
+        }]
+    }) : null;
 
     var localLoginFrm = new Ext.form.FormPanel({
         id: 'local_login_form',
