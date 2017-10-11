@@ -2,58 +2,31 @@
 
 // Operation: user_interface->get_tabs
 
+use Models\Services\Tabs;
+
 $returnData = array();
 
 try {
     $user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));
 
-    $tabs = array();
-
-    $roles = $user->getRoles();
-
-    foreach ($roles as $role_abbrev) {
-        if ($role_abbrev == 'dev') {
-            continue;
-        }
-
-        $role = \User\aRole::factory($user->_getFormalRoleName($role_abbrev));
-        $modules = $role->getPermittedModules();
-
-        foreach ($modules as $module) {
-            if (! isset($tabs[$module->getName()])) {
-                $tabs[$module->getName()] = array(
-                    'tab' => $module->getName(),
-                    'isDefault' => $module->isDefault(),
-                    'title' => $module->getTitle(),
-                    'pos' => $module->getPosition(),
-                    'permitted_modules' => $module->getPermittedModules(),
-                    'javascriptClass' => $module->getJavascriptClass(),
-                    'javascriptReference' => $module->getJavascriptReference(),
-                    'tooltip' => $module->getTooltip(),
-                    'userManualSectionName' => $module->getUserManualSectionName()
-                );
-            } else {
-                if ($module->getPermittedModules() !== null) {
-                    // if module with same name already added, merge permitted_modules
-                    if ($tabs[$module->getName()]['permitted_modules'] === null) {
-                        $tabs[$module->getName()]['permitted_modules'] = $module->getPermittedModules();
-                    } else {
-                        $tabs[$module->getName()]['permitted_modules'] = array_values(
-                            array_unique(
-                                array_merge(
-                                    $tabs[$module->getName()]['permitted_modules'], $module->getPermittedModules()
-                                )
-                            )
-                        );
-                    }
-                }
-            }
-        }
+    $results = array();
+    $tabs = Tabs::getTabs($user);
+    foreach($tabs as $tab) {
+        $results[] = array(
+            'tab' => $tab['name'],
+            'isDefault' => isset($tab['default']) ? $tab['default'] : false,
+            'title' => $tab['title'],
+            'pos' => $tab['position'],
+            'permitted_modules' => isset($tab['permitted_modules']) ? $tab['permitted_modules'] : null,
+            'javascriptClass' => $tab['javascriptClass'],
+            'javascriptReference' => $tab['javascriptReference'],
+            'tooltip' => isset($tab['tooltip']) ? $tab['tooltip'] : '',
+            'userManualSectionName' => $tab['userManualSectionName'],
+        );
     }
-
     // Sort tabs
     usort(
-        $tabs,
+        $results,
         function ($a, $b) { return ($a['pos'] < $b['pos']) ? -1 : 1; }
     );
 
@@ -62,7 +35,7 @@ try {
         'totalCount' => 1,
         'message'    => '',
         'data'       => array(
-            array('tabs' => json_encode(array_values($tabs)))
+            array('tabs' => json_encode(array_values($results)))
         ),
     );
 } catch (SessionExpiredException $see)
