@@ -2,10 +2,10 @@
 
 use CCR\DB;
 use User\Roles;
-use Xdmod\Config;
 
 class Tabs
 {
+    const DEFAULT_ACL_HIERARCHY = 'acl_hierarchy';
 
     private function __construct()
     {
@@ -23,17 +23,24 @@ class Tabs
         $db = DB::factory('database');
 
         $query = <<<SQL
-SELECT DISTINCT t.name as tab, a.name as acl FROM acl_tabs at
-  JOIN user_acls ua
-    ON at.acl_id = ua.acl_id
-  JOIN tabs t
-    ON at.tab_id = t.tab_id
-  JOIN acls a
-    ON a.acl_id = at.acl_id
-WHERE ua.user_id = :user_id
+SELECT t.name as tab ,a.name as acl FROM acl_tabs at
+JOIN (
+    SELECT ua.acl_id FROM user_acls ua
+      JOIN acl_hierarchies ah
+        ON ah.acl_id = ua.acl_id
+      JOIN hierarchies h
+      ON ah.hierarchy_id = h.hierarchy_id
+    WHERE ua.user_id = :user_id AND
+          h.name = :acl_hierarchy_name
+    ORDER BY ah.level DESC LIMIT 1
+    ) max
+ON at.acl_id = max.acl_id
+JOIN acls a ON a.acl_id = at.acl_id
+JOIN tabs t ON t.tab_id = at.tab_id
 SQL;
         $rows = $db->query($query, array(
-            ':user_id' => $userId
+            ':user_id' => $userId,
+            ':acl_hierarchy_name' => self::DEFAULT_ACL_HIERARCHY
         ));
 
         $sections = array('display', 'type', 'permitted_modules', 'query_descripters', 'summary_charts');
