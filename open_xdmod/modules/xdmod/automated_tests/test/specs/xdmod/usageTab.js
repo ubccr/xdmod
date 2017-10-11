@@ -2,9 +2,9 @@ var logIn = require('./loginPage.page.js');
 var usg = require('./usageTab.page.js');
 
 describe('Usage', function () {
-    var loginName = testHelpers.auth.roles.centerdirector.username;
-    var loginPassword = testHelpers.auth.roles.centerdirector.password;
-    var displayName = testHelpers.auth.roles.centerdirector.display;
+    var loginName = testHelpers.auth.roles.cd.username;
+    var loginPassword = testHelpers.auth.roles.cd.password;
+    var displayName = testHelpers.auth.roles.cd.givenname + ' ' + testHelpers.auth.roles.cd.surname;
     logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
     var baselineDate = {
         start: '2016-12-25',

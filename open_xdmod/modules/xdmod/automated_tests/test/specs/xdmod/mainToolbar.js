@@ -1,7 +1,7 @@
 var logIn = require('./loginPage.page.js');
-var loginName = testHelpers.auth.roles.centerdirector.username;
-var loginPassword = testHelpers.auth.roles.centerdirector.password;
-var displayName = testHelpers.auth.roles.centerdirector.display;
+var loginName = testHelpers.auth.roles.cd.username;
+var loginPassword = testHelpers.auth.roles.cd.password;
+var displayName = testHelpers.auth.roles.cd.givenname + ' ' + testHelpers.auth.roles.cd.surname
 var mTb = require('./mainToolbar.page.js');
 var mainTab;
 

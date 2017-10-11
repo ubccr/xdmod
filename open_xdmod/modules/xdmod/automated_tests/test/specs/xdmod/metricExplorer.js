@@ -60,9 +60,9 @@ describe('Metric Explorer', function metricExplorer() {
         }
     };
     var chartName = 'ME autotest chart ' + Date.now();
-    var loginName = testHelpers.auth.roles.centerdirector.username;
-    var loginPassword = testHelpers.auth.roles.centerdirector.password;
-    var displayName = testHelpers.auth.roles.centerdirector.display;
+    var loginName = testHelpers.auth.roles.cd.username;
+    var loginPassword = testHelpers.auth.roles.cd.password;
+    var displayName = testHelpers.auth.roles.cd.givenname + ' ' + testHelpers.auth.roles.cd.surname;
     logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
     describe('Select Tab', function xdmod() {
         it('Selected', function meSelect() {

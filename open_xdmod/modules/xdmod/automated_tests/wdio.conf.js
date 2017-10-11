@@ -1,18 +1,15 @@
-// eslint-disable-next-line no-unused-vars
 var InternetExplorer = {
     browserName: 'internet explorer',
     platform: 'Windows 10',
     version: '11.103',
     screenResolution: '1280x1024'
 };
-// eslint-disable-next-line no-unused-vars
 var FireFox = {
     browserName: 'firefox',
     platform: 'Windows 10',
     version: '45.0',
     screenResolution: '2560x1600'
 };
-
 var HeadlessChrome = {
     browserName: 'chrome',
     chromeOptions: {
@@ -27,7 +24,6 @@ var HeadlessChrome = {
         ]
     }
 };
-
 var Chrome = {
     browserName: 'chrome',
     platform: 'Windows 10',
@@ -42,24 +38,15 @@ var Chrome = {
         ]
     }
 };
-// eslint-disable-next-line no-unused-vars
 var Safari = {
     browserName: 'safari',
     platform: 'macOS 10.12',
     version: '10',
     screenResolution: '1024x768'
 };
-// eslint-disable-next-line no-unused-vars
-var PhantomJS = {
-    browserName: 'phantomjs',
-    'phantomjs.cli.args': [
-        '--ignore-ssl-errors=true',
-        '--web-security=false',
-        '--debug=false'
-    ]
-};
 
-var secrets = require('./.secrets');
+var secrets = require('../integration_tests/.secrets.json');
+secrets.url = process.env.TEST_URL ? process.env.TEST_URL : secrets.url;
 
 var capabilities = [Chrome];
 var services = ['selenium-standalone'];
@@ -68,13 +55,20 @@ var path = '/wd/hub';
 var reporters = ['spec'];
 var reporterOptions = {};
 
+var user = '';
+var key = '';
+
 if (process.env.WDIO_MODE === 'headless') {
     capabilities = [HeadlessChrome];
     services = ['chromedriver'];
     port = 9515;
     path = '/';
+} else if (process.env.SAUCE_USER && process.env.SAUCE_KEY) {
+    user = process.env.SAUCE_USER;
+    key = process.env.SAUCE_KEY;
+    services = ['sauce'];
+    capabilities = [InternetExplorer, Chrome, FireFox, Safari];
 }
-
 if (process.env.JUNIT_OUTDIR) {
     reporters.push('junit');
     reporterOptions.junit = {
@@ -83,6 +77,8 @@ if (process.env.JUNIT_OUTDIR) {
 }
 
 exports.config = {
+    user: user,
+    key: key,
     // ==================
     // Specify Test Files
     // ==================
