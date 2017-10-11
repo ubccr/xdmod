@@ -959,7 +959,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
     });
 
     var loginItems = [];
-    var accountName = CCR.xdmod.federationLoginLink && CCR.xdmod.federationLoginLink.organization.en !== 'Federation' ? CCR.xdmod.federationLoginLink.organization.en : CCR.xdmod.org_name; 
+    var accountName = CCR.xdmod.federationLoginLink && CCR.xdmod.federationLoginLink.organization.en !== 'Federation' ? CCR.xdmod.federationLoginLink.organization.en : CCR.xdmod.org_name;
 
     var localLoginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
         text: 'Sign in',
