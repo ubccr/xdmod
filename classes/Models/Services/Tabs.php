@@ -1,6 +1,7 @@
 <?php namespace Models\Services;
 
 use CCR\DB;
+use User\Roles;
 use Xdmod\Config;
 
 class Tabs
@@ -35,9 +36,15 @@ SQL;
             ':user_id' => $userId
         ));
 
-        $config = Config::factory();
+        $sections = array('display', 'type', 'permitted_modules', 'query_descripters', 'summary_charts');
+        $acls = array();
 
-        $acls = $config['roles']['roles'];
+        $roleNames = Roles::getRoleNames(array('default'));
+        foreach( $roleNames as $roleName) {
+            foreach($sections as $section) {
+                $acls[$roleName][$section] = Roles::getConfig($roleName, $section);
+            }
+        }
 
         foreach($rows as $row) {
             $tab = $row['tab'];
