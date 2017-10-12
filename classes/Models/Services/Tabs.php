@@ -23,7 +23,7 @@ class Tabs
         $db = DB::factory('database');
 
         $query = <<<SQL
-SELECT t.name as tab ,a.name as acl FROM acl_tabs at
+SELECT t.name AS tab ,a.name AS acl FROM acl_tabs at
 JOIN (
     SELECT ua.acl_id FROM user_acls ua
       JOIN acl_hierarchies ah
@@ -47,25 +47,26 @@ SQL;
         $acls = array();
 
         $roleNames = Roles::getRoleNames(array('default'));
-        foreach( $roleNames as $roleName) {
-            foreach($sections as $section) {
+        foreach ($roleNames as $roleName) {
+            foreach ($sections as $section) {
                 $acls[$roleName][$section] = Roles::getConfig($roleName, $section);
             }
         }
 
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             $tab = $row['tab'];
             $acl = $row['acl'];
             if (array_key_exists($acl, $acls)) {
                 $tabs = array_reduce(
                     $acls[$acl]['permitted_modules'],
-                    function($carry, $item) use($tab) {
+                    function ($carry, $item) use ($tab) {
                         if ($tab === $item['name']) {
                             $carry[] = $item;
                         }
                         return $carry;
                     },
-                    array());
+                    array()
+                );
                 if (count($tabs) > 0) {
                     $results = array_merge($results, $tabs);
                 }
