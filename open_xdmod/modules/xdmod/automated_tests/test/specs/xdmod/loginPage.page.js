@@ -49,8 +49,8 @@ class LoginPage {
             });
             it('Should Login', function doLogin() {
                 browser.waitForVisible('#txt_login_username');
-                $('#txt_login_username').setValue(loginName);
-                $('#txt_login_password').setValue(loginPassword);
+                $('#txt_login_username').setValue(username);
+                $('#txt_login_password').setValue(password);
                 $('#btn_sign_in .x-btn-mc').click();
             });
             it('Display Logged in Users Name', function () {
