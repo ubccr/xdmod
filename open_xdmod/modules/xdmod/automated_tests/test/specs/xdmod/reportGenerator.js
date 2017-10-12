@@ -243,9 +243,7 @@ describe('Report Generator', function () {
     });
 
     // User
-    const { username: userLoginName, password: userLoginPassword } = testHelpers.auth.roles.usr;
-    const userDisplayName = testHelpers.auth.roles.usr.givenname + ' ' + testHelpers.auth.roles.usr.surname;
-    loginPage.login('Open XDMoD', '/', userLoginName, userLoginPassword, userDisplayName);
+    loginPage.login('user');
 
     describe('Normal user default report generator state', function () {
         it('Report Generator is enabled', function () {
@@ -268,9 +266,7 @@ describe('Report Generator', function () {
     loginPage.logout();
 
     // PI
-    const { username: piLoginName, password: piLoginPassword } = testHelpers.auth.roles.pi;
-    const piDisplayName = testHelpers.auth.roles.pi.givenname + ' ' + testHelpers.auth.roles.pi.surname;
-    loginPage.login('Open XDMoD', '/', piLoginName, piLoginPassword, piDisplayName);
+    loginPage.login('principalinvestigator');
 
     describe('Principal investigator default report generator state', function () {
         it('Report Generator is enabled', function () {
@@ -293,9 +289,7 @@ describe('Report Generator', function () {
     loginPage.logout();
 
     // Center staff
-    const { username: csLoginName, password: csLoginPassword } = testHelpers.auth.roles.cs;
-    const csDisplayName = testHelpers.auth.roles.cs.givenname + ' ' + testHelpers.auth.roles.cs.surname;
-    loginPage.login('Open XDMoD', '/', csLoginName, csLoginPassword, csDisplayName);
+    loginPage.login('centerstaff');
 
     describe('Center staff default report generator state', function () {
         it('Report Generator is enabled', function () {
@@ -318,9 +312,7 @@ describe('Report Generator', function () {
     loginPage.logout();
 
     // Center director
-    const { username: cdLoginName, password: cdLoginPassword } = testHelpers.auth.roles.cd;
-    const cdDisplayName = testHelpers.auth.roles.cd.givenname + ' ' + testHelpers.auth.roles.cd.surname;
-    loginPage.login('Open XDMoD', '/', cdLoginName, cdLoginPassword, cdDisplayName);
+    loginPage.login('centerdirector');
 
     describe('Center director default report generator state', function () {
         it('Report Generator is enabled', function () {
