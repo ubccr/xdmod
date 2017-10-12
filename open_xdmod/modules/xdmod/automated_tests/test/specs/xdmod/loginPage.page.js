@@ -33,14 +33,9 @@ class LoginPage {
         displayName = displayName.trim();
         describe('General', function () {
             it('Verify Logo and Title', function () {
-<<<<<<< HEAD
                 browser.url(theUrl);
                 expect(browser.getTitle()).to.equal(title);
-=======
-                browser.url('/');
-                expect(browser.getTitle()).to.equal('Open XDMoD');
                  // $(this.logo).waitForVisible(2000);
->>>>>>> upstream/xdmod7.1
                 $('#logo').waitForVisible(2000);
                 var logoSize = browser.getElementSize('#logo');
                 expect(logoSize.width).to.equal(93);
@@ -53,17 +48,9 @@ class LoginPage {
                 browser.waitAndClick('a[href*=actionLogin]');
             });
             it('Should Login', function doLogin() {
-<<<<<<< HEAD
                 browser.waitForVisible('#txt_login_username');
                 $('#txt_login_username').setValue(loginName);
                 $('#txt_login_password').setValue(loginPassword);
-=======
-                $('.x-window-header-text=Welcome To XDMoD').waitForVisible(20000);
-                $('#wnd_login iframe').waitForVisible(20000);
-                browser.frame($('#wnd_login iframe').value);
-                $('#txt_login_username input').setValue(username);
-                $('#txt_login_password input').setValue(password);
->>>>>>> upstream/xdmod7.1
                 $('#btn_sign_in .x-btn-mc').click();
             });
             it('Display Logged in Users Name', function () {
