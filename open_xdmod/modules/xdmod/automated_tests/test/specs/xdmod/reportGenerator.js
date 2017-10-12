@@ -243,8 +243,7 @@ describe('Report Generator', function () {
     });
 
     // User
-    const { username: userLoginName, password: userLoginPassword, display: userDisplayName } = testHelpers.auth.roles.user;
-    loginPage.login('Open XDMoD', '/', userLoginName, userLoginPassword, userDisplayName);
+    loginPage.login('user');
 
     describe('Normal user default report generator state', function () {
         it('Report Generator is enabled', function () {
@@ -267,8 +266,7 @@ describe('Report Generator', function () {
     loginPage.logout();
 
     // PI
-    const { username: piLoginName, password: piLoginPassword, display: piDisplayName } = testHelpers.auth.roles.principalinvestigator;
-    loginPage.login('Open XDMoD', '/', piLoginName, piLoginPassword, piDisplayName);
+    loginPage.login('principalinvestigator');
 
     describe('Principal investigator default report generator state', function () {
         it('Report Generator is enabled', function () {
@@ -291,8 +289,7 @@ describe('Report Generator', function () {
     loginPage.logout();
 
     // Center staff
-    const { username: csLoginName, password: csLoginPassword, display: csDisplayName } = testHelpers.auth.roles.centerstaff;
-    loginPage.login('Open XDMoD', '/', csLoginName, csLoginPassword, csDisplayName);
+    loginPage.login('centerstaff');
 
     describe('Center staff default report generator state', function () {
         it('Report Generator is enabled', function () {
@@ -315,8 +312,7 @@ describe('Report Generator', function () {
     loginPage.logout();
 
     // Center director
-    const { username: cdLoginName, password: cdLoginPassword, display: cdDisplayName } = testHelpers.auth.roles.centerdirector;
-    loginPage.login('Open XDMoD', '/', cdLoginName, cdLoginPassword, cdDisplayName);
+    loginPage.login('centerdirector');
 
     describe('Center director default report generator state', function () {
         it('Report Generator is enabled', function () {

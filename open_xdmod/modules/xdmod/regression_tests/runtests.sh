@@ -2,9 +2,9 @@
 
 set -e
 
-if [ ! -e ../integration_tests/.secrets ];
+if [ ! -e ../integration_tests/.secrets.json ];
 then
-    echo "ERROR missing .secrets file." >&2
+    echo "ERROR missing .secrets.json file." >&2
     echo >&2
     cat README.md >&2
     false

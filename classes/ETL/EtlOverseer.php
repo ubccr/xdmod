@@ -71,9 +71,15 @@ class EtlOverseer extends Loggable implements iEtlOverseer
             if ( ! $options->enabled ) {
                 continue;
             }
-            $usedEndpointKeys[] = $options->utility;
-            $usedEndpointKeys[] = $options->source;
-            $usedEndpointKeys[] = $options->destination;
+            if ( null !== $options->utility ) {
+                $usedEndpointKeys[] = $options->utility;
+            }
+            if ( null !== $options->source ) {
+                $usedEndpointKeys[] = $options->source;
+            }
+            if ( null !== $options->destination ) {
+                $usedEndpointKeys[] = $options->destination;
+            }
         }
         foreach ( $this->etlOverseerOptions->getSectionNames() as $sectionName ) {
             foreach ( $etlConfig->getSectionActionNames($sectionName) as $actionName ) {
@@ -81,9 +87,15 @@ class EtlOverseer extends Loggable implements iEtlOverseer
                 if ( ! $options->enabled ) {
                     continue;
                 }
-                $usedEndpointKeys[] = $options->utility;
-                $usedEndpointKeys[] = $options->source;
-                $usedEndpointKeys[] = $options->destination;
+                if ( null !== $options->utility ) {
+                    $usedEndpointKeys[] = $options->utility;
+                }
+                if ( null !== $options->source ) {
+                    $usedEndpointKeys[] = $options->source;
+                }
+                if ( null !== $options->destination ) {
+                    $usedEndpointKeys[] = $options->destination;
+                }
             }
         }
 

@@ -1,12 +1,9 @@
 var logIn = require('./loginPage.page.js');
-var loginName = testHelpers.auth.roles.centerdirector.username;
-var loginPassword = testHelpers.auth.roles.centerdirector.password;
-var displayName = testHelpers.auth.roles.centerdirector.display;
 var mTb = require('./mainToolbar.page.js');
 var mainTab;
 
 describe('Main Toolbar', function () {
-    logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
+    logIn.login('centerdirector');
     describe('Check Tab', function xdmod() {
         it('Get Browser Tab ID', function () {
             mainTab = browser.getCurrentTabId();
