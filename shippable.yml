@@ -17,13 +17,12 @@ build:
         - ~/bin/buildrpm xdmod
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/bootstrap.sh
         - composer install --no-progress
-        - cp ~/assets/secrets open_xdmod/modules/xdmod/integration_tests/.secrets
+        - cp ~/assets/secrets open_xdmod/modules/xdmod/integration_tests/.secrets.json
         - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/results.xml
         - cp ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
         - ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/componentresults.xml
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
-        - cp ~/assets/secrets.json open_xdmod/modules/xdmod/automated_tests/.secrets.json
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
     on_failure:
         - cat /var/log/xdmod/*
