@@ -343,38 +343,26 @@ EOF;
 
         $this->assertTrue(count($menus) > 0, "Public User: get_menus has returned no results.");
 
-        $realms = $this->getRealms();
+        $realms = array('Jobs');
         $this->assertNotEmpty($realms, "Unable to retrieve realms from datawarehouse.json");
 
-        $categories = array_reduce($menus, function ($carry, $item) {
-            if (isset($item['category'])) {
-                if (!in_array($item['category'], $carry)) {
-                    $carry[] = $item['category'];
+        $categories = array_reduce(
+            $menus,
+            function ($carry, $item) {
+                if (isset($item['category'])) {
+                    if (!in_array($item['category'], $carry)) {
+                        $carry[] = $item['category'];
+                    }
                 }
-            }
-            return $carry;
-        }, array());
+                return $carry;
+            },
+            array()
+        );
 
         $this->assertTrue(count($categories) >= 1, "There were no 'menus' that had a category propery, this is unexpected.");
 
         $realmCategoryDiff = array_diff($realms, $categories);
 
         $this->assertEmpty($realmCategoryDiff, "There were realms in datawarehouse.json that were not returned by get_menus.");
-    }
-
-    /**
-     * Retrieve an array of the currently installed realms
-     * ( from datawarehouse.json )
-     *
-     * @returns array
-     **/
-    public function getRealms()
-    {
-        $config = Config::factory();
-        $datawarehouse = $config['datawarehouse'];
-        if (isset($datawarehouse['realms'])) {
-            return array_keys($datawarehouse['realms']);
-        }
-        return array();
     }
 }
