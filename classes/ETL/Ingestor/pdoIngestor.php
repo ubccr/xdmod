@@ -53,6 +53,7 @@ use ETL\DbModel\Query;
 
 use CCR\DB\MySQLHelper;
 use PDOException;
+use Exception;
 use PDO;
 use Log;
 
@@ -158,6 +159,15 @@ class pdoIngestor extends aIngestor
      */
 
     protected $stringEnclosure = '';
+
+    /** -----------------------------------------------------------------------------------------
+     * Database helper object such as MySQLHelper
+     *
+     * @var object
+     * ------------------------------------------------------------------------------------------
+     */
+
+    private $_dest_helper = null;
 
     /** -----------------------------------------------------------------------------------------
      * General setup.
@@ -340,6 +350,7 @@ class pdoIngestor extends aIngestor
 
         $query_success = false;
         $n_attempts = 0;
+        $srcStatement = null;
 
         while (false == $query_success) {
             $n_attempts += 1;
@@ -638,6 +649,7 @@ class pdoIngestor extends aIngestor
 
         // Turn off buffering if necessary. This is a MySQL specific optimization.
 
+        $originalBufferedQueryAttribute = null;
         if ( ! $this->options->buffered_query && $this->sourceEndpoint instanceof Mysql ) {
             $this->logger->info("Switching to un-buffered query mode");
             $pdo = $this->sourceHandle->handle();

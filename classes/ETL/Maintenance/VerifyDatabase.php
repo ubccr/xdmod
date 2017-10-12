@@ -17,9 +17,9 @@ use ETL\iAction;
 use ETL\aAction;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\DbModel\Query;
-use \PDOException;
+use PDOException;
 use ETL\Utilities;
-use \Log;
+use Log;
 
 use PHPSQLParser\PHPSQLParser;
 
@@ -40,6 +40,9 @@ class VerifyDatabase extends aAction implements iAction
         'header'  => null,
         'footer'  => null
     );
+
+    // SQL to execute to perform the verification
+    protected $sqlQueryString = null;
 
     /* ------------------------------------------------------------------------------------------
      * @see aAction::__construct()

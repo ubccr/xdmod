@@ -591,7 +591,7 @@ class EtlConfiguration extends Configuration
 
         if ( isset($defaults->$globalDefaultKey->$pathsKey) && isset($actionConfig->endpoints) ) {
             foreach ( $actionConfig->endpoints as $endpointName => &$endpointConfig ) {
-                if ( ! isset($endpointconfig->paths) ) {
+                if ( ! isset($endpointConfig->paths) ) {
                     $endpointConfig->paths = $defaults->$globalDefaultKey->$pathsKey;
                 }
             }

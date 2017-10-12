@@ -422,7 +422,7 @@ class pdoAggregator extends aAggregator
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "Error verifying aggregation unit table for '$aggregationUnit'",
-                array('exception' => $e, 'sql' => $sql)
+                array('exception' => $e)
             );
         }
 
@@ -738,6 +738,8 @@ class pdoAggregator extends aAggregator
         $firstPeriod = current($aggregationPeriodList);
         $periodSize = $firstPeriod['period_end_day_id'] - $firstPeriod['period_start_day_id'];
         $batchSliceSize = $this->options->experimental_batch_aggregation_periods_per_batch;
+        $tmpTableName = null;
+        $qualifiedTmpTableName = null;
 
         // If aggregation batching is enabled, calculate whether or not it is beneficial using the
         // following formula derrived from trial and error:
@@ -928,8 +930,9 @@ class pdoAggregator extends aAggregator
 
                 $this->logger->debug("[EXPERIMENTAL] Create temporary table $qualifiedTmpTableName with min period = $minDayId, max period = $maxDayId");
 
+                $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
+
                 try {
-                    $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
                     $result = $this->sourceHandle->execute($sql);
                 } catch (PDOException $e ) {
                     $this->logAndThrowException(
@@ -1036,8 +1039,9 @@ class pdoAggregator extends aAggregator
 
             }  // while ( ! $done )
 
+            $sql = "DROP TEMPORARY TABLE IF EXISTS $tmpTableName";
+            
             try {
-                $sql = "DROP TEMPORARY TABLE IF EXISTS $tmpTableName";
                 $result = $this->sourceHandle->execute($sql);
             } catch (PDOException $e ) {
                 $this->logAndThrowException(
@@ -1114,6 +1118,8 @@ class pdoAggregator extends aAggregator
             $availableParamKeys = Utilities::createPdoBindVarsFromArrayKeys($aggregationPeriodInfo);
             $availableParams = array_combine($availableParamKeys, $aggregationPeriodInfo);
             $periodId = $aggregationPeriodInfo['period_id'];
+            $dummyQuery = null;
+            $deleteSql = null;
 
             // If we're not completely re-aggregating, delete existing entries from the aggregation table
             // matching the periods that we are aggregating. Be sure to restrict resources if necessary.

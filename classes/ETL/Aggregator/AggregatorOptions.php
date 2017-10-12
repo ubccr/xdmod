@@ -16,7 +16,7 @@ namespace ETL\Aggregator;
 
 use ETL\aOptions;
 use ETL\DataEndpoint\iDataEndpoint;
-use \Exception;
+use Exception;
 
 class AggregatorOptions extends aOptions
 {

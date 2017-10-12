@@ -22,7 +22,7 @@ use ETL\aRdbmsDestinationAction;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
 use ETL\aOptions;
-use \Log;
+use Log;
 
 abstract class aAggregator extends aRdbmsDestinationAction
 {

@@ -113,7 +113,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
         $schemaData = @file_get_contents($this->recordSchemaPath);
 
         if ( false === $schemaData ) {
-            $err = err_get_last();
+            $err = error_get_last();
             $this->logAndThrowException(
                 sprintf("Error reading JSON schema '%s': %s", $this->recordSchemaPath, $err['message'])
             );

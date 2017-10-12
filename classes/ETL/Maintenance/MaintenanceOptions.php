@@ -16,7 +16,7 @@
 namespace ETL\Maintenance;
 
 use ETL\aOptions;
-use \Exception;
+use Exception;
 
 class MaintenanceOptions extends aOptions
 {
