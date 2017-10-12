@@ -347,12 +347,12 @@ ORDER BY ordinal_position ASC";
      * ------------------------------------------------------------------------------------------
      */
 
-    abstract function schemaExists($schemaName = null);
+    abstract public function schemaExists($schemaName = null);
 
     /* ------------------------------------------------------------------------------------------
      * @see iRdbmsEndpoint::createSchema()
      * ------------------------------------------------------------------------------------------
      */
 
-    abstract function createSchema($schemaName = null);
+    abstract public function createSchema($schemaName = null);
 }  // class aRdbmsEndpoint

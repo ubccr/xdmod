@@ -283,6 +283,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
+     // @codingStandardsIgnoreLine
     protected function _execute()
     {
         // Support a source query, mapping from the source to rest parameters, rest field map

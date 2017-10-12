@@ -126,10 +126,8 @@ abstract class aDataEndpoint extends aEtlObject
     }
 
     /**
-     * Connect the data endpoint
-     *
+     * See iDataEndpoint::connect()
      */
 
-    abstract function connect();
-
+    abstract public function connect();
 }  // abstract class aDataEndpoint
