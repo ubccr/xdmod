@@ -1,4 +1,6 @@
-<?php namespace Models\Services;
+<?php
+
+namespace Models\Services;
 
 use CCR\DB;
 use User\Roles;
@@ -56,7 +58,7 @@ SQL;
         foreach ($rows as $row) {
             $tab = $row['tab'];
             $acl = $row['acl'];
-            if (array_key_exists($acl, $acls)) {
+            if (array_key_exists($acl, $acls) && isset($acls[$acl]['permitted_modules'])) {
                 $tabs = array_reduce(
                     $acls[$acl]['permitted_modules'],
                     function ($carry, $item) use ($tab) {

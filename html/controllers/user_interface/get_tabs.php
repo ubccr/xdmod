@@ -27,7 +27,9 @@ try {
     // Sort tabs
     usort(
         $results,
-        function ($a, $b) { return ($a['pos'] < $b['pos']) ? -1 : 1; }
+        function ($a, $b) {
+            return ($a['pos'] < $b['pos']) ? -1 : 1;
+        }
     );
 
     $returnData = array(
@@ -54,4 +56,3 @@ try {
 }
 
 xd_controller\returnJSON($returnData);
-
