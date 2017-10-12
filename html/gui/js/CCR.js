@@ -928,14 +928,14 @@ CCR.xdmod.ui.FadeInWindow = Ext.extend(Ext.Window, { //experimental
     }
 });
 
-CCR.xdmod.ui.actionLogin = function (config, animateTarget, showLocalLogin) {
+CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     XDMoD.TrackEvent("Portal", "Sign In link clicked");
 
     //reset referer
     XDMoD.referer = document.location.hash;
 
     // TODO: Actually get this from config
-    showLocalLogin = true;
+    var showLocalLogin = true;
 
     var txtLoginUsername = new Ext.form.TextField({
         emptyText: 'Your Username',
