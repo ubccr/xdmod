@@ -51,7 +51,7 @@ class ExternalProcess extends \php_user_filter
      * arguments: Optional argument string to be passed to the application
      * logger: Optional logger for displying error messages
      *
-     * @var stdClass
+     * @var object
      */
 
     public $params = null;

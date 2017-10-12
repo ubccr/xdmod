@@ -12,8 +12,8 @@ namespace ETL;
 
 use ETL\Configuration\EtlConfiguration;
 use ETL\Ingestor\IngestorOptions;
-use \Exception;
-use \Log;
+use Exception;
+use Log;
 
 class Ingestor
 {

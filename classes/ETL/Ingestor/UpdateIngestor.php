@@ -9,7 +9,8 @@
 namespace ETL\Ingestor;
 
 // PEAR logger
-use \Log;
+use Log;
+use PDOException;
 
 use ETL\iAction;
 use ETL\Configuration;
@@ -27,7 +28,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
      * This action does not (yet) support multiple destination tables. If multiple
      * destination tables are present, store the first here and use it.
      *
-     * @var Table
+     * @var \ETL\DbModel\Table
      */
 
     protected $etlDestinationTable = null;
@@ -79,7 +80,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         $this->etlDestinationTable = current($this->etlDestinationTableList);
         $etlTableKey = key($this->etlDestinationTableList);
         if ( count($this->etlDestinationTableList) > 1 ) {
-            $logger->warning(
+            $this->logger->warning(
                 sprintf(
                     "%s does not support multiple ETL destination tables, using first table with key: '%s'",
                     $this,
@@ -94,6 +95,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
             'update' => 'object'
         );
 
+        $messages = null;
         if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile, $requiredKeys, $messages) ) {
             $this->logAndThrowException(sprintf("Definition file error: %s", implode(', ', $messages)));
         }

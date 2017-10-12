@@ -19,7 +19,8 @@ use ETL\DbModel\Table;
 use ETL\aOptions;
 use ETL\iAction;
 use ETL\aRdbmsDestinationAction;
-use \Log;
+use Log;
+use Exception;
 
 class ManageTables extends aRdbmsDestinationAction implements iAction
 {

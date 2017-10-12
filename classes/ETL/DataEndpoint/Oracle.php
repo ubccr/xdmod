@@ -11,6 +11,7 @@ namespace ETL\DataEndpoint;
 
 use ETL\DataEndpoint\DataEndpointOptions;
 use Log;
+use PDOException;
 
 class Oracle extends aRdbmsEndpoint implements iRdbmsEndpoint
 {
@@ -115,7 +116,7 @@ AND table_name = UPPER(:tablename)";
             }
         } catch (PDOException $e) {
             $this->logAndThrowException(
-                "Error querying for table '$schema'.'$tableName':",
+                "Error querying for table '$schemaName'.'$tableName':",
                 array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
             );
         }
@@ -147,6 +148,7 @@ WHERE owner = UPPER(:schema)
 AND table_name = UPPER(:tablename)
 ORDER BY column_id ASC";
 
+        $result = null;
         $params = array(":schema" => $this->getSchema(),
                         ":tablename"  => $tableName);
 

@@ -702,6 +702,8 @@ class Configuration extends Loggable implements \Iterator
 
     public function deleteKeyTransformer($transformer)
     {
+        $className = null;
+
         if ( is_object($transformer) && $transformer instanceof iConfigFileKeyTransformer ) {
             $className = get_class($transformer);
         } elseif ( is_string($transformer) ) {

@@ -15,8 +15,8 @@ namespace ETL\DataEndpoint;
 
 use ETL\aEtlObject;
 use ETL\DataEndpoint\iDataEndpoint;
-use \Exception;
-use \Log;
+use Exception;
+use Log;
 
 abstract class aDataEndpoint extends aEtlObject
 {
@@ -124,4 +124,12 @@ abstract class aDataEndpoint extends aEtlObject
         $keyIndex = self::$currentUniqueKeyIndex++;
         $this->key = "DataEndpoint{$keyIndex}";
     }
+
+    /**
+     * Connect the data endpoint
+     *
+     */
+
+    abstract function connect();
+
 }  // abstract class aDataEndpoint

@@ -15,7 +15,7 @@
 namespace ETL\Ingestor;
 
 use ETL\aOptions;
-use \Exception;
+use Exception;
 
 class IngestorOptions extends aOptions
 {

@@ -405,7 +405,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
                 $this->logAndThrowException(
                     sprintf(
                         "custom_insert_values_components must be an object, %s given",
-                        gettype($customInsertValuesComponents)
+                        gettype($this->customInsertValuesComponents)
                     )
                 );
             }

@@ -267,7 +267,7 @@ abstract class aStructuredFile extends File
      *
      * @param string $path The path of the file to parse.
      *
-     * @return The number of bytes read
+     * @return integer The number of bytes read
      *
      * @throw Exception If the file could not be read.
      * @throw Exception If the file could not be parsed.

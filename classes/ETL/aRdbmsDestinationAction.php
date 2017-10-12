@@ -556,7 +556,7 @@ abstract class aRdbmsDestinationAction extends aAction
             } catch (PDOException $e) {
                 $this->logAndThrowException(
                     "Error verifying table $tableName",
-                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                    array('exception' => $e, 'endpoint' => $this->destinationEndpoint)
                 );
             }
 
