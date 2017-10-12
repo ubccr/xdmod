@@ -934,9 +934,6 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     //reset referer
     XDMoD.referer = document.location.hash;
 
-    // TODO: Actually get this from config
-    var showLocalLogin = true;
-
     var txtLoginUsername = new Ext.form.TextField({
         emptyText: 'Your Username',
         width: 184,
@@ -1046,15 +1043,13 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     var localLoginFrm = new Ext.form.FormPanel({
         id: 'local_login_form',
-        title: 'Sign in with a local Account:',
+        title: 'Sign in with a local XDMoD Account:',
         items: localLoginItems
     });
 
     var title = 'Sign into XDMoD';
 
-    if (!showLocalLogin && CCR.xdmod.isFederationConfigured) {
-        loginItems.push(federatedLoginFrm);
-    } else if (showLocalLogin && CCR.xdmod.isFederationConfigured) {
+    if (CCR.xdmod.isFederationConfigured) {
         loginItems.push(federatedLoginFrm);
         loginItems.push(localLoginFrm);
     } else {
@@ -1115,10 +1110,10 @@ CCR.xdmod.ui.forgot_password = function () {
                                 presentLoginResponse('A valid e-mail address must be specified.', false, 'reset_response');
                                 break;
                             case 'no_user_mapping':
-                                presentLoginResponse('No XDMoD user could be associated with this e-mail address.', false, 'reset_response');
+                                presentLoginResponse('No XDMoD user could be associated with this e-mail address. Please contact your system administrator.', false, 'reset_response');
                                 break;
                             case 'multiple_accounts_mapped':
-                                presentLoginResponse('Multiple XDMoD accounts are associated with this e-mail address.', false, 'reset_response');
+                                presentLoginResponse('Multiple XDMoD accounts are associated with this e-mail address. Please contact your system administrator.', false, 'reset_response');
                                 break;
                             case 'success':
                                 presentLoginResponse('Password reset instructions have been sent to this e-mail address.', true, 'reset_response');
