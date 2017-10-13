@@ -19,7 +19,7 @@ if ($auth && $auth->isSamlConfigured()) {
             $samlError = "INACTIVE";
         }
     } else {
-        $samlError = null;
+        $samlError = $xdmodUser;
     }
 }
 // Used for Federated login or samlErrors
@@ -60,7 +60,7 @@ if ($auth && $auth->isSamlConfigured()) {
                 $message = "There was an error with your account; an administrator has been notified.";
                 break;
             case "INACTIVE":
-                $message = "Your account is not currently active.";
+                $message = "Your account is not currently active, please contact an administrator.";
                 break;
             case "EXISTS":
                 $message = "An account is currently configured with this information, please contact an administrator.";
@@ -72,14 +72,11 @@ if ($auth && $auth->isSamlConfigured()) {
                 $message = "An unknown error has occured.";
         }
     ?>
-      <body class="error_message">
+      <body class="error_message" onload="loadPortal()">
         <p>
             <?php
             echo $message;
             ?>
-        </p>
-        <p>
-          <a href="javascript:void(0);" onclick="parent.presentContactFormViaLoginError()">Click Here</a> to contact an administrator.
         </p>
       </body>
       </html>

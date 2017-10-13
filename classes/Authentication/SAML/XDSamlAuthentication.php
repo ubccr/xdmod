@@ -7,10 +7,32 @@ use \Exception;
 
 class XDSamlAuthentication
 {
+    /**
+     * The selected auth source
+     *
+     * @var \SimpleSAML_Auth_Simple
+     */
     protected $_as = null; // The selected auth source
-    protected $_sources = null; // Enumerated potential auth sources
-    protected $_samlConfig = null;
-    protected $_isConfigured = null;
+
+    /**
+     * Enumerated potential auth sources
+     *
+     * @var array
+     */
+    protected $_sources = null
+
+    /**
+     * Whether or not SAML is configured. Defaults to false.
+     *
+     * @var boolean
+     */
+    protected $_isConfigured = false;
+
+    /**
+     * Whether or not we allow federated users local access. Defaults to true.
+     *
+     * @var boolean
+     */
     protected $_allowLocalAccessViaFederation = true;
 
     public function __construct()
@@ -124,7 +146,8 @@ class XDSamlAuthentication
     /**
      * Retrieves the login url we want to use with this authentication provider.
      *
-     * @param returnTo the URI to redirect to after auth, if any. null by default.
+     * @param string $returnTo the URI to redirect to after auth. default is null.
+     *
      * @return mixed An array containing a login link + redirect, the name of the organization (eg. Twitter),
      * and an icon (eg. A logo with the Twitter icon + 'Sign in with Twitter' ). false if none found.
      */
@@ -159,6 +182,11 @@ class XDSamlAuthentication
 
     /**
      * Sends an email notifying XDMoD admin of new account.
+     *
+     * @param \XDUser $user The newly minted XDMoD user
+     * @param array $samlAttributes SAML attributes associated with this user
+     * @param boolean $linked whether federated user is linked to this account
+     * @param boolean $error whether or not we had issues creating federated user
      */
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
