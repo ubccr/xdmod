@@ -85,10 +85,7 @@ MSG
                 );
                 exit(1);
             } else {
-                $this->logger->notice(<<<MSG
-The script executed without error.
-MSG
-                );
+                $this->logger->notice("The script executed without error.");
                 $this->logger->notice($output);
             }
         }
