@@ -38,12 +38,6 @@ var Chrome = {
         ]
     }
 };
-var Safari = {
-    browserName: 'safari',
-    platform: 'macOS 10.12',
-    version: '10',
-    screenResolution: '1024x768'
-};
 
 var secrets = require('../integration_tests/.secrets.json');
 secrets.url = process.env.TEST_URL ? process.env.TEST_URL : secrets.url;
