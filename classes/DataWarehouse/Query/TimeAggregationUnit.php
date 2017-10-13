@@ -44,10 +44,11 @@ abstract class TimeAggregationUnit
 
     /**
      * geDateRangeIds
-     * Given the following possible combinations get the possible range of
-     * date ids that are possible forcing the bounds to be min and max job date,
-     * if less than or greater than jobmin or jobmax -1
-     * -1 is used as to force later functions to return the proper values.
+     * Given a date range (start, end) return a new date range that has been
+     * normalized so that it includes only dates that overlap the time for which
+     * data is available. If the desired date range falls fully outside of the
+     * dates for which data is available (either before or after) this is
+     * considered an error.
      *
      *                   minjob---------------------- maxjob
      * (-1) start----end
@@ -56,9 +57,12 @@ abstract class TimeAggregationUnit
      * (start-max)                           start-----------end
      * (-1)                                                      start----end
      *
-     * @return array the miniumum and maximum date ids or -1, -1 if out of bounds
+     * @param string $start start date in fomrat (YYYY-MM-DD)
+     * @param string $end end date in fomrat (YYYY-MM-DD)
+     *
+     * @return array The miniumum and maximum date ids or -1, -1 if out of bounds
      */
-    public function geDateRangeIds($start, $end){
+    public function getDateRangeIds($start, $end){
         $queryParams = array(
             $start,
             $start,
@@ -67,8 +71,8 @@ abstract class TimeAggregationUnit
             $end,
             $end
         );
-        $dateResult = \DataWarehouse::connect()->query('
-            SELECT
+        $dateResult = \DataWarehouse::connect()->query(
+            'SELECT
                 MIN(p.id) as minPeriodId,
                 MAX(p.id) as maxPeriodId
             FROM
@@ -100,9 +104,9 @@ abstract class TimeAggregationUnit
                     );',
             $queryParams
         );
-         if(null === $dateResult[0]['minPeriodId'] || null === $dateResult[0]['minPeriodId']){
-             return array(-1,-1);
-         }
+        if(null === $dateResult[0]['minPeriodId'] || null === $dateResult[0]['minPeriodId']){
+            return array(-1,-1);
+        }
          return array_values($dateResult[0]);
     }
 

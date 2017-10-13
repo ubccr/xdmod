@@ -1380,7 +1380,7 @@ class Query
                                $end_date_parsed['month'],
                                $end_date_parsed['day'],
                                $end_date_parsed['year']);
-        list($this->_min_date_id, $this->_max_date_id) = $this->_aggregation_unit->geDateRangeIds($this->_start_date, $this->_end_date);
+        list($this->_min_date_id, $this->_max_date_id) = $this->_aggregation_unit->getDateRangeIds($this->_start_date, $this->_end_date);
 
         if (!$start_date_given && !$end_date_given) {
             return;
