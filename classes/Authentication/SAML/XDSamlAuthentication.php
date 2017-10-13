@@ -19,7 +19,7 @@ class XDSamlAuthentication
      *
      * @var array
      */
-    protected $_sources = null
+    protected $_sources = null;
 
     /**
      * Whether or not SAML is configured. Defaults to false.
