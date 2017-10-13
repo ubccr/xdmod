@@ -7,9 +7,8 @@ use \Exception;
 
 class XDSamlAuthentication
 {
-    protected $_as = null;
-
-    protected $_sources = null;
+    protected $_as = null; // The selected auth source
+    protected $_sources = null; // Enumerated potential auth sources
     protected $_samlConfig = null;
     protected $_isConfigured = null;
     protected $_allowLocalAccessViaFederation = true;
@@ -35,6 +34,11 @@ class XDSamlAuthentication
         }
     }
 
+    /**
+     * Tells us whether or not we have properly set up SAML authentication sources.
+     * 
+     * @return boolean true if we have 1 or more auth sources. false otherwise
+     */
     public function isSamlConfigured()
     {
         //TODO: Make this more robust by taking into account if the IDP MetaData does not exist.
@@ -45,6 +49,11 @@ class XDSamlAuthentication
         return $this->_isConfigured;
     }
 
+    /**
+     * Attempts to find a valid XDMoD user associated with the attributes we receive from SAML
+     * 
+     * @return mixed a valid XDMoD user if we have one, false otherwise
+     */
     public function getXdmodAccount()
     {
         $samlAttrs = $this->_as->getAttributes();
@@ -112,6 +121,13 @@ class XDSamlAuthentication
         return false;
     }
 
+    /**
+     * Retrieves the login url we want to use with this authentication provider. 
+     * 
+     * @param returnTo the URI to redirect to after auth, if any. null by default.
+     * @return mixed An array containing a login link + redirect, the name of the organization (eg. Twitter), 
+     * and an icon (eg. A logo with the Twitter icon + 'Sign in with Twitter' ). false if none found.
+     */
     public function getLoginLink($returnTo = null)
     {
         if ($this->isSamlConfigured()) {
@@ -140,6 +156,10 @@ class XDSamlAuthentication
             return false;
         }
     }
+
+    /**
+     * Sends an email notifying XDMoD admin of new account.
+     */
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
         $siteTitle = \xd_utilities\getConfiguration('general', 'title');
