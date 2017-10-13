@@ -59,6 +59,14 @@ abstract class TimeAggregationUnit
      * @return array the miniumum and maximum date ids or -1, -1 if out of bounds
      */
     public function geDateRangeIds($start, $end){
+        $queryParams = array(
+            $start,
+            $start,
+            $start,
+            $end,
+            $end,
+            $end
+        );
         $dateResult = \DataWarehouse::connect()->query('
             SELECT
                 MIN(p.id) as minPeriodId,
@@ -69,15 +77,15 @@ abstract class TimeAggregationUnit
                 (
                 SELECT
                     CASE
-                      WHEN "' . $start . '" > max_job_date THEN NULL
-                      WHEN "' . $start . '" < min_job_date
+                      WHEN ? > max_job_date THEN NULL
+                      WHEN ? < min_job_date
                       THEN min_job_date
-                      ELSE "' . $start . '"
+                      ELSE ?
                     END AS adj_start_date,
                     CASE
-                      WHEN "' . $end . '" < min_job_date THEN NULL
-                      WHEN "' . $end . '" > max_job_date THEN max_job_date
-                      ELSE "' . $end . '"
+                      WHEN ? < min_job_date THEN NULL
+                      WHEN ? > max_job_date THEN max_job_date
+                      ELSE ?
                     END AS adj_end_date
                   FROM
                     minmaxdate
@@ -89,7 +97,8 @@ abstract class TimeAggregationUnit
                     (
                         mmd.adj_start_date BETWEEN p.' . $this->getUnitName() . '_start AND p.' . $this->getUnitName() . '_end
                         OR mmd.adj_end_date BETWEEN p.' . $this->getUnitName() . '_start AND p.' . $this->getUnitName() . '_end
-                    );'
+                    );',
+            $queryParams
         );
          if(null === $dateResult[0]['minPeriodId'] || null === $dateResult[0]['minPeriodId']){
              return array(-1,-1);
