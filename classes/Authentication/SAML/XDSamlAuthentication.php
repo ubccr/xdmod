@@ -63,11 +63,7 @@ class XDSamlAuthentication
      */
     public function isSamlConfigured()
     {
-        //TODO: Make this more robust by taking into account if the IDP MetaData does not exist.
-        // look at getLoginLink for details on getting idp info
-        if (is_null($this->_isConfigured)) {
-            $this->_isConfigured = count($this->_sources) > 0 ? true : false;
-        }
+        $this->_isConfigured = count($this->_sources) > 0 ? true : false;
         return $this->_isConfigured;
     }
 
