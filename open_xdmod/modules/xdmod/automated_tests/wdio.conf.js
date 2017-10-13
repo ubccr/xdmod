@@ -67,7 +67,7 @@ if (process.env.WDIO_MODE === 'headless') {
     user = process.env.SAUCE_USER;
     key = process.env.SAUCE_KEY;
     services = ['sauce'];
-    capabilities = [InternetExplorer, Chrome, FireFox, Safari];
+    capabilities = [Chrome, FireFox, InternetExplorer];
 }
 if (process.env.JUNIT_OUTDIR) {
     reporters.push('junit');
