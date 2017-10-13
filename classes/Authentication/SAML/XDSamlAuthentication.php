@@ -36,7 +36,7 @@ class XDSamlAuthentication
 
     /**
      * Tells us whether or not we have properly set up SAML authentication sources.
-     * 
+     *
      * @return boolean true if we have 1 or more auth sources. false otherwise
      */
     public function isSamlConfigured()
@@ -51,7 +51,7 @@ class XDSamlAuthentication
 
     /**
      * Attempts to find a valid XDMoD user associated with the attributes we receive from SAML
-     * 
+     *
      * @return mixed a valid XDMoD user if we have one, false otherwise
      */
     public function getXdmodAccount()
@@ -122,10 +122,10 @@ class XDSamlAuthentication
     }
 
     /**
-     * Retrieves the login url we want to use with this authentication provider. 
-     * 
+     * Retrieves the login url we want to use with this authentication provider.
+     *
      * @param returnTo the URI to redirect to after auth, if any. null by default.
-     * @return mixed An array containing a login link + redirect, the name of the organization (eg. Twitter), 
+     * @return mixed An array containing a login link + redirect, the name of the organization (eg. Twitter),
      * and an icon (eg. A logo with the Twitter icon + 'Sign in with Twitter' ). false if none found.
      */
     public function getLoginLink($returnTo = null)
