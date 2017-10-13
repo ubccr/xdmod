@@ -121,12 +121,6 @@ abstract class TimeAggregationUnit
     private static $_initialized = false;
 
     /**
-     * This is the max date id that will be used if end_date is out of range and greater than the last
-     * date id avaiable in the data table.
-     */
-    public static $_max_date_id = 999999999999999;
-
-    /**
      *  This array keeps track of the TimeAggregationUnit subclasses that have registed
      *   using RegisterUnit
      */

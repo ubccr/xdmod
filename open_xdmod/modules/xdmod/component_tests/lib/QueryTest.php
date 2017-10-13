@@ -15,16 +15,16 @@ class AggregateTest extends \PHPUnit_Framework_TestCase
     public function testGetDurrationResult($period, $start, $end, $groupby, $expected)
     {
         $q = new \DataWarehouse\Query\Jobs\Aggregate(
-             $period,
-             $start,
-             $end,
-             $groupby
+            $period,
+            $start,
+            $end,
+            $groupby
         );
         $duration = $q->getDurationFormula();
         $this->assertEquals($expected, $duration->getDefinition());
     }
 
-    public function QueryDataProvider(){
+    public function queryDataProvider(){
         return array(
             array(
                 'day',
