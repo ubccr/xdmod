@@ -40,77 +40,62 @@ abstract class TimeAggregationUnit
      */
     abstract public function getMaxPeriodPerYear();
 
-
     abstract public function getTimeLabel($timestamp);
-    /**
-     * getMinDateId
-     *
-     * @return int the minimum id from the corresponding time period table based on the
-     *         value of start_date. Returns 1, if start_date is less than all possible
-     *         values in the table.
-     */
-    public function getMinDateId($start_date)
-    {
-        $q = "select min(id) as id from ".$this->getUnitName()."s
-        where '$start_date'
-            between
-            ".$this->getUnitName()."_start
-            and ".$this->getUnitName()."_end";
-
-        $startDateResult = \DataWarehouse::connect()->query($q);
-
-        $start_date_id = 1;
-        if(count($startDateResult) > 0)
-        {
-            $start_date_id = $startDateResult[0]['id'];
-            if(!isset($start_date_id) || $start_date_id == '' )
-            {
-                $q = "select case when '$start_date' < min(".$this->getUnitName()."_start) then 1 else ".self::$_max_date_id." end as id  from ".$this->getUnitName()."s";
-                $startDateResult = \DataWarehouse::connect()->query($q);
-                if(count($startDateResult) > 0)
-                {
-                    $start_date_id = $startDateResult[0]['id'];
-                }
-            }
-        }
-
-
-        return $start_date_id;
-    } //getMinDateId
 
     /**
+     * geDateRangeIds
+     * Given the following possible combinations get the possible range of
+     * date ids that are possible forcing the bounds to be min and max job date,
+     * if less than or greater than jobmin or jobmax -1
+     * -1 is used as to force later functions to return the proper values.
      *
-     * @return int the maximum id from the corresponding time period table based on the
-     *          value of end_date. Returns -1 if end_date is greater than all possible
-     *         values in the table
+     *                   minjob---------------------- maxjob
+     * (-1) start----end
+     * (min-end)   start-----------end
+     * (start-end)               start-----------end
+     * (start-max)                           start-----------end
+     * (-1)                                                      start----end
+     *
+     * @return array the miniumum and maximum date ids or -1, -1 if out of bounds
      */
-    public function getMaxDateId($end_date)
-    {
-        $endDateResult = \DataWarehouse::connect()->query(
-            "select max(id) as id from ".$this->getUnitName()."s
-        where '$end_date'
-            between
-            ".$this->getUnitName()."_start
-            and ".$this->getUnitName()."_end"
+    public function geDateRangeIds($start, $end){
+        $dateResult = \DataWarehouse::connect()->query('
+            SELECT
+                MIN(p.id) as minPeriodId,
+                MAX(p.id) as maxPeriodId
+            FROM
+                ' . $this->getUnitName() . 's p
+            JOIN
+                (
+                SELECT
+                    CASE
+                      WHEN "' . $start . '" > max_job_date THEN NULL
+                      WHEN "' . $start . '" < min_job_date
+                      THEN min_job_date
+                      ELSE "' . $start . '"
+                    END AS adj_start_date,
+                    CASE
+                      WHEN "' . $end . '" < min_job_date THEN NULL
+                      WHEN "' . $end . '" > max_job_date THEN max_job_date
+                      ELSE "' . $end . '"
+                    END AS adj_end_date
+                  FROM
+                    minmaxdate
+                ) mmd
+             WHERE
+                mmd.adj_start_date IS NOT NULL
+                AND mmd.adj_end_date IS NOT NULL
+                AND
+                    (
+                        mmd.adj_start_date BETWEEN p.' . $this->getUnitName() . '_start AND p.' . $this->getUnitName() . '_end
+                        OR mmd.adj_end_date BETWEEN p.' . $this->getUnitName() . '_start AND p.' . $this->getUnitName() . '_end
+                    );'
         );
-
-            $end_date_id = self::$_max_date_id;
-        if(count($endDateResult) > 0)
-        {
-            $end_date_id = $endDateResult[0]['id'];
-            if(!isset($end_date_id))
-            {
-                $endDateResult = \DataWarehouse::connect()->query(
-                    "select case when '$end_date' < min(".$this->getUnitName()."_start) then 0 else ".self::$_max_date_id." end as id  from ".$this->getUnitName()."s"
-                );
-                if(count($endDateResult) > 0)
-                {
-                    $end_date_id = $endDateResult[0]['id'];
-                }
-            }
-        }
-        return $end_date_id;
-    } //getMaxDateId
+         if(null === $dateResult[0]['minPeriodId'] || null === $dateResult[0]['minPeriodId']){
+             return array(-1,-1);
+         }
+         return array_values($dateResult[0]);
+    }
 
     /**
      * @return string this object as a string
