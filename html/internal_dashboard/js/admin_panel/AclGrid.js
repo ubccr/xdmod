@@ -144,7 +144,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             }
         });
 
-        // Make sure to call the superclass initComponent.
+        //  Make sure to call the superclass initComponent.
         XDMoD.Admin.AclGrid.superclass.initComponent.call(this);
     },
 
