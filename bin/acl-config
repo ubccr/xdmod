@@ -874,6 +874,8 @@ SQL;
 
     $inserted = $db->execute($query, $params);
     if ($inserted === 0) {
+        // If we did not insert a record then the assumption is that it already
+        // exists, attempt to retrieve the acl_type_id.
         $query = <<<SQL
     SELECT at.acl_type_id
     FROM acl_types at
@@ -886,6 +888,9 @@ SQL;
             )
         );
         $log->info("   Retrieved acl type for $type");
+        if (count($results) === 0) {
+            throw new Exception("Unable to determine acl type for [$module][$type][$aclTypeDisplay]");
+        }
         return $results[0]['acl_type_id'];
     }
     $log->info("   Created new acl type record for $type");
@@ -1393,7 +1398,23 @@ SQL;
     );
 
     if ($inserted === 0) {
-        $log->info("[ALREADY EXISTS] Realm $realmDisplay for Module $moduleName");
+        $updateQuery = <<<SQL
+    UPDATE realms
+    SET display = :realm_display
+    WHERE name = :realm_name;
+SQL;
+        $updated = $db->execute(
+            $updateQuery,
+            array(
+                ':realm_display' => $realmDisplay,
+                ':realm_name'    => $realmName
+            )
+        );
+        if ($updated === 1) {
+            $log->info("Updated Realm [$realmName] with display [$realmDisplay]");
+        } else {
+            $log->info("[ALREADY EXISTS] Realm $realmDisplay for Module $moduleName");
+        }
     } elseif ($inserted === 1) {
         $log->info($successMsg);
     }
