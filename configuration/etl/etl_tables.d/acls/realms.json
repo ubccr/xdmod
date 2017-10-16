@@ -19,6 +19,11 @@
         "name": "name",
         "type": "varchar(255)",
         "nullable": false
+      },
+      {
+        "name": "display",
+        "type": "varchar(255)",
+        "nullable": true
       }
     ],
     "indexes": [
