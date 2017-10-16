@@ -348,7 +348,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
             // ------------------------------------------
 
-            var storeUserListing = new DashboardStore({
+        var storeUserListing = new DashboardStore(
+            {
                 autoload: true,
                 url: '../controllers/user_admin.php',
                 baseParams: {
@@ -366,7 +367,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     'account_is_active',
                     'last_logged_in'
                 ]
-            });
+            }
+        );
 
             this.userStore = storeUserListing;
 

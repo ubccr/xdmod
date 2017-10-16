@@ -45,7 +45,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                       '<img src="images/center_edit.png">' +
                       '</a>' +
                       '</div>'
-                      ;
+                    ;
                 }
                 var checked = val ? '-on' : '';
                 return '<div class="x-grid3-check-col' + checked + ' x-grid3-cc-' + this.id + '"></div>';
@@ -64,7 +64,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 event.stopEvent();
 
                 var record = this.grid.store.getAt(
-                  this.grid.getView().findRowIndex(node)
+                    this.grid.getView().findRowIndex(node)
                 );
 
                 record.set(this.dataIndex, !record.data[this.dataIndex]);
@@ -214,7 +214,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
                     event.stopEvent();
 
                     var record = this.grid.store.getAt(
-                      this.grid.getView().findRowIndex(node)
+                        this.grid.getView().findRowIndex(node)
                     );
                     var value = !record.data[this.dataIndex];
                     record.set(this.dataIndex, value);
