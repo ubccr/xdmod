@@ -949,7 +949,7 @@ SQL;
         $log->warning("[FAIL] Attempt to commit hierarchies for Acl [$acl] failed.");
         $rolledBack = $db->rollBack();
 
-        // We throw an Exception so that we do not leave the db in an inconsistent state.
+        // We throw an Exception to indicate that the database may be in an inconsistent state.
         if ($rolledBack === false) {
             throw new \Exception("Unable to rollback Acl [$acl] hierarchy records. Database may be left in an inconsistent state.");
         }
