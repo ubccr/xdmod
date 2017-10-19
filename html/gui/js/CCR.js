@@ -958,66 +958,68 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     var loginItems = [];
     var accountName = CCR.xdmod.federationLoginLink && CCR.xdmod.federationLoginLink.organization.en !== 'Federation' ? CCR.xdmod.federationLoginLink.organization.en : CCR.xdmod.org_name;
 
+    var signInWithLocalAccount = function () {
+        if (txtLoginUsername.getValue().length === 0) {
+            presentLoginResponse('You must specify a username.', false, 'login_response', function () {
+                txtLoginUsername.focus();
+            });
+            return;
+        }
+
+        if (txtLoginPassword.getValue().length === 0) {
+            presentLoginResponse('You must specify a password.', false, 'login_response', function () {
+                txtLoginPassword.focus();
+            });
+            return;
+        }
+
+        var restArgs = {
+            username: txtLoginUsername.getValue(),
+            password: txtLoginPassword.getValue()
+        };
+
+        Ext.Ajax.request({
+            url: '/rest/v0.1/auth/login',
+            method: 'POST',
+            params: restArgs,
+            callback: function (options, success, response) {
+                var data = CCR.safelyDecodeJSONResponse(response);
+                var decodedResponse;
+
+                if (success) {
+                    decodedResponse = CCR.checkDecodedJSONResponseSuccess(data);
+                }
+
+                if (decodedResponse) {
+                    XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
+                    XDMoD.REST.token = data.results.token;
+                    XDMoD.TrackEvent('Login Window', 'Login from public session', '(Token: ' + XDMoD.REST.token + ')', true);
+                    presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
+                    parent.location.href = '../../index.php' + parent.XDMoD.referer;
+                    parent.location.hash = parent.XDMoD.referer;
+                    parent.location.reload();
+                } else {
+                    XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
+                    var message = data.message || 'There was an error encountered while logging in. Please try again.';
+                    message = Ext.util.Format.htmlEncode(message);
+                    message = message.replace(
+                        CCR.xdmod.support_email,
+                        '<br /><a href="mailto:' + CCR.xdmod.support_email + '?subject=Problem Logging In">' + CCR.xdmod.support_email + '</a>'
+                    );
+
+                    presentLoginResponse(message, false, 'login_response', function () {
+                        txtLoginPassword.focus(true);
+                    });
+                }
+            }
+        });
+    };
+
     var localLoginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
         text: 'Sign in',
         autoHeight: true,
         id: 'btn_sign_in',
-        handler: function () {
-            if (txtLoginUsername.getValue().length === 0) {
-                presentLoginResponse('You must specify a username.', false, 'login_response', function () {
-                    txtLoginUsername.focus();
-                });
-                return;
-            }
-
-            if (txtLoginPassword.getValue().length === 0) {
-                presentLoginResponse('You must specify a password.', false, 'login_response', function () {
-                    txtLoginPassword.focus();
-                });
-                return;
-            }
-
-            var restArgs = {
-                username: txtLoginUsername.getValue(),
-                password: txtLoginPassword.getValue()
-            };
-
-            Ext.Ajax.request({
-                url: '/rest/v0.1/auth/login',
-                method: 'POST',
-                params: restArgs,
-                callback: function (options, success, response) {
-                    var data = CCR.safelyDecodeJSONResponse(response);
-                    var decodedResponse;
-
-                    if (success) {
-                        decodedResponse = CCR.checkDecodedJSONResponseSuccess(data);
-                    }
-
-                    if (decodedResponse) {
-                        XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
-                        XDMoD.REST.token = data.results.token;
-                        XDMoD.TrackEvent('Login Window', 'Login from public session', '(Token: ' + XDMoD.REST.token + ')', true);
-                        presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
-                        parent.location.href = '../../index.php' + parent.XDMoD.referer;
-                        parent.location.hash = parent.XDMoD.referer;
-                        parent.location.reload();
-                    } else {
-                        XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
-                        var message = data.message || 'There was an error encountered while logging in. Please try again.';
-                        message = Ext.util.Format.htmlEncode(message);
-                        message = message.replace(
-                            CCR.xdmod.support_email,
-                            '<br /><a href="mailto:' + CCR.xdmod.support_email + '?subject=Problem Logging In">' + CCR.xdmod.support_email + '</a>'
-                        );
-
-                        presentLoginResponse(message, false, 'login_response', function () {
-                            txtLoginPassword.focus(true);
-                        });
-                    }
-                }
-            });
-        }
+        handler: signInWithLocalAccount
     }), {
         xtype: 'tbtext',
         id: 'login_response'
@@ -1044,7 +1046,16 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     var localLoginFrm = new Ext.form.FormPanel({
         id: 'local_login_form',
         title: 'Sign in with a local XDMoD Account:',
-        items: localLoginItems
+        items: localLoginItems,
+        keys: [{
+            key: Ext.EventObject.ENTER,
+            fn: signInWithLocalAccount
+        }],
+        listeners: {
+            render: function (p) {
+                p.getKeyMap();
+            }
+        }
     });
 
     var title = 'Sign into XDMoD';
