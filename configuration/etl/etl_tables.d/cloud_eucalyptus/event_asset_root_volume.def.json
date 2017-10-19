@@ -13,6 +13,7 @@
 
     "source_query": {
         "records": {
+            "resource_id": "staging.resource_id",
             "event_id": "staging.event_id",
             "asset_id": "a.asset_id"
         },
