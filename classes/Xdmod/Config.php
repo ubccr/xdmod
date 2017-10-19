@@ -314,7 +314,7 @@ class Config implements ArrayAccess
                     $mainValue = $data[$mainKey];
                 }
                 else {
-                    $mainValue = null;
+                    $mainValue = array();
                 }
 
                 if (!is_array($mainValue)) {
