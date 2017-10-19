@@ -87,11 +87,17 @@ class MetricExplorer {
                 titleByText: function (title) {
                     return module.exports.selectors.chart.svg + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
                 },
+                credits: function () {
+                    return module.exports.selectors.chart.svg + '/*[name()="text"]/*[name()="tspan" and contains(text(),"Powered by XDMoD")]';
+                },
                 yAxisTitle: function () {
                     return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-axis")]/*[name() = "text" and contains(@class,"highcharts-yaxis-title")]';
                 },
                 legend: function () {
                     return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-legend-item")]/*[name()="text"]';
+                },
+                seriesMarkers: function (seriesId) {
+                    return module.exports.selectors.chart.svg + '//*[local-name() = "g" and contains(@class, "highcharts-series-' + seriesId.toString() + '") and contains(@class, "highcharts-markers")]/*[local-name() = "path"]';
                 },
                 title: '#hc-panelmetric_explorer svg .undefinedtitle',
                 titleInput: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] input[type=text]',
@@ -107,6 +113,8 @@ class MetricExplorer {
                 axis: '#metric_explorer .highcharts-yaxis-labels'
             },
             catalog: {
+                panel: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//span[text()="Metric Catalog"]/ancestor::node()[2]',
+                collapseButton: '//div[@id="metric_explorer"]//div[contains(@class,"x-panel")]//span[text()="Metric Catalog"]/ancestor::node()[2]//div[contains(@class,"x-tool-collapse-west")]',
                 container: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder)',
                 tree: '#metric_explorer > div > .x-panel-body-noborder > .x-border-panel:not(.x-panel-noborder) .x-tree-root-ct',
                 rootNodeByName: function (name) {
@@ -141,24 +149,29 @@ class MetricExplorer {
         browser.setValue(this.selectors.newChart.modalDialog.textBox(), chartName);
         browser.click(this.selectors.newChart.modalDialog.ok());
         browser.waitForInvisible(this.selectors.newChart.modalDialog.box);
-        browser.waitUntilNotExist('.ext-el-mask');
         browser.waitForVisible('//div[@class="x-grid-empty"]/b[text()="No data is available for viewing"]');
+        browser.waitForAllInvisible('.ext-el-mask');
+    }
+    waitForLoaded() {
+        browser.waitForVisible(this.selectors.container, 3000);
+        browser.waitForVisible(this.selectors.catalog.container, 10000);
+        browser.waitUntilAnimEnd(this.selectors.catalog.collapseButton);
     }
     setDateRange(start, end) {
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
         browser.waitAndClick(this.selectors.startDate);
         browser.setValue(this.selectors.startDate, start);
         browser.waitAndClick(this.selectors.endDate);
         browser.setValue(this.selectors.endDate, end);
         browser.click(this.selectors.toolbar.buttonByName('Refresh'));
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
     }
     addDataViaCatalog(realm, statistic, groupby) {
         browser.waitForVisible(this.selectors.catalog.container, 10000);
         browser.waitUntilAnimEndAndClick(this.selectors.catalog.rootNodeByName(realm));
         browser.waitUntilAnimEndAndClick(this.selectors.catalog.nodeByPath(realm, statistic));
         browser.waitForVisible(this.selectors.catalog.addToChartMenu.container);
-        browser.waitAndClick(this.selectors.catalog.addToChartMenu.itemByName(groupby));
+        browser.waitUntilAnimEndAndClick(this.selectors.catalog.addToChartMenu.itemByName(groupby));
         browser.waitForChart();
     }
     saveChanges() {
@@ -221,8 +234,23 @@ class MetricExplorer {
         browser.waitAndClick(this.selectors.load.chartByName(name));
         browser.waitForInvisible(this.selectors.load.dialog);
     }
-    checkChart(chartTitle, yAxisLabel, legend) {
+    checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
         browser.waitForVisible(this.selectors.chart.titleByText(chartTitle));
+        var selToCheck;
+        if (isValidChart) {
+            selToCheck = this.selectors.chart.credits();
+        } else {
+            selToCheck = this.selectors.chart.titleByText(chartTitle);
+        }
+        browser.waitForVisible(selToCheck);
+        for (let i = 0; i < 100; i++) {
+            try {
+                browser.click(selToCheck);
+                break;
+            } catch (e) {
+                browser.waitForAllInvisible('.ext-el-mask');
+            }
+        }
 
         if (yAxisLabel) {
             browser.waitForExist(this.selectors.chart.yAxisTitle());
@@ -352,7 +380,7 @@ class MetricExplorer {
         browser.waitForVisible(this.selectors.deleteChart.dialogBox);
         browser.waitAndClick(this.selectors.deleteChart.buttonByLabel('Yes'));
         browser.waitForInvisible(this.selectors.deleteChart.dialogBox);
-        browser.waitUntilNotExist('#ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
     }
     actionLoadChart(chartNumber) {
         browser.pause(3000);
@@ -389,37 +417,45 @@ class MetricExplorer {
     switchToAggregate() {
         browser.waitAndClick(this.selectors.options.button);
         browser.waitAndClick(this.selectors.options.aggregate);
-        browser.waitAndClick('.xtb-text.logo93');
+        this.clickLogoAndWaitForMask();
         browser.waitForInvisible(this.selectors.options.aggregate);
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
     }
 
     undoAggregateOrTrendLine($container) {
         browser.waitAndClick(this.undo($container));
             // The mouse stays and causes a hover, lets move the mouse somewhere else
-        browser.waitAndClick('.xtb-text.logo93');
+        this.clickLogoAndWaitForMask();
     }
 
     clickFirstDataPoint() {
-        var seriesIndex = 0;
-        var pointIndex = 0;
-        browser.moveToObject('#hc-panelmetric_explorer', 0, 0);
-        var pointLocation = browser.getChartSeriesPointLocation('hc-panelmetric_explorer', seriesIndex, pointIndex).value;
-        expect(pointLocation.left).to.be.a('number');
-        expect(pointLocation.top).to.be.a('number');
-        browser.moveTo(null, pointLocation.left, pointLocation.top);
-        browser.buttonDown();
-        browser.buttonUp();
-        browser.execute('return document.querySelectorAll("svg g.highcharts-series-group g.highcharts-markers.highcharts-tracker path")[' + seriesIndex + '];').click();
-        browser.pause(10000);
+        var elems = browser.elements(this.selectors.chart.seriesMarkers(0));
+        // Data points are returned in reverse order.
+        // for some unknown reason the first point click gets intercepted by the series
+        // menu.
+        elems.value[0].click();
+        elems.value[elems.value.length - 1].click();
     }
-    saveChartTitle() {
-        browser.pause(5000);
-        browser.waitForLoadedThenClick(this.meselectors.options.button);
-        browser.waitForVisible(this.meselectors.options.title, 30000);
-        expect(browser.getValue(this.meselectors.options.title)).to.be.a('string');
-        var chartTitle = browser.getValue(this.meselectors.options.title);
-        return (chartTitle);
+
+    /**
+     * Best effort to try to wait until the load mask has been and gone.
+     */
+    clickSelectorAndWaitForMask(selector) {
+        browser.waitForVisible(selector);
+        browser.waitForAllInvisible('.ext-el-mask');
+
+        for (let i = 0; i < 100; i++) {
+            try {
+                browser.click(selector);
+                break;
+            } catch (e) {
+                browser.waitForAllInvisible('.ext-el-mask');
+            }
+        }
+    }
+
+    clickLogoAndWaitForMask() {
+        this.clickSelectorAndWaitForMask('.xtb-text.logo93');
     }
 }
 

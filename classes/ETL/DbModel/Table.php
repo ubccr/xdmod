@@ -26,6 +26,7 @@ namespace ETL\DbModel;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use Log;
 use stdClass;
+use Exception;
 
 class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlterableEntity
 {

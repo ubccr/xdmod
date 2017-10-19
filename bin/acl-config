@@ -106,7 +106,7 @@ function main()
     $blacklist = array('default');
 
     // the sections of roles.json that we want to process.
-    $sections = array('permitted_modules', 'query_descripters', 'display', 'type');
+    $sections = array('permitted_modules', 'query_descripters', 'display', 'type', 'hierarchies');
 
     // the ultimate destination for the parsed information from
     // roles/datawarehouse
@@ -291,26 +291,29 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
 
     global $log;
 
-    $acls = $moduleData['acls'];
-    $realms = $moduleData['realms'];
+    // Data for a module may contain a list of ACLs, a list of Realms and the access that is
+    // granted, or both.
+
+    $acls = ( isset($moduleData['acls']) ? $moduleData['acls'] : null );
+    $realms = ( isset($moduleData['realms']) ? $moduleData['realms'] : null );
 
     $log->info("Processing Module: $module");
 
     if ($modules === null) {
         $log->err("Unable to process $module, missing module information. Is there a $module.json file in CONF_DIR/datawarehouse.d?");
         return;
-    } else if ($realms !== null) {
+    }
+
+    if ($realms !== null) {
         processRealms($db, $module, $realms);
     } else {
         $log->warning("No realm information for module $module skipping...");
     }
 
-    if ($acls == null) {
-        $log->err("Unable to process $module, missing role information. Is there a $module.json file in CONF_DIR/modules.d?");
-    } else if ($acls !== null && $realms !== null) {
-        processAcls($db, $module, $realms, $acls);
+    if ($acls !== null) {
+        processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls);
     } else {
-        $log->warning("No acl or realm information for module $module skipping...");
+        $log->info("No acl information for module $module skipping...");
     }
 }
 
@@ -611,8 +614,10 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls)
     global $dryRun, $log;
 
     foreach ($acls as $acl => $aclData) {
-        $permittedModules = $aclData['permitted_modules'];
-        $queryDescriptors = $aclData['query_descripters'];
+        // Don't assume that there are query descriptors or permitted modules. For example, an ACL
+        // may only be granting access to one or the other.
+        $permittedModules = ( isset($aclData['permitted_modules']) ? $aclData['permitted_modules'] : null );
+        $queryDescriptors = ( isset($aclData['query_descripters']) ? $aclData['query_descripters'] : null );
         $display = isset($aclData['display']) ? $aclData['display'] : $acl;
         $type = isset($aclData['type']) ? $aclData['type'] : null;
         $hierarchies = isset($aclData['hierarchies'])
@@ -740,7 +745,7 @@ SQL;
                 ':display' => $display
             )
         );
-        $aclId =  $record[0]['acl_id'];
+        $aclId =  count($record) > 0 ? $record[0]['acl_id'] : null;
     } elseif ($inserted === 1 ) {
         $log->info("[SUCCESS] Inserted $msg");
         $aclId = $db->handle()->lastInsertId();
@@ -872,12 +877,12 @@ SQL;
     $log->debug($statement);
     $inserted = 0;
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
-        if (null === $hierarchyInfo['level']) {
+        if (!isset($hierarchyInfo['level'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No level present.");
             continue;
         }
 
-        if (null === $hierarchyInfo['filter_override']) {
+        if (!isset($hierarchyInfo['filter_override'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No filter_override present.");
             continue;
         }
@@ -1542,7 +1547,7 @@ function verifyJsonSyntax()
                 if ($fileInfo->isDot()) {
                     continue;
                 }
-                if ($fileInfo->getExtension() === 'json') {
+                if (pathinfo($fileInfo->getFilename(), PATHINFO_EXTENSION) === 'json') {
                     $fileName = $fileInfo->getFilename();
                     $filePath = $confPath.DIRECTORY_SEPARATOR.$fileName;
                     $fileParts = explode(DIRECTORY_SEPARATOR, $filePath);
@@ -1605,8 +1610,8 @@ function verifyConfigData()
             $data = $config[$section];
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch(Exception $e) {
-            $log->err("[FAIL] Unable to load section $section");
-            $invalid []= $section;
+            $log->err("[FAIL] Unable to load section: '$section' ");
+            $invalid[] = $section;
         }
     }
 

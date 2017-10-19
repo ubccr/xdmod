@@ -32,7 +32,7 @@ chance of keeping on top of things.
 
 ## Style Guidelines (linting)
 
-* If there exists a linter config file for some aspect of the project (e.g. `.eslintrc.json`, `.editorconfig`, `.remarkrc`), please use the associated linter with the config.
+* If there exists a linter config file for some aspect of the project (e.g. `.eslintrc.json`, `.editorconfig`, `.remarkrc`) in this repo or [`xdmod-qa`](https://github.com/ubccr/xdmod-qa), please use the associated linter with the config.
 * If there is no applicable linter or linter config when editing a file, try to stick with its current style.
 * Make sure that you fix any errors found by all configured linters (e.g. remark-lint, ESLint, phpcs).
 * If an error or warning can't be fixed, please add comments to the pull/commit explaining why.

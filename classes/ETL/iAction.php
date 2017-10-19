@@ -14,7 +14,7 @@
 namespace ETL;
 
 use ETL\Configuration\EtlConfiguration;
-use \Log;
+use Log;
 
 interface iAction
 {

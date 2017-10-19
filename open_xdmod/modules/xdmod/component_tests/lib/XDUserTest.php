@@ -412,22 +412,31 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($user->getUserID());
     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage User "bilbo" not found
+     */
     public function testGetUserByUserNameInvalid()
     {
         $user = XDUser::getUserByUserName("bilbo");
-        $this->assertNull($user);
     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage User "" not found
+     */
     public function testGetUserByUserNameEmptyString()
     {
         $user = XDUser::getUserByUserName("");
-        $this->assertNull($user);
     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage No username provided
+     */
     public function testGetUserByUserNameNull()
     {
         $user = XDUser::getUserByUserName(null);
-        $this->assertNull($user);
     }
 
     /**

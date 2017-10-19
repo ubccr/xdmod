@@ -57,6 +57,8 @@ abstract class GroupBy extends \Common\Identity
 
     /*
     * Constructor
+    *
+    * @param string $name The group by name.  The name must not contain any hyphen-minus characters ("-").
     */
     public function __construct($name, array $statistics = array(), $possible_values_query = NULL)
     { 

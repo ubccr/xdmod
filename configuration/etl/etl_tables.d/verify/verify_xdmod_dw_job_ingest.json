@@ -1,0 +1,55 @@
+{
+    "#": "Verify that accounting data is being ingested into the XDMoD DW on a timely basis",
+
+    "source_query": {
+
+        "overseer_restrictions": {
+            "include_only_resource_codes": "r.id IN ${VALUE}",
+            "exclude_resource_codes": "r.id NOT IN ${VALUE}"
+        },
+
+        "records": {
+            "id": "r.id",
+            "name": "r.name",
+            "code": "r.code",
+            "last_entry_date": "max(maxts.max_ts)",
+            "number_of_days": "${NUMBER_OF_DAYS}"
+        },
+
+        "joins": [
+            {
+                "name": "resourcefact",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "r"
+            },{
+                "#": "Since HAVING is not yet supported I need to simulate adding this clause:",
+                "#": "HAVING MAX(j.end_time) < (NOW() - INTERVAL '${NUMBER_OF_DAYS} DAYS')",
+                "#": "Note that jobfact does not have the last modified timestamp but job_record and job_task will",
+                "name": "( SELECT resource_id, MAX(j.end_time) AS max_ts FROM ${SOURCE_SCHEMA}.jobfact j GROUP BY j.resource_id )",
+                "alias": "maxts",
+                "on": "maxts.resource_id = r.id"
+            }
+        ],
+
+        "where": [
+            "r.end_date IS NULL",
+            "maxts.max_ts < (NOW() - INTERVAL ${NUMBER_OF_DAYS} DAY)"
+        ],
+
+        "groupby": [
+            "r.id",
+            "r.name",
+            "r.code"
+        ]
+    },
+
+    "verify_database": {
+        "response": {
+            "destination_email": "${DW_ETL_LOG_RECIPIENT}",
+            "subject": "[XDMoD] Accounting data not ingested in ${NUMBER_OF_DAYS} days",
+            "header": "Job accounting data has not been ingested for these resources in ${NUMBER_OF_DAYS} days.",
+            "footer": "Thank You.",
+            "line": "Jobs have not been reported for '${code}' since ${last_entry_date}"
+        }
+    }
+}

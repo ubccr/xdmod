@@ -60,16 +60,14 @@ describe('Metric Explorer', function metricExplorer() {
         }
     };
     var chartName = 'ME autotest chart ' + Date.now();
-    var loginName = testHelpers.auth.roles.centerdirector.username;
-    var loginPassword = testHelpers.auth.roles.centerdirector.password;
-    var displayName = testHelpers.auth.roles.centerdirector.display;
-    logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
+    logIn.login('centerdirector');
     describe('Select Tab', function xdmod() {
         it('Selected', function meSelect() {
             browser.waitForLoadedThenClick(me.selectors.tab);
             browser.waitForVisible(me.selectors.container, 3000);
             browser.waitForVisible(me.selectors.catalog.container, 10000);
             $container = cheerio.load(browser.getHTML(me.selectors.container));
+            browser.waitUntilAnimEnd(me.selectors.catalog.collapseButton);
         });
     });
     describe('Create and save a chart', function () {
@@ -125,7 +123,7 @@ describe('Metric Explorer', function metricExplorer() {
             me.waitForChartToChange(me.switchToAggregate);
         });
         it('Check that error message is displayed', function () {
-            me.checkChart('An error occurred while loading the chart.');
+            me.checkChart('An error occurred while loading the chart.', null, null, false);
         });
         it('Undo Scratch Pad switch to aggregate', function () {
             me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
@@ -162,7 +160,7 @@ describe('Metric Explorer', function metricExplorer() {
         it('Show Trend Line via Chart Options', function meAddTrendLine() {
             me.waitForChartToChange(function () {
                 browser.waitAndClick(me.selectors.options.trendLine);
-                browser.waitAndClick(me.selectors.options.button);
+                me.clickSelectorAndWaitForMask(me.selectors.options.button);
                 browser.waitForInvisible(me.selectors.options.trendLine);
             });
         });
@@ -176,6 +174,9 @@ describe('Metric Explorer', function metricExplorer() {
             me.checkChart(chartName, 'Node Hours: Total', 'Screwdriver');
         });
     });
+    /* The following tests are disabled until such a time as they can be changed to work
+     * reliably without browser.pause()
+
     describe('Context Menu', function contextMenu() {
         it('Start with scratchpad', function () {
             browser.refresh();
@@ -422,5 +423,6 @@ describe('Metric Explorer', function metricExplorer() {
             });
         });
     });
+    */
     logIn.logout();
 });

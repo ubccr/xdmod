@@ -15,7 +15,7 @@
 namespace ETL\Ingestor;
 
 use ETL\aOptions;
-use \Exception;
+use Exception;
 
 class IngestorOptions extends aOptions
 {
@@ -66,6 +66,9 @@ class IngestorOptions extends aOptions
             // rather than updating fields in place. The option exists for flexibility. See
             // http://dev.mysql.com/doc/refman/5.7/en/alter-table.html
             "disable_keys" => false,
+
+            // Perform an ANALYZE or TABLE following ingestion
+            "analyze_table" => true,
 
             // A list of the only resources that should be included for this action. This is mainly
             // used for actions that are resource-specific, but it is up to the action to heed this

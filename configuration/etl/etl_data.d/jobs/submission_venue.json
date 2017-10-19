@@ -1,7 +1,9 @@
 [
     ["submission_venue_id", "submission_venue", "display", "description"],
-    [-1, "unknown", "Unknown",  "Unknown" ],
-    [1,  "cli",     "CLI",      "Command Line Interface" ],
-    [2,  "gateway", "Gateway",  "Science Gateway" ]
+    [-1, "unknown",       "Unknown",       "Unknown" ],
+    [1,  "cli",           "CLI",           "Command Line Interface" ],
+    [2,  "gateway",       "Gateway",       "Science Gateway" ],
+    [3,  "openstack-api", "OpenStack API", "OpenStack API" ],
+    [4,  "atmosphere",    "Atmosphere",    "Atmosphere Portal" ]
 ]
 

@@ -1,4 +1,6 @@
 /* eslint-env node, es6 */
+var xdmod = require('./xdmod.page.js');
+
 class Usage {
     constructor() {
         this.tab = '#main_tab_panel__tg_usage';
@@ -6,6 +8,9 @@ class Usage {
         this.endField = '#tg_usage input[id^=end_field_ext]';
         this.legendText = 'g.highcharts-legend-item';
         this.refreshButton = '//div[@id="tg_usage"]//button[text()="Refresh"]/ancestor::node()[5]';
+        this.toolbar = {
+            exportButton: '//div[@id="tg_usage"]//button[text()="Export"]/ancestor::node()[5]'
+        };
         this.panel = '//div[@id="tg_usage"]';
         this.availableForReportCheckbox = '//div[@id="tg_usage"]//label[text()="Available For Report"]/parent::node()/input[@type="checkbox"]';
         this.mask = '.ext-el-mask';
@@ -40,10 +45,8 @@ class Usage {
      * Select the "Usage" tab by clicking it.
      */
     selectTab() {
-        expect(browser.isVisible(this.tab), '"Usage" tab (the actual tab, not necessarily the panel) is visible').to.be.true;
-        browser.click(this.tab);
-        browser.waitForVisible(this.panel);
-        browser.waitForAllInvisible(this.mask, 5000);
+        xdmod.selectTab('tg_usage');
+        browser.waitForVisible(this.chart);
     }
 
     /**

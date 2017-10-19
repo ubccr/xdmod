@@ -2,10 +2,7 @@ var logIn = require('./loginPage.page.js');
 var usg = require('./usageTab.page.js');
 
 describe('Usage', function () {
-    var loginName = testHelpers.auth.roles.centerdirector.username;
-    var loginPassword = testHelpers.auth.roles.centerdirector.password;
-    var displayName = testHelpers.auth.roles.centerdirector.display;
-    logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
+    logIn.login('centerdirector');
     var baselineDate = {
         start: '2016-12-25',
         end: '2017-01-02'

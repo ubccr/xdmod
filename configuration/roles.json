@@ -257,6 +257,10 @@
         "pub": {
             "display": "Public User",
             "type": "data",
+            "hierarchies": [{
+                "level": 0,
+                "filter_override": false
+            }],
             "permitted_modules": [
                 {
                     "name": "tg_summary",
@@ -346,6 +350,10 @@
         "usr": {
             "display": "User",
             "type": "data",
+            "hierarchies": [{
+                "level": 100,
+                "filter_override": false
+            }],
             "dimensions": [
                 "person"
             ],
@@ -354,6 +362,10 @@
         "cd": {
             "display": "Center Director",
             "type": "feature",
+            "hierarchies": [{
+                "level": 400,
+                "filter_override": false
+            }],
             "dimensions": [
                 "provider"
             ],
@@ -362,6 +374,10 @@
         "pi": {
             "display": "Principal Investigator",
             "type": "data",
+            "hierarchies": [{
+                "level": 200,
+                "filter_override": false
+            }],
             "dimensions": [
                 "pi"
             ],
@@ -370,6 +386,10 @@
         "cs": {
             "display": "Center Staff",
             "type": "data",
+            "hierarchies": [{
+                "level": 300,
+                "filter_override": false
+            }],
             "dimensions": [
                 "provider"
             ],
@@ -378,6 +398,10 @@
         "mgr": {
             "display": "Manager",
             "type": "data",
+            "hierarchies": [{
+                "level": 301,
+                "filter_override": false
+            }],
             "dimensions": [
                 "person"
             ],

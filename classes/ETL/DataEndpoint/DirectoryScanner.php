@@ -113,7 +113,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     /** -----------------------------------------------------------------------------------------
      * The iterator for the current file that we are parsing.
      *
-     * @var Iterator
+     * @var \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
@@ -133,7 +133,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * The iterator for the first file that was parsed. This allows us to reset the iterator witout
      * re-parsing the first file.
      *
-     * @var Iterator
+     * @var \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
@@ -758,7 +758,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * and contain no records) then we need to move on to the next file in the list. Only after we
      * have processed all files and all records in the final file should valid() return FALSE.
      *
-     * @return boolen TRUE if the current position is valid, FALSE otherwise.
+     * @return boolean TRUE if the current position is valid, FALSE otherwise.
      *
      * @see Iterator::valid()
      * ------------------------------------------------------------------------------------------
