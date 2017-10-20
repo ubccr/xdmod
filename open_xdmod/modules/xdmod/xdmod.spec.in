@@ -12,13 +12,10 @@ BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{relea
 BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd
-
-%{?el6:Requires: mysql >= 5.1}
-%{?el7:Requires: mariadb >= 5.1}
-
-Requires:      php >= 5.3 php-cli php-mysql php-pdo php-gd php-mcrypt php-xml
+Requires:      mariadb >= 5.5.3
+Requires:      php >= 5.4 php-cli php-mysql php-pdo php-gd php-mcrypt php-xml
 Requires:      php-pear-Log php-pear-MDB2 php-pear-MDB2-Driver-mysql
-Requires:      java-1.7.0-openjdk java-1.7.0-openjdk-devel
+Requires:      java-1.8.0-openjdk java-1.8.0-openjdk-devel
 Requires:      cronie
 Requires:      logrotate
 Requires:      ghostscript

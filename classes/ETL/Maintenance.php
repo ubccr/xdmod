@@ -12,8 +12,8 @@ namespace ETL;
 
 use ETL\Configuration\EtlConfiguration;
 use ETL\Maintenance\MaintenanceOptions;
-use \Exception;
-use \Log;
+use Exception;
+use Log;
 
 class Maintenance
 {

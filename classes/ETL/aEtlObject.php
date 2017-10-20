@@ -13,10 +13,10 @@
 namespace ETL;
 
 use ETL\DataEndpoint\DataEndpointOptions;
-use \Log;
-use \Exception;
-use \PDOException;
-use \stdClass;
+use Log;
+use Exception;
+use PDOException;
+use stdClass;
 
 abstract class aEtlObject extends Loggable
 {

@@ -16,7 +16,7 @@
 namespace ETL\DataEndpoint;
 
 use ETL\aOptions;
-use \Exception;
+use Exception;
 
 class DataEndpointOptions extends aOptions
 {
