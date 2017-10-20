@@ -211,20 +211,11 @@ be used to check your code, you can do so by following the instructions on the
 
 ### Dependencies
 
-  - [PHP](https://secure.php.net/)
-  - PHP Extension Packages
-    - CentOS 6
-      - `php-xml`
-    - CentOS 7
-      - None
-    - Ubuntu 16.04
-      - `php-curl`
-      - `php-gmp`
-      - `php-zip`
+See [Software Requirements][software-requirements].
+
+### Build Dependencies
+
   - [Composer](https://getcomposer.org/)
-  - [PEAR](https://pear.php.net/)
-  - [PEAR Log Module](https://pear.php.net/package/Log/)
-  - [Java Development Kit 7+](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
   - [rpmbuild](http://rpm.org/)
     - This is only required if building RPMs.
 
@@ -241,10 +232,10 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 
 #### Source
 
-This process has been tested on CentOS 6, CentOS 7, and Ubuntu 16.04. Known
-issues are documented in the [Building FAQ](#building-faq) below. If you run
-into any issues not listed below on these or any other platforms, please
-let us know. The tested version of composer is 1.3.2 (TravisCI builds use --stable)
+This process has been tested on CentOS 7. Known issues are documented in the
+[Building FAQ](#building-faq) below. If you run into any issues not listed
+below on these or any other platforms, please let us know. The tested version
+of composer is 1.3.2 (TravisCI builds use --stable)
 
   1. Change directory to the root of the Open XDMoD repository.
   1. Install Composer dependencies for Open XDMoD.
@@ -261,10 +252,9 @@ The resulting tarball will be located in `open_xdmod/build`.
 
 #### RPM
 
-This process has been tested on CentOS 6 and CentOS 7. Known
-issues are documented in the [Building FAQ](#building-faq) below. If you run
-into any issues not listed below on these or any other platforms, please
-let us know.
+This process has been tested on CentOS 7. Known issues are documented in the
+[Building FAQ](#building-faq) below. If you run into any issues not listed
+below on these or any other platforms, please let us know.
 
 This procedure assumes your `rpmbuild` directory is `~/rpmbuild`. If it is not,
 substitute accordingly.
@@ -353,3 +343,4 @@ See the [license page on the Open XDMoD website][license-page] for details.
 [repo-format]: https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.txt
 [xdmod-qa]: https://github.com/ubccr/xdmod-qa
 [xdmod-repo-manifest]: https://github.com/ubccr/xdmod-repo-manifest
+[software-requirements]: http://open.xdmod.org/software-requirements.html
