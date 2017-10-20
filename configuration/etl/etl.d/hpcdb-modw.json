@@ -12,7 +12,7 @@
                     "type": "mysql",
                     "name": "Cloud timing test DB",
                     "config": "datawarehouse",
-                    "schema": "modw_cloud",
+                    "schema": "modw",
                     "create_schema_if_not_exists": true
                 }
             }
@@ -31,7 +31,7 @@
         }
     },
 
-    "#": "New job ingestion from mod_hpcdb to modw_cloud",
+    "#": "New job ingestion from mod_hpcdb to modw",
     "hpcdb-modw.bootstrap":[{
         "name": "jobtimes",
         "definition_file": "xdmod/job-times.json",
@@ -278,15 +278,15 @@
         "endpoints": {
             "source": {
                 "type": "mysql",
-                "name": "Cloud test DB",
+                "name": "Job Record/Task database",
                 "config": "datawarehouse",
-                "schema": "modw_cloud"
+                "schema": "modw"
             },
             "destination": {
                 "type": "mysql",
-                "name": "Cloud test DB",
+                "name": "Aggregates Database",
                 "config": "datawarehouse",
-                "schema": "modw_cloud",
+                "schema": "modw_aggregates",
                 "create_schema_if_not_exists": true
             }
         },
