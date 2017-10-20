@@ -431,7 +431,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
             }
             tabPanel.add(tabInstance);
             if (tab.isDefault === true) {
-                tabToken = tabToken || mainTabToken + CCR.xdmod.ui.tokenDelimiter + tab.name;
+                tabToken = tabToken || mainTabToken + CCR.xdmod.ui.tokenDelimiter + tab.tab;
             }
         }
 

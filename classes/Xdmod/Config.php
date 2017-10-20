@@ -151,7 +151,7 @@ class Config implements ArrayAccess
 
             $partialData = Json::loadFile($file);
             if (isset($results[$module]) && is_array($results[$module])) {
-                $results[$module] = array_merge($results[$module], $this->sanitizeKeys($partialData));
+                $results[$module] = array_merge_recursive($results[$module], $this->sanitizeKeys($partialData));
             } else {
                 $results[$module] = $this->sanitizeKeys($partialData);
             }
