@@ -26,19 +26,32 @@ class Tabs
 
         $query = <<<SQL
 SELECT t.name AS tab ,a.name AS acl FROM acl_tabs at
-JOIN (
-    SELECT ua.acl_id FROM user_acls ua
-      JOIN acl_hierarchies ah
-        ON ah.acl_id = ua.acl_id
-      JOIN hierarchies h
-      ON ah.hierarchy_id = h.hierarchy_id
-    WHERE ua.user_id = :user_id AND
-          h.name = :acl_hierarchy_name
-    ORDER BY ah.level DESC LIMIT 1
-    ) max
-ON at.acl_id = max.acl_id
-JOIN acls a ON a.acl_id = at.acl_id
-JOIN tabs t ON t.tab_id = at.tab_id
+  JOIN (
+         SELECT ua.acl_id FROM user_acls ua
+           JOIN acl_hierarchies ah
+             ON ah.acl_id = ua.acl_id
+           JOIN hierarchies h
+             ON ah.hierarchy_id = h.hierarchy_id
+         WHERE ua.user_id = :user_id AND
+               h.name = :acl_hierarchy_name
+         ORDER BY ah.level DESC LIMIT 1
+       ) max
+    ON at.acl_id = max.acl_id
+  JOIN acls a ON a.acl_id = at.acl_id
+  JOIN tabs t ON t.tab_id = at.tab_id
+UNION
+SELECT nh.tab, nh.acl FROM (
+  SELECT DISTINCT t.name as tab, a.name AS acl
+  FROM acl_tabs at
+    JOIN user_acls ua ON at.acl_id = ua.acl_id
+    JOIN acls a ON a.acl_id = at.acl_id
+    JOIN tabs t ON t.tab_id = at.tab_id
+    LEFT JOIN acl_hierarchies ah
+      ON ah.acl_id = at.acl_id
+  WHERE
+    ua.user_id = :user_id
+    AND ah.acl_hierarchy_id IS NULL
+) nh;
 SQL;
         $rows = $db->query($query, array(
             ':user_id' => $userId,
