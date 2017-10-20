@@ -116,49 +116,82 @@ function main()
 
     // Module Retrieval
     $modules = $config['modules'];
-    if (null !== $modules['WARNING']) {
+    if (isset($modules['WARNING'])) {
         unset($modules['WARNING']);
     }
-
+    $moduleHierarchies = array();
     // Hierarchy retrieval
-    $hierarchies = $config->getModuleSection('hierarchies');
+    foreach($modules as $module => $moduleData) {
+        $hierarchies = $config->filterByMetaData(
+            $config->getModuleSection('hierarchies'),
+            array(
+                'modules' => array(
+                    $module
+                )
+            )
+        );
+        if (isset($hierarchies['hierarchies'])) {
+            $hierarchies = $hierarchies['hierarchies'];
+        }
+        $moduleHierarchies[$module] = $hierarchies;
+    }
+
 
     // Acl Retrieval
     $roles = Roles::getRoleNames($blacklist);
-    $rolesData = $config->getModuleSection('roles');
 
     foreach ($modules as $module => $moduleData) {
-        if (isset($rolesData[$module])) {
-            $moduleRoleData = $rolesData[$module]['roles'];
-            foreach ($roles as $role) {
-                $roleData = isset($moduleRoleData[$role]) ? $moduleRoleData[$role] : array();
-                if (array_key_exists('extends', $roleData)) {
-                    $roleData = array_merge($moduleRoleData[$roleData['extends']], $roleData);
-                }
-                foreach ($sections as $section) {
-                    if (isset($roleData[$section])) {
-                        $results[$module]['acls'][$role][$section] = $roleData[$section];
-                    }
+        // retrieve the role information as viewed in the context
+        // of the provided module.
+        $moduleData = $config->filterByMetaData(
+            $config->getModuleSection('roles'),
+            array(
+                'modules' => array(
+                    DEFAULT_MODULE_NAME,
+                    $module
+                )
+            )
+        );
+
+        if (isset($moduleData['roles'])) {
+            $moduleData = $moduleData['roles'];
+        }
+
+        foreach($roles as $role) {
+            $roleData = isset($moduleData[$role]) ? $moduleData[$role] : array();
+            if (array_key_exists('extends', $roleData)) {
+                 $roleData = array_merge_recursive($moduleData[$roleData['extends']], $roleData);
+            }
+            foreach($sections as $section) {
+                if (isset($roleData[$section])) {
+                    $results[$module]['acls'][$role][$section] = $roleData[$section];
                 }
             }
-        } else {
-            $log->notice("No role information for $module skipping...");
         }
     }
 
     // Datawarehouse Retrieval
-    $datawarehouseSource = $config->getModuleSection('datawarehouse');
     foreach ($modules as $module => $moduleData) {
-        if ( isset($datawarehouseSource[$module]['realms']) ) {
-            $dwSource= $datawarehouseSource[$module]['realms'];
-            foreach ($dwSource as $realmDisplay => $dwData) {
-                $groupBys = null !== $dwData['group_bys'] ? $dwData['group_bys'] : null;
-                $statistics = null !== $dwData['statistics'] ? $dwData['statistics'] : null;
-                $results[$module]['realms'][$realmDisplay] = array(
-                    'group_bys' => $groupBys,
-                    'statistics' => $statistics
-                );
-            }
+        $realms = $config->filterByMetaData(
+            $config->getModuleSection('datawarehouse'),
+            array(
+                'modules' => array(
+                    $module
+                )
+            )
+        );
+
+        if (isset($realms['realms'])) {
+            $realms = $realms['realms'];
+        }
+
+        foreach($realms as $realm => $data) {
+            $groupBys = isset($data['group_bys']) ? $data['group_bys'] : null;
+            $statistics = isset($data['statistics']) ? $data['statistics'] : null;
+            $results[$module]['realms'][$realm] = array(
+                'group_bys' => $groupBys,
+                'statistics' => $statistics
+            );
         }
     }
 
@@ -183,7 +216,7 @@ function main()
     processModules($db, $modules);
 
     // Process the hierarchies into the database
-    processHierarchies($db, $hierarchies);
+    processHierarchies($db, $moduleHierarchies);
 
     // Make sure to process the default module first first.
     if (array_key_exists(DEFAULT_MODULE_NAME, $results)) {
@@ -201,11 +234,11 @@ function main()
  *
  *
  * @param iDatabase $db
- * @param string    $module
- * @param array     $hierarchies
- *
+ * @param array $hierarchies
  * @return void
- **/
+ * @throws Exception
+ * @internal param string $module
+ */
 function processHierarchies(iDatabase $db, $hierarchies)
 {
     global $dryRun, $log;
@@ -229,47 +262,43 @@ function processHierarchies(iDatabase $db, $hierarchies)
 SQL;
     $log->debug($query);
 
-    if ( ! $dryRun ) {
-        $statement = $db->prepare($query);
-        $log->debug($query);
-    }
-
     $inserted = 0;
     $processed = 0;
-    foreach ($hierarchies as $moduleName => $hierarchyData) {
-        $hierarchies = $hierarchyData['hierarchies'];
-        foreach ($hierarchies as $hierarchy) {
+    // {"hierarchies":[{"name":"acl_hierarchy","display":"ACL Hierarchy"}]}
+
+    foreach ($hierarchies as $module => $hierarchyData) {
+
+        foreach ($hierarchyData as $hierarchy) {
             $name = null;
             $display = null;
 
             if (null === $hierarchy['name']) {
-                throw new Exception("Malformed hierarchy entry for module $moduleName. No name property.");
+                throw new Exception("Malformed hierarchy entry for module $module. No name property.");
             }
             $name = $hierarchy['name'];
 
             if (null === $hierarchy['display']) {
-                $log->warning("Hierarchy entry for module $moduleName missing 'display' property, generating default value.");
+                $log->warning("Hierarchy entry for module $module missing 'display' property, generating default value.");
                 $display = $name;
             } else {
                 $display = $hierarchy['display'];
             }
 
             if ($dryRun) {
-                $log->info("[SUCCESS] created hierarchy [module: $moduleName, name: $name, display: $display]");
+                $log->info("[SUCCESS] created hierarchy [module: $module, name: $name, display: $display]");
                 continue;
             }
 
             $params = array(
                 ':name' => $name,
                 ':display' => $display,
-                ':module_name' => $moduleName
+                ':module_name' => $module
             );
 
             $log->debug($params);
 
-            $modified = $statement->execute($params);
-            $count = $modified === true ? $statement->rowCount() : 0;
-            $inserted += $count;
+            $modified = $db->execute($query, $params);
+            $inserted += $modified;
         }
         $processed += count($hierarchies);
     }
@@ -313,7 +342,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
     if ($acls !== null) {
         processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls);
     } else {
-        $log->info("No acl information for module $module skipping...");
+        $log->info("No acl information for module $xmodule skipping...");
     }
 }
 
@@ -727,7 +756,7 @@ SQL;
     $aclId = null;
     $inserted = $db->execute($query, $params);
     if ($inserted === 0) {
-        $log->info("[ALREADY EXISTS] $msg");
+        $log->notice("[ALREADY EXISTS] Acl $msg");
         $query = <<<SQL
     SELECT a.acl_id
     FROM acls a
@@ -747,7 +776,7 @@ SQL;
         );
         $aclId =  count($record) > 0 ? $record[0]['acl_id'] : null;
     } elseif ($inserted === 1 ) {
-        $log->info("[SUCCESS] Inserted $msg");
+        $log->notice("[SUCCESS] Inserted Acl $msg");
         $aclId = $db->handle()->lastInsertId();
     }
 
@@ -789,9 +818,7 @@ function processAclType(iDatabase $db, $module, $type)
         WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN acl_types cur
-        ON cur.module_id = inc.module_id AND
-           BINARY cur.name      = BINARY inc.name      AND
-           BINARY cur.display   = BINARY inc.display
+        ON BINARY cur.name  = BINARY inc.name
     WHERE cur.acl_type_id IS NULL;
 SQL;
     $aclTypeDisplay = ucfirst($type);
@@ -813,13 +840,14 @@ SQL;
         $query = <<<SQL
     SELECT at.acl_type_id
     FROM acl_types at
-        JOIN modules m
-            ON at.module_id = m.module_id
-    WHERE BINARY m.name     = BINARY :module_name    AND
-          BINARY at.name    = BINARY :acl_type_name  AND
-          BINARY at.display = BINARY :acl_type_display
+    WHERE BINARY at.name    = BINARY :acl_type_name
 SQL;
-        $results = $db->query($query, $params);
+        $results = $db->query(
+            $query,
+            array(
+                ':acl_type_name' => $type
+            )
+        );
         $log->info("   Retrieved acl type for $type");
         return $results[0]['acl_type_id'];
     }
@@ -869,13 +897,14 @@ function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies) {
     WHERE cur.acl_hierarchy_id IS NULL;
 SQL;
 
+    $log->debug($query);
+
     if ( ! $dryRun ) {
         $statement = $db->prepare($query);
-        $log->debug($query);
     }
 
-    $log->debug($statement);
     $inserted = 0;
+    $db->beginTransaction();
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
         if (!isset($hierarchyInfo['level'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No level present.");
@@ -904,16 +933,18 @@ SQL;
         }
 
         $modified = $statement->execute($params);
+
         $count = $modified === true ? $statement->rowCount() : 0;
         $inserted += $count;
         if ($count === 0) {
-            $log->info("[FAIL] Did not Process Acl Hierarchy: $id");
+            $log->notice("[SUCCESS] Acl Hierarchy: $id already exists");
         } elseif ($count === 1) {
-            $log->info("[SUCCESS] Processed Acl Hierarchy: $id");
+            $log->notice("[SUCCESS] Processed Acl Hierarchy: $id");
         } else {
-            $log->info("[FAIL] Inserted more than one Acl Hierarchy Record for: $id");
+            $log->warning("[FAIL] Inserted more than one Acl Hierarchy Record for: $id");
         }
     }
+    $db->commit();
     $processed = count($hierarchies);
     $log->notice("Processed: $processed, Inserted: $inserted");
 }
@@ -972,8 +1003,7 @@ function createTab(iDatabase $db, $module, $tab)
         WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN tabs cur
-        ON        cur.module_id = inc.module_id   AND
-           BINARY cur.name      = BINARY inc.name
+        ON BINARY cur.name = BINARY inc.name       
     WHERE cur.tab_id IS NULL;
 SQL;
 
@@ -1000,13 +1030,9 @@ SQL;
         $query = <<<SQL
     SELECT t.tab_id
     FROM tabs t
-        JOIN modules m
-            ON t.module_id = m.module_id
-    WHERE BINARY m.name = BINARY :module_name AND
-          BINARY t.name = BINARY :name
+    WHERE BINARY t.name = BINARY :name
 SQL;
         $params = array(
-            ':module_name' => $module,
             ':name' => $tab
         );
 
@@ -1168,13 +1194,13 @@ SQL;
         $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
 
         if (!array_key_exists($realm, $realms)) {
-            $log->err("Unable to find a corresponding realm record for [$realm]. Skipping Query Descriptor for [ $module, $role, $groupBy ]");
+            $log->warning("Unable to find a corresponding realm record for [$realm]. Skipping Query Descriptor for [ $module, $acl, $groupBy ]");
             continue;
         }
 
         $realmData = $realms[$realm];
         if (!isset($realmData['statistics'])) {
-            $log->err("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $role, $groupBy ]");
+            $log->warning("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupBy ]");
             continue;
         }
         $statistics = $realmData['statistics'];
@@ -1586,7 +1612,7 @@ function verifyJsonSyntax()
  * the Acl system depends on. If an exception occurs while attempting to
  * retrieve as section then we can assume there is a problem with that section.
  *
- * @return 0 if all configuration sections were loaded successfully else 1.
+ * @return int 0 if all configuration sections were loaded successfully else 1.
  **/
 function verifyConfigData()
 {
