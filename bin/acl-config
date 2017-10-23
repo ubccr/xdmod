@@ -745,7 +745,7 @@ SQL;
                 ':display' => $display
             )
         );
-        $aclId =  $record[0]['acl_id'];
+        $aclId =  count($record) > 0 ? $record[0]['acl_id'] : null;
     } elseif ($inserted === 1 ) {
         $log->info("[SUCCESS] Inserted $msg");
         $aclId = $db->handle()->lastInsertId();
