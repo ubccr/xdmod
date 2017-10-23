@@ -1,0 +1,39 @@
+{
+    "table_definition": {
+        "name": "file_system",
+        "engine": "InnoDB",
+        "comment": "File system dimension",
+        "columns": [
+            {
+                "name": "file_system_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "AUTO_INCREMENT"
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "File system name"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "file_system_id"
+                ]
+            },
+            {
+                "name": "uk_name",
+                "columns": [
+                    "name"
+                ],
+                "is_unique": true
+            }
+        ]
+    },
+    "destination_columns": {
+        "name": "name"
+    }
+}
