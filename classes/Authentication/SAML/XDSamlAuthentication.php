@@ -12,7 +12,7 @@ class XDSamlAuthentication
      *
      * @var \SimpleSAML_Auth_Simple
      */
-    protected $_as = null; // The selected auth source
+    protected $_as = null;
 
     /**
      * Enumerated potential auth sources
