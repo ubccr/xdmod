@@ -2,6 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use Xdmod\Config;
+
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
@@ -315,5 +317,52 @@ EOF;
         $ret[] = array($baseSettings, 'text/xml', 'application/xml; charset=us-ascii');
 
         return $ret;
+    }
+
+    /**
+     * Ensure that the public user is able to see all of the realms that are
+     * currently installed in this instance of XDMoD.
+     */
+    public function testPublicUserGetMenus()
+    {
+        $data = <<< EOF
+{
+    "operation": "get_menus",
+    "public_user": "true",
+    "query_group": "tg_usage",
+    "node": "category_"
+}
+EOF;
+
+        $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($data, true));
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $menus = $response[0];
+
+        $this->assertTrue(count($menus) > 0, "Public User: get_menus has returned no results.");
+
+        $realms = array('Jobs');
+        $this->assertNotEmpty($realms, "Unable to retrieve realms from datawarehouse.json");
+
+        $categories = array_reduce(
+            $menus,
+            function ($carry, $item) {
+                if (isset($item['category'])) {
+                    if (!in_array($item['category'], $carry)) {
+                        $carry[] = $item['category'];
+                    }
+                }
+                return $carry;
+            },
+            array()
+        );
+
+        $this->assertTrue(count($categories) >= 1, "There were no 'menus' that had a category propery, this is unexpected.");
+
+        $realmCategoryDiff = array_diff($realms, $categories);
+
+        $this->assertEmpty($realmCategoryDiff, "There were realms in datawarehouse.json that were not returned by get_menus.");
     }
 }
