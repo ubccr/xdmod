@@ -935,7 +935,6 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     XDMoD.referer = document.location.hash;
 
     var txtLoginUsername = new Ext.form.TextField({
-        emptyText: 'Your Username',
         width: 184,
         height: 22,
         id: 'txt_login_username',
@@ -945,7 +944,6 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     });
 
     var txtLoginPassword = new Ext.form.TextField({
-        emptyText: 'Your Password',
         width: 184,
         height: 22,
         enableKeyEvents: true,
