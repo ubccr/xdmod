@@ -336,7 +336,7 @@ class Config implements ArrayAccess
                 if (array_key_exists($mainKey, $data)) {
                     $mainValue = $data[$mainKey];
                 } else {
-                    $mainValue = null;
+                    $mainValue = array();
                 }
 
                 if (!is_array($mainValue)) {
@@ -381,16 +381,16 @@ class Config implements ArrayAccess
      * Since we're assuming that all the arrays are from JSON, this
      * function just checks to for keys that are strings.
      *
-     * @param array $arr
+     * @param array $value
      *
      * @return bool True if the value is an associative array.
      */
-    protected function isAssocArray($arr)
+    protected function isAssocArray($value)
     {
-        if (!is_array($arr)) {
+        if (!is_array($value)) {
             return false;
         }
-        return (bool)count(array_filter(array_keys($arr), 'is_string'));
+        return (bool)count(array_filter(array_keys($value), 'is_string'));
     }
 
     public function filterByMetaData(array $data, array $metaData)
