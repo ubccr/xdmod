@@ -1394,6 +1394,7 @@ SQL;
         $statement = $db->handle()->prepare($query);
         $log->debug($query);
     }
+    $totalInserted = 0;
 
     foreach ($groupBys as $groupBy) {
         $groupByName = $groupBy['name'];
@@ -1416,13 +1417,15 @@ SQL;
         );
 
         $inserted = $statement->rowCount();
-
+        $totalInserted += $inserted;
         if ($inserted === 0) {
             $log->info("[ALREADY EXISTS] Group By $groupByName for Module $moduleName and Realm $realmName");
         } elseif ($inserted === 1) {
             $log->info(sprintf($successMsg, $groupByName));
         }
     }
+    $processed = count($groupBys);
+    $log->notice("\tProcessed: $processed, Inserted: $totalInserted");
 }
 
 /**
