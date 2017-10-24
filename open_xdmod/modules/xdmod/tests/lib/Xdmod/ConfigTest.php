@@ -25,7 +25,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $config = Config::factory();
         $this->assertNotNull($config);
 
-        foreach($testCases as $testCase) {
+        foreach ($testCases as $testCase) {
             if (!isset($testCase['expected'])) {
                 continue;
             }
@@ -42,8 +42,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                 )
                 : $config->getModuleSection($section);
 
-            echo "Expected: " . $expected . "\n";
-            echo "Actual  : " . json_encode($actual) . "\n";
             $this->assertEquals($expected, json_encode($actual));
         }
 
@@ -144,7 +142,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         try {
             $config->getModuleSection($section);
         } catch (\Exception $e) {
-            $msg =$e->getMessage();
+            $msg = $e->getMessage();
             $condition = strpos($msg, "Cannot merge non-array/object values") >= 0;
             $this->assertTrue(
                 $condition,
@@ -224,7 +222,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $filtered = $config->filterByMetaData(
             $data,
             array(
-                'enabled'=> true
+                'enabled' => true
             )
         );
         $this->assertNotEmpty($filtered, "Expected data to be returned but found none.");
@@ -253,7 +251,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $filtered = $config->filterByMetaData(
             $data,
             array(
-                'testing'=> array(
+                'testing' => array(
                     "modules" => array(
                         "xdmod"
                     )
