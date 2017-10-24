@@ -123,74 +123,81 @@ function main()
         unset($modules['#']);
     }
     $moduleHierarchies = array();
-    // Hierarchy retrieval
-    foreach($modules as $module => $moduleData) {
-        $hierarchies = $config->filterByMetaData(
-            $config->getModuleSection('hierarchies'),
-            array(
-                'modules' => array(
-                    $module
-                )
-            )
-        );
-        if (isset($hierarchies['hierarchies'])) {
-            $hierarchies = $hierarchies['hierarchies'];
-        }
-        $moduleHierarchies[$module] = $hierarchies;
-    }
 
+    // Role Retrieval
+    $allRoles = Roles::getRoleNames($blacklist);
 
-    // Acl Retrieval
-    $roles = Roles::getRoleNames($blacklist);
+    // Retrieve the annotated combined config information for each section.
+    $rawHierarchies = $config->getModuleSection('hierarchies');
+    $rawRoles = $config->getModuleSection('roles');
+    $rawRealms = $config->getModuleSection('datawarehouse');
+
 
     foreach ($modules as $module => $moduleData) {
-        // retrieve the role information as viewed in the context
-        // of the provided module.
-        $moduleData = $config->filterByMetaData(
-            $config->getModuleSection('roles'),
-            array(
+
+        // Setup the metadata to be used in the filtering.
+        if ($module !== DEFAULT_MODULE_NAME) {
+            $metaData = array(
                 'modules' => array(
                     DEFAULT_MODULE_NAME,
                     $module
                 )
-            )
-        );
-        if (isset($moduleData['roles'])) {
-            $moduleData = $moduleData['roles'];
+            );
+        } else {
+            $metaData = array(
+                'modules' => array(
+                    DEFAULT_MODULE_NAME,
+                )
+            );
         }
-        foreach ($roles as $role) {
-            $roleData = isset($moduleData[$role]) ? $moduleData[$role] : array();
-            if (array_key_exists('extends', $roleData)) {
-                 $roleData = array_merge_recursive($moduleData[$roleData['extends']], $roleData);
-            }
-            foreach ($sections as $section) {
-                if (isset($roleData[$section])) {
-                    $results[$module]['acls'][$role][$section] = $roleData[$section];
+
+        // Retrieve the section information filtered by module.
+        $hierarchies = $config->filterByMetaData(
+            $rawHierarchies,
+            $metaData
+        );
+
+        $roles = $config->filterByMetaData(
+            $rawRoles,
+            $metaData
+        );
+
+        $realms = $config->filterByMetaData(
+            $rawRealms,
+            $metaData
+        );
+
+        // Process the hierarchies provided by this module, if any.
+        if (count($hierarchies) > 0 && isset($hierarchies['hierarchies'])) {
+            $moduleHierarchies[$module] = $hierarchies['hierarchies'];
+        }
+
+        // Process the roles provided by this module, if any.
+        if (count($roles) > 0 && isset($roles['roles'])) {
+            $moduleRoles = $roles['roles'];
+            foreach ($allRoles as $role) {
+                $roleData = isset($moduleRoles[$role]) ? $moduleRoles[$role] : array();
+                if (array_key_exists('extends', $roleData)) {
+                    $roleData = array_merge_recursive($moduleRoles[$roleData['extends']], $roleData);
+                }
+                foreach ($sections as $section) {
+                    if (isset($roleData[$section])) {
+                        $results[$module]['acls'][$role][$section] = $roleData[$section];
+                    }
                 }
             }
         }
-    }
 
-    // Datawarehouse Retrieval
-    foreach ($modules as $module => $moduleData) {
-        $realms = $config->filterByMetaData(
-            $config->getModuleSection('datawarehouse'),
-            array(
-                'modules' => array(
-                    $module
-                )
-            )
-        );
-        if (isset($realms['realms'])) {
-            $realms = $realms['realms'];
-        }
-        foreach ($realms as $realm => $data) {
-            $groupBys = isset($data['group_bys']) ? $data['group_bys'] : null;
-            $statistics = isset($data['statistics']) ? $data['statistics'] : null;
-            $results[$module]['realms'][$realm] = array(
-                'group_bys' => $groupBys,
-                'statistics' => $statistics
-            );
+        // Process the realms provided by this module, if any.
+        if (count($realms) > 0 && isset($realms['realms'])) {
+            foreach ($realms['realms'] as $realm => $data) {
+                $groupBys = isset($data['group_bys']) ? $data['group_bys'] : null;
+                $statistics = isset($data['statistics']) ? $data['statistics'] : null;
+                $results[$module]['realms'][$realm] = array(
+                    'group_bys' => $groupBys,
+                    'statistics' => $statistics
+                );
+            }
         }
     }
 
@@ -211,10 +218,32 @@ function main()
 
     $db = DB::factory('database');
 
-    // Process the modules into the database
+    // Process the xdmod module first
+    if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
+        processModules(
+            $db,
+            array(
+                    DEFAULT_MODULE_NAME => $modules[DEFAULT_MODULE_NAME]
+            )
+        );
+        unset($modules[DEFAULT_MODULE_NAME]);
+    }
+
+    // Process the rest of the modules
     processModules($db, $modules);
 
-    // Process the hierarchies into the database
+    // Process the xdmod hierarchies into the database first
+    if (array_key_exists(DEFAULT_MODULE_NAME, $moduleHierarchies)) {
+        processHierarchies(
+            $db,
+            array(
+                DEFAULT_MODULE_NAME => $moduleHierarchies[DEFAULT_MODULE_NAME]
+            )
+        );
+        unset($moduleHierarchies[DEFAULT_MODULE_NAME]);
+    }
+
+    // process the rest of the modules hierarchies.
     processHierarchies($db, $moduleHierarchies);
 
     // Make sure to process the default module first first.
@@ -243,21 +272,32 @@ function processHierarchies(iDatabase $db, $hierarchies)
     global $dryRun, $log;
     $log->notice("Processing Hierarchies...");
 
+    // SELECT the incoming data IFF
+    //   There is not a record in hierarchies that has:
+    //     - the same name / display as incoming
+    //     - but a different module_id than incoming
     $query = <<<SQL
     INSERT INTO hierarchies(module_id, name, display)
-    SELECT inc.*
-    FROM(
-       SELECT
-           m.module_id AS module_id,
-           :name       AS name,
-           :display    AS display
-       FROM modules m
-       WHERE BINARY m.name = BINARY :module_name
-    ) inc
-    LEFT JOIN hierarchies cur
-        ON cur.module_id        = inc.module_id AND
-           BINARY cur.name      = BINARY inc.name
-    WHERE cur.hierarchy_id IS NULL;
+    SELECT inc.module_id, inc.name, inc.display
+    FROM
+      (
+        SELECT
+          m.module_id AS module_id,
+          :name       AS name,
+          :display    AS display
+        FROM modules m
+        WHERE BINARY m.name = BINARY :module_name
+      ) inc
+    WHERE NOT EXISTS(
+        SELECT 1
+        FROM hierarchies cur
+          JOIN modules m
+            ON cur.module_id = m.module_id AND
+            m.name != :module_name
+        WHERE
+          BINARY cur.name = BINARY :name AND
+          BINARY cur.display = BINARY :display
+    );
 SQL;
     $log->debug($query);
 
@@ -1274,7 +1314,7 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
     global $dryRun, $log;
 
     foreach ($realms as $realm => $realmData) {
-        $log->notice("Processing Realm: $realm");
+        $log->notice("Processing Realm: $realm for Module: $moduleName");
 
         createRealm($db, $moduleName, strtolower($realm));
 
@@ -1318,8 +1358,7 @@ function createRealm(iDatabase $db, $moduleName, $realmName)
         WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN realms cur
-        ON cur.module_id        = inc.module_id   AND
-           BINARY cur.name      = BINARY inc.name
+        ON BINARY cur.name = BINARY inc.name
     WHERE cur.realm_id IS NULL;
 SQL;
 
