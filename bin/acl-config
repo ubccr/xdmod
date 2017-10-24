@@ -201,9 +201,6 @@ function main()
         }
     }
 
-    // We want to process 'xdmod' first.
-    array_multisort($results, SORT_ASC);
-
     $db = null;
 
     // The database connection will always be needed, even during dry-run because there are
