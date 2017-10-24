@@ -1195,8 +1195,10 @@ SQL;
         $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
         $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
 
+        // if we can't find the current realm in the array of available realms
+        // then just ignore this entry. This is due to the way in which we
+        // process modules / how the data is represented and is expected.
         if (!array_key_exists($realm, $realms)) {
-            $log->warning("Unable to find a corresponding realm record for [$realm]. Skipping Query Descriptor for [ $module, $acl, $groupBy ]");
             continue;
         }
 
