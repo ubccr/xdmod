@@ -64,8 +64,8 @@ class GroupByNone extends GroupBy
         Query &$query,
         Table $dataTable,
         $multiGroup = false,
-        $operation,
-        $whereConstraint
+        $operation = '=',
+        $whereConstraint = 'NULL'
     ) {
         // NO-OP
     }
