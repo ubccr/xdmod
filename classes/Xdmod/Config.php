@@ -367,6 +367,17 @@ class Config implements ArrayAccess
         return (bool)count(array_filter(array_keys($value), 'is_string'));
     }
 
+    /**
+     * Filter $data by the provided $metaData. $data should be annotated via the
+     * loadModuleSection function, or contain nodes with 'meta-data' attributes.
+     * Filtered in this case means every node in $data that has some
+     * intersection with $metaData.
+     *
+     * @param array $data     that data to be filtered
+     * @param array $metaData the data that will be used to do the filtering
+     * @return array the nodes in $data that have meta-data entries in common
+     *               with $metaData
+     */
     public function filterByMetaData(array $data, array $metaData)
     {
         $results = array();
