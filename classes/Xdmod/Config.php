@@ -210,32 +210,6 @@ class Config implements ArrayAccess
     }
 
     /**
-     * Attempt to walk the provided array and if there are any keys with that
-     * start with a '+' character, replace that key with that keys value minus
-     * the '+' character.
-     *
-     * @param array $data the data whose keys will be sanitized
-     *
-     * @return array
-     **/
-    private function sanitizeKeys($data)
-    {
-        $results = array();
-
-        foreach ($data as $key => $value) {
-            $hasPlus = substr($key, 0, 1) === '+';
-            $newKey = false === $hasPlus ? $key : substr($key, 1);
-            if (is_array($value) && $this->isAssocArray($value)) {
-                $results[$newKey] = $this->sanitizeKeys($value);
-            } else {
-                $results[$newKey] = $value;
-            }
-        }
-
-        return $results;
-    }
-
-    /**
      * Get the file name for a configuration section.
      *
      * @param string $section
@@ -490,7 +464,7 @@ class Config implements ArrayAccess
                 // If either of the values are associative then just perform the
                 // regular intersection.
                 if (array_key_exists($key, $right)) {
-                    if (is_array($value)) {
+                    if (is_array($value) && is_array($right[$key])) {
                         $intersect = $this->arrayRecursiveIntersect($value, $right[$key]);
                         if (count($intersect)) {
                             $results[$key] = $intersect;
@@ -501,13 +475,6 @@ class Config implements ArrayAccess
                         }
                     }
                 }
-            } elseif ($isArray && $rightArray && !$isAssoc && !$rightAssoc) {
-                // If both values are arrays just not associative arrays then we can
-                // do a regular 'ol array_intersect.
-                $intersect = array_intersect($value, $right);
-                if (count($intersect)) {
-                    $results[$key] = $intersect;
-                }
             } elseif (!$isArray && $rightArray && !$rightAssoc) {
                 /* If the value is not an array ( and there-by not an associative
                  * array ) AND the right value is an array ( but not an associative
@@ -516,14 +483,6 @@ class Config implements ArrayAccess
                  */
                 if (in_array($value, $right)) {
                     $results[] = $value;
-                }
-            } elseif ($isArray && !$isAssoc && !$rightArray) {
-                /* If the value is an array but not an associative one AND the right
-                 * value is not an array then check for the existence of the right
-                 * value in the value.
-                 */
-                if (in_array($right, $value)) {
-                    $results[] = $right;
                 }
             }
         }
