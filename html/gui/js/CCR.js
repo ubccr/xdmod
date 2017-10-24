@@ -1014,8 +1014,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     };
 
     var localLoginItems = [txtLoginUsername, txtLoginPassword, new Ext.Button({
+        width: 75,
+        height: 22,
         text: 'Sign in',
-        autoHeight: true,
         id: 'btn_sign_in',
         handler: signInWithLocalAccount
     }), {
@@ -1023,11 +1024,11 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         id: 'login_response'
     }, {
         xtype: 'tbtext',
-        html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot Your Password?</a>',
+        html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
         id: 'forgot_password_link'
     }, {
         xtype: 'tbtext',
-        html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t Have an Account?</a>',
+        html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
         id: 'sign_up_link'
     }];
 
@@ -1035,15 +1036,18 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         id: 'federated_login_form',
         title: 'Sign in with ' + accountName + ':',
         items: [{
-            xtype: 'tbtext',
-            html: '<a href="' + CCR.xdmod.federationLoginLink.url + '"><img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img></a>',
-            id: 'federatedLoginLink'
+            xtype: 'button',
+            html: '<img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img>',
+            id: 'federatedLoginLink',
+            handler: function (b) {
+                document.location = CCR.xdmod.federationLoginLink.url;
+            }
         }]
     }) : null;
 
     var localLoginFrm = new Ext.form.FormPanel({
         id: 'local_login_form',
-        title: 'Sign in with a local XDMoD Account:',
+        title: 'Sign in with a local XDMoD account:',
         items: localLoginItems,
         keys: [{
             key: Ext.EventObject.ENTER,
@@ -1074,6 +1078,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         resizable: false,
         draggable: false,
         items: loginItems,
+        padding: 15,
         listeners: {
             close: function () {
                 XDMoD.TrackEvent('Login Window', 'Closed Window');

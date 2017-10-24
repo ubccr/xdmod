@@ -50,26 +50,20 @@
  #federated_login_form .x-panel-body, #local_login_form .x-panel-body, #forgot_password_form .x-panel-body {
 	 background-color: #e8e8e8 !important;
 	 border: 1px;
-	 border-color: #777;
+	 border-color: #bbb;
 	 border-style: solid;
-	 margin: 2.5px;
  }
  
  #federated_login_form form, #local_login_form form, #forgot_password_form form {
-	 padding: 2.5px;
+	padding: 15px;
  }
  
- #federatedLoginLink img {
+#federatedLoginLink img {
 	 border: 1.33px; 
 	 border-style: ridge; 
 	 border-radius: 4px; 
-	 padding: 5px; 
 	 margin: 2.5px; 
-	 box-shadow: 0.5px 1.5px 0.25px 0.25px;
- }
- 
- #federatedLoginLink img:hover {
-	 background-color: #0574d4;
+	 box-shadow: 0.25px;
  }
  
  #txt_login_username, #txt_login_password {
@@ -78,4 +72,8 @@
  
  #login_response, #forgot_password_link, #sign_up_link {
 	 margin: 2.5px 0px 2.5px 0px;
+ }
+
+ #btn_sign_in {
+	 margin-right: 15px;
  }
