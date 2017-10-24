@@ -155,17 +155,15 @@ function main()
                 )
             )
         );
-
         if (isset($moduleData['roles'])) {
             $moduleData = $moduleData['roles'];
         }
-
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
             $roleData = isset($moduleData[$role]) ? $moduleData[$role] : array();
             if (array_key_exists('extends', $roleData)) {
                  $roleData = array_merge_recursive($moduleData[$roleData['extends']], $roleData);
             }
-            foreach($sections as $section) {
+            foreach ($sections as $section) {
                 if (isset($roleData[$section])) {
                     $results[$module]['acls'][$role][$section] = $roleData[$section];
                 }
@@ -183,12 +181,10 @@ function main()
                 )
             )
         );
-
         if (isset($realms['realms'])) {
             $realms = $realms['realms'];
         }
-
-        foreach($realms as $realm => $data) {
+        foreach ($realms as $realm => $data) {
             $groupBys = isset($data['group_bys']) ? $data['group_bys'] : null;
             $statistics = isset($data['statistics']) ? $data['statistics'] : null;
             $results[$module]['realms'][$realm] = array(
