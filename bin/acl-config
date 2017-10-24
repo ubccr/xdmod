@@ -1557,21 +1557,21 @@ function verifyAclSetup()
 
     $log->notice("*** Conducting Configuration File Verification Steps...");
 
-    $result = 0;
+    $invalidSetupSections = 0;
 
     // Verify that the config files are valid json
-    $result += verifyJsonSyntax();
+    $invalidSetupSections += ( ! verifyJsonSyntax() ? 1 : 0);
 
     // Verify that the config files are able to be loaded
     // via the 'Config' system.
-    $result += verifyConfigData();
+    $invalidSetupSections += ( ! verifyConfigData() ? 1 : 0);
 
-    if ($result > 0) {
+    if ($invalidSetupSections > 0) {
         $log->err("*** Verification Failed!");
     } else {
         $log->notice("*** All Configuration File Verification Steps Passed!");
     }
-    return $result;
+    return $invalidSetupSections;
 }
 
 /**
@@ -1580,7 +1580,7 @@ function verifyAclSetup()
  * by the result of json_decode being equal to null per:
  * http://php.net/manual/en/function.json-decode.php)
  *
- * @return int 0 if there were no files found with invalid json syntax else 1.
+ * @return boolean true if all files were valid else false.
  **/
 function verifyJsonSyntax()
 {
@@ -1641,10 +1641,10 @@ function verifyJsonSyntax()
     $invalidCount = count($invalid);
     if ($invalidCount > 0) {
         $log->err("[FAIL] $invalidCount invalid files found");
-        return 1;
+        return false;
     } else {
         $log->info("[SUCCESS] all files valid");
-        return 0;
+        return true;
     }
 }
 
@@ -1654,7 +1654,7 @@ function verifyJsonSyntax()
  * the Acl system depends on. If an exception occurs while attempting to
  * retrieve as section then we can assume there is a problem with that section.
  *
- * @return int 0 if all configuration sections were loaded successfully else 1.
+ * @return boolean true if all configuration sections were loaded successfully else false.
  **/
 function verifyConfigData()
 {
@@ -1686,10 +1686,10 @@ function verifyConfigData()
     $invalidCount = count($invalid);
     if ($invalidCount > 0) {
         $log->err("[FAIL] $invalidCount invalid sections found");
-        return 1;
+        return false;
     } else {
         $log->info("[SUCCESS] all sections valid");
-        return 0;
+        return true;
     }
 }
 
