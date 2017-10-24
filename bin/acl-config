@@ -119,8 +119,8 @@ function main()
 
     // Remove the warning to users that this files contents are automatically
     // generated and that they modify it at their own risk.
-    if (isset($modules['WARNING'])) {
-        unset($modules['WARNING']);
+    if (isset($modules['#'])) {
+        unset($modules['#']);
     }
     $moduleHierarchies = array();
     // Hierarchy retrieval
