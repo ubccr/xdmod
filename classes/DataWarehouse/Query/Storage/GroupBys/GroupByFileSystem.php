@@ -34,12 +34,12 @@ class GroupByFileSystem extends GroupBy
         $this->_long_name_field_name = 'name';
         $this->_short_name_field_name = 'name';
         $this->_order_id_field_name = 'name';
-        $this->_table = new Table(
-            $this->_schema,
+        $this->table = new Table(
+            $this->schema,
             'file_system',
             'fs'
         );
-        $this->_info = 'A file system stores data in files';
+        $this->info = 'A file system stores data in files';
     }
 
     public static function getLabel()

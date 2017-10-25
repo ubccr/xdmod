@@ -23,17 +23,17 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
     /**
      * @var \DataWarehouse\Query\Model\Schema;
      */
-    protected $_schema; // @codingStandardsIgnoreLine
+    protected $schema;
 
     /**
      * @var \DataWarehouse\Query\Model\Table
      */
-    protected $_table; // @codingStandardsIgnoreLine
+    protected $table;
 
     /**
      * @var string
      */
-    protected $_info; // @codingStandardsIgnoreLine
+    protected $info;
 
     public function __construct(
         $name,
@@ -51,12 +51,12 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
             $possibleValuesQuery
         );
 
-        $this->_schema = new Schema('modw_storage');
+        $this->schema = new Schema('modw_storage');
     }
 
     public function getInfo()
     {
-        return $this->_info;
+        return $this->info;
     }
 
     public function getDrillTargets($statisticName, $queryClassname)
@@ -95,7 +95,7 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
     ) {
         $orderField = new OrderBy(
             new TableField(
-                $this->_table,
+                $this->table,
                 $this->_order_id_field_name
             ),
             $dir,
@@ -114,9 +114,9 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
         Table $dataTable,
         $multiGroup = false
     ) {
-        $query->addTable($this->_table);
+        $query->addTable($this->table);
 
-        $tableIdField = new TableField($this->_table, $this->_id_field_name);
+        $tableIdField = new TableField($this->table, $this->_id_field_name);
         $dataTableIdField = new TableField($dataTable, $this->_id_field_name);
 
         $query->addWhereCondition(
@@ -128,25 +128,25 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
         );
 
         $idField = new TableField(
-            $this->_table,
+            $this->table,
             $this->_id_field_name,
             $this->getIdColumnName($multiGroup)
         );
 
         $nameField = new TableField(
-            $this->_table,
+            $this->table,
             $this->_long_name_field_name,
             $this->getLongNameColumnName($multiGroup)
         );
 
         $shortnameField = new TableField(
-            $this->_table,
+            $this->table,
             $this->_short_name_field_name,
             $this->getShortNameColumnName($multiGroup)
         );
 
         $orderIdField = new TableField(
-            $this->_table,
+            $this->table,
             $this->_order_id_field_name,
             $this->getOrderIdColumnName($multiGroup)
         );
@@ -168,9 +168,9 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
         $operation,
         $whereConstraint
     ) {
-        $query->addTable($this->_table);
+        $query->addTable($this->table);
 
-        $tableIdField = new TableField($this->_table, $this->_id_field_name);
+        $tableIdField = new TableField($this->table, $this->_id_field_name);
         $dataTableIdField = new TableField($dataTable, $this->_id_field_name);
 
         $query->addWhereCondition(
@@ -210,7 +210,7 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
             sprintf(
                 'SELECT %s AS field_label FROM %s WHERE %s IN (_filter_) ORDER BY %s',
                 $this->_long_name_field_name,
-                $this->_table->getQualifiedName(),
+                $this->table->getQualifiedName(),
                 $this->_id_field_name,
                 $this->_long_name_field_name
             )

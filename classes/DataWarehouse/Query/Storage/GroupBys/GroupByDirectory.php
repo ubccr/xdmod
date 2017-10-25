@@ -34,12 +34,12 @@ class GroupByDirectory extends GroupBy
         $this->_long_name_field_name = 'path';
         $this->_short_name_field_name = 'path';
         $this->_order_id_field_name = 'path';
-        $this->_table = new Table(
-            $this->_schema,
+        $this->table = new Table(
+            $this->schema,
             'directory',
             'dir'
         );
-        $this->_info = 'A directory is a file system structure which contains files and other directories.';
+        $this->info = 'A directory is a file system structure which contains files and other directories.';
     }
 
     public static function getLabel()

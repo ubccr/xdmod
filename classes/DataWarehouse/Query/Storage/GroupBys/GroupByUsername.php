@@ -35,12 +35,12 @@ class GroupByUsername extends GroupBy
         $this->_short_name_field_name = 'username';
         $this->_long_name_field_name = 'username';
         $this->_order_id_field_name = 'username';
-        $this->_table = new Table(
-            $this->_schema,
+        $this->table = new Table(
+            $this->schema,
             'user',
             'u'
         );
-        $this->_info = 'The system username of the user.';
+        $this->info = 'The system username of the user.';
     }
 
     public static function getLabel()
