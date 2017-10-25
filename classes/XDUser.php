@@ -489,11 +489,6 @@ class XDUser
                 $user->_roles[] = $roleSet['abbrev'];
             }
 
-            if ($roleSet['is_primary'] == '1') {
-                $user->_primary_role = \User\aRole::factory($roleSet['description']);
-                $user->_primary_role->configure($user, $roleSet['param_value']);
-            }
-
             if ($roleSet['is_active'] == '1') {
                 $user->_active_role = \User\aRole::factory($roleSet['description']);
                 $user->_active_role->configure($user, $roleSet['param_value']);
