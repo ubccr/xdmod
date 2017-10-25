@@ -385,6 +385,11 @@ class Config implements ArrayAccess
         $isAssocArray = $this->isAssocArray($data);
         $hasMetaData = isset($data[self::META_DATA_PROPERTY]);
         $isArray = is_array($data);
+
+        /* If we have a node that has a meta-data property and it has some
+         * intersection with the filtering meta-data then we want to process
+         * any children it may have for inclusion as well.
+         */
         if ($isAssocArray && $hasMetaData) {
             $intersection = $this->arrayRecursiveIntersect(
                 $data[self::META_DATA_PROPERTY],
@@ -392,11 +397,32 @@ class Config implements ArrayAccess
             );
             $processChildren = !empty($intersection);
         } elseif ($isArray && !$hasMetaData) {
+            /* the other case where we want to possibly process a nodes children
+             * is when it is an array ( perhaps associative ) but definitely
+             * does not have a meta-data property. This allows us to process
+             * data structures that look like:
+             * $data = array(
+             *     'mgr' => array(
+             *         'permitted_modules' => array(
+             *             array( ... added by module 1 ... ),
+             *             array( ... added by module 2 ... )
+             *         ),
+             *         'meta-data' => array( .. meta-data that matches .. )
+             *     )
+             * )
+             * 'mgr' has meta-data so it will be included ( note it's an
+             * associative array ), 'permitted_modules' is not an associative
+             * array but we still want to interrogate / possibly include it's
+             * children. Otherwise we would not have visibility into arrays that
+             * contain data we would like to have filtered.
+             */
             $processChildren = true;
         }
 
         if ($processChildren) {
             foreach ($data as $key => $value) {
+                // we are not interested in the 'meta-data' property so skip it
+                // is found.
                 if ($key === self::META_DATA_PROPERTY) {
                     continue;
                 }
@@ -404,6 +430,16 @@ class Config implements ArrayAccess
                 $isAssocArray = $this->isAssocArray($value);
                 $isArray = is_array($value);
                 $hasMetaData = isset($value[self::META_DATA_PROPERTY]);
+
+                /* If:
+                 *   - the value is an associative array & has meta-data that
+                 *    intersects with the filter
+                 * ...  or ...
+                 *   - the value is an array just not associative
+                 * Then:
+                 *   - we want to inspect the child nodes of value, so send it
+                 *     through the filter.
+                 */
                 if ($isAssocArray && $hasMetaData) {
                     $intersection = $this->arrayRecursiveIntersect(
                         $value[self::META_DATA_PROPERTY],
@@ -415,6 +451,14 @@ class Config implements ArrayAccess
                 } elseif (!$isAssocArray && $isArray) {
                     $results[$key] = $this->filterByMetaData($value, $metaData);
                 } elseif (!$isAssocArray && !$isArray) {
+                    /* This accounts for the data structure:
+                     * $data = array(
+                     *     ...
+                     *     'key' => 'value'
+                     *     ...
+                     * );
+                     *
+                     */
                     $results[$key] = $value;
                 }
             }
@@ -424,7 +468,7 @@ class Config implements ArrayAccess
 
     /**
      * Add the specified metaData to all associative arrays contained within the
-     * parameter $data.
+     * parameter $data. This includes nested associative arrays.
      *
      * @param array $data the data that is going to have it's meta-data
      *                        modified.
@@ -454,12 +498,12 @@ class Config implements ArrayAccess
     }
 
     /**
-     * Recursively process the provided arrays and attempt to find the values that
-     * they have in common.
+     * Recursively process the provided arrays and attempt to find the key /
+     * values that they have in common.
      *
      * @param array $left
      * @param array $right
-     * @return array
+     * @return array of key / values that they have in common.
      */
     protected function arrayRecursiveIntersect(array $left, array $right)
     {
@@ -471,16 +515,38 @@ class Config implements ArrayAccess
             $isAssoc = $this->isAssocArray($value);
             $rightAssoc = $this->isAssocArray($right);
 
+            // If either of the values are associative then just perform the
+            // regular intersection.
             if ($isAssoc || $rightAssoc) {
-                // If either of the values are associative then just perform the
-                // regular intersection.
+
+                // If the right array has a matching key...
                 if (array_key_exists($key, $right)) {
+
+                    // and both values are arrays...
                     if (is_array($value) && is_array($right[$key])) {
+
+                        // attempt to find the intersection between values and if
+                        // there are, include that in the results.
                         $intersect = $this->arrayRecursiveIntersect($value, $right[$key]);
                         if (count($intersect)) {
                             $results[$key] = $intersect;
                         }
                     } else {
+
+                        /* handle the case where the data looks like:
+                         * $left = array(
+                         *   ...
+                         *   'key' => 'value'
+                         *   ...
+                         * );
+                         *
+                         * $right = array(
+                         *   ...
+                         *   'key' => 'value'
+                         *   ...
+                         * );
+                         *
+                         */
                         if ($value === $right[$key]) {
                             $results[$key] = $value;
                         }
@@ -490,7 +556,18 @@ class Config implements ArrayAccess
                 /* If the value is not an array ( and there-by not an associative
                  * array ) AND the right value is an array ( but not an associative
                  * array ) then check for values existence in the right value and if
-                 * found then include value in the results.
+                 * found then include value in the results. This handles data
+                 * that looks like:
+                 * $left = array(
+                 *   'key' => 'value'
+                 * );
+                 * $right = array(
+                 *   'key' => array(
+                 *      'value',
+                 *      'value2',
+                 *      ...
+                 *   )
+                 * );
                  */
                 if (in_array($value, $right)) {
                     $results[] = $value;
