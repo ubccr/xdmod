@@ -75,5 +75,6 @@
  }
 
  #btn_sign_in {
-	 margin-right: 15px;
+	 position: absolute;
+	 right: 32px;
  }
