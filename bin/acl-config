@@ -997,7 +997,7 @@ SQL;
 
         // We throw an Exception so that we do not leave the db in an inconsistent state.
         if ($rolledBack === false) {
-            throw new \Exception("Unable to rollback Acl [$acl] hierarchy records. Database may be left in an inconsistent state.");
+            throw new Exception("Unable to rollback Acl [$acl] hierarchy records. Database may be left in an inconsistent state.");
         }
     }
     $processed = count($hierarchies);
