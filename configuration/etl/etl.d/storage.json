@@ -12,7 +12,8 @@
                     "type": "mysql",
                     "name": "Storage",
                     "config": "datawarehouse",
-                    "schema": "modw_storage"
+                    "schema": "modw_storage",
+                    "create_schema_if_not_exists": true
                 }
             }
         }
