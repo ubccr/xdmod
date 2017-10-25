@@ -393,42 +393,40 @@ SQL;
         // Needed because we have 'IN' clauses.
         $handle = $db->handle();
 
-        // PDO can't handle 'IN' for prepared statements so create some suitable strings
-        // for substitution. ( making sure to quote where appropriate ).
-        $acls = implode(',', array_reduce($user->getAcls(), function ($carry, Acl $item) use ($handle) {
-            $carry [] = $handle->quote($item->getAclId(), PDO::PARAM_INT);
-            return $carry;
-        }, array()));
-
-        $realmNames = implode(',', array_reduce($realms, function ($carry, $item) use ($handle) {
-            $value = null;
-            if ($item instanceof Realm) {
-                $value = $item->getName();
-            } elseif (is_string($item)) {
-                $value = $item;
-            } else {
-                $value = (string)$item;
-            }
-            $carry [] = $handle->quote($value);
-            return $carry;
-        }, array()));
+        $realmNames = implode(
+            ',',
+            array_reduce(
+                $realms,
+                function ($carry, $item) use ($handle) {
+                    $value = null;
+                    if ($item instanceof Realm) {
+                        $value = $item->getName();
+                    } elseif (is_string($item)) {
+                        $value = $item;
+                    } else {
+                        $value = (string)$item;
+                    }
+                    $carry [] = $handle->quote($value);
+                    return $carry;
+                },
+                array()
+            )
+        );
 
         $sql = <<<SQL
 SELECT DISTINCT
   a.name,
-  CASE WHEN agb.enabled = TRUE THEN NULL ELSE CONCAT('group_by_',r.name,'_',gb.name) END AS id,
-  CASE WHEN agb.enabled = TRUE THEN NULL ELSE gb.name END as group_by,
-  CASE WHEN agb.enabled = TRUE THEN NULL ELSE r.display END as realm
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE CONCAT('group_by_', r.name, '_', gb.name) END AS id,
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE gb.name END                                   AS group_by,
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE r.display END                                 AS realm
 FROM acl_group_bys agb
-  JOIN acls a
-    ON a.acl_id = agb.acl_id
-  JOIN group_bys gb
-    ON gb.group_by_id = agb.group_by_id
-  JOIN realms r
-    ON gb.realm_id = r.realm_id
-WHERE agb.acl_id IN ($acls)
-      AND r.name IN ($realmNames)
-ORDER BY a.name
+  JOIN user_acls ua ON agb.acl_id = ua.acl_id
+  JOIN acls a ON a.acl_id = ua.acl_id
+  JOIN group_bys gb ON gb.group_by_id = agb.group_by_id
+  JOIN realms r ON agb.realm_id = r.realm_id
+WHERE
+  ua.user_id = :user_id AND
+  r.name IN ($realmNames);
 SQL;
         $results = array();
 
@@ -436,14 +434,17 @@ SQL;
          * of a users acls / the provided realms in one go we do not need the
          * 'foreach role ... role->getDisabledMenus()' we then take care of
          * formatting the results as the XDUser->getDisabledMenus function
-         * expects by including the group_by name / ordering by group_by name
-         * and constructing an associative array based on said group_by name.
-         * The code in XDUser->getDisabledMenus is still responsible for detecting
-         * whether or not any given disabled menu is present for all other acls.
+         * expects. The code in XDUser->getDisabledMenus is still responsible
+         * for detecting whether or not any given disabled menu is present for
+         * all other acls.
          */
-        $rows = $db->query($sql);
+        $rows = $db->query(
+            $sql,
+            array(
+                ':user_id' => $user->getUserID()
+            )
+        );
 
-        $previousName = null;
         foreach ($rows as $row) {
             if ($row['id'] != null) {
                 $results[] = array(
