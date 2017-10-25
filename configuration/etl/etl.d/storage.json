@@ -22,12 +22,12 @@
         {
             "name": "StorageFileSystemIngestor",
             "description": "Ingests file system data",
-            "definition_file": "storage\/file_system.json",
+            "definition_file": "storage/file_system.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
                     "name": "User storage usage input file",
-                    "path": "storage\/user_usage.json",
+                    "path": "storage/user_usage.json",
                     "filters": [
                         {
                             "type": "external",
@@ -42,12 +42,12 @@
         {
             "name": "StorageUserIngestor",
             "description": "Ingests user data",
-            "definition_file": "storage\/user.json",
+            "definition_file": "storage/user.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
                     "name": "User storage usage input file",
-                    "path": "storage\/user_usage.json",
+                    "path": "storage/user_usage.json",
                     "filters": [
                         {
                             "type": "external",
@@ -62,12 +62,12 @@
         {
             "name": "StorageDirectoryIngestor",
             "description": "Ingests directory data",
-            "definition_file": "storage\/directory.json",
+            "definition_file": "storage/directory.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
                     "name": "User storage usage input file",
-                    "path": "storage\/user_usage.json",
+                    "path": "storage/user_usage.json",
                     "filters": [
                         {
                             "type": "external",
@@ -82,13 +82,13 @@
         {
             "name": "StorageUserUsageIngestor",
             "description": "Ingests user storage usage data",
-            "definition_file": "storage\/user_usage.json",
+            "definition_file": "storage/user_usage.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
                     "name": "User storage usage input file",
-                    "path": "storage\/user_usage.json",
-                    "array_element_schema_path": "storage\/user_usage.schema.json"
+                    "path": "storage/user_usage.json",
+                    "array_element_schema_path": "storage/user_usage.schema.json"
                 }
             }
         },
@@ -98,7 +98,7 @@
             "namespace": "ETL\\Aggregator",
             "class": "SimpleAggregator",
             "options_class": "AggregatorOptions",
-            "definition_file": "storage\/user_usage_by.aggregation.json",
+            "definition_file": "storage/user_usage_by.aggregation.json",
             "table_prefix": "storage_user_usage_by_",
             "aggregation_units": [
                 "day",
