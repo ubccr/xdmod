@@ -268,6 +268,7 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
             }
         });
     }
+
     return {
         text: 'Help',
         tooltip: 'Help',
@@ -1039,7 +1040,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
             xtype: 'button',
             html: '<img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img>',
             id: 'federatedLoginLink',
-            handler: function (b) {
+            handler: function () {
                 document.location = CCR.xdmod.federationLoginLink.url;
             }
         }]
