@@ -21,7 +21,7 @@ build:
         - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-integration.xml
         - cp ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
-        - ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-component.xml.xml
+        - ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-component.xml
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/samlSetup.sh
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
