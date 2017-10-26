@@ -3,6 +3,7 @@
 namespace CCR;
 
 use Xdmod\EmailTemplate;
+use CCR\Log;
 
 class MailWrapper
 {
@@ -61,8 +62,24 @@ class MailWrapper
      */
     public static function sendMail($properties) {
         $mail = MailWrapper::initPHPMailer($properties);
-        if(!$mail->send()){
-            throw new \Exception($mail->ErrorInfo);
+        try {
+            if (!$mail->send()) {
+                throw new \Exception($mail->ErrorInfo);
+            }
+        }
+        catch(\phpmailerException $e){
+            if(!preg_match('/^Could not execute.*sendmail/', $e->getMessage())){
+                throw $e;
+            }
+            Log::factory(
+                'mail-wrapper',
+                array(
+                    'file' => false,
+                    'db' => true,
+                    'mail' => false,
+                    'console' => false
+                )
+            )->err($mail);
         }
     }
 
