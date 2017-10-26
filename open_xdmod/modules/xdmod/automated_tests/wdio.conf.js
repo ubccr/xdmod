@@ -41,7 +41,12 @@ var Chrome = {
 
 var secrets = require('../integration_tests/.secrets.json');
 secrets.url = process.env.TEST_URL ? process.env.TEST_URL : secrets.url;
-
+var excludes = [
+    './test/**/*.page.js'
+];
+if (!process.env.FEDERATED) {
+    excludes.push('./test/specs/xdmod/federatedLogin.js');
+}
 var capabilities = [Chrome];
 var services = ['selenium-standalone'];
 var port = 4444;
@@ -87,10 +92,12 @@ exports.config = {
     ],
 
     // Patterns to exclude.
-    exclude: [
-        // pageObject files should always be excluded
-        './test/**/*.page.js'
-    ],
+    exclude: excludes,
+    suites: {
+        federatedLogin: [
+            './test/specs/xdmod/federatedLogin.js'
+        ]
+    },
     //
     // ============
     // Capabilities
