@@ -18,5 +18,10 @@ fi
 pushd `dirname $0`
 npm set progress=false
 npm install --quiet
-npm test 2> >(grep -v depcrecated >&2)
-npm run test-federated 2> >(grep -v depcrecated >&2)
+
+if [ "$4" = "--federated" ];
+then
+    npm run test-federated 2> >(grep -v depcrecated >&2)
+else
+    npm test 2> >(grep -v depcrecated >&2)
+fi
