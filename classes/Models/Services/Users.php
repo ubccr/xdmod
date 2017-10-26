@@ -54,7 +54,7 @@ SELECT DISTINCT
   u.email_address,
   u.user_type,
   u.account_is_active,
-  ut.acl_type                            AS acl_type,
+  ut.acl_type                            AS role_type,
   CASE WHEN last_session.init_time IS NULL
     THEN '0'
   ELSE last_session.init_time END           last_logged_in
