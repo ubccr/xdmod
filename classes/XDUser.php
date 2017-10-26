@@ -3203,6 +3203,12 @@ SQL;
             throw new \Exception("This user must be saved prior to calling " . __FUNCTION__ . ".");
         }
 
+        // If they haven't provided an organizationId then we can't add an
+        // acl relation to it.
+        if (!isset($organizationId)) {
+            return;
+        }
+
         $acl = Acls::getAclByName($aclName);
 
         if ( null == $acl) {

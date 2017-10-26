@@ -424,7 +424,13 @@ JSON
 
     public function testEnumUserTypesAndRoles()
     {
-        $expected = '{"user_types":[{"id":"1","type":"External","color":"#000000"},{"id":"2","type":"Internal","color":"#0000ff"},{"id":"3","type":"Testing","color":"#008800"},{"id":"4","type":"Demo","color":"#808000"},{"id":"5","type":"Federated","color":"#FFCC00"},{"id":700,"type":"XSEDE","color":"#b914f6"}],"user_roles":[{"description":"Center Director","role_id":"1"},{"description":"Center Staff","role_id":"5"},{"description":"Developer","role_id":"7"},{"description":"Manager","role_id":"0"},{"description":"Principal Investigator","role_id":"4"},{"description":"Public","role_id":"8"},{"description":"User","role_id":"3"}],"success":true}';
+        $expected = implode(
+            '',
+            array(
+                '{"user_types":[{"id":"1","type":"External","color":"#000000"},{"id":"2","type":"Internal","color":"#0000ff"},{"id":"3","type":"Testing","color":"#008800"},{"id":"4","type":"Demo","color":"#808000"},{"id":"5","type":"Federated","color":"#FFCC00"},{"id":700,"type":"XSEDE","color":"#b914f6"}],"user_roles":[{"description":"Center Director","role_id":"1"},{"description":"Center Staff","role_id":"5"},{"description":"Developer","role_id":"7"},{"descript',
+                'ion":"Manager","role_id":"0"},{"description":"Principal Investigator","role_id":"4"},{"description":"Public","role_id":"8"},{"description":"User","role_id":"3"}],"success":true}'
+            )
+        );
 
         $this->helper->authenticateDashboard('admin');
 
@@ -496,7 +502,7 @@ JSON
         $this->helper->logoutDashboard();
     }
 
-    /*public function testCreateUser()
+    public function testCreateUser()
     {
         $this->helper->authenticateDashboard('admin');
 
@@ -507,14 +513,7 @@ JSON
             'last_name' => 'smith',
             'email_address' => 'bsmith@test.com',
             'username' => 'bsmith',
-            'roles' => json_encode(array(
-                'mainRoles' => array('usr'),
-                'primaryRole' => 'usr',
-                'centerDirectorSites' => array(),
-                'primaryCenterDirectorSite' => -1,
-                'centerStaffSites' => array(),
-                'primaryCenterStaffSite' => -1
-            )),
+            'acls' => json_encode(array('usr' => array())),
             'assignment' => 283,
             'institution' => -1,
             'user_type' => 1
@@ -556,12 +555,12 @@ JSON
         }
 
         $this->helper->logoutDashboard();
-    }*/
+    }
 
     /**
      * @depends testCreateUser
      */
-    /*public function testModifyUser()
+    public function testModifyUser()
     {
         $this->helper->authenticateDashboard('admin');
 
@@ -581,14 +580,10 @@ JSON
             'operation' => 'update_user',
             'uid' => $user['id'],
             'email_address' => $user['email_address'],
-            'roles' => json_encode(
+            'acls' => json_encode(
                 array(
-                    'mainRoles' => array('pi', 'usr'),
-                    'primaryRole' => 'usr',
-                    'centerDirectorSites' => array(),
-                    'primaryCenterDirectorSite' => -1,
-                    'centerStaffSites' => array(),
-                    'primaryCenterStaffSite' => -1
+                    'pi' => array(),
+                    'usr' => array()
                 )
             ),
             'assigned_user' => 283,
@@ -618,12 +613,12 @@ JSON
         $this->assertEquals('bsmith', $data['username'], "Expected the 'username' property to be: $expectedUsername Received: " . $data['username']);
         $this->assertEquals($expectedUserType, $data['user_type'], "Expected the 'user_type' property to be $expectedUserType Received: " . $data['user_type']);
         $this->helper->logoutDashboard();
-    }*/
+    }
 
     /**
      * @depends testModifyUser
      */
-    /*public function testDeleteUser()
+    public function testDeleteUser()
     {
         $this->helper->authenticateDashboard('admin');
 
@@ -660,7 +655,7 @@ JSON
         $this->assertEquals($expectedMessage, $data['message'], "Expected the 'message' property to be: $expectedMessage received: ". $data['message']);
 
         $this->helper->logoutDashboard();
-    } */
+    }
 
     public function listUsers($groupFilter = 'all', $roleFilter = 'any', $contextFilter = '')
     {
