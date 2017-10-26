@@ -48,7 +48,7 @@ if ($auth && $auth->isSamlConfigured()) {
     function loadPortal() {
       setTimeout(function(){
         parent.location.href = '/index.php';
-      }, 2000);
+      }, 3000);
     }
   </script>
 </head>
@@ -60,7 +60,7 @@ if ($auth && $auth->isSamlConfigured()) {
                 $message = "There was an error with your account; an administrator has been notified.";
                 break;
             case "INACTIVE":
-                $message = "Your account is not currently active, please contact an administrator.";
+                $message = "Your account is currently inactive, please contact an administrator.";
                 break;
             case "EXISTS":
                 $message = "An account is currently configured with this information, please contact an administrator.";
