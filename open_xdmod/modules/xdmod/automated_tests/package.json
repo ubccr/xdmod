@@ -10,7 +10,7 @@
     "requirements-check": "node check-version.js",
     "postinstall": "npm run requirements-check",
     "test": "wdio wdio.conf.js",
-    "test-sauce": "wdio wdio-sauce.conf.js"
+    "test-federated": "FEDERATED=true npm test -- --spec ./test/specs/xdmod/federatedLogin.js"
   },
   "author": "Ben Plessinger",
   "license": "GPL-3.0",

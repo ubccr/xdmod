@@ -2,8 +2,8 @@
 
 namespace Authentication\SAML;
 
-use CCR\MailWrapper;
 use \Exception;
+use CCR\Log;
 
 class XDSamlAuthentication
 {
@@ -13,9 +13,19 @@ class XDSamlAuthentication
     protected $_samlConfig = null;
     protected $_isConfigured = null;
     protected $_allowLocalAccessViaFederation = true;
+    private $logger = null;
 
     public function __construct()
     {
+        $this->logger = Log::factory(
+            'XDSamlAuthentication',
+            array(
+               'file' => false,
+               'db' => true,
+               'mail' => false,
+               'console' => false
+            )
+        );
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
         try {
             $this->_allowLocalAccessViaFederation = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false: true;
@@ -93,21 +103,15 @@ class XDSamlAuthentication
             } catch (Exception $e) {
                 return "EXISTS";
             }
-      
             $newUser->setUserType(FEDERATED_USER_TYPE);
             try {
                 $newUser->saveUser();
-            } catch(Exception $e) {
-                error_log('User creation failed: ' . $e->getMessage());
-                return false;
-            }
-            try {
-                self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != -2));
-                return $newUser;
             } catch (Exception $e) {
-                error_log("Error notifying " . $newUser->getEmailAddress() . ": " . $e->getMessage());
+                $this->logger->err('User creation failed: ' . $e->getMessage());
                 return false;
             }
+            self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != -2));
+            return $newUser;
         }
         return false;
     }
@@ -142,39 +146,21 @@ class XDSamlAuthentication
     }
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
-        $siteTitle = \xd_utilities\getConfiguration('general', 'title');
-        $userEmail = $user->getEmailAddress();
-
-        $body = "The following person has had an account created on XDMoD:\n\n" .
-        "Person Details ----------------------------------\n\n" .
+        $body =
+        "\n\nPerson Details ----------------------------------\n\n" .
         "\nName:                     " . $user->getFormalName(true) .
-        "\nUserame:                  " . $user->getUsername() .
-        "\nE-Mail:                   " . $userEmail;
+        "\nUsername:                 " . $user->getUsername() .
+        "\nE-Mail:                   " . $user->getEmailAddress();
 
-        if(count($samlAttributes) != 0) {
+        if (count($samlAttributes) != 0) {
             $body = $body . "\n\n" .
                 "Additional SAML Attributes ----------------------------------\n\n" .
                 print_r($samlAttributes, true);
         }
-
         if ($error) {
-            $subject = "[" . $siteTitle . "] Error Creating federated user";
+            $this->logger->err("Error Creating federated user" . $body);
         } else {
-            $subject = "[" . $siteTitle . "] New " . ($linked ? "linked": "unlinked") . " federated user created";
+            $this->logger->notice("New " . ($linked ? "linked": "unlinked") . " federated user created" . $body);
         }
-
-        $properties = array(
-            'body'        => $body,
-            'subject'     => $subject,
-            'toAddress'   => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
-            'fromAddress' => $userEmail,
-            'fromName'    => $user->getFormalName()
-        );
-
-        if ($userEmail != NO_EMAIL_ADDRESS_SET) {
-            $properties['replyAddress'] = \xd_utilities\getConfiguration('mailer', 'sender_email');
-        }
-
-        MailWrapper::sendMail($properties);
     }
 }
