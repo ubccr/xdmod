@@ -9,7 +9,7 @@ class JobSizeWeightedByCPUHours extends \DataWarehouse\Query\Jobs\Statistic
         parent::__construct(
             '
                 COALESCE(
-                    SUM(jf.processors * jf.cpu_time) / SUM(jf.cpu_time),
+                    SUM(jf.processor_count * jf.cpu_time) / SUM(jf.cpu_time),
                     0
                 )
             ',
@@ -28,4 +28,3 @@ class JobSizeWeightedByCPUHours extends \DataWarehouse\Query\Jobs\Statistic
             . " hours}/sum(i =  0 to n){job i cpu hours}";
     }
 }
-

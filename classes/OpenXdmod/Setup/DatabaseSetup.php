@@ -124,6 +124,10 @@ EOT
             $settings[$section . '_user'] = $settings['db_user'];
             $settings[$section . '_pass'] = $settings['db_pass'];
         }
+        $settings['datawarehouse_root_host'] = $settings['db_host'];
+        $settings['datawarehouse_root_port'] = $settings['db_port'];
+        $settings['datawarehouse_root_user'] = $adminUsername;
+        $settings['datawarehouse_root_pass'] = $adminPassword;
 
         $this->saveIniConfig($settings, 'portal_settings');
 

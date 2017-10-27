@@ -12,7 +12,19 @@ class AverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(sum(jf.processors*jf.running_job_count)/sum(jf.running_job_count),0)', 'avg_processors', 'Job Size: Per Job', 'Core Count', 1);
+        parent::__construct(
+            '
+                COALESCE(
+                    SUM(jf.processor_count * jf.running_job_count)
+                    /
+                    SUM(jf.running_job_count)
+                ,0)
+            ',
+            'avg_processors',
+            'Job Size: Per Job',
+            'Core Count',
+            1
+        );
     }
 
     public function getInfo()
