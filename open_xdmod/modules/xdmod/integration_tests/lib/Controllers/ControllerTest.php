@@ -145,6 +145,8 @@ JSON;
         // Set the newly ordered users back into the data structure.
         $expectedJson['response'] = $newUsers;
         $diff = $this->arrayRecursiveDiff($expectedJson, $data);
+        echo "\nExpected: " . json_encode($expectedJson) . "\n";
+        echo "Actual : " . json_encode($data) . "\n";
         echo "Diff: " . json_encode($diff) . "\n";
         $success = true;
         array_walk_recursive(
