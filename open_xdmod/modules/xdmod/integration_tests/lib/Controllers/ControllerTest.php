@@ -63,6 +63,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "email_address": "centerdirector@example.com",
             "user_type": "1",
             "role_type": "User, Center Director",
+            "account_is_active": "1",
             "last_logged_in": "0"
         },
         {
@@ -74,6 +75,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "email_address": "centerstaff@example.com",
             "user_type": "1",
             "role_type": "User, Center Staff",
+            "account_is_active": "1",
             "last_logged_in": "0"
         },
         {
@@ -85,6 +87,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "email_address": "principal@example.com",
             "user_type": "1",
             "role_type": "User, Principal Investigator",
+            "account_is_active": "1",
             "last_logged_in": "0"
         },
         {
@@ -96,6 +99,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "email_address": "public@ccr.xdmod.org",
             "user_type": "2",
             "role_type": "Public User",
+            "account_is_active": "1",
             "last_logged_in": "0"
         },
         {
@@ -107,6 +111,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "email_address": "admin@localhost",
             "user_type": "2",
             "role_type": "Manager",
+            "account_is_active": "1",
             "last_logged_in": "1509029443.7082"
         },
         {
@@ -118,6 +123,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "email_address": "normaluser@example.com",
             "user_type": "1",
             "role_type": "User",
+            "account_is_active": "1",
             "last_logged_in": "0"
         }
     ]
@@ -138,7 +144,6 @@ JSON;
         }
         // Set the newly ordered users back into the data structure.
         $expectedJson['response'] = $newUsers;
-
         $diff = $this->arrayRecursiveDiff($expectedJson, $data);
         $success = true;
         array_walk_recursive(
@@ -150,9 +155,7 @@ JSON;
             },
             'last_logged_in'
         );
-        if ($success === false) {
-            echo "Diff: " . json_encode($diff) . "\n";
-        }
+
         $this->assertTrue($success, "There were other differences besides the expected 'last_logged_in'");
 
         $this->helper->logoutDashboard();
