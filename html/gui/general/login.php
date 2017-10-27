@@ -50,6 +50,10 @@ if ($auth && $auth->isSamlConfigured()) {
         parent.location.href = '/index.php';
       }, 3000);
     }
+
+    function contactAdmin() {
+        parent.location.href = '/index.php#main_tab_panel:tools:contact_us'';
+    }
   </script>
 </head>
     <?php
@@ -72,11 +76,13 @@ if ($auth && $auth->isSamlConfigured()) {
                 $message = "An unknown error has occured.";
         }
     ?>
-      <body class="error_message" onload="loadPortal()">
+      <body class="error_message">
         <p>
             <?php
             echo $message;
             ?>
+            <br>
+            <a href="javascript:contactAdmin()">Contact a system administrator.</a>
         </p>
       </body>
       </html>

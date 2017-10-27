@@ -442,14 +442,20 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
         //Conditionally present the profile if an e-mail address has not been set
         xsedeProfilePrompt();
 
-          // The login dialog is presented if the user is not logged in
-          // and the location requests an unavailable tab.
-          if (CCR.xdmod.publicUser && token.tab) {
-              var match = tabPanel.find('id', token.tab);
-              if (match.length === 0) {
-                  CCR.xdmod.ui.actionLogin();
-              }
-          }
+        // The login dialog is presented if the user is not logged in
+        // and the location requests an unavailable tab.
+        if (CCR.xdmod.publicUser && token.tab) {
+            if (token.tab === 'tools') {
+                if (token.subtab === 'contact_us') {
+                    new XDMoD.ContactDialog().show();
+                }
+            } else {
+                var match = tabPanel.find('id', token.tab);
+                if (match.length === 0) {
+                    CCR.xdmod.ui.actionLogin();
+                }
+            }
+        }
 
         var hasToken = token && token.content && token.content.length > 2;
         var hasTabToken = tabToken && tabToken.length > 2;
