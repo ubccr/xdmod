@@ -1412,12 +1412,21 @@ SQL;
             ':user_id' => $this->_id,
         );
 
+        $role_query_6 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
+            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
+            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
+            "AND r.description = 'Public'";
+        $role_query_6_params = array(
+            ':user_id' => $this->_id,
+        );
+
         $available_roles = array_merge(
             $this->_pdo->query($role_query_1, $role_query_1_params),
             $this->_pdo->query($role_query_2, $role_query_2_params),
             $this->_pdo->query($role_query_3, $role_query_3_params),
             $this->_pdo->query($role_query_4, $role_query_4_params),
-            $this->_pdo->query($role_query_5, $role_query_5_params)
+            $this->_pdo->query($role_query_5, $role_query_5_params),
+            $this->_pdo->query($role_query_6, $role_query_6_params)
         );
 
         return $available_roles;
