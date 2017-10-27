@@ -238,19 +238,20 @@ class EtlConfiguration extends Configuration
         }  // foreach ( $etlSectionNames as $typeName )
 
         // --------------------------------------------------------------------------------
-        // Register the global default endpoints but note that individual actions may still define
-        // their own. We should not verify these unless they are actually used by an enabled action.
+        // Register the global utility endpoint in the main ETL configuration file because it may be
+        // needed by the etl overseer script to look up resource ids from resource codes. We do not
+        // register other global endpoints because these should only be registered if an enabled
+        // action needs them.
 
         $this->endpoints = array();
 
-        if ( isset($this->localDefaults->global->endpoints) ) {
-            foreach ( $this->localDefaults->global->endpoints as $name => $endpointConfig ) {
-                try {
-                    $endpoint = $this->addDataEndpoint($endpointConfig);
-                    $this->globalEndpoints[$name] = $endpoint->getKey();
-                } catch (Exception $e) {
-                    $this->logAndThrowException("Error registering default endpoint '$name': " . $e->getMessage());
-                }
+        if ( ! $this->isLocalConfig && isset($this->localDefaults->global->endpoints->utility) ) {
+            $name = 'utility';
+            try {
+                $endpoint = $this->addDataEndpoint($this->localDefaults->global->endpoints->utility);
+                $this->globalEndpoints[$name] = $endpoint->getKey();
+            } catch (Exception $e) {
+                $this->logAndThrowException("Error registering default endpoint '$name': " . $e->getMessage());
             }
         }  // if ( isset(($this->localDefaults->global->endpoints) )
 
