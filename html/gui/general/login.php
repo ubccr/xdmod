@@ -52,7 +52,7 @@ if ($auth && $auth->isSamlConfigured()) {
     }
 
     function contactAdmin() {
-        parent.location.href = '/index.php#main_tab_panel:tools:contact_us'';
+        parent.location.href = '/index.php#main_tab_panel:tools:contact_us';
     }
   </script>
 </head>
