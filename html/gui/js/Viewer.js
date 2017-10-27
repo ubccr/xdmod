@@ -444,6 +444,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
 
         // The login dialog is presented if the user is not logged in
         // and the location requests an unavailable tab.
+        // eslint-disable-next-line indent
         if (CCR.xdmod.publicUser && token.tab) {
             if (token.tab === 'tools') {
                 if (token.subtab === 'contact_us') {
