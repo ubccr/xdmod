@@ -19,7 +19,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
     public function testEnumExistingUsers()
     {
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $params = array(
             'operation' => 'enum_existing_users',
@@ -159,7 +159,7 @@ JSON;
     {
         $expected = '{"success":true,"status":"success","user_types":[{"id":"4","type":"Demo"},{"id":"1","type":"External"},{"id":"5","type":"Federated"},{"id":"2","type":"Internal"},{"id":"3","type":"Testing"}]}';
 
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $data = array(
             'operation' => 'enum_user_types'
@@ -241,7 +241,7 @@ JSON
         , true
         );
 
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $data = array(
             'operation' => 'enum_roles'
@@ -277,7 +277,7 @@ JSON
      */
     public function testListUsers($group, $expected)
     {
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $data = array(
             'operation' => 'list_users',
@@ -432,7 +432,7 @@ JSON
             )
         );
 
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $data = array(
             'operation' => 'enum_user_types_and_roles'
@@ -465,7 +465,7 @@ JSON
      */
     public function testSabUserEnumTgUsers($expected)
     {
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $data = array(
             'start' => 0,
@@ -504,7 +504,7 @@ JSON
 
     public function testCreateUser()
     {
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $data = array(
             'operation' => 'create_user',
@@ -562,7 +562,7 @@ JSON
      */
     public function testModifyUser()
     {
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $users = $this->listUsers();
 
@@ -620,7 +620,7 @@ JSON
      */
     public function testDeleteUser()
     {
-        $this->helper->authenticateDashboard('admin');
+        $this->helper->authenticateDashboard('mgr');
 
         $users = $this->listUsers();
         $user = array_values(

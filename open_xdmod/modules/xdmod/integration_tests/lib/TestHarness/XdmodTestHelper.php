@@ -142,7 +142,7 @@ class XdmodTestHelper
         $this->userrole = $userrole;
         $this->setauthvariables(null);
         $data = array(
-            'xdmod_username' => $userrole,
+            'xdmod_username' => $this->config['role'][$userrole]['username'],
             'xdmod_password' => $this->config['role'][$userrole]['password']
         );
         $authresult = $this->post("internal_dashboard/user_check.php", null, $data);
