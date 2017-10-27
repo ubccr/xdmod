@@ -150,6 +150,9 @@ JSON;
             },
             'last_logged_in'
         );
+        if ($success === false) {
+            echo "Diff: " . json_encode($diff) . "\n";
+        }
         $this->assertTrue($success, "There were other differences besides the expected 'last_logged_in'");
 
         $this->helper->logoutDashboard();
