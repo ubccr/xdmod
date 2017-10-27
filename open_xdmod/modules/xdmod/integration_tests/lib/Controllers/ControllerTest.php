@@ -131,7 +131,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 JSON;
 
         $expectedJson = json_decode($expected, true);
-
         $this->assertEquals($expectedJson['success'], $data['success']);
         $this->assertEquals($expectedJson['count'], $data['count']);
 
@@ -143,17 +142,17 @@ JSON;
             $entryExists = $this->entryExists(
                 $actualUsers,
                 function ($key, $value) use ($expectedUser) {
-                    if ($value['id'] === $expectedUser['id']) {
+                    if ($value['username'] === $expectedUser['username']) {
                         $success = true;
                         $diff = array_diff_assoc($expectedUser, $value);
                         array_walk_recursive(
                             $diff,
-                            function ($value, $index, $property) use (&$success) {
-                                if ($index !== $property) {
+                            function ($value, $index, $properties) use (&$success) {
+                                if (!in_array($index, $properties)) {
                                     $success = false;
                                 }
                             },
-                            'last_logged_in'
+                            array('last_logged_in', 'id', 'email_address')
                         );
                         return $success;
                     }
@@ -161,8 +160,6 @@ JSON;
                 }
             );
             if (!$entryExists) {
-                echo "Tried to find: \n\t" . json_encode($expectedUser) . "\n";
-                echo "Actual: " . json_encode($actual) . "\n";
                 $allFound = false;
                 break;
             }
