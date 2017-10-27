@@ -76,7 +76,7 @@ FROM Users u
   LEFT JOIN (
               SELECT
                 ua.user_id,
-                GROUP_CONCAT(a.display SEPARATOR ', ') acl_type
+                GROUP_CONCAT(a.display ORDER BY a.acl_id SEPARATOR ', ') acl_type
               FROM moddb.user_acls ua
                 JOIN  moddb.acls a
                   ON a.acl_id = ua.acl_id

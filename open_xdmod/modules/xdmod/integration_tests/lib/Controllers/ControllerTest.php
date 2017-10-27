@@ -131,35 +131,44 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 JSON;
 
         $expectedJson = json_decode($expected, true);
-        $users = $expectedJson['response'];
-        uksort(
-            $users,
-            function ($leftIndex, $rightIndex) use ($users) {
-                return $users[$leftIndex]['id'] - $users[$rightIndex]['id'];
-            }
-        );
-        $newUsers = array();
-        foreach($users as $key => $value) {
-            $newUsers[] = $value;
-        }
-        // Set the newly ordered users back into the data structure.
-        $expectedJson['response'] = $newUsers;
-        $diff = $this->arrayRecursiveDiff($expectedJson, $data);
-        echo "\nExpected: " . json_encode($expectedJson) . "\n";
-        echo "Actual : " . json_encode($data) . "\n";
-        echo "Diff: " . json_encode($diff) . "\n";
-        $success = true;
-        array_walk_recursive(
-            $diff,
-            function ($value, $index, $property) use (&$success) {
-                if ($index !== $property) {
-                    $success = false;
-                }
-            },
-            'last_logged_in'
-        );
 
-        $this->assertTrue($success, "There were other differences besides the expected 'last_logged_in'");
+        $this->assertEquals($expectedJson['success'], $data['success']);
+        $this->assertEquals($expectedJson['count'], $data['count']);
+
+        $expectedUsers = $expectedJson['response'];
+        $actualUsers = $data['response'];
+
+        $allFound = true;
+        foreach ($expectedUsers as $key => $expectedUser) {
+            $entryExists = $this->entryExists(
+                $actualUsers,
+                function ($key, $value) use ($expectedUser) {
+                    if ($value['id'] === $expectedUser['id']) {
+                        $success = true;
+                        $diff = array_diff_assoc($expectedUser, $value);
+                        array_walk_recursive(
+                            $diff,
+                            function ($value, $index, $property) use (&$success) {
+                                if ($index !== $property) {
+                                    $success = false;
+                                }
+                            },
+                            'last_logged_in'
+                        );
+                        return $success;
+                    }
+                    return false;
+                }
+            );
+            if (!$entryExists) {
+                echo "Tried to find: \n\t" . json_encode($expectedUser) . "\n";
+                echo "Actual: " . json_encode($actual) . "\n";
+                $allFound = false;
+                break;
+            }
+        }
+
+        $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in'");
 
         $this->helper->logoutDashboard();
     }
@@ -186,7 +195,7 @@ JSON;
         $this->assertArrayHasKey('status', $data, "Expected the returned data structure to have a 'status' property.");
         $this->assertArrayHasKey('user_types', $data, "Expected the returned data structure to have a 'user_types' property.");
 
-        $this->assertEquals(true, $data['success'], "Expected the 'success' property to be true, found: ". $data['success']);
+        $this->assertEquals(true, $data['success'], "Expected the 'success' property to be true, found: " . $data['success']);
         $this->assertEquals('success', $data['status'], "Expected the 'status' property to be 'success', found: " . $data['status']);
         $this->assertTrue(count($data['user_types']) > 0, "Expected there to be more than 0 'user_types' returned.");
 
@@ -247,7 +256,7 @@ JSON;
     ]
 }
 JSON
-        , true
+            , true
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -281,7 +290,7 @@ JSON
 
     /**
      * @dataProvider listUsersGroupProvider
-     * @param int   $group
+     * @param int $group
      * @param array $expected
      */
     public function testListUsers($group, $expected)
@@ -309,7 +318,7 @@ JSON
             }
         );
         $newUsers = array();
-        foreach($users as $key => $value) {
+        foreach ($users as $key => $value) {
             $newUsers[] = $value;
         }
         // Set the newly ordered users back into the data structure.
@@ -483,7 +492,7 @@ JSON
             'pi_only' => 'n',
             'search_mode' => 'formal_name',
             'userManagement' => 'y',
-            'dashboard_mode'=> 1,
+            'dashboard_mode' => 1,
             'query' => ''
         );
 
@@ -661,7 +670,7 @@ JSON
         $expectedMessage = 'User <b>bsmith</b> deleted from the portal';
 
         $this->assertTrue($data['success'], "Expected the 'success' property to be: true Received: " . $data['success']);
-        $this->assertEquals($expectedMessage, $data['message'], "Expected the 'message' property to be: $expectedMessage received: ". $data['message']);
+        $this->assertEquals($expectedMessage, $data['message'], "Expected the 'message' property to be: $expectedMessage received: " . $data['message']);
 
         $this->helper->logoutDashboard();
     }
@@ -670,7 +679,7 @@ JSON
     {
         $data = array(
             'group_filter' => $groupFilter,
-            'role_filter'=> $roleFilter,
+            'role_filter' => $roleFilter,
             'context_filter' => $contextFilter,
             'operation' => 'enum_existing_users'
         );
@@ -690,7 +699,6 @@ JSON
 
         return $data['response'];
     }
-
 
 
     public function arrayRecursiveDiff($aArray1, $aArray2)
@@ -2234,5 +2242,16 @@ JSON
                 )
             )
         );
+    }
+
+    protected function entryExists(array $source, callable $predicate)
+    {
+        foreach ($source as $key => $value) {
+            $found = $predicate($key, $value);
+            if ($found === true) {
+                return true;
+            }
+        }
+        return false;
     }
 }
