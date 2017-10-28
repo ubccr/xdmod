@@ -3,10 +3,8 @@ describe('Federated Login', () => {
         browser.url('/');
         browser.waitForInvisible('.ext-el-mask-msg');
         browser.waitAndClick('a[href*=actionLogin]');
-        $('.x-window-header-text=Welcome To XDMoD').waitForVisible(20000);
-        $('#wnd_login iframe').waitForVisible(20000);
-        browser.frame($('#wnd_login iframe').value);
-        browser.waitAndClick('a[href*="as_login"]');
+        browser.waitForVisible('#federatedLoginLink');
+        browser.waitAndClick('#federatedLoginLink');
     });
     it('Should goto the federated login page and login', () => {
         browser.waitForExist('form[action="/sso"]');
