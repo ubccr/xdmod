@@ -5,7 +5,9 @@
 
 namespace OpenXdmod\Setup;
 
+use TimePeriodGenerator;
 use CCR\DB\MySQLHelper;
+use CCR\DB;
 
 /**
  * Database setup.
@@ -184,6 +186,17 @@ EOT
             throw new \Exception("$command returned $return_value, stdout:  stderr: $err");
         }
 
+        $aggregationUnits = array(
+            'day',
+            'month',
+            'quarter',
+            'year'
+        );
+
+        foreach ($aggregationUnits as $aggUnit) {
+            $tpg = TimePeriodGenerator::getGeneratorForUnit($aggUnit);
+            $tpg->generateMainTable(DB::factory('datawarehouse'), new \DateTime('2000-01-01'), new \DateTime('2038-01-18'));
+        }
         /**
          *  ETLv2 database bootstrap end
          */
