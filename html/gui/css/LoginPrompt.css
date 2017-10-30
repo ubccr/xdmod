@@ -78,3 +78,9 @@
 	 position: absolute;
 	 right: 15px;
  }
+
+ #assistancePrompt {
+	width: 100% !important;
+	text-align: right !important;
+	left: 0 !important;
+}
