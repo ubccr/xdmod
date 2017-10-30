@@ -64,14 +64,16 @@ $ acl-import
 
 Copy data to `/etc/xdmod/etl/etl_data.d/storage/user_usage.json`.
 
-NOTE: The thresholds and usage numbers are all measured in bytes.
+NOTE: The thresholds and usage numbers are all measured in bytes.  Directory
+names are currently limited to 255 characters.
 
 ```json
 [
     {
         "file_system": "nfs",
+        "directory": "/home",
         "username": "jdoe",
-        "dt": "2017-01-01T00:00:00+04:00",
+        "dt": "2017-01-01T00:00:00",
         "soft_threshold": 1000000,
         "hard_threshold": 1200000,
         "file_count": 10000,
