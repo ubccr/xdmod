@@ -52,7 +52,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $expected = <<<JSON
 {
     "success": true,
-    "count": 6,
+    "count": 5,
     "response": [
         {
             "formal_name": "Reed Bunting",
@@ -87,18 +87,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "email_address": "principal@example.com",
             "user_type": "1",
             "role_type": "User, Principal Investigator",
-            "account_is_active": "1",
-            "last_logged_in": "0"
-        },
-        {
-            "formal_name": "Public User",
-            "id": "1",
-            "username": "Public User",
-            "first_name": "Public",
-            "last_name": "User",
-            "email_address": "public@ccr.xdmod.org",
-            "user_type": "2",
-            "role_type": "Public User",
             "account_is_active": "1",
             "last_logged_in": "0"
         },
@@ -232,13 +220,6 @@ JSON;
         {
             "acl": "Principal Investigator",
             "acl_id": "pi",
-            "include": false,
-            "primary": false,
-            "requires_center": false
-        },
-        {
-            "acl": "Public User",
-            "acl_id": "pub",
             "include": false,
             "primary": false,
             "requires_center": false
@@ -427,14 +408,6 @@ JSON
     "status": "success",
     "users": [
         {
-            "id": "1",
-            "username": "Public User",
-            "first_name": "Public",
-            "last_name": "User",
-            "account_is_active": "1",
-            "last_logged_in": 0
-        },
-        {
             "id": "2",
             "username": "admin",
             "first_name": "Admin",
@@ -476,7 +449,7 @@ JSON
             '',
             array(
                 '{"user_types":[{"id":"1","type":"External","color":"#000000"},{"id":"2","type":"Internal","color":"#0000ff"},{"id":"3","type":"Testing","color":"#008800"},{"id":"4","type":"Demo","color":"#808000"},{"id":"5","type":"Federated","color":"#FFCC00"},{"id":700,"type":"XSEDE","color":"#b914f6"}],"user_roles":[{"description":"Center Director","role_id":"1"},{"description":"Center Staff","role_id":"5"},{"description":"Developer","role_id":"7"},{"descript',
-                'ion":"Manager","role_id":"0"},{"description":"Principal Investigator","role_id":"4"},{"description":"Public","role_id":"8"},{"description":"User","role_id":"3"}],"success":true}'
+                'ion":"Manager","role_id":"0"},{"description":"Principal Investigator","role_id":"4"},{"description":"User","role_id":"3"}],"success":true}'
             )
         );
 
