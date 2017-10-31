@@ -16,14 +16,16 @@ catch(Exception $e){
 foreach($roles as $currentRole) {
     // requiresCenter can only be true iff the current install supports
     // multiple service providers.
-    $requiresCenter = $currentRole['requires_center'] && $multipleServiceProviders;
-    $roleEntries[] = array(
-       'acl' => $currentRole['display'],
-       'acl_id' => $currentRole['name'],
-       'include' => false,
-       'primary' => false,
-       'requires_center' => $requiresCenter
-    );
+    if ($currentRole['name'] !== 'pub') {
+        $requiresCenter = $currentRole['requires_center'] && $multipleServiceProviders;
+        $roleEntries[] = array(
+            'acl' => $currentRole['display'],
+            'acl_id' => $currentRole['name'],
+            'include' => false,
+            'primary' => false,
+            'requires_center' => $requiresCenter
+        );
+    }
 }//foreach
 
 // -----------------------------

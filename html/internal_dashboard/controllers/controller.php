@@ -99,10 +99,16 @@ switch($operation) {
      $context_filter = isset($_REQUEST['context_filter']) ? $_REQUEST['context_filter'] : '';
 
      $results = Users::getUsers($group_filter, $role_filter, $context_filter);
+     $filtered = array();
+     foreach($results as $user) {
+         if ($user['username'] !== 'Public User') {
+             $filtered[] = $user;
+         }
+     }
 
      $response['success'] = true;
-     $response['count'] = count($results);
-     $response['response'] = $results;
+     $response['count'] = count($filtered);
+     $response['response'] = $filtered;
 
      break;
 
@@ -129,7 +135,7 @@ switch($operation) {
 
      $response['user_types'] = $results;
 
-     $query = "SELECT description, role_id FROM moddb.Roles ORDER BY description";
+     $query = "SELECT description, role_id FROM moddb.Roles WHERE abbrev != 'pub' ORDER BY description";
 
      $results = $pdo->query($query);
 
