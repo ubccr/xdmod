@@ -48,18 +48,10 @@ class LoginPage {
                 $('a[href*=actionLogin]').click();
             });
             it('Should Login', function doLogin() {
-                $('.x-window-header-text=Welcome To XDMoD').waitForVisible(20000);
-                $('#wnd_login iframe').waitForVisible(20000);
-                browser.frame($('#wnd_login iframe').value);
-                $('#txt_login_username input').setValue(username);
-                $('#txt_login_password input').setValue(password);
-                $('#btn_sign_in .x-btn-mc').click();
-
-                // Per: http://webdriver.io/api/protocol/frame.html#Usage
-                // Resetting the server to the page's default content
-                // This was causing issues with running the tests under
-                // Ubuntu 16.04:Firefox
-                browser.frame();
+                browser.waitForVisible('#btn_sign_in');
+                $('#txt_login_username').setValue(username);
+                $('#txt_login_password').setValue(password);
+                browser.waitAndClick('#btn_sign_in');
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForVisible(60000);

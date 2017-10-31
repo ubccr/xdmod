@@ -7,11 +7,32 @@ use CCR\Log;
 
 class XDSamlAuthentication
 {
+    /**
+     * The selected auth source
+     *
+     * @var \SimpleSAML_Auth_Simple
+     */
     protected $_as = null;
 
+    /**
+     * Enumerated potential auth sources
+     *
+     * @var array
+     */
     protected $_sources = null;
-    protected $_samlConfig = null;
-    protected $_isConfigured = null;
+
+    /**
+     * Whether or not SAML is configured. Defaults to false.
+     *
+     * @var boolean
+     */
+    protected $_isConfigured = false;
+
+    /**
+     * Whether or not we allow federated users local access. Defaults to true.
+     *
+     * @var boolean
+     */
     protected $_allowLocalAccessViaFederation = true;
     private $logger = null;
 
@@ -45,16 +66,22 @@ class XDSamlAuthentication
         }
     }
 
+    /**
+     * Tells us whether or not we have properly set up SAML authentication sources.
+     *
+     * @return boolean true if we have 1 or more auth sources. false otherwise
+     */
     public function isSamlConfigured()
     {
-        //TODO: Make this more robust by taking into account if the IDP MetaData does not exist.
-        // look at getLoginLink for details on getting idp info
-        if (is_null($this->_isConfigured)) {
-            $this->_isConfigured = count($this->_sources) > 0 ? true : false;
-        }
+        $this->_isConfigured = count($this->_sources) > 0 ? true : false;
         return $this->_isConfigured;
     }
 
+    /**
+     * Attempts to find a valid XDMoD user associated with the attributes we receive from SAML
+     *
+     * @return mixed a valid XDMoD user if we have one, false otherwise
+     */
     public function getXdmodAccount()
     {
         $samlAttrs = $this->_as->getAttributes();
@@ -116,7 +143,15 @@ class XDSamlAuthentication
         return false;
     }
 
-    public function getLoginLink()
+    /**
+     * Retrieves the login url we want to use with this authentication provider.
+     *
+     * @param string $returnTo the URI to redirect to after auth. default is null.
+     *
+     * @return mixed An array containing a login link + redirect, the name of the organization (eg. Twitter),
+     * and an icon (eg. A logo with the Twitter icon + 'Sign in with Twitter' ). false if none found.
+     */
+    public function getLoginLink($returnTo = null)
     {
         if ($this->isSamlConfigured()) {
             $idpAuth = \SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler()->getList();
@@ -136,7 +171,7 @@ class XDSamlAuthentication
                 );
             }
             return array(
-                    'url' => $this->_as->getLoginUrl(),
+                    'url' => $this->_as->getLoginUrl($returnTo),
                     'organization' => $orgDisplay,
                     'icon' => $icon
                 );
@@ -144,6 +179,15 @@ class XDSamlAuthentication
             return false;
         }
     }
+
+    /**
+     * Sends an email notifying XDMoD admin of new account.
+     *
+     * @param \XDUser $user The newly minted XDMoD user
+     * @param array $samlAttributes SAML attributes associated with this user
+     * @param boolean $linked whether federated user is linked to this account
+     * @param boolean $error whether or not we had issues creating federated user
+     */
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
         $body =
