@@ -187,12 +187,14 @@ SQL;
         $sql = <<<SQL
 SELECT
   a.*,
-  INSTR(aclt.name, 'requires_center') > 0 AS requires_center
+  CASE WHEN req.acl_id IS NULL THEN FALSE
+    ELSE TRUE END requires_center
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
-  JOIN acl_types aclt
-    ON aclt.acl_type_id = a.acl_type_id
+  LEFT JOIN (
+    SELECT DISTINCT acl_id FROM acl_group_bys WHERE required = true
+    ) req ON req.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
         return $db->query($sql, array('user_id' => $userId));
@@ -445,7 +447,15 @@ SQL;
             )
         );
 
+        $previousName = null;
         foreach ($rows as $row) {
+            $name = $row['name'];
+            if ($name != $previousName) {
+                $previousName = $name;
+            }
+            if (!isset($results[$name])) {
+                $results[$name] = array();
+            }
             if ($row['id'] != null) {
                 $results[] = array(
                     'id' => $row['id'],

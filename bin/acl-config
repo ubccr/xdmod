@@ -106,7 +106,7 @@ function main()
     $blacklist = array('default');
 
     // the sections of roles.json that we want to process.
-    $sections = array('permitted_modules', 'query_descripters', 'display', 'type', 'hierarchies');
+    $sections = array('permitted_modules', 'query_descripters', 'display', 'type', 'hierarchies', 'requires');
 
     // the ultimate destination for the parsed information from
     // roles/datawarehouse
@@ -680,6 +680,7 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls)
         $hierarchies = isset($aclData['hierarchies'])
                      ? $aclData['hierarchies']
                      : null;
+        $required = isset($aclData['requires']) ? $aclData['requires'] : array();
 
         processAcl($db, $module, $acl, $display, $type, $hierarchies);
 
@@ -692,7 +693,7 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls)
 
         if (null !== $queryDescriptors && count($queryDescriptors) > 0) {
             $log->info("Processing Query Descriptors for Acl [$acl]");
-            processQueryDescriptors($db, $module, $acl, $realms, $queryDescriptors);
+            processQueryDescriptors($db, $module, $acl, $required, $realms, $queryDescriptors);
         } elseif (null === $queryDescriptors) {
             $log->info("Acl $acl has no query descriptors to process.");
         }
@@ -1177,6 +1178,8 @@ SQL;
  *                                    query descriptors with.
  * @param string    $acl              the name of the acl to associate these
  *                                    query
+ * @param array     $aclRequired      an array of optional group_bys that this
+ *                                    acl requires.
  * @param array     $realms           an array of realm names to validate
  *                                    'realm' values found in the
  *                                    queryDescriptors array.
@@ -1187,7 +1190,7 @@ SQL;
  *
  * @return void
  **/
-function processQueryDescriptors(iDatabase $db, $module, $acl, array $realms, array $queryDescriptors)
+function processQueryDescriptors(iDatabase $db, $module, $acl, array $aclRequired, array $realms, array $queryDescriptors)
 {
     global $dryRun, $log;
 
@@ -1202,7 +1205,7 @@ function processQueryDescriptors(iDatabase $db, $module, $acl, array $realms, ar
      *     :statistic_name - string
      **/
     $query = <<<SQL
-INSERT INTO acl_group_bys(realm_id, acl_id, group_by_id, statistic_id, visible, enabled)
+INSERT INTO acl_group_bys(realm_id, acl_id, group_by_id, statistic_id, visible, enabled, required)
 SELECT inc.*
 FROM (
     SELECT
@@ -1211,7 +1214,8 @@ FROM (
         gb.group_by_id AS group_by_id,
         s.statistic_id AS statistic_id,
         :visible       AS visible,
-        :enabled       AS enabled
+        :enabled       AS enabled,
+        :required      AS required
     FROM acls a, group_bys gb, statistics s, modules m, realms r
     WHERE BINARY m.name       = BINARY :module_name    AND
           BINARY r.name       = BINARY :realm_name     AND
@@ -1267,6 +1271,7 @@ SQL;
             $visible = isset($statistic['visible']) ? $statistic['visible'] : null;
 
             $enabled = null !== $disable ? !$disable : true;
+            $required = in_array($groupBy, $aclRequired);
 
             if ($visible === null && $hide !== null) {
                 $visible = !$hide;
@@ -1285,7 +1290,8 @@ SQL;
                 ':group_by_name' => $groupBy,
                 ':statistic_name' => $statisticName,
                 ':visible' => $visible,
-                ':enabled' => $enabled
+                ':enabled' => $enabled,
+                ':required' => $required
             );
 
             $log->debug(json_encode($params));

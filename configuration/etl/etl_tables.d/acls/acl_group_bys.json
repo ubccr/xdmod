@@ -41,6 +41,12 @@
         "type": "tinyint(1)",
         "nullable": false,
         "default": true
+      },
+      {
+        "name": "required",
+        "type": "tinyint(1)",
+        "nullable": false,
+        "default": false
       }
     ],
     "indexes": [
