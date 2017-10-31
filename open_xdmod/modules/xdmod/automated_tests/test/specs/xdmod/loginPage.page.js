@@ -48,7 +48,7 @@ class LoginPage {
                 $('a[href*=actionLogin]').click();
             });
             it('Should Login', function doLogin() {
-                browser.waitForVisible('#txt_login_username');
+                browser.waitForVisible('#btn_sign_in');
                 $('#txt_login_username').setValue(username);
                 $('#txt_login_password').setValue(password);
                 browser.waitAndClick('#btn_sign_in');
