@@ -275,11 +275,38 @@ JSON
 
         $this->assertTrue(count($data['acls']) > 0, "Expected the 'acls' property to have 1 or more values.");
 
-        $diff = $this->arrayRecursiveDiff($data, $expected);
-        $this->assertTrue(
-            count($diff) === 0,
-            "There were differences in between the actual data and the expected. \nExpected: " . json_encode($expected) . "\nActual: " . json_encode($data)
-        );
+        $expectedAcls = $expected['acls'];
+        $actualAcls = $data['acls'];
+
+        $allFound = true;
+        foreach ($expectedAcls as $key => $expectedAcl) {
+            $entryExists = $this->entryExists(
+                $actualAcls,
+                function ($key, $value) use ($expectedAcl) {
+                    if ($value['acl_id'] === $expectedAcl['acl_id']) {
+                        $success = true;
+                        $diff = array_diff_assoc($expectedAcl, $value);
+                        array_walk_recursive(
+                            $diff,
+                            function ($value, $index, $properties) use (&$success) {
+                                if (!in_array($index, $properties)) {
+                                    $success = false;
+                                }
+                            },
+                            array('acl_id')
+                        );
+                        return $success;
+                    }
+                    return false;
+                }
+            );
+            if (!$entryExists) {
+                $allFound = false;
+                break;
+            }
+        }
+
+        $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in'");
 
         $this->helper->logoutDashboard();
 
@@ -307,32 +334,38 @@ JSON
         $data = $response[0];
 
         // Retrieve the users value and ensure that it is sorted in the correct order.
-        $users = $data['users'];
-        uksort(
-            $users,
-            function ($leftIndex, $rightIndex) use ($users) {
-                return $users[$leftIndex]['id'] - $users[$rightIndex]['id'];
-            }
-        );
-        $newUsers = array();
-        foreach ($users as $key => $value) {
-            $newUsers[] = $value;
-        }
-        // Set the newly ordered users back into the data structure.
-        $data['users'] = $newUsers;
+        $actualUsers = $data['users'];
+        $expectedUsers = $expected['users'];
 
-        $diff = $this->arrayRecursiveDiff($expected, $data);
-        $success = true;
-        array_walk_recursive(
-            $diff,
-            function ($value, $index, $property) use (&$success) {
-                if ($index !== $property) {
-                    $success = false;
+        $allFound = true;
+        foreach ($expectedUsers as $key => $expectedUser) {
+            $entryExists = $this->entryExists(
+                $actualUsers,
+                function ($key, $value) use ($expectedUser) {
+                    if ($value['username'] === $expectedUser['username']) {
+                        $success = true;
+                        $diff = array_diff_assoc($expectedUser, $value);
+                        array_walk_recursive(
+                            $diff,
+                            function ($value, $index, $properties) use (&$success) {
+                                if (!in_array($index, $properties)) {
+                                    $success = false;
+                                }
+                            },
+                            array('last_logged_in', 'id', 'email_address')
+                        );
+                        return $success;
+                    }
+                    return false;
                 }
-            },
-            'last_logged_in'
-        );
-        $this->assertTrue($success, "There were other differences besides the expected 'last_logged_in'");
+            );
+            if (!$entryExists) {
+                $allFound = false;
+                break;
+            }
+        }
+
+        $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in'");
 
         $this->helper->logoutDashboard();
     }
