@@ -399,9 +399,6 @@
         }
     },
     "config": {
-        "platform": {
-            "php": "5.3.3"
-        },
         "secure-http": false
     },
     "scripts": {
