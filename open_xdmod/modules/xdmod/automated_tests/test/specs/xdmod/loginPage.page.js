@@ -51,7 +51,7 @@ class LoginPage {
                 browser.waitForVisible('#txt_login_username');
                 $('#txt_login_username').setValue(username);
                 $('#txt_login_password').setValue(password);
-                $('#btn_sign_in .x-btn-mc').click();
+                $('#btn_sign_in').click();
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForVisible(60000);
