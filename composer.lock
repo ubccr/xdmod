@@ -5,7 +5,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ff0d3478279b47b88df48eb907fe819",
+    "content-hash": "7afff0dae222f49fa24b77e36dbe8097",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -971,6 +971,37 @@
             "time": "2015-06-04T21:24:58+00:00"
         },
         {
+            "name": "simplesamlphp/composer-module-installer",
+            "version": "v1.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simplesamlphp/composer-module-installer.git",
+                "reference": "b70414a2112fe49e97a7eddd747657bd8bc38ef0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simplesamlphp/composer-module-installer/zipball/b70414a2112fe49e97a7eddd747657bd8bc38ef0",
+                "reference": "b70414a2112fe49e97a7eddd747657bd8bc38ef0",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0",
+                "simplesamlphp/simplesamlphp": "*"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "SimpleSamlPhp\\Composer\\ModuleInstallerPlugin"
+            },
+            "autoload": {
+                "psr-0": {
+                    "SimpleSamlPhp\\Composer": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "A Composer plugin that allows installing SimpleSAMLphp modules through Composer.",
+            "time": "2017-04-24T07:12:50+00:00"
+        },
+        {
             "name": "simplesamlphp/saml2",
             "version": "v1.8",
             "source": {
@@ -1517,6 +1548,42 @@
                 "MIT"
             ],
             "homepage": "https://github.com/tildeio/rsvp.js"
+        },
+        {
+            "name": "ubccr/simplesamlphp-module-authglobus",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ubccr/simplesamlphp-module-authglobus.git",
+                "reference": "fc81fad799aa25faeebab85c0ca73176c2bac39f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authglobus/zipball/fc81fad799aa25faeebab85c0ca73176c2bac39f",
+                "reference": "fc81fad799aa25faeebab85c0ca73176c2bac39f",
+                "shasum": ""
+            },
+            "require": {
+                "simplesamlphp/composer-module-installer": "~1.0"
+            },
+            "require-dev": {
+                "simplesamlphp/simplesamlphp": "^1.14",
+                "squizlabs/php_codesniffer": "2.8.0"
+            },
+            "type": "simplesamlphp-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Rudra Chakraborty",
+                    "email": "rudracha@buffalo.edu",
+                    "role": "Scientific Programmer, University at Buffalo"
+                }
+            ],
+            "description": "Globus Auth module for SimpleSAMLphp.",
+            "time": "2017-09-07T18:12:49+00:00"
         },
         {
             "name": "whitehat101/apr1-md5",
