@@ -48,10 +48,10 @@ class LoginPage {
                 $('a[href*=actionLogin]').click();
             });
             it('Should Login', function doLogin() {
-                browser.waitForVisible('#txt_login_username');
+                browser.waitForVisible('#btn_sign_in');
                 $('#txt_login_username').setValue(username);
                 $('#txt_login_password').setValue(password);
-                $('#btn_sign_in .x-btn-mc').click();
+                browser.waitAndClick('#btn_sign_in');
             });
             it('Display Logged in Users Name', function () {
                 $('#welcome_message').waitForVisible(60000);
