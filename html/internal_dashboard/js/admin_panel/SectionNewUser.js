@@ -409,18 +409,20 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             win.show();
         };
 
+        /* eslint-disable no-use-before-define */
         var roleGridClickHandler = function () {
-            var sel_roles = newUserRoleGrid.getSelectedRoles();
-            cmbInstitution.setDisabled(sel_roles.itemExists('cc') == -1);
+            var selRoles = newUserRoleGrid.getSelectedAcls();
+            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
         };
 
-        var newUserRoleGrid = new XDMoD.Admin.RoleGrid({
+        var newUserRoleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment_n',
             role_description_column_width: 140,
             layout: 'fit',
             height: 200,
             selectionChangeHandler: roleGridClickHandler
         });
+        /* eslint-enable no-use-before-define */
 
         this.setCallback = function (callback) {
             account_creation_callback = callback;
@@ -456,7 +458,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         };
 
         var fsRoleAssignment = new Ext.form.FieldSet({
-            title: 'Role Assignment',
+            title: 'Acl Assignment',
 
             items: [
                 newUserRoleGrid
@@ -491,21 +493,15 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     CCR.xdmod.ui.userManagementMessage('Please fix any fields marked as invalid.', false);
                     return;
                 }
+                var acls = newUserRoleGrid.getSelectedAcls();
+                var missingMappedUser = cmbUserMapping.getValue().length === 0;
 
-                if (!newUserRoleGrid.areRolesSpecified()) {
+                if (acls.length <= 0) {
                     CCR.xdmod.ui.userManagementMessage('This user must have at least one role.', false);
                     return;
                 }
 
-                if (!newUserRoleGrid.isPrimaryRoleSpecified()) {
-                    CCR.xdmod.ui.userManagementMessage('This user must have a primary role assigned.', false);
-                    return;
-                }
-
-                var sel_roles = newUserRoleGrid.getSelections();
-
-                if ((sel_roles.mainRoles.itemExists('usr') === 1 || sel_roles.mainRoles.itemExists('pi') === 1) &&
-                    cmbUserMapping.getValue().length === 0) {
+                if ((acls.indexOf('usr') >= 0 || acls.indexOf('pi') >= 0) && missingMappedUser) {
                     cmbUserMapping.addClass('admin_panel_invalid_text_entry');
 
                     CCR.xdmod.ui.userManagementMessage('This user must be mapped to a XSEDE Account<br>(Using the drop-down list)', false);
@@ -519,10 +515,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     return;
                 }
 
-                if (
-                    (sel_roles.mainRoles.itemExists('cc') == 1) &&
-                    (cmbInstitution.getValue().length === 0)
-                ) {
+                if (acls.indexOf('cc') >= 0 && missingMappedUser) {
                     cmbInstitution.addClass('admin_panel_invalid_text_entry');
                     CCR.xdmod.ui.userManagementMessage('An institution must be specified for a user having a role of Campus Champion.', false);
                     return;
@@ -532,6 +525,13 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     cmbUserType.addClass('admin_panel_invalid_text_entry');
                     CCR.xdmod.ui.userManagementMessage('This user must have a type associated with it.', false);
                     return;
+                }
+
+                var populatedAcls = {};
+                // populate centers for any of the selected acls that have them
+                for (var i = 0; i < acls.length; i++) {
+                    var acl = acls[i];
+                    populatedAcls[acl] = newUserRoleGrid.getCenters(acl);
                 }
 
                 // Submit request
@@ -546,7 +546,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     email_address: txtEmailAddress.getValue(),
                     username: txtUsername.getValue(),
 
-                    roles: Ext.util.JSON.encode(sel_roles),
+                    acls: Ext.util.JSON.encode(populatedAcls),
                     assignment: mapped_user_id,
                     institution: institution,
                     user_type: cmbUserType.getValue()

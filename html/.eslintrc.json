@@ -12,6 +12,8 @@
     "jQuery": false,
     "Highcharts": false,
     "truncateText": false,
-    "XDMoD": false
+    "XDMoD": false,
+    "Dashboard": false,
+    "DashboardStore": false
   }
 }

@@ -186,10 +186,13 @@ SQL;
 
         $sql = <<<SQL
 SELECT
-  a.*
+  a.*,
+  INSTR(aclt.name, 'requires_center') > 0 AS requires_center
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
+  JOIN acl_types aclt
+    ON aclt.acl_type_id = a.acl_type_id
 WHERE ua.user_id = :user_id
 SQL;
         return $db->query($sql, array('user_id' => $userId));
@@ -390,42 +393,40 @@ SQL;
         // Needed because we have 'IN' clauses.
         $handle = $db->handle();
 
-        // PDO can't handle 'IN' for prepared statements so create some suitable strings
-        // for substitution. ( making sure to quote where appropriate ).
-        $acls = implode(',', array_reduce($user->getAcls(), function ($carry, Acl $item) use ($handle) {
-            $carry [] = $handle->quote($item->getAclId(), PDO::PARAM_INT);
-            return $carry;
-        }, array()));
-
-        $realmNames = implode(',', array_reduce($realms, function ($carry, $item) use ($handle) {
-            $value = null;
-            if ($item instanceof Realm) {
-                $value = $item->getName();
-            } elseif (is_string($item)) {
-                $value = $item;
-            } else {
-                $value = (string)$item;
-            }
-            $carry [] = $handle->quote($value);
-            return $carry;
-        }, array()));
+        $realmNames = implode(
+            ',',
+            array_reduce(
+                $realms,
+                function ($carry, $item) use ($handle) {
+                    $value = null;
+                    if ($item instanceof Realm) {
+                        $value = $item->getName();
+                    } elseif (is_string($item)) {
+                        $value = $item;
+                    } else {
+                        $value = (string)$item;
+                    }
+                    $carry [] = $handle->quote($value);
+                    return $carry;
+                },
+                array()
+            )
+        );
 
         $sql = <<<SQL
 SELECT DISTINCT
   a.name,
-  CASE WHEN agb.enabled = TRUE THEN NULL ELSE CONCAT('group_by_',r.name,'_',gb.name) END AS id,
-  CASE WHEN agb.enabled = TRUE THEN NULL ELSE gb.name END as group_by,
-  CASE WHEN agb.enabled = TRUE THEN NULL ELSE r.name END as realm
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE CONCAT('group_by_', r.name, '_', gb.name) END AS id,
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE gb.name END                                   AS group_by,
+  CASE WHEN agb.enabled = TRUE THEN NULL ELSE r.display END                                 AS realm
 FROM acl_group_bys agb
-  JOIN acls a
-    ON a.acl_id = agb.acl_id
-  JOIN group_bys gb
-    ON gb.group_by_id = agb.group_by_id
-  JOIN realms r
-    ON gb.realm_id = r.realm_id
-WHERE agb.acl_id IN ($acls)
-      AND r.name IN ($realmNames)
-ORDER BY a.name
+  JOIN user_acls ua ON agb.acl_id = ua.acl_id
+  JOIN acls a ON a.acl_id = ua.acl_id
+  JOIN group_bys gb ON gb.group_by_id = agb.group_by_id
+  JOIN realms r ON agb.realm_id = r.realm_id
+WHERE
+  ua.user_id = :user_id AND
+  r.name IN ($realmNames);
 SQL;
         $results = array();
 
@@ -433,24 +434,20 @@ SQL;
          * of a users acls / the provided realms in one go we do not need the
          * 'foreach role ... role->getDisabledMenus()' we then take care of
          * formatting the results as the XDUser->getDisabledMenus function
-         * expects by including the group_by name / ordering by group_by name
-         * and constructing an associative array based on said group_by name.
-         * The code in XDUser->getDisabledMenus is still responsible for detecting
-         * whether or not any given disabled menu is present for all other acls.
+         * expects. The code in XDUser->getDisabledMenus is still responsible
+         * for detecting whether or not any given disabled menu is present for
+         * all other acls.
          */
-        $rows = $db->query($sql);
+        $rows = $db->query(
+            $sql,
+            array(
+                ':user_id' => $user->getUserID()
+            )
+        );
 
-        $previousName = null;
         foreach ($rows as $row) {
-            $name = $row['name'];
-            if ($name != $previousName) {
-                $previousName = $name;
-            }
-            if (!isset($results[$name])) {
-                $results[$name] = array();
-            }
             if ($row['id'] != null) {
-                $results[$name] [] = array(
+                $results[] = array(
                     'id' => $row['id'],
                     'group_by' => $row['group_by'],
                     'realm' => $row['realm']
@@ -779,5 +776,87 @@ SQL;
             }, array());
         }
         return array();
+    }
+
+    /**
+     * Attempt to retrieve the "most privileged" acl for the provided user.
+     * "most privileged" in this context is the acl that fulfills the following
+     * requirements:
+     *   - The user provided has a relation to said acl.
+     *   - The acl was added by the module identified by the parameter
+     *     '$moduleName'.
+     *   - The acl has takes part in a relationship with the acl hierarchy
+     *     identified by the parameter '$aclHierarchyName'.
+     *   - Of all acls that fit the previous requirements, it must also be the
+     *     one that has the highest 'level' value. This corresponds to the
+     *     'value' column of acl_hierarchies table and the
+     *     roles.json:<acl>:hierarchies:level property.
+     *
+     * @param XDUser $user             the user for whom the most privileged acl
+     *                                 is to be returned.
+     * @param string $moduleName       the module that is used to constrain the
+     *                                 most privileged acl search. ( optional )
+     * @param string $aclHierarchyName the name of the acl hierarchy to
+     *                                 constrain the most privileged acl search.
+     *                                 (optional)
+     * @return Acl|null If the user does not have an acl that satisfies the
+     *                  constraints then null will be returned. Else, the acl
+     *                  is returned as an instantiated Acl object.
+     * @throws Exception if the user does not have a user id.
+     */
+    public static function getMostPrivilegedAcl(XDUser $user, $moduleName = DEFAULT_MODULE_NAME, $aclHierarchyName = 'acl_hierarchy')
+    {
+        if (null === $user->getUserID()) {
+            throw new Exception('A valid user id must be supplied.');
+        }
+
+        $query = <<<SQL
+SELECT DISTINCT
+  a.*,
+  aclp.abbrev organization,
+  aclp.id     organization_id
+FROM acls a
+  JOIN user_acls ua
+    ON a.acl_id = ua.acl_id
+  LEFT JOIN (
+    SELECT
+      ah.acl_id,
+      ah.level
+    FROM acl_hierarchies ah
+      JOIN hierarchies h
+        ON ah.hierarchy_id = h.hierarchy_id
+      JOIN modules m
+        ON h.module_id = m.module_id
+    WHERE h.name = :acl_hierarchy_name
+          AND m.name = :module_name
+          AND m.enabled = TRUE
+  ) aclh
+    ON aclh.acl_id = ua.acl_id
+  LEFT JOIN (
+    SELECT
+      uagbp.acl_id,
+      o.abbrev,
+      o.id
+    FROM modw.organization o
+      JOIN user_acl_group_by_parameters uagbp
+        ON o.id = uagbp.value
+    ) aclp
+    ON aclp.acl_id = ua.acl_id
+WHERE ua.user_id = :user_id
+ORDER BY COALESCE(aclh.level, 0) DESC
+LIMIT 1
+SQL;
+        $db = DB::factory('database');
+        $rows = $db->query($query, array(
+            ':module_name' => $moduleName,
+            ':acl_hierarchy_name' => $aclHierarchyName,
+            ':user_id' => $user->getUserID()
+        ));
+
+        if (count($rows) > 0) {
+            return new Acl($rows[0]);
+        }
+
+        return null;
     }
 }

@@ -461,7 +461,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $user = XDUser::getPublicUser();
         $primaryRole = $user->getPrimaryRole();
 
-        $this->assertNotNull($primaryRole);
+        $this->assertNull($primaryRole);
     }
 
     /**

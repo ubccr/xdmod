@@ -33,7 +33,7 @@ try {
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
 
     foreach ($options as $key => $value) {
-        switch($key) {
+        switch ($key) {
             case 't':
             case 'dryrun':
                 $dryRun = true;
@@ -403,7 +403,6 @@ function createModuleVersion(iDatabase $db, $moduleId, $installedOn, array $vers
     $moduleVersion = "$major.$minor.$patch $preRelease";
 
 
-
     $query = <<<SQL
 INSERT INTO module_versions (
   module_id,
@@ -630,7 +629,7 @@ function processModules(iDatabase $db, array $modules)
         $display = isset($data['display']) ? $data['display'] : $name;
         $enabled = isset($data['enabled']) ? $data['enabled'] : true;
         $version = $data['version'];
-        $installedOn =  isset($data['installed_on'])
+        $installedOn = isset($data['installed_on'])
                      ? $data['installed_on']
                      : date("Y-m-d");
 
@@ -731,7 +730,7 @@ function processAcl(iDatabase $db, $module, $name, $display, $type = null, $hier
         $aclTypeId = processAclType($db, $module, $type);
 
         $query = <<<SQL
-INSERT into acls(module_id, acl_type_Id, name, display, enabled)
+INSERT INTO acls(module_id, acl_type_Id, name, display, enabled)
 SELECT inc.*
 FROM (
     SELECT
@@ -750,7 +749,7 @@ WHERE cur.acl_id IS NULL;
 SQL;
         $params = array(
             ':name' => $name,
-            ':display'=> $display,
+            ':display' => $display,
             ':enabled' => true,
             ':module_name' => $module,
             ':acl_type_id' => $aclTypeId
@@ -774,7 +773,7 @@ WHERE cur.acl_id IS NULL;
 SQL;
         $params = array(
             ':name' => $name,
-            ':display'=> $display,
+            ':display' => $display,
             ':enabled' => true,
             ':module_name' => $module
         );
@@ -790,6 +789,9 @@ SQL;
 
     $aclId = null;
     $inserted = $db->execute($query, $params);
+
+    // If the insert was not successful ( and it didn't error out ), then the
+    // record already exists, take the appropriate steps.
     if ($inserted === 0) {
         $log->notice("[ALREADY EXISTS] Acl $msg");
         $query = <<<SQL
@@ -872,6 +874,8 @@ SQL;
 
     $inserted = $db->execute($query, $params);
     if ($inserted === 0) {
+        // If we did not insert a record then the assumption is that it already
+        // exists, attempt to retrieve the acl_type_id.
         $query = <<<SQL
     SELECT at.acl_type_id
     FROM acl_types at
@@ -884,6 +888,9 @@ SQL;
             )
         );
         $log->info("   Retrieved acl type for $type");
+        if (count($results) === 0) {
+            throw new Exception("Unable to determine acl type for [$module][$type][$aclTypeDisplay]");
+        }
         return $results[0]['acl_type_id'];
     }
     $log->info("   Created new acl type record for $type");
@@ -905,7 +912,8 @@ SQL;
  * @throws Exception if there is an exception encountered while attempting to execute
  *                   the sql required to process these acl hierarchy records.
  **/
-function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies) {
+function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies)
+{
     global $dryRun, $log;
 
     $log->notice("Processing Acl Hierarchy Records...");
@@ -939,6 +947,9 @@ SQL;
     }
 
     $inserted = 0;
+
+    // Begin a transaction so that either all of the hierarchies are inserted or
+    // none of them are.
     $db->beginTransaction();
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
         if (!isset($hierarchyInfo['level'])) {
@@ -979,7 +990,16 @@ SQL;
             $log->warning("[WARNING] Inserted more than one Acl Hierarchy Record for: $id");
         }
     }
-    $db->commit();
+    $committed = $db->commit();
+    if ($committed === false) {
+        $log->warning("[FAIL] Attempt to commit hierarchies for Acl [$acl] failed.");
+        $rolledBack = $db->rollBack();
+
+        // We throw an Exception so that we do not leave the db in an inconsistent state.
+        if ($rolledBack === false) {
+            throw new Exception("Unable to rollback Acl [$acl] hierarchy records. Database may be left in an inconsistent state.");
+        }
+    }
     $processed = count($hierarchies);
     $log->notice("Processed: $processed, Inserted: $inserted");
 }
@@ -1025,9 +1045,7 @@ function createTab(iDatabase $db, $module, $tab)
     global $dryRun, $log;
     $msg = "name: $tab";
 
-
-
-    $query =<<<SQL
+    $query = <<<SQL
     INSERT INTO tabs(module_id, name)
     SELECT inc.*
     FROM (
@@ -1183,7 +1201,7 @@ function processQueryDescriptors(iDatabase $db, $module, $acl, array $realms, ar
      *     :group_by_name  - string
      *     :statistic_name - string
      **/
-    $query =<<<SQL
+    $query = <<<SQL
 INSERT INTO acl_group_bys(realm_id, acl_id, group_by_id, statistic_id, visible, enabled)
 SELECT inc.*
 FROM (
@@ -1224,7 +1242,7 @@ SQL;
     $totalProcessed = 0;
     foreach ($queryDescriptors as $queryDescriptor) {
 
-        $realm = isset($queryDescriptor['realm']) ? $queryDescriptor['realm']: null;
+        $realm = isset($queryDescriptor['realm']) ? $queryDescriptor['realm'] : null;
         $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
         $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
 
@@ -1245,7 +1263,7 @@ SQL;
         foreach ($statistics as $statistic) {
 
             $statisticName = isset($statistic['name']) ? $statistic['name'] : null;
-            $hide = isset($statistic['hide']) ? $statistic['hide']: null;
+            $hide = isset($statistic['hide']) ? $statistic['hide'] : null;
             $visible = isset($statistic['visible']) ? $statistic['visible'] : null;
 
             $enabled = null !== $disable ? !$disable : true;
@@ -1267,7 +1285,7 @@ SQL;
                 ':group_by_name' => $groupBy,
                 ':statistic_name' => $statisticName,
                 ':visible' => $visible,
-                ':enabled'=> $enabled
+                ':enabled' => $enabled
             );
 
             $log->debug(json_encode($params));
@@ -1313,7 +1331,7 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
     foreach ($realms as $realm => $realmData) {
         $log->notice("Processing Realm: $realm for Module: $moduleName");
 
-        createRealm($db, $moduleName, strtolower($realm));
+        createRealm($db, $moduleName, $realm);
 
         $groupBys = $realmData['group_bys'];
         $statistics = $realmData['statistics'];
@@ -1327,30 +1345,31 @@ function processRealms(iDatabase $db, $moduleName, array $realms)
  * Attempt to create a realm with the provided realmName associated with the
  * module associated with the provided moduleName.
  *
- * @param iDatabase $db         the database to be used when creating the realm
- * @param string    $moduleName the name of the module to associate this realm
- *                              with.
- * @param string    $realmName  the name that this realm should be created with.
+ * @param iDatabase $db            the database to be used when creating the realm
+ * @param string    $moduleName    the name of the module to associate this realm
+ *                                 with.
+ * @param string    $realmDisplay  the name that this realm should be created with.
  *
  * @return void
  **/
-function createRealm(iDatabase $db, $moduleName, $realmName)
+function createRealm(iDatabase $db, $moduleName, $realmDisplay)
 {
     global $dryRun, $log;
 
-    $realmName = strtolower($realmName);
+    $realmName = strtolower($realmDisplay);
 
-    $log->notice("*** Creating Realm ($realmName)...");
+    $log->notice("*** Creating Realm ($realmDisplay)...");
 
-    $successMsg = "[SUCCESS] Created Realm: $realmName for Module: $moduleName";
+    $successMsg = "[SUCCESS] Created Realm: $realmDisplay for Module: $moduleName";
 
     $query = <<<SQL
-    INSERT INTO realms(module_id, name)
+    INSERT INTO realms(module_id, name, display)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id AS module_id,
-            :realm_name AS name
+            :realm_name AS name,
+            :realm_display AS display
         FROM modules m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
@@ -1361,6 +1380,7 @@ SQL;
 
     $params = array(
         ':realm_name' => $realmName,
+        ':realm_display' => $realmDisplay,
         ':module_name' => $moduleName
     );
 
@@ -1378,7 +1398,23 @@ SQL;
     );
 
     if ($inserted === 0) {
-        $log->info("[ALREADY EXISTS] Realm $realmName for Module $moduleName");
+        $updateQuery = <<<SQL
+    UPDATE realms
+    SET display = :realm_display
+    WHERE name = :realm_name;
+SQL;
+        $updated = $db->execute(
+            $updateQuery,
+            array(
+                ':realm_display' => $realmDisplay,
+                ':realm_name'    => $realmName
+            )
+        );
+        if ($updated === 1) {
+            $log->info("Updated Realm [$realmName] with display [$realmDisplay]");
+        } else {
+            $log->info("[ALREADY EXISTS] Realm $realmDisplay for Module $moduleName");
+        }
     } elseif ($inserted === 1) {
         $log->info($successMsg);
     }
@@ -1592,21 +1628,21 @@ function verifyJsonSyntax()
     );
 
     $invalid = array();
-    $confPrefix = CONFIG_DIR.DIRECTORY_SEPARATOR;
+    $confPrefix = CONFIG_DIR . DIRECTORY_SEPARATOR;
     foreach ($searchSet as $primaryFile => $configDir) {
-        $primaryFilePath = $confPrefix.$primaryFile;
+        $primaryFilePath = $confPrefix . $primaryFile;
         if (file_exists($primaryFilePath)) {
             $fileJson = Json::loadFile($primaryFilePath);
 
             if (null === $fileJson) {
                 $log->err("[FAIL] $primaryFile in an invalid json file");
-                $inalid []= $primaryFile;
+                $inalid [] = $primaryFile;
             } else {
                 $log->info("[SUCCESS] $primaryFile is a valid json file.");
             }
         }
 
-        $confPath = $confPrefix.$configDir;
+        $confPath = $confPrefix . $configDir;
         if (file_exists($confPath)) {
             foreach (new DirectoryIterator($confPath) as $fileInfo) {
                 if ($fileInfo->isDot()) {
@@ -1614,7 +1650,7 @@ function verifyJsonSyntax()
                 }
                 if (pathinfo($fileInfo->getFilename(), PATHINFO_EXTENSION) === 'json') {
                     $fileName = $fileInfo->getFilename();
-                    $filePath = $confPath.DIRECTORY_SEPARATOR.$fileName;
+                    $filePath = $confPath . DIRECTORY_SEPARATOR . $fileName;
                     $fileParts = explode(DIRECTORY_SEPARATOR, $filePath);
                     $parentDir = $fileParts[count($fileParts) - 2];
                     $fileId = implode(
@@ -1628,7 +1664,7 @@ function verifyJsonSyntax()
                     } catch (Exception $e) {
                         $reason = $e->getMessage();
                         $log->err("[FAIL] $fileId is not a valid json file. Reason:\n $reason");
-                        $invalid []= $filePath;
+                        $invalid [] = $filePath;
                     }
                 }
             }
@@ -1674,8 +1710,8 @@ function verifyConfigData()
         try {
             $data = $config[$section];
             $log->info("[SUCCESS] $section loaded successfully.");
-        } catch(Exception $e) {
-            $log->err("[FAIL] Unable to load section: '$section' ");
+        } catch (Exception $e) {
+            $log->err("[FAIL] Unable to load section $section");
             $invalid[] = $section;
         }
     }
@@ -1716,8 +1752,9 @@ function verifyDatabase()
  *
  * @return string
  **/
-function logLevelToVerbosity($logLevel) {
-    switch($logLevel) {
+function logLevelToVerbosity($logLevel)
+{
+    switch ($logLevel) {
         case Log::INFO:
             return 'verbose';
         case Log::DEBUG:

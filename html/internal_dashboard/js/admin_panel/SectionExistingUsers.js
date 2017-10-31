@@ -348,7 +348,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
             // ------------------------------------------
 
-            var storeUserListing = new DashboardStore({
+        var storeUserListing = new DashboardStore(
+            {
                 autoload: true,
                 url: '../controllers/user_admin.php',
                 baseParams: {
@@ -360,12 +361,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 fields: [
                     'id',
                     'username',
+                    'email_address',
                     'first_name',
                     'last_name',
                     'account_is_active',
                     'last_logged_in'
                 ]
-            });
+            }
+        );
 
             this.userStore = storeUserListing;
 
@@ -385,7 +388,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
                 if (self.initFlag == 1) {
                     Ext.getCmp('txtAccountTimestamps').update('');
-                    Ext.getCmp('txtAccountStatus').update('');
+                    document.getElementById('txtAccountStatus').innerText = '';
                 }
 
                 self.initFlag = 1;
@@ -559,6 +562,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         userManagementAction({
                             operation: 'update_user',
                             uid: selected_user_id,
+                            email_address: document.getElementById('existingUserEmail').value,
                             is_active: (action == 'Enable') ? 'y' : 'n'
                         });
                     }
@@ -601,6 +605,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var minEmailLength = XDMoD.constants.minEmailLength;
         var maxEmailLength = XDMoD.constants.maxEmailLength;
         var existingUserEmailField = new Ext.form.TextField({
+            id: 'existingUserEmail',
             fieldLabel: 'E-Mail Address',
             emptyText: minEmailLength + ' min, ' + maxEmailLength + ' max',
             msgTarget: 'under',
@@ -657,18 +662,19 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         });
 
         // ------------------------------------------
-
-        var roleGridClickHandler = function () {
-            var sel_roles = roleGrid.getSelectedRoles();
-            cmbInstitution.setDisabled(sel_roles.itemExists('cc') == -1);
-            saveIndicator.show();
-        };
-
-        var roleGrid = new XDMoD.Admin.RoleGrid({
+        /* eslint-disable no-use-before-define */
+        var roleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment',
             selectionChangeHandler: roleGridClickHandler,
             border: false
         });
+
+        var roleGridClickHandler = function () {
+            var selRoles = roleGrid.getSelectedAcls();
+            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
+            saveIndicator.show();
+        };
+        /* eslint-enable no-use-before-define */
 
         // ------------------------------------------
 
@@ -684,7 +690,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
 
         var roleSettings = new Ext.Panel({
-            title: 'Role Assignment',
+            title: 'Acl Assignment',
             columns: 1,
             layout: 'fit',
             flex: 0.55,
@@ -745,7 +751,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
 				// ===========================================
 
-                if (!roleGrid.areRolesSpecified()) {
+                if (roleGrid.getSelectedAcls().length === 0) {
                     CCR.xdmod.ui.userManagementMessage(
                         'This user must have at least one role.',
                         false
@@ -753,21 +759,12 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     return;
                 }
 
-                if (!roleGrid.isPrimaryRoleSpecified()) {
-                    CCR.xdmod.ui.userManagementMessage(
-                        'This user must have a primary role assigned.',
-                        false
-                    );
-                    return;
-                }
-				
-				var sel_roles = roleGrid.getSelections();
-				
+                var acls = roleGrid.getSelectedAcls();
                 // ===========================================
 											              
-				if (
-                    (sel_roles.mainRoles.itemExists('pi') == 1 || sel_roles.mainRoles.itemExists('usr') == 1) &&
-                    (cmbUserMapping.getValue().length === 0 )
+                if (
+                    (acls.indexOf('pi') >= 0 || acls.indexOf('usr') >= 0) &&
+                    (cmbUserMapping.getValue().length === 0)
                 ) {
                     cmbUserMapping.addClass('admin_panel_invalid_text_entry');
                     CCR.xdmod.ui.userManagementMessage(
@@ -780,7 +777,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 				
 				
                 if (
-                    (sel_roles.mainRoles.itemExists('cc') == 1) &&
+                    (acls.indexOf('cc') >= 0) &&
                     (cmbInstitution.getValue().length === 0)
                 ) {
                     cmbInstitution.addClass('admin_panel_invalid_text_entry');
@@ -791,11 +788,19 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     return;
                 }
 
+                var populatedAcls = {};
+                for (var i = 0; i < acls.length; i++) {
+                    var acl = acls[i];
+                    if (!populatedAcls.hasOwnProperty(acl)) {
+                        populatedAcls[acl] = roleGrid.getCenters(acl);
+                    }
+                }
+
                 var objParams = {
                     operation: 'update_user',
                     uid: selected_user_id,
                     email_address: existingUserEmailField.getValue(),
-                    roles: Ext.util.JSON.encode(sel_roles),
+                    acls: Ext.util.JSON.encode(populatedAcls),
                     assigned_user: (cmbUserMapping.getValue().length === 0) ?
                                  '-1' :
                                  cmbUserMapping.getValue(),
@@ -1071,7 +1076,10 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         '<p>' + json.user_information.time_last_logged_in + '</p>' +
                         '<p>' + json.user_information.time_updated + '</p>'
                     );
-                    
+
+                    var txtAccountStatus = document.getElementById('txtAccountStatus');
+                    txtAccountStatus.innerText = json.user_information.is_active;
+
                     if (json.user_information.is_active == 'active') {
                         Ext.getCmp('disableAccountMenuItem').show();
                         Ext.getCmp('enableAccountMenuItem').hide();
@@ -1141,12 +1149,23 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
                         tg_user_list_phase = 'load_user';
 
-                        roleGrid.setRoles(json.user_information.roles);
-
-                        roleGrid.setCenterConfig(XDMoD.Admin.Roles.CENTER_DIRECTOR, json.user_information.center_director_sites);
-                        roleGrid.setCenterConfig(XDMoD.Admin.Roles.CENTER_STAFF, json.user_information.center_staff_sites);
-
-                        roleGrid.setPrimaryRole(json.user_information.primary_role);
+                        /**
+                         * acls are in the form:
+                         * {
+                         *   // If the user's acl has one or more relations to centers
+                         *   "<acl_name>": ["<center_1>", "<center_2>"],
+                         *
+                         *   // If the acl has no relation to centers
+                         *   "<acl_name>": []
+                         * }
+                         */
+                        roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
+                        for (var acl in json.user_information.acls) {
+                            if (json.user_information.acls.hasOwnProperty(acl)) {
+                                var centers = json.user_information.acls[acl];
+                                roleGrid.setCenterConfig(acl, centers);
+                            }
+                        }
 
                         userSettings.setDisabled(false);
                         userEditor.hideMask();

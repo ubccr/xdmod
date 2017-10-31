@@ -39,6 +39,10 @@ class XdmodTestHelper
         $this->cookiefile = tempnam(sys_get_temp_dir(), "xdmodtestcookies.");
         curl_setopt($this->curl, CURLOPT_COOKIEFILE, $this->cookiefile);
 
+        if (isset($this->cookie)) {
+            curl_setopt($this->curl, CURLOPT_COOKIE, $this->cookie);
+        }
+
         if (isset($config['decodetextasjson'])) {
             $this->decodeTextAsJson = true;
         }
@@ -122,9 +126,49 @@ class XdmodTestHelper
         $this->setauthvariables($authtokens['token']);
     }
 
+    /**
+     * Attempt to authenticate using the provided $userrole against XDMoD's
+     * internal dashboard.
+     *
+     * @param string $userrole the role you wish to authenticate as with the
+     *                         internal dashboard.
+     * @throws \Exception if the specified $userrole is not present in .secrets.json
+     */
+    public function authenticateDashboard($userrole)
+    {
+        if (! isset($this->config['role'][$userrole])) {
+            throw new \Exception("User role $userrole not defined in .secrets.json file");
+        }
+        $this->userrole = $userrole;
+        $this->setauthvariables(null);
+        $data = array(
+            'xdmod_username' => $this->config['role'][$userrole]['username'],
+            'xdmod_password' => $this->config['role'][$userrole]['password']
+        );
+        $authresult = $this->post("internal_dashboard/user_check.php", null, $data);
+        $cookie = isset($authresult[2]['Set-Cookie']) ? $authresult[2]['Set-Cookie'] : null;
+        $this->setauthvariables('', $cookie);
+    }
+
     public function logout()
     {
         $logoutResult = $this->post("rest/auth/logout", null, null);
+        $this->setauthvariables(null);
+    }
+
+    /**
+     * Attempt to execute the internal dashboard's logout action for the current
+     * session.
+     */
+    public function logoutDashboard()
+    {
+        $this->post(
+            'internal_dashboard/controllers/controller.php',
+            null,
+            array(
+                'operation' => 'logout'
+            )
+        );
         $this->setauthvariables(null);
     }
 
