@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c93d5262e311deefad050542bed54ac7",
+    "content-hash": "4bc639eecf2d768c8377c4a76df60b48",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -1630,16 +1630,16 @@
         },
         {
             "name": "ubccr/simplesamlphp-module-authglobus",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/simplesamlphp-module-authglobus.git",
-                "reference": "97af50eb40736c3f9c359855e422ece9ad98a701"
+                "reference": "fc81fad799aa25faeebab85c0ca73176c2bac39f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authglobus/zipball/97af50eb40736c3f9c359855e422ece9ad98a701",
-                "reference": "97af50eb40736c3f9c359855e422ece9ad98a701",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authglobus/zipball/fc81fad799aa25faeebab85c0ca73176c2bac39f",
+                "reference": "fc81fad799aa25faeebab85c0ca73176c2bac39f",
                 "shasum": ""
             },
             "require": {
@@ -1662,7 +1662,7 @@
                 }
             ],
             "description": "Globus Auth module for SimpleSAMLphp.",
-            "time": "2017-10-24T17:20:57+00:00"
+            "time": "2017-09-07T18:12:49+00:00"
         },
         {
             "name": "whitehat101/apr1-md5",
@@ -2830,8 +2830,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "openid/php-openid": 20,
-        "ubccr/simplesamlphp-module-authglobus": 20
+        "openid/php-openid": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
