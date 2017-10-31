@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__).'/../../../configuration/linker.php';
+require_once dirname(__FILE__) . '/../../../configuration/linker.php';
 
 use CCR\DB;
 use Models\Services\Users;
@@ -13,17 +13,16 @@ $operation = isset($_REQUEST['operation']) ? $_REQUEST['operation'] : '';
 
 if ($operation == 'logout') {
 
-     unset($_SESSION['xdDashboardUser']);
-     $response['success'] = true;
+    unset($_SESSION['xdDashboardUser']);
+    $response['success'] = true;
 
-     if (isset($_REQUEST['splash_redirect'])) {
+    if (isset($_REQUEST['splash_redirect'])) {
         print "<html><head><script language='JavaScript'>top.location.href='../index.php';</script></head></html>";
-     }
-     else {
+    } else {
         echo json_encode($response);
-     }
+    }
 
-     exit;
+    exit;
 }
 
 
@@ -35,197 +34,196 @@ $pdo = DB::factory('database');
 
 // =====================================================
 
-switch($operation) {
+switch ($operation) {
 
-  case 'enum_account_requests':
+    case 'enum_account_requests':
 
-     $results = $pdo->query("SELECT id, first_name, last_name, organization, title, email_address, field_of_science, additional_information, time_submitted, status, comments FROM AccountRequests");
+        $results = $pdo->query("SELECT id, first_name, last_name, organization, title, email_address, field_of_science, additional_information, time_submitted, status, comments FROM AccountRequests");
 
-     $response['success'] = true;
-     $response['count'] = count($results);
-     $response['response'] = $results;
+        $response['success'] = true;
+        $response['count'] = count($results);
+        $response['response'] = $results;
 
-     $response['md5'] = md5(json_encode($response));
+        $response['md5'] = md5(json_encode($response));
 
-     if (isset($_POST['md5only'])) {
-        unset($response['count']);
-        unset($response['response']);
-     }
+        if (isset($_POST['md5only'])) {
+            unset($response['count']);
+            unset($response['response']);
+        }
 
-     break;
+        break;
 
-  case 'update_request':
+    case 'update_request':
 
-     $id = \xd_security\assertParameterSet('id');
-     $comments = \xd_security\assertParameterSet('comments');
+        $id = \xd_security\assertParameterSet('id');
+        $comments = \xd_security\assertParameterSet('comments');
 
-     $results = $pdo->query("SELECT id FROM AccountRequests WHERE id=:id", array('id'=> $id));
+        $results = $pdo->query("SELECT id FROM AccountRequests WHERE id=:id", array('id' => $id));
 
-     if (count($results) == 1) {
+        if (count($results) == 1) {
 
-        $pdo->execute("UPDATE AccountRequests SET comments=:comments WHERE id=:id", array('comments' => $comments, 'id'=> $id));
+            $pdo->execute("UPDATE AccountRequests SET comments=:comments WHERE id=:id", array('comments' => $comments, 'id' => $id));
+
+            $response['success'] = true;
+
+        } else {
+
+            $response['success'] = false;
+            $response['message'] = 'invalid id specified';
+
+        }
+
+        break;
+
+    case 'delete_request':
+
+        $id_parameter = \xd_security\assertParameterSet('id', '/^\d+(,\d+)*$/');
+
+        $id_strings = explode(',', $id_parameter);
+        $ids = array_map('intval', $id_strings);
+
+        $id_placeholders = implode(', ', array_fill(0, count($ids), '?'));
+        $results = $pdo->execute("DELETE FROM AccountRequests WHERE id IN ($id_placeholders)", $ids);
 
         $response['success'] = true;
 
-     }
-     else {
+        break;
+
+    case 'enum_existing_users':
+
+        $group_filter = \xd_security\assertParameterSet('group_filter');
+        $role_filter = \xd_security\assertParameterSet('role_filter');
+
+        $context_filter = isset($_REQUEST['context_filter']) ? $_REQUEST['context_filter'] : '';
+
+        $results = Users::getUsers($group_filter, $role_filter, $context_filter);
+        $filtered = array();
+        foreach ($results as $user) {
+            if ($user['username'] !== 'Public User') {
+                $filtered[] = $user;
+            }
+        }
+
+        $response['success'] = true;
+        $response['count'] = count($filtered);
+        $response['response'] = $filtered;
+
+        break;
+
+    case 'generate_ldif':
+
+        $group_filter = \xd_security\assertParameterSet('group_filter');
+        $role_filter = \xd_security\assertParameterSet('role_filter');
+
+        $context_filter = isset($_REQUEST['context_filter']) ? $_REQUEST['context_filter'] : '';
+
+        $ldif = new LDIF($group_filter, $role_filter, $context_filter);
+        $ldif->generate();
+        $ldif->present();
+
+        exit;
+
+    case 'enum_user_types_and_roles':
+
+        $query = "SELECT id, type, color FROM moddb.UserTypes";
+
+        $results = $pdo->query($query);
+
+        $results[] = array('id' => XSEDE_USER_TYPE, 'type' => 'XSEDE', 'color' => '#b914f6');
+
+        $response['user_types'] = $results;
+
+        $query = "SELECT description, role_id FROM moddb.Roles WHERE abbrev != 'pub' ORDER BY description";
+
+        $results = $pdo->query($query);
+
+        $response['user_roles'] = $results;
+
+        $response['success'] = true;
+
+        break;
+
+    case 'enum_user_visits':
+    case 'enum_user_visits_export':
+
+        $timeframe = strtolower(\xd_security\assertParameterSet('timeframe'));
+        $user_types = explode(',', \xd_security\assertParameterSet('user_types'));
+
+        if ($timeframe !== 'year' && $timeframe !== 'month') {
+
+            $response['success'] = false;
+            $response['message'] = 'invalid value specified for the timeframe';
+
+            break;
+
+        }
+
+        $response['success'] = true;
+        $response['stats'] = XDStatistics::getUserVisitStats($timeframe, $user_types);
+
+        if ($operation == 'enum_user_visits_export') {
+
+            header("Content-type: application/xls");
+            header("Content-Disposition:attachment;filename=\"xdmod_visitation_stats_by_$timeframe.csv\"");
+
+            print implode(',', array_keys($response['stats'][0])) . "\n";
+
+            $previous_timeframe = '';
+
+            foreach ($response['stats'] as $entry) {
+
+                if ($previous_timeframe !== $entry['timeframe']) {
+
+                    $previous_timeframe = $entry['timeframe'];
+                    print "\n";
+
+                }
+
+                $entry['role_list'] = '"' . $entry['role_list'] . '"';
+
+                if ($entry['user_type'] == 1) $entry['user_type'] = 'External';
+                if ($entry['user_type'] == 2) $entry['user_type'] = 'Internal';
+                if ($entry['user_type'] == 3) $entry['user_type'] = 'Testing';
+
+                if ($entry['user_type'] == 700) {
+
+                    $entry['user_type'] = 'XSEDE';
+
+                    $u = explode(';', $entry['username']);
+
+                    $entry['username'] = $u[1];
+
+                }
+
+                print implode(',', $entry) . "\n";
+
+            }
+
+            exit;
+
+        }
+
+        break;
+
+
+    case 'ak_arr':
+
+        $start_date = $_REQUEST['start_date'];
+        $end_date = $_REQUEST['end_date'];
+
+        $response['success'] = true;
+        $resource['response'] = array(array('x' => array(1, 2, 3), 'y' => array(5, 2, 1)));
+        $resource['count'] = count($response['response']);
+
+
+        break;
+
+    default:
 
         $response['success'] = false;
-        $response['message'] = 'invalid id specified';
+        $response['message'] = 'operation not recognized';
 
-     }
-
-     break;
-
-  case 'delete_request':
-
-     $id_parameter = \xd_security\assertParameterSet('id', '/^\d+(,\d+)*$/');
-
-     $id_strings = explode(',', $id_parameter);
-     $ids = array_map('intval', $id_strings);
-
-     $id_placeholders = implode(', ', array_fill(0, count($ids), '?'));
-     $results = $pdo->execute("DELETE FROM AccountRequests WHERE id IN ($id_placeholders)", $ids);
-
-     $response['success'] = true;
-
-     break;
-
-  case 'enum_existing_users':
-
-     $group_filter = \xd_security\assertParameterSet('group_filter');
-     $role_filter = \xd_security\assertParameterSet('role_filter');
-
-     $context_filter = isset($_REQUEST['context_filter']) ? $_REQUEST['context_filter'] : '';
-
-     $results = Users::getUsers($group_filter, $role_filter, $context_filter);
-     $filtered = array();
-     foreach($results as $user) {
-         if ($user['username'] !== 'Public User') {
-             $filtered[] = $user;
-         }
-     }
-
-     $response['success'] = true;
-     $response['count'] = count($filtered);
-     $response['response'] = $filtered;
-
-     break;
-
-  case 'generate_ldif':
-
-     $group_filter = \xd_security\assertParameterSet('group_filter');
-     $role_filter = \xd_security\assertParameterSet('role_filter');
-
-     $context_filter = isset($_REQUEST['context_filter']) ? $_REQUEST['context_filter'] : '';
-
-     $ldif = new LDIF($group_filter, $role_filter, $context_filter);
-     $ldif->generate();
-     $ldif->present();
-
-     exit;
-
-  case 'enum_user_types_and_roles':
-
-     $query = "SELECT id, type, color FROM moddb.UserTypes";
-
-     $results = $pdo->query($query);
-
-     $results[] = array('id' => XSEDE_USER_TYPE, 'type' => 'XSEDE', 'color' => '#b914f6');
-
-     $response['user_types'] = $results;
-
-     $query = "SELECT description, role_id FROM moddb.Roles WHERE abbrev != 'pub' ORDER BY description";
-
-     $results = $pdo->query($query);
-
-     $response['user_roles'] = $results;
-
-     $response['success'] = true;
-
-     break;
-
-  case 'enum_user_visits': 
-  case 'enum_user_visits_export':
-
-   $timeframe = strtolower(\xd_security\assertParameterSet('timeframe'));
-   $user_types = explode(',', \xd_security\assertParameterSet('user_types'));
-   
-   if ($timeframe !== 'year' && $timeframe !== 'month') {
-   
-      $response['success'] = false;
-      $response['message'] = 'invalid value specified for the timeframe';
-      
-      break;
-      
-   }
-
-   $response['success'] = true;
-   $response['stats'] = XDStatistics::getUserVisitStats($timeframe, $user_types);
-   
-   if ($operation == 'enum_user_visits_export') {
-   
-      header("Content-type: application/xls");
-      header("Content-Disposition:attachment;filename=\"xdmod_visitation_stats_by_$timeframe.csv\"");
-      
-      print implode(',', array_keys($response['stats'][0]))."\n";
-      
-      $previous_timeframe = '';
-      
-      foreach ($response['stats'] as $entry) {
-      
-         if ($previous_timeframe !== $entry['timeframe']) {
-         
-            $previous_timeframe = $entry['timeframe'];
-            print "\n";
-            
-         }
-         
-         $entry['role_list'] = '"'.$entry['role_list'].'"';
-         
-         if ($entry['user_type'] == 1) $entry['user_type'] = 'External';
-         if ($entry['user_type'] == 2) $entry['user_type'] = 'Internal';
-         if ($entry['user_type'] == 3) $entry['user_type'] = 'Testing';
-          
-         if ($entry['user_type'] == 700) {
-            
-            $entry['user_type'] = 'XSEDE';
-            
-            $u = explode(';', $entry['username']);
-            
-            $entry['username'] = $u[1];
-         
-         }
-         
-         print implode(',', $entry)."\n";
-      
-      }
-
-      exit;
-      
-   }
-   
-     break;
-      
-      
-case 'ak_arr':
-
-  $start_date = $_REQUEST['start_date'];
-  $end_date = $_REQUEST['end_date'];
-
-  $response['success'] = true;
-  $resource['response'] = array(array('x' => array(1,2,3), 'y' => array(5,2,1)));
-  $resource['count'] = count($response['response']);
-
-
-  break;
-
-  default:
-
-     $response['success'] = false;
-     $response['message'] = 'operation not recognized';
-
-     break;
+        break;
 
 }//switch
 
