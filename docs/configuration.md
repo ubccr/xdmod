@@ -39,9 +39,12 @@ Will create and initialize database as well as storing these settings:
 These settings are stored in `portal_settings.ini`.
 
 You will be required to supply a username and password for a user that
-has privileges to create databases and users.  If you don't want to use
-this process and would prefer to manually create the databases, see the
-[Database Guide](databases.html).
+has privileges to create databases and users.
+
+**NOTE**: If your database is on a different server than the server where Open
+XDMoD is installed you must create the databases manually.  Likewise, if you
+don't want to use this process and would prefer to manually create the
+databases, see the [Database Guide](databases.html).
 
 #### Acl Database Setup
 Will create the tables required by the Acl framework. This is done via execution
