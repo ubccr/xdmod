@@ -447,15 +447,7 @@ SQL;
             )
         );
 
-        $previousName = null;
         foreach ($rows as $row) {
-            $name = $row['name'];
-            if ($name != $previousName) {
-                $previousName = $name;
-            }
-            if (!isset($results[$name])) {
-                $results[$name] = array();
-            }
             if ($row['id'] != null) {
                 $results[] = array(
                     'id' => $row['id'],
@@ -465,9 +457,7 @@ SQL;
             }
         }
 
-        return array_filter($results, function ($item) {
-            return count($item) > 0;
-        });
+        return $results;
     }
 
 
