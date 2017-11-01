@@ -58,6 +58,10 @@
 	padding: 15px;
  }
  
+#federatedLoginLink button {
+	height: 100%;
+}
+
 #federatedLoginLink img {
 	margin: 4px;
 }
