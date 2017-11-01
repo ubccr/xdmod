@@ -1045,7 +1045,8 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         title: 'Sign in with ' + accountName + ':',
         items: [{
             xtype: 'button',
-            html: '<img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img>',
+            text: '<img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img>',
+            anchor: '100%',
             id: 'federatedLoginLink',
             handler: function () {
                 document.location = CCR.xdmod.federationLoginLink.url;

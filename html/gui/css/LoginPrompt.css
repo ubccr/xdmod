@@ -59,12 +59,9 @@
  }
  
 #federatedLoginLink img {
-	 border: 1.33px; 
-	 border-style: ridge; 
-	 border-radius: 4px;
-	 margin: 2.5px; 
- }
- 
+	margin: 4px;
+}
+
  #txt_login_username, #txt_login_password {
 	 background-color: #e8e8e8;
  }
