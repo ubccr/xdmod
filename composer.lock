@@ -1,11 +1,10 @@
-
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7afff0dae222f49fa24b77e36dbe8097",
+    "content-hash": "e05767fea2567a876b6cabb471fae8dd",
     "packages": [
         {
             "name": "apache/commons-beanutils",
@@ -1551,16 +1550,16 @@
         },
         {
             "name": "ubccr/simplesamlphp-module-authglobus",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/simplesamlphp-module-authglobus.git",
-                "reference": "fc81fad799aa25faeebab85c0ca73176c2bac39f"
+                "reference": "97af50eb40736c3f9c359855e422ece9ad98a701"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authglobus/zipball/fc81fad799aa25faeebab85c0ca73176c2bac39f",
-                "reference": "fc81fad799aa25faeebab85c0ca73176c2bac39f",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authglobus/zipball/97af50eb40736c3f9c359855e422ece9ad98a701",
+                "reference": "97af50eb40736c3f9c359855e422ece9ad98a701",
                 "shasum": ""
             },
             "require": {
