@@ -1,4 +1,3 @@
-
 {
     "require": {
         "silex/silex": "~1.2",
@@ -25,7 +24,7 @@
         "egulias/email-validator": "^1.2",
         "taq/pdooci": "^1.0",
         "phpmailer/phpmailer": "^5.2",
-        "ubccr/simplesamlphp-module-authglobus": "^1.0.0"
+        "ubccr/simplesamlphp-module-authglobus": "1.1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*"
