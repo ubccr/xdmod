@@ -1940,7 +1940,7 @@ class XDReportManager
             'file'         => $logPath,
             'fileLogLevel' => Log::INFO,
             'console'      => false,
-            'db'           => false,
+            'db'           => true,
             'mail'         => false,
         ));
 
