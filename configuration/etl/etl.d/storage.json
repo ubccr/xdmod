@@ -1,0 +1,125 @@
+{
+    "#": "Storage Ingestion and Aggregation",
+    "defaults": {
+        "storage": {
+            "enabled": true,
+            "truncate_destination": false,
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Storage",
+                    "config": "datawarehouse",
+                    "schema": "modw_storage",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+    "storage": [
+        {
+            "name": "StorageFileSystemIngestor",
+            "description": "Ingests file system data",
+            "definition_file": "storage/file_system.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "User storage usage input file",
+                    "path": "storage/user_usage.json",
+                    "filters": [
+                        {
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'map({ name: .file_system }) | unique'"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "StorageUserIngestor",
+            "description": "Ingests user data",
+            "definition_file": "storage/user.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "User storage usage input file",
+                    "path": "storage/user_usage.json",
+                    "filters": [
+                        {
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'map({ username }) | unique'"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "StorageDirectoryIngestor",
+            "description": "Ingests directory data",
+            "definition_file": "storage/directory.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "User storage usage input file",
+                    "path": "storage/user_usage.json",
+                    "filters": [
+                        {
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'map({ path: .directory }) | unique'"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "StorageUserUsageIngestor",
+            "description": "Ingests user storage usage data",
+            "definition_file": "storage/user_usage.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "User storage usage input file",
+                    "path": "storage/user_usage.json",
+                    "array_element_schema_path": "storage/user_usage.schema.json"
+                }
+            }
+        },
+        {
+            "name": "StorageUserUsageAggregator",
+            "description": "Storage aggregator for user data",
+            "namespace": "ETL\\Aggregator",
+            "class": "SimpleAggregator",
+            "options_class": "AggregatorOptions",
+            "definition_file": "storage/user_usage_by.aggregation.json",
+            "table_prefix": "storage_user_usage_by_",
+            "aggregation_units": [
+                "day",
+                "month",
+                "quarter",
+                "year"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Storage",
+                    "config": "datawarehouse",
+                    "schema": "modw_storage"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Aggregate Data",
+                    "config": "datawarehouse",
+                    "schema": "modw_aggregates"
+                }
+            }
+        }
+    ]
+}
