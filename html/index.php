@@ -74,14 +74,6 @@ use Models\Services\Realms;
          return false;
       }//isReferrer
 
-      if (isReferrer('https://go.teragrid.org') || isReferrer('https://portal.xsede.org')) {
-         // If someone clicks on the 'Cancel' button when consulting the oAuth login UI, it would normally
-         // redirect that person to the xdmod main page.  The logic below inhibits this.
-
-         header('location: oauth/entrypoint.php');
-         exit;
-      }
-
       if (!isset($_SESSION['public_session_token'])) {
          $_SESSION['public_session_token'] = 'public-'.microtime(true).'-'.uniqid();
       }
