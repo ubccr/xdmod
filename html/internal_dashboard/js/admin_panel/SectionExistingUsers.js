@@ -663,17 +663,21 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         // ------------------------------------------
         /* eslint-disable no-use-before-define */
+        var roleGridClickHandler = function () {
+            var selRoles = roleGrid.getSelectedAcls();
+            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
+            if (roleGrid.isInDirtyState()) {
+                saveIndicator.show();
+            } else {
+                saveIndicator.hide();
+            }
+
+        };
         var roleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment',
             selectionChangeHandler: roleGridClickHandler,
             border: false
         });
-
-        var roleGridClickHandler = function () {
-            var selRoles = roleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
-            saveIndicator.show();
-        };
         /* eslint-enable no-use-before-define */
 
         // ------------------------------------------
@@ -1039,6 +1043,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
 
                     roleGrid.setDirtyState(false);
+                    roleGrid.reset();
                     settingsAreDirty = false;
 
                     saveIndicator.hide();
