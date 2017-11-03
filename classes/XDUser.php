@@ -11,7 +11,7 @@ use Models\Services\Acls;
  *
  * @Class XDUser
  */
-class XDUser
+class XDUser implements JsonSerializable
 {
 
     private $_pdo;                       // PDO Handle (set in __construct)
@@ -3253,4 +3253,32 @@ SQL;
             ':value'   => $organizationId
         ));
     } // addAclOrganization
+
+        /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        $ignored = array(
+            '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',
+            '_timePasswordUpdated'
+        );
+        $reflection = new ReflectionClass($this);
+        $results = array();
+        $properties = $reflection->getProperties();
+        foreach($properties as $property) {
+            $name = $property->getName();
+            if (!in_array($name, $ignored)) {
+                $property->setAccessible(true);
+
+                $value = $property->getValue($this);
+                $results[$name] = $value;
+            }
+        }
+        return $results;
+    }
 }//XDUser

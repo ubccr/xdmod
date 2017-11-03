@@ -152,15 +152,6 @@ class CenterDirectorRole extends \User\AuthenticatedRole
 
         $pdo = DB::factory('database');
 
-        $is_primary_role = (
-            ($member->getPrimaryRole()->getIdentifier() == ROLE_ID_CENTER_DIRECTOR) &&
-            ($member->getPrimaryOrganization() == $this->getActiveCenter())
-        );
-
-        if ($is_primary_role == true) {
-            throw new \Exception("Unable to revoke, as this user's default<br />role is Center Director of this Center");
-        }
-
         $active_role_failover_needed = (
             ($member->getActiveRole()->getIdentifier() == ROLE_ID_CENTER_DIRECTOR) &&
             ($member->getActiveOrganization() == $this->getActiveCenter())
