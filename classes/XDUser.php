@@ -3265,7 +3265,7 @@ SQL;
     {
         $ignored = array(
             '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',
-            '_timePasswordUpdated'
+            '_timePasswordUpdated', '_token'
         );
         $reflection = new ReflectionClass($this);
         $results = array();
