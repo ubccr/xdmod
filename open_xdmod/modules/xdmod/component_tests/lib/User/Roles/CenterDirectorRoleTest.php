@@ -102,7 +102,7 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testEnumStaffMembers()
     {
-        $expected = Json::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . '/center_director_staff_members.json');
+        $expected = Json::loadFile(XDUserTest::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'center_director_staff_members.json');
 
         $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
         $cd = new CenterDirectorRole();

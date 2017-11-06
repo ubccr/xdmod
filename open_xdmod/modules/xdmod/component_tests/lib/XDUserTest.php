@@ -16,7 +16,7 @@ use \Exception;
 class XDUserTest extends \PHPUnit_Framework_TestCase
 {
 
-    const TEST_ARTIFACT_OUTPUT_PATH = "/../../tests/artifacts/xdmod-test-artifacts/xdmod/acls/output";
+    const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/acls/output";
 
     const PUBLIC_USER_NAME = 'Public User';
     const PUBLIC_ACL_NAME = 'pub';
@@ -47,16 +47,16 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
     public function testGetUserByUserName()
     {
         $users = array(
-            self::PUBLIC_USER_NAME => '/public_user.json',
-            self::CENTER_STAFF_USER_NAME => '/center_staff.json',
-            self::CENTER_DIRECTOR_USER_NAME => '/center_director.json',
-            self::PRINCIPAL_INVESTIGATOR_USER_NAME => '/principal.json',
-            self::NORMAL_USER_USER_NAME => '/normal_user.json'
+            self::PUBLIC_USER_NAME => 'public_user.json',
+            self::CENTER_STAFF_USER_NAME => 'center_staff.json',
+            self::CENTER_DIRECTOR_USER_NAME => 'center_director.json',
+            self::PRINCIPAL_INVESTIGATOR_USER_NAME => 'principal.json',
+            self::NORMAL_USER_USER_NAME => 'normal_user.json'
         );
 
         foreach($users as $userName => $expectedFile) {
             $user = XDUser::getUserByUserName($userName);
-            $expected = JSON::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . $expectedFile);
+            $expected = JSON::loadFile(self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . $expectedFile);
             $actual = json_decode(json_encode($user), true);
             $this->assertEquals($expected, $actual);
         }
@@ -828,7 +828,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
     public function testCenterDirectorEnumAllAvailableRoles()
     {
-        $expected = JSON::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . '/center_director_all_available_roles.json');
+        $expected = JSON::loadFile(self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'center_director_all_available_roles.json');
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $allAvailableRoles = $user->enumAllAvailableRoles();
