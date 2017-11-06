@@ -2112,7 +2112,7 @@ class XDReportManager
                 $properties['site_title'] = \xd_utilities\getConfiguration('general', 'title');
                 $properties['subject'] = "Your$frequency " . 'XDMoD Report' . " $subject_suffix";
             } else {
-                $properties['additional_information'] = $additional_config['custom message'];
+                $properties['additional_information'] = $additional_config['custom_message'];
                 $properties['subject'] = "Your$frequency " . 'XDMoD Compliance Report' . " $subject_suffix";
             }
 
