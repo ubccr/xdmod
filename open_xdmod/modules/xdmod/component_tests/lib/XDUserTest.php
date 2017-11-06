@@ -16,7 +16,7 @@ use \Exception;
 class XDUserTest extends \PHPUnit_Framework_TestCase
 {
 
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../../tests/artifacts/xdmod-test-artifacts/xdmod/acls/output";
+    const TEST_ARTIFACT_OUTPUT_PATH = "/../../tests/artifacts/xdmod-test-artifacts/xdmod/acls/output";
 
     const PUBLIC_USER_NAME = 'Public User';
     const PUBLIC_ACL_NAME = 'pub';
