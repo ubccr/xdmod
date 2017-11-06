@@ -10,7 +10,7 @@ use XDUser;
  **/
 class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../../../../tests/artifacts/xdmod-test-artifacts/xdmod/acls/output";
+    const TEST_ARTIFACT_OUTPUT_PATH = "/../../../../tests/artifacts/xdmod-test-artifacts/xdmod/acls/output";
     /**
      * @expectedException Exception
      * @expectedExceptionMessage No user ID has been assigned to this role.  You must call configure() before calling getCorrespondingUserID()
