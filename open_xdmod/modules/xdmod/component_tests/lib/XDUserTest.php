@@ -673,17 +673,6 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $anotherUser->getActiveRole();
     }
 
-    /* NOTE: this will never hit because _getFormalRoleName will never return null.
-     * @expectedException Exception
-     * @expectedExceptionMessage Attempting to set an invalid active role
-     *\/
-    public function testSetActiveRoleWithInvalidRoleNameFails()
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-
-        $user->setActiveRole(self::INVALID_ACL_NAME);
-    }*/
-
     /**
      * @expectedException Exception
      * @expectedExceptionMessage An additional parameter must be passed for this role (organization id)
