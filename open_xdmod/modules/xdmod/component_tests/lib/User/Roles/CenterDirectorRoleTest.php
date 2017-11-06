@@ -1,4 +1,6 @@
-<?php namespace ComponentTests;
+<?php
+
+namespace ComponentTests;
 
 use CCR\Json;
 use Exception;
@@ -10,7 +12,7 @@ use XDUser;
  **/
 class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 {
-    const TEST_ARTIFACT_OUTPUT_PATH = "/../../../../tests/artifacts/xdmod-test-artifacts/xdmod/acls/output";
+    const TEST_ARTIFACT_OUTPUT_PATH = '/../../../artifacts/xdmod-test-artifacts/xdmod/acls/output';
     /**
      * @expectedException Exception
      * @expectedExceptionMessage No user ID has been assigned to this role.  You must call configure() before calling getCorrespondingUserID()
@@ -102,7 +104,7 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testEnumStaffMembers()
     {
-        $expected = Json::loadFile(XDUserTest::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'center_director_staff_members.json');
+        $expected = Json::loadFile(__DIR__ . CenterDirectorRoleTest::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'center_director_staff_members.json');
 
         $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
         $cd = new CenterDirectorRole();

@@ -1,4 +1,6 @@
-<?php namespace ComponentTests;
+<?php
+
+namespace ComponentTests;
 
 use CCR\DB;
 use CCR\Json;
@@ -16,7 +18,7 @@ use \Exception;
 class XDUserTest extends \PHPUnit_Framework_TestCase
 {
 
-    const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/acls/output";
+    const TEST_ARTIFACT_OUTPUT_PATH = "/../artifacts/xdmod-test-artifacts/xdmod/acls/output";
 
     const PUBLIC_USER_NAME = 'Public User';
     const PUBLIC_ACL_NAME = 'pub';
@@ -56,7 +58,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
         foreach($users as $userName => $expectedFile) {
             $user = XDUser::getUserByUserName($userName);
-            $expected = JSON::loadFile(self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . $expectedFile);
+            $expected = JSON::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . $expectedFile);
             $actual = json_decode(json_encode($user), true);
             $this->assertEquals($expected, $actual);
         }
@@ -828,7 +830,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
     public function testCenterDirectorEnumAllAvailableRoles()
     {
-        $expected = JSON::loadFile(self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'center_director_all_available_roles.json');
+        $expected = JSON::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'center_director_all_available_roles.json');
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $allAvailableRoles = $user->enumAllAvailableRoles();
