@@ -476,4 +476,3 @@ function generateFilterName(array $filter)
 {
     return sprintf("(%s) %s = %s", $filter['id'], $filter['dimension_id'], $filter['value_name']);
 }
-?>
