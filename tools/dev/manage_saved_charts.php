@@ -31,7 +31,7 @@ $scriptOptions = array(
     'source' => null,
     'user' => null,
     'verbose' => false,
-    'xdmod-root' => '/home/smgallo/xdmod/'
+    'xdmod-root' => '/usr/share/xdmod/'
 );
 
 $supportedOperations = array(
@@ -467,9 +467,9 @@ function generateSeriesName(array $series)
 /**
  * Generate a filter name.
  *
- * @param array filter An associative array based on the decoded JSON object representing a chart filter.
+ * @param array $filter An associative array based on the decoded JSON object representing a chart filter.
  *
- * @return string The series name.
+ * @return string The filter name.
  */
 
 function generateFilterName(array $filter)
