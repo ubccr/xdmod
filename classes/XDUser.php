@@ -1852,14 +1852,25 @@ SQL
 
     public function isCenterDirectorOfOrganization($organization_id)
     {
+        $query = <<<SQL
+SELECT COUNT(*) AS num_matches
+FROM user_acl_group_by_parameters uagbp
+JOIN group_bys gb ON uagbp.group_by_id = gb.group_by_id
+JOIN acls a ON uagbp.acl_id = a.acl_id
+WHERE
+  a.name        = :acl_name      AND
+  gb.name       = :group_by_name AND
+  uagbp.user_id = :user_id       AND
+  uagbp.value   = :organization_id;
+SQL;
 
         $results = $this->_pdo->query(
-            "SELECT COUNT(*) AS num_matches FROM UserRoleParameters WHERE user_id=:user_id AND role_id=:role_id AND param_name=:param_name AND param_value=:param_value",
+            $query,
             array(
-                'user_id' => $this->_id,
-                'role_id' => \xd_roles\getRoleIDFromIdentifier(ROLE_ID_CENTER_DIRECTOR),
-                'param_name' => 'provider',
-                'param_value' => $organization_id
+                ':user_id' => $this->_id,
+                ':acl_name' => ROLE_ID_CENTER_DIRECTOR,
+                ':group_by_name' => 'provider',
+                ':organization_id' => $organization_id
             )
         );
 
