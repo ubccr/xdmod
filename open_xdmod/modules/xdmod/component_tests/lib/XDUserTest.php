@@ -872,13 +872,30 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $method->invoke($user, null);
     }
 
-    public function testCenterDirectorEnumAllAvailableRoles()
+    /**
+     * @dataProvider provideEnumAllAvailableRoles
+     *
+     * @param string $userName     the name of the user to be tested.
+     * @param string $expectedFile the name of the file that holds the expected
+     *                             results of the test.
+     */
+    public function testEnumAllAvailableRoles($userName, $expectedFile)
     {
         $expected = JSON::loadFile($this->getTestFile('center_director_all_available_roles.json'));
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $allAvailableRoles = $user->enumAllAvailableRoles();
         $this->assertEquals($expected, $allAvailableRoles);
+    }
+
+    public function provideEnumAllAvailableRoles()
+    {
+        return array(
+            array(self::CENTER_DIRECTOR_USER_NAME, 'center_director_all_available_roles.json'),
+            array(self::CENTER_STAFF_USER_NAME, 'center_staff_all_available_roles.json'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, 'principal_user_all_available_roles.json'),
+            array(self::NORMAL_USER_USER_NAME, 'normal_user_all_available_roles.json')
+        );
     }
 
     /**
