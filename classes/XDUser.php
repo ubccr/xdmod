@@ -155,7 +155,7 @@ class XDUser implements JsonSerializable
 
         // =================================
 
-        $primary_role_name = $this->_getFormalRoleName(ROLE_ID_USER);
+        $primary_role_name = $this->_getFormalRoleName($primary_role);
 
         // These roles cannot be used immediately after constructing a new XDUser (since a user id has not been defined at this point).
         // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
