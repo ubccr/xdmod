@@ -1352,73 +1352,49 @@ SQL;
 
         }
 
-        // Program Officer
+        $query = <<<SQL
+SELECT
+  CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
+    THEN CONCAT(a.display, ' - ', o.abbrev)
+  ELSE a.display
+  END    AS 'description',
+  CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
+    THEN CONCAT(a.name, ':', uagbp.value)
+    ELSE a.name
+    END AS 'param_value'
+FROM user_acls ua
+  JOIN acls a ON a.acl_id = ua.acl_id
+  LEFT JOIN user_acl_group_by_parameters uagbp
+    ON uagbp.user_id = ua.user_id AND
+       uagbp.acl_id = ua.acl_id
+  LEFT JOIN modw.organization AS o
+    ON o.id = uagbp.value
+  LEFT JOIN (
+              SELECT
+                ah.acl_id,
+                ah.level
+              FROM acl_hierarchies ah
+                JOIN hierarchies h
+                  ON ah.hierarchy_id = h.hierarchy_id
+                JOIN modules m
+                  ON h.module_id = m.module_id
+              WHERE h.name = :acl_hierarchy_name
+                    AND m.name = :module_name
+                    AND m.enabled = TRUE
+            ) aclh
+    ON aclh.acl_id = ua.acl_id
+WHERE ua.user_id = :user_id
+ORDER BY COALESCE(aclh.level, 0) DESC;
+SQL;
 
-        $role_query_1 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'Program Officer'";
-        $role_query_1_params = array(
-            ':user_id' => $this->_id,
-        );
 
-        // Center Director and Center Staff
-
-        $role_query_2 = "SELECT CONCAT(r.description, ' - ', o.abbrev) AS description, CONCAT(r.abbrev, ':', urp.param_value) AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoleParameters AS urp, moddb.Roles AS r, modw.organization AS o " .
-            "WHERE urp.param_value = o.id AND r.role_id = urp.role_id AND urp.user_id=:user_id AND r.description != 'Campus Champion'" .
-            "ORDER BY r.description, o.abbrev";
-        $role_query_2_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        // Campus Champion
-
-        $role_query_3 = "SELECT CONCAT(r.description, ' - ', o.name) AS description, CONCAT(r.abbrev, ':', urp.param_value) AS param_value, urp.is_primary, ur.is_active " .
-            "FROM moddb.UserRoleParameters AS urp, moddb.UserRoles AS ur, moddb.Roles AS r, modw.organization AS o " .
-            "WHERE urp.param_value = o.id AND ur.role_id = r.role_id AND ur.user_id =:ur_user_id AND r.role_id = urp.role_id " .
-            "AND urp.user_id=:urp_user_id AND r.description = 'Campus Champion'" .
-            "ORDER BY r.description, o.abbrev";
-        $role_query_3_params = array(
-            ':ur_user_id' => $this->_id,
-            ':urp_user_id' => $this->_id,
-        );
-
-        // Principal Investigator
-
-        $role_query_4 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'Principal Investigator'";
-        $role_query_4_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        // User
-
-        $role_query_5 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'User'";
-        $role_query_5_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        $role_query_6 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'Public'";
-        $role_query_6_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        $available_roles = array_merge(
-            $this->_pdo->query($role_query_1, $role_query_1_params),
-            $this->_pdo->query($role_query_2, $role_query_2_params),
-            $this->_pdo->query($role_query_3, $role_query_3_params),
-            $this->_pdo->query($role_query_4, $role_query_4_params),
-            $this->_pdo->query($role_query_5, $role_query_5_params),
-            $this->_pdo->query($role_query_6, $role_query_6_params)
+        $available_roles = $this->_pdo->query(
+            $query,
+            array(
+                ':acl_hierarchy_name' => 'acl_hierarchy',
+                ':module_name' => DEFAULT_MODULE_NAME,
+                ':user_id' => $this->_id
+            )
         );
 
         return $available_roles;
