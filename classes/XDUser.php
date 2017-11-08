@@ -1376,11 +1376,7 @@ FROM user_acls ua
               FROM acl_hierarchies ah
                 JOIN hierarchies h
                   ON ah.hierarchy_id = h.hierarchy_id
-                JOIN modules m
-                  ON h.module_id = m.module_id
               WHERE h.name = :acl_hierarchy_name
-                    AND m.name = :module_name
-                    AND m.enabled = TRUE
             ) aclh
     ON aclh.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
