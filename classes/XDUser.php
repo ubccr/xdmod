@@ -2566,23 +2566,19 @@ SQL;
 
     public function _getFormalRoleName($role_abbrev)
     {
-
-        if ($role_abbrev == ROLE_ID_PUBLIC) {
-            return 'Public';
-        }
-
-        if ($role_abbrev == NULL) {
-            return 'Public';
+        $publicAclDisplay = 'Public';
+        if ($role_abbrev == ROLE_ID_PUBLIC || $role_abbrev == NULL) {
+            return $publicAclDisplay;
         }
 
         $pdo = DB::factory('database');
 
-        $roleData = $pdo->query("SELECT description FROM Roles WHERE abbrev=:abbrev", array(
+        $roleData = $pdo->query("SELECT display as description FROM acls WHERE name = :abbrev", array(
             ':abbrev' => $role_abbrev,
         ));
 
         if (count($roleData) == 0) {
-            return 'Public';
+            return $publicAclDisplay;
         }
 
         return $roleData[0]['description'];
