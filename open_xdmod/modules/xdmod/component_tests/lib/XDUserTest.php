@@ -600,6 +600,20 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($user->getUserID());
     }
 
+    public function testCreateUserWithNonStandardPrimaryRole()
+    {
+        $user = new XDUser('test666', null, 'test666@ccr.xdmod.org', 'test', 'a', 'user', array(ROLE_ID_USER, ROLE_ID_MANAGER), ROLE_ID_MANAGER);
+
+        $this->assertEquals('0', $user->getUserID());
+
+        $user->setUserType(DEMO_USER_TYPE);
+
+        $user->saveUser();
+
+        $actual = $user->getActiveRole()->getIdentifier();
+        $this->assertEquals(ROLE_ID_MANAGER, $actual);
+    }
+
     /**
      * @expectedException Exception
      * @expectedExceptionMessage At least one role must be associated with this user
