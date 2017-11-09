@@ -1710,9 +1710,12 @@ FROM (
       gb.group_by_id AS group_by_id,
       :value AS value 
    FROM group_bys gb 
-   WHERE gb.name = 'provider'
-) inc 
-LEFT JOIN user_acl_group_by_parameters cur 
+   JOIN modules m
+     ON gb.module_id = m.module_id
+   WHERE m.name = :module_name AND
+         gb.name = 'provider'
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
   ON cur.user_id = inc.user_id
   AND cur.acl_id = inc.acl_id
   AND cur.group_by_id = inc.group_by_id
@@ -1723,7 +1726,8 @@ SQL
                 array(
                     ':user_id' => $this->_id,
                     ':acl_id' => $acl->getAclId(),
-                    ':value' => $organization_id
+                    ':value' => $organization_id,
+                    ':module_name' => DEFAULT_MODULE_NAME
                 )
             );
         }//foreach

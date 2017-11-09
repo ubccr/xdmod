@@ -23,7 +23,8 @@ INSERT INTO ${DESTINATION_SCHEMA}.user_acl_group_by_parameters (user_id, acl_id,
            JOIN ${DESTINATION_SCHEMA}.group_bys gb
              ON gb.name LIKE CONCAT('%', urp.param_name, '%')
            JOIN ${DESTINATION_SCHEMA}.modules m
-             ON m.module_id = gb.module_id
+             ON gb.module_id = m.module_id
+        WHERE m.name = 'xdmod'
          ORDER BY urp.user_id, urp.role_id, a.acl_id, gb.group_by_id
        ) inc
     LEFT JOIN ${DESTINATION_SCHEMA}.user_acl_group_by_parameters cur
