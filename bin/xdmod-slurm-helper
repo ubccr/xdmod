@@ -164,36 +164,13 @@ function main()
     }
 
     $args = getSacctCmdArgs($shredder, $startTime, $endTime);
-
-    $logFile   = tempnam(sys_get_temp_dir(), 'sacct-log-');
-    $errorFile = tempnam(sys_get_temp_dir(), 'sacct-error-');
-
-    $args[] = "1>$logFile";
-    $args[] = "2>$errorFile";
-
     array_unshift($args, $sacct);
-
     $cmd = implode(' ', $args);
-    $logger->info("Executing command: $cmd");
 
-    // Set time zone to UTC, execute the command, then restore the
-    // previously set timezone.  This is necessary since the logger uses
-    // the timezone to display the time in log messages.
-
-    $tz = getenv('TZ');
-
-    putenv('TZ=UTC');
-    system($cmd);
-
-    if (empty($tz)) {
-        putenv("TZ");
-    } else {
-        putenv("TZ=$tz");
-    }
-
-    if (filesize($errorFile) > 0) {
-        $error = file_get_contents($errorFile);
-        $logger->crit("Error while executing sacct: $error");
+    try {
+        $logFile = executeSacctCommand($cmd);
+    } catch (Exception $e) {
+        $logger->crit($e->getMessage());
         exit(1);
     }
 
@@ -201,6 +178,10 @@ function main()
 
     $logger->info("Total shredded: $count");
     $logger->info("Done shredding!");
+
+    if (!unlink($logFile)) {
+        $logger->warning("Failed to remove temporary file '$logFile'");
+    }
 
     $logger->notice('Normalizing data');
 
@@ -300,6 +281,101 @@ function getSacctCmdArgs(
     }
 
     return $args;
+}
+
+/**
+ * Execute sacct command.
+ *
+ * @param string $cmd Full sacct command including all arguments.
+ * @return string Path to file containing the output from sacct.
+ * @throws Exception If there was an error opening a temporary file, executing
+ *   the sacct command, getting the output from sacct, or if sacct returns a
+ *   non-zero value.
+ */
+function executeSacctCommand($cmd)
+{
+    global $logger;
+
+    $logFile = tempnam(sys_get_temp_dir(), 'sacct-log-');
+    $logger->debug("Writing sacct output to '$logFile'");
+    $logFilePointer = fopen($logFile, 'w');
+
+    if ($logFilePointer === false) {
+        throw new Exception("Failed to open temporary file '$logFile'");
+    }
+
+    // Set time zone to UTC, execute the command, then restore the previously
+    // set timezone.  This is necessary since the logger uses the timezone to
+    // display the time in log messages.  This is not done using the proc_open
+    // parameter since doing so replaces the entire environment.
+    $tz = getenv('TZ');
+    putenv('TZ=UTC');
+
+    $logger->info("Executing command: $cmd");
+    $process = proc_open(
+        $cmd . ';echo $? >&3', // Direct exit code to pipe 3.
+        array(
+            0 => array('file', '/dev/null', 'r'),
+            1 => $logFilePointer,
+            2 => array('pipe', 'w'),
+            3 => array('pipe', 'w'),
+        ),
+        $pipes
+    );
+
+    // Restore timezone if necessary.
+    if ($tz !== false) {
+        putenv('TZ');
+    } else {
+        putenv("TZ=$tz");
+    }
+
+    if (!is_resource($process)) {
+        throw new Exception('Failed to create sacct subprocess');
+    }
+
+    if (!fclose($logFilePointer)) {
+        $logger->err("Failed to close temporary file '$logFile'");
+    }
+
+    $err = stream_get_contents($pipes[2]);
+
+    if ($err === false) {
+        throw new Exception('Failed to get subprocess STDERR');
+    }
+
+    if (!fclose($pipes[2])) {
+        $logger->err('Failed to close subprocess STDERR');
+    }
+
+    $exitCode = stream_get_contents($pipes[3]);
+
+    if ($exitCode === false) {
+        throw new Exception('Failed to get subprocess exit code');
+    }
+
+    // Remove trailing white space.
+    $exitCode = trim($exitCode);
+
+    if (!fclose($pipes[3])) {
+        $logger->err('Failed to close subprocess pipe 3');
+    }
+
+    $procStatus = proc_close($process);
+
+    if (strlen($err) > 0) {
+        throw new Exception("Error while executing sacct: $err");
+    }
+
+    if ($procStatus === -1) {
+        throw new Exception('Error occurred while closing sacct subprocess');
+    }
+
+    if ($exitCode !== '0') {
+        throw new Exception("sacct returned $exitCode");
+    }
+
+    return $logFile;
 }
 
 function displayHelpText()
