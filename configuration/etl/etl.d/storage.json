@@ -88,7 +88,8 @@
                     "type": "jsonfile",
                     "name": "User storage usage input file",
                     "path": "storage/user_usage.json",
-                    "array_element_schema_path": "storage/user_usage.schema.json"
+                    "array_element_schema_path": "storage/user_usage.schema.json",
+                    "field_names": ["file_system", "username", "directory", "dt", "file_count", "logical_usage", "physical_usage", "soft_threshold", "hard_threshold"]
                 }
             }
         },
