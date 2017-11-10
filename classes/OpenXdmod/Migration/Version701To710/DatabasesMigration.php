@@ -5,6 +5,9 @@
  **/
 namespace OpenXdmod\Migration\Version701To710;
 
+use CCR\DB;
+use TimePeriodGenerator;
+
 /**
  * Ensure that the tables / data exists that will support the Acl subsystem
  * going into version 7.1.
@@ -28,6 +31,62 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 
         $this->migrateTables();
         $this->populateTables();
+
+        $this->updateTimePeriods();
+        $this->runEtlPipeline('hpcdb-modw.bootstrap');
+        $this->runEtlPipeline('hpcdb-modw.ingest');
+    }
+
+    private function runEtlPipeline($name = null){
+        if(empty($name)){
+            throw new \Exception('ETL Pipeline not given');
+        }
+        $start = new \DateTime('2000-01-01');
+        $end = new \DateTime('2038-01-18');
+
+        $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php '
+            . '-c ' . CONFIG_DIR . '/etl/etl.json' . ' -p ' . $name .
+            ' -m ' . $start->format('Y-m-d') . ' -y ' . $end->format('Y-m-d');
+        $pipes = array();
+        $this->logger->notice("Executing $command");
+        $process = proc_open(
+            $command,
+            array(
+                0 => array('file', '/dev/null', 'r'),
+                1 => array('pipe', 'w'),
+                2 => array('pipe', 'w'),
+            ),
+            $pipes
+        );
+        if (!is_resource($process)) {
+            $this->logger->error('Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true));
+            throw new \Exception('Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true));
+        }
+        $out = stream_get_contents($pipes[1]);
+        $err = stream_get_contents($pipes[2]);
+
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+
+        $return_value = proc_close($process);
+        if ($return_value != 0) {
+            $this->logger->error("$command returned $return_value, stdout:  stderr: $err");
+            throw new \Exception("$command returned $return_value, stdout:  stderr: $err");
+        }
+    }
+
+    private function updateTimePeriods(){
+        $aggregationUnits = array(
+            'day',
+            'month',
+            'quarter',
+            'year'
+        );
+
+        foreach ($aggregationUnits as $aggUnit) {
+            $tpg = TimePeriodGenerator::getGeneratorForUnit($aggUnit);
+            $tpg->generateMainTable(DB::factory('datawarehouse'), new \DateTime('2000-01-01'), new \DateTime('2038-01-18'));
+        }
     }
 
     /**

@@ -29,6 +29,8 @@ then
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     #this will be moved into the xdmod-ingestor after testing is complete
     php /usr/share/xdmod/tools/etl/etl_overseer.php -c /etc/xdmod/etl/etl.json -p hpcdb-modw.ingest
+    #this will be moved into the xdmod-ingestor after testing is complete
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -c /etc/xdmod/etl/etl.json -p hpcdb-modw.aggregate
     php /root/bin/createusers.php
 fi
 
