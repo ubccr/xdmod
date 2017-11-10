@@ -6,6 +6,7 @@
 namespace OpenXdmod\Migration\Version701To710;
 
 use CCR\DB;
+use FilterListBuilder;
 use TimePeriodGenerator;
 
 /**
@@ -34,7 +35,59 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 
         $this->updateTimePeriods();
         $this->runEtlPipeline('hpcdb-modw.bootstrap');
+        $this->logger->notice(
+            "Data is going to be migrated away from modw.jobfact into\n" .
+            "modw.job_records and modw.jobtasks, this might take a while.\n"
+        );
         $this->runEtlPipeline('hpcdb-modw.ingest');
+        $this->validateJobTasks();
+        $this->logger->notice('Rebuilding filter lists');
+        try {
+            $builder = new FilterListBuilder();
+            $this->logger->notice('got the builder');
+            $this->logger->notice('Running buildAllLists');
+            $builder->setLogger($this->logger);
+            $builder->buildAllLists();
+            $this->logger->notice('Returned from buildAllLists');
+        } catch (Exception $e) {
+            $this->logger->notice('Failed BuildAllLists: '  . $e->getMessage());
+            $this->logger->crit(array(
+                'message'    => 'Filter list building failed: ' . $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
+            ));
+            throw new \Exception('Filter list building failed: ' . $e->getMessage());
+        }
+        $this->logger->notice('Done building filter lists');
+    }
+
+    private function validateJobTasks(){
+        $this->logger->notice('Validating Job Tasks');
+        $dbh = DB::factory('datawarehouse');
+        $results = $dbh->query(
+            "SELECT
+                count(job_tasks.`job_id`) AS tasks,
+                count(jobfact.`job_id`) AS facts
+            FROM
+                job_tasks,
+                jobfact;"
+        );
+        $this->logger->debug(print_r($results, true));
+        if($results[0]['facts'] === $results[0]['tasks']){
+            $this->logger->notice(
+                "Migration Complete.\n\tThe modw.jobfact table is no longer needed " .
+                "it can now be deleted.\n"
+            );
+        }
+        else {
+            $this->logger->error(
+                "Migration FAILED!!\n" .
+                print_r($results, true)
+            );
+            throw new \Exception(
+                "Migration FAILED!!\n" .
+                print_r($results, true)
+            );
+        }
     }
 
     private function runEtlPipeline($name = null){
@@ -64,15 +117,15 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         }
         $out = stream_get_contents($pipes[1]);
         $err = stream_get_contents($pipes[2]);
-
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-
+        foreach($pipes as $pipe){
+            fclose($pipe);
+        }
         $return_value = proc_close($process);
         if ($return_value != 0) {
-            $this->logger->error("$command returned $return_value, stdout:  stderr: $err");
-            throw new \Exception("$command returned $return_value, stdout:  stderr: $err");
+            $this->logger->error("$command returned $return_value, stdout:  $out stderr: $err");
+            throw new \Exception("$command returned $return_value, stdout:  $out stderr: $err");
         }
+        $this->logger->notice("Execution Complete: $command");
     }
 
     private function updateTimePeriods(){
