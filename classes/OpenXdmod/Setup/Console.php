@@ -29,24 +29,10 @@ class Console
     }
 
     /**
-     * Whether the console is interactive or running in batch mode.
-     */
-    private $interactive = true;
-
-    /**
      * Constructor.
      */
     protected function __construct()
     {
-    }
-
-    /**
-     * Set interaction mode.
-     * @param bool $interactiveMode true for interactive mode, false for batch mode.
-     */
-    public function setInteractive($interactiveMode)
-    {
-        $this->interactive = $interactiveMode;
     }
 
     /**
@@ -145,10 +131,6 @@ class Console
             $prompt .= " [$default]";
         }
 
-        if ($this->interactive === false && !empty($default)) {
-            return $default;
-        }
-
         $prompt .= ' ';
 
         $response = readline($prompt);
@@ -197,9 +179,6 @@ class Console
      */
     public function silentPrompt($prompt)
     {
-        if ($this->interactive === false) {
-            return '';
-        }
         echo "$prompt ";
         $first = preg_replace('/\r?\n$/', '', `stty -echo; head -n1; stty echo`);
         echo "\n(confirm) $prompt ";

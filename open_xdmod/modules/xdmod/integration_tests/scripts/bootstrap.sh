@@ -32,5 +32,5 @@ if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
-    xdmod-upgrade --batch-mode | col -b
+    expect $BASEDIR/xdmod-upgrade.tcl | col -b
 fi
