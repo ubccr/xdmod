@@ -68,7 +68,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
 													));
 		$query->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition( new \DataWarehouse\Query\Model\TableField($this->queue_table,'resource_id'),
 													'=',
-													new \DataWarehouse\Query\Model\TableField($data_table, "resource_id")
+													new \DataWarehouse\Query\Model\TableField($data_table, "task_resource_id")
 													));
 		$this->addOrder($query,$multi_group);
 

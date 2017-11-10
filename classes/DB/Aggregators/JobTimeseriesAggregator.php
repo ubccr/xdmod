@@ -36,7 +36,7 @@ class JobTimeseriesAggregator extends Aggregator
             new TableColumn("{$this->_time_period}", 'int(3)', ":{$this->_time_period}", true, false, "The {$this->_time_period} of the year."),
 
             new TableColumn('person_id', 'int(7)', '', true, true, "The id of the person that ran the jobs.", true),
-            new TableColumn('organization_id', 'int(6)', '', true, true, "The organization of the resource that the jobs ran on.", true),
+            new TableColumn('resource_organization_id', 'int(6)', '', true, true, "The organization of the resource that the jobs ran on.", true),
             new TableColumn('person_organization_id', 'int(6)', '', true, true, "The organization of the person that ran the jobs.", true),
             new TableColumn('person_nsfstatuscode_id', 'int(3)', '', true, true, "The NSF status code of the person that ran the jobs.", true),
 
