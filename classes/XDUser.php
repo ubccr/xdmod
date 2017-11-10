@@ -1388,7 +1388,6 @@ SQL;
             $query,
             array(
                 ':acl_hierarchy_name' => 'acl_hierarchy',
-                ':module_name' => DEFAULT_MODULE_NAME,
                 ':user_id' => $this->_id
             )
         );
