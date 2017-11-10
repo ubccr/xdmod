@@ -65,53 +65,6 @@
                 "path": "xdmod/processor-buckets.json"
             }
         }
-    },{
-        "name": "days",
-        "definition_file": "xdmod/days.json",
-        "description": "days + data",
-        "endpoints": {
-            "source": {
-                "type": "jsonfile",
-                "name": "days data",
-                "path": "xdmod/days.json"
-            }
-        }
-    },
-    {
-        "name": "months",
-        "definition_file": "xdmod/months.json",
-        "description": "months + data",
-        "endpoints": {
-            "source": {
-                "type": "jsonfile",
-                "name": "months data",
-                "path": "xdmod/months.json"
-            }
-        }
-    },
-    {
-        "name": "quarters",
-        "definition_file": "xdmod/quarters.json",
-        "description": "quarters + data",
-        "endpoints": {
-            "source": {
-                "type": "jsonfile",
-                "name": "quarters data",
-                "path": "xdmod/quarters.json"
-            }
-        }
-    },
-    {
-        "name": "years",
-        "definition_file": "xdmod/years.json",
-        "description": "years + data",
-        "endpoints": {
-            "source": {
-                "type": "jsonfile",
-                "name": "years data",
-                "path": "xdmod/years.json"
-            }
-        }
     }],
     "hpcdb-modw.ingest": [{
         "name": "account",
@@ -269,11 +222,12 @@
             "hpcdb-modw/job_record_hpc_post_ingest_updates.sql"
         ]
     }, {
-        "name": "min-max-date-pre-aggregate",
+        "name": "min-max-date",
         "definition_file": "hpcdb-modw/min-max-date.json",
         "description": "",
         "truncate_destination": true
-    }, {
+    }],
+    "hpcdb-modw.aggregate": [{
         "name": "aggregate",
         "endpoints": {
             "source": {
