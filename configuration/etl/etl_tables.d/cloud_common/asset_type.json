@@ -1,0 +1,65 @@
+{
+    "#": "Asset types are global to all cloud resources",
+
+    "table_definition": {
+        "name": "asset_type",
+        "engine": "MyISAM",
+        "comment": "Type of an asset",
+        "columns": [
+            {
+                "name": "asset_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "asset_type",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Short version or abbrev"
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "description",
+                "type": "varchar(1024)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "unit_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null,
+                "comment": "Unknown = -1"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "asset_type_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "asset_type",
+                "columns": [
+                    "asset_type"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "fk_unit",
+                "columns": [
+                    "unit_id"
+                ],
+                "is_unique": false
+            }
+        ]
+    }
+}

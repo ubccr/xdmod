@@ -1,0 +1,70 @@
+{
+    "table_definition": {
+        "name": "instance_data",
+        "engine": "MyISAM",
+        "comment": "Additional instance information",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "event_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "instance_type_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "image_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "host_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "event_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "fk_instance",
+                "columns": [
+                    "instance_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_image",
+                "columns": [
+                    "image_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_host",
+                "columns": [
+                    "host_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ]
+    }
+}

@@ -1,0 +1,105 @@
+{
+    "#": "Assets are specific to a resource and include volumes, ip addresses, etc.",
+
+    "table_definition": {
+        "name": "asset",
+        "engine": "MyISAM",
+        "comment": "Generic assets",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "asset_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "Auto-increment relative to resource_id. We do not have unknown assets."
+            },
+            {
+                "name": "asset_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "provider_identifier",
+                "type": "varchar(64)",
+                "nullable": false,
+                "default": "",
+                "comment": "Asset identifier from the provider"
+            },
+            {
+                "name": "account_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Optional account the asset is associated with. Unknown = 1."
+            },
+            {
+                "name": "create_time_utc",
+                "type": "datetime",
+                "nullable": false,
+                "default": "0000-00-00 00:00:00",
+                "comment": "The time that the asset was created in UTC."
+            },
+            {
+                "name": "destroy_time_utc",
+                "type": "datetime",
+                "nullable": true,
+                "default": null,
+                "comment": "The time that the asset was destroyed in UTC."
+            },
+            {
+                "name": "size",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Optional asset size"
+            }
+        ],
+
+        "#": "Note that the primary key is (resource, type, identifier, create_time) rather than",
+        "#": "asset_id so we can take advantage of ON DUPLICATE KEY UPDATE to update existing entries",
+        "#": "and still use auto_increment for new entries.",
+
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "asset_type_id",
+                    "provider_identifier",
+                    "account_id",
+                    "create_time_utc",
+                    "size"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "fk_asset_type",
+                "columns": [
+                    "asset_type_id"
+                ],
+                "is_unique": false
+            },
+            {
+                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
+                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
+                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
+                "#": "useful when you want to put data into ordered groups.",
+                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
+
+                "name": "autoincrement_key",
+                "columns": [
+                    "resource_id",
+                    "asset_id"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

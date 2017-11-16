@@ -1,0 +1,72 @@
+{
+    "#": "Instances are specific to a resource",
+
+    "table_definition": {
+        "name": "instance",
+        "engine": "MyISAM",
+        "comment": "Cloud instances",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "instance_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "Auto-increment relative to resource_id. Unknown = 1"
+            },
+            {
+                "name": "account_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Unknown = 1"
+            },
+            {
+                "name": "provider_identifier",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "Instance identifier from cloud provider"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Unknown = 1"
+            }
+        ],
+
+        "#": "Note that the primary key is (resource, instance) rather than instance_id so we can",
+        "#": "take advantage of ON DUPLICATE KEY UPDATE to update existing entries and still use",
+        "#": "auto_increment for new entries.",
+
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "provider_identifier"
+                ],
+                "is_unique": true
+            },
+            {
+                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
+                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
+                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
+                "#": "useful when you want to put data into ordered groups.",
+                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
+
+                "name": "increment_key",
+                "columns": [
+                    "resource_id",
+                    "instance_id"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

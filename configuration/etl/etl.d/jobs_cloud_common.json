@@ -1,0 +1,107 @@
+{
+    "defaults": {
+
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        },
+
+        "jobs-cloud-common": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true
+        }
+    },
+
+    "#": "Current Cloud job ingestion",
+
+    "jobs-cloud-common": [
+        {
+            "#": "Initialize tables that will be populated by infrastructure-specific actions",
+
+            "name": "CloudTableManagement",
+            "class": "ManageTables",
+            "description": "Manage job tables not managed by other actions",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "cloud_common/cloud_resource_metadata.json",
+                "cloud_common/job_record_event.json",
+                "cloud_common/event.json",
+                "cloud_common/asset.json",
+                "cloud_common/instance_data.json",
+                "cloud_common/event_asset.json"
+            ]
+        },
+        {
+            "name": "CloudAssetTypeInitializer",
+            "description": "Initialize cloud asset types including unknown",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/asset_type.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud asset types",
+                    "path": "cloud_common/asset_type.json"
+                }
+            }
+        },
+        {
+            "name": "CloudEventTypeInitializer",
+            "description": "Initialize cloud event types including unknown",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/event_type.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud event types",
+                    "path": "cloud_common/event_type.json"
+                }
+            }
+        },
+        {
+            "name": "CloudRecordTypeInitializer",
+            "description": "Initialize cloud record types including unknown",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/record_type.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud record types",
+                    "path": "cloud_common/record_type.json"
+                }
+            }
+        },
+        {
+            "#": "Note that any actions run after this cannot truncate the tables set here",
+
+            "name": "CloudUnknownDimensionInitializer",
+            "description": "Initialize values for unknown hosts, images, etc. that are specific to a resource",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_common/initialize_unknown_dimension_values.def.json",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD DW",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        }
+    ]
+}
