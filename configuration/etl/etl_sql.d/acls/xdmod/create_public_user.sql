@@ -22,6 +22,9 @@ LEFT JOIN Users cur
         BINARY cur.email_address = BINARY inc.email_address
 WHERE cur.id IS NULL;
 
+-- Update public acl display
+UPDATE acls SET display = 'Public' WHERE name = 'pub';
+
 -- Create the association between the public user and the public acl.
 INSERT INTO user_acls(user_id, acl_id)
 SELECT inc.*
