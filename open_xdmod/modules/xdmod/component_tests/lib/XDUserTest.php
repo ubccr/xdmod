@@ -1292,23 +1292,9 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
             array(self::PRINCIPAL_INVESTIGATOR_ACL_NAME, 'Principal Investigator'),
             array(self::NORMAL_USER_ACL, 'User'),
             array(self::PUBLIC_ACL_NAME, 'Public'),
-            array(self::INVALID_ACL_NAME, 'Public')
+            array(self::INVALID_ACL_NAME, 'Public'),
+            array(null, 'Public'),
+            array('', 'Public')
         );
-    }
-
-    public function testGetFormalRoleNameNull()
-    {
-        $expected = 'Public';
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
-        $actual = $user->_getFormalRoleName(null);
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testGetFormalRoleNameEmptyString()
-    {
-        $expected = 'Public';
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
-        $actual = $user->_getFormalRoleName('');
-        $this->assertEquals($expected, $actual);
     }
 }
