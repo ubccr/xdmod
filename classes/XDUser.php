@@ -2583,7 +2583,8 @@ FROM (
        AND a.name = :abbrev;
 SQL;
 
-        $roleData = $pdo->query($query,
+        $roleData = $pdo->query(
+            $query,
             array(
                 ':abbrev' => $role_abbrev,
                 ':pub_abbrev' => ROLE_ID_PUBLIC
