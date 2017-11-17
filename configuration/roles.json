@@ -255,7 +255,7 @@
             ]
         },
         "pub": {
-            "display": "Public User",
+            "display": "Public",
             "type": "data",
             "hierarchies": [{
                 "level": 0,
