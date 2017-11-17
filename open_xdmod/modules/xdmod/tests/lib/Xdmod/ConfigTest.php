@@ -23,8 +23,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($section);
         $this->assertNotEmpty($testCases);
 
-        echo "Section: $section\n";
-
         $config = Config::factory();
         $this->assertNotNull($config);
 
