@@ -267,6 +267,7 @@ function main()
         $logger->info('Building filter lists');
         try {
             $builder = new FilterListBuilder();
+            $builder->setLogger($logger);
             $builder->buildAllLists();
         } catch (Exception $e) {
             $logger->crit(array(
