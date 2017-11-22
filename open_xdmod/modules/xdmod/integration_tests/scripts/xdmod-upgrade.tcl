@@ -20,3 +20,5 @@ set timeout 60
 spawn "xdmod-upgrade"
 confirmUpgrade
 expect eof
+lassign [wait] pid spawnid os_error_flag value
+exit $value
