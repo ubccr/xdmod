@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-acl-etl -pacls-xdmod-management -g
+acl-etl -pacls-xdmod-management -v
