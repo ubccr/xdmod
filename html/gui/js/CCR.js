@@ -33,8 +33,6 @@ XDMoD.TrackEvent = function (category, action, details, suppress_close_handler) 
         details = JSON.stringify(details);
     }
 
-    //console.log("[TrackEvent]: " + [XDMoD.REST.token,XDMoD.Tracking.sequence_index,CCR.xdmod.ui.username,category,action,details,details.length].join(' -- '));
-
     var dimension_limit = 150; // dimension limit imposed by Google
     var action_dimension_slots = 3; // how many custom dimensions are dedicated to storing action details
 
@@ -984,14 +982,12 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
                 if (decodedResponse) {
                     XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
-                    XDMoD.REST.token = data.results.token;
-                    XDMoD.TrackEvent('Login Window', 'Login from public session', '(Token: ' + XDMoD.REST.token + ')', true);
                     presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
                     parent.location.href = '../../index.php' + parent.XDMoD.referer;
                     parent.location.hash = parent.XDMoD.referer;
                     parent.location.reload();
                 } else {
-                    XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
+                    XDMoD.TrackEvent('Login Window', 'Failed login', txtLoginUsername.getValue());
                     var message = data.message || 'There was an error encountered while logging in. Please try again.';
                     message = Ext.util.Format.htmlEncode(message);
                     message = message.replace(
