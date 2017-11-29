@@ -1,0 +1,20 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/system-account.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "system_account_id",
+            "person_id": "person_id",
+            "resource_id": "resource_id",
+            "username": "username",
+            "ts": "ts",
+            "uid": "uid"
+        },
+        "joins": [{
+            "name": "hpcdb_system_accounts",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "saf"
+        }]
+    }
+}

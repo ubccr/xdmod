@@ -1,0 +1,88 @@
+{
+    "table_definition": {
+        "name": "fieldofscience_hierarchy",
+        "engine": "MyISAM",
+        "columns": [{
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "description",
+                "type": "varchar(200)",
+                "nullable": true
+            },
+            {
+                "name": "description2",
+                "type": "varchar(200)",
+                "nullable": true
+            },
+            {
+                "name": "parent_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "parent_description",
+                "type": "varchar(200)",
+                "nullable": true
+            },
+            {
+                "name": "directorate_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "directorate_description",
+                "type": "varchar(200)",
+                "nullable": true
+            },
+            {
+                "name": "directorate_abbrev",
+                "type": "varchar(100)",
+                "nullable": true
+            },
+            {
+                "name": "division_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "division_description",
+                "type": "varchar(200)",
+                "nullable": true
+            },
+            {
+                "name": "order_id",
+                "type": "int(11)",
+                "nullable": true
+            }
+        ],
+        "indexes": [{
+                "name": "fos_h_directorate_id",
+                "columns": [
+                    "directorate_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fos_h_parent_id",
+                "columns": [
+                    "parent_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

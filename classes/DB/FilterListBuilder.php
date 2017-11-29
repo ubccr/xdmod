@@ -234,15 +234,16 @@ class FilterListBuilder extends Loggable
                 $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
 
                 $db->execute("DELETE FROM `{$targetSchema}`.`{$pairTableName}`");
-                $db->execute("
-                    INSERT INTO
+                $query =
+                    "INSERT INTO
                         `{$targetSchema}`.`{$pairTableName}`
                     SELECT DISTINCT
                         $firstIdField,
                         $secondIdField
                     FROM $selectTablesStr
-                    WHERE $wheresStr
-                ");
+                    WHERE $wheresStr";
+                $this->_logger->debug($query);
+                $db->execute($query);
 
                 $db->commit();
 

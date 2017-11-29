@@ -223,8 +223,9 @@ abstract class TimeAggregationUnit
      *                          in 'Y-m-d' format.
      * @param  mixed $min_aggregation_unit The smallest aggregation unit
      *                                     allowed when automatically
-     *                                     determining the unit or null if
-     *                                     no limit. (Default: null)
+     *                                     determining the unit or null
+     *                                     if no limit. (Default: null)
+     *
      * @return string A properly-formatted name for a concrete aggregation unit.
      */
     public static function deriveAggregationUnitName($time_period, $start_date, $end_date, $min_aggregation_unit = null)
@@ -249,8 +250,7 @@ abstract class TimeAggregationUnit
                 $time_period = 'day';
             }
 
-            if ($min_aggregation_unit !== null)
-            {
+            if ($min_aggregation_unit !== null) {
                 $min_aggregation_unit = self::deriveAggregationUnitName($min_aggregation_unit, $start_date, $end_date);
 
                 $time_period_length = self::$unit_sizes_in_days[$time_period];
@@ -268,8 +268,9 @@ abstract class TimeAggregationUnit
     /**
      * Determine which of two aggregation units is larger.
      *
-     * @param  string $unit_1 The first unit to compare.
-     * @param  string $unit_2 The second unit to compare.
+     * @param string $unit_1 The first unit to compare.
+     * @param string $unit_2 The second unit to compare.
+     *
      * @return string         The name of the larger unit. This may differ from
      *                        the input unit in capitalization. If one input
      *                        is not a valid unit, the other is returned
@@ -352,16 +353,18 @@ abstract class TimeAggregationUnit
      * @return boolean       True if the string is the name of a time
      *                       aggregation unit, otherwise false.
      */
-    public static function isTimeAggregationUnitName($name) {
+    public static function isTimeAggregationUnitName($name)
+    {
         return array_key_exists(strtolower($name), self::$unit_sizes_in_days);
     }
 
     /**
      * Compute the time period covered by a given datapoint.
      *
-     * @param unixtimestamp of start of period (seconds since the epoch).
-     * @param period to cover (day, month, quarter, year).
-     * @return the start and end dates coverted by the time point
+     * @param unixtimestamp $time_point of start of period (seconds since the epoch).
+     * @param string        $period     to cover (day, month, quarter, year).
+     *
+     * @return array the start and end dates coverted by the time point
      * @throws DomainException if specified time is invalid or period is invalid
      */
     public static function getRawTimePeriod($time_point, $period)
@@ -373,11 +376,11 @@ abstract class TimeAggregationUnit
             throw new \DomainException("Invalid value for time point");
         }
 
-        if(!static::isTimeAggregationUnitName($period)) {
+        if (!static::isTimeAggregationUnitName($period)) {
             throw new \DomainException("Invalid time period");
         }
 
-        switch($period) {
+        switch ($period) {
             case 'day':
                 // do nothing
                 break;

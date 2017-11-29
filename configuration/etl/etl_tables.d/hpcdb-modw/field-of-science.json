@@ -1,0 +1,27 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/field-of-science.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "fos.field_of_science_id",
+            "parent_id": "fos.parent_id",
+            "description": "fos.description",
+            "fos_nsf_id": "fos.field_of_science_id",
+            "fos_nsf_abbrev": "fos.abbrev",
+            "directorate_fos_id": "fosh.directorate_id"
+        },
+        "joins": [{
+                "name": "hpcdb_fields_of_science_hierarchy",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "fosh"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_fields_of_science",
+                "alias": "fos",
+                "on": "fosh.field_of_science_id = fos.field_of_science_id"
+            }
+        ]
+    }
+}
