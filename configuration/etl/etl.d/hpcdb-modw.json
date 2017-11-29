@@ -86,8 +86,7 @@
     }, {
         "name": "allocation",
         "definition_file": "hpcdb-modw/allocation.json",
-        "description": "allocation records",
-        "optimize_query": false
+        "description": "allocation records"
     }, {
         "name": "resource",
         "definition_file": "hpcdb-modw/resource-fact.json",
@@ -103,13 +102,11 @@
     }, {
         "name": "field-of-science-hierarchy",
         "definition_file": "hpcdb-modw/field-of-science-hierarchy.json",
-        "description": "field of science hierarchy records",
-        "optimize_query": false
+        "description": "field of science hierarchy records"
     }, {
         "name": "organization",
         "definition_file": "hpcdb-modw/organization.json",
-        "description": "organization records",
-        "optimize_query": false
+        "description": "organization records"
     }, {
         "name": "node-count",
         "definition_file": "hpcdb-modw/node-count.json",
@@ -117,30 +114,26 @@
     }, {
         "name": "pi-person",
         "definition_file": "hpcdb-modw/piperson.json",
-        "description": "PI Person records",
-        "optimize_query": false
+        "description": "PI Person records"
     }, {
         "name": "pi-person-post-insert",
         "namespace": "ETL\\Maintenance",
         "options_class": "MaintenanceOptions",
         "description": "required PI records",
         "class": "ExecuteSql",
-        "enabled": true,
         "sql_file_list": [
             "hpcdb-modw/pi-person-post-ingest-insert.sql"
         ]
     }, {
         "name": "person",
         "definition_file": "hpcdb-modw/person.json",
-        "description": "person records",
-        "optimize_query": false
+        "description": "person records"
     }, {
         "name": "person-post-insert",
         "namespace": "ETL\\Maintenance",
         "options_class": "MaintenanceOptions",
         "description": "Required person records",
         "class": "ExecuteSql",
-        "enabled": true,
         "sql_file_list": [
             "hpcdb-modw/person-post-ingest-insert.sql"
         ]
@@ -184,8 +177,7 @@
     }, {
         "name": "service-provider",
         "definition_file": "hpcdb-modw/service-provider.json",
-        "description": "service provider records",
-        "optimize_query": false
+        "description": "service provider records"
     }, {
         "name": "system-account",
         "definition_file": "hpcdb-modw/system-account.json",
@@ -224,7 +216,7 @@
     }, {
         "name": "min-max-date",
         "definition_file": "hpcdb-modw/min-max-date.json",
-        "description": "",
+        "description": "Job Record min and max job dates",
         "truncate_destination": true
     }],
     "hpcdb-modw.aggregate": [{

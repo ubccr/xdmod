@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "organization",
         "engine": "MyISAM",
-        "comment": "The various organization pertaining to TG.",
+        "comment": "The various organization.",
         "columns": [{
                 "name": "id",
                 "type": "int(11)",

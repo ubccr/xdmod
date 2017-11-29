@@ -2,7 +2,7 @@
     "table_definition": {
         "name": "account",
         "engine": "MyISAM",
-        "comment": "This table has records for all the TeraGrid accounts.",
+        "comment": "This table has records for all the accounts/projects.",
         "columns": [{
                 "name": "id",
                 "type": "int(11)",

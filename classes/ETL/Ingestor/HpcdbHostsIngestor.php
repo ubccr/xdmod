@@ -16,11 +16,20 @@ use \PDOException;
 
 class HpcdbHostsIngestor extends pdoIngestor implements iAction
 {
+    /**
+     * @see ETL\Ingestor\pdoIngestor::transform
+     */
     public function transform(array $srcRecord, $orderId)
     {
         $srcRecord = parent::transform($srcRecord, $orderId);
         $transformedRecord = array();
-
+        /**
+         * call HostListParser to expand host names and updates
+         * this record to be able to be turned into something that
+         * can then be used in hpcdb-modw.ingest.job-hosts action to
+         *  the job hosts table.
+         * @see Xdmod\HostListParser
+         */
         $parser = new HostListParser();
         $hosts = $parser->expandHostList($srcRecord[0]['hostnames']);
         $order_id = 0;

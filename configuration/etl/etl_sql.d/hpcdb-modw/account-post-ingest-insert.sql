@@ -1,3 +1,8 @@
+--
+-- Previous method created these databases and inserted these rows upon
+-- table creation.  To maintain Consistency, these are
+--
+--
 INSERT IGNORE INTO `${DESTINATION_SCHEMA}`.`account` (
     id,
     parent_id,

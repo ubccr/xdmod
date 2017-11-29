@@ -6,20 +6,12 @@
                 "type": "datetime",
                 "nullable": true,
                 "default": null,
-                "extra": null,
-                "comment": null,
-                "hints": null,
-                "rename": null,
                 "name": "min_job_date"
             },
             {
                 "type": "datetime",
                 "nullable": true,
                 "default": null,
-                "extra": null,
-                "comment": null,
-                "hints": null,
-                "rename": null,
                 "name": "max_job_date"
             }
         ],
