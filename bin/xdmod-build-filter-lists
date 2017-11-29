@@ -4,55 +4,37 @@
 require_once __DIR__ . '/../configuration/linker.php';
 
 use CCR\Log;
+
 // Disable memory limit.
 ini_set('memory_limit', -1);
 
 $opts = array(
-    array('h', 'help'),
+    'h' => 'help',
 
     // Logging levels.
-    array('v', 'verbose'),
-    array('d',  'debug'),
-    array('q', 'quiet'),
+    'v' => 'verbose',
+    'd' => 'debug',
+    'q' => 'quiet',
 
-    array('r::', 'realms::'),
+    'r:' => 'realm:',
 );
-
-$shortOptions = implode(
-    '',
-    array_map(
-        function ($opt) {
-            return $opt[0];
-        },
-        $opts
-    )
-);
-$longOptions = array_map(
-    function ($opt) {
-        return $opt[1];
-    },
-    $opts
-);
-
-$args = getopt($shortOptions, $longOptions);
+$args = getopt(implode('', array_keys($opts)), $opts);
 
 if ($args === false) {
-    fwrite(STDERR, "Failed to parse arguments\n");
-    exit(1);
-}
-if (array_key_exists('h', $args) || array_key_exists('help', $args)){
-    displayHelpText();
-    exit();
+    usageAndExit("Failed to parse arguments\n");
 }
 $realms = array();
 $logLevel = Log::NOTICE;
 foreach ($args as $key => $value) {
-    if (is_array($value) && 'v' !== $key) {
-        fwrite(STDERR, "Multiple values not allowed for '$key'\n");
-        exit(1);
+    if (is_array($value) && !in_array($key, array('v', 'r'))) {
+        usageAndExit("Multiple values not allowed for '$key'");
     }
 
     switch ($key) {
+        case 'h':
+        case 'help':
+            usageAndExit();
+            break;
         case 'd':
         case 'debug':
             $logLevel = max($logLevel, Log::DEBUG);
@@ -61,37 +43,26 @@ foreach ($args as $key => $value) {
         case 'quiet':
             $logLevel = max($logLevel, Log::WARNING);
             break;
-        case 'r':
-        case 'realms':
-            $realms = explode(',', $value);
-            break;
         case 'verbose':
-            $logLevel = max($logLevel, Log::DEBUG);
+            $logLevel = max($logLevel, Log::INFO);
             break;
         case 'v':
-            $logLevel = max($logLevel, Log::INFO);
-            if(is_array($value)){
-                switch(count($value)){
-                    case 2:
-                        $logLevel = max($logLevel, Log::DEBUG);
-                        break;
-                    case 3:
-                        // This should be implemented as Log::TRACE
-                        // once TRACE is Implemented
-                        $logLevel = max($logLevel, Log::DEBUG);
-                        break;
-                    default:
-                        $logLevel = max($logLevel, Log::INFO);
-                }
+            $value = is_array($value) ? $value : array($value);
+            switch(count($value)){
+                case 1:
+                    $logLevel = max($logLevel, Log::INFO);
+                    break;
+                case 2:
+                    $logLevel = max($logLevel, Log::DEBUG);
+                    break;
             }
-
             break;
-        case 'debug':
-            $logLevel = max($logLevel, Log::DEBUG);
+        case 'r':
+        case 'realms':
+            $realms = is_array($value) ? $value : array($value);
             break;
         default:
-            fwrite(STDERR, "Unexpected option '$key'\n");
-            exit(1);
+            usageAndExit("Unexpected option '$key'\n");
             break;
     }
 }
@@ -103,16 +74,17 @@ $logger = Log::factory(
         'consoleLogLevel' => $logLevel,
     )
 );
-
 build($realms, $logger);
 
 function build($realms, $logger){
+
     try {
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($logger);
         if (count($realms) > 0){
             foreach($realms as $realm){
                 if(!empty($realm)){
+                    $logger->notice('Building Filter List: ' . $realm);
                     $filterListBuilder->buildRealmLists($realm);
                 }
             }
@@ -125,13 +97,14 @@ function build($realms, $logger){
             'message'    => 'Filter list building failed: ' . $e->getMessage(),
             'stacktrace' => $e->getTraceAsString(),
         ));
+        exit(1);
     }
 }
-function displayHelpText()
+function usageAndExit($msg = null)
 {
     echo <<<'EOF'
 
-Usage: xdmod-build-filter-lists [-v] [-r]
+Usage: {$argv[0]} [-v] [-r {realm} -r {realm} ...]
 
     -h, --help
         Display this message and exit.
@@ -145,9 +118,14 @@ Usage: xdmod-build-filter-lists [-v] [-r]
     -q, --quiet
         Output warning level and above log messages.
 
-    -r[Jobs,SUPREMM]
-        Comma Separated list of realms to build filter list for.  If none specified, auto discover and build all.
-
+    -r, --realm
+        One for each Realm to build filter list for.
+        If none specified, auto discover and build all.
 
 EOF;
+    if ($msg !== null) {
+        fwrite(STDERR, "\n$msg\n\n");
+        exit(1);
+    }
+    exit;
 }
