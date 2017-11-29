@@ -63,7 +63,7 @@ class FilterListBuilder extends Loggable
     /**
      * Build filter lists for the given realm's dimensions.
      *
-     * @param  string $realmName The name of a realm to build lists for.
+     * @param string $realmName The name of a realm to build lists for.
      */
     public function buildRealmLists($realmName)
     {
@@ -83,8 +83,8 @@ class FilterListBuilder extends Loggable
     /**
      * Build filter lists for the given dimension.
      *
-     * @param  Query   $realmQuery A query for the realm the dimension is in.
-     * @param  GroupBy $groupBy    The dimension's GroupBy to build lists for.
+     * @param Query   $realmQuery A query for the realm the dimension is in.
+     * @param GroupBy $groupBy    The dimension's GroupBy to build lists for.
      */
     public function buildDimensionLists(Query $realmQuery, GroupBy $groupBy)
     {
@@ -112,12 +112,12 @@ class FilterListBuilder extends Loggable
 
             $dimensionColumnType = $dimensionProperties['type'];
 
-            $db->execute("
-                CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
+            $db->execute(
+                "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
                     `{$dimensionName}` {$dimensionColumnType} NOT NULL,
                     PRIMARY KEY (`{$dimensionName}`)
-                );
-            ");
+                );"
+            );
         }
 
         try {
@@ -135,14 +135,14 @@ class FilterListBuilder extends Loggable
             $wheresStr = implode(' AND ', $wheres);
 
             $db->execute("DELETE FROM `{$targetSchema}`.`{$mainTableName}`");
-            $db->execute("
-                INSERT INTO
+            $db->execute(
+                "INSERT INTO
                     `{$targetSchema}`.`{$mainTableName}`
                 SELECT DISTINCT
                     $idField
                 FROM $selectTablesStr
-                WHERE $wheresStr
-            ");
+                WHERE $wheresStr"
+            );
 
             $db->commit();
 
@@ -206,15 +206,14 @@ class FilterListBuilder extends Loggable
                     $this->_logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
                     continue;
                 }
-
-                $db->execute("
-                    CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
+                $db->execute(
+                    "CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
                         `{$firstDimensionName}` {$firstDimensionColumnType} NOT NULL,
                         `{$secondDimensionName}` {$secondDimensionColumnType} NOT NULL,
                         PRIMARY KEY (`{$firstDimensionName}`, `{$secondDimensionName}`),
                         INDEX `idx_second_dimension` (`{$secondDimensionName}` ASC)
-                    )
-                ");
+                    )"
+                );
             }
 
             try {
@@ -234,15 +233,15 @@ class FilterListBuilder extends Loggable
                 $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
 
                 $db->execute("DELETE FROM `{$targetSchema}`.`{$pairTableName}`");
-                $db->execute("
-                    INSERT INTO
+                $db->execute(
+                    "INSERT INTO
                         `{$targetSchema}`.`{$pairTableName}`
                     SELECT DISTINCT
                         $firstIdField,
                         $secondIdField
                     FROM $selectTablesStr
-                    WHERE $wheresStr
-                ");
+                    WHERE $wheresStr"
+                );
 
                 $db->commit();
 
@@ -312,7 +311,7 @@ class FilterListBuilder extends Loggable
      * Get data about how a dimension is stored in the database.
      *
      * @param  Query   $realmQuery A query for the realm the dimension is in.
-     * @param  GroupBy $groupBy The GroupBy for the dimension to get data for.
+     * @param  GroupBy $groupBy    The GroupBy for the dimension to get data for.
      * @return array            Data about the dimension, including:
      *                              * type: The data type used to represent IDs
      *                                      for the dimension.
