@@ -73,7 +73,7 @@ function main()
     }
 
     $help = $ingest = $aggregate = $noAppend = $ingestAll = $ingestShredded
-        = $ingestStaging = $ingestHpcdb = $buildFilterLists = false;
+        = $ingestStaging = $ingestHpcdb = false;
 
     $startDate = $endDate = null;
 
@@ -106,9 +106,6 @@ function main()
                 break;
             case 'aggregate':
                 $aggregate = true;
-                break;
-            case 'build-filter-lists':
-                $buildFilterLists = true;
                 break;
             case 'start-date':
                 $startDate = $value;
@@ -205,7 +202,7 @@ function main()
     $dwi->setLogger($logger);
 
     // If no task was explicitly specified, do ingestion and aggregation.
-    if (!$ingest && !$aggregate && !$buildFilterLists) {
+    if (!$ingest && !$aggregate) {
         $ingest = $aggregate = true;
     }
 
@@ -263,22 +260,6 @@ function main()
         $logger->info('Done aggregating data');
     }
 
-    if ($buildFilterLists) {
-        $logger->info('Building filter lists');
-        try {
-            $builder = new FilterListBuilder();
-            $builder->setLogger($logger);
-            $builder->buildAllLists();
-        } catch (Exception $e) {
-            $logger->crit(array(
-                'message'    => 'Filter list building failed: ' . $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString(),
-            ));
-            exit(1);
-        }
-        $logger->info('Done building filter lists');
-    }
-
     // NOTE: "process_end_time" is needed for the log summary.
     $logger->notice(array(
         'message'          => 'xdmod-ingestor end',
@@ -316,4 +297,3 @@ Usage: xdmod-ingestor [-v]
 
 EOF;
 }
-
