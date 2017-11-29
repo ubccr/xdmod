@@ -59,7 +59,7 @@ $params = array('uid' => RESTRICTION_UID);
    	if (isset($_POST['acls'])) {
    	
          $role_config = json_decode($_POST['acls'], true);
-         if (!in_array(ROLE_ID_MANAGER, $role_config)) {
+         if (!array_key_exists(ROLE_ID_MANAGER, $role_config)) {
                 $returnData['success'] = false;
                 $returnData['status'] = 'You are not allowed to revoke manager access from yourself.';
                 xd_controller\returnJSON($returnData);
