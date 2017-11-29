@@ -1,0 +1,51 @@
+{
+    "#": "Event types are global to all cloud resources",
+
+    "table_definition": {
+        "name": "event_type",
+        "engine": "MyISAM",
+        "comment": "Event type: start, stop, attach, detach, etc.",
+        "columns": [
+            {
+                "name": "event_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "event_type",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Short version or abbrev"
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "description",
+                "type": "varchar(1024)",
+                "nullable": true,
+                "default": null
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "event_type_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "event_type",
+                "columns": [
+                    "event_type"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

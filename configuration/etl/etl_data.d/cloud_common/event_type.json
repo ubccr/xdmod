@@ -1,0 +1,20 @@
+[
+    ["event_type_id", "event_type", "display", "description"],
+    [-1, "unknown",               "Unknown",               "Unknown event type" ],
+    [1,  "REQUEST_START",         "Request Start",         "Request to start instance" ],
+    [2,  "START",                 "Start",                 "Instance started" ],
+    [3,  "REQUEST_STOP",          "Request Stop",          "Request to stop instance" ],
+    [4,  "STOP",                  "Stop",                  "Instance stopped" ],
+    [5,  "REQUEST_TERMINATE",     "Request Terminate",     "Request to terminate instance" ],
+    [6,  "TERMINATE",             "Terminate",             "Instance terminated" ],
+    [7,  "REQUEST_RESUME",        "Request Resume",        "Request to resume suspended instance" ],
+    [8,  "RESUME",                "Resume",                "Resume suspended instance" ],
+    [9,  "REQUEST_IP_ATTACH",     "Request Attach IP",     "Request to attach IP address" ],
+    [10, "REQUEST_VOLUME_ATTACH", "Request Attach Volume", "Request to attach storage volume" ],
+    [11, "VOLUME_ATTACH",         "Volume Attach",         "Storage volume attached" ],
+    [12, "REQUEST_VOLUME_DETACH", "Request Detach Volume", "Request to detach storage volume" ],
+    [13, "REQUEST_MIGRATE",       "Request Migrate",       "Request to migrate instance to another host" ],
+    [14, "START_MIGRATE",         "Start Migrate",         "Start migrating an instance to another host" ],
+    [15, "STOP_MIGRATE",          "Stop Migrate",          "Migration of an instance to another host completed" ],
+    [16, "STATE_REPORT",          "State Report",          "Instance state report" ]
+]

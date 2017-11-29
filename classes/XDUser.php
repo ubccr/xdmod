@@ -1710,9 +1710,12 @@ FROM (
       gb.group_by_id AS group_by_id,
       :value AS value 
    FROM group_bys gb 
-   WHERE gb.name = 'provider'
-) inc 
-LEFT JOIN user_acl_group_by_parameters cur 
+   JOIN modules m
+     ON gb.module_id = m.module_id
+   WHERE m.name = :module_name AND
+         gb.name = 'provider'
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
   ON cur.user_id = inc.user_id
   AND cur.acl_id = inc.acl_id
   AND cur.group_by_id = inc.group_by_id
@@ -1723,7 +1726,8 @@ SQL
                 array(
                     ':user_id' => $this->_id,
                     ':acl_id' => $acl->getAclId(),
-                    ':value' => $organization_id
+                    ':value' => $organization_id,
+                    ':module_name' => DEFAULT_MODULE_NAME
                 )
             );
         }//foreach
@@ -1852,14 +1856,25 @@ SQL
 
     public function isCenterDirectorOfOrganization($organization_id)
     {
+        $query = <<<SQL
+SELECT COUNT(*) AS num_matches
+FROM user_acl_group_by_parameters uagbp
+JOIN group_bys gb ON uagbp.group_by_id = gb.group_by_id
+JOIN acls a ON uagbp.acl_id = a.acl_id
+WHERE
+  a.name        = :acl_name      AND
+  gb.name       = :group_by_name AND
+  uagbp.user_id = :user_id       AND
+  uagbp.value   = :organization_id;
+SQL;
 
         $results = $this->_pdo->query(
-            "SELECT COUNT(*) AS num_matches FROM UserRoleParameters WHERE user_id=:user_id AND role_id=:role_id AND param_name=:param_name AND param_value=:param_value",
+            $query,
             array(
-                'user_id' => $this->_id,
-                'role_id' => \xd_roles\getRoleIDFromIdentifier(ROLE_ID_CENTER_DIRECTOR),
-                'param_name' => 'provider',
-                'param_value' => $organization_id
+                ':user_id' => $this->_id,
+                ':acl_name' => ROLE_ID_CENTER_DIRECTOR,
+                ':group_by_name' => 'provider',
+                ':organization_id' => $organization_id
             )
         );
 
@@ -2551,24 +2566,30 @@ SQL;
 
     public function _getFormalRoleName($role_abbrev)
     {
-
-        if ($role_abbrev == ROLE_ID_PUBLIC) {
-            return 'Public';
-        }
-
-        if ($role_abbrev == NULL) {
-            return 'Public';
-        }
-
         $pdo = DB::factory('database');
+        $query = <<<SQL
+SELECT CASE WHEN a.acl_id IS NULL
+  THEN pub.description
+       ELSE a.display END description
+FROM (
+       SELECT
+         acl_id,
+         display AS description
+       FROM acls
+       WHERE name = :pub_abbrev
+     ) pub
+  LEFT JOIN acls a
+    ON a.acl_id != pub.acl_id
+       AND a.name = :abbrev;
+SQL;
 
-        $roleData = $pdo->query("SELECT description FROM Roles WHERE abbrev=:abbrev", array(
-            ':abbrev' => $role_abbrev,
-        ));
-
-        if (count($roleData) == 0) {
-            return 'Public';
-        }
+        $roleData = $pdo->query(
+            $query,
+            array(
+                ':abbrev' => $role_abbrev,
+                ':pub_abbrev' => ROLE_ID_PUBLIC
+            )
+        );
 
         return $roleData[0]['description'];
 

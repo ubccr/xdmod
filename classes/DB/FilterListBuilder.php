@@ -1,6 +1,8 @@
 <?php
 
 use CCR\DB;
+use CCR\DB\MySQLHelper;
+use DB\Exceptions\TableNotFoundException;
 use DataWarehouse\Query\GroupBy;
 use DataWarehouse\Query\Query;
 use DataWarehouse\Query\TimeAggregationUnit;
@@ -9,7 +11,7 @@ use Xdmod\Config;
 /**
  * Builds lists of filters for every realm's dimensions.
  */
-class FilterListBuilder
+class FilterListBuilder extends Loggable
 {
     /**
      * The set of list tables already built by this builder.
@@ -32,6 +34,16 @@ class FilterListBuilder
      * @var array|null
      */
     private static $rolesDimensionNames = null;
+
+    /**
+     * Construct filter list builder.
+     */
+    public function __construct()
+    {
+        if ($this->_logger === null) {
+            $this->_logger = Log::singleton('null');
+        }
+    }
 
     /**
      * Build filter lists for all realms' dimensions.
@@ -91,7 +103,13 @@ class FilterListBuilder
         $targetSchema = FilterListHelper::getSchemaName();
         $mainTableExistsResults = $db->query("SHOW TABLES FROM {$targetSchema} LIKE '$mainTableName'");
         if (empty($mainTableExistsResults)) {
-            $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
+            try {
+                $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
+            } catch (TableNotFoundException $e) {
+                $this->_logger->notice("Not creating $targetSchema.$mainTableName list table; {$e->getTable()} table not found");
+                return;
+            }
+
             $dimensionColumnType = $dimensionProperties['type'];
 
             $db->execute("
@@ -179,10 +197,15 @@ class FilterListBuilder
             // create it.
             $pairTableExistsResults = $db->query("SHOW TABLES FROM {$targetSchema} LIKE '$pairTableName'");
             if (empty($pairTableExistsResults)) {
-                $firstDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $firstGroupBy);
-                $firstDimensionColumnType = $firstDimensionProperties['type'];
-                $secondDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $secondGroupBy);
-                $secondDimensionColumnType = $secondDimensionProperties['type'];
+                try {
+                    $firstDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $firstGroupBy);
+                    $firstDimensionColumnType = $firstDimensionProperties['type'];
+                    $secondDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $secondGroupBy);
+                    $secondDimensionColumnType = $secondDimensionProperties['type'];
+                } catch (TableNotFoundException $e) {
+                    $this->_logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
+                    continue;
+                }
 
                 $db->execute("
                     CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
@@ -297,6 +320,8 @@ class FilterListBuilder
     private function getDimensionDatabaseProperties(Query $realmQuery, GroupBy $groupBy)
     {
         $db = DB::factory('datawarehouse');
+        $helper = MySQLHelper::factory($db);
+        $helper->setLogger($this->_logger);
 
         // TODO After GroupBy is refactored, use GroupBy methods to get the
         // table and column names,
@@ -308,6 +333,10 @@ class FilterListBuilder
         $dimensionTable = $dimensionTableStringComponents[0];
         preg_match('/\.(\S+)\s/', $dimensionQueryFields['id'], $dimensionColumnMatches);
         $dimensionColumn = $dimensionColumnMatches[1];
+
+        if (!$helper->tableExists($dimensionTable)) {
+            throw new TableNotFoundException("Could not find table $dimensionTable", 0, null, $dimensionTable);
+        }
 
         $columnDescriptionResults = $db->query("DESCRIBE {$dimensionTable} {$dimensionColumn}");
         if (empty($columnDescriptionResults)) {

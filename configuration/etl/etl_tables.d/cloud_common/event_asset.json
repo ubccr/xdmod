@@ -1,0 +1,44 @@
+{
+    "#": "Associate resource-specific events to assets",
+
+    "table_definition": {
+        "name": "event_asset",
+        "engine": "MyISAM",
+        "comment": "Assets associated with an event",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "event_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "asset_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_event",
+                "columns": [
+                    "resource_id",
+                    "event_id"
+                ],
+                "is_unique": false
+            },
+            {
+                "name": "fk_asset",
+                "columns": [
+                    "resource_id",
+                    "asset_id"
+                ],
+                "is_unique": false
+            }
+        ]
+    }
+}

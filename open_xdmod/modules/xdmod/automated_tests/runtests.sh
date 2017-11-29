@@ -21,7 +21,7 @@ npm install --quiet
 
 if [ "$4" = "--federated" ];
 then
-    npm run test-federated 2> >(grep -v depcrecated >&2)
+    npm run test-federated
 else
-    npm test 2> >(grep -v depcrecated >&2)
+    npm test
 fi

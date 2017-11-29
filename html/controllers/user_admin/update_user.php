@@ -59,7 +59,7 @@ $params = array('uid' => RESTRICTION_UID);
    	if (isset($_POST['acls'])) {
    	
          $role_config = json_decode($_POST['acls'], true);
-         if (!in_array(ROLE_ID_MANAGER, $role_config)) {
+         if (!array_key_exists(ROLE_ID_MANAGER, $role_config)) {
                 $returnData['success'] = false;
                 $returnData['status'] = 'You are not allowed to revoke manager access from yourself.';
                 xd_controller\returnJSON($returnData);
@@ -123,7 +123,7 @@ $params = array('uid' => RESTRICTION_UID);
          $user_to_update->disassociateWithInstitution();
       }
       else {
-         $user_to_update->setInstitution($_POST['institution'], ($role_config['primaryRole'] == ROLE_ID_CAMPUS_CHAMPION));	
+         $user_to_update->setInstitution($_POST['institution'], array_key_exists(ROLE_ID_CAMPUS_CHAMPION, $role_config));
       }
 
    }//if (isset($_POST['institution']))

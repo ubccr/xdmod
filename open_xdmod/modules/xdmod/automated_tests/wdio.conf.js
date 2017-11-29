@@ -76,6 +76,7 @@ if (process.env.JUNIT_OUTDIR) {
 }
 
 exports.config = {
+    deprecationWarnings: false,
     user: user,
     key: key,
     // ==================

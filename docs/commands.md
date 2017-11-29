@@ -63,3 +63,9 @@ The `xdmod-update-resource-specs` command is used to update your
 The `xdmod-check-config` command is used to check your Open XDMoD
 environment for any problems.  See the
 [Troubleshooting Guide](troubleshooting.html) for more details.
+
+### xdmod-build-filter-lists
+
+The `xdmod-build-filter-lists` command is used to build filter lists for the
+different realms.  Ability to auto detect and build all or specify a specific
+realm or realms to process.

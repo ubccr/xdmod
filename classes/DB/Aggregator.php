@@ -21,6 +21,9 @@ class Aggregator extends Loggable
 
     public function __construct()
     {
+        if ($this->_logger === null) {
+            $this->_logger = Log::singleton('null');
+        }
     }
 
     /**
@@ -35,6 +38,7 @@ class Aggregator extends Loggable
         }
 
         $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->_logger);
         $filterListBuilder->buildRealmLists($this->realmName);
     }
 

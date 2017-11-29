@@ -1,0 +1,7 @@
+[
+    ["record_type_id", "record_type", "display", "description"],
+    [-1, "unknown",         "Unknown",         "Unknown record type" ],
+    [1,  "ACCOUNTING",      "Accounting",      "Accounting record" ],
+    [2,  "ADMINISTRATIVE",  "Administrative",  "Administrative record" ],
+    [3,  "DERIVED",         "Derived",         "Record derived from various sources" ]
+]
