@@ -43,7 +43,6 @@ function main()
 
         array('', 'ingest'),
         array('', 'aggregate'),
-        array('', 'build-filter-lists'),
 
         // Dates used by both ingestion and aggregation.
         array('', 'start-date:'),
