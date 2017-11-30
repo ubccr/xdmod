@@ -26,6 +26,8 @@
 $scriptOptions = array(
     'destination' => null,
     'dryrun' => false,
+    'legend-orig' => null,
+    'legend-new' => null,
     'list' => null,
     'operation' => null,
     'source' => null,
@@ -35,10 +37,13 @@ $scriptOptions = array(
 );
 
 $supportedOperations = array(
-    'copy-filters'
+    'copy-filters',
+    'force-update-legend'
 );
 
 $options = array(
+    'a:' => 'legend-orig:',
+    'b:' => 'legend-new:',
     'd:' => 'destination:',
     'h'  => 'help',
     'l:' => 'list:',
@@ -54,6 +59,16 @@ $args = getopt(implode('', array_keys($options)), $options);
 
 foreach ($args as $arg => $value) {
     switch ($arg) {
+        case 'a':
+        case 'legend-orig':
+            $scriptOptions['legend-orig'] = $value;
+            break;
+
+        case 'b':
+        case 'legend-new':
+            $scriptOptions['legend-new'] = $value;
+            break;
+
         case 'd':
         case 'destination':
             $scriptOptions['destination'] = $value;
@@ -245,7 +260,68 @@ if ( isset($scriptOptions['operation']) ) {
         usage_and_exit(sprintf("Unsupported operation: %s", $scriptOptions['operation']));
     }
 
+    $saveChart = false;
+    $deestChartConfig = null;
+
     switch ( $scriptOptions['operation'] ) {
+        case 'force-update-legend':
+            if ( ! isset($scriptOptions['destination']) ) {
+                usage_and_exit(sprintf("Operation %s requires destination", $scriptOptions['operation']));
+            }
+
+            if ( ! isset($scriptOptions['legend-orig']) || ! isset($scriptOptions['legend-new']) ) {
+                usage_and_exit(sprintf("Operation %s requires legend-orig and legend-new options to be specified", $scriptOptions['operation']));
+            }
+
+            $destParts = explode(',', $scriptOptions['destination']);
+            $destChartId = array_shift($destParts);
+            $destSeriesId = ( count($destParts) > 0 ? array_shift($destParts) : null );
+
+            // Validate the chart
+
+            if ( ! array_key_exists($destChartId, $chartInfoList) ) {
+                usage_and_exit(sprintf("Unknown destination chart id: %s", $destChartId));
+            }
+
+            $destChartConfig = $chartInfoList[$destChartId]['config'];
+            $updatedLegend = false;
+
+            // The legend is stored as an associative array where the key is the original
+            // legend and the value is an object with the value of the 'title' property as
+            // the new legend. If no legends have been modified, the original legend will
+            // not be present in the array.
+
+            foreach ( $destChartConfig['legend'] as $origLegend => &$modifiedLegend ) {
+                if ( $origLegend == $scriptOptions['legend-orig'] ) {
+                    $modifiedLegend['title'] = $scriptOptions['legend-new'];
+                    $updatedLegend = true;
+                    if ( $scriptOptions['verbose'] ) {
+                        print sprintf(
+                            "Updating existing legend override '%s' => '%s'",
+                            $scriptOptions['legend-orig'],
+                            $scriptOptions['legend-new']
+                        ) . PHP_EOL;
+                    }
+                    break;
+                }
+            }
+
+            if ( ! $updatedLegend ) {
+                $destChartConfig['legend'][ $scriptOptions['legend-orig'] ] = array(
+                    'title' => $scriptOptions['legend-new']
+                );
+                if ( $scriptOptions['verbose'] ) {
+                    print sprintf(
+                        "Adding new legend override '%s' => '%s'",
+                        $scriptOptions['legend-orig'],
+                        $scriptOptions['legend-new']
+                    ) . PHP_EOL;
+                }
+            }
+
+            $saveChart = true;
+            break;
+
         case 'copy-filters':
             if ( ! isset($scriptOptions['source']) || ! isset($scriptOptions['destination']) ) {
                 usage_and_exit(sprintf("Operation %s requires source and destination", $scriptOptions['operation']));
@@ -371,24 +447,30 @@ if ( isset($scriptOptions['operation']) ) {
 
                 // Update the data in the chart
 
-                if ( ! $scriptOptions['dryrun'] ) {
-                    $charts['data'][$destChartId]['config'] = json_encode($destChartConfig);
-                    $userProfile->setValue('queries_store', $charts);
-                    try {
-                        $userProfile->save();
-                        print "Saved." . PHP_EOL;
-                    } catch (Exception $e) {
-                        fwrite(
-                            STDERR,
-                            sprintf("Error saving profile for user %s: %s", $scriptOptions['user'], $e->getMessage())
-                        );
-                        exit(1);
-                    }
-                }
+                $saveChart = true;
             }  // if ( count($filtersToAdd) > 0 )
             break;
         default:
             break;
+    }
+
+    if ( $saveChart &&  ! $scriptOptions['dryrun'] ) {
+        if ( null === $destChartConfig) {
+            fwrite(STDERR, "Destination chart config is NULL, nothing to save");
+            exit(1);
+        }
+        $charts['data'][$destChartId]['config'] = json_encode($destChartConfig);
+        $userProfile->setValue('queries_store', $charts);
+        try {
+            $userProfile->save();
+            print "Saved." . PHP_EOL;
+        } catch (Exception $e) {
+            fwrite(
+                STDERR,
+                sprintf("Error saving profile for user %s: %s", $scriptOptions['user'], $e->getMessage())
+            );
+            exit(1);
+        }
     }
 }
 
@@ -411,6 +493,12 @@ function usage_and_exit($msg = null)
         <<<"EOMSG"
         Usage: {$argv[0]}
 
+        -a <text>, --legend-orig <text>
+        When modifying a legend, this is the text of the original legend.
+
+        -b <text>, --legend-new <text>
+        When modifying a legend, this is the text of the new legend.
+
         -d <chart_id>[,<series_id>], --destination <chart_id>[,<series_id>]
         The destination for the specified operation. Only used if an operation has been specified.
         If only a chart identifier has been provided then global options for that chart will be
@@ -424,7 +512,8 @@ function usage_and_exit($msg = null)
 
         -o <operation>, --operation <operation>
         Operation to perform. Supported operations are:
-        copy-filters: Copy the filters from the source to the destination
+        copy-filters: Copy the filters from the source to the destination chart
+        force-update-legend: Force a legend in the destination chart to be updated
 
         -r <path>, --xdmod-root <path>
         The XDMoD root path where we will find share/configuration/linker.php
