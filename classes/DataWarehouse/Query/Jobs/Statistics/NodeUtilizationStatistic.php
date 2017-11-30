@@ -66,15 +66,14 @@ class NodeUtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
 
     public function getInfo()
     {
-        return "The percentage of resource nodes utilized by "
-            . ORGANIZATION_NAME . " jobs.<br/><i>" . ORGANIZATION_NAME
-            . " Node Utilization:</i> the ratio of the total node hours"
-            . " consumed by " . ORGANIZATION_NAME . " jobs over a given time"
-            . " period divided by the total node hours that the system could"
-            . " have potentially provided during that period. It does not"
-            . " include non-" . ORGANIZATION_NAME . " jobs.<br/>This value is"
-            . " only accurate if node sharing is not allowed";
+        return 'The percentage of resource nodes utilized by '
+            . ORGANIZATION_NAME . ' jobs.<br/><i>' . ORGANIZATION_NAME
+            . ' Node Utilization:</i> the ratio of the total node hours'
+            . ' consumed by ' . ORGANIZATION_NAME . ' jobs over a given time'
+            . ' period divided by the total node hours that the system could'
+            . ' have potentially provided during that period. It does not'
+            . ' include non-' . ORGANIZATION_NAME . ' jobs.<br/>This value is'
+            . ' only accurate if node sharing is not allowed';
 
     }
 }
-

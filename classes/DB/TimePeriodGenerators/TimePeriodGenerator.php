@@ -21,7 +21,7 @@ abstract class TimePeriodGenerator
      *     quarter
      *     year
      *
-     * @param  string              $unit The unit of time to get a generator for.
+     * @param  string $unit The unit of time to get a generator for.
      * @return TimePeriodGenerator       An instance of a subclass selected
      *                                   based on the given unit.
      * @throws Exception                 The given unit doesn't match a subclass.
@@ -167,7 +167,8 @@ abstract class TimePeriodGenerator
      *                              total_hours:   The timespan of the range in hours.
      *                              total_seconds: The timespan of the range in seconds.
      */
-    private function getTimestampsAndTotals(DateTime $start_dt, DateTime $end_dt) {
+    private function getTimestampsAndTotals(DateTime $start_dt, DateTime $end_dt)
+    {
         // Convert the datetimes to Unix timestamps.
         $start_ts = $start_dt->getTimestamp();
         $end_ts = $end_dt->getTimestamp();
@@ -194,20 +195,20 @@ abstract class TimePeriodGenerator
     /**
      * Generate the main database table for this unit.
      *
-     * @param  iDatabase $db The database the tables are being generated for.
-     *                       A schema should be in use by this connection.
+     * @param iDatabase $db The database the tables are being generated for.
+     *                      A schema should be in use by this connection.
      */
     public function generateMainTable(iDatabase $db)
     {
         // Get the minimum (inclusive) and maximum (exclusive) DateTimes for
         // the range of time to generate time periods for.
-        $datetime_query_results = $db->query("
-            SELECT
+        $datetime_query_results = $db->query(
+            "SELECT
                 DATE_SUB(min_job_date, INTERVAL 1 DAY) AS min_datetime,
                 max_job_date AS max_datetime
             FROM
-                modw.minmaxdate
-        ");
+                modw.minmaxdate"
+        );
         $min_datetime = $this->getDatabaseDateTime($datetime_query_results[0]['min_datetime']);
         $max_datetime = $this->getDatabaseDateTime($datetime_query_results[0]['max_datetime']);
 
@@ -225,14 +226,15 @@ abstract class TimePeriodGenerator
         // Delete any table entries before the start of the time range.
         $current_start_datetime = $this->getTimePeriodStart($min_datetime);
         $db_start_column = substr($db_start_param, 1);
-        $db->execute("
-            DELETE FROM
+        $db->execute(
+            "DELETE FROM
                 $db_table
             WHERE
-                $db_start_column < $db_start_param
-        ", array(
+                $db_start_column < $db_start_param",
+            array(
             $db_start_param => $this->getDatabaseDateTimeString($current_start_datetime),
-        ));
+            )
+        );
 
         // Create a database entry for each time period in the range.
         $insert_statement = null;
@@ -273,9 +275,12 @@ abstract class TimePeriodGenerator
 
             if ($insert_statement === null) {
                 $insert_params = array_keys($insert_param_values);
-                $insert_columns = array_map(function ($insert_param) {
-                    return substr($insert_param, 1);
-                }, $insert_params);
+                $insert_columns = array_map(
+                    function ($insert_param) {
+                        return substr($insert_param, 1);
+                    },
+                    $insert_params
+                );
                 $update_columns = array(
                     substr($db_start_param, 1),
                     substr($db_end_param, 1),
@@ -288,14 +293,19 @@ abstract class TimePeriodGenerator
 
                 $insert_columns_str = implode(', ', $insert_columns);
                 $insert_params_str = implode(', ', $insert_params);
-                $update_str = implode(', ', array_map(function ($update_column) {
-                    return "${update_column} = VALUES(${update_column})";
-                }, $update_columns));
-                $insert_statement = "
-                    INSERT INTO $db_table ($insert_columns_str)
+                $update_str = implode(
+                    ', ',
+                    array_map(
+                        function ($update_column) {
+                            return "${update_column} = VALUES(${update_column})";
+                        },
+                        $update_columns
+                    )
+                );
+                $insert_statement =
+                    "INSERT INTO $db_table ($insert_columns_str)
                     VALUES ($insert_params_str)
-                    ON DUPLICATE KEY UPDATE $update_str
-                ";
+                    ON DUPLICATE KEY UPDATE $update_str";
             }
 
             $db->execute($insert_statement, $insert_param_values);
@@ -305,13 +315,14 @@ abstract class TimePeriodGenerator
         } // while
 
         // Delete any table entries after the end of the time range.
-        $db->execute("
-            DELETE FROM
+        $db->execute(
+            "DELETE FROM
                 $db_table
             WHERE
-                $db_start_column >= $db_start_param
-        ", array(
-            $db_start_param => $this->getDatabaseDateTimeString($current_start_datetime),
-        ));
+                $db_start_column >= $db_start_param",
+            array(
+                $db_start_param => $this->getDatabaseDateTimeString($current_start_datetime),
+            )
+        );
     }
 }
