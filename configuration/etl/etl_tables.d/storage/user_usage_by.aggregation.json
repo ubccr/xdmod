@@ -21,7 +21,7 @@
                 "name": "${AGGREGATION_UNIT}",
                 "type": "smallint(5) unsigned",
                 "nullable": false,
-                "comment": "The {$AGGREGATION_UNIT} of the year."
+                "comment": "The ${AGGREGATION_UNIT} of the year."
             },
             {
                 "name": "file_system_id",
