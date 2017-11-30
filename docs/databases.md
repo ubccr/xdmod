@@ -66,6 +66,15 @@ add the `--host` option and/or `--port` option to the commands above if
 you are not using localhost and/or the default mysql port.  Likewise,
 the SQL file paths will different if the source package was installed.
 
+Initialize ACLs:
+
+    $ acl-xdmod-management
+    $ acl-config
+    $ acl-import
+
+**NOTE**: If you are installed the source tarball update your `PATH` to include
+the Open XDMoD `bin` directory before running these commands.
+
 ### moddb
 
 Application data.  Stores data used by the portal, including user data
