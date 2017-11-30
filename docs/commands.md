@@ -69,3 +69,23 @@ environment for any problems.  See the
 The `xdmod-build-filter-lists` command is used to build filter lists for the
 different realms.  Ability to auto detect and build all or specify a specific
 realm or realms to process.
+
+### acl-config
+
+The `acl-config` command validates the configuration files that are used by the
+ACL framework.
+
+### acl-etl
+
+The `acl-etl` command is used by the `acl-xdmod-management` and `acl-import`
+commands.
+
+### acl-import
+
+The `acl-import` command imports the ACLs into the database.
+
+### acl-xdmod-management
+
+The `acl-xdmod-management` command creates or updates the structure of the
+database tables used by the ACL framework.
+
