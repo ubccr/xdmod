@@ -72,8 +72,8 @@ Initialize ACLs:
     $ acl-config
     $ acl-import
 
-**NOTE**: If you are installed the source tarball update your `PATH` to include
-the Open XDMoD `bin` directory before running these commands.
+**NOTE**: If you installed the source tarball update your `PATH` to include the
+Open XDMoD `bin` directory before running these commands.
 
 ### moddb
 
