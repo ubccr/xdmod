@@ -32,7 +32,7 @@ then
     #this will be moved into the xdmod-ingestor after testing is complete
     php /usr/share/xdmod/tools/etl/etl_overseer.php -c /etc/xdmod/etl/etl.json -p hpcdb-modw.aggregate
     #this will be removed when the ingest and aggregate processes are moved to xdmod-ingestor
-    xdmod-ingestor --build-filter-lists
+    xdmod-build-filter-lists -r Jobs
     php /root/bin/createusers.php
 fi
 
