@@ -32,7 +32,7 @@
     },
 
     "#": "New job ingestion from mod_hpcdb to modw",
-    "hpcdb-modw.bootstrap":[{
+    "hpcdb-modw.bootstrap": [{
         "name": "jobtimes",
         "definition_file": "xdmod/job-times.json",
         "description": "job times + data",
@@ -43,7 +43,7 @@
                 "path": "xdmod/job-times.json"
             }
         }
-    },{
+    }, {
         "name": "error-descriptions",
         "definition_file": "xdmod/error-descriptions.json",
         "description": "error descriptions + data",
@@ -54,7 +54,7 @@
                 "path": "xdmod/error-descriptions.json"
             }
         }
-    },{
+    }, {
         "name": "processorbuckets",
         "definition_file": "xdmod/processor-buckets.json",
         "description": "processorbuckets + data",
@@ -65,20 +65,55 @@
                 "path": "xdmod/processor-buckets.json"
             }
         }
+    }, {
+        "name": "account",
+        "definition_file": "xdmod/account.json",
+        "description": "account + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "unknown account data data",
+                "path": "xdmod/account.json"
+            }
+        }
+    }, {
+        "name": "person",
+        "definition_file": "xdmod/person.json",
+        "description": "person + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "unknown person data data",
+                "path": "xdmod/person.json"
+            }
+        }
+    }, {
+        "name": "pi-person",
+        "definition_file": "xdmod/piperson.json",
+        "description": "pi person + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "unknown pi-person data data",
+                "path": "xdmod/pi-person.json"
+            }
+        }
+    }, {
+        "name": "resource-type",
+        "definition_file": "xdmod/resource-type.json",
+        "description": "resource-type + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "unknown resource type data data",
+                "path": "xdmod/resource-type.json"
+            }
+        }
     }],
     "hpcdb-modw.ingest": [{
         "name": "account",
         "definition_file": "hpcdb-modw/account.json",
         "description": "Account records"
-    }, {
-        "name": "account-post-insert",
-        "namespace": "ETL\\Maintenance",
-        "options_class": "MaintenanceOptions",
-        "description": "required account records",
-        "class": "ExecuteSql",
-        "sql_file_list": [
-            "hpcdb-modw/account-post-ingest-insert.sql"
-        ]
     }, {
         "name": "allocation-breakdown",
         "definition_file": "hpcdb-modw/allocation-breakdown.json",
@@ -116,27 +151,9 @@
         "definition_file": "hpcdb-modw/piperson.json",
         "description": "PI Person records"
     }, {
-        "name": "pi-person-post-insert",
-        "namespace": "ETL\\Maintenance",
-        "options_class": "MaintenanceOptions",
-        "description": "required PI records",
-        "class": "ExecuteSql",
-        "sql_file_list": [
-            "hpcdb-modw/pi-person-post-ingest-insert.sql"
-        ]
-    }, {
         "name": "person",
         "definition_file": "hpcdb-modw/person.json",
         "description": "person records"
-    }, {
-        "name": "person-post-insert",
-        "namespace": "ETL\\Maintenance",
-        "options_class": "MaintenanceOptions",
-        "description": "Required person records",
-        "class": "ExecuteSql",
-        "sql_file_list": [
-            "hpcdb-modw/person-post-ingest-insert.sql"
-        ]
     }, {
         "name": "people-under-pi",
         "definition_file": "hpcdb-modw/people-under-pi.json",
@@ -157,15 +174,6 @@
         "name": "resource-type",
         "definition_file": "hpcdb-modw/resource-type.json",
         "description": "resource type records"
-    }, {
-        "name": "resource-type-post-insert",
-        "namespace": "ETL\\Maintenance",
-        "options_class": "MaintenanceOptions",
-        "description": "required resource type records",
-        "class": "ExecuteSql",
-        "sql_file_list": [
-            "hpcdb-modw/resource-type-post-ingest-insert.sql"
-        ]
     }, {
         "name": "resource-spec",
         "definition_file": "hpcdb-modw/resource-spec.json",
@@ -201,7 +209,7 @@
             "hpcdb-modw/jobhosts-post-ingest-truncate.sql"
         ]
     }, {
-        "name": "job-recordor",
+        "name": "job-record",
         "definition_file": "hpcdb-modw/job_record_hpc.json",
         "description": "HPC job records from the hpcdb"
     }, {
