@@ -5,6 +5,7 @@ require_once dirname(__FILE__) . '/../configuration/linker.php';
 use CCR\DB;
 use Models\Acl;
 use Models\Services\Acls;
+use User\aRole;
 
 /**
  * XDMoD Portal User
@@ -496,6 +497,14 @@ class XDUser implements JsonSerializable
 
         }//foreach
 
+        if (!isset($user->_active_role)) {
+            $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user);
+            $activeRoleFormalName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
+
+            $user->_active_role = aRole::factory($activeRoleFormalName);
+            $user->_active_role->configure($user);
+        }
+
         // BEGIN: ACL population
         $query = <<<SQL
 SELECT a.*, ua.user_id
@@ -962,20 +971,37 @@ SQL;
             );
         }
 
-        // If the updater (e.g. Manager) has pulled out the (recently) active role for this user, reassign the active role to the primary role.
+        // Retrieve this users most privileged acl as it will be used to set the
+        // the _active_role property.
+        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
 
-        $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
+        // NOTE: It is possible that a user may not have any acls, in this case
+        // there cannot be a most privileged one and so we test to make sure
+        // that an acl was returned before utilizing it.
+        if (isset($mostPrivilegedAcl)) {
+            $activeRoleName = $this->_getFormalRoleName($mostPrivilegedAcl->getName());
+
+            $this->_active_role = aRole::factory($activeRoleName);
+        }
+
+        if (isset($this->_active_role)) {
+            // If the updater (e.g. Manager) has pulled out the (recently) active role for this user, reassign the active role to the primary role.
+
+            $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
 
 
-        $this->_pdo->execute(
-            "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
-            array('id' => $this->_id, 'roleId' => $active_role_id)
-        );
-        /* END: UserRole Updating */
+            $this->_pdo->execute(
+                "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
+                array('id' => $this->_id, 'roleId' => $active_role_id)
+            );
+            /* END: UserRole Updating */
 
-        /* BEGIN: Configure Primary and Active Roles */
-        $this->_active_role->configure($this);
-        /* END: Configure Primary and Active Roles */
+            /* BEGIN: Configure Primary and Active Roles */
+            $this->_active_role->configure($this);
+            /* END: Configure Primary and Active Roles */
+        }
+
+
 
 
         $timestampData = $this->_pdo->query(
@@ -2121,6 +2147,13 @@ SQL;
             throw new Exception('You must call saveUser() on this newly created XDUser prior to using getActiveRole()');
         }
 
+        if (!isset($this->_active_role)) {
+            $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
+            $formalName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
+            $this->_active_role = aRole::factory($formalName);
+            $this->_active_role->configure($this);
+        }
+
         return $this->_active_role;
 
     }//getActiveRole
@@ -2564,7 +2597,7 @@ SQL;
      *
      */
 
-    public function _getFormalRoleName($role_abbrev)
+    public static function _getFormalRoleName($role_abbrev)
     {
         $pdo = DB::factory('database');
         $query = <<<SQL
