@@ -212,7 +212,7 @@ function main()
 
         $configFileVersion = $newVersion;
     }
-
+    $logger->notice('Upgrade Complete');
     exit;
 }
 
