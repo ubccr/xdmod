@@ -18,8 +18,8 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->helper->post('/controllers/metric_explorer.php', null, array('operation' => 'get_dw_descripter'));
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
 
 
         $dwdata = $response[0];
@@ -71,9 +71,9 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 200);
-        $this->assertEquals($response[0]['totalCount'], 1);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+        $this->assertEquals(1, $response[0]['totalCount']);
 
         $this->helper->logout();
 
@@ -81,8 +81,8 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
         $this->assertGreaterThan(1, $response[0]['totalCount']);
         $totalUsers = $response[0]['totalCount'];
 
@@ -92,8 +92,8 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
         $this->assertGreaterThan(1, $response[0]['totalCount']);
         $this->assertLessThan($totalUsers, $response[0]['totalCount']);
 
@@ -101,8 +101,8 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 401);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(401, $response[1]['http_code']);
     }
 
     /**
@@ -118,8 +118,8 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
         $this->helper->authenticate('cd');
         $response = $this->helper->post('rest/v1/metrics/explorer/queries', null, array('data' => json_encode($settings)));
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
 
         $querydata = $response[0];
         $this->assertArrayHasKey('data', $querydata);
@@ -160,7 +160,7 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
    "x_axis": {},
    "y_axis": {},
    "legend": {},
-   "defaultDatasetConfig": {  
+   "defaultDatasetConfig": {
       "display_type": "column"
    },
    "swap_xy": false,
@@ -173,12 +173,12 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
    "font_size": 3,
    "show_filters": true,
    "show_warnings": true,
-   "data_series": {  
+   "data_series": {
       "data": [ ],
       "total": 0
    },
    "aggregation_unit": "Auto",
-   "global_filters": {  
+   "global_filters": {
       "data": [ ],
       "total": 0
    },
