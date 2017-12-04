@@ -19,12 +19,13 @@ then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     expect $BASEDIR/xdmod-setup.tcl | col -b
-    for resource in $REF_DIR/*.log; do 
-        xdmod-shredder -r `basename $resource .log` -f slurm -i $resource; 
-    done 
+    for resource in $REF_DIR/*.log; do
+        xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
+    done
     xdmod-ingestor
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     xdmod-ingestor
+    xdmod-build-filter-lists -r Jobs
     php /root/bin/createusers.php
     acl-import
 fi

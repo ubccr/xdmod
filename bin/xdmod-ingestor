@@ -216,23 +216,20 @@ function main()
 
             // If no ingestion phase is specified, ingest all.
             if (!$ingestShredded && !$ingestStaging && !$ingestHpcdb) {
-                $ingestAll = true;
+                $ingestAll = $ingestShredded = $ingestStaging = $ingestHpcdb = true;
             }
 
             if ($ingestAll) {
-                $dwi->ingestAll($startDate, $endDate);
-            } else {
-                if ($ingestShredded) {
-                    $dwi->ingestAllShredded($startDate, $endDate);
-                }
-
-                if ($ingestStaging) {
-                    $dwi->ingestAllStaging($startDate, $endDate);
-                }
-
-                if ($ingestHpcdb) {
-                    $dwi->ingestAllHpcdb($startDate, $endDate);
-                }
+                $logger->debug('Ingesting all data');
+            }
+            if ($ingestShredded) {
+                $dwi->ingestAllShredded($startDate, $endDate);
+            }
+            if ($ingestStaging) {
+                $dwi->ingestAllStaging($startDate, $endDate);
+            }
+            if ($ingestHpcdb) {
+                runEtlPipeline('hpcdb-modw.ingest', $startDate, $endDate);
             }
         } catch (Exception $e) {
             $logger->crit(array(
@@ -247,8 +244,7 @@ function main()
     if ($aggregate) {
         $logger->info('Aggregating data');
         try {
-            $dwi->initializeAggregation($startDate, $endDate);
-            $dwi->aggregateAllJobs($startDate, $endDate);
+            runEtlPipeline('hpcdb-modw.aggregate', $startDate, $endDate);
         } catch (Exception $e) {
             $logger->crit(array(
                 'message'    => 'Aggregation failed: ' . $e->getMessage(),
@@ -266,6 +262,56 @@ function main()
     ));
 
     exit;
+}
+
+function runEtlPipeline($name, $start, $end){
+    global $logger;
+
+    if(empty($name)){
+        throw new \Exception('ETL Pipeline not given');
+    }
+    if(empty($start)){
+        $start = new \DateTime('2000-01-01');
+    }
+    else {
+        $start = new \DateTime($start);
+    }
+    if(empty($end)){
+        $end = new \DateTime('2038-01-18');
+    }
+    else {
+        $end = new \DateTime($end);
+    }
+
+    $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php '
+        . '-c ' . CONFIG_DIR . '/etl/etl.json' . ' -p ' . $name .
+        ' -m ' . $start->format('Y-m-d') . ' -y ' . $end->format('Y-m-d');
+    $pipes = array();
+    $logger->notice("Executing $command");
+    $process = proc_open(
+        $command,
+        array(
+            0 => array('file', '/dev/null', 'r'),
+            1 => array('pipe', 'w'),
+            2 => array('pipe', 'w'),
+        ),
+        $pipes
+    );
+    if (!is_resource($process)) {
+        $logger->err('Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true));
+        throw new \Exception('Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true));
+    }
+    $out = stream_get_contents($pipes[1]);
+    $err = stream_get_contents($pipes[2]);
+    foreach($pipes as $pipe){
+        fclose($pipe);
+    }
+    $return_value = proc_close($process);
+    if ($return_value != 0) {
+        $logger->err("$command returned $return_value, stdout:  $out stderr: $err");
+        throw new \Exception("$command returned $return_value, stdout:  $out stderr: $err");
+    }
+    $logger->notice("Execution Complete: $command");
 }
 
 function displayHelpText()

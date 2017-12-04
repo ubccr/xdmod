@@ -36,7 +36,7 @@ class JobTimeseriesAggregator extends Aggregator
             new TableColumn("{$this->_time_period}", 'int(3)', ":{$this->_time_period}", true, false, "The {$this->_time_period} of the year."),
 
             new TableColumn('person_id', 'int(7)', '', true, true, "The id of the person that ran the jobs.", true),
-            new TableColumn('organization_id', 'int(6)', '', true, true, "The organization of the resource that the jobs ran on.", true),
+            new TableColumn('resource_organization_id', 'int(6)', '', true, true, "The organization of the resource that the jobs ran on.", true),
             new TableColumn('person_organization_id', 'int(6)', '', true, true, "The organization of the person that ran the jobs.", true),
             new TableColumn('person_nsfstatuscode_id', 'int(3)', '', true, true, "The NSF status code of the person that ran the jobs.", true),
 
@@ -52,8 +52,8 @@ class JobTimeseriesAggregator extends Aggregator
             new TableColumn('allocation_id', 'int(7)', '', true, true, "The id of allocation these jobs used to run", true),
             new TableColumn('principalinvestigator_person_id', 'int(7)', '', true, true, "The PI that owns the project that funds these jobs", true),
             new TableColumn('piperson_organization_id', 'int(7)', 'coalesce(piperson_organization_id, 0)', true, false, "The organization of the PI that owns the project that funds these jobs", true),
-            new TableColumn('jobtime_id', 'int(3)', '(select id from job_times jt where wallduration >= jt.min_duration and wallduration <= jt.max_duration)', true, false, "Job time is bucketing of wall time based on prechosen intervals in the modw.job_times table.", true),
-            new TableColumn('nodecount_id', 'int(8)', 'nodecount', true, false, "Number of nodes each of the jobs used."),
+            new TableColumn('job_time_bucket_id', 'int(3)', '(select id from job_times jt where wallduration >= jt.min_duration and wallduration <= jt.max_duration)', true, false, "Job time is bucketing of wall time based on prechosen intervals in the modw.job_times table.", true),
+            new TableColumn('node_count', 'int(8)', 'node_count', true, false, "Number of nodes each of the jobs used."),
             new TableColumn('processors', 'int(8)', '(case when resource_id = 2020 then 1 else processors end)', true, false, "Number of processors each of the jobs used.", true),
             new TableColumn('processorbucket_id', 'int(3)', '(select id from processor_buckets pb where case when resource_id = 2020 then 1 else processors end between pb.min_processors and pb.max_processors)', false, true, "Processor bucket or job size buckets are prechosen in the modw.processor_buckets table.", true),
             new TableColumn(

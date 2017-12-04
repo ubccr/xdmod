@@ -219,27 +219,6 @@ class DataWarehouseInitializer
     }
 
     /**
-     * Ingest all data needed for the data warehouse.
-     *
-     * @param string $startDate
-     * @param string $endDate
-     */
-    public function ingestAll($startDate = null, $endDate = null)
-    {
-        $this->logger->debug('Ingesting all data');
-        if ($startDate !== null) {
-            $this->logger->debug('Start date: ' . $startDate);
-        }
-        if ($endDate !== null) {
-            $this->logger->debug('End date: ' . $endDate);
-        }
-
-        $this->ingestAllShredded($startDate, $endDate);
-        $this->ingestAllStaging($startDate, $endDate);
-        $this->ingestAllHpcdb($startDate, $endDate);
-    }
-
-    /**
      * Ingest shredded job data.
      *
      * @param string $startDate
@@ -462,13 +441,6 @@ class DataWarehouseInitializer
         ";
         $this->logger->debug('Create statement: ' . $sql);
         $this->warehouseDb->execute($sql);
-
-        // Re-generate the aggregation unit tables (day, month, quarter,
-        // year) in modw
-        foreach ($this->aggregationUnits as $aggUnit) {
-            $tpg = TimePeriodGenerator::getGeneratorForUnit($aggUnit);
-            $tpg->generateMainTable($this->warehouseDb);
-        }
     }
 
     /**
@@ -662,4 +634,3 @@ class DataWarehouseInitializer
         return array($startDate, $endDate);
     }
 }
-
