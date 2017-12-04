@@ -1,0 +1,47 @@
+{
+    "table_definition": {
+        "name": "principalinvestigator",
+        "engine": "MyISAM",
+        "comment": "Only PIs are allowed to make requests.",
+        "columns": [{
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the person of the PI."
+            },
+            {
+                "name": "request_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The request id."
+            }
+        ],
+        "indexes": [{
+                "name": "fk_princialinvestigator_person1_idx",
+                "columns": [
+                    "person_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_princialinvestigator_request1_idx",
+                "columns": [
+                    "request_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "person_id",
+                    "request_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

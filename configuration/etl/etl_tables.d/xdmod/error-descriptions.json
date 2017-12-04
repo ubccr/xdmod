@@ -1,0 +1,29 @@
+{
+    "table_definition": {
+        "engine": "MyISAM",
+        "columns": [{
+                "type": "int(11)",
+                "nullable": false,
+                "default": null,
+                "name": "id"
+            },
+            {
+                "type": "varchar(255)",
+                "nullable": false,
+                "default": null,
+                "name": "description"
+            }
+        ],
+        "indexes": [{
+            "columns": [
+                "id"
+            ],
+            "type": "BTREE",
+            "is_unique": true,
+            "name": "PRIMARY"
+        }],
+        "triggers": [],
+        "schema": "modw",
+        "name": "error_descriptions"
+    }
+}

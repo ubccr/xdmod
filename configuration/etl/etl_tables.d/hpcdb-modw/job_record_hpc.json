@@ -1,0 +1,243 @@
+{
+    "#": "Load HPC job records from the HPCDB.",
+    "#": "HPC jobs are broken into 2 parts: the job record storing a request for resources and zero or",
+    "#": "more job tasks recording consumption of the requested resources. For typical HPC jobs there",
+    "#": "will be 1 record and 1 task but a job reservation or job array will have 1 record with 0 or",
+    "#": "more tasks.",
+
+    "table_definition": [{
+            "$ref": "etl_tables.d/xdmod/job-records.json#/table_definition"
+        },
+        {
+            "$ref": "etl_tables.d/xdmod/job-tasks.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+
+        "#": "Note that start_date, end_date refer to the start/end of the ingestion window, not job start/end dates",
+
+        "overseer_restrictions": {
+            "start_date": "j.end_time >= UNIX_TIMESTAMP(${VALUE})",
+            "end_date": "j.end_time <= UNIX_TIMESTAMP(${VALUE})",
+            "include_only_resource_codes": "j.resource_id IN ${VALUE}",
+            "exclude_resource_codes": "j.resource_id NOT IN ${VALUE}"
+        },
+
+        "records": {
+            "job_id": "j.job_id",
+            "job_record_id": "(SELECT MIN(innerj.job_id) FROM ${SOURCE_SCHEMA}.hpcdb_jobs innerj WHERE innerj.local_jobid = j.local_jobid AND innerj.resource_id = j.resource_id AND innerj.submit_time = j.submit_time)",
+            "local_job_id": "j.local_jobid",
+            "creation_time": "FROM_UNIXTIME(j.ts)",
+            "resource_id": "res.resource_id",
+            "resourcetype_id": "res.resource_type_id",
+            "request_id": "req.request_id",
+            "account_id": "j.account_id",
+            "allocation_id": "j.allocation_id",
+            "allocation_resource_id": "ares.resource_id",
+            "fos_id": "req.primary_fos_id",
+            "job_record_type_id": 1,
+            "submission_venue_id": 1,
+            "job_task_type_id": 1,
+
+            "local_job_array_index": "j.local_job_array_index",
+            "local_job_id_raw": "j.local_job_id_raw",
+
+            "job_name": "j.jobname",
+            "queue": "COALESCE(j.queue, 'NA')",
+            "node_count": "j.nodecount",
+
+            "systemaccount_id": "sa.system_account_id",
+            "person_id": "p.person_id",
+            "person_organization_id": "p.organization_id",
+            "person_nsfstatuscode_id": 0,
+            "principalinvestigator_person_id": "pi_map.person_id",
+            "piperson_organization_id": "pi.organization_id",
+
+            "resource_state_id": 0,
+            "resource_country_id": 0,
+            "resource_organization_id": "o.organization_id",
+            "resource_organization_type_id": 0,
+
+            "wallduration": "${wallduration_statement}",
+            "start_time_ts": "${start_time_ts_statement}",
+            "end_time_ts": "j.end_time",
+
+            "#": "Because the start_day_id and end_day_id will be compared to the modw.days table and modw.days records",
+            "#": "are calculated based on the local timezone of the server (EDT in our case) we need to explicitly",
+            "#": "convert to that time zone when calculating the start and end days",
+            "start_day_id": "YEAR(FROM_UNIXTIME(${start_time_ts_statement})) * 100000 + DAYOFYEAR(FROM_UNIXTIME(${start_time_ts_statement}))",
+            "end_day_id": "YEAR(FROM_UNIXTIME(j.end_time)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(j.end_time))",
+
+            "completed": 1,
+            "memory_kb": -1,
+
+            "#": "The following fields depend on a re-calculated start time, which in turn depends on a re-calculated wall_time",
+            "#": "so these are handled in a post-processing query while the wall_time and start_time are calculated here.",
+            "submit_time_ts": "j.submit_time",
+            "waitduration": 0,
+
+            "#": "We will normalize processor counts in the post-processing step since this needs access",
+            "#": "to the XDMoD data warehouse resource specs table",
+            "processor_count": "j.processors",
+            "#": "CPU time will be calculated in the post-processing step as wallduration * processor_count",
+            "cpu_time": 0
+
+        },
+
+        "joins": [{
+            "name": "hpcdb_jobs",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "j"
+        }, {
+            "name": "hpcdb_allocations",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "alloc",
+            "on": "alloc.allocation_id = j.allocation_id"
+        }, {
+            "name": "hpcdb_requests",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "req",
+            "#on": "req.account_id = j.account_id AND alloc.initial_start_date = req.start_date",
+            "on": "req.account_id = j.account_id"
+        }, {
+            "name": "hpcdb_system_accounts",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "sa",
+            "on": "sa.username = j.username AND sa.person_id = j.person_id AND sa.resource_id = j.resource_id"
+        }, {
+            "name": "hpcdb_resources",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "res",
+            "on": "res.resource_id = j.resource_id"
+        }, {
+            "name": "hpcdb_resources",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "ares",
+            "on": "ares.resource_id = alloc.resource_id"
+        }, {
+            "name": "hpcdb_people",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "p",
+            "on": "p.person_id = j.person_id"
+        }, {
+            "name": "hpcdb_principal_investigators",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "pi_map",
+            "on": "pi_map.request_id = req.request_id"
+        }, {
+            "name": "hpcdb_people",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "pi",
+            "on": "pi.person_id = pi_map.person_id"
+        }, {
+            "name": "hpcdb_organizations",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "o",
+            "on": "o.organization_id = res.organization_id"
+        }],
+
+        "#": "Exclude jobs with nodecount = 0, which appear to be reservations.",
+        "#": "Exclude jobs with end_time < 0",
+
+        "where": [
+            "j.nodecount <> 0",
+            "j.nodecount IS NOT NULL",
+            "j.end_time > 0"
+        ],
+
+        "macros": [{
+            "name": "wallduration_statement",
+            "file": "hpcdb-modw-cloud/wallduration_calc.sql"
+        }, {
+            "name": "start_time_ts_statement",
+            "file": "hpcdb-modw-cloud/start_time_ts_calc.sql"
+        }]
+
+    },
+
+    "destination_record_map": {
+        "job_records": {
+            "job_record_id": "job_record_id",
+            "resource_id": "resource_id",
+            "resourcetype_id": "resourcetype_id",
+            "request_id": "request_id",
+            "account_id": "account_id",
+            "allocation_id": "allocation_id",
+            "allocation_resource_id": "allocation_resource_id",
+            "fos_id": "fos_id",
+
+            "queue": "queue",
+
+            "person_id": "person_id",
+            "person_organization_id": "person_organization_id",
+            "person_nsfstatuscode_id": "person_nsfstatuscode_id",
+            "principalinvestigator_person_id": "principalinvestigator_person_id",
+            "piperson_organization_id": "piperson_organization_id",
+
+            "resource_state_id": "resource_state_id",
+            "resource_country_id": "resource_country_id",
+            "resource_organization_id": "resource_organization_id",
+            "resource_organization_type_id": "resource_organization_type_id",
+
+            "job_record_type_id": "job_record_type_id",
+            "submission_venue_id": "submission_venue_id",
+
+            "submit_time_ts": "submit_time_ts",
+            "start_time_ts": "start_time_ts",
+            "end_time_ts": "end_time_ts",
+            "start_day_id": "start_day_id",
+            "end_day_id": "end_day_id",
+
+            "#local_charge_su": "local_charge_su",
+            "#adjusted_charge_su": "adjusted_charge_su",
+            "#local_charge_xdsu": "local_charge_xdsu",
+            "#adjusted_charge_xdsu": "adjusted_charge_xdsu",
+            "#local_charge_nu": "local_charge_nu",
+            "#adjusted_charge_nu": "adjusted_charge_nu",
+
+            "#conversion_factor": "conversion_factor",
+            "completed": "completed"
+
+        },
+        "job_tasks": {
+            "job_record_id": "job_record_id",
+            "job_id": "job_id",
+            "creation_time": "creation_time",
+            "local_jobid": "local_job_id",
+            "job_task_type_id": "job_task_type_id",
+            "resource_id": "resource_id",
+
+            "local_job_array_index": "local_job_array_index",
+            "local_job_id_raw": "local_job_id_raw",
+
+            "name": "job_name",
+            "node_count": "node_count",
+            "processor_count": "processor_count",
+
+            "systemaccount_id": "systemaccount_id",
+            "person_id": "person_id",
+            "person_organization_id": "person_organization_id",
+            "person_nsfstatuscode_id": "person_nsfstatuscode_id",
+
+            "wallduration": "wallduration",
+            "waitduration": "waitduration",
+            "cpu_time": "cpu_time",
+            "submit_time_ts": "submit_time_ts",
+            "start_time_ts": "start_time_ts",
+            "end_time_ts": "end_time_ts",
+            "start_day_id": "start_day_id",
+            "end_day_id": "end_day_id",
+
+            "#local_charge_su": "local_charge_su",
+            "#adjusted_charge_su": "adjusted_charge_su",
+            "#local_charge_xdsu": "local_charge_xdsu",
+            "#adjusted_charge_xdsu": "adjusted_charge_xdsu",
+            "#local_charge_nu": "local_charge_nu",
+            "#adjusted_charge_nu": "adjusted_charge_nu",
+            "#conversion_factor": "conversion_factor",
+            "memory_kb": "memory_kb",
+            "completed": "completed"
+        }
+    }
+}

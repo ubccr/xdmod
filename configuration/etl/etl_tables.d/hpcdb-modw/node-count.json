@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "$ref" : "etl_tables.d/xdmod/node-count.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "DISTINCT nodecount",
+            "nodes": "nodecount"
+        },
+        "joins": [{
+            "name": "hpcdb_jobs",
+            "schema": "${SOURCE_SCHEMA}"
+        }],
+        "where": [
+            "nodecount <> 0",
+            "nodecount IS NOT NULL"
+        ]
+    }
+}
