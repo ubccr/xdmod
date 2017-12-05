@@ -503,6 +503,9 @@ class XDUser implements JsonSerializable
 
             $user->_active_role = aRole::factory($activeRoleFormalName);
             $user->_active_role->configure($user);
+
+            $user->_primary_role = aRole::factory($activeRoleFormalName);
+            $user->_primary_role->configure($user);
         }
 
         // BEGIN: ACL population
@@ -982,22 +985,30 @@ SQL;
             $activeRoleName = $this->_getFormalRoleName($mostPrivilegedAcl->getName());
 
             $this->_active_role = aRole::factory($activeRoleName);
+
+            $this->_primary_role = aRole::factory($activeRoleName);
         }
 
         if (isset($this->_active_role)) {
             // If the updater (e.g. Manager) has pulled out the (recently) active role for this user, reassign the active role to the primary role.
 
             $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
-
+            $primary_role_id = $this->_getRoleID($this->_primary_role->getIdentifier());
 
             $this->_pdo->execute(
                 "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
                 array('id' => $this->_id, 'roleId' => $active_role_id)
             );
+
+            $this->_pdo->execute(
+                "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
+                array(':id' => $this->_id, ':roleId' => $primary_role_id)
+            );
             /* END: UserRole Updating */
 
             /* BEGIN: Configure Primary and Active Roles */
             $this->_active_role->configure($this);
+            $this->_primary_role->configure($this);
             /* END: Configure Primary and Active Roles */
         }
 
@@ -2188,21 +2199,11 @@ SQL;
 
         // XDUser::enumAllAvailableRoles already orders the roles in terms of 'visibility' / 'highest privilege'
         // so just acquire the first item in the set.
-
-        $availableRoles = $this->enumAllAvailableRoles();
-        if (count($availableRoles) > 0) {
-
-            $roleData = explode(':', $availableRoles[0]['param_value']);
-            $roleData = array_pad($roleData, 2, NULL);
-
-            return $this->assumeActiveRole($roleData[0], $roleData[1]);
-
-        } else {
-
-            return $this->getActiveRole();
-
-        }
-
+        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
+        $roleName = XDUser::_getFormalRoleName($mostPrivilegedAcl->getName());
+        $role = aRole::factory($roleName);
+        $role->configure($this);
+        return $role;
     }//getMostPrivilegedRole
 
     /* @function getAllRoles
