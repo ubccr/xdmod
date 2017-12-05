@@ -46,6 +46,29 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
     const INVALID_ID = -999;
     const INVALID_ACL_NAME = 'babbaganoush';
 
+    const MIN_USERS = 1;
+    const MAX_USERS = 1000;
+    const DEFAULT_TEST_USER_NAME = "test";
+    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
+
+    private static $users = array();
+
+    const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
+
+    private static $ENV;
+
+    public static function setUpBeforeClass()
+    {
+        $testEnvironment = getenv('test_env');
+        if ($testEnvironment !== false) {
+            self::$ENV = $testEnvironment;
+        } else {
+            self::$ENV = self::DEFAULT_TEST_ENVIRONMENT;
+        }
+
+    }
+
+
     /**
      * @dataProvider provideGetUserByUserName
      * @param string $userName     the name of the user to be requested.
@@ -55,7 +78,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
     public function testGetUserByUserName($userName, $expectedFile)
     {
         $user = XDUser::getUserByUserName($userName);
-        $expected = JSON::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . $expectedFile);
+        $expected = JSON::loadFile($this->getTestFile($expectedFile));
         $actual = json_decode(json_encode($user), true);
         $this->assertEquals($expected, $actual);
     }
@@ -524,7 +547,8 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      **/
     public function testGetPrimaryRoleWithNewUser()
     {
-        $user = new XDUser('test', null, 'test@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
+
         $user->getPrimaryRole();
     }
 
@@ -541,7 +565,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      **/
     public function testGetActiveRoleWithNewUserShouldFail()
     {
-        $user = new XDUser('test', null, 'test@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
         $user->getActiveRole();
     }
 
@@ -552,7 +576,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      **/
     public function testCreateUserWithoutUserTypeShouldFail()
     {
-        $user = new XDUser('test', null, 'test@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
 
         $this->assertEquals('0', $user->getUserID());
 
@@ -563,7 +587,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateUser()
     {
-        $user = new XDUser('test', null, 'test@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
 
         $this->assertEquals('0', $user->getUserID());
 
@@ -575,13 +599,43 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException Exception
+     * @expectedExceptionMessage At least one role must be associated with this user
+     */
+    public function testCreateUserWithNoRoles()
+    {
+        $user = self::getUser(null, 'test', 'a', 'user', array());
+        $this->assertEquals('0', $user->getUserID());
+
+        $user->setUserType(XSEDE_USER_TYPE);
+
+        $user->saveUser();
+        $this->assertNotNull($user->getUserID());
+    }
+
+    public function testCreateUserWithNonStandardPrimaryRole()
+    {
+        $user = self::getUser(null, 'test', 'a', 'user', array(ROLE_ID_USER, ROLE_ID_MANAGER), ROLE_ID_MANAGER);
+
+        $this->assertEquals('0', $user->getUserID());
+
+        $user->setUserType(DEMO_USER_TYPE);
+
+        $user->saveUser();
+
+        $actual = $user->getActiveRole()->getIdentifier();
+        $this->assertEquals(ROLE_ID_MANAGER, $actual);
+    }
+
+    /**
      * Expect that it should complain about there already being a test user.
      *
      * @expectedException Exception
      **/
     public function testCreateUserWithExistingUserNameShouldFail()
     {
-        $anotherUser = new XDUser('test', null, 'test@ccr.xdmod.org', 'test', 'a', 'user');
+        $username = array_keys(self::$users)[count(self::$users) - 1];
+        $anotherUser = self::getUser(null, 'test', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, null, $username);
         $anotherUser->setUserType(XSEDE_USER_TYPE);
         $anotherUser->saveUser();
     }
@@ -591,7 +645,8 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      **/
     public function testCreateUserWithExistingEmailShouldFail()
     {
-        new XDUser('test2', null, 'public@ccr.xdmod.org', 'public', 'a', 'user');
+        $username = array_keys(self::$users)[count(self::$users) -1];
+        self::getUser(null, 'public', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX);
     }
 
     /**
@@ -599,7 +654,8 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      **/
     public function testSaveUserWithSameEmailAndNotXsedeTypeAndNoIdShouldFail()
     {
-        $anotherUser = new XDUser('test2', null, 'public@ccr.xdmod.org', 'public', 'a', 'user');
+        $username = array_keys(self::$users)[count(self::$users) - 1];
+        $anotherUser = self::getUser(null, 'public', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX);
         $anotherUser->setUserType(DEMO_USER_TYPE);
         $anotherUser->saveUser();
     }
@@ -669,7 +725,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetActiveRoleOnUnSavedUserFails()
     {
-        $anotherUser = new XDUser('test3', null, 'public3@ccr.xdmod.org', 'public', 'a', 'user');
+        $anotherUser = self::getUser(null, 'public', 'a', 'user');
         $anotherUser->getActiveRole();
     }
 
@@ -826,7 +882,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
     public function testCenterDirectorEnumAllAvailableRoles()
     {
-        $expected = JSON::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'center_director_all_available_roles.json');
+        $expected = JSON::loadFile($this->getTestFile('center_director_all_available_roles.json'));
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $allAvailableRoles = $user->enumAllAvailableRoles();
@@ -984,7 +1040,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testEnumCenterDirectorSitesWithUnsavedUserFails()
     {
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
         $user->enumCenterDirectorSites();
     }
 
@@ -1051,7 +1107,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPrimaryOrganizationForUnsavedUserFails()
     {
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
         $user->getPrimaryOrganization();
     }
 
@@ -1084,7 +1140,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetOrganizationCollectionWithUnsavedUserFails()
     {
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
         $user->getOrganizationCollection();
     }
 
@@ -1216,7 +1272,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
     public function testGetPromoterUnsavedUser()
     {
 
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
         $promoter = $user->getPromoter(self::CENTER_DIRECTOR_ACL_NAME, 1);
         $this->assertEquals(-1, $promoter);
     }
@@ -1278,7 +1334,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetFormalRoleName($roleName, $expected)
     {
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'user');
 
         $actual = $user->_getFormalRoleName($roleName);
         $this->assertEquals($expected, $actual);
