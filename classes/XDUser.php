@@ -993,27 +993,30 @@ SQL;
             // If the updater (e.g. Manager) has pulled out the (recently) active role for this user, reassign the active role to the primary role.
 
             $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
-            $primary_role_id = $this->_getRoleID($this->_primary_role->getIdentifier());
+
 
             $this->_pdo->execute(
                 "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
                 array('id' => $this->_id, 'roleId' => $active_role_id)
             );
 
-            $this->_pdo->execute(
-                "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
-                array(':id' => $this->_id, ':roleId' => $primary_role_id)
-            );
+
             /* END: UserRole Updating */
 
             /* BEGIN: Configure Primary and Active Roles */
             $this->_active_role->configure($this);
-            $this->_primary_role->configure($this);
+
             /* END: Configure Primary and Active Roles */
         }
 
-
-
+        if (isset($this->_primary_role)) {
+            $primary_role_id = $this->_getRoleID($this->_primary_role->getIdentifier());
+            $this->_pdo->execute(
+                "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
+                array(':id' => $this->_id, ':roleId' => $primary_role_id)
+            );
+            $this->_primary_role->configure($this);
+        }
 
         $timestampData = $this->_pdo->query(
             "SELECT time_created, time_last_updated, password_last_updated
