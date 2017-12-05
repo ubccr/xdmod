@@ -1353,20 +1353,31 @@ SQL;
         }
 
         $query = <<<SQL
-SELECT
+SELECT DISTINCT
   CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
     THEN CONCAT(a.display, ' - ', o.abbrev)
   ELSE a.display
   END    AS 'description',
   CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
     THEN CONCAT(a.name, ':', uagbp.value)
-    ELSE a.name
-    END AS 'param_value'
-FROM user_acls ua
-  JOIN acls a ON a.acl_id = ua.acl_id
+  ELSE a.name
+  END AS 'param_value'
+FROM        user_acls ua
+       JOIN acls a
+    ON a.acl_id = ua.acl_id
   LEFT JOIN user_acl_group_by_parameters uagbp
     ON uagbp.user_id = ua.user_id AND
-       uagbp.acl_id = ua.acl_id
+       uagbp.acl_id = ua.acl_id AND
+    uagbp.group_by_id = (
+      SELECT
+        gb.group_by_id
+      FROM group_bys gb
+        JOIN modules m ON gb.module_id = m.module_id
+        JOIN realms r ON gb.realm_id = r.realm_id
+      WHERE m.name = :module_name AND
+            r.name = :realm_name AND
+            gb.name = :group_by_name
+    )
   LEFT JOIN modw.organization AS o
     ON o.id = uagbp.value
   LEFT JOIN (
@@ -1383,12 +1394,17 @@ WHERE ua.user_id = :user_id
 ORDER BY COALESCE(aclh.level, 0) DESC;
 SQL;
 
-
+        // NOTE: previously we had no DB concept of modules / realms
+        // the values that are provided for :module_name, :realm_name, and
+        // :group_by_name simulate the behavior of the old system.
         $available_roles = $this->_pdo->query(
             $query,
             array(
                 ':acl_hierarchy_name' => 'acl_hierarchy',
-                ':user_id' => $this->_id
+                ':user_id' => $this->_id,
+                ':module_name' => DEFAULT_MODULE_NAME,
+                ':realm_name' => 'jobs',
+                ':group_by_name' => 'provider'
             )
         );
 
@@ -1462,9 +1478,11 @@ FROM (
         a.acl_id AS acl_id, 
         gb.group_by_id AS group_by_id,
         :value AS value 
-    FROM acls a, group_bys gb
+    FROM acls a, group_bys gb, modules m
     WHERE a.name = :acl_name
     AND gb.name = 'institution'
+    AND m.name = :module_name
+    AND gb.module_id = m.module_id
 ) inc 
 LEFT JOIN user_acl_group_by_parameters cur 
 ON cur.user_id = inc.user_id
@@ -1482,7 +1500,8 @@ SQL;
         $this->_pdo->execute($aclInsert, array(
             ':user_id' => $this->_id,
             ':acl_name' => $aclName,
-            ':value' => $institution_id
+            ':value' => $institution_id,
+            ':module_name' => DEFAULT_MODULE_NAME
         ));
 
     }//setInstitution
