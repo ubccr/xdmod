@@ -1705,18 +1705,21 @@ SQL
             ));
             $this->_pdo->execute(
                 <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value) 
-SELECT inc.* 
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
 FROM (
-   SELECT 
+   SELECT
       :user_id AS user_id,
       :acl_id AS acl_id,
       gb.group_by_id AS group_by_id,
-      :value AS value 
-   FROM group_bys gb 
+      :value AS value
+   FROM group_bys gb
    JOIN modules m
      ON gb.module_id = m.module_id
+   JOIN realms r
+    ON gb.realm_id = r.realm_id
    WHERE m.name = :module_name AND
+         r.name = :realm_name  AND
          gb.name = 'provider'
 ) inc
 LEFT JOIN user_acl_group_by_parameters cur
@@ -1731,7 +1734,8 @@ SQL
                     ':user_id' => $this->_id,
                     ':acl_id' => $acl->getAclId(),
                     ':value' => $organization_id,
-                    ':module_name' => DEFAULT_MODULE_NAME
+                    ':module_name' => DEFAULT_MODULE_NAME,
+                    ':realm_name' => 'jobs'
                 )
             );
         }//foreach
