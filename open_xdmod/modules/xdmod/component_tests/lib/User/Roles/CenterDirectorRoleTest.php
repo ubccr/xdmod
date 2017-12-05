@@ -68,12 +68,13 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
     public function testGetFormalName()
     {
         $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
-        $expected = 'Center Director - screw';
+        $expected = 'Center Director';
         $cd = new CenterDirectorRole();
         $cd->configure($user);
 
         $actual =  $cd->getFormalName();
-        $this->assertEquals($expected, $actual);
+        $found = strpos($actual, $expected);
+        $this->assertTrue($found !== false);
     }
 
     public function testGetIdentifier()
