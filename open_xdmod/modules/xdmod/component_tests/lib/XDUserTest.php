@@ -1297,4 +1297,75 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
             array('', 'Public')
         );
     }
+
+    public function testGetFormalRoleNameNull()
+    {
+        $expected = 'Public';
+        $user = self::getUser(null, 'test', 'a', 'user');
+        $actual = $user->_getFormalRoleName(null);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetFormalRoleNameEmptyString()
+    {
+        $expected = 'Public';
+        $user = self::getUser(null, 'test', 'a', 'user');
+        $actual = $user->_getFormalRoleName('');
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function tearDownAfterClass()
+    {
+        foreach (self::$users as $userName => $user) {
+            try {
+                $user->removeUser();
+            } catch (Exception $e) {
+                echo "\nUnable to remove User: $userName\n";
+                echo "{$e->getCode()}: {$e->getMessage()}\n{$e->getTraceAsString()}\n";
+            }
+        }
+    }
+
+    /**
+     * Retrieve and log a reference to an XDUser instance created with the
+     * provided arguments.
+     *
+     * @param string $username
+     * @param string $password
+     * @param string $firstName
+     * @param string $middleName
+     * @param string $lastName
+     * @param array|null $acls
+     * @param string|null $primaryRole
+     * @param string|null $email
+     * @return XDUser
+     */
+    private static function getUser($password, $firstName, $middleName, $lastName, array $acls = null, $primaryRole = null, $email = null, $username = null)
+    {
+        $newUserName = isset($username) ? $username : self::getUserName(self::DEFAULT_TEST_USER_NAME);
+        $emailAddress = isset($email) ? $email : "$newUserName" . self::DEFAULT_EMAIL_ADDRESS_SUFFIX;
+
+        if (!isset($acls) && !isset($primaryRole)) {
+            $user = new XDUser($newUserName, $password, $firstName, $middleName, $lastName);
+        } else {
+            $user = new XDUser($newUserName, $password, $emailAddress, $firstName, $middleName, $lastName, $acls, $primaryRole);
+        }
+
+        self::$users[$newUserName] = $user;
+        return $user;
+    }
+
+    private static function getUserName($username)
+    {
+        while (array_key_exists($username, self::$users)) {
+            $suffix = rand(self::MIN_USERS, self::MAX_USERS);
+            $username = "$username$suffix";
+        }
+        return $username;
+    }
+
+    public static function getTestFile($fileName)
+    {
+        return __DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . self::$ENV . DIRECTORY_SEPARATOR . $fileName;
+    }
 }
