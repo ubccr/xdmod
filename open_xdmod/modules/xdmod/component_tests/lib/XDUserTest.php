@@ -59,15 +59,17 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        self::setupEnvironment();
+    }
+    private static function setupEnvironment()
+    {
         $testEnvironment = getenv('test_env');
         if ($testEnvironment !== false) {
             self::$ENV = $testEnvironment;
         } else {
             self::$ENV = self::DEFAULT_TEST_ENVIRONMENT;
         }
-
     }
-
 
     /**
      * @dataProvider provideGetUserByUserName
@@ -1422,6 +1424,9 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
     public static function getTestFile($fileName)
     {
+        if (!isset(self::$ENV)){
+            self::setupEnvironment();
+        }
         return __DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . self::$ENV . DIRECTORY_SEPARATOR . $fileName;
     }
 }
