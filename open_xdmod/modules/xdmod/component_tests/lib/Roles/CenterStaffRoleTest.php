@@ -2,8 +2,6 @@
 
 namespace ComponentTests\Roles;
 
-require __DIR__ . './../../../bootstrap.php';
-
 use ComponentTests\BaseTest;
 use Exception;
 use User\Roles\CenterStaffRole;

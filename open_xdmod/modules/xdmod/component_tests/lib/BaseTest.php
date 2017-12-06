@@ -62,7 +62,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     private static function setupPaths()
     {
-        self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../../artifacts/xdmod-test-artifacts/";
+        self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../artifacts/xdmod-test-artifacts/";
     }
 
     /**

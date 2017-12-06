@@ -2,8 +2,6 @@
 
 namespace ComponentTests;
 
-require __DIR__ . './../../bootstrap.php';
-
 use CCR\Json;
 
 /**

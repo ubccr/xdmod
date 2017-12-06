@@ -2,8 +2,6 @@
 
 namespace ComponentTests;
 
-require_once __DIR__ . './../../bootstrap.php';
-
 use CCR\DB;
 use CCR\Json;
 use ReflectionClass;

@@ -2,8 +2,6 @@
 
 namespace ComponentTests\Roles;
 
-require __DIR__ . '/../../../bootstrap.php';
-
 use CCR\Json;
 use ComponentTests\BaseTest;
 use ComponentTests\XDUserTest;
