@@ -1,6 +1,8 @@
 <?php
 
-namespace UnitTesting\DataWarehouse\Query\Jobs\Aggregate;
+namespace ComponentTests;
+
+require __DIR__ . './../../bootstrap.php';
 
 use CCR\Json;
 
@@ -8,7 +10,7 @@ use CCR\Json;
  * This test is designed for class \DataWarehouse\Query\Jobs\Aggregate
  */
 
-class AggregateTest extends \BaseTest
+class AggregateTest extends BaseTest
 {
     private $_query;
     /**

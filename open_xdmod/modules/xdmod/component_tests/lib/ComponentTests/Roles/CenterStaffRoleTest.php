@@ -1,5 +1,10 @@
-<?php namespace ComponentTests;
+<?php
 
+namespace ComponentTests\Roles;
+
+require __DIR__ . './../../../bootstrap.php';
+
+use ComponentTests\BaseTest;
 use Exception;
 use User\Roles\CenterStaffRole;
 use XDUser;
@@ -7,7 +12,7 @@ use XDUser;
 /**
  * Tests meant to exercise the functions in the CenterStaffRole class
  **/
-class CenterStaffRoleTest extends \PHPUnit_Framework_TestCase
+class CenterStaffRoleTest extends BaseTest
 {
     /**
      * @expectedException Exception
@@ -21,8 +26,8 @@ class CenterStaffRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetIdentifierAbsolute()
     {
-        $expected = XDUserTest::CENTER_STAFF_ACL_NAME . ';1';
-        $user = XDUser::getUserByUserName(XDUserTest::CENTER_STAFF_USER_NAME);
+        $expected = self::CENTER_STAFF_ACL_NAME . ';1';
+        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
         $cs = new CenterStaffRole();
         $cs->configure($user);
         $actual = $cs->getIdentifier(true);
@@ -31,8 +36,8 @@ class CenterStaffRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetIdentifier()
     {
-        $expected = XDUserTest::CENTER_STAFF_ACL_NAME;
-        $user = XDUser::getUserByUserName(XDUserTest::CENTER_STAFF_USER_NAME);
+        $expected = self::CENTER_STAFF_ACL_NAME;
+        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
         $cs = new CenterStaffRole();
         $cs->configure($user);
         $actual = $cs->getIdentifier();
@@ -52,11 +57,11 @@ class CenterStaffRoleTest extends \PHPUnit_Framework_TestCase
     public function testGetActiveCenter()
     {
         $users = array(
-            XDUserTest::CENTER_STAFF_USER_NAME => 1,
-            XDUserTest::CENTER_DIRECTOR_USER_NAME => -1,
-            XDUserTest::PRINCIPAL_INVESTIGATOR_USER_NAME => -1,
-            XDUserTest::NORMAL_USER_USER_NAME => -1,
-            XDUserTest::PUBLIC_USER_NAME => -1
+            self::CENTER_STAFF_USER_NAME => 1,
+            self::CENTER_DIRECTOR_USER_NAME => -1,
+            self::PRINCIPAL_INVESTIGATOR_USER_NAME => -1,
+            self::NORMAL_USER_USER_NAME => -1,
+            self::PUBLIC_USER_NAME => -1
         );
         foreach($users as $userName => $expected) {
             $user = XDUser::getUserByUserName($userName);

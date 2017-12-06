@@ -2,9 +2,10 @@
 
 namespace ComponentTests;
 
+require_once __DIR__ . './../../bootstrap.php';
+
 use CCR\DB;
 use CCR\Json;
-use PHPUnit_Framework_Error_Notice;
 use ReflectionClass;
 use User\Roles\CenterDirectorRole;
 use \XDUser;
@@ -18,36 +19,7 @@ use \Exception;
 class XDUserTest extends BaseTest
 {
 
-    const PUBLIC_USER_NAME = 'Public User';
-    const PUBLIC_ACL_NAME = 'pub';
-    const PUBLIC_USER_EXPECTED = '/public_user.json';
 
-    const CENTER_DIRECTOR_USER_NAME = 'centerdirector';
-    const CENTER_DIRECTOR_ACL_NAME = 'cd';
-    const CENTER_DIRECTOR_EXPECTED = '/center_director.json';
-
-    const CENTER_STAFF_USER_NAME = 'centerstaff';
-    const CENTER_STAFF_ACL_NAME = 'cs';
-    const CENTER_STAFF_EXPECTED = '/center_staff.json';
-
-    const PRINCIPAL_INVESTIGATOR_USER_NAME = 'principal';
-    const PRINCIPAL_INVESTIGATOR_ACL_NAME = 'pi';
-    const PRINCIPAL_INVESTIGATOR_EXPECTED = '/principal.json';
-
-    const NORMAL_USER_USER_NAME = 'normaluser';
-    const NORMAL_USER_ACL = 'usr';
-    const NORMAL_USER_EXPECTED = '/normal_user.json';
-
-    const VALID_SERVICE_PROVIDER_ID = 1;
-    const VALID_SERVICE_PROVIDER_NAME = 'screw';
-
-    const INVALID_ID = -999;
-    const INVALID_ACL_NAME = 'babbaganoush';
-
-    const MIN_USERS = 1;
-    const MAX_USERS = 1000;
-    const DEFAULT_TEST_USER_NAME = "test";
-    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
 
     private static $users = array();
 
