@@ -9,6 +9,7 @@ namespace ComponentTests;
 use CCR\DB;
 
 /**
+ * @group OpenXDMoD
  * Test the xdmod-slurm-helper executable.
  */
 class SlurmHelperTest extends \PHPUnit_Framework_TestCase

@@ -41,8 +41,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     public function getTestFile($fileName, $project = self::DEFAULT_PROJECT, $type = self::DEFAULT_TYPE)
     {
         if (!isset(self::$ENV)){
-            $this->setupEnvironment();
+            self::setupEnvironment();
         }
+
+        if (!isset(self::$TEST_ARTIFACT_OUTPUT_PATH)) {
+            self::setupPaths();
+        }
+
         return implode(
             '',
             array(
