@@ -73,8 +73,7 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
         $cd->configure($user);
 
         $actual =  $cd->getFormalName();
-        $found = strpos($actual, $expected);
-        $this->assertTrue($found !== false);
+        $this->assertNotFalse(strpos($actual, $expected), "Expected to find '$expected' in '$actual'");
     }
 
     public function testGetIdentifier()
