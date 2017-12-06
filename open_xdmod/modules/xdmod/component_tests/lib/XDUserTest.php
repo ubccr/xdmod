@@ -846,30 +846,54 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($roleId);
     }
 
-    /**
-     * @expectedException PHPUnit_Framework_Error_Notice
-     * @expectedExceptionMessage Undefined offset: 0
-     */
     public function testGetRoleIDForInvalidRole()
     {
-        $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $method = $reflection->getMethod('_getRoleID');
-        $method->setAccessible(true);
-        $method->invoke($user, self::INVALID_ACL_NAME);
+        try {
+            $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+            $reflection = new ReflectionClass($user);
+            $method = $reflection->getMethod('_getRoleID');
+            $method->setAccessible(true);
+            $result = $method->invoke($user, self::INVALID_ACL_NAME);
+            $this->assertNull($result);
+        } catch (Exception $e) {
+            $expectedMessage = 'Undefined offset: 0';
+            $isCorrectClass = $e instanceof \PHPUnit_Framework_Error_Notice;
+            $message = $e->getMessage();
+
+            $this->assertTrue(
+                $isCorrectClass,
+                "Expected an exception of type [\PHPUnit_Framework_Error_Notice]. Received: [" . get_class($e) . "]"
+            );
+            $this->assertNotFalse(
+                strpos($message, $expectedMessage),
+                "Expected the message to contain [$expectedMessage]. Received: [$message]"
+            );
+        }
     }
 
-    /**
-     * @expectedException PHPUnit_Framework_Error_Notice
-     * @expectedExceptionMessage Undefined offset: 0
-     */
     public function testGetRoleWithNull()
     {
-        $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $method = $reflection->getMethod('_getRoleID');
-        $method->setAccessible(true);
-        $method->invoke($user, null);
+        try {
+            $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+            $reflection = new ReflectionClass($user);
+            $method = $reflection->getMethod('_getRoleID');
+            $method->setAccessible(true);
+            $result = $method->invoke($user, null);
+            $this->assertNull($result, "Expected [null]. Received [$result]");
+        } catch (Exception $e) {
+            $expectedMessage = 'Undefined offset: 0';
+            $isCorrectClass = $e instanceof \PHPUnit_Framework_Error_Notice;
+            $message = $e->getMessage();
+
+            $this->assertTrue(
+                $isCorrectClass,
+                "Expected an exception of type [\PHPUnit_Framework_Error_Notice]. Received: [" . get_class($e) . "]"
+            );
+            $this->assertNotFalse(
+                strpos($message, $expectedMessage),
+                "Expected the message to contain [$expectedMessage]. Received: [$message]"
+            );
+        }
     }
 
     /**
@@ -881,8 +905,8 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testEnumAllAvailableRoles($userName, $expectedFile)
     {
-        $expected = JSON::loadFile($this->getTestFile('center_director_all_available_roles.json'));
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
+        $expected = JSON::loadFile($this->getTestFile($expectedFile));
+        $user = XDUser::getUserByUserName($userName);
 
         $allAvailableRoles = $user->enumAllAvailableRoles();
         $this->assertEquals($expected, $allAvailableRoles);
