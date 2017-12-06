@@ -15,10 +15,8 @@ use \Exception;
  * modify the isDeveloper function.
  * @group skip
  **/
-class XDUserTest extends \PHPUnit_Framework_TestCase
+class XDUserTest extends BaseTest
 {
-
-    const TEST_ARTIFACT_OUTPUT_PATH = '/../artifacts/xdmod-test-artifacts/xdmod/acls/output';
 
     const PUBLIC_USER_NAME = 'Public User';
     const PUBLIC_ACL_NAME = 'pub';
@@ -91,7 +89,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
             array(self::PUBLIC_USER_NAME,'public_user.json'),
             array(self::CENTER_STAFF_USER_NAME , 'center_staff.json'),
             array(self::CENTER_DIRECTOR_USER_NAME , 'center_director.json'),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal-xduser_primary_role.json'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal.json'),
             array(self::NORMAL_USER_USER_NAME , 'normal_user.json')
         );
     }
@@ -1451,13 +1449,5 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
             $username = "$username$suffix";
         }
         return $username;
-    }
-
-    public static function getTestFile($fileName)
-    {
-        if (!isset(self::$ENV)){
-            self::setupEnvironment();
-        }
-        return __DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . self::$ENV . DIRECTORY_SEPARATOR . $fileName;
     }
 }

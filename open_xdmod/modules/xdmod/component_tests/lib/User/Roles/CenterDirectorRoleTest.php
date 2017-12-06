@@ -10,9 +10,8 @@ use XDUser;
 /**
  * Tests meant to exercise the functions in the CenterDirectorRole class.
  **/
-class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
+class CenterDirectorRoleTest extends \BaseTest
 {
-    const TEST_ARTIFACT_OUTPUT_PATH = '/../../../artifacts/xdmod-test-artifacts/xdmod/acls/output';
     /**
      * @expectedException Exception
      * @expectedExceptionMessage No user ID has been assigned to this role.  You must call configure() before calling getCorrespondingUserID()
@@ -104,7 +103,7 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testEnumStaffMembers()
     {
-        $expected = Json::loadFile(XDUserTest::getTestFile('center_director_staff_members.json'));
+        $expected = Json::loadFile($this->getTestFile('center_director_staff_members.json'));
 
         $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
         $cd = new CenterDirectorRole();
