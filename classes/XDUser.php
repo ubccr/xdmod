@@ -1357,27 +1357,28 @@ SELECT DISTINCT
   CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
     THEN CONCAT(a.display, ' - ', o.abbrev)
   ELSE a.display
-  END    AS 'description',
+  END                   AS 'description',
   CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
     THEN CONCAT(a.name, ':', uagbp.value)
   ELSE a.name
-  END AS 'param_value'
-FROM        user_acls ua
-       JOIN acls a
+  END                   AS 'param_value',
+  mp.acl_id IS NOT NULL AS is_primary,
+  a.enabled             AS is_active
+FROM user_acls ua
+  JOIN acls a
     ON a.acl_id = ua.acl_id
   LEFT JOIN user_acl_group_by_parameters uagbp
     ON uagbp.user_id = ua.user_id AND
        uagbp.acl_id = ua.acl_id AND
-    uagbp.group_by_id = (
-      SELECT
-        gb.group_by_id
-      FROM group_bys gb
-        JOIN modules m ON gb.module_id = m.module_id
-        JOIN realms r ON gb.realm_id = r.realm_id
-      WHERE m.name = :module_name AND
-            r.name = :realm_name AND
-            gb.name = :group_by_name
-    )
+       uagbp.group_by_id = (
+         SELECT gb.group_by_id
+         FROM group_bys gb
+           JOIN modules m ON gb.module_id = m.module_id
+           JOIN realms r ON gb.realm_id = r.realm_id
+         WHERE m.name = :module_name AND
+               r.name = :realm_name AND
+               gb.name = :group_by_name
+       )
   LEFT JOIN modw.organization AS o
     ON o.id = uagbp.value
   LEFT JOIN (
@@ -1390,6 +1391,43 @@ FROM        user_acls ua
               WHERE h.name = :acl_hierarchy_name
             ) aclh
     ON aclh.acl_id = ua.acl_id
+  LEFT JOIN (
+              SELECT DISTINCT
+                a.*,
+                aclp.abbrev organization,
+                aclp.id     organization_id
+              FROM acls a
+                JOIN user_acls ua
+                  ON a.acl_id = ua.acl_id
+                LEFT JOIN (
+                            SELECT
+                              ah.acl_id,
+                              ah.level
+                            FROM acl_hierarchies ah
+                              JOIN hierarchies h
+                                ON ah.hierarchy_id = h.hierarchy_id
+                              JOIN modules m
+                                ON h.module_id = m.module_id
+                            WHERE h.name = :acl_hierarchy_name
+                                  AND m.name = :module_name
+                                  AND m.enabled = TRUE
+                          ) aclh
+                  ON aclh.acl_id = ua.acl_id
+                LEFT JOIN (
+                            SELECT
+                              uagbp.acl_id,
+                              o.abbrev,
+                              o.id
+                            FROM modw.organization o
+                              JOIN user_acl_group_by_parameters uagbp
+                                ON o.id = uagbp.value
+                          ) aclp
+                  ON aclp.acl_id = ua.acl_id
+              WHERE ua.user_id = :user_id
+              ORDER BY COALESCE(aclh.level, 0) DESC
+              LIMIT 1
+            ) mp
+    ON mp.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 ORDER BY COALESCE(aclh.level, 0) DESC;
 SQL;
