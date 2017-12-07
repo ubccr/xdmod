@@ -91,7 +91,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
             array(self::PUBLIC_USER_NAME,'public_user.json'),
             array(self::CENTER_STAFF_USER_NAME , 'center_staff.json'),
             array(self::CENTER_DIRECTOR_USER_NAME , 'center_director.json'),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal.json'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal-xduser_primary_role.json'),
             array(self::NORMAL_USER_USER_NAME , 'normal_user.json')
         );
     }
@@ -305,6 +305,10 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($roles);
     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage A user must have at least one role.
+     */
     public function testSetRolesEmpty()
     {
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
@@ -316,16 +320,6 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
         $user->setRoles(array());
         $user->saveUser();
-
-        $newRoles = $user->getRoles();
-        $this->assertEmpty($newRoles);
-
-        $user->setRoles($originalRoles);
-        $user->saveUser();
-
-        $roles = $user->getRoles();
-        $this->assertEquals($originalRoles, $roles);
-        $this->assertTrue(in_array(self::CENTER_DIRECTOR_ACL_NAME, $roles));
     }
 
     public function testGetAcls()
@@ -351,6 +345,10 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(in_array(self::CENTER_DIRECTOR_ACL_NAME, $acls));
     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage A user must have at least one acl.
+     */
     public function testSetAclsEmpty()
     {
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
@@ -360,15 +358,6 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
         $user->setAcls(array());
         $user->saveUser();
-
-        $newAcls = $user->getAcls();
-        $this->assertTrue(count($newAcls) === 0);
-
-        $user->setAcls($originalAcls);
-        $user->saveUser();
-
-        $acls = $user->getAcls();
-        $this->assertEquals($originalAcls, $acls);
     }
 
     public function testAddNewAcl()
@@ -541,7 +530,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $user = XDUser::getPublicUser();
         $primaryRole = $user->getPrimaryRole();
 
-        $this->assertNull($primaryRole);
+        $this->assertNotNull($primaryRole);
     }
 
     /**

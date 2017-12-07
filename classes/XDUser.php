@@ -465,47 +465,13 @@ class XDUser implements JsonSerializable
         // See: http://stackoverflow.com/questions/1197005/how-to-get-numeric-types-from-mysql-using-pdo
         $user->_user_type = (int)$userCheck[0]['user_type'];
 
-        $user->_roles = array();
+        // We retrieve the most privileged acl for this user and use it for the
+        // active / primary role.
+        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user);
+        $activeRoleFormalName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
 
-        $rolesResult = $pdo->query("
-         SELECT 
-            r.abbrev,
-            r.description,
-            IF(ur.is_primary, COALESCE(urp.is_primary, ur.is_primary), ur.is_primary) AS is_primary,
-            IF(ur.is_active, COALESCE(urp.is_active, ur.is_active), ur.is_active) AS is_active,
-            urp.param_value
-         FROM
-            UserRoles AS ur
-            JOIN Roles AS r ON ur.role_id = r.role_id
-            LEFT JOIN UserRoleParameters AS urp ON ur.user_id = urp.user_id AND ur.role_id = urp.role_id
-         WHERE ur.user_id = :user_id
-      ", array(
-            ':user_id' => $user->_id,
-        ));
-
-        foreach ($rolesResult as $roleSet) {
-
-            if (!in_array($roleSet['abbrev'], $user->_roles)) {
-                $user->_roles[] = $roleSet['abbrev'];
-            }
-
-            if ($roleSet['is_active'] == '1') {
-                $user->_active_role = \User\aRole::factory($roleSet['description']);
-                $user->_active_role->configure($user, $roleSet['param_value']);
-            }
-
-        }//foreach
-
-        if (!isset($user->_active_role)) {
-            $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user);
-            $activeRoleFormalName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
-
-            $user->_active_role = aRole::factory($activeRoleFormalName);
-            $user->_active_role->configure($user);
-
-            $user->_primary_role = aRole::factory($activeRoleFormalName);
-            $user->_primary_role->configure($user);
-        }
+        $user->_primary_role = $user->_active_role = aRole::factory($activeRoleFormalName);
+        $user->_active_role->configure($user);
 
         // BEGIN: ACL population
         $query = <<<SQL
@@ -513,16 +479,32 @@ SELECT a.*, ua.user_id
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
+  LEFT JOIN (
+    SELECT
+      ah.acl_id,
+      ah.level
+    FROM acl_hierarchies ah
+      JOIN hierarchies h
+        ON ah.hierarchy_id = h.hierarchy_id
+      JOIN modules m
+        ON h.module_id = m.module_id
+    WHERE h.name = :acl_hierarchy_name
+          AND m.name = :module_name
+          AND m.enabled = TRUE
+  ) aclh
+    ON aclh.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
       AND a.enabled = TRUE
+ORDER BY COALESCE(aclh.level, 0) DESC;
 SQL;
         $results = $pdo->query(
             $query,
             array(
-                'user_id' => $uid
+                'user_id' => $uid,
+                ':acl_hierarchy_name' => 'acl_hierarchy',
+                ':module_name' => DEFAULT_MODULE_NAME
             )
         );
-
 
         $acls = array_reduce($results, function ($carry, $item) {
             $acl = new Acl($item);
@@ -532,6 +514,12 @@ SQL;
 
         $user->setAcls($acls);
         // END: ACL population
+
+        // we do this instead of calling `setRoles` as `setRoles` will end up
+        // making a db call per role to keep the acls in sync. And in the end
+        // the results will be the same.
+        $user->_roles = $user->getAcls(true);
+
 
         return $user;
 
@@ -835,6 +823,14 @@ SQL;
             throw new Exception('The user must have a valid user type.');
         }
 
+        if (count($this->_roles) === 0) {
+            throw new Exception('A user must have at least one role.');
+        }
+
+        if (count($this->_acls) === 0) {
+            throw new Exception('A user must have at least one acl.');
+        }
+
         // Retrieve the userId (if any) for the email associated with this User
         // object.
         $id_of_user_holding_email_address = self::userExistsWithEmailAddress($this->_email);
@@ -977,45 +973,24 @@ SQL;
         // the _active_role property.
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
 
-        // NOTE: It is possible that a user may not have any acls, in this case
-        // there cannot be a most privileged one and so we test to make sure
-        // that an acl was returned before utilizing it.
-        if (isset($mostPrivilegedAcl)) {
-            $activeRoleName = $this->_getFormalRoleName($mostPrivilegedAcl->getName());
-
-            $this->_active_role = aRole::factory($activeRoleName);
-
-            $this->_primary_role = aRole::factory($activeRoleName);
+        if (!isset($mostPrivilegedAcl)) {
+            throw new Exception('Unable to determine this users most privileged acl. There may be a problem with the state of the database.');
         }
 
-        if (isset($this->_active_role)) {
-            // If the updater (e.g. Manager) has pulled out the (recently) active role for this user, reassign the active role to the primary role.
+        $activeRoleName = $this->_getFormalRoleName($mostPrivilegedAcl->getName());
+        $this->_primary_role = $this->_active_role = aRole::factory($activeRoleName);
 
-            $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
+        $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
+        $this->_pdo->execute(
+            "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
+            array('id' => $this->_id, 'roleId' => $active_role_id)
+        );
+        $this->_active_role->configure($this);
 
-
-            $this->_pdo->execute(
-                "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
-                array('id' => $this->_id, 'roleId' => $active_role_id)
-            );
-
-
-            /* END: UserRole Updating */
-
-            /* BEGIN: Configure Primary and Active Roles */
-            $this->_active_role->configure($this);
-
-            /* END: Configure Primary and Active Roles */
-        }
-
-        if (isset($this->_primary_role)) {
-            $primary_role_id = $this->_getRoleID($this->_primary_role->getIdentifier());
-            $this->_pdo->execute(
-                "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
-                array(':id' => $this->_id, ':roleId' => $primary_role_id)
-            );
-            $this->_primary_role->configure($this);
-        }
+        $this->_pdo->execute(
+            "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
+            array(':id' => $this->_id, ':roleId' => $activeRoleName)
+        );
 
         $timestampData = $this->_pdo->query(
             "SELECT time_created, time_last_updated, password_last_updated
@@ -2158,13 +2133,6 @@ SQL;
     {
         if ($this->_id == NULL) {
             throw new Exception('You must call saveUser() on this newly created XDUser prior to using getActiveRole()');
-        }
-
-        if (!isset($this->_active_role)) {
-            $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
-            $formalName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
-            $this->_active_role = aRole::factory($formalName);
-            $this->_active_role->configure($this);
         }
 
         return $this->_active_role;
