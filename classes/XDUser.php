@@ -161,8 +161,7 @@ class XDUser implements JsonSerializable
         // These roles cannot be used immediately after constructing a new XDUser (since a user id has not been defined at this point).
         // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
         // these roles using getPrimaryRole() and getActiveRole()
-
-        $this->_active_role = \User\aRole::factory($primary_role_name);
+        $this->_primary_role = $this->_active_role = \User\aRole::factory($primary_role_name);
     }//construct
 
     // ---------------------------
