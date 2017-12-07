@@ -298,8 +298,9 @@ function runEtlPipeline($name, $start, $end){
         $pipes
     );
     if (!is_resource($process)) {
-        $logger->err('Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true));
-        throw new \Exception('Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true));
+        $msg = 'Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true);
+        $logger->err($msg);
+        throw new \Exception($msg);
     }
     $out = stream_get_contents($pipes[1]);
     $err = stream_get_contents($pipes[2]);
@@ -308,8 +309,9 @@ function runEtlPipeline($name, $start, $end){
     }
     $return_value = proc_close($process);
     if ($return_value != 0) {
-        $logger->err("$command returned $return_value, stdout:  $out stderr: $err");
-        throw new \Exception("$command returned $return_value, stdout:  $out stderr: $err");
+        $msg = $command ."\nreturned\n" . $return_value ."\nstdout:\n" . $out . "\nstderr:\n". $err;
+        $logger->err($msg);
+        throw new \Exception($msg);
     }
     $logger->notice("Execution Complete: $command");
 }

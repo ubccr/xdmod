@@ -155,7 +155,10 @@ EOT
             $this->console->displayMessage('Details:');
             $this->console->displayMessage(print_r(error_get_last(), true));
             $this->console->displayBlankLine();
+
             $this->console->prompt('Press ENTER to continue.');
+
+            return;
         }
         $out = stream_get_contents($pipes[1]);
         $err = stream_get_contents($pipes[2]);
