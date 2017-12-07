@@ -1,8 +1,10 @@
 <?php
 
-namespace ComponentTests;
+namespace ComponentTests\Roles;
 
 use CCR\Json;
+use ComponentTests\BaseTest;
+use ComponentTests\XDUserTest;
 use Exception;
 use User\Roles\CenterDirectorRole;
 use XDUser;
@@ -10,9 +12,8 @@ use XDUser;
 /**
  * Tests meant to exercise the functions in the CenterDirectorRole class.
  **/
-class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
+class CenterDirectorRoleTest extends BaseTest
 {
-    const TEST_ARTIFACT_OUTPUT_PATH = '/../../../artifacts/xdmod-test-artifacts/xdmod/acls/output';
     /**
      * @expectedException Exception
      * @expectedExceptionMessage No user ID has been assigned to this role.  You must call configure() before calling getCorrespondingUserID()
@@ -25,7 +26,7 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCorrespondingUserID()
     {
-        $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
+        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $expected = $user->getUserID();
 
         $cd = new CenterDirectorRole();
@@ -46,7 +47,7 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetActiveCenter()
     {
-        $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
+        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $expected = 1;
 
         $cd = new CenterDirectorRole();
@@ -67,13 +68,13 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFormalName()
     {
-        $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
-        $expected = 'Center Director - screw';
+        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
+        $expected = 'Center Director';
         $cd = new CenterDirectorRole();
         $cd->configure($user);
 
         $actual =  $cd->getFormalName();
-        $this->assertEquals($expected, $actual);
+        $this->assertNotFalse(strpos($actual, $expected), "Expected to find '$expected' in '$actual'");
     }
 
     public function testGetIdentifier()
@@ -83,7 +84,7 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
             true => XDUserTest::CENTER_DIRECTOR_ACL_NAME . ';1'
         );
 
-        $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
+        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $cd = new CenterDirectorRole();
         $cd->configure($user);
         foreach($params as $param => $expected) {
@@ -104,9 +105,9 @@ class CenterDirectorRoleTest extends \PHPUnit_Framework_TestCase
 
     public function testEnumStaffMembers()
     {
-        $expected = Json::loadFile(XDUserTest::getTestFile('center_director_staff_members.json'));
+        $expected = Json::loadFile($this->getTestFile('center_director_staff_members.json'));
 
-        $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
+        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $cd = new CenterDirectorRole();
         $cd->configure($user);
         $actual = $cd->enumCenterStaffMembers();
