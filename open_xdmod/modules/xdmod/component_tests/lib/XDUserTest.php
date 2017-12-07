@@ -4,7 +4,6 @@ namespace ComponentTests;
 
 use CCR\DB;
 use CCR\Json;
-use PHPUnit_Framework_Error_Notice;
 use ReflectionClass;
 use User\Roles\CenterDirectorRole;
 use \XDUser;
@@ -15,61 +14,12 @@ use \Exception;
  * modify the isDeveloper function.
  * @group skip
  **/
-class XDUserTest extends \PHPUnit_Framework_TestCase
+class XDUserTest extends BaseTest
 {
 
-    const TEST_ARTIFACT_OUTPUT_PATH = "/../artifacts/xdmod-test-artifacts/xdmod/acls/output";
 
-    const PUBLIC_USER_NAME = 'Public User';
-    const PUBLIC_ACL_NAME = 'pub';
-    const PUBLIC_USER_EXPECTED = '/public_user.json';
-
-    const CENTER_DIRECTOR_USER_NAME = 'centerdirector';
-    const CENTER_DIRECTOR_ACL_NAME = 'cd';
-    const CENTER_DIRECTOR_EXPECTED = '/center_director.json';
-
-    const CENTER_STAFF_USER_NAME = 'centerstaff';
-    const CENTER_STAFF_ACL_NAME = 'cs';
-    const CENTER_STAFF_EXPECTED = '/center_staff.json';
-
-    const PRINCIPAL_INVESTIGATOR_USER_NAME = 'principal';
-    const PRINCIPAL_INVESTIGATOR_ACL_NAME = 'pi';
-    const PRINCIPAL_INVESTIGATOR_EXPECTED = '/principal.json';
-
-    const NORMAL_USER_USER_NAME = 'normaluser';
-    const NORMAL_USER_ACL = 'usr';
-    const NORMAL_USER_EXPECTED = '/normal_user.json';
-
-    const VALID_SERVICE_PROVIDER_ID = 1;
-    const VALID_SERVICE_PROVIDER_NAME = 'screw';
-
-    const INVALID_ID = -999;
-    const INVALID_ACL_NAME = 'babbaganoush';
-
-    const MIN_USERS = 1;
-    const MAX_USERS = 1000;
-    const DEFAULT_TEST_USER_NAME = "test";
-    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
 
     private static $users = array();
-
-    const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
-
-    private static $ENV;
-
-    public static function setUpBeforeClass()
-    {
-        self::setupEnvironment();
-    }
-    private static function setupEnvironment()
-    {
-        $testEnvironment = getenv('test_env');
-        if ($testEnvironment !== false) {
-            self::$ENV = $testEnvironment;
-        } else {
-            self::$ENV = self::DEFAULT_TEST_ENVIRONMENT;
-        }
-    }
 
     /**
      * @dataProvider provideGetUserByUserName
@@ -541,7 +491,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $user = XDUser::getPublicUser();
         $primaryRole = $user->getPrimaryRole();
 
-        $this->assertNull($primaryRole);
+        $this->assertNotNull($primaryRole);
     }
 
     /**
@@ -627,10 +577,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
         $actual = $user->getActiveRole()->getIdentifier();
 
-        // NOTE: this isn't actually correct and is corrected in
-        // the xduser_primary_role PR. But, in the interest of getting our tests
-        // to pass this change is necessary.
-        $this->assertEquals(ROLE_ID_USER, $actual);
+        $this->assertEquals(ROLE_ID_MANAGER, $actual);
     }
 
     /**
@@ -860,39 +807,80 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($roleId);
     }
 
-    /**
-     * @expectedException PHPUnit_Framework_Error_Notice
-     * @expectedExceptionMessage Undefined offset: 0
-     */
     public function testGetRoleIDForInvalidRole()
     {
-        $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $method = $reflection->getMethod('_getRoleID');
-        $method->setAccessible(true);
-        $method->invoke($user, self::INVALID_ACL_NAME);
+        try {
+            $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+            $reflection = new ReflectionClass($user);
+            $method = $reflection->getMethod('_getRoleID');
+            $method->setAccessible(true);
+            $result = $method->invoke($user, self::INVALID_ACL_NAME);
+            $this->assertNull($result);
+        } catch (Exception $e) {
+            $expectedMessage = 'Undefined offset: 0';
+            $isCorrectClass = $e instanceof \PHPUnit_Framework_Error_Notice;
+            $message = $e->getMessage();
+
+            $this->assertTrue(
+                $isCorrectClass,
+                "Expected an exception of type [\PHPUnit_Framework_Error_Notice]. Received: [" . get_class($e) . "]"
+            );
+            $this->assertNotFalse(
+                strpos($message, $expectedMessage),
+                "Expected the message to contain [$expectedMessage]. Received: [$message]"
+            );
+        }
+    }
+
+    public function testGetRoleWithNull()
+    {
+        try {
+            $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+            $reflection = new ReflectionClass($user);
+            $method = $reflection->getMethod('_getRoleID');
+            $method->setAccessible(true);
+            $result = $method->invoke($user, null);
+            $this->assertNull($result, "Expected [null]. Received [$result]");
+        } catch (Exception $e) {
+            $expectedMessage = 'Undefined offset: 0';
+            $isCorrectClass = $e instanceof \PHPUnit_Framework_Error_Notice;
+            $message = $e->getMessage();
+
+            $this->assertTrue(
+                $isCorrectClass,
+                "Expected an exception of type [\PHPUnit_Framework_Error_Notice]. Received: [" . get_class($e) . "]"
+            );
+            $this->assertNotFalse(
+                strpos($message, $expectedMessage),
+                "Expected the message to contain [$expectedMessage]. Received: [$message]"
+            );
+        }
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Notice
-     * @expectedExceptionMessage Undefined offset: 0
+     * @dataProvider provideEnumAllAvailableRoles
+     *
+     * @param string $userName     the name of the user to be tested.
+     * @param string $expectedFile the name of the file that holds the expected
+     *                             results of the test.
      */
-    public function testGetRoleWithNull()
+    public function testEnumAllAvailableRoles($userName, $expectedFile)
     {
-        $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $method = $reflection->getMethod('_getRoleID');
-        $method->setAccessible(true);
-        $method->invoke($user, null);
-    }
-
-    public function testCenterDirectorEnumAllAvailableRoles()
-    {
-        $expected = JSON::loadFile($this->getTestFile('center_director_all_available_roles.json'));
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
+        $expected = JSON::loadFile($this->getTestFile($expectedFile));
+        $user = XDUser::getUserByUserName($userName);
 
         $allAvailableRoles = $user->enumAllAvailableRoles();
         $this->assertEquals($expected, $allAvailableRoles);
+    }
+
+    public function provideEnumAllAvailableRoles()
+    {
+        return array(
+            array(self::CENTER_DIRECTOR_USER_NAME, 'center_director_all_available_roles.json'),
+            array(self::CENTER_STAFF_USER_NAME, 'center_staff_all_available_roles.json'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, 'principal_user_all_available_roles.json'),
+            array(self::NORMAL_USER_USER_NAME, 'normal_user_all_available_roles.json')
+        );
     }
 
     /**
@@ -1424,13 +1412,5 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
             $username = "$username$suffix";
         }
         return $username;
-    }
-
-    public static function getTestFile($fileName)
-    {
-        if (!isset(self::$ENV)){
-            self::setupEnvironment();
-        }
-        return __DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . self::$ENV . DIRECTORY_SEPARATOR . $fileName;
     }
 }
