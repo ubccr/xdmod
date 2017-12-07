@@ -155,13 +155,13 @@ class XDUser implements JsonSerializable
 
         // =================================
 
-        $primary_role_name = $this->_getFormalRoleName(ROLE_ID_USER);
+        $primary_role_name = $this->_getFormalRoleName($primary_role);
 
         // These roles cannot be used immediately after constructing a new XDUser (since a user id has not been defined at this point).
         // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
         // these roles using getPrimaryRole() and getActiveRole()
 
-        $this->_active_role = \User\aRole::factory($primary_role_name);
+        $this->_primary_role = $this->_active_role = \User\aRole::factory($primary_role_name);
     }//construct
 
     // ---------------------------
@@ -977,6 +977,13 @@ SQL;
         $this->_active_role->configure($this);
         /* END: Configure Primary and Active Roles */
 
+        $primary_role_id = $this->_getRoleID($this->_primary_role->getIdentifier());
+
+        $this->_pdo->execute(
+            "UPDATE UserRoles SET is_primary ='1' WHERE user_id=:id AND role_id=:roleId",
+            array('id' => $this->_id, 'roleId' => $primary_role_id)
+        );
+        $this->_primary_role->configure($this);
 
         $timestampData = $this->_pdo->query(
             "SELECT time_created, time_last_updated, password_last_updated
