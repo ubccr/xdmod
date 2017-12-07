@@ -494,6 +494,11 @@ class XDUser implements JsonSerializable
                 $user->_active_role->configure($user, $roleSet['param_value']);
             }
 
+            if ($roleSet['is_primary'] == '1') {
+                $user->_primary_role = \User\aRole::factory($roleSet['description']);
+                $user->_primary_role->configure($user, $roleSet['param_value']);
+            }
+
         }//foreach
 
         // BEGIN: ACL population
