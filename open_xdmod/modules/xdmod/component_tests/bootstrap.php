@@ -10,7 +10,7 @@ spl_autoload_register(
         // 'ComponentTests' namespace. Therefor, if ComponentTests is found in
         // $className we strip it from $className and look for that file instead.
         if (strpos($className, 'ComponentTests') !== false) {
-            $parts = explode($className, '\\');
+            $parts = explode('\\', $className);
             if ($parts[0] === 'ComponentTests') {
                 unset($parts[0]);
                 $className = implode('\\', $parts);
