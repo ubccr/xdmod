@@ -641,17 +641,20 @@ class XDUserTest extends BaseTest
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage User "test" not found
+     * @expectedExceptionMessageRegExp /User "(\w+)" not found/
      */
     public function testRemoveUser()
     {
-        $user = XDUser::getUserByUserName('test');
+        $user = self::getUser(null, 'Test', 'A', 'User', array('usr'));
+        $user->setUserType(self::DEFAULT_USER_TYPE);
+        $user->saveUser();
+        $userName = $user->getUsername();
 
         $this->assertNotNull($user);
 
         $user->removeUser();
 
-        XDUser::getUserByUserName('test');
+        XDUser::getUserByUserName($userName);
     }
 
     /**
