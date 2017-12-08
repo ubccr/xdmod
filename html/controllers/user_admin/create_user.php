@@ -41,7 +41,7 @@ try {
         '',
         $_POST['last_name'],
         array_keys($acls),
-        null,
+        ROLE_ID_USER,
         NULL,
         $_POST['assignment']
     );
