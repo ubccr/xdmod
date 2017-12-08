@@ -134,7 +134,7 @@ class XDUser implements JsonSerializable
 
         foreach ($this->_roles as $role) {
 
-            if ($this->_getFormalRoleName($role) == NULL) {
+            if (self::_getFormalRoleName($role) == NULL) {
                 throw new Exception("Unrecognized role $role");
             }
 
@@ -156,7 +156,7 @@ class XDUser implements JsonSerializable
 
         // =================================
 
-        $primary_role_name = $this->_getFormalRoleName($primary_role);
+        $primary_role_name = self::_getFormalRoleName($primary_role);
 
         // These roles cannot be used immediately after constructing a new XDUser (since a user id has not been defined at this point).
         // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
@@ -977,7 +977,7 @@ SQL;
             throw new Exception('Unable to determine this users most privileged acl. There may be a problem with the state of the database.');
         }
 
-        $activeRoleName = $this->_getFormalRoleName($mostPrivilegedAcl->getName());
+        $activeRoleName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
         $this->_primary_role = $this->_active_role = aRole::factory($activeRoleName);
 
         $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
@@ -2105,7 +2105,7 @@ SQL;
     public function setPrimaryRole($primary_role)
     {
 
-        $primary_role_name = $this->_getFormalRoleName($primary_role);
+        $primary_role_name = self::_getFormalRoleName($primary_role);
 
         if ($primary_role_name == NULL) {
             throw new Exception("Attempting to set an invalid primary role");
@@ -2275,7 +2275,7 @@ SQL;
 
         if (empty($active_role)) $active_role = ROLE_ID_PUBLIC;
 
-        $active_role_name = $this->_getFormalRoleName($active_role);
+        $active_role_name = self::_getFormalRoleName($active_role);
 
         $virtual_active_role = \User\aRole::factory($active_role_name);
         $virtual_active_role->configure($this, $role_param);
@@ -2298,7 +2298,7 @@ SQL;
     public function setActiveRole($active_role, $role_param = NULL)
     {
 
-        $active_role_name = $this->_getFormalRoleName($active_role);
+        $active_role_name = self::_getFormalRoleName($active_role);
 
         if ($active_role_name == NULL) {
             throw new Exception("Attempting to set an invalid active role");
@@ -3013,11 +3013,11 @@ SQL;
 
             if ($role_abbrev == 'dev') continue;
 
-            $role = \User\aRole::factory($this->_getFormalRoleName($role_abbrev));
+            $role = \User\aRole::factory(self::_getFormalRoleName($role_abbrev));
             $disabledMenusByRole[$role_abbrev] = $role->getDisabledMenus($realms);
 
         }
-        $role = \User\aRole::factory($this->_getFormalRoleName('pub'));
+        $role = \User\aRole::factory(self::_getFormalRoleName('pub'));
         $disabledMenusByRole['pub'] = $role->getDisabledMenus($realms);
 
         // If the user only has one role, return that role's menus immediately.
