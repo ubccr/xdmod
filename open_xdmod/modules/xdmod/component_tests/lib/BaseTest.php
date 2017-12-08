@@ -6,7 +6,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
     private static $TEST_ARTIFACT_OUTPUT_PATH;
 
-    const DEFAULT_TEST_ENVIRONMENT = 'xdmod';
+    const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
 
     const DEFAULT_PROJECT = 'acls';
 
@@ -38,6 +38,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     const INVALID_ID = -999;
     const INVALID_ACL_NAME = 'babbaganoush';
 
+    const DEFAULT_CENTER = 1;
+    const DEFAULT_USER_TYPE = 3;
+
     const MIN_USERS = 1;
     const MAX_USERS = 1000;
     const DEFAULT_TEST_USER_NAME = "test";
@@ -62,7 +65,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     private static function setupPaths()
     {
-        self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../artifacts/xdmod-test-artifacts/";
+        self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../artifacts/xdmod-test-artifacts";
     }
 
     /**
@@ -71,7 +74,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string  $type
      * @return string
      */
-    public function getTestFile($fileName, $project = self::DEFAULT_PROJECT, $type = self::DEFAULT_TYPE)
+    public function getTestFile($fileName, $project = self::DEFAULT_PROJECT, $type = self::DEFAULT_TYPE, $additionalDirs = array())
     {
         if (!isset(self::$ENV)){
             self::setupEnvironment();
@@ -82,18 +85,19 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
 
         return implode(
-            '',
-            array(
-                self::$TEST_ARTIFACT_OUTPUT_PATH,
-                DIRECTORY_SEPARATOR,
-                self::$ENV,
-                DIRECTORY_SEPARATOR,
-                $project,
-                DIRECTORY_SEPARATOR,
-                $type,
-                DIRECTORY_SEPARATOR,
-                $fileName
+            DIRECTORY_SEPARATOR,
+            array_merge(
+                array(
+                    self::$TEST_ARTIFACT_OUTPUT_PATH,
+                    'xdmod',
+                    $project,
+                    $type,
+                    self::$ENV
+                ),
+                $additionalDirs,
+                array($fileName)
             )
+
         );
     }
 }
