@@ -1363,7 +1363,7 @@ SELECT DISTINCT
   ELSE a.name
   END                   AS 'param_value',
   mp.acl_id IS NOT NULL AS is_primary,
-  a.enabled             AS is_active
+  mp.acl_id IS NOT NULL AS is_active
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
