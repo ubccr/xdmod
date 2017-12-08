@@ -4,6 +4,7 @@ namespace ComponentTests;
 
 use CCR\DB;
 use CCR\Json;
+use Models\Acl;
 use ReflectionClass;
 use User\Roles\CenterDirectorRole;
 use \XDUser;
@@ -16,9 +17,6 @@ use \Exception;
  **/
 class XDUserTest extends BaseTest
 {
-
-
-
     private static $users = array();
 
     const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
@@ -867,6 +865,17 @@ class XDUserTest extends BaseTest
         }
     }
 
+    private function allCombinations(array $data)
+    {
+        $results = array(array());
+        foreach ($data as $element) {
+            foreach ($results as $combination) {
+                array_push($results, array_merge(array($element), $combination));
+            }
+        }
+        return $results;
+    }
+
     /**
      * @dataProvider provideEnumAllAvailableRoles
      *
@@ -885,12 +894,68 @@ class XDUserTest extends BaseTest
 
     public function provideEnumAllAvailableRoles()
     {
-        return array(
+        $results = array(
             array(self::CENTER_DIRECTOR_USER_NAME, 'center_director_all_available_roles.json'),
             array(self::CENTER_STAFF_USER_NAME, 'center_staff_all_available_roles.json'),
             array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, 'principal_user_all_available_roles.json'),
             array(self::NORMAL_USER_USER_NAME, 'normal_user_all_available_roles.json')
         );
+
+        try {
+            // Retrieve all acls except for 'pub' and convert them to an array of
+            // acl names.
+            $acls = array_map(
+                function (Acl $acl) {
+                    return $acl->getName();
+                },
+                array_filter(
+                    Acls::getAcls(),
+                    function (Acl $acl) {
+                        return $acl->getName() !== self::PUBLIC_ACL_NAME;
+                    }
+                )
+            );
+
+            // retrieve all possible combinations of the acls that were retrieved.
+            $allAclCombinations = $this->allCombinations($acls);
+            $count = 0;
+            // Here we setup a user per acl combination
+            foreach ($allAclCombinations as $aclCombination) {
+                if (empty($aclCombination)) {
+                    continue;
+                }
+
+                $user = self::getUser(null, 'Test', 'Acl', 'User', $aclCombination);
+                $user->setUserType(self::DEFAULT_USER_TYPE);
+                // Save 'um so that we get an id + the db records we need.
+                $user->saveUser();
+
+                // check to see if the user has either of the 'center' acls
+                $hasCenterDirector = in_array(self::CENTER_DIRECTOR_ACL_NAME, $aclCombination);
+                $hasCenterStaff = in_array(self::CENTER_STAFF_ACL_NAME, $aclCombination);
+
+                // and if so then make sure the correct relations get setup.
+                if ($hasCenterStaff) {
+                    $user->setOrganizations(array(self::DEFAULT_CENTER => array('active' => 1, 'primary' => 1)), self::CENTER_STAFF_ACL_NAME);
+                }
+
+                if ($hasCenterDirector){
+                    $user->setOrganizations(array(self::DEFAULT_CENTER => array('active' => 1, 'primary' => 1)), self::CENTER_DIRECTOR_ACL_NAME);
+                }
+
+                $userName = $user->getUsername();
+                $fileName = implode('_', $aclCombination) . "_acls.json";
+                $results []= array(
+                    $userName,
+                    $fileName
+                );
+                $count += 1;
+            }
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        }
+        $this->assertTrue(true);
+        return $results;
     }
 
     /**
