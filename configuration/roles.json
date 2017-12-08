@@ -399,7 +399,7 @@
             "display": "Manager",
             "type": "data",
             "hierarchies": [{
-                "level": 301,
+                "level": 1,
                 "filter_override": false
             }],
             "dimensions": [
