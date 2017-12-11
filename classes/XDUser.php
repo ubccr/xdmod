@@ -1364,9 +1364,17 @@ SELECT DISTINCT
   END                   AS 'param_value',
   mp.acl_id IS NOT NULL AS is_primary,
   mp.acl_id IS NOT NULL AS is_active
+-- we select from user_acls as this table holds the primary relationship between
+-- users and the acls they have relationships with.
 FROM user_acls ua
+-- acls is joined in strictly to retrieve more detailed display information
   JOIN acls a
     ON a.acl_id = ua.acl_id
+-- we left join in user_acl_group_by_parameters as this is where 'center' related
+-- information about a user / acl relation is stored. Left join is specifically
+-- used so that we will always get all records from user_acls regardless of
+-- whether or not there is a corresponding record in
+-- user_acl_group_by_parameters
   LEFT JOIN user_acl_group_by_parameters uagbp
     ON uagbp.user_id = ua.user_id AND
        uagbp.acl_id = ua.acl_id AND
@@ -1379,8 +1387,14 @@ FROM user_acls ua
                r.name = :realm_name AND
                gb.name = :group_by_name
        )
+-- we left join in modw.organization to retrieve more detailed display
+-- information. It's a left join as it will be joined to
+-- user_acl_group_by_parameters which is also a left join.
   LEFT JOIN modw.organization AS o
     ON o.id = uagbp.value
+-- This left join retrieves what will be our primary sorting value
+-- acl_hierarchies.level. It is a left join because it is not expected that all
+-- acls will participate in a hierarchy.
   LEFT JOIN (
               SELECT
                 ah.acl_id,
@@ -1391,6 +1405,9 @@ FROM user_acls ua
               WHERE h.name = :acl_hierarchy_name
             ) aclh
     ON aclh.acl_id = ua.acl_id
+-- This big long left join retrieves the most privileged acl. You can reference
+-- Acls.php::getMostPrivilegedAcl. This is used to determine the 'is_primary'
+-- and 'is_active' values.
   LEFT JOIN (
               SELECT DISTINCT
                 a.*,
@@ -1428,8 +1445,11 @@ FROM user_acls ua
               LIMIT 1
             ) mp
     ON mp.acl_id = ua.acl_id
+-- we only want records that are related to a specific user
 WHERE ua.user_id = :user_id
-ORDER BY COALESCE(aclh.level, 0) DESC;
+-- In this ordering we use 'COALESCE' so that any acl that does not participate
+-- in a hierarchy will be sent to the bottom of the list.
+ORDER BY COALESCE(aclh.level, 0) DESC, a.name ;
 SQL;
 
         // NOTE: previously we had no DB concept of modules / realms
