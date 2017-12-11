@@ -958,7 +958,6 @@ class XDUserTest extends BaseTest
         } catch(Exception $e) {
             echo $e->getMessage();
         }
-        $this->assertTrue(true);
         return $results;
     }
 
