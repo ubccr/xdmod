@@ -739,7 +739,13 @@ FROM (
 LEFT JOIN acls cur
   ON cur.acl_type_id = inc.acl_type_id AND
      BINARY cur.name = BINARY inc.name
-WHERE cur.acl_id IS NULL;
+WHERE cur.acl_id IS NULL
+ON DUPLICATE KEY UPDATE
+  -- we leave out module_id and name as they are the basis for the
+  -- unique key.
+  acl_type_id = inc.acl_type_id,
+  display = inc.display,
+  enabled = inc.enabled;
 SQL;
         $params = array(
             ':name' => $name,
