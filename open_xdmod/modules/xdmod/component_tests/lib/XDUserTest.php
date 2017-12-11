@@ -1147,7 +1147,7 @@ class XDUserTest extends BaseTest
      */
     public function testEnumCenterStaffSitesWithUnsavedUserFails()
     {
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'User', array('cs', 'usr'), 'cs');
         $user->enumCenterStaffSites();
     }
 
