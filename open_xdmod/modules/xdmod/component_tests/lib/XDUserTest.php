@@ -582,7 +582,11 @@ class XDUserTest extends BaseTest
 
         $actual = $user->getActiveRole()->getIdentifier();
 
-        $this->assertEquals(ROLE_ID_MANAGER, $actual);
+        // This is due to the way 'most privileged' works. It prefers acls that
+        // take part in a hierarchy as opposed to those that do not. Since 'usr'
+        // is a part of a hierarchy ( 'mgr' just enables access to certain
+        // features ) then that is what is returned.
+        $this->assertEquals(ROLE_ID_USER, $actual);
     }
 
     /**
