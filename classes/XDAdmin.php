@@ -110,13 +110,11 @@ class XDAdmin
     {
         $sql = <<<SQL
 SELECT a.*,
-  CASE WHEN req.acl_id IS NULL THEN FALSE
-  ELSE TRUE END requires_center
+  req.acl_id IS NOT NULL AS requires_center
 FROM acls a LEFT JOIN
   (
-    SELECT DISTINCT acl_id
-    FROM acl_group_bys
-    WHERE required = TRUE
+    SELECT a2.acl_id 
+    FROM acls a2 WHERE a2.name IN ('cs', 'cc', 'cd')
   ) req ON req.acl_id = a.acl_id
   ORDER BY a.display;
 SQL;

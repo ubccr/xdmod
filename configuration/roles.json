@@ -366,9 +366,6 @@
                 "level": 400,
                 "filter_override": false
             }],
-            "requires": [
-                "provider"
-            ],
             "dimensions": [
                 "provider"
             ],
@@ -393,9 +390,6 @@
                 "level": 300,
                 "filter_override": false
             }],
-            "requires": [
-                "provider"
-            ],
             "dimensions": [
                 "provider"
             ],
