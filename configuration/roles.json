@@ -397,11 +397,7 @@
         },
         "mgr": {
             "display": "Manager",
-            "type": "data",
-            "hierarchies": [{
-                "level": 1,
-                "filter_override": false
-            }],
+            "type": "feature",
             "dimensions": [
                 "person"
             ],
