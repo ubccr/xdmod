@@ -24,6 +24,9 @@ class CenterStaffRoleTest extends BaseTest
 
     public function testGetIdentifierAbsolute()
     {
+        // It is expected that when `getIdentifier` is called w/ an
+        // `absolute_identifier` of true. That result will contain the center
+        // that the user is associated with in the form: <acl_name>;<center>
         $expected = self::CENTER_STAFF_ACL_NAME . ';1';
         $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
         $cs = new CenterStaffRole();

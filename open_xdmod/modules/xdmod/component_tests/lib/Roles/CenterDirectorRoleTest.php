@@ -74,6 +74,13 @@ class CenterDirectorRoleTest extends BaseTest
         $cd->configure($user);
 
         $actual =  $cd->getFormalName();
+
+        // As the formal name for Center Director will be in the form:
+        // Center Director - <CENTER>
+        // The exact value will vary from system to system.
+        // We can instead test that the expected value is present in the actual
+        // and now the test can be run on any number of systems.
+        // NOTE: this test was written before the use of artifacts.
         $this->assertNotFalse(strpos($actual, $expected), "Expected to find '$expected' in '$actual'");
     }
 
