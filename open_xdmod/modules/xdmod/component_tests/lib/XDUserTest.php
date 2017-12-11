@@ -810,7 +810,7 @@ class XDUserTest extends BaseTest
 
     public function testGetRoleIDForValidRole()
     {
-        $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
         $reflection = new ReflectionClass($user);
         $method = $reflection->getMethod('_getRoleID');
         $method->setAccessible(true);
@@ -822,7 +822,7 @@ class XDUserTest extends BaseTest
     public function testGetRoleIDForInvalidRole()
     {
         try {
-            $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+            $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
             $reflection = new ReflectionClass($user);
             $method = $reflection->getMethod('_getRoleID');
             $method->setAccessible(true);
@@ -847,7 +847,7 @@ class XDUserTest extends BaseTest
     public function testGetRoleWithNull()
     {
         try {
-            $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+            $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
             $reflection = new ReflectionClass($user);
             $method = $reflection->getMethod('_getRoleID');
             $method->setAccessible(true);
