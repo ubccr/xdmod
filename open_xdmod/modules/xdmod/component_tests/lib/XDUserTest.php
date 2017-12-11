@@ -57,7 +57,7 @@ class XDUserTest extends BaseTest
             array(self::PUBLIC_USER_NAME,'public_user.json'),
             array(self::CENTER_STAFF_USER_NAME , 'center_staff.json'),
             array(self::CENTER_DIRECTOR_USER_NAME , 'center_director.json'),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal.json'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal-update_enumAllAvailableRoles.json'),
             array(self::NORMAL_USER_USER_NAME , 'normal_user.json')
         );
     }
