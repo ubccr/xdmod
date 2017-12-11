@@ -989,7 +989,7 @@ SQL;
 
         $this->_pdo->execute(
             "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
-            array(':id' => $this->_id, ':roleId' => $activeRoleName)
+            array(':id' => $this->_id, ':roleId' => $active_role_id)
         );
 
         $timestampData = $this->_pdo->query(
