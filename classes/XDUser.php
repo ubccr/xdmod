@@ -1405,9 +1405,8 @@ FROM user_acls ua
               WHERE h.name = :acl_hierarchy_name
             ) aclh
     ON aclh.acl_id = ua.acl_id
--- This big long left join retrieves the most privileged acl. You can reference
--- Acls.php::getMostPrivilegedAcl. This is used to determine the 'is_primary'
--- and 'is_active' values.
+-- This big long left join retrieves the most privileged acl for to determine the
+-- is_primary and is_active values. You can reference Acls.php getMostPrivilegedAcl.
   LEFT JOIN (
               SELECT DISTINCT
                 a.*,
@@ -1447,23 +1446,24 @@ FROM user_acls ua
     ON mp.acl_id = ua.acl_id
 -- we only want records that are related to a specific user
 WHERE ua.user_id = :user_id
--- In this ordering we use 'COALESCE' so that any acl that does not participate
--- in a hierarchy will be sent to the bottom of the list.
+-- In this ordering we use coalesce so that any acl that does not participate
+-- in a hierarchy will be sent to the bottom of the list
 ORDER BY COALESCE(aclh.level, 0) DESC, a.name ;
 SQL;
+        $params = array(
+            ':acl_hierarchy_name' => 'acl_hierarchy',
+            ':user_id' => $this->_id,
+            ':module_name' => DEFAULT_MODULE_NAME,
+            ':realm_name' => 'jobs',
+            ':group_by_name' => 'provider'
+        );
 
         // NOTE: previously we had no DB concept of modules / realms
         // the values that are provided for :module_name, :realm_name, and
         // :group_by_name simulate the behavior of the old system.
         $available_roles = $this->_pdo->query(
             $query,
-            array(
-                ':acl_hierarchy_name' => 'acl_hierarchy',
-                ':user_id' => $this->_id,
-                ':module_name' => DEFAULT_MODULE_NAME,
-                ':realm_name' => 'jobs',
-                ':group_by_name' => 'provider'
-            )
+            $params
         );
 
         return $available_roles;
