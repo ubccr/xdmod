@@ -14,7 +14,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 
     initComponent: function () {
         var self = this;
-        this.isDirty = true;
+        this.isDirty = false;
 
         this.isInDirtyState = function () {
             return self.isDirty;
@@ -65,16 +65,35 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 var record = this.grid.store.getAt(
                     this.grid.getView().findRowIndex(node)
                 );
+                // if this record requires a center AND
 
-                if (record.data.requires_center === true &&
-                self.aclCenters.hasOwnProperty(record.data.acl) &&
-                self.aclCenters[record.data.acl].length > 0) {
+                var requires_center = record.data.requires_center;
+                var aclCenterExists = self.aclCenters.hasOwnProperty(record.data.acl_id);
+                var aclHasCenters = aclCenterExists && self.aclCenters[record.data.acl_id].length > 0;
+
+                // If this acl requires center information
+                // and we have an entry for this acl in our center list
+                // and the entry for this acl has centers currently associated
+                // with it.
+                if (requires_center && aclCenterExists && aclHasCenters) {
                     record.set(this.dataIndex, true);
+                } else if (requires_center && aclCenterExists && !aclHasCenters) {
+                    // this acl requires center information
+                    // we have an entry for this acl in our center list
+                    // but we do not have any centers associated with this acl.
+
+                    // do nothing
+
+                    // As this is for a user who is having an acl w/ a required
+                    // center added to them, but they have not selected a center
+                    // yet
                 } else {
+                    // provide the default behavior of clicking on a checkbox
+                    // flipping the state.
                     record.set(this.dataIndex, !record.data[this.dataIndex]);
                 }
 
-                var isDirty = record.get(this.dataIndex) === record.modified[this.dataIndex];
+                var isDirty = record.get(this.dataIndex) !== record.modified[this.dataIndex];
                 self.setDirtyState(isDirty);
 
                 if (record.data.requires_center === true) {
@@ -87,7 +106,9 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
              */
             reset: function () {
                 this.grid.store.each(function (record) {
+                    if (record.get(this.dataIndex) !== false) {
                     record.set(this.dataIndex, false);
+                    }
                 }, this);
             },
 
@@ -238,7 +259,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
                     var parent = Ext.getCmp(self.parentId);
                     var hasAcl = parent.aclCenters.hasOwnProperty(self.acl_id);
                     var aclHasCenter = parent.aclCenters[self.acl_id].indexOf(record.data.id) >= 0;
-                    var isDirty = record.get(self.dataIndex) !== record.modified[self.dataIndex];
+                    var isDirty = record.get('include') !== record.modified['include'];
 
                     if (hasAcl && aclHasCenter && !value) {
                         // If the acl already has a record for this center and
@@ -277,7 +298,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             ]
         });
 
-        var grid = new Ext.grid.GridPanel({
+        this.grid = new Ext.grid.GridPanel({
             title: 'Select the centers associated with the <span style="color: #00F;">' + this.acl + '</span> acl.',
             store: this.store,
             autoScroll: true,
@@ -308,7 +329,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             }
         });
 
-        grid.store.on('load', function (store, records) {
+        this.grid.store.on('load', function (store, records) {
             for (var i = 0; i < records.length; i++) {
                 var record = records[i];
                 var found = self.selected.indexOf(record.data.id) >= 0;
@@ -323,7 +344,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             header: false,
             showSeparator: false,
             items: [
-                grid
+                this.grid
             ]
         });
 
