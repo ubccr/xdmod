@@ -193,7 +193,7 @@ FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
   LEFT JOIN (
-    SELECT DISTINCT acl_id FROM acl_group_bys WHERE required = true
+    SELECT acl_id FROM acls WHERE name IN ('cd', 'cs', 'cc')
     ) req ON req.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
