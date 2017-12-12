@@ -664,6 +664,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
         /* eslint-disable no-use-before-define */
         var roleGridClickHandler = function () {
+
             var selRoles = roleGrid.getSelectedAcls();
             cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
             if (roleGrid.isInDirtyState()) {

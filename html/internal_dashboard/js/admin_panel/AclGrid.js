@@ -205,7 +205,9 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     reset: function () {
         this.ccInclude.reset();
         for (var key in this.aclCenters) {
-            this.aclCenters[key] = [];
+            if (this.aclCenters.hasOwnProperty(key)) {
+                this.aclCenters[key] = [];
+            }
         }
     },
     getCenters: function (acl) {
@@ -233,12 +235,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             baseParams: {
                 operation: 'enum_resource_providers'
             },
-            autoLoad: true,
-            listeners: {
-                load: function() {
-
-                }
-            }
+            autoLoad: true
         });
         this.ccInclude = new Ext.grid.CheckColumn({
             header: 'Include',
