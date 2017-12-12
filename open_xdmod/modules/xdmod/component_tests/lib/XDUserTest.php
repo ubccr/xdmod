@@ -1454,12 +1454,26 @@ class XDUserTest extends BaseTest
             foreach ($roleSet as $role) {
                 $user->setOrganizations($centerSet, $role);
             }
+
             $mostPrivilegedRole = $user->getMostPrivilegedRole();
 
             $expected = array_keys($centerSet);
-            $parameters = $mostPrivilegedRole->getParameters();
+            $roles = implode('_', $roleSet);
+            $centers = implode('_', array_values($expected));
+            $fileName = "$roles-$centers.json";
+            $testFilePath = $this->getTestFile($fileName);
+            $testFileExists = file_exists($testFilePath) && is_readable($testFilePath);
+            if ($testFileExists) {
+                $expected = json_decode(file_get_contents($testFilePath));
+            }
 
+            $parameters = $mostPrivilegedRole->getParameters();
             $actual = array_values($parameters);
+
+            if (!$testFileExists) {
+                file_put_contents($testFilePath, json_encode($actual));
+            }
+
             foreach ($actual as $idx => $item) {
                 $this->assertTrue(in_array($item, $expected), "Expected [". json_encode($expected) . "] Received: [" . json_encode($actual) . "]");
             }
