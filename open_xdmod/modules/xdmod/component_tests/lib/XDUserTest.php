@@ -905,58 +905,55 @@ class XDUserTest extends BaseTest
             array(self::NORMAL_USER_USER_NAME, 'normal_user_all_available_roles.json')
         );
 
-        try {
-            // Retrieve all acls except for 'pub' and convert them to an array of
-            // acl names.
-            $acls = array_map(
+        // Retrieve all acls except for 'pub' and convert them to an array of
+        // acl names.
+        $acls = array_map(
+            function (Acl $acl) {
+                return $acl->getName();
+            },
+            array_filter(
+                Acls::getAcls(),
                 function (Acl $acl) {
-                    return $acl->getName();
-                },
-                array_filter(
-                    Acls::getAcls(),
-                    function (Acl $acl) {
-                        return $acl->getName() !== self::PUBLIC_ACL_NAME;
-                    }
-                )
-            );
-
-            // retrieve all possible combinations of the acls that were retrieved.
-            $allAclCombinations = $this->allCombinations($acls);
-            $count = 0;
-            // Here we setup a user per acl combination
-            foreach ($allAclCombinations as $aclCombination) {
-                if (empty($aclCombination)) {
-                    continue;
+                    return $acl->getName() !== self::PUBLIC_ACL_NAME;
                 }
+            )
+        );
 
-                $user = self::getUser(null, 'Test', 'Acl', 'User', $aclCombination);
-                $user->setUserType(self::DEFAULT_USER_TYPE);
-                // Save 'um so that we get an id + the db records we need.
-                $user->saveUser();
+        // retrieve all possible combinations of the acls that were retrieved.
+        $allAclCombinations = $this->allCombinations($acls);
 
-                // check to see if the user has either of the 'center' acls
-                $hasCenterDirector = in_array(self::CENTER_DIRECTOR_ACL_NAME, $aclCombination);
-                $hasCenterStaff = in_array(self::CENTER_STAFF_ACL_NAME, $aclCombination);
-
-                // and if so then make sure the correct relations get setup.
-                if ($hasCenterStaff) {
-                    $user->setOrganizations(array(self::DEFAULT_CENTER => array('active' => 1, 'primary' => 1)), self::CENTER_STAFF_ACL_NAME);
-                }
-
-                if ($hasCenterDirector){
-                    $user->setOrganizations(array(self::DEFAULT_CENTER => array('active' => 1, 'primary' => 1)), self::CENTER_DIRECTOR_ACL_NAME);
-                }
-
-                $userName = $user->getUsername();
-                $fileName = implode('_', $aclCombination) . "_acls.json";
-                $results []= array(
-                    $userName,
-                    $fileName
-                );
-                $count += 1;
+        // Here we setup a user per acl combination
+        foreach ($allAclCombinations as $aclCombination) {
+            if (empty($aclCombination)) {
+                continue;
             }
-        } catch(Exception $e) {
-            echo $e->getMessage();
+
+            $user = self::getUser(null, 'Test', 'Acl', 'User', $aclCombination);
+            $user->setUserType(self::DEFAULT_USER_TYPE);
+
+            // Save 'um so that we get an id + the db records we need.
+            $user->saveUser();
+
+
+            // check to see if the user has either of the 'center' acls
+            $hasCenterDirector = in_array(self::CENTER_DIRECTOR_ACL_NAME, $aclCombination);
+            $hasCenterStaff = in_array(self::CENTER_STAFF_ACL_NAME, $aclCombination);
+
+            // and if so then make sure the correct relations get setup.
+            if ($hasCenterStaff) {
+                $user->setOrganizations(array(self::DEFAULT_CENTER => array('active' => 1, 'primary' => 1)), self::CENTER_STAFF_ACL_NAME);
+            }
+
+            if ($hasCenterDirector){
+                $user->setOrganizations(array(self::DEFAULT_CENTER => array('active' => 1, 'primary' => 1)), self::CENTER_DIRECTOR_ACL_NAME);
+            }
+
+            $userName = $user->getUsername();
+            $fileName = implode('_', $aclCombination) . "_acls.json";
+            $results []= array(
+                $userName,
+                $fileName
+            );
         }
         return $results;
     }
