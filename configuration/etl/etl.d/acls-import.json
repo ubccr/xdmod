@@ -48,6 +48,16 @@
                 }
             ],
             "enabled": true
+        },
+        {
+            "name": "acls.import.xdmod.user_acl_group_by_parameters_sync",
+            "description": "Syncs current user_acl_group_by_parameters records w/ all 'provider' group_bys",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/user_acl_group_by_parameters_sync.sql"
+                }
+            ],
+            "enabled": true
         }
     ]
 }
