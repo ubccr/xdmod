@@ -664,7 +664,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
         /* eslint-disable no-use-before-define */
         var roleGridClickHandler = function () {
-
             var selRoles = roleGrid.getSelectedAcls();
             cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
             if (roleGrid.isInDirtyState()) {
@@ -672,7 +671,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             } else {
                 saveIndicator.hide();
             }
-
         };
         var roleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment',

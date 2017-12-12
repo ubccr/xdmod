@@ -107,7 +107,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             reset: function () {
                 this.grid.store.each(function (record) {
                     if (record.get(this.dataIndex) !== false) {
-                    record.set(this.dataIndex, false);
+                        record.set(this.dataIndex, false);
                     }
                 }, this);
             },
@@ -175,10 +175,12 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         this.store.each(function (record) {
             var hasAcl = acls.indexOf(record.data.acl_id) >= 0;
             record.set('include', hasAcl);
+            /* eslint-disable no-param-reassign */
             if (!record.hasOwnProperty('modified')) {
                 record.modified = {};
             }
             record.modified['include'] = hasAcl;
+            /* eslint-enable no-param-reassign */
         }, this);
     },
 
