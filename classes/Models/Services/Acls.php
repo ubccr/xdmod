@@ -187,8 +187,7 @@ SQL;
         $sql = <<<SQL
 SELECT
   a.*,
-  CASE WHEN req.acl_id IS NULL THEN FALSE
-    ELSE TRUE END requires_center
+  req.acl_id IS NOT NULL requires_center
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
