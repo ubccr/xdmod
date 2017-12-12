@@ -1439,6 +1439,67 @@ class XDUserTest extends BaseTest
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @dataProvider  provideRoleGetParameters
+     * @param array $roleSet
+     * @param array $centerSet
+     */
+    public function testRoleGetParameters($roleSet, $centerSet)
+    {
+        if (!empty($roleSet) && !empty($centerSet)) {
+            $user = self::getUser(null, 'test', 'a', 'user', $roleSet);
+            $user->setUserType(self::DEFAULT_USER_TYPE);
+            $user->saveUser();
+
+            foreach ($roleSet as $role) {
+                $user->setOrganizations($centerSet, $role);
+            }
+            $mostPrivilegedRole = $user->getMostPrivilegedRole();
+
+            $expected = array_keys($centerSet);
+            $parameters = $mostPrivilegedRole->getParameters();
+
+            $actual = array_values($parameters);
+            foreach ($actual as $idx => $item) {
+                $this->assertTrue(in_array($item, $expected), "Expected [". json_encode($expected) . "] Received: [" . json_encode($actual) . "]");
+            }
+        }
+    }
+
+    public function provideRoleGetParameters()
+    {
+        # SDSC: 856
+        # PSC: 848
+        # TACC: 476
+        $centerPermutations = $this->allCombinations(array(856, 848, 476));
+        $rolePermutations = $this->allCombinations(array('cd', 'cs'));
+        /*$rolePermutations = $this->allCombinations(array('cd', 'cs', 'cc'));*/
+
+        $results = array();
+        foreach($rolePermutations as $rolePermutation) {
+            foreach($centerPermutations as $centerPermutation) {
+                $centers = array();
+                if (!empty($centerPermutation)) {
+                    $total = 0;
+                    foreach($centerPermutation as $center) {
+                        switch($total) {
+                            case 0:
+                                $centers[$center] = array('primary' => 1, 'active' => 1);
+                                break;
+                            default:
+                                $centers[$center] = array('primary' => 0, 'active'=> 1);
+                                break;
+                        }
+                        $total += 1;
+                    }
+                }
+                $results []= array($rolePermutation, $centers);
+            }
+        }
+        return $results;
+    }
+
+
     public static function tearDownAfterClass()
     {
         foreach (self::$users as $userName => $user) {
