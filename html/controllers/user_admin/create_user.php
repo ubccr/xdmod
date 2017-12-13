@@ -1,6 +1,7 @@
 <?php
 
 use CCR\MailWrapper;
+use Models\Services\Centers;
 
 // Operation: user_admin->create_user
 
@@ -48,13 +49,34 @@ try {
     $newuser->setUserType($_POST['user_type']);
     $newuser->saveUser();
     // =============================
-    foreach($acls as $acl => $centers) {
+    foreach ($acls as $acl => $centers) {
         if (count($centers) > 0) {
             $centerConfig = array();
+            $count = 0;
             foreach($centers as $center) {
-                $centerConfig[$center] = array('primary' => 1, 'active' => 1);
+                switch($count) {
+                    case 0:
+                        $config = array('primary' => 1, 'active' => 1);
+                        break;
+                    default:
+                        $config = array('primary' => 0, 'active' => 0);
+                        break;
+                }
+                $centerConfig[$center] = $config;
+                $count += 1;
             }
             $newuser->setOrganizations($centerConfig, $acl);
+        } elseif (in_array($acl, array('cd', 'cs', 'cc'))) {
+            $currentCenters = Centers::getCenters();
+            if (count($currentCenters) > 0) {
+                $center = $currentCenters[0]['id'];
+                $newuser->setOrganizations(
+                    array(
+                        $center => array('primary' => 1, 'active' => 1)
+                    ),
+                    $acl
+                );
+            }
         }
     }
     // =============================
