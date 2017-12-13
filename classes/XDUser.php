@@ -3353,7 +3353,7 @@ SQL;
     {
         $ignored = array(
             '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',
-            '_timePasswordUpdated', '_token'
+            '_timePasswordUpdated', '_token', 'logger'
         );
         $reflection = new ReflectionClass($this);
         $results = array();
