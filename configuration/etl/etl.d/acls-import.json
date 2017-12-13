@@ -58,6 +58,26 @@
                 }
             ],
             "enabled": true
+        },
+        {
+            "name": "acls.import.xdmod.scrub_acl_tabs",
+            "description": "Ensures that the acl_tabs table does not contain erroneous data",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/scrub_acl_tabs.sql"
+                }
+            ],
+            "enabled": true
+        },
+        {
+            "name": "acls.import.xdmod.update_admin_users",
+            "description": "Ensure that any users that only have 'mgr' have 'usr' added.",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/update_admin_users.sql"
+                }
+            ],
+            "enabled": true
         }
     ]
 }

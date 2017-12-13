@@ -397,19 +397,11 @@
         },
         "mgr": {
             "display": "Manager",
-            "type": "feature",
-            "dimensions": [
-                "person"
-            ],
-            "extends": "default"
+            "type": "feature"
         },
         "dev": {
             "display": "Developer",
-            "type": "feature",
-            "dimensions": [
-                "person"
-            ],
-            "extends": "default"
+            "type": "feature"
         }
     }
 }
