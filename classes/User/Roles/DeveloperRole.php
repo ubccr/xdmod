@@ -13,7 +13,4 @@ class DeveloperRole extends \User\aRole
         parent::__construct(ROLE_ID_DEVELOPER);
 
     }//__construct
-
-}//PublicRole
-
-?>
+}
