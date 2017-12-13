@@ -3,6 +3,7 @@
 require_once dirname(__FILE__) . '/../configuration/linker.php';
 
 use CCR\DB;
+use CCR\Log;
 use Models\Acl;
 use Models\Services\Acls;
 use User\aRole;
@@ -12,7 +13,7 @@ use User\aRole;
  *
  * @Class XDUser
  */
-class XDUser implements JsonSerializable
+class XDUser extends ETL\Loggable implements JsonSerializable
 {
 
     private $_pdo;                       // PDO Handle (set in __construct)
@@ -162,6 +163,17 @@ class XDUser implements JsonSerializable
         // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
         // these roles using getPrimaryRole() and getActiveRole()
         $this->_primary_role = $this->_active_role = \User\aRole::factory($primary_role_name);
+        parent::__construct(
+            Log::factory(
+                'xduser.sql',
+                array(
+                    'db' => false,
+                    'mail' => false,
+                    'console' => false,
+                    'file'=> LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
+                )
+            )
+        );
     }//construct
 
     // ---------------------------
@@ -1458,16 +1470,26 @@ SQL;
             ':group_by_name' => 'provider'
         );
 
-        // NOTE: previously we had no DB concept of modules / realms
-        // the values that are provided for :module_name, :realm_name, and
-        // :group_by_name simulate the behavior of the old system.
-        $available_roles = $this->_pdo->query(
-            $query,
-            $params
-        );
+        try {
+            // NOTE: previously we had no DB concept of modules / realms
+            // the values that are provided for :module_name, :realm_name, and
+            // :group_by_name simulate the behavior of the old system.
+            $available_roles = $this->_pdo->query(
+                $query,
+                $params
+            );
 
-        return $available_roles;
+            return $available_roles;
+        } catch (PDOException $e) {
+            $this->logAndThrowException(
+                "A PDOException was thrown in 'XDUser::enumAllAvailableRoles'",
+                array(
+                    'exception' => $e,
+                    'sql'=> $query
+                )
+            );
 
+        }
     }//enumAllAvailableRoles
 
     // ---------------------------
