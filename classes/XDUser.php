@@ -1363,7 +1363,7 @@ SQL;
             return array();
 
         }
-
+        // NOTE: DO NOT PUT ['] in your comments, you will break the sql.
         $query = <<<SQL
 SELECT DISTINCT
   CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
@@ -1391,17 +1391,13 @@ FROM user_acls ua
   LEFT JOIN user_acl_group_by_parameters uagbp
     ON uagbp.user_id = ua.user_id AND
        uagbp.acl_id = ua.acl_id AND
-       uagbp.group_by_id = (
+       uagbp.group_by_id IN (
          SELECT gb.group_by_id
          FROM group_bys gb
-           JOIN modules m ON gb.module_id = m.module_id
-           JOIN realms r ON gb.realm_id = r.realm_id
-         WHERE m.name = :module_name AND
-               r.name = :realm_name AND
-               gb.name = :group_by_name
+         WHERE gb.name = :group_by_name
        )
 -- we left join in modw.organization to retrieve more detailed display
--- information. It's a left join as it will be joined to
+-- information. Its a left join as it will be joined to
 -- user_acl_group_by_parameters which is also a left join.
   LEFT JOIN modw.organization AS o
     ON o.id = uagbp.value
@@ -1435,11 +1431,7 @@ FROM user_acls ua
                             FROM acl_hierarchies ah
                               JOIN hierarchies h
                                 ON ah.hierarchy_id = h.hierarchy_id
-                              JOIN modules m
-                                ON h.module_id = m.module_id
                             WHERE h.name = :acl_hierarchy_name
-                                  AND m.name = :module_name
-                                  AND m.enabled = TRUE
                           ) aclh
                   ON aclh.acl_id = ua.acl_id
                 LEFT JOIN (
@@ -1458,19 +1450,16 @@ FROM user_acls ua
             ) mp
     ON mp.acl_id = ua.acl_id
 -- we only want records that are related to a specific user
-WHERE ua.user_id = :user_id AND
--- the original sql implicitly left out the 'flag' or 'feature' acls
--- so we need to filter these out here.
-      at.name != 'feature'
+-- the original sql implicitly left out the flag or feature acls
+-- so we need to filter these out here
+WHERE ua.user_id = :user_id AND at.name != 'feature'
 -- In this ordering we use coalesce so that any acl that does not participate
 -- in a hierarchy will be sent to the bottom of the list
-ORDER BY COALESCE(aclh.level, 0) DESC, a.name ;
+ORDER BY COALESCE(aclh.level, 0) DESC, a.name
 SQL;
         $params = array(
             ':acl_hierarchy_name' => 'acl_hierarchy',
             ':user_id' => $this->_id,
-            ':module_name' => DEFAULT_MODULE_NAME,
-            ':realm_name' => 'jobs',
             ':group_by_name' => 'provider'
         );
 
