@@ -361,7 +361,7 @@
         },
         "cd": {
             "display": "Center Director",
-            "type": "feature",
+            "type": "data",
             "hierarchies": [{
                 "level": 400,
                 "filter_override": false

@@ -1387,6 +1387,7 @@ FROM user_acls ua
 -- used so that we will always get all records from user_acls regardless of
 -- whether or not there is a corresponding record in
 -- user_acl_group_by_parameters
+  JOIN acl_types at ON a.acl_type_id = at.acl_type_id
   LEFT JOIN user_acl_group_by_parameters uagbp
     ON uagbp.user_id = ua.user_id AND
        uagbp.acl_id = ua.acl_id AND
@@ -1457,7 +1458,10 @@ FROM user_acls ua
             ) mp
     ON mp.acl_id = ua.acl_id
 -- we only want records that are related to a specific user
-WHERE ua.user_id = :user_id
+WHERE ua.user_id = :user_id AND
+-- the original sql implicitly left out the 'flag' or 'feature' acls
+-- so we need to filter these out here.
+      at.name != 'feature'
 -- In this ordering we use coalesce so that any acl that does not participate
 -- in a hierarchy will be sent to the bottom of the list
 ORDER BY COALESCE(aclh.level, 0) DESC, a.name ;
