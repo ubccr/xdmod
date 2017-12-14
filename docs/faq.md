@@ -134,3 +134,17 @@ This indicates that the data needed by the new ACL system introduced in 7.0.0 is
 not present.  This is typically caused by failing to migrate the Open XDMoD
 database from 6.6.0 to 7.0.0.  The `xdmod-upgrade` script must be executed
 after upgrading the Open XDMoD RPM or source installation.
+
+### Why do I see default value or incorrect value MySQL errors?
+
+These errors include:
+
+- `SQLSTATE[HY000]: General error: 1364 Field ... doesn't have a default value`
+- `SQLSTATE[HY000]: General error: 1366 Incorrect integer value: ''`
+
+If you see either of these errors, you should check your
+[Server SQL Modes][sql-mode].  Open XDMoD does not support any of the strict
+Server SQL Modes.  You must set `sql_mode = ''` in your MySQL server
+configuration.
+
+[sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html

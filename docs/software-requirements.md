@@ -125,6 +125,12 @@ database.
 
 [log_bin_trust_function_creators]: https://dev.mysql.com/doc/refman/5.5/en/replication-options-binary-log.html#option_mysqld_log-bin-trust-function-creators
 
+**NOTE**: Open XDMoD does not support any of the strict
+[Server SQL Modes][sql-mode].  You must set `sql_mode = ''` in your MySQL
+server configuration.
+
+[sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html
+
 ### PhantomJS
 
 The recommended version is 2.1.1.
