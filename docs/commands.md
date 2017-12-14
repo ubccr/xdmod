@@ -72,8 +72,10 @@ realm or realms to process.
 
 ### acl-config
 
-The `acl-config` command validates the configuration files that are used by the
-ACL framework.
+The `acl-config` command both validates the configuration files that are used
+by the ACL framework and ensures that the contents of the tables created by
+`acl-xdmod-management` are populated correctly based on information in the
+validated configuration files.
 
 ### acl-etl
 
@@ -82,7 +84,9 @@ commands.
 
 ### acl-import
 
-The `acl-import` command imports the ACLs into the database.
+The `acl-import` command imports data from the existing tables into the ACL
+tables so that they start with a valid representation of the current
+installation.
 
 ### acl-xdmod-management
 
