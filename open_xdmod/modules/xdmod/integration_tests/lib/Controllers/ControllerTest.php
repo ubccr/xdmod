@@ -153,7 +153,7 @@ JSON;
             }
         }
 
-        $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in'");
+        $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in' | " . json_encode($actualUsers));
 
         $this->helper->logoutDashboard();
     }
