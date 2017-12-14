@@ -13,6 +13,31 @@ Change the prefix as desired.  The default installation prefix is
 `/usr/local/xdmod`.  These instructions assume you are installing Open
 XDMoD in `/opt/xdmod`.
 
+Create Open XDMoD User And Group
+--------------------------------
+
+For improved security, create an Open XDMoD user and group that will have
+access to sensitive data:
+
+    # groupadd -r xdmod
+    # useradd -r -M -c "Open XDMoD" -g xdmod -d /opt/xdmod/lib -s /sbin/nologin xdmod
+
+Secure the file containing database passwords:
+
+    # chmod 440 /opt/xdmod/etc/portal_settings.ini
+    # chown apache:xdmod /opt/xdmod/etc/portal_settings.ini
+
+**NOTE**: The `portal_settings.ini` file must be readable by Apache and any
+user that will run the Open XDMoD commands.  Replace the Apache username
+(`apache`) with the appropriate name if it is different on your system.
+
+Add any user that will run Open XDMoD to the `xdmod` group:
+
+    # usermod -a -G xdmod jdoe
+
+Replace `jdoe` with an appropriate username.  Typically, you will need to log
+out of your system and log back in for this change to take effect.
+
 Run Configuration Script
 ------------------------
 

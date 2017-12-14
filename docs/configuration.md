@@ -200,10 +200,10 @@ scheduled reports.  You can also use this file to schedule shredding and
 ingestion.
 
     # Every morning at 3:00 AM -- run the report scheduler
-    0 3 * * * root /usr/bin/php /usr/lib/xdmod/report_schedule_manager.php >/dev/null
+    0 3 * * * xdmod /usr/bin/php /usr/lib/xdmod/report_schedule_manager.php >/dev/null
 
     # Shred and ingest PBS logs
-    0 1 * * * root /usr/bin/xdmod-shredder -q -r resource-name -f pbs -d /var/spool/pbs/server_priv/accounting && /usr/bin/xdmod-ingestor -q
+    0 1 * * * xdmod /usr/bin/xdmod-shredder -q -r resource-name -f pbs -d /var/spool/pbs/server_priv/accounting && /usr/bin/xdmod-ingestor -q
 
 Location of Configuration Files
 -------------------------------
