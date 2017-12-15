@@ -969,6 +969,9 @@ SQL;
 
         foreach ($this->_roles as $role) {
             $roleId = $this->_getRoleID($role);
+            if ($roleId === null) {
+                throw new Exception("Unable to find an id for: $roleId. Unable to save user.");
+            }
             $this->_pdo->execute(
                 "INSERT INTO UserRoles VALUES(:id, :roleId, '0', '0')",
                 array('id' => $this->_id,
@@ -1110,7 +1113,7 @@ SQL;
             ':abbrev' => $role_abbrev,
         ));
 
-        return $roleResults[0]['role_id'];
+        return count($roleResults) > 0 ? $roleResults[0]['role_id'] : null;
 
     }//_getRoleID
 
