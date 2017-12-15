@@ -43,6 +43,9 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         });
 
         cmbInstitution.on('disable', function () { cmbInstitution.reset(); });
+        cmbInstitution.on('change', function(combo) {
+            combo.removeClass('admin_panel_invalid_text_entry');
+        });
 
         var storeUserType = new DashboardStore({
             url: base_controller,
@@ -494,14 +497,13 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     return;
                 }
                 var acls = newUserRoleGrid.getSelectedAcls();
-                var missingMappedUser = cmbUserMapping.getValue().length === 0;
 
                 if (acls.length <= 0) {
                     CCR.xdmod.ui.userManagementMessage('This user must have at least one role.', false);
                     return;
                 }
 
-                if ((acls.indexOf('usr') >= 0 || acls.indexOf('pi') >= 0) && missingMappedUser) {
+                if ((acls.indexOf('usr') >= 0 || acls.indexOf('pi') >= 0) && cmbUserMapping.getValue().length === 0) {
                     cmbUserMapping.addClass('admin_panel_invalid_text_entry');
 
                     CCR.xdmod.ui.userManagementMessage('This user must be mapped to a XSEDE Account<br>(Using the drop-down list)', false);
@@ -515,7 +517,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     return;
                 }
 
-                if (acls.indexOf('cc') >= 0 && missingMappedUser) {
+                if (acls.indexOf('cc') >= 0 && cmbInstitution.getValue().length === 0) {
                     cmbInstitution.addClass('admin_panel_invalid_text_entry');
                     CCR.xdmod.ui.userManagementMessage('An institution must be specified for a user having a role of Campus Champion.', false);
                     return;
