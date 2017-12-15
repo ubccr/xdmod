@@ -21,6 +21,7 @@ var events = require('events'),
     DatasetProcessor = require('./dataset_processor.js'),
 	ce = require('cloneextend'),
 	config = require('../config.js');
+var fs = require('fs');
 
 var ETLProfile = module.exports = function (etlProfile) {
     etlProfile.init();
@@ -262,26 +263,25 @@ ETLProfile.prototype.getTables = function () {
  */
 ETLProfile.prototype.getTableDocumentation = function () {
     var tableDefToHtml = function (caption, defn) {
-        var output = '<table><caption>' + caption + '</caption><thead><tr><th>Column Name</th><th>Description</th><th>Units</th><th>Type</th></tr></thead><tbody>';
+        var output = '<table><caption>' + caption + '</caption><thead><tr><th>Column Name</th><th>Description</th><th>Units</th><th>Per</th><th>Type</th></tr></thead><tbody>\n';
         for (var i = 0; i < defn.length; i++) {
-            output += '<tr><td>' + defn[i][1] + '</td><td>' + defn[i][2] + '</td><td>' + defn[i][3] + '</td><td>' + defn[i][0] + '</td></tr>';
+            output += '<tr><td>' + defn[i][1] + '</td><td>' + defn[i][2] + '</td><td>' + defn[i][3] + '</td><td>' + defn[i][4] + '</td><td>' + defn[i][0] + '</td></tr>\n';
         }
         output += '</tbody></table>';
         return output;
     };
 
-    var htmlout = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html><head><title>Table Documentation</title><head><body>';
+    var htmltemplate = fs.readFileSync('./templates/table_documentation.html.template', 'utf8');
+    var htmlout;
 
     var tables = this.getTables();
     for (var t in tables) {
         if (tables.hasOwnProperty(t)) {
-            htmlout += tableDefToHtml('Documentation for table `' + this.output.config.database + '`.`' + t + '`', tables[t].getTableDocumentation());
+            htmlout = htmltemplate.replace('__TABLE__', tableDefToHtml('Documentation for table `' + this.output.config.database + '`.`' + t + '`', tables[t].getTableDocumentation()));
+
+            process.stdout.write(htmlout);
         }
     }
-
-    htmlout += '</body></html>\n';
-
-    process.stdout.write(htmlout);
 };
 
 /*
@@ -446,7 +446,6 @@ ETLProfile.prototype.getAggregationTables = function () {
 */
 ETLProfile.prototype.aggregate = function (recreate) {
     var self = this;
-	var fs = require('fs');
 	try { 
         if (this.output.dbEngine === 'mysqldb') {
             var tables = this.getAggregationTables();
@@ -496,7 +495,6 @@ ETLProfile.prototype.aggregate = function (recreate) {
 
 var xdmodIntegrator = function(realmName, realmConfigRoot) {
     var self = this;
-    var fs = require('fs');
     var roles = [];
     var realms = { "+realms": {} };
     realms["+realms"][realmName] = { "schema": "N/A", "table": "N/A", "datasource": realmName, group_bys: [], statistics: [] };
@@ -652,7 +650,6 @@ var generateGroupBy = function(aggTemplate, itemAlias, className, column)
 
 ETLProfile.prototype.integrateWithXDMoD = function () {
     var self = this;
-	var fs = require('fs');
 	var escape = require('mysql').escape;
 	try { 
         // TODO - should not have SUPREMM in the name
@@ -804,7 +801,6 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
 
 var getRegressionTests = function(dataset) {
 
-    var fs = require('fs');
     var files;
     var testConfig = [];
     var i;
@@ -834,7 +830,6 @@ var getRegressionTests = function(dataset) {
 ETLProfile.prototype.regressionTests = function () {
     var self = this;
 
-    var fs = require('fs');
     var path = require('path');
     var arrayCompare = require('./array_compare.js');
 
