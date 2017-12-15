@@ -103,6 +103,9 @@ $params = array('uid' => RESTRICTION_UID);
     if (isset($_POST['acls'])) {
 
         $acls = json_decode($_POST['acls'], true);
+        if (count($acls) < 1) {
+            \xd_response\presentError("Acl information is required");
+        }
 
         $featureAcls = array('dev', 'mgr');
         $count = 0;
@@ -110,7 +113,7 @@ $params = array('uid' => RESTRICTION_UID);
             $count += in_array($acl, $featureAcls) ? 1 : 0;
         }
         if ($count === count($acls)) {
-            throw new Exception('Select another acl other than "Manager" or "Developer"');
+            \xd_response\presentError('Select another acl other than "Manager" or "Developer"');
         }
 
         $user_to_update->setAcls(array());
@@ -136,6 +139,8 @@ $params = array('uid' => RESTRICTION_UID);
                 $newuser->setOrganizations($centerConfig, $acl);
             }
         }
+    } else {
+        \xd_response\presentError("Acl information is required");
     } // if (isset($_POST['acls'])) {
 
    // -----------------------------

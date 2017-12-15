@@ -21,13 +21,16 @@ $creator = \xd_security\assertDashboardUserLoggedIn();
 
 if (isset($_POST['acls'])) {
     $acls = json_decode($_POST['acls'], true);
+    if (count($acls) < 1){
+        \xd_response\presentError("Acl information is required");
+    }
     $featureAcls = array('dev', 'mgr');
     $count = 0;
     foreach(array_keys($acls) as $acl) {
         $count += in_array($acl, $featureAcls) ? 1 : 0;
     }
     if ($count === count($acls)) {
-        throw new Exception('Select another acl other than "Manager" or "Developer"');
+        \xd_response\presentError('Select another acl other than "Manager" or "Developer"');
     }
 }
 else {
