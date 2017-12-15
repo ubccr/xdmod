@@ -192,7 +192,7 @@ FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
   LEFT JOIN (
-    SELECT acl_id FROM acls WHERE name IN ('cd', 'cs', 'cc')
+    SELECT acl_id FROM acls WHERE name IN ('cd', 'cs')
     ) req ON req.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;

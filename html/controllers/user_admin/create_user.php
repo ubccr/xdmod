@@ -66,7 +66,7 @@ try {
                 $count += 1;
             }
             $newuser->setOrganizations($centerConfig, $acl);
-        } elseif (in_array($acl, array('cd', 'cs', 'cc'))) {
+        } elseif (in_array($acl, array('cd', 'cs'))) {
             $currentCenters = Centers::getCenters();
             if (count($currentCenters) > 0) {
                 $center = $currentCenters[0]['id'];
