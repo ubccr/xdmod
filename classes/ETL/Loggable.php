@@ -86,16 +86,20 @@ class Loggable
         $logMessage = array();
         $message = "{$this}: " . ( is_string($message) ? $message : "" );
         $logLevel = PEAR_LOG_ERR;
+        $exceptionProvided = false;
 
         if ( null !== $options ) {
 
             if ( array_key_exists('exception', $options) && $options['exception'] instanceof Exception ) {
                 $message .= " Exception: '" . $options['exception']->getMessage() . "'";
+                $exceptionProvided = true;
             }
 
             if ( array_key_exists('sql', $options) && is_string($options['sql']) ) {
                 $logMessage['sql'] = $options['sql'];
-                $logMessage['stacktrace'] = $options['exception']->getTraceAsString();
+                if ( $exceptionProvided ) {
+                    $logMessage['stacktrace'] = $options['exception']->getTraceAsString();
+                }
             }
 
             if ( array_key_exists('endpoint', $options) && $options['endpoint'] instanceof iDataEndpoint ) {
