@@ -114,7 +114,7 @@ SELECT a.*,
 FROM acls a LEFT JOIN
   (
     SELECT a2.acl_id 
-    FROM acls a2 WHERE a2.name IN ('cs', 'cc', 'cd')
+    FROM acls a2 WHERE a2.name IN ('cs','cd')
   ) req ON req.acl_id = a.acl_id
   ORDER BY a.display;
 SQL;
