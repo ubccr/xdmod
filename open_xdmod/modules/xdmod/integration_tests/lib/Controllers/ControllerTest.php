@@ -1,7 +1,5 @@
 <?php namespace IntegrationTests\Controllers;
 
-require_once __DIR__ . '/../../bootstrap.php';
-
 use TestHarness\XdmodTestHelper;
 
 class ControllerTest extends \PHPUnit_Framework_TestCase
