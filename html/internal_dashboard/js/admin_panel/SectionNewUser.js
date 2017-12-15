@@ -43,7 +43,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         });
 
         cmbInstitution.on('disable', function () { cmbInstitution.reset(); });
-        cmbInstitution.on('change', function(combo) {
+        cmbInstitution.on('change', function (combo) {
             combo.removeClass('admin_panel_invalid_text_entry');
         });
 
