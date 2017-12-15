@@ -791,6 +791,18 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     return;
                 }
 
+                var hasOnly = function (data, required) {
+                    var count = 0;
+                    for (var i = 0; i < required.length; i++) {
+                        count += data.indexOf(required[i]) !== -1 ? 1 : 0;
+                    }
+                    return count === data.length;
+                };
+                if (hasOnly(acls, ['dev', 'mgr'])) {
+                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
+                    return;
+                }
+
                 var populatedAcls = {};
                 for (var i = 0; i < acls.length; i++) {
                     var acl = acls[i];

@@ -528,6 +528,17 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     CCR.xdmod.ui.userManagementMessage('This user must have a type associated with it.', false);
                     return;
                 }
+                var hasOnly = function (data, required) {
+                    var count = 0;
+                    for (var i = 0; i < required.length; i++) {
+                        count += data.indexOf(required[i]) !== -1 ? 1 : 0;
+                    }
+                    return count === data.length;
+                };
+                if (hasOnly(acls, ['dev', 'mgr'])) {
+                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
+                    return;
+                }
 
                 var populatedAcls = {};
                 // populate centers for any of the selected acls that have them
