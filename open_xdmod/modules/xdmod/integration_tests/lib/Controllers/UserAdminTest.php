@@ -183,7 +183,7 @@ class UserAdminTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateCenterDirectorSingleCenterUserSuccess()
     {
-        $acls = array('cd' => array(476));
+        $acls = array('cd' => array(self::CENTER_TACC));
         $this->createUser('test.cd.one_center', $acls);
     }
 
@@ -225,6 +225,12 @@ class UserAdminTest extends \PHPUnit_Framework_TestCase
         $user = XDUser::getUserByUserName($username);
         $this->assertNotNull($user);
 
+        // set the users password to the username for easy testing
+        $user->setPassword(($username));
+        $user->saveUser();
+
+        // save the user for later use / removal
+        self::$users[$username] = $user;
         $this->helper->logoutDashboard();
     }
 
