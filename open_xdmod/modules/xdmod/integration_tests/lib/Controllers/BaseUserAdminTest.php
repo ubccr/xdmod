@@ -6,7 +6,7 @@ use CCR\Json;
 use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 
-class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
+abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
 {
 
     const MIN_USERS = 1;
