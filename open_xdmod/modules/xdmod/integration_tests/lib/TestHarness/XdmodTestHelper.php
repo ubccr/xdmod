@@ -259,6 +259,29 @@ class XdmodTestHelper
 
         return $this->docurl();
     }
+
+    public function patch($path, $params = null, $data = null)
+    {
+        $url = $this->siteurl . $path;
+
+        if ($params !== null) {
+            $url .= "?" . http_build_query($params);
+        }
+        if (isset($this->verbose)) {
+            echo "$url\n";
+        }
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_POST, true);
+        if (isset($data)) {
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($data));
+        }
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
+        $response = $this->docurl();
+
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, null);
+        return $response;
+    }
     public function getSiteurl(){
         return $this->siteurl;
     }
