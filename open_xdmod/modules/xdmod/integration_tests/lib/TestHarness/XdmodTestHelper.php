@@ -126,6 +126,18 @@ class XdmodTestHelper
         $this->setauthvariables($authtokens['token']);
     }
 
+    public function authenticateDirect($username, $password)
+    {
+        $data = array(
+            'username' => $username,
+            'password' => $password
+        );
+        $this->setauthvariables(null);
+        $authresult = $this->post("rest/auth/login", null, $data);
+        $authtokens = $authresult[0]['results'];
+        $this->setauthvariables($authtokens['token']);
+    }
+
     /**
      * Attempt to authenticate using the provided $userrole against XDMoD's
      * internal dashboard.

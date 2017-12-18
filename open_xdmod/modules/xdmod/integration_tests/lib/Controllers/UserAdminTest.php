@@ -15,6 +15,7 @@ class UserAdminTest extends \PHPUnit_Framework_TestCase
 
     const CENTER_TACC = 476;
     const CENTER_SDSC = 856;
+    const CENTER_PSC = 848;
 
     /**
      * @var XdmodTestHelper
@@ -187,13 +188,497 @@ class UserAdminTest extends \PHPUnit_Framework_TestCase
         $this->createUser('test.cd.one_center', $acls);
     }
 
+    public function testCreateCenterDirectorMultipleCenterUserSuccess()
+    {
+        $this->createUser(
+            'test.cd.multi-center',
+            array(
+                'cd' => array(
+                    self::CENTER_TACC,
+                    self::CENTER_SDSC
+                )
+            )
+        );
+    }
+
+    public function testCreateCenterStaffSingleCenterUserSuccess()
+    {
+        $this->createUser(
+            'test.cs.one-center',
+            array(
+                'cs' => array(
+                    self::CENTER_TACC
+                )
+            )
+        );
+    }
+
+    public function testCreateCenterStaffMultiCenterUserSuccess()
+    {
+        $this->createUser(
+            'test.cs.multi-center',
+            array(
+                'cs' => array(
+                    self::CENTER_TACC,
+                    self::CENTER_SDSC
+                )
+            )
+        );
+    }
+
+   /*
+    Creating a program officer requires additional files from XSEDE.
+    public function testCreateProgramOfficerUserSuccess()
+    {
+        $this->createUser(
+            'test.po',
+            array(
+                'po' => array()
+            )
+        );
+    }*/
+
+    public function testCreatePrincipalInvestigatorUserSuccess()
+    {
+        $this->createUser(
+            'test.pi',
+            array(
+                'pi' => array()
+            )
+        );
+    }
+
+    public function testCreateNormalUserSuccess()
+    {
+        $this->createUser(
+            'test.usr',
+            array(
+                'usr' => array()
+            )
+        );
+    }
+
+    /* Creating a Campus Champion requires a fully merged XSEDE installation
+    public function testCreateCampusChampion()
+    {
+        $this->createUser(
+            'test.cc',
+            array(
+                'cc' => array()
+            )
+        );
+    }*/
+
+    /**
+     * @depends testCreateCenterDirectorSingleCenterUserSuccess
+     **/
+    public function testCenterDirectorSingleCenterCanSeeTheCorrectServiceProviders()
+    {
+        $user = self::$users['test.cd.one_center'];
+        $this->assertNotNull($user);
+        $this->helper->authenticateDirect('test.cd.one_center', 'test.cd.one_center');
+        $response = $this->helper->get(
+            'rest/v0.1/warehouse/dimensions/provider',
+            array(
+                'querygroup' => 'tg_usage',
+                'filter' => true,
+                'realm' => 'SUPREMM'
+            )
+        );
+
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $data = $response[0];
+        $results = $data['results'];
+        $found = false;
+        foreach($results as $result) {
+            // NOTE: we explicitly use '==' here because the 'id' is a string
+            // and we store the center id as a number.
+            if ($result['id'] == self::CENTER_TACC) {
+                $found = true;
+            }
+        }
+        $this->assertTrue($found, "Unable to find the correct center. Expected: [" . self::CENTER_TACC . "] Receied: [" . json_encode($results) . "]");
+        $this->helper->logout();
+    }
+
+    /**
+     * @depends testCreateCenterDirectorSingleCenterUserSuccess
+     **/
+    public function testCenterDirectorSingleCenterCanSeeJobs()
+    {
+        $user = self::$users['test.cd.one_center'];
+        $this->assertNotNull($user);
+        $this->helper->authenticateDirect('test.cd.one_center', 'test.cd.one_center');
+
+        $response = $this->helper->get(
+            'rest/v0.1/warehouse/search/jobs',
+            array(
+                'start_date' => '2017-12-10',
+                'end_date' => '2017-12-16',
+                'realm' => 'SUPREMM',
+                'limit' => '24',
+                'start' => '0',
+                'params' => json_encode(array(
+                    'provider' => array('476')
+                ))
+            )
+        );
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $data = $response[0];
+        $results = $data['results'];
+        $this->assertTrue(count($results) > 0);
+        $this->helper->logout();
+    }
+
+    /**
+     * @depends testCreateCenterDirectorSingleCenterUserSuccess
+     **/
+    public function testCenterDirectorSingleCenterCanNotSeeJobsForAnotherCenter()
+    {
+        $user = self::$users['test.cd.one_center'];
+        $this->assertNotNull($user);
+        $this->helper->authenticateDirect('test.cd.one_center', 'test.cd.one_center');
+
+        $response = $this->helper->get(
+            'rest/v0.1/warehouse/search/jobs',
+            array(
+                'start_date' => '2017-12-10',
+                'end_date' => '2017-12-16',
+                'realm' => 'SUPREMM',
+                'limit' => '24',
+                'start' => '0',
+                'params' => json_encode(array(
+                    'provider' => array(self::CENTER_SDSC)
+                ))
+            )
+        );
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $data = $response[0];
+        $results = $data['results'];
+        $this->assertTrue(count($results) === 0);
+        $this->helper->logout();
+    }
+
+    /**
+     * @depends testCreateCenterDirectorMultipleCenterUserSuccess
+     **/
+    public function testCenterDirectorMultiCenterCanSeeCorrectServiceProviders()
+    {
+        $userName = 'test.cd.multi-center';
+        $user = self::$users[$userName];
+        $this->assertNotNull($user);
+        $this->helper->authenticateDirect($userName, $userName);
+        $response = $this->helper->get(
+            'rest/v0.1/warehouse/dimensions/provider',
+            array(
+                'querygroup' => 'tg_usage',
+                'filter' => true,
+                'realm' => 'SUPREMM'
+            )
+        );
+
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $centers = array(self::CENTER_TACC, self::CENTER_SDSC);
+        $data = $response[0];
+        $results = $data['results'];
+        $count = 0;
+        foreach($results as $result) {
+            // NOTE: we explicitly use '==' here because the 'id' is a string
+            // and we store the center id as a number.
+            if (in_array($result['id'],$centers)) {
+                $count += 1;
+            }
+        }
+        $this->assertTrue($count === count($centers), "Unable to find the correct center. Expected: [" . self::CENTER_TACC . "] Receied: [" . json_encode($results) . "]");
+        $this->helper->logout();
+    }
+
+    /**
+     * @depends testCreateCenterDirectorMultipleCenterUserSuccess
+     **/
+    public function testCenterDirectorMultiCenterCanSeeJobsForServiceProviders()
+    {
+        $userName = 'test.cd.multi-center';
+        $user = self::$users[$userName];
+        $this->assertNotNull($user);
+
+        $this->helper->authenticateDirect($userName, $userName);
+
+        $serviceProviders = array(
+            array(self::CENTER_TACC),
+            array(self::CENTER_SDSC),
+            array(self::CENTER_TACC, self::CENTER_SDSC)
+        );
+        foreach ($serviceProviders as $serviceProvider) {
+            $data = array(
+                'start_date' => '2017-12-10',
+                'end_date' => '2017-12-16',
+                'realm' => 'SUPREMM',
+                'limit' => '24',
+                'start' => '0',
+                'params' => json_encode(
+                    array(
+                        'provider' => $serviceProvider
+                    )
+                )
+            );
+            $response = $this->helper->get(
+                'rest/v0.1/warehouse/search/jobs',
+                $data
+            );
+
+            $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+            $this->assertEquals(200, $response[1]['http_code']);
+
+            $data = $response[0];
+            $results = $data['results'];
+
+            $this->assertTrue(count($results) > 0);
+        }
+        $this->helper->logout();
+    }
+
+    public function testCenterDirectorMultiCenterCannotSeeJobsForCentersTheyDoNotDirect()
+    {
+        $userName = 'test.cd.multi-center';
+        $user = self::$users[$userName];
+        $this->assertNotNull($user);
+        $this->helper->authenticateDirect($userName, $userName);
+
+        $response = $this->helper->get(
+            'rest/v0.1/warehouse/search/jobs',
+            array(
+                'start_date' => '2017-12-10',
+                'end_date' => '2017-12-16',
+                'realm' => 'SUPREMM',
+                'limit' => '24',
+                'start' => '0',
+                'params' => json_encode(array(
+                    'provider' => array(self::CENTER_PSC)
+                ))
+            )
+        );
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $data = $response[0];
+        $results = $data['results'];
+        $this->assertTrue(count($results) === 0);
+        $this->helper->logout();
+    }
+
+    /**
+     * @depends testCreateCenterStaffSingleCenterUserSuccess
+     **/
+    public function testCenterStaffSingleCenterCanSeeJobs()
+    {
+        $user = self::$users['test.cs.one-center'];
+        $this->assertNotNull($user);
+        $this->helper->authenticateDirect('test.cs.one-center', 'test.cs.one-center');
+
+        $response = $this->helper->get(
+            'rest/v0.1/warehouse/search/jobs',
+            array(
+                'start_date' => '2017-12-10',
+                'end_date' => '2017-12-16',
+                'realm' => 'SUPREMM',
+                'limit' => '24',
+                'start' => '0',
+                'params' => json_encode(array(
+                    'provider' => array(self::CENTER_TACC)
+                ))
+            )
+        );
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $data = $response[0];
+        $results = $data['results'];
+        $this->assertTrue(count($results) > 0);
+        $this->helper->logout();
+    }
+
+    /**
+     * @depends testCreateCenterStaffSingleCenterUserSuccess
+     **/
+    public function testCenterStaffSingleCenterStaffCanNotSeeJobsForAnotherCenter()
+    {
+        $user = self::$users['test.cs.one-center'];
+        $this->assertNotNull($user);
+        $this->helper->authenticateDirect('test.cs.one-center', 'test.cs.one-center');
+
+        $response = $this->helper->get(
+            'rest/v0.1/warehouse/search/jobs',
+            array(
+                'start_date' => '2017-12-10',
+                'end_date' => '2017-12-16',
+                'realm' => 'SUPREMM',
+                'limit' => '24',
+                'start' => '0',
+                'params' => json_encode(array(
+                    'provider' => array(self::CENTER_SDSC)
+                ))
+            )
+        );
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $data = $response[0];
+        $results = $data['results'];
+        $this->assertTrue(count($results) === 0);
+        $this->helper->logout();
+    }
+
+    /**
+     * @depends testCreateCenterStaffMultiCenterUserSuccess
+     **/
+    public function testCenterStaffMultiCenterCanSeeJobsForServiceProviders()
+    {
+        $userName = 'test.cs.multi-center';
+        $user = self::$users[$userName];
+        $this->assertNotNull($user);
+
+        $this->helper->authenticateDirect($userName, $userName);
+
+        $serviceProviders = array(
+            array(self::CENTER_TACC),
+            array(self::CENTER_SDSC),
+            array(self::CENTER_TACC, self::CENTER_SDSC)
+        );
+        foreach ($serviceProviders as $serviceProvider) {
+            $data = array(
+                'start_date' => '2017-12-10',
+                'end_date' => '2017-12-16',
+                'realm' => 'SUPREMM',
+                'limit' => '24',
+                'start' => '0',
+                'params' => json_encode(
+                    array(
+                        'provider' => $serviceProvider
+                    )
+                )
+            );
+            $response = $this->helper->get(
+                'rest/v0.1/warehouse/search/jobs',
+                $data
+            );
+
+            $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+            $this->assertEquals(200, $response[1]['http_code']);
+
+            $data = $response[0];
+            $results = $data['results'];
+
+            $this->assertTrue(count($results) > 0);
+        }
+    }
+
+    /**
+     * @depends testCreateCenterStaffMultiCenterUserSuccess
+     **/
+    public function testCenterStaffMultiCenterCanSeeCorrectServiceProviders()
+    {
+        $userName = 'test.cd.multi-center';
+        $user = self::$users[$userName];
+        $this->assertNotNull($user);
+        $this->helper->authenticateDirect($userName, $userName);
+        $response = $this->helper->get(
+            'rest/v0.1/warehouse/dimensions/provider',
+            array(
+                'querygroup' => 'tg_usage',
+                'filter' => true,
+                'realm' => 'SUPREMM'
+            )
+        );
+
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $centers = array(self::CENTER_TACC, self::CENTER_SDSC);
+        $data = $response[0];
+        $results = $data['results'];
+        $count = 0;
+        foreach($results as $result) {
+            // NOTE: we explicitly use '==' here because the 'id' is a string
+            // and we store the center id as a number.
+            if (in_array($result['id'],$centers)) {
+                $count += 1;
+            }
+        }
+        $this->assertTrue($count === count($centers), "Unable to find the correct center. Expected: [" . self::CENTER_TACC . "] Receied: [" . json_encode($results) . "]");
+    }
+
+    public function testCenterStaffSingleQuickFilters()
+    {
+        $userName = 'test.cs.one-center';
+        $user = self::$users[$userName];
+        $this->assertNotNull($user);
+
+        $this->helper->authenticateDirect($userName, $userName);
+
+        $response = $this->helper->get('rest/v0.1/warehouse/quick_filters');
+
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $dimensionNames = $response[0]['results']['dimensionNames'];
+        $filters = $response[0]['results']['filters'];
+        $found = false;
+        foreach ($dimensionNames as $dimensionName => $dimensionDisplay) {
+            $dimensionFilters = $filters[$dimensionName];
+            foreach($dimensionFilters as $key => $dimensionFilter) {
+                if ($dimensionFilter['valueId'] == self::CENTER_TACC) {
+                    $found = true;
+                }
+            }
+        }
+        $this->assertTrue($found);
+    }
+
+    /**
+     * @depends testCreateCenterDirectorMultipleCenterUserSuccess
+     **/
+    public function testCenterDirectorSingleQuickFilters()
+    {
+        $userName = 'test.cd.one_center';
+        $user = self::$users[$userName];
+        $this->assertNotNull($user);
+
+        $this->helper->authenticateDirect($userName, $userName);
+
+        $response = $this->helper->get('rest/v0.1/warehouse/quick_filters');
+
+        $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $dimensionNames = $response[0]['results']['dimensionNames'];
+        $filters = $response[0]['results']['filters'];
+        $found = false;
+        foreach ($dimensionNames as $dimensionName => $dimensionDisplay) {
+            $dimensionFilters = $filters[$dimensionName];
+            foreach($dimensionFilters as $key => $dimensionFilter) {
+                if ($dimensionFilter['valueId'] == self::CENTER_TACC) {
+                    $found = true;
+                }
+            }
+        }
+        $this->assertTrue($found);
+    }
+
     /**
      * @param string $username
      * @param array $acls
      * @throws \Exception
-     */
+     **/
     private function createUser($username, array $acls)
-
     {
         $this->helper->authenticateDashboard('mgr');
         $institution = array_key_exists('cc', $acls) ? 476 : -1;
@@ -218,7 +703,6 @@ class UserAdminTest extends \PHPUnit_Framework_TestCase
 
         $responseData = $response[0];
         $message = $responseData['message'];
-
         $this->assertNotFalse(strpos($message, $username));
         $this->assertNotFalse(strpos($message, 'successfully'));
 
