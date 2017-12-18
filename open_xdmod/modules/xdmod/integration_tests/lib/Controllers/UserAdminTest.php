@@ -167,10 +167,9 @@ class UserAdminTest extends BaseUserAdminTest
 
     public function provideCreateUsersSuccess()
     {
-        $users = JSON::loadFile(
+        return JSON::loadFile(
             TestFiles::getFile('user_admin', 'create_users', 'input')
         );
-        return $users;
     }
 
     /**
@@ -236,7 +235,7 @@ class UserAdminTest extends BaseUserAdminTest
 
     public function provideTestUsersQuickFilters()
     {
-        return  Json::loadFile(
+        return Json::loadFile(
             TestFiles::getFile('user_admin', 'user_quick_filters', 'output')
         );
     }
