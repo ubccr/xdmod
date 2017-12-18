@@ -167,7 +167,13 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertEquals($expected, $response[0]);
+        $actual = $response[0];
+
+        // need to replace any references to '$emailAddress' w/ the value of
+        // $emailAddress.
+        $actual['message'] = strtr($actual['message'], array('$emailAddress' => $emailAddress));
+
+        $this->assertEquals($expected, $actual);
         $userId = null;
         if ($expectedSuccess === true) {
             $userId = $this->retrieveUserId($username);
