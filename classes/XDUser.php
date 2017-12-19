@@ -498,11 +498,7 @@ FROM user_acls ua
     FROM acl_hierarchies ah
       JOIN hierarchies h
         ON ah.hierarchy_id = h.hierarchy_id
-      JOIN modules m
-        ON h.module_id = m.module_id
     WHERE h.name = :acl_hierarchy_name
-          AND m.name = :module_name
-          AND m.enabled = TRUE
   ) aclh
     ON aclh.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
@@ -513,8 +509,7 @@ SQL;
             $query,
             array(
                 'user_id' => $uid,
-                ':acl_hierarchy_name' => 'acl_hierarchy',
-                ':module_name' => DEFAULT_MODULE_NAME
+                ':acl_hierarchy_name' => 'acl_hierarchy'
             )
         );
 
@@ -1526,40 +1521,40 @@ SQL;
         $aclName = 'cd';
 
         $aclCleanup = <<<SQL
-DELETE FROM user_acl_group_by_parameters 
-WHERE user_id = :user_id 
+DELETE FROM user_acl_group_by_parameters
+WHERE user_id = :user_id
     AND acl_id IN (
-        SELECT 
-            a.acl_id 
-        FROM acls a 
+        SELECT
+            a.acl_id
+        FROM acls a
         WHERE a.name = :acl_name
     )
     AND group_by_id IN (
-        SELECT 
+        SELECT
             gb.group_by_id
-        FROM group_bys gb 
+        FROM group_bys gb
         WHERE gb.name = 'institution'
     )
 SQL;
 
         $aclInsert = <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)  
-SELECT inc.* 
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
 FROM (
-    SELECT 
+    SELECT
         :user_id AS user_id,
-        a.acl_id AS acl_id, 
+        a.acl_id AS acl_id,
         gb.group_by_id AS group_by_id,
-        :value AS value 
+        :value AS value
     FROM acls a, group_bys gb
     WHERE a.name = :acl_name
     AND gb.name = 'institution'
-) inc 
-LEFT JOIN user_acl_group_by_parameters cur 
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
 ON cur.user_id = inc.user_id
 AND cur.acl_id = inc.acl_id
 AND cur.group_by_id = inc.group_by_id
-AND cur.value = inc.value 
+AND cur.value = inc.value
 WHERE cur.user_acl_parameter_id IS NULL;
 SQL;
 
@@ -1604,10 +1599,10 @@ SQL;
         ));
         $this->_pdo->execute(<<<SQL
         DELETE FROM user_acl_group_by_parameters
-WHERE user_id = :user_id 
+WHERE user_id = :user_id
 AND group_by_id IN (
 SELECT gb.group_by_id
-FROM group_bys gb 
+FROM group_bys gb
 WHERE gb.name = 'institution');
 SQL
             , array(
@@ -3309,18 +3304,18 @@ SQL;
         ));
 
         $populateUserAclGroupByParameters = <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value) 
-SELECT inc.* 
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
 FROM (
-   SELECT 
+   SELECT
       :user_id AS user_id,
       :acl_id AS acl_id,
       gb.group_by_id AS group_by_id,
-      :value AS value 
-   FROM group_bys gb 
+      :value AS value
+   FROM group_bys gb
    WHERE gb.name = 'provider'
-) inc 
-LEFT JOIN user_acl_group_by_parameters cur 
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
   ON cur.user_id = inc.user_id
   AND cur.acl_id = inc.acl_id
   AND cur.group_by_id = inc.group_by_id
