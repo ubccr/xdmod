@@ -60,7 +60,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "last_name": "Bunting",
             "email_address": "centerdirector@example.com",
             "user_type": "1",
-            "role_type": "Center Director",
+            "role_type": "User, Center Director",
             "account_is_active": "1",
             "last_logged_in": "0"
         },
