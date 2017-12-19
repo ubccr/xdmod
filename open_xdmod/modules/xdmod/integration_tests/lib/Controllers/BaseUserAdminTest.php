@@ -171,9 +171,29 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
 
         $actual = $response[0];
 
-        // need to replace any references to '$emailAddress' w/ the value of
-        // $emailAddress.
-        $actual['message'] = strtr($actual['message'], array('$emailAddress' => $emailAddress));
+        // substitutions that will be used in the event that the actual and
+        // expected have keys in common.
+        $substitutions = array(
+            '$emailAddress' => $emailAddress,
+            '$username' => $username,
+            '$userType' => $userType,
+            '$firstName' => $firstName,
+            '$lastName' => $lastName,
+            '$assignment' => $person,
+            '$institution' => $institution
+        );
+
+        // retrieve the keys that the actual / expected have in common.
+        $similar = array_intersect(array_keys($actual), array_keys($expected));
+
+        // make sure that we perform substitutions on those keys they have in
+        // common ( and whose values are string ).
+        foreach ($similar as $key) {
+            $expectedValue = $expected[$key];
+            if (is_string($expectedValue)) {
+                $expected[$key] = strtr($expected[$key], $substitutions);
+            }
+        }
 
         $this->assertEquals($expected, $actual);
         $userId = null;
