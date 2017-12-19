@@ -924,7 +924,9 @@ class XDUserTest extends BaseTest
 
         // Here we setup a user per acl combination
         foreach ($allAclCombinations as $aclCombination) {
-            if (empty($aclCombination)) {
+            // replace the hardcoded array on rhs of || with a call to
+            // Acls::getAclsForAclType when it get's merged in.
+            if (empty($aclCombination) || count(array_diff($aclCombination, array('mgr', 'dev'))) < 1 ) {
                 continue;
             }
 
