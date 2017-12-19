@@ -1,6 +1,8 @@
 <?php
 
 use CCR\MailWrapper;
+use Models\Acl;
+use Models\Services\Acls;
 use Models\Services\Centers;
 
 // Operation: user_admin->create_user
@@ -24,13 +26,30 @@ if (isset($_POST['acls'])) {
     if (count($acls) < 1){
         \xd_response\presentError("Acl information is required");
     }
-    $featureAcls = array('dev', 'mgr');
-    $count = 0;
-    foreach(array_keys($acls) as $acl) {
-        $count += in_array($acl, $featureAcls) ? 1 : 0;
+    // Checking for an acl set that only contains feature acls.
+    // Feature acls are acls that only provide access to an XDMoD feature and
+    // are not used for data access.
+    $aclNames = array();
+    $featureAcls = Acls::getAclsByTypeName('feature');
+    if (count($featureAcls) > 0) {
+        $aclNames = array_reduce(
+            $featureAcls,
+            function ($carry, Acl $item) {
+                $carry []= $item->getName();
+                return $carry;
+            },
+            array()
+        );
     }
-    if ($count === count($acls)) {
-        \xd_response\presentError('Select another acl other than "Manager" or "Developer"');
+    $found = false;
+    foreach(array_keys($acls) as $acl) {
+        if (!in_array($acl, $aclNames)) {
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) {
+        \xd_response\presentError('Please include a non-feature acl ( i.e. User, PI etc. )');
     }
 }
 else {

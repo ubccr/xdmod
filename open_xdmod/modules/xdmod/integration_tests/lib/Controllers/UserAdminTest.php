@@ -129,17 +129,17 @@ class UserAdminTest extends BaseUserAdminTest
             // acls only contain 'flag' acls ( dev )
             array(
                 $this->copyAndReplace($params, array('acls' => '{"dev": []}')),
-                $this->copyAndReplace($expected, array('message' => 'Select another acl other than "Manager" or "Developer"'))
+                $this->copyAndReplace($expected, array('message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'))
             ),
             // acls only contain 'flag' acls ( mgr )
             array(
                 $this->copyAndReplace($params, array('acls' => '{"mgr": []}')),
-                $this->copyAndReplace($expected, array('message' => 'Select another acl other than "Manager" or "Developer"'))
+                $this->copyAndReplace($expected, array('message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'))
             ),
             // acls only contain 'flag' acls ( dev, mgr )
             array(
                 $this->copyAndReplace($params, array('acls' => '{"dev": [], "mgr": []}')),
-                $this->copyAndReplace($expected, array('message' => 'Select another acl other than "Manager" or "Developer"'))
+                $this->copyAndReplace($expected, array('message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'))
             )
         );
     }

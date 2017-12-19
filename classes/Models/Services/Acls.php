@@ -872,4 +872,39 @@ SQL;
 
         return null;
     }
+
+    /**
+     * Attempts to retrieve the set of acls who have an acl_type with the name
+     * aclTypeName. If no records are found then an empty array will be
+     * returned.
+     *
+     * @param string $aclTypeName
+     * @return array
+     */
+    public static function getAclsByTypeName($aclTypeName)
+    {
+        $db = DB::factory('database');
+
+        $query = <<<SQL
+SELECT a.* 
+FROM acls a 
+  JOIN acl_types at ON a.acl_type_id = at.acl_type_id
+WHERE at.name = :acl_type_name
+SQL;
+        $rows = $db->query(
+            $query,
+            array(
+                ':acl_type_name' => $aclTypeName
+            )
+        );
+
+        if (count($rows) > 0) {
+            return array_reduce($rows, function ($carry, $item) {
+                $carry []= new Acl($item);
+                return $carry;
+            }, array());
+        }
+        return array();
+    }
+
 }
