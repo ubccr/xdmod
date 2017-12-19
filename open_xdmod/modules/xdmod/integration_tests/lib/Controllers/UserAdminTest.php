@@ -236,7 +236,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideTestUsersQuickFilters()
     {
         return Json::loadFile(
-            TestFiles::getFile('user_admin', 'user_quick_filters', 'output')
+            TestFiles::getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
         );
     }
 
