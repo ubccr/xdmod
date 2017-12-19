@@ -818,6 +818,8 @@ SELECT DISTINCT
 FROM acls a
   JOIN user_acls ua
     ON a.acl_id = ua.acl_id
+  JOIN acl_types at
+    ON a.acl_type_id = at.acl_type_id
   LEFT JOIN (
     SELECT
       ah.acl_id,
@@ -838,7 +840,9 @@ FROM acls a
         ON o.id = uagbp.value
     ) aclp
     ON aclp.acl_id = ua.acl_id
-WHERE ua.user_id = :user_id
+WHERE
+    ua.user_id  = :user_id AND
+    at.name    != 'feature'
 ORDER BY COALESCE(aclh.level, 0) DESC
 LIMIT 1
 SQL;
