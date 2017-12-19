@@ -833,17 +833,32 @@ FROM acls a
   LEFT JOIN (
     SELECT
       uagbp.acl_id,
+      uagbp.user_id,
       o.abbrev,
       o.id
     FROM modw.organization o
       JOIN user_acl_group_by_parameters uagbp
         ON o.id = uagbp.value
-    ) aclp
-    ON aclp.acl_id = ua.acl_id
-WHERE
-    ua.user_id  = :user_id AND
-    at.name    != 'feature'
-ORDER BY COALESCE(aclh.level, 0) DESC
+      JOIN group_bys gb
+        ON uagbp.group_by_id = gb.group_by_id
+      WHERE gb.name = 'provider'
+  ) aclp
+    ON aclp.acl_id = ua.acl_id AND
+    aclp.user_id = ua.user_id
+-- left join to allows us to prefer user_acl_group_by_parameter records
+-- with values found in modw.serviceprovider
+  LEFT JOIN (
+    SELECT DISTINCT
+      gt.organization_id AS id,
+      gt.short_name AS short_name,
+      gt.long_name AS long_name
+    FROM
+      modw.serviceprovider gt
+    WHERE 1
+  ) spv ON spv.id = aclp.id
+WHERE ua.user_id = :user_id AND
+  at.name != 'feature'
+ORDER BY COALESCE(aclh.level, 0) DESC, COALESCE(aclp.id, 0) DESC
 LIMIT 1
 SQL;
         $db = DB::factory('database');
