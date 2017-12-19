@@ -23,6 +23,8 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
     const CENTER_SDSC = 856;
     const CENTER_PSC = 848;
 
+    const PUBLIC_USER_NAME = 'Public User';
+
     /**
      * @var XdmodTestHelper
      */

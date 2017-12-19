@@ -236,7 +236,55 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideTestUsersQuickFilters()
     {
         return Json::loadFile(
-            TestFiles::getFile('user_admin', 'user_quick_filters', 'output')
+            TestFiles::getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
+        );
+    }
+
+    /**
+     * @depends testCreateUsersSuccess
+     * @dataProvider provideGetMenus
+     * @group UserAdminTest.createUsers
+     * @param array $user
+     */
+    public function testGetMenus(array $user)
+    {
+        $this->assertArrayHasKey('username', $user);
+        $this->assertArrayHasKey('output', $user);
+
+        $username = $user['username'];
+        $output = $user['output'];
+
+        if ($username !== self::PUBLIC_USER_NAME) {
+            $this->helper->authenticateDirect($username, $username);
+        }
+
+        $data = array(
+            'operation' => 'get_menus',
+            'public_user' => $username === self::PUBLIC_USER_NAME ? 'true' : 'false',
+            'query_group' => 'tg_usage',
+            'node' => 'category_'
+        );
+
+        $response = $this->helper->post('controllers/user_interface.php', null, $data);
+
+        $this->validateResponse($response);
+
+        $actual = $response[0];
+        $expected = JSON::loadFile(
+            TestFiles::getFile('user_admin', $output)
+        );
+
+        $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected [". json_encode($expected) . "] Received [" . json_encode($actual) . "]");
+
+        if ($username !== self::PUBLIC_USER_NAME) {
+            $this->helper->logout();
+        }
+    }
+
+    public function provideGetMenus()
+    {
+        return JSON::loadFile(
+            TestFiles::getFile('user_admin', 'get_menus', 'input')
         );
     }
 }
