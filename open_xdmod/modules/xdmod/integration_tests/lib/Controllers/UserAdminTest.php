@@ -200,7 +200,9 @@ class UserAdminTest extends BaseUserAdminTest
 
     /**
      * @dataProvider provideTestUsersQuickFilters
+     * @depends testCreateUsersSuccess
      * @group UserAdminTest.createUsers
+     *
      * @param array $user
      */
     public function testUsersQuickFilters(array $user)
