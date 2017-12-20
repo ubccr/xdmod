@@ -2224,12 +2224,7 @@ SQL;
         $roleName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
         $role = aRole::factory($roleName);
 
-        $organizationId = $mostPrivilegedAcl->getOrganizationId();
-        if (!isset($organizationId)) {
-            $role->configure($this);
-        } else {
-            $role->configure($this, $organizationId);
-        }
+        $role->configure($this, $mostPrivilegedAcl->getOrganizationId());
 
         return $role;
     }//getMostPrivilegedRole
