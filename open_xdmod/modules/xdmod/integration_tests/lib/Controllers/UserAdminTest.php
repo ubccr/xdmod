@@ -289,4 +289,107 @@ class UserAdminTest extends BaseUserAdminTest
             TestFiles::getFile('user_admin', 'get_menus', 'input')
         );
     }
+
+    /**
+     * @depends testCreateUsersSuccess
+     * @dataProvider provideGetTabs
+     * @group UserAdminTest.createUsers
+     * @param array $user
+     */
+    public function testGetTabs(array $user)
+    {
+        $this->assertArrayHasKey('username', $user);
+        $this->assertArrayHasKey('output', $user);
+
+        $username = $user['username'];
+
+        $isPublicUser = $username === self::PUBLIC_USER_NAME;
+
+        if (!$isPublicUser) {
+            $this->helper->authenticateDirect($username, $username);
+        }
+
+        $data = array(
+            'operation' => 'get_tabs',
+            'public_user' => ($isPublicUser ? 'true' : 'false')
+        );
+
+        $response = $this->helper->post('controllers/user_interface.php', null, $data);
+        $this->validateResponse($response);
+
+        $actual = $response[0];
+        $this->assertArrayHasKey('data', $actual);
+        $this->assertArrayHasKey('success', $actual);
+        $this->assertArrayHasKey('totalCount', $actual);
+        $this->assertArrayHasKey('message', $actual);
+
+        $expectedFileName = $user['output'];
+        $expected = JSON::loadFile(
+            TestFiles::getFile('user_admin', $expectedFileName, 'output')
+        );
+
+        $this->assertEquals($expected, $actual);
+
+        if (!$isPublicUser) {
+            $this->helper->logout();
+        }
+    }
+
+    public function provideGetTabs()
+    {
+        return JSON::loadFile(
+            TestFiles::getFile('user_admin', 'get_tabs', 'input')
+        );
+    }
+
+    /**
+     * @depends testCreateUsersSuccess
+     * @dataProvider provideGetDwDescripters
+     * @group UserAdminTest.createUsers
+     * @param array $user
+     */
+    public function testGetDwDescripters(array $user)
+    {
+        $this->assertArrayHasKey('username', $user);
+        $this->assertArrayHasKey('output', $user);
+
+        $username = $user['username'];
+
+        $isPublicUser = $username === self::PUBLIC_USER_NAME;
+
+        if (!$isPublicUser) {
+            $this->helper->authenticateDirect($username, $username);
+        }
+
+        $data = array(
+            'operation' => 'get_dw_descripter',
+            'public_user' => ($isPublicUser ? 'true' : 'false')
+        );
+
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $data);
+        $this->validateResponse($response);
+
+        $actual = $response[0];
+        $this->assertArrayHasKey('data', $actual);
+        $this->assertArrayHasKey('totalCount', $actual);
+
+        $expectedFileName = $user['output'];
+        $expected = JSON::loadFile(
+            TestFiles::getFile('user_admin', $expectedFileName, 'output')
+        );
+
+        $this->assertEquals($expected, $actual);
+
+        if (!$isPublicUser) {
+            $this->helper->logout();
+        }
+
+    }
+
+    public function provideGetDwDescripters()
+    {
+        return JSON::loadFile(
+            TestFiles::getFile('user_admin', 'get_dw_descripters', 'input')
+        );
+    }
 }
