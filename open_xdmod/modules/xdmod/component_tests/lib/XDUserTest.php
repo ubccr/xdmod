@@ -127,32 +127,34 @@ class XDUserTest extends BaseTest
         $this->assertNotEquals('', $expiration);
     }
 
-    public function testSetOrganizationsValid()
+    /**
+     * @dataProvider provideSetOrganizationsValid
+     * @param array $options
+     */
+    public function testSetOrganizationsValid(array $options)
     {
-        // NOTE: there is no validation of the organization id
+        $this->assertArrayHasKey('username', $options);
+        $this->assertArrayHasKey('acl', $options);
+        $this->assertArrayHasKey('organizations', $options);
 
-        // TACC original is 561 ( IU )
-        $validOrganizationId = 476;
-        $defaultConfig = array('active' => true, 'primary' => true);
+        $username = $options['username'];
+        $organizations = $options['organizations'];
+        $acl = $options['acl'];
+        $defaultConfig= array('primary' => true, 'active' => true);
 
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
+        $user = XDUser::getUserByUserName($username);
 
         // RETRIEVE: the initial organizations
         $originalOrganizations = $user->getOrganizationCollection(self::CENTER_DIRECTOR_ACL_NAME);
         $this->assertTrue(count($originalOrganizations) > 0);
 
-        // SET: the new one in it's place.
-        $user->setOrganizations(
-            array(
-                $validOrganizationId => $defaultConfig
-            ),
-            self::CENTER_DIRECTOR_ACL_NAME
-        );
+        $user->setOrganizations($organizations, $acl);
 
         // RETRIEVE: them again, this should now be the new one.
-        $newOrganizations = $user->getOrganizationCollection(self::CENTER_DIRECTOR_ACL_NAME);
+        $newOrganizations = $user->getOrganizationCollection($acl);
         $this->assertNotEmpty($newOrganizations);
-        $this->assertTrue(in_array($validOrganizationId, $newOrganizations));
+        $diff = array_diff(array_keys($organizations), $newOrganizations);
+        $this->assertEmpty($diff);
 
         $original = array();
         foreach (array_values($originalOrganizations) as $organizationId) {
@@ -160,7 +162,14 @@ class XDUserTest extends BaseTest
         }
 
         // RESET: the organizations to the original.
-        $user->setOrganizations($original, self::CENTER_DIRECTOR_ACL_NAME);
+        $user->setOrganizations($original, $acl);
+    }
+
+    public function provideSetOrganizationsValid()
+    {
+        return Json::loadFile(
+            $this->getTestFile('set_organization_valid.json', self::DEFAULT_PROJECT, 'input')
+        );
     }
 
     public function testSetInstitution()
@@ -1484,12 +1493,15 @@ class XDUserTest extends BaseTest
 
     public function provideRoleGetParameters()
     {
-        # SDSC: 856
-        # PSC: 848
-        # TACC: 476
-        $centerPermutations = $this->allCombinations(array(856, 848, 476));
-        $rolePermutations = $this->allCombinations(array('cd', 'cs'));
-        /*$rolePermutations = $this->allCombinations(array('cd', 'cs', 'cc'));*/
+        $input = JSON::loadFile(
+            $this->getTestFile('role_get_parameters.json', self::DEFAULT_PROJECT, 'input')
+        );
+
+        $this->assertArrayHasKey('centers', $input);
+        $this->assertArrayHasKey('acls', $input);
+
+        $centerPermutations = $this->allCombinations($input['centers']);
+        $rolePermutations = $this->allCombinations($input['acls']);
 
         $results = array();
         foreach($rolePermutations as $rolePermutation) {
