@@ -2,6 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use CCR\Json;
+use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 
 class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
@@ -15,16 +17,11 @@ class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
      * Test enumeration of report templates for user types.
      *
      * @param string $userType User type abbreviation.
-     * @param int $httpCode Expected HTTP status code.
-     * @param array $expectedContent Expected content decoded from returned JSON.
+     * @param string $outputFile the test file that contains the expected output.
      *
      * @dataProvider enumReportTemplateDataProvider
      */
-    public function testEnumReportTemplates(
-        $userType,
-        $httpCode,
-        array $expectedContent
-    ) {
+    public function testEnumReportTemplates($userType, $outputFile) {
         if ($userType !== 'pub') {
             $this->helper->authenticate($userType);
         }
@@ -37,6 +34,16 @@ class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
 
         list($content, $curlinfo) = $response;
 
+        $expected = Json::loadFile(
+            TestFiles::getFile('controllers', $outputFile)
+        );
+
+        $this->assertArrayHasKey('http_coded', $expected);
+        $this->assertArrayHasKey('response', $expected);
+
+        $httpCode = $expected['http_code'];
+        $expectedContent = $expected['response'];
+
         $this->assertEquals('application/json', $curlinfo['content_type']);
         $this->assertEquals($httpCode, $curlinfo['http_code']);
         $this->assertEquals($expectedContent, $content);
@@ -46,64 +53,8 @@ class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function enumReportTemplateDataProvider()
     {
-        $notAuthenticatedReportTemplates = array(
-            'success' => false,
-            'count' => 0,
-            'total' => 0,
-            'totalCount' => 0,
-            'results' => array(),
-            'data' => array(),
-            'message' => 'Session Expired',
-            'code' => 2,
-        );
-
-        $noReportTemplates = array(
-            'status' => 'success',
-            'success' => true,
-            'templates' => array(),
-            'count' => 0,
-        );
-
-        $centerDirectorReportTemplates = array(
-            'status' => 'success',
-            'success' => true,
-            'templates' => array(
-                array(
-                    'id' => '1',
-                    'name' => 'Quarterly Report - Center Director',
-                    'description' => 'Quarterly Report - Center Director',
-                    'use_submenu' => '0'
-                ),
-            ),
-            'count' => 1
-        );
-
-        return array(
-            array(
-                'pub',
-                401,
-                $notAuthenticatedReportTemplates,
-            ),
-            array(
-                'cd',
-                200,
-                $centerDirectorReportTemplates,
-            ),
-            array(
-                'cs',
-                200,
-                $noReportTemplates,
-            ),
-            array(
-                'pi',
-                200,
-                $noReportTemplates,
-            ),
-            array(
-                'usr',
-                200,
-                $noReportTemplates,
-            ),
+        return Json::loadFile(
+            TestFiles::getFile('controllers', 'enum_report_templates', 'input')
         );
     }
 }
