@@ -180,7 +180,7 @@ EOF;
     {
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
-        $this->assertEquals($response[1]['content_type'], 'text/plain; charset=UTF-8');
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
