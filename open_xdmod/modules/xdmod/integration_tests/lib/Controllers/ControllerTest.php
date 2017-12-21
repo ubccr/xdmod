@@ -32,98 +32,31 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(strpos($response[1]['content_type'], 'text/html') >= 0);
         $this->assertEquals(200, $response[1]['http_code']);
 
-        $actual = $response[0];
-        $data = json_decode($actual, true);
+        $actual = json_decode($response[0], true);
 
-        $this->assertArrayHasKey('success', $data);
-        $this->assertArrayHasKey('count', $data);
-        $this->assertArrayHasKey('response', $data);
+        $this->assertArrayHasKey('success', $actual);
+        $this->assertArrayHasKey('count', $actual);
+        $this->assertArrayHasKey('response', $actual);
 
-        $this->assertEquals(true, $data['success']);
+        $this->assertEquals(true, $actual['success']);
         $this->assertTrue(
-            $data['count'] > 0,
+            $actual['count'] > 0,
             "Expected the integer property 'count' to have a value greater than 0."
         );
         $this->assertTrue(
-            count($data['response']) > 0,
+            count($actual['response']) > 0,
             "Expected the array property 'response' to have 1 or more items, found 0"
         );
 
-        $expected = <<<JSON
-{
-    "success": true,
-    "count": 5,
-    "response": [
-        {
-            "formal_name": "Reed Bunting",
-            "id": "3",
-            "username": "centerdirector",
-            "first_name": "Reed",
-            "last_name": "Bunting",
-            "email_address": "centerdirector@example.com",
-            "user_type": "1",
-            "role_type": "User, Center Director",
-            "account_is_active": "1",
-            "last_logged_in": "0"
-        },
-        {
-            "formal_name": "Turtle Dove",
-            "id": "4",
-            "username": "centerstaff",
-            "first_name": "Turtle",
-            "last_name": "Dove",
-            "email_address": "centerstaff@example.com",
-            "user_type": "1",
-            "role_type": "User, Center Staff",
-            "account_is_active": "1",
-            "last_logged_in": "0"
-        },
-        {
-            "formal_name": "Caspian Tern",
-            "id": "5",
-            "username": "principal",
-            "first_name": "Caspian",
-            "last_name": "Tern",
-            "email_address": "principal@example.com",
-            "user_type": "1",
-            "role_type": "User, Principal Investigator",
-            "account_is_active": "1",
-            "last_logged_in": "0"
-        },
-        {
-            "formal_name": "Admin User",
-            "id": "2",
-            "username": "admin",
-            "first_name": "Admin",
-            "last_name": "User",
-            "email_address": "admin@localhost",
-            "user_type": "2",
-            "role_type": "User, Manager",
-            "account_is_active": "1",
-            "last_logged_in": "1509029443.7082"
-        },
-        {
-            "formal_name": " Whimbrel",
-            "id": "6",
-            "username": "normaluser",
-            "first_name": "",
-            "last_name": "Whimbrel",
-            "email_address": "normaluser@example.com",
-            "user_type": "1",
-            "role_type": "User",
-            "account_is_active": "1",
-            "last_logged_in": "0"
-        }
-    ]
-}
-JSON;
+        $expected = JSON::loadFile(
+            TestFiles::getFile('controllers', 'enum_existing_users')
+        );
 
-        $expectedJson = json_decode($expected, true);
-        $this->assertEquals($expectedJson['success'], $data['success']);
-        $this->assertEquals($expectedJson['count'], $data['count']);
+        $this->assertEquals($expected['success'], $actual['success']);
+        $this->assertEquals($expected['count'], $actual['count']);
 
-        $expectedUsers = $expectedJson['response'];
-        $actualUsers = $data['response'];
+        $expectedUsers = $expected['response'];
+        $actualUsers = $actual['response'];
 
         $allFound = true;
         foreach ($expectedUsers as $key => $expectedUser) {
