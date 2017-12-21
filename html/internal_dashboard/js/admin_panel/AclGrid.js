@@ -93,7 +93,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     record.set(this.dataIndex, !record.data[this.dataIndex]);
                 }
 
-                var isDirty = record.get(this.dataIndex) !== record.modified[this.dataIndex];
+                var isDirty = record.modified && record.get(this.dataIndex) !== record.modified[this.dataIndex];
                 self.setDirtyState(isDirty);
 
                 if (record.data.requires_center === true) {
