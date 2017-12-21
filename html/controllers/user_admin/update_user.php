@@ -120,7 +120,7 @@ $params = array('uid' => RESTRICTION_UID);
         foreach ($acls as $aclName => $centers) {
             $acl = Acls::getAclByName($aclName);
             $user_to_update->addAcl($acl);
-
+            // Make sure to set organizations if there are any.
             if (count($centers) > 0) {
                 $centerConfig = array();
                 $count = 0;
@@ -136,7 +136,7 @@ $params = array('uid' => RESTRICTION_UID);
                     $centerConfig[$center] = $config;
                     $count += 1;
                 }
-                $newuser->setOrganizations($centerConfig, $acl);
+                $user_to_update->setOrganizations($centerConfig, $aclName);
             }
         }
     } else {
