@@ -2,6 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use CCR\Json;
+use TestHarness\TestFiles;
 use Xdmod\Config;
 
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
@@ -152,7 +154,7 @@ EOF;
 EOF;
         $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($defaultJson, true));
 
-        $this->assertEquals($response[1]['content_type'], 'text/plain; charset=UTF-8');
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
@@ -164,7 +166,11 @@ EOF;
         $this->assertCount(1, $dataseries[0]['data']);
         $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
 
-        $this->assertEquals(1.79457892, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+        $expected = Json::loadFile(
+            TestFiles::getFile('controllers', 'aggregate_view')
+        );
+
+        $this->assertEquals($expected['value'], $dataseries[0]['data'][0]['y'], '', 1.0e-6);
     }
 
     /**
