@@ -1,5 +1,7 @@
 <?php namespace IntegrationTests\Controllers;
 
+use CCR\Json;
+use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 
 class ControllerTest extends \PHPUnit_Framework_TestCase
@@ -158,7 +160,9 @@ JSON;
 
     public function testEnumUserTypes()
     {
-        $expected = '{"success":true,"status":"success","user_types":[{"id":"4","type":"Demo"},{"id":"1","type":"External"},{"id":"5","type":"Federated"},{"id":"2","type":"Internal"},{"id":"3","type":"Testing"}]}';
+        $expected = JSON::loadFile(
+            TestFiles::getFile('controllers', 'enum_user_types')
+        );
 
         $this->helper->authenticateDashboard('mgr');
 
@@ -171,16 +175,15 @@ JSON;
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals(200, $response[1]['http_code']);
 
-        $actual = json_encode($response[0]);
-        $data = $response[0];
+        $actual = $response[0];
 
-        $this->assertArrayHasKey('success', $data, "Expected the returned data structure to have a 'success' property.");
-        $this->assertArrayHasKey('status', $data, "Expected the returned data structure to have a 'status' property.");
-        $this->assertArrayHasKey('user_types', $data, "Expected the returned data structure to have a 'user_types' property.");
+        $this->assertArrayHasKey('success', $actual, "Expected the returned data structure to have a 'success' property.");
+        $this->assertArrayHasKey('status', $actual, "Expected the returned data structure to have a 'status' property.");
+        $this->assertArrayHasKey('user_types', $actual, "Expected the returned data structure to have a 'user_types' property.");
 
-        $this->assertEquals(true, $data['success'], "Expected the 'success' property to be true, found: " . $data['success']);
-        $this->assertEquals('success', $data['status'], "Expected the 'status' property to be 'success', found: " . $data['status']);
-        $this->assertTrue(count($data['user_types']) > 0, "Expected there to be more than 0 'user_types' returned.");
+        $this->assertEquals(true, $actual['success'], "Expected the 'success' property to be true, found: " . $actual['success']);
+        $this->assertEquals('success', $actual['status'], "Expected the 'status' property to be 'success', found: " . $actual['status']);
+        $this->assertTrue(count($actual['user_types']) > 0, "Expected there to be more than 0 'user_types' returned.");
 
         $this->assertEquals($expected, $actual, "Expected the actual results to match the expected results");
 
