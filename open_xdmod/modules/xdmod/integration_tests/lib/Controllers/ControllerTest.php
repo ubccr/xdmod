@@ -125,50 +125,8 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
     public function testEnumRoles()
     {
-        $expected = json_decode(<<<JSON
-        {
-    "success": true,
-    "status": "success",
-    "acls": [
-        {
-            "acl": "Center Director",
-            "acl_id": "cd",
-            "include": false,
-            "primary": false,
-            "requires_center": false
-        },
-        {
-            "acl": "Center Staff",
-            "acl_id": "cs",
-            "include": false,
-            "primary": false,
-            "requires_center": false
-        },
-        {
-            "acl": "Manager",
-            "acl_id": "mgr",
-            "include": false,
-            "primary": false,
-            "requires_center": false
-        },
-        {
-            "acl": "Principal Investigator",
-            "acl_id": "pi",
-            "include": false,
-            "primary": false,
-            "requires_center": false
-        },
-        {
-            "acl": "User",
-            "acl_id": "usr",
-            "include": false,
-            "primary": false,
-            "requires_center": false
-        }
-    ]
-}
-JSON
-            , true
+        $expected = JSON::loadFile(
+            TestFiles::getFile('controllers', 'enum_roles')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -229,11 +187,16 @@ JSON
 
     /**
      * @dataProvider listUsersGroupProvider
-     * @param int $group
-     * @param array $expected
+     * @internal param array $options
      */
-    public function testListUsers($group, $expected)
+    public function testListUsers(array $options)
     {
+        $this->assertArrayHasKey('user_group', $options);
+        $this->assertArrayHasKey('output', $options);
+
+        $group = $options['user_group'];
+        $outputFile = $options['output'];
+
         $this->helper->authenticateDashboard('mgr');
 
         $data = array(
@@ -247,7 +210,9 @@ JSON
         $this->assertEquals(200, $response[1]['http_code']);
 
         $data = $response[0];
-
+        $expected = Json::loadFile(
+            TestFiles::getFile('controllers', $outputFile)
+        );
         // Retrieve the users value and ensure that it is sorted in the correct order.
         $actualUsers = $data['users'];
         $expectedUsers = $expected['users'];
@@ -287,93 +252,8 @@ JSON
 
     public function listUsersGroupProvider()
     {
-        return array(
-            // External
-            array(
-                1,
-                json_decode(<<<JSON
-{
-    "success": true,
-    "status": "success",
-    "users": [
-        {
-            "id": "3",
-            "username": "centerdirector",
-            "first_name": "Reed",
-            "last_name": "Bunting",
-            "account_is_active": "1",
-            "last_logged_in": 0
-        },
-        {
-            "id": "4",
-            "username": "centerstaff",
-            "first_name": "Turtle",
-            "last_name": "Dove",
-            "account_is_active": "1",
-            "last_logged_in": 0
-        },
-        {
-            "id": "5",
-            "username": "principal",
-            "first_name": "Caspian",
-            "last_name": "Tern",
-            "account_is_active": "1",
-            "last_logged_in": 0
-        },
-        {
-            "id": "6",
-            "username": "normaluser",
-            "first_name": "",
-            "last_name": "Whimbrel",
-            "account_is_active": "1",
-            "last_logged_in": 0
-        }
-    ]
-}
-JSON
-                    , true)
-            ),
-            // Internal
-            array(
-                2,
-                json_decode(<<<JSON
-{
-    "success": true,
-    "status": "success",
-    "users": [
-        {
-            "id": "2",
-            "username": "admin",
-            "first_name": "Admin",
-            "last_name": "User",
-            "account_is_active": "1",
-            "last_logged_in": 1509035416000
-        }
-    ]
-}
-JSON
-                    , true
-                )
-            ),
-            // Testing
-            array(
-                3,
-                json_decode('{"success":true,"status":"success","users":[]}', true)
-            ),
-            // Demo
-            array(
-                4,
-                json_decode('{"success":true,"status":"success","users":[]}', true)
-            ),
-            // Federated
-            array(
-                5,
-                json_decode('{"success":true,"status":"success","users":[]}', true)
-            ),
-            array(
-                700,
-                json_decode('{"success":true,"status":"success","users":[]}', true)
-            )
+        return Json::loadFile(
+            TestFiles::getFile('controllers', 'list_users', 'input')
         );
     }
 
@@ -394,7 +274,7 @@ JSON
         $this->assertTrue(strpos($response[1]['content_type'], 'text/html') >= 0);
         $this->assertEquals(200, $response[1]['http_code']);
 
-        $actual = json_decode($response[0]);
+        $actual = json_decode($response[0], true);
 
         $this->assertArrayHasKey('success', $data);
         $this->assertArrayHasKey('user_types', $data);
