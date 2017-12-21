@@ -276,13 +276,13 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
         $actual = json_decode($response[0], true);
 
-        $this->assertArrayHasKey('success', $data);
-        $this->assertArrayHasKey('user_types', $data);
-        $this->assertArrayHasKey('user_roles', $data);
+        $this->assertArrayHasKey('success', $actual);
+        $this->assertArrayHasKey('user_types', $actual);
+        $this->assertArrayHasKey('user_roles', $actual);
 
-        $this->assertTrue($data['success'], "Expected the 'success' property to be true.");
-        $this->assertTrue(count($data['user_types']) > 0, "Expected there to be 1 or more user_types");
-        $this->assertTrue(count($data['user_roles']) > 0, "Expected there to be 1 or more user_roles");
+        $this->assertTrue($actual['success'], "Expected the 'success' property to be true.");
+        $this->assertTrue(count($actual['user_types']) > 0, "Expected there to be 1 or more user_types");
+        $this->assertTrue(count($actual['user_roles']) > 0, "Expected there to be 1 or more user_roles");
 
         $this->assertEquals($expected, $actual, "Expected the actual results to equal the expected.");
 
@@ -358,7 +358,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
         if (array_key_exists('user_type', $data)) {
             // Then this should be a completely successful test.
-            $expectedMessage = 'User <b>bsmith<\/b> created successfully';
+            $expectedMessage = 'User <b>bsmith</b> created successfully';
 
             $this->assertArrayHasKey('success', $data, "Expected the returned data structure to contain a 'success' property.");
             $this->assertArrayHasKey('user_type', $data, "");
