@@ -38,7 +38,7 @@ class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
             TestFiles::getFile('controllers', $outputFile)
         );
 
-        $this->assertArrayHasKey('http_coded', $expected);
+        $this->assertArrayHasKey('http_code', $expected);
         $this->assertArrayHasKey('response', $expected);
 
         $httpCode = $expected['http_code'];
