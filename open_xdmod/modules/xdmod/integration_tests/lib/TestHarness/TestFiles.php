@@ -4,27 +4,54 @@ namespace TestHarness;
 
 class TestFiles
 {
-    const TEST_ARTIFACT_OUTPUT_PATH = '../../artifacts/xdmod-test-artifacts';
-    private static $ENV;
+    const TEST_ARTIFACT_OUTPUT_PATH = './artifacts/xdmod-test-artifacts';
 
+    /**
+     * The base directory to use when retrieving test files.
+     * @var string
+     */
+    private $baseDir;
 
-    private static function setupEnvironment()
+    /**
+     * The string to be used as the 'default' test environment
+     * one is not found in the environment.
+     * @var string
+     */
+    private $defaultEnvironment;
+
+    /**
+     * The current environment setting for this utility class.
+     * @var string
+     */
+    private $env;
+
+    /**
+     * TestFiles constructor.
+     * @param string $baseDir the base directory to use when retrieving test
+     * files.
+     */
+    public function __construct($baseDir, $defaultEnvironment = null)
     {
-        $testEnv = getenv('TEST_ENV');
-        self::$ENV = $testEnv !== false ? $testEnv : 'xdmod';
+        $this->baseDir = $baseDir;
+        $this->defaultEnvironment = isset($defaultEnvironment) ? $defaultEnvironment : 'xdmod';
+        $this->setupEnvironment();
     }
 
-    public static function getFile($testGroup, $fileName, $type = 'output')
+
+    private function setupEnvironment()
     {
-        if (!isset(self::$ENV)){
-            self::setupEnvironment();
-        }
+        $testEnv = getenv('TEST_ENV');
+        $this->env = $testEnv !== false ? $testEnv : $this->defaultEnvironment;
+    }
+
+    public function getFile($testGroup, $fileName, $type = 'output')
+    {
         return implode(
             DIRECTORY_SEPARATOR,
             array(
-                __DIR__ ,
-                self::TEST_ARTIFACT_OUTPUT_PATH ,
-                self::$ENV,
+                $this->baseDir,
+                self::TEST_ARTIFACT_OUTPUT_PATH,
+                $this->env,
                 $testGroup,
                 $type,
                 $fileName . '.json',
