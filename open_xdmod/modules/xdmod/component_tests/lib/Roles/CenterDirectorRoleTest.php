@@ -6,6 +6,7 @@ use CCR\Json;
 use ComponentTests\BaseTest;
 use ComponentTests\XDUserTest;
 use Exception;
+use TestHarness\TestFiles;
 use User\Roles\CenterDirectorRole;
 use XDUser;
 
@@ -14,6 +15,15 @@ use XDUser;
  **/
 class CenterDirectorRoleTest extends BaseTest
 {
+    protected $testFiles;
+
+    public function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../../../');
+        }
+        return $this->testFiles;
+    }
     /**
      * @expectedException Exception
      * @expectedExceptionMessage No user ID has been assigned to this role.  You must call configure() before calling getCorrespondingUserID()
@@ -112,7 +122,9 @@ class CenterDirectorRoleTest extends BaseTest
 
     public function testEnumStaffMembers()
     {
-        $expected = Json::loadFile($this->getTestFile('center_director_staff_members-update_enumAllAvailableRoles.json'));
+        $expected = Json::loadFile(
+            $this->getTestFiles()->getFile('acls', 'center_director_staff_members')
+        );
 
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $cd = new CenterDirectorRole();

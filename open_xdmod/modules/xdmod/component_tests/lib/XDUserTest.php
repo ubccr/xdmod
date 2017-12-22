@@ -20,22 +20,24 @@ class XDUserTest extends BaseTest
 {
     private static $users = array();
 
+    /**
+     * @var TestFiles
+     */
+    private $testFiles;
+
     const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
 
-    private static $ENV;
-
-    public static function setUpBeforeClass()
+    protected function setUp()
     {
-        self::setupEnvironment();
+        $this->testFiles = new TestFiles(__DIR__ . '/../');
     }
-    private static function setupEnvironment()
+
+    public function getTestFiles()
     {
-        $testEnvironment = getenv('test_env');
-        if ($testEnvironment !== false) {
-            self::$ENV = $testEnvironment;
-        } else {
-            self::$ENV = self::DEFAULT_TEST_ENVIRONMENT;
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../');
         }
+        return $this->testFiles;
     }
 
     /**
@@ -47,7 +49,9 @@ class XDUserTest extends BaseTest
     public function testGetUserByUserName($userName, $expectedFile)
     {
         $user = XDUser::getUserByUserName($userName);
-        $expected = JSON::loadFile($this->getTestFile($expectedFile));
+        $expected = JSON::loadFile(
+            $this->getTestFiles()->getFile('acls', $expectedFile)
+        );
         $actual = json_decode(json_encode($user), true);
         $this->assertEquals($expected, $actual);
     }
@@ -617,7 +621,7 @@ class XDUserTest extends BaseTest
      **/
     public function testCreateUserWithExistingEmailShouldFail()
     {
-        $username = array_keys(self::$users)[count(self::$users) -1];
+        $username = array_keys(self::$users)[count(self::$users) - 1];
         self::getUser(null, 'public', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX);
     }
 
@@ -996,20 +1000,20 @@ class XDUserTest extends BaseTest
     public function provideGetMostPrivilegedRole()
     {
         return array(
-            array(self::CENTER_DIRECTOR_USER_NAME , self::CENTER_DIRECTOR_ACL_NAME),
-            array(self::CENTER_STAFF_USER_NAME , self::CENTER_STAFF_ACL_NAME),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , self::PRINCIPAL_INVESTIGATOR_ACL_NAME),
-            array(self::NORMAL_USER_USER_NAME , self::NORMAL_USER_ACL),
-            array(self::PUBLIC_USER_NAME , self::PUBLIC_ACL_NAME)
+            array(self::CENTER_DIRECTOR_USER_NAME, self::CENTER_DIRECTOR_ACL_NAME),
+            array(self::CENTER_STAFF_USER_NAME, self::CENTER_STAFF_ACL_NAME),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, self::PRINCIPAL_INVESTIGATOR_ACL_NAME),
+            array(self::NORMAL_USER_USER_NAME, self::NORMAL_USER_ACL),
+            array(self::PUBLIC_USER_NAME, self::PUBLIC_ACL_NAME)
         );
     }
 
     /**
      * @dataProvider provideGetAllRoles
      * @param string $userName
-     * @param array  $expected
+     * @param $output
      */
-    public function testGetAllRoles($userName, array $expected)
+    public function testGetAllRoles($userName, $output)
     {
 
         $user = XDUser::getUserByUserName($userName);
@@ -1022,48 +1026,27 @@ class XDUserTest extends BaseTest
             },
             array()
         );
+        $expected = Json::loadFile(
+            $this->getTestFiles()->getFile('acls', $output)
+        );
         $this->assertEquals($expected, $actual);
     }
 
     public function provideGetAllRoles()
     {
-        return array(
-            array(
-                self::CENTER_DIRECTOR_USER_NAME,
-                array(
-                    self::CENTER_DIRECTOR_ACL_NAME,
-                    self::NORMAL_USER_ACL
-                )
-            ),
-            array(
-                self::CENTER_STAFF_USER_NAME,
-                array(
-                    self::CENTER_STAFF_ACL_NAME,
-                    self::NORMAL_USER_ACL
-                )),
-            array(
-                self::PRINCIPAL_INVESTIGATOR_USER_NAME,
-                array(
-                    self::PRINCIPAL_INVESTIGATOR_ACL_NAME,
-                    self::NORMAL_USER_ACL
-                )),
-            array(
-                self::NORMAL_USER_USER_NAME,
-                array(
-                    self::NORMAL_USER_ACL
-                )),
-            array(
-                self::PUBLIC_USER_NAME,
-                array(
-                    self::PUBLIC_ACL_NAME
-                ))
+        return Json::loadFile(
+            $this->getTestFiles()->getFile(
+                'acls',
+                'get_all_roles',
+                'input'
+            )
         );
     }
 
     /**
      * @dataProvider provideIsCenterDirectorOfOrganizationValidCenter
      * @param string $userName
-     * @param bool   $expected
+     * @param bool $expected
      */
     public function testIsCenterDirectorOfOrganizationValidCenter($userName, $expected)
     {
@@ -1144,7 +1127,7 @@ class XDUserTest extends BaseTest
         $user = XDUser::getUserByUserName($userName);
         $actual = $user->enumCenterDirectorSites();
         $expected = Json::loadFile(
-            TestFiles::getFile(
+            $this->getTestFiles()->getFile(
                 'acls',
                 $expectedFileName
             )
@@ -1156,7 +1139,7 @@ class XDUserTest extends BaseTest
     public function provideEnumCenterDirectorsSites()
     {
         return Json::loadFile(
-            TestFiles::getFile(
+            $this->getTestFiles()->getFile(
                 'acls',
                 'enum_center_director_sites',
                 'input'
@@ -1184,7 +1167,7 @@ class XDUserTest extends BaseTest
         $user = XDUser::getUserByUserName($userName);
         $actual = $user->enumCenterStaffSites();
         $expected = Json::loadFile(
-            TestFiles::getFile('acls', $expectedFileName)
+            $this->getTestFiles()->getFile('acls', $expectedFileName)
         );
         $this->assertEquals($expected, $actual);
     }
@@ -1192,7 +1175,7 @@ class XDUserTest extends BaseTest
     public function provideEnumCenterStaffSites()
     {
         return Json::loadFile(
-            TestFiles::getFile('acls', 'enum_center_staff_sites', 'input')
+            $this->getTestFiles()->getFile('acls', 'enum_center_staff_sites', 'input')
         );
     }
 
