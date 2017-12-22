@@ -8,9 +8,21 @@ use TestHarness\XdmodTestHelper;
 
 class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
 {
+
+    protected $testFiles;
+
     protected function setUp()
     {
         $this->helper = new XdmodTestHelper();
+        $this->testFiles = new TestFiles(__DIR__ . '/../../');
+    }
+
+    public function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../../');
+        }
+        return $this->testFiles;
     }
 
     /**
@@ -35,7 +47,7 @@ class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
         list($content, $curlinfo) = $response;
 
         $expected = Json::loadFile(
-            TestFiles::getFile('controllers', $outputFile)
+            $this->getTestFiles()->getFile('controllers', $outputFile)
         );
 
         $this->assertArrayHasKey('http_code', $expected);
@@ -54,7 +66,7 @@ class ReportGeneratorTest extends \PHPUnit_Framework_TestCase
     public function enumReportTemplateDataProvider()
     {
         return Json::loadFile(
-            TestFiles::getFile('controllers', 'enum_report_templates', 'input')
+            $this->getTestFiles()->getFile('controllers', 'enum_report_templates', 'input')
         );
     }
 }

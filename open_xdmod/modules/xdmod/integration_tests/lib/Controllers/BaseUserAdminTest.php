@@ -44,9 +44,23 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
      */
     protected static $existingUsers = array();
 
+    /**
+     * @var TestFiles
+     */
+    protected $testFiles;
+
     protected function setUp()
     {
         $this->helper = new XdmodTestHelper();
+        $this->testFiles = new TestFiles(__DIR__ . '/../../');
+    }
+
+    public function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../../');
+        }
+        return $this->testFiles;
     }
 
     public static function tearDownAfterClass()
@@ -163,7 +177,7 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         // retrieve the expected results of submitting the 'create_user' request
         // with the supplied arguments.
         $expected = JSON::loadFile(
-            TestFiles::getFile(
+            $this->getTestFiles()->getFile(
                 'user_admin',
                 $output
             )
@@ -246,7 +260,7 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         );
 
         $expected = JSON::loadFile(
-            TestFiles::getFile('user_admin', 'test.update_user')
+            $this->getTestFiles()->getFile('user_admin', 'test.update_user')
         );
 
         $this->validateResponse($updateUserResponse);

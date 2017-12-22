@@ -8,6 +8,16 @@ use TestHarness\TestFiles;
 class UserAdminTest extends BaseUserAdminTest
 {
 
+    protected $testFiles;
+    
+    public function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../..');
+        }
+        return $this->testFiles;
+    }
+
     /**
      * Tests all of the situations in which user creation can fail ( i.e. throw an exception ).
      *
@@ -168,7 +178,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideCreateUsersSuccess()
     {
         return JSON::loadFile(
-            TestFiles::getFile('user_admin', 'create_users', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'create_users', 'input')
         );
     }
 
@@ -194,7 +204,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideThatExistingUsersCanBeRetrieved()
     {
         return Json::loadFile(
-            TestFiles::getFile('user_admin', 'existing_users', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'existing_users', 'input')
         );
     }
 
@@ -238,7 +248,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideTestUsersQuickFilters()
     {
         return Json::loadFile(
-            TestFiles::getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
+            $this->getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output')
         );
     }
 
@@ -273,7 +283,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $actual = $response[0];
         $expected = JSON::loadFile(
-            TestFiles::getFile('user_admin', $output)
+            $this->getTestFiles()->getFile('user_admin', $output)
         );
 
         $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected [". json_encode($expected) . "] Received [" . json_encode($actual) . "]");
@@ -286,7 +296,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetMenus()
     {
         return JSON::loadFile(
-            TestFiles::getFile('user_admin', 'get_menus', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'get_menus', 'input')
         );
     }
 
@@ -325,7 +335,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $expectedFileName = $user['output'];
         $expected = JSON::loadFile(
-            TestFiles::getFile('user_admin', $expectedFileName, 'output')
+            $this->getTestFiles()->getFile('user_admin', $expectedFileName, 'output')
         );
 
         $this->assertEquals($expected, $actual);
@@ -338,7 +348,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetTabs()
     {
         return JSON::loadFile(
-            TestFiles::getFile('user_admin', 'get_tabs', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'get_tabs', 'input')
         );
     }
 
@@ -375,7 +385,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $expectedFileName = $user['output'];
         $expected = JSON::loadFile(
-            TestFiles::getFile('user_admin', $expectedFileName, 'output')
+            $this->getTestFiles()->getFile('user_admin', $expectedFileName, 'output')
         );
 
         $this->assertEquals($expected, $actual);
@@ -389,7 +399,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetDwDescripters()
     {
         return JSON::loadFile(
-            TestFiles::getFile('user_admin', 'get_dw_descripters', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'get_dw_descripters', 'input')
         );
     }
 }

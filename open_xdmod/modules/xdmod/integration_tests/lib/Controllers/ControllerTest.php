@@ -12,9 +12,23 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected $helper;
 
+    /**
+     * @var TestFiles
+     */
+    protected $testFiles;
+
+
+    protected function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__. '/../../');
+        }
+        return $this->testFiles;
+    }
+
     protected function setUp()
     {
-        $this->helper = new XdmodTestHelper();
+        $this->helper = new XdmodTestHelper(__DIR__ . '/../../');
     }
 
     public function testEnumExistingUsers()
@@ -49,7 +63,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         );
 
         $expected = JSON::loadFile(
-            TestFiles::getFile('controllers', 'enum_existing_users')
+            $this->getTestFiles()->getFile('controllers', 'enum_existing_users')
         );
 
         $this->assertEquals($expected['success'], $actual['success']);
@@ -94,7 +108,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumUserTypes()
     {
         $expected = JSON::loadFile(
-            TestFiles::getFile('controllers', 'enum_user_types')
+            $this->getTestFiles()->getFile('controllers', 'enum_user_types')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -126,7 +140,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumRoles()
     {
         $expected = JSON::loadFile(
-            TestFiles::getFile('controllers', 'enum_roles')
+            $this->getTestFiles()->getFile('controllers', 'enum_roles')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -211,7 +225,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
         $data = $response[0];
         $expected = Json::loadFile(
-            TestFiles::getFile('controllers', $outputFile)
+            $this->getTestFiles()->getFile('controllers', $outputFile)
         );
         // Retrieve the users value and ensure that it is sorted in the correct order.
         $actualUsers = $data['users'];
@@ -253,14 +267,14 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function listUsersGroupProvider()
     {
         return Json::loadFile(
-            TestFiles::getFile('controllers', 'list_users', 'input')
+            $this->getTestFiles()->getFile('controllers', 'list_users', 'input')
         );
     }
 
     public function testEnumUserTypesAndRoles()
     {
         $expected = JSON::loadFile(
-            TestFiles::getFile('controllers', 'enum_user_types_and_roles')
+            $this->getTestFiles()->getFile('controllers', 'enum_user_types_and_roles')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -292,7 +306,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testSabUserEnumTgUsers()
     {
         $expected = JSON::loadFile(
-            TestFiles::getFile('controllers', 'sab_user_enum_tg_users')
+            $this->getTestFiles()->getFile('controllers', 'sab_user_enum_tg_users')
         );
 
         $this->helper->authenticateDashboard('mgr');

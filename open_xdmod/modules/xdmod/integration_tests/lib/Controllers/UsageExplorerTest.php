@@ -8,9 +8,21 @@ use Xdmod\Config;
 
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 {
+
+    protected $testFiles;
+
     protected function setUp()
     {
         $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->testFiles = new TestFiles(__DIR__ . '/../../');
+    }
+    
+    public function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../../');
+        }
+        return $this->testFiles;
     }
 
     /**
@@ -167,7 +179,7 @@ EOF;
         $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
 
         $expected = Json::loadFile(
-            TestFiles::getFile('controllers', 'aggregate_view')
+            $this->getTestFiles()->getFile('controllers', 'aggregate_view')
         );
 
         $this->assertEquals($expected['value'], $dataseries[0]['data'][0]['y'], '', 1.0e-6);
