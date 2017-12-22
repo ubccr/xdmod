@@ -10,6 +10,7 @@ use User\Roles\CenterDirectorRole;
 use \XDUser;
 use Models\Services\Acls;
 use \Exception;
+use TestHarness\TestFiles;
 
 /**
  * modify the isDeveloper function.
@@ -1136,24 +1137,30 @@ class XDUserTest extends BaseTest
     /**
      * @dataProvider provideEnumCenterDirectorsSites
      * @param string $userName
-     * @param bool $expected
+     * @param bool $expectedFileName
      */
-    public function testEnumCenterDirectorSites($userName, $expected)
+    public function testEnumCenterDirectorSites($userName, $expectedFileName)
     {
         $user = XDUser::getUserByUserName($userName);
         $actual = $user->enumCenterDirectorSites();
+        $expected = Json::loadFile(
+            TestFiles::getFile(
+                'acls',
+                $expectedFileName
+            )
+        );
         $this->assertEquals($expected, $actual);
 
     }
 
     public function provideEnumCenterDirectorsSites()
     {
-        return array(
-            array(self::CENTER_DIRECTOR_USER_NAME, array(array('provider' => '1', 'is_primary' => '1'))),
-            array(self::CENTER_STAFF_USER_NAME,  array()),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME,  array()),
-            array(self::NORMAL_USER_USER_NAME,  array()),
-            array(self::PUBLIC_USER_NAME,  array())
+        return Json::loadFile(
+            TestFiles::getFile(
+                'acls',
+                'enum_center_director_sites',
+                'input'
+            )
         );
     }
 
@@ -1170,23 +1177,22 @@ class XDUserTest extends BaseTest
     /**
      * @dataProvider provideEnumCenterStaffSites
      * @param string $userName
-     * @param array  $expected
+     * @param array $expectedFileName
      */
-    public function testEnumCenterStaffSites($userName, $expected)
+    public function testEnumCenterStaffSites($userName, $expectedFileName)
     {
         $user = XDUser::getUserByUserName($userName);
         $actual = $user->enumCenterStaffSites();
+        $expected = Json::loadFile(
+            TestFiles::getFile('acls', $expectedFileName)
+        );
         $this->assertEquals($expected, $actual);
     }
 
     public function provideEnumCenterStaffSites()
     {
-        return array(
-            array(self::CENTER_DIRECTOR_USER_NAME, array()),
-            array(self::CENTER_STAFF_USER_NAME, array(array('provider' => '1', 'is_primary' => '1'))),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, array()),
-            array(self::NORMAL_USER_USER_NAME, array()),
-            array(self::PUBLIC_USER_NAME, array())
+        return Json::loadFile(
+            TestFiles::getFile('acls', 'enum_center_staff_sites', 'input')
         );
     }
 
