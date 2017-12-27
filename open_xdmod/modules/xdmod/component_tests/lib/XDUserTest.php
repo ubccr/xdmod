@@ -1195,23 +1195,22 @@ class XDUserTest extends BaseTest
     /**
      * @dataProvider provideGetPrimaryOrganization
      * @param $userName
-     * @param $expected
+     * @param $expectedFileName
      */
-    public function testGetPrimaryOrganization($userName, $expected)
+    public function testGetPrimaryOrganization($userName, $expectedFileName)
     {
         $user = XDUser::getUserByUserName($userName);
         $actual = $user->getPrimaryOrganization();
+        $expected = Json::loadFile(
+            $this->getTestFiles()->getFile('acls', $expectedFileName)
+        );
         $this->assertEquals($expected, $actual);
     }
 
     public function provideGetPrimaryOrganization()
     {
-        return array(
-            array(self::CENTER_DIRECTOR_USER_NAME, '1'),
-            array(self::CENTER_STAFF_USER_NAME, '-1'),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, '-1'),
-            array(self::NORMAL_USER_USER_NAME, '-1'),
-            array(self::PUBLIC_USER_NAME, '-1')
+        return JSON::loadFile(
+            $this->getTestFiles()->getFile('acls', 'get_primary_organization', 'input')
         );
     }
 
