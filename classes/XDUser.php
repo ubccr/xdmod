@@ -1829,7 +1829,7 @@ SQL
             throw new Exception("This user must be saved prior to calling enumCenterStaffSites()");
         }
 
-        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=5 AND param_name='provider' AND user_id=:user_id", array(
+        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=5 AND param_name='provider' AND user_id=:user_id ORDER BY param_value", array(
             ':user_id' => $this->_id,
         ));
 
@@ -1854,7 +1854,7 @@ SQL
             throw new Exception("This user must be saved prior to calling enumCenterDirectorSites()");
         }
 
-        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=1 AND param_name='provider' AND user_id=:user_id", array(
+        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=1 AND param_name='provider' AND user_id=:user_id ORDER BY param_value", array(
             ':user_id' => $this->_id,
         ));
 
