@@ -1204,7 +1204,9 @@ class XDUserTest extends BaseTest
         $expected = Json::loadFile(
             $this->getTestFiles()->getFile('acls', $expectedFileName)
         );
-        $this->assertEquals($expected, $actual);
+        $this->assertArrayHasKey('value', $expected);
+
+        $this->assertEquals($expected['value'], $actual);
     }
 
     public function provideGetPrimaryOrganization()
