@@ -2033,7 +2033,7 @@ SQL;
             throw new Exception("This user must be saved prior to calling getOrganizationCollection()");
         }
 
-        $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev=:abbrev AND urp.user_id=:user_id AND urp.param_name='provider'";
+        $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev=:abbrev AND urp.user_id=:user_id AND urp.param_name='provider' ORDER BY urp.param_value";
 
         $center_collection = array();
 
