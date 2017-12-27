@@ -340,9 +340,23 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('success', $data['message'], "Expected the 'message' property to equal 'success'. Received: " . $data['message']);
         $this->assertCount(300, $data['users'], "Expected 300 users to be returned. Received: " . count($data['users']));
 
-        $diff = $this->arrayRecursiveDiff($expected, $data);
-        $this->assertCount(0, $diff, "Expected there to be no difference between the actual and expected data. Differences: " . json_encode($diff));
+        $expectedUsers = $expected['users'];
+        $actualUsers = $data['users'];
 
+        $notFound = array();
+        foreach($expectedUsers as $key => $expectedUser) {
+            $found = array_filter(
+                $actualUsers,
+                function ($value) use ($expectedUser) {
+                    return $expectedUser['person_id'] === $value['person_id'] &&
+                        $expectedUser['person_name']=== $value['person_name'];
+                }
+            );
+            if (empty($found)) {
+                $notFound []= $expectedUser;
+            }
+        }
+        $this->assertEmpty($notFound, "There were expected users missing in actual. \nExpected: " . json_encode($notFound) . "\nActual: " . json_encode($actualUsers));
         $this->helper->logoutDashboard();
     }
 
