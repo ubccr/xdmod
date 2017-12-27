@@ -1231,10 +1231,16 @@ class XDUserTest extends BaseTest
      * @param string $userName
      * @param array $expectedData
      */
-    public function testGetOrganizationCollection($userName, $expectedData)
+    public function testGetOrganizationCollection($userName, $expectedFileName)
     {
+        $expectedData = JSON::loadFile(
+            $this->getTestFiles()->getFile('acls', $expectedFileName)
+        );
         foreach ($expectedData as $centerStaffOrDirector => $expected) {
             $user = XDUser::getUserByUserName($userName);
+            if ($centerStaffOrDirector === 'null') {
+                $centerStaffOrDirector = null;
+            }
             $actual = $user->getOrganizationCollection($centerStaffOrDirector);
             $this->assertEquals($expected, $actual);
         }
@@ -1242,47 +1248,8 @@ class XDUserTest extends BaseTest
 
     public function provideGetOrganizationCollection()
     {
-        return array(
-            array(
-                self::CENTER_DIRECTOR_USER_NAME, array(
-                    self::CENTER_STAFF_ACL_NAME => array(),
-                    self::CENTER_DIRECTOR_ACL_NAME => array(1),
-                    null => array(),
-                    '' => array()
-                )
-            ),
-            array(
-                self::CENTER_STAFF_USER_NAME, array(
-                    self::CENTER_STAFF_ACL_NAME => array(1),
-                    self::CENTER_DIRECTOR_ACL_NAME => array(),
-                    null => array(),
-                    '' => array()
-                )
-            ),
-            array(
-                self::PRINCIPAL_INVESTIGATOR_USER_NAME, array(
-                    self::CENTER_STAFF_ACL_NAME => array(),
-                    self::CENTER_DIRECTOR_ACL_NAME => array(),
-                    null => array(),
-                    '' => array()
-                )
-            ),
-            array(
-                self::NORMAL_USER_USER_NAME, array(
-                    self::CENTER_STAFF_ACL_NAME => array(),
-                    self::CENTER_DIRECTOR_ACL_NAME => array(),
-                    null => array(),
-                    '' => array()
-                )
-            ),
-            array(
-                self::PUBLIC_USER_NAME, array(
-                    self::CENTER_STAFF_ACL_NAME => array(),
-                    self::CENTER_DIRECTOR_ACL_NAME => array(),
-                    null => array(),
-                    '' => array()
-                )
-            )
+        return JSON::loadFile(
+            $this->getTestFiles()->getFile('acls', 'get_organization_collection', 'input')
         );
     }
 
