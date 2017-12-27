@@ -234,8 +234,11 @@ class XDUserTest extends BaseTest
         $this->assertEmpty($newOrganizations);
 
         $original = array();
-        foreach (array_values($originalOrganizations) as $organizationId) {
-            $original[$organizationId] = $defaultConfig;
+        $originalOrganizationValues = array_values($originalOrganizations);
+        for ($i = 0; $i < count($originalOrganizationValues); $i++) {
+            $primary = $i === count($originalOrganizationValues) - 1;
+            $value = $originalOrganizationValues[$i];
+            $original[$value] = array('array' => true, 'primary' => $primary);
         }
         $user->setOrganizations($original, self::CENTER_DIRECTOR_ACL_NAME);
 
