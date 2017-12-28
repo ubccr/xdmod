@@ -939,6 +939,15 @@ class XDUserTest extends BaseTest
                 continue;
             }
 
+            // check if we're in testing in anything but OpenXDMoD, if we are
+            // then make sure to not include XSEDE specific acls
+            $environment = getenv('TEST_ENV');
+            if ($environment === 'xdmod-xsede' &&
+                (in_array('po', $aclCombination) || in_array('cc', $aclCombination) || in_array('acl.custom-query-tab', $aclCombination))
+            ) {
+                continue;
+            }
+
             $user = self::getUser(null, 'Test', 'Acl', 'User', $aclCombination);
             $user->setUserType(self::DEFAULT_USER_TYPE);
 
