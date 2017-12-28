@@ -20,7 +20,13 @@ class CenterDirectorRoleTest extends BaseTest
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../../../');
+            $environment = getenv('TEST_ENV');
+            $suffix = '/../../../';
+            if ($environment === 'xdmod-xsede') {
+                $suffix = '/../../';
+            }
+
+            $this->testFiles = new TestFiles(__DIR__ . $suffix);
         }
         return $this->testFiles;
     }
@@ -55,15 +61,25 @@ class CenterDirectorRoleTest extends BaseTest
         $cd->getActiveCenter();
     }
 
-    public function testGetActiveCenter()
+    /**
+     * @dataProvider provideGetActiveCenter
+     * @param $expectedCenterId
+     */
+    public function testGetActiveCenter($expectedCenterId)
     {
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-        $expected = 1;
+        $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
 
         $cd = new CenterDirectorRole();
         $cd->configure($user);
         $actual = $cd->getActiveCenter();
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expectedCenterId, $actual);
+    }
+
+    public function provideGetActiveCenter()
+    {
+        return Json::loadFile(
+            $this->getTestFiles()->getFile('acls', 'center_director_get_active_center')
+        );
     }
 
     /**
@@ -94,7 +110,12 @@ class CenterDirectorRoleTest extends BaseTest
         $this->assertNotFalse(strpos($actual, $expected), "Expected to find '$expected' in '$actual'");
     }
 
-    public function testGetIdentifier()
+    /**
+     * @dataProvider provideGetIdentifier
+     * @param $param
+     * @param $expected
+     */
+    public function testGetIdentifier($param, $expected)
     {
         $params = array(
             false => XDUserTest::CENTER_DIRECTOR_ACL_NAME,
@@ -109,6 +130,14 @@ class CenterDirectorRoleTest extends BaseTest
             $this->assertEquals($expected, $actual);
         }
     }
+
+    public function provideGetIdentifier()
+    {
+        return Json::loadFile(
+            $this->getTestFiles()->getFile('acls', 'center_director_get_identifier')
+        );
+    }
+
 
     /**
      * @expectedException Exception
