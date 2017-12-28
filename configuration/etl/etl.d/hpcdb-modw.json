@@ -249,7 +249,6 @@
         "class": "SimpleAggregator",
         "description": "Aggregate HPC job records",
         "definition_file": "hpcdb-modw/jobfact_hpc_aggregation.json",
-        "truncate_destination": true,
         "table_prefix": "jobfact_by_",
         "aggregation_units": [
             "day", "month", "quarter", "year"
