@@ -117,18 +117,13 @@ class CenterDirectorRoleTest extends BaseTest
      */
     public function testGetIdentifier($param, $expected)
     {
-        $params = array(
-            false => XDUserTest::CENTER_DIRECTOR_ACL_NAME,
-            true => XDUserTest::CENTER_DIRECTOR_ACL_NAME . ';1'
-        );
 
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $cd = new CenterDirectorRole();
         $cd->configure($user);
-        foreach($params as $param => $expected) {
-            $actual = $cd->getIdentifier($param);
-            $this->assertEquals($expected, $actual);
-        }
+        $actual = $cd->getIdentifier($param);
+        $this->assertEquals($expected, $actual);
+
     }
 
     public function provideGetIdentifier()
