@@ -173,14 +173,16 @@ class XDUserTest extends BaseTest
     public function provideSetOrganizationsValid()
     {
         return Json::loadFile(
-            $this->getTestFile('set_organization_valid.json', self::DEFAULT_PROJECT, 'input')
+            $this->getTestFiles()->getFile('acls', 'center_director_valid_organization_ids')
         );
     }
 
-    public function testSetInstitution()
+    /**
+     * @dataProvider provideSetInstitution
+     * @param $validInstitutionId
+     */
+    public function testSetInstitution($validInstitutionId)
     {
-        $validInstitutionId = 476;
-
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $originalInstitution = $user->getInstitution();
@@ -197,6 +199,13 @@ class XDUserTest extends BaseTest
 
         $checkInstitution = $user->getInstitution();
         $this->assertEquals($originalInstitution, $checkInstitution);
+    }
+
+    public function provideSetInstitution()
+    {
+        return Json::loadFile(
+            $this->getTestFiles()->getFile('acls', 'center_director_valid_organization_ids')
+        );
     }
 
     public function testDisassociateWithInstitution()
@@ -219,8 +228,6 @@ class XDUserTest extends BaseTest
 
     public function testSetOrganizationsEmpty()
     {
-        $defaultConfig = array('active' => true, 'primary' => true);
-
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $originalOrganizations = $user->getOrganizationCollection(self::CENTER_DIRECTOR_ACL_NAME);
@@ -238,7 +245,7 @@ class XDUserTest extends BaseTest
         for ($i = 0; $i < count($originalOrganizationValues); $i++) {
             $primary = $i === count($originalOrganizationValues) - 1;
             $value = $originalOrganizationValues[$i];
-            $original[$value] = array('array' => true, 'primary' => $primary);
+            $original[$value] = array('active' => true, 'primary' => $primary);
         }
         $user->setOrganizations($original, self::CENTER_DIRECTOR_ACL_NAME);
 
@@ -755,17 +762,28 @@ class XDUserTest extends BaseTest
         $user->setActiveRole(self::CENTER_STAFF_ACL_NAME, self::INVALID_ID);
     }
 
-    public function testSetActiveRoleForCenterDirectorWithValidOrgID()
+    /**
+     * @dataProvider provideSetActiveRoleForCenterDirectorWithValidOrgID
+     * @param $validServiceProviderId
+     */
+    public function testSetActiveRoleForCenterDirectorWithValidOrgID($validServiceProviderId)
     {
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
-        $user->setActiveRole(self::CENTER_DIRECTOR_ACL_NAME, self::VALID_SERVICE_PROVIDER_ID);
+        $user->setActiveRole(self::CENTER_DIRECTOR_ACL_NAME, $validServiceProviderId);
 
         $activeRole = $user->getActiveRole();
         $this->assertNotNull($activeRole);
 
         $activeRoleName = $activeRole->getIdentifier();
         $this->assertEquals(self::CENTER_DIRECTOR_ACL_NAME, $activeRoleName);
+    }
+
+    public function provideSetActiveRoleForCenterDirectorWithValidOrgID()
+    {
+        return Json::loadFile(
+            $this->getTestFiles()->getFile('acls', 'center_director_valid_organization_ids')
+        );
     }
 
     public function testSetActiveRoleForCenterStaffWithValidOrgID()
