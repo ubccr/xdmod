@@ -970,7 +970,7 @@ SQL;
         foreach ($this->_roles as $role) {
             $roleId = $this->_getRoleID($role);
             if ($roleId === null) {
-                throw new Exception("Unable to find an id for: $roleId. Unable to save user.");
+                continue;
             }
             $this->_pdo->execute(
                 "INSERT INTO UserRoles VALUES(:id, :roleId, '0', '0')",
