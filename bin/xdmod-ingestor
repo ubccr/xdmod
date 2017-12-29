@@ -200,11 +200,18 @@ function main()
 
     $dwi->setLogger($logger);
 
+    // Parameters used by ETL
+    $etlParams = array(
+        'start-date' => $startDate,
+        'end-date' => $endDate,
+        'last-modified-start-date' => $startDate
+    );
+
     // If no task was explicitly specified, do ingestion and aggregation.
     if (!$ingest && !$aggregate) {
         $ingest = $aggregate = true;
+        $etlParams['last-modified-start-date'] = date('Y-m-d\TH:i:00');
     }
-
     // If any ingestion phase is specified, don't aggregate.
     if ($ingestAll || $ingestShredded || $ingestStaging || $ingestHpcdb) {
         $aggregate = false;
@@ -229,7 +236,7 @@ function main()
                 $dwi->ingestAllStaging($startDate, $endDate);
             }
             if ($ingestHpcdb) {
-                runEtlPipeline('hpcdb-modw.ingest', $startDate, $endDate);
+                runEtlPipeline('hpcdb-modw.ingest', $etlParams);
             }
         } catch (Exception $e) {
             $logger->crit(array(
@@ -244,7 +251,7 @@ function main()
     if ($aggregate) {
         $logger->info('Aggregating data');
         try {
-            runEtlPipeline('hpcdb-modw.aggregate', $startDate, $endDate);
+            runEtlPipeline('hpcdb-modw.aggregate', $etlParams);
         } catch (Exception $e) {
             $logger->crit(array(
                 'message'    => 'Aggregation failed: ' . $e->getMessage(),
@@ -264,30 +271,60 @@ function main()
     exit;
 }
 
-function runEtlPipeline($name, $start, $end){
+/**
+ *  This is a helper function to run different etl pipelines,
+ *  This will be replaced with a direct call to the etl classes at a future date
+ *
+ * @param string $name Pipeline or "section" to run
+ * @param array $params parameters to be passed to etl_overseer
+ *
+ * @thows Exception when something fails with the external command
+ */
+
+function runEtlPipeline($name, $params = array()){
     global $logger;
 
     if(empty($name)){
         throw new \Exception('ETL Pipeline not given');
     }
-    if(empty($start)){
-        $start = new \DateTime('2000-01-01');
+    $params['process-section'] = $name;
+
+    if(array_key_exists('start-date', $params)){
+        $params['start-date'] = new \DateTime($params['start-date']);
     }
     else {
-        $start = new \DateTime($start);
+        $params['start-date'] = new \DateTime('2000-01-01');
     }
-    if(empty($end)){
-        $end = new \DateTime('2038-01-18');
+    $params['start-date'] = $params['start-date']->format('Y-m-d');
+
+    if(array_key_exists('end-date', $params)){
+        $params['end-date'] = new \DateTime($params['end-date']);
     }
     else {
-        $end = new \DateTime($end);
+        $params['end-date'] = new \DateTime('2038-01-18');
+    }
+    $params['end-date'] = $params['end-date']->format('Y-m-d');
+
+    if(array_key_exists('last-modified-start-date', $params)){
+        $params['last-modified-start-date'] = new \DateTime($params['last-modified-start-date']);
+    }
+    else {
+        $params['last-modified-start-date'] = new \DateTime($params['start-date']);
+    }
+    $params['last-modified-start-date'] = $params['last-modified-start-date']->format('Y-m-d\TH:i:s');
+
+    if(!array_key_exists('config-file', $params)){
+        $params['config-file'] = CONFIG_DIR . '/etl/etl.json';
     }
 
-    $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php '
-        . '-c ' . CONFIG_DIR . '/etl/etl.json' . ' -p ' . $name .
-        ' -m ' . $start->format('Y-m-d') . ' -y ' . $end->format('Y-m-d');
+    $argumentString = '';
+    foreach ($params as $key => $value) {
+        $argumentString .= ' --' . $key . ' ' . escapeshellarg($value);
+    }
+    $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php' . $argumentString;
     $pipes = array();
     $logger->notice("Executing $command");
+
     $process = proc_open(
         $command,
         array(
