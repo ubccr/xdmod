@@ -289,7 +289,7 @@ function runEtlPipeline($name, $params = array()){
     }
     $params['process-section'] = $name;
 
-    if(array_key_exists('start-date', $params)){
+    if(array_key_exists('start-date', $params) && !empty($params['start-date'])){
         $params['start-date'] = new \DateTime($params['start-date']);
     }
     else {
@@ -297,7 +297,7 @@ function runEtlPipeline($name, $params = array()){
     }
     $params['start-date'] = $params['start-date']->format('Y-m-d');
 
-    if(array_key_exists('end-date', $params)){
+    if(array_key_exists('end-date', $params) && !empty($params['end-date'])){
         $params['end-date'] = new \DateTime($params['end-date']);
     }
     else {
@@ -305,7 +305,7 @@ function runEtlPipeline($name, $params = array()){
     }
     $params['end-date'] = $params['end-date']->format('Y-m-d');
 
-    if(array_key_exists('last-modified-start-date', $params)){
+    if(array_key_exists('last-modified-start-date', $params) && !empty($params['last-modified-start-date'])){
         $params['last-modified-start-date'] = new \DateTime($params['last-modified-start-date']);
     }
     else {
