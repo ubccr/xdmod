@@ -28,10 +28,15 @@ class TestFiles
     /**
      * TestFiles constructor.
      * @param string $baseDir the base directory to use when retrieving test
+     * @param string $defaultEnvironment the value to use as the default
+     * environment if one is not found
      * files.
      */
     public function __construct($baseDir, $defaultEnvironment = null)
     {
+        if (!is_dir($baseDir)) {
+            throw new Exception("Base Dir: $baseDir is not a directory. Unable to continue")
+        }
         $this->baseDir = $baseDir;
         $this->defaultEnvironment = isset($defaultEnvironment) ? $defaultEnvironment : 'xdmod';
         $this->setupEnvironment();

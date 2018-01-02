@@ -900,7 +900,7 @@ SQL;
 
         if (count($rows) > 0) {
             return array_reduce($rows, function ($carry, $item) {
-                $carry []= new Acl($item);
+                $carry[] = new Acl($item);
                 return $carry;
             }, array());
         }

@@ -76,18 +76,10 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 // and the entry for this acl has centers currently associated
                 // with it.
                 if (requires_center && aclCenterExists && aclHasCenters) {
-                    record.set(this.dataIndex, true);
-                } else if (requires_center && aclCenterExists && !aclHasCenters) {
-                    // this acl requires center information
-                    // we have an entry for this acl in our center list
-                    // but we do not have any centers associated with this acl.
-
-                    // do nothing
-
-                    // As this is for a user who is having an acl w/ a required
-                    // center added to them, but they have not selected a center
-                    // yet
-                } else {
+                    if (aclHasCenter) {
+                        record.set(this.dataIndex, true);
+                    }
+                 else {
                     // provide the default behavior of clicking on a checkbox
                     // flipping the state.
                     record.set(this.dataIndex, !record.data[this.dataIndex]);
@@ -173,7 +165,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 
     setSelectedAcls: function (acls) {
         this.store.each(function (record) {
-            var hasAcl = acls.indexOf(record.data.acl_id) >= 0;
+            var hasAcl = acls.indexOf(record.data.acl_id) != -1;
             record.set('include', hasAcl);
             /* eslint-disable no-param-reassign */
             if (!record.hasOwnProperty('modified')) {
