@@ -125,13 +125,10 @@ $params = array('uid' => RESTRICTION_UID);
                 $centerConfig = array();
                 $count = 0;
                 foreach($centers as $center) {
-                    switch($count) {
-                        case 0:
-                            $config = array('primary' => 1, 'active' => 1);
-                            break;
-                        default:
-                            $config = array('primary' => 0, 'active' => 0);
-                            break;
+                    if ($count === 0 ) {
+                        $config = array('primary' => 1, 'active' => 1);
+                    } else {
+                        $config = array('primary' => 0, 'active' => 0);
                     }
                     $centerConfig[$center] = $config;
                     $count += 1;
