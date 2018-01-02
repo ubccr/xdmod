@@ -76,7 +76,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 // and the entry for this acl has centers currently associated
                 // with it.
                 if (requires_center && aclCenterExists && aclHasCenters) {
-                    if (aclHasCenter) {
+                    if (aclHasCenters) {
                         record.set(this.dataIndex, true);
                     }
                 } else {
@@ -165,7 +165,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 
     setSelectedAcls: function (acls) {
         this.store.each(function (record) {
-            var hasAcl = acls.indexOf(record.data.acl_id) != -1;
+            var hasAcl = acls.indexOf(record.data.acl_id) !== -1;
             record.set('include', hasAcl);
             /* eslint-disable no-param-reassign */
             if (!record.hasOwnProperty('modified')) {
