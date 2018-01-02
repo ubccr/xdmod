@@ -79,7 +79,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     if (aclHasCenter) {
                         record.set(this.dataIndex, true);
                     }
-                 else {
+                } else {
                     // provide the default behavior of clicking on a checkbox
                     // flipping the state.
                     record.set(this.dataIndex, !record.data[this.dataIndex]);
