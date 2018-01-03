@@ -22,7 +22,6 @@ describe('Export Dialog', function () {
         ];
         expect(browser.getText(xdmod.selectors.exportDialog.comboListItems)).to.deep.equal(expected);
         browser.waitAndClick(xdmod.selectors.exportDialog.formatDropdown());
-        browser.waitForInvisible(xdmod.selectors.exportDialog.comboList);
     });
     it('Check Image Sizes', function () {
         browser.waitAndClick(xdmod.selectors.exportDialog.imageSizeDropdown());
@@ -36,7 +35,6 @@ describe('Export Dialog', function () {
         ];
         expect(browser.getText(xdmod.selectors.exportDialog.comboListItems)).to.deep.equal(expected);
         browser.waitAndClick(xdmod.selectors.exportDialog.imageSizeDropdown());
-        browser.waitForInvisible(xdmod.selectors.exportDialog.comboList);
     });
     it('Check show chart title exists', function () {
         browser.waitForVisible(xdmod.selectors.exportDialog.showTitleCheckbox());
@@ -45,7 +43,6 @@ describe('Export Dialog', function () {
         browser.waitAndClick(xdmod.selectors.exportDialog.formatDropdown());
         browser.waitForVisible(xdmod.selectors.exportDialog.comboList);
         browser.waitAndClick(xdmod.selectors.exportDialog.comboListItemByName('CSV'));
-        browser.waitForInvisible(xdmod.selectors.exportDialog.comboList);
     });
     it('Make sure title and image options are not visible', function () {
         browser.waitForInvisible(xdmod.selectors.exportDialog.showTitleCheckbox());
@@ -55,7 +52,6 @@ describe('Export Dialog', function () {
         browser.waitAndClick(xdmod.selectors.exportDialog.formatDropdown());
         browser.waitForVisible(xdmod.selectors.exportDialog.comboList);
         browser.waitAndClick(xdmod.selectors.exportDialog.comboListItemByName('PDF'));
-        browser.waitForInvisible(xdmod.selectors.exportDialog.comboList);
     });
     it('Make sure title and size options are visible', function () {
         browser.waitForVisible(xdmod.selectors.exportDialog.showTitleCheckbox());
