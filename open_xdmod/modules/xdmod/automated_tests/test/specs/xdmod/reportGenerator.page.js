@@ -899,7 +899,6 @@ class ReportGenerator {
         const reportCount = this.getMyReportsRows().length;
         if (!center) {
             browser.click(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
-
         } else {
             // move the mouse to the middle of the menu so that the center selection menu appears
             browser.moveToObject(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
@@ -913,7 +912,6 @@ class ReportGenerator {
         // There is no visible indicator that the reports are being
         // updated, so wait for the number of rows to change.
         browser.waitUntil(() => reportCount !== this.getMyReportsRows().length, 2000, 'Expect number of reports to change');
-
     }
 
     /**

@@ -166,7 +166,7 @@ describe('Metric Explorer', function metricExplorer() {
             });
         });
         it('Trend Line looks the same as previous run', function () {
-            me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line ]);
+            me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line]);
         });
         it('Undo Trend Line', function meUndoTrendLine() {
             me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);

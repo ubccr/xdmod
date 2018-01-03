@@ -687,20 +687,20 @@ describe('Report Generator', function () {
             });
             it('Check charts', function () {
                 const templateCharts = reportGeneratorPage.getCharts(
-                  'centerdirector',
-                  {
-                      'startDate': startDate,
-                      'endDate': endDate,
-                      'previousMonthStartDate': previousMonthStartDate,
-                      'previousMonthEndDate': previousMonthEndDate,
-                      'previousQuarterStartDate': previousQuarterStartDate,
-                      'previousQuarterEndDate': previousQuarterEndDate,
-                      'previousYearStartDate': previousYearStartDate,
-                      'previousYearEndDate': previousYearEndDate,
-                      'yearToDateStartDate': yearToDateStartDate,
-                      'yearToDateEndDate': yearToDateEndDate
-                  }
-                  );
+                    'centerdirector',
+                    {
+                        'startDate': startDate,
+                        'endDate': endDate,
+                        'previousMonthStartDate': previousMonthStartDate,
+                        'previousMonthEndDate': previousMonthEndDate,
+                        'previousQuarterStartDate': previousQuarterStartDate,
+                        'previousQuarterEndDate': previousQuarterEndDate,
+                        'previousYearStartDate': previousYearStartDate,
+                        'previousYearEndDate': previousYearEndDate,
+                        'yearToDateStartDate': yearToDateStartDate,
+                        'yearToDateEndDate': yearToDateEndDate
+                    }
+                );
                 reportGeneratorPage.getIncludedCharts().forEach((chart, i) => {
                     const templateChart = templateCharts[i];
                     expect(chart.getTitle(), 'Chart title').to.be.equal(templateChart.title);
