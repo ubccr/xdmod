@@ -689,16 +689,16 @@ describe('Report Generator', function () {
                 const templateCharts = reportGeneratorPage.getCharts(
                     'centerdirector',
                     {
-                        'startDate': startDate,
-                        'endDate': endDate,
-                        'previousMonthStartDate': previousMonthStartDate,
-                        'previousMonthEndDate': previousMonthEndDate,
-                        'previousQuarterStartDate': previousQuarterStartDate,
-                        'previousQuarterEndDate': previousQuarterEndDate,
-                        'previousYearStartDate': previousYearStartDate,
-                        'previousYearEndDate': previousYearEndDate,
-                        'yearToDateStartDate': yearToDateStartDate,
-                        'yearToDateEndDate': yearToDateEndDate
+                        startDate: startDate,
+                        endDate: endDate,
+                        previousMonthStartDate: previousMonthStartDate,
+                        previousMonthEndDate: previousMonthEndDate,
+                        previousQuarterStartDate: previousQuarterStartDate,
+                        previousQuarterEndDate: previousQuarterEndDate,
+                        previousYearStartDate: previousYearStartDate,
+                        previousYearEndDate: previousYearEndDate,
+                        yearToDateStartDate: yearToDateStartDate,
+                        yearToDateEndDate: yearToDateEndDate
                     }
                 );
                 reportGeneratorPage.getIncludedCharts().forEach((chart, i) => {
