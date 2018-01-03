@@ -293,7 +293,7 @@ function runEtlPipeline($name, $params = array()){
         $params['start-date'] = new \DateTime($params['start-date']);
     }
     else {
-        $params['start-date'] = new \DateTime('2000-01-01');
+        $params['start-date'] = new \DateTime('now -7 days');
     }
     $params['start-date'] = $params['start-date']->format('Y-m-d');
 
@@ -374,10 +374,13 @@ Usage: xdmod-ingestor [-v]
 
     --start-date *date*
         Specify the start date (YYYY-MM-DD) to be used during
-        aggregation.
+        aggregation and ingestion.
+        Default: now -7 days
 
     --end-date *date*
-        Specify the end date (YYYY-MM-DD) to be used during aggregation.
+        Specify the end date (YYYY-MM-DD) to be used during
+        aggregation and ingestion.
+        Default: 2038-01-18
 
 
 EOF;

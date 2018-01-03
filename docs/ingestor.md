@@ -14,7 +14,7 @@ General Usage
 -------------
 
 By default, the ingestor with process new job data entered into the
-Open XDMoD database.
+Open XDMoD database whose end times are within the past 7 days.
 
     $ xdmod-ingestor
 
