@@ -1,3 +1,4 @@
+var expected = global.testHelpers.artifacts.getArtifact('metricExplorer');
 var logIn = require('./loginPage.page.js');
 var me = require('./metricExplorer.page.js');
 var cheerio = require('cheerio');
@@ -75,7 +76,7 @@ describe('Metric Explorer', function metricExplorer() {
             me.createNewChart(chartName, 'Timeseries', 'Line');
             me.setDateRange('2016-12-30', '2017-01-02');
             me.addDataViaCatalog('Jobs', 'Node Hours: Total', 'None');
-            me.checkChart(chartName, 'Node Hours: Total', 'Screwdriver');
+            me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             me.saveChanges();
             me.clear();
         });
@@ -105,18 +106,18 @@ describe('Metric Explorer', function metricExplorer() {
         });
         it("'Add Data' via toolbar", function meAddData1() {
             // click on CPU Hours: Total
-            me.addDataViaMenu('.ext-el-mask-msg', '3');
+            me.addDataViaMenu('.ext-el-mask-msg', 'CPU Hours: Total');
             me.addDataSeriesByDefinition();
         });
         it('Chart contains correct information', function () {
-            me.checkChart('untitled query 1', 'CPU Hours: Total', 'Screwdriver');
+            me.checkChart('untitled query 1', 'CPU Hours: Total', expected.legend);
         });
 
         it("'Add Data' again via toolbar", function meAddData2() {
             me.waitForChartToChange(me.addDataViaToolbar);
         });
         it('Chart contains correct information', function () {
-            me.checkChart('untitled query 1', 'CPU Hour', ['Screwdriver [CPU Hours: Total]', 'Screwdriver [CPU Hours: Per Job]']);
+            me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
         });
 
         it('Switch to aggregate chart (expect incompatible metric error)', function () {
@@ -129,13 +130,13 @@ describe('Metric Explorer', function metricExplorer() {
             me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
         });
         it('Check first undo works', function () {
-            me.checkChart('untitled query 1', 'CPU Hour', ['Screwdriver [CPU Hours: Total]', 'Screwdriver [CPU Hours: Per Job]']);
+            me.checkChart('untitled query 1', 'CPU Hour', [expected.legend + ' [CPU Hours: Total]', expected.legend + ' [CPU Hours: Per Job]']);
         });
         it('Undo Scratch Pad second source', function meUndoScratchPad() {
             me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
         });
         it('Check second undo works', function () {
-            me.checkChart('untitled query 1', 'CPU Hours: Total', 'Screwdriver');
+            me.checkChart('untitled query 1', 'CPU Hours: Total', expected.legend);
         });
         it('Attempt Delete Scratchpad Chart', function meDeleteScratchPad() {
             me.attemptDeleteScratchpad();
@@ -147,7 +148,7 @@ describe('Metric Explorer', function metricExplorer() {
             me.loadExistingChartByName(chartName);
         });
         it('Loaded chart looks the same as previous run', function () {
-            me.checkChart(chartName, 'Node Hours: Total', 'Screwdriver');
+            me.checkChart(chartName, 'Node Hours: Total', expected.legend);
         });
         it('Open Chart Options', function meChartOptions() {
             browser.waitAndClick(me.selectors.options.button);
@@ -165,13 +166,13 @@ describe('Metric Explorer', function metricExplorer() {
             });
         });
         it('Trend Line looks the same as previous run', function () {
-            me.checkChart(chartName, 'Node Hours: Total', ['Screwdriver', 'Trend Line: Screwdriver (-17,225.81x +56,410.55),R-Squared=0.85']);
+            me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line ]);
         });
         it('Undo Trend Line', function meUndoTrendLine() {
             me.waitForChartToChange(me.undoAggregateOrTrendLine, $container);
         });
         it('Undo Trend Line looks the same as previous run', function () {
-            me.checkChart(chartName, 'Node Hours: Total', 'Screwdriver');
+            me.checkChart(chartName, 'Node Hours: Total', expected.legend);
         });
     });
     /* The following tests are disabled until such a time as they can be changed to work

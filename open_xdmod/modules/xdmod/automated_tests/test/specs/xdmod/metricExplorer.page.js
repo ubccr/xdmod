@@ -158,7 +158,7 @@ class MetricExplorer {
         browser.waitUntilAnimEnd(this.selectors.catalog.collapseButton);
     }
     setDateRange(start, end) {
-        browser.waitForAllInvisible('.ext-el-mask');
+        browser.waitUntilNotExist('.ext-el-mask');
         browser.waitAndClick(this.selectors.startDate);
         browser.setValue(this.selectors.startDate, start);
         browser.waitAndClick(this.selectors.endDate);
@@ -167,6 +167,7 @@ class MetricExplorer {
         browser.waitForAllInvisible('.ext-el-mask');
     }
     addDataViaCatalog(realm, statistic, groupby) {
+        browser.waitUntilNotExist('.ext-el-mask');
         browser.waitForVisible(this.selectors.catalog.container, 10000);
         browser.waitUntilAnimEndAndClick(this.selectors.catalog.rootNodeByName(realm));
         browser.waitUntilAnimEndAndClick(this.selectors.catalog.nodeByPath(realm, statistic));
@@ -219,8 +220,8 @@ class MetricExplorer {
         browser.waitUntilNotExist(maskName);
         browser.waitForVisible(this.selectors.catalog.container, 5000);
         browser.waitAndClick(this.selectors.addData.button);
-        browser.waitAndClick(this.selectors.buttonMenu.firstLevel + ' ul li:nth-child(3)');
-        browser.waitAndClick(this.selectors.addData.secondLevel + ' ul li:nth-child(' + n + ')');
+        browser.waitAndClick('//div[@id="metric-explorer-chartoptions-add-data-menu"]//span[contains(text(), "Jobs")]');
+        browser.waitAndClick("//div[contains(@class, 'x-menu')][contains(@class, 'x-menu-floating')][contains(@class, 'x-layer')][contains(@style, 'visibility: visible')]//span[contains(text(), '" + n + "')]");
         browser.waitForVisible(this.selectors.dataSeriesDefinition.dialogBox);
     }
     addDataSeriesByDefinition() {
@@ -389,11 +390,10 @@ class MetricExplorer {
         browser.waitForChart();
     }
     addDataViaToolbar() {
-        browser.click(this.selectors.addData.button);
-        // Click on Jobs
-        browser.waitAndClick(this.selectors.buttonMenu.firstLevel + ' ul li:nth-child(3)');
-        // click on CPU Hours: Per Job
-        browser.waitAndClick(this.selectors.addData.secondLevel + ' ul li:nth-child(2)');
+        var n = 'CPU Hours: Per Job';
+        browser.waitAndClick(this.selectors.addData.button);
+        browser.waitAndClick('//div[@id="metric-explorer-chartoptions-add-data-menu"]//span[contains(text(), "Jobs")]');
+        browser.waitAndClick("//div[contains(@class, 'x-menu')][contains(@class, 'x-menu-floating')][contains(@class, 'x-layer')][contains(@style, 'visibility: visible')]//span[contains(text(), '" + n + "')]");
         this.addDataSeriesByDefinition();
     }
     genericStartingPoint() {
