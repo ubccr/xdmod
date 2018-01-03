@@ -1,7 +1,7 @@
 const loginPage = require('./loginPage.page.js');
 const usagePage = require('./usageTab.page.js');
 const reportGeneratorPage = require('./reportGenerator.page.js');
-
+const expected = global.testHelpers.artifacts.getArtifact('reportGenerator');
 describe('Report Generator', function () {
     // These dates correspond to the dates of the test job data.
     const startDate = '2016-12-20';
@@ -98,7 +98,7 @@ describe('Report Generator', function () {
 
     const centerDirectorReportTemplates = [
         {
-            name: 'Quarterly Report - Center Director',
+            name: expected.centerdirector.report_templates.name,
             chartsPerPage: 1,
             schedule: 'Quarterly',
             deliveryFormat: 'PDF',
@@ -305,7 +305,7 @@ describe('Report Generator', function () {
             expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
         });
         it('No report templates available', function () {
-            expect(reportGeneratorPage.isNewBasedOnEnabled()).to.be.false;
+            expect(reportGeneratorPage.isNewBasedOnEnabled()).to.equal(expected.centerstaff.report_templates_available);
         });
     });
 
@@ -669,25 +669,40 @@ describe('Report Generator', function () {
                 reportGeneratorPage.clickNewBasedOn();
             });
             it(`Select "${template.name}"`, function () {
-                reportGeneratorPage.selectNewBasedOnTemplate(template.name);
+                reportGeneratorPage.selectNewBasedOnTemplate(template.name, expected.centerdirector.center);
             });
             it('Check list of reports', function () {
                 const reportRows = reportGeneratorPage.getMyReportsRows();
-                expect(reportRows.length, 'New report added').to.be.equal(reportIndex + 1);
+                expect(reportRows.length, 'New report added').to.be.equal(reportIndex + expected.centerdirector.report_templates.reports_created);
                 const reportRow = reportRows[reportIndex];
-                expect(reportRow.getName(), 'Name is correct').to.be.equal(template.name + ' 1');
+                expect(reportRow.getName(), 'Name is correct').to.be.equal(expected.centerdirector.report_templates.created_name + ' 1');
                 expect(reportRow.getDerivedFrom(), '"Derived From" is correct').to.be.equal(template.name);
                 expect(reportRow.getSchedule(), 'Schedule is correct').to.be.equal(template.schedule);
-                expect(reportRow.getDeliveryFormat(), 'Delivery format is correct').to.be.equal(template.deliveryFormat);
-                expect(reportRow.getNumberOfCharts(), 'Number of charts of is correct').to.be.equal(template.charts.length);
+                expect(reportRow.getDeliveryFormat(), 'Delivery format is correct').to.be.equal(expected.centerdirector.report_templates.delivery_format);
+                expect(reportRow.getNumberOfCharts(), 'Number of charts of is correct').to.be.equal(expected.centerdirector.report_templates.created_reports_count);
                 expect(reportRow.getNumberOfChartsPerPage(), 'Number of charts per page is correct').to.be.equal(template.chartsPerPage);
             });
             it('Edit report based on template', function () {
                 reportGeneratorPage.getMyReportsRows()[reportIndex].doubleClick();
             });
             it('Check charts', function () {
+                const templateCharts = reportGeneratorPage.getCharts(
+                  'centerdirector',
+                  {
+                      'startDate': startDate,
+                      'endDate': endDate,
+                      'previousMonthStartDate': previousMonthStartDate,
+                      'previousMonthEndDate': previousMonthEndDate,
+                      'previousQuarterStartDate': previousQuarterStartDate,
+                      'previousQuarterEndDate': previousQuarterEndDate,
+                      'previousYearStartDate': previousYearStartDate,
+                      'previousYearEndDate': previousYearEndDate,
+                      'yearToDateStartDate': yearToDateStartDate,
+                      'yearToDateEndDate': yearToDateEndDate
+                  }
+                  );
                 reportGeneratorPage.getIncludedCharts().forEach((chart, i) => {
-                    const templateChart = template.charts[i];
+                    const templateChart = templateCharts[i];
                     expect(chart.getTitle(), 'Chart title').to.be.equal(templateChart.title);
                     expect(chart.getDrillDetails(), 'Drill details').to.be.equal(templateChart.drillDetails);
                     expect(chart.getTimeframeType(), 'Timeframe type').to.be.equal(templateChart.timeframeType);
