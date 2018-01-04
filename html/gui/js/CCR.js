@@ -2019,7 +2019,7 @@ CCR.getInstance = function(instancePath, classPath, config) {
  * @param {Array} right
  * @return {Array}
  */
-CCR.difference = function(left, right) {
+CCR.difference = function (left, right) {
     var notFound = [];
 
     for (var i = 0; i < right.length; i++) {
