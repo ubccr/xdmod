@@ -543,8 +543,11 @@ class pdoAggregator extends aAggregator
                 }
 
                 if ( 0 != count($missing) ) {
-                    $msg = "Table '$tableName' missing required field: (" . implode(", ", $missing) . ")";
-                    $this->logAndThrowException($msg);
+                    $this->logAndThrowException(sprintf(
+                        "Table to be aggregated '%s' missing required fields and conversion has not been specified: (%s)",
+                        $tableName,
+                        implode(", ", $missing)
+                    ));
                 }
             }
 
