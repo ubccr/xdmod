@@ -797,12 +797,12 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                  * @param {Array} right
                  * @returns {Array}
                  */
-                var difference = function(left, right) {
+                var difference = function (left, right) {
                     var notFound = [];
 
                     for (var i = 0; i < right.length; i++) {
                         var key = right[i];
-                        if (-1 === left.indexOf(key)) {
+                        if (left.indexOf(key) === -1) {
                             notFound.push(key);
                         }
                     }
