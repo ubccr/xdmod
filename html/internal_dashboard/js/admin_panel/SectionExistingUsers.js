@@ -790,25 +790,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     );
                     return;
                 }
-                /**
-                 * Find all entries in the right array that are not found in the left.
-                 *
-                 * @param {Array} left
-                 * @param {Array} right
-                 * @returns {Array}
-                 */
-                var difference = function (left, right) {
-                    var notFound = [];
-
-                    for (var i = 0; i < right.length; i++) {
-                        var key = right[i];
-                        if (left.indexOf(key) === -1) {
-                            notFound.push(key);
-                        }
-                    }
-
-                    return notFound;
-                };
 
                 // these have their own variable so that they can be easily
                 // swapped out for the results of a call to the backend to retrieve
@@ -816,7 +797,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 // array of strings represents.
                 var featureAcls = ['dev', 'mgr'];
 
-                var nonFeatureAcls = difference(featureAcls, acls);
+                var nonFeatureAcls = CCR.difference(featureAcls, acls);
 
                 if (nonFeatureAcls.length === 0) {
                     CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
