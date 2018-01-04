@@ -790,15 +790,35 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     );
                     return;
                 }
+                /**
+                 * Find all entries in the right array that are not found in the left.
+                 *
+                 * @param {Array} left
+                 * @param {Array} right
+                 * @returns {Array}
+                 */
+                var difference = function(left, right) {
+                    var notFound = [];
 
-                var hasOnly = function (data, required) {
-                    var count = 0;
-                    for (var i = 0; i < required.length; i++) {
-                        count += data.indexOf(required[i]) !== -1 ? 1 : 0;
+                    for (var i = 0; i < right.length; i++) {
+                        var key = right[i];
+                        if (-1 === left.indexOf(key)) {
+                            notFound.push(key);
+                        }
                     }
-                    return count === data.length;
+
+                    return notFound;
                 };
-                if (hasOnly(acls, ['dev', 'mgr'])) {
+
+                // these have their own variable so that they can be easily
+                // swapped out for the results of a call to the backend to retrieve
+                // the current list of feature acls. And to make it clear what this
+                // array of strings represents.
+                var featureAcls = ['dev', 'mgr'];
+
+                var nonFeatureAcls = difference(featureAcls, acls);
+
+                if (nonFeatureAcls.length === 0) {
                     CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
                     return;
                 }
