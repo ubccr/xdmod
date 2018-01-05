@@ -75,7 +75,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 // and we have an entry for this acl in our center list
                 // and the entry for this acl has centers currently associated
                 // with it.
-                if (requires_center && aclCenterExists && aclHasCenters) {
+                if (requires_center && aclCenterExists) {
                     if (aclHasCenters) {
                         record.set(this.dataIndex, true);
                     }
