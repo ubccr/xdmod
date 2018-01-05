@@ -35,7 +35,7 @@ class TestFiles
     public function __construct($baseDir, $defaultEnvironment = null)
     {
         if (!is_dir($baseDir)) {
-            throw new Exception("Base Dir: $baseDir is not a directory. Unable to continue");
+            throw new \Exception("Base Dir: $baseDir is not a directory. Unable to continue");
         }
         $this->baseDir = $baseDir;
         $this->defaultEnvironment = isset($defaultEnvironment) ? $defaultEnvironment : 'xdmod';
