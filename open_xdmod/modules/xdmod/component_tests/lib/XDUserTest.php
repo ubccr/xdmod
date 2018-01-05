@@ -4,7 +4,7 @@ namespace ComponentTests;
 
 use CCR\DB;
 use CCR\Json;
-use PHPUnit_Framework_Error_Notice;
+use Models\Acl;
 use ReflectionClass;
 use User\Roles\CenterDirectorRole;
 use \XDUser;
@@ -15,42 +15,8 @@ use \Exception;
  * modify the isDeveloper function.
  * @group skip
  **/
-class XDUserTest extends \PHPUnit_Framework_TestCase
+class XDUserTest extends BaseTest
 {
-
-    const TEST_ARTIFACT_OUTPUT_PATH = '/../artifacts/xdmod-test-artifacts/xdmod/acls/output';
-
-    const PUBLIC_USER_NAME = 'Public User';
-    const PUBLIC_ACL_NAME = 'pub';
-    const PUBLIC_USER_EXPECTED = '/public_user.json';
-
-    const CENTER_DIRECTOR_USER_NAME = 'centerdirector';
-    const CENTER_DIRECTOR_ACL_NAME = 'cd';
-    const CENTER_DIRECTOR_EXPECTED = '/center_director.json';
-
-    const CENTER_STAFF_USER_NAME = 'centerstaff';
-    const CENTER_STAFF_ACL_NAME = 'cs';
-    const CENTER_STAFF_EXPECTED = '/center_staff.json';
-
-    const PRINCIPAL_INVESTIGATOR_USER_NAME = 'principal';
-    const PRINCIPAL_INVESTIGATOR_ACL_NAME = 'pi';
-    const PRINCIPAL_INVESTIGATOR_EXPECTED = '/principal.json';
-
-    const NORMAL_USER_USER_NAME = 'normaluser';
-    const NORMAL_USER_ACL = 'usr';
-    const NORMAL_USER_EXPECTED = '/normal_user.json';
-
-    const VALID_SERVICE_PROVIDER_ID = 1;
-    const VALID_SERVICE_PROVIDER_NAME = 'screw';
-
-    const INVALID_ID = -999;
-    const INVALID_ACL_NAME = 'babbaganoush';
-
-    const MIN_USERS = 1;
-    const MAX_USERS = 1000;
-    const DEFAULT_TEST_USER_NAME = "test";
-    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
-
     private static $users = array();
 
     const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
@@ -90,8 +56,8 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         return array(
             array(self::PUBLIC_USER_NAME,'public_user.json'),
             array(self::CENTER_STAFF_USER_NAME , 'center_staff.json'),
-            array(self::CENTER_DIRECTOR_USER_NAME , 'center_director.json'),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal-xduser_primary_role.json'),
+            array(self::CENTER_DIRECTOR_USER_NAME , 'center_director-update_enumAllAvailableRoles.json'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal-update_enumAllAvailableRoles.json'),
             array(self::NORMAL_USER_USER_NAME , 'normal_user.json')
         );
     }
@@ -161,32 +127,34 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals('', $expiration);
     }
 
-    public function testSetOrganizationsValid()
+    /**
+     * @dataProvider provideSetOrganizationsValid
+     * @param array $options
+     */
+    public function testSetOrganizationsValid(array $options)
     {
-        // NOTE: there is no validation of the organization id
+        $this->assertArrayHasKey('username', $options);
+        $this->assertArrayHasKey('acl', $options);
+        $this->assertArrayHasKey('organizations', $options);
 
-        // TACC original is 561 ( IU )
-        $validOrganizationId = 476;
-        $defaultConfig = array('active' => true, 'primary' => true);
+        $username = $options['username'];
+        $organizations = $options['organizations'];
+        $acl = $options['acl'];
+        $defaultConfig= array('primary' => true, 'active' => true);
 
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
+        $user = XDUser::getUserByUserName($username);
 
         // RETRIEVE: the initial organizations
         $originalOrganizations = $user->getOrganizationCollection(self::CENTER_DIRECTOR_ACL_NAME);
         $this->assertTrue(count($originalOrganizations) > 0);
 
-        // SET: the new one in it's place.
-        $user->setOrganizations(
-            array(
-                $validOrganizationId => $defaultConfig
-            ),
-            self::CENTER_DIRECTOR_ACL_NAME
-        );
+        $user->setOrganizations($organizations, $acl);
 
         // RETRIEVE: them again, this should now be the new one.
-        $newOrganizations = $user->getOrganizationCollection(self::CENTER_DIRECTOR_ACL_NAME);
+        $newOrganizations = $user->getOrganizationCollection($acl);
         $this->assertNotEmpty($newOrganizations);
-        $this->assertTrue(in_array($validOrganizationId, $newOrganizations));
+        $diff = array_diff(array_keys($organizations), $newOrganizations);
+        $this->assertEmpty($diff);
 
         $original = array();
         foreach (array_values($originalOrganizations) as $organizationId) {
@@ -194,7 +162,14 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         }
 
         // RESET: the organizations to the original.
-        $user->setOrganizations($original, self::CENTER_DIRECTOR_ACL_NAME);
+        $user->setOrganizations($original, $acl);
+    }
+
+    public function provideSetOrganizationsValid()
+    {
+        return Json::loadFile(
+            $this->getTestFile('set_organization_valid.json', self::DEFAULT_PROJECT, 'input')
+        );
     }
 
     public function testSetInstitution()
@@ -616,7 +591,11 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
         $actual = $user->getActiveRole()->getIdentifier();
 
-        $this->assertEquals(ROLE_ID_MANAGER, $actual);
+        // This is due to the way 'most privileged' works. It prefers acls that
+        // take part in a hierarchy as opposed to those that do not. Since 'usr'
+        // is a part of a hierarchy ( 'mgr' just enables access to certain
+        // features ) then that is what is returned.
+        $this->assertEquals(ROLE_ID_USER, $actual);
     }
 
     /**
@@ -673,17 +652,20 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage User "test" not found
+     * @expectedExceptionMessageRegExp /User "(\w+)" not found/
      */
     public function testRemoveUser()
     {
-        $user = XDUser::getUserByUserName('test');
+        $user = self::getUser(null, 'Test', 'A', 'User', array('usr'));
+        $user->setUserType(self::DEFAULT_USER_TYPE);
+        $user->saveUser();
+        $userName = $user->getUsername();
 
         $this->assertNotNull($user);
 
         $user->removeUser();
 
-        XDUser::getUserByUserName('test');
+        XDUser::getUserByUserName($userName);
     }
 
     /**
@@ -837,7 +819,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRoleIDForValidRole()
     {
-        $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
         $reflection = new ReflectionClass($user);
         $method = $reflection->getMethod('_getRoleID');
         $method->setAccessible(true);
@@ -846,39 +828,154 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($roleId);
     }
 
-    /**
-     * @expectedException PHPUnit_Framework_Error_Notice
-     * @expectedExceptionMessage Undefined offset: 0
-     */
     public function testGetRoleIDForInvalidRole()
     {
-        $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $method = $reflection->getMethod('_getRoleID');
-        $method->setAccessible(true);
-        $method->invoke($user, self::INVALID_ACL_NAME);
+        try {
+            $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+            $reflection = new ReflectionClass($user);
+            $method = $reflection->getMethod('_getRoleID');
+            $method->setAccessible(true);
+            $result = $method->invoke($user, self::INVALID_ACL_NAME);
+            $this->assertNull($result);
+        } catch (Exception $e) {
+            $expectedMessage = 'Undefined offset: 0';
+            $isCorrectClass = $e instanceof \PHPUnit_Framework_Error_Notice;
+            $message = $e->getMessage();
+
+            $this->assertTrue(
+                $isCorrectClass,
+                "Expected an exception of type [\PHPUnit_Framework_Error_Notice]. Received: [" . get_class($e) . "]"
+            );
+            $this->assertNotFalse(
+                strpos($message, $expectedMessage),
+                "Expected the message to contain [$expectedMessage]. Received: [$message]"
+            );
+        }
+    }
+
+    public function testGetRoleWithNull()
+    {
+        try {
+            $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
+            $reflection = new ReflectionClass($user);
+            $method = $reflection->getMethod('_getRoleID');
+            $method->setAccessible(true);
+            $result = $method->invoke($user, null);
+            $this->assertNull($result, "Expected [null]. Received [$result]");
+        } catch (Exception $e) {
+            $expectedMessage = 'Undefined offset: 0';
+            $isCorrectClass = $e instanceof \PHPUnit_Framework_Error_Notice;
+            $message = $e->getMessage();
+
+            $this->assertTrue(
+                $isCorrectClass,
+                "Expected an exception of type [\PHPUnit_Framework_Error_Notice]. Received: [" . get_class($e) . "]"
+            );
+            $this->assertNotFalse(
+                strpos($message, $expectedMessage),
+                "Expected the message to contain [$expectedMessage]. Received: [$message]"
+            );
+        }
+    }
+
+    private function allCombinations(array $data)
+    {
+        $results = array(array());
+        foreach ($data as $element) {
+            foreach ($results as $combination) {
+                array_push($results, array_merge(array($element), $combination));
+            }
+        }
+        return $results;
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Notice
-     * @expectedExceptionMessage Undefined offset: 0
+     * @dataProvider provideEnumAllAvailableRoles
+     *
+     * @param string $userName     the name of the user to be tested.
+     * @param string $expectedFile the name of the file that holds the expected
+     *                             results of the test.
      */
-    public function testGetRoleWithNull()
+    public function testEnumAllAvailableRoles($userName, $expectedFile)
     {
-        $user = XDUSer::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $method = $reflection->getMethod('_getRoleID');
-        $method->setAccessible(true);
-        $method->invoke($user, null);
-    }
-
-    public function testCenterDirectorEnumAllAvailableRoles()
-    {
-        $expected = JSON::loadFile($this->getTestFile('center_director_all_available_roles.json'));
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
+        $expected = JSON::loadFile($this->getTestFile($expectedFile));
+        $user = XDUser::getUserByUserName($userName);
 
         $allAvailableRoles = $user->enumAllAvailableRoles();
         $this->assertEquals($expected, $allAvailableRoles);
+    }
+
+    public function provideEnumAllAvailableRoles()
+    {
+        $results = array(
+            array(self::CENTER_DIRECTOR_USER_NAME, 'center_director_all_available_roles.json'),
+            array(self::CENTER_STAFF_USER_NAME, 'center_staff_all_available_roles.json'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, 'principal_user_all_available_roles.json'),
+            array(self::NORMAL_USER_USER_NAME, 'normal_user_all_available_roles.json')
+        );
+
+        // Retrieve all acls except for 'pub' and convert them to an array of
+        // acl names.
+        $acls = array_map(
+            function (Acl $acl) {
+                return $acl->getName();
+            },
+            array_filter(
+                Acls::getAcls(),
+                function (Acl $acl) {
+                    return $acl->getName() !== self::PUBLIC_ACL_NAME;
+                }
+            )
+        );
+
+        // retrieve all possible combinations of the acls that were retrieved.
+        $allAclCombinations = $this->allCombinations($acls);
+
+        // Here we setup a user per acl combination
+        foreach ($allAclCombinations as $aclCombination) {
+            // replace the hardcoded array on rhs of || with a call to
+            // Acls::getAclsForAclType when it get's merged in.
+            if (empty($aclCombination) || count(array_diff($aclCombination, array('mgr', 'dev'))) < 1 ) {
+                continue;
+            }
+
+            // check if we're in testing in anything but OpenXDMoD, if we are
+            // then make sure to not include XSEDE specific acls
+            $environment = getenv('TEST_ENV');
+            if ($environment === 'xdmod-xsede' &&
+                (in_array('po', $aclCombination) || in_array('cc', $aclCombination) || in_array('acl.custom-query-tab', $aclCombination))
+            ) {
+                continue;
+            }
+
+            $user = self::getUser(null, 'Test', 'Acl', 'User', $aclCombination);
+            $user->setUserType(self::DEFAULT_USER_TYPE);
+
+            // Save 'um so that we get an id + the db records we need.
+            $user->saveUser();
+
+
+            // check to see if the user has either of the 'center' acls
+            $hasCenterDirector = in_array(self::CENTER_DIRECTOR_ACL_NAME, $aclCombination);
+            $hasCenterStaff = in_array(self::CENTER_STAFF_ACL_NAME, $aclCombination);
+
+            // and if so then make sure the correct relations get setup.
+            if ($hasCenterStaff) {
+                $user->setOrganizations(array(self::DEFAULT_CENTER => array('active' => 1, 'primary' => 1)), self::CENTER_STAFF_ACL_NAME);
+            }
+
+            if ($hasCenterDirector){
+                $user->setOrganizations(array(self::DEFAULT_CENTER => array('active' => 1, 'primary' => 1)), self::CENTER_DIRECTOR_ACL_NAME);
+            }
+
+            $userName = $user->getUsername();
+            $fileName = implode('_', $aclCombination) . "_acls.json";
+            $results []= array(
+                $userName,
+                $fileName
+            );
+        }
+        return $results;
     }
 
     /**
@@ -1066,7 +1163,7 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
      */
     public function testEnumCenterStaffSitesWithUnsavedUserFails()
     {
-        $user = new XDUser('test4', null, 'test4@ccr.xdmod.org', 'test', 'a', 'user');
+        $user = self::getUser(null, 'test', 'a', 'User', array('cs', 'usr'), 'cs');
         $user->enumCenterStaffSites();
     }
 
@@ -1362,6 +1459,84 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @dataProvider  provideRoleGetParameters
+     * @param array $roleSet
+     * @param array $centerSet
+     */
+    public function testRoleGetParameters($roleSet, $centerSet)
+    {
+        if (!empty($roleSet) && !empty($centerSet)) {
+            $user = self::getUser(null, 'test', 'a', 'user', $roleSet);
+            $user->setUserType(self::DEFAULT_USER_TYPE);
+            $user->saveUser();
+
+            foreach ($roleSet as $role) {
+                $user->setOrganizations($centerSet, $role);
+            }
+
+            $mostPrivilegedRole = $user->getMostPrivilegedRole();
+
+            $expected = array_keys($centerSet);
+            $roles = implode('_', $roleSet);
+            $centers = implode('_', array_values($expected));
+            $fileName = "$roles-$centers.json";
+            $testFilePath = $this->getTestFile($fileName);
+            $testFileExists = file_exists($testFilePath) && is_readable($testFilePath);
+            if ($testFileExists) {
+                $expected = json_decode(file_get_contents($testFilePath));
+            }
+
+            $parameters = $mostPrivilegedRole->getParameters();
+            $actual = array_values($parameters);
+
+            if (!$testFileExists) {
+                file_put_contents($testFilePath, json_encode($actual));
+            }
+
+            foreach ($actual as $idx => $item) {
+                $this->assertTrue(in_array($item, $expected), "Expected [". json_encode($expected) . "] Received: [" . json_encode($actual) . "]");
+            }
+        }
+    }
+
+    public function provideRoleGetParameters()
+    {
+        $input = JSON::loadFile(
+            $this->getTestFile('role_get_parameters.json', self::DEFAULT_PROJECT, 'input')
+        );
+
+        $this->assertArrayHasKey('centers', $input);
+        $this->assertArrayHasKey('acls', $input);
+
+        $centerPermutations = $this->allCombinations($input['centers']);
+        $rolePermutations = $this->allCombinations($input['acls']);
+
+        $results = array();
+        foreach($rolePermutations as $rolePermutation) {
+            foreach($centerPermutations as $centerPermutation) {
+                $centers = array();
+                if (!empty($centerPermutation)) {
+                    $total = 0;
+                    foreach($centerPermutation as $center) {
+                        switch($total) {
+                            case 0:
+                                $centers[$center] = array('primary' => 1, 'active' => 1);
+                                break;
+                            default:
+                                $centers[$center] = array('primary' => 0, 'active'=> 1);
+                                break;
+                        }
+                        $total += 1;
+                    }
+                }
+                $results []= array($rolePermutation, $centers);
+            }
+        }
+        return $results;
+    }
+
+
     public static function tearDownAfterClass()
     {
         foreach (self::$users as $userName => $user) {
@@ -1410,13 +1585,5 @@ class XDUserTest extends \PHPUnit_Framework_TestCase
             $username = "$username$suffix";
         }
         return $username;
-    }
-
-    public static function getTestFile($fileName)
-    {
-        if (!isset(self::$ENV)){
-            self::setupEnvironment();
-        }
-        return __DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . self::$ENV . DIRECTORY_SEPARATOR . $fileName;
     }
 }

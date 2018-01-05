@@ -361,7 +361,7 @@
         },
         "cd": {
             "display": "Center Director",
-            "type": "feature",
+            "type": "data",
             "hierarchies": [{
                 "level": 400,
                 "filter_override": false
@@ -397,15 +397,11 @@
         },
         "mgr": {
             "display": "Manager",
-            "type": "data",
-            "hierarchies": [{
-                "level": 301,
-                "filter_override": false
-            }],
-            "dimensions": [
-                "person"
-            ],
-            "extends": "default"
+            "type": "feature"
+        },
+        "dev": {
+            "display": "Developer",
+            "type": "feature"
         }
     }
 }

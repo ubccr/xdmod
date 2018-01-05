@@ -38,8 +38,10 @@ class AdminUserSetup extends SetupItem
                 '',
 
                 $lastName,
-                array(ROLE_ID_MANAGER),
-                ROLE_ID_MANAGER
+                array(ROLE_ID_MANAGER, ROLE_ID_USER),
+                ROLE_ID_MANAGER,
+                null,
+                -1
             );
 
             // Internal user.

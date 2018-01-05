@@ -3,6 +3,7 @@
 require_once dirname(__FILE__) . '/../configuration/linker.php';
 
 use CCR\DB;
+use CCR\Log;
 use Models\Acl;
 use Models\Services\Acls;
 use User\aRole;
@@ -12,7 +13,7 @@ use User\aRole;
  *
  * @Class XDUser
  */
-class XDUser implements JsonSerializable
+class XDUser extends ETL\Loggable implements JsonSerializable
 {
 
     private $_pdo;                       // PDO Handle (set in __construct)
@@ -162,6 +163,17 @@ class XDUser implements JsonSerializable
         // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
         // these roles using getPrimaryRole() and getActiveRole()
         $this->_primary_role = $this->_active_role = \User\aRole::factory($primary_role_name);
+        parent::__construct(
+            Log::factory(
+                'xduser.sql',
+                array(
+                    'db' => false,
+                    'mail' => false,
+                    'console' => false,
+                    'file'=> LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
+                )
+            )
+        );
     }//construct
 
     // ---------------------------
@@ -486,11 +498,7 @@ FROM user_acls ua
     FROM acl_hierarchies ah
       JOIN hierarchies h
         ON ah.hierarchy_id = h.hierarchy_id
-      JOIN modules m
-        ON h.module_id = m.module_id
     WHERE h.name = :acl_hierarchy_name
-          AND m.name = :module_name
-          AND m.enabled = TRUE
   ) aclh
     ON aclh.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
@@ -501,8 +509,7 @@ SQL;
             $query,
             array(
                 'user_id' => $uid,
-                ':acl_hierarchy_name' => 'acl_hierarchy',
-                ':module_name' => DEFAULT_MODULE_NAME
+                ':acl_hierarchy_name' => 'acl_hierarchy'
             )
         );
 
@@ -989,7 +996,7 @@ SQL;
 
         $this->_pdo->execute(
             "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
-            array(':id' => $this->_id, ':roleId' => $activeRoleName)
+            array(':id' => $this->_id, ':roleId' => $active_role_id)
         );
 
         $timestampData = $this->_pdo->query(
@@ -1351,78 +1358,126 @@ SQL;
             return array();
 
         }
-
-        // Program Officer
-
-        $role_query_1 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'Program Officer'";
-        $role_query_1_params = array(
+        // NOTE: DO NOT PUT ['] in your comments, you will break the sql.
+        $query = <<<SQL
+SELECT DISTINCT
+  CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
+    THEN CONCAT(a.display, ' - ', o.abbrev)
+  ELSE a.display
+  END                   AS 'description',
+  CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
+    THEN CONCAT(a.name, ':', uagbp.value)
+  ELSE a.name
+  END                   AS 'param_value',
+  mp.acl_id IS NOT NULL AS is_primary,
+  mp.acl_id IS NOT NULL AS is_active
+-- we select from user_acls as this table holds the primary relationship between
+-- users and the acls they have relationships with.
+FROM user_acls ua
+-- acls is joined in strictly to retrieve more detailed display information
+  JOIN acls a
+    ON a.acl_id = ua.acl_id
+-- we left join in user_acl_group_by_parameters as this is where 'center' related
+-- information about a user / acl relation is stored. Left join is specifically
+-- used so that we will always get all records from user_acls regardless of
+-- whether or not there is a corresponding record in
+-- user_acl_group_by_parameters
+  JOIN acl_types at ON a.acl_type_id = at.acl_type_id
+  LEFT JOIN user_acl_group_by_parameters uagbp
+    ON uagbp.user_id = ua.user_id AND
+       uagbp.acl_id = ua.acl_id AND
+       uagbp.group_by_id IN (
+         SELECT gb.group_by_id
+         FROM group_bys gb
+         WHERE gb.name = :group_by_name
+       )
+-- we left join in modw.organization to retrieve more detailed display
+-- information. Its a left join as it will be joined to
+-- user_acl_group_by_parameters which is also a left join.
+  LEFT JOIN modw.organization AS o
+    ON o.id = uagbp.value
+-- This left join retrieves what will be our primary sorting value
+-- acl_hierarchies.level. It is a left join because it is not expected that all
+-- acls will participate in a hierarchy.
+  LEFT JOIN (
+              SELECT
+                ah.acl_id,
+                ah.level
+              FROM acl_hierarchies ah
+                JOIN hierarchies h
+                  ON ah.hierarchy_id = h.hierarchy_id
+              WHERE h.name = :acl_hierarchy_name
+            ) aclh
+    ON aclh.acl_id = ua.acl_id
+-- This big long left join retrieves the most privileged acl for to determine the
+-- is_primary and is_active values. You can reference Acls.php getMostPrivilegedAcl.
+  LEFT JOIN (
+              SELECT DISTINCT
+                a.*,
+                aclp.abbrev organization,
+                aclp.id     organization_id
+              FROM acls a
+                JOIN user_acls ua
+                  ON a.acl_id = ua.acl_id
+                LEFT JOIN (
+                            SELECT
+                              ah.acl_id,
+                              ah.level
+                            FROM acl_hierarchies ah
+                              JOIN hierarchies h
+                                ON ah.hierarchy_id = h.hierarchy_id
+                            WHERE h.name = :acl_hierarchy_name
+                          ) aclh
+                  ON aclh.acl_id = ua.acl_id
+                LEFT JOIN (
+                            SELECT
+                              uagbp.acl_id,
+                              o.abbrev,
+                              o.id
+                            FROM modw.organization o
+                              JOIN user_acl_group_by_parameters uagbp
+                                ON o.id = uagbp.value
+                          ) aclp
+                  ON aclp.acl_id = ua.acl_id
+              WHERE ua.user_id = :user_id
+              ORDER BY COALESCE(aclh.level, 0) DESC
+              LIMIT 1
+            ) mp
+    ON mp.acl_id = ua.acl_id
+-- we only want records that are related to a specific user
+-- the original sql implicitly left out the flag or feature acls
+-- so we need to filter these out here
+WHERE ua.user_id = :user_id AND at.name != 'feature'
+-- In this ordering we use coalesce so that any acl that does not participate
+-- in a hierarchy will be sent to the bottom of the list
+ORDER BY COALESCE(aclh.level, 0) DESC, a.name
+SQL;
+        $params = array(
+            ':acl_hierarchy_name' => 'acl_hierarchy',
             ':user_id' => $this->_id,
+            ':group_by_name' => 'provider'
         );
 
-        // Center Director and Center Staff
+        try {
+            // NOTE: previously we had no DB concept of modules / realms
+            // the values that are provided for :module_name, :realm_name, and
+            // :group_by_name simulate the behavior of the old system.
+            $available_roles = $this->_pdo->query(
+                $query,
+                $params
+            );
 
-        $role_query_2 = "SELECT CONCAT(r.description, ' - ', o.abbrev) AS description, CONCAT(r.abbrev, ':', urp.param_value) AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoleParameters AS urp, moddb.Roles AS r, modw.organization AS o " .
-            "WHERE urp.param_value = o.id AND r.role_id = urp.role_id AND urp.user_id=:user_id AND r.description != 'Campus Champion'" .
-            "ORDER BY r.description, o.abbrev";
-        $role_query_2_params = array(
-            ':user_id' => $this->_id,
-        );
+            return $available_roles;
+        } catch (PDOException $e) {
+            $this->logAndThrowException(
+                "A PDOException was thrown in 'XDUser::enumAllAvailableRoles'",
+                array(
+                    'exception' => $e,
+                    'sql'=> $query
+                )
+            );
 
-        // Campus Champion
-
-        $role_query_3 = "SELECT CONCAT(r.description, ' - ', o.name) AS description, CONCAT(r.abbrev, ':', urp.param_value) AS param_value, urp.is_primary, ur.is_active " .
-            "FROM moddb.UserRoleParameters AS urp, moddb.UserRoles AS ur, moddb.Roles AS r, modw.organization AS o " .
-            "WHERE urp.param_value = o.id AND ur.role_id = r.role_id AND ur.user_id =:ur_user_id AND r.role_id = urp.role_id " .
-            "AND urp.user_id=:urp_user_id AND r.description = 'Campus Champion'" .
-            "ORDER BY r.description, o.abbrev";
-        $role_query_3_params = array(
-            ':ur_user_id' => $this->_id,
-            ':urp_user_id' => $this->_id,
-        );
-
-        // Principal Investigator
-
-        $role_query_4 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'Principal Investigator'";
-        $role_query_4_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        // User
-
-        $role_query_5 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'User'";
-        $role_query_5_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        $role_query_6 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'Public'";
-        $role_query_6_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        $available_roles = array_merge(
-            $this->_pdo->query($role_query_1, $role_query_1_params),
-            $this->_pdo->query($role_query_2, $role_query_2_params),
-            $this->_pdo->query($role_query_3, $role_query_3_params),
-            $this->_pdo->query($role_query_4, $role_query_4_params),
-            $this->_pdo->query($role_query_5, $role_query_5_params),
-            $this->_pdo->query($role_query_6, $role_query_6_params)
-        );
-
-        return $available_roles;
-
+        }
     }//enumAllAvailableRoles
 
     // ---------------------------
@@ -1466,40 +1521,40 @@ SQL;
         $aclName = 'cd';
 
         $aclCleanup = <<<SQL
-DELETE FROM user_acl_group_by_parameters 
-WHERE user_id = :user_id 
+DELETE FROM user_acl_group_by_parameters
+WHERE user_id = :user_id
     AND acl_id IN (
-        SELECT 
-            a.acl_id 
-        FROM acls a 
+        SELECT
+            a.acl_id
+        FROM acls a
         WHERE a.name = :acl_name
     )
     AND group_by_id IN (
-        SELECT 
+        SELECT
             gb.group_by_id
-        FROM group_bys gb 
+        FROM group_bys gb
         WHERE gb.name = 'institution'
     )
 SQL;
 
         $aclInsert = <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)  
-SELECT inc.* 
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
 FROM (
-    SELECT 
+    SELECT
         :user_id AS user_id,
-        a.acl_id AS acl_id, 
+        a.acl_id AS acl_id,
         gb.group_by_id AS group_by_id,
-        :value AS value 
+        :value AS value
     FROM acls a, group_bys gb
     WHERE a.name = :acl_name
     AND gb.name = 'institution'
-) inc 
-LEFT JOIN user_acl_group_by_parameters cur 
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
 ON cur.user_id = inc.user_id
 AND cur.acl_id = inc.acl_id
 AND cur.group_by_id = inc.group_by_id
-AND cur.value = inc.value 
+AND cur.value = inc.value
 WHERE cur.user_acl_parameter_id IS NULL;
 SQL;
 
@@ -1544,10 +1599,10 @@ SQL;
         ));
         $this->_pdo->execute(<<<SQL
         DELETE FROM user_acl_group_by_parameters
-WHERE user_id = :user_id 
+WHERE user_id = :user_id
 AND group_by_id IN (
 SELECT gb.group_by_id
-FROM group_bys gb 
+FROM group_bys gb
 WHERE gb.name = 'institution');
 SQL
             , array(
@@ -1715,19 +1770,16 @@ SQL
             ));
             $this->_pdo->execute(
                 <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value) 
-SELECT inc.* 
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
 FROM (
-   SELECT 
+   SELECT
       :user_id AS user_id,
       :acl_id AS acl_id,
       gb.group_by_id AS group_by_id,
-      :value AS value 
-   FROM group_bys gb 
-   JOIN modules m
-     ON gb.module_id = m.module_id
-   WHERE m.name = :module_name AND
-         gb.name = 'provider'
+      :value AS value
+   FROM group_bys gb
+   WHERE gb.name = 'provider'
 ) inc
 LEFT JOIN user_acl_group_by_parameters cur
   ON cur.user_id = inc.user_id
@@ -1740,8 +1792,7 @@ SQL
                 array(
                     ':user_id' => $this->_id,
                     ':acl_id' => $acl->getAclId(),
-                    ':value' => $organization_id,
-                    ':module_name' => DEFAULT_MODULE_NAME
+                    ':value' => $organization_id
                 )
             );
         }//foreach
@@ -2172,7 +2223,9 @@ SQL;
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
         $roleName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
         $role = aRole::factory($roleName);
-        $role->configure($this);
+
+        $role->configure($this, $mostPrivilegedAcl->getOrganizationId());
+
         return $role;
     }//getMostPrivilegedRole
 
@@ -3253,18 +3306,18 @@ SQL;
         ));
 
         $populateUserAclGroupByParameters = <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value) 
-SELECT inc.* 
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
 FROM (
-   SELECT 
+   SELECT
       :user_id AS user_id,
       :acl_id AS acl_id,
       gb.group_by_id AS group_by_id,
-      :value AS value 
-   FROM group_bys gb 
+      :value AS value
+   FROM group_bys gb
    WHERE gb.name = 'provider'
-) inc 
-LEFT JOIN user_acl_group_by_parameters cur 
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
   ON cur.user_id = inc.user_id
   AND cur.acl_id = inc.acl_id
   AND cur.group_by_id = inc.group_by_id
@@ -3290,7 +3343,7 @@ SQL;
     {
         $ignored = array(
             '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',
-            '_timePasswordUpdated', '_token'
+            '_timePasswordUpdated', '_token', 'logger'
         );
         $reflection = new ReflectionClass($this);
         $results = array();

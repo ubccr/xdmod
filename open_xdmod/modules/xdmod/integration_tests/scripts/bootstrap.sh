@@ -26,6 +26,7 @@ then
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     xdmod-ingestor
     php /root/bin/createusers.php
+    acl-import
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];

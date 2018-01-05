@@ -277,24 +277,18 @@ function processHierarchies(iDatabase $db, $hierarchies)
     INSERT INTO hierarchies(module_id, name, display)
     SELECT inc.module_id, inc.name, inc.display
     FROM
-      (
+    (
         SELECT
           m.module_id AS module_id,
           :name       AS name,
           :display    AS display
         FROM modules m
         WHERE BINARY m.name = BINARY :module_name
-      ) inc
-    WHERE NOT EXISTS(
-        SELECT 1
-        FROM hierarchies cur
-          JOIN modules m
-            ON cur.module_id = m.module_id AND
-            m.name != :module_name
-        WHERE
-          BINARY cur.name = BINARY :name AND
-          BINARY cur.display = BINARY :display
-    );
+    ) inc
+    LEFT JOIN hierarchies cur
+    ON BINARY cur.name    = BINARY inc.name    AND
+       BINARY cur.display = BINARY cur.display
+    WHERE cur.hierarchy_id IS NULL;
 SQL;
     $log->debug($query);
 
@@ -745,7 +739,13 @@ FROM (
 LEFT JOIN acls cur
   ON cur.acl_type_id = inc.acl_type_id AND
      BINARY cur.name = BINARY inc.name
-WHERE cur.acl_id IS NULL;
+WHERE cur.acl_id IS NULL
+ON DUPLICATE KEY UPDATE
+  -- we leave out module_id and name as they are the basis for the
+  -- unique key.
+  acl_type_id = inc.acl_type_id,
+  display = inc.display,
+  enabled = inc.enabled;
 SQL;
         $params = array(
             ':name' => $name,
