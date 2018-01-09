@@ -12,11 +12,11 @@ class MetricExplorer {
                 buttonByName: function (name) {
                     return '//div[@id="metric_explorer"]//table[@class="x-toolbar-ct"]//button[text()="' + name + '"]/ancestor::node()[5]';
                 },
-                addData: function(name) {
-                    return '//div[@id="metric-explorer-chartoptions-add-data-menu"]//span[contains(text(), "' + name+ '")]'
+                addData: function (name) {
+                    return '//div[@id="metric-explorer-chartoptions-add-data-menu"]//span[contains(text(), "' + name + '")]';
                 },
-                addDataGroupBy: function(groupBy) {
-                    return "//div[contains(@class, 'x-menu')][contains(@class, 'x-menu-floating')][contains(@class, 'x-layer')][contains(@style, 'visibility: visible')]//span[contains(text(), '" + groupBy + "')]"
+                addDataGroupBy: function (groupBy) {
+                    return "//div[contains(@class, 'x-menu')][contains(@class, 'x-menu-floating')][contains(@class, 'x-layer')][contains(@style, 'visibility: visible')]//span[contains(text(), '" + groupBy + "')]";
                 }
             },
             container: '#metric_explorer',
