@@ -11,6 +11,12 @@ class MetricExplorer {
             toolbar: {
                 buttonByName: function (name) {
                     return '//div[@id="metric_explorer"]//table[@class="x-toolbar-ct"]//button[text()="' + name + '"]/ancestor::node()[5]';
+                },
+                addData: function(name) {
+                    return '//div[@id="metric-explorer-chartoptions-add-data-menu"]//span[contains(text(), "' + name+ '")]'
+                },
+                addDataGroupBy: function(groupBy) {
+                    return "//div[contains(@class, 'x-menu')][contains(@class, 'x-menu-floating')][contains(@class, 'x-layer')][contains(@style, 'visibility: visible')]//span[contains(text(), '" + groupBy + "')]"
                 }
             },
             container: '#metric_explorer',
@@ -390,10 +396,9 @@ class MetricExplorer {
         browser.waitForChart();
     }
     addDataViaToolbar() {
-        var n = 'CPU Hours: Per Job';
         browser.waitAndClick(this.selectors.addData.button);
-        browser.waitAndClick('//div[@id="metric-explorer-chartoptions-add-data-menu"]//span[contains(text(), "Jobs")]');
-        browser.waitAndClick("//div[contains(@class, 'x-menu')][contains(@class, 'x-menu-floating')][contains(@class, 'x-layer')][contains(@style, 'visibility: visible')]//span[contains(text(), '" + n + "')]");
+        browser.waitAndClick(this.selectors.toolbar.addData('Jobs'));
+        browser.waitAndClick(this.selectors.toolbar.addDataGroupBy('CPU Hours: Per Job'));
         this.addDataSeriesByDefinition();
     }
     genericStartingPoint() {
