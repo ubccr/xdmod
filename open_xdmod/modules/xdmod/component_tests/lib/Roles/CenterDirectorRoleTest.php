@@ -20,13 +20,7 @@ class CenterDirectorRoleTest extends BaseTest
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
-            $environment = getenv('TEST_ENV');
-            $suffix = '/../../../';
-            if ($environment === 'xdmod-xsede') {
-                $suffix = '/../../';
-            }
-
-            $this->testFiles = new TestFiles(__DIR__ . $suffix);
+            $this->testFiles = new TestFiles(__DIR__ . '/../../');
         }
         return $this->testFiles;
     }
