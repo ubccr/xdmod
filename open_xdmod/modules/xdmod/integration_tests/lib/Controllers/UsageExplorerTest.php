@@ -136,7 +136,7 @@ EOF;
     "group_by": "none",
     "statistic": "avg_wallduration_hours",
     "start_date": "2016-01-01",
-    "end_date": "2017-01-01",
+    "end_date": "2016-12-31",
     "operation": "get_charts",
     "timeframe_label": "User Defined",
     "scale": "1",
