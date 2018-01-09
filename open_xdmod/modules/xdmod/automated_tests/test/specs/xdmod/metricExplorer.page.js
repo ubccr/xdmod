@@ -158,7 +158,7 @@ class MetricExplorer {
         browser.waitUntilAnimEnd(this.selectors.catalog.collapseButton);
     }
     setDateRange(start, end) {
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
         browser.waitAndClick(this.selectors.startDate);
         browser.setValue(this.selectors.startDate, start);
         browser.waitAndClick(this.selectors.endDate);
