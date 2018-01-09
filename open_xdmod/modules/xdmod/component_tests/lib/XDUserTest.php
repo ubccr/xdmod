@@ -59,11 +59,11 @@ class XDUserTest extends BaseTest
     public function provideGetUserByUserName()
     {
         return array(
-            array(self::PUBLIC_USER_NAME,'public_user.json'),
-            array(self::CENTER_STAFF_USER_NAME , 'center_staff.json'),
-            array(self::CENTER_DIRECTOR_USER_NAME , 'center_director-update_enumAllAvailableRoles.json'),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal-update_enumAllAvailableRoles.json'),
-            array(self::NORMAL_USER_USER_NAME , 'normal_user.json')
+            array(self::PUBLIC_USER_NAME,'public_user'),
+            array(self::CENTER_STAFF_USER_NAME , 'center_staff'),
+            array(self::CENTER_DIRECTOR_USER_NAME , 'center_director-update_enumAllAvailableRoles'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME , 'principal-update_enumAllAvailableRoles'),
+            array(self::NORMAL_USER_USER_NAME , 'normal_user')
         );
     }
 
@@ -170,16 +170,21 @@ class XDUserTest extends BaseTest
         $user->setOrganizations($original, $acl);
     }
 
+    /**
+     * @return array|object
+     * @throws Exception
+     */
     public function provideSetOrganizationsValid()
     {
         return Json::loadFile(
-            $this->getTestFiles()->getFile('acls', 'center_director_valid_organization_ids')
+            $this->getTestFiles()->getFile('acls', 'set_organization_valid', 'input')
         );
     }
 
     /**
      * @dataProvider provideSetInstitution
      * @param $validInstitutionId
+     * @throws Exception
      */
     public function testSetInstitution($validInstitutionId)
     {
