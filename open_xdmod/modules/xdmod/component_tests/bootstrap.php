@@ -17,7 +17,7 @@ spl_autoload_register(
             }
         }
 
-        if (strpos('TestHarness', $className) !== false) {
+        if (strpos($className, 'TestHarness') !== false) {
             $classPath = implode(
                 DIRECTORY_SEPARATOR,
                 array(
