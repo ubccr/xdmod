@@ -3,6 +3,7 @@
 // Operation: user_admin->update_user
 
 use Models\Services\Acls;
+use Models\Acl;
 
 $params = array('uid' => RESTRICTION_UID);
 
@@ -107,13 +108,27 @@ $params = array('uid' => RESTRICTION_UID);
             \xd_response\presentError("Acl information is required");
         }
 
-        $featureAcls = array('dev', 'mgr');
-        $count = 0;
-        foreach(array_keys($acls) as $acl) {
-            $count += in_array($acl, $featureAcls) ? 1 : 0;
+        // Checking for an acl set that only contains feature acls.
+        // Feature acls are acls that only provide access to an XDMoD feature and
+        // are not used for data access.
+        $aclNames = array();
+        $featureAcls = Acls::getAclsByTypeName('feature');
+        $tabAcls = Acls::getAclsByTypeName('tab');
+        $uiOnlyAcls = array_merge($featureAcls, $tabAcls);
+        if (count($uiOnlyAcls) > 0) {
+            $aclNames = array_reduce(
+                $uiOnlyAcls,
+                function ($carry, Acl $item) {
+                    $carry []= $item->getName();
+                    return $carry;
+                },
+                array()
+            );
         }
-        if ($count === count($acls)) {
-            \xd_response\presentError('Select another acl other than "Manager" or "Developer"');
+        $diff = array_diff(array_keys($acls), $aclNames);
+        $found = !empty($diff);
+        if (!$found) {
+            \xd_response\presentError('Please include a non-feature acl ( i.e. User, PI etc. )');
         }
 
         $user_to_update->setAcls(array());

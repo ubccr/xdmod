@@ -31,9 +31,11 @@ if (isset($_POST['acls'])) {
     // are not used for data access.
     $aclNames = array();
     $featureAcls = Acls::getAclsByTypeName('feature');
-    if (count($featureAcls) > 0) {
+    $tabAcls = Acls::getAclsByTypeName('tab');
+    $uiOnlyAcls = array_merge($featureAcls, $tabAcls);
+    if (count($uiOnlyAcls) > 0) {
         $aclNames = array_reduce(
-            $featureAcls,
+            $uiOnlyAcls,
             function ($carry, Acl $item) {
                 $carry []= $item->getName();
                 return $carry;
@@ -41,13 +43,8 @@ if (isset($_POST['acls'])) {
             array()
         );
     }
-    $found = false;
-    foreach(array_keys($acls) as $acl) {
-        if (!in_array($acl, $aclNames)) {
-            $found = true;
-            break;
-        }
-    }
+    $diff = array_diff(array_keys($acls), $aclNames);
+    $found = !empty($diff);
     if (!$found) {
         \xd_response\presentError('Please include a non-feature acl ( i.e. User, PI etc. )');
     }
