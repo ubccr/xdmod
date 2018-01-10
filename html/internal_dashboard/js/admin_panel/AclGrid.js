@@ -289,7 +289,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             ]
         });
 
-        this.grid = new Ext.grid.GridPanel({
+        var grid = new Ext.grid.GridPanel({
             title: 'Select the centers associated with the <span style="color: #00F;">' + this.acl + '</span> acl.',
             store: this.store,
             autoScroll: true,
@@ -320,7 +320,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             }
         });
 
-        this.grid.store.on('load', function (store, records) {
+        grid.store.on('load', function (store, records) {
             for (var i = 0; i < records.length; i++) {
                 var record = records[i];
                 var found = self.selected.indexOf(record.data.id) >= 0;
@@ -335,7 +335,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             header: false,
             showSeparator: false,
             items: [
-                this.grid
+                grid
             ]
         });
 
