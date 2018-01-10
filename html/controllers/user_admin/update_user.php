@@ -148,7 +148,7 @@ $params = array('uid' => RESTRICTION_UID);
          $user_to_update->disassociateWithInstitution();
       }
       else {
-         $user_to_update->setInstitution($_POST['institution'], array_key_exists(ROLE_ID_CAMPUS_CHAMPION, $role_config));
+         $user_to_update->setInstitution($_POST['institution'], array_key_exists(ROLE_ID_CAMPUS_CHAMPION, $acls));
       }
 
    }//if (isset($_POST['institution']))
