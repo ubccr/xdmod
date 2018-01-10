@@ -126,28 +126,4 @@ class CenterDirectorRoleTest extends BaseTest
             $this->getTestFiles()->getFile('acls', 'center_director_get_identifier')
         );
     }
-
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage No user ID has been assigned to this role.  You must call configure() before calling getCorrespondingUserID()
-     */
-    public function testEnumStaffMembersNoUser()
-    {
-        $cd = new CenterDirectorRole();
-        $cd->enumCenterStaffMembers();
-    }
-
-    public function testEnumStaffMembers()
-    {
-        $expected = Json::loadFile(
-            $this->getTestFiles()->getFile('acls', 'center_director_staff_members')
-        );
-
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-        $cd = new CenterDirectorRole();
-        $cd->configure($user);
-        $actual = $cd->enumCenterStaffMembers();
-        $this->assertEquals(count($expected), count($actual));
-    }
 }

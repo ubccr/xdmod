@@ -79,37 +79,6 @@ class CenterDirectorRole extends \User\AuthenticatedRole
 
     // --------------------------------------------------
 
-    public function enumCenterStaffMembers()
-    {
-
-        $pdo = DB::factory('database');
-
-        $organization_id = $this->getActiveCenter();
-
-        // Locate users having a 'Center Staff' role and belong to the same (active) center as that
-        // of the director.
-
-        $query = "SELECT u.id, CONCAT(u.last_name, ', ', u.first_name) as name " .
-                 "FROM Users AS u,  Roles AS r, UserRoleParameters AS urp " .
-                 "WHERE u.id = urp.user_id AND r.role_id = urp.role_id AND r.abbrev='cs' " .
-                 "AND urp.param_name = 'provider' AND urp.param_value=:param_value";
-
-        $staffMembers = $pdo->query($query, array(
-            ':param_value' => $organization_id,
-        ));
-
-        $centerStaffMembers = array();
-
-        foreach($staffMembers as $member) {
-
-            $centerStaffMembers[] = array('id' => $member['id'], 'name' => $member['name']);
-
-        }//foreach
-
-        return $centerStaffMembers;
-
-    }//enumCenterStaffMembers
-
     // --------------------------------------------------
 
     public function upgradeStaffMember($member)
