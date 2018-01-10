@@ -65,7 +65,6 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 var record = this.grid.store.getAt(
                     this.grid.getView().findRowIndex(node)
                 );
-                // if this record requires a center AND
 
                 var requires_center = record.data.requires_center;
                 var aclCenterExists = self.aclCenters.hasOwnProperty(record.data.acl_id);
