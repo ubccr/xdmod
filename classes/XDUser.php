@@ -1450,7 +1450,7 @@ FROM user_acls ua
 -- we only want records that are related to a specific user
 -- the original sql implicitly left out the flag or feature acls
 -- so we need to filter these out here
-WHERE ua.user_id = :user_id AND at.name != 'feature'
+WHERE ua.user_id = :user_id AND at.name = 'data'
 -- In this ordering we use coalesce so that any acl that does not participate
 -- in a hierarchy will be sent to the bottom of the list
 ORDER BY COALESCE(aclh.level, 0) DESC, a.name
