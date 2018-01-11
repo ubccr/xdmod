@@ -579,7 +579,7 @@ SQL;
     public function isDeveloper()
     {
 
-        return (in_array(ROLE_ID_DEVELOPER, $this->_acls));
+        return (array_key_exists(ROLE_ID_DEVELOPER, $this->_acls));
 
     }//isDeveloper
 
