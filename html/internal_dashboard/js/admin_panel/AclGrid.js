@@ -27,11 +27,11 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             }
         };
 
-        this.updateDirtyState = function() {
+        this.updateDirtyState = function () {
             var dirty = false;
 
             var records = self.grid.store.data.items;
-            for ( var i = 0; i < records.length; i++) {
+            for (var i = 0; i < records.length; i++) {
                 var record = records[i];
                 dirty = record.modified !== null && record.get('include') !== record.modified['include'];
                 if (dirty) {
