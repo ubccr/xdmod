@@ -652,7 +652,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 ]
             },
             listeners: {
-                'activate': function() {
+                activate: function () {
                     newUserRoleGrid.reset();
                 }
             }
