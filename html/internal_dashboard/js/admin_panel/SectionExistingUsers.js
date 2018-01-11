@@ -605,7 +605,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var minEmailLength = XDMoD.constants.minEmailLength;
         var maxEmailLength = XDMoD.constants.maxEmailLength;
         var existingUserEmailField = new Ext.form.TextField({
-            id: 'existingUserEmail',
             fieldLabel: 'E-Mail Address',
             emptyText: minEmailLength + ' min, ' + maxEmailLength + ' max',
             msgTarget: 'under',
