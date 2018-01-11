@@ -27,6 +27,21 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             }
         };
 
+        this.updateDirtyState = function() {
+            var dirty = false;
+
+            var records = self.grid.store.data.items;
+            for ( var i = 0; i < records.length; i++) {
+                var record = records[i];
+                dirty = record.modified !== null && record.get('include') !== record.modified['include'];
+                if (dirty) {
+                    break;
+                }
+            }
+
+            self.setDirtyState(dirty);
+        };
+
         this.ccInclude = new Ext.grid.CheckColumn({
             header: 'Include',
             dataIndex: 'include',
@@ -66,29 +81,14 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     this.grid.getView().findRowIndex(node)
                 );
 
-                var requires_center = record.data.requires_center;
-                var aclCenterExists = self.aclCenters.hasOwnProperty(record.data.acl_id);
-                var aclHasCenters = aclCenterExists && self.aclCenters[record.data.acl_id].length > 0;
-
-                // If this acl requires center information
-                // and we have an entry for this acl in our center list
-                // and the entry for this acl has centers currently associated
-                // with it.
-                if (requires_center && aclCenterExists) {
-                    if (aclHasCenters) {
-                        record.set(this.dataIndex, true);
-                    }
+                if (record.data.requires_center) {
+                    // let the center selector handle things.
+                    XDMoD.Admin.AclGrid.prepCenterMenu(self.id, record.data.acl, record.data.acl_id, self.id);
                 } else {
                     // provide the default behavior of clicking on a checkbox
                     // flipping the state.
                     record.set(this.dataIndex, !record.data[this.dataIndex]);
-                }
-
-                var isDirty = record.modified && record.get(this.dataIndex) !== record.modified[this.dataIndex];
-                self.setDirtyState(isDirty);
-
-                if (record.data.requires_center === true) {
-                    XDMoD.Admin.AclGrid.prepCenterMenu(self.id, record.data.acl, record.data.acl_id, self.id);
+                    self.updateDirtyState();
                 }
             }, // onMouseDown
 
