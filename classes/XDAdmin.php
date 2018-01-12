@@ -109,14 +109,11 @@ class XDAdmin
     public function enumerateAcls()
     {
         $sql = <<<SQL
-SELECT a.*,
-  req.acl_id IS NOT NULL AS requires_center
-FROM acls a LEFT JOIN
-  (
-    SELECT a2.acl_id 
-    FROM acls a2 WHERE a2.name IN ('cs','cd')
-  ) req ON req.acl_id = a.acl_id
-  ORDER BY a.display;
+SELECT
+a.*,
+  CASE WHEN a.name IN ('cd', 'cs') THEN 1 ELSE 0 END requires_center
+FROM acls a
+ORDER BY a.display;
 SQL;
 
         return $this->moddb->query($sql);
