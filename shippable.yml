@@ -19,10 +19,11 @@ build:
         - composer install --no-progress
         - cp ~/assets/secrets open_xdmod/modules/xdmod/integration_tests/.secrets.json
         - ./open_xdmod/modules/xdmod/tests/artifacts/update-artifacts.sh
-        - REG_TEST_USER_ROLE=user ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-user.xml
-        - REG_TEST_USER_ROLE=principalinvestigator ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-principalinvestigator.xml
-        - REG_TEST_USER_ROLE=centerdirector ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-centerdirector.xml
-        - REG_TEST_USER_ROLE=centerstaff ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-centerstaff.xml
+        - REG_TEST_USER_ROLE=user ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-user.xml
+        - REG_TEST_USER_ROLE=principalinvestigator ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-principalinvestigator.xml
+        - REG_TEST_USER_ROLE=centerdirector ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-centerdirector.xml
+        - REG_TEST_USER_ROLE=centerstaff ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-centerstaff.xml
+        - ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-public.xml
         - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-integration.xml
         - cp ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
@@ -31,7 +32,6 @@ build:
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/samlSetup.sh
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults --federated
-        - ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-public.xml
 
     on_failure:
         - cat /var/log/xdmod/*
