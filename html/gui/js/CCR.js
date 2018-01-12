@@ -2013,23 +2013,23 @@ CCR.getInstance = function(instancePath, classPath, config) {
 };
 
 /**
- * Find all entries in the right array that are not found in the left.
+ * Find all entries in the right array that are also in the left.
  *
  * @param {Array} left
  * @param {Array} right
  * @return {Array}
  */
-CCR.difference = function (left, right) {
-    var notFound = [];
+CCR.intersect = function (left, right) {
+    var found = [];
 
     for (var i = 0; i < right.length; i++) {
         var key = right[i];
-        if (left.indexOf(key) === -1) {
-            notFound.push(key);
+        if (left.indexOf(key) !== -1) {
+            found.push(key);
         }
     }
 
-    return notFound;
+    return found;
 };
 
 

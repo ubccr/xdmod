@@ -790,15 +790,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     return;
                 }
 
-                // these have their own variable so that they can be easily
-                // swapped out for the results of a call to the backend to retrieve
-                // the current list of feature acls. And to make it clear what this
-                // array of strings represents.
-                var featureAcls = ['dev', 'mgr'];
+                var dataAcls = Object.values(CCR.xdmod.UserTypes);
 
-                var nonFeatureAcls = CCR.difference(featureAcls, acls);
+                var intersection = CCR.intersect(dataAcls, acls);
 
-                if (nonFeatureAcls.length === 0) {
+                if (intersection.length === 0) {
                     CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
                     return;
                 }
