@@ -141,7 +141,9 @@
     }, {
         "name": "organization",
         "definition_file": "hpcdb-modw/organization.json",
-        "description": "organization records"
+        "description": "organization records",
+        "#": "disable to allow order_id to be set",
+        "optimize_query": false
     }, {
         "name": "node-count",
         "definition_file": "hpcdb-modw/node-count.json",
@@ -149,11 +151,15 @@
     }, {
         "name": "pi-person",
         "definition_file": "hpcdb-modw/piperson.json",
-        "description": "PI Person records"
+        "description": "PI Person records",
+        "#": "disable to allow order_id to be set",
+        "optimize_query": false
     }, {
         "name": "person",
         "definition_file": "hpcdb-modw/person.json",
-        "description": "person records"
+        "description": "person records",
+        "#": "disable to allow order_id to be set",
+        "optimize_query": false
     }, {
         "name": "people-under-pi",
         "definition_file": "hpcdb-modw/people-under-pi.json",
