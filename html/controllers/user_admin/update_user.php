@@ -101,59 +101,63 @@ $params = array('uid' => RESTRICTION_UID);
 
 
 // ===========================================
-    if (isset($_POST['acls'])) {
+    // Make sure that we're not attempting to enable / disable the user before
+    // processing 'acls'
+    if (!isset($_POST['is_active'])) {
+        if (isset($_POST['acls'])) {
 
-        $acls = json_decode($_POST['acls'], true);
-        if (count($acls) < 1) {
-            \xd_response\presentError("Acl information is required");
-        }
-
-        // Checking for an acl set that only contains feature acls.
-        // Feature acls are acls that only provide access to an XDMoD feature and
-        // are not used for data access.
-        $aclNames = array();
-        $featureAcls = Acls::getAclsByTypeName('feature');
-        $tabAcls = Acls::getAclsByTypeName('tab');
-        $uiOnlyAcls = array_merge($featureAcls, $tabAcls);
-        if (count($uiOnlyAcls) > 0) {
-            $aclNames = array_reduce(
-                $uiOnlyAcls,
-                function ($carry, Acl $item) {
-                    $carry []= $item->getName();
-                    return $carry;
-                },
-                array()
-            );
-        }
-        $diff = array_diff(array_keys($acls), $aclNames);
-        $found = !empty($diff);
-        if (!$found) {
-            \xd_response\presentError('Please include a non-feature acl ( i.e. User, PI etc. )');
-        }
-
-        $user_to_update->setAcls(array());
-        foreach ($acls as $aclName => $centers) {
-            $acl = Acls::getAclByName($aclName);
-            $user_to_update->addAcl($acl);
-            // Make sure to set organizations if there are any.
-            if (count($centers) > 0) {
-                $centerConfig = array();
-                $count = 0;
-                foreach($centers as $center) {
-                    if ($count === 0 ) {
-                        $config = array('primary' => 1, 'active' => 1);
-                    } else {
-                        $config = array('primary' => 0, 'active' => 0);
-                    }
-                    $centerConfig[$center] = $config;
-                    $count += 1;
-                }
-                $user_to_update->setOrganizations($centerConfig, $aclName);
+            $acls = json_decode($_POST['acls'], true);
+            if (count($acls) < 1) {
+                \xd_response\presentError("Acl information is required");
             }
-        }
-    } else {
-        \xd_response\presentError("Acl information is required");
-    } // if (isset($_POST['acls'])) {
+
+            // Checking for an acl set that only contains feature acls.
+            // Feature acls are acls that only provide access to an XDMoD feature and
+            // are not used for data access.
+            $aclNames = array();
+            $featureAcls = Acls::getAclsByTypeName('feature');
+            $tabAcls = Acls::getAclsByTypeName('tab');
+            $uiOnlyAcls = array_merge($featureAcls, $tabAcls);
+            if (count($uiOnlyAcls) > 0) {
+                $aclNames = array_reduce(
+                    $uiOnlyAcls,
+                    function ($carry, Acl $item) {
+                        $carry []= $item->getName();
+                        return $carry;
+                    },
+                    array()
+                );
+            }
+            $diff = array_diff(array_keys($acls), $aclNames);
+            $found = !empty($diff);
+            if (!$found) {
+                \xd_response\presentError('Please include a non-feature acl ( i.e. User, PI etc. )');
+            }
+
+            $user_to_update->setAcls(array());
+            foreach ($acls as $aclName => $centers) {
+                $acl = Acls::getAclByName($aclName);
+                $user_to_update->addAcl($acl);
+                // Make sure to set organizations if there are any.
+                if (count($centers) > 0) {
+                    $centerConfig = array();
+                    $count = 0;
+                    foreach($centers as $center) {
+                        if ($count === 0 ) {
+                            $config = array('primary' => 1, 'active' => 1);
+                        } else {
+                            $config = array('primary' => 0, 'active' => 0);
+                        }
+                        $centerConfig[$center] = $config;
+                        $count += 1;
+                    }
+                    $user_to_update->setOrganizations($centerConfig, $aclName);
+                }
+            }
+        } else {
+            \xd_response\presentError("Acl information is required");
+        } // if (isset($_POST['acls'])) {
+    }
 
    // -----------------------------
        

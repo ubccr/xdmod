@@ -562,7 +562,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         userManagementAction({
                             operation: 'update_user',
                             uid: selected_user_id,
-                            email_address: document.getElementById('existingUserEmail').value,
+                            email_address: existingUserEmailField.getValue(),
                             is_active: (action == 'Enable') ? 'y' : 'n'
                         });
                     }
