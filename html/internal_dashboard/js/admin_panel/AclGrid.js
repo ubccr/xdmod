@@ -97,9 +97,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
              */
             reset: function () {
                 this.grid.store.each(function (record) {
-                    if (record.get(this.dataIndex) !== false) {
-                        record.set(this.dataIndex, false);
-                    }
+                    record.set(this.dataIndex, false);
                 }, this);
             },
 
