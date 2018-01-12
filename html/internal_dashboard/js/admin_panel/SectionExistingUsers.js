@@ -559,12 +559,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 buttons: Ext.Msg.YESNO,
                 fn: function(resp) {
                     if (resp == 'yes'){
+                        /* eslint-disable no-use-before-define */
                         userManagementAction({
                             operation: 'update_user',
                             uid: selected_user_id,
                             email_address: existingUserEmailField.getValue(),
                             is_active: (action == 'Enable') ? 'y' : 'n'
                         });
+                        /* eslint-enable no-use-before-define */
                     }
                 }
             });
