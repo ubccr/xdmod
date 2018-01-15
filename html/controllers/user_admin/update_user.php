@@ -167,8 +167,8 @@ $params = array('uid' => RESTRICTION_UID);
          $user_to_update->disassociateWithInstitution();
       }
       else {
-        $isPrimary = isset($acls) ? array_key_exists(ROLE_ID_CAMPUS_CHAMPION, $acls) : false;
-           $user_to_update->setInstitution($_POST['institution'], $isPrimary);
+            $isPrimary = isset($acls) ? array_key_exists(ROLE_ID_CAMPUS_CHAMPION, $acls) : false;
+            $user_to_update->setInstitution($_POST['institution'], $isPrimary);
       }
 
    }//if (isset($_POST['institution']))
