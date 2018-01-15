@@ -1097,14 +1097,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     if (json.user_information.is_active == 'active') {
                         Ext.getCmp('disableAccountMenuItem').show();
                         Ext.getCmp('enableAccountMenuItem').hide();
-                        Ext.getCmp('txtAccountStatus').removeClass('admin_panel_user_user_status_disabled');
-                        Ext.getCmp('txtAccountStatus').addClass('admin_panel_user_user_status_active');
+                        txtAccountStatus.classList.remove('admin_panel_user_user_status_disabled');
+                        txtAccountStatus.classList.add('admin_panel_user_user_status_active');
                     }
                     else {
                         Ext.getCmp('enableAccountMenuItem').show();
                         Ext.getCmp('disableAccountMenuItem').hide();
-                        Ext.getCmp('txtAccountStatus').removeClass('admin_panel_user_user_status_active');
-                        Ext.getCmp('txtAccountStatus').addClass('admin_panel_user_user_status_disabled');
+                        txtAccountStatus.classList.remove('admin_panel_user_user_status_active');
+                        txtAccountStatus.classList.add('admin_panel_user_user_status_disabled');
                     }
 
                     if (reset_controls) {
