@@ -2,7 +2,21 @@
 
 set -e
 
-PHPUNITARGS="$@"
+REGUSER=""
+PI=""
+CD=""
+CS=""
+PUB=""
+
+if [ "$1" = "--junit-output-dir" ];
+then
+    REGUSER="--log-junit $2/xdmod-regression-user.xml"
+    PI="--log-junit $2/xdmod-regression-principalinvestigator.xml"
+    CD="--log-junit $2/xdmod-regression-centerdirector.xml"
+    CS="--log-junit $2/xdmod-regression-centerstaff.xml"
+    PUB="--log-junit $2/xdmod-regression-public.xml"
+fi
+
 cd $(dirname $0)
 
 if [ ! -e ../integration_tests/.secrets.json ];
@@ -20,4 +34,8 @@ if [ ! -x "$phpunit" ]; then
     exit 127
 fi
 
-$phpunit ${PHPUNITARGS} .
+REG_TEST_USER_ROLE=usr $phpunit $REGUSER .
+REG_TEST_USER_ROLE=pi $phpunit $PI .
+REG_TEST_USER_ROLE=cd $phpunit $CD .
+REG_TEST_USER_ROLE=cs $phpunit $CS .
+$phpunit $PUB .
