@@ -165,7 +165,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 if (file_exists($expectedFile) ) {
                     $testCase[2] = file_get_contents($expectedFile);
                 }
-                $testData[$testName] = $testCase;
+                $testData[$testName. '-' . $k . '-' . (empty($envUserrole) ? 'public' : $envUserrole)] = $testCase;
             }
         }
         if(empty($testData)){
