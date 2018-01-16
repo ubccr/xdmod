@@ -7,9 +7,9 @@
 var fs = require('fs');
 var path = require('path');
 var dir = __dirname;
-var rolesFile = path.join(dir, '/etc/xdmod/roles.json');
-var datawarehouseFile = path.join(dir, '/etc/xdmod/datawarehouse.json');
-var outputDir = path.join(dir, '../artifacts/input');
+var rolesFile = '/etc/xdmod/roles.json';
+var datawarehouseFile = '/etc/xdmod/datawarehouse.json';
+var outputDir = path.join(dir, '../../../tests/artifacts/xdmod-test-artifacts/xdmod/regression/current/input');
 if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
 }
@@ -19,8 +19,12 @@ var referenceRequest = {
     realm: 'Accounts',
     group_by: 'none',
     statistic: 'open_account_count',
-    start_date: '2016-05-20',
-    end_date: '2017-05-01',
+    /*
+     * This date specifically only tests the date range of the reference data.
+     * To use this on another dataset be sure to change your date range.
+     */
+    start_date: '2016-12-22',
+    end_date: '2017-01-01',
     timeframe_label: '2016',
     scale: '1',
     aggregation_unit: 'Auto',
