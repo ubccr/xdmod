@@ -34,8 +34,9 @@ if [ ! -x "$phpunit" ]; then
     exit 127
 fi
 
-REG_TEST_USER_ROLE=usr $phpunit $REGUSER .
-REG_TEST_USER_ROLE=pi $phpunit $PI .
-REG_TEST_USER_ROLE=cd $phpunit $CD .
-REG_TEST_USER_ROLE=cs $phpunit $CS .
-$phpunit $PUB .
+REG_TEST_USER_ROLE=usr $phpunit $REGUSER . &
+REG_TEST_USER_ROLE=pi $phpunit $PI . &
+REG_TEST_USER_ROLE=cd $phpunit $CD . &
+REG_TEST_USER_ROLE=cs $phpunit $CS . &
+$phpunit $PUB . &
+wait

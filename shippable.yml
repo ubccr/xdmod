@@ -20,7 +20,6 @@ build:
         - cp ~/assets/secrets open_xdmod/modules/xdmod/integration_tests/.secrets.json
         - ./open_xdmod/modules/xdmod/tests/artifacts/update-artifacts.sh
         - ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
-        - ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-regression-public.xml
         - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-integration.xml
         - cp ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
