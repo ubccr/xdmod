@@ -16,7 +16,7 @@ lappend resources [list robertson Robertson 400 4000]
 # Helper functions
 
 proc selectMenuOption { option } {
-	
+
 	expect {
 		-re "\nSelect an option .*: "
 	}
@@ -88,22 +88,22 @@ answerQuestion {DB Admin Username} root
 providePassword {DB Admin Password:} {}
 confirmFileWrite yes
 enterToContinue
-set timeout 120
+set timeout 240
 provideInput {Do you want to see the output*} {no}
 provideInput {Do you want to see the output*} {no}
 provideInput {Do you want to see the output*} {no}
 set timeout 10
 
 selectMenuOption 3
-provideInput {Organization Name:} Screwdriver 
-provideInput {Organization Abbreviation:} screw 
+provideInput {Organization Name:} Screwdriver
+provideInput {Organization Abbreviation:} screw
 confirmFileWrite yes
 enterToContinue
 
 selectMenuOption 4
 foreach resource $resources {
 	selectMenuOption 1
-	provideInput {Resource Name:} [lindex $resource 0]	
+	provideInput {Resource Name:} [lindex $resource 0]
 	provideInput {Formal Name:} [lindex $resource 1]
 	provideInput {How many nodes does this resource have?} [lindex $resource 2]
 	provideInput {How many total processors (cpu cores) does this resource have?} [lindex $resource 3]
@@ -133,3 +133,6 @@ confirmFileWrite yes
 enterToContinue
 
 selectMenuOption q
+
+lassign [wait] pid spawnid os_error_flag value
+exit $value

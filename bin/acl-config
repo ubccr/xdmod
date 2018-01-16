@@ -33,7 +33,7 @@ try {
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
 
     foreach ($options as $key => $value) {
-        switch($key) {
+        switch ($key) {
             case 't':
             case 'dryrun':
                 $dryRun = true;
@@ -106,7 +106,7 @@ function main()
     $blacklist = array('default');
 
     // the sections of roles.json that we want to process.
-    $sections = array('permitted_modules', 'query_descripters', 'display', 'type');
+    $sections = array('permitted_modules', 'query_descripters', 'display', 'type', 'hierarchies');
 
     // the ultimate destination for the parsed information from
     // roles/datawarehouse
@@ -116,24 +116,69 @@ function main()
 
     // Module Retrieval
     $modules = $config['modules'];
-    if (null !== $modules['WARNING']) {
-        unset($modules['WARNING']);
+
+    // Remove the warning to users that this files contents are automatically
+    // generated and that they modify it at their own risk.
+    if (isset($modules['#'])) {
+        unset($modules['#']);
     }
+    $moduleHierarchies = array();
 
-    // Hierarchy retrieval
-    $hierarchies = $config->getModuleSection('hierarchies');
+    // Role Retrieval
+    $allRoles = Roles::getRoleNames($blacklist);
 
-    // Acl Retrieval
-    $roles = Roles::getRoleNames($blacklist);
-    $rolesData = $config->getModuleSection('roles');
+    // Retrieve the annotated combined config information for each section.
+    $rawHierarchies = $config->getModuleSection('hierarchies');
+    $rawRoles = $config->getModuleSection('roles');
+    $rawRealms = $config->getModuleSection('datawarehouse');
+
 
     foreach ($modules as $module => $moduleData) {
-        if (isset($rolesData[$module])) {
-            $moduleRoleData = $rolesData[$module]['roles'];
-            foreach ($roles as $role) {
-                $roleData = isset($moduleRoleData[$role]) ? $moduleRoleData[$role] : array();
+
+        // Setup the metadata to be used in the filtering.
+        if ($module !== DEFAULT_MODULE_NAME) {
+            $metaData = array(
+                'modules' => array(
+                    DEFAULT_MODULE_NAME,
+                    $module
+                )
+            );
+        } else {
+            $metaData = array(
+                'modules' => array(
+                    DEFAULT_MODULE_NAME,
+                )
+            );
+        }
+
+        // Retrieve the section information filtered by module.
+        $hierarchies = $config->filterByMetaData(
+            $rawHierarchies,
+            $metaData
+        );
+
+        $roles = $config->filterByMetaData(
+            $rawRoles,
+            $metaData
+        );
+
+        $realms = $config->filterByMetaData(
+            $rawRealms,
+            $metaData
+        );
+
+        // Process the hierarchies provided by this module, if any.
+        if (count($hierarchies) > 0 && isset($hierarchies['hierarchies'])) {
+            $moduleHierarchies[$module] = $hierarchies['hierarchies'];
+        }
+
+        // Process the roles provided by this module, if any.
+        if (count($roles) > 0 && isset($roles['roles'])) {
+            $moduleRoles = $roles['roles'];
+            foreach ($allRoles as $role) {
+                $roleData = isset($moduleRoles[$role]) ? $moduleRoles[$role] : array();
                 if (array_key_exists('extends', $roleData)) {
-                    $roleData = array_merge($moduleRoleData[$roleData['extends']], $roleData);
+                    $roleData = array_merge_recursive($moduleRoles[$roleData['extends']], $roleData);
                 }
                 foreach ($sections as $section) {
                     if (isset($roleData[$section])) {
@@ -141,21 +186,14 @@ function main()
                     }
                 }
             }
-        } else {
-            $log->notice("No role information for $module skipping...");
         }
-    }
 
-    // Datawarehouse Retrieval
-    $datawarehouseSource = $config->getModuleSection('datawarehouse');
-
-    foreach ($modules as $module => $moduleData) {
-        if (null !== $datawarehouseSource[$module]['realms']) {
-            $dwSource= $datawarehouseSource[$module]['realms'];
-            foreach ($dwSource as $realmDisplay => $dwData) {
-                $groupBys = null !== $dwData['group_bys'] ? $dwData['group_bys'] : null;
-                $statistics = null !== $dwData['statistics'] ? $dwData['statistics'] : null;
-                $results[$module]['realms'][$realmDisplay] = array(
+        // Process the realms provided by this module, if any.
+        if (count($realms) > 0 && isset($realms['realms'])) {
+            foreach ($realms['realms'] as $realm => $data) {
+                $groupBys = isset($data['group_bys']) ? $data['group_bys'] : null;
+                $statistics = isset($data['statistics']) ? $data['statistics'] : null;
+                $results[$module]['realms'][$realm] = array(
                     'group_bys' => $groupBys,
                     'statistics' => $statistics
                 );
@@ -163,27 +201,47 @@ function main()
         }
     }
 
-    // We want to process 'xdmod' first.
-    array_multisort($results, SORT_ASC);
-
     $db = null;
 
-    if (!$dryRun) {
-        $log->notice("*** Conducting Database Verification...");
-        if (!verifyDatabase()) {
-            $log->err("Unable to connect to the database, please check the following: \n\t - settings for 'database' in portal_settings.ini are correct.\n\t - the database identified by the 'database' section of portal_settings.ini is running, accepting connections, and that the user specified has connection privileges.");
-            exit(1);
-        }
-        $log->notice("*** Database Verification Passed!");
+    // The database connection will always be needed, even during dry-run because there are
+    // informational queries that will be executed even though information is not being changed.
 
-        $db = DB::factory('database');
+    $log->debug("*** Conducting Database Verification...");
+    if (!verifyDatabase()) {
+        $log->err("Unable to connect to the database, please check the following: \n\t - settings for 'database' in portal_settings.ini are correct.\n\t - the database identified by the 'database' section of portal_settings.ini is running, accepting connections, and that the user specified has connection privileges.");
+        exit(1);
+    }
+    $log->debug("*** Database Verification Passed!");
+
+    $db = DB::factory('database');
+
+    // Process the xdmod module first
+    if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
+        processModules(
+            $db,
+            array(
+                    DEFAULT_MODULE_NAME => $modules[DEFAULT_MODULE_NAME]
+            )
+        );
+        unset($modules[DEFAULT_MODULE_NAME]);
     }
 
-    // Process the modules into the database
+    // Process the rest of the modules
     processModules($db, $modules);
 
-    // Process the hierarchies into the database
-    processHierarchies($db, $hierarchies);
+    // Process the xdmod hierarchies into the database first
+    if (array_key_exists(DEFAULT_MODULE_NAME, $moduleHierarchies)) {
+        processHierarchies(
+            $db,
+            array(
+                DEFAULT_MODULE_NAME => $moduleHierarchies[DEFAULT_MODULE_NAME]
+            )
+        );
+        unset($moduleHierarchies[DEFAULT_MODULE_NAME]);
+    }
+
+    // process the rest of the modules hierarchies.
+    processHierarchies($db, $moduleHierarchies);
 
     // Make sure to process the default module first first.
     if (array_key_exists(DEFAULT_MODULE_NAME, $results)) {
@@ -201,72 +259,75 @@ function main()
  *
  *
  * @param iDatabase $db
- * @param string    $module
- * @param array     $hierarchies
- *
+ * @param array $hierarchies
  * @return void
- **/
-function processHierarchies($db, $hierarchies)
+ * @throws Exception
+ * @internal param string $module
+ */
+function processHierarchies(iDatabase $db, $hierarchies)
 {
     global $dryRun, $log;
     $log->notice("Processing Hierarchies...");
 
+    // SELECT the incoming data IFF
+    //   There is not a record in hierarchies that has:
+    //     - the same name / display as incoming
+    //     - but a different module_id than incoming
     $query = <<<SQL
     INSERT INTO hierarchies(module_id, name, display)
-    SELECT inc.*
-    FROM(
-       SELECT
-           m.module_id AS module_id,
-           :name       AS name,
-           :display    AS display
-       FROM modules m
-       WHERE BINARY m.name = BINARY :module_name
+    SELECT inc.module_id, inc.name, inc.display
+    FROM
+    (
+        SELECT
+          m.module_id AS module_id,
+          :name       AS name,
+          :display    AS display
+        FROM modules m
+        WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN hierarchies cur
-        ON cur.module_id        = inc.module_id AND
-           BINARY cur.name      = BINARY inc.name
+    ON BINARY cur.name    = BINARY inc.name    AND
+       BINARY cur.display = BINARY cur.display
     WHERE cur.hierarchy_id IS NULL;
 SQL;
     $log->debug($query);
 
-    $statement = $db->prepare($query);
-
     $inserted = 0;
     $processed = 0;
-    foreach ($hierarchies as $moduleName => $hierarchyData) {
-        $hierarchies = $hierarchyData['hierarchies'];
-        foreach ($hierarchies as $hierarchy) {
+
+    foreach ($hierarchies as $module => $hierarchyData) {
+
+        foreach ($hierarchyData as $hierarchy) {
             $name = null;
             $display = null;
 
             if (null === $hierarchy['name']) {
-                throw new Exception("Malformed hierarchy entry for module $moduleName. No name property.");
+                throw new Exception("Malformed hierarchy entry for module $module. No name property.");
             }
             $name = $hierarchy['name'];
 
             if (null === $hierarchy['display']) {
-                $log->warning("Hierarchy entry for module $moduleName missing 'display' property, generating default value.");
+                $log->warning("Hierarchy entry for module $module missing 'display' property, generating default value.");
                 $display = $name;
             } else {
                 $display = $hierarchy['display'];
             }
 
             if ($dryRun) {
-                $log->info("[SUCCESS] created hierarchy [module: $moduleName, name: $name, display: $display]");
+                $log->info("[SUCCESS] created hierarchy [module: $module, name: $name, display: $display]");
                 continue;
             }
 
             $params = array(
                 ':name' => $name,
                 ':display' => $display,
-                ':module_name' => $moduleName
+                ':module_name' => $module
             );
 
             $log->debug($params);
 
-            $modified = $statement->execute($params);
-            $count = $modified === true ? $statement->rowCount() : 0;
-            $inserted += $count;
+            $modified = $db->execute($query, $params);
+            $inserted += $modified;
         }
         $processed += count($hierarchies);
     }
@@ -283,45 +344,48 @@ SQL;
  *
  * @return void
  **/
-function processResult($db, $module, $moduleData, $modules)
+function processResult(iDatabase $db, $module, $moduleData, $modules)
 {
 
     global $log;
 
-    $acls = $moduleData['acls'];
-    $realms = $moduleData['realms'];
+    // Data for a module may contain a list of ACLs, a list of Realms and the access that is
+    // granted, or both.
+
+    $acls = ( isset($moduleData['acls']) ? $moduleData['acls'] : null );
+    $realms = ( isset($moduleData['realms']) ? $moduleData['realms'] : null );
 
     $log->info("Processing Module: $module");
 
     if ($modules === null) {
         $log->err("Unable to process $module, missing module information. Is there a $module.json file in CONF_DIR/datawarehouse.d?");
         return;
-    } else if ($realms !== null) {
+    }
+
+    if ($realms !== null) {
         processRealms($db, $module, $realms);
     } else {
         $log->warning("No realm information for module $module skipping...");
     }
 
-    if ($acls == null) {
-        $log->err("Unable to process $module, missing role information. Is there a $module.json file in CONF_DIR/modules.d?");
-    } else if ($acls !== null && $realms !== null) {
-        processAcls($db, $module, $realms, $acls);
+    if ($acls !== null) {
+        processAcls($db, $module, ( null !== $realms ? $realms : array() ), $acls);
     } else {
-        $log->warning("No acl or realm information for module $module skipping...");
+        $log->info("No acl information for module $module skipping...");
     }
 }
 
 /**
  * Attempt to create the module version defined by the provided information.
  *
- * @param iDatabase|null $db          the db. null in the case of a dryRun.
- * @param integer        $moduleId    the module id
- * @param string         $installedOn the date this module version was created.
- * @param array          $version     the version information
+ * @param iDatabase $db          the db. null in the case of a dryRun.
+ * @param integer   $moduleId    the module id
+ * @param string    $installedOn the date this module version was created.
+ * @param array     $version     the version information
  *
  * @return integer|null
  **/
-function createModuleVersion($db, $moduleId, $installedOn, array $version)
+function createModuleVersion(iDatabase $db, $moduleId, $installedOn, array $version)
 {
     global $log, $dryRun;
 
@@ -332,7 +396,6 @@ function createModuleVersion($db, $moduleId, $installedOn, array $version)
 
     $moduleVersion = "$major.$minor.$patch $preRelease";
 
-    
 
     $query = <<<SQL
 INSERT INTO module_versions (
@@ -417,14 +480,14 @@ SQL;
 /**
  * Attempt to create a Module defined by the provided information.
  *
- * @param iDatabase|null $db      the database to use. null if dryRun is true.
- * @param string         $name    the internal name of the module
- * @param string         $display the value that should be displayed to users.
- * @param boolean        $enabled whether or not the module is enabled.
+ * @param iDatabase $db      the database to use. null if dryRun is true.
+ * @param string    $name    the internal name of the module
+ * @param string    $display the value that should be displayed to users.
+ * @param boolean   $enabled whether or not the module is enabled.
  *
  * @return integer|null
  **/
-function createModule($db, $name, $display, $enabled)
+function createModule(iDatabase $db, $name, $display, $enabled)
 {
     global $dryRun, $log;
 
@@ -484,14 +547,14 @@ SQL;
 /**
  * Attempt to associate the provided module w/ the provided module version.
  *
- * @param iDatabase|null $db              the database to be used in the
- *                                        operation. null if dryRun is true.
- * @param integer        $moduleId        the id of the module in question
- * @param integer        $moduleVersionId the id of the version in question
+ * @param iDatabase $db              the database to be used in the
+ *                                   operation. null if dryRun is true.
+ * @param integer   $moduleId        the id of the module in question
+ * @param integer   $moduleVersionId the id of the version in question
  *
  * @return void
  **/
-function associateModuleAndVersion($db, $moduleId, $moduleVersionId)
+function associateModuleAndVersion(iDatabase $db, $moduleId, $moduleVersionId)
 {
     global $dryRun, $log;
 
@@ -541,13 +604,13 @@ SQL;
 /**
  * Process the provided array of modules into the database.
  *
- * @param iDatabase|null $db the database that will be used while processing the
- *                           provided modules
+ * @param iDatabase $db the database that will be used while processing the
+ *                      provided modules
  * @param array[] $modules   the modules to be inserted into the database.
  *
  * @return void
  **/
-function processModules($db, array $modules)
+function processModules(iDatabase $db, array $modules)
 {
     global $dryRun, $log;
 
@@ -560,7 +623,7 @@ function processModules($db, array $modules)
         $display = isset($data['display']) ? $data['display'] : $name;
         $enabled = isset($data['enabled']) ? $data['enabled'] : true;
         $version = $data['version'];
-        $installedOn =  isset($data['installed_on'])
+        $installedOn = isset($data['installed_on'])
                      ? $data['installed_on']
                      : date("Y-m-d");
 
@@ -595,21 +658,23 @@ function processModules($db, array $modules)
  *         - group_by  ( associated with module and realm)
  *         - statistic ( associated with module and realm)
  *
- * @param iDatabase|null $db     the database to use when processing the provided
- *                               acls
- * @param string         $module the module to use when processing the provided acls
- * @param array          $realms the realm to use when processing the provided acls
- * @param array          $acls   the array of acls to be processed into the provided
- *                               db.
+ * @param iDatabase $db     the database to use when processing the provided
+ *                          acls
+ * @param string    $module the module to use when processing the provided acls
+ * @param array     $realms the realm to use when processing the provided acls
+ * @param array     $acls   the array of acls to be processed into the provided
+ *                          db.
  * @return void
  **/
-function processAcls($db, $module, array $realms, array $acls)
+function processAcls(iDatabase $db, $module, array $realms, array $acls)
 {
     global $dryRun, $log;
 
     foreach ($acls as $acl => $aclData) {
-        $permittedModules = $aclData['permitted_modules'];
-        $queryDescriptors = $aclData['query_descripters'];
+        // Don't assume that there are query descriptors or permitted modules. For example, an ACL
+        // may only be granting access to one or the other.
+        $permittedModules = ( isset($aclData['permitted_modules']) ? $aclData['permitted_modules'] : null );
+        $queryDescriptors = ( isset($aclData['query_descripters']) ? $aclData['query_descripters'] : null );
         $display = isset($aclData['display']) ? $aclData['display'] : $acl;
         $type = isset($aclData['type']) ? $aclData['type'] : null;
         $hierarchies = isset($aclData['hierarchies'])
@@ -637,20 +702,20 @@ function processAcls($db, $module, array $realms, array $acls)
 /**
  * Process a single Acl into the database represented by $db.
  *
- * @param iDatabase|null $db          the database to use when processing this
- *                                    acl.
- * @param string         $module      the name of the module this acl is
- *                                    associated with.
- * @param string         $name        the internal name for this acl.
- * @param string         $display     the external name for this acl.
- * @param string         $type        the type of acl this is. Optional.
- * @param array          $hierarchies the hierarchy information associated
- *                                    with this acl. Optional.
+ * @param iDatabase $db          the database to use when processing this
+ *                               acl.
+ * @param string    $module      the name of the module this acl is
+ *                               associated with.
+ * @param string    $name        the internal name for this acl.
+ * @param string    $display     the external name for this acl.
+ * @param string    $type        the type of acl this is. Optional.
+ * @param array     $hierarchies the hierarchy information associated
+ *                               with this acl. Optional.
  *
  * @return int|null null if the acl was not able to be created or the acl_id if
  *                       it was created or exists.
  **/
-function processAcl($db, $module, $name, $display, $type = null, $hierarchies = null)
+function processAcl(iDatabase $db, $module, $name, $display, $type = null, $hierarchies = null)
 {
     global $dryRun, $log;
     $msg = "[Module: $module, Name: $name, Display: $display, Type: $type]";
@@ -659,7 +724,7 @@ function processAcl($db, $module, $name, $display, $type = null, $hierarchies = 
         $aclTypeId = processAclType($db, $module, $type);
 
         $query = <<<SQL
-INSERT into acls(module_id, acl_type_Id, name, display, enabled)
+INSERT INTO acls(module_id, acl_type_Id, name, display, enabled)
 SELECT inc.*
 FROM (
     SELECT
@@ -674,11 +739,17 @@ FROM (
 LEFT JOIN acls cur
   ON cur.acl_type_id = inc.acl_type_id AND
      BINARY cur.name = BINARY inc.name
-WHERE cur.acl_id IS NULL;
+WHERE cur.acl_id IS NULL
+ON DUPLICATE KEY UPDATE
+  -- we leave out module_id and name as they are the basis for the
+  -- unique key.
+  acl_type_id = inc.acl_type_id,
+  display = inc.display,
+  enabled = inc.enabled;
 SQL;
         $params = array(
             ':name' => $name,
-            ':display'=> $display,
+            ':display' => $display,
             ':enabled' => true,
             ':module_name' => $module,
             ':acl_type_id' => $aclTypeId
@@ -702,7 +773,7 @@ WHERE cur.acl_id IS NULL;
 SQL;
         $params = array(
             ':name' => $name,
-            ':display'=> $display,
+            ':display' => $display,
             ':enabled' => true,
             ':module_name' => $module
         );
@@ -718,8 +789,11 @@ SQL;
 
     $aclId = null;
     $inserted = $db->execute($query, $params);
+
+    // If the insert was not successful ( and it didn't error out ), then the
+    // record already exists, take the appropriate steps.
     if ($inserted === 0) {
-        $log->info("[ALREADY EXISTS] $msg");
+        $log->notice("[ALREADY EXISTS] Acl $msg");
         $query = <<<SQL
     SELECT a.acl_id
     FROM acls a
@@ -737,9 +811,9 @@ SQL;
                 ':display' => $display
             )
         );
-        $aclId =  $record[0]['acl_id'];
+        $aclId =  count($record) > 0 ? $record[0]['acl_id'] : null;
     } elseif ($inserted === 1 ) {
-        $log->info("[SUCCESS] Inserted $msg");
+        $log->notice("[SUCCESS] Inserted Acl $msg");
         $aclId = $db->handle()->lastInsertId();
     }
 
@@ -763,7 +837,7 @@ SQL;
  * @throws Exception if there is a problem encountered executing any of the
  *                   sql queries.
  **/
-function processAclType($db, $module, $type)
+function processAclType(iDatabase $db, $module, $type)
 {
     global $dryRun, $log;
 
@@ -781,9 +855,7 @@ function processAclType($db, $module, $type)
         WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN acl_types cur
-        ON cur.module_id = inc.module_id AND
-           BINARY cur.name      = BINARY inc.name      AND
-           BINARY cur.display   = BINARY inc.display
+        ON BINARY cur.name  = BINARY inc.name
     WHERE cur.acl_type_id IS NULL;
 SQL;
     $aclTypeDisplay = ucfirst($type);
@@ -802,17 +874,23 @@ SQL;
 
     $inserted = $db->execute($query, $params);
     if ($inserted === 0) {
+        // If we did not insert a record then the assumption is that it already
+        // exists, attempt to retrieve the acl_type_id.
         $query = <<<SQL
     SELECT at.acl_type_id
     FROM acl_types at
-        JOIN modules m
-            ON at.module_id = m.module_id
-    WHERE BINARY m.name     = BINARY :module_name    AND
-          BINARY at.name    = BINARY :acl_type_name  AND
-          BINARY at.display = BINARY :acl_type_display
+    WHERE BINARY at.name    = BINARY :acl_type_name
 SQL;
-        $results = $db->query($query, $params);
+        $results = $db->query(
+            $query,
+            array(
+                ':acl_type_name' => $type
+            )
+        );
         $log->info("   Retrieved acl type for $type");
+        if (count($results) === 0) {
+            throw new Exception("Unable to determine acl type for [$module][$type][$aclTypeDisplay]");
+        }
         return $results[0]['acl_type_id'];
     }
     $log->info("   Created new acl type record for $type");
@@ -834,7 +912,8 @@ SQL;
  * @throws Exception if there is an exception encountered while attempting to execute
  *                   the sql required to process these acl hierarchy records.
  **/
-function processAclHierarchy($db, $module, $acl, array $hierarchies) {
+function processAclHierarchy(iDatabase $db, $module, $acl, array $hierarchies)
+{
     global $dryRun, $log;
 
     $log->notice("Processing Acl Hierarchy Records...");
@@ -861,16 +940,24 @@ function processAclHierarchy($db, $module, $acl, array $hierarchies) {
     WHERE cur.acl_hierarchy_id IS NULL;
 SQL;
 
-    $statement = $db->prepare($query);
-    $log->debug($statement);
+    $log->debug($query);
+
+    if ( ! $dryRun ) {
+        $statement = $db->prepare($query);
+    }
+
     $inserted = 0;
+
+    // Begin a transaction so that either all of the hierarchies are inserted or
+    // none of them are.
+    $db->beginTransaction();
     foreach ($hierarchies as $hierarchyName => $hierarchyInfo) {
-        if (null === $hierarchyInfo['level']) {
+        if (!isset($hierarchyInfo['level'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No level present.");
             continue;
         }
 
-        if (null === $hierarchyInfo['filter_override']) {
+        if (!isset($hierarchyInfo['filter_override'])) {
             $log->warning("Malformed hierarchy information for Acl $acl. No filter_override present.");
             continue;
         }
@@ -892,14 +979,25 @@ SQL;
         }
 
         $modified = $statement->execute($params);
+
         $count = $modified === true ? $statement->rowCount() : 0;
         $inserted += $count;
         if ($count === 0) {
-            $log->info("[FAIL] Did not Process Acl Hierarchy: $id");
+            $log->notice("[SUCCESS] Acl Hierarchy: $id already exists");
         } elseif ($count === 1) {
-            $log->info("[SUCCESS] Processed Acl Hierarchy: $id");
+            $log->notice("[SUCCESS] Processed Acl Hierarchy: $id");
         } else {
-            $log->info("[FAIL] Inserted more than one Acl Hierarchy Record for: $id");
+            $log->warning("[WARNING] Inserted more than one Acl Hierarchy Record for: $id");
+        }
+    }
+    $committed = $db->commit();
+    if ($committed === false) {
+        $log->warning("[FAIL] Attempt to commit hierarchies for Acl [$acl] failed.");
+        $rolledBack = $db->rollBack();
+
+        // We throw an Exception so that we do not leave the db in an inconsistent state.
+        if ($rolledBack === false) {
+            throw new Exception("Unable to rollback Acl [$acl] hierarchy records. Database may be left in an inconsistent state.");
         }
     }
     $processed = count($hierarchies);
@@ -909,15 +1007,15 @@ SQL;
 /**
  * Attempt to process the provided tabs and relate them to the provided acl.
  *
- * @param iDatabase|null $db     the database to be used during these operations.
- * @param string         $module the module name associated with these tabs / acl.
- * @param string         $acl    the acl that these tabs should be associated with.
- * @param array          $tabs   the tabs that should be created / associated with
- *                               the provided acl.
+ * @param iDatabase $db     the database to be used during these operations.
+ * @param string    $module the module name associated with these tabs / acl.
+ * @param string    $acl    the acl that these tabs should be associated with.
+ * @param array     $tabs   the tabs that should be created / associated with
+ *                          the provided acl.
  *
  * @return void
  **/
-function processTabs($db, $module, $acl, array $tabs)
+function processTabs(iDatabase $db, $module, $acl, array $tabs)
 {
     global $dryRun, $log;
 
@@ -935,21 +1033,19 @@ function processTabs($db, $module, $acl, array $tabs)
  * Attempt to create a database representation of the provided tab information
  * that is related to the provided module.
  *
- * @param iDatabase|null $db     the database the tab is to be created in.
- * @param string         $module the module name the tab is to be associated with.
- * @param string         $tab    the name to use when creating said tab.
+ * @param iDatabase $db     the database the tab is to be created in.
+ * @param string    $module the module name the tab is to be associated with.
+ * @param string    $tab    the name to use when creating said tab.
  *
  * @return int|null null if the tab could not be created. int if the tab was
  *                       created or already existed.
  **/
-function createTab($db, $module, $tab)
+function createTab(iDatabase $db, $module, $tab)
 {
     global $dryRun, $log;
     $msg = "name: $tab";
 
-    
-
-    $query =<<<SQL
+    $query = <<<SQL
     INSERT INTO tabs(module_id, name)
     SELECT inc.*
     FROM (
@@ -960,8 +1056,7 @@ function createTab($db, $module, $tab)
         WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN tabs cur
-        ON        cur.module_id = inc.module_id   AND
-           BINARY cur.name      = BINARY inc.name
+        ON BINARY cur.name = BINARY inc.name       
     WHERE cur.tab_id IS NULL;
 SQL;
 
@@ -988,13 +1083,9 @@ SQL;
         $query = <<<SQL
     SELECT t.tab_id
     FROM tabs t
-        JOIN modules m
-            ON t.module_id = m.module_id
-    WHERE BINARY m.name = BINARY :module_name AND
-          BINARY t.name = BINARY :name
+    WHERE BINARY t.name = BINARY :name
 SQL;
         $params = array(
-            ':module_name' => $module,
             ':name' => $tab
         );
 
@@ -1018,15 +1109,15 @@ SQL;
  * Attempt to create a relation between the acl identified by the provided
  * aclName and the tab identified by the provided tabName.
  *
- * @param iDatabase|null $db      the database to use when creating the relation.
- * @param string         $aclName the name of the acl to use when creating the
- *                                relation.
- * @param string         $tabName the name of the tab to use when creating the
- *                                relation.
+ * @param iDatabase $db      the database to use when creating the relation.
+ * @param string    $aclName the name of the acl to use when creating the
+ *                           relation.
+ * @param string    $tabName the name of the tab to use when creating the
+ *                           relation.
  *
  * @return void
  **/
-function relateAclAndTab($db, $aclName, $tabName)
+function relateAclAndTab(iDatabase $db, $aclName, $tabName)
 {
     global $dryRun, $log;
 
@@ -1080,23 +1171,23 @@ SQL;
  * array. These are used for authorizing an acl to have access to a selected
  * group by and associated set of statistics for a given module / realm.
  *
- * @param iDatabase|null $db               the database to use when processing these
- *                                         query descriptors.
- * @param string         $module           the name of the module to associate these
- *                                         query descriptors with.
- * @param string         $acl              the name of the acl to associate these
- *                                         query
- * @param array          $realms           an array of realm names to validate
- *                                         'realm' values found in the
- *                                         queryDescriptors array.
- * @param array          $queryDescriptors an array containing a set of information
- *                                         from datawarehouse.json ( group_bys and
- *                                         statistics ) that will be used to create
- *                                         the descriptors.
+ * @param iDatabase $db               the database to use when processing these
+ *                                    query descriptors.
+ * @param string    $module           the name of the module to associate these
+ *                                    query descriptors with.
+ * @param string    $acl              the name of the acl to associate these
+ *                                    query
+ * @param array     $realms           an array of realm names to validate
+ *                                    'realm' values found in the
+ *                                    queryDescriptors array.
+ * @param array     $queryDescriptors an array containing a set of information
+ *                                    from datawarehouse.json ( group_bys and
+ *                                    statistics ) that will be used to create
+ *                                    the descriptors.
  *
  * @return void
  **/
-function processQueryDescriptors($db, $module, $acl, array $realms, array $queryDescriptors)
+function processQueryDescriptors(iDatabase $db, $module, $acl, array $realms, array $queryDescriptors)
 {
     global $dryRun, $log;
 
@@ -1110,7 +1201,7 @@ function processQueryDescriptors($db, $module, $acl, array $realms, array $query
      *     :group_by_name  - string
      *     :statistic_name - string
      **/
-    $query =<<<SQL
+    $query = <<<SQL
 INSERT INTO acl_group_bys(realm_id, acl_id, group_by_id, statistic_id, visible, enabled)
 SELECT inc.*
 FROM (
@@ -1151,18 +1242,20 @@ SQL;
     $totalProcessed = 0;
     foreach ($queryDescriptors as $queryDescriptor) {
 
-        $realm = isset($queryDescriptor['realm']) ? $queryDescriptor['realm']: null;
+        $realm = isset($queryDescriptor['realm']) ? $queryDescriptor['realm'] : null;
         $groupBy = isset($queryDescriptor['group_by']) ? $queryDescriptor['group_by'] : null;
         $disable = isset($queryDescriptor['disable']) ? $queryDescriptor['disable'] : false;
 
+        // if we can't find the current realm in the array of available realms
+        // then just ignore this entry. This is due to the way in which we
+        // process modules / how the data is represented and is expected.
         if (!array_key_exists($realm, $realms)) {
-            $log->err("Unable to find a corresponding realm record for [$realm]. Skipping Query Descriptor for [ $module, $role, $groupBy ]");
             continue;
         }
 
         $realmData = $realms[$realm];
         if (!isset($realmData['statistics'])) {
-            $log->err("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $role, $groupBy ]");
+            $log->warning("No statistics found for realm $realm. Skipping Query Descriptor for [ $module, $acl, $groupBy ]");
             continue;
         }
         $statistics = $realmData['statistics'];
@@ -1170,7 +1263,7 @@ SQL;
         foreach ($statistics as $statistic) {
 
             $statisticName = isset($statistic['name']) ? $statistic['name'] : null;
-            $hide = isset($statistic['hide']) ? $statistic['hide']: null;
+            $hide = isset($statistic['hide']) ? $statistic['hide'] : null;
             $visible = isset($statistic['visible']) ? $statistic['visible'] : null;
 
             $enabled = null !== $disable ? !$disable : true;
@@ -1192,7 +1285,7 @@ SQL;
                 ':group_by_name' => $groupBy,
                 ':statistic_name' => $statisticName,
                 ':visible' => $visible,
-                ':enabled'=> $enabled
+                ':enabled' => $enabled
             );
 
             $log->debug(json_encode($params));
@@ -1224,21 +1317,21 @@ SQL;
  * Attempt to process the provided realms into the database identified by
  * the provided $db.
  *
- * @param iDatabase|null $db         the database that will be used to create
- *                                   these realms. null if dryRun is true.
- * @param string         $moduleName the module to associate these realms with.
- * @param array          $realms     the realms to be created.
+ * @param iDatabase $db         the database that will be used to create
+ *                              these realms. null if dryRun is true.
+ * @param string    $moduleName the module to associate these realms with.
+ * @param array     $realms     the realms to be created.
  *
  * @return void
  **/
-function processRealms($db, $moduleName, array $realms)
+function processRealms(iDatabase $db, $moduleName, array $realms)
 {
     global $dryRun, $log;
 
     foreach ($realms as $realm => $realmData) {
-        $log->notice("Processing Realm: $realm");
+        $log->notice("Processing Realm: $realm for Module: $moduleName");
 
-        createRealm($db, $moduleName, strtolower($realm));
+        createRealm($db, $moduleName, $realm);
 
         $groupBys = $realmData['group_bys'];
         $statistics = $realmData['statistics'];
@@ -1252,41 +1345,42 @@ function processRealms($db, $moduleName, array $realms)
  * Attempt to create a realm with the provided realmName associated with the
  * module associated with the provided moduleName.
  *
- * @param iDatabase|null $db         the database to be used when creating the realm
- * @param string         $moduleName the name of the module to associate this realm
- *                                   with.
- * @param string         $realmName  the name that this realm should be created with.
+ * @param iDatabase $db            the database to be used when creating the realm
+ * @param string    $moduleName    the name of the module to associate this realm
+ *                                 with.
+ * @param string    $realmDisplay  the name that this realm should be created with.
  *
  * @return void
  **/
-function createRealm($db, $moduleName, $realmName)
+function createRealm(iDatabase $db, $moduleName, $realmDisplay)
 {
     global $dryRun, $log;
 
-    $realmName = strtolower($realmName);
+    $realmName = strtolower($realmDisplay);
 
-    $log->notice("*** Creating Realm ($realmName)...");
+    $log->notice("*** Creating Realm ($realmDisplay)...");
 
-    $successMsg = "[SUCCESS] Created Realm: $realmName for Module: $moduleName";
+    $successMsg = "[SUCCESS] Created Realm: $realmDisplay for Module: $moduleName";
 
     $query = <<<SQL
-    INSERT INTO realms(module_id, name)
+    INSERT INTO realms(module_id, name, display)
     SELECT inc.*
     FROM (
         SELECT
             m.module_id AS module_id,
-            :realm_name AS name
+            :realm_name AS name,
+            :realm_display AS display
         FROM modules m
         WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN realms cur
-        ON cur.module_id        = inc.module_id   AND
-           BINARY cur.name      = BINARY inc.name
+        ON BINARY cur.name = BINARY inc.name
     WHERE cur.realm_id IS NULL;
 SQL;
 
     $params = array(
         ':realm_name' => $realmName,
+        ':realm_display' => $realmDisplay,
         ':module_name' => $moduleName
     );
 
@@ -1304,7 +1398,23 @@ SQL;
     );
 
     if ($inserted === 0) {
-        $log->info("[ALREADY EXISTS] Realm $realmName for Module $moduleName");
+        $updateQuery = <<<SQL
+    UPDATE realms
+    SET display = :realm_display
+    WHERE name = :realm_name;
+SQL;
+        $updated = $db->execute(
+            $updateQuery,
+            array(
+                ':realm_display' => $realmDisplay,
+                ':realm_name'    => $realmName
+            )
+        );
+        if ($updated === 1) {
+            $log->info("Updated Realm [$realmName] with display [$realmDisplay]");
+        } else {
+            $log->info("[ALREADY EXISTS] Realm $realmDisplay for Module $moduleName");
+        }
     } elseif ($inserted === 1) {
         $log->info($successMsg);
     }
@@ -1313,17 +1423,17 @@ SQL;
 /**
  * Attempt to create a database record for each entry in the groupBys array.
  *
- * @param iDatabase|null $db         the database to be used when creating the group
- *                                   bys.
- * @param string         $moduleName the name of the module to associate with the
- *                                   group bys.
- * @param string         $realmName  the name of the realm to associate with the
- *                                   group bys.
- * @param array          $groupBys   the group bys that are to be created.
+ * @param iDatabase $db         the database to be used when creating the group
+ *                              bys.
+ * @param string    $moduleName the name of the module to associate with the
+ *                              group bys.
+ * @param string    $realmName  the name of the realm to associate with the
+ *                              group bys.
+ * @param array     $groupBys   the group bys that are to be created.
  *
  * @return void
  **/
-function createGroupBys($db, $moduleName, $realmName, array $groupBys)
+function createGroupBys(iDatabase $db, $moduleName, $realmName, array $groupBys)
 {
     global $dryRun, $log;
 
@@ -1354,6 +1464,7 @@ SQL;
         $statement = $db->handle()->prepare($query);
         $log->debug($query);
     }
+    $totalInserted = 0;
 
     foreach ($groupBys as $groupBy) {
         $groupByName = $groupBy['name'];
@@ -1376,28 +1487,30 @@ SQL;
         );
 
         $inserted = $statement->rowCount();
-
+        $totalInserted += $inserted;
         if ($inserted === 0) {
             $log->info("[ALREADY EXISTS] Group By $groupByName for Module $moduleName and Realm $realmName");
         } elseif ($inserted === 1) {
             $log->info(sprintf($successMsg, $groupByName));
         }
     }
+    $processed = count($groupBys);
+    $log->notice("\tProcessed: $processed, Inserted: $totalInserted");
 }
 
 /**
  * Attempt to create a database record for each entry in the statistics array.
  *
- * @param iDatabase|null $db         the database to use when creating the statistics
- * @param string         $moduleName the name of the module to associate the
- *                                   statistics with
- * @param string         $realmName  the name of the realm to associate the
- *                                   statistics with
- * @param array          $statistics the statistics to be created
+ * @param iDatabase $db         the database to use when creating the statistics
+ * @param string    $moduleName the name of the module to associate the
+ *                              statistics with
+ * @param string    $realmName  the name of the realm to associate the
+ *                              statistics with
+ * @param array     $statistics the statistics to be created
  *
  * @return void
  **/
-function createStatistics($db, $moduleName, $realmName, array $statistics)
+function createStatistics(iDatabase $db, $moduleName, $realmName, array $statistics)
 {
     global $dryRun, $log;
 
@@ -1477,21 +1590,21 @@ function verifyAclSetup()
 
     $log->notice("*** Conducting Configuration File Verification Steps...");
 
-    $result = 0;
+    $invalidSetupSections = 0;
 
     // Verify that the config files are valid json
-    $result += verifyJsonSyntax();
+    $invalidSetupSections += ( ! verifyJsonSyntax() ? 1 : 0);
 
     // Verify that the config files are able to be loaded
     // via the 'Config' system.
-    $result += verifyConfigData();
+    $invalidSetupSections += ( ! verifyConfigData() ? 1 : 0);
 
-    if ($result > 0) {
+    if ($invalidSetupSections > 0) {
         $log->err("*** Verification Failed!");
     } else {
         $log->notice("*** All Configuration File Verification Steps Passed!");
     }
-    return $result;
+    return $invalidSetupSections;
 }
 
 /**
@@ -1500,7 +1613,7 @@ function verifyAclSetup()
  * by the result of json_decode being equal to null per:
  * http://php.net/manual/en/function.json-decode.php)
  *
- * @return int 0 if there were no files found with invalid json syntax else 1.
+ * @return boolean true if all files were valid else false.
  **/
 function verifyJsonSyntax()
 {
@@ -1515,21 +1628,21 @@ function verifyJsonSyntax()
     );
 
     $invalid = array();
-    $confPrefix = CONFIG_DIR.DIRECTORY_SEPARATOR;
+    $confPrefix = CONFIG_DIR . DIRECTORY_SEPARATOR;
     foreach ($searchSet as $primaryFile => $configDir) {
-        $primaryFilePath = $confPrefix.$primaryFile;
+        $primaryFilePath = $confPrefix . $primaryFile;
         if (file_exists($primaryFilePath)) {
             $fileJson = Json::loadFile($primaryFilePath);
 
             if (null === $fileJson) {
                 $log->err("[FAIL] $primaryFile in an invalid json file");
-                $inalid []= $primaryFile;
+                $inalid [] = $primaryFile;
             } else {
                 $log->info("[SUCCESS] $primaryFile is a valid json file.");
             }
         }
 
-        $confPath = $confPrefix.$configDir;
+        $confPath = $confPrefix . $configDir;
         if (file_exists($confPath)) {
             foreach (new DirectoryIterator($confPath) as $fileInfo) {
                 if ($fileInfo->isDot()) {
@@ -1537,7 +1650,7 @@ function verifyJsonSyntax()
                 }
                 if (pathinfo($fileInfo->getFilename(), PATHINFO_EXTENSION) === 'json') {
                     $fileName = $fileInfo->getFilename();
-                    $filePath = $confPath.DIRECTORY_SEPARATOR.$fileName;
+                    $filePath = $confPath . DIRECTORY_SEPARATOR . $fileName;
                     $fileParts = explode(DIRECTORY_SEPARATOR, $filePath);
                     $parentDir = $fileParts[count($fileParts) - 2];
                     $fileId = implode(
@@ -1551,7 +1664,7 @@ function verifyJsonSyntax()
                     } catch (Exception $e) {
                         $reason = $e->getMessage();
                         $log->err("[FAIL] $fileId is not a valid json file. Reason:\n $reason");
-                        $invalid []= $filePath;
+                        $invalid [] = $filePath;
                     }
                 }
             }
@@ -1561,10 +1674,10 @@ function verifyJsonSyntax()
     $invalidCount = count($invalid);
     if ($invalidCount > 0) {
         $log->err("[FAIL] $invalidCount invalid files found");
-        return 1;
+        return false;
     } else {
         $log->info("[SUCCESS] all files valid");
-        return 0;
+        return true;
     }
 }
 
@@ -1574,7 +1687,7 @@ function verifyJsonSyntax()
  * the Acl system depends on. If an exception occurs while attempting to
  * retrieve as section then we can assume there is a problem with that section.
  *
- * @return 0 if all configuration sections were loaded successfully else 1.
+ * @return boolean true if all configuration sections were loaded successfully else false.
  **/
 function verifyConfigData()
 {
@@ -1597,19 +1710,19 @@ function verifyConfigData()
         try {
             $data = $config[$section];
             $log->info("[SUCCESS] $section loaded successfully.");
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $log->err("[FAIL] Unable to load section $section");
-            $invalid []= $section;
+            $invalid[] = $section;
         }
     }
 
     $invalidCount = count($invalid);
     if ($invalidCount > 0) {
         $log->err("[FAIL] $invalidCount invalid sections found");
-        return 1;
+        return false;
     } else {
         $log->info("[SUCCESS] all sections valid");
-        return 0;
+        return true;
     }
 }
 
@@ -1639,8 +1752,9 @@ function verifyDatabase()
  *
  * @return string
  **/
-function logLevelToVerbosity($logLevel) {
-    switch($logLevel) {
+function logLevelToVerbosity($logLevel)
+{
+    switch ($logLevel) {
         case Log::INFO:
             return 'verbose';
         case Log::DEBUG:

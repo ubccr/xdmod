@@ -1,0 +1,16 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/allocation-on-resource.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "allocation_id": "aorf.allocation_id",
+            "resource_id": "aorf.resource_id"
+        },
+        "joins": [{
+            "name": "hpcdb_allocations_on_resources",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "aorf"
+        }]
+    }
+}

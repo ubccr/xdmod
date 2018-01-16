@@ -1,6 +1,8 @@
 <?php
 
 use CCR\DB;
+use CCR\DB\MySQLHelper;
+use DB\Exceptions\TableNotFoundException;
 use DataWarehouse\Query\GroupBy;
 use DataWarehouse\Query\Query;
 use DataWarehouse\Query\TimeAggregationUnit;
@@ -9,7 +11,7 @@ use Xdmod\Config;
 /**
  * Builds lists of filters for every realm's dimensions.
  */
-class FilterListBuilder
+class FilterListBuilder extends Loggable
 {
     /**
      * The set of list tables already built by this builder.
@@ -34,6 +36,16 @@ class FilterListBuilder
     private static $rolesDimensionNames = null;
 
     /**
+     * Construct filter list builder.
+     */
+    public function __construct()
+    {
+        if ($this->_logger === null) {
+            $this->_logger = Log::singleton('null');
+        }
+    }
+
+    /**
      * Build filter lists for all realms' dimensions.
      */
     public function buildAllLists()
@@ -51,7 +63,7 @@ class FilterListBuilder
     /**
      * Build filter lists for the given realm's dimensions.
      *
-     * @param  string $realmName The name of a realm to build lists for.
+     * @param string $realmName The name of a realm to build lists for.
      */
     public function buildRealmLists($realmName)
     {
@@ -71,8 +83,8 @@ class FilterListBuilder
     /**
      * Build filter lists for the given dimension.
      *
-     * @param  Query   $realmQuery A query for the realm the dimension is in.
-     * @param  GroupBy $groupBy    The dimension's GroupBy to build lists for.
+     * @param Query   $realmQuery A query for the realm the dimension is in.
+     * @param GroupBy $groupBy    The dimension's GroupBy to build lists for.
      */
     public function buildDimensionLists(Query $realmQuery, GroupBy $groupBy)
     {
@@ -91,15 +103,21 @@ class FilterListBuilder
         $targetSchema = FilterListHelper::getSchemaName();
         $mainTableExistsResults = $db->query("SHOW TABLES FROM {$targetSchema} LIKE '$mainTableName'");
         if (empty($mainTableExistsResults)) {
-            $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
+            try {
+                $dimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $groupBy);
+            } catch (TableNotFoundException $e) {
+                $this->_logger->notice("Not creating $targetSchema.$mainTableName list table; {$e->getTable()} table not found");
+                return;
+            }
+
             $dimensionColumnType = $dimensionProperties['type'];
 
-            $db->execute("
-                CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
+            $db->execute(
+                "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
                     `{$dimensionName}` {$dimensionColumnType} NOT NULL,
                     PRIMARY KEY (`{$dimensionName}`)
-                );
-            ");
+                );"
+            );
         }
 
         try {
@@ -117,14 +135,14 @@ class FilterListBuilder
             $wheresStr = implode(' AND ', $wheres);
 
             $db->execute("DELETE FROM `{$targetSchema}`.`{$mainTableName}`");
-            $db->execute("
-                INSERT INTO
+            $db->execute(
+                "INSERT INTO
                     `{$targetSchema}`.`{$mainTableName}`
                 SELECT DISTINCT
                     $idField
                 FROM $selectTablesStr
-                WHERE $wheresStr
-            ");
+                WHERE $wheresStr"
+            );
 
             $db->commit();
 
@@ -179,19 +197,23 @@ class FilterListBuilder
             // create it.
             $pairTableExistsResults = $db->query("SHOW TABLES FROM {$targetSchema} LIKE '$pairTableName'");
             if (empty($pairTableExistsResults)) {
-                $firstDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $firstGroupBy);
-                $firstDimensionColumnType = $firstDimensionProperties['type'];
-                $secondDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $secondGroupBy);
-                $secondDimensionColumnType = $secondDimensionProperties['type'];
-
-                $db->execute("
-                    CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
+                try {
+                    $firstDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $firstGroupBy);
+                    $firstDimensionColumnType = $firstDimensionProperties['type'];
+                    $secondDimensionProperties = $this->getDimensionDatabaseProperties($realmQuery, $secondGroupBy);
+                    $secondDimensionColumnType = $secondDimensionProperties['type'];
+                } catch (TableNotFoundException $e) {
+                    $this->_logger->notice("Not creating $targetSchema.$pairTableName pair table; {$e->getTable()} table not found");
+                    continue;
+                }
+                $db->execute(
+                    "CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
                         `{$firstDimensionName}` {$firstDimensionColumnType} NOT NULL,
                         `{$secondDimensionName}` {$secondDimensionColumnType} NOT NULL,
                         PRIMARY KEY (`{$firstDimensionName}`, `{$secondDimensionName}`),
                         INDEX `idx_second_dimension` (`{$secondDimensionName}` ASC)
-                    )
-                ");
+                    )"
+                );
             }
 
             try {
@@ -211,15 +233,15 @@ class FilterListBuilder
                 $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
 
                 $db->execute("DELETE FROM `{$targetSchema}`.`{$pairTableName}`");
-                $db->execute("
-                    INSERT INTO
+                $db->execute(
+                    "INSERT INTO
                         `{$targetSchema}`.`{$pairTableName}`
                     SELECT DISTINCT
                         $firstIdField,
                         $secondIdField
                     FROM $selectTablesStr
-                    WHERE $wheresStr
-                ");
+                    WHERE $wheresStr"
+                );
 
                 $db->commit();
 
@@ -289,7 +311,7 @@ class FilterListBuilder
      * Get data about how a dimension is stored in the database.
      *
      * @param  Query   $realmQuery A query for the realm the dimension is in.
-     * @param  GroupBy $groupBy The GroupBy for the dimension to get data for.
+     * @param  GroupBy $groupBy    The GroupBy for the dimension to get data for.
      * @return array            Data about the dimension, including:
      *                              * type: The data type used to represent IDs
      *                                      for the dimension.
@@ -297,6 +319,8 @@ class FilterListBuilder
     private function getDimensionDatabaseProperties(Query $realmQuery, GroupBy $groupBy)
     {
         $db = DB::factory('datawarehouse');
+        $helper = MySQLHelper::factory($db);
+        $helper->setLogger($this->_logger);
 
         // TODO After GroupBy is refactored, use GroupBy methods to get the
         // table and column names,
@@ -308,6 +332,10 @@ class FilterListBuilder
         $dimensionTable = $dimensionTableStringComponents[0];
         preg_match('/\.(\S+)\s/', $dimensionQueryFields['id'], $dimensionColumnMatches);
         $dimensionColumn = $dimensionColumnMatches[1];
+
+        if (!$helper->tableExists($dimensionTable)) {
+            throw new TableNotFoundException("Could not find table $dimensionTable", 0, null, $dimensionTable);
+        }
 
         $columnDescriptionResults = $db->query("DESCRIBE {$dimensionTable} {$dimensionColumn}");
         if (empty($columnDescriptionResults)) {

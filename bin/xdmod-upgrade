@@ -26,8 +26,8 @@ ini_set('memory_limit', -1);
  * @var array
  */
 $supportedUpgrades = array(
-    '6.6.0' => '7.0.0',
     '7.0.0' => '7.0.1',
+    '7.0.1' => '7.1.0',
 );
 
 /**
@@ -59,8 +59,6 @@ try {
 function main()
 {
     global $argv, $logger, $supportedUpgrades, $installedVersion;
-
-    $interactiveMode = true;
 
     $opts = array(
         array('h', 'help'),
@@ -127,9 +125,6 @@ function main()
             case 'current-version':
                 $configFileVersion = $value;
                 break;
-            case 'batch-mode':
-                $interactiveMode = false;
-                break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
                 exit(1);
@@ -192,14 +187,12 @@ function main()
     }
 
     $console = Console::factory();
-    $console->setInteractive($interactiveMode);
 
-    if ($interactiveMode) {
-        displayWarning($configFileVersion, $installedVersion);
-        $response = readline('Are you sure you want to continue (yes/no): ');
-        if ($response != 'yes') {
-            exit;
-        }
+    displayWarning($configFileVersion, $installedVersion);
+    $response = $console->prompt('Are you sure you want to continue?', 'no', array('yes', 'no'));
+    if ($response !== 'yes') {
+        $console->displayMessage('No upgrade performed');
+        exit;
     }
 
     while (isset($supportedUpgrades[$configFileVersion])) {
@@ -219,7 +212,7 @@ function main()
 
         $configFileVersion = $newVersion;
     }
-
+    $logger->notice('Upgrade Complete');
     exit;
 }
 
@@ -315,4 +308,3 @@ Usage: xdmod-upgrade [-v]
 
 EOF;
 }
-

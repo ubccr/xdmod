@@ -1,8 +1,10 @@
 <?php
 
    // Operation: user_admin->update_user
-	
-   $params = array('uid' => RESTRICTION_UID);
+
+use Models\Services\Acls;
+
+$params = array('uid' => RESTRICTION_UID);
 
    $isValid = xd_security\secureCheck($params, 'POST');
 	
@@ -54,21 +56,15 @@
          xd_controller\returnJSON($returnData);
       }
 
-   	if (isset($_POST['roles'])) {
+   	if (isset($_POST['acls'])) {
    	
-         $role_config = json_decode($_POST['roles'], true);
-   	  
-         if (isset($role_config['mainRoles'])){
-   
-            if (!in_array(ROLE_ID_MANAGER, $role_config['mainRoles'])) {
-               $returnData['success'] = false;
-               $returnData['status'] = 'You are not allowed to revoke manager access from yourself.';
-               xd_controller\returnJSON($returnData);
-            }
-   
+         $role_config = json_decode($_POST['acls'], true);
+         if (!array_key_exists(ROLE_ID_MANAGER, $role_config)) {
+                $returnData['success'] = false;
+                $returnData['status'] = 'You are not allowed to revoke manager access from yourself.';
+                xd_controller\returnJSON($returnData);
          }
-         
-      }//if (isset($_POST['roles'])) 
+      }//if (isset($_POST['acls']))
 
    } 
 
@@ -104,132 +100,21 @@
 
 
 // ===========================================
+    if (isset($_POST['acls'])) {
+        $acls = json_decode($_POST['acls'], true);
+        $user_to_update->setAcls(array());
+        foreach ($acls as $aclName => $centers) {
+            $acl = Acls::getAclByName($aclName);
+            $user_to_update->addAcl($acl);
 
-	if (isset($_POST['roles'])) {
-	
-	  $role_config = json_decode($_POST['roles'], true);
-	  
-	  $required_role_config_items = array('mainRoles', 'primaryRole', 
-	                                      'centerDirectorSites', 'primaryCenterDirectorSite', 
-	                                      'centerStaffSites', 'primaryCenterStaffSite');
-	  
-	  $diff = array_diff($required_role_config_items, array_keys($role_config));
-	  
-	  // If $diff is 0, then all required role-related parameters are supplied
-
-	  if (count($diff) == 0) {
-	  
-         $activeRoleConfig = $user_to_update->getActiveRoleSettings();
-         
-         if (empty($role_config['mainRoles']))     $role_config['mainRoles'] = array();
-         
-         if (isset($role_config['mainRoles']))     $user_to_update->setRoles($role_config['mainRoles']);
-      
-         if (isset($role_config['primaryRole']))   $user_to_update->setPrimaryRole($role_config['primaryRole']);
-         
-         // -----------------------------
-            
-         $assignActiveToPrimary = false;
-         
-         if (!in_array($user_to_update->getActiveRoleID(), $role_config['mainRoles'])) {
-       
-            // Active role was pulled out -- need to reassign the active role to the primary role  
-            
-            $assignActiveToPrimary = true;
-      
-         }
-         
-         // -----------------------------
-
-         $activeRoleConfig['active_cd_center'] = -1;
-         $activeRoleConfig['active_cs_center'] = -1;
-
-         if (($activeRoleConfig['main_role'] == ROLE_ID_CENTER_DIRECTOR) || ($activeRoleConfig['main_role'] == ROLE_ID_CENTER_STAFF)) {
-         
-            if ($activeRoleConfig['main_role'] == ROLE_ID_CENTER_DIRECTOR) { $site_ref = 'centerDirectorSites'; $active_center_ref = 'active_cd_center'; }
-            if ($activeRoleConfig['main_role'] == ROLE_ID_CENTER_STAFF)    { $site_ref = 'centerStaffSites';    $active_center_ref = 'active_cs_center'; }
-            
-            $activeCenterPersists = in_array($activeRoleConfig['active_center'], $role_config[$site_ref]);
-            
-            if ($activeCenterPersists == true) {
-
-               $activeRoleConfig[$active_center_ref] = $activeRoleConfig['active_center'];
-
+            if (count($centers) > 0) {
+                foreach ($centers as $center) {
+                    $user_to_update->addAclOrganization($aclName, $center);
+                }
             }
-            else {
+        }
+    } // if (isset($_POST['acls'])) {
 
-               if ($role_config['primaryRole'] == ROLE_ID_CENTER_DIRECTOR) {
-                  $activeRoleConfig['active_cd_center'] = $role_config['primaryCenterDirectorSite'];
-               }
-               elseif ($role_config['primaryRole'] == ROLE_ID_CENTER_STAFF) {
-                  $activeRoleConfig['active_cs_center'] = $role_config['primaryCenterStaffSite'];  
-               }
-               else {
-                  $user_to_update->setActiveRole($role_config['primaryRole']);     
-               }
-               
-            }
-                           
-         }//if (active role was formerly CENTER_DIRECTOR or CENTER_STAFF)
-
-         // -----------------------------                  
-
-         $centerDirectorConfig = array();
-                           
-         foreach ($role_config['centerDirectorSites'] as $cdSite) {
-            
-            $active = ($activeRoleConfig['active_cd_center'] == $cdSite);
-            $primary = ($cdSite == $role_config['primaryCenterDirectorSite']);
-            
-            $centerDirectorConfig[$cdSite] = array('active' => $active, 'primary' => $primary);
-         
-         }//foreach
-         
-         $user_to_update->setOrganizations($centerDirectorConfig, ROLE_ID_CENTER_DIRECTOR, $assignActiveToPrimary);	
- 
-         // -----------------------------
-      
-         $centerStaffConfig = array();
-                  
-         foreach ($role_config['centerStaffSites'] as $csSite) {
-               
-            $active = ($activeRoleConfig['active_cs_center'] == $csSite);
-            $primary = ($csSite == $role_config['primaryCenterStaffSite']);
-               
-            $centerStaffConfig[$csSite] = array('active' => $active, 'primary' => $primary);
-            
-         }//foreach
-         
-         $user_to_update->setOrganizations($centerStaffConfig, ROLE_ID_CENTER_STAFF, $assignActiveToPrimary);	  
-         
-         // -----------------------------         
-         
-         if (!in_array($user_to_update->getActiveRoleID(), $role_config['mainRoles'])) {
-       
-            // Active role was pulled out -- need to reassign the active role to the primary role  
-
-            $organization_param = NULL;
-            
-            if ($role_config['primaryRole'] == ROLE_ID_CENTER_DIRECTOR) { $organization_param = $role_config['primaryCenterDirectorSite']; }
-            if ($role_config['primaryRole'] == ROLE_ID_CENTER_STAFF)    { $organization_param = $role_config['primaryCenterStaffSite'];    }
-
-            $user_to_update->setActiveRole($role_config['primaryRole'], $organization_param);     
-  
-         }
-         
-	  }
-     else {
-	  
-         $required_params = implode(', ', $diff);
-   
-         $returnData['success'] = false;
-         $returnData['status'] = "Role config items required: $required_params";
-         xd_controller\returnJSON($returnData);
-
-	  }  
-	  
-	}//if (isset($_POST['roles'])) {
-   
    // -----------------------------
        
    if (isset($_POST['institution'])) {
@@ -238,7 +123,7 @@
          $user_to_update->disassociateWithInstitution();
       }
       else {
-         $user_to_update->setInstitution($_POST['institution'], ($role_config['primaryRole'] == ROLE_ID_CAMPUS_CHAMPION));	
+         $user_to_update->setInstitution($_POST['institution'], array_key_exists(ROLE_ID_CAMPUS_CHAMPION, $role_config));
       }
 
    }//if (isset($_POST['institution']))

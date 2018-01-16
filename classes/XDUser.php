@@ -3,15 +3,17 @@
 require_once dirname(__FILE__) . '/../configuration/linker.php';
 
 use CCR\DB;
+use CCR\Log;
 use Models\Acl;
 use Models\Services\Acls;
+use User\aRole;
 
 /**
  * XDMoD Portal User
  *
  * @Class XDUser
  */
-class XDUser
+class XDUser extends ETL\Loggable implements JsonSerializable
 {
 
     private $_pdo;                       // PDO Handle (set in __construct)
@@ -131,20 +133,12 @@ class XDUser
             throw new Exception("At least one role must be associated with this user");
         }
 
-        if ($this->_getFormalRoleName($primary_role) == NULL) {
-            throw new Exception("A valid primary role must be specified");
-        }
-
         foreach ($this->_roles as $role) {
 
-            if ($this->_getFormalRoleName($role) == NULL) {
+            if (self::_getFormalRoleName($role) == NULL) {
                 throw new Exception("Unrecognized role $role");
             }
 
-        }
-
-        if (!in_array($primary_role, $this->_roles)) {
-            throw new Exception("Primary role $primary_role must be a member of the set of roles assigned to this user");
         }
 
         // =================================
@@ -163,14 +157,23 @@ class XDUser
 
         // =================================
 
-        $primary_role_name = $this->_getFormalRoleName($primary_role);
+        $primary_role_name = self::_getFormalRoleName($primary_role);
 
         // These roles cannot be used immediately after constructing a new XDUser (since a user id has not been defined at this point).
         // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
         // these roles using getPrimaryRole() and getActiveRole()
-
-        $this->_primary_role = \User\aRole::factory($primary_role_name);
-        $this->_active_role = \User\aRole::factory($primary_role_name);
+        $this->_primary_role = $this->_active_role = \User\aRole::factory($primary_role_name);
+        parent::__construct(
+            Log::factory(
+                'xduser.sql',
+                array(
+                    'db' => false,
+                    'mail' => false,
+                    'console' => false,
+                    'file'=> LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
+                )
+            )
+        );
     }//construct
 
     // ---------------------------
@@ -204,7 +207,7 @@ class XDUser
     {
 
         if (!isset($this->_id)) {
-            throw new \Exception('This user must be saved first.');
+            throw new Exception('This user must be saved first.');
         }
 
         return new XDUserProfile($this->_id);
@@ -474,41 +477,13 @@ class XDUser
         // See: http://stackoverflow.com/questions/1197005/how-to-get-numeric-types-from-mysql-using-pdo
         $user->_user_type = (int)$userCheck[0]['user_type'];
 
-        $user->_roles = array();
+        // We retrieve the most privileged acl for this user and use it for the
+        // active / primary role.
+        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user);
+        $activeRoleFormalName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
 
-        $rolesResult = $pdo->query("
-         SELECT 
-            r.abbrev,
-            r.description,
-            IF(ur.is_primary, COALESCE(urp.is_primary, ur.is_primary), ur.is_primary) AS is_primary,
-            IF(ur.is_active, COALESCE(urp.is_active, ur.is_active), ur.is_active) AS is_active,
-            urp.param_value
-         FROM
-            UserRoles AS ur
-            JOIN Roles AS r ON ur.role_id = r.role_id
-            LEFT JOIN UserRoleParameters AS urp ON ur.user_id = urp.user_id AND ur.role_id = urp.role_id
-         WHERE ur.user_id = :user_id
-      ", array(
-            ':user_id' => $user->_id,
-        ));
-
-        foreach ($rolesResult as $roleSet) {
-
-            if (!in_array($roleSet['abbrev'], $user->_roles)) {
-                $user->_roles[] = $roleSet['abbrev'];
-            }
-
-            if ($roleSet['is_primary'] == '1') {
-                $user->_primary_role = \User\aRole::factory($roleSet['description']);
-                $user->_primary_role->configure($user, $roleSet['param_value']);
-            }
-
-            if ($roleSet['is_active'] == '1') {
-                $user->_active_role = \User\aRole::factory($roleSet['description']);
-                $user->_active_role->configure($user, $roleSet['param_value']);
-            }
-
-        }//foreach
+        $user->_primary_role = $user->_active_role = aRole::factory($activeRoleFormalName);
+        $user->_active_role->configure($user);
 
         // BEGIN: ACL population
         $query = <<<SQL
@@ -516,16 +491,27 @@ SELECT a.*, ua.user_id
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
+  LEFT JOIN (
+    SELECT
+      ah.acl_id,
+      ah.level
+    FROM acl_hierarchies ah
+      JOIN hierarchies h
+        ON ah.hierarchy_id = h.hierarchy_id
+    WHERE h.name = :acl_hierarchy_name
+  ) aclh
+    ON aclh.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
       AND a.enabled = TRUE
+ORDER BY COALESCE(aclh.level, 0) DESC;
 SQL;
         $results = $pdo->query(
             $query,
             array(
-                'user_id' => $uid
+                'user_id' => $uid,
+                ':acl_hierarchy_name' => 'acl_hierarchy'
             )
         );
-
 
         $acls = array_reduce($results, function ($carry, $item) {
             $acl = new Acl($item);
@@ -535,6 +521,12 @@ SQL;
 
         $user->setAcls($acls);
         // END: ACL population
+
+        // we do this instead of calling `setRoles` as `setRoles` will end up
+        // making a db call per role to keep the acls in sync. And in the end
+        // the results will be the same.
+        $user->_roles = $user->getAcls(true);
+
 
         return $user;
 
@@ -831,11 +823,19 @@ SQL;
     {
         /* BEGIN: VALIDATION  */
         if ($this->isPublicUser()) {
-            throw new \Exception('The public role user cannot be saved.');
+            throw new Exception('The public role user cannot be saved.');
         }
 
         if ($this->_user_type == 0) {
-            throw new \Exception('The user must have a valid user type.');
+            throw new Exception('The user must have a valid user type.');
+        }
+
+        if (count($this->_roles) === 0) {
+            throw new Exception('A user must have at least one role.');
+        }
+
+        if (count($this->_acls) === 0) {
+            throw new Exception('A user must have at least one acl.');
         }
 
         // Retrieve the userId (if any) for the email associated with this User
@@ -921,7 +921,7 @@ SQL;
                 // New User Creation -- assign the new user id to the associated roles
                 $this->_id = $new_user_id;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new Exception("Exception occured while inserting / updating. UpdateToken: [{$this->_update_token}] Query: [$query] data: [{$this->arrayToString($update_data)}]", null, $e);
         }
         /* END: Execute the query */
@@ -975,30 +975,29 @@ SQL;
                     'roleId' => $roleId)
             );
         }
-        $primaryRoleId = $this->_getRoleID($this->_primary_role->getIdentifier());
-        $this->_pdo->execute(
-            "UPDATE UserRoles SET is_primary='1' WHERE user_id=:id AND role_id=:roleId",
-            array('id' => $this->_id, 'roleId' => $primaryRoleId)
-        );
 
-        // If the updater (e.g. Manager) has pulled out the (recently) active role for this user, reassign the active role to the primary role.
+        // Retrieve this users most privileged acl as it will be used to set the
+        // the _active_role property.
+        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
 
-        $active_role_id = (in_array($this->_active_role->getIdentifier(), $this->_roles)) ?
-            $this->_getRoleID($this->_active_role->getIdentifier()) :
-            $primaryRoleId;
+        if (!isset($mostPrivilegedAcl)) {
+            throw new Exception('Unable to determine this users most privileged acl. There may be a problem with the state of the database.');
+        }
 
+        $activeRoleName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
+        $this->_primary_role = $this->_active_role = aRole::factory($activeRoleName);
 
+        $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
         $this->_pdo->execute(
             "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
             array('id' => $this->_id, 'roleId' => $active_role_id)
         );
-        /* END: UserRole Updating */
-
-        /* BEGIN: Configure Primary and Active Roles */
-        $this->_primary_role->configure($this);
         $this->_active_role->configure($this);
-        /* END: Configure Primary and Active Roles */
 
+        $this->_pdo->execute(
+            "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
+            array(':id' => $this->_id, ':roleId' => $active_role_id)
+        );
 
         $timestampData = $this->_pdo->query(
             "SELECT time_created, time_last_updated, password_last_updated
@@ -1127,7 +1126,7 @@ SQL;
     {
 
         if ($this->isPublicUser()) {
-            throw new \Exception('Cannot remove public user');
+            throw new Exception('Cannot remove public user');
         }
 
         // Clean up any report-based data generated by the user
@@ -1359,69 +1358,126 @@ SQL;
             return array();
 
         }
-
-        // Program Officer
-
-        $role_query_1 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'Program Officer'";
-        $role_query_1_params = array(
+        // NOTE: DO NOT PUT ['] in your comments, you will break the sql.
+        $query = <<<SQL
+SELECT DISTINCT
+  CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
+    THEN CONCAT(a.display, ' - ', o.abbrev)
+  ELSE a.display
+  END                   AS 'description',
+  CASE WHEN uagbp.user_acl_parameter_id IS NOT NULL
+    THEN CONCAT(a.name, ':', uagbp.value)
+  ELSE a.name
+  END                   AS 'param_value',
+  mp.acl_id IS NOT NULL AS is_primary,
+  mp.acl_id IS NOT NULL AS is_active
+-- we select from user_acls as this table holds the primary relationship between
+-- users and the acls they have relationships with.
+FROM user_acls ua
+-- acls is joined in strictly to retrieve more detailed display information
+  JOIN acls a
+    ON a.acl_id = ua.acl_id
+-- we left join in user_acl_group_by_parameters as this is where 'center' related
+-- information about a user / acl relation is stored. Left join is specifically
+-- used so that we will always get all records from user_acls regardless of
+-- whether or not there is a corresponding record in
+-- user_acl_group_by_parameters
+  JOIN acl_types at ON a.acl_type_id = at.acl_type_id
+  LEFT JOIN user_acl_group_by_parameters uagbp
+    ON uagbp.user_id = ua.user_id AND
+       uagbp.acl_id = ua.acl_id AND
+       uagbp.group_by_id IN (
+         SELECT gb.group_by_id
+         FROM group_bys gb
+         WHERE gb.name = :group_by_name
+       )
+-- we left join in modw.organization to retrieve more detailed display
+-- information. Its a left join as it will be joined to
+-- user_acl_group_by_parameters which is also a left join.
+  LEFT JOIN modw.organization AS o
+    ON o.id = uagbp.value
+-- This left join retrieves what will be our primary sorting value
+-- acl_hierarchies.level. It is a left join because it is not expected that all
+-- acls will participate in a hierarchy.
+  LEFT JOIN (
+              SELECT
+                ah.acl_id,
+                ah.level
+              FROM acl_hierarchies ah
+                JOIN hierarchies h
+                  ON ah.hierarchy_id = h.hierarchy_id
+              WHERE h.name = :acl_hierarchy_name
+            ) aclh
+    ON aclh.acl_id = ua.acl_id
+-- This big long left join retrieves the most privileged acl for to determine the
+-- is_primary and is_active values. You can reference Acls.php getMostPrivilegedAcl.
+  LEFT JOIN (
+              SELECT DISTINCT
+                a.*,
+                aclp.abbrev organization,
+                aclp.id     organization_id
+              FROM acls a
+                JOIN user_acls ua
+                  ON a.acl_id = ua.acl_id
+                LEFT JOIN (
+                            SELECT
+                              ah.acl_id,
+                              ah.level
+                            FROM acl_hierarchies ah
+                              JOIN hierarchies h
+                                ON ah.hierarchy_id = h.hierarchy_id
+                            WHERE h.name = :acl_hierarchy_name
+                          ) aclh
+                  ON aclh.acl_id = ua.acl_id
+                LEFT JOIN (
+                            SELECT
+                              uagbp.acl_id,
+                              o.abbrev,
+                              o.id
+                            FROM modw.organization o
+                              JOIN user_acl_group_by_parameters uagbp
+                                ON o.id = uagbp.value
+                          ) aclp
+                  ON aclp.acl_id = ua.acl_id
+              WHERE ua.user_id = :user_id
+              ORDER BY COALESCE(aclh.level, 0) DESC
+              LIMIT 1
+            ) mp
+    ON mp.acl_id = ua.acl_id
+-- we only want records that are related to a specific user
+-- the original sql implicitly left out the flag or feature acls
+-- so we need to filter these out here
+WHERE ua.user_id = :user_id AND at.name != 'feature'
+-- In this ordering we use coalesce so that any acl that does not participate
+-- in a hierarchy will be sent to the bottom of the list
+ORDER BY COALESCE(aclh.level, 0) DESC, a.name
+SQL;
+        $params = array(
+            ':acl_hierarchy_name' => 'acl_hierarchy',
             ':user_id' => $this->_id,
+            ':group_by_name' => 'provider'
         );
 
-        // Center Director and Center Staff
+        try {
+            // NOTE: previously we had no DB concept of modules / realms
+            // the values that are provided for :module_name, :realm_name, and
+            // :group_by_name simulate the behavior of the old system.
+            $available_roles = $this->_pdo->query(
+                $query,
+                $params
+            );
 
-        $role_query_2 = "SELECT CONCAT(r.description, ' - ', o.abbrev) AS description, CONCAT(r.abbrev, ':', urp.param_value) AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoleParameters AS urp, moddb.Roles AS r, modw.organization AS o " .
-            "WHERE urp.param_value = o.id AND r.role_id = urp.role_id AND urp.user_id=:user_id AND r.description != 'Campus Champion'" .
-            "ORDER BY r.description, o.abbrev";
-        $role_query_2_params = array(
-            ':user_id' => $this->_id,
-        );
+            return $available_roles;
+        } catch (PDOException $e) {
+            $this->logAndThrowException(
+                "A PDOException was thrown in 'XDUser::enumAllAvailableRoles'",
+                array(
+                    'exception' => $e,
+                    'sql'=> $query
+                )
+            );
 
-        // Campus Champion
-
-        $role_query_3 = "SELECT CONCAT(r.description, ' - ', o.name) AS description, CONCAT(r.abbrev, ':', urp.param_value) AS param_value, urp.is_primary, ur.is_active " .
-            "FROM moddb.UserRoleParameters AS urp, moddb.UserRoles AS ur, moddb.Roles AS r, modw.organization AS o " .
-            "WHERE urp.param_value = o.id AND ur.role_id = r.role_id AND ur.user_id =:ur_user_id AND r.role_id = urp.role_id " .
-            "AND urp.user_id=:urp_user_id AND r.description = 'Campus Champion'" .
-            "ORDER BY r.description, o.abbrev";
-        $role_query_3_params = array(
-            ':ur_user_id' => $this->_id,
-            ':urp_user_id' => $this->_id,
-        );
-
-        // Principal Investigator
-
-        $role_query_4 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'Principal Investigator'";
-        $role_query_4_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        // User
-
-        $role_query_5 = "SELECT r.description, r.abbrev AS param_value, urp.is_primary, urp.is_active " .
-            "FROM moddb.UserRoles AS urp, moddb.Roles AS r " .
-            "WHERE r.role_id = urp.role_id AND user_id=:user_id " .
-            "AND r.description = 'User'";
-        $role_query_5_params = array(
-            ':user_id' => $this->_id,
-        );
-
-        $available_roles = array_merge(
-            $this->_pdo->query($role_query_1, $role_query_1_params),
-            $this->_pdo->query($role_query_2, $role_query_2_params),
-            $this->_pdo->query($role_query_3, $role_query_3_params),
-            $this->_pdo->query($role_query_4, $role_query_4_params),
-            $this->_pdo->query($role_query_5, $role_query_5_params)
-        );
-
-        return $available_roles;
-
+        }
     }//enumAllAvailableRoles
 
     // ---------------------------
@@ -1441,7 +1497,7 @@ SQL;
         // This feature currently applies to campus champions...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling setInstitution()");
+            throw new Exception("This user must be saved prior to calling setInstitution()");
         }
 
         $primary_flag = $is_primary ? 1 : 0;
@@ -1465,40 +1521,40 @@ SQL;
         $aclName = 'cd';
 
         $aclCleanup = <<<SQL
-DELETE FROM user_acl_group_by_parameters 
-WHERE user_id = :user_id 
+DELETE FROM user_acl_group_by_parameters
+WHERE user_id = :user_id
     AND acl_id IN (
-        SELECT 
-            a.acl_id 
-        FROM acls a 
+        SELECT
+            a.acl_id
+        FROM acls a
         WHERE a.name = :acl_name
     )
     AND group_by_id IN (
-        SELECT 
+        SELECT
             gb.group_by_id
-        FROM group_bys gb 
+        FROM group_bys gb
         WHERE gb.name = 'institution'
     )
 SQL;
 
         $aclInsert = <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)  
-SELECT inc.* 
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
 FROM (
-    SELECT 
+    SELECT
         :user_id AS user_id,
-        a.acl_id AS acl_id, 
+        a.acl_id AS acl_id,
         gb.group_by_id AS group_by_id,
-        :value AS value 
+        :value AS value
     FROM acls a, group_bys gb
     WHERE a.name = :acl_name
     AND gb.name = 'institution'
-) inc 
-LEFT JOIN user_acl_group_by_parameters cur 
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
 ON cur.user_id = inc.user_id
 AND cur.acl_id = inc.acl_id
 AND cur.group_by_id = inc.group_by_id
-AND cur.value = inc.value 
+AND cur.value = inc.value
 WHERE cur.user_acl_parameter_id IS NULL;
 SQL;
 
@@ -1532,7 +1588,7 @@ SQL;
         // This feature currently applies to campus champions...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling disassociateWithInstitution()");
+            throw new Exception("This user must be saved prior to calling disassociateWithInstitution()");
         }
 
         $cleanupStatement = "DELETE FROM UserRoleParameters " .
@@ -1543,10 +1599,10 @@ SQL;
         ));
         $this->_pdo->execute(<<<SQL
         DELETE FROM user_acl_group_by_parameters
-WHERE user_id = :user_id 
+WHERE user_id = :user_id
 AND group_by_id IN (
 SELECT gb.group_by_id
-FROM group_bys gb 
+FROM group_bys gb
 WHERE gb.name = 'institution');
 SQL
             , array(
@@ -1641,11 +1697,11 @@ SQL
         // This feature currently applies to center directors and center staff members...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling setOrganization()");
+            throw new Exception("This user must be saved prior to calling setOrganization()");
         }
 
         if ($role != ROLE_ID_CENTER_DIRECTOR && $role != ROLE_ID_CENTER_STAFF) {
-            throw new \Exception("This user must be saved prior to calling setOrganization()");
+            throw new Exception("This user must be saved prior to calling setOrganization()");
         }
 
         $role_id = $this->_getRoleID($role);
@@ -1714,18 +1770,18 @@ SQL
             ));
             $this->_pdo->execute(
                 <<<SQL
-INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value) 
-SELECT inc.* 
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
 FROM (
-   SELECT 
+   SELECT
       :user_id AS user_id,
       :acl_id AS acl_id,
       gb.group_by_id AS group_by_id,
-      :value AS value 
-   FROM group_bys gb 
+      :value AS value
+   FROM group_bys gb
    WHERE gb.name = 'provider'
-) inc 
-LEFT JOIN user_acl_group_by_parameters cur 
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
   ON cur.user_id = inc.user_id
   AND cur.acl_id = inc.acl_id
   AND cur.group_by_id = inc.group_by_id
@@ -1767,7 +1823,7 @@ SQL
         // This feature currently applies to center staff members...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling enumCenterStaffSites()");
+            throw new Exception("This user must be saved prior to calling enumCenterStaffSites()");
         }
 
         $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=5 AND param_name='provider' AND user_id=:user_id", array(
@@ -1792,7 +1848,7 @@ SQL
         // This feature currently applies to center directors...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling enumCenterDirectorSites()");
+            throw new Exception("This user must be saved prior to calling enumCenterDirectorSites()");
         }
 
         $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=1 AND param_name='provider' AND user_id=:user_id", array(
@@ -1820,7 +1876,7 @@ SQL
         // This feature currently applies to center directors...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling disassociateWithOrganizations()");
+            throw new Exception("This user must be saved prior to calling disassociateWithOrganizations()");
         }
 
         $cleanupStatement = "DELETE FROM UserRoleParameters WHERE user_id=:user_id AND role_id=1 AND param_name='provider'";
@@ -1848,7 +1904,7 @@ SQL
         // This feature currently applies to campus champions...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling getInstitution()");
+            throw new Exception("This user must be saved prior to calling getInstitution()");
         }
 
         $query = "SELECT param_value FROM UserRoleParameters WHERE user_id=:user_id AND param_name='institution'";
@@ -1865,14 +1921,25 @@ SQL
 
     public function isCenterDirectorOfOrganization($organization_id)
     {
+        $query = <<<SQL
+SELECT COUNT(*) AS num_matches
+FROM user_acl_group_by_parameters uagbp
+JOIN group_bys gb ON uagbp.group_by_id = gb.group_by_id
+JOIN acls a ON uagbp.acl_id = a.acl_id
+WHERE
+  a.name        = :acl_name      AND
+  gb.name       = :group_by_name AND
+  uagbp.user_id = :user_id       AND
+  uagbp.value   = :organization_id;
+SQL;
 
         $results = $this->_pdo->query(
-            "SELECT COUNT(*) AS num_matches FROM UserRoleParameters WHERE user_id=:user_id AND role_id=:role_id AND param_name=:param_name AND param_value=:param_value",
+            $query,
             array(
-                'user_id' => $this->_id,
-                'role_id' => \xd_roles\getRoleIDFromIdentifier(ROLE_ID_CENTER_DIRECTOR),
-                'param_name' => 'provider',
-                'param_value' => $organization_id
+                ':user_id' => $this->_id,
+                ':acl_name' => ROLE_ID_CENTER_DIRECTOR,
+                ':group_by_name' => 'provider',
+                ':organization_id' => $organization_id
             )
         );
 
@@ -1899,7 +1966,7 @@ SQL
         // This feature currently applies to center directors...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling getPrimaryOrganization()");
+            throw new Exception("This user must be saved prior to calling getPrimaryOrganization()");
         }
 
         $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev='cd' AND urp.user_id=:user_id AND urp.param_name='provider' AND urp.is_primary=1";
@@ -1929,7 +1996,7 @@ SQL
         // This feature currently applies to center directors...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling getActiveOrganization()");
+            throw new Exception("This user must be saved prior to calling getActiveOrganization()");
         }
 
         $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev='cd' AND urp.user_id=:user_id AND urp.param_name='provider' AND urp.is_active=1";
@@ -1960,7 +2027,7 @@ SQL
         // This feature currently applies to center staff / center directors...
 
         if (empty($this->_id)) {
-            throw new \Exception("This user must be saved prior to calling getOrganizationCollection()");
+            throw new Exception("This user must be saved prior to calling getOrganizationCollection()");
         }
 
         $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev=:abbrev AND urp.user_id=:user_id AND urp.param_name='provider'";
@@ -2089,7 +2156,7 @@ SQL;
     public function setPrimaryRole($primary_role)
     {
 
-        $primary_role_name = $this->_getFormalRoleName($primary_role);
+        $primary_role_name = self::_getFormalRoleName($primary_role);
 
         if ($primary_role_name == NULL) {
             throw new Exception("Attempting to set an invalid primary role");
@@ -2153,21 +2220,13 @@ SQL;
 
         // XDUser::enumAllAvailableRoles already orders the roles in terms of 'visibility' / 'highest privilege'
         // so just acquire the first item in the set.
+        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
+        $roleName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
+        $role = aRole::factory($roleName);
 
-        $availableRoles = $this->enumAllAvailableRoles();
-        if (count($availableRoles) > 0) {
+        $role->configure($this, $mostPrivilegedAcl->getOrganizationId());
 
-            $roleData = explode(':', $availableRoles[0]['param_value']);
-            $roleData = array_pad($roleData, 2, NULL);
-
-            return $this->assumeActiveRole($roleData[0], $roleData[1]);
-
-        } else {
-
-            return $this->getActiveRole();
-
-        }
-
+        return $role;
     }//getMostPrivilegedRole
 
     /* @function getAllRoles
@@ -2269,7 +2328,7 @@ SQL;
 
         if (empty($active_role)) $active_role = ROLE_ID_PUBLIC;
 
-        $active_role_name = $this->_getFormalRoleName($active_role);
+        $active_role_name = self::_getFormalRoleName($active_role);
 
         $virtual_active_role = \User\aRole::factory($active_role_name);
         $virtual_active_role->configure($this, $role_param);
@@ -2292,7 +2351,7 @@ SQL;
     public function setActiveRole($active_role, $role_param = NULL)
     {
 
-        $active_role_name = $this->_getFormalRoleName($active_role);
+        $active_role_name = self::_getFormalRoleName($active_role);
 
         if ($active_role_name == NULL) {
             throw new Exception("Attempting to set an invalid active role");
@@ -2562,26 +2621,32 @@ SQL;
      *
      */
 
-    public function _getFormalRoleName($role_abbrev)
+    public static function _getFormalRoleName($role_abbrev)
     {
-
-        if ($role_abbrev == ROLE_ID_PUBLIC) {
-            return 'Public';
-        }
-
-        if ($role_abbrev == NULL) {
-            return 'Public';
-        }
-
         $pdo = DB::factory('database');
+        $query = <<<SQL
+SELECT CASE WHEN a.acl_id IS NULL
+  THEN pub.description
+       ELSE a.display END description
+FROM (
+       SELECT
+         acl_id,
+         display AS description
+       FROM acls
+       WHERE name = :pub_abbrev
+     ) pub
+  LEFT JOIN acls a
+    ON a.acl_id != pub.acl_id
+       AND a.name = :abbrev;
+SQL;
 
-        $roleData = $pdo->query("SELECT description FROM Roles WHERE abbrev=:abbrev", array(
-            ':abbrev' => $role_abbrev,
-        ));
-
-        if (count($roleData) == 0) {
-            return 'Public';
-        }
+        $roleData = $pdo->query(
+            $query,
+            array(
+                ':abbrev' => $role_abbrev,
+                ':pub_abbrev' => ROLE_ID_PUBLIC
+            )
+        );
 
         return $roleData[0]['description'];
 
@@ -2919,7 +2984,7 @@ SQL;
             return $xsede_username;
 
         } else {
-            throw new \Exception('The user is not a valid XSEDE user');
+            throw new Exception('The user is not a valid XSEDE user');
         }
 
     }//getXSEDEUsername
@@ -2954,7 +3019,7 @@ SQL;
         );
 
         if (count($result) == 0) {
-            throw new \Exception("Cannot locate information for user $username");
+            throw new Exception("Cannot locate information for user $username");
         }
 
         return $result[0]['person_id'];
@@ -3001,11 +3066,11 @@ SQL;
 
             if ($role_abbrev == 'dev') continue;
 
-            $role = \User\aRole::factory($this->_getFormalRoleName($role_abbrev));
+            $role = \User\aRole::factory(self::_getFormalRoleName($role_abbrev));
             $disabledMenusByRole[$role_abbrev] = $role->getDisabledMenus($realms);
 
         }
-        $role = \User\aRole::factory($this->_getFormalRoleName('pub'));
+        $role = \User\aRole::factory(self::_getFormalRoleName('pub'));
         $disabledMenusByRole['pub'] = $role->getDisabledMenus($realms);
 
         // If the user only has one role, return that role's menus immediately.
@@ -3168,13 +3233,15 @@ SQL;
      * @param string $username the identifier to use when attempting to retrieve
      * the XDUser instance.
      *
-     * @return null|XDUser null if the user cannot be found or if null is provided
-     * as the username, else an instantiated XDUser instance.
+     * @return XDUser An instantiated XDUser instance.
+     *
+     * @throws Exception If the user cannot be found or if null is provided as
+     * the username.
      **/
     public static function getUserByUserName($username)
     {
         if (null === $username) {
-            return null;
+            throw new Exception('No username provided');
         }
 
         // Note: due to the complexity of getUserById ( and it being the sole
@@ -3192,6 +3259,104 @@ SQL;
             $uid = $row[0]['id'];
             return self::getUserByID($uid);
         }
-        return null;
+        throw new Exception("User \"$username\" not found");
     } // getUserByUserName
+
+    /**
+     * Attempt to make a relationship between the provided acl and organization
+     * identifier. These relationships are generally used when a user needs to
+     * have the data XDMoD is providing to them filtered by a particular
+     * organization.
+     *
+     * @param string $aclName        the name of the acl that should have a
+     *                               relationship created for it with the
+     *                               provided organization.
+     * @param string $organizationId the name of the organization
+     * @throws Exception if this user has not been saved yet
+     * @throws Exception if the provided acl cannot be found.
+     */
+    public function addAclOrganization($aclName, $organizationId)
+    {
+        if (empty($this->_id)) {
+            throw new Exception("This user must be saved prior to calling " . __FUNCTION__ . ".");
+        }
+
+        // If they haven't provided an organizationId then we can't add an
+        // acl relation to it.
+        if (!isset($organizationId)) {
+            return;
+        }
+
+        $acl = Acls::getAclByName($aclName);
+
+        if ( null == $acl) {
+            throw new Exception("Unable to retrieve acl for: $aclName");
+        }
+
+
+        $cleanUserAclGroupByParameters = <<<SQL
+DELETE FROM user_acl_group_by_parameters
+WHERE user_id = :user_id AND
+      acl_id  = :acl_id
+SQL;
+
+        $this->_pdo->execute($cleanUserAclGroupByParameters, array(
+            ':user_id' => $this->_id,
+            ':acl_id'  => $acl->getAclId()
+        ));
+
+        $populateUserAclGroupByParameters = <<<SQL
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+SELECT inc.*
+FROM (
+   SELECT
+      :user_id AS user_id,
+      :acl_id AS acl_id,
+      gb.group_by_id AS group_by_id,
+      :value AS value
+   FROM group_bys gb
+   WHERE gb.name = 'provider'
+) inc
+LEFT JOIN user_acl_group_by_parameters cur
+  ON cur.user_id = inc.user_id
+  AND cur.acl_id = inc.acl_id
+  AND cur.group_by_id = inc.group_by_id
+  AND cur.value = inc.value
+WHERE cur.user_acl_parameter_id IS NULL;
+SQL;
+
+        $this->_pdo->execute($populateUserAclGroupByParameters, array(
+            ':user_id' => $this->_id,
+            ':acl_id'  => $acl->getAclId(),
+            ':value'   => $organizationId
+        ));
+    } // addAclOrganization
+
+        /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        $ignored = array(
+            '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',
+            '_timePasswordUpdated', '_token', 'logger'
+        );
+        $reflection = new ReflectionClass($this);
+        $results = array();
+        $properties = $reflection->getProperties();
+        foreach($properties as $property) {
+            $name = $property->getName();
+            if (!in_array($name, $ignored)) {
+                $property->setAccessible(true);
+
+                $value = $property->getValue($this);
+                $results[$name] = $value;
+            }
+        }
+        return $results;
+    }
 }//XDUser

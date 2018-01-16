@@ -19,7 +19,7 @@
 
 namespace ETL;
 
-use \Exception;
+use Exception;
 
 // Extending stdClass allows us to use aOptions with when a general class is used, such as verifying
 // required keys in an aOptions class or a standard parsed JSON object.
@@ -55,7 +55,7 @@ abstract class aOptions extends \stdClass implements \Iterator
         "description" => null,
 
         // TRUE if this aggregator is enabled
-        "enabled" => false,
+        "enabled" => true,
 
         // Object containing path information for the various directories used by the ETL process (table
         // configs, data, etc.)
@@ -160,7 +160,7 @@ abstract class aOptions extends \stdClass implements \Iterator
 
             case 'paths':
                 if ( ! is_object($value) ) {
-                    get_class($this) . ": '$property' must be an object (type = " . gettype($value) . ")";
+                    $msg = get_class($this) . ": '$property' must be an object (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
                 break;
@@ -300,6 +300,7 @@ abstract class aOptions extends \stdClass implements \Iterator
                 return $path;
             }
 
+            $value = null;
             $objectPath = '$this->' . implode("->", $parts);
             $evalStr = "\$value = ( isset($objectPath) ? $objectPath : null);";
             eval($evalStr);

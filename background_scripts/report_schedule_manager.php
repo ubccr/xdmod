@@ -81,7 +81,7 @@ foreach ($active_frequencies as $frequency) {
         ? 'None'
         : count($report_details);
 
-    $logger->debug("Reports Scheduled for $frequency Delivery: $suffix");
+    $logger->info("Reports Scheduled for $frequency Delivery: $suffix");
 
     foreach ($report_details as $details) {
 
@@ -98,7 +98,7 @@ foreach ($active_frequencies as $frequency) {
         }
 
         if (!$maint_mode || $user->getUsername() == $maint_user) {
-            $logger->debug(
+            $logger->info(
                 "Preparing report {$details['report_id']}"
                 . " ({$user->getUsername()})"
             );

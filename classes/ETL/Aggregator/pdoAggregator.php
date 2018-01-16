@@ -193,8 +193,6 @@ class pdoAggregator extends aAggregator
         // An individual action may override restrictions provided by the overseer.
         $this->setOverseerRestrictionOverrides();
 
-        $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
-
         if ( null === $this->etlSourceQuery ) {
             $msg = "ETL source query is not set";
             $this->logAndThrowException($msg);
@@ -202,6 +200,8 @@ class pdoAggregator extends aAggregator
             $msg = "ETL source query is not an instance of Query";
             $this->logAndThrowException($msg);
         }
+
+        $this->getEtlOverseerOptions()->applyOverseerRestrictions($this->etlSourceQuery, $this->sourceEndpoint, $this);
 
         // Group by fields must match existing column names. Variables are not substituted at this point
         // but it doesn't matter because the naming will still be consistent.
@@ -381,7 +381,7 @@ class pdoAggregator extends aAggregator
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
 
-            if ( $numAggregationPeriodsProcessed > 0 ) {
+            if ( $numAggregationPeriodsProcessed > 0 && $this->options->analyze_table ) {
                 $sqlList[] = "OPTIMIZE TABLE $qualifiedDestTableName";
             }
 
@@ -417,12 +417,12 @@ class pdoAggregator extends aAggregator
             $tableFullName =  $utilitySchema . "." . $tableName;
             if ( false === $this->utilityEndpoint->tableExists($tableName, $utilitySchema) ) {
                 $this->logger->info("Table does not exist: '$tableFullName', skipping.");
-                continue;
+                return false;
             }
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "Error verifying aggregation unit table for '$aggregationUnit'",
-                array('exception' => $e, 'sql' => $sql)
+                array('exception' => $e)
             );
         }
 
@@ -738,6 +738,8 @@ class pdoAggregator extends aAggregator
         $firstPeriod = current($aggregationPeriodList);
         $periodSize = $firstPeriod['period_end_day_id'] - $firstPeriod['period_start_day_id'];
         $batchSliceSize = $this->options->experimental_batch_aggregation_periods_per_batch;
+        $tmpTableName = null;
+        $qualifiedTmpTableName = null;
 
         // If aggregation batching is enabled, calculate whether or not it is beneficial using the
         // following formula derrived from trial and error:
@@ -928,8 +930,9 @@ class pdoAggregator extends aAggregator
 
                 $this->logger->debug("[EXPERIMENTAL] Create temporary table $qualifiedTmpTableName with min period = $minDayId, max period = $maxDayId");
 
+                $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
+
                 try {
-                    $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
                     $result = $this->sourceHandle->execute($sql);
                 } catch (PDOException $e ) {
                     $this->logAndThrowException(
@@ -1002,7 +1005,9 @@ class pdoAggregator extends aAggregator
                     $sql =
                         "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
                         . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
-                    $this->logger->debug("[EXPERIMENTAL] Batch temp table " . $this->sourceEndpoint . ": $sql");
+                    $this->logger->debug(
+                        sprintf("[EXPERIMENTAL] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
+                    );
                     $result = $this->sourceHandle->execute($sql, $usedParams);
                 } catch (PDOException $e ) {
                     $this->logAndThrowException(
@@ -1034,8 +1039,9 @@ class pdoAggregator extends aAggregator
 
             }  // while ( ! $done )
 
+            $sql = "DROP TEMPORARY TABLE IF EXISTS $tmpTableName";
+            
             try {
-                $sql = "DROP TEMPORARY TABLE IF EXISTS $tmpTableName";
                 $result = $this->sourceHandle->execute($sql);
             } catch (PDOException $e ) {
                 $this->logAndThrowException(
@@ -1112,6 +1118,8 @@ class pdoAggregator extends aAggregator
             $availableParamKeys = Utilities::createPdoBindVarsFromArrayKeys($aggregationPeriodInfo);
             $availableParams = array_combine($availableParamKeys, $aggregationPeriodInfo);
             $periodId = $aggregationPeriodInfo['period_id'];
+            $dummyQuery = null;
+            $deleteSql = null;
 
             // If we're not completely re-aggregating, delete existing entries from the aggregation table
             // matching the periods that we are aggregating. Be sure to restrict resources if necessary.

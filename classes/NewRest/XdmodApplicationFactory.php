@@ -107,14 +107,7 @@ class XdmodApplicationFactory {
 
         // SETUP: a before middleware that detects / starts the query debug mode for a request.
         $app->before(function (Request $request, Application $app) {
-            $app['debug_sql'] =
-                $app['debug']
-                && (
-                    filter_var(\xd_utilities\getConfiguration('general', 'sql_debug_mode'), FILTER_VALIDATE_BOOLEAN)
-                    || $request->query->getBoolean('debug')
-                )
-            ;
-            if ($app['debug_sql']) {
+            if ($request->query->getBoolean('debug')) {
                 PDODB::debugOn();
             }
         });
@@ -125,10 +118,8 @@ class XdmodApplicationFactory {
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.
         $app->after(function (Request $request, Response $response, Application $app) {
-            if ($app['debug_sql']) {
+            if (PDODB::debugging()) {
                 $debugInfo = PDODB::debugInfo();
-                PDODB::debugOff();
-                PDODB::resetDebugInfo();
 
                 $contentType = $response->headers->get('content-type', null);
                 if ('application/json' === strtolower($contentType)) {

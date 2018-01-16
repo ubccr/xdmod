@@ -16,7 +16,7 @@ namespace ETL\Aggregator;
 
 use ETL\aOptions;
 use ETL\DataEndpoint\iDataEndpoint;
-use \Exception;
+use Exception;
 
 class AggregatorOptions extends aOptions
 {
@@ -64,6 +64,9 @@ class AggregatorOptions extends aOptions
             // performance on bulk inserts but may not for aggregation. The option exists for flexibility.
             // See http://dev.mysql.com/doc/refman/5.7/en/alter-table.html
             "disable_keys" => false,
+
+            // Perform an ANALYZE or OPTIMIZE TABLE following ingestion
+            "analyze_table" => true,
 
             // A list of the only resources that should be included for this action. This is mainly
             // used for actions that are resource-specific, but it is up to the action to heed this

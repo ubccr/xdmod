@@ -1,10 +1,40 @@
 /* eslint-env node, es6 */
+var roles = require('./../../../../integration_tests/.secrets.json').role;
 class LoginPage {
-    login(title, theUrl, loginName, loginPassword, displayName) {
+
+    login(desiredRole) {
+        let username;
+        let password;
+        let displayName;
+        let role;
+        switch (desiredRole) {
+            case 'cd':
+            case 'centerdirector':
+                role = 'cd';
+                break;
+            case 'usr':
+            case 'user':
+                role = 'usr';
+                break;
+            case 'pi':
+            case 'principalinvestigator':
+                role = 'pi';
+                break;
+            case 'cs':
+            case 'centerstaff':
+                role = 'cs';
+                break;
+            default:
+                role = desiredRole;
+        }
+        username = roles[role].username;
+        password = roles[role].password;
+        displayName = roles[role].givenname + ' ' + roles[role].surname;
+        displayName = displayName.trim();
         describe('General', function () {
             it('Verify Logo and Title', function () {
-                browser.url(theUrl);
-                expect(browser.getTitle()).to.equal(title);
+                browser.url('/');
+                expect(browser.getTitle()).to.equal('Open XDMoD');
                  // $(this.logo).waitForVisible(2000);
                 $('#logo').waitForVisible(2000);
                 var logoSize = browser.getElementSize('#logo');
@@ -14,26 +44,19 @@ class LoginPage {
         });
         describe('Login', function login() {
             it('Click the login link', function clickLogin() {
-                browser.waitUntilNotExist('.ext-el-mask-msg');
+                browser.waitForInvisible('.ext-el-mask-msg');
                 $('a[href*=actionLogin]').click();
             });
             it('Should Login', function doLogin() {
-                $('.x-window-header-text=Welcome To XDMoD').waitForExist(20000);
-                $('#wnd_login iframe').waitForExist(20000);
-                browser.frame($('#wnd_login iframe').value);
-                $('#txt_login_username input').setValue(loginName);
-                $('#txt_login_password input').setValue(loginPassword);
-                $('#btn_sign_in .x-btn-mc').click();
-
-                // Per: http://webdriver.io/api/protocol/frame.html#Usage
-                // Resetting the server to the page's default content
-                // This was causing issues with running the tests under
-                // Ubuntu 16.04:Firefox
-                browser.frame();
+                browser.waitForVisible('#btn_sign_in');
+                $('#txt_login_username').setValue(username);
+                $('#txt_login_password').setValue(password);
+                browser.waitAndClick('#btn_sign_in');
             });
             it('Display Logged in Users Name', function () {
-                $('#welcome_message').waitForExist(60000);
+                $('#welcome_message').waitForVisible(60000);
                 expect($('#welcome_message').getText()).to.equal(displayName);
+                $('#main_tab_panel__about_xdmod').waitForVisible();
             });
         });
     }
@@ -45,8 +68,9 @@ class LoginPage {
                 $('#logout_link').click();
             });
             it('Display Logged out State', function clickLogout() {
-                browser.waitUntilNotExist('.ext-el-mask-msg');
-                $('a[href*=actionLogin]').waitForExist();
+                browser.waitForInvisible('.ext-el-mask-msg');
+                $('a[href*=actionLogin]').waitForVisible();
+                $('#main_tab_panel__about_xdmod').waitForVisible();
             });
         });
 /*

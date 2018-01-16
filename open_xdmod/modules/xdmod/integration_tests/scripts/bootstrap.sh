@@ -14,8 +14,9 @@ if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove
     rm -rf /etc/xdmod
-    rm -rf /var/lib/mysql
-    yum -y localinstall ~/rpmbuild/RPMS/*/*.rpm
+    rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
+    yum -y remove java-1.7.0-openjdk java-1.7.0-openjdk-devel
+    yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do 
@@ -25,11 +26,12 @@ then
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     xdmod-ingestor
     php /root/bin/createusers.php
+    acl-import
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
-    rpm -Uvh ~/rpmbuild/RPMS/*/*.rpm
+    yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
-    xdmod-upgrade --batch-mode | col -b
+    expect $BASEDIR/xdmod-upgrade.tcl | col -b
 fi

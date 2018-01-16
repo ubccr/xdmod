@@ -1,0 +1,31 @@
+{
+    "table_definition": {
+            "$ref" : "etl_tables.d/xdmod/resource-allocated.json#/table_definition"
+        },
+    "source_query": {
+        "records": {
+            "resource_id": "rf.resource_id",
+            "start_date_ts": "COALESCE(raf.start_date_ts, 0)",
+            "end_date_ts": "raf.end_date_ts",
+            "name": "rf.resource_name",
+            "percent": "COALESCE(raf.percent, 100)"
+        },
+        "joins": [{
+                "name": "hpcdb_resources",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rf"
+            },
+            {
+                "name": "hpcdb_resource_allocated",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raf",
+                "type": "LEFT",
+                "on": "raf.resource_id = rf.resource_id"
+            }
+        ],
+        "orderby": [
+            "rf.resource_id",
+            "raf.start_date_ts"
+        ]
+    }
+}

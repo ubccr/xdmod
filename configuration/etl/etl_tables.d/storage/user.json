@@ -1,0 +1,36 @@
+{
+    "table_definition": {
+        "name": "user",
+        "engine": "InnoDB",
+        "comment": "File system users",
+        "columns": [
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "AUTO_INCREMENT"
+            },
+            {
+                "name": "username",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "User's username"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "user_id"
+                ]
+            },
+            {
+                "name": "uk_username",
+                "columns": [
+                    "username"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

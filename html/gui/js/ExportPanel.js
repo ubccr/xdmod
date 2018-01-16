@@ -29,7 +29,8 @@ Ext.apply(CCR.xdmod.ui.ExportPanel, {
         ['png', 'PNG - Portable Network Graphics'],
         ['svg', 'SVG - Scalable Vector Graphics'],
         ['csv', 'CSV - Comma Separated Values'],
-        ['xml', 'XML - Extensible Markup Language']
+        ['xml', 'XML - Extensible Markup Language'],
+        ['pdf', 'PDF - Portable Document Format']
     ],
     format_types_noimg: [
         ['csv', 'CSV - Comma Separated Values'],
@@ -56,10 +57,10 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
         this.lastformatSetting = this.formatTypeCombo.getValue();
 
         if(allow) {
-            this.formatTypeCombo.store.loadData(CCR.xdmod.ui.ExportPanel.format_types);
+            this.formatTypeCombo.store.loadData(this.format_types);
             this.settings.format = cachedFormat;
         } else {
-            this.formatTypeCombo.store.loadData(CCR.xdmod.ui.ExportPanel.format_types_noimg);
+            this.formatTypeCombo.store.loadData(this.format_types_noimg);
             this.settings.format = cachedFormat;
         }
         this.formatTypeCombo.setValue(this.settings.format);
@@ -67,20 +68,37 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
         this.imageExportAllowed = allow;
     },
     setupDisplay: function(format_type) {
-        switch(format_type) {
-            case 'png':
-            case 'svg':
-                this.showTitleCheckbox.show();
-                this.templateTypeCombo.show();
-                break;
-            case 'xml':
-            case 'csv':
-                this.showTitleCheckbox.hide();
-                this.templateTypeCombo.hide();
-                break;
+        // Define which fields are to be shown for each export type. (Note that the xml
+        // and csv exports have no fields shown).
+        var fieldSettings = {
+            width_inches: ['pdf'],
+            height_inches: ['pdf'],
+            font_pt: ['pdf'],
+            show_title: ['pdf', 'png', 'svg'],
+            image_size: ['png', 'svg']
+        };
+
+        var field;
+        for (field in fieldSettings) {
+            if (fieldSettings.hasOwnProperty(field)) {
+                this.form.findField(field).setVisible(fieldSettings[field].includes(format_type));
+            }
         }
     },
     initComponent: function () {
+
+        this.format_types = CCR.xdmod.ui.ExportPanel.format_types;
+        this.format_types_noimg = CCR.xdmod.ui.ExportPanel.format_types_noimg;
+
+        if (this.config && this.config.allowedExports) {
+            var allowedExports = this.config.allowedExports;
+            this.format_types = CCR.xdmod.ui.ExportPanel.format_types.filter(function (ftype) {
+                return allowedExports.includes(ftype[0]);
+            });
+            this.format_types_noimg = CCR.xdmod.ui.ExportPanel.format_types_noimg.filter(function (ftype) {
+                return allowedExports.includes(ftype[0]);
+            });
+        }
 
         this.settings = { format: 'png', showtitle: true, height: 484, width: 916, font_size: 0, scale: 1};
         this.template = 'medium';
@@ -163,7 +181,7 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
         this.templateTypeCombo = new Ext.form.ComboBox( {
             flex: 2.5,
             fieldLabel: 'Image Size',
-            name: 'format_type',
+            name: 'image_size',
             xtype: 'combo',
             mode: 'local',
             editable: false,
@@ -231,7 +249,7 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
                     'id',
                     'text'
                 ],
-                data: CCR.xdmod.ui.ExportPanel.format_types
+                data: this.format_types
             }),
             disabled: false,
             value: this.settings.format,
@@ -245,7 +263,7 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
                 }
             }
         });
-        var form = new Ext.FormPanel({
+        var formpanel = new Ext.FormPanel({
             labelWidth: 125, // label settings here cascade unless overridden
             bodyStyle: 'padding:5px 5px 0',
             monitorValid: true,
@@ -260,25 +278,78 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
                 this.templateTypeCombo,
                 this.widthTextBox,
                 this.heightTextBox,
-                this.fontSizeSlider
+                this.fontSizeSlider,
+                {
+                    xtype: 'numberfield',
+                    name: 'width_inches',
+                    fieldLabel: 'Width (inches)',
+                    allowDecimals: true,
+                    decimalPrecision: 2,
+                    hidden: true,
+                    minValue: 0.01,
+                    maxValue: 1000000000,
+                    width: 36,
+                    value: 6.00
+                },
+                {
+                    xtype: 'numberfield',
+                    name: 'height_inches',
+                    fieldLabel: 'Height (inches)',
+                    allowDecimals: true,
+                    decimalPrecision: 2,
+                    hidden: true,
+                    minValue: 0.01,
+                    maxValue: 1000000000,
+                    width: 36,
+                    value: 3.20
+                },
+                {
+                    xtype: 'numberfield',
+                    name: 'font_pt',
+                    fieldLabel: 'Font size (pt)',
+                    allowDecimals: true,
+                    decimalPrecision: 1,
+                    hidden: true,
+                    minValue: 0.1,
+                    maxValue: 100,
+                    width: 36,
+                    value: 8
+                }
             ],
             buttons: [{
                 scope: this,
                 text: 'Export',
                 formBind: true,
                 handler: function (b, e) {
-                    this.settings.format = this.formatTypeCombo.getValue();
-                    this.settings.showtitle = this.showTitleCheckbox.getValue();
-                    this.settings.width = this.widthTextBox.getValue();
-                    this.settings.height = this.heightTextBox.getValue();
-                    this.settings.font_size = this.fontSizeSlider.getValue();
-                    this.template = this.templateTypeCombo.getValue();
+                    var SVG_DPI = 90.0;
+                    var PS_PPI = 72.0;
+                    var PX_TO_XDMOD_FONT = -12;
+
+                    var formVals = this.form.getFieldValues();
+                    if (formVals.format_type === 'pdf') {
+                        this.settings.scale = 2.5;
+                        this.settings.format = formVals.format_type;
+                        this.settings.showtitle = this.showTitleCheckbox.getValue();
+                        this.settings.width = Math.round(formVals.width_inches * SVG_DPI);
+                        this.settings.height = Math.round(formVals.height_inches * SVG_DPI);
+                        this.settings.font_size = Math.round((this.settings.scale * SVG_DPI * formVals.font_pt) / PS_PPI) + PX_TO_XDMOD_FONT;
+                        this.template = 'custom';
+                    } else {
+                        this.settings.scale = 1;
+                        this.settings.format = this.formatTypeCombo.getValue();
+                        this.settings.showtitle = this.showTitleCheckbox.getValue();
+                        this.settings.width = this.widthTextBox.getValue();
+                        this.settings.height = this.heightTextBox.getValue();
+                        this.settings.font_size = this.fontSizeSlider.getValue();
+                        this.template = this.templateTypeCombo.getValue();
+                    }
 
                     var params = { 
                         format: this.settings.format, 
                         show_title: this.settings.showtitle ? 'y' : 'n',
                         width: this.settings.width,
                         height: this.settings.height,
+                        scale: this.settings.scale,
                         inline: 'n'
                     };
 
@@ -305,8 +376,9 @@ Ext.extend(CCR.xdmod.ui.ExportPanel, Ext.Panel, {
                 }
             }]
         });
+        this.form = formpanel.getForm();
         Ext.apply(this, {
-            items: [form],
+            items: [formpanel],
             layout: 'fit',
             width: 400,
             height: 300,

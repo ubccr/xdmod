@@ -10,10 +10,12 @@
 require __DIR__ . '/../../configuration/linker.php';
 restore_exception_handler();
 
+// Disable PHP's memory limit.
+ini_set('memory_limit', -1);
+
 // Character to use when separating list output
 const LIST_SEPARATOR = "\t";
 
-use \Exception;
 use CCR\Log;
 use CCR\DB;
 use ETL\EtlOverseer;
@@ -167,6 +169,9 @@ foreach ($args as $arg => $value) {
                     break;
                 case 'month':
                     $scriptOptions['chunk-size-days'] = 30;
+                    break;
+                case 'quarter':
+                    $scriptOptions['chunk-size-days'] = 91;
                     break;
                 case 'year':
                     $scriptOptions['chunk-size-days'] = 365;
@@ -398,7 +403,9 @@ try {
     $etlConfig->setLogger($logger);
     $etlConfig->initialize();
 } catch ( Exception $e ) {
-    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+    log_error_and_exit(
+        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
+    );
 }
 
 Utilities::setEtlConfig($etlConfig);
@@ -421,8 +428,9 @@ if ( count($scriptOptions['process-sections']) > 0 ) {
     }
 
     if ( count($missing) > 0 ) {
-        fwrite(STDERR, "Unknown sections: " . implode(", ", $missing) . "\n");
-        exit();
+        log_error_and_exit(
+            sprintf("Unknown sections: %s", implode(", ", $missing))
+        );
     }
 }  // if ( count($scriptOptions['process-sections'] > 0) )
 
@@ -430,9 +438,12 @@ if ( count($scriptOptions['process-sections']) > 0 ) {
 // List any requested resources. After listing, exit.
 
 if ( false === ($utilityEndpoint = $etlConfig->getGlobalEndpoint('utility')) ) {
-    $msg = "Global utility endpoint not defined, cannot query database for resource code mapping";
-    exit("$msg\n". $e->getTraceAsString() . "\n");
-    throw new Exception($msg);
+    log_error_and_exit(sprintf(
+        "%s%s%s",
+        "Global utility endpoint not defined, cannot query database for resource code mapping",
+        PHP_EOL,
+        $e->getTraceAsString()
+    ));
 }
 $utilitySchema = $utilityEndpoint->getSchema();
 
@@ -455,7 +466,9 @@ if ( $showList ) {
                 try {
                     $result = $utilityEndpoint->getHandle()->query($sql);
                 } catch (Exception $e) {
-                    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+                    log_error_and_exit(
+                        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
+                    );
                 }
                 $headings = array("Resource Code","Start Date","End Date");
                 print implode(LIST_SEPARATOR, $headings) . "\n";
@@ -550,7 +563,7 @@ if ( $showList ) {
                 break;
         }
     }
-    exit();
+    exit(0);
 }  // if ( $showList )
 
 // ------------------------------------------------------------------------------------------
@@ -560,7 +573,9 @@ if ( $showList ) {
 try {
     $result = $utilityEndpoint->getHandle()->query("SELECT id, code from {$utilitySchema}.resourcefact");
 } catch (Exception $e) {
-    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+    log_error_and_exit(
+        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
+    );
 }
 $scriptOptions['resource-code-map'] = array();
 
@@ -571,7 +586,9 @@ foreach ( $result as $row ) {
 try {
     $overseerOptions = new EtlOverseerOptions($scriptOptions, $logger);
 } catch ( Exception $e ) {
-    exit($e->getMessage() . "\n". $e->getTraceAsString() . "\n");
+    log_error_and_exit(
+        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
+    );
 }
 
 // If nothing was requested, exit.
@@ -590,14 +607,17 @@ if ( count($scriptOptions['process-sections']) == 0 &&
 $overseer = new EtlOverseer($overseerOptions, $logger);
 if ( ! ($overseer instanceof iEtlOverseer ) )
 {
-    $msg = "EtlOverseer is not an instance of iEtlOverseer";
-    exit($msg);
+    log_error_and_exit(
+        sprintf("EtlOverseer (%s) is not an instance of iEtlOverseer", get_class($overseer))
+    );
 }
 
 try {
     $overseer->execute($etlConfig);
 } catch ( Exception $e ) {
-    exit($e->getMessage() . "\n" . $e->getTraceAsString() . "\n");
+    log_error_and_exit(
+        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
+    );
 }
 
 // NOTE: "process_end_time" is needed for log summary."
@@ -608,6 +628,18 @@ $logger->notice(array('message'          => 'dw_extract_transform_load end',
 exit(0);
 
 // ==========================================================================================
+
+/**
+ * Log an error message and exit with a status indicating an error.
+ */
+
+function log_error_and_exit($msg)
+{
+    global $logger;
+    $logger->err($msg);
+    fwrite(STDERR, $msg . PHP_EOL);
+    exit(1);
+}  // log_error_and_exit()
 
 /**
  * Display usage text and exit with error status.
@@ -653,7 +685,7 @@ Usage: {$argv[0]}
     -g, --group
     Process the specified ETL group. May use multiple times.
 
-    -k, --chunk-size {none, day, week, month, year}
+    -k, --chunk-size {none, day, week, month, quarter, year}
     Break up ingestion into chunks of this size. Helps to make more recent data available faster. [default year]
 
     -l, --list {resources, sections, actions, endpoint-types, configured-endpoints} | <etl_section_name>

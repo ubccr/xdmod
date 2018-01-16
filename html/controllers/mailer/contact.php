@@ -67,11 +67,6 @@ if ($captcha_private_key !== '' && !isset($_SESSION['xdUser'])) {
 
 // ----------------------------------------------------------
 
-$recipient
-  = (xd_utilities\getConfiguration('general', 'debug_mode') == 'on')
-  ? xd_utilities\getConfiguration('general', 'debug_recipient')
-  : xd_utilities\getConfiguration('general', 'contact_page_recipient');
-
 switch ($reason) {
   case 'wishlist':
     $subject = "[WISHLIST] Feature request sent from a portal visitor";
@@ -92,17 +87,16 @@ $message .="\n------------------------\n\nSession Tracking Data:\n\n  ";
 $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $timestamp";
 
 try {
-    $mail = MailWrapper::initPHPMailer($_POST['email'], $_POST['name']);
-
-    $mail->Subject = $subject;
-    $mail->addAddress($recipient);
-
-    //Original sender's e-mail must be in the 'From' field for the XDMoD Request Tracker to function
-    $mail->addReplyTo($_POST['email'], $_POST['name']);
-
-    $mail->Body = $message;
-
-    $mail->send();
+    //Original sender's e-mail must be in the 'fromAddress' field for the XDMoD Request Tracker to function
+    MailWrapper::sendMail(array(
+        'body'         => $message,
+        'subject'      => $subject,
+        'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+        'fromAddress'  => $_POST['email'],
+        'fromName'     => $_POST['name'],
+        'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
+        )
+    );
 }
 catch (Exception $e) {
     $response['success'] = false;
@@ -117,18 +111,17 @@ $message
     = "Hello, {$_POST['name']}\n\n"
     . "This e-mail is to inform you that the XDMoD Portal Team has received your $message_type, and will\n"
     . "be in touch with you as soon as possible.\n\n"
-    . MailTemplates::getMaintainerSignature();
+    . MailWrapper::getMaintainerSignature();
 
 // -------------------
 
 try {
-    $mail = MailWrapper::initPHPMailer();
-    $mail->Subject = "Thank you for your $message_type.";
-    $mail->addAddress($_POST['email']);
-
-    $mail->Body = $message;
-
-    $mail->send();
+    MailWrapper::sendMail(array(
+        'body'      => $message,
+        'subject'   => "Thank you for your $message_type.",
+        'toAddress' => $_POST['email']
+        )
+    );
 }
 catch (Exception $e) {
     $response['success'] = false;

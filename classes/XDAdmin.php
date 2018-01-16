@@ -102,15 +102,24 @@ class XDAdmin
     }
 
     /**
-     * Get a list of all roles.
+     * Get a list of all acls.
      *
      * @return array
      */
-    public function enumerateRoles()
+    public function enumerateAcls()
     {
-        return $this->moddb->query(
-            "SELECT description, abbrev FROM Roles ORDER BY description"
-        );
+        $sql = <<<SQL
+    SELECT DISTINCT
+        a.display, 
+        a.name,
+        INSTR(aclt.name, 'requires_center') > 0 AS requires_center 
+    FROM acls a 
+    JOIN acl_types aclt 
+        ON aclt.acl_type_id = a.acl_type_id 
+    ORDER BY a.display
+SQL;
+
+        return $this->moddb->query($sql);
     }
 
     /**

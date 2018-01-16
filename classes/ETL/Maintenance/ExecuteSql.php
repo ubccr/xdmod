@@ -244,7 +244,7 @@ class ExecuteSql extends aAction implements iAction
                 } catch ( PDOException $e ) {
                     $this->logAndThrowException(
                         "Error executing SQL",
-                        array('exception' => $e, 'sql' => $this->sqlQueryString, 'endpoint' => $this->sourceEndpoint)
+                        array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->sourceEndpoint)
                     );
                 }
 

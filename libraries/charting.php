@@ -149,7 +149,7 @@
 
    // @function exportHighchart
          
-   function exportHighchart($chartConfig, $width, $height, $scale, $format, $globalChartConfig = null) {
+   function exportHighchart($chartConfig, $width, $height, $scale, $format, $globalChartConfig = null, $fileMetadata = null) {
       $effectiveWidth = (int)($width*$scale);
       $effectiveHeight = (int)($height*$scale);
 
@@ -207,9 +207,93 @@
          
       }
       	      
+    if ($format == 'pdf') {
+        \xd_phantomjs\phantomExecute(dirname(__FILE__)."/phantomjs/generate_highchart.js png $tmp_html_filename $output_image_filename $effectiveWidth $effectiveHeight");
+
+        $data = getPdfWithMetadata($output_image_filename, round($width / 90.0 * 72.0), round($height / 90.0 * 72.0), $fileMetadata);
+
+        @unlink($output_image_filename);
+        @unlink($tmp_html_filename);
+
+        return $data;
+    }
+
    }//exportHighchart
    
    
+/**
+ * getPdfMark
+ * @param array with optional author, subject and title elements
+ * @returns valid pdfmark postscript for use by ghostscript
+ */
+function getPdfMark($docmeta)
+{
+    $author = isset($docmeta['author']) ? addcslashes($docmeta['author'], "()\n\\") : 'XDMoD';
+    $subject = isset($docmeta['subject']) ? addcslashes($docmeta['subject'], "()\n\\") : 'XDMoD chart';
+    $title = isset($docmeta['title']) ? addcslashes($docmeta['title'], "()\n\\") :'XDMoD PDF chart export';
+    $creator = addcslashes('XDMoD ' . OPEN_XDMOD_VERSION, "()\n\\");
+
+    $pdfmark = <<<EOM
+[ /Title ($title)
+  /Author ($author)
+  /Subject ($subject)
+  /Creator ($creator)
+  /DOCINFO pdfmark
+EOM;
+    return $pdfmark;
+}
+
+/**
+ * getPdfWithMetadata
+ *
+ * Use ghostscript to add metadata to the PDF file and set the paper size correctly.
+ * @param filename of PDF file
+ * @param widthPsPoints the new paper size in postscript points (72 ppi).
+ * @param heightPsPoints the new paper size in postscript points (72 ppi).
+ * @param docmeta array containing metadata fields
+ *
+ * @return PDF document
+ */
+function getPdfWithMetadata($pdfFilename, $widthPsPoints, $heightPsPoints, $docmeta)
+{
+    $command = <<<EOC
+gs -o- -sstdout=/dev/stderr -sDEVICE=pdfwrite \
+    -dDEVICEWIDTHPOINTS=$widthPsPoints -dDEVICEHEIGHTPOINTS=$heightPsPoints \
+    -dPDFFitPage -dFIXEDMEDIA -dAutoRotatePages=/None -dCompatibilityLevel=1.4 \
+    $pdfFilename -
+EOC;
+
+    $pipes = array();
+    $descriptor_spec = array(
+        0 => array('pipe', 'r'),
+        1 => array('pipe', 'w'),
+        2 => array('pipe', 'w'),
+    );
+
+    $process = proc_open($command, $descriptor_spec, $pipes);
+
+    if (!is_resource($process)) {
+        throw new \Exception('Unable execute command: "'. $command . '". Details: ' . print_r(error_get_last(), true));
+    }
+
+    fwrite($pipes[0], getPdfMark($docmeta));
+    fclose($pipes[0]);
+
+    $out = stream_get_contents($pipes[1]);
+    $err = stream_get_contents($pipes[2]);
+
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+
+    $return_value = proc_close($process);
+
+    if ($return_value != 0) {
+        throw new \Exception("$command returned $return_value, stdout: $out stderr: $err");
+    }
+
+    return $out;
+}
+
 	function replace_functions(&$object, array &$value_arr, array &$replace_keys, &$xxx = 1)
 	{
 		foreach($object as $key => &$__value){

@@ -1,0 +1,36 @@
+{
+    "table_definition": {
+        "name": "directory",
+        "engine": "InnoDB",
+        "comment": "Directory dimension",
+        "columns": [
+            {
+                "name": "directory_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "AUTO_INCREMENT"
+            },
+            {
+                "name": "path",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "File system path"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "directory_id"
+                ]
+            },
+            {
+                "name": "uk_path",
+                "columns": [
+                    "path"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

@@ -24,8 +24,8 @@ use ETL\Configuration\EtlConfiguration;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\aOptions;
-use ETL\DbModel\Table;
 
+use ETL\DbModel\Table;
 use PHPSQLParser\PHPSQLParser;
 
 use Exception;
@@ -199,41 +199,45 @@ abstract class aRdbmsDestinationAction extends aAction
     }  // createDestinationTableObjects()
 
     /** -----------------------------------------------------------------------------------------
-     * Parse and verify the mapping between source record fields and destination table
-     * fields. If a mapping has not been provided, generate one automatically. The
-     * destination field map specifies a mapping from source record fields to destination
-     * table fields for one or more destination tables.
+     * Parse and verify the mapping between source record fields and destination table fields. If a
+     * mapping has not been provided, generate one automatically. The destination field map
+     * specifies a mapping from source record fields to destination table fields for one or more
+     * destination tables.
      *
      * Use Cases:
      *
      * 1. There are >= 1 destination tables and no destination field map
      *
-     * Automatically create the destination field map by mapping source fields to
-     * destination table fields **where the fields match, excluding non-matching fields.**
-     * Log a warning for any fields that do not match.
+     * Automatically create the destination field map by mapping source fields to destination table
+     * fields **where the fields match, excluding non-matching fields.** Log a warning for any
+     * fields that do not match.
      *
      * 2. There are >= 1 destination tables and a destination field map is specified.
      *
-     * Verify that the destination fields specified in the mapping are valid fields for
-     * the destination table that they references. Also verify that the source fields are
-     * valid. It is not required that all source fields are mapped to destination fields
-     * but care should be exercised that resonable defaults are specified in the table
-     * definitions.
+     * Verify that the destination fields specified in the mapping are valid fields for the
+     * destination table that they reference. Also verify that the source fields are valid (and at
+     * least 1 source field exists). It is not required that all source fields are mapped to
+     * destination fields but care should be exercised that resonable defaults are specified in the
+     * table definitions.
      *
      * @param array An array containing the fields available from the source record
+     * @param iDataEndpoint $sourceEndpoint Optional source endpoint used to validate values
      *
-     * @return array | null A 2-dimensional array where the keys match etl table
-     *   definitions and values map table columns (destination) to query result columns
-     *   (source), or null if no destination record map was specified.
+     * @return array | null A 2-dimensional array where the keys match etl table definitions and
+     *   values map table columns (destination) to query result columns (source), or null if no
+     *   destination record map was specified.
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function parseDestinationFieldMap(array $sourceFields)
-    {
+    protected function parseDestinationFieldMap(
+        array $sourceFields,
+        iDataEndpoint $sourceEndpoint = null
+    ) {
         $this->destinationFieldMappings = array();
 
         if ( ! isset($this->parsedDefinitionFile->destination_record_map) ) {
 
+            $this->logger->debug("No destination_field_map specified");
             $this->destinationFieldMappings = $this->generateDestinationFieldMap($sourceFields);
 
         } elseif ( ! is_object($this->parsedDefinitionFile->destination_record_map) ) {
@@ -246,12 +250,17 @@ abstract class aRdbmsDestinationAction extends aAction
 
                 if ( ! is_object($fieldMap) ) {
                     $this->logAndThrowException(
-                        sprintf("destination_record_map for table '%s' must be an object", $etlTableKey)
+                        sprintf("destination_record_map for table key '%s' must be an object", $etlTableKey)
                     );
                 } elseif ( 0 == count(array_keys((array) $fieldMap)) ) {
                     $this->logger->warning(
-                        sprintf("%s: destination_record_map for table '%s' is empty", $this, $etlTableKey)
+                        sprintf(
+                            "%s: destination_record_map for table key '%s' is empty, skipping.",
+                            $this,
+                            $etlTableKey
+                        )
                     );
+                    continue;
                 }
 
                 // Convert the field map from an object to an associative array where keys
@@ -263,7 +272,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
         $success = true;
         $success &= $this->verifyDestinationMapKeys();
-        $success &= $this->verifyDestinationMapValues($sourceFields);
+        $success &= $this->verifyDestinationMapSourceFields($sourceFields, $sourceEndpoint);
 
         return $success;
 
@@ -285,16 +294,23 @@ abstract class aRdbmsDestinationAction extends aAction
     protected function generateDestinationFieldMap(array $sourceFields)
     {
         $destinationFieldMap = array();
-        $fieldMapDebugOutput = '';
+        $fieldMapDebugOutput = array();
         $numSourceFields = count($sourceFields);
 
         $this->logger->debug(
             sprintf(
-                "Auto-generating destination_field_map from %d source fields: %s",
+                "Auto-generating destination_field_map using %d source fields: %s",
                 $numSourceFields,
                 implode(', ', $sourceFields)
             )
         );
+
+        // If there are no source fields then we have no data to map.
+
+        if ( 0 == $numSourceFields ) {
+            $this->logger->debug("No source record fields, creating empty destination field map");
+            return $destinationFieldMap;
+        }
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
 
@@ -304,21 +320,26 @@ abstract class aRdbmsDestinationAction extends aAction
                 sprintf("Available fields for table key '%s': %s", $etlTableKey, implode(', ', $availableTableFields))
             );
 
-            if ( 0 == $numSourceFields ) {
-                $destinationFieldMap[$etlTableKey] = array();
-                continue;
-            }
-
             // Map common fields and log warnings for fields that are not mapped
 
             $commonFields = array_intersect($availableTableFields, $sourceFields);
             $unmappedSourceFields = array_diff($sourceFields, $availableTableFields);
 
+            // If there were no common fields between the source record and destination table,
+            // don't bother creating a map for this table.
+
+            if ( 0 == count($commonFields) ) {
+                $this->logger->warning(
+                    sprintf("No source fields match available fields for table key '%s', skipping.", $etlTableKey)
+                );
+                continue;
+            }
+
             $destinationFieldMap[$etlTableKey] = array_combine($commonFields, $commonFields);
 
             // Generate a more succinct representation of the field map
 
-            $fieldMapDebugOutput .= sprintf(
+            $fieldMapDebugOutput[] = sprintf(
                 "Table: %s%s",
                 $etlTableKey,
                 array_reduce(
@@ -334,8 +355,9 @@ abstract class aRdbmsDestinationAction extends aAction
             if ( 0 != count($unmappedSourceFields) ) {
                 $this->logger->warning(
                     sprintf(
-                        "%s: The following source record fields were not mapped for table '%s': (%s)",
+                        "%s: The following %d source record fields were not mapped for table '%s': (%s)",
                         $this,
+                        count($unmappedSourceFields),
                         $etlTableKey,
                         implode(', ', $unmappedSourceFields)
                     )
@@ -343,19 +365,9 @@ abstract class aRdbmsDestinationAction extends aAction
             }
         }
 
-        if ( 0 == count($sourceFields) ) {
-            $this->logger->debug(
-                sprintf(
-                    "Generated empty destination_field_map for table keys: %s",
-                    implode(', ', array_keys($destinationFieldMap))
-                )
-            );
-
-        } else {
-            $this->logger->debug(
-                sprintf("Generated destination_field_map:\n%s", $fieldMapDebugOutput)
-            );
-        }
+        $this->logger->debug(
+            sprintf("Generated destination_field_map:\n%s", implode(PHP_EOL, $fieldMapDebugOutput))
+        );
 
         return $destinationFieldMap;
 
@@ -384,11 +396,13 @@ abstract class aRdbmsDestinationAction extends aAction
         $undefinedFields = array();
 
         foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationTableMap ) {
+
             if ( ! array_key_exists($etlTableKey, $this->etlDestinationTableList) ) {
                 $this->logAndThrowException(
-                    sprintf("Unknown table '%s' referenced in destination_record_map", $etlTableKey)
+                    sprintf("Unknown table key '%s' referenced in destination_record_map", $etlTableKey)
                 );
             }
+
             $availableTableFields = $this->etlDestinationTableList[$etlTableKey]->getColumnNames();
             // Remember that the keys in the field map are table field names
             $destinationTableFields = array_keys($destinationTableMap);
@@ -422,6 +436,7 @@ abstract class aRdbmsDestinationAction extends aAction
      * destination table fields. The values in the map must be valid source record fields.
      *
      * @param array An array containing the fields available from the source record
+     * @param iDataEndpoint $sourceEndpoint Optional source endpoint used to validate values
      *
      * @return bool TRUE on success
      *
@@ -429,8 +444,10 @@ abstract class aRdbmsDestinationAction extends aAction
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function verifyDestinationMapValues(array $sourceFields)
-    {
+    protected function verifyDestinationMapSourceFields(
+        array $sourceFields,
+        iDataEndpoint $sourceEndpoint = null
+    ) {
         $undefinedFields = array();
 
         foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationTableMap ) {
@@ -438,9 +455,28 @@ abstract class aRdbmsDestinationAction extends aAction
                 $this->logAndThrowException(
                     sprintf("Unknown table '%s' referenced in destination_record_map", $etlTableKey)
                 );
+
             }
 
-            $missing = array_diff($destinationTableMap, $sourceFields);
+            // By default, we verify that the source fields specified in the destination map are
+            // present in the fields provided by the source records (this is not automated for RDBMS
+            // endpoints yet). Endpoints that support complex data records perform their own
+            // validation of the source fields in the destination field map.
+
+            if ( null !== $sourceEndpoint && $sourceEndpoint->supportsComplexDataRecords() ) {
+                $missing = $sourceEndpoint->validateDestinationMapSourceFields($destinationTableMap);
+            } else {
+                $missing = array_diff($destinationTableMap, $sourceFields);
+            }
+
+            // Allow the destination map values (source fields) to contain variables.
+
+            $missing = array_filter(
+                $missing,
+                function ($item) {
+                    return ! Utilities::containsVariable($item);
+                }
+            );
 
             if ( 0  != count($missing) ) {
                 $missing = array_map(
@@ -453,7 +489,7 @@ abstract class aRdbmsDestinationAction extends aAction
                 $undefinedFields[] = sprintf(
                     "Table '%s' has undefined source query fields for keys (%s)",
                     $etlTableKey,
-                    implode(",", $missing)
+                    implode(', ', $missing)
                 );
             }
 
@@ -470,7 +506,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
         return true;
 
-    }  // verifyDestinationMapValues()
+    }  // verifyDestinationMapSourceFields()
 
     /** -----------------------------------------------------------------------------------------
      * Truncate records from the destination table. Note that
@@ -520,7 +556,7 @@ abstract class aRdbmsDestinationAction extends aAction
             } catch (PDOException $e) {
                 $this->logAndThrowException(
                     "Error verifying table $tableName",
-                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                    array('exception' => $e, 'endpoint' => $this->destinationEndpoint)
                 );
             }
 
@@ -614,7 +650,11 @@ abstract class aRdbmsDestinationAction extends aAction
                 }
             }
 
-            if ( null !== $numRecordsProcessed && $numRecordsProcessed > 0 ) {
+            if (
+                null !== $numRecordsProcessed &&
+                $numRecordsProcessed > 0 &&
+                $this->options->analyze_table
+            ) {
                 $sqlList[] = "ANALYZE TABLE $qualifiedDestTableName";
             }
         }
@@ -655,7 +695,9 @@ abstract class aRdbmsDestinationAction extends aAction
             try {
                 $this->logger->debug($sql);
                 if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
+                    $start = microtime(true);
                     $endpoint->getHandle()->execute($sql);
+                    $this->logger->debug(sprintf('Completed in %fs', round(microtime(true) - $start, 5)));
                 }
             }
             catch (PDOException $e) {
@@ -696,7 +738,8 @@ abstract class aRdbmsDestinationAction extends aAction
     } // parseSql()
 
     /** -----------------------------------------------------------------------------------------
-     * Parse an SQL SELECT statement and return the fields (columns) that are being queried.
+     * Parse an SQL SELECT statement and return the fields (columns) that are being queried. It is
+     * expected that the order of the column names is the same as they appear in the query.
      * @see https://code.google.com/p/php-sql-parser/
      *
      * @param string $sql The SQL statement to parse

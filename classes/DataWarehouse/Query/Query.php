@@ -4,6 +4,7 @@ namespace DataWarehouse\Query;
 use Exception;
 
 use CCR\DB;
+use CCR\DB\PDODB;
 use FilterListHelper;
 use Xdmod\Config;
 
@@ -237,7 +238,7 @@ class Query
 
         $query_string = $this->getQueryString($limit);
 
-        $debug = \xd_utilities\filter_var(\xd_utilities\getConfiguration('general', 'sql_debug_mode'), FILTER_VALIDATE_BOOLEAN);
+        $debug = PDODB::debugging();
         if ($debug == true) {
             $class = get_class($this);
             $this->log->debug(sprintf("%s: \n%s", $class, $query_string));
@@ -1379,9 +1380,7 @@ class Query
                                $end_date_parsed['month'],
                                $end_date_parsed['day'],
                                $end_date_parsed['year']);
-
-        $this->_min_date_id = $this->_aggregation_unit->getMinDateId($this->_start_date);
-        $this->_max_date_id = $this->_aggregation_unit->getMaxDateId($this->_end_date);
+        list($this->_min_date_id, $this->_max_date_id) = $this->_aggregation_unit->getDateRangeIds($this->_start_date, $this->_end_date);
 
         if (!$start_date_given && !$end_date_given) {
             return;

@@ -22,7 +22,7 @@ use ETL\aRdbmsDestinationAction;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
 use ETL\aOptions;
-use \Log;
+use Log;
 
 abstract class aAggregator extends aRdbmsDestinationAction
 {
@@ -134,6 +134,10 @@ abstract class aAggregator extends aRdbmsDestinationAction
                     // but after the table exists.
 
                     $this->truncateDestination();
+
+                    $this->logger->debug(
+                        sprintf("Available Variables: %s", $this->getVariableMapDebugString())
+                    );
 
                     // Perform the dirty work
 

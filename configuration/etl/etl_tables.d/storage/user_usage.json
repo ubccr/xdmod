@@ -1,0 +1,125 @@
+{
+    "table_definition": {
+        "name": "user_usage",
+        "engine": "InnoDB",
+        "comment": "User storage usage",
+        "columns": [
+            {
+                "name": "file_system_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "File system ID"
+            },
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "User ID"
+            },
+            {
+                "name": "directory_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Directory ID"
+            },
+            {
+                "name": "dt",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "Date and time usage data was collected"
+            },
+            {
+                "name": "ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "Date and time usage data was collected"
+            },
+            {
+                "name": "file_count",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "File count"
+            },
+            {
+                "name": "logical_usage",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Logical file system usage in bytes"
+            },
+            {
+                "name": "physical_usage",
+                "type": "bigint(20) unsigned",
+                "nullable": true,
+                "comment": "Physical file system usage in bytes"
+            },
+            {
+                "name": "soft_threshold",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Soft threshold in bytes"
+            },
+            {
+                "name": "hard_threshold",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Hard threshold in bytes"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "idx_file_system_id",
+                "columns": [
+                    "file_system_id"
+                ]
+            },
+            {
+                "name": "idx_user_id",
+                "columns": [
+                    "user_id"
+                ]
+            },
+            {
+                "name": "idx_directory_id",
+                "columns": [
+                    "directory_id"
+                ]
+            },
+            {
+                "name": "idx_ts",
+                "columns": [
+                    "ts"
+                ]
+            },
+            {
+                "name": "uk_dimensions",
+                "columns": [
+                    "file_system_id",
+                    "user_id",
+                    "directory_id",
+                    "ts"
+                ],
+                "is_unique": true
+            }
+        ]
+    },
+    "destination_record_map": {
+        "user_usage": {
+            "file_system_id": "file_system",
+            "user_id": "username",
+            "directory_id": "directory",
+            "dt": "dt",
+            "ts": "dt",
+            "file_count": "file_count",
+            "logical_usage": "logical_usage",
+            "physical_usage": "physical_usage",
+            "soft_threshold": "soft_threshold",
+            "hard_threshold": "hard_threshold"
+        }
+    },
+    "custom_insert_values_components": {
+        "file_system_id": "(SELECT file_system_id FROM modw_storage.file_system WHERE name = ?)",
+        "user_id": "(SELECT user_id FROM modw_storage.user WHERE username = ?)",
+        "directory_id": "(SELECT directory_id FROM modw_storage.directory WHERE path = ?)",
+        "ts": "UNIX_TIMESTAMP(?)"
+    }
+}

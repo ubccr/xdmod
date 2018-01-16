@@ -13,6 +13,8 @@
 
 namespace ETL\Configuration;
 
+use ETL\Utilities;
+
 class JsonReferenceWithMacroTransformer extends JsonReferenceTransformer implements iConfigFileKeyTransformer
 {
     /* ------------------------------------------------------------------------------------------

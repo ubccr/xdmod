@@ -54,47 +54,12 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             legend: {
                 enabled: false
             },
+            credits: {
+                text: '',
+                href: ''
+            },
             exporting: {
-                enabled: true,
-                buttons: {
-                    contextButton: {
-                        menuClassName: 'job-viewer-timeseries-chart-contextmenu',
-                        symbol: 'menu',
-                        title: 'Chart context menu',
-                        menuItems: [
-                        {
-                            text: 'Print chart',
-                            onclick: function () {
-                                this.print();
-                            }
-                        },
-                        {
-                            separator: true
-                        },
-                        {
-                            text: 'Download PNG image',
-                            onclick: function () {
-                                document.location = this.userOptions.dataurl + '&filetype=image/png';
-                            }
-                        },
-                        {
-                            text: 'Download SVG image',
-                            onclick: function () {
-                                document.location = this.userOptions.dataurl + '&filetype=image/svg';
-                            }
-                        },
-                        {
-                            separator: true
-                        },
-                        {
-                            text: 'Download CSV data',
-                            onclick: function () {
-                                document.location = this.userOptions.dataurl + '&filetype=text/csv';
-                            }
-                        }
-                        ]
-                    }
-                }
+                enabled: false
             },
             tooltip: {
                 dateTimeLabelFormats: {
@@ -221,6 +186,16 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
             }
         },
 
+        export_option_selected: function (exportParams) {
+            document.location = this.dataurl + '&' + Ext.urlEncode(exportParams);
+        },
+
+        print_clicked: function () {
+            if (this.chart) {
+                this.chart.print();
+            }
+        },
+
         /**
          *
          * @param panel
@@ -262,8 +237,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 chartOptions.series = record.data.series;
                 chartOptions.yAxis.title.text = record.data.schema.units;
                 chartOptions.xAxis.title.text = 'Time (' + record.data.schema.timezone + ')';
+                chartOptions.credits.text = record.data.schema.source + '. Powered by XDMoD/Highcharts';
                 chartOptions.title.text = record.data.schema.description;
                 chartOptions.dataurl = record.store.proxy.url;
+                this.dataurl = record.store.proxy.url;
                 this.displayTimezone = record.data.schema.timezone;
 
                 this.setHighchartTimezone();

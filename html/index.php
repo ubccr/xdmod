@@ -5,7 +5,11 @@
       The Center For Computational Research, University At Buffalo
    */
 
-   @session_start();
+use Models\Realm;
+use Models\Services\Acls;
+use Models\Services\Realms;
+
+@session_start();
 
    // Fix to the 'trailing slash' issue -------------------------------
 
@@ -70,14 +74,6 @@
          return false;
       }//isReferrer
 
-      if (isReferrer('https://go.teragrid.org') || isReferrer('https://portal.xsede.org')) {
-         // If someone clicks on the 'Cancel' button when consulting the oAuth login UI, it would normally
-         // redirect that person to the xdmod main page.  The logic below inhibits this.
-
-         header('location: oauth/entrypoint.php');
-         exit;
-      }
-
       if (!isset($_SESSION['public_session_token'])) {
          $_SESSION['public_session_token'] = 'public-'.microtime(true).'-'.uniqid();
       }
@@ -115,6 +111,7 @@
 
       <link rel="shortcut icon" href="gui/icons/favicon_static.ico" />
       <script type="text/javascript" src="gui/lib/oldie-console-patch.js"></script>
+      <script type="text/javascript" src="gui/lib/oldie-array-includes-polyfill.js"></script>
       <?php if (!$userLoggedIn): ?>
       <script type="text/javascript">
          /**
@@ -243,10 +240,13 @@
          $developer = $user->isDeveloper() ? 'true' : 'false';
 
          $primary_center_director = (
-               ($user->getActiveRole()->getIdentifier() == ROLE_ID_CENTER_DIRECTOR) &&
+               $user->hasAcl(ROLE_ID_CENTER_DIRECTOR) &&
                true //($user->getPromoter(ROLE_ID_CENTER_DIRECTOR, $user->getActiveRole()->getActiveCenter()) == -1)
          ) ? 'true' : 'false';
-
+         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
+             $carry []= $item->getName();
+             return $carry;
+         }, array());
       ?>
 
       <script type='text/javascript'>
@@ -276,18 +276,12 @@
                print "CCR.xdmod.ui.isManager = $manager;\n";
                print "CCR.xdmod.ui.isDeveloper = $developer;\n";
                print "CCR.xdmod.ui.isCenterDirector = $primary_center_director;\n";
-
-               print "CCR.xdmod.ui.active_role_label = '{$user->getActiveRole()->getFormalName()}';\n";
             }
 
-            print "CCR.xdmod.ui.disabledMenus = ".json_encode($user->getDisabledMenus(
-                array_keys($user->getActiveRole()->getAllQueryRealms('tg_usage'))
-            )).";\n";
+            print "CCR.xdmod.ui.disabledMenus = ".json_encode(Acls::getDisabledMenus($user, $realms)).";\n";
 
             if ($userLoggedIn) {
                print "CCR.xdmod.ui.allRoles = ".json_encode($user->enumAllAvailableRoles())."\n";
-
-               print "CCR.xdmod.ui.activeRole = '".$user->getActiveRole()->getIdentifier(true)."';\n";
             }
 
             print "CCR.xdmod.org_name = ".json_encode(ORGANIZATION_NAME).";\n";
@@ -310,7 +304,8 @@
                   // This will catch when a configuration directory does not exist if it is set in the environment level
                }
                if ($auth && $auth->isSamlConfigured()) {
-                  print "CCR.xdmod.isFederationConfigured = true;";
+                    print "CCR.xdmod.isFederationConfigured = true;\n";
+                    print "CCR.xdmod.federationLoginLink = " . json_encode($auth->getLoginLink('/gui/general/login.php')) . ";\n";
                } else {
                   print "CCR.xdmod.isFederationConfigured = false;";
                }

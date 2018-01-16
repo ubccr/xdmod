@@ -16,7 +16,7 @@ use ETL\aRdbmsDestinationAction;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
 use ETL\aOptions;
-use \Log;
+use Log;
 
 abstract class aIngestor extends aRdbmsDestinationAction
 {
@@ -119,6 +119,10 @@ abstract class aIngestor extends aRdbmsDestinationAction
                 );
                 $this->variableMap = array_merge($this->variableMap, $localVariableMap);
 
+                $this->logger->debug(
+                    sprintf("Available Variables: %s", $this->getVariableMapDebugString())
+                );
+
                 $numRecordsProcessed = $this->_execute();
                 $totalRecordsProcessed += $numRecordsProcessed;
                 $intervalNum++;
@@ -158,5 +162,6 @@ abstract class aIngestor extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
+    // @codingStandardsIgnoreLine
     abstract protected function _execute();
 }  // abstract class aIngestor

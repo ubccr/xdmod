@@ -238,19 +238,20 @@ class EtlConfiguration extends Configuration
         }  // foreach ( $etlSectionNames as $typeName )
 
         // --------------------------------------------------------------------------------
-        // Register the global default endpoints (the overseer script needs access to the utility
-        // endpoint) but note that individual actions may define their own.
+        // Register the global utility endpoint in the main ETL configuration file because it may be
+        // needed by the etl overseer script to look up resource ids from resource codes. We do not
+        // register other global endpoints because these should only be registered if an enabled
+        // action needs them.
 
         $this->endpoints = array();
 
-        if ( isset($this->localDefaults->global->endpoints) ) {
-            foreach ( $this->localDefaults->global->endpoints as $name => $endpointConfig ) {
-                try {
-                    $endpoint = $this->addDataEndpoint($endpointConfig);
-                    $this->globalEndpoints[$name] = $endpoint->getKey();
-                } catch (Exception $e) {
-                    $this->logAndThrowException("Error registering default endpoint '$name': " . $e->getMessage());
-                }
+        if ( ! $this->isLocalConfig && isset($this->localDefaults->global->endpoints->utility) ) {
+            $name = 'utility';
+            try {
+                $endpoint = $this->addDataEndpoint($this->localDefaults->global->endpoints->utility);
+                $this->globalEndpoints[$name] = $endpoint->getKey();
+            } catch (Exception $e) {
+                $this->logAndThrowException("Error registering default endpoint '$name': " . $e->getMessage());
             }
         }  // if ( isset(($this->localDefaults->global->endpoints) )
 
@@ -591,7 +592,7 @@ class EtlConfiguration extends Configuration
 
         if ( isset($defaults->$globalDefaultKey->$pathsKey) && isset($actionConfig->endpoints) ) {
             foreach ( $actionConfig->endpoints as $endpointName => &$endpointConfig ) {
-                if ( ! isset($endpointconfig->paths) ) {
+                if ( ! isset($endpointConfig->paths) ) {
                     $endpointConfig->paths = $defaults->$globalDefaultKey->$pathsKey;
                 }
             }
@@ -688,11 +689,14 @@ class EtlConfiguration extends Configuration
         // Set up the options with whatever was included in the config. The factory and implementation
         // classes will check for required parameters.
 
-        // Register the endpoints. Endpoints are global and only one endpoint will be created for each
-        // unique key. We need to register the endpoints first because the actions will need the keys
-        // when they are executed.
+        // Actions are enabled by default and do not require the "enabled" key, but it may still be
+        // specified in the config.
 
-        if ( $config->enabled ) {
+        if ( ! isset($config->enabled) || $config->enabled ) {
+
+            // Register the endpoints. Endpoints are global and only one endpoint will be created
+            // for each unique key. We need to register the endpoints first because the actions will
+            // need the keys when they are executed.
 
             $endpointKey = self::DATA_ENDPOINT_KEY;
             foreach ($config->$endpointKey as $endpointName => $endpointConfig) {
@@ -722,7 +726,7 @@ class EtlConfiguration extends Configuration
                 }
             }
         } else {
-            // For actions that are not configured, set minimal information needed for listing actions
+            // For actions that are not enabled, set minimal information needed for listing actions
             $options->enabled = false;
             $options->name = $config->name;
             if ( isset($config->description) ) {

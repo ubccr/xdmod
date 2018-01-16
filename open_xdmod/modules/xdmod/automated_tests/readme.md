@@ -27,7 +27,9 @@ You will need to perform the following steps
 6. Check Available For Report
 
 7. Switch to the Report Generator Tab
+
 8. Click new
+
 9. Drag untitled query 1 from the Available Charts to Included Charts
 10. Click Save
 
@@ -67,7 +69,9 @@ capabilities: [
 
 ##### SauceLabs
 
-Choose/add another browser to `wdio-sauce.conf.js`, use the [Platform Configurator](https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/) and add specifications using the same syntax of the `Chrome` and `FireFox` browsers.
+Tests will automatically use [SauceLabs][sl] if you have SAUCE_USER and SAUCE_KEY environment variables set.
+
+To choose/add another browser to `wdio.conf.js`, use the [Platform Configurator][sl-conf] and add specifications using the same syntax of the `Chrome` and `FireFox` browsers. and then update the capabilities array in the check for the SAUCE environment variables.
 
 #### Other Options
 
@@ -79,13 +83,9 @@ _Note:_ The XDMoD SauceLabs account allows for a max of 5 concurrent tests at a 
 
 If running tests through SauceLabs, enter the correct `key` for the `xdmod-sauce` account.
 
-#### template.secrets.json
+#### .secrets.json
 
-```bash
-cp template.secrets.json .secrets.json
-```
-
-modify .secrets.json to have correct username, password, and display name for user being tested.
+The username and password are read from a file called .secrets.json in the integration test directory. Please follow the instructions in the integration test directory to setup the password file.
 
 ## Run
 
@@ -98,9 +98,11 @@ npm test
 ### run tests through sauce labs
 
 ```bash
-npm run test-sauce
+SAUCE_USER=sauce-user SAUCE_KEY=X-X-X npm run test
 ```
 
 and see the fun that is automated ui testing.
 
+[sl]: https://saucelabs.com/
+[sl-conf]: https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/
 [wd]: http://webdriver.io/

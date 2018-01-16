@@ -1,18 +1,16 @@
 var logIn = require('./loginPage.page.js');
-var loginName = testHelpers.auth.roles.centerdirector.username;
-var loginPassword = testHelpers.auth.roles.centerdirector.password;
-var displayName = testHelpers.auth.roles.centerdirector.display;
 var Abt = require('./about.page.js');
 
 describe('About', function about() {
-    logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
+    logIn.login('centerdirector');
     describe('Logged In Test', function loggedInTests() {
         it('Verify About is the Last Tab', function aboutIsTheLastTab() {
+            browser.waitForAllInvisible('.ext-el-mask');
             browser.waitForVisible(Abt.tab, 30000);
             expect(browser.getText(Abt.last_tab)).to.equal('About');
         });
 
-        it('Select Tab', function selectTab() {
+        it('Select About Tab', function selectTab() {
             browser.waitForLoadedThenClick(Abt.tab, 50000);
             browser.waitForVisible(Abt.container, 20000);
         });
@@ -95,6 +93,6 @@ describe('About', function about() {
             });
         });
     });
-    logIn.login('Open XDMoD', '/', loginName, loginPassword, displayName);
+    logIn.login('cd');
     logIn.logout();
 });

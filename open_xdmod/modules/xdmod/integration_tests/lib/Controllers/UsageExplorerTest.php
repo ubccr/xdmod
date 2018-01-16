@@ -2,6 +2,8 @@
 
 namespace IntegrationTests\Controllers;
 
+use Xdmod\Config;
+
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
@@ -238,5 +240,129 @@ EOF;
         $ret[] = array($baseSettings, 'n');
 
         return $ret;
+    }
+
+    /**
+     * @dataProvider exportDataProvider
+     */
+    public function testExport($chartConfig, $expectedMimeType, $expectedFinfo)
+    {
+        $response = $this->helper->post('/controllers/user_interface.php', null, $chartConfig);
+
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $this->assertEquals($expectedMimeType, $response[1]['content_type']);
+
+        // Check the mime type of the file is correct.
+        $finfo = finfo_open(FILEINFO_MIME);
+        $this->assertEquals($expectedFinfo, finfo_buffer($finfo, $response[0]));
+    }
+
+    public function exportDataProvider()
+    {
+        $baseJson = <<<EOF
+{
+    "public_user": "true",
+    "realm": "Jobs",
+    "group_by": "none",
+    "statistic": "active_person_count",
+    "start_date": "2016-12-20",
+    "end_date": "2017-01-05",
+    "timeframe_label": "User Defined",
+    "scale": "2.5",
+    "aggregation_unit": "Auto",
+    "dataset_type": "timeseries",
+    "thumbnail": "n",
+    "query_group": "tg_usage",
+    "display_type": "line",
+    "combine_type": "stack",
+    "limit": "10",
+    "offset": "0",
+    "log_scale": "n",
+    "show_guide_lines": "y",
+    "show_trend_line": "n",
+    "show_error_bars": "n",
+    "show_aggregate_labels": "n",
+    "show_error_labels": "n",
+    "hide_tooltip": "false",
+    "show_title": "y",
+    "width": "540",
+    "height": "288",
+    "legend_type": "bottom_center",
+    "font_size": "13",
+    "format": "pdf",
+    "inline": "n",
+    "operation": "get_data"
+}
+EOF;
+
+        $baseSettings = json_decode($baseJson, true);
+
+        $ret = array(
+            array($baseSettings, 'application/pdf', 'application/pdf; charset=binary'),
+        );
+
+        $baseSettings['scale'] = '1';
+        $baseSettings['font_size'] = '3';
+        $baseSettings['format'] = 'png';
+        $ret[] = array($baseSettings, 'image/png', 'image/png; charset=binary');
+
+        $baseSettings['format'] = 'svg';
+        $ret[] = array($baseSettings, 'image/svg+xml', 'text/plain; charset=utf-8');
+
+        $baseSettings['format'] = 'csv';
+        $ret[] = array($baseSettings, 'application/xls', 'text/plain; charset=us-ascii');
+
+        $baseSettings['format'] = 'xml';
+        $ret[] = array($baseSettings, 'text/xml', 'application/xml; charset=us-ascii');
+
+        return $ret;
+    }
+
+    /**
+     * Ensure that the public user is able to see all of the realms that are
+     * currently installed in this instance of XDMoD.
+     */
+    public function testPublicUserGetMenus()
+    {
+        $data = <<< EOF
+{
+    "operation": "get_menus",
+    "public_user": "true",
+    "query_group": "tg_usage",
+    "node": "category_"
+}
+EOF;
+
+        $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($data, true));
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $menus = $response[0];
+
+        $this->assertTrue(count($menus) > 0, "Public User: get_menus has returned no results.");
+
+        $realms = array('Jobs');
+        $this->assertNotEmpty($realms, "Unable to retrieve realms from datawarehouse.json");
+
+        $categories = array_reduce(
+            $menus,
+            function ($carry, $item) {
+                if (isset($item['category'])) {
+                    if (!in_array($item['category'], $carry)) {
+                        $carry[] = $item['category'];
+                    }
+                }
+                return $carry;
+            },
+            array()
+        );
+
+        $this->assertTrue(count($categories) >= 1, "There were no 'menus' that had a category propery, this is unexpected.");
+
+        $realmCategoryDiff = array_diff($realms, $categories);
+
+        $this->assertEmpty($realmCategoryDiff, "There were realms in datawarehouse.json that were not returned by get_menus.");
     }
 }

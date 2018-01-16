@@ -1,18 +1,29 @@
-// eslint-disable-next-line no-unused-vars
 var InternetExplorer = {
     browserName: 'internet explorer',
     platform: 'Windows 10',
     version: '11.103',
     screenResolution: '1280x1024'
 };
-// eslint-disable-next-line no-unused-vars
 var FireFox = {
     browserName: 'firefox',
     platform: 'Windows 10',
     version: '45.0',
     screenResolution: '2560x1600'
 };
-
+var HeadlessChrome = {
+    browserName: 'chrome',
+    chromeOptions: {
+        args: [
+            'incognito',
+            '--no-sandbox',
+            '--headless',
+            '--no-gpu',
+            'disable-extensions',
+            'start-maximized',
+            'window-size=2560,1600'
+        ]
+    }
+};
 var Chrome = {
     browserName: 'chrome',
     platform: 'Windows 10',
@@ -27,24 +38,47 @@ var Chrome = {
         ]
     }
 };
-// eslint-disable-next-line no-unused-vars
-var Safari = {
-    browserName: 'safari',
-    platform: 'macOS 10.12',
-    version: '10',
-    screenResolution: '1024x768'
-};
-// eslint-disable-next-line no-unused-vars
-var PhantomJS = {
-    browserName: 'phantomjs',
-    'phantomjs.cli.args': [
-        '--ignore-ssl-errors=true',
-        '--web-security=false',
-        '--debug=false'
-    ]
-};
+
+var secrets = require('../integration_tests/.secrets.json');
+secrets.url = process.env.TEST_URL ? process.env.TEST_URL : secrets.url;
+var excludes = [
+    './test/**/*.page.js'
+];
+if (!process.env.FEDERATED) {
+    excludes.push('./test/specs/xdmod/federatedLogin.js');
+}
+var capabilities = [Chrome];
+var services = ['selenium-standalone'];
+var port = 4444;
+var path = '/wd/hub';
+var reporters = ['spec'];
+var reporterOptions = {};
+
+var user = '';
+var key = '';
+
+if (process.env.WDIO_MODE === 'headless') {
+    capabilities = [HeadlessChrome];
+    services = ['chromedriver'];
+    port = 9515;
+    path = '/';
+} else if (process.env.SAUCE_USER && process.env.SAUCE_KEY) {
+    user = process.env.SAUCE_USER;
+    key = process.env.SAUCE_KEY;
+    services = ['sauce'];
+    capabilities = [Chrome, FireFox, InternetExplorer];
+}
+if (process.env.JUNIT_OUTDIR) {
+    reporters.push('junit');
+    reporterOptions.junit = {
+        outputDir: process.env.JUNIT_OUTDIR
+    };
+}
 
 exports.config = {
+    deprecationWarnings: false,
+    user: user,
+    key: key,
     // ==================
     // Specify Test Files
     // ==================
@@ -54,14 +88,17 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './test/specs/**/*.js'
+        './test/specs/**/*.js',
+        '../../../../../*/tests/automated_tests/test/specs/*.js'
     ],
 
     // Patterns to exclude.
-    exclude: [
-        // pageObject files should always be excluded
-        './test/**/*.page.js'
-    ],
+    exclude: excludes,
+    suites: {
+        federatedLogin: [
+            './test/specs/xdmod/federatedLogin.js'
+        ]
+    },
     //
     // ============
     // Capabilities
@@ -91,9 +128,7 @@ exports.config = {
     // test should run tests.
     maxInstances: 1,
 
-    capabilities: [
-        Chrome
-    ],
+    capabilities: capabilities,
     //
     // ===================
     // Test Configurations
@@ -117,10 +152,15 @@ exports.config = {
     //
     // Set a base URL in order to shorten url command calls. If your url parameter starts
     // with '/', the base url gets prepended.
-    baseUrl: 'https://tas-reference-dbs.ccr.xdmod.org',
+    baseUrl: secrets.url,
     //
     // Default timeout for all waitForXXX commands.
     waitforTimeout: 10000,
+
+    port: port,
+
+    path: path,
+
     //
     // Initialize the browser instance with a WebdriverIO plugin. The object should have the
     // plugin name as key and the desired plugin options as property. Make sure you have
@@ -140,9 +180,7 @@ exports.config = {
     //     browserevent: {}
     // },
     //
-    services: [
-        'selenium-standalone'
-    ],
+    services: services,
     // Framework you want to run your specs with.
     // The following are supported: mocha, jasmine and cucumber
     // see also: http://webdriver.io/guide/testrunner/frameworks.html
@@ -157,13 +195,17 @@ exports.config = {
     // Test reporter for stdout.
     // The following are supported: dot (default), spec and xunit
     // see also: http://webdriver.io/guide/testrunner/reporters.html
-    reporters: ['spec'],
+    reporters: reporters,
+
+    reporterOptions: reporterOptions,
+
     //
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: 100000
+        timeout: 100000,
+        bail: true
     },
     //
     // =====

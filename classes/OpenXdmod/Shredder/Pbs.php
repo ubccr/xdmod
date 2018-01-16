@@ -187,7 +187,7 @@ class Pbs extends Shredder
             return;
         }
 
-        $jobIdData = $this->getJobIdAndHost($jobId);
+        $jobIdData = $this->getJobId($jobId);
         $job['job_id'] = $jobIdData['job_id'];
         if ($jobIdData['job_array_index'] !== null) {
             $job['job_array_index'] = $jobIdData['job_array_index'];
@@ -268,18 +268,22 @@ class Pbs extends Shredder
     }
 
     /**
-     * Determine the job_id and hostname for a job.
+     * Determine the ID and job array index for a job.
      *
      * @param string $id The PBS id_string.
      *
-     * @return array
+     * @return array An array containing:
+     *                   job_id: The job's ID.
+     *                   job_array_index: The index of the job in a job array,
+     *                       or null if job not in an array or data not found.
      */
-    public function getJobIdAndHost($id)
+    public function getJobId($id)
     {
         $this->logger->debug("Parsing id_string '$id'");
 
-        // id_string is formatted as "sequence_number.hostname".
-        list($sequence, $host) = explode('.', $id, 2);
+        // id_string may be formatted as
+        // "sequence_number.hostname" or "sequence_number"
+        $sequence = strtok($id, '.');
 
         $jobId = $index = null;
 
@@ -303,7 +307,6 @@ class Pbs extends Shredder
         }
 
         return array(
-            'host'            => $host,
             'job_id'          => $jobId,
             'job_array_index' => $index,
         );

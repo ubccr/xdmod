@@ -1,0 +1,17 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/request.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "rf.request_id",
+            "primary_fos_id": "rf.primary_fos_id",
+            "account_id": "rf.account_id"
+        },
+        "joins": [{
+            "name": "hpcdb_requests",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "rf"
+        }]
+    }
+}

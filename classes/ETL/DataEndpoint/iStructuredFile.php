@@ -86,4 +86,14 @@ interface iStructuredFile extends iFile, \Iterator, \Countable
      */
 
     public function parse();
+
+    /** -----------------------------------------------------------------------------------------
+     * Check to see if the endpoint supports complex data records (e.g. JSON objects). This may
+     * check to see if the endpoint implements iComplexDataRecords or perform other checks.
+     *
+     * @return boolean TRUE if the endpoint supports complex data records, FALSE if it does not.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function supportsComplexDataRecords();
 }  // interface iStructuredFile

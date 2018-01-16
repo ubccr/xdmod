@@ -1,0 +1,61 @@
+{
+    "table_definition": {
+        "name": "allocationonresource",
+        "engine": "MyISAM",
+        "comment": "state of alloc wrt resources.",
+        "columns": [{
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the allocation record."
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the resource that is allowed to use the allocation. In other words the allocation listed can be used by running jobs on this resource, depending on the allocation_state_id."
+            },
+            {
+                "name": "allocation_state_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The state of the allocation."
+            }
+        ],
+        "indexes": [{
+                "name": "fk_allocation_on_resource_allocation1_idx",
+                "columns": [
+                    "allocation_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_allocation_on_resource_allocation_state1_idx",
+                "columns": [
+                    "allocation_state_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_allocation_on_resource_resourcefact1_idx",
+                "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "allocation_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

@@ -6,6 +6,8 @@
 namespace xd_response;
 
 use Exception;
+
+use CCR\DB\PDODB;
 use xd_controller;
 use xd_utilities;
 
@@ -44,6 +46,11 @@ function buildError($error)
         }
     } else {
         $response['message'] = $error;
+    }
+
+    // If SQL debugging is enabled, include query data.
+    if (PDODB::debugging()) {
+        $response['sql'] = PDODB::debugInfo();
     }
 
     return $response;

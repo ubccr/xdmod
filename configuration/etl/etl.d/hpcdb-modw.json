@@ -1,0 +1,258 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB",
+                    "config": "datawarehouse",
+                    "schema": "mod_hpcdb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud timing test DB",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        },
+        "hpcdb-modw.bootstrap": {
+            "class": "StructuredFileIngestor",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "enabled": true
+        },
+        "hpcdb-modw.ingest": {
+            "class": "DatabaseIngestor",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "enabled": true
+        }
+    },
+
+    "#": "New job ingestion from mod_hpcdb to modw",
+    "hpcdb-modw.bootstrap": [{
+        "name": "jobtimes",
+        "definition_file": "xdmod/job-times.json",
+        "description": "job times + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "job times data",
+                "path": "xdmod/job-times.json"
+            }
+        }
+    }, {
+        "name": "error-descriptions",
+        "definition_file": "xdmod/error-descriptions.json",
+        "description": "error descriptions + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "job times data",
+                "path": "xdmod/error-descriptions.json"
+            }
+        }
+    }, {
+        "name": "processorbuckets",
+        "definition_file": "xdmod/processor-buckets.json",
+        "description": "processorbuckets + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "processorbuckets data",
+                "path": "xdmod/processor-buckets.json"
+            }
+        }
+    }, {
+        "name": "account",
+        "definition_file": "xdmod/account.json",
+        "description": "account + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "unknown account data data",
+                "path": "xdmod/account.json"
+            }
+        }
+    }, {
+        "name": "person",
+        "definition_file": "xdmod/person.json",
+        "description": "person + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "unknown person data data",
+                "path": "xdmod/person.json"
+            }
+        }
+    }, {
+        "name": "pi-person",
+        "definition_file": "xdmod/piperson.json",
+        "description": "pi person + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "unknown pi-person data data",
+                "path": "xdmod/pi-person.json"
+            }
+        }
+    }, {
+        "name": "resource-type",
+        "definition_file": "xdmod/resource-type.json",
+        "description": "resource-type + data",
+        "endpoints": {
+            "source": {
+                "type": "jsonfile",
+                "name": "unknown resource type data data",
+                "path": "xdmod/resource-type.json"
+            }
+        }
+    }],
+    "hpcdb-modw.ingest": [{
+        "name": "account",
+        "definition_file": "hpcdb-modw/account.json",
+        "description": "Account records"
+    }, {
+        "name": "allocation-breakdown",
+        "definition_file": "hpcdb-modw/allocation-breakdown.json",
+        "description": "allocation breakdown records"
+    }, {
+        "name": "allocation",
+        "definition_file": "hpcdb-modw/allocation.json",
+        "description": "allocation records"
+    }, {
+        "name": "resource",
+        "definition_file": "hpcdb-modw/resource-fact.json",
+        "description": "resource records"
+    }, {
+        "name": "allocation-on-resource",
+        "definition_file": "hpcdb-modw/allocation-on-resource.json",
+        "description": "allocations on resource records"
+    }, {
+        "name": "field-of-science",
+        "definition_file": "hpcdb-modw/field-of-science.json",
+        "description": "field of science records"
+    }, {
+        "name": "field-of-science-hierarchy",
+        "definition_file": "hpcdb-modw/field-of-science-hierarchy.json",
+        "description": "field of science hierarchy records"
+    }, {
+        "name": "organization",
+        "definition_file": "hpcdb-modw/organization.json",
+        "description": "organization records"
+    }, {
+        "name": "node-count",
+        "definition_file": "hpcdb-modw/node-count.json",
+        "description": "node count records"
+    }, {
+        "name": "pi-person",
+        "definition_file": "hpcdb-modw/piperson.json",
+        "description": "PI Person records"
+    }, {
+        "name": "person",
+        "definition_file": "hpcdb-modw/person.json",
+        "description": "person records"
+    }, {
+        "name": "people-under-pi",
+        "definition_file": "hpcdb-modw/people-under-pi.json",
+        "description": "people under pi records"
+    }, {
+        "name": "principal-investigator",
+        "definition_file": "hpcdb-modw/principal-investigator.json",
+        "description": "principal investigator records"
+    }, {
+        "name": "queue",
+        "definition_file": "hpcdb-modw/queue.json",
+        "description": "queue records"
+    }, {
+        "name": "request",
+        "definition_file": "hpcdb-modw/request.json",
+        "description": "request records"
+    }, {
+        "name": "resource-type",
+        "definition_file": "hpcdb-modw/resource-type.json",
+        "description": "resource type records"
+    }, {
+        "name": "resource-spec",
+        "definition_file": "hpcdb-modw/resource-spec.json",
+        "description": "resource spec records"
+    }, {
+        "name": "resource-allocated",
+        "definition_file": "hpcdb-modw/resource-allocated.json",
+        "description": "resource spec records"
+    }, {
+        "name": "service-provider",
+        "definition_file": "hpcdb-modw/service-provider.json",
+        "description": "service provider records"
+    }, {
+        "name": "system-account",
+        "definition_file": "hpcdb-modw/system-account.json",
+        "description": "system account records"
+    }, {
+        "name": "hosts",
+        "class": "HpcdbHostsIngestor",
+        "definition_file": "hpcdb-modw/host.json",
+        "description": "system account records"
+    }, {
+        "name": "job-hosts",
+        "definition_file": "hpcdb-modw/jobhosts.json",
+        "description": "system account records"
+    }, {
+        "name": "jobhosts-post-truncate",
+        "namespace": "ETL\\Maintenance",
+        "options_class": "MaintenanceOptions",
+        "description": "Post-updates for HPCDB job hosts",
+        "class": "ExecuteSql",
+        "sql_file_list": [
+            "hpcdb-modw/jobhosts-post-ingest-truncate.sql"
+        ]
+    }, {
+        "name": "job-record",
+        "definition_file": "hpcdb-modw/job_record_hpc.json",
+        "description": "HPC job records from the hpcdb"
+    }, {
+        "name": "HpcdbPostIngestJobUpdates",
+        "namespace": "ETL\\Maintenance",
+        "options_class": "MaintenanceOptions",
+        "description": "Post-updates for HPCDB job records",
+        "class": "ExecuteSql",
+        "sql_file_list": [
+            "hpcdb-modw/job_record_hpc_post_ingest_updates.sql"
+        ]
+    }, {
+        "name": "min-max-date",
+        "definition_file": "hpcdb-modw/min-max-date.json",
+        "description": "Job Record min and max job dates",
+        "truncate_destination": true
+    }],
+    "hpcdb-modw.aggregate": [{
+        "name": "aggregate",
+        "endpoints": {
+            "source": {
+                "type": "mysql",
+                "name": "Job Record/Task database",
+                "config": "datawarehouse",
+                "schema": "modw"
+            },
+            "destination": {
+                "type": "mysql",
+                "name": "Aggregates Database",
+                "config": "datawarehouse",
+                "schema": "modw_aggregates",
+                "create_schema_if_not_exists": true
+            }
+        },
+        "namespace": "ETL\\Aggregator",
+        "options_class": "AggregatorOptions",
+        "class": "SimpleAggregator",
+        "description": "Aggregate HPC job records",
+        "definition_file": "hpcdb-modw/jobfact_hpc_aggregation.json",
+        "truncate_destination": true,
+        "table_prefix": "jobfact_by_",
+        "aggregation_units": [
+            "day", "month", "quarter", "year"
+        ]
+    }]
+}

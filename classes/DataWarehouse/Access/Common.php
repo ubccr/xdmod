@@ -304,11 +304,15 @@ class Common
             return $result;
         }
 
-        if ($format === 'png' || $format === 'svg' ) 
+        if ($format === 'png' || $format === 'svg' || $format === 'pdf')
         {
+            $fileMeta = array(
+                'title' => $filename
+            );
+
             $result = array(
                 "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
-                "results" => \xd_charting\exportHighchart( $returnData['data'][0], $width, $height, $scale, $format)
+                "results" => \xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, $format, null, $fileMeta)
             );
 
             return $result;
