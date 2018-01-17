@@ -7,14 +7,19 @@ PI=""
 CD=""
 CS=""
 PUB=""
-
+SUP=""
+if [ "$3" = "--suprem" ];
+then
+    SUP="-supremm"
+    export REG_TEST_BASE="/../../../tests/artifacts/xdmod-test-artifacts/xdmod-supremm/regression/current/"
+fi
 if [ "$1" = "--junit-output-dir" ];
 then
-    REGUSER="--log-junit $2/xdmod-regression-user.xml"
-    PI="--log-junit $2/xdmod-regression-principalinvestigator.xml"
-    CD="--log-junit $2/xdmod-regression-centerdirector.xml"
-    CS="--log-junit $2/xdmod-regression-centerstaff.xml"
-    PUB="--log-junit $2/xdmod-regression-public.xml"
+    REGUSER="--log-junit $2/xdmod$SUP-regression-user.xml"
+    PI="--log-junit $2/xdmod$SUP-regression-principalinvestigator.xml"
+    CD="--log-junit $2/xdmod$SUP-regression-centerdirector.xml"
+    CS="--log-junit $2/xdmod$SUP-regression-centerstaff.xml"
+    PUB="--log-junit $2/xdmod$SUP-regression-public.xml"
 fi
 
 cd $(dirname $0)
