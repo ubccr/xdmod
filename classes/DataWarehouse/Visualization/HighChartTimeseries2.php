@@ -477,60 +477,7 @@ class HighChartTimeseries2 extends HighChart2
                 // queries we must execute. If ME, use the $limit (default 10) to enable paging
                 // thru dataset.
 
-                // Query for the top $limit categories in the realm, over the selected time period
-                //$datagroupDataObject = $dataset->getColumnSortedMax($data_description->metric,
-                //                                                        'dim_'.$data_description->group_by,
-                //                                                        $limit,
-                //                                                        $offset,
-                //                                                        $data_description->realm);
-                // Roll back to the 'old way' of getting top-n sorted dimension values:
-                $datagroupDataObject = $dataset->getColumnUniqueOrdered(
-                    'dim_'.$data_description->group_by,
-                    $limit,
-                    $offset,
-                    $data_description->realm
-                );
-
-                // Use the top $limit categories to build an iterator with $limit objects inside:
-                $yAxisDataObjectsIterator = $dataset->getColumnIteratorBy(
-                    'met_'.$data_description->metric,
-                    $datagroupDataObject
-                );
-
-                // --- Set up dataset truncation for Usage tab support: ----
-                // Populate an array with our iterator contents, but only up to $limit.
-                // (implicitly) run the queries and populate the array, but only up to $limit:
-                // that is taken care of by the limit on datagroupDataObject above.
-                $yAxisDataObjectsArray = array();
-                foreach($yAxisDataObjectsIterator as $yAxisDataObject)
-                {
-                    $yAxisDataObjectsArray[] = $yAxisDataObject;
-                }
-
-                $dataTruncated = false;
-                if ( $summarizeDataseries && $this->_total > $limit )
-                {
-                    // Run one more query containing everything that was NOT in the top n.
-                    // Populate SimpleTimeseriesData object yAxisTruncateObj with this
-                    // summary information
-                    $yAxisTruncateObj = $dataset->getSummarizedColumn(
-                        $data_description->metric,
-                        $data_description->group_by,
-                        $this->_total - $limit,
-                        $yAxisDataObjectsIterator->getLimitIds(),
-                        $data_description->realm
-                    );
-
-                    // set the remainder dataset label for plotting
-                    $dataname = $this->getDataname($data_description->metric, $limit );
-                    $yAxisTruncateObj->setGroupName($dataname );
-                    // set label on the dataseries' legend
-                    $yAxisTruncateObj->setName($dataname );
-
-                    $yAxisDataObjectsArray[] = $yAxisTruncateObj;
-                    $dataTruncated = true;
-                }
-                unset($yAxisDataObjectsIterator);
+                list($yAxisDataObjectsArray, $dataTruncated) = $this->getYAxisData($data_description, $dataset, $limit, $offset, $summarizeDataseries);
 
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 // @refer HighChart2 line 866
@@ -946,4 +893,68 @@ class HighChartTimeseries2 extends HighChart2
         $this->setChartTitleSubtitle($font_size);
 
     } // function configure()
+
+    /**
+     * Returns the yAxis data for the chart
+     *
+     * @return array() Array of yAxis data objects and whether the data were truncated
+     */
+    private function getYAxisData($data_description, $dataset, $limit, $offset, $summarizeDataseries) {
+
+        $dataTruncated = false;
+        $yAxisDataObjectsArray = array();
+
+        if ($data_description->group_by === 'none') {
+            $yAxisData = $dataset->getColumn('met_'.$data_description->metric, $limit, $offset);
+            $metricName = $dataset->getColumnLabel($data_description->group_by, true);
+            $yAxisData->setGroupName($metricName);
+            $yAxisData->setName($metricName);
+            $yAxisDataObjectsArray[] = $yAxisData;
+        } else {
+            $datagroupDataObject = $dataset->getColumnUniqueOrdered(
+                'dim_'.$data_description->group_by,
+                $limit,
+                $offset,
+                $data_description->realm
+            );
+
+            // Use the top $limit categories to build an iterator with $limit objects inside:
+            $yAxisDataObjectsIterator = $dataset->getColumnIteratorBy(
+                'met_'.$data_description->metric,
+                $datagroupDataObject
+            );
+
+            // Populate an array with our iterator contents, but only up to $limit.
+            // (implicitly) run the queries and populate the array, but only up to $limit:
+            // that is taken care of by the limit on datagroupDataObject above.
+            foreach ($yAxisDataObjectsIterator as $yAxisDataObject) {
+                $yAxisDataObjectsArray[] = $yAxisDataObject;
+            }
+
+            if ($summarizeDataseries && $this->_total > $limit) {
+                // Run one more query containing everything that was NOT in the top n.
+                // Populate SimpleTimeseriesData object yAxisTruncateObj with this
+                // summary information
+                $yAxisTruncateObj = $dataset->getSummarizedColumn(
+                    $data_description->metric,
+                    $data_description->group_by,
+                    $this->_total - $limit,
+                    $yAxisDataObjectsIterator->getLimitIds(),
+                    $data_description->realm
+                );
+
+                // set the remainder dataset label for plotting
+                $dataname = $this->getDataname($data_description->metric, $limit);
+                $yAxisTruncateObj->setGroupName($dataname);
+                // set label on the dataseries' legend
+                $yAxisTruncateObj->setName($dataname);
+
+                $yAxisDataObjectsArray[] = $yAxisTruncateObj;
+                $dataTruncated = true;
+            }
+            unset($yAxisDataObjectsIterator);
+        }
+
+        return array($yAxisDataObjectsArray, $dataTruncated);
+    }
 } // class HighChartTimeseries2

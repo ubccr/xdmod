@@ -274,9 +274,10 @@ class SimpleTimeseriesDataset extends SimpleDataset
         $column_name,
         $realm 
     ) {
-        // Following are true but unneeded:
-        //$is_dimension = true;
-        //$column_type = 'dim';
+        if ($column_name === 'none') {
+            // no need to run the query if group by none.
+            return 1;
+        }
 
         $query_classname = '\\DataWarehouse\\Query\\' . $realm . '\\Aggregate';
 
