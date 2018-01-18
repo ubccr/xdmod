@@ -387,7 +387,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 existingUserEmailField.setValue('');
 
                 if (self.initFlag == 1) {
-                    Ext.getCmp('txtAccountTimestamps').update('');
+                    document.getElementById('txtAccountTimestamps').innerText = '';
                     document.getElementById('txtAccountStatus').innerText = '';
                 }
 
@@ -688,7 +688,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         self.resetDirtyState = function () {
             settingsAreDirty = false;
-            roleGrid.setDirtyState(false);
+            roleGrid.updateDirtyState();
+            roleGrid.reset();
         };
 
         // ------------------------------------------
@@ -1173,13 +1174,13 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                          *   "<acl_name>": []
                          * }
                          */
-                        roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
                         for (var acl in json.user_information.acls) {
                             if (json.user_information.acls.hasOwnProperty(acl)) {
                                 var centers = json.user_information.acls[acl];
                                 roleGrid.setCenterConfig(acl, centers);
                             }
                         }
+                        roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
 
                         userSettings.setDisabled(false);
                         userEditor.hideMask();

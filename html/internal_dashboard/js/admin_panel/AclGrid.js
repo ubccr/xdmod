@@ -121,13 +121,25 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 {
                     header: 'Name',
                     dataIndex: 'acl',
-                    width: 109
+                    width: 109,
+                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                        var data = store.getAt(rowIndex).data;
+                        if (data.requires_center === true) {
+                            if (!record.ref) {
+                                record.ref = Ext.id();
+                            }
+                            var centers = store.parent.getCenters(data.acl_id);
+                            return value + '<span id="' + record.ref + '"><b> (' + centers.length + ')</b></span>';
+                        }
+                        return value;
+                    }
                 },
                 this.ccInclude
             ]
         }); // columnModel
 
         var store = new DashboardStore({
+            parent: self,
             autoLoad: false,
             autoDestroy: true,
             url: '../controllers/user_admin.php',
@@ -211,6 +223,15 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         if (this.aclCenters.hasOwnProperty(acl) && centers && centers.length > 0) {
             this.aclCenters[acl] = centers;
         }
+    },
+    updateCenterCounts: function () {
+        this.store.each(function (record) {
+            if (record.ref) {
+                var centers = this.getCenters(record.data.acl_id);
+                var elem = document.getElementById(record.ref);
+                elem.innerHTML = '<b> (' + centers.length + ')</b>';
+            }
+        }, this);
     }
 }); // XDMoD.Admin.AclGrid
 
@@ -265,6 +286,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
                         parent.selectAcl(self.acl_id);
                         parent.setDirtyState(isDirty);
                     }
+                    parent.updateCenterCounts();
                 }
             }
 
