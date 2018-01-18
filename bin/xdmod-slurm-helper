@@ -217,6 +217,7 @@ function getSacctCmdArgs(
         '--parsable2',
         '--noheader',
         '--allocations',
+        '--duplicates',
     );
 
     if ($shredder->hasResource()) {
