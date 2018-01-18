@@ -122,11 +122,13 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     header: 'Name',
                     dataIndex: 'acl',
                     width: 109,
-                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         var data = store.getAt(rowIndex).data;
                         if (data.requires_center === true) {
                             if (!record.ref) {
+                                /* eslint-disable no-param-reassign */
                                 record.ref = Ext.id();
+                                /* eslint-enable no-param-reassign */
                             }
                             var centers = store.parent.getCenters(data.acl_id);
                             return value + '<span id="' + record.ref + '"><b> (' + centers.length + ')</b></span>';
