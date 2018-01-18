@@ -6,6 +6,7 @@ use CCR\Json;
 use ComponentTests\BaseTest;
 use ComponentTests\XDUserTest;
 use Exception;
+use TestHarness\TestFiles;
 use User\Roles\CenterDirectorRole;
 use XDUser;
 
@@ -14,6 +15,15 @@ use XDUser;
  **/
 class CenterDirectorRoleTest extends BaseTest
 {
+    protected $testFiles;
+
+    public function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../../');
+        }
+        return $this->testFiles;
+    }
     /**
      * @expectedException Exception
      * @expectedExceptionMessage No user ID has been assigned to this role.  You must call configure() before calling getCorrespondingUserID()
@@ -45,15 +55,25 @@ class CenterDirectorRoleTest extends BaseTest
         $cd->getActiveCenter();
     }
 
-    public function testGetActiveCenter()
+    /**
+     * @dataProvider provideGetActiveCenter
+     * @param $expectedCenterId
+     */
+    public function testGetActiveCenter($expectedCenterId)
     {
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-        $expected = 1;
+        $user = XDUser::getUserByUserName(XDUserTest::CENTER_DIRECTOR_USER_NAME);
 
         $cd = new CenterDirectorRole();
         $cd->configure($user);
         $actual = $cd->getActiveCenter();
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expectedCenterId, $actual);
+    }
+
+    public function provideGetActiveCenter()
+    {
+        return Json::loadFile(
+            $this->getTestFiles()->getFile('acls', 'center_director_get_active_center')
+        );
     }
 
     /**
@@ -84,40 +104,26 @@ class CenterDirectorRoleTest extends BaseTest
         $this->assertNotFalse(strpos($actual, $expected), "Expected to find '$expected' in '$actual'");
     }
 
-    public function testGetIdentifier()
-    {
-        $params = array(
-            false => XDUserTest::CENTER_DIRECTOR_ACL_NAME,
-            true => XDUserTest::CENTER_DIRECTOR_ACL_NAME . ';1'
-        );
-
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-        $cd = new CenterDirectorRole();
-        $cd->configure($user);
-        foreach($params as $param => $expected) {
-            $actual = $cd->getIdentifier($param);
-            $this->assertEquals($expected, $actual);
-        }
-    }
-
     /**
-     * @expectedException Exception
-     * @expectedExceptionMessage No user ID has been assigned to this role.  You must call configure() before calling getCorrespondingUserID()
+     * @dataProvider provideGetIdentifier
+     * @param $param
+     * @param $expected
      */
-    public function testEnumStaffMembersNoUser()
+    public function testGetIdentifier($param, $expected)
     {
-        $cd = new CenterDirectorRole();
-        $cd->enumCenterStaffMembers();
-    }
-
-    public function testEnumStaffMembers()
-    {
-        $expected = Json::loadFile($this->getTestFile('center_director_staff_members-update_enumAllAvailableRoles.json'));
 
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $cd = new CenterDirectorRole();
         $cd->configure($user);
-        $actual = $cd->enumCenterStaffMembers();
-        $this->assertEquals(count($expected), count($actual));
+        $actual = $cd->getIdentifier($param);
+        $this->assertEquals($expected, $actual);
+
+    }
+
+    public function provideGetIdentifier()
+    {
+        return Json::loadFile(
+            $this->getTestFiles()->getFile('acls', 'center_director_get_identifier')
+        );
     }
 }

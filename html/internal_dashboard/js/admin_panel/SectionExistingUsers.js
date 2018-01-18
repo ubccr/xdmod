@@ -387,7 +387,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 existingUserEmailField.setValue('');
 
                 if (self.initFlag == 1) {
-                    Ext.getCmp('txtAccountTimestamps').update('');
+                    document.getElementById('txtAccountTimestamps').innerText = '';
                     document.getElementById('txtAccountStatus').innerText = '';
                 }
 
@@ -559,12 +559,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 buttons: Ext.Msg.YESNO,
                 fn: function(resp) {
                     if (resp == 'yes'){
+                        /* eslint-disable no-use-before-define */
                         userManagementAction({
                             operation: 'update_user',
                             uid: selected_user_id,
-                            email_address: document.getElementById('existingUserEmail').value,
+                            email_address: existingUserEmailField.getValue(),
                             is_active: (action == 'Enable') ? 'y' : 'n'
                         });
+                        /* eslint-enable no-use-before-define */
                     }
                 }
             });
@@ -605,7 +607,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var minEmailLength = XDMoD.constants.minEmailLength;
         var maxEmailLength = XDMoD.constants.maxEmailLength;
         var existingUserEmailField = new Ext.form.TextField({
-            id: 'existingUserEmail',
             fieldLabel: 'E-Mail Address',
             emptyText: minEmailLength + ' min, ' + maxEmailLength + ' max',
             msgTarget: 'under',
@@ -663,17 +664,20 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         // ------------------------------------------
         /* eslint-disable no-use-before-define */
+        var roleGridClickHandler = function () {
+            var selRoles = roleGrid.getSelectedAcls();
+            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
+            if (roleGrid.isInDirtyState()) {
+                saveIndicator.show();
+            } else {
+                saveIndicator.hide();
+            }
+        };
         var roleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment',
             selectionChangeHandler: roleGridClickHandler,
             border: false
         });
-
-        var roleGridClickHandler = function () {
-            var selRoles = roleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
-            saveIndicator.show();
-        };
         /* eslint-enable no-use-before-define */
 
         // ------------------------------------------
@@ -684,7 +688,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         self.resetDirtyState = function () {
             settingsAreDirty = false;
-            roleGrid.setDirtyState(false);
+            roleGrid.updateDirtyState();
+            roleGrid.reset();
         };
 
         // ------------------------------------------
@@ -785,6 +790,15 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         'An institution must be specified for a user having a role of Campus Champion.',
                         false
                     );
+                    return;
+                }
+
+                var dataAcls = Object.values(CCR.xdmod.UserTypes);
+
+                var intersection = CCR.intersect(dataAcls, acls);
+
+                if (intersection.length === 0) {
+                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
                     return;
                 }
 
@@ -1039,6 +1053,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
 
                     roleGrid.setDirtyState(false);
+                    roleGrid.reset();
                     settingsAreDirty = false;
 
                     saveIndicator.hide();
@@ -1083,14 +1098,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     if (json.user_information.is_active == 'active') {
                         Ext.getCmp('disableAccountMenuItem').show();
                         Ext.getCmp('enableAccountMenuItem').hide();
-                        Ext.getCmp('txtAccountStatus').removeClass('admin_panel_user_user_status_disabled');
-                        Ext.getCmp('txtAccountStatus').addClass('admin_panel_user_user_status_active');
+                        txtAccountStatus.classList.remove('admin_panel_user_user_status_disabled');
+                        txtAccountStatus.classList.add('admin_panel_user_user_status_active');
                     }
                     else {
                         Ext.getCmp('enableAccountMenuItem').show();
                         Ext.getCmp('disableAccountMenuItem').hide();
-                        Ext.getCmp('txtAccountStatus').removeClass('admin_panel_user_user_status_active');
-                        Ext.getCmp('txtAccountStatus').addClass('admin_panel_user_user_status_disabled');
+                        txtAccountStatus.classList.remove('admin_panel_user_user_status_active');
+                        txtAccountStatus.classList.add('admin_panel_user_user_status_disabled');
                     }
 
                     if (reset_controls) {
@@ -1159,13 +1174,13 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                          *   "<acl_name>": []
                          * }
                          */
-                        roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
                         for (var acl in json.user_information.acls) {
                             if (json.user_information.acls.hasOwnProperty(acl)) {
                                 var centers = json.user_information.acls[acl];
                                 roleGrid.setCenterConfig(acl, centers);
                             }
                         }
+                        roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
 
                         userSettings.setDisabled(false);
                         userEditor.hideMask();

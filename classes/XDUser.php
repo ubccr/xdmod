@@ -579,7 +579,7 @@ SQL;
     public function isDeveloper()
     {
 
-        return (in_array(ROLE_ID_DEVELOPER, $this->_acls));
+        return (array_key_exists(ROLE_ID_DEVELOPER, $this->_acls));
 
     }//isDeveloper
 
@@ -969,6 +969,9 @@ SQL;
 
         foreach ($this->_roles as $role) {
             $roleId = $this->_getRoleID($role);
+            if ($roleId === null) {
+                continue;
+            }
             $this->_pdo->execute(
                 "INSERT INTO UserRoles VALUES(:id, :roleId, '0', '0')",
                 array('id' => $this->_id,
@@ -1110,7 +1113,7 @@ SQL;
             ':abbrev' => $role_abbrev,
         ));
 
-        return $roleResults[0]['role_id'];
+        return count($roleResults) > 0 ? $roleResults[0]['role_id'] : null;
 
     }//_getRoleID
 
@@ -1447,7 +1450,7 @@ FROM user_acls ua
 -- we only want records that are related to a specific user
 -- the original sql implicitly left out the flag or feature acls
 -- so we need to filter these out here
-WHERE ua.user_id = :user_id AND at.name != 'feature'
+WHERE ua.user_id = :user_id AND at.name = 'data'
 -- In this ordering we use coalesce so that any acl that does not participate
 -- in a hierarchy will be sent to the bottom of the list
 ORDER BY COALESCE(aclh.level, 0) DESC, a.name
@@ -1826,7 +1829,7 @@ SQL
             throw new Exception("This user must be saved prior to calling enumCenterStaffSites()");
         }
 
-        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=5 AND param_name='provider' AND user_id=:user_id", array(
+        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=5 AND param_name='provider' AND user_id=:user_id ORDER BY param_value", array(
             ':user_id' => $this->_id,
         ));
 
@@ -1851,7 +1854,7 @@ SQL
             throw new Exception("This user must be saved prior to calling enumCenterDirectorSites()");
         }
 
-        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=1 AND param_name='provider' AND user_id=:user_id", array(
+        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=1 AND param_name='provider' AND user_id=:user_id ORDER BY param_value", array(
             ':user_id' => $this->_id,
         ));
 
@@ -2030,7 +2033,7 @@ SQL;
             throw new Exception("This user must be saved prior to calling getOrganizationCollection()");
         }
 
-        $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev=:abbrev AND urp.user_id=:user_id AND urp.param_name='provider'";
+        $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev=:abbrev AND urp.user_id=:user_id AND urp.param_name='provider' ORDER BY urp.param_value";
 
         $center_collection = array();
 

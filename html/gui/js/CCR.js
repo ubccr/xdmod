@@ -2012,6 +2012,26 @@ CCR.getInstance = function(instancePath, classPath, config) {
     return result;
 };
 
+/**
+ * Find all entries in the right array that are also in the left.
+ *
+ * @param {Array} left
+ * @param {Array} right
+ * @return {Array}
+ */
+CCR.intersect = function (left, right) {
+    var found = [];
+
+    for (var i = 0; i < right.length; i++) {
+        var key = right[i];
+        if (left.indexOf(key) !== -1) {
+            found.push(key);
+        }
+    }
+
+    return found;
+};
+
 
 // override 3.4.0 to be able to restore column state
 Ext.override(Ext.grid.ColumnModel, {

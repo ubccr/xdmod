@@ -1,7 +1,7 @@
 /**
  * Report generator test classes.
  */
-
+const expected = global.testHelpers.artifacts.getArtifact('reportGenerator');
 /**
  * Helper function for creating XPath expression predicates to accurately
  * determine if an element has a class.
@@ -360,6 +360,7 @@ class ReportGenerator {
                     newBasedOnTemplateRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains('btn_report_template')}]]`,
                     newBasedOnReportRows: () => this.selectors.myReports.toolbar.newBasedOnMenu() + `//li[.//img[${classContains('btn_selected_report')}]]`,
                     newBasedOnTemplate: name => this.selectors.myReports.toolbar.newBasedOnTemplateRows() + `//a[.//b[text()="${name}"]]`,
+                    newBasedOnTemplateWithCenter: center => `//div[${classContains('x-menu-floating')}]//a[.//img[${classContains('btn_resource_provider')}] and .//span[contains(text(), "${center}")]]`,
                     newBasedOnReport: name => this.selectors.myReports.toolbar.newBasedOnReportRows() + `//a[./img[.//b[text()="${name}"]]`,
                     editButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Edit"]',
                     previewButton: () => this.selectors.myReports.toolbar.panel() + '//button[text()="Preview"]',
@@ -891,11 +892,23 @@ class ReportGenerator {
      * Must click the "New Based On" button before selecting the template.
      *
      * @param {String} templateName The full name of the template.
+     * @param {String} center       The name of the center to select [optional].
      */
-    selectNewBasedOnTemplate(templateName) {
+    selectNewBasedOnTemplate(templateName, center) {
         browser.waitForVisible(this.selectors.myReports.toolbar.newBasedOnMenu());
         const reportCount = this.getMyReportsRows().length;
-        browser.click(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
+        if (!center) {
+            browser.click(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
+        } else {
+            // move the mouse to the middle of the menu so that the center selection menu appears
+            browser.moveToObject(this.selectors.myReports.toolbar.newBasedOnTemplate(templateName));
+
+            // wait for the new menu to be visible
+            browser.waitForVisible(this.selectors.myReports.toolbar.newBasedOnTemplateWithCenter(center));
+
+            // Select the option that corresponds with the center argument
+            browser.click(this.selectors.myReports.toolbar.newBasedOnTemplateWithCenter(center));
+        }
         // There is no visible indicator that the reports are being
         // updated, so wait for the number of rows to change.
         browser.waitUntil(() => reportCount !== this.getMyReportsRows().length, 2000, 'Expect number of reports to change');
@@ -1621,6 +1634,19 @@ class ReportGenerator {
         expect(index, 'Index is valid').to.be.below(charts.length);
         browser.dragAndDrop(this.selectors.availableCharts.chartList.rows() + `[${index + 1}]`, this.selectors.reportEditor.includedCharts.chartList.panel());
         browser.waitForExist(this.selectors.reportEditor.includedCharts.chartList.rows() + `[${includedChartCountBefore + 1}]`);
+    }
+
+    getCharts(user, options) {
+        var charts = expected[user].report_templates.charts;
+        charts.forEach(function (chart, i) {
+            if (chart['startDate'] in options) {
+                charts[i].startDate = options[chart['startDate']];
+            }
+            if (chart['endDate'] in options) {
+                charts[i].endDate = options[chart['endDate']];
+            }
+        });
+        return charts;
     }
 }
 

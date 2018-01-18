@@ -1,6 +1,6 @@
 var logIn = require('./loginPage.page.js');
 var usg = require('./usageTab.page.js');
-
+var expected = global.testHelpers.artifacts.getArtifact('usage');
 describe('Usage', function () {
     logIn.login('centerdirector');
     var baselineDate = {
@@ -11,7 +11,12 @@ describe('Usage', function () {
         it('Select "Usage" tab', function () {
             usg.selectTab();
             browser.waitForChart();
-            browser.waitForExist(usg.chartByTitle('CPU Hours: Total'));
+            browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title));
+
+            // by refreshing we ensure that there are not stale legend-item elements
+            // on the page.
+            browser.refresh();
+            browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title));
         });
         it('Set a known start and end date', function meSetStartEnd() {
             usg.setStartDate(baselineDate.start);
@@ -22,7 +27,7 @@ describe('Usage', function () {
         it('Select Job Size Min', function () {
             browser.waitForLoadedThenClick(usg.treeNodeByPath('Jobs Summary', 'Job Size: Min'));
             browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)'));
-            usg.checkLegendText('Screwdriver');
+            usg.checkLegendText(expected.centerdirector.legend);
         });
         it('View CPU Hours by System Username', function () {
             browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs Summary'));
@@ -36,7 +41,12 @@ describe('Usage', function () {
         it('Selected', function () {
             usg.selectTab();
             browser.waitForChart();
-            browser.waitForExist(usg.chartByTitle('CPU Hours: Total'));
+            browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title));
+
+            // by refreshing we ensure that there are not stale legend-item elements
+            // on the page.
+            browser.refresh();
+            browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title));
         });
         it('Set a known start and end date', function meSetStartEnd() {
             usg.setStartDate(baselineDate.start);
@@ -47,7 +57,7 @@ describe('Usage', function () {
         it('View Job Size Min', function () {
             browser.waitForLoadedThenClick(usg.treeNodeByPath('Jobs Summary', 'Job Size: Min'));
             browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)'));
-            usg.checkLegendText('Screwdriver');
+            usg.checkLegendText(expected.centerdirector.legend);
         });
         it('Confirm System Username is not selectable', function () {
             browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs Summary'));

@@ -187,12 +187,13 @@ SQL;
         $sql = <<<SQL
 SELECT
   a.*,
-  INSTR(aclt.name, 'requires_center') > 0 AS requires_center
+  req.acl_id IS NOT NULL requires_center
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
-  JOIN acl_types aclt
-    ON aclt.acl_type_id = a.acl_type_id
+  LEFT JOIN (
+    SELECT acl_id FROM acls WHERE name IN ('cd', 'cs')
+    ) req ON req.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
         return $db->query($sql, array('user_id' => $userId));
@@ -455,9 +456,7 @@ SQL;
             }
         }
 
-        return array_filter($results, function ($item) {
-            return count($item) > 0;
-        });
+        return $results;
     }
 
 
@@ -872,5 +871,39 @@ SQL;
         }
 
         return null;
+    }
+
+    /**
+     * Attempts to retrieve the set of acls who have an acl_type with the name
+     * aclTypeName. If no records are found then an empty array will be
+     * returned.
+     *
+     * @param string $aclTypeName
+     * @return array
+     */
+    public static function getAclsByTypeName($aclTypeName)
+    {
+        $db = DB::factory('database');
+
+        $query = <<<SQL
+SELECT a.* 
+FROM acls a 
+  JOIN acl_types at ON a.acl_type_id = at.acl_type_id
+WHERE at.name = :acl_type_name
+SQL;
+        $rows = $db->query(
+            $query,
+            array(
+                ':acl_type_name' => $aclTypeName
+            )
+        );
+
+        if (count($rows) > 0) {
+            return array_reduce($rows, function ($carry, $item) {
+                $carry[] = new Acl($item);
+                return $carry;
+            }, array());
+        }
+        return array();
     }
 }

@@ -126,6 +126,18 @@ class XdmodTestHelper
         $this->setauthvariables($authtokens['token']);
     }
 
+    public function authenticateDirect($username, $password)
+    {
+        $data = array(
+            'username' => $username,
+            'password' => $password
+        );
+        $this->setauthvariables(null);
+        $authresult = $this->post("rest/auth/login", null, $data);
+        $authtokens = $authresult[0]['results'];
+        $this->setauthvariables($authtokens['token']);
+    }
+
     /**
      * Attempt to authenticate using the provided $userrole against XDMoD's
      * internal dashboard.
@@ -246,6 +258,29 @@ class XdmodTestHelper
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
 
         return $this->docurl();
+    }
+
+    public function patch($path, $params = null, $data = null)
+    {
+        $url = $this->siteurl . $path;
+
+        if ($params !== null) {
+            $url .= "?" . http_build_query($params);
+        }
+        if (isset($this->verbose)) {
+            echo "$url\n";
+        }
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_POST, true);
+        if (isset($data)) {
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($data));
+        }
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
+        $response = $this->docurl();
+
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, null);
+        return $response;
     }
     public function getSiteurl(){
         return $this->siteurl;

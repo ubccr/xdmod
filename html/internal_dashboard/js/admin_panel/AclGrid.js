@@ -3,7 +3,6 @@ Ext.ns('XDMoD.Admin');
 XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     enableHdMenu: false,
 
-    selectedAcls: null,
     selectionChangeHandler: null,
     aclCenters: {},
 
@@ -15,17 +14,32 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 
     initComponent: function () {
         var self = this;
-        var isDirty = true;
+        this.isDirty = false;
 
         this.isInDirtyState = function () {
-            return isDirty;
+            return self.isDirty;
         };
 
         this.setDirtyState = function (dirty) {
-            isDirty = dirty;
+            self.isDirty = dirty;
             if (self.selectionChangeHandler) {
                 self.selectionChangeHandler();
             }
+        };
+
+        this.updateDirtyState = function () {
+            var dirty = false;
+
+            var records = self.store.data.items;
+            for (var i = 0; i < records.length; i++) {
+                var record = records[i];
+                dirty = record.modified !== null && record.get('include') !== record.modified['include'];
+                if (dirty) {
+                    break;
+                }
+            }
+
+            self.setDirtyState(dirty);
         };
 
         this.ccInclude = new Ext.grid.CheckColumn({
@@ -67,16 +81,14 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     this.grid.getView().findRowIndex(node)
                 );
 
-                record.set(this.dataIndex, !record.data[this.dataIndex]);
-
-                isDirty = true;
-
-                if (self.selectionChangeHandler) {
-                    self.selectionChangeHandler();
-                }
-
-                if (record.data.requires_center === true) {
+                if (record.data.requires_center) {
+                    // let the center selector handle things.
                     XDMoD.Admin.AclGrid.prepCenterMenu(self.id, record.data.acl, record.data.acl_id, self.id);
+                } else {
+                    // provide the default behavior of clicking on a checkbox
+                    // flipping the state.
+                    record.set(this.dataIndex, !record.data[this.dataIndex]);
+                    self.updateDirtyState();
                 }
             }, // onMouseDown
 
@@ -109,13 +121,27 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 {
                     header: 'Name',
                     dataIndex: 'acl',
-                    width: 109
+                    width: 109,
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        var data = store.getAt(rowIndex).data;
+                        if (data.requires_center === true) {
+                            if (!record.ref) {
+                                /* eslint-disable no-param-reassign */
+                                record.ref = Ext.id();
+                                /* eslint-enable no-param-reassign */
+                            }
+                            var centers = store.parent.getCenters(data.acl_id);
+                            return value + '<span id="' + record.ref + '"><b> (' + centers.length + ')</b></span>';
+                        }
+                        return value;
+                    }
                 },
                 this.ccInclude
             ]
         }); // columnModel
 
         var store = new DashboardStore({
+            parent: self,
             autoLoad: false,
             autoDestroy: true,
             url: '../controllers/user_admin.php',
@@ -150,7 +176,14 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 
     setSelectedAcls: function (acls) {
         this.store.each(function (record) {
-            record.set('include', acls.indexOf(record.data.acl_id) >= 0);
+            var hasAcl = acls.indexOf(record.data.acl_id) !== -1;
+            record.set('include', hasAcl);
+            /* eslint-disable no-param-reassign */
+            if (!record.hasOwnProperty('modified')) {
+                record.modified = {};
+            }
+            record.modified['include'] = hasAcl;
+            /* eslint-enable no-param-reassign */
         }, this);
     },
 
@@ -176,6 +209,11 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 
     reset: function () {
         this.ccInclude.reset();
+        for (var key in this.aclCenters) {
+            if (this.aclCenters.hasOwnProperty(key)) {
+                this.aclCenters[key] = [];
+            }
+        }
     },
     getCenters: function (acl) {
         if (this.aclCenters.hasOwnProperty(acl)) {
@@ -187,6 +225,15 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         if (this.aclCenters.hasOwnProperty(acl) && centers && centers.length > 0) {
             this.aclCenters[acl] = centers;
         }
+    },
+    updateCenterCounts: function () {
+        this.store.each(function (record) {
+            if (record.ref) {
+                var centers = this.getCenters(record.data.acl_id);
+                var elem = document.getElementById(record.ref);
+                elem.innerHTML = '<b> (' + centers.length + ')</b>';
+            }
+        }, this);
     }
 }); // XDMoD.Admin.AclGrid
 
@@ -216,24 +263,32 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
                     var record = this.grid.store.getAt(
                         this.grid.getView().findRowIndex(node)
                     );
+
                     var value = !record.data[this.dataIndex];
                     record.set(this.dataIndex, value);
 
                     var parent = Ext.getCmp(self.parentId);
                     var hasAcl = parent.aclCenters.hasOwnProperty(self.acl_id);
                     var aclHasCenter = parent.aclCenters[self.acl_id].indexOf(record.data.id) >= 0;
+                    var isDirty = record.get('include') !== record.modified['include'];
 
                     if (hasAcl && aclHasCenter && !value) {
                         // If the acl already has a record for this center and
                         // it's being removed then remove it.
                         parent.aclCenters[self.acl_id].splice(parent.aclCenters[self.acl_id].indexOf(record.data.id), 1);
-                        parent.deselectAcl(self.acl_id);
+                        if (parent.aclCenters[self.acl_id].length === 0) {
+                            parent.deselectAcl(self.acl_id);
+                        }
+
+                        parent.setDirtyState(isDirty);
                     } else if (hasAcl && !aclHasCenter && value) {
                         // If the acl does not have a record for this center
                         // then add it.
                         parent.aclCenters[self.acl_id].push(record.data.id);
                         parent.selectAcl(self.acl_id);
+                        parent.setDirtyState(isDirty);
                     }
+                    parent.updateCenterCounts();
                 }
             }
 
@@ -290,9 +345,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
             for (var i = 0; i < records.length; i++) {
                 var record = records[i];
                 var found = self.selected.indexOf(record.data.id) >= 0;
-                if (found === true) {
-                    record.set('include', true);
-                }
+                record.set('include', found);
             }
         });
 

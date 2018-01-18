@@ -109,14 +109,11 @@ class XDAdmin
     public function enumerateAcls()
     {
         $sql = <<<SQL
-    SELECT DISTINCT
-        a.display, 
-        a.name,
-        INSTR(aclt.name, 'requires_center') > 0 AS requires_center 
-    FROM acls a 
-    JOIN acl_types aclt 
-        ON aclt.acl_type_id = a.acl_type_id 
-    ORDER BY a.display
+SELECT
+a.*,
+  CASE WHEN a.name IN ('cd', 'cs') THEN 1 ELSE 0 END requires_center
+FROM acls a
+ORDER BY a.display;
 SQL;
 
         return $this->moddb->query($sql);
