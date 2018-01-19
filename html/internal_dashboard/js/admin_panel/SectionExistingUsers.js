@@ -1181,6 +1181,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             }
                         }
                         roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
+                        roleGrid.updateCenterCounts();
 
                         userSettings.setDisabled(false);
                         userEditor.hideMask();
