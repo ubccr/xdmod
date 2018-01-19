@@ -15,8 +15,6 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel,  {
       };
 
       var emptyTextContainer = Ext.id();
-      
-      var adminPanel = new XDMoD.AdminPanel();
 
       // --------------------------------
 
@@ -64,13 +62,13 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel,  {
 
          current_state[type] = value;
 
-         current_users.storeProvider.reload({
-            params: {
-               'group_filter' : current_state.group,
-               'role_filter': current_state.role,
-               'context_filter' : current_state.context
-            }
-         });
+          self.storeProvider.reload({
+              params: {
+                  group_filter: current_state.group,
+                  role_filter: current_state.role,
+                  context_filter: current_state.context
+              }
+          });
 
       };//adjustUserListView
 
@@ -316,12 +314,12 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel,  {
 
       existingUserGrid.on('rowdblclick', function(grid, ri, e) {
 
-         adminPanel.loadExistingUser({
+          self.adminPanel.loadExistingUser({
 
-            user_data: grid.getSelectionModel().getSelected().data,
-            callback: reloadUserList
+              user_data: grid.getSelectionModel().getSelected().data,
+              callback: reloadUserList
 
-         });
+          });
 
       });//self.userGrid.on('rowdblclick', ...
 
@@ -419,12 +417,12 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel,  {
                         iconCls: 'btn_group',
                         id: 'about_button',
                         handler: function () {
-                           adminPanel.showPanel({
-                              doListReload: true,
-                              callback: function () {
-                                 current_users.reloadUserList();
-                              }
-                           });
+                            self.adminPanel.showPanel({
+                                doListReload: true,
+                                callback: function () {
+                                    self.reloadUserList();
+                                }
+                            });
                         },
                         scope: this
                      }
