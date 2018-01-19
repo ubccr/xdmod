@@ -143,8 +143,6 @@ class HighChartTimeseries2 extends HighChart2
 
         $this->show_filters = $show_filters;
 
-        $this->registerContextMenus();
-
         // Instantiate the color generator:
         $colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
 
@@ -585,6 +583,11 @@ class HighChartTimeseries2 extends HighChart2
                         $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
                         $dataLabelsConfig = array(
                             'enabled' => $data_description->value_labels || $std_err_labels_enabled,
+                            'settings' => array(
+                                'value_labels' => $data_description->value_labels,
+                                'error_labels' => $std_err_labels_enabled,
+                                'decimals' => $decimals
+                            ),
                             'style' => array(
                                 'fontSize' => (11 + $font_size).'px',
                                 'fontWeight'=> 'normal',
@@ -602,14 +605,6 @@ class HighChartTimeseries2 extends HighChart2
                         }
                         else // ($data_description->display_type != 'pie')
                         {
-                            if ($data_description->value_labels && $std_err_labels_enabled) {
-                                $dataLabelsConfig['formatter'] = "function(){ return Highcharts.numberFormat(this.y, $decimals)+' [+/-'+Highcharts.numberFormat(this.percentage, $decimals)+']';}";
-                            } elseif ($std_err_labels_enabled) {
-                                $dataLabelsConfig['formatter'] = "function(){ return '+/-'+Highcharts.numberFormat(this.percentage, $decimals);}";
-                            } else {
-                                $dataLabelsConfig['formatter'] = "function(){ return Highcharts.numberFormat(this.y, $decimals);}";
-                            }
-
                             if($this->_swapXY)
                             {
                                 $dataLabelsConfig  = array_merge(
@@ -694,9 +689,6 @@ class HighChartTimeseries2 extends HighChart2
                         {
                             $visible = $data_description->visibility->{$formattedDataSeriesName};
                         }
-                        $seriesClick = 'function(event){'.($this->_showContextMenu?'XDMoD.Module.MetricExplorer.seriesContextMenu(this,false,'.$data_description->id.');':'').'}';
-                        $legendItemClick = $this->_showContextMenu?'function(event){XDMoD.Module.MetricExplorer.seriesContextMenu(this,true,'.$data_description->id.'); return false;}':'function(event){return true;}';
-                        $pointClick = 'function(event){'.($this->_showContextMenu?'this.ts = this.x; XDMoD.Module.MetricExplorer.pointContextMenu(this,'.$data_description->id.');':'').'}';
 
                         // note that this is governed by XId and XValue in the non-timeseries case!
                         $drilldown = array('id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName());
@@ -731,14 +723,6 @@ class HighChartTimeseries2 extends HighChart2
                             'data' => $seriesValues,
                             'cursor' => 'pointer',
                             'visible' => $visible,
-                            'events' => array(
-                                'legendItemClick' => $legendItemClick
-                            ),
-                            'point' => array(
-                                'events' => array(
-                                    'click' => $pointClick
-                                )
-                            ),
                             'pointRange' => $pointInterval,
                             'isRemainder' => $isRemainder,
                             'isRestrictedByRoles' => $data_description->restrictedByRoles
@@ -828,9 +812,6 @@ class HighChartTimeseries2 extends HighChart2
                                     'dashStyle' => 'ShortDot',
                                     'm' => $m,
                                     'b' => $b,
-                                    'events' => array(
-                                        'legendItemClick' => $legendItemClick
-                                    ),
                                     'data' => $trend_points,
                                     'isRemainder' => $isRemainder,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
@@ -879,13 +860,6 @@ class HighChartTimeseries2 extends HighChart2
                                 $visible = $data_description->visibility->{$dsn};
                             }
 
-                            $err_series_tooltip = "function() { ".
-                                "var fErr = Highcharts.numberFormat(this.stderr, $semDecimals); ".
-                                "return ".
-                                "'<span style=\"color:{$error_color}\">\u25CF</span> {$lookupDataSeriesName}: ".
-                                    "<b>+/-' + fErr + '</b><br/>';".
-                                "}";
-
                             $err_data_series_desc = array(
                                 'name' => $lookupDataSeriesName,
                                 'showInLegend' => true,
@@ -901,19 +875,11 @@ class HighChartTimeseries2 extends HighChart2
                                 'pointPadding' => 0,
                                 'yAxis' => $yAxisIndex,
                                 'tooltip' => array(
-                                    'pointFormatter' => $err_series_tooltip
+                                    'valueDecimals' => $semDecimals
                                 ),
                                 'data' => $error_series,
                                 'cursor' => 'pointer',
                                 'visible' => $visible,
-                                'events' => array(
-                                    'legendItemClick' => $legendItemClick
-                                ),
-                                'point' => array(
-                                    'events' => array(
-                                        'click' => $pointClick
-                                    )
-                                ),
                                 'isRemainder' => $isRemainder,
                                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
                             );
@@ -931,8 +897,6 @@ class HighChartTimeseries2 extends HighChart2
         if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();
         }
-
-        $this->addChartExtensions();
 
         if($this->show_filters)
         {
