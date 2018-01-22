@@ -2646,7 +2646,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     series: {
                                         events: {
                                             click: function (evt) {
-                                                var id;
+                                                var drillId;
                                                 var label;
                                                 var drillInfo = evt.point.series.userOptions.drilldown;
 
@@ -2656,17 +2656,17 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                                 }
 
                                                 if (evt.point.drilldown) {
-                                                    id = evt.point.drilldown.id;
+                                                    drillId = evt.point.drilldown.id;
                                                     label = evt.point.drilldown.label;
                                                 } else {
-                                                    evt.point.ts = evt.point.x;
-                                                    id = drillInfo.id;
+                                                    evt.point.ts = evt.point.x; // eslint-disable-line no-param-reassign
+                                                    drillId = drillInfo.id;
                                                     label = drillInfo.label;
                                                 }
-                                                XDMoD.Module.Usage.drillChart(evt.point, drillInfo.drilldowns, drillInfo.groupUnit, id, label, 'none', 'tg_usage', drillInfo.realm);
+                                                XDMoD.Module.Usage.drillChart(evt.point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
                                             }
                                         }
-                                    } 
+                                    }
                                 }
 
                             }; //baseChartOptions
@@ -2681,26 +2681,22 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 loadHandlers: [],
                                 redrawHandlers: []
                             };
-                            extraChartHandlers.loadHandlers.push(function (e) {
-
+                            extraChartHandlers.loadHandlers.push(function () {
                                 this.checkSeries = function () {
-
-                                    if (this.series.length == 0) {
-
-                                        if (this.placeholder_element) this.placeholder_element.destroy();
+                                    if (this.series.length === 0) {
+                                        if (this.placeholder_element) {
+                                            this.placeholder_element.destroy();
+                                        }
                                         this.placeholder_element = this.renderer.image('gui/images/report_thumbnail_no_data.png', (this.chartWidth - 400) / 2, (this.chartHeight - 300) / 2, 400, 300).add();
-
-                                    } //if (this.series.length == 0)
-
-                                }; //this.checkSeries
+                                    }
+                                };
 
                                 this.checkSeries();
-
                             });
-                            extraChartHandlers.redrawHandlers.push(function (e) {
-
-                                if(this.checkSeries) this.checkSeries();
-
+                            extraChartHandlers.redrawHandlers.push(function () {
+                                if (this.checkSeries) {
+                                    this.checkSeries();
+                                }
                             });
 
                             this.chart = XDMoD.utils.createChart(chartOptions, extraChartHandlers);

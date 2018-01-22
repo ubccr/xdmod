@@ -692,16 +692,16 @@ class Usage extends Common
                 $usageChartInPool = $chartPool->chartExistsInQueue($usageChartArgsStr);
 
                 $drillDowns = array_map(
-                            function ($drillTarget) {
-                            return explode('-', $drillTarget, 2);
-                            },
-                            $user->getMostPrivilegedRole()->getQueryDescripters(
-                                'tg_usage',
-                                $usageRealm,
-                                $usageGroupBy,
-                                $meRequestMetric->getAlias()->getName()
-                                )->getDrillTargets($meRequestMetric->getAlias())
-                        );
+                    function ($drillTarget) {
+                        return explode('-', $drillTarget, 2);
+                    },
+                    $user->getMostPrivilegedRole()->getQueryDescripters(
+                        'tg_usage',
+                        $usageRealm,
+                        $usageGroupBy,
+                        $meRequestMetric->getAlias()->getName()
+                    )->getDrillTargets($meRequestMetric->getAlias())
+                );
 
                 // For each data series...
                 $primaryDataSeriesRank = $usageOffset;

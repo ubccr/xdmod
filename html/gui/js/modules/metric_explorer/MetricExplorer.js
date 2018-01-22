@@ -5899,21 +5899,21 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                             return XDMoD.Module.MetricExplorer.yAxisLabelContextMenu(axis);
                         },
                         click: function (event) {
-                            return XDMoD.Module.MetricExplorer.chartContextMenu.call(this,event);
+                            return XDMoD.Module.MetricExplorer.chartContextMenu.call(this, event);
                         }
                     }
                 },
                 plotOptions: {
                     series: {
                         events: {
-                            legendItemClick: function (event) {
+                            legendItemClick: function () {
                                 XDMoD.Module.MetricExplorer.seriesContextMenu(this, true, this.userOptions.datasetId);
                                 return false;
                             }
                         },
                         point: {
                             events: {
-                                click: function (event) {
+                                click: function () {
                                     if (this.options.x) {
                                         this.ts = this.options.x;
                                     }
