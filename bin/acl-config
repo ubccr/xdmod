@@ -27,7 +27,7 @@ $opts = array(
 );
 
 $dryRun = false;
-$logLevel = Log::NOTICE;
+$logLevel = Log::ERR;
 
 try {
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
