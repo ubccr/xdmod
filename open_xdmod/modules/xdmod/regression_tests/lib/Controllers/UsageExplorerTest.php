@@ -43,7 +43,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider csvExportProvider
      */
-    public function testCsvExport($testName, $input, $expected)
+    public function testCsvExport($testName, $input, $expectedFile)
     {
         $aggUnit = $input['aggregation_unit'];
         $fullTestName = $testName . ' by ' . $aggUnit;
@@ -62,7 +62,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
             if(gettype($csvdata) === "array"){
                 $csvdata = print_r($csvdata, 1);
             }
-            if ($expected === null) {
+            if ($expectedFile === null) {
 
                 $endpoint = parse_url(self::$helper->getSiteUrl());
                 $outputDir = self::$baseDir .
@@ -79,6 +79,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 );
                 return;
             }
+            $expected = file_get_contents($expectedFile);
             /*
              * this temporarliy allows the "failed" tests of the public
              * user to pass, need to figure out a more robust way for
@@ -117,7 +118,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         self::$baseDir = __DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod/regression/current/';
         $envBaseDir = getenv('REG_TEST_BASE');
         if(!empty($envBaseDir)){
-            self::$baseDir = $envBaseDir;
+            self::$baseDir = __DIR__ . $envBaseDir;
         }
         $envResource = getenv('REG_TEST_RESOURCE');
         $envRegex = getenv('REG_TEST_REGEX');
@@ -163,7 +164,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     '-' . (empty($envUserrole) ? 'public' : $envUserrole) .
                     '.csv';
                 if (file_exists($expectedFile) ) {
-                    $testCase[2] = file_get_contents($expectedFile);
+                    $testCase[2] = $expectedFile;
                 }
                 $testData[$testName. '-' . $k . '-' . (empty($envUserrole) ? 'public' : $envUserrole)] = $testCase;
             }
