@@ -117,7 +117,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         self::$baseDir = __DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod/regression/current/';
         $envBaseDir = getenv('REG_TEST_BASE');
         if(!empty($envBaseDir)){
-            self::$baseDir = $envBaseDir;
+            self::$baseDir = __DIR__ . $envBaseDir;
         }
         $envResource = getenv('REG_TEST_RESOURCE');
         $envRegex = getenv('REG_TEST_REGEX');
