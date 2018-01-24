@@ -7,7 +7,7 @@ var InternetExplorer = {
 var FireFox = {
     browserName: 'firefox',
     platform: 'Windows 10',
-    version: '45.0',
+    version: '57.0',
     screenResolution: '2560x1600'
 };
 var HeadlessChrome = {
@@ -27,7 +27,7 @@ var HeadlessChrome = {
 var Chrome = {
     browserName: 'chrome',
     platform: 'Windows 10',
-    version: '48.0',
+    version: '63.0',
     screenResolution: '2560x1600',
     chromeOptions: {
         args: [
