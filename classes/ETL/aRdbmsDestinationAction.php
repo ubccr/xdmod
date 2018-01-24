@@ -767,7 +767,7 @@ abstract class aRdbmsDestinationAction extends aAction
                  && array_key_exists('name', $item['alias'])
             ) {
                 $columnNames[] = $item['alias']['name'];
-            } else {
+            } elseif ( 'reserved' != $item['expr_type'] ) {
                 $pos = strrpos($item['base_expr'], ".");
                 $columnNames[] = ( false === $pos ? $item['base_expr'] : substr($item['base_expr'], $pos + 1) );
             }
