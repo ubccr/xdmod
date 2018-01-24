@@ -173,7 +173,7 @@ class MetricExplorer {
         browser.waitForAllInvisible('.ext-el-mask');
     }
     addDataViaCatalog(realm, statistic, groupby) {
-        browser.waitUntilNotExist('.ext-el-mask');
+        browser.waitForAllInvisible('.ext-el-mask');
         browser.waitForVisible(this.selectors.catalog.container, 10000);
         browser.waitUntilAnimEndAndClick(this.selectors.catalog.rootNodeByName(realm));
         browser.waitUntilAnimEndAndClick(this.selectors.catalog.nodeByPath(realm, statistic));
