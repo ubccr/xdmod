@@ -25,9 +25,13 @@ XDMoD.UserManagement.Panel = Ext.extend(Ext.TabPanel, {
     initialize: function(tabPanel) {
         // Don't create the tab components until the tab is activated. Otherwise, the stores get
         // loaded sending several potentially unused rest requests.
-        
-        current_users = new XDMoD.CurrentUsers();
-        var account_requests = new XDMoD.AccountRequests();
+        var adminPanel = new XDMoD.AdminPanel();
+        var current_users = new XDMoD.CurrentUsers({
+            adminPanel: adminPanel
+        });
+        var account_requests = new XDMoD.AccountRequests({
+            adminPanel: adminPanel
+        });
         var user_stats = new XDMoD.UserStats();
         
         tabPanel.add(account_requests);
