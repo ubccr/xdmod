@@ -687,9 +687,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         };
 
         self.resetDirtyState = function () {
-            settingsAreDirty = false;
-            roleGrid.updateDirtyState();
-            roleGrid.reset();
+            roleGrid.setDirtyState(false);
         };
 
         // ------------------------------------------
