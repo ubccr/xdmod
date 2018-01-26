@@ -24,7 +24,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `UserTypes` WRITE;
 /*!40000 ALTER TABLE `UserTypes` DISABLE KEYS */;
-INSERT INTO `UserTypes` VALUES (1,'External','#000000'),(2,'Internal','#0000ff'),(3,'Testing','#008800'),(4,'Demo','#808000'),(5,'Federated','#FFCC00');
+INSERT INTO `UserTypes` VALUES (1,'External','#000000'),(2,'Internal','#0000ff'),(3,'Testing','#008800'),(4,'Demo','#808000'),(5,'Federated','#b914f6');
 /*!40000 ALTER TABLE `UserTypes` ENABLE KEYS */;
 UNLOCK TABLES;
 
