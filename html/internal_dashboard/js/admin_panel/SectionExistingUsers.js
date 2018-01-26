@@ -308,17 +308,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             });
                         }
 
-                        // Add entry to account for XSEDE Users...
-                        self.userTypes.push({
-                            text: 'XSEDE Users',
-                            id: CCR.xdmod.XSEDE_USER_TYPE
-                        });
-
-                        mnuUserTypeFilter.addItem({
-                            text: 'XSEDE Users',
-                            type_id: CCR.xdmod.XSEDE_USER_TYPE
-                        });
-
                         var user_type_to_load =
                             (self.cachedUserTypeID > 0) ?
                             self.cachedUserTypeID :
@@ -620,7 +609,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
             validator: function (value) {
                 // If the user is an XSEDE user, an email address is not required.
-                if (cached_user_type === CCR.xdmod.XSEDE_USER_TYPE) {
+                if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
                     return true;
                 }
 
@@ -1125,7 +1114,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             cmbUserMapping.reset();
                         }
 
-                        if (cached_user_type === CCR.xdmod.XSEDE_USER_TYPE) {
+                        if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
 
                             // XSEDE-derived User: Can't change user type
                             cmbUserType.hide();

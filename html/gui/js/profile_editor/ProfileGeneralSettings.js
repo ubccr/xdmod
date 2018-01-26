@@ -188,9 +188,8 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 					if(data.results.is_federated_user && data.results.email_address.length == 0){
 						XDMoD.Profile.logoutOnClose = true;
 					}
-					if (data.results.is_xsede_user == true) {
-
-						if (data.results.first_time_login && (data.results.email_address.length != 0)) {
+    if (data.results.is_federated_user === true) {
+        if (data.results.first_time_login && (data.results.email_address.length != 0)) {
 							// If the user is logging in for the first time and does have an e-mail address set
 							// (due to it being specified in the XDcDB), welcome the user and inform them they
 							// have an opportunity to update their e-mail address.
