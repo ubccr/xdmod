@@ -676,6 +676,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         };
 
         self.resetDirtyState = function () {
+            settingsAreDirty = false;
             roleGrid.setDirtyState(false);
         };
 
@@ -695,7 +696,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var lblXSEDEUser = new Ext.form.Label({
             fieldLabel: 'User Type',
-            html: '<b style="color: #00f">XSEDE User</b>'
+            html: '<b style="color: #00f">Federated User</b>'
         });
 
         lblXSEDEUser.hide();
