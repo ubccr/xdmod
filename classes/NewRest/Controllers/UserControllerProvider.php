@@ -131,7 +131,7 @@ class UserControllerProvider extends BaseControllerProvider
             'first_name' => $user->getFirstName(),
             'last_name' => $user->getLastName(),
             'email_address' => $emailAddress,
-            'is_xsede_user' => $user->isXSEDEUser(),
+            'is_federated_user' => $user->isFederatedUser(),
             'is_federated_user' => $user->getUserType() == FEDERATED_USER_TYPE,
             'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
             'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']),

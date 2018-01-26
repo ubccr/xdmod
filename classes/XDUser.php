@@ -290,13 +290,13 @@ class XDUser extends ETL\Loggable implements JsonSerializable
 
         }
 
-        // We don't want to acknowledge XSEDE-derived accounts...
+        // We don't want to acknowledge Federated-derived accounts...
 
         $userCheck = $pdo->query(
             $user_check_query,
             array(
                 'email_address' => $email_address,
-                'user_type' => XSEDE_USER_TYPE
+                'user_type' => FEDERATED_USER_TYPE
             )
         );
 
@@ -697,11 +697,10 @@ SQL;
         FROM Users
         WHERE username=:username
         AND password=MD5(:password)
-        AND user_type NOT IN (:xsede_user_type, :federated_user_type)",
+        AND user_type != :federated_user_type",
             array(
                 'username' => $uname,
                 'password' => $pass,
-                'xsede_user_type' => XSEDE_USER_TYPE,
                 'federated_user_type' => FEDERATED_USER_TYPE
             )
         );
@@ -845,8 +844,8 @@ SQL;
         // A common e-mail address CAN be shared among multiple XSEDE accounts...
         // Each XDMoD (local) account must have a distinct e-mail address (unless that e-mail address is present in moddb.ExceptionEmailAddresses)
 
-        // The second condition is in place to account for the case where a new XSEDE user is being created (and is not currently in the XDMoD DB)
-        if (($id_of_user_holding_email_address != INVALID) && ($this->getUserType() != XSEDE_USER_TYPE)) {
+        // The second condition is in place to account for the case where a new Federated user is being created (and is not currently in the XDMoD DB)
+        if (($id_of_user_holding_email_address != INVALID) && ($this->getUserType() != FEDERATED_USER_TYPE)) {
 
             if (!isset($this->_id)) {
                 // This user has no record in the database (never saved).  If $id_of_user_holding_email_address
@@ -2845,7 +2844,7 @@ SQL;
             $last_name
         );
 
-        $user->setUserType(XSEDE_USER_TYPE);                   // XSEDE User
+        $user->setUserType(FEDERATED_USER_TYPE);                   // XSEDE User
         $user->setPersonID($person_id);
 
         $user->setEmailAddress($email_address);
@@ -2906,7 +2905,7 @@ SQL;
             "SELECT id FROM Users WHERE username=:username AND user_type=:user_type",
             array(
                 'username' => $username,
-                'user_type' => XSEDE_USER_TYPE
+                'user_type' => FEDERATED_USER_TYPE
             )
         );
 
@@ -2940,7 +2939,7 @@ SQL;
             'SELECT id FROM moddb.Users WHERE username = :username AND user_type=:user_type',
             array(
                 'username' => $username,
-                'user_type' => XSEDE_USER_TYPE
+                'user_type' => FEDERATED_USER_TYPE
             )
         );
 
@@ -2951,7 +2950,7 @@ SQL;
     // --------------------------------
 
     /*
-     * @function isXSEDEUser
+     * @function isFederatedUser
      *
      * Determines whether the user is an XSEDE-oriented user
      *
@@ -2959,40 +2958,15 @@ SQL;
      *
      */
 
-    public function isXSEDEUser()
+    public function isFederatedUser()
     {
 
-        return ($this->getUserType() == XSEDE_USER_TYPE);
+        return ($this->getUserType() == FEDERATED_USER_TYPE);
 
-    }//isXSEDEUser
+    }//isFederatedUser
 
     // --------------------------------
 
-    /*
-     * @function getXSEDEUsername
-     *
-     * Resolves the XSEDE username from the XDMoD-formatted username
-     *
-     * @returns String (the XSEDE username)
-     *
-     */
-
-    public function getXSEDEUsername()
-    {
-
-        if (strpos($this->getUsername(), ';') !== false) {
-
-            list($xsede_username, $formal_name) = explode(';', $this->getUsername(), 2);
-
-            return $xsede_username;
-
-        } else {
-            throw new Exception('The user is not a valid XSEDE user');
-        }
-
-    }//getXSEDEUsername
-
-    // --------------------------------
 
     /*
      * @function resolvePersonIDFromXSEDEUsername

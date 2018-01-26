@@ -267,7 +267,7 @@ use Models\Services\Realms;
                print "CCR.xdmod.ui.fullName = " . json_encode($user->getFormalName()) . ";\n";
                $userType = $user->getUserType();
                print "CCR.xdmod.ui.usertype = '$userType';\n";
-               $userIsFederated = ($userType === FEDERATED_USER_TYPE || $userType === XSEDE_USER_TYPE) ? "true" : "false";
+               $userIsFederated = ($userType === FEDERATED_USER_TYPE ) ? "true" : "false";
                print "CCR.xdmod.ui.userIsFederated = $userIsFederated;\n";
                print "CCR.xdmod.ui.mappedPID = '{$user->getPersonID(TRUE)}';\n";
 
@@ -499,7 +499,7 @@ use Models\Services\Realms;
             // with the appropriate (initial) view
             $userEmail = $user->getEmailAddress();
             $userEmailSpecified = ($userEmail != NO_EMAIL_ADDRESS_SET && !empty($userEmail));
-            if ($user->isXSEDEUser() == true || $usersFirstLogin) {
+            if ($user->isFederatedUser() == true || $usersFirstLogin) {
 
                // NOTE: $_SESSION['suppress_profile_autoload'] will be set only upon update of the user's profile (see respective REST call)
 

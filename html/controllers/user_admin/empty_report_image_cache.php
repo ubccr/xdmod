@@ -19,7 +19,7 @@
       $report_manager = new XDReportManager($target_user);
       $report_manager->emptyCache();
             
-      $displayUsername = $target_user->isXSEDEUser() ? $target_user->getXSEDEUsername() : $target_user->getUsername();
+      $displayUsername = $target_user->getUsername();
 
       $returnData['success'] = true;
       $returnData['message'] = "The report image cache for user <b>$displayUsername</b> has been emptied";
