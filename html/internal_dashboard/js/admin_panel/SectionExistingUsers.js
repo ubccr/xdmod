@@ -1116,7 +1116,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
-
                             // XSEDE-derived User: Can't change user type
                             cmbUserType.hide();
                             lblXSEDEUser.show();
