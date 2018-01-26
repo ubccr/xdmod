@@ -210,7 +210,17 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             root: 'user_types',
             autoLoad: true,
             baseParams: { operation: 'enum_user_types' },
-            fields: ['id', 'type']
+            fields: ['id', 'type'],
+            listeners: {
+                load: function (store, records) {
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        if (record.data.type === 'Federated') {
+                            store.remove(record);
+                        }
+                    }
+                }
+            }
         });
 
         var cmbUserType = new Ext.form.ComboBox({
