@@ -125,7 +125,7 @@ switch ($operation) {
 
     case 'enum_user_types_and_roles':
 
-        $query = "SELECT id, type, color FROM moddb.UserTypes";
+        $query = "SELECT id, type, color FROM moddb.UserTypes WHERE type != 'Federated'";
 
         $results = $pdo->query($query);
 
