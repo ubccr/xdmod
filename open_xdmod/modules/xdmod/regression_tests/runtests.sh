@@ -34,9 +34,17 @@ if [ ! -x "$phpunit" ]; then
     exit 127
 fi
 
-REG_TEST_USER_ROLE=usr $phpunit $REGUSER . &
-REG_TEST_USER_ROLE=pi $phpunit $PI . &
-REG_TEST_USER_ROLE=cd $phpunit $CD . &
-REG_TEST_USER_ROLE=cs $phpunit $CS . &
-$phpunit $PUB . &
-wait
+REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerTest.php & usrpid=$!
+REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerTest.php & pipid=$!
+REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php & cdpid=$!
+REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerTest.php & cspid=$!
+$phpunit $PUB . & pubpid=$!
+
+for pid in $usrpid $pipid $cdpid $cspid $pubpid;
+do
+    wait "$pid"
+    if [ "$?" -ne "0" ];
+    then
+        exit 1
+    fi
+done

@@ -174,7 +174,11 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 'No input, please run assets/scripts/maketest.js'
             );
         }
-        return $testData;
+        if (getenv('REG_TEST_ALL') === '1') {
+            return $testData;
+        } else {
+            return array_intersect_key($testData, array_flip(array_rand($testData, 35)));
+        }
     }
     private function getResultAsCSV($raw){
         $datasRegEx = '/(?<=---------\n)([\s\S]*)(?=\n---------)/';
