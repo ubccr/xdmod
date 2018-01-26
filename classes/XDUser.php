@@ -2844,7 +2844,7 @@ SQL;
             $last_name
         );
 
-        $user->setUserType(FEDERATED_USER_TYPE);                   // XSEDE User
+        $user->setUserType(FEDERATED_USER_TYPE);
         $user->setPersonID($person_id);
 
         $user->setEmailAddress($email_address);
