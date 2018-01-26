@@ -761,7 +761,7 @@ class Query
      * The where conditions and role parameters from the other class will
      * overwrite any existing settings in this class.
      */
-    public function cloneParameters($other)
+    public function cloneParameters(Query $other)
     {
         $this->_where_conditions = $other->_where_conditions;
         $this->parameters = $other->parameters;
