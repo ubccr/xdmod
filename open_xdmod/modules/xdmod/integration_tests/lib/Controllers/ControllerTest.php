@@ -274,7 +274,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumUserTypesAndRoles()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_user_types_and_roles')
+            $this->getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-xsede_to_federated')
         );
 
         $this->helper->authenticateDashboard('mgr');
