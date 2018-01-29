@@ -215,7 +215,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 load: function (store, records) {
                     for (var i = 0; i < records.length; i++) {
                         var record = records[i];
-                        if (record.data.id === CCR.xdmod.FEDERATED_USER_TYPE) {
+                        if (parseInt(record.data.id) === CCR.xdmod.FEDERATED_USER_TYPE) {
                             store.remove(record);
                         }
                     }
