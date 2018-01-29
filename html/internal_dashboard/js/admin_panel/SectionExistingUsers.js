@@ -451,7 +451,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
                         if (objParams.operation == 'update_user') {
                             self.userStoreLoadReset = false;
-                            fetchUserDetails(objParams.uid, false);
+                            // eslint-disable-next-line no-use-before-define
+                            fetchUserDetails(objParams.uid, true);
                         }
 
                         // Refresh the user list based on the
