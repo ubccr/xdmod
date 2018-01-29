@@ -290,13 +290,13 @@ class XDUser extends ETL\Loggable implements JsonSerializable
 
         }
 
-        // We don't want to acknowledge XSEDE-derived accounts...
+        // We don't want to acknowledge Federated-derived accounts...
 
         $userCheck = $pdo->query(
             $user_check_query,
             array(
                 'email_address' => $email_address,
-                'user_type' => XSEDE_USER_TYPE
+                'user_type' => FEDERATED_USER_TYPE
             )
         );
 
@@ -697,11 +697,10 @@ SQL;
         FROM Users
         WHERE username=:username
         AND password=MD5(:password)
-        AND user_type NOT IN (:xsede_user_type, :federated_user_type)",
+        AND user_type != :federated_user_type",
             array(
                 'username' => $uname,
                 'password' => $pass,
-                'xsede_user_type' => XSEDE_USER_TYPE,
                 'federated_user_type' => FEDERATED_USER_TYPE
             )
         );
@@ -845,8 +844,8 @@ SQL;
         // A common e-mail address CAN be shared among multiple XSEDE accounts...
         // Each XDMoD (local) account must have a distinct e-mail address (unless that e-mail address is present in moddb.ExceptionEmailAddresses)
 
-        // The second condition is in place to account for the case where a new XSEDE user is being created (and is not currently in the XDMoD DB)
-        if (($id_of_user_holding_email_address != INVALID) && ($this->getUserType() != XSEDE_USER_TYPE)) {
+        // The second condition is in place to account for the case where a new Federated user is being created (and is not currently in the XDMoD DB)
+        if (($id_of_user_holding_email_address != INVALID) && ($this->getUserType() != FEDERATED_USER_TYPE)) {
 
             if (!isset($this->_id)) {
                 // This user has no record in the database (never saved).  If $id_of_user_holding_email_address
@@ -2813,145 +2812,10 @@ SQL;
 
     }
 
-    // XSEDE-Centric functionality =========================================================
-
-    /*
-     * @function initializeXSEDEUser
-     *
-     * Manifests a XDUser from an XSEDE account (referenced by XSEDE username and the CN of the certificate)
-     *
-     * @param String $username (The XSEDE username (username;Formal Name)
-     *
-     * @returns an XDUser object
-     *
-     */
-
-    public static function initializeXSEDEUser($username)
-    {
-
-        list($xsede_username, $formal_name) = explode(';', $username);
-        list($first_name, $last_name) = explode(' ', $formal_name, 2);
-
-        $person_id = self::resolvePersonIDFromXSEDEUsername($xsede_username);
-
-        $email_address = self::_getXSEDEEmailAddressFromPersonID($person_id);
-
-        $user = new self(
-            $username,
-            NULL,                    // password
-            NO_EMAIL_ADDRESS_SET,    // e-mail address
-            $first_name,
-            NULL,                    // middle name
-            $last_name
-        );
-
-        $user->setUserType(XSEDE_USER_TYPE);                   // XSEDE User
-        $user->setPersonID($person_id);
-
-        $user->setEmailAddress($email_address);
-
-        $user->saveUser();
-
-        // Role detection -------------------------------
-
-        $user_role_set = array(ROLE_ID_USER);
-
-        if (self::isPrincipalInvestigator($person_id) === true) {
-
-            // Add PI role to the to-be-created user
-            $user_role_set[] = ROLE_ID_PRINCIPAL_INVESTIGATOR;
-
-            $cc_org_id = self::isCampusChampion($person_id);
-
-            if ($cc_org_id !== false) {
-
-                // Add CC role to the to-be-created user
-                $user_role_set[] = ROLE_ID_CAMPUS_CHAMPION;
-
-                $user->setInstitution($cc_org_id);
-
-            }
-
-        }
-
-        $user->setRoles($user_role_set);
-
-        // ----------------------------------------------
-
-        $user->saveUser();
-
-        return $user;
-
-    }//initializeXSEDEUser
-
     // --------------------------------
 
     /*
-     * @function deriveUserFromXSEDEUser
-     *
-     * Maps an XSEDE user to an XDUser
-     *
-     * @param String $username (The XSEDE username (username;Formal Name)
-     *
-     * @returns an XDUser object
-     *
-     */
-
-    public static function deriveUserFromXSEDEUser($username)
-    {
-
-        $pdo = DB::factory('database');
-
-        $userCheck = $pdo->query(
-            "SELECT id FROM Users WHERE username=:username AND user_type=:user_type",
-            array(
-                'username' => $username,
-                'user_type' => XSEDE_USER_TYPE
-            )
-        );
-
-        if (count($userCheck) == 0) {
-            return NULL;
-        }
-
-        return self::getUserByID($userCheck[0]['id']);
-
-    }//deriveUserFromXSEDEUser
-
-    // --------------------------------
-
-    /*
-     * @function XSEDEUserExists
-     *
-     * Determines whether an XSEDE user is already established in our accounts registry
-     *
-     * @param String $username (The XSEDE username (username;Formal Name)
-     *
-     * @returns boolean
-     *
-     */
-
-    public static function XSEDEUserExists($username)
-    {
-
-        $pdo = DB::factory('database');
-
-        $userCheck = $pdo->query(
-            'SELECT id FROM moddb.Users WHERE username = :username AND user_type=:user_type',
-            array(
-                'username' => $username,
-                'user_type' => XSEDE_USER_TYPE
-            )
-        );
-
-        return (count($userCheck) > 0);
-
-    }//XSEDEUserExists
-
-    // --------------------------------
-
-    /*
-     * @function isXSEDEUser
+     * @function isFederatedUser
      *
      * Determines whether the user is an XSEDE-oriented user
      *
@@ -2959,106 +2823,14 @@ SQL;
      *
      */
 
-    public function isXSEDEUser()
+    public function isFederatedUser()
     {
 
-        return ($this->getUserType() == XSEDE_USER_TYPE);
+        return ($this->getUserType() == FEDERATED_USER_TYPE);
 
-    }//isXSEDEUser
+    }//isFederatedUser
 
     // --------------------------------
-
-    /*
-     * @function getXSEDEUsername
-     *
-     * Resolves the XSEDE username from the XDMoD-formatted username
-     *
-     * @returns String (the XSEDE username)
-     *
-     */
-
-    public function getXSEDEUsername()
-    {
-
-        if (strpos($this->getUsername(), ';') !== false) {
-
-            list($xsede_username, $formal_name) = explode(';', $this->getUsername(), 2);
-
-            return $xsede_username;
-
-        } else {
-            throw new Exception('The user is not a valid XSEDE user');
-        }
-
-    }//getXSEDEUsername
-
-    // --------------------------------
-
-    /*
-     * @function resolvePersonIDFromXSEDEUsername
-     *
-     * Determines the person id from the XSEDE username
-     *
-     * @param String $username (The XSEDE username)
-     *
-     * @returns int (the person id corresponding to the username)
-     *
-     * @throws Exception if the username cannot be mapped to a person id (which may happen if the state of the production tgcdb is 'ahead' of our local copy)
-     *
-     * (Verified by Dave Hart) -- Every XSEDE user has a record in acct.system_accounts which pertains to the 'portal.teragrid' resource
-     *
-     */
-
-    public static function resolvePersonIDFromXSEDEUsername($username)
-    {
-
-        $pdo = DB::factory('database');
-
-        $result = $pdo->query(
-            'SELECT sa.person_id FROM modw.systemaccount AS sa, modw.resourcefact AS r WHERE sa.username=:username AND sa.resource_id = r.id AND r.name="portal.teragrid"',
-            array(
-                'username' => $username
-            )
-        );
-
-        if (count($result) == 0) {
-            throw new Exception("Cannot locate information for user $username");
-        }
-
-        return $result[0]['person_id'];
-
-    }//resolvePersonIDFromXSEDEUsername
-
-    // --------------------------------
-
-    /*
-     * @function _getXSEDEEmailAddressFromPersonID
-     *
-     * Determines the email address for an XSEDE user based on his/her person id
-     *
-     * @param int $person_id (The XSEDE person id)
-     *
-     * @returns string (the corresponding email address)
-     * If no e-mail address can be found (or the person id does not validate), then NO_EMAIL_ADDRESS_SET is returned
-     *
-     */
-
-    private static function _getXSEDEEmailAddressFromPersonID($person_id)
-    {
-
-        $pdo = DB::factory('database');
-
-        $result = $pdo->query(
-            'SELECT email_address FROM modw.person WHERE id=:person_id',
-            array(
-                'person_id' => $person_id
-            )
-        );
-
-        return (count($result) > 0 && !empty($result[0]['email_address'])) ? $result[0]['email_address'] : NO_EMAIL_ADDRESS_SET;
-
-    }//_getXSEDEEmailAddressFromPersonID
-
 
     public function getDisabledMenus($realms)
     {

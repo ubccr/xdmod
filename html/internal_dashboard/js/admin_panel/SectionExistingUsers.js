@@ -210,7 +210,17 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             root: 'user_types',
             autoLoad: true,
             baseParams: { operation: 'enum_user_types' },
-            fields: ['id', 'type']
+            fields: ['id', 'type'],
+            listeners: {
+                load: function (store, records) {
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        if (record.data.id === CCR.xdmod.FEDERATED_USER_TYPE) {
+                            store.remove(record);
+                        }
+                    }
+                }
+            }
         });
 
         var cmbUserType = new Ext.form.ComboBox({
@@ -307,17 +317,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                                 type_id: json.user_types[i].id
                             });
                         }
-
-                        // Add entry to account for XSEDE Users...
-                        self.userTypes.push({
-                            text: 'XSEDE Users',
-                            id: CCR.xdmod.XSEDE_USER_TYPE
-                        });
-
-                        mnuUserTypeFilter.addItem({
-                            text: 'XSEDE Users',
-                            type_id: CCR.xdmod.XSEDE_USER_TYPE
-                        });
 
                         var user_type_to_load =
                             (self.cachedUserTypeID > 0) ?
@@ -620,7 +619,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
             validator: function (value) {
                 // If the user is an XSEDE user, an email address is not required.
-                if (cached_user_type === CCR.xdmod.XSEDE_USER_TYPE) {
+                if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
                     return true;
                 }
 
@@ -706,7 +705,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var lblXSEDEUser = new Ext.form.Label({
             fieldLabel: 'User Type',
-            html: '<b style="color: #00f">XSEDE User</b>'
+            html: '<b style="color: #00f">Federated User</b>'
         });
 
         lblXSEDEUser.hide();
@@ -1125,8 +1124,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             cmbUserMapping.reset();
                         }
 
-                        if (cached_user_type === CCR.xdmod.XSEDE_USER_TYPE) {
-
+                        if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
                             // XSEDE-derived User: Can't change user type
                             cmbUserType.hide();
                             lblXSEDEUser.show();

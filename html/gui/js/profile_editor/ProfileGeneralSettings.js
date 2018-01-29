@@ -188,47 +188,44 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 					if(data.results.is_federated_user && data.results.email_address.length == 0){
 						XDMoD.Profile.logoutOnClose = true;
 					}
-					if (data.results.is_xsede_user == true) {
+    if (data.results.is_federated_user === true) {
+        if (data.results.first_time_login && (data.results.email_address.length !== 0)) {
+            // If the user is logging in for the first time and does have an e-mail address set
+            // (due to it being specified in the XDcDB), welcome the user and inform them they
+            // have an opportunity to update their e-mail address.
+            if (data.results.autoload_suppression === true) {
+                // If the user has updated their profile on first login already, there is no need to suggest an e-mail change
+                active_layout_index = XDMoD.ProfileEditorConstants.XSEDE_SPLASH;
+            } else {
+                active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_CHANGE;
+                user_profile_email_addr.addClass('user_profile_highlight_entry');
+            }
+        } else if (data.results.first_time_login && (data.results.email_address.length === 0)) {
+            // If the user is logging in for the first time and does *not* have an e-mail address set,
+            // welcome the user and inform them that he/she needs to set an e-mail address.
 
-						if (data.results.first_time_login && (data.results.email_address.length != 0)) {
-							// If the user is logging in for the first time and does have an e-mail address set
-							// (due to it being specified in the XDcDB), welcome the user and inform them they
-							// have an opportunity to update their e-mail address.
-							if (data.results.autoload_suppression == true) {
-								//If the user has updated their profile on first login already, there is no need to suggest an e-mail change
-								active_layout_index = XDMoD.ProfileEditorConstants.XSEDE_SPLASH;
-							}
-							else {
-								active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_CHANGE;
-								user_profile_email_addr.addClass('user_profile_highlight_entry');
-							}
+            active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_NEEDED;
+            XDMoD.Profile.logoutOnClose = true;
+        } else if (data.results.email_address.length === 0) {
+            // Regardless of whether the user is logging in for the first time or not, the lack of
+            // an e-mail address requires attention
+            active_layout_index = XDMoD.ProfileEditorConstants.EMAIL_NEEDED;
+            XDMoD.Profile.logoutOnClose = true;
+        } else {
+            // The XSEDE user has logged in at least a second time and has no issues with their e-mail address
+            active_layout_index = XDMoD.ProfileEditorConstants.XSEDE_SPLASH;
+        }
+    } // if (data.results.is_xsede_user == true)
 
-						}
-						else if (data.results.first_time_login && (data.results.email_address.length == 0)) {
-							// If the user is logging in for the first time and does *not* have an e-mail address set,
-							// welcome the user and inform them that he/she needs to set an e-mail address.
-
-							active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_NEEDED;
-							XDMoD.Profile.logoutOnClose = true;
-						}
-						else if (data.results.email_address.length == 0) {
-							// Regardless of whether the user is logging in for the first time or not, the lack of
-							// an e-mail address requires attention
-							active_layout_index = XDMoD.ProfileEditorConstants.EMAIL_NEEDED;
-							XDMoD.Profile.logoutOnClose = true;
-						}
-						else {
-							// The XSEDE user has logged in at least a second time and has no issues with their e-mail address
-							active_layout_index = XDMoD.ProfileEditorConstants.XSEDE_SPLASH;
-						}
-
-					} //if (data.results.is_xsede_user == true)
-
-					// ================================================
-
-					lblRole.on('afterrender', function() {
-						document.getElementById('profile_editor_most_privileged_role').innerHTML = data.results.most_privileged_role;
-					});
+    // ================================================
+    // eslint-disable-next-line no-use-before-define
+    lblRole.on(
+      'afterrender',
+      function () {
+          // eslint-disable-next-line no-undef
+          document.getElementById('profile_editor_most_privileged_role').innerHTML = data.results.most_privileged_role;
+      }
+    );
 
 					self.parentWindow.show();
 

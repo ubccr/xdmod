@@ -24,8 +24,8 @@
        
       $username = $user_to_remove->getUsername();
    
-      $statusPrefix = $user_to_remove->isXSEDEUser() ? 'XSEDE ' : '';
-      $displayUsername = $user_to_remove->isXSEDEUser() ? $user_to_remove->getXSEDEUsername() : $user_to_remove->getUsername();
+      $statusPrefix = $user_to_remove->isFederatedUser() ? 'Federated ' : '';
+      $displayUsername = $user_to_remove->getUsername();
       
       $user_to_remove->removeUser();
    

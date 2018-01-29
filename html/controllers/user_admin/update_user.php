@@ -76,7 +76,7 @@ $params = array('uid' => RESTRICTION_UID);
 
       $email_address = (strlen($_POST['email_address']) > 0) ? $_POST['email_address'] : NO_EMAIL_ADDRESS_SET;
 
-      if ( ($user_to_update->getUserType() != XSEDE_USER_TYPE) && ($email_address == NO_EMAIL_ADDRESS_SET) ) {
+      if ( ($user_to_update->getUserType() != FEDERATED_USER_TYPE) && ($email_address == NO_EMAIL_ADDRESS_SET) ) {
             $returnData['success'] = false;
             $returnData['status'] = 'This XDMoD user must have an e-mail address set.';
             xd_controller\returnJSON($returnData);
@@ -91,7 +91,7 @@ $params = array('uid' => RESTRICTION_UID);
 
    if (isset($_POST['user_type'])) {
 
-      if ($user_to_update->getUserType() != XSEDE_USER_TYPE) {
+      if ($user_to_update->getUserType() != FEDERATED_USER_TYPE) {
 
          $user_to_update->setUserType($_POST['user_type']);
 
@@ -186,8 +186,8 @@ $params = array('uid' => RESTRICTION_UID);
 
    $returnData['success'] = true;
 
-   $statusPrefix = $user_to_update->isXSEDEUser() ? 'XSEDE ' : '';
-   $displayUsername = $user_to_update->isXSEDEUser() ? $user_to_update->getXSEDEUsername() : $user_to_update->getUsername();
+   $statusPrefix = $user_to_update->isFederatedUser() ? 'Federated ' : '';
+   $displayUsername = $user_to_update->getUsername();
 
    $returnData['status'] = $statusPrefix."User <b>$displayUsername</b> updated successfully";
 

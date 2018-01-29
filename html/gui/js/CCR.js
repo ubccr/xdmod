@@ -459,7 +459,7 @@ CCR.xdmod.ui.smallChartScale = 0.61;
 CCR.xdmod.ui.thumbWidth = 400;
 CCR.xdmod.ui.thumbHeight = CCR.xdmod.ui.thumbWidth * CCR.xdmod.ui.thumbAspect;
 
-CCR.xdmod.XSEDE_USER_TYPE = 700;
+CCR.xdmod.FEDERATED_USER_TYPE = 5;
 
 CCR.xdmod.UserTypes = {
     ProgramOfficer: 'po',

@@ -506,7 +506,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 if ((acls.indexOf('usr') !== -1 || acls.indexOf('pi') !== -1) && cmbUserMapping.getValue().length === 0) {
                     cmbUserMapping.addClass('admin_panel_invalid_text_entry');
 
-                    CCR.xdmod.ui.userManagementMessage('This user must be mapped to a XSEDE Account<br>(Using the drop-down list)', false);
+                    CCR.xdmod.ui.userManagementMessage('This user must be mapped to an Account<br>(Using the drop-down list)', false);
                     return;
                 }
 
