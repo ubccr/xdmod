@@ -137,36 +137,8 @@ $params = array('uid' => RESTRICTION_UID);
 
             $user_to_update->setAcls(array());
             foreach ($acls as $aclName => $centers) {
-                // This block pertains to OpenXDMoD. Specifically, no centers are
-                // returned with acls in OpenXDMOD as there is only one to choose
-                // from. So we catch that use case here and provide the one center
-                // for 'center' related acls.
-                if (count($centers) === 0 ) {
-                    $currentCenters = Centers::getCenters();
-                    if (count($currentCenters) > 0) {
-                        $centers[$aclName] = $currentCenters[0]['id'];
-                    }
-                }
-
                 $acl = Acls::getAclByName($aclName);
                 $user_to_update->addAcl($acl);
-
-                // Make sure to set organizations if there are any. But only for
-                // center related acls.
-                if (in_array($aclName, array('cd', 'cs')) && count($centers) > 0) {
-                    $centerConfig = array();
-                    $count = 0;
-                    foreach($centers as $center) {
-                        if ($count === 0 ) {
-                            $config = array('primary' => 1, 'active' => 1);
-                        } else {
-                            $config = array('primary' => 0, 'active' => 0);
-                        }
-                        $centerConfig[$center] = $config;
-                        $count += 1;
-                    }
-                    $user_to_update->setOrganizations($centerConfig, $aclName);
-                }
             }
         } else {
             \xd_response\presentError("Acl information is required");
@@ -191,6 +163,39 @@ $params = array('uid' => RESTRICTION_UID);
 
    try {
       $user_to_update->saveUser();
+
+      if (!isset($_POST['is_active'])) {
+          if (isset($_POST['acls']) && isset($acls)) {
+              foreach ($acls as $aclName => $centers) {
+                  // This block pertains to OpenXDMoD. Specifically, no centers are
+                  // returned with acls in OpenXDMOD as there is only one to choose
+                  // from. So we catch that use case here and provide the one center
+                  // for 'center' related acls.
+                  if (count($centers) === 0 ) {
+                      $currentCenters = Centers::getCenters();
+                      if (count($currentCenters) > 0) {
+                          $centers[$aclName] = $currentCenters[0]['id'];
+                      }
+                  }
+                  // Make sure to set organizations if there are any. But only for
+                  // center related acls.
+                  if (in_array($aclName, array('cd', 'cs')) && count($centers) > 0) {
+                      $centerConfig = array();
+                      $count = 0;
+                      foreach($centers as $center) {
+                          if ($count === 0 ) {
+                              $config = array('primary' => 1, 'active' => 1);
+                          } else {
+                              $config = array('primary' => 0, 'active' => 0);
+                          }
+                          $centerConfig[$center] = $config;
+                          $count += 1;
+                      }
+                      $user_to_update->setOrganizations($centerConfig, $aclName);
+                  }
+              }
+          }
+      }
    }
    catch(Exception $e) {
       $returnData['success'] = false;
