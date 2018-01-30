@@ -190,10 +190,9 @@ try {
                     $centerConfig = array();
                     $count = 0;
                     foreach ($centers as $center) {
+                        $config = array('primary' => 0, 'active' => 0);
                         if ($count === 0) {
                             $config = array('primary' => 1, 'active' => 1);
-                        } else {
-                            $config = array('primary' => 0, 'active' => 0);
                         }
                         $centerConfig[$center] = $config;
                         $count += 1;
