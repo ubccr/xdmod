@@ -26,7 +26,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
         $template = new Template('portal_settings');
         $template->apply($data);
 
-        $this->assertEquals($defaultContents, $template->getContents());
+        $this->assertEquals(parse_ini_string($defaultContents), parse_ini_string($template->getContents()));
     }
 
     /**
