@@ -160,6 +160,34 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             }
         }); // store
 
+        // If we are not supporting multiple service providers then pre-fetch
+        // the default service provider.
+        if (CCR.xdmod.features.multiple_service_providers === false) {
+            Ext.Ajax.request({
+                url: '/controllers/user_admin/enum_resource_providers.php',
+                callback: function (options, success, response) {
+                    var json;
+                    if (success) {
+                        json = CCR.safelyDecodeJSONResponse(response);
+                        success = CCR.checkDecodedJSONResponseSuccess(json);
+                    }
+
+                    if (!success) {
+                        CCR.xdmod.ui.presentFailureResponse(response, {
+                            title: 'User Management',
+                            wrapperMessage: 'Failed to load user.'
+                        });
+                        return;
+                    }
+
+                    var providers = json.providers;
+                    if (providers.length > 0) {
+                        self.defaultProvider = providers[0]['id'];
+                    }
+                }
+            });
+        }
+
         Ext.apply(this, {
             store: store,
             cm: columnModel,
@@ -216,7 +244,10 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         }
     },
     getCenters: function (acl) {
-        if (this.aclCenters.hasOwnProperty(acl)) {
+        if (CCR.xdmod.features.multiple_service_providers === false &&
+          this.defaultProvider) {
+            return this.defaultProvider;
+        } else if (this.aclCenters.hasOwnProperty(acl)) {
             return this.aclCenters[acl];
         }
         return [];

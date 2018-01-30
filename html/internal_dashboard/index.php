@@ -210,6 +210,16 @@ if (isset($_POST['direct_to'])) {
 
   <?php echo \OpenXdmod\Assets::generateAssetTags('internal_dashboard'); ?>
 
+  <script type="text/javascript">
+  <?php
+  $features = xd_utilities\getConfigurationSection('features');
+  // Convert array values to boolean
+  array_walk($features, function(&$v) { $v = ($v == 'on'); } );
+
+  print "CCR.xdmod.features = ".json_encode($features).";\n";
+  ?>
+  </script>
+
   <script type="text/javascript" src="js/dashboard.js"></script>
 
   <?php /* App Kernel code. */ ?>
