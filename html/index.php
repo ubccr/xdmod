@@ -291,8 +291,12 @@ use Models\Services\Realms;
             print "CCR.xdmod.logged_in = !CCR.xdmod.publicUser;\n";
             $useCaptcha = 'false';
             try {
-                $useCaptcha = xd_utilities\getConfiguration('mailer', 'captcha_public_key') !== '' ? 'true' : 'false';
-                print 'CCR.xdmod.captcha_sitekey = "' . xd_utilities\getConfiguration('mailer', 'captcha_public_key').'";';
+                $captchaSiteKey = xd_utilities\getConfiguration('mailer', 'captcha_public_key');
+                $captchaSecret = xd_utilities\getConfiguration('mailer', 'captcha_private_key');
+                if('' !== $captchaSiteKey && '' !== $captchaSecret){
+                    $useCaptcha = 'true';
+                    print 'CCR.xdmod.captcha_sitekey = "' . $captchaSiteKey .'";';
+                }
             }
             catch(exception $ex) {
             }

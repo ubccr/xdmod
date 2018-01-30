@@ -108,7 +108,7 @@ XDMoD.AbstractContactDialog = Ext.extend(Ext.Window, {
                 reason: self.contactReason
             };
 
-            if (captchaField) {
+            if (captchaField && CCR.xdmod.captcha_ready) {
                 var captchaResponse = Ext.util.Format.trim(captchaField.getResponseField());
 
                 if (captchaResponse.length === 0) {

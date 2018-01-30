@@ -156,7 +156,7 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
                 field_of_science: 'not available'
             };
 
-            if (captchaField) {
+            if (captchaField && CCR.xdmod.captcha_ready) {
                 var captchaResponse = Ext.util.Format.trim(captchaField.getResponseField());
                 if (captchaResponse.length === 0) {
                     CCR.xdmod.ui.userManagementMessage("Please answer the reCAPTCHA challenge.", false);
