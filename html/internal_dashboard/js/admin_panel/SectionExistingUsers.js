@@ -1108,6 +1108,10 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
 
                     if (reset_controls) {
+                        // We start by enabling userSettings and all of the controls it contains.
+                        // We then disable / enable controls based on the information retrieved.
+                        userSettings.setDisabled(false);
+
                         userEditor.setTitle('User Details: ' + Ext.util.Format.htmlEncode(json.user_information.formal_name));
 
                         existingUserEmailField.setValue(json.user_information.email_address);
@@ -1181,7 +1185,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
                         roleGrid.updateCenterCounts();
 
-                        userSettings.setDisabled(false);
                         userEditor.hideMask();
                         btnSaveChanges.setDisabled(false);
 
