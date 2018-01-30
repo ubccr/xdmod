@@ -291,10 +291,10 @@ use Models\Services\Realms;
             print "CCR.xdmod.logged_in = !CCR.xdmod.publicUser;\n";
             $useCaptcha = 'false';
             try {
-              $useCaptcha = xd_utilities\getConfiguration('mailer', 'captcha_private_key') !== '' ? 'true' : 'false';
+                $useCaptcha = xd_utilities\getConfiguration('mailer', 'captcha_public_key') !== '' ? 'true' : 'false';
+                print 'CCR.xdmod.captcha_sitekey = "' . xd_utilities\getConfiguration('mailer', 'captcha_public_key').'";';
             }
             catch(exception $ex) {
-              print "console.warn(\"" . $ex->getMessage() . "\");\n";
             }
             print "CCR.xdmod.use_captcha = " . $useCaptcha .";";
             if (!$userLoggedIn) {
@@ -549,6 +549,14 @@ use Models\Services\Realms;
       <?php if ($userLoggedIn): ?>
       <script type="text/javascript">Ext.onReady(xdmodviewer.init, xdmodviewer);</script>
       <?php endif; ?>
+        <?php if ('false' !== $useCaptcha && !$userLoggedIn): ?>
+          <script src="https://www.google.com/recaptcha/api.js?onload=onCaptchaloadCallback&render=explicit" async defer></script>
+          <script type="text/javascript">
+            onCaptchaloadCallback = function() {
+                CCR.xdmod.captcha_ready = true;
+            };
+          </script>
+        <?php endif; ?>
 
    </head>
 

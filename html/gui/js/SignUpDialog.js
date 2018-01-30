@@ -137,7 +137,7 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
 
         if (CCR.xdmod.use_captcha) {
             captchaField = new XDMoD.CaptchaField({
-                style: 'margin-left: 110px'
+                style: 'margin-left: 130px'
             });//captchaField
         }
 
@@ -163,7 +163,6 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
                     return;
                 }
 
-                params.recaptcha_challenge_field = captchaField.getChallengeField();
                 params.recaptcha_response_field = captchaResponse;
             }
 
@@ -181,7 +180,7 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
                 failure: function (form, action) {
                     if (action.failureType === Ext.form.Action.CLIENT_INVALID) {
                         CCR.xdmod.ui.userManagementMessage(
-                            "Please resolve any problems in the form and try sending your request again.", 
+                            'Please resolve any problems in the form and try sending your request again.',
                             false
                         );
                         return;
@@ -308,4 +307,3 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
     }//initComponent
 
 });//XDMoD.SignUpDialog
-

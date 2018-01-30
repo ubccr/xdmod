@@ -49,20 +49,15 @@ $reason = isset($_POST['reason']) ? $_POST['reason'] : 'contact';
 $captcha_private_key = xd_utilities\getConfiguration('mailer', 'captcha_private_key');
 
 if ($captcha_private_key !== '' && !isset($_SESSION['xdUser'])) {
-  if (!isset($_POST["recaptcha_challenge_field"]) || !isset($_POST["recaptcha_response_field"])){
-    \xd_response\presentError('Recaptcha information not specified');
-  }
-
-  $recaptcha_check = recaptcha_check_answer(
-    $captcha_private_key,
-    $_SERVER["REMOTE_ADDR"],
-    $_POST["recaptcha_challenge_field"],
-    $_POST["recaptcha_response_field"]
-  );
-
-  if (!$recaptcha_check->is_valid) {
-    \xd_response\presentError('You must enter the words in the Recaptcha box properly.');
-  };
+    if (!isset($_POST['g-recaptcha-response'])){
+        \xd_response\presentError('Recaptcha information not specified');
+    }
+    $recaptcha = new \ReCaptcha\ReCaptcha($captcha_private_key);
+    $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER["REMOTE_ADDR"]);
+    if (!$resp->isSuccess()) {
+        $errors = $resp->getErrorCodes();
+        \xd_response\presentError('You must enter the words in the Recaptcha box properly.' . print_r($errors, 1));
+    }
 }
 
 // ----------------------------------------------------------
@@ -135,4 +130,3 @@ catch (Exception $e) {
 $response['success'] = true;
 
 echo json_encode($response);
-
