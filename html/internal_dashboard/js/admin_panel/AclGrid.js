@@ -164,7 +164,10 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         // the default service provider.
         if (CCR.xdmod.features.multiple_service_providers === false) {
             Ext.Ajax.request({
-                url: '/controllers/user_admin/enum_resource_providers.php',
+                url: '../controllers/user_admin.php',
+                params: {
+                    operation: 'enum_resource_providers'
+                },
                 callback: function (options, success, response) {
                     var json;
                     if (success) {
