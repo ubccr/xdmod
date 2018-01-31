@@ -90,21 +90,6 @@ try {
                 $count += 1;
             }
             $newuser->setOrganizations($centerConfig, $acl);
-        } elseif (in_array($acl, array('cd', 'cs'))) {
-            // This block pertains to OpenXDMoD. Specifically, no centers are
-            // returned with acls in OpenXDMOD as there is only one to choose
-            // from. So we catch that use case here and provide the one center
-            // for 'center' related acls.
-            $currentCenters = Centers::getCenters();
-            if (count($currentCenters) > 0) {
-                $center = $currentCenters[0]['id'];
-                $newuser->setOrganizations(
-                    array(
-                        $center => array('primary' => 1, 'active' => 1)
-                    ),
-                    $acl
-                );
-            }
         }
     }
     // =============================

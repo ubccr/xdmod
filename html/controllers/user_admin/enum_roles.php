@@ -17,13 +17,15 @@ foreach($roles as $currentRole) {
     // requiresCenter can only be true iff the current install supports
     // multiple service providers.
     if ($currentRole['name'] !== 'pub') {
-        $requiresCenter = $currentRole['requires_center'] && $multipleServiceProviders;
+        $requiresCenters = $currentRole['requires_center'];
+        $displayCenters = $requiresCenters && $multipleServiceProviders;
         $roleEntries[] = array(
             'acl' => $currentRole['display'],
             'acl_id' => $currentRole['name'],
             'include' => false,
             'primary' => false,
-            'requires_center' => $requiresCenter
+            'displays_center' => $displayCenters,
+            'requires_center' => $requiresCenters
         );
     }
 }//foreach

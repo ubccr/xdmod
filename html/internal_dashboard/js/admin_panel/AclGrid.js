@@ -53,7 +53,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             renderer: function (val, metaData, record, rowIndex, colIndex, store) {
                 var data = store.getAt(rowIndex).data;
 
-                if (data.requires_center === true) {
+                if (data.displays_center === true) {
                     return '<div style="text-align:center;">' +
                       '<a title="Specify Centers" href="javascript:void(0)">' +
                       '<img src="images/center_edit.png">' +
@@ -81,7 +81,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     this.grid.getView().findRowIndex(node)
                 );
 
-                if (record.data.requires_center) {
+                if (record.data.displays_center) {
                     // let the center selector handle things.
                     XDMoD.Admin.AclGrid.prepCenterMenu(self.id, record.data.acl, record.data.acl_id, self.id);
                 } else {
@@ -124,7 +124,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     width: 109,
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         var data = store.getAt(rowIndex).data;
-                        if (data.requires_center === true) {
+                        if (data.displays_center === true) {
                             if (!record.ref) {
                                 /* eslint-disable no-param-reassign */
                                 record.ref = Ext.id();
@@ -146,7 +146,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             autoDestroy: true,
             url: '../controllers/user_admin.php',
             root: 'acls',
-            fields: ['acl', 'acl_id', 'include', 'requires_center'],
+            fields: ['acl', 'acl_id', 'include', 'requires_center', 'displays_center'],
             listeners: {
                 load: function (dashboardStore, records) {
                     for (var i = 0; i < records.length; i++) {
@@ -248,8 +248,11 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     },
     getCenters: function (acl) {
         if (CCR.xdmod.features.multiple_service_providers === false &&
-          this.defaultProvider) {
-            return [this.defaultProvider];
+            this.defaultProvider) {
+            var record = this.store.getAt(this.store.find('acl_id', acl));
+            if (record && record.get('requires_center') === true) {
+                return [this.defaultProvider];
+            }
         } else if (this.aclCenters.hasOwnProperty(acl)) {
             return this.aclCenters[acl];
         }
