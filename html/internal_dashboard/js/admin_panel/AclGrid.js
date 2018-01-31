@@ -172,6 +172,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                     var json;
                     if (success) {
                         json = CCR.safelyDecodeJSONResponse(response);
+                        // eslint-disable-next-line no-param-reassign
                         success = CCR.checkDecodedJSONResponseSuccess(json);
                     }
 
