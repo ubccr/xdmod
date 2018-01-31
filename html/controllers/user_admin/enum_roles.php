@@ -24,8 +24,8 @@ foreach($roles as $currentRole) {
             'acl_id' => $currentRole['name'],
             'include' => false,
             'primary' => false,
-            'displays_center' => $displayCenters,
-            'requires_center' => $requiresCenters
+            'displays_center' => (bool) $displayCenters,
+            'requires_center' => (bool) $requiresCenters
         );
     }
 }//foreach
