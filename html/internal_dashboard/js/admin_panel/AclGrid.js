@@ -249,7 +249,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
     getCenters: function (acl) {
         if (CCR.xdmod.features.multiple_service_providers === false &&
           this.defaultProvider) {
-            return this.defaultProvider;
+            return [this.defaultProvider];
         } else if (this.aclCenters.hasOwnProperty(acl)) {
             return this.aclCenters[acl];
         }
