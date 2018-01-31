@@ -1091,20 +1091,20 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         '<p>' + json.user_information.time_updated + '</p>'
                     );
 
-                    var txtAccountStatus = document.getElementById('txtAccountStatus');
-                    txtAccountStatus.innerText = json.user_information.is_active;
+                    var txtAccountStatus = Ext.getCmp('txtAccountStatus');
+                    txtAccountStatus.setText(json.user_information.is_active);
 
                     if (json.user_information.is_active == 'active') {
                         Ext.getCmp('disableAccountMenuItem').show();
                         Ext.getCmp('enableAccountMenuItem').hide();
-                        txtAccountStatus.classList.remove('admin_panel_user_user_status_disabled');
-                        txtAccountStatus.classList.add('admin_panel_user_user_status_active');
+                        txtAccountStatus.removeClass('admin_panel_user_user_status_disabled');
+                        txtAccountStatus.addClass('admin_panel_user_user_status_active');
                     }
                     else {
                         Ext.getCmp('enableAccountMenuItem').show();
                         Ext.getCmp('disableAccountMenuItem').hide();
-                        txtAccountStatus.classList.remove('admin_panel_user_user_status_active');
-                        txtAccountStatus.classList.add('admin_panel_user_user_status_disabled');
+                        txtAccountStatus.removeClass('admin_panel_user_user_status_active');
+                        txtAccountStatus.addClass('admin_panel_user_user_status_disabled');
                     }
 
                     if (reset_controls) {
