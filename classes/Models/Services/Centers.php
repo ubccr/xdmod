@@ -27,8 +27,12 @@ class Centers
     public static function getCenters()
     {
         $db = DB::factory('database');
-
-        return $db->query("SELECT o.* FROM modw.organization o");
+        return $db->query("
+    SELECT o.*
+    FROM modw.organization o
+    JOIN modw.resourcefact rf
+      ON o.id = rf.organization_id;
+");
     }
 
     public static function getCenterStaffMembers(XDUser $user)
