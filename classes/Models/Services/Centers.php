@@ -28,10 +28,10 @@ class Centers
     {
         $db = DB::factory('database');
         return $db->query("
-    SELECT o.*
+    SELECT DISTINCT o.*
     FROM modw.organization o
-    JOIN modw.resourcefact rf
-      ON o.id = rf.organization_id;
+      JOIN modw.resourcefact rf
+        ON o.id = rf.organization_id;
 ");
     }
 
