@@ -459,7 +459,7 @@ CCR.xdmod.ui.smallChartScale = 0.61;
 CCR.xdmod.ui.thumbWidth = 400;
 CCR.xdmod.ui.thumbHeight = CCR.xdmod.ui.thumbWidth * CCR.xdmod.ui.thumbAspect;
 
-CCR.xdmod.XSEDE_USER_TYPE = 700;
+CCR.xdmod.FEDERATED_USER_TYPE = 5;
 
 CCR.xdmod.UserTypes = {
     ProgramOfficer: 'po',
@@ -2010,6 +2010,26 @@ CCR.getInstance = function(instancePath, classPath, config) {
         );
     }
     return result;
+};
+
+/**
+ * Find all entries in the right array that are also in the left.
+ *
+ * @param {Array} left
+ * @param {Array} right
+ * @return {Array}
+ */
+CCR.intersect = function (left, right) {
+    var found = [];
+
+    for (var i = 0; i < right.length; i++) {
+        var key = right[i];
+        if (left.indexOf(key) !== -1) {
+            found.push(key);
+        }
+    }
+
+    return found;
 };
 
 

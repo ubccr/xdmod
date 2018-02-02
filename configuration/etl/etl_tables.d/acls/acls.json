@@ -45,6 +45,15 @@
         ],
         "type": "BTREE",
         "is_unique": true
+      },
+      {
+        "name": "idx_module_id_name",
+        "columns": [
+          "module_id",
+          "name"
+        ],
+        "type": "BTREE",
+        "is_unique": true
       }
     ]
   }

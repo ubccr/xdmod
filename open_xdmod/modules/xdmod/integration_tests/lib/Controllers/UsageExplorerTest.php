@@ -2,13 +2,27 @@
 
 namespace IntegrationTests\Controllers;
 
+use CCR\Json;
+use TestHarness\TestFiles;
 use Xdmod\Config;
 
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 {
+
+    protected $testFiles;
+
     protected function setUp()
     {
         $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->testFiles = new TestFiles(__DIR__ . '/../../');
+    }
+    
+    public function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../../');
+        }
+        return $this->testFiles;
     }
 
     /**
@@ -122,7 +136,7 @@ EOF;
     "group_by": "none",
     "statistic": "avg_wallduration_hours",
     "start_date": "2016-01-01",
-    "end_date": "2017-12-31",
+    "end_date": "2016-12-31",
     "operation": "get_charts",
     "timeframe_label": "User Defined",
     "scale": "1",
@@ -152,7 +166,7 @@ EOF;
 EOF;
         $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($defaultJson, true));
 
-        $this->assertEquals($response[1]['content_type'], 'text/plain; charset=UTF-8');
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
@@ -164,7 +178,11 @@ EOF;
         $this->assertCount(1, $dataseries[0]['data']);
         $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
 
-        $this->assertEquals(1.79457892, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+        $expected = Json::loadFile(
+            $this->getTestFiles()->getFile('controllers', 'aggregate_view')
+        );
+
+        $this->assertEquals($expected['value'], $dataseries[0]['data'][0]['y'], '', 1.0e-6);
     }
 
     /**
@@ -174,7 +192,7 @@ EOF;
     {
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
-        $this->assertEquals($response[1]['content_type'], 'text/plain; charset=UTF-8');
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);

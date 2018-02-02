@@ -1,5 +1,6 @@
 /* eslint-env node, es6 */
 var roles = require('./../../../../integration_tests/.secrets.json').role;
+var expected = global.testHelpers.artifacts.getArtifact('loginPage');
 class LoginPage {
 
     login(desiredRole) {
@@ -34,7 +35,8 @@ class LoginPage {
         describe('General', function () {
             it('Verify Logo and Title', function () {
                 browser.url('/');
-                expect(browser.getTitle()).to.equal('Open XDMoD');
+                const actual = browser.getTitle();
+                expect(actual).to.equal(expected.title);
                  // $(this.logo).waitForVisible(2000);
                 $('#logo').waitForVisible(2000);
                 var logoSize = browser.getElementSize('#logo');

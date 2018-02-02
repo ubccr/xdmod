@@ -1,6 +1,9 @@
 <?php
 
 use CCR\MailWrapper;
+use Models\Acl;
+use Models\Services\Acls;
+use Models\Services\Centers;
 
 // Operation: user_admin->create_user
 
@@ -20,6 +23,31 @@ $creator = \xd_security\assertDashboardUserLoggedIn();
 
 if (isset($_POST['acls'])) {
     $acls = json_decode($_POST['acls'], true);
+    if (count($acls) < 1){
+        \xd_response\presentError("Acl information is required");
+    }
+    // Checking for an acl set that only contains feature acls.
+    // Feature acls are acls that only provide access to an XDMoD feature and
+    // are not used for data access.
+    $aclNames = array();
+    $featureAcls = Acls::getAclsByTypeName('feature');
+    $tabAcls = Acls::getAclsByTypeName('tab');
+    $uiOnlyAcls = array_merge($featureAcls, $tabAcls);
+    if (count($uiOnlyAcls) > 0) {
+        $aclNames = array_reduce(
+            $uiOnlyAcls,
+            function ($carry, Acl $item) {
+                $carry []= $item->getName();
+                return $carry;
+            },
+            array()
+        );
+    }
+    $diff = array_diff(array_keys($acls), $aclNames);
+    $found = !empty($diff);
+    if (!$found) {
+        \xd_response\presentError('Please include a non-feature acl ( i.e. User, PI etc. )');
+    }
 }
 else {
     \xd_response\presentError("Acl information is required");
@@ -41,18 +69,27 @@ try {
         '',
         $_POST['last_name'],
         array_keys($acls),
-        null,
+        ROLE_ID_USER,
         NULL,
         $_POST['assignment']
     );
     $newuser->setUserType($_POST['user_type']);
     $newuser->saveUser();
     // =============================
-    foreach($acls as $acl => $centers) {
+    foreach ($acls as $acl => $centers) {
         if (count($centers) > 0) {
+            $centerConfig = array();
+            $count = 0;
             foreach($centers as $center) {
-                $newuser->addAclOrganization($acl, $center);
+                if ($count === 0) {
+                    $config = array('primary' => 1, 'active' => 1);
+                } else {
+                    $config = array('primary' => 0, 'active' => 0);
+                }
+                $centerConfig[$center] = $config;
+                $count += 1;
             }
+            $newuser->setOrganizations($centerConfig, $acl);
         }
     }
     // =============================

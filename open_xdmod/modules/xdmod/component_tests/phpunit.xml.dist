@@ -18,4 +18,11 @@
          stopOnSkipped="false"
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
          verbose="true">
+    <testsuite name="roles">
+        <directory>lib/Roles</directory>
+    </testsuite>
+    <testsuite name="non-roles">
+        <directory>lib</directory>
+        <exclude>lib/Roles</exclude>
+    </testsuite>
 </phpunit>

@@ -13,12 +13,20 @@ proc confirmUpgrade { } {
     send yes\n
 }
 
+proc confirmComplete { } {
+    expect {
+        timeout { send_user "\nFailed to get completion notice\n"; exit 1 }
+        -re "\nUpgrade Complete.*"
+    }
+
+}
+
 #-------------------------------------------------------------------------------
 # main body
 
-set timeout 60
+set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
-expect eof
+confirmComplete
 lassign [wait] pid spawnid os_error_flag value
 exit $value

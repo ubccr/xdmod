@@ -129,8 +129,6 @@ switch ($operation) {
 
         $results = $pdo->query($query);
 
-        $results[] = array('id' => XSEDE_USER_TYPE, 'type' => 'XSEDE', 'color' => '#b914f6');
-
         $response['user_types'] = $results;
 
         $query = "SELECT description, role_id FROM moddb.Roles WHERE abbrev != 'pub' ORDER BY description";

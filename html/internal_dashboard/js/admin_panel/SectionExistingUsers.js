@@ -210,7 +210,17 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             root: 'user_types',
             autoLoad: true,
             baseParams: { operation: 'enum_user_types' },
-            fields: ['id', 'type']
+            fields: ['id', 'type'],
+            listeners: {
+                load: function (store, records) {
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        if (parseInt(record.data.id, 10) === CCR.xdmod.FEDERATED_USER_TYPE) {
+                            store.remove(record);
+                        }
+                    }
+                }
+            }
         });
 
         var cmbUserType = new Ext.form.ComboBox({
@@ -308,17 +318,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             });
                         }
 
-                        // Add entry to account for XSEDE Users...
-                        self.userTypes.push({
-                            text: 'XSEDE Users',
-                            id: CCR.xdmod.XSEDE_USER_TYPE
-                        });
-
-                        mnuUserTypeFilter.addItem({
-                            text: 'XSEDE Users',
-                            type_id: CCR.xdmod.XSEDE_USER_TYPE
-                        });
-
                         var user_type_to_load =
                             (self.cachedUserTypeID > 0) ?
                             self.cachedUserTypeID :
@@ -387,7 +386,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 existingUserEmailField.setValue('');
 
                 if (self.initFlag == 1) {
-                    Ext.getCmp('txtAccountTimestamps').update('');
+                    document.getElementById('txtAccountTimestamps').innerText = '';
                     document.getElementById('txtAccountStatus').innerText = '';
                 }
 
@@ -452,7 +451,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
                         if (objParams.operation == 'update_user') {
                             self.userStoreLoadReset = false;
-                            fetchUserDetails(objParams.uid, false);
+                            // eslint-disable-next-line no-use-before-define
+                            fetchUserDetails(objParams.uid, true);
                         }
 
                         // Refresh the user list based on the
@@ -559,12 +559,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 buttons: Ext.Msg.YESNO,
                 fn: function(resp) {
                     if (resp == 'yes'){
+                        /* eslint-disable no-use-before-define */
                         userManagementAction({
                             operation: 'update_user',
                             uid: selected_user_id,
-                            email_address: document.getElementById('existingUserEmail').value,
+                            email_address: existingUserEmailField.getValue(),
                             is_active: (action == 'Enable') ? 'y' : 'n'
                         });
+                        /* eslint-enable no-use-before-define */
                     }
                 }
             });
@@ -605,7 +607,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var minEmailLength = XDMoD.constants.minEmailLength;
         var maxEmailLength = XDMoD.constants.maxEmailLength;
         var existingUserEmailField = new Ext.form.TextField({
-            id: 'existingUserEmail',
             fieldLabel: 'E-Mail Address',
             emptyText: minEmailLength + ' min, ' + maxEmailLength + ' max',
             msgTarget: 'under',
@@ -619,7 +620,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
             validator: function (value) {
                 // If the user is an XSEDE user, an email address is not required.
-                if (cached_user_type === CCR.xdmod.XSEDE_USER_TYPE) {
+                if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
                     return true;
                 }
 
@@ -663,17 +664,20 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         // ------------------------------------------
         /* eslint-disable no-use-before-define */
+        var roleGridClickHandler = function () {
+            var selRoles = roleGrid.getSelectedAcls();
+            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
+            if (roleGrid.isInDirtyState()) {
+                saveIndicator.show();
+            } else {
+                saveIndicator.hide();
+            }
+        };
         var roleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment',
             selectionChangeHandler: roleGridClickHandler,
             border: false
         });
-
-        var roleGridClickHandler = function () {
-            var selRoles = roleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
-            saveIndicator.show();
-        };
         /* eslint-enable no-use-before-define */
 
         // ------------------------------------------
@@ -703,7 +707,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var lblXSEDEUser = new Ext.form.Label({
             fieldLabel: 'User Type',
-            html: '<b style="color: #00f">XSEDE User</b>'
+            html: '<b style="color: #00f">Federated User</b>'
         });
 
         lblXSEDEUser.hide();
@@ -785,6 +789,15 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         'An institution must be specified for a user having a role of Campus Champion.',
                         false
                     );
+                    return;
+                }
+
+                var dataAcls = Object.values(CCR.xdmod.UserTypes);
+
+                var intersection = CCR.intersect(dataAcls, acls);
+
+                if (intersection.length === 0) {
+                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
                     return;
                 }
 
@@ -1039,6 +1052,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
 
                     roleGrid.setDirtyState(false);
+                    roleGrid.reset();
                     settingsAreDirty = false;
 
                     saveIndicator.hide();
@@ -1077,23 +1091,27 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         '<p>' + json.user_information.time_updated + '</p>'
                     );
 
-                    var txtAccountStatus = document.getElementById('txtAccountStatus');
-                    txtAccountStatus.innerText = json.user_information.is_active;
+                    var txtAccountStatus = Ext.getCmp('txtAccountStatus');
+                    txtAccountStatus.setText(json.user_information.is_active);
 
                     if (json.user_information.is_active == 'active') {
                         Ext.getCmp('disableAccountMenuItem').show();
                         Ext.getCmp('enableAccountMenuItem').hide();
-                        Ext.getCmp('txtAccountStatus').removeClass('admin_panel_user_user_status_disabled');
-                        Ext.getCmp('txtAccountStatus').addClass('admin_panel_user_user_status_active');
+                        txtAccountStatus.removeClass('admin_panel_user_user_status_disabled');
+                        txtAccountStatus.addClass('admin_panel_user_user_status_active');
                     }
                     else {
                         Ext.getCmp('enableAccountMenuItem').show();
                         Ext.getCmp('disableAccountMenuItem').hide();
-                        Ext.getCmp('txtAccountStatus').removeClass('admin_panel_user_user_status_active');
-                        Ext.getCmp('txtAccountStatus').addClass('admin_panel_user_user_status_disabled');
+                        txtAccountStatus.removeClass('admin_panel_user_user_status_active');
+                        txtAccountStatus.addClass('admin_panel_user_user_status_disabled');
                     }
 
                     if (reset_controls) {
+                        // We start by enabling userSettings and all of the controls it contains.
+                        // We then disable / enable controls based on the information retrieved.
+                        userSettings.setDisabled(false);
+
                         userEditor.setTitle('User Details: ' + Ext.util.Format.htmlEncode(json.user_information.formal_name));
 
                         existingUserEmailField.setValue(json.user_information.email_address);
@@ -1112,8 +1130,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             cmbUserMapping.reset();
                         }
 
-                        if (cached_user_type === CCR.xdmod.XSEDE_USER_TYPE) {
-
+                        if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
                             // XSEDE-derived User: Can't change user type
                             cmbUserType.hide();
                             lblXSEDEUser.show();
@@ -1159,15 +1176,15 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                          *   "<acl_name>": []
                          * }
                          */
-                        roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
                         for (var acl in json.user_information.acls) {
                             if (json.user_information.acls.hasOwnProperty(acl)) {
                                 var centers = json.user_information.acls[acl];
                                 roleGrid.setCenterConfig(acl, centers);
                             }
                         }
+                        roleGrid.setSelectedAcls(Object.keys(json.user_information.acls));
+                        roleGrid.updateCenterCounts();
 
-                        userSettings.setDisabled(false);
                         userEditor.hideMask();
                         btnSaveChanges.setDisabled(false);
 

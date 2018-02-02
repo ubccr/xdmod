@@ -1,11 +1,13 @@
 <?php
-	
+
+use Models\Services\Centers;
+
 	try {
 	
    	$activeUser = \xd_security\getLoggedInUser();
 
-      $members = $activeUser->getActiveRole()->enumCenterStaffMembers();
-    	
+        $members = Centers::getCenterStaffMembers($activeUser);
+
     	$returnData = array();
     	
     	$returnData['success'] = true;

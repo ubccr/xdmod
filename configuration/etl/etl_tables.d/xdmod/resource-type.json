@@ -1,0 +1,34 @@
+{
+    "table_definition": {
+        "name": "resourcetype",
+        "engine": "MyISAM",
+        "comment": "The different types of resources.",
+        "columns": [{
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the record."
+            },
+            {
+                "name": "description",
+                "type": "char(50)",
+                "nullable": false,
+                "comment": "The description of the resource type."
+            },
+            {
+                "name": "abbrev",
+                "type": "char(10)",
+                "nullable": false
+            }
+        ],
+        "indexes": [{
+            "name": "PRIMARY",
+            "columns": [
+                "id"
+            ],
+            "type": "BTREE",
+            "is_unique": true
+        }],
+        "triggers": []
+    }
+}

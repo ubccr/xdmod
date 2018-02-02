@@ -1,0 +1,79 @@
+{
+    "table_definition": {
+        "name": "allocationbreakdown",
+        "engine": "MyISAM",
+        "comment": "Assigns people to a part of an allocation.",
+        "columns": [{
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the record."
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the person who gets a part of the allocation."
+            },
+            {
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The id of the allocation the person can use."
+            },
+            {
+                "name": "percentage",
+                "type": "decimal(5,2)",
+                "nullable": true,
+                "comment": "The percentage [0-100] of the allocation that the person can use. "
+            },
+            {
+                "name": "alloc_limit",
+                "type": "decimal(18,4)",
+                "nullable": true,
+                "comment": "Usually set to the base_allocation of the allocation."
+            },
+            {
+                "name": "used_allocation",
+                "type": "decimal(18,4)",
+                "nullable": true,
+                "comment": "How much the user has used in Sus."
+            }
+        ],
+        "indexes": [{
+                "name": "alloc_pid",
+                "columns": [
+                    "allocation_id",
+                    "person_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "fk_allocationbreakdown_allocation1_idx",
+                "columns": [
+                    "allocation_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_allocationbreakdown_person1_idx",
+                "columns": [
+                    "person_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

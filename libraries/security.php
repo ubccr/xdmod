@@ -222,10 +222,7 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
         }
 
         if (in_array(STATUS_CENTER_DIRECTOR_ROLE, $requirements)) {
-            if (
-                $user->getActiveRole()->getIdentifier()
-                != ROLE_ID_CENTER_DIRECTOR
-            ) {
+            if (!$user->hasAcl(ROLE_ID_CENTER_DIRECTOR)) {
                 $returnData['status']     = 'not_a_center_director';
                 $returnData['success']    = false;
                 $returnData['totalCount'] = 0;

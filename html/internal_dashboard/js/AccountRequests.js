@@ -5,8 +5,6 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
         var self = this;
         var cachedMD5 = '';
 
-        var adminPanel = new XDMoD.AdminPanel();
-
         self.storeProvider = new DashboardStore({
             url: 'controllers/controller.php',
             root: 'response',
@@ -279,7 +277,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
                         text: 'Initialize New User Dialog',
                         disabled: true,
                         handler: function () {
-                            adminPanel.initNewUser({
+                            self.adminPanel.initNewUser({
                                 user_data: self.userGrid.getSelectionModel().getSelected().data,
                                 callback: reloadAccountRequests
                             });
@@ -363,7 +361,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
                                 iconCls: 'btn_group',
                                 id: 'about_button',
                                 handler: function () {
-                                    adminPanel.showPanel({
+                                    self.adminPanel.showPanel({
                                         doListReload: false,
                                         callback: function () {
                                             current_users.reloadUserList();

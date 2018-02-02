@@ -27,7 +27,10 @@ use CCR\DB;
  * @method void    setEnabled($enabled)
  * @method integer getUserId()
  * @method void    setUserId($userId)
- *
+ * @method string  getOrganization()
+ * @method void    setOrganization($organization)
+ * @method integer getOrganizationId()
+ * @method void    setOrganizationId($organizationId)
  */
 class Acl extends DBObject
 {
@@ -40,7 +43,11 @@ class Acl extends DBObject
         'enabled' => 'enabled',
 
         // Needed for getParameters
-        'user_id' => 'userId'
+        'user_id' => 'userId',
+
+        // Needed for getMostPrivilegedRole
+        'organization' => 'organization',
+        'organization_id' => 'organizationId'
     );
 
     /**

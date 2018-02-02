@@ -78,7 +78,7 @@ try {
     // PHP Checks.
 
     _debug('Checking PHP version');
-    $requiredVersion = '5.3.0';
+    $requiredVersion = '5.4.0';
     $currentVersion  = phpversion();
     $result = strcmp($currentVersion, $requiredVersion) >= 0;
     displayResult(

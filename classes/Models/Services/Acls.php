@@ -187,12 +187,13 @@ SQL;
         $sql = <<<SQL
 SELECT
   a.*,
-  INSTR(aclt.name, 'requires_center') > 0 AS requires_center
+  req.acl_id IS NOT NULL requires_center
 FROM user_acls ua
   JOIN acls a
     ON a.acl_id = ua.acl_id
-  JOIN acl_types aclt
-    ON aclt.acl_type_id = a.acl_type_id
+  LEFT JOIN (
+    SELECT acl_id FROM acls WHERE name IN ('cd', 'cs')
+    ) req ON req.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
         return $db->query($sql, array('user_id' => $userId));
@@ -455,9 +456,7 @@ SQL;
             }
         }
 
-        return array_filter($results, function ($item) {
-            return count($item) > 0;
-        });
+        return $results;
     }
 
 
@@ -818,6 +817,8 @@ SELECT DISTINCT
 FROM acls a
   JOIN user_acls ua
     ON a.acl_id = ua.acl_id
+  JOIN acl_types at
+    ON a.acl_type_id = at.acl_type_id
   LEFT JOIN (
     SELECT
       ah.acl_id,
@@ -825,30 +826,42 @@ FROM acls a
     FROM acl_hierarchies ah
       JOIN hierarchies h
         ON ah.hierarchy_id = h.hierarchy_id
-      JOIN modules m
-        ON h.module_id = m.module_id
     WHERE h.name = :acl_hierarchy_name
-          AND m.name = :module_name
-          AND m.enabled = TRUE
   ) aclh
     ON aclh.acl_id = ua.acl_id
   LEFT JOIN (
     SELECT
       uagbp.acl_id,
+      uagbp.user_id,
       o.abbrev,
       o.id
     FROM modw.organization o
       JOIN user_acl_group_by_parameters uagbp
         ON o.id = uagbp.value
-    ) aclp
-    ON aclp.acl_id = ua.acl_id
-WHERE ua.user_id = :user_id
-ORDER BY COALESCE(aclh.level, 0) DESC
+      JOIN group_bys gb
+        ON uagbp.group_by_id = gb.group_by_id
+      WHERE gb.name = 'provider'
+  ) aclp
+    ON aclp.acl_id = ua.acl_id AND
+    aclp.user_id = ua.user_id
+-- left join to allows us to prefer user_acl_group_by_parameter records
+-- with values found in modw.serviceprovider
+  LEFT JOIN (
+    SELECT DISTINCT
+      gt.organization_id AS id,
+      gt.short_name AS short_name,
+      gt.long_name AS long_name
+    FROM
+      modw.serviceprovider gt
+    WHERE 1
+  ) spv ON spv.id = aclp.id
+WHERE ua.user_id = :user_id AND
+  at.name != 'feature'
+ORDER BY COALESCE(aclh.level, 0) DESC, COALESCE(aclp.id, 0) DESC
 LIMIT 1
 SQL;
         $db = DB::factory('database');
         $rows = $db->query($query, array(
-            ':module_name' => $moduleName,
             ':acl_hierarchy_name' => $aclHierarchyName,
             ':user_id' => $user->getUserID()
         ));
@@ -858,5 +871,39 @@ SQL;
         }
 
         return null;
+    }
+
+    /**
+     * Attempts to retrieve the set of acls who have an acl_type with the name
+     * aclTypeName. If no records are found then an empty array will be
+     * returned.
+     *
+     * @param string $aclTypeName
+     * @return array
+     */
+    public static function getAclsByTypeName($aclTypeName)
+    {
+        $db = DB::factory('database');
+
+        $query = <<<SQL
+SELECT a.* 
+FROM acls a 
+  JOIN acl_types at ON a.acl_type_id = at.acl_type_id
+WHERE at.name = :acl_type_name
+SQL;
+        $rows = $db->query(
+            $query,
+            array(
+                ':acl_type_name' => $aclTypeName
+            )
+        );
+
+        if (count($rows) > 0) {
+            return array_reduce($rows, function ($carry, $item) {
+                $carry[] = new Acl($item);
+                return $carry;
+            }, array());
+        }
+        return array();
     }
 }

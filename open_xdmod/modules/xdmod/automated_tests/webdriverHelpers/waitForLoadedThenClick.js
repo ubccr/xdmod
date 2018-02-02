@@ -2,7 +2,7 @@
  *  Wait for loadingMask to not exist and selector to exist then click on selector
  *
  *  @param {string} selector - element to click on
- *  @param {Number} [maskMs=500] - Milliseconds to wait for mask to not exist
+ *  @param {Number} [maskMs=9000] - Milliseconds to wait for mask to not exist
  *
  *  @uses commands/waitForVisible, helpers/waitAndClick
  */
