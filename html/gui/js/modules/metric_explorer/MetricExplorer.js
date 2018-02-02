@@ -2878,7 +2878,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                         disabled: false,
                                         handler: function(b /*, e*/ ) {
                                             XDMoD.TrackEvent('Metric Explorer', 'Selected a filter from the Create Filter menu', b.text);
-
                                             // Limit the results to the realms which
                                             // have metrics on the chart. (An empty
                                             // list of realms will get results for all
@@ -4194,11 +4193,11 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         this.filtersStore.on('load', this.filterStoreLoad, this);
 
-        this.filtersStore.on('add', function() {
+        this.filtersStore.on('add', function () {
             this.saveQuery();
         }, this);
 
-        this.filtersStore.on('remove', function() {
+        this.filtersStore.on('remove', function () {
             this.saveQuery();
         }, this);
         // ---------------------------------------------------------
@@ -4240,14 +4239,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             scope: this,
             width: 50,
             hidden: false,
-            checkchange: function(record, data_index, checked) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Toggled filter checkbox', Ext.encode({
-                        dimension: record.data.dimension_id,
-                        value: record.data.value_name,
-                        checked: checked
-                    }));
-                } //checkchange
-        }); //activeFilterCheckColumn
+            checkchange: function (record, data_index, checked) {
+                XDMoD.TrackEvent('Metric Explorer', 'Toggled filter checkbox', Ext.encode({
+                    dimension: record.data.dimension_id,
+                    value: record.data.value_name,
+                    checked: checked
+                }));
+            } // checkchange
+        }); // activeFilterCheckColumn
 
         // ---------------------------------------------------------
 
@@ -4279,11 +4278,11 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             tooltip: 'Apply selected filter(s)',
             text: 'Apply',
             scope: this,
-            handler: function(e, b){
-              XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
-              self.saveQuery();
-            } //handler
-        }) //applyFilterSelection
+            handler: function () {
+                XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
+                self.saveQuery();
+            } // handler
+        }); // applyFilterSelection
 
         // ---------------------------------------------------------
 
@@ -4317,7 +4316,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 } //listeners
             }), //Ext.grid.RowSelectionModel
             plugins: [
-                activeFilterCheckColumn //,
+                activeFilterCheckColumn
             ],
             autoExpandColumn: 'value_name',
             store: this.filtersStore,
@@ -4368,14 +4367,13 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
             ],
             tbar: [
-                removeFilterItem
-            ],
-            bbar: [
                 applyFilterSelection,
                 '-',
                 checkAllButton,
                 '-',
-                uncheckAllButton
+                uncheckAllButton,
+                '-',
+                removeFilterItem
             ]
         }); //this.filtersGridPanel
 
@@ -5436,7 +5434,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }
 
         chartStore.on('beforeload', function() {
-            
             if (!this.getDurationSelector().validate()) {
                 return;
             }
@@ -5451,7 +5448,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         chartStore.on('load', function(chartStore) {
-            
             this.firstChange = true;
 
             if (chartStore.getCount() != 1) {
@@ -5909,7 +5905,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
 
                 existingFilterRecord.set('checked', nowChecked);
-                this.saveQuery();
             } else {
                 if (!nowChecked) {
                     return;

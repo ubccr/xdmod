@@ -225,7 +225,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                     value: record.data.value_name,
                     checked: checked
                 }));
-            } //checkchange
+            } // checkchange
         });
         this.filtersStore = new Ext.data.GroupingStore({
             autoDestroy: true,
@@ -277,11 +277,11 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             tooltip: 'Apply selected filter(s)',
             text: 'Apply',
             scope: this,
-            handler: function(e, b){
-              this.record.set('filters', this.getSelectedFilters())
-              XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
-            } //handler
-        }) //applyFilterSelection
+            handler: function () {
+                this.record.set('filters', this.getSelectedFilters());
+                XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
+            } // handler
+        }); // applyFilterSelection
 
         var removeFilterItem = new Ext.Button({
             iconCls: 'delete_filter',
@@ -302,10 +302,10 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             }
         });
 
-        var viewer = CCR.xdmod.ui.Viewer.getViewer(),
-            datasetsMenuDefaultWidth = 1150,
-            viewerWidth = viewer.getWidth();
-    
+        var viewer = CCR.xdmod.ui.Viewer.getViewer();
+        var datasetsMenuDefaultWidth = 1150;
+        var viewerWidth = viewer.getWidth();
+
         var filtersGridPanel = new Ext.grid.GridPanel({
             header: false,
             height: 250,
@@ -902,18 +902,18 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                         iconCls: 'add_filter',
                         scope: this,
                         menu: filtersMenu
-                   },
-                   {
+                    },
+                    {
                         xtype: 'button',
                         text: 'Filters',
                         iconCls: 'filter',
                         menu: new Ext.menu.Menu({
-                          showSeparator: false,
-                          items: filtersGridPanel,
-                          width: viewerWidth < datasetsMenuDefaultWidth ? viewerWidth : datasetsMenuDefaultWidth,
-                          renderTo: document.body
-                    })
-                  }
+                            showSeparator: false,
+                            items: filtersGridPanel,
+                            width: viewerWidth < datasetsMenuDefaultWidth ? viewerWidth : datasetsMenuDefaultWidth,
+                            renderTo: document.body
+                        })
+                    }
                 ]
             }, {
                 fieldLabel: 'Ignore Chart Filters',
