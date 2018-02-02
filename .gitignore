@@ -10,7 +10,7 @@ cache/
 log/
 logs/
 
-# Created by https://www.gitignore.io/api/archives,bower,intellij,xcode,composer,node,osx,sass,maven,java,linux,vim
+# Created by https://www.gitignore.io/api/archives,bower,intellij,xcode,composer,node,osx,sass,maven,java,linux,vim,tags
 
 ### Archives ###
 # It's better to unpack these files and commit the raw source because
@@ -248,6 +248,26 @@ hs_err_pid*
 Session.vim
 .netrwhist
 *~
+
+### Tags ###
+# Ignore tags created by etags, ctags, gtags (GNU global) and cscope
+TAGS
+.TAGS
+!TAGS/
+tags
+.tags
+!tags/
+gtags.files
+GTAGS
+GRTAGS
+GPATH
+GSYMS
+cscope.files
+cscope.out
+cscope.in.out
+cscope.po.out
+
+# END Created by https://www.gitignore.io/api/archives,bower,intellij,xcode,composer,node,osx,sass,maven,java,linux,vim,tags
 
 ## XDMod Specific ignores ##
 
