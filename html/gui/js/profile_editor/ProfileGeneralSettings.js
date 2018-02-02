@@ -192,7 +192,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         if (data.results.first_time_login) {
             // If the user is logging in for the first time, prompt them to validate their email address
             active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_CHANGE;
-        	user_profile_email_addr.addClass('user_profile_highlight_entry');
+			user_profile_email_addr.addClass('user_profile_highlight_entry');
         }
     }
 
@@ -380,7 +380,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 				layout: 'form',
 				items: [{
 					xtype: 'tbtext',
-					text: 'Please ensure the email listed above is accurate. Your e-mail address is required in order to use certain features of XDMoD as well as receive important messages from the XDMoD team. Once you have validated your email, click "Update" to confirm.'
+                    text: 'Please ensure the email listed above is accurate. Your e-mail address is required in order to use certain features of XDMoD as well as receive important messages from the XDMoD team. Once you have validated your email, click "Update" to confirm.'
 				}]
 			});
 			// ------------------------------------------------
