@@ -2249,7 +2249,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         var config = this.getConfig();
         var rec = this.getCurrentRecord();
-        
+
         if (config.featured === JSON.parse(this.currentQueryRecord.data.config).featured &&
           !this.currentQueryRecord.stack.isMarked()) {
             this.summaryDirty = true;
@@ -2878,6 +2878,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                         disabled: false,
                                         handler: function(b /*, e*/ ) {
                                             XDMoD.TrackEvent('Metric Explorer', 'Selected a filter from the Create Filter menu', b.text);
+
                                             // Limit the results to the realms which
                                             // have metrics on the chart. (An empty
                                             // list of realms will get results for all
@@ -5435,6 +5436,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }
 
         chartStore.on('beforeload', function() {
+            
             if (!this.getDurationSelector().validate()) {
                 return;
             }
@@ -5449,6 +5451,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         chartStore.on('load', function(chartStore) {
+            
             this.firstChange = true;
 
             if (chartStore.getCount() != 1) {
