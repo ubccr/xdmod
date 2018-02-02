@@ -136,7 +136,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                     scope: this,
                     handler: function (b, e) {
                         XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected filter from menu', b.text);
-                        filterButtonHandler.call(b.scope, filtersGridPanel.toolbars[0].el, b.dimension, b.text, b.realms);
+                        filterButtonHandler.call(b.scope, this.items.items[0].items.items[11].items.items[0].el, b.dimension, b.text, b.realms);
                     }
                 });
             } else {
@@ -220,7 +220,6 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             width: 50,
             hidden: false,
             checkchange: function (record, data_index, checked) {
-                this.scope.record.set('filters', this.scope.getSelectedFilters());
                 XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Toggled filter checkbox', Ext.encode({
                     dimension: record.data.dimension_id,
                     value: record.data.value_name,
@@ -273,6 +272,17 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 });
             }
         });
+
+        var applyFilterSelection = new Ext.Button({
+            tooltip: 'Apply selected filter(s)',
+            text: 'Apply',
+            scope: this,
+            handler: function(e, b){
+              this.record.set('filters', this.getSelectedFilters())
+              XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
+            } //handler
+        }) //applyFilterSelection
+
         var removeFilterItem = new Ext.Button({
             iconCls: 'delete_filter',
             tooltip: 'Delete highlighted filter(s)',
@@ -291,9 +301,14 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 filtersGridPanel.store.remove(records);
             }
         });
+
+        var viewer = CCR.xdmod.ui.Viewer.getViewer(),
+            datasetsMenuDefaultWidth = 1150,
+            viewerWidth = viewer.getWidth();
+    
         var filtersGridPanel = new Ext.grid.GridPanel({
             header: false,
-            height: 130,
+            height: 250,
             id: 'grid_filters_' + this.id,
             useArrows: true,
             autoScroll: true,
@@ -350,22 +365,15 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                     dataIndex: 'value_name'
                 }
             ],
-            tbar: [{
-                    scope: this,
-                    iconCls: 'add_filter',
-                    text: 'Add Filter',
-                    handler: function () {
-                        XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Create Filter');
-                    },
-                    menu: filtersMenu
-                },
-                '->',
+            tbar: [
+                removeFilterItem
+            ],
+            bbar: [
+                applyFilterSelection,
                 '-',
                 checkAllButton,
                 '-',
-                uncheckAllButton,
-                '-',
-                removeFilterItem
+                uncheckAllButton
             ]
         });
 
@@ -374,7 +382,6 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         }
         this.filtersStore.on('add', updateFilters, this);
         this.filtersStore.on('remove', updateFilters, this);
-        this.filtersStore.on('update', updateFilters, this);
         this.has_std_err = this.realms[this.record.data.realm]['metrics'][this.record.data.metric].std_err;
         this.stdErrorCheckBox = new Ext.form.Checkbox({
             fieldLabel: 'Std Err Bars',
@@ -886,9 +893,28 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             },
             this.enabledDatasetCheckBox, {
                 fieldLabel: 'Local Filters',
-                xtype: 'panel',
-                layout: 'fit',
-                items: filtersGridPanel
+                xtype: 'container',
+                layout: 'hbox',
+                items: [
+                    {
+                        xtype: 'button',
+                        text: 'Add Filter',
+                        iconCls: 'add_filter',
+                        scope: this,
+                        menu: filtersMenu
+                   },
+                   {
+                        xtype: 'button',
+                        text: 'Filters',
+                        iconCls: 'filter',
+                        menu: new Ext.menu.Menu({
+                          showSeparator: false,
+                          items: filtersGridPanel,
+                          width: viewerWidth < datasetsMenuDefaultWidth ? viewerWidth : datasetsMenuDefaultWidth,
+                          renderTo: document.body
+                    })
+                  }
+                ]
             }, {
                 fieldLabel: 'Ignore Chart Filters',
                 name: 'ignore_global',

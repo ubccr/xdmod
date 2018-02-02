@@ -2249,8 +2249,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         var config = this.getConfig();
         var rec = this.getCurrentRecord();
-
-      if (config.featured === JSON.parse(this.currentQueryRecord.data.config).featured &&
+        
+        if (config.featured === JSON.parse(this.currentQueryRecord.data.config).featured &&
           !this.currentQueryRecord.stack.isMarked()) {
             this.summaryDirty = true;
         }
@@ -2878,7 +2878,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                         disabled: false,
                                         handler: function(b /*, e*/ ) {
                                             XDMoD.TrackEvent('Metric Explorer', 'Selected a filter from the Create Filter menu', b.text);
-
                                             // Limit the results to the realms which
                                             // have metrics on the chart. (An empty
                                             // list of realms will get results for all
@@ -4201,12 +4200,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         this.filtersStore.on('remove', function() {
             this.saveQuery();
         }, this);
-
-        this.filtersStore.on('update', function(t, record, op) {
-            record.commit(true);
-            this.saveQuery();
-        }, this);
-
         // ---------------------------------------------------------
 
         var checkAllButton = new Ext.Button({
@@ -4278,6 +4271,18 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     this.filtersGridPanel.store.remove(records);
                 } //handler
         }); //removeFilterItem
+
+        //----------------------------------------------------------
+
+        var applyFilterSelection = new Ext.Button({
+            tooltip: 'Apply selected filter(s)',
+            text: 'Apply',
+            scope: this,
+            handler: function(e, b){
+              XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
+              self.saveQuery();
+            } //handler
+        }) //applyFilterSelection
 
         // ---------------------------------------------------------
 
@@ -4362,11 +4367,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
             ],
             tbar: [
+                removeFilterItem
+            ],
+            bbar: [
+                applyFilterSelection,
+                '-',
                 checkAllButton,
                 '-',
-                uncheckAllButton,
-                '-',
-                removeFilterItem
+                uncheckAllButton
             ]
         }); //this.filtersGridPanel
 
@@ -5427,7 +5435,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }
 
         chartStore.on('beforeload', function() {
-
             if (!this.getDurationSelector().validate()) {
                 return;
             }
@@ -5442,7 +5449,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         chartStore.on('load', function(chartStore) {
-
             this.firstChange = true;
 
             if (chartStore.getCount() != 1) {
@@ -5900,6 +5906,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
 
                 existingFilterRecord.set('checked', nowChecked);
+                this.saveQuery();
             } else {
                 if (!nowChecked) {
                     return;
