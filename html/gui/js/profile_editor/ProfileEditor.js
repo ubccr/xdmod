@@ -6,8 +6,6 @@ XDMoD.ProfileEditorConstants = {
 
    PASSWORD:             0,
    WELCOME_EMAIL_CHANGE: 1,
-   WELCOME_EMAIL_NEEDED: 2,
-   EMAIL_NEEDED:         3,
    FEDERATED_USER:       5
 
 };//XDMoD.ProfileEditorConstants
