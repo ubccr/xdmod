@@ -8,7 +8,6 @@ XDMoD.ProfileEditorConstants = {
    WELCOME_EMAIL_CHANGE: 1,
    WELCOME_EMAIL_NEEDED: 2,
    EMAIL_NEEDED:         3,
-   XSEDE_SPLASH:         4,
    FEDERATED_USER:       5
 
 };//XDMoD.ProfileEditorConstants
