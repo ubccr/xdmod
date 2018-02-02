@@ -4367,13 +4367,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
             ],
             tbar: [
+                removeFilterItem
+            ],
+            bbar: [
                 applyFilterSelection,
                 '-',
                 checkAllButton,
                 '-',
-                uncheckAllButton,
-                '-',
-                removeFilterItem
+                uncheckAllButton
             ]
         }); //this.filtersGridPanel
 
