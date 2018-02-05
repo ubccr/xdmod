@@ -4206,12 +4206,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             text: 'Select All',
             scope: this,
             handler: function( /*b, e*/ ) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Clicked on Check All in Chart Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Check All in Chart Filters pane');
 
-                    this.filtersStore.each(function(r) {
-                        r.set('checked', true);
-                    });
-                } // handler
+                this.filtersStore.each(function (r) {
+                    r.set('checked', true);
+                });
+            } // handler
         }); // selectAllButton
 
         // ---------------------------------------------------------
@@ -4220,12 +4220,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             text: 'Clear All',
             scope: this,
             handler: function( /*b, e*/ ) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Clicked on Uncheck All in Chart Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Uncheck All in Chart Filters pane');
 
-                    this.filtersStore.each(function(r) {
-                        r.set('checked', false);
-                    });
-                } // handler
+                this.filtersStore.each(function (r) {
+                    r.set('checked', false);
+                });
+            } // handler
         }); // clearAllButton
 
         // ---------------------------------------------------------
