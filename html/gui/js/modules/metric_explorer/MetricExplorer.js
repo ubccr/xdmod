@@ -4202,8 +4202,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }, this);
         // ---------------------------------------------------------
 
-        var checkAllButton = new Ext.Button({
-            text: 'Check All',
+        var selectAllButton = new Ext.Button({
+            text: 'Select All',
             scope: this,
             handler: function( /*b, e*/ ) {
                     XDMoD.TrackEvent('Metric Explorer', 'Clicked on Check All in Chart Filters pane');
@@ -4211,13 +4211,13 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     this.filtersStore.each(function(r) {
                         r.set('checked', true);
                     });
-                } //handler
-        }); //checkAllButton
+                } // handler
+        }); // selectAllButton
 
         // ---------------------------------------------------------
 
-        var uncheckAllButton = new Ext.Button({
-            text: 'Uncheck All',
+        var clearAllButton = new Ext.Button({
+            text: 'Clear All',
             scope: this,
             handler: function( /*b, e*/ ) {
                     XDMoD.TrackEvent('Metric Explorer', 'Clicked on Uncheck All in Chart Filters pane');
@@ -4225,8 +4225,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     this.filtersStore.each(function(r) {
                         r.set('checked', false);
                     });
-                } //handler
-        }); //uncheckAllButton
+                } // handler
+        }); // clearAllButton
 
         // ---------------------------------------------------------
 
@@ -4295,6 +4295,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             sortable: false,
             enableHdMenu: false,
             margins: '0 0 0 0',
+            buttonAlign: 'left',
             sm: new Ext.grid.RowSelectionModel({
                 singleSelect: false,
                 listeners: {
@@ -4369,14 +4370,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             tbar: [
                 removeFilterItem
             ],
-            bbar: [
-                applyFilterSelection,
+            fbar: [
+                clearAllButton,
                 '-',
-                checkAllButton,
-                '-',
-                uncheckAllButton
+                selectAllButton,
+                '->',
+                applyFilterSelection
             ]
-        }); //this.filtersGridPanel
+        }); // this.filtersGridPanel
 
         // ---------------------------------------------------------
 

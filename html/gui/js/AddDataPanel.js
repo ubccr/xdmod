@@ -111,6 +111,8 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         };
     },
     initComponent: function () {
+        var filterButtonHandler;
+
         if (!this.record && this.store) {
             this.record = CCR.xdmod.ui.AddDataPanel.initRecord(this.store, this.config, this.getSelectedFilters(), this.timeseries);
         }
@@ -123,6 +125,15 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         var filterItems = [];
         var filterMap = {};
         filtersMenu.removeAll(true);
+
+        this.addFilterButton = new Ext.Button({
+            text: "Add Filter",
+            xtype: 'button',
+            iconCls: 'add_filter',
+            scope: this,
+            menu: filtersMenu
+        });
+
         var realm_dimensions = this.realms[this.record.data.realm]['dimensions'];
         for (x in realm_dimensions) {
             if (x == 'none' || realm_dimensions[x].text == undefined) continue;
@@ -136,7 +147,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                     scope: this,
                     handler: function (b, e) {
                         XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected filter from menu', b.text);
-                        filterButtonHandler.call(b.scope, this.items.items[0].items.items[11].items.items[0].el, b.dimension, b.text, b.realms);
+                        filterButtonHandler.call(b.scope, b.dimension, b.text, b.realms);
                     }
                 });
             } else {
@@ -157,7 +168,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             }
         );
         filtersMenu.addItem(filterItems);
-        var filterButtonHandler = function (el, dim_id, dim_label, realms) {
+        var filterButtonHandler = function (dim_id, dim_label, realms) {
             if (!dim_id || !dim_label) return;
             var filterDimensionPanel = new CCR.xdmod.ui.FilterDimensionPanel({
                 origin_module: 'Metric Explorer',
@@ -196,7 +207,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             });
             addFilterMenu.ownerCt = this;
             addFilterMenu = Ext.menu.MenuMgr.get(addFilterMenu);
-            addFilterMenu.show(el, 'tl-bl?');
+            addFilterMenu.show(this.addFilterButton.el, 'tl-bl?');
         }
         var realmData = [];
         for (realm in this.realms) {
@@ -252,8 +263,8 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             var currentFilters = jQuery.extend({}, this.record.data.filters);
             this.filtersStore.loadData(currentFilters, false);
         }
-        var checkAllButton = new Ext.Button({
-            text: 'Check All',
+        var selectAllButton = new Ext.Button({
+            text: 'Select All',
             scope: this,
             handler: function (b, e) {
                 XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Check All in Local Filters pane');
@@ -262,8 +273,8 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 });
             }
         });
-        var uncheckAllButton = new Ext.Button({
-            text: 'Uncheck All',
+        var clearAllButton = new Ext.Button({
+            text: 'Clear All',
             scope: this,
             handler: function (b, e) {
                 XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Uncheck All in Local Filters pane');
@@ -316,6 +327,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             enableHdMenu: false,
             loadMask: true,
             margins: '0 0 0 0',
+            buttonAlign: 'left',
             view: new Ext.grid.GroupingView({
                 emptyText: 'No filters created.<br/> Click on <img class="x-panel-inline-icon add_filter" src="gui/lib/extjs/resources/images/default/s.gif" alt=""> to create filters.',
                 forceFit: true,
@@ -368,12 +380,12 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             tbar: [
                 removeFilterItem
             ],
-            bbar: [
-                applyFilterSelection,
+            fbar: [
+                clearAllButton,
                 '-',
-                checkAllButton,
-                '-',
-                uncheckAllButton
+                selectAllButton,
+                '->',
+                applyFilterSelection
             ]
         });
 
@@ -896,13 +908,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 xtype: 'container',
                 layout: 'hbox',
                 items: [
-                    {
-                        xtype: 'button',
-                        text: 'Add Filter',
-                        iconCls: 'add_filter',
-                        scope: this,
-                        menu: filtersMenu
-                    },
+                    this.addFilterButton,
                     {
                         xtype: 'button',
                         text: 'Filters',
