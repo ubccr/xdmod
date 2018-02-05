@@ -127,7 +127,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         filtersMenu.removeAll(true);
 
         this.addFilterButton = new Ext.Button({
-            text: "Add Filter",
+            text: 'Add Filter',
             xtype: 'button',
             iconCls: 'add_filter',
             scope: this,
@@ -168,7 +168,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             }
         );
         filtersMenu.addItem(filterItems);
-        var filterButtonHandler = function (dim_id, dim_label, realms) {
+        filterButtonHandler = function (dim_id, dim_label, realms) {
             if (!dim_id || !dim_label) return;
             var filterDimensionPanel = new CCR.xdmod.ui.FilterDimensionPanel({
                 origin_module: 'Metric Explorer',
