@@ -16,7 +16,6 @@ Open XDMoD requires the following software:
     - [cURL][php-curl]
     - [DOM][php-dom]
     - [XMLWriter][php-xmlwriter]
-    - [PEAR Log Package][pear-log]
     - [PEAR MDB2 Package][pear-mdb2]
     - [PEAR MDB2 MySQL Driver][pear-mdb2-mysql]
 - [Java][] 1.8 including the [JDK][]
@@ -40,7 +39,6 @@ Open XDMoD requires the following software:
 [php-curl]:        http://php.net/manual/en/book.curl.php
 [php-dom]:         http://php.net/manual/en/book.dom.php
 [php-xmlwriter]:   http://php.net/manual/en/book.xmlwriter.php
-[pear-log]:        http://pear.php.net/package/Log
 [pear-mdb2]:       http://pear.php.net/package/MDB2
 [pear-mdb2-mysql]: http://pear.php.net/package/MDB2_Driver_mysql
 [java]:            http://java.com/
@@ -72,7 +70,7 @@ added with this command for CentOS 7:
     # yum install epel-release
 
     # yum install httpd php php-cli php-mysql php-gd php-mcrypt \
-                  gmp-devel php-gmp php-pdo php-xml php-pear-Log \
+                  gmp-devel php-gmp php-pdo php-xml \
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   java-1.7.0-openjdk java-1.7.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
