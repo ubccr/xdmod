@@ -9,18 +9,27 @@ XDMoD.CaptchaField = Ext.extend(Ext.Panel, {
     afterRender: function () {
         var recaptchaTag = document.getElementById('contact-recaptcha');
         recaptchaTag.dataset.callback = this.signupFormSubmit;
+        if (typeof grecaptcha === 'undefined') {
+            CCR.xdmod.ui.userManagementMessage(
+                'Error Loading reCAPTCHA. Contact an administrator directly.',
+                false
+            );
+            return;
+        }
         this.grecaptchaid = grecaptcha.render(recaptchaTag);
+        if (this.grecaptchaid > 0) {
+            this.elementId = 'g-recaptcha-response-' + this.grecaptchaid;
+        } else {
+            this.elementId = 'g-recaptcha-response';
+        }
+    },
+    getResponseField: function () {
+        if (this.elementId) {
+            return document.getElementById(this.elementId).value;
+        }
+        return '';
     },
     initComponent: function () {
-        var self = this;
-        self.grecaptchaid = 0;
-        self.getResponseField = function () {
-            var elementId = 'g-recaptcha-response';
-            if (self.grecaptchaid > 0) {
-                elementId += '-' + self.grecaptchaid;
-            }
-            return document.getElementById(elementId).value;
-        };
         XDMoD.CaptchaField.superclass.initComponent.call(this);
     }
 });

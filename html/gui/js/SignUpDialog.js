@@ -135,7 +135,7 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
 
         var captchaField = null;
 
-        if (CCR.xdmod.use_captcha) {
+        if (CCR.xdmod.captcha_sitekey.length > 0) {
             captchaField = new XDMoD.CaptchaField({
                 style: 'margin-left: 130px'
             });//captchaField
@@ -156,10 +156,19 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
                 field_of_science: 'not available'
             };
 
-            if (captchaField && CCR.xdmod.captcha_ready) {
+            if (captchaField) {
                 var captchaResponse = Ext.util.Format.trim(captchaField.getResponseField());
                 if (captchaResponse.length === 0) {
-                    CCR.xdmod.ui.userManagementMessage("Please answer the reCAPTCHA challenge.", false);
+                    CCR.xdmod.ui.userManagementMessage(
+                        'Please answer the reCAPTCHA challenge.',
+                        false
+                    );
+                    return;
+                } else if (captchaResponse === null) {
+                    CCR.xdmod.ui.userManagementMessage(
+                        'Error Loading reCAPTCHA',
+                        false
+                    );
                     return;
                 }
 

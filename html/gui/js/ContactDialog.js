@@ -79,7 +79,7 @@ XDMoD.AbstractContactDialog = Ext.extend(Ext.Window, {
 
         var captchaField = null;
 
-        if (CCR.xdmod.use_captcha && !CCR.xdmod.logged_in) {
+        if (CCR.xdmod.captcha_sitekey.length > 0) {
             captchaField = new XDMoD.CaptchaField({
                 style: 'margin-left: 60px; margin-bottom: 10px;'
             });//captchaField
@@ -108,7 +108,7 @@ XDMoD.AbstractContactDialog = Ext.extend(Ext.Window, {
                 reason: self.contactReason
             };
 
-            if (captchaField && CCR.xdmod.captcha_ready) {
+            if (captchaField) {
                 var captchaResponse = Ext.util.Format.trim(captchaField.getResponseField());
 
                 if (captchaResponse.length === 0) {
