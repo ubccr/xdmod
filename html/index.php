@@ -295,7 +295,7 @@ use Models\Services\Realms;
                     $captchaSiteKey = xd_utilities\getConfiguration('mailer', 'captcha_public_key');
                     $captchaSecret = xd_utilities\getConfiguration('mailer', 'captcha_private_key');
                     if('' === $captchaSiteKey || '' === $captchaSecret){
-                        $captchaSiteKey;
+                        $captchaSiteKey = '';
                     }
                 }
             }

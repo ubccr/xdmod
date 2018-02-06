@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "65cf0dae717c5d8337d089443560adb3",
+    "content-hash": "984c7bb4609112f3b26def3c12f7972e",
     "packages": [
         {
             "name": "apache/commons-beanutils",
