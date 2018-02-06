@@ -73,5 +73,4 @@ class LogTest extends \PHPUnit_Framework_TestCase
             array(Log::ALERT, 2)
         );
     }
-
 }
