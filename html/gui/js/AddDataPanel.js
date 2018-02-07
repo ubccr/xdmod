@@ -291,6 +291,12 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             handler: function () {
                 this.record.set('filters', this.getSelectedFilters());
                 XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
+                this.filtersStore.each(function () {
+                    // Deletes the dirty and modified property from the record
+                    // to signify the record is now unmodified
+                    delete this.dirty;
+                    delete this.modified;
+                });
             } // handler
         }); // applyFilterSelection
 
@@ -310,6 +316,26 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                     }));
                 } //for (each record selected)
                 filtersGridPanel.store.remove(records);
+            }
+        });
+
+        var cancelFilterSelection = new Ext.Button({
+            tooltip: 'Cancel filter selections',
+            text: 'Cancel',
+            scope: this,
+            handler: function () {
+                this.filtersStore.each(function (record) {
+                    if (record.modified !== null) {
+                        if (record.get('checked') !== record.modified.checked) {
+                            var checked = !record.get('checked') || false;
+                            record.set('checked', checked);
+                            // Deletes the dirty and modified property from the record
+                            // to signify the record is now unmodified
+                            delete this.dirty;
+                            delete this.modified;
+                        }
+                    }
+                });
             }
         });
 
@@ -385,7 +411,9 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 '-',
                 selectAllButton,
                 '->',
-                applyFilterSelection
+                applyFilterSelection,
+                '-',
+                cancelFilterSelection
             ]
         });
 
