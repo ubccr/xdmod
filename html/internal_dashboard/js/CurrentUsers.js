@@ -359,6 +359,8 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel,  {
                   text: 'Refresh',
                   handler: function(){
                      self.storeProvider.reload();
+                     var existingUsers = Ext.getCmp('admin_tab_existing_user');
+                     existingUsers.reloadUserList();
                   }
                },
 
