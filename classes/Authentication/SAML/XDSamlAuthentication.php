@@ -88,9 +88,14 @@ class XDSamlAuthentication
         if (!isset($samlAttrs["username"])) {
             $thisUserName = null;
         } else {
-            $thisUserName = !empty($samlAttrs['username'][0]) ? $samlAttrs['username'][0] : null;  # code...
+            $thisUserName = !empty($samlAttrs['username'][0]) ? $samlAttrs['username'][0] : null;
         }
-        if ($this->_as->isAUthenticated() && !empty($thisUserName)) {
+        if (!isset($samlAttrs["system_username"])) {
+            $thisSystemUserName = $thisUserName;
+        } else {
+            $thisSystemUserName = !empty($samlAttrs['system_username'][0]) ? $samlAttrs['system_username'][0] : null;
+        }
+        if ($this->_as->isAuthenticated() && !empty($thisUserName)) {
             $xdmodUserId = \XDUser::userExistsWithUsername($thisUserName);
             if ($xdmodUserId !== INVALID) {
                 return \XDUser::getUserByID($xdmodUserId);
@@ -104,7 +109,7 @@ class XDSamlAuthentication
                 }
             }
             $emailAddress = !empty($samlAttrs['email_address'][0]) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
-            $personId = \DataWarehouse::getPersonIdByUsername($thisUserName);
+            $personId = \DataWarehouse::getPersonIdByUsername($thisSystemUserName);
             if (!isset($samlAttrs["first_name"])) {
                 $samlAttrs["first_name"] = array("UNKNOWN");
             }
@@ -137,7 +142,7 @@ class XDSamlAuthentication
                 $this->logger->err('User creation failed: ' . $e->getMessage());
                 return false;
             }
-            self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != -2));
+            self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
             return $newUser;
         }
         return false;
