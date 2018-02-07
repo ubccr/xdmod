@@ -54,32 +54,32 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
     cachedAutoSelectUserID: undefined,
 
     reloadUserList: function (user_type, select_user_with_id) {
-
         if (!user_type) {
             var currentType = this.groupToggle.text;
             var items = this.groupToggle.menu.items.items;
+            /* eslint-disable block-scoped-var */
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 if (item.text.indexOf(currentType) !== -1) {
+                    // eslint-disable-next-line no-param-reassign
                     user_type = item.type_id;
                     break;
                 }
             }
         }
 
+
         this.cachedAutoSelectUserID = select_user_with_id;
 
         if (this.userTypes.length === 0) {
-
             // "Current Users" tab has not yet been visited.  Simply
             // cache the user type ID so that when the user types store
             // does load, the intended category can be fetched.
             this.cachedUserTypeID = user_type;
         }
-
+        // eslint-disable-next-line no-redeclare
         for (var i = 0; i < this.userTypes.length; i++) {
-
-            if (this.userTypes[i].id == user_type) {
+            if (this.userTypes[i].id === user_type) {
                 this.cachedUserTypeID = user_type;
 
                 this.groupToggle.setText(this.userTypes[i].text);
@@ -92,6 +92,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 return;
             }
         }
+        /* eslint-enable block-scoped-var */
     },
 
     initComponent: function () {
