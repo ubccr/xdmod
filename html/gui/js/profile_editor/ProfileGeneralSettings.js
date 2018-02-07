@@ -382,7 +382,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 					xtype: 'tbtext',
     text: 'Please ensure the email listed above is accurate. Your e-mail address is required in order to use certain features of XDMoD as well as receive important messages from the XDMoD team. Once you have validated your email, click "Update" to confirm.'
 }, {
-	html: '<br/>If you require elevated access (e.g. Center Director, Program Officer), please contact <a href="mailto:' + CCR.xdmod.tech_support_recipient + '">' + CCR.xdmod.tech_support_recipient + '</a> to request such privileges.'
+	html: '<br/>If you require elevated access (e.g. Center Director, Center Staff, etc.), please contact <a href="mailto:' + CCR.xdmod.tech_support_recipient + '">' + CCR.xdmod.tech_support_recipient + '</a> to request such privileges.'
 }]
 			});
 			// ------------------------------------------------
