@@ -88,12 +88,12 @@ class XDSamlAuthentication
         if (!isset($samlAttrs["username"])) {
             $thisUserName = null;
         } else {
-            $thisUserName = !empty($samlAttrs['username'][0]) ? $samlAttrs['username'][0] : null;  # code...
+            $thisUserName = !empty($samlAttrs['username'][0]) ? $samlAttrs['username'][0] : null;
         }
         if (!isset($samlAttrs["system_username"])) {
             $thisSystemUserName = $thisUserName;
         } else {
-            $thisSystemUserName = !empty($samlAttrs['system_username'][0]) ? $samlAttrs['system_username'][0] : null;  # code...
+            $thisSystemUserName = !empty($samlAttrs['system_username'][0]) ? $samlAttrs['system_username'][0] : null;
         }
         if ($this->_as->isAuthenticated() && !empty($thisUserName)) {
             $xdmodUserId = \XDUser::userExistsWithUsername($thisUserName);
