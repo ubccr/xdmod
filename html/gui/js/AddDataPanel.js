@@ -290,13 +290,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             scope: this,
             handler: function () {
                 this.record.set('filters', this.getSelectedFilters());
-                XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
-                this.filtersStore.each(function () {
-                    // Deletes the dirty and modified property from the record
-                    // to signify the record is now unmodified
-                    delete this.dirty;
-                    delete this.modified;
-                });
+                this.filtersStore.commitChanges();
             } // handler
         }); // applyFilterSelection
 
@@ -324,18 +318,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             text: 'Cancel',
             scope: this,
             handler: function () {
-                this.filtersStore.each(function (record) {
-                    if (record.modified !== null) {
-                        if (record.get('checked') !== record.modified.checked) {
-                            var checked = !record.get('checked') || false;
-                            record.set('checked', checked);
-                            // Deletes the dirty and modified property from the record
-                            // to signify the record is now unmodified
-                            delete this.dirty;
-                            delete this.modified;
-                        }
-                    }
-                });
+                this.filtersStore.rejectChanges();
             }
         });
 
