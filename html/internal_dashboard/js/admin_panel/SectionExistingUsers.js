@@ -1073,8 +1073,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     */
                     var txtAccountTimestamps = Ext.getCmp('txtAccountTimestamps');
                     var refreshEl = function() {
-                         if ( this.el === undefined
-                                || this.el === null ) {
+                         if (this.el === undefined || this.el === null) {
 
                             this.el = Ext.get(this.id);
                         }
@@ -1154,7 +1153,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
                         else {
                             cmbInstitution.setDisabled(true);
-                            cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
                         }
 
                         // -----------------------------
