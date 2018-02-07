@@ -142,7 +142,7 @@ class XDSamlAuthentication
                 $this->logger->err('User creation failed: ' . $e->getMessage());
                 return false;
             }
-            self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != -2));
+            self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
             return $newUser;
         }
         return false;
