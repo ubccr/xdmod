@@ -67,7 +67,7 @@ class DataWarehouse
 	 *
 	 * @param string username
 	 *
-	 * @return person_id or -2
+	 * @return person_id or UNKNOWN_USER_TYPE (-1)
 	 ************************************************************/
     public function getPersonIdByUsername($username = null){
         if(!empty($username)){
@@ -85,7 +85,7 @@ class DataWarehouse
                 return $personId[0]['person_id'];
             }
         }
-        return -2;
+        return UNKNOWN_USER_TYPE;
     }
     /************************************************************
 	 * @function getAllocations()
