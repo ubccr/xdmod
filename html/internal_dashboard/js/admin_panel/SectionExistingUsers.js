@@ -54,6 +54,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
     cachedAutoSelectUserID: undefined,
 
     reloadUserList: function (user_type, select_user_with_id) {
+        // If a user_type is not supplied then use the currently selected user_type
         if (!user_type) {
             var currentType = this.groupToggle.text;
             var items = this.groupToggle.menu.items.items;
