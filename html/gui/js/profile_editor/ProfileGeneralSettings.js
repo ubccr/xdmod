@@ -185,9 +185,9 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 					// ================================================
 
 					//active_layout_index = XDMoD.ProfileEditorConstants.PASSWORD;
-					if(data.results.is_federated_user && data.results.email_address.length === 0){
-						XDMoD.Profile.logoutOnClose = true;
-					}
+    if (data.results.is_federated_user && data.results.email_address.length === 0) {
+        XDMoD.Profile.logoutOnClose = true;
+    }
     if (data.results.is_federated_user === true) {
         if (data.results.first_time_login) {
             // If the user is logging in for the first time, prompt them to validate their email address
@@ -382,7 +382,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 					xtype: 'tbtext',
     text: 'Please ensure the email listed above is accurate. Your e-mail address is required in order to use certain features of XDMoD as well as receive important messages from the XDMoD team. Once you have validated your email, click "Update" to confirm.'
 }, {
-	html: '<br/>If you require elevated access (e.g. Center Director, Center Staff, etc.), please contact <a href="mailto:' + CCR.xdmod.tech_support_recipient + '">' + CCR.xdmod.tech_support_recipient + '</a> to request such privileges.'
+    html: '<br/>If you require elevated access (e.g. Center Director, Center Staff, etc.), please contact <a href="mailto:' + CCR.xdmod.tech_support_recipient + '">' + CCR.xdmod.tech_support_recipient + '</a> to request such privileges.'
 }]
 			});
 			// ------------------------------------------------
@@ -401,7 +401,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
 				items: [
 					sectionPassword,
-					sectionFederatedEmail,
+    sectionFederatedEmail,
 					sectionFederatedUser
 				]
 
