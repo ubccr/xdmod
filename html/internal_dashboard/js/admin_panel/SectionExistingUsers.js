@@ -822,6 +822,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
 
+                // When we are working on a 'Federated' user the cmbUserType will
+                // not have a value ( as it's hidden ). In that case use the
+                // cached_user_type variable which is populated when we fetch
+                // the users details.
+                var userType = cmbUserType.isVisible() ? cmbUserType.getValue() : cached_user_type;
                 var objParams = {
                     operation: 'update_user',
                     uid: selected_user_id,
@@ -833,7 +838,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     institution: (cmbInstitution.getValue().length === 0) ?
                                  '-1' :
                                  cmbInstitution.getValue(),
-                    user_type: cmbUserType.getValue()
+                    user_type: userType
                 };
 
                 Ext.Ajax.request({
