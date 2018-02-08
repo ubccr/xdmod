@@ -1039,7 +1039,7 @@ SQL;
 
         $time_frags = explode('.', $init_time);
 
-        return date('m/d/Y, g:i:s A', $time_frags[0]);
+        return date('Y-m-d, H:i:s', $time_frags[0]);
 
     }//getLastLoginTimestamp
 
@@ -2589,27 +2589,11 @@ SQL;
     private function _formalizeTimestamp($db_timestamp)
     {
 
-        if (!isset($db_timestamp)) return "??";
+        if (!isset($db_timestamp)) {
+            return "??";
+        }
 
-        list($db_date, $db_time) = explode(' ', $db_timestamp);
-
-        list($year, $month, $day) = explode('-', $db_date);
-
-        $formal_date = $month . '/' . $day . '/' . $year;
-
-        // ------------------------
-
-        list($m_hour, $min, $sec) = explode(':', $db_time);
-
-        $meridiem = ($m_hour > 11) ? 'PM' : 'AM';
-
-        $s_hour = ($m_hour > 12) ? $m_hour - 12 : $m_hour;
-        if ($s_hour == 0) $s_hour = 12;
-
-        $formal_time = $s_hour . ':' . $min . ':' . $sec;
-
-        return $formal_date . ', ' . $formal_time . ' ' . $meridiem;
-
+        return date('Y-m-d, H:i:s', strtotime($db_timestamp));
     }//_formalizeTimestamp
 
     // ---------------------------
