@@ -414,10 +414,10 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 ],
 
                 listeners: {
-                    rowclick: function (thisgrid, rowIndex) {
+                    rowclick: function (thisGrid, rowIndex) {
                         selectedUser = usersStore.getAt(rowIndex);
                     },
-                    rowdblclick: function (thisgrid, rowIndex) {
+                    rowdblclick: function (thisGrid, rowIndex) {
                         selectedUser = usersStore.getAt(rowIndex);
                         okButton.handler();
                     }
