@@ -159,7 +159,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             colIndex,
             store
         ) {
-            if (val !== '0') {
+            if (val !== 0) {
                 color = '#00f';
                 d = new Date(val);
                 d = DateUtilities.convertDateToProperString(d);
