@@ -314,8 +314,13 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         };
 
         this.displayUserGrid = function (users) {
-            var userFields, usersArray, usersStore, grid, win, selectedUser = null;
-
+            var userFields;
+            var usersArray;
+            var usersStore;
+            var grid;
+            var win;
+            var selectedUser = null;
+            
             userFields = [
                 'person_id',
                 'person_name',
@@ -349,7 +354,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 text: 'OK',
                 scope: this,
                 handler: function () {
-                    if ( null === selectedUser ) {
+                    if (selectedUser === null) {
                         CCR.xdmod.ui.userManagementMessage('Select a user from the list.', false);
                     } else {
                         cmbUserMapping.initializeWithValue(
@@ -409,7 +414,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 ],
 
                 listeners: {
-                    rowclick: function (grid, rowIndex) {
+                    rowclick: function (thisgrid, rowIndex) {
                         selectedUser = usersStore.getAt(rowIndex);
                     }
                 },
