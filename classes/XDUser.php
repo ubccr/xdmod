@@ -1027,7 +1027,7 @@ SQL;
     public function getLastLoginTimestamp()
     {
 
-        $results = $this->_pdo->query("SELECT init_time FROM SessionManager WHERE user_id=:user_id ORDER BY init_time DESC LIMIT 1", array(
+        $results = $this->_pdo->query("SELECT FROM_UNIXTIME(init_time) as lastLogin FROM SessionManager WHERE user_id=:user_id ORDER BY init_time DESC LIMIT 1", array(
             ':user_id' => $this->_id,
         ));
 
@@ -1035,12 +1035,7 @@ SQL;
             return "Never logged in";
         }
 
-        $init_time = $results[0]['init_time'];
-
-        $time_frags = explode('.', $init_time);
-
-        return date('Y-m-d, H:i:s', $time_frags[0]);
-
+        return $results[0]['lastLogin'];
     }//getLastLoginTimestamp
 
     // ---------------------------
@@ -2542,7 +2537,7 @@ SQL;
 
     public function getCreationTimestamp()
     {
-        return $this->_formalizeTimestamp($this->_timeCreated);
+        return $this->_timeCreated;
     }
 
     // ---------------------------
@@ -2572,29 +2567,8 @@ SQL;
 
     public function getUpdateTimestamp()
     {
-        return $this->_formalizeTimestamp($this->_timeUpdated);
+        return $this->_timeUpdated;
     }
-
-    // ---------------------------
-
-    /*
-     *
-     * @function _formalizeTimestamp
-     * (transforms the DB stored timestamp into a more readable format)
-     *
-     * @return string
-     *
-     */
-
-    private function _formalizeTimestamp($db_timestamp)
-    {
-
-        if (!isset($db_timestamp)) {
-            return "??";
-        }
-
-        return date('Y-m-d, H:i:s', strtotime($db_timestamp));
-    }//_formalizeTimestamp
 
     // ---------------------------
 
