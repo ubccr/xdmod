@@ -314,7 +314,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         };
 
         this.displayUserGrid = function (users) {
-            var userFields, usersArray, usersStore, grid, win;
+            var userFields, usersArray, usersStore, grid, win, selectedUser = null;
 
             userFields = [
                 'person_id',
@@ -343,6 +343,32 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             }, this);
 
             usersStore.loadData(usersArray);
+
+            var okButton = new Ext.Button({
+                tooltip: 'Select User',
+                text: 'OK',
+                scope: this,
+                handler: function () {
+                    if ( null === selectedUser ) {
+                        CCR.xdmod.ui.userManagementMessage('Select a user from the list.', false);
+                    } else {
+                        cmbUserMapping.initializeWithValue(
+                            selectedUser.get('person_id'),
+                            selectedUser.get('person_name')
+                        );
+                        win.close();
+                    }
+                }
+            });
+
+            var cancelButton = new Ext.Button({
+                tooltip: 'Cancel',
+                text: 'Cancel',
+                scope: this,
+                handler: function () {
+                    win.close();
+                }
+            });
 
             grid = new Ext.grid.GridPanel({
                 store: usersStore,
@@ -383,19 +409,19 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 ],
 
                 listeners: {
-                    rowdblclick: function (grid, rowIndex) {
-                        var user = usersStore.getAt(rowIndex);
-                        cmbUserMapping.initializeWithValue(
-                            user.get('person_id'),
-                            user.get('person_name')
-                        );
-                        win.close();
+                    rowclick: function (grid, rowIndex) {
+                        selectedUser = usersStore.getAt(rowIndex);
                     }
-                }
+                },
+
+                fbar: [
+                    okButton,
+                    cancelButton
+                ]
             });
 
             win = new Ext.Window({
-                title: 'No exact match found, select one',
+                title: 'No exact user match found, please select a user.',
                 autoShow: true,
                 layout: 'fit',
                 border: false,
@@ -661,4 +687,3 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         XDMoD.CreateUser.superclass.onRender.call(this, ct, position);
     }
 });
-
