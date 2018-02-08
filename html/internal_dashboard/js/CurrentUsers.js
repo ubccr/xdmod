@@ -212,7 +212,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
             var color;
             var d;
 
-            if (val) {
+            if (val !== '0') {
                 var millis = val.split('.')[0] * 1000;
 
                 color = '#000';
@@ -528,4 +528,3 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
     }// initComponent
 
 });// XDMoD.CurrentUsers
-
