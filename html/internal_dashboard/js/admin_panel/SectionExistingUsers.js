@@ -786,7 +786,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
                 var acls = roleGrid.getSelectedAcls();
                 // ===========================================
-											              
+
                 if (
                     (acls.indexOf('pi') >= 0 || acls.indexOf('usr') >= 0) &&
                     (cmbUserMapping.getValue().length === 0)
@@ -799,8 +799,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     );
                     return;
                 }
-				
-				
+
+
                 if (
                     (acls.indexOf('cc') >= 0) &&
                     (cmbInstitution.getValue().length === 0)
@@ -830,6 +830,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
 
+                // When we are working on a 'Federated' user the cmbUserType will
+                // not have a value ( as it's hidden ). In that case use the
+                // cached_user_type variable which is populated when we fetch
+                // the users details.
+                var userType = cmbUserType.isVisible() ? cmbUserType.getValue() : cached_user_type;
                 var objParams = {
                     operation: 'update_user',
                     uid: selected_user_id,
@@ -841,7 +846,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     institution: (cmbInstitution.getValue().length === 0) ?
                                  '-1' :
                                  cmbInstitution.getValue(),
-                    user_type: cmbUserType.getValue()
+                    user_type: userType
                 };
 
                 Ext.Ajax.request({
@@ -1082,21 +1087,19 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     cmbInstitution.removeClass('admin_panel_invalid_text_entry');
 
                     // Account status details ---------------
-                   
+
                    /**
                     * Retrieving a reference to the txtAccountTimestamps
                     * first. Then overriding some of the broken methods
-                    * provided by Ext.menu.BaseItem. The reason 
-                    * is that they do not have an up to date 'el' 
-                    * property, or really, an 'el'  property at all.  
+                    * provided by Ext.menu.BaseItem. The reason
+                    * is that they do not have an up to date 'el'
+                    * property, or really, an 'el'  property at all.
                     * This is required for the 'update' method calls,
-                    * made later in the process, to work successfully.  
-                    */ 
+                    * made later in the process, to work successfully.
+                    */
                     var txtAccountTimestamps = Ext.getCmp('txtAccountTimestamps');
                     var refreshEl = function() {
-                         if ( this.el === undefined 
-                                || this.el === null ) {
-
+                        if (this.el === undefined || this.el === null) {
                             this.el = Ext.get(this.id);
                         }
                         return this.el;
@@ -1143,13 +1146,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         mapping_cached_person_id = json.user_information.assigned_user_id;
 
                         cached_user_type = parseInt(json.user_information.user_type);
-
-
-                        if (json.user_information.assigned_user_id != '-1') {
-                            cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
-                        } else {
-                            cmbUserMapping.reset();
-                        }
+                        cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
 
                         if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
                             // XSEDE-derived User: Can't change user type
@@ -1352,4 +1349,3 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
     }//initComponent
 
 });//XDMoD.ExistingUsers
-
