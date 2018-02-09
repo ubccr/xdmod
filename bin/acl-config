@@ -70,12 +70,7 @@ try {
         )
     );
 
-    try {
-        main();
-    } catch (Exception $e) {
-        $log->err("An Exception has occurred: [{$e->getCode()}] {$e->getMessage()}");
-        $log->debug($e->getTraceAsString());
-    }
+    main();
 
 } catch (Exception $e) {
     do {
