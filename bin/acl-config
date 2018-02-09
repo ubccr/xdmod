@@ -70,7 +70,13 @@ try {
         )
     );
 
-    main();
+    try {
+        main();
+    } catch (Exception $e) {
+        $log->err("An Exception has occurred: [{$e->getCode()}] {$e->getMessage()}");
+        $log->debug($e->getTraceAsString());
+    }
+
 } catch (Exception $e) {
     do {
         fwrite(STDERR, $e->getMessage() . "\n");
@@ -215,6 +221,72 @@ function main()
 
     $db = DB::factory('database');
 
+    // Ensure that we're starting from scratch while backing up the tables that
+    // we do not populate ( user_acls, user_acl_group_by_parameters ) which will
+    // be re-populated after we are done w/ the population of the tables
+    $tables = array(
+        'user_acls' => array(
+            'create' => 'SELECT ua.user_id, a.name as acl_name FROM user_acls ua JOIN acls a ON a.acl_id = ua.acl_id',
+            'populate' => <<< SQL
+INSERT INTO user_acls (user_id, acl_id)
+  SELECT
+    ua.user_id,
+    a.acl_id
+  FROM user_acls_bkup ua 
+    LEFT JOIN acls a ON a.name = ua.acl_name
+  WHERE a.acl_id IS NOT NULL;
+SQL
+        ),
+        'user_acl_group_by_parameters' => array(
+                'create' => <<<SQL
+
+SELECT
+  uagbp.user_id,
+  a.name  AS acl_name,
+  m.name  AS group_by_module_name,
+  r.name  AS group_by_realm_name,
+  gb.name AS group_by_name,
+  uagbp.value
+FROM user_acl_group_by_parameters uagbp
+  JOIN acls a ON a.acl_id = uagbp.acl_id
+  JOIN group_bys gb ON gb.group_by_id = uagbp.group_by_id
+  JOIN realms r ON r.realm_id = gb.realm_id
+  JOIN modules m ON m.module_id = gb.module_id;
+SQL
+        ,
+            'populate' => <<<SQL
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+  SELECT
+    uagbp.user_id,
+    a.acl_id,
+    gb.group_by_id,
+    uagbp.value
+  FROM user_acl_group_by_parameters_bkup uagbp
+    LEFT JOIN acls a ON a.name = uagbp.acl_name
+    LEFT JOIN modules m ON m.name = uagbp.group_by_module_name
+    LEFT JOIN realms r ON r.name = uagbp.group_by_realm_name
+    LEFT JOIN group_bys gb
+      ON gb.name = uagbp.group_by_name AND
+         gb.module_id = m.module_id AND
+         gb.realm_id = r.realm_id
+  WHERE a.acl_id IS NOT NULL AND
+        m.module_id IS NOT NULL AND
+        r.realm_id IS NOT NULL AND
+        gb.group_by_id IS NOT NULL;
+SQL
+
+        )
+    );
+
+    // populated via this script.
+    backupTables($db, $tables);
+
+    wipeManagedTables($db);
+
+    createManagedTables();
+
+    repopulateTables($db, $tables);
+
     // Process the xdmod module first
     if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
         processModules(
@@ -253,7 +325,147 @@ function main()
     foreach ($results as $module => $moduleData) {
         processResult($db, $module, $moduleData, $modules);
     }
+
+    // Now re-populate the user related tables.
+    repopulateTables($db, $tables);
 }
+
+/**
+ * Create a backup of the user related acl tables so that we can later re-populate
+ * them
+ *
+ * @param iDatabase $db     the database that the user related tables will be backed
+ *                          up in.
+ * @param array     $tables
+ * @throws Exception if a problem occurs while executing table backup sql.
+ */
+function backupTables(iDatabase $db, array $tables)
+{
+    global $dryRun, $log;
+    $log->info("Backing Up User Related Tables...");
+
+    foreach($tables as $table => $queries) {
+        $creationQuery = $queries['create'];
+        $query = <<<SQL
+CREATE TEMPORARY TABLE ${table}_bkup AS $creationQuery;
+SQL;
+        $log->debug("Backup query [$table]: $query");
+
+        if ($dryRun) {
+            $log->notice("Table[$table] would have been created:\n$query");
+            continue;
+        }
+        // throws exception or returns row count
+        $rows = $db->execute($query);
+        $message = $rows > 0
+            ? "Table [$table] => records[$rows] populated"
+            : "Table [$table] => no records populated";
+        $log->debug($message);
+    }
+
+    $log->info("User Related Tables Backed Up!");
+}
+
+/**
+ * Attempt to drop the tables managed by this script.
+ *
+ * @param iDatabase $db
+ * @throws Exception if a problem occurs while executing sql.
+ */
+function wipeManagedTables(iDatabase $db)
+{
+    global $dryRun, $log;
+
+    $log->info("Wiping Managed Tables...");
+
+    $tables = array(
+        'user_acl_group_by_parameters',
+        'user_acls',
+        'acl_tabs',
+        'tabs',
+        'acl_hierarchies',
+        'acls',
+        'acl_types',
+        'group_bys',
+        'statistics',
+        'hierarchies',
+        'realms',
+        'modules'
+    );
+
+    foreach($tables as $table) {
+        $query = <<<SQL
+DROP TABLE $table;
+SQL;
+        if ($dryRun) {
+            $log->info("Would have dropped: $table");
+            continue;
+        }
+
+        $log->debug("Dropping Table[$table]:\n\t$query");
+
+        $db->execute($query);
+    }
+
+    $log->info("Managed Tables Wiped!");
+}
+
+function createManagedTables()
+{
+    global $dryRun, $log;
+
+    $cmd = implode(
+        ' ',
+        array(
+            'php',
+            BASE_DIR . '/tools/etl/etl_overseer.php',
+            '-c',
+            CONFIG_DIR . '/etl/etl.json',
+            '-p',
+            'acls-xdmod-management',
+            '-v',
+            'quiet'
+        )
+    );
+
+    if ($dryRun) {
+        $log->info("Would have executed: $cmd");
+        return;
+    }
+
+    echo exec($cmd);
+}
+
+
+/**
+ * Re-populate the user related tables
+ * @param iDatabase $db the database to utilize while re-populating the tables.
+ * @param array $tables the tables to be re-populated.
+ */
+function repopulateTables(iDatabase $db, array $tables)
+{
+    global $dryRun, $log;
+
+    $log->info("Repopulating Tables...");
+
+    foreach($tables as $table => $queries) {
+        $query = $queries['populate'];
+
+        if ($dryRun) {
+            $log->info("For Table[$table]: \n$query");
+            continue;
+        }
+
+        $rows = $db->execute($query);
+        $message = $rows > 0
+            ? "Table [$table] => records[$rows] populated"
+            : "Table [$table] => no records populated";
+        $log->debug($message);
+    }
+
+    $log->info("Re-Population of Tables Complete!");
+}
+
 
 /**
  *
