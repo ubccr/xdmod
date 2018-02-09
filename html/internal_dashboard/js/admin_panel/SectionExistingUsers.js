@@ -54,6 +54,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
     cachedAutoSelectUserID: undefined,
 
     reloadUserList: function (user_type, select_user_with_id) {
+        // If a user_type is not supplied then use the currently selected user_type.
+        // The retrieval of the current user_type is made somewhat more difficult
+        // because the component used to control this property is a Split Button w/ menu
+        // as opposed to something like a ComboBox. With a ComboBox we could just
+        // do something like: `this.groupToggle.getValue()`. But instead we need
+        // to go through each of the menu items and determine which of them is
+        // selected ( which we base off of the components text property as it's
+        // updated w/ the currently selected menu item's text when clicked. )
         if (!user_type) {
             var currentType = this.groupToggle.text;
             var items = this.groupToggle.menu.items.items;
