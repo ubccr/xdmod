@@ -143,7 +143,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             scope: this,
             menu: filtersMenu
         });
-        
+
         var realm_dimensions = this.realms[this.record.data.realm]['dimensions'];
         for (x in realm_dimensions) {
             if (x == 'none' || realm_dimensions[x].text == undefined) continue;
@@ -411,7 +411,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 cancelFilterSelection
             ]
         });
-        
+
         this.editFiltersButton = new Ext.Button({
             xtype: 'button',
             text: 'Filters (' + this.numberOfFiltersSelected() + ')',
