@@ -3,11 +3,11 @@
 /**
  * @author Ryan Rathsam <ryanrath@buffalo.edu>
  **/
-namespace OpenXdmod\Migration\Version701To710;
+namespace OpenXdmod\Migration\Version701To750;
 
 /**
  * Ensure that the tables / data exists that will support the Acl subsystem
- * going into version 7.1.
+ * going into version 7.5.
  **/
 class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 {
