@@ -135,9 +135,9 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
 
         var captchaField = null;
 
-        if (CCR.xdmod.use_captcha) {
+        if (CCR.xdmod.captcha_sitekey.length > 0) {
             captchaField = new XDMoD.CaptchaField({
-                style: 'margin-left: 110px'
+                style: 'margin-left: 130px'
             });//captchaField
         }
 
@@ -159,11 +159,19 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
             if (captchaField) {
                 var captchaResponse = Ext.util.Format.trim(captchaField.getResponseField());
                 if (captchaResponse.length === 0) {
-                    CCR.xdmod.ui.userManagementMessage("Please answer the reCAPTCHA challenge.", false);
+                    CCR.xdmod.ui.userManagementMessage(
+                        'Please answer the reCAPTCHA challenge.',
+                        false
+                    );
+                    return;
+                } else if (captchaResponse === null) {
+                    CCR.xdmod.ui.userManagementMessage(
+                        'Error Loading reCAPTCHA',
+                        false
+                    );
                     return;
                 }
 
-                params.recaptcha_challenge_field = captchaField.getChallengeField();
                 params.recaptcha_response_field = captchaResponse;
             }
 
@@ -181,7 +189,7 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
                 failure: function (form, action) {
                     if (action.failureType === Ext.form.Action.CLIENT_INVALID) {
                         CCR.xdmod.ui.userManagementMessage(
-                            "Please resolve any problems in the form and try sending your request again.", 
+                            'Please resolve any problems in the form and try sending your request again.',
                             false
                         );
                         return;
@@ -308,4 +316,3 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
     }//initComponent
 
 });//XDMoD.SignUpDialog
-

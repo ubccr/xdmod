@@ -67,7 +67,13 @@ basic_auth = "[:rest_basic_auth:]"
 [mailer]
 sender_name = "[:mailer_sender_name:]"
 sender_email = "[:mailer_sender_email:]"
+; To use a captcha on Signup and Contact by no logged in users XDMoD loadSupportScripts
+; google recaptcha, to get the following information you must login to
+; https://www.google.com/recaptcha/admin
+
+; in google parlance this is sitekey
 captcha_public_key = "[:mailer_captcha_public_key:]"
+; in google parlance this is secret
 captcha_private_key = "[:mailer_captcha_private_key:]"
 
 [reporting]

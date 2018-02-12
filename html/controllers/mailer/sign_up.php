@@ -18,32 +18,7 @@ use CCR\DB;
 
 // Check CAPTCHA if enabled.
 
-$captcha_private_key = xd_utilities\getConfiguration(
-    'mailer',
-    'captcha_private_key'
-);
-
-if ($captcha_private_key !== '') {
-    if (
-        !isset($_POST["recaptcha_challenge_field"])
-        || !isset($_POST["recaptcha_response_field"])
-    ){
-        \xd_response\presentError('Recaptcha information not specified');
-    }
-
-    $recaptcha_check = recaptcha_check_answer(
-        $captcha_private_key,
-        $_SERVER["REMOTE_ADDR"],
-        $_POST["recaptcha_challenge_field"],
-        $_POST["recaptcha_response_field"]
-    );
-
-    if (!$recaptcha_check->is_valid) {
-        \xd_response\presentError(
-            'You must enter the words in the Recaptcha box properly.'
-        );
-    };
-}
+\xd_utilities\verify_captcha();
 
 // Insert account request into database (so it appears in the internal
 // dashboard under "XDMoD Account Requests").
@@ -130,4 +105,3 @@ catch (Exception $e) {
 }
 
 echo json_encode($response);
-
