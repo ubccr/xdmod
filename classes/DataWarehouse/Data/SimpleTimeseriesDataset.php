@@ -300,7 +300,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
 
         // we only return a count here, so remove this unneeded order by:
         $agg_query->clearOrders();
-        $agg_query->setParameters($this->_query->parameters);
+        $agg_query->cloneParameters($this->_query);
 
         return $agg_query->getCount();
     } // getUniqueCount
@@ -373,7 +373,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
             }
         }
 
-        $agg_query->setParameters($this->_query->parameters);
+        $agg_query->cloneParameters($this->_query);
 
         $dataObject = new \DataWarehouse\Data\SimpleTimeseriesData($column_name);
 
@@ -764,21 +764,21 @@ class SimpleTimeseriesDataset extends SimpleDataset
             false           // single_stat
         );
 
-        // add a where condition on the array of excluded ids. These are the top-n
-        if (!empty($whereExcludeArray)) {
-            $w = $q->addWhereAndJoin($where_name, "NOT IN", $whereExcludeArray);
-        }
-
         // add the stats
         foreach ($this->_query->_stats as $stat_name => $stat) {
             $q->addStat($stat_name);
         }
 
         // if we have additional parameters:
-        $q->setParameters($this->_query->parameters);
+        $q->cloneParameters($this->_query);
 
         // group on the where clause column, which will be enforced after time agg. unit
         $q->addGroupBy($where_name);
+
+        // add a where condition on the array of excluded ids. These are the top-n
+        if (!empty($whereExcludeArray)) {
+            $w = $q->addWhereAndJoin($where_name, "NOT IN", $whereExcludeArray);
+        }
 
         // set up data object for return
         $dataObject = new \DataWarehouse\Data\SimpleTimeseriesData($column_name);
