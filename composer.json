@@ -3,7 +3,7 @@
         "silex/silex": "~1.2",
         "simplesamlphp/simplesamlphp": "~1.14",
         "openid/php-openid": "dev-master#ee669c6a9d4d95b58ecd9b6945627276807694fb",
-        "greenlion/php-sql-parser": "~4.0.0",
+        "greenlion/php-sql-parser": "~4.1.0",
         "justinrainbow/json-schema": "~2.0",
         "symfony/process": "~2.0",
         "sencha/extjs-gpl": "3.4.*",

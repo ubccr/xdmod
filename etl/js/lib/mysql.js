@@ -71,6 +71,42 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
 
         return stmt;
     };
+
+    /**
+     * return an array of arrays containing the colunm type, name, description and units
+     */
+    this.getTableDocumentation = function () {
+        var reqDims = [];
+        var restDims = [];
+        var metrics = [];
+        var colKeys = Object.keys(this.columns).sort();
+
+        for (var col in colKeys) {
+            if (colKeys.hasOwnProperty(col)) {
+                var column = this.columns[colKeys[col]];
+                column.name = colKeys[col];
+
+                var comments = column.comments ? column.comments : '-';
+                if (column.developer_comment) {
+                    comments += ' ' + column.developer_comment;
+                }
+                var unit = column.unit ? column.unit : '-';
+                var per = column.per ? column.per : '-';
+                if (column.nullable === false) {
+                    if (column.def === null) {
+                        reqDims.push(['DIMENSION', column.name, comments, unit, per]);
+                    } else {
+                        restDims.push(['DIMENSION', column.name, comments, unit, per]);
+                    }
+                } else {
+                    metrics.push(['FACT', column.name, comments, unit, per]);
+                }
+            }
+        }
+
+        return reqDims.concat(restDims).concat(metrics);
+    };
+
 	this.getCreateTableStatement = function() {
 		var reqDims = [], 
 			restDims = [], 

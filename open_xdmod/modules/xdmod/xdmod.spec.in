@@ -29,6 +29,12 @@ detailed interactive charts, graphs, and tables.
 %prep
 %setup -q -n %{name}-%{version}__PRERELEASE__
 
+%pre
+getent group xdmod >/dev/null || groupadd -r xdmod
+getent passwd xdmod >/dev/null || \
+    useradd -r -M -c "Open XDMoD" -g xdmod -d %{_localstatedir}/lib/%{name} -s /sbin/nologin xdmod
+exit 0
+
 %install
 rm -rf $RPM_BUILD_ROOT
 DESTDIR=$RPM_BUILD_ROOT ./install \
@@ -44,6 +50,12 @@ DESTDIR=$RPM_BUILD_ROOT ./install \
     --crondconfdir=%{_sysconfdir}/cron.d
 
 %post
+# Create log files that need to be writable by both Apache and Open XDMoD scripts.
+for file in exceptions.log query.log; do
+    touch %{_localstatedir}/log/%{name}/$file
+    chown apache:xdmod %{_localstatedir}/log/%{name}/$file
+    chmod 0664 %{_localstatedir}/log/%{name}/$file
+done
 if [ "$1" -ge 2 ]; then
     echo "Run xdmod-upgrade to complete the Open XDMoD upgrade process."
     echo "Refer to http://open.xdmod.org/upgrade.html for more details."
@@ -61,9 +73,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
-%attr(0775,root,apache) %dir %{_localstatedir}/log/%{name}
+%dir %attr(0775,apache,xdmod) %{_localstatedir}/log/%{name}
 
-%config(noreplace) %{_sysconfdir}/%{name}/
+%dir %{_sysconfdir}/%{name}
+%config(noreplace) %attr(0440,apache,xdmod) %{_sysconfdir}/%{name}/portal_settings.ini
+%config(noreplace) %{_sysconfdir}/%{name}/*.d/
+%config(noreplace) %{_sysconfdir}/%{name}/*.json
+%config(noreplace) %{_sysconfdir}/%{name}/email_templates/
+%config(noreplace) %{_sysconfdir}/%{name}/etl/
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}

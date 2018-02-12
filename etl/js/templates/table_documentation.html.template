@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>
+Table Documentation</title>
+<script>
+function filterTable(keyup) {
+
+    var associatedTable = keyup.target.parentElement.getElementsByTagName('table')[0];
+    var rows = associatedTable.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+        let td = rows[i].getElementsByTagName("td")[0];
+        if (td) {
+            if (td.innerHTML.toLowerCase().indexOf(keyup.target.value) > -1) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+}
+table {
+    border-collapse: collapse;
+    width: 80em;
+    border-top: 2px solid #aaa;
+    border-bottom: 2px solid #aaa;
+}
+table th, #doctable td {
+    text-align: left;
+    vertical-align: top;
+    padding: 1ex
+}
+table thead tr {
+    border-bottom: 1px solid #aaa;
+}
+table tr:hover {
+    background-color: #f1f1f1;
+}
+</style>
+<head>
+<body>
+<div>
+<input type="text" id="searchfilter" onkeyup="filterTable(event)" placeholder="Filter table content...">
+__TABLE__
+</div>
+</body>
+</html>
+
