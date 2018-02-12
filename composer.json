@@ -24,7 +24,8 @@
         "egulias/email-validator": "^1.2",
         "taq/pdooci": "^1.0",
         "phpmailer/phpmailer": "^5.2",
-        "ubccr/simplesamlphp-module-authglobus": "1.2.0"
+        "ubccr/simplesamlphp-module-authglobus": "1.2.0",
+        "ubccr/log": "1.13.2"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*"
