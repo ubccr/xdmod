@@ -14,7 +14,6 @@
     "truncateText": false,
     "XDMoD": false,
     "Dashboard": false,
-    "DashboardStore": false,
-    "grecaptcha": false
+    "DashboardStore": false
   }
 }

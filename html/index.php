@@ -289,19 +289,14 @@ use Models\Services\Realms;
             print "CCR.xdmod.org_abbrev = ".json_encode(ORGANIZATION_NAME_ABBREV).";\n";
 
             print "CCR.xdmod.logged_in = !CCR.xdmod.publicUser;\n";
-            $captchaSiteKey = '';
+            $useCaptcha = 'false';
             try {
-                if(!$userLoggedIn){
-                    $captchaSiteKey = xd_utilities\getConfiguration('mailer', 'captcha_public_key');
-                    $captchaSecret = xd_utilities\getConfiguration('mailer', 'captcha_private_key');
-                    if('' === $captchaSiteKey || '' === $captchaSecret){
-                        $captchaSiteKey = '';
-                    }
-                }
+              $useCaptcha = xd_utilities\getConfiguration('mailer', 'captcha_private_key') !== '' ? 'true' : 'false';
             }
             catch(exception $ex) {
+              print "console.warn(\"" . $ex->getMessage() . "\");\n";
             }
-            print "CCR.xdmod.captcha_sitekey = '" . $captchaSiteKey ."';";
+            print "CCR.xdmod.use_captcha = " . $useCaptcha .";";
             if (!$userLoggedIn) {
                $auth = null;
                try {
@@ -554,9 +549,7 @@ use Models\Services\Realms;
       <?php if ($userLoggedIn): ?>
       <script type="text/javascript">Ext.onReady(xdmodviewer.init, xdmodviewer);</script>
       <?php endif; ?>
-        <?php if (strlen($captchaSiteKey) > 0): ?>
-          <script src="https://www.google.com/recaptcha/api.js?render=explicit"></script>
-        <?php endif; ?>
+
    </head>
 
    <body>
