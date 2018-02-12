@@ -1027,7 +1027,7 @@ SQL;
     public function getLastLoginTimestamp()
     {
 
-        $results = $this->_pdo->query("SELECT init_time FROM SessionManager WHERE user_id=:user_id ORDER BY init_time DESC LIMIT 1", array(
+        $results = $this->_pdo->query("SELECT FROM_UNIXTIME(init_time) as lastLogin FROM SessionManager WHERE user_id=:user_id ORDER BY init_time DESC LIMIT 1", array(
             ':user_id' => $this->_id,
         ));
 
@@ -1035,12 +1035,7 @@ SQL;
             return "Never logged in";
         }
 
-        $init_time = $results[0]['init_time'];
-
-        $time_frags = explode('.', $init_time);
-
-        return date('m/d/Y, g:i:s A', $time_frags[0]);
-
+        return $results[0]['lastLogin'];
     }//getLastLoginTimestamp
 
     // ---------------------------
@@ -2542,7 +2537,7 @@ SQL;
 
     public function getCreationTimestamp()
     {
-        return $this->_formalizeTimestamp($this->_timeCreated);
+        return $this->_timeCreated;
     }
 
     // ---------------------------
@@ -2572,45 +2567,8 @@ SQL;
 
     public function getUpdateTimestamp()
     {
-        return $this->_formalizeTimestamp($this->_timeUpdated);
+        return $this->_timeUpdated;
     }
-
-    // ---------------------------
-
-    /*
-     *
-     * @function _formalizeTimestamp
-     * (transforms the DB stored timestamp into a more readable format)
-     *
-     * @return string
-     *
-     */
-
-    private function _formalizeTimestamp($db_timestamp)
-    {
-
-        if (!isset($db_timestamp)) return "??";
-
-        list($db_date, $db_time) = explode(' ', $db_timestamp);
-
-        list($year, $month, $day) = explode('-', $db_date);
-
-        $formal_date = $month . '/' . $day . '/' . $year;
-
-        // ------------------------
-
-        list($m_hour, $min, $sec) = explode(':', $db_time);
-
-        $meridiem = ($m_hour > 11) ? 'PM' : 'AM';
-
-        $s_hour = ($m_hour > 12) ? $m_hour - 12 : $m_hour;
-        if ($s_hour == 0) $s_hour = 12;
-
-        $formal_time = $s_hour . ':' . $min . ':' . $sec;
-
-        return $formal_date . ', ' . $formal_time . ' ' . $meridiem;
-
-    }//_formalizeTimestamp
 
     // ---------------------------
 

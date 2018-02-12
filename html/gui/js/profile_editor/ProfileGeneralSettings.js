@@ -185,37 +185,16 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 					// ================================================
 
 					//active_layout_index = XDMoD.ProfileEditorConstants.PASSWORD;
-					if(data.results.is_federated_user && data.results.email_address.length == 0){
-						XDMoD.Profile.logoutOnClose = true;
-					}
+    if (data.results.is_federated_user && data.results.email_address.length === 0) {
+        XDMoD.Profile.logoutOnClose = true;
+    }
     if (data.results.is_federated_user === true) {
-        if (data.results.first_time_login && (data.results.email_address.length !== 0)) {
-            // If the user is logging in for the first time and does have an e-mail address set
-            // (due to it being specified in the XDcDB), welcome the user and inform them they
-            // have an opportunity to update their e-mail address.
-            if (data.results.autoload_suppression === true) {
-                // If the user has updated their profile on first login already, there is no need to suggest an e-mail change
-                active_layout_index = XDMoD.ProfileEditorConstants.XSEDE_SPLASH;
-            } else {
-                active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_CHANGE;
-                user_profile_email_addr.addClass('user_profile_highlight_entry');
-            }
-        } else if (data.results.first_time_login && (data.results.email_address.length === 0)) {
-            // If the user is logging in for the first time and does *not* have an e-mail address set,
-            // welcome the user and inform them that he/she needs to set an e-mail address.
-
-            active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_NEEDED;
-            XDMoD.Profile.logoutOnClose = true;
-        } else if (data.results.email_address.length === 0) {
-            // Regardless of whether the user is logging in for the first time or not, the lack of
-            // an e-mail address requires attention
-            active_layout_index = XDMoD.ProfileEditorConstants.EMAIL_NEEDED;
-            XDMoD.Profile.logoutOnClose = true;
-        } else {
-            // The XSEDE user has logged in at least a second time and has no issues with their e-mail address
-            active_layout_index = XDMoD.ProfileEditorConstants.XSEDE_SPLASH;
+        if (data.results.first_time_login) {
+            // If the user is logging in for the first time, prompt them to validate their email address
+            active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_CHANGE;
+            user_profile_email_addr.addClass('user_profile_highlight_entry');
         }
-    } // if (data.results.is_xsede_user == true)
+    }
 
     // ================================================
     // eslint-disable-next-line no-use-before-define
@@ -381,133 +360,6 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 				]
 			}); //sectionPassword
 
-			// ------------------------------------------------
-
-			var renderXSEDEMessage = function(config) {
-
-				if (config == undefined) config = {};
-
-				if (config.display_banner == undefined) config.display_banner = false;
-
-				var message = (config.message != undefined) ? '<tr><td align=center style="font-size: 11px">' + config.message + '</td></tr>' : '';
-
-				var bannerRow = '';
-
-				if (config.display_banner == true) {
-
-					var spacing = (config.message == undefined) ? '<br/>' : '';
-
-					bannerRow = '<tr><td align=center valign=top>' + spacing + '<img src="gui/images/xsede_profile_banner.png"></td></tr>';
-
-				}
-
-				return '<table border=0 height=100% width=100%>' +
-					bannerRow +
-					message +
-					'<tr><td align=center valign=bottom style="font-size: 11px">' +
-					'If you require elevated access<br />(e.g. Center Director, Program Officer),<br />' +
-					'please contact <a href="mailto:' + CCR.xdmod.tech_support_recipient + '">' + CCR.xdmod.tech_support_recipient + '</a><br />' +
-					'to request such privileges.</td></tr>' +
-					'</table>';
-
-			}; //renderXSEDEMessage
-
-			// ------------------------------------------------
-
-			var sectionXSEDEWelcomeEmailChange = new Ext.Panel({
-
-				labelWidth: 95,
-				frame: false,
-				bodyStyle: 'padding:0px 5px',
-				width: 350,
-				//defaults: {width: 200},
-				layout: 'form',
-
-				items: [
-
-					{
-						xtype: 'tbtext',
-						text: renderXSEDEMessage({
-							message: '<b>Welcome, XSEDE User</b><br />The e-mail address above is currently associated with your XSEDE account. ' +
-								'Please update this e-mail address as necessary if you wish to have XDMoD-specific content delivered to an alternative address.'
-						})
-					}
-
-				]
-
-			}); //sectionXSEDEWelcomeEmailChange
-
-			// ------------------------------------------------
-
-			var sectionXSEDEWelcomeEmailNeeded = new Ext.Panel({
-
-				labelWidth: 95,
-				frame: false,
-				//title: 'Welcome XSEDE User',
-				bodyStyle: 'padding:0px 5px',
-				width: 350,
-				//defaults: {width: 200},
-				layout: 'form',
-
-				items: [
-
-					{
-						xtype: 'tbtext',
-						text: renderXSEDEMessage({
-							message: '<b>Welcome, XSEDE User</b><br />An e-mail address is required in order to use certain features of XDMoD as well as ' +
-								'receive important messages from the XDMoD team.'
-						})
-					}
-
-				]
-
-			}); //sectionXSEDEWelcomeEmailNeeded
-
-			// ------------------------------------------------
-
-			var sectionXSEDEEmailNeeded = new Ext.Panel({
-
-				labelWidth: 95,
-				frame: false,
-				//title: 'Welcome XSEDE User',
-				bodyStyle: 'padding:0px 5px',
-				width: 350,
-				//defaults: {width: 200},
-				layout: 'form',
-
-				items: [
-
-					{
-						xtype: 'tbtext',
-						text: renderXSEDEMessage({
-							display_banner: true,
-							message: 'An e-mail address is required in order to use certain features of XDMoD as well as receive important messages from the XDMoD team.'
-						})
-					}
-				]
-
-			}); //sectionXSEDEEmailNeeded
-
-			// ------------------------------------------------
-
-			var sectionXSEDESplash = new Ext.Panel({
-
-				labelWidth: 95,
-				frame: false,
-				//title: 'Welcome XSEDE User',
-				bodyStyle: 'padding:0px 5px',
-				width: 350,
-				//defaults: {width: 200},
-				layout: 'form',
-
-				items: [{
-					xtype: 'tbtext',
-					text: renderXSEDEMessage({
-						display_banner: true
-					})
-				}]
-			}); //sectionXSEDESplash
-
 			var sectionFederatedUser = new Ext.Panel({
 				labelWidth: 95,
 				frame: false,
@@ -528,8 +380,10 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 				layout: 'form',
 				items: [{
 					xtype: 'tbtext',
-					text: 'An e-mail address is required in order to use certain features of XDMoD as well as receive important messages from the XDMoD team.'
-				}]
+    text: 'Please ensure the email listed above is accurate. Your e-mail address is required in order to use certain features of XDMoD as well as receive important messages from the XDMoD team. Once you have validated your email, click "Update" to confirm.'
+}, {
+    html: '<br/>If you require elevated access (e.g. Center Director, Center Staff, etc.), please contact <a href="mailto:' + CCR.xdmod.tech_support_recipient + '">' + CCR.xdmod.tech_support_recipient + '</a> to request such privileges.'
+}]
 			});
 			// ------------------------------------------------
 
@@ -547,10 +401,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
 				items: [
 					sectionPassword,
-					sectionXSEDEWelcomeEmailChange,
-					sectionXSEDEWelcomeEmailNeeded,
-					sectionXSEDEEmailNeeded,
-					sectionXSEDESplash,
+    sectionFederatedEmail,
 					sectionFederatedUser
 				]
 
