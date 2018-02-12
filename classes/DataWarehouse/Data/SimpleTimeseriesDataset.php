@@ -300,7 +300,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
 
         // we only return a count here, so remove this unneeded order by:
         $agg_query->clearOrders();
-        $agg_query->cloneParameters($this->_query);
+        $agg_query->setParameters($this->_query->parameters);
 
         return $agg_query->getCount();
     } // getUniqueCount
@@ -373,7 +373,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
             }
         }
 
-        $agg_query->cloneParameters($this->_query);
+        $agg_query->setParameters($this->_query->parameters);
 
         $dataObject = new \DataWarehouse\Data\SimpleTimeseriesData($column_name);
 
@@ -775,7 +775,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
         }
 
         // if we have additional parameters:
-        $q->cloneParameters($this->_query);
+        $q->setParameters($this->_query->parameters);
 
         // group on the where clause column, which will be enforced after time agg. unit
         $q->addGroupBy($where_name);

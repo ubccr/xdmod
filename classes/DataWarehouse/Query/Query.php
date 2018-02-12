@@ -756,21 +756,6 @@ class Query
         }
     }
 
-    /**
-     * Copy the parameters and role parameters from another query class
-     * The where conditions and role parameters from the other class will
-     * overwrite any existing settings in this class.
-     */
-    public function cloneParameters(Query $other)
-    {
-        $this->_where_conditions = $other->_where_conditions;
-        $this->parameters = $other->parameters;
-        $this->restrictedByRoles = $other->restrictedByRoles;
-        $this->roleRestrictions = $other->roleRestrictions;
-        $this->roleParameters = $other->roleParameters;
-        $this->roleParameterDescriptions = $other->roleParameterDescriptions;
-    }
-
     private function getLeftJoinSql()
     {
         $stmt = '';
