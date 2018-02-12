@@ -410,7 +410,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
                         xtype: 'button',
                         iconCls: 'btn_email',
                         text: 'Prepare E-Mail',
-                        handler: function(){
+                        handler: function () {
                             var w = new XDMoD.BatchMailClient();
                             w.show();
                         }
