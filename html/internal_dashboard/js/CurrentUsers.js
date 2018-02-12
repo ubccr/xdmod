@@ -407,29 +407,17 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
 
                     '|',
 
-                    {
-                        xtype: 'button',
-                        iconCls: 'btn_ldif',
-                        text: 'Generate LDIF',
-                        tooltip: 'LDAP Data Interchange Format',
-                        handler: function () {
-                            processLDIFExport({
-                                group_filter: current_state.group,
-                                role_filter: current_state.role,
-                                context_filter: current_state.context
-                            });
-                        }
-                    },
+               {
+                  xtype: 'button',
+                  iconCls: 'btn_email',
+                  text: 'Prepare E-Mail',
+                  handler: function(){
 
-                    {
-                        xtype: 'button',
-                        iconCls: 'btn_email',
-                        text: 'Prepare E-Mail',
-                        handler: function () {
-                            var w = new XDMoD.BatchMailClient();
-                            w.show();
-                        }
-                    },
+                     var w = new XDMoD.BatchMailClient();
+                     w.show();
+
+                  }
+               },
 
                     {
                         xtype: 'buttongroup',

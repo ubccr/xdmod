@@ -110,19 +110,6 @@ switch ($operation) {
 
         break;
 
-    case 'generate_ldif':
-
-        $group_filter = \xd_security\assertParameterSet('group_filter');
-        $role_filter = \xd_security\assertParameterSet('role_filter');
-
-        $context_filter = isset($_REQUEST['context_filter']) ? $_REQUEST['context_filter'] : '';
-
-        $ldif = new LDIF($group_filter, $role_filter, $context_filter);
-        $ldif->generate();
-        $ldif->present();
-
-        exit;
-
     case 'enum_user_types_and_roles':
 
         $query = "SELECT id, type, color FROM moddb.UserTypes";
