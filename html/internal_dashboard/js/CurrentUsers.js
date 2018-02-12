@@ -1,4 +1,4 @@
-/* global document, window, DateUtilities, processLDIFExport */
+/* global document, window, DateUtilities */
 Ext.ns('XDMoD');
 
 XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
@@ -406,19 +406,15 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
                     },
 
                     '|',
-
-               {
-                  xtype: 'button',
-                  iconCls: 'btn_email',
-                  text: 'Prepare E-Mail',
-                  handler: function(){
-
-                     var w = new XDMoD.BatchMailClient();
-                     w.show();
-
-                  }
-               },
-
+                    {
+                        xtype: 'button',
+                        iconCls: 'btn_email',
+                        text: 'Prepare E-Mail',
+                        handler: function(){
+                            var w = new XDMoD.BatchMailClient();
+                            w.show();
+                        }
+                    },
                     {
                         xtype: 'buttongroup',
                         items: [
