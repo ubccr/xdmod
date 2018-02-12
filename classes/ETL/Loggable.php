@@ -31,21 +31,21 @@ class Loggable
 
     public function __construct(Log $logger = null)
     {
-        $this->logger = ( null === $logger ? Log::singleton('null') : $logger );
+        $this->setLogger($logger);
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
      * Set the logger for this object.
      *
-     * @param Log $logger A logger class
+     * @param Log $logger A logger class or NULL to use the null logger
      *
      * @return This object for method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function setLogger(Log $logger)
+    public function setLogger(Log $logger = null)
     {
-        $this->logger = $logger;
+        $this->logger = ( null === $logger ? Log::singleton('null') : $logger );
         return $this;
     }  // setLogger()
 
