@@ -5879,6 +5879,60 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         var highChartPanel = new CCR.xdmod.ui.HighChartPanel({
             id: 'hc-panel' + this.id,
+            baseChartOptions: {
+                chart: {
+                    events: {
+                        titleClick: function (event) {
+                            return XDMoD.Module.MetricExplorer.titleContextMenu(event);
+                        },
+                        subtitleClick: function (event) {
+                            return XDMoD.Module.MetricExplorer.subtitleContextMenu(event);
+                        },
+                        xAxisClick: function (axis) {
+                            return XDMoD.Module.MetricExplorer.xAxisContextMenu(axis);
+                        },
+                        yAxisClick: function (axis) {
+                            return XDMoD.Module.MetricExplorer.yAxisContextMenu(axis);
+                        },
+                        xAxisTitleClick: function (axis) {
+                            return XDMoD.Module.MetricExplorer.xAxisTitleContextMenu(axis);
+                        },
+                        yAxisTitleClick: function (axis) {
+                            return XDMoD.Module.MetricExplorer.yAxisTitleContextMenu(axis);
+                        },
+                        xAxisLabelClick: function (axis) {
+                            return XDMoD.Module.MetricExplorer.xAxisLabelContextMenu(axis);
+                        },
+                        yAxisLabelClick: function (axis) {
+                            return XDMoD.Module.MetricExplorer.yAxisLabelContextMenu(axis);
+                        },
+                        click: function (event) {
+                            return XDMoD.Module.MetricExplorer.chartContextMenu.call(this, event);
+                        }
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        events: {
+                            legendItemClick: function () {
+                                XDMoD.Module.MetricExplorer.seriesContextMenu(this, true, this.userOptions.datasetId);
+                                return false;
+                            }
+                        },
+                        point: {
+                            events: {
+                                click: function () {
+                                    if (this.options.x) {
+                                        this.ts = this.options.x;
+                                    }
+
+                                    XDMoD.Module.MetricExplorer.pointContextMenu(this, this.series.userOptions.datasetId);
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             store: chartStore
         }); //assistPanel
 

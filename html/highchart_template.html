@@ -11,6 +11,14 @@
 
       <script type="text/javascript">
 
+        var Ext = {
+            namespace: function(){}
+        };
+        var XDMoD = {
+            utils: {
+            }
+        };
+
          var chart;   // Globally expose the reference to Highcharts.Chart such that the phantomjs script
                       // can access it via page.evaluate()
 
@@ -60,7 +68,7 @@
             }
 
             if (inputChartOptions.series.length == 0) inputChartOptions.subtitle.text = inputChartOptions.subtitle.text+'<br/> <h2>**NO DATA**<h2/>';
-            chart = new Highcharts.Chart(inputChartOptions);
+            chart = XDMoD.utils.createChart(inputChartOptions);
 
          });//$(document).ready(...
 
@@ -73,6 +81,7 @@
       <script type="text/javascript" src="_html_dir_/gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
 
       <script type="text/javascript" src="_html_dir_/gui/lib/highcharts/js/highcharts.src.js"></script>
+      <script type="text/javascript" src="_html_dir_/gui/js/HighChartWrapper.js"></script>
 
       <!-- needed for getSVG() -->
       <script type="text/javascript" src="_html_dir_/gui/lib/highcharts/js/modules/exporting.src.js"></script>

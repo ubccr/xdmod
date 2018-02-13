@@ -206,6 +206,7 @@ use Models\Services\Realms;
       <script type="text/javascript" src="gui/lib/MessageWindow.js"></script>
 
       <script type="text/javascript" src="gui/js/CCR.js"></script>
+      <script type="text/javascript" src="gui/js/HighChartWrapper.js"></script>
       <script type="text/javascript" src="gui/js/RESTDataProxy.js"></script>
       <script type="text/javascript" src="gui/js/CustomHttpProxy.js"></script>
 
