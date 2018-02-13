@@ -3,6 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
+use Exception;
 use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 
@@ -66,7 +67,11 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         foreach (self::$newUsers as $username => $userId) {
-            self::removeUser($userId, $username);
+            try {
+                self::removeUser($userId, $username);
+            } catch (Exception $e) {
+                echo "Exception removing user [$userId, $username] during teardown: [{$e->getCode()}] {$e->getMessage()}: \n{$e->getTraceAsString()}\n";
+            }
         }
     }
 
@@ -105,15 +110,23 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
             throw new Exception("Expected http code: $expectedHttpCode. Received: $actualHttpCode");
         }
 
-        $actualSuccess = $response[0]['success'];
+        $actualSuccess = (bool) $response[0]['success'];
         $actualMessage = $response[0]['message'];
-        if ($actualSuccess !== true) {
-            throw new Exception("Remove User ['success'] Expected: false, Received: $actualSuccess");
-        }
-        if (strpos($actualMessage, $username) === false) {
-            throw new Exception("Remove User ['message'] did not contain username: $username. Received: " . $actualMessage);
-        }
 
+        $actualSuccessMessage = $actualMessage ? 'true' : 'false';
+
+        if (strpos($actualMessage, 'user_does_not_exist') !== false) {
+            if ($actualSuccess !== false) {
+                throw new Exception("Remove User ['success'] Expected: false, Received: $actualSuccessMessage | $actualMessage");
+            }
+        } else {
+            if ($actualSuccess !== true) {
+                throw new Exception("Remove User ['success'] Expected: false, Received: $actualSuccessMessage | $actualMessage");
+            }
+            if (strpos($actualMessage, $username) === false) {
+                throw new Exception("Remove User ['message'] did not contain username: $username. Received: " . $actualMessage);
+            }
+        }
         $helper->logoutDashboard();
     }
 
@@ -330,7 +343,7 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         $actualContentType = $response[1]['content_type'];
         $actualHttpCode = $response[1]['http_code'];
         $this->assertTrue(
-            strpos($actualContentType, $expectedContentType) >= 0,
+            strpos($actualContentType, $expectedContentType) !== false,
             "Expected content-type: $expectedContentType. Received: $actualContentType"
         );
         $this->assertEquals(

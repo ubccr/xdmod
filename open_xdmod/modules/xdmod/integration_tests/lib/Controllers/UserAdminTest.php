@@ -9,7 +9,7 @@ class UserAdminTest extends BaseUserAdminTest
 {
 
     protected $testFiles;
-    
+
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
@@ -210,7 +210,7 @@ class UserAdminTest extends BaseUserAdminTest
 
     /**
      * @dataProvider provideTestUsersQuickFilters
-     * @depends testCreateUsersSuccess
+     * @depends      testCreateUsersSuccess
      * @group UserAdminTest.createUsers
      *
      * @param array $user
@@ -253,7 +253,7 @@ class UserAdminTest extends BaseUserAdminTest
     }
 
     /**
-     * @depends testCreateUsersSuccess
+     * @depends      testCreateUsersSuccess
      * @dataProvider provideGetMenus
      * @group UserAdminTest.createUsers
      * @param array $user
@@ -286,7 +286,7 @@ class UserAdminTest extends BaseUserAdminTest
             $this->getTestFiles()->getFile('user_admin', $output)
         );
 
-        $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected [". json_encode($expected) . "] Received [" . json_encode($actual) . "]");
+        $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected [" . json_encode($expected) . "] Received [" . json_encode($actual) . "]");
 
         if ($username !== self::PUBLIC_USER_NAME) {
             $this->helper->logout();
@@ -301,7 +301,7 @@ class UserAdminTest extends BaseUserAdminTest
     }
 
     /**
-     * @depends testCreateUsersSuccess
+     * @depends      testCreateUsersSuccess
      * @dataProvider provideGetTabs
      * @group UserAdminTest.createUsers
      * @param array $user
@@ -353,7 +353,7 @@ class UserAdminTest extends BaseUserAdminTest
     }
 
     /**
-     * @depends testCreateUsersSuccess
+     * @depends      testCreateUsersSuccess
      * @dataProvider provideGetDwDescripters
      * @group UserAdminTest.createUsers
      * @param array $user
@@ -401,5 +401,207 @@ class UserAdminTest extends BaseUserAdminTest
         return JSON::loadFile(
             $this->getTestFiles()->getFile('user_admin', 'get_dw_descripters', 'input')
         );
+    }
+
+    /**
+     * @dataProvider provideGetUserVisits
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testGetUserVisits(array $options)
+    {
+        $this->assertArrayHasKey('data', $options);
+        $this->assertArrayHasKey('output', $options);
+        $this->assertArrayHasKey('success', $options);
+        $this->assertArrayHasKey('content_type', $options);
+
+        $testData = $options['data'];
+        $expectedOutput = $options['output'];
+        $expectedContentType = $options['content_type'];
+
+        $this->helper->authenticateDashboard('mgr');
+
+        $data = array_merge(
+            array(
+                'operation' => 'enum_user_visits'
+            ),
+            $testData
+        );
+
+        $response = $this->helper->post("internal_dashboard/controllers/controller.php", null, $data);
+
+        $this->validateResponse($response, 200, $expectedContentType);
+
+        $actual = json_decode($response[0], true);
+
+        $expected = JSON::loadFile(
+            $this->getTestFiles()->getFile('user_admin', $expectedOutput, 'output')
+        );
+
+
+        $this->assertArrayHasKey('success', $actual);
+        $this->assertArrayHasKey('success', $expected);
+
+        $this->assertEquals($expected['success'], $actual['success']);
+
+        // If we're expecting actual data back then...
+        if (array_key_exists('stats', $expected)) {
+            $actualStats = $actual['stats'];
+            $expectedStats = $expected['stats'];
+
+            $allFound = true;
+            $notFound = array();
+
+            foreach ($expectedStats as $key => $expectedStat) {
+                $entryExists = $this->entryExists(
+                    $actualStats,
+                    function ($key, $value) use ($expectedStat, &$notFound, $expectedOutput) {
+                        $diff = array_diff_assoc($expectedStat, $value);
+                        $missingDiff = array_diff(array_keys($diff), array('visit_frequency', 'timeframe'));
+                        if (count($missingDiff) === 0) {
+                            return true;
+                        }
+                        return false;
+                    }
+                );
+                if (!$entryExists) {
+                    $allFound = false;
+                    break;
+                }
+            }
+            $this->assertTrue($allFound, "There were other differences besides the expected: ". json_encode($notFound));
+        } elseif (array_key_exists('message', $expected)) {
+            $this->assertArrayHasKey('message', $actual);
+            $this->assertEquals($expected['message'], $actual['message']);
+        } else {
+            $this->assertTrue(false, "No idea how to evaluate the data for this test.");
+        }
+
+        $this->helper->logoutDashboard();
+    }
+
+    /**
+     * @dataProvider provideGetUserVisits
+     *
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testGetUserVisitsExport(array $options)
+    {
+        $this->assertArrayHasKey('data', $options);
+        $this->assertArrayHasKey('output', $options);
+        $this->assertArrayHasKey('success', $options);
+
+        $testData = $options['data'];
+        $expectedOutput = $options['output'];
+        $expectedSuccess = $options['success'];
+
+        $this->helper->authenticateDashboard('mgr');
+
+        $data = array_merge(
+            array(
+                'operation' => 'enum_user_visits_export'
+            ),
+            $testData
+        );
+
+        $response = $this->helper->post("internal_dashboard/controllers/controller.php", null, $data);
+        $expectedContentType = $expectedSuccess ? 'application/xls' : 'text/html; charset=UTF-8';
+        $this->validateResponse($response, 200, $expectedContentType);
+
+        $actual = array();
+        if (true === $expectedSuccess) {
+            $actualLines = explode("\n", $response[0]);
+            foreach($actualLines as $line) {
+                $actual[] = str_getcsv($line);
+            }
+        } else {
+            $actualLines = json_decode($response[0], true);
+            foreach($actualLines as $key => $value) {
+                $actual[] = array($key, $value);
+            }
+        }
+
+        $fileType = $expectedSuccess ? '.csv' : '.json';
+        $expectedFileName = $this->getTestFiles()->getFile('user_admin', $expectedOutput, 'output', $fileType);
+
+        $rows = 0;
+        $length = 1;
+        $expected = array();
+        $ignoredColumns = array('visit_frequency' => null);
+
+        if (true === $expectedSuccess) {
+            // We need a bit of meta-data from the expected file. Read through the
+            // expected file and retrieve:
+            //   - the column index of any columns that are to be ignored
+            //   - the number of rows we expect.
+            //   - the largest number of columns seen for a line
+            //   - the expected row itself to be saved for later comparison.
+            if (($handle = fopen($expectedFileName, 'r')) !== false) {
+                while (($data = fgetcsv($handle))) {
+                    if ($rows === 0) {
+                        foreach($ignoredColumns as $key => $value) {
+                            $index = array_search($key, $data);
+                            $ignoredColumns[$key] = $index;
+                        }
+                    }
+                    $rows++;
+                    $num = count($data);
+                    if ($num > $length) {
+                        $length = $num;
+                    }
+                    $expected[] = $data;
+                }
+                fclose($handle);
+            }
+
+            // Now we can get down to the business of comparing...
+            for ($i = 0; $i < $rows; $i++) {
+                if (isset($actual[$i]) && isset($expected[$i])) {
+                    $actualLine = $actual[$i];
+                    $expectedLine = $expected[$i];
+                    for ($col = 0; $col < $length; $col++) {
+                        // We only do a comparison if we're not ignoring this
+                        // column *and* we have column values in both lines.
+                        if (!in_array($col, $ignoredColumns) &&
+                            isset($actualLine[$col]) &&
+                            isset($expectedLine[$col])) {
+                            $actualCol = $actualLine[$col];
+                            $expectedCol = $expectedLine[$col];
+                            $this->assertEquals($expectedCol, $actualCol, "Column: $col was different. ". json_encode($ignoredColumns));
+                        }
+                    }
+                }
+            }
+        } else {
+            // If this test isn't expected to succed then it is assumed the output
+            // is a json file. Process accordingly.
+            $expectedJson = JSON::loadFile($expectedFileName);
+            foreach($expectedJson as $key => $value) {
+                $expected[] = array($key, $value);
+            }
+
+            $this->assertEquals($expected, $actual);
+        }
+
+        $this->helper->logoutDashboard();
+    }
+
+    public function provideGetUserVisits()
+    {
+        return JSON::loadFile(
+            $this->getTestFiles()->getFile('user_admin', 'get_user_visits', 'input')
+        );
+    }
+
+    protected function entryExists(array $source, callable $predicate)
+    {
+        foreach ($source as $key => $value) {
+            $found = $predicate($key, $value);
+            if ($found === true) {
+                return true;
+            }
+        }
+        return false;
     }
 }
