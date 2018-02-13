@@ -1,23 +1,17 @@
-var InternetExplorer = {
-    browserName: 'internet explorer',
-    platform: 'Windows 10',
-    version: '11.103',
-    screenResolution: '1280x1024'
-};
-var FireFox = {
-    browserName: 'firefox',
-    platform: 'Windows 10',
-    version: '45.0',
-    screenResolution: '2560x1600'
-};
+/**
+ * If you want to add other platforms use the following:
+ * https://wiki.saucelabs.com/display/DOCS/Platform+Configurator
+ * put them into variable and then add them to the proper `capabilities`
+ * variable
+ */
 var HeadlessChrome = {
     browserName: 'chrome',
     chromeOptions: {
         args: [
-            'incognito',
             '--no-sandbox',
             '--headless',
             '--no-gpu',
+            'incognito',
             'disable-extensions',
             'start-maximized',
             'window-size=2560,1600'
@@ -27,7 +21,7 @@ var HeadlessChrome = {
 var Chrome = {
     browserName: 'chrome',
     platform: 'Windows 10',
-    version: '48.0',
+    version: '61.0',
     screenResolution: '2560x1600',
     chromeOptions: {
         args: [
@@ -66,7 +60,7 @@ if (process.env.WDIO_MODE === 'headless') {
     user = process.env.SAUCE_USER;
     key = process.env.SAUCE_KEY;
     services = ['sauce'];
-    capabilities = [Chrome, FireFox, InternetExplorer];
+    capabilities = [Chrome];
 }
 if (process.env.JUNIT_OUTDIR) {
     reporters.push('junit');
