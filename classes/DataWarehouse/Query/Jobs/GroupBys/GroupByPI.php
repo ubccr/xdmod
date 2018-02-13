@@ -108,48 +108,11 @@ class GroupByPI extends \DataWarehouse\Query\Jobs\GroupBy
     public function pullQueryParameters(&$request)
     {
         return parent::pullQueryParameters2($request,'_filter_', 'principalinvestigator_person_id');
-        /*
-        $parameters = array();
-        if(isset($request[$this->getName().'_filter']) && $request[$this->getName().'_filter'] != '')
-        {
-            $filterString = $request[$this->getName().'_filter'];
-
-            $filterItems = explode(',',$filterString);
-
-            if(isset($request[$this->getName()]))
-            {
-                $filterItems[] = $request[$this->getName()];
-            }
-
-            if(count($filterItems) > 0) $parameters[] = new \DataWarehouse\Query\Model\Parameter('principalinvestigator_person_id', 'in', "(".implode(',',$filterItems).")");
-        }
-        else
-        if(isset($request[$this->getName()]))
-        {
-            $parameters[] = new \DataWarehouse\Query\Model\Parameter('principalinvestigator_person_id', '=', $request[$this->getName()]);
-
-        }
-        return $parameters;*/
     }
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2($request,
                             "select long_name as field_label from modw.piperson  where person_id in (_filter_) order by order_id");
-                            /*
-        $parameters = array();
-        if(isset($request[$this->getName()]))
-        {
-            $fieldLabelQuery = "select long_name as field_label from modw.piperson  where person_id =".$request[$this->getName()];
-            $fieldLabelResults = \DataWarehouse::connect()->query($fieldLabelQuery);
-
-            foreach($fieldLabelResults as $fieldLabelResult)
-            {
-                $parameters[] = $this->getLabel().' = '.$fieldLabelResult['field_label'];
-                break;
-            }
-        }
-
-        return $parameters;*/
     }
 
     public function getPossibleValues($hint = null, $limit = null, $offset = null, array $parameters = array(), $base_query = null, $filter = null)

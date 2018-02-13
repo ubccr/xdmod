@@ -115,39 +115,11 @@ class GroupByUsername extends \DataWarehouse\Query\Jobs\GroupBy
     public function pullQueryParameters(&$request)
     {
         return parent::pullQueryParameters2($request, 'select id from modw.systemaccount where username in (_filter_)', 'systemaccount_id');
-        /*
-        $parameters = array();
-        if(isset($request[$this->getName().'_filter']) && $request[$this->getName().'_filter'] != '')
-        {
-            $filterString = $request[$this->getName().'_filter'];
-
-            $filterItems = explode(',',$filterString);
-
-            if(isset($request[$this->getName()]))
-            {
-                $filterItems[] = $request[$this->getName()];
-            }
-
-            if(count($filterItems) > 0) $parameters[] = new \DataWarehouse\Query\Model\Parameter('systemaccount_id', 'in',  "(select id from modw.systemaccount where username in "."('".implode("','",$filterItems)."')".")"  );
-        }
-        else
-        if(isset($request[$this->getName()]))
-        {
-            $parameters[] = new \DataWarehouse\Query\Model\Parameter('systemaccount_id', 'in', "(select id from modw.systemaccount where username = '".$request[$this->getName()]."')");
-        }
-        return $parameters;*/
     }
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2($request,
                             "select distinct username as field_label from modw.systemaccount  where username in (_filter_) order by username");
-                            /*
-        $parameters = array();
-        if(isset($request[$this->getName()]))
-        {
-            $parameters[] = $this->getLabel().' = '.$request[$this->getName()];
-        }
-        return $parameters;*/
     }
 
     public function getPossibleValues($hint = null, $limit = null, $offset = null, array $parameters = array(), $base_query = null, $filter = null)

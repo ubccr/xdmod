@@ -108,27 +108,6 @@ class GroupByPerson extends \DataWarehouse\Query\Jobs\GroupBy
     public function pullQueryParameters(&$request)
     {
         return parent::pullQueryParameters2($request,'_filter_', 'person_id');
-        /*$parameters = array();
-        if(isset($request[$this->getName().'_filter']) && $request[$this->getName().'_filter'] != '')
-        {
-            $filterString = $request[$this->getName().'_filter'];
-
-            $filterItems = explode(',',$filterString);
-
-            if(isset($request[$this->getName()]))
-            {
-                $filterItems[] = $request[$this->getName()];
-            }
-
-            if(count($filterItems) > 0) $parameters[] = new \DataWarehouse\Query\Model\Parameter('person_id', 'in', "(".implode(',',$filterItems).")");
-        }
-        else
-        if(isset($request[$this->getName()]))
-        {
-            $parameters[] = new \DataWarehouse\Query\Model\Parameter('person_id', '=', $request[$this->getName()]);
-
-        }
-        return $parameters;*/
     }
     public function pullQueryParameterDescriptions(&$request)
     {
