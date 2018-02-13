@@ -777,7 +777,7 @@ class SimpleTimeseriesDataset extends SimpleDataset
 
         // add a where condition on the array of excluded ids. These are the top-n
         if (!empty($whereExcludeArray)) {
-            $w = $q->addWhereAndJoin($where_name, "NOT IN", $whereExcludeArray);
+            $q->addWhereAndJoin($where_name, "NOT IN", $whereExcludeArray);
         }
 
         // set up data object for return
