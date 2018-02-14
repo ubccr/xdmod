@@ -4,7 +4,7 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
     resizable: false,
     title: "Sign Up Today",
     iconCls: 'signup_16',
-    bodyStyle: 'padding:15px 13px 0',
+    bodyStyle: 'padding: 0 13px;',
 
     initComponent: function () {
         var fieldRequiredText = 'This field is required.';
@@ -137,7 +137,7 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
 
         if (CCR.xdmod.captcha_sitekey.length > 0) {
             captchaField = new XDMoD.CaptchaField({
-                style: 'margin-left: 130px'
+                style: 'margin-left: 130px; padding: 13px 0;'
             });//captchaField
         }
 
