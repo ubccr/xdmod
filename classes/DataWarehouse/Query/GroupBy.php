@@ -379,6 +379,15 @@ abstract class GroupBy extends \Common\Identity
     {
         return "uncategorized";
     }
+
+    public function getRealm()
+    {
+        $class = get_called_class();
+        $matches = array();
+        return preg_match('/DataWarehouse\\\\Query\\\\(\\w+)\\\\/', $class, $matches)
+            ? $matches[1]
+            : "unknown";
+    }
 }
 
 ?>
