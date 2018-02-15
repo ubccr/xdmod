@@ -52,7 +52,17 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             root: 'user_types',
             baseParams: { 'operation' : 'enum_user_types' },
             fields: ['id', 'type'],
-            autoLoad: true
+            autoLoad: true,
+            listeners: {
+                load: function (store, records) {
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        if (parseInt(record.data.id, 10) === CCR.xdmod.FEDERATED_USER_TYPE) {
+                            store.remove(record);
+                        }
+                    }
+                }
+            }
         });
 
         var cmbUserType = new Ext.form.ComboBox({
