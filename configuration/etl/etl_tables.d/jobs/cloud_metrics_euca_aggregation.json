@@ -1,0 +1,220 @@
+{
+    "#": "Aggregation of Cloud Data ingested from Eucalyptus",
+        "table_definition": {
+            "name": "cm_euca_fact_by_",
+            "table_prefix": "cm_euca_fact_by_",
+            "engine": "MyISAM",
+            "comment": "Euca facts aggregated by ${AGGREGATION_UNIT}.",
+            "columns": [
+                {
+                    "name": "${AGGREGATION_UNIT}_id",
+                    "type": "int(10) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+                },{
+                    "name": "year",
+                    "type": "smallint(5) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+                },{
+                    "name": "${AGGREGATION_UNIT}",
+                    "type": "smallint(5) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+                },{
+                    "name": "host_resource_id",
+                    "type": "int(11) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: The resource id of the host of a VM where event(s) occured."
+                },{
+                    "name": "account_id",
+                    "type": "smallint(5) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: The account id associated with the VM."
+                },{
+                    "name": "person_id",
+                    "type": "int(11) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: The person id associated with a VM instance."
+                },{
+                    "name": "instance",
+                    "type": "varchar(256)",
+                    "nullable": false,
+                    "comment": "DIMENSION: The provider identifier of the instance itself."
+                },{
+                    "name": "start_event_id",
+                    "type": "int(11) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: Starting event id."
+                },{
+                    "name": "instance_type_id",
+                    "type": "int(11) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: Type of instance on which an event occurred."
+                },{
+                    "name": "configuration",
+                    "type": "varchar(256)",
+                    "nullable": false,
+                    "comment": "DIMENSION: configuration name of a VM configuration."
+                },{
+                    "name": "num_cores",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "comment": "DIMENSION: Number of cores on a VM."
+                },{
+                    "name": "memory_mb",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "comment": "DIMENSION: Amount of memory in MB reserved by a VM."
+                },{
+                    "name": "disk_gb",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "comment": "DIMENSION: Disk size in GB reserved by a VM."
+                },{
+                    "name": "start_event_time",
+                    "type": "datetime",
+                    "nullable": false,
+                    "comment": "DIMENSION: The start time of this instance's run."
+                },{
+                    "name": "start_event",
+                    "type": "varchar(256)",
+                    "nullable": false,
+                    "comment": "DIMENSION: Type of start event (start, resume)."
+                },{
+                    "name": "end_event_time",
+                    "type": "datetime",
+                    "nullable": false,
+                    "comment": "DIMENSION: The end time of this instance's run."
+                },{
+                    "name": "end_event",
+                    "type": "varchar(256)",
+                    "nullable": false,
+                    "comment": "DIMENSION: Type of end event (suspend, stop, terminate)."
+                },{
+                    "name": "number_of_vms",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "comment": "FACT: Number of VMs extant in some fashion in a given period."
+                },{
+                    "name": "started_vm_count",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "comment": "FACT: Number of VMs started over a given period."
+                },{
+                    "name": "ended_vm_count",
+                    "type": "int(11)",
+                    "nullable": true,
+                    "comment": "FACT: Number of VMs ended over a given period."
+                },{
+                    "name": "wallduration",
+                    "type": "decimal(18,0)",
+                    "nullable": true,
+                    "comment": "FACT: (seconds) The wallduration of the VMs that were running during this period."
+                }
+            ],
+
+        "indexes": [
+            {
+                "name": "index_account",
+                "columns": [ "account_id" ]
+            },{
+                "name": "index_person",
+                "columns": [ "person_id" ]
+            },{
+                "name": "index_start_event_id",
+                "columns": [ "start_event_id" ]
+            },{
+                "name": "index_instance_type_id",
+                "columns": [ "instance_type_id" ]
+            },{
+                "name": "index_resource",
+                "columns": [ "host_resource_id" ]
+            },{
+                "name": "index_period_value",
+                "columns": [ "${AGGREGATION_UNIT}" ]
+            },{
+                "name": "index_period",
+                "columns": [ "${AGGREGATION_UNIT}_id" ]
+            }]
+        },
+        "aggregation_period_query": {
+            "overseer_restrictions": {
+                "#last_modified_start_date": "last_modified >= ${VALUE}",
+                "#last_modified_end_date": "last_modified <= ${VALUE}",
+                "include_only_resource_codes": "resource_id IN ${VALUE}",
+                "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
+            },
+            "conversions": {
+                "start_day_id": "YEAR(FROM_UNIXTIME(euca_events_transient)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(euca_events_transient))",
+                "end_day_id": "YEAR(FROM_UNIXTIME(euca_events_transient)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(euca_events_transient))"
+            }
+        },
+        "destination_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "host_resource_id IN ${VALUE}",
+                "exclude_resource_codes": "host_resource_id NOT IN ${VALUE}"
+            }
+        },
+        "source_query": {
+            "overseer_restrictions": {
+                "include_only_resource_codes": "host.resource_id IN ${VALUE}",
+                "exclude_resource_codes": "host.resource_id NOT IN ${VALUE}"
+            },
+            "records": {
+                "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
+                "year": "${:YEAR_VALUE}",
+                "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
+                "host_resource_id": "euca_events_transient.resource_id",
+                "account_id": "instance.account_id",
+                "person_id": "instance.person_id",
+                "start_event_id": "euca_events_transient.start_event_id",
+                "instance_type_id": "euca_events_transient.instance_type_id",
+                "configuration": "euca_events_transient.configuration",
+                "num_cores": "SUM(euca_events_transient.num_cores)",
+                "memory_mb": "SUM(euca_events_transient.memory_mb)",
+                "disk_gb": "SUM(euca_events_transient.disk_gb)",
+                "started_vm_count": "SUM(IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
+                "ended_vm_count": "SUM(IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
+                "number_of_vms": "COUNT(SELECT DISTINCT IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, euca_events_transient.instance, 0))",
+                "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)"
+            },
+            "groupby": [
+              "${AGGREGATION_UNIT}_id",
+              "year",
+              "${AGGREGATION_UNIT}",
+              "configuration",
+              "instance_type_id",
+              "account_id",
+              "person_id"
+            ],
+            "joins":[
+              {
+                  "name": "euca_events_transient",
+                  "schema": "${SOURCE_SCHEMA}"
+              },{
+                  "name": "instance",
+                  "schema": "${SOURCE_SCHEMA}",
+                  "on": "instance.instance_id = event.instance_id and instance.resource_id = event.resource_id"
+              }
+            ],
+            "where": [
+              "euca_events_transient.start_day_id <= ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_day_id >= ${:PERIOD_START_DAY_ID}",
+              "euca_events_transient.configuration != \"Unknown\"",
+              "euca_events_transient.instance !=\"Unknown\"",
+              "euca_events_transient.num_cores != 0"
+          ],
+            "macros": [{
+                "name": "wallduration_case_statement",
+                "file": "statistic_ratio_case.sql",
+                "args": {
+                    "statistic": "euca_events_transient.wallduration",
+                    "max": "${:PERIOD_SECONDS}",
+                    "src_start_ts": "euca_events_transient.start_time_ts",
+                    "src_end_ts": "euca_events_transient.end_time_ts",
+                    "dest_start_ts": "${:PERIOD_START_TS}",
+                    "dest_end_ts": "${:PERIOD_END_TS}"
+                }
+            }]
+        }
+}
