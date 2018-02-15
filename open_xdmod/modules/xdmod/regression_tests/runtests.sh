@@ -40,11 +40,13 @@ REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php & cdpid
 REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerTest.php & cspid=$!
 $phpunit $PUB . & pubpid=$!
 
+EXIT_STATUS=0
 for pid in $usrpid $pipid $cdpid $cspid $pubpid;
 do
     wait "$pid"
     if [ "$?" -ne "0" ];
     then
-        exit 1
+        EXIT_STATUS=1
     fi
 done
+exit $EXIT_STATUS
