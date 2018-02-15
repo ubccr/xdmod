@@ -72,10 +72,6 @@
                 {
                     "name": "year",
                     "class": "GroupByYear"
-                },
-                {
-                    "name": "provider",
-                    "class": "GroupByProvider"
                 }
             ],
             "statistics": [
