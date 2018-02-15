@@ -1049,8 +1049,8 @@ class XDUserTest extends BaseTest
     public function provideEnumAllAvailableRoles()
     {
         $results = array(
-            array(self::CENTER_DIRECTOR_USER_NAME, 'center_director_all_available_roles.json'),
-            array(self::CENTER_STAFF_USER_NAME, 'center_staff_all_available_roles.json'),
+            array(self::CENTER_DIRECTOR_USER_NAME, 'center_director_all_available_roles-update_datawarehouse.json'),
+            array(self::CENTER_STAFF_USER_NAME, 'center_staff_all_available_roles-update_datawarehouse.json'),
             array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, 'principal_user_all_available_roles.json'),
             array(self::NORMAL_USER_USER_NAME, 'normal_user_all_available_roles.json')
         );
@@ -1110,7 +1110,9 @@ class XDUserTest extends BaseTest
             }
 
             $userName = $user->getUsername();
-            $fileName = implode('_', $aclCombination) . "_acls.json";
+            $updated = in_array('cd', $aclCombination) || in_array('cs', $aclCombination);
+            $suffix = $updated === true ? '-update_datawarehouse' : '';
+            $fileName = implode('_', $aclCombination) . "_acls$suffix.json";
             $results []= array(
                 $userName,
                 $fileName

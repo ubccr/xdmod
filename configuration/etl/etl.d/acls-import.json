@@ -78,6 +78,16 @@
                 }
             ],
             "enabled": true
+        },
+        {
+            "name": "acls.import.xdmod.sync_parameter_tables",
+            "description": "Ensure that orphan records in user_acl_group_by_parameters or UserRoleParameters are removed",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/sync_parameter_tables.sql"
+                }
+            ],
+            "enabled": true
         }
     ]
 }
