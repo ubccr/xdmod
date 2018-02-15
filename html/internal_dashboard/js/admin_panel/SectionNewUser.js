@@ -496,7 +496,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         };
 
         var fsRoleAssignment = new Ext.form.FieldSet({
-            title: 'Acl Assignment',
+            title: 'ACL Assignment',
 
             items: [
                 newUserRoleGrid
@@ -568,7 +568,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 var intersection = CCR.intersect(dataAcls, acls);
 
                 if (intersection.length === 0) {
-                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
+                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag ACL for the user (i.e., anything not Manager or Developer).');
                     return;
                 }
 
