@@ -175,7 +175,7 @@ try {
         if (isset($_POST['acls']) && isset($acls)) {
 
             // clear the organizations first.
-            $user_to_update->setOrganizations();
+            $user_to_update->setOrganizations(array(), ROLE_ID_CENTER_DIRECTOR);
             $user_to_update->setOrganizations(array(), ROLE_ID_CENTER_STAFF);
 
             // then add each new one.
