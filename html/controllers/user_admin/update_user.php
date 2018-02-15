@@ -173,6 +173,12 @@ try {
 
     if (!isset($_POST['is_active'])) {
         if (isset($_POST['acls']) && isset($acls)) {
+
+            // clear the organizations first.
+            $user_to_update->setOrganizations();
+            $user_to_update->setOrganizations(array(), ROLE_ID_CENTER_STAFF);
+
+            // then add each new one.
             foreach ($acls as $aclName => $centers) {
                 if ( count($centers) > 0) {
                     $centerConfig = array();
