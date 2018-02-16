@@ -78,6 +78,16 @@
                 }
             ],
             "enabled": true
+        },
+        {
+            "name": "acls.import.xdmod.clear_orphan_parameter_records",
+            "description": "Ensure that any orphan parameter records are removed.",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/clear_orphan_parameter_records.sql"
+                }
+            ],
+            "enabled": true
         }
     ]
 }
