@@ -1514,11 +1514,10 @@ class Query
                     }
                 )
             );
-            $visible = true;
             if (array_key_exists('visible', $found)) {
-                $visible = $found['visible'];
+                $group_by_name_to_instance[$group_by_name]->setAvailableOnDrilldown($found['visible']);
             }
-            $group_by_name_to_instance[$group_by_name]->setAvailableOnDrilldown($visible);
+
         }
         return $group_by_name_to_instance[$group_by_name];
     } //getGroupBy
