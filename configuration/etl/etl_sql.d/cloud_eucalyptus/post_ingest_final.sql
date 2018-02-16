@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS euca_events_transient
 SELECT
     it.provider_identifier as instance,
     consolidate.event_id as start_event_id,
+    consolidate.resource_id as resource_id,
     consolidate.instance_id as id,
     consolidate.start_event_type as start_event,
     consolidate.start_event_time as start_event_time,
@@ -16,7 +17,9 @@ SELECT
     itt.start_time AS config_start,
     UNIX_TIMESTAMP(consolidate.start_event_time) AS start_time_ts,
     UNIX_TIMESTAMP(consolidate.end_event_time) AS end_time_ts,
-    UNIX_TIMESTAMP(consolidate.end_event_time) - UNIX_TIMESTAMP(consolidate.start_event_time) AS wallduration
+    UNIX_TIMESTAMP(consolidate.end_event_time) - UNIX_TIMESTAMP(consolidate.start_event_time) AS wallduration,
+    YEAR(consolidate.start_event_time) * 100000 + DAYOFYEAR(consolidate.start_event_time) AS start_day_id,
+    YEAR(consolidate.end_event_time) * 100000 + DAYOFYEAR(consolidate.end_event_time) AS end_day_id
 FROM (
     -- Match up instance stop events that occur after a start event
     SELECT

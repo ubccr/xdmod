@@ -42,6 +42,11 @@
                     "nullable": false,
                     "comment": "DIMENSION: The provider identifier of the instance itself."
                 },{
+                    "name": "instance_id",
+                    "type": "int(11)",
+                    "nullable": false,
+                    "comment": "DIMENSION: The ID of the instance itself."
+                },{
                     "name": "start_event_id",
                     "type": "int(11) unsigned",
                     "nullable": false,
@@ -144,10 +149,6 @@
                 "#last_modified_end_date": "last_modified <= ${VALUE}",
                 "include_only_resource_codes": "resource_id IN ${VALUE}",
                 "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
-            },
-            "conversions": {
-                "start_day_id": "YEAR(FROM_UNIXTIME(euca_events_transient)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(euca_events_transient))",
-                "end_day_id": "YEAR(FROM_UNIXTIME(euca_events_transient)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(euca_events_transient))"
             }
         },
         "destination_query": {
@@ -169,14 +170,16 @@
                 "account_id": "instance.account_id",
                 "person_id": "instance.person_id",
                 "start_event_id": "euca_events_transient.start_event_id",
+                "instance": "euca_events_transient.instance",
+                "instance_id": "euca_events_transient.id",
                 "instance_type_id": "euca_events_transient.instance_type_id",
                 "configuration": "euca_events_transient.configuration",
                 "num_cores": "SUM(euca_events_transient.num_cores)",
                 "memory_mb": "SUM(euca_events_transient.memory_mb)",
                 "disk_gb": "SUM(euca_events_transient.disk_gb)",
-                "started_vm_count": "SUM(IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
-                "ended_vm_count": "SUM(IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
-                "number_of_vms": "COUNT(SELECT DISTINCT IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, euca_events_transient.instance, 0))",
+                "started_vm_count": "SUM( IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'START', 1, 0) )",
+                "ended_vm_count": "SUM( IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0) )",
+                "number_of_vms": "COUNT(SELECT DISTINCT IF(euca_events_transient.start_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, euca_events_transient.instance, 0))",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)"
             },
             "groupby": [
@@ -186,7 +189,9 @@
               "configuration",
               "instance_type_id",
               "account_id",
-              "person_id"
+              "person_id",
+              "instance",
+              "instance_id"
             ],
             "joins":[
               {
@@ -195,7 +200,7 @@
               },{
                   "name": "instance",
                   "schema": "${SOURCE_SCHEMA}",
-                  "on": "instance.instance_id = event.instance_id and instance.resource_id = event.resource_id"
+                  "on": "instance.instance_id = euca_events_transient.id and instance.resource_id = euca_events_transient.resource_id"
               }
             ],
             "where": [
