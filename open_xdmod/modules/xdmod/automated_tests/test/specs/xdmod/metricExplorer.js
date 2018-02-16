@@ -82,6 +82,21 @@ describe('Metric Explorer', function metricExplorer() {
         });
     });
     describe('Basic Scenarios', function basicScenarios() {
+        it('Add/Edit Filters in Toolbar', function () {
+            me.loadExistingChartByName(chartName);
+            me.addFiltersFromToolbar();
+            me.cancelFiltersFromToolbar();
+            me.editFiltersFromToolbar();
+            me.clear();
+        });
+        it('Add/Edit Filters in Data Series Definition', function(){
+            me.clickLogoAndWaitForMask();
+            me.loadExistingChartByName(chartName);
+            me.addFiltersFromDataSeriesDefinition();
+            me.cancelFiltersFromDataSeriesDefinition();
+            me.editFiltersFromDataSeriesDefinition();
+            me.clear();
+        });
         it('Has Instructions', function meConfirmInstructions() {
             me.verifyInstructions();
         });
