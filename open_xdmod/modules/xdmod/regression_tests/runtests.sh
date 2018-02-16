@@ -33,20 +33,27 @@ if [ ! -x "$phpunit" ]; then
     echo phpunit not found, run \"composer install\" 1>&2
     exit 127
 fi
-
-REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerTest.php & usrpid=$!
-REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerTest.php & pipid=$!
-REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php & cdpid=$!
-REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerTest.php & cspid=$!
-$phpunit $PUB . & pubpid=$!
-
-EXIT_STATUS=0
-for pid in $usrpid $pipid $cdpid $cspid $pubpid;
-do
-    wait "$pid"
-    if [ "$?" -ne "0" ];
-    then
-        EXIT_STATUS=1
-    fi
-done
-exit $EXIT_STATUS
+if [ "$REG_TEST_ALL" == "1" ]; then
+    set +e
+    REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerTest.php
+    REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerTest.php
+    REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php
+    REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerTest.php
+    $phpunit $PUB . & pubpid=$!
+else
+    REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerTest.php & usrpid=$!
+    REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerTest.php & pipid=$!
+    REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php & cdpid=$!
+    REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerTest.php & cspid=$!
+    $phpunit $PUB . & pubpid=$!
+    EXIT_STATUS=0
+    for pid in $usrpid $pipid $cdpid $cspid $pubpid;
+    do
+        wait "$pid"
+        if [ "$?" -ne "0" ];
+        then
+            EXIT_STATUS=1
+        fi
+    done
+    exit $EXIT_STATUS
+fi
