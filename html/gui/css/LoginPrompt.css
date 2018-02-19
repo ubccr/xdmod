@@ -3,61 +3,65 @@
 	padding-top: 5px;
 	color: #777;
  }
- 
+
  .win_splash_login_prompt .no_account_description {
 	width: 290px !important;
 	color: #777;
  }
- 
+
  /* To give bevelled look to buttons */
- 
+
  .win_splash_login_prompt .x-btn-tl{
 	 background-position: -6px 0;
  }
- 
+
  .win_splash_login_prompt .x-btn-tr{
 	 background-position: -9px 0;
  }
- 
+
  .win_splash_login_prompt .x-btn-tc{
 	 background-position: 0 -9px;
  }
- 
+
  .win_splash_login_prompt .x-btn-ml{
 	 background-position: -6px -24px;
  }
- 
+
  .win_splash_login_prompt .x-btn-mr{
 	 background-position: -9px -24px;
  }
- 
+
  .win_splash_login_prompt .x-btn-mc{
 	 background-position: 0 -2168px;
  }
- 
+
  .win_splash_login_prompt .x-btn-bl{
 	 background-position: -6px -3px;
  }
- 
+
  .win_splash_login_prompt .x-btn-br{
 	 background-position: -9px -3px;
  }
- 
+
  .win_splash_login_prompt .x-btn-bc{
 	 background-position: 0 -18px;
  }
- 
+
  #federated_login_form .x-panel-body, #local_login_form .x-panel-body, #forgot_password_form .x-panel-body {
 	 background-color: #e8e8e8 !important;
 	 border: 1px;
 	 border-color: #bbb;
 	 border-style: solid;
  }
- 
+
+ #forgot_password_form {
+	 padding: 15px;
+ }
+
  #federated_login_form form, #local_login_form form, #forgot_password_form form {
 	padding: 15px;
  }
- 
+
 #federatedLoginLink button {
 	height: 100%;
 }
@@ -69,7 +73,7 @@
  #txt_login_username, #txt_login_password {
 	 background-color: #e8e8e8;
  }
- 
+
  #login_response, #forgot_password_link, #sign_up_link {
 	 margin: 2.5px 0px 2.5px 0px;
  }
