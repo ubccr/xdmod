@@ -19,8 +19,8 @@ describe('Metric Explorer', function metricExplorer() {
             contextMenu: {
                 open: function chartContextMenuOpen() {
                     it('Open Chart Context Menu', function () {
-                            //  TODO: Find a better way to open this.  Currently there is a chance
-                            //  that the click will open the dataseries menu
+                        //  TODO: Find a better way to open this.  Currently there is a chance
+                        //  that the click will open the dataseries menu
                         browser.waitAndClick('#hc-panelmetric_explorer', 10000);
                     });
                 },
@@ -89,7 +89,7 @@ describe('Metric Explorer', function metricExplorer() {
             me.editFiltersFromToolbar();
             me.clear();
         });
-        it('Add/Edit Filters in Data Series Definition', function(){
+        it('Add/Edit Filters in Data Series Definition', function () {
             me.clickLogoAndWaitForMask();
             me.loadExistingChartByName(chartName);
             me.addFiltersFromDataSeriesDefinition();
