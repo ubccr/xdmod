@@ -30,7 +30,7 @@
                     "name": "account_id",
                     "type": "smallint(5) unsigned",
                     "nullable": false,
-                    "comment": "DIMENSION: The account id associated with a VM."
+                    "comment": "DIMENSION: The account id associated with the VM."
                 },{
                     "name": "person_id",
                     "type": "int(11) unsigned",
@@ -65,17 +65,17 @@
                     "name": "num_cores",
                     "type": "int(11)",
                     "nullable": false,
-                    "comment": "FACT: Number of cores on a VM."
+                    "comment": "DIMENSION: Number of cores on a VM."
                 },{
                     "name": "memory_mb",
                     "type": "int(11)",
                     "nullable": false,
-                    "comment": "FACT: Amount of memory in MB reserved by a VM."
+                    "comment": "DIMENSION: Amount of memory in MB reserved by a VM."
                 },{
                     "name": "disk_gb",
                     "type": "int(11)",
                     "nullable": false,
-                    "comment": "FACT: Disk size in GB reserved by a VM."
+                    "comment": "DIMENSION: Disk size in GB reserved by a VM."
                 },{
                     "name": "start_event_time",
                     "type": "datetime",
@@ -166,9 +166,10 @@
                 "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
-                "host_resource_id": "instance.resource_id",
+                "host_resource_id": "euca_events_transient.resource_id",
                 "account_id": "instance.account_id",
                 "person_id": "instance.person_id",
+                "start_event_id": "euca_events_transient.start_event_id",
                 "instance": "euca_events_transient.instance",
                 "instance_id": "euca_events_transient.id",
                 "instance_type_id": "euca_events_transient.instance_type_id",
@@ -176,9 +177,9 @@
                 "num_cores": "SUM(euca_events_transient.num_cores)",
                 "memory_mb": "SUM(euca_events_transient.memory_mb)",
                 "disk_gb": "SUM(euca_events_transient.disk_gb)",
-                "started_vm_count": "SUM(IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.start_event = 'START', 1, 0))",
-                "ended_vm_count": "SUM(IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0))",
-                "number_of_vms": "COUNT(IF(euca_events_transient.start_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, euca_events_transient.instance, 0))",
+                "started_vm_count": "SUM( IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'START', 1, 0) )",
+                "ended_vm_count": "SUM( IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0) )",
+                "number_of_vms": "COUNT(SELECT DISTINCT IF(euca_events_transient.start_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, euca_events_transient.instance, 0))",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)"
             },
             "groupby": [
@@ -186,6 +187,7 @@
               "year",
               "${AGGREGATION_UNIT}",
               "configuration",
+              "instance_type_id",
               "account_id",
               "person_id",
               "instance",
@@ -202,10 +204,10 @@
               }
             ],
             "where": [
-              "modw_cloud.euca_events_transient.start_day_id <= ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_day_id >= ${:PERIOD_START_DAY_ID}",
-              "modw_cloud.euca_events_transient.configuration != \"Unknown\"",
-              "modw_cloud.euca_events_transient.instance !=\"unknown\"",
-              "modw_cloud.euca_events_transient.num_cores != 0"
+              "euca_events_transient.start_day_id <= ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_day_id >= ${:PERIOD_START_DAY_ID}",
+              "euca_events_transient.configuration != \"Unknown\"",
+              "euca_events_transient.instance !=\"Unknown\"",
+              "euca_events_transient.num_cores != 0"
           ],
             "macros": [{
                 "name": "wallduration_case_statement",
