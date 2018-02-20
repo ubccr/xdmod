@@ -1,6 +1,34 @@
 Open XDMoD Change Log
 =====================
 
+## 2018-??-?? v7.5.0
+
+- Features
+  - General
+    - Improve performance of Utilization statistic
+    - Do not embed JavaScript in chart objects returned by the back end, instead
+    - include this code directly in the user interface code
+    - General improvements to the performance of the REST stack
+    - Updated Google Captcha to v2 (v1 is now discontinued)
+    - Added numerous component and unit tests
+    - Removed unused code paths
+    - Update greenlion/PHP-SQL-Parser to newer release that does not autoload itself
+  - User Interface
+    - Legend item edit box is now displayed next to the legend item that is being edited and is larger to accommodate longer strings
+    - Added a "Select All" button to the filter dialog
+    - Added PDF export capability, which greatly improves the quality of images included in LATEX documents
+  - ETL
+    - When ingesting Slurm data, return duplicate jobs such as those that were resubmitted due to node fail conditions
+    - Improve performance of filter list generation
+  - Application Kernels
+    - Several minor bug fixes and UI improvements
+- Bug Fixes
+  - General
+    - Fix the Show Guidelines button in the Usage tab</li>
+    - Fixed an issue with data filtering when an unprivileged user tries to view timeseries data for a restricted realm or statistic
+  - User Interface
+    - Fix the "TypeError: element is undefined" error when plotting Pie chart in metric explorer
+
 ## 2017-09-27 v7.0.1
 
 - Bug Fixes
