@@ -177,9 +177,13 @@
                 "num_cores": "SUM(euca_events_transient.num_cores)",
                 "memory_mb": "SUM(euca_events_transient.memory_mb)",
                 "disk_gb": "SUM(euca_events_transient.disk_gb)",
-                "started_vm_count": "SUM( IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'START', 1, 0) )",
-                "ended_vm_count": "SUM( IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0) )",
-                "number_of_vms": "COUNT(SELECT DISTINCT IF(euca_events_transient.start_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, euca_events_transient.instance, 0))",
+                "start_event": "euca_events_transient.start_event",
+                "end_event": "euca_events_transient.end_event",
+                "start_event_time": "euca_events_transient.start_event_time",
+                "end_event_time": "euca_events_transient.end_event_time",
+                "started_vm_count": "SUM(IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.start_event = 'START', 1, 0))",
+                "ended_vm_count": "SUM(IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0))",
+                "number_of_vms": "SUM(IF(euca_events_transient.start_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, 1, 0))",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)"
             },
             "groupby": [
