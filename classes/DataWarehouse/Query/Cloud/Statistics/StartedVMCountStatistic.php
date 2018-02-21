@@ -3,20 +3,20 @@ namespace DataWarehouse\Query\Jobs\Statistics;
 
 /*
 * @author Rudra Chakraborty
-* @date 02-20-2018
+* @date 02-21-2018
 *
 * Summation of Average Wallduration per VM
 */
-class RunningVMCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
+class StartedVMCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(sum(jf.number_of_vms),0)', 'number_of_vms', 'Number of VMs Running', 'Number of VMs', 0);
+        parent::__construct('coalesce(sum(jf.started_vm_count),0)', 'started_vm_count', 'Number of VMs Started', 'Number of VMs', 0);
     }
 
     public function getInfo()
     {
-        return  "The total number of running " . ORGANIZATION_NAME . " virtual machines.<br/>
+        return  "The total number of " . ORGANIZATION_NAME . " VM instances started on a cloud resource.<br/>
         <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.";
     }
     public function isVisible()

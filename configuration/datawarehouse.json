@@ -283,6 +283,53 @@
                     "class": "LogicalUtilizationStatistic"
                 }
             ]
+        },
+        "Cloud": {
+            "schema": "modw_cloud",
+            "table": "cm_euca_fact",
+            "datasource": "Cloud Stuff",
+            "group_bys": [
+                {
+                    "name": "none",
+                    "class": "GroupByNone"
+                },
+                {
+                    "name": "day",
+                    "class": "GroupByDay"
+                },
+                {
+                    "name": "month",
+                    "class": "GroupByMonth"
+                },
+                {
+                    "name": "quarter",
+                    "class": "GroupByQuarter"
+                },
+                {
+                    "name": "year",
+                    "class": "GroupByYear"
+                },
+            ],
+            "statistics": [
+                {
+                    "name": "ended_vm_count",
+                    "class": "VMCountStatistic"
+                },
+                {
+                    "name": "number_of_vms",
+                    "class": "RunningVMCountStatistic",
+                    "control": true
+                },
+                {
+                    "name": "started_vm_count",
+                    "class": "StartedVMCountStatistic",
+                    "control": true
+                },
+                {
+                    "name": "avg_wallduration_hours",
+                    "class": "AverageWallHoursStatistic"
+                }
+            ]
         }
     }
 }

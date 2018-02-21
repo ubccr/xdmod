@@ -7,7 +7,7 @@ namespace DataWarehouse\Query\Jobs\Statistics;
 *
 * Summation of Average Wallduration per VM
 */
-class JobCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
+class VMCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance = null)
     {
