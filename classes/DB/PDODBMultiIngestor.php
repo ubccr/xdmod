@@ -262,9 +262,10 @@ class PDODBMultiIngestor implements Ingestor
                         );
                     }
 
+                    fclose($f);
+
                     $this->_dest_helper->executeStatement($load_statement);
 
-                    fclose($f);
                     $f = fopen($infile_name, 'w');
                 }
                 catch (Exception $e) {
