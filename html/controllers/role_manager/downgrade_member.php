@@ -1,28 +1,30 @@
 <?php
 
-\xd_security\assertParameterSet('member_id', RESTRICTION_UID);
+use Models\Services\Users;
 
-// -----------------------------
+\xd_security\assertParameterSet('member_id', RESTRICTION_UID);
 
 $member = XDUser::getUserByID($_POST['member_id']);
 
-if ($member == NULL) {
+if ($member === null) {
     \xd_response\presentError('user_does_not_exist');
 }
 
-// -----------------------------
-
+$returnData = array();
 try {
 
-    $active_user = \xd_security\getLoggedInUser();
+    $activeUser = \xd_security\getLoggedInUser();
+    $organization = $activeUser->getActiveOrganization();
+    $memberUserId = $member->getUserID();
 
-    $member_organizations = $member->getOrganizationCollection();
-
-    if (!in_array($active_user->getActiveOrganization(), $member_organizations)) {
+    // An eligible user must be associated with the currently logged in users center.
+    if (!Users::userIsAssociatedWithCenter($memberUserId, $organization)) {
         \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
-    $active_user->getActiveRole()->downgradeStaffMember($member);
+    //
+    Users::demoteUserFromCenterStaff($member, $organization);
+
     $returnData['success'] = true;
 
 } catch (SessionExpiredException $see) {
@@ -34,5 +36,3 @@ try {
 }
 
 echo json_encode($returnData);
-
-?>

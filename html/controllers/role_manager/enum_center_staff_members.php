@@ -1,12 +1,12 @@
 <?php
 
-use Models\Services\Centers;
+use Models\Services\Users;
 
 try {
 
     $activeUser = \xd_security\getLoggedInUser();
 
-    $members = Centers::getCenterStaffMembers($activeUser);
+    $members = Users::getUsersForPromotion($activeUser->getActiveOrganization());
 
     $returnData = array();
 

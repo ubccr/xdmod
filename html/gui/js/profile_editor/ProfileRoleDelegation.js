@@ -112,7 +112,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel,  {
                labelWidth: 95,
                padding: '5px',
                frame: true,
-               title: 'Delegate Center Director Privileges',
+               title: 'Delegate Center Staff Privileges',
                defaults: {
                   width: 200
                },
@@ -130,7 +130,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel,  {
 
       var btnElevateUser = new Ext.Button({
 
-         text: 'Upgrade Staff Member To Center Director',
+         text: 'Upgrade Staff Member To Center Staff',
          hidden: true,
 
          handler: function() {
@@ -178,7 +178,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel,  {
 
       var btnDowngradeUser = new Ext.Button({
 
-         text: 'Revoke Center Director Privileges',
+         text: 'Revoke Center Staff Privileges',
          hidden: true,
 
          handler: function() {

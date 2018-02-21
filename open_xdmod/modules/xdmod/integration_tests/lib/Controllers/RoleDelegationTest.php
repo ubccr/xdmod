@@ -60,6 +60,7 @@ class RoleDelegationTest extends BaseUserAdminTest
         $response = $this->helper->post('controllers/role_manager.php', null, $data);
         $this->validateResponse($response, 200, 'text/html; charset=UTF-8');
 
+        $this->assertTrue(is_string($response[0]), "Response data not as expected. Received: " . json_encode($response[0]));
         $content = json_decode($response[0], true);
         $expected = JSON::loadFile($this->getTestFiles()->getFile('role_delegation', $expectedFileName));
 

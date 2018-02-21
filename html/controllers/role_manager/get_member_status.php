@@ -1,56 +1,50 @@
 <?php
 
+use Models\Services\Centers;
+use Models\Services\Users;
+
 \xd_security\assertParameterSet('member_id', RESTRICTION_UID);
 
-$member = XDUser::getUserByID($_POST['member_id']);
-
-if ($member == null) {
-    \xd_response\presentError('user_does_not_exist');
-}
-
 try {
+    $member = XDUser::getUserByID($_POST['member_id']);
+
+    if ($member === null) {
+        \xd_response\presentError('user_does_not_exist');
+    }
+
+    $returnData = array(
+        'success' => true,
+        'message' => '',
+        'eligible' => true
+    );
+
     $activeUser = \xd_security\getLoggedInUser();
+    $organization = $activeUser->getActiveOrganization();
+    $memberUserId = $member->getUserID();
 
-    $memberStaffOrganizations = $member->getOrganizationCollection(ROLE_ID_CENTER_STAFF);
-
-    if (!in_array($activeUser->getActiveOrganization(), $memberStaffOrganizations)) {
+    // An eligible user must be associated with the currently logged in users center.
+    if (!Users::userIsAssociatedWithCenter($memberUserId, $organization)) {
         \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
-    $memberDirectorOrganizations = $member->getOrganizationCollection(ROLE_ID_CENTER_DIRECTOR);
-
-    if (in_array($activeUser->getActiveOrganization(), $memberDirectorOrganizations)) {
-
-        // This member is already capable of becoming a center director of this center
-
-        $promoter = $member->getPromoter(ROLE_ID_CENTER_DIRECTOR, $activeUser->getActiveOrganization());
-
+    // They must not already be a Center Director for the organization.
+    if (Centers::hasCenterRelation($memberUserId, $organization, ROLE_ID_CENTER_DIRECTOR)) {
         $returnData['success'] = false;
-        $returnData['message'] = "is already a Center Director";
-
-        if ($promoter != -1) {
-
-            // This member was promoted to a Center Director by another user...
-
-            if ($activeUser->getUserId() == $promoter) {
-
-                $returnData['success'] = true;
-                $returnData['eligible'] = false;
-
-            }
-
-            $promoterUser = XDUser::getUserById($promoter);
-            $promoterName = $promoterUser->getFormalName();
-
-            $returnData['message'] = "has been upgraded to Center Director<br />(promoted by $promoterName)";
-        }
-
+        $returnData['message'] = "is a Center Director";
         \xd_controller\returnJSON($returnData);
-    }//if (in_array($active_user->getActiveOrganization(), $member_director_organizations))
+    }
 
-    $returnData['success'] = true;
-    $returnData['message'] = '';
-    $returnData['eligible'] = true;
+    // This makes them ineligible for promotion, but eligible for demotion.
+    if (Centers::hasCenterRelation($memberUserId, $organization, ROLE_ID_CENTER_STAFF)) {
+        $returnData['eligible'] = false;
+    }
+
+    // They must be active
+    if (!$member->getAccountStatus()) {
+        $returnData['success'] = false;
+        $returnData['message'] = "User is disabled";
+        \xd_controller\returnJSON($returnData);
+    }
 
     echo json_encode($returnData);
 } catch (SessionExpiredException $see) {
@@ -60,4 +54,5 @@ try {
 } catch (\Exception $e) {
 
     \xd_response\presentError($e->getMessage());
+
 }
