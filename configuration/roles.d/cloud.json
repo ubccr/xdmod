@@ -1,0 +1,17 @@
+{
+    "+roles": {
+        "cloud": {
+            "display": "Cloud",
+            "type": "data",
+            "dimensions": [
+                "person"
+            ],
+            "query_descripters": [
+                {
+                    "realm": "Cloud",
+                    "group_by": "none"
+                }
+            ]
+        }
+    }
+}
