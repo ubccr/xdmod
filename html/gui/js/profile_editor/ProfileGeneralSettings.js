@@ -374,7 +374,17 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
                 html: '<br/>If you require elevated access (e.g. Center Director, Center Staff, etc.), please contact <a href="mailto:' + CCR.xdmod.tech_support_recipient + '">' + CCR.xdmod.tech_support_recipient + '</a> to request such privileges.'
             }]
         });
+
         // ------------------------------------------------
+
+        var bottomItems = [
+            sectionFederatedEmail,
+            sectionFederatedUser
+        ];
+
+        if (!CCR.xdmod.ui.userIsFederated) {
+            bottomItems.unshift(sectionPassword);
+        }
 
         sectionBottom = new Ext.Panel({
 
@@ -388,11 +398,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             layout: 'card',
             activeItem: 0,
 
-            items: [
-                sectionPassword,
-                sectionFederatedEmail,
-                sectionFederatedUser
-            ]
+            items: bottomItems
 
         }); // sectionBottom
 

@@ -544,9 +544,11 @@ SQL;
 
     public function setPassword($raw_password)
     {
+        if ($this->getUserType() === FEDERATED_USER_TYPE){
+           throw new Exception("Permission Denied");
+        }
 
         return $this->_password = $raw_password;
-
     }//setPassword
 
     // ---------------------------
