@@ -545,7 +545,7 @@ SQL;
 
     public function setPassword($raw_password)
     {
-        if ($this->getUserType() === FEDERATED_USER_TYPE){
+        if ($this->getUserType() === FEDERATED_USER_TYPE) {
             throw new AccessDeniedException("Permission Denied. Only local accounts may have their passwords modified.");
         }
 
