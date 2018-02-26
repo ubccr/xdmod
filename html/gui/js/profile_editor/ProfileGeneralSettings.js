@@ -89,7 +89,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             listeners: {
                 blur: XDMoD.utils.trimOnBlur,
                 focus: removeFieldHighlight,
-                invalid: function (thisField) {
+                invalid: function (thisField, msg) {
                     removeFieldHighlight(thisField);
                     XDMoD.utils.syncWindowShadow(thisField);
                 },
@@ -130,7 +130,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             msgTarget: 'under',
             submitValue: false,
 
-            validator: function () {
+            validator: function (value) {
                 if (user_profile_new_pass.getValue() === user_profile_new_pass_again.getValue()) {
                     return true;
                 }
@@ -273,8 +273,8 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
             listeners: {
 
-                change: function (rg) {
-                    var userKeepingPassword = rg.getValue().getGroupValue() === 'keep';
+                change: function (thisRadioGroup, checked) {
+                    var userKeepingPassword = thisRadioGroup.getValue().getGroupValue() === 'keep';
                     user_profile_new_pass.setDisabled(userKeepingPassword);
                     user_profile_new_pass_again.setDisabled(userKeepingPassword);
 
