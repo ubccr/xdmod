@@ -1504,7 +1504,7 @@ class Query
 			$classname = static::getGroupByClassname($group_by_name);
 			$group_by_name_to_instance[$group_by_name] = new $classname;
 
-			$realm = static::getRealm();
+            $realm = static::getRealm();
             $config = static::getConfigData();
             $found = array_pop(
                 array_filter(
