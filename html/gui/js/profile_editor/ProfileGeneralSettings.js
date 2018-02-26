@@ -89,7 +89,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             listeners: {
                 blur: XDMoD.utils.trimOnBlur,
                 focus: removeFieldHighlight,
-                invalid: function (thisField/* , msg */) {
+                invalid: function (thisField) {
                     removeFieldHighlight(thisField);
                     XDMoD.utils.syncWindowShadow(thisField);
                 },
@@ -130,7 +130,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             msgTarget: 'under',
             submitValue: false,
 
-            validator: function (/* value */) {
+            validator: function () {
                 if (user_profile_new_pass.getValue() === user_profile_new_pass_again.getValue()) {
                     return true;
                 }
@@ -165,13 +165,13 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         this.cbProfile = function (options, success, response) {
             // If success reported, attempt to extract user data.
             var data;
-            var decodedSuccess;
+            var decodedSuccessResponse;
             if (success) {
                 data = CCR.safelyDecodeJSONResponse(response);
-                decodedSuccess = CCR.checkDecodedJSONResponseSuccess(data);
+                decodedSuccessResponse = CCR.checkDecodedJSONResponseSuccess(data);
             }
 
-            if (decodedSuccess) {
+            if (decodedSuccessResponse) {
                 user_profile_firstname.setValue(data.results.first_name);
                 user_profile_lastname.setValue(data.results.last_name);
                 user_profile_email_addr.setValue(data.results.email_address);
@@ -273,7 +273,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
             listeners: {
 
-                change: function (rg/* , ch */) {
+                change: function (rg) {
                     var userKeepingPassword = rg.getValue().getGroupValue() === 'keep';
                     user_profile_new_pass.setDisabled(userKeepingPassword);
                     user_profile_new_pass_again.setDisabled(userKeepingPassword);
