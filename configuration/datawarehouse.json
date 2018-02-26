@@ -75,7 +75,8 @@
                 },
                 {
                     "name": "provider",
-                    "class": "GroupByProvider"
+                    "class": "GroupByProvider",
+                    "visible": false
                 }
             ],
             "statistics": [

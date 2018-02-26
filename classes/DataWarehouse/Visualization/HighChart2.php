@@ -1484,7 +1484,9 @@ class HighChart2
 									continue;
 							}
 
-							chart.options.chart.events.helperFunctions.addBackgroundColor(series.legendItem, "#DFDFDF");
+                            if (series.legendItem) {
+                                chart.options.chart.events.helperFunctions.addBackgroundColor(series.legendItem, "#DFDFDF");
+                            }
 					}
 			}';
     }

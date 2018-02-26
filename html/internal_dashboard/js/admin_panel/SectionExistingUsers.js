@@ -715,7 +715,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
 
         var roleSettings = new Ext.Panel({
-            title: 'Acl Assignment',
+            title: 'ACL Assignment',
             columns: 1,
             layout: 'fit',
             flex: 0.55,
@@ -818,7 +818,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 var intersection = CCR.intersect(dataAcls, acls);
 
                 if (intersection.length === 0) {
-                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
+                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag ACL for the user (i.e., anything not Manager or Developer).');
                     return;
                 }
 
