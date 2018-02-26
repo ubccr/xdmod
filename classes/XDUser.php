@@ -7,6 +7,7 @@ use CCR\Log;
 use Models\Acl;
 use Models\Services\Acls;
 use User\aRole;
+use DataWarehouse\Query\Exceptions\AccessDeniedException;
 
 /**
  * XDMoD Portal User
@@ -545,7 +546,7 @@ SQL;
     public function setPassword($raw_password)
     {
         if ($this->getUserType() === FEDERATED_USER_TYPE){
-            throw new Exception("Permission Denied. Only local accounts may have their passwords modified.");
+            throw new AccessDeniedException("Permission Denied. Only local accounts may have their passwords modified.");
         }
 
         return $this->_password = $raw_password;
