@@ -1503,7 +1503,22 @@ class Query
 			static::registerGroupBys();
 			$classname = static::getGroupByClassname($group_by_name);
 			$group_by_name_to_instance[$group_by_name] = new $classname;
-		}
+
+            $realm = static::getRealm();
+            $config = static::getConfigData();
+            $found = array_pop(
+                array_filter(
+                    $config['realms'][$realm]['group_bys'],
+                    function ($value) use ($group_by_name) {
+                        return $value['name']=== $group_by_name;
+                    }
+                )
+            );
+            if (array_key_exists('visible', $found)) {
+                $group_by_name_to_instance[$group_by_name]->setAvailableOnDrilldown($found['visible']);
+            }
+
+        }
         return $group_by_name_to_instance[$group_by_name];
     } //getGroupBy
 
