@@ -139,49 +139,93 @@ SQLF;
      * context as granting the "center staff" acl w/ associated parameter record
      * for the promoters center.
      *
-     * @param integer $organizationId the id of the organization for whom
-     *                                    the list of eligible users should be
-     *                                    retrieved.
+     * @param integer $userId the id of the user to be used when determining which
+     *                users are eligible for promotion.
      * @return array populated if users were found, else an empty array.
-     * @throws \Exception if unable to retrieve a database connection.
-     * @throws \Exception if unable to query the database.
+     * @throws Exception if unable to query the database.
      */
-    public static function getUsersForPromotion($organizationId)
+    public static function getUsersForPromotion($userId)
     {
         $db = DB::factory(self::DB_SECTION_NAME);
         $query = <<<SQL
-SELECT
+SELECT DISTINCT
   u.id,
-  CONCAT(u.last_name, ', ', u.first_name, ' [', COALESCE(o.abbrev, po.abbrev),
-         ']') AS name
+  CONCAT(u.last_name, ', ', u.first_name, ' [', o.abbrev, ']') AS name
 FROM Users u
-  -- we only want organization records w/ a resourcefact entry
-  -- i.e. "centers"
-  LEFT JOIN modw.organization o
-    ON o.id = u.organization_id AND
-       o.id IN
-       (SELECT DISTINCT rf.organization_id
-        FROM modw.resourcefact rf)
-  LEFT JOIN modw.person p ON p.id = u.person_id
-  LEFT JOIN modw.organization po ON po.id = p.organization_id
-  -- exclude users that are 'cd' for the given organization.
-  LEFT JOIN (
-              SELECT DISTINCT uagbp.user_id
-              FROM user_acl_group_by_parameters uagbp
-                JOIN acls a ON uagbp.acl_id = a.acl_id
-              WHERE a.name = 'cd' AND
-                    uagbp.value = :organization_id
-            ) has_cd ON has_cd.user_id = u.id
+  -- This left join retrieves the correct center associated with this user.
+  LEFT JOIN
+  (
+    -- This retrieves all of the centers for a particular user
+    SELECT DISTINCT
+      uagbp.user_id,
+      uagbp.value organization_id
+    FROM user_acl_group_by_parameters uagbp
+      JOIN modw.organization o ON uagbp.value = o.id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    UNION
+    -- this retrieves all of the centers that a user is directly associated with
+    SELECT DISTINCT
+      u.id user_id,
+      u.organization_id
+    FROM moddb.Users u
+      JOIN modw.organization o ON o.id = u.organization_id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    UNION
+    -- this retrieves all centers that a users person is directly associated with
+    SELECT DISTINCT
+      u.id user_id,
+      o.id organization_id
+    FROM moddb.Users u
+      JOIN modw.person p ON p.id = u.person_id
+      JOIN modw.organization o ON o.id = p.organization_id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+  ) uo
+    ON uo.user_id = u.id
+  -- This left join retrieves the correct center value for the specified :user_id
+  -- i.e. the user running this query.
+  LEFT JOIN
+  (
+    SELECT DISTINCT uagbp.value organization_id
+    FROM user_acl_group_by_parameters uagbp
+      JOIN modw.organization o ON uagbp.value = o.id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE uagbp.user_id = :user_id
+    UNION
+    SELECT DISTINCT u.organization_id
+    FROM moddb.Users u
+      JOIN modw.organization o ON o.id = u.organization_id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE u.id = :user_id
+    UNION
+    SELECT DISTINCT o.id organization_id
+    FROM moddb.Users u
+      JOIN modw.person p ON p.id = u.person_id
+      JOIN modw.organization o ON o.id = p.organization_id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE u.id = :user_id
+  ) co ON uo.organization_id = co.organization_id
+  -- This left join retrieves all users that have a 'cd' record and the associated center id (value)
+  LEFT JOIN
+  (
+    SELECT DISTINCT
+      uagbp.user_id,
+      uagbp.value
+    FROM user_acl_group_by_parameters uagbp
+      JOIN acls a ON uagbp.acl_id = a.acl_id
+    WHERE a.name = 'cd'
+  ) has_cd
+    ON has_cd.user_id = u.id AND has_cd.value = co.organization_id
+  -- This join allows us to retrieve more information about the current users center.
+  JOIN modw.organization o
+    ON o.id = co.organization_id
 WHERE
-  -- only include users that have an organization / person_id
-  (u.organization_id IS NOT NULL OR u.person_id IS NOT NULL) AND
-  -- exclude users that are a 'cd' for the given organization.
-  has_cd.user_id IS NULL AND
-  -- include users that have a relation to the specified organization
-  (o.id = :organization_id OR po.id = :organization_id);
+  -- We only want users that have the same center as the current_user
+  uo.organization_id = co.organization_id AND
+  -- We also only want users that do not have the 'cd' acl
+  has_cd.user_id IS NULL;
 SQL;
         $params = array(
-            ':organization_id' => $organizationId
+            ':user_id' => $userId
         );
 
         return $db->query($query, $params);

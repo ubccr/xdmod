@@ -6,7 +6,7 @@ try {
 
     $activeUser = \xd_security\getLoggedInUser();
 
-    $members = Users::getUsersForPromotion($activeUser->getActiveOrganization());
+    $members = Users::getUsersForPromotion($activeUser->getUserID());
 
     $returnData = array();
 
