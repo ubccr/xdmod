@@ -251,35 +251,44 @@ SQL;
         $query = <<<SQL
 SELECT
   u.id,
-  CONCAT(u.last_name, ', ', u.first_name, ' [', COALESCE(o.abbrev, po.abbrev),
-         ']') AS name
+  CONCAT(u.last_name, ', ', u.first_name, ' [', uo.abbrev,']') AS name
 FROM Users u
-  -- we only want organization records w/ a resourcefact entry
-  -- i.e. "centers"
-  LEFT JOIN modw.organization o
-    ON o.id = u.organization_id AND
-       o.id IN
-       (SELECT DISTINCT rf.organization_id
-        FROM modw.resourcefact rf)
-  LEFT JOIN modw.person p ON p.id = u.person_id
-  LEFT JOIN modw.organization po 
-    ON po.id = p.organization_id AND
-       po.id IN
-       (SELECT DISTINCT rf.organization_id
-        FROM modw.resourcefact rf)
+  LEFT JOIN
+  (
+    SELECT DISTINCT uagbp.value organization_id,
+    o.abbrev
+    FROM user_acl_group_by_parameters uagbp
+      JOIN modw.organization o ON uagbp.value = o.id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE uagbp.user_id = :user_id
+    UNION
+    SELECT DISTINCT u.organization_id, o.abbrev
+    FROM moddb.Users u
+      JOIN modw.organization o ON o.id = u.organization_id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE u.id = :user_id
+    UNION
+    SELECT DISTINCT o.id organization_id, o.abbrev
+    FROM moddb.Users u
+      JOIN modw.person p ON p.id = u.person_id
+      JOIN modw.organization o ON o.id = p.organization_id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE u.id = :user_id
+  ) uo ON uo.organization_id = :organization_id
   -- exclude users that are 'cd' for the given organization.
-  LEFT JOIN (
-              SELECT DISTINCT uagbp.user_id
-              FROM user_acl_group_by_parameters uagbp
-                JOIN acls a ON uagbp.acl_id = a.acl_id
-              WHERE a.name = 'cd' AND
-                    uagbp.value = :organization_id
-            ) has_cd ON has_cd.user_id = u.id
+  LEFT JOIN
+  (
+    SELECT DISTINCT uagbp.user_id
+    FROM user_acl_group_by_parameters uagbp
+      JOIN acls a ON uagbp.acl_id = a.acl_id
+    WHERE a.name = 'cd' AND
+          uagbp.value = :organization_id
+  ) has_cd ON has_cd.user_id = u.id
 WHERE
   u.id = :user_id AND
   -- exclude users that are a 'cd' for the given organization.*/
   has_cd.user_id IS NULL AND
-  (o.id = :organization_id OR po.id = :organization_id);
+  uo.organization_id = :organization_id;
 SQL;
         $params = array(
             ':user_id' => $userId,

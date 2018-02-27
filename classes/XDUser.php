@@ -2017,10 +2017,18 @@ SQL;
         }
         $query = <<<SQL
 SELECT
-  COALESCE(o.id, po.id) as param_value
+  COALESCE(uagbp.value, o.id, po.id) as param_value
 FROM Users u
-  -- we only want organization records w/ a resourcefact entry
-  -- i.e. "centers"
+  LEFT JOIN user_acl_group_by_parameters uagbp
+    ON uagbp.user_id = u.id AND
+    uagbp.group_by_id IN (
+      SELECT gb.group_by_id FROM group_bys gb
+      WHERE gb.name = 'provider'
+    ) AND
+    uagbp.value IN (
+      SELECT o.id FROM modw.organization o
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    )
   LEFT JOIN modw.organization o
     ON o.id = u.organization_id AND
        o.id IN
@@ -2028,7 +2036,7 @@ FROM Users u
         FROM modw.resourcefact rf)
   LEFT JOIN modw.person p ON p.id = u.person_id
   LEFT JOIN modw.organization po ON po.id = p.organization_id
-WHERE u.id = :user_id
+WHERE u.id = :user_id;
 SQL;
 
         $results = $this->_pdo->query($query, array(
