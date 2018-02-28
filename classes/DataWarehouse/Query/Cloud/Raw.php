@@ -100,7 +100,7 @@ class Raw extends \DataWarehouse\Query\Query
             )
         );
 
-        $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "job_id"));
+        $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "instance"));
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "name"));
         $this->addField(new \DataWarehouse\Query\Model\TableField($accountTable, "charge_number"));
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "submit_time"));
@@ -120,14 +120,15 @@ class Raw extends \DataWarehouse\Query\Query
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "wallduration", 'wall_time_seconds'));
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "waitduration", 'wait_time_seconds'));
 
+/*
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "nodecount", "node_count"));
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "processors", 'core_count'));
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "local_charge", 'local_charge_su'));
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "adjusted_charge", 'adjusted_charge_su'));
+*/
 
 
-
-        $this->addOrder(new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\Field("job_id"), 'desc', 'job_id'));
+        $this->addOrder(new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\Field("instance"), 'desc', 'instance'));
 
         $this->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(

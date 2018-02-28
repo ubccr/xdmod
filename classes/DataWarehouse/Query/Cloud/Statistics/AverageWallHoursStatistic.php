@@ -8,7 +8,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 * Summation of Average Wallduration per VM
 */
 
-class AverageWallHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
+class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance)
     {

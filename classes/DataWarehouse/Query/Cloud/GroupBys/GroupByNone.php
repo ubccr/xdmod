@@ -1,6 +1,6 @@
 <?php
 
-namespace DataWarehouse\Query\Jobs\GroupBys;
+namespace DataWarehouse\Query\Cloud\GroupBys;
 
 /* 
 * @author Amin Ghadersohi
@@ -10,7 +10,7 @@ namespace DataWarehouse\Query\Jobs\GroupBys;
 * 
 */
 
-class GroupByNone extends \DataWarehouse\Query\Jobs\GroupBy
+class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 {	public  function __construct()
 	{
 		parent::__construct('none',array());

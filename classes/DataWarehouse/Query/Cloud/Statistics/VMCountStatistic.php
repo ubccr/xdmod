@@ -1,5 +1,5 @@
 <?php
-namespace DataWarehouse\Query\Jobs\Statistics;
+namespace DataWarehouse\Query\Cloud\Statistics;
 
 /*
 * @author Rudra Chakraborty
@@ -7,7 +7,7 @@ namespace DataWarehouse\Query\Jobs\Statistics;
 *
 * Summation of Average Wallduration per VM
 */
-class VMCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
+class VMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {

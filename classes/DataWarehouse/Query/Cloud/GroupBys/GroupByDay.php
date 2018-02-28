@@ -1,16 +1,16 @@
 <?php
 
-namespace DataWarehouse\Query\Jobs\GroupBys;
+namespace DataWarehouse\Query\Cloud\GroupBys;
 
-/* 
+/*
 * @author Amin Ghadersohi
 * @date 2011-Jan-07
 *
 * class for adding group by day to a query
-* 
+*
 */
 
-class GroupByDay extends \DataWarehouse\Query\Jobs\GroupBy
+class GroupByDay extends \DataWarehouse\Query\Cloud\GroupBy
 {
 	public static function getLabel()
 	{
@@ -20,7 +20,7 @@ class GroupByDay extends \DataWarehouse\Query\Jobs\GroupBy
 
 	public function __construct()
 	{
-		parent::__construct('day', 
+		parent::__construct('day',
 							array(),
 							"select distinct gt.id,
 												 date(gt.day_start) as long_name,
@@ -33,22 +33,22 @@ class GroupByDay extends \DataWarehouse\Query\Jobs\GroupBy
 							);
 		$this->setAvailableOnDrilldown(false);
 	}
-	
+
 	public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false)
 	{
 
 		$modw_schema = new \DataWarehouse\Query\Model\Schema('modw');
-		$modw_aggregates_schema = new \DataWarehouse\Query\Model\Schema('modw_aggregates');
-		
-		$id_field = new \DataWarehouse\Query\Model\TableField($query->getDataTable(), "day_id", $this->getIdColumnName($multi_group)); 	
-		$name_field = new \DataWarehouse\Query\Model\FormulaField('date('.$query->getDateTable()->getAlias().".day_start)", $this->getLongNameColumnName($multi_group)); 
-		$shortname_field = new \DataWarehouse\Query\Model\FormulaField('date('.$query->getDateTable()->getAlias().".day_start)", $this->getShortNameColumnName($multi_group)); 
-		$value_field = new \DataWarehouse\Query\Model\TableField($query->getDateTable(), "day_start_ts"); 
-		$query->addField($id_field);	
+		$modw_aggregates_schema = new \DataWarehouse\Query\Model\Schema('modw_cloud');
+
+		$id_field = new \DataWarehouse\Query\Model\TableField($query->getDataTable(), "day_id", $this->getIdColumnName($multi_group));
+		$name_field = new \DataWarehouse\Query\Model\FormulaField('date('.$query->getDateTable()->getAlias().".day_start)", $this->getLongNameColumnName($multi_group));
+		$shortname_field = new \DataWarehouse\Query\Model\FormulaField('date('.$query->getDateTable()->getAlias().".day_start)", $this->getShortNameColumnName($multi_group));
+		$value_field = new \DataWarehouse\Query\Model\TableField($query->getDateTable(), "day_start_ts");
+		$query->addField($id_field);
 		$query->addField($name_field);
-		$query->addField($shortname_field);		
-		$query->addField($value_field);	
-		
+		$query->addField($shortname_field);
+		$query->addField($value_field);
+
 		$query->addGroup($id_field);
 
 		$this->addOrder($query,$multi_group);
@@ -67,13 +67,13 @@ class GroupByDay extends \DataWarehouse\Query\Jobs\GroupBy
 	public function pullQueryParameters(&$request)
 	{
 		$parameters = array();
-		
+
 		return $parameters;
 	}
 	public function pullQueryParameterDescriptions(&$request)
 	{
 		$parameters = array();
-		
+
 		return $parameters;
 	}
 }
