@@ -63,9 +63,9 @@ switch ($operation) {
         $group_filter = \xd_security\assertParameterSet('group_filter');
         $role_filter = \xd_security\assertParameterSet('role_filter');
 
-        $query = \xd_dashboard\deriveUserEnumerationQuery($group_filter, $role_filter, '', true);
+        list($query, $params) = \xd_dashboard\deriveUserEnumerationQuery($group_filter, $role_filter, true);
 
-        $results = $pdo->query($query);
+        $results = $pdo->query($query, $params);
 
         $addresses = array();
 

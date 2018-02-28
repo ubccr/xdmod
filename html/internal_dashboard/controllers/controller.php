@@ -118,7 +118,7 @@ switch ($operation) {
 
         $response['user_types'] = $results;
 
-        $query = "SELECT description, role_id FROM moddb.Roles WHERE abbrev != 'pub' ORDER BY description";
+        $query = "SELECT display description, acl_id role_id FROM moddb.acls WHERE name != 'pub' ORDER BY description";
 
         $results = $pdo->query($query);
 
