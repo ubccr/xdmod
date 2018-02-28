@@ -22,7 +22,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
             'Cloud',
             'modw_cloud',
             'cm_euca_fact',
-            array('started_job_count', 'running_job_count'),
+            array('started_vm_count', 'number_of_vms'),
             $aggregation_unit_name,
             $start_date,
             $end_date,

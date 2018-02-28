@@ -12,8 +12,8 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance)
     {
-        $job_count_formula = 'number_of_vms';
-        parent::__construct('coalesce(sum(jf.wallduration/3600.0)/sum(jf.' . $job_count_formula . '),0)', 'avg_wallduration_hours', 'Wall Hours: Per Job', 'Hour', 2);
+        $vm_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'ended_vm_count' : 'number_of_vms';
+        parent::__construct('coalesce(sum(jf.wallduration/3600.0)/sum(jf.' . $vm_count_formula . '),0)', 'avg_wallduration_hours', 'Wall Hours: Per Job', 'Hour', 2);
     }
 
     public function getInfo()

@@ -23,12 +23,4 @@ class StartedVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
     {
         return true;
     }
-
-    /**
-     * @see DataWarehouse\Query\Statistic
-     */
-    public function usesTimePeriodTablesForAggregate()
-    {
-        return false;
-    }
 }
