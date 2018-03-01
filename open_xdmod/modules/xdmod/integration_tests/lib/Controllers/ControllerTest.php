@@ -140,7 +140,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumRoles()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_roles')
+            $this->getTestFiles()->getFile('controllers', 'enum_roles-add_default_center')
         );
 
         $this->helper->authenticateDashboard('mgr');

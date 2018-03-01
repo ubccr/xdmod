@@ -40,7 +40,7 @@ with the name of your resource.  It may also be possible to use other
 options that limit the output.
 
     $ TZ=UTC sacct --clusters *cluster* --allusers \
-        --parsable2 --noheader --allocations \
+        --parsable2 --noheader --allocations --duplicates \
         --format jobid,jobidraw,cluster,partition,account,group,gid,\
     user,uid,submit,eligible,start,end,elapsed,exitcode,state,nnodes,\
     ncpus,reqcpus,reqmem,reqgres,reqtres,timelimit,nodelist,jobname \

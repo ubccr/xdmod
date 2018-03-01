@@ -2465,9 +2465,13 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         this.saveQuery();
     },
     getTextEditMenu: function(textContent, label, handler, resetButton) {
+        var width = 16;
+        if (textContent.length > width) {
+            width = Math.min(textContent.length, 40);
+        }
         var field = new Ext.form.TextField({
             value: Ext.util.Format.htmlDecode(textContent),
-            width: 200,
+            width: width.toString() + 'em',
             listeners: {
                 specialkey: function(field, e) {
                     if (e.getKey() == e.ENTER) {
@@ -4199,6 +4203,10 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }, this);
 
         this.filtersStore.on('remove', function() {
+            this.saveQuery();
+        }, this);
+
+        this.filtersStore.on('clear', function () {
             this.saveQuery();
         }, this);
 

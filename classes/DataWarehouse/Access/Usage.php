@@ -647,6 +647,9 @@ class Usage extends Common
                         unset($meChart['yAxis'][0]['gridLineDashStyle']);
                         unset($meChart['yAxis'][0]['gridLineColor']);
                     }
+                    if ($usageChartSettings['show_guide_lines'] === 'n') {
+                        $meChart['yAxis'][0]['gridLineWidth'] = 0;
+                    }
                 }
 
                 // If there are x-axis categories, they are sorted by value,
