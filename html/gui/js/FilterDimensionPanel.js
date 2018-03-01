@@ -40,6 +40,7 @@ Ext.extend(CCR.xdmod.ui.FilterDimensionPanel, Ext.Panel, {
     initComponent: function () {
         var self = this;
 
+        var MAX_SELECT_ALL_FILTERS = 150;
         /**
          * A set of filter changes that have not yet been applied to a chart.
          *
@@ -88,6 +89,7 @@ Ext.extend(CCR.xdmod.ui.FilterDimensionPanel, Ext.Panel, {
         }, this);
         store.on('load', function (t, op) {
             dimensionGrid.hideMask();
+            self.getFooterToolbar().getComponent('select_all').setDisabled(t.getTotalCount() > MAX_SELECT_ALL_FILTERS);
         }, this);
         store.on('exception', function (proxy, type, action, options, response) {
             dimensionGrid.hideMask();
@@ -110,37 +112,69 @@ Ext.extend(CCR.xdmod.ui.FilterDimensionPanel, Ext.Panel, {
         };
 
         var applyQueuedFilters = function () {
-            Ext.each(self.filterQueue, applyFilter);
-            self.filterQueue = [];
-        };
+            var addList = {};
+            var modifyList = {};
 
-        var applyFilter = function (filter) {
-
-            var index = self.filtersStore.findBy(function (r) {
-
-                if (r.data.id == filter.id) {
-                    return true;
-                }
-
-            }); //index
-
-
-            if (index < 0) {
-                var newFilterRecord =  new self.filtersStore.recordType(filter);
-                self.filtersStore.addSorted(newFilterRecord);
-            }else
-            {
-                var existingFilterRecord = self.filtersStore.getAt(index);
-                if(!filter.checked && existingFilterRecord.data.checked)
-                {
-                    self.filtersStore.removeAt(index);
-                }else
-                {
-                    existingFilterRecord.set('checked', filter.checked);
+            var index;
+            var i;
+            var qLen = self.filterQueue.length;
+            for (i = 0; i < qLen; ++i) {
+                index = self.filtersStore.findExact('id', self.filterQueue[i].id);
+                if (index < 0) {
+                    addList[self.filterQueue[i].id] = self.filterQueue[i];
+                } else {
+                    modifyList[self.filterQueue[i].id] = {
+                        index: index,
+                        record: self.filterQueue[i]
+                    };
                 }
             }
 
+            var recordsToAdd = [];
+            for (i in addList) {
+                if (addList.hasOwnProperty(i) && addList[i].checked) {
+                    recordsToAdd.push(new self.filtersStore.recordType(addList[i]));
+                }
+            }
 
+            var recordsToRemove = [];
+            var removeIndexes = {};
+            var record;
+            for (i in modifyList) {
+                if (modifyList.hasOwnProperty(i)) {
+                    record = self.filtersStore.getAt(modifyList[i].index);
+                    if (modifyList[i].record.checked === record.data.checked) {
+                        // nothing to do
+                        continue;
+                    }
+                    if (modifyList[i].record.checked) {
+                        record.set('checked', modifyList[i].record.checked);
+                    } else {
+                        recordsToRemove.push(record);
+                        removeIndexes[i] = true;
+                    }
+                }
+            }
+            // The store remove function has very poor performance if more than
+            // a handful of records are removed at one time. See, e.g.
+            // https://www.sencha.com/forum/showthread.php?215971-Poor-performance-on-Ext-data-store-remove(records)
+            //
+            // We use the remove() call for small numbers and otherwise
+            // removeAll and then add back the ones that should be there.
+
+            if (recordsToRemove.length < 20) {
+                self.filtersStore.remove(recordsToRemove);
+            } else {
+                self.filtersStore.getRange().forEach(function (item) {
+                    if (!removeIndexes[item.data.id]) {
+                        recordsToAdd.push(item);
+                    }
+                });
+                self.filtersStore.removeAll();
+            }
+
+            self.filtersStore.add(recordsToAdd);
+            self.filterQueue = [];
         };
 
         var checkColumn = new Ext.grid.CheckColumn({
@@ -371,6 +405,49 @@ Ext.extend(CCR.xdmod.ui.FilterDimensionPanel, Ext.Panel, {
                     Ext.each(viewRecords, function (viewRecord) {
                         viewRecord.set('checked', false);
                         onCheckChange.call(self, viewRecord);
+                    });
+                }
+            },
+            {
+                text: 'Select All',
+                itemId: 'select_all',
+                disabled: true,
+                listeners: {
+                    enable: function (button) {
+                        button.setTooltip('Select all filters');
+                    },
+                    disable: function (button) {
+                        button.setTooltip('Select all is only available if there are fewer than ' + MAX_SELECT_ALL_FILTERS.toString() + ' items in the filter list.');
+                    }
+                },
+                handler: function () {
+                    var currentCursor = pagingToolbar.cursor;
+                    var currentPageSize = pagingToolbar.pageSize;
+
+                    dimensionGrid.showMask();
+                    store.suspendEvents();
+                    store.reload({
+                        params: {
+                            start: 0,
+                            limit: store.getTotalCount()
+                        },
+                        callback: function (records, options, success) {
+                            if (success) {
+                                self.filterQueue = [];
+                                Ext.each(records, function (record) {
+                                    record.set('checked', true);
+                                    onCheckChange.call(self, record);
+                                }, this);
+                            }
+                            store.resumeEvents();
+
+                            store.reload({
+                                params: {
+                                    start: currentCursor,
+                                    limit: currentPageSize
+                                }
+                            });
+                        }
                     });
                 }
             },

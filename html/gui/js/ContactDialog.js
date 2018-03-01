@@ -79,9 +79,9 @@ XDMoD.AbstractContactDialog = Ext.extend(Ext.Window, {
 
         var captchaField = null;
 
-        if (CCR.xdmod.use_captcha && !CCR.xdmod.logged_in) {
+        if (CCR.xdmod.captcha_sitekey.length > 0) {
             captchaField = new XDMoD.CaptchaField({
-                style: 'margin-left: 47px'
+                style: 'margin-left: 60px; margin-bottom: 10px;'
             });//captchaField
         }
 
@@ -110,15 +110,15 @@ XDMoD.AbstractContactDialog = Ext.extend(Ext.Window, {
 
             if (captchaField) {
                 var captchaResponse = Ext.util.Format.trim(captchaField.getResponseField());
+
                 if (captchaResponse.length === 0) {
                     CCR.xdmod.ui.userManagementMessage(
-                        "Please answer the reCAPTCHA challenge.",
+                        'Please answer the reCAPTCHA challenge.',
                         false
                     );
                     return;
                 }
 
-                params.recaptcha_challenge_field = captchaField.getChallengeField();
                 params.recaptcha_response_field = captchaResponse;
             }
 

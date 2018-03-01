@@ -134,7 +134,7 @@ class FilterListBuilder extends Loggable
             $selectTablesStr = implode(', ', $selectTables);
             $wheresStr = implode(' AND ', $wheres);
 
-            $db->execute("DELETE FROM `{$targetSchema}`.`{$mainTableName}`");
+            $db->execute("TRUNCATE TABLE `{$targetSchema}`.`{$mainTableName}`");
             $db->execute(
                 "INSERT INTO
                     `{$targetSchema}`.`{$mainTableName}`
@@ -232,7 +232,7 @@ class FilterListBuilder extends Loggable
                 $selectTablesStr = implode(', ', array_unique(array_merge($firstSelectTables, $secondSelectTables)));
                 $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
 
-                $db->execute("DELETE FROM `{$targetSchema}`.`{$pairTableName}`");
+                $db->execute("TRUNCATE TABLE `{$targetSchema}`.`{$pairTableName}`");
                 $db->execute(
                     "INSERT INTO
                         `{$targetSchema}`.`{$pairTableName}`
