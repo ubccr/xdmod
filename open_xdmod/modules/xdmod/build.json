@@ -1,6 +1,6 @@
 {
     "name": "xdmod",
-    "version": "7.5.0",
+    "version": "8.0.0",
     "release": "1.0",
     "files": {
         "include_paths": [
