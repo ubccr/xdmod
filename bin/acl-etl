@@ -28,7 +28,7 @@ function main()
         'c::' => 'config_file::',
         'p:' => 'section:',
         'v' => 'verbose',
-        'g' => 'debug',
+        'd' => 'debug',
         'h' => 'help'
     );
 
@@ -56,7 +56,7 @@ function main()
             case 'verbose':
                 $params['log_level'] = 'info';
                 break;
-            case 'g':
+            case 'd':
             case 'debug':
                 $params['log_level'] = 'debug';
                 break;
@@ -79,7 +79,7 @@ Usage acl-etl [options]
     -c | --config_file [file]    the config file to use during the etl operation.
     -p | --section     [section] the section that should be executed.
     -v | --verbose               output additional information during processing.
-    -g | --debug                 output debug information during processing.
+    -d | --debug                 output debug information during processing.
 EOF;
     echo "$msg\n";
 }
