@@ -1354,7 +1354,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             }
                         } : null
                     );
-                    menu.showAt(Ext.get(series.legendItem.element).getXY());
+                    menu.showAt(Ext.EventObject.getXY());
 
                 }
             });

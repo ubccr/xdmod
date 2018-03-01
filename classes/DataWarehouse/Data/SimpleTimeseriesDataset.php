@@ -764,11 +764,6 @@ class SimpleTimeseriesDataset extends SimpleDataset
             false           // single_stat
         );
 
-        // add a where condition on the array of excluded ids. These are the top-n
-        if (!empty($whereExcludeArray)) {
-            $w = $q->addWhereAndJoin($where_name, "NOT IN", $whereExcludeArray);
-        }
-
         // add the stats
         foreach ($this->_query->_stats as $stat_name => $stat) {
             $q->addStat($stat_name);
@@ -779,6 +774,11 @@ class SimpleTimeseriesDataset extends SimpleDataset
 
         // group on the where clause column, which will be enforced after time agg. unit
         $q->addGroupBy($where_name);
+
+        // add a where condition on the array of excluded ids. These are the top-n
+        if (!empty($whereExcludeArray)) {
+            $q->addWhereAndJoin($where_name, "NOT IN", $whereExcludeArray);
+        }
 
         // set up data object for return
         $dataObject = new \DataWarehouse\Data\SimpleTimeseriesData($column_name);
