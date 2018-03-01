@@ -54,6 +54,11 @@ class XDUserTest extends BaseTest
             $this->getTestFiles()->getFile('acls', $expectedFile)
         );
         $actual = json_decode(json_encode($user), true);
+        if ($expected['_password'] !== null) {
+            $this->assertTrue(password_verify($userName, $actual['_password']));
+            unset($expected['_password']);
+            unset($actual['_password']);
+        }
         $this->assertEquals($expected, $actual);
     }
 
@@ -941,7 +946,7 @@ class XDUserTest extends BaseTest
         $password = $reflection->getProperty('_password');
         $password->setAccessible(true);
         $newPassword = $password->getValue($updatedUser);
-        $this->assertEquals(md5(self::INVALID_ACL_NAME), $newPassword);
+        $this->assertTrue(password_verify(self::INVALID_ACL_NAME, $newPassword));
 
         $user->setPassword(self::CENTER_STAFF_USER_NAME);
         $user->saveUser();
