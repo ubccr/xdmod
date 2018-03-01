@@ -5,7 +5,6 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
-
 - Open XDMoD only supports upgrading to a new version from the version
   that directly precedes it.  If you need to upgrade from an older
   version you must upgrade through all the intermediate versions or
@@ -93,6 +92,14 @@ merge any changes after running the upgrade script.
 ### Upgrade Database Schema and Config Files
 
     # /opt/xdmod-new/bin/xdmod-upgrade
+
+7.0.0 to 7.0.1 Upgrade Notes
+----------------------------
+
+- This upgrade does not in include any database schema changes.
+- This upgrade does not include any config file format changes, but the
+  upgrade script will recreate `portal_settings.ini` with the new
+  version number.
 
 6.6.0 to 7.0.0 Upgrade Notes
 ----------------------------

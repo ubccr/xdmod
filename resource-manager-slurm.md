@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.0/resource-manager-slurm.html
+redirect_to: /7.5/resource-manager-slurm.html
 ---

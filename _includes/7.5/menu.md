@@ -6,6 +6,11 @@ About
 - [Architecture](architecture.html)
 - [Documentation Conventions](docs-conventions.html)
 
+Support
+-------
+
+- [Support](support.html)
+
 Download
 --------
 
@@ -37,7 +42,6 @@ Using
 - [HOWTOs](howto.html)
 - [Frequently Asked Questions](faq.html)
 - [Troubleshooting](troubleshooting.html)
-- [Support](support.html)
 
 Resource Manager Notes
 ----------------------

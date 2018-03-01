@@ -39,9 +39,43 @@ Will create and initialize database as well as storing these settings:
 These settings are stored in `portal_settings.ini`.
 
 You will be required to supply a username and password for a user that
-has privileges to create databases and users.  If you don't want to use
-this process and would prefer to manually create the databases, see the
-[Database Guide](databases.html).
+has privileges to create databases and users.
+
+**NOTE**: If your database is on a different server than the server where Open
+XDMoD is installed you must create the databases manually.  Likewise, if you
+don't want to use this process and would prefer to manually create the
+databases, see the [Database Guide](databases.html).
+
+#### Acl Database Setup
+Will create the tables required by the Acl framework. This is done via execution
+of the script:
+  - bin/acl-xdmod-management. 
+Should the table structures require additional changes after modifying the 
+appropriate configuration files located in 
+etc/etl/etl_tables.d/acls/xdmod/<table>.json this script should be executed to
+migrate the changes to the database.
+
+#### Acl Database Population
+After the tables required for the Acl framework have been created two scripts
+will be executed to populate them. 
+
+The first is:
+  - bin/acl-config
+  
+this script validates and utilizes the information contained in the following 
+files:
+  - etc/datawarehouse.json
+  - etc/datawarehouse.d/*.json
+  - etc/roles.json
+  - etc/roles.d/*.json
+  - etc/hierarchies.json
+  - etc/hierarchies.d/*.json
+  
+The second script is:
+  - bin/acl-import
+  
+this script executes a series of sql statements that are stored in 
+etc/etl/etl_sql.d/acls/xdmod/\*.sql.
 
 ### Organization Settings
 
@@ -166,10 +200,10 @@ scheduled reports.  You can also use this file to schedule shredding and
 ingestion.
 
     # Every morning at 3:00 AM -- run the report scheduler
-    0 3 * * * root /usr/bin/php /usr/lib/xdmod/report_schedule_manager.php >/dev/null
+    0 3 * * * xdmod /usr/bin/php /usr/lib/xdmod/report_schedule_manager.php >/dev/null
 
     # Shred and ingest PBS logs
-    0 1 * * * root /usr/bin/xdmod-shredder -q -r resource-name -f pbs -d /var/spool/pbs/server_priv/accounting && /usr/bin/xdmod-ingestor -q
+    0 1 * * * xdmod /usr/bin/xdmod-shredder -q -r resource-name -f pbs -d /var/spool/pbs/server_priv/accounting && /usr/bin/xdmod-ingestor -q
 
 Location of Configuration Files
 -------------------------------
@@ -288,13 +322,6 @@ principal investigator (`pi`), center staff (`cs`) and manager (`mgr`).
             }
         }
     }
-
-### node_attributes.json
-
-Used to define data needed for sub-resources.
-
-**NOTE**: This configuration file is deprecated and may be removed in
-a future release.
 
 ### organization.json
 

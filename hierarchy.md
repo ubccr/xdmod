@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.0/hierarchy.html
+redirect_to: /7.5/hierarchy.html
 ---

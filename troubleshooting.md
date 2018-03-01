@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.0/troubleshooting.html
+redirect_to: /7.5/troubleshooting.html
 ---

@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.0/databases.html
+redirect_to: /7.5/databases.html
 ---

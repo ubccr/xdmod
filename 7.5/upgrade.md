@@ -93,6 +93,40 @@ merge any changes after running the upgrade script.
 
     # /opt/xdmod-new/bin/xdmod-upgrade
 
+7.0.1 to 7.5.0 Upgrade Notes
+----------------------------
+
+- This upgrade includes RPM packaging changes.
+    - The RPM will create an `xdmod` user and group if they do not already
+      exist.
+    - The RPM will change the permissions of `/var/log/xdmod/query.log` and
+      `/var/log/xdmod/exceptions.log` so that they are writable by the `apache`
+      user and the `xdmod` group.
+    - The RPM will change the ownership and permissions of `/var/log/xdmod`
+      so that it is writable by the `apache` user
+      and the `xdmod` group.
+
+7.0.0 to 7.0.1 Upgrade Notes
+----------------------------
+
+- This upgrade does not in include any database schema changes.
+- This upgrade does not include any config file format changes, but the
+  upgrade script will recreate `portal_settings.ini` with the new
+  version number.
+
+6.6.0 to 7.0.0 Upgrade Notes
+----------------------------
+
+- This upgrade includes database schema changes.
+    - Modifies `moddb` schema to remove unused tables and add new ACL tables.
+
+6.5.0 to 6.6.0 Upgrade Notes
+----------------------------
+
+- This upgrade includes database schema changes.
+    - Modifies `moddb` schema.
+    - Modifies `modw` schema.
+
 6.0.0 to 6.5.0 Upgrade Notes
 ----------------------------
 

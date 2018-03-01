@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.0/install-source.html
+redirect_to: /7.5/install-source.html
 ---

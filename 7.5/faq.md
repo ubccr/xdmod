@@ -24,7 +24,7 @@ extensively, so we recommend MySQL 5.1 or 5.5.
 ### How do I enable LDAP Authentication?
 
 Open XDMoD has support for [federated authentication](simpleSAMLphp.html)
-using [simpleSAMLphp][simplesaml].  Basic support for [LDAP Authentication][simpleSAMLphp-ldap.html) is also provided.
+using [simpleSAMLphp][simplesaml].  Basic support for [LDAP Authentication](simpleSAMLphp-ldap.html) is also provided.
 
 [simplesaml]: https://simplesamlphp.org/
 
@@ -107,3 +107,44 @@ will create the databases.  You may also use the less safe
 [mysql-binary-log]:                https://dev.mysql.com/doc/refman/5.5/en/replication-options-binary-log.html
 [mysql-grant]:                     https://dev.mysql.com/doc/refman/5.5/en/grant.html
 [log_bin_trust_function_creators]: https://dev.mysql.com/doc/refman/5.5/en/replication-options-binary-log.html#option_mysqld_log-bin-trust-function-creators
+
+### Why do I see the error message "Failed to correct job times" during the shredding process?
+
+Resource manager account log records may be missing some job data under certain
+circumstances.  It is expected that a job record will have a start time, end
+time and wall time.  If one of these is missing it will be calculated using the
+other two.  If two or more are missing the error message in question will be
+displayed along with the values that were present in the job record.  In
+addition to this error message a file will be produced at the end of the
+shredding process containing the job record that produced the error along with
+additional details.  Look for the log message "Job errors written to ...".
+
+One example of a situation that will produce this error is that some resource
+managers record a 0 start time in their accounting logs when a job is canceled
+before the job started.  It is also possible that other errors occurred to
+produce these values so they are not ignored and this error message is produced.
+As of Open XDMoD 7.0 any job with a start or end time equal to 0 will not be
+ingested into the data warehouse and will not contribute to the job count or
+any other metrics.  Previous versions of Open XDMoD did include these jobs
+which resulted in inaccurate results.
+
+### Why do I see the error message "User "Public User" not found" instead of the portal?
+
+This indicates that the data needed by the new ACL system introduced in 7.0.0 is
+not present.  This is typically caused by failing to migrate the Open XDMoD
+database from 6.6.0 to 7.0.0.  The `xdmod-upgrade` script must be executed
+after upgrading the Open XDMoD RPM or source installation.
+
+### Why do I see default value or incorrect value MySQL errors?
+
+These errors include:
+
+- `SQLSTATE[HY000]: General error: 1364 Field ... doesn't have a default value`
+- `SQLSTATE[HY000]: General error: 1366 Incorrect integer value: ''`
+
+If you see either of these errors, you should check your
+[Server SQL Modes][sql-mode].  Open XDMoD does not support any of the strict
+Server SQL Modes.  You must set `sql_mode = ''` in your MySQL server
+configuration.
+
+[sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html
