@@ -93,7 +93,7 @@ merge any changes after running the upgrade script.
 
     # /opt/xdmod-new/bin/xdmod-upgrade
 
-7.0.1 to 7.1.0 Upgrade Notes
+7.0.1 to 7.5.0 Upgrade Notes
 ----------------------------
 
 - This upgrade includes RPM packaging changes.
