@@ -10,12 +10,11 @@ use DataWarehouse\Query\Model\FormulaField;
 use DataWarehouse\Query\Model\Table;
 use DataWarehouse\Query\Model\TableField;
 use DataWarehouse\Query\Query;
-use DataWarehouse\Query\Cloud\GroupByAggregationUnit;
 
 /**
  * GroupBy used for viewing aggregate cloud data by quarter.
  */
-class GroupByQuarter extends GroupByAggregationUnit
+class GroupByQuarter extends GroupBy
 {
     public function __construct()
     {
