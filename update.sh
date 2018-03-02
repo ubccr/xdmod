@@ -7,7 +7,7 @@ ENDPOINT=https://api.github.com/repos/ubccr/xdmod
 BRANCHFILTER='xdmod[0-9]\.[0-9]'
 
 #branches=$(curl -s $ENDPOINT/releases | jq .[].target_commitish | grep -o $BRANCHFILTER)
-latest=$(curl -s $ENDPOINT/releases/latest | jq .target_commitish | grep -o $BRANCHFILTER)
+#latest=$(curl -s $ENDPOINT/releases/latest | jq .target_commitish | grep -o $BRANCHFILTER)
 branches="xdmod7.5 xdmod7.0 xdmod6.6"
 latest="xdmod7.5"
 
