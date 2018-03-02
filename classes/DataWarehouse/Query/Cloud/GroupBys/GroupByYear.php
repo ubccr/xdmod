@@ -1,80 +1,75 @@
 <?php
+/**
+ * @package OpenXdmod\Cloud
+ * @author Rudra Chakraborty
+ */
 
 namespace DataWarehouse\Query\Cloud\GroupBys;
 
-/*
-* @author Amin Ghadersohi
-* @date 2011-Jan-07
-*
-* class for adding group by day to a query
-*
-*/
+use DataWarehouse\Query\Model\FormulaField;
+use DataWarehouse\Query\Model\Table;
+use DataWarehouse\Query\Model\TableField;
+use DataWarehouse\Query\Query;
+use DataWarehouse\Query\Cloud\GroupByAggregationUnit;
 
-class GroupByYear extends \DataWarehouse\Query\Cloud\GroupBy
+/**
+ * GroupBy used for viewing aggregate cloud data by year.
+ */
+class GroupByYear extends GroupByAggregationUnit
 {
-	public static function getLabel()
-	{
-		 return  'Year';
-	}
+    public function __construct()
+    {
+        parent::__construct(
+            'year',
+            array(),
+            '
+                SELECT DISTINCT
+                    gt.id,
+                    DATE(gt.year_start) AS long_name,
+                    DATE(gt.year_start) AS short_name,
+                    gt.year_start_ts AS start_ts
+                FROM modw.years gt
+                WHERE 1
+                ORDER BY gt.id ASC
+            '
+        );
+        $this->setAvailableOnDrilldown(false);
+    }
 
-	public function __construct()
-	{
-		parent::__construct('year',
-							array(),
-							"select distinct gt.id,
-												 date_format(gt.year_start, '%Y') as long_name,
-												 date_format(gt.year_start, '%Y') as short_name,
-												 gt.year_start_ts as start_ts
-												 from  modw.years gt
-												 where 1
-												 order by gt.id asc",
-							array()
-							);
-		$this->setAvailableOnDrilldown(false);
-	}
+    public static function getLabel()
+    {
+        return 'Year';
+    }
 
-	public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false, $field_name = NULL)
-	{
+    public function applyTo(
+        Query &$query,
+        Table $dataTable,
+        $multiGroup = false
+    ) {
+        $idField = new TableField(
+            $query->getDataTable(),
+            'year_id',
+            $this->getIdColumnName($multiGroup)
+        );
+        $nameField = new FormulaField(
+            'date(' . $query->getDateTable()->getAlias() . '.year_start)',
+            $this->getLongNameColumnName($multiGroup)
+        );
+        $shortnameField = new FormulaField(
+            'date(' . $query->getDateTable()->getAlias() . '.year_start)',
+            $this->getShortNameColumnName($multiGroup)
+        );
+        $valueField = new TableField(
+            $query->getDateTable(),
+            'year_start_ts'
+        );
+        $query->addField($idField);
+        $query->addField($nameField);
+        $query->addField($shortnameField);
+        $query->addField($valueField);
 
-		$modw_schema = new \DataWarehouse\Query\Model\Schema('modw');
-		$modw_aggregates_schema = new \DataWarehouse\Query\Model\Schema('modw_cloud');
+        $query->addGroup($idField);
 
-		$id_field = new \DataWarehouse\Query\Model\TableField($query->getDataTable(), "year_id", $this->getIdColumnName($multi_group));
-		$name_field = new \DataWarehouse\Query\Model\FormulaField('date_format('.$query->getDateTable()->getAlias().".year_start, '%Y')", $this->getLongNameColumnName($multi_group));
-		$shortname_field = new \DataWarehouse\Query\Model\FormulaField('date_format('.$query->getDateTable()->getAlias().".year_start, '%Y')", $this->getShortNameColumnName($multi_group));
-		$value_field = new \DataWarehouse\Query\Model\TableField($query->getDateTable(), "year_start_ts");
-		$query->addField($id_field);
-		$query->addField($name_field);
-		$query->addField($shortname_field);
-		$query->addField($value_field);
-
-		$query->addGroup($id_field);
-
-		$this->addOrder($query,$multi_group);
-	}
-	public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
-	{
-		$orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($query->getDataTable(), "year_id"), $dir, $this->getName());
-		if($prepend === true)
-		{
-			$query->prependOrder($orderField);
-		}else
-		{
-			$query->addOrder($orderField);
-		}
-	}
-
-	public function pullQueryParameters(&$request)
-	{
-		$parameters = array();
-
-		return $parameters;
-	}
-	public function pullQueryParameterDescriptions(&$request)
-	{
-		$parameters = array();
-
-		return $parameters;
-	}
+        //$this->addOrder($query, $multiGroup);
+    }
 }
-?>

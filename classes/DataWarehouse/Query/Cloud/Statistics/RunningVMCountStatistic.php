@@ -11,24 +11,18 @@ class RunningVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(sum(jf.number_of_vms),0)', 'number_of_vms', 'Number of VMs Running', 'Number of VMs', 0);
+        parent::__construct('coalesce(sum(jf.number_of_vms),0)', 'number_of_vms', 'Number of VMs Running',
+            'Number of VMs', 0);
     }
 
     public function getInfo()
     {
-        return  "The total number of running " . ORGANIZATION_NAME . " virtual machines.<br/>
-        <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.";
+        return  "The total number of running " . ORGANIZATION_NAME . " virtual machines.<br/> <i>VM Instance:
+            </i>An individual virtual machine (VM) spun up within a cloud.";
     }
+
     public function isVisible()
     {
         return true;
-    }
-
-    /**
-     * @see DataWarehouse\Query\Statistic
-     */
-    public function usesTimePeriodTablesForAggregate()
-    {
-        return false;
     }
 }

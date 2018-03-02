@@ -1,77 +1,77 @@
 <?php
+/**
+ * @package OpenXdmod\Cloud
+ * @author Rudra Chakraborty
+ */
 
 namespace DataWarehouse\Query\Cloud\GroupBys;
 
-/* 
-* @author Amin Ghadersohi
-* @date 2011-Jan-07
-*
-* class for adding no group by to a query
-* 
-*/
+use DataWarehouse\Query\Model\FormulaField;
+use DataWarehouse\Query\Model\Table;
+use DataWarehouse\Query\Query;
+use DataWarehouse\Query\Cloud\GroupBy;
 
-class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
-{	public  function __construct()
-	{
-		parent::__construct('none',array());
-	}
-	public static function getLabel()
-	{
-	    return  ORGANIZATION_NAME;
-	}
+/**
+ * Default GroupBy used for aggregate cloud queries.
+ */
+class GroupByNone extends GroupBy
+{
+    public function __construct()
+    {
+        parent::__construct('none', array());
+    }
 
-	public function getDefaultDatasetType()
-	{
-		return 'timeseries';
-	}
-	public function getInfo() 
-	{
-		return 	"Summarizes jobs reported to the ".ORGANIZATION_NAME." central database (excludes non-".ORGANIZATION_NAME." usage of the resource).";
-	}
-	public function getDefaultDisplayType($dataset_type = NULL)
-	{
-		if($dataset_type == 'timeseries')
-		{
-			return 'line';
-		}
-		else
-		{
-			return 'h_bar';
-		}
-	}
-	public function getDefaultCombineMethod()
-	{
-		return 'stack';
-	}
+    public static function getLabel()
+    {
+        return ORGANIZATION_NAME;
+    }
 
-    // JMS Oct 15
-    // Use the GroupBy subclass to add a Where clause and needed Join 
-	public function addWhereJoin(\DataWarehouse\Query\Query &$query, 
-                            \DataWarehouse\Query\Model\Table $data_table, 
-                            $multi_group = false,
-                            $operation,
-                            $whereConstraint)
-	{
-        // NO-OP
-	}
-	
-	public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false)
-	{
-		$query->addField(new \DataWarehouse\Query\Model\FormulaField('-9999', $this->getIdColumnName($multi_group)));
+    public function getDefaultDatasetType()
+    {
+        return 'timeseries';
+    }
 
-		$fieldLabel = "'".ORGANIZATION_NAME."'";
+    public function getInfo()
+    {
+        return 'Summarizes all Cloud data.';
+    }
 
-		$query->addField(new \DataWarehouse\Query\Model\FormulaField($fieldLabel, $this->getLongNameColumnName($multi_group)));
-		$query->addField(new \DataWarehouse\Query\Model\FormulaField($fieldLabel, $this->getShortNameColumnName($multi_group)));
-		$query->addField(new \DataWarehouse\Query\Model\FormulaField($fieldLabel, $this->getOrderIdColumnName($multi_group)));
-	}
-	public function pullQueryParameterDescriptions(&$request)
-	{
-		$parameters = array();
+    public function getDefaultDisplayType($datasetType = null)
+    {
+        return $datasetType === 'timeseries' ? 'line' : 'h_bar';
+    }
 
+    public function getDefaultCombineMethod()
+    {
+        return 'stack';
+    }
 
-		return $parameters;
-	}
+    public function getDefaultShowTrendLine()
+    {
+        return 'y';
+    }
 
+    public function applyTo(
+        Query &$query,
+        Table $dataTable,
+        $multiGroup = false
+    ) {
+        $query->addField(new FormulaField('-9999', $this->getIdColumnName($multiGroup)));
+
+        $fieldLabel = "'" . ORGANIZATION_NAME . "'";
+
+        $query->addField(new FormulaField($fieldLabel, $this->getLongNameColumnName($multiGroup)));
+        $query->addField(new FormulaField($fieldLabel, $this->getShortNameColumnName($multiGroup)));
+        $query->addField(new FormulaField($fieldLabel, $this->getOrderIdColumnName($multiGroup)));
+    }
+
+    public function pullQueryParameters(&$request)
+    {
+        return array();
+    }
+
+    public function pullQueryParameterDescriptions(&$request)
+    {
+        return array();
+    }
 }
-?>

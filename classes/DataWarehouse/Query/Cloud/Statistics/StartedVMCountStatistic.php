@@ -19,6 +19,7 @@ class StartedVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
         return  "The total number of " . ORGANIZATION_NAME . " VM instances started on a cloud resource.<br/>
         <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.";
     }
+
     public function isVisible()
     {
         return true;
