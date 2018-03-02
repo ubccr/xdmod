@@ -97,17 +97,17 @@
                     "nullable": false,
                     "comment": "DIMENSION: Type of end event (suspend, stop, terminate)."
                 },{
-                    "name": "number_of_vms",
+                    "name": "num_vms_running",
                     "type": "int(11)",
                     "nullable": true,
                     "comment": "FACT: Number of VMs extant in some fashion in a given period."
                 },{
-                    "name": "started_vm_count",
+                    "name": "num_vms_started",
                     "type": "int(11)",
                     "nullable": true,
                     "comment": "FACT: Number of VMs started over a given period."
                 },{
-                    "name": "ended_vm_count",
+                    "name": "num_vms_ended",
                     "type": "int(11)",
                     "nullable": true,
                     "comment": "FACT: Number of VMs ended over a given period."
@@ -181,9 +181,9 @@
                 "end_event": "euca_events_transient.end_event",
                 "start_event_time": "euca_events_transient.start_event_time",
                 "end_event_time": "euca_events_transient.end_event_time",
-                "started_vm_count": "SUM(IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.start_event = 'START', 1, 0))",
-                "ended_vm_count": "SUM(IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0))",
-                "number_of_vms": "SUM(IF(euca_events_transient.start_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS}, 1, 0))",
+                "num_vms_started": "SUM(IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.start_event = 'START', 1, 0))",
+                "num_vms_ended": "SUM(IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0))",
+                "num_vms_running": "SUM(IF(euca_events_transient.start_time_ts >= ${:PERIOD_START_TS} AND euca_events_transient.end_time_ts <= ${:PERIOD_END_TS}, 1, 0))",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)"
             },
             "groupby": [
