@@ -1,6 +1,6 @@
 <?php
 
-namespace DataWarehouse\Query\Jobs\GroupBys;
+namespace DataWarehouse\Query\Cloud\GroupBys;
 
 /*
 * @author Amin Ghadersohi

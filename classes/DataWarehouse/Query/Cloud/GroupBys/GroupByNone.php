@@ -1,13 +1,13 @@
 <?php
 
-namespace DataWarehouse\Query\Jobs\GroupBys;
+namespace DataWarehouse\Query\Cloud\GroupBys;
 
-/* 
+/*
 * @author Amin Ghadersohi
 * @date 2011-Jan-07
 *
 * class for adding no group by to a query
-* 
+*
 */
 
 class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
@@ -24,7 +24,7 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 	{
 		return 'timeseries';
 	}
-	public function getInfo() 
+	public function getInfo()
 	{
 		return 	"Summarizes jobs reported to the ".ORGANIZATION_NAME." central database (excludes non-".ORGANIZATION_NAME." usage of the resource).";
 	}
@@ -45,16 +45,16 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 	}
 
     // JMS Oct 15
-    // Use the GroupBy subclass to add a Where clause and needed Join 
-	public function addWhereJoin(\DataWarehouse\Query\Query &$query, 
-                            \DataWarehouse\Query\Model\Table $data_table, 
+    // Use the GroupBy subclass to add a Where clause and needed Join
+	public function addWhereJoin(\DataWarehouse\Query\Query &$query,
+                            \DataWarehouse\Query\Model\Table $data_table,
                             $multi_group = false,
                             $operation,
                             $whereConstraint)
 	{
         // NO-OP
 	}
-	
+
 	public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false)
 	{
 		$query->addField(new \DataWarehouse\Query\Model\FormulaField('-9999', $this->getIdColumnName($multi_group)));
