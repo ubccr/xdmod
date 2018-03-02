@@ -11,7 +11,7 @@ class RunningVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(sum(jf.number_of_vms),0)', 'number_of_vms', 'Number of VMs Running',
+        parent::__construct('coalesce(sum(jf.num_vms_running),0)', 'num_vms_running', 'Number of VMs Running',
             'Number of VMs', 0);
     }
 

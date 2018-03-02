@@ -11,7 +11,7 @@ class StartedVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(sum(jf.started_vm_count),0)', 'started_vm_count', 'Number of VMs Started', 'Number of VMs', 0);
+        parent::__construct('coalesce(sum(jf.num_vms_started),0)', 'num_vms_started', 'Number of VMs Started', 'Number of VMs', 0);
     }
 
     public function getInfo()

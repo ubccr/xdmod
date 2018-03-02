@@ -12,8 +12,8 @@ class VMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.ended_vm_count),0)',
-            'ended_vm_count',
+            'COALESCE(SUM(jf.num_vms_ended),0)',
+            'num_vms_ended',
             'Number of VMs Ended',
             'Number of VMs',
             0

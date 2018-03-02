@@ -9,6 +9,6 @@ class Statistic extends \DataWarehouse\Query\Statistic
 {
 	public function getWeightStatName()
 	{
-		return 'number_of_vms';
+		return 'num_vms_running';
 	}
 }

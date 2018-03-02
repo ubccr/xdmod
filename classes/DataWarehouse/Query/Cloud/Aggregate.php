@@ -23,7 +23,7 @@ class Aggregate extends \DataWarehouse\Query\Query
             'Cloud',
             'modw_cloud',
             'cm_euca_fact',
-            array('started_vm_count', 'number_of_vms'),
+            array('num_vms_started', 'num_vms_running'),
             $aggregation_unit_name,
             $start_date,
             $end_date,
