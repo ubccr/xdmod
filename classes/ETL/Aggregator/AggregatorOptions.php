@@ -86,13 +86,13 @@ class AggregatorOptions extends aOptions
             // Experimental batching of aggregation periods for performance testing
 
             // This flag must be set to TRUE to enable batching of aggregation periods
-            "experimental_enable_batch_aggregation" => false,
+            "enable_batch_aggregation" => true,
             // Number of periods (day, month, quarter, year) per batch
-            "experimental_batch_aggregation_periods_per_batch" => 10,
+            "batch_aggregation_periods_per_batch" => 10,
             // Threshold: The minimum number of periods required to enable batch aggregation
-            "experimental_batch_aggregation_min_num_periods" => 25,
+            "batch_aggregation_min_num_periods" => 25,
             // Threshold: The maximum number of days per batch allowed before batching isn't beneficial
-            "experimental_batch_aggregation_max_num_days_per_batch" => 300
+            "batch_aggregation_max_num_days_per_batch" => 300
 
             );
 

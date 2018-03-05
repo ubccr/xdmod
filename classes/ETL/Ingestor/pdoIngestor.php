@@ -819,7 +819,9 @@ class pdoIngestor extends aIngestor
 
                     foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                         try {
+                            fflush($outFdList[$etlTableKey]);
                             $output = $this->_dest_helper->executeStatement($loadStatement);
+
                             $this->logger->debug(
                                 sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
                             );
@@ -866,7 +868,9 @@ class pdoIngestor extends aIngestor
 
             foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                 try {
+                    fclose($outFdList[$etlTableKey]);
                     $output = $this->_dest_helper->executeStatement($loadStatement);
+
                     $this->logger->debug(
                         sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
                     );
@@ -889,7 +893,6 @@ class pdoIngestor extends aIngestor
 
                 // Cleanup
 
-                fclose($outFdList[$etlTableKey]);
                 @unlink($infileList[$etlTableKey]);
                 $numFilesLoaded++;
 

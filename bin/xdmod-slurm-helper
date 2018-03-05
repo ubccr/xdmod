@@ -168,7 +168,7 @@ function main()
     $cmd = implode(' ', $args);
 
     try {
-        $logFile = executeSacctCommand($cmd);
+        $logFile = executeSacctCommand($cmd, $resource);
     } catch (Exception $e) {
         $logger->crit($e->getMessage());
         exit(1);
@@ -179,8 +179,10 @@ function main()
     $logger->info("Total shredded: $count");
     $logger->info("Done shredding!");
 
-    if (!unlink($logFile)) {
-        $logger->warning("Failed to remove temporary file '$logFile'");
+    if ($logLevel < Log::DEBUG) {
+        if (!unlink($logFile)) {
+            $logger->warning("Failed to remove temporary file '$logFile'");
+        }
     }
 
     $logger->notice('Normalizing data');
@@ -217,6 +219,7 @@ function getSacctCmdArgs(
         '--parsable2',
         '--noheader',
         '--allocations',
+        '--duplicates',
     );
 
     if ($shredder->hasResource()) {
@@ -287,16 +290,18 @@ function getSacctCmdArgs(
  * Execute sacct command.
  *
  * @param string $cmd Full sacct command including all arguments.
+ * @param string $resource Name of the resource from the sacct arguments.
  * @return string Path to file containing the output from sacct.
  * @throws Exception If there was an error opening a temporary file, executing
  *   the sacct command, getting the output from sacct, or if sacct returns a
  *   non-zero value.
  */
-function executeSacctCommand($cmd)
+function executeSacctCommand($cmd, $resource)
 {
     global $logger;
 
-    $logFile = tempnam(sys_get_temp_dir(), 'sacct-log-');
+    $resource = preg_replace('/\W/', '-', $resource);
+    $logFile = tempnam(sys_get_temp_dir(), 'sacct-log-' . $resource . '-');
     $logger->debug("Writing sacct output to '$logFile'");
     $logFilePointer = fopen($logFile, 'w');
 

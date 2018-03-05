@@ -696,3 +696,29 @@ function verify_object_property_types(
 
     return ( 0 == count($messages) );
 }  // verify_object_property_types()
+
+/**
+ * If CAPTCHA settings are correct, validate a captcha
+ */
+function verify_captcha(){
+    $captchaSiteKey = '';
+    $captchaSecret = '';
+    try {
+        $captchaSiteKey = getConfiguration('mailer', 'captcha_public_key');
+        $captchaSecret = getConfiguration('mailer', 'captcha_private_key');
+    }
+    catch(exception $e){
+    }
+
+    if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($_SESSION['xdUser'])) {
+        if (!isset($_POST['g-recaptcha-response'])){
+            \xd_response\presentError('Recaptcha information not specified');
+        }
+        $recaptcha = new \ReCaptcha\ReCaptcha($captchaSecret);
+        $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER["REMOTE_ADDR"]);
+        if (!$resp->isSuccess()) {
+            $errors = $resp->getErrorCodes();
+            \xd_response\presentError('You must enter the words in the Recaptcha box properly.' . print_r($errors, 1));
+        }
+    }
+}
