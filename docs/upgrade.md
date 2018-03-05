@@ -93,6 +93,9 @@ merge any changes after running the upgrade script.
 
     # /opt/xdmod-new/bin/xdmod-upgrade
 
+7.5.0 to 8.0.0 Upgrade Notes
+----------------------------
+
 7.0.1 to 7.5.0 Upgrade Notes
 ----------------------------
 

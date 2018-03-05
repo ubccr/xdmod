@@ -594,7 +594,8 @@ class pdoIngestor extends aIngestor
             if ( $this->options->force_load_data_infile_replace_into ) {
                 $loadStatement = "LOAD DATA LOCAL INFILE '$infileName' replace into table $qualifiedDestTableName "
                     . "fields terminated by 0x1e optionally enclosed by 0x1f lines terminated by 0x1d "
-                    . "(" . implode(',', $destColumnList) . ")";
+                    . "(" . implode(',', $destColumnList) . ") "
+                    . "SHOW WARNINGS";
             } else {
                 $tmpTable = $etlTable->getSchema(true)
                     . "."
@@ -614,6 +615,7 @@ class pdoIngestor extends aIngestor
                     . "LOAD DATA LOCAL INFILE '$infileName' INTO TABLE $tmpTable "
                     . "FIELDS TERMINATED BY 0x1e OPTIONALLY ENCLOSED BY 0x1f LINES TERMINATED BY 0x1d "
                     . "($destColumns); "
+                    . "SHOW WARNINGS; "
                     . "INSERT INTO $qualifiedDestTableName ($destColumns) "
                     . "SELECT $destColumns FROM $tmpTable ON DUPLICATE KEY UPDATE $updateColumns; "
                     . "DROP TABLE $tmpTable;";
@@ -818,10 +820,17 @@ class pdoIngestor extends aIngestor
                     foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                         try {
                             fflush($outFdList[$etlTableKey]);
-                            $this->_dest_helper->executeStatement($loadStatement);
+                            $output = $this->_dest_helper->executeStatement($loadStatement);
+
                             $this->logger->debug(
                                 sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
                             );
+
+                            if ( count($output) > 0 ) {
+                                foreach($output as $line) {
+                                    $this->logger->warning(sprintf("Data Load Output: %s", $line));
+                                }
+                            }
 
                             // Clear the infile
 
@@ -860,10 +869,18 @@ class pdoIngestor extends aIngestor
             foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                 try {
                     fclose($outFdList[$etlTableKey]);
-                    $this->_dest_helper->executeStatement($loadStatement);
+                    $output = $this->_dest_helper->executeStatement($loadStatement);
+
                     $this->logger->debug(
                         sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
                     );
+
+                    if ( count($output) > 0 ) {
+                        foreach($output as $line) {
+                            $this->logger->warning(sprintf("Data Load Output: %s", $line));
+                        }
+                    }
+
                 }
                 catch (Exception $e) {
                     $msg = array('message'    => $e->getMessage(),
