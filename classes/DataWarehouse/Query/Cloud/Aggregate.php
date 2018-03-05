@@ -13,7 +13,7 @@ class Aggregate extends \DataWarehouse\Query\Query
         $start_date,
         $end_date,
         $group_by,
-        $stat = 'number_of_vms',
+        $stat = 'num_vms_ended',
         array $parameters = array(),
         $query_groupname = 'query_groupname',
         array $parameterDescriptions = array(),

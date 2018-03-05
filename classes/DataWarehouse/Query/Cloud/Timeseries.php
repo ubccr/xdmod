@@ -12,7 +12,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
         $start_date,
         $end_date,
         $group_by,
-        $stat = 'num_vms_ended',
+        $stat = 'num_vms_running',
         array $parameters = array(),
         $query_groupname = 'query_groupname',
         array $parameter_description = array(),
