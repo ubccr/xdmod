@@ -1,0 +1,64 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": "true"
+                },
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": "true"
+                }
+            }
+        },
+        "jobs-cloud-openstack": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true
+        }
+    },
+
+    "jobs-cloud-openstack": [
+        {
+            "name": "OpenStackRawCloudEventIngestor",
+            "description": "Loading Open Stack data",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_openstack/raw_cloud_job_logs.def.json",
+            "truncate_destination": true,
+            "stop_on_exception": false,
+            "endpoints": {
+                "source": {
+                    "type": "directoryscanner",
+                    "name": "Open Stack event logs",
+                    "path": "/data/openstack",
+                    "file_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}_[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.json/",
+                    "#": "Recursion depth is relative to the path",
+                    "recursion_depth": 1,
+                    "handler": {
+                        "type": "jsonfile",
+                        "record_separator": "},",
+                        "record_schema_path": "cloud/event.schema.json",
+                        "field_names": [
+                              "event_type",
+                              "generated",
+                              "host",
+                              "instance_id",
+                              "instance_type",
+                              "project_name",
+                              "user_name",
+                              "raw"
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}
