@@ -1,6 +1,6 @@
 The regression tests use the integration test framework, which is designed to be used to run tests against an installed and working XDMoD instance.
 
-The tests require a valid user account on XDMoD. The username and password are read from a file called .secrets in the integration test directory. Please follow the instructions in the integration test directory to setup the password file.
+The tests require a valid user account on XDMoD. The username and password are read from a file called .secrets.json in the integration test directory. Please follow the instructions in the integration test directory to setup the password file.
 
 Run the tests with ./runtests.sh
 
