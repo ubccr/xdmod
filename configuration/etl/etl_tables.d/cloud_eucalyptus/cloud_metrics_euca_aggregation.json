@@ -183,7 +183,7 @@
                 "end_event_time": "euca_events_transient.end_event_time",
                 "num_vms_started": "SUM(IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.start_event = 'START', 1, 0))",
                 "num_vms_ended": "SUM(IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0))",
-                "num_vms_running": "SUM(IF(euca_events_transient.end_time_ts <= ${:PERIOD_END_TS}, 1, 0))",
+                "num_vms_running": "SUM(1)",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)"
             },
             "groupby": [

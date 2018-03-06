@@ -7,7 +7,6 @@ namespace DataWarehouse\Query\Cloud;
 */
 class Aggregate extends \DataWarehouse\Query\Query
 {
-
     public function __construct(
         $aggregation_unit_name,
         $start_date,
