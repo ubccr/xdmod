@@ -452,6 +452,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
     var startDate = this.getDurationSelector().getStartDate().format('Y-m-d');
     var endDate = this.getDurationSelector().getEndDate().format('Y-m-d');
     var aggregationUnit = this.getDurationSelector().getAggregationUnit();
+    var timeframeLabel = this.getDurationSelector().getDurationLabel();
 
     var filters = {
       data: [],
@@ -475,6 +476,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
       start_date: startDate,
       end_date: endDate,
       aggregation_unit: aggregationUnit,
+      timeframe_label: timeframeLabel,
       filters: Ext.encode(filters),
       public_user: this.public_user
 
@@ -527,7 +529,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
           title: truncateText(panel_ref.title),
           index: truncateText(panel_ref.config.index),
           start_date: panel_ref.config.start_date,
-          end_date: panel_ref.config.end_date
+          end_date: panel_ref.config.end_date,
+          timeframe_label: panel_ref.config.timeframe_label
         };
 
       }; //getTrackingConfig
@@ -540,6 +543,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
         config.start_date = this.getDurationSelector().getStartDate().format('Y-m-d');
         config.end_date = this.getDurationSelector().getEndDate().format('Y-m-d');
         config.aggregation_unit = this.getDurationSelector().getAggregationUnit();
+        config.timeframe_label = this.getDurationSelector().getDurationLabel();
         config.font_size = 2;
 
         var title = config.title;
