@@ -1,18 +1,18 @@
 <?php
 namespace DataWarehouse\Query\Jobs\Statistics;
 
-/* 
+/*
 * @author Amin Ghadersohi
 * @date 2011-Feb-07
 *
-* class for calculating the total wait duration in hours 
+* class for calculating the total wait duration in hours
 */
 
 class TotalWaitHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
 	public function __construct($query_instance = NULL)
 	{
-		parent::__construct('coalesce(sum(jf.waitduration/3600.0),0)', 'total_waitduration_hours', 'Wait Hours: Total', 'Hour');
+		parent::__construct('coalesce(sum(jf.waitduration),0)/3600.0', 'total_waitduration_hours', 'Wait Hours: Total', 'Hour');
 		$this->setOrderByStat(SORT_DESC);
 	}
 	public function getWeightStatName()
@@ -26,5 +26,5 @@ class TotalWaitHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
 		<i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.";
 	}
 }
- 
+
 ?>

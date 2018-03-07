@@ -34,7 +34,7 @@ class NodeUtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
             "
                 100.0 * (
                     COALESCE(
-                        SUM(jf.node_time / 3600.0)
+                        SUM(jf.node_time)
                         /
                         (
                             SELECT
@@ -54,7 +54,7 @@ class NodeUtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
                                     ) <> 0
                         ),
                         0
-                    )
+                    ) / 3600.0
                 )
             ",
             'node_utilization',
