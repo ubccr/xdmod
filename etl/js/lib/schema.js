@@ -62,51 +62,66 @@ function bindAttributes(query, values) {
     return ret;
 }
 
-Schema.prototype.getDerivedFields = function (transformed, queryFormatFn) {
-	var ret = {};
-	var queries = {};
-	var values = {};
-	for(var q in this.derivedFieldQueries) {
-		var query = this.derivedFieldQueries[q],
-			fields = [];
-		if(query.value) {
-			values[q] = query.value(transformed.data);
-			continue;
-		}
-		for(var field in this.derivedFields) {
-			var derivedField = this.derivedFields[field];	
-			if(derivedField.queries.indexOf(q) > -1) {
-				if(query.mapping && query.mapping[field]) {
-					fields.push(query.mapping[field] + " as " + field);
-				} else {
-					fields.push(field);
-				}
-			}
-		}
-		queries[q] = "select SQL_NO_CACHE " + fields.join(", ") 
-			+ (query.table ? " from " + query.table  : "")
-			+ (query.where ? " where " + query.where : "");
-		queries[q] = bindAttributes(queries[q], transformed.data);	
-	}
-	//console.log(values);
-	for(var field in this.derivedFields) {
-		var derivedField = this.derivedFields[field];
-		
-		for( var q in derivedField.queries) {
-			var query = queries[derivedField.queries[q]];
-			if(query !== undefined) {				
-				var cacheable = this.derivedFieldQueries[derivedField.queries[q]].cacheable;
-				if( cacheable === undefined ) { cacheable = true };
-				ret[field] = {query: query, schemaField: derivedField, cacheable: cacheable};
-			} else {
-				ret[field] = {value: values[derivedField.queries[q]], schemaField: derivedField};
-			}
-		}
-	
-	}
-//	console.log(ret);
-	return ret;
-}
+Schema.prototype.getDerivedFields = function (transformed /* , queryFormatFn */) {
+    var ret = {};
+    var queries = {};
+    var values = {};
+    var q;
+    var query;
+    var field;
+    var derivedField;
+    var fields;
+
+    for (q in this.derivedFieldQueries) {
+        if (this.derivedFieldQueries.hasOwnProperty(q)) {
+            query = this.derivedFieldQueries[q];
+            fields = [];
+            if (query.value) {
+                values[q] = query.value(transformed.data);
+                continue;
+            }
+            for (field in this.derivedFields) {
+                if (this.derivedFields.hasOwnProperty(field)) {
+                    derivedField = this.derivedFields[field];
+                    if (derivedField.queries.indexOf(q) > -1) {
+                        if (query.mapping && query.mapping[field]) {
+                            fields.push(query.mapping[field] + ' as ' + field);
+                        } else {
+                            fields.push(field);
+                        }
+                    }
+                }
+            }
+            queries[q] = 'select SQL_NO_CACHE ' + fields.join(', ')
+                + (query.table ? ' from ' + query.table : '')
+                + (query.where ? ' where ' + query.where : '');
+            queries[q] = bindAttributes(queries[q], transformed.data);
+        }
+    }
+
+    for (field in this.derivedFields) {
+        if (this.derivedFields.hasOwnProperty(field)) {
+            derivedField = this.derivedFields[field];
+
+            for (q in derivedField.queries) {
+                if (derivedField.queries.hasOwnProperty(q)) {
+                    query = queries[derivedField.queries[q]];
+                    if (query !== undefined) {
+                        var cacheable = this.derivedFieldQueries[derivedField.queries[q]].cacheable;
+                        if (cacheable === undefined) {
+                            cacheable = true;
+                        }
+                        ret[field] = { query: query, schemaField: derivedField, cacheable: cacheable };
+                    } else {
+                        ret[field] = { value: values[derivedField.queries[q]], schemaField: derivedField };
+                    }
+                }
+            }
+        }
+    }
+
+    return ret;
+};
 
 /**
  * Retrieves the schema drivedField for a given field 
