@@ -3,8 +3,10 @@
 namespace DataWarehouse\Query\Cloud\GroupBys;
 
 use DataWarehouse\Query\Query;
+use DataWarehouse\Query\Model\OrderBy;
 use DataWarehouse\Query\Model\Schema;
 use DataWarehouse\Query\Model\Table;
+use DataWarehouse\Query\Model\TableField;
 use DataWarehouse\Query\Model\WhereCondition;
 
 /*
@@ -79,7 +81,7 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
         $datatable_person_id_field = new TableField($data_table, 'person_id');
 
         // the where condition that specifies the join of the tables
-        $query->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition(
+        $query->addWhereCondition(new WhereCondition(
             $persontable_id_field,
                                                     '=',
                                                     $datatable_person_id_field
@@ -98,10 +100,10 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
         );
     }
 
-    public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc',
+    public function addOrder(Query &$query, $multi_group = false, $dir = 'asc',
         $prepend = false)
     {
-        $orderField = new \DataWarehouse\Query\Model\OrderBy(new TableField($this->person_table, $this->_order_id_field_name), $dir, $this->getName());
+        $orderField = new OrderBy(new TableField($this->person_table, $this->_order_id_field_name), $dir, $this->getName());
         if ($prepend === true) {
             $query->prependOrder($orderField);
         } else {

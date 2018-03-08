@@ -1,0 +1,15 @@
+{
+    "+roles": {
+        "+usr": {
+            "+query_descripters": [{
+                    "realm": "Cloud",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "person"
+                }
+            ]
+        }
+    }
+}
