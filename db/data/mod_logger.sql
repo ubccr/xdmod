@@ -12,7 +12,7 @@
 
 LOCK TABLES `log_level` WRITE;
 /*!40000 ALTER TABLE `log_level` DISABLE KEYS */;
-INSERT INTO `log_level` VALUES (0,'EMERG','System is unusable'),(1,'ALERT','Immediate action required'),(2,'CRIT','Critical conditions'),(3,'ERR','Error conditions'),(4,'WARNING','Warning conditions'),(5,'NOTICE','Normal but significant'),(6,'INFO','Informational'),(7,'DEBUG','Debug-level message');
+INSERT INTO `log_level` VALUES (0,'EMERG','System is unusable'),(1,'ALERT','Immediate action required'),(2,'CRIT','Critical conditions'),(3,'ERR','Error conditions'),(4,'WARNING','Warning conditions'),(5,'NOTICE','Normal but significant'),(6,'INFO','Informational'),(7,'DEBUG','Debug-level message'),(8,'TRACE','Trace-level message');
 /*!40000 ALTER TABLE `log_level` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -25,5 +25,5 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-INSERT INTO `schema_version_history` VALUES ('mod_logger', '5.6.0', NOW(), 'created', 'N/A');
+INSERT INTO `schema_version_history` VALUES ('mod_logger', '8.0.0', NOW(), 'created', 'N/A');
 

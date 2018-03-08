@@ -2,8 +2,6 @@
 
 namespace CCR;
 
-require_once 'Log.php';
-
 use xd_utilities;
 
 /**
@@ -24,6 +22,7 @@ class Log
     const NOTICE  = PEAR_LOG_NOTICE;
     const INFO    = PEAR_LOG_INFO;
     const DEBUG   = PEAR_LOG_DEBUG;
+    const TRACE   = PEAR_LOG_TRACE;
 
     /**
      * Private constructor for factory pattern.
