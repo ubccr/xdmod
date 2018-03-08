@@ -62,6 +62,28 @@ function bindAttributes(query, values) {
     return ret;
 }
 
+var applyMappingToField = function (field, mapping) {
+    var fieldName = '';
+
+    if (!mapping || !mapping[field]) {
+        return field;
+    }
+
+    if (typeof mapping[field] === 'string') {
+        fieldName = mapping[field];
+    } else {
+        if (mapping[field].alias) {
+            fieldName = mapping[field].alias + '.';
+        }
+        if (mapping[field].field) {
+            fieldName += mapping[field].field;
+        } else {
+            fieldName += field;
+        }
+    }
+    return fieldName + ' AS ' + field;
+};
+
 Schema.prototype.getDerivedFields = function (transformed /* , queryFormatFn */) {
     var ret = {};
     var queries = {};
@@ -84,11 +106,7 @@ Schema.prototype.getDerivedFields = function (transformed /* , queryFormatFn */)
                 if (this.derivedFields.hasOwnProperty(field)) {
                     derivedField = this.derivedFields[field];
                     if (derivedField.queries.indexOf(q) > -1) {
-                        if (query.mapping && query.mapping[field]) {
-                            fields.push(query.mapping[field] + ' as ' + field);
-                        } else {
-                            fields.push(field);
-                        }
+                        fields.push(applyMappingToField(field, query.mapping));
                     }
                 }
             }
