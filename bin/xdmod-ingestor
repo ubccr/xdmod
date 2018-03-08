@@ -287,39 +287,39 @@ function runEtlPipeline($name, $params = array()){
     if(empty($name)){
         throw new \Exception('ETL Pipeline not given');
     }
-    $params['process-section'] = $name;
+    $etlParams = $params;
+    $etlParams['process-section'] = $name;
 
     if(isset($params['start-date'])){
-        $params['start-date'] = new \DateTime($params['start-date']);
+        $startDate = new \DateTime($params['start-date']);
     }
     else {
-        $params['start-date'] = new \DateTime('now -7 days');
+        $startDate = new \DateTime('now -7 days');
     }
-    $params['start-date'] = $params['start-date']->format('Y-m-d');
+    $etlParams['start-date'] = $startDate->format('Y-m-d');
 
     if(isset($params['end-date'])){
-        $params['end-date'] = new \DateTime($params['end-date']);
-
+        $endDate = new \DateTime($params['end-date']);
     }
     else {
-        $params['end-date'] = new \DateTime('2038-01-18');
+        $endDate = new \DateTime('2038-01-18');
     }
-    $params['end-date'] = $params['end-date']->format('Y-m-d');
+    $etlParams['end-date'] = $endDate->format('Y-m-d');
 
     if(isset($params['last-modified-start-date'])){
-        $params['last-modified-start-date'] = new \DateTime($params['last-modified-start-date']);
+        $lastModified = new \DateTime($params['last-modified-start-date']);
     }
     else {
-        $params['last-modified-start-date'] = new \DateTime($params['start-date']);
+        $lastModified = new \DateTime($params['start-date']);
     }
-    $params['last-modified-start-date'] = $params['last-modified-start-date']->format('Y-m-d\TH:i:s');
+    $etlParams['last-modified-start-date'] = $lastModified->format('Y-m-d\TH:i:s');
 
-    if(!array_key_exists('config-file', $params)){
-        $params['config-file'] = CONFIG_DIR . '/etl/etl.json';
+    if(!array_key_exists('config-file', $etlParams)){
+        $etlParams['config-file'] = CONFIG_DIR . '/etl/etl.json';
     }
 
     $argumentString = '';
-    foreach ($params as $key => $value) {
+    foreach ($etlParams as $key => $value) {
         $argumentString .= ' --' . $key . ' ' . escapeshellarg($value);
     }
     $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php' . $argumentString;
