@@ -363,7 +363,11 @@ class Configuration extends Loggable implements \Iterator
             'is_local_config' => true
         );
 
-        $localConfigObj = new Configuration($localConfigFile, $this->baseDir, $this->logger, $options);
+        // The static keyword uses late binding to create an instance of the class that you called
+        // the method on. This allows classes extending Configuration to create instances of
+        // themselves when calling this method if they have not overriden it.
+
+        $localConfigObj = new static($localConfigFile, $this->baseDir, $this->logger, $options);
         $localConfigObj->initialize();
 
         return $localConfigObj;
