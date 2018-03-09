@@ -55,12 +55,20 @@
  * Merge data from local configuration files into the global namespace, calling cleanup() on local
  * files.
  *
+ * 5. postMergeTasks()
+ *
+ * Perform any tasks that need to occur after the merging of the local configuration objects (if
+ * any) into the global configuration object. This is useful for massaging the final configuration
+ * object.
+ *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2016-06-15
  *
  * @date 2017-04-11 - Added dynamic key transformers
  *
  * @date 2017-04-18 - Moved parsing of local configuration files into this class
+ *
+ * @date 2018-03-09 - Added postMergeTasks()
  * ==========================================================================================
  */
 
@@ -261,6 +269,8 @@ class Configuration extends Loggable implements \Iterator
 
         }  // if ( null !== $confSubdirectory )
 
+        $this->postMergeTasks();
+
     }  // initialize()
 
 
@@ -427,6 +437,19 @@ class Configuration extends Loggable implements \Iterator
         return $this;
 
     }  // merge()
+
+    /**
+     * Perform any tasks that need to occur after merging the local configuration objects into the
+     * global configuration object. By default no actions are performed, allowing child classes to
+     * customize the global configuration object as needed.
+     *
+     * @return Configuration This object to support method chaining.
+     */
+
+    protected function postMergeTasks()
+    {
+        return $this;
+    }  // postMergeTasks()
 
     /** -----------------------------------------------------------------------------------------
      * Clean up intermediate information that we don't need to keep around after processing. This
