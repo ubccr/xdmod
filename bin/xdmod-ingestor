@@ -47,6 +47,7 @@ function main()
         // Dates used by both ingestion and aggregation.
         array('', 'start-date:'),
         array('', 'end-date:'),
+        array('', 'last-modified-start-date:'),
 
         // Ingestion phases.
         array('', 'ingest-all'),
@@ -74,7 +75,7 @@ function main()
     $help = $ingest = $aggregate = $noAppend = $ingestAll = $ingestShredded
         = $ingestStaging = $ingestHpcdb = false;
 
-    $startDate = $endDate = null;
+    $startDate = $endDate = $lastModifiedStartDate = null;
 
     $logLevel = -1;
 
@@ -111,6 +112,9 @@ function main()
                 break;
             case 'end-date':
                 $endDate = $value;
+                break;
+            case 'last-modified-start-date':
+                $lastModifiedStartDate = $value;
                 break;
             case 'ingest-all':
                 $ingestAll = true;
@@ -164,6 +168,10 @@ function main()
         $logger->crit("Invalid end date '$endDate'");
         exit(1);
     }
+    if ($lastModifiedStartDate !== null && strtotime($lastModifiedStartDate) === false) {
+        $logger->crit("Invalid last modified start date '$lastModifiedStartDate'");
+        exit(1);
+    }
 
     if ($startDate === null && $endDate !== null) {
         $logger->crit('Must specify start date with end date');
@@ -173,6 +181,9 @@ function main()
     if ($startDate !== null && $endDate === null) {
         $endDate = date('Y-m-d');
         $logger->info("Using today '$endDate' for end date");
+    }
+    if($lastModifiedStartDate === null ){
+        $lastModifiedStartDate = date('Y-m-d\TH:i:00');
     }
 
     // NOTE: "process_start_time" is needed for the log summary.
@@ -204,13 +215,12 @@ function main()
     $etlParams = array(
         'start-date' => $startDate,
         'end-date' => $endDate,
-        'last-modified-start-date' => $startDate
+        'last-modified-start-date' => $lastModifiedStartDate
     );
 
     // If no task was explicitly specified, do ingestion and aggregation.
     if (!$ingest && !$aggregate) {
         $ingest = $aggregate = true;
-        $etlParams['last-modified-start-date'] = date('Y-m-d\TH:i:00');
     }
     // If any ingestion phase is specified, don't aggregate.
     if ($ingestAll || $ingestShredded || $ingestStaging || $ingestHpcdb) {
@@ -236,6 +246,22 @@ function main()
                 $dwi->ingestAllStaging($startDate, $endDate);
             }
             if ($ingestHpcdb) {
+                if(null === $startDate){
+                    $result = $dwDb->execute("SELECT
+                            FROM_UNIXTIME(hj.end_time) as end_time
+                        FROM
+                            mod_hpcdb.hpcdb_jobs hj
+                        WHERE
+                            hj.job_id = (
+                                SELECT
+                                    max(jf.job_id)
+                                FROM
+                                    modw.job_tasks jf
+                                )
+                        LIMIT 1"
+                    );
+                    $etlParms['start-date'] = $result[0]['end_time'];
+                }
                 runEtlPipeline('hpcdb-modw.ingest', $etlParams);
             }
         } catch (Exception $e) {
@@ -292,11 +318,8 @@ function runEtlPipeline($name, $params = array()){
 
     if(isset($params['start-date'])){
         $startDate = new \DateTime($params['start-date']);
+        $etlParams['start-date'] = $startDate->format('Y-m-d');
     }
-    else {
-        $startDate = new \DateTime('now -7 days');
-    }
-    $etlParams['start-date'] = $startDate->format('Y-m-d');
 
     if(isset($params['end-date'])){
         $endDate = new \DateTime($params['end-date']);
@@ -310,7 +333,7 @@ function runEtlPipeline($name, $params = array()){
         $lastModified = new \DateTime($params['last-modified-start-date']);
     }
     else {
-        $lastModified = new \DateTime($params['start-date']);
+        $lastModified = new \DateTime(date('Y-m-d H:i:s'));
     }
     $etlParams['last-modified-start-date'] = $lastModified->format('Y-m-d\TH:i:s');
 
@@ -320,7 +343,9 @@ function runEtlPipeline($name, $params = array()){
 
     $argumentString = '';
     foreach ($etlParams as $key => $value) {
-        $argumentString .= ' --' . $key . ' ' . escapeshellarg($value);
+        if(null !== $value){
+            $argumentString .= ' --' . $key . ' ' . escapeshellarg($value);
+        }
     }
     $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php' . $argumentString;
     $pipes = array();
@@ -375,13 +400,17 @@ Usage: xdmod-ingestor [-v]
     --start-date *date*
         Specify the start date (YYYY-MM-DD) to be used during
         aggregation and ingestion.
-        Default: now -7 days
+        Default: End date of last ingested job
 
     --end-date *date*
         Specify the end date (YYYY-MM-DD) to be used during
         aggregation and ingestion.
         Default: 2038-01-18
 
+    --last-modified-start-date
+        Specify the last modified start date (YYYY-MM-DD) to be used during
+        aggregation. Only jobs ingested on or after this date will be aggregated
+        Default: now
 
 EOF;
 }

@@ -345,6 +345,24 @@ class DataWarehouseInitializer
     }
 
     /**
+     * Initialize aggregate database.
+     *
+     * This function should be called before all other aggregation
+     * funcions.
+     *
+     * @param string $startDate
+     * @param string $endDate
+     */
+    public function initializeAggregation($startDate = null, $endDate = null)
+    {
+        /**
+         * This is staying around until xsede can be updated to not require this to be changed.
+         * As this is called from supremm aggregation still.
+         */
+        return;
+    }
+
+    /**
      * Aggregate a fact table.
      *
      * @param string $aggregator Aggregator class name.
@@ -352,6 +370,9 @@ class DataWarehouseInitializer
      * @param string $endDate Aggregation end date.
      * @param bool $append True if aggregation data should be appended.
      */
+     /**
+      * This is staying around until supremm can be updated to etlv2
+      */
     public function aggregate(
         $aggregator,
         $startDate,

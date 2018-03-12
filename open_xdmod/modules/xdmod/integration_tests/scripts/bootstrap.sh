@@ -22,9 +22,9 @@ then
     for resource in $REF_DIR/*.log; do
         xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
     done
-    xdmod-ingestor --start-date 2016-12-01 --end-date 2017-01-05
+    xdmod-ingestor
     xdmod-import-csv -t names -i $REF_DIR/names.csv
-    xdmod-ingestor --start-date 2016-12-01 --end-date 2017-01-05
+    xdmod-ingestor
     xdmod-build-filter-lists -r Jobs
     php /root/bin/createusers.php
     acl-import
