@@ -206,7 +206,7 @@ class PDODBMultiIngestor implements Ingestor
                         !isset($srcRow[$insert_field])
                         ? '\N'
                         : (
-                            empty($srcRow[$insert_field])
+                            '' === $srcRow[$insert_field]
                             ? $string_enc . '' . $string_enc
                             : str_replace('\\', '\\\\', $srcRow[$insert_field])
                         )

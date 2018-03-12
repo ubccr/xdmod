@@ -962,7 +962,7 @@ class pdoIngestor extends aIngestor
             if ( null === $value ) {
                 // Transform NULL values for MySQL LOAD FILE
                 $value = '\N';
-            } elseif ( empty($value) ) {
+            } elseif ( '' === $value ) {
                 $value = $this->stringEnclosure . '' . $this->stringEnclosure;
             } else {
                 // Handle proper escaping of backslashes to preserve source data containing them.
