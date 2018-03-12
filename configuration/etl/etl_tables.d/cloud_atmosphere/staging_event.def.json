@@ -1,0 +1,105 @@
+{
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_atmosphere/staging_event.json#/table_definition"
+        }
+    ],
+
+    "#": "Set up a staging table where we can generate unique event ids using the key",
+    "#": "(resource, instance, event_time, event_type, record_type, account).",
+    "#": "Events may not have an associated instance or host but since these are used",
+    "#": "in the primary key set unknowns to 1",
+
+    "#": "Note that there are some instances where we have multiple DERIVED events that differ",
+    "#": "only in the value of the private_ip value (e.g, i-4b80d6cc on 2017-04-19 20:42:30 and",
+    "#": "i-51af0925 on 2017-01-24 20:56:47). These events are collapsed and cause a difference",
+    "#": "between the number of raw vs staging events.",
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "event_time_utc": "raw.event_time_utc",
+            "event_type_id": "COALESCE(etype.event_type_id, 1)",
+            "record_type_id": "COALESCE(rtype.record_type_id, 1)",
+            "account_id": "COALESCE(acct.account_id, 1)",
+            "host_id": "COALESCE(h.host_id, 1)",
+            "instance_id": "COALESCE(i.instance_id, 1)",
+            "instance_type_id": "COALESCE(itype.instance_type_id, 1)",
+            "image_id": "COALESCE(img.image_id, 1)",
+            "event_data": "raw.event_data",
+            "root_volume_type_id": "COALESCE(atype.asset_type_id, 1)"
+        },
+
+        "joins": [
+            {
+                "name": "atmosphere_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            },
+            {
+                "name": "event_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "etype",
+                "on": "etype.event_type = raw.event_type"
+            },
+            {
+                "name": "record_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rtype",
+                "on": "rtype.record_type = raw.record_type"
+            },
+            {
+                "name": "account",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "acct",
+                "on": "acct.provider_account = raw.provider_account AND acct.resource_id = raw.resource_id",
+                "type": "LEFT OUTER"
+            },
+            {
+                "name": "host",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "h",
+                "on": "h.hostname = h.hostname = raw.hostname AND h.resource_id = raw.resource_id",
+                "type": "LEFT OUTER"
+            },
+            {
+                "name": "instance",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "i",
+                "on": "i.provider_identifier = raw.provider_instance_identifier AND i.resource_id = raw.resource_id",
+                "type": "LEFT OUTER"
+            },
+            {
+                "name": "instance_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "itype",
+                "on": "itype.instance_type = raw.instance_type AND itype.resource_id = raw.resource_id",
+                "type": "LEFT OUTER"
+            },
+            {
+                "name": "image",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "img",
+                "on": "img.image = raw.image AND img.resource_id = raw.resource_id",
+                "type": "LEFT OUTER"
+            },
+            {
+                "name": "asset_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "atype",
+                "on": "atype.asset_type = CONCAT('vol-', raw.root_volume_type)",
+                "type": "LEFT OUTER"
+            }
+        ],
+
+        "groupby": [
+            "raw.resource_id",
+            "i.instance_id",
+            "raw.event_time_utc",
+            "etype.event_type_id",
+            "rtype.record_type_id",
+            "acct.account_id",
+            "h.host_id"
+        ]
+    }
+}
