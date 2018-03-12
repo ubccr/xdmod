@@ -6,6 +6,10 @@ use Exception;
 use CCR\DB\iDatabase;
 use CCR\DB\MySQLDB;
 use CCR\DB\MySQLHelper;
+use ProcessorBucketGenerator;
+use JobTimeGenerator;
+use TimePeriodGenerator;
+use JobTimeseriesAggregator;
 
 class DataWarehouseInitializer
 {
@@ -174,6 +178,36 @@ class DataWarehouseInitializer
         $this->logger = $logger;
     }
 
+    /**
+     * Set the name of the aggregate database.
+     *
+     * @param string $dbName
+     */
+    public function setAggregateDatabaseName($dbName)
+    {
+        $this->aggDbName = $dbName;
+    }
+
+    /**
+     * Ingest all data needed for the data warehouse.
+     *
+     * @param string $startDate
+     * @param string $endDate
+     */
+    public function ingestAll($startDate = null, $endDate = null)
+    {
+        $this->logger->debug('Ingesting all data');
+        if ($startDate !== null) {
+            $this->logger->debug('Start date: ' . $startDate);
+        }
+        if ($endDate !== null) {
+            $this->logger->debug('End date: ' . $endDate);
+        }
+
+        $this->ingestAllShredded($startDate, $endDate);
+        $this->ingestAllStaging($startDate, $endDate);
+        $this->ingestAllHpcdb($startDate, $endDate);
+    }
 
     /**
      * Ingest shredded job data.
@@ -236,6 +270,44 @@ class DataWarehouseInitializer
     }
 
     /**
+     * Ingest HPcDB data to the MoD warehouse.
+     *
+     * @param string $startDate
+     * @param string $endDate
+     */
+    public function ingestAllHpcdb($startDate = null, $endDate = null)
+    {
+        $this->logger->debug('Ingesting HPcDB data');
+        if ($startDate !== null) {
+            $this->logger->debug('Start date: ' . $startDate);
+        }
+        if ($endDate !== null) {
+            $this->logger->debug('End date: ' . $endDate);
+        }
+
+        // Store aggregation start and end dates before ingesting from
+        // mod_hpcdb since those dates depend on what data has not been
+        // inserted into modw.
+        list(
+            $this->aggregationStartDate,
+            $this->aggregationEndDate,
+        ) = $this->getDefaultAggregationDateParams();
+
+        $ingestors = $this->addPrefix(
+            $this->hpcdbIngestors,
+            "OpenXdmod\\Ingestor\\Hpcdb\\"
+        );
+
+        $this->ingest(
+            $ingestors,
+            $this->hpcdbDb,
+            $this->warehouseDb,
+            $startDate,
+            $endDate
+        );
+    }
+
+    /**
      * Run a set of ingestors using the specified databases.
      *
      * @param Ingestor[] ingestors A set of ingestors.
@@ -245,7 +317,7 @@ class DataWarehouseInitializer
      * @param string $endDate
      */
     protected function ingest(
-        array $ingestors,
+        array $ingestors = array(),
         iDatabase $srcDb,
         iDatabase $destDb,
         $startDate = null,
@@ -273,6 +345,53 @@ class DataWarehouseInitializer
     }
 
     /**
+     * Aggregate a fact table.
+     *
+     * @param string $aggregator Aggregator class name.
+     * @param string $startDate Aggregation start date.
+     * @param string $endDate Aggregation end date.
+     * @param bool $append True if aggregation data should be appended.
+     */
+    public function aggregate(
+        $aggregator,
+        $startDate,
+        $endDate,
+        $append = true
+    ) {
+        $this->logger->info(array(
+            'message'    => 'start',
+            'class'      => get_class($this),
+            'function'   => __FUNCTION__,
+            'aggregator' => $aggregator,
+            'start_date' => $startDate,
+            'end_date'   => $endDate,
+            'append'     => $append,
+        ));
+
+        foreach ($this->aggregationUnits as $aggUnit) {
+            $this->logger->info("Aggregating by $aggUnit");
+            $agg = new $aggregator($aggUnit);
+            $agg->setLogger($this->logger);
+            $agg->execute(
+                $this->warehouseDb,
+                $this->aggDbName,
+                $startDate,
+                $endDate,
+                $append
+            );
+        }
+
+        $this->logger->info("Building filter lists");
+        $agg->updateFilters();
+
+        $this->logger->info(array(
+            'message'  => 'end',
+            'class'    => get_class($this),
+            'function' => __FUNCTION__,
+        ));
+    }
+
+    /**
      * Prefix a set of strings.
      *
      * @param string[] $names A set of names that need prefixing.
@@ -280,7 +399,7 @@ class DataWarehouseInitializer
      *
      * @return string[]
      */
-    private function addPrefix(array $names, $prefix)
+    private function addPrefix(array $names = array(), $prefix)
     {
         return array_map(
             function ($name) use ($prefix) {
