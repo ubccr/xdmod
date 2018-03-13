@@ -2029,22 +2029,6 @@ function boolToString($value)
     return ($value) ? 'true' : 'false';
 }
 
-function retrieveETLSQLFile($fileName)
-{
-    $filePath = implode(
-        DIRECTORY_SEPARATOR,
-        array(
-            CONFIG_DIR,
-            'etl',
-            'etl_sql.d',
-            'acls',
-            'xdmod',
-            "$fileName.sql"
-        )
-    );
-    return file_get_contents($filePath);
-}
-
 /**
  * Display this scripts help / usage information.
  *
