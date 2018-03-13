@@ -109,6 +109,16 @@
                 "path": "xdmod/resource-type.json"
             }
         }
+    }, {
+        "name": "job-records-job-tasks",
+        "definition_file_list": [
+            "xdmod/job-records.json",
+            "xdmod/job-tasks.json"
+        ],
+        "description": "Setup job_records & job_tasks tables",
+        "class": "ManageTables",
+        "namespace": "ETL\\Maintenance",
+        "options_class": "MaintenanceOptions"
     }],
     "hpcdb-modw.ingest": [{
         "name": "account",
