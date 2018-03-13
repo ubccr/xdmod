@@ -25,4 +25,9 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return "The configuration type of a VM instance.";
     }
+
+    public function applyTo(Query &$query, Table $data_table) {
+        
+    }
+
 }

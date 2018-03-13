@@ -25,4 +25,9 @@ class GroupByAccount extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return "The account of the principal investigator associated with a VM instance.";
     }
+
+    public function applyTo(Query &$query, Table $data_table) {
+        
+    }
+
 }

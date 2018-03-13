@@ -92,7 +92,7 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
         }
 
         $query->addWhereCondition(
-            new \DataWarehouse\Query\Model\WhereCondition(
+            new WhereCondition(
                 $persontable_id_field,
                 $operation,
                 $whereConstraint
