@@ -90,7 +90,7 @@ And imported with a command like this:
 After importing this data you must ingest it for the date range of any
 job data you have already shredded.
 
-    $ xdmod-ingest --start-date 2012-01-01 --end-date 2012-12-31
+    $ xdmod-ingestor --start-date 2012-01-01 --end-date 2012-12-31
 
 Disabling Hierarchy Dimensions
 ------------------------------
