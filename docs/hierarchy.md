@@ -67,7 +67,7 @@ And imported with a command like this:
 
     $ xdmod-import-csv -t hierarchy -i hierarchy.csv
 
-After importing the heirarchy it is necessary to provide a mapping from
+After importing the hierarchy it is necessary to provide a mapping from
 your user groups to the hierarchy items.  The input format of this
 mapping is a CSV file where the first column contains the name of groups
 used by your resource manager and the second column contains names of
@@ -90,7 +90,7 @@ And imported with a command like this:
 After importing this data you must ingest it for the date range of any
 job data you have already shredded.
 
-    $ xdmod-ingest --start-date 2012-01-01 --end-date 2012-12-31
+    $ xdmod-ingestor --start-date 2012-01-01 --end-date 2012-12-31
 
 Disabling Hierarchy Dimensions
 ------------------------------
@@ -115,7 +115,7 @@ Remove these entries from the file:
         "group_by": "fieldofscience"
     },
 
-These correspond to the three levels of the heirarchy.  The names refer
+These correspond to the three levels of the hierarchy.  The names refer
 to those used by XSEDE, but the text displayed to overridden by the
 names in `hierarchy.json`.  The top level is `nsfdirectorate`, the
 middle level is `parentscience` and the bottom level is
