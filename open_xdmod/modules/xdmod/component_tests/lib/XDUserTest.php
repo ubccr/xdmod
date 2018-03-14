@@ -20,25 +20,7 @@ class XDUserTest extends BaseTest
 {
     private static $users = array();
 
-    /**
-     * @var TestFiles
-     */
-    private $testFiles;
-
     const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
-
-    protected function setUp()
-    {
-        $this->testFiles = new TestFiles(__DIR__ . '/../');
-    }
-
-    public function getTestFiles()
-    {
-        if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../');
-        }
-        return $this->testFiles;
-    }
 
     /**
      * @dataProvider provideGetUserByUserName
@@ -1035,7 +1017,7 @@ class XDUserTest extends BaseTest
      */
     public function testEnumAllAvailableRoles($userName, $expectedFile)
     {
-        $expected = JSON::loadFile($this->getTestFile($expectedFile));
+        $expected = JSON::loadFile($this->getTestFiles()->getFile('acls', $expectedFile));
         $user = XDUser::getUserByUserName($userName);
 
         $allAvailableRoles = $user->enumAllAvailableRoles();
@@ -1049,10 +1031,10 @@ class XDUserTest extends BaseTest
     public function provideEnumAllAvailableRoles()
     {
         $results = array(
-            array(self::CENTER_DIRECTOR_USER_NAME, 'center_director_all_available_roles.json'),
-            array(self::CENTER_STAFF_USER_NAME, 'center_staff_all_available_roles.json'),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, 'principal_user_all_available_roles.json'),
-            array(self::NORMAL_USER_USER_NAME, 'normal_user_all_available_roles.json')
+            array(self::CENTER_DIRECTOR_USER_NAME, 'center_director_all_available_roles'),
+            array(self::CENTER_STAFF_USER_NAME, 'center_staff_all_available_roles'),
+            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, 'principal_user_all_available_roles'),
+            array(self::NORMAL_USER_USER_NAME, 'normal_user_all_available_roles')
         );
 
         // Retrieve all acls except for 'pub' and convert them to an array of
@@ -1110,7 +1092,7 @@ class XDUserTest extends BaseTest
             }
 
             $userName = $user->getUsername();
-            $fileName = implode('_', $aclCombination) . "_acls.json";
+            $fileName = implode('_', $aclCombination) . "_acls";
             $results []= array(
                 $userName,
                 $fileName
@@ -1611,8 +1593,7 @@ class XDUserTest extends BaseTest
             $expected = array_keys($centerSet);
             $roles = implode('_', $roleSet);
             $centers = implode('_', array_values($expected));
-            $fileName = "$roles-$centers.json";
-            $testFilePath = $this->getTestFile($fileName);
+            $testFilePath = $this->getTestFiles()->getFile('acls', "$roles-$centers");
             $testFileExists = file_exists($testFilePath) && is_readable($testFilePath);
             if ($testFileExists) {
                 $expected = json_decode(file_get_contents($testFilePath));
@@ -1638,7 +1619,7 @@ class XDUserTest extends BaseTest
     public function provideRoleGetParameters()
     {
         $input = JSON::loadFile(
-            $this->getTestFile('role_get_parameters.json', self::DEFAULT_PROJECT, 'input')
+            $this->getTestFiles()->getFile('acls', 'role_get_parameters', 'input')
         );
 
         $this->assertArrayHasKey('centers', $input);

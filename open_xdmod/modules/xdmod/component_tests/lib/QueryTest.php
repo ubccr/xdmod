@@ -27,7 +27,7 @@ class AggregateTest extends BaseTest
     }
 
     public function queryDataProvider(){
-        $expectedFileName = $this->getTestFile('aggregate_durations.json');
+        $expectedFileName = $this->getTestFiles()->getFile('acls', 'aggregate_durations');
         $expected = JSON::loadFile($expectedFileName);
         return $expected;
     }

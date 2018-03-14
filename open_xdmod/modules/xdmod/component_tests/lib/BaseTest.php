@@ -2,6 +2,8 @@
 
 namespace ComponentTests;
 
+use TestHarness\TestFiles;
+
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
     private static $TEST_ARTIFACT_OUTPUT_PATH;
@@ -48,6 +50,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     private static $ENV;
 
+    /**
+     * @var TestFiles
+     */
+    private $testFiles = null;
+
     public static function setUpBeforeClass()
     {
         self::setupEnvironment();
@@ -68,35 +75,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../artifacts/xdmod-test-artifacts";
     }
 
-    /**
-     * @param string  $fileName
-     * @param string  $project
-     * @param string  $type
-     * @return string
-     */
-    public function getTestFile($fileName, $project = self::DEFAULT_PROJECT, $type = self::DEFAULT_TYPE, $additionalDirs = array())
+    public function getTestFiles()
     {
-        if (!isset(self::$ENV)){
-            self::setupEnvironment();
+        if ( ! isset($this->testFiles) ) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../');
         }
-
-        if (!isset(self::$TEST_ARTIFACT_OUTPUT_PATH)) {
-            self::setupPaths();
-        }
-
-        return implode(
-            DIRECTORY_SEPARATOR,
-            array_merge(
-                array(
-                    self::$TEST_ARTIFACT_OUTPUT_PATH,
-                    'xdmod',
-                    $project,
-                    $type,
-                    self::$ENV
-                ),
-                $additionalDirs,
-                array($fileName)
-            )
-        );
+        return $this->testFiles;
     }
 }
