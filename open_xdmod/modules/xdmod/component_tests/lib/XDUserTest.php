@@ -36,6 +36,24 @@ class XDUserTest extends BaseTest
             $this->getTestFiles()->getFile('acls', $expectedFile)
         );
         $actual = json_decode(json_encode($user), true);
+
+        // Compare only keys that we care about, remove all others.
+        $keyList = array(
+            '_username',
+            '_email',
+            '_firstName',
+            '_middleName',
+            '_lastName',
+            '_roles',
+            '_acls',
+            'name',
+            'display',
+            'enabled'
+        );
+
+        $actual = $this->array_filter_keys_recursive($keyList, $actual);
+        $expected = $this->array_filter_keys_recursive($keyList, $expected);
+
         $this->assertEquals($expected, $actual);
     }
 
