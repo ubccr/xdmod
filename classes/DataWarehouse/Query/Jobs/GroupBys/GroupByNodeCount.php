@@ -58,7 +58,7 @@ class GroupByNodeCount extends \DataWarehouse\Query\Jobs\GroupBy
 
         $query->addGroup($node_count_id_field);
 
-        $datatable_node_count_field = new \DataWarehouse\Query\Model\TableField($data_table, 'nodecount_id');
+        $datatable_node_count_field = new \DataWarehouse\Query\Model\TableField($data_table, 'node_count');
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
                 $datatable_node_count_field,
@@ -75,7 +75,7 @@ class GroupByNodeCount extends \DataWarehouse\Query\Jobs\GroupBy
         $query->addTable($this->nodes_table);
 
         $node_count_id_field = new \DataWarehouse\Query\Model\TableField($this->nodes_table, $this->_id_field_name);
-        $datatable_node_count_field = new \DataWarehouse\Query\Model\TableField($data_table, 'nodecount_id');
+        $datatable_node_count_field = new \DataWarehouse\Query\Model\TableField($data_table, 'node_count');
 
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
@@ -110,7 +110,7 @@ class GroupByNodeCount extends \DataWarehouse\Query\Jobs\GroupBy
     }
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'nodecount_id');
+        return parent::pullQueryParameters2($request, '_filter_', 'node_count');
 
     }
     public function pullQueryParameterDescriptions(&$request)

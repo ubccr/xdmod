@@ -15,7 +15,7 @@ class NormalizedAverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs
         parent::__construct(
             '100.0 *
                 COALESCE(
-                    SUM(jf.processors * jf.running_job_count)
+                    SUM(jf.processor_count * jf.running_job_count)
                     /
                     SUM(jf.running_job_count)
                     /
@@ -27,7 +27,7 @@ class NormalizedAverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs
                         WHERE
                             FIND_IN_SET(
                                 rrf.resource_id,
-                                GROUP_CONCAT(distinct jf.resource_id)
+                                GROUP_CONCAT(distinct jf.task_resource_id)
                             ) <> 0
                             AND ' . $query_instance->getAggregationUnit()->getUnitName().'_end_ts >= rrf.start_date_ts
                             AND (

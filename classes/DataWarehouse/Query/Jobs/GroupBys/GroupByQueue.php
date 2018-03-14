@@ -59,7 +59,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
 
         $query->addGroup($id_field);
 
-        $datatable_queue_id_field = new \DataWarehouse\Query\Model\TableField($data_table, "queue_id");
+        $datatable_queue_id_field = new \DataWarehouse\Query\Model\TableField($data_table, "queue");
 
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
@@ -72,7 +72,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
             new \DataWarehouse\Query\Model\WhereCondition(
                 new \DataWarehouse\Query\Model\TableField($this->queue_table, 'resource_id'),
                 '=',
-                new \DataWarehouse\Query\Model\TableField($data_table, "resource_id")
+                new \DataWarehouse\Query\Model\TableField($data_table, "task_resource_id")
             )
         );
         $this->addOrder($query, $multi_group);
@@ -93,7 +93,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
         $query->addTable($this->queue_table);
 
         $id_field = new \DataWarehouse\Query\Model\TableField($this->queue_table, $this->_id_field_name);
-        $datatable_queue_id_field = new \DataWarehouse\Query\Model\TableField($data_table, "queue_id");
+        $datatable_queue_id_field = new \DataWarehouse\Query\Model\TableField($data_table, "queue");
 
         // note: resource_id is the column in the queue table that is an int...
         $resource_id_field = new \DataWarehouse\Query\Model\TableField($data_table, "resource_id");
@@ -110,7 +110,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
             new \DataWarehouse\Query\Model\WhereCondition(
                 new \DataWarehouse\Query\Model\TableField($this->queue_table, 'resource_id'),
                 '=',
-                new \DataWarehouse\Query\Model\TableField($data_table, "resource_id")
+                new \DataWarehouse\Query\Model\TableField($data_table, "task_resource_id")
             )
         );
         // the where condition that specifies the constraint on the joined table
@@ -141,7 +141,7 @@ class GroupByQueue extends \DataWarehouse\Query\Jobs\GroupBy
     }
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'queue_id');
+        return parent::pullQueryParameters2($request, '_filter_', 'queue');
     }
     public function pullQueryParameterDescriptions(&$request)
     {

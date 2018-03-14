@@ -97,36 +97,6 @@ class DataWarehouseInitializer
     );
 
     /**
-     * Ingestors that use the HPcDB as their data source.
-     *
-     * @var array
-     */
-    protected $hpcdbIngestors = array(
-        'Accounts',
-        'AllocationBreakdowns',
-        'Allocations',
-        'AllocationsOnResources',
-        'FieldOfScience',
-        'FieldOfScienceHierarchy',
-        'Organizations',
-        'NodeCount',
-        'PIPeople',
-        'People',
-        'PeopleUnderPI',
-        'PrincipalInvestigators',
-        'Queues',
-        'Requests',
-        'ResourceTypes',
-        'Resources',
-        'ResourceSpecs',
-        'ResourceAllocated',
-        'ServiceProvider',
-        'SystemAccounts',
-        'Jobs',
-        'JobHosts',
-    );
-
-    /**
      * Aggregation units.
      *
      * @var array
@@ -385,90 +355,11 @@ class DataWarehouseInitializer
      */
     public function initializeAggregation($startDate = null, $endDate = null)
     {
-        $this->logger->info('Initializing aggregation');
-
-        $this->logger->debug('Generating processor buckets');
-        $generator = new ProcessorBucketGenerator();
-        $generator->execute($this->warehouseDb, $this->aggDbName);
-
-        $this->logger->debug('Generating job times');
-        $generator = new JobTimeGenerator();
-        $generator->execute($this->warehouseDb, $this->aggDbName);
-
-        if ($startDate === null) {
-            $startDate = $this->aggregationStartDate;
-        }
-
-        if ($endDate === null) {
-            $endDate = $this->aggregationEndDate;
-        }
-
-        $this->logger->info("Date range: '$startDate' to '$endDate'");
-
-        if ($startDate === null || $endDate === null) {
-            $msg = 'No start and/or end date, ending initialization';
-            $this->logger->debug($msg);
-            return;
-        }
-
-        if (strcmp($startDate, $endDate) > 0) {
-            $msg = "Invalid date range: '$startDate' to '$endDate'";
-            throw new Exception($msg);
-        }
-
-        $sql = "
-            SELECT DISTINCT resource_id
-            FROM jobfact
-            WHERE
-                start_time BETWEEN '$startDate' AND '$endDate'
-                AND resource_id NOT IN (
-                    SELECT DISTINCT resource_id
-                    FROM resourcespecs
-                    WHERE processors IS NOT NULL
-                )
-        ";
-        $this->logger->debug('Querying for missing data: ' . $sql);
-        $resourcesWithoutInfo = $this->warehouseDb->query($sql);
-
-        if (count($resourcesWithoutInfo) > 0) {
-            $resources = array();
-            foreach ($resourcesWithoutInfo as $resource) {
-                $resources[] = $resource['resource_id'];
-            }
-
-            $msg = 'New Resource(s) in resourcespecs table do not have '
-                . 'processor and node information: '
-                . implode(',', $resources);
-            throw new Exception($msg);
-        }
-
-        $this->logger->debug('Dropping minmaxdate table');
-        $this->warehouseDb->execute("DROP TABLE IF EXISTS minmaxdate");
-
-        $this->logger->debug('Creating minmaxdate table');
-        $sql = "
-            CREATE TABLE minmaxdate AS SELECT
-                LEAST(
-                    MIN(start_time),
-                    MIN(end_time),
-                    MIN(submit_time)
-                ) AS min_job_date,
-                GREATEST(
-                    MAX(start_time),
-                    MAX(end_time),
-                    MAX(submit_time)
-                ) AS max_job_date
-            FROM jobfact
-        ";
-        $this->logger->debug('Create statement: ' . $sql);
-        $this->warehouseDb->execute($sql);
-
-        // Re-generate the aggregation unit tables (day, month, quarter,
-        // year) in modw
-        foreach ($this->aggregationUnits as $aggUnit) {
-            $tpg = TimePeriodGenerator::getGeneratorForUnit($aggUnit);
-            $tpg->generateMainTable($this->warehouseDb);
-        }
+        /**
+         * This is staying around until xsede can be updated to not require this to be changed.
+         * As this is called from supremm aggregation still.
+         */
+        return;
     }
 
     /**
@@ -479,6 +370,9 @@ class DataWarehouseInitializer
      * @param string $endDate Aggregation end date.
      * @param bool $append True if aggregation data should be appended.
      */
+     /**
+      * This is staying around until supremm can be updated to etlv2
+      */
     public function aggregate(
         $aggregator,
         $startDate,
@@ -519,55 +413,6 @@ class DataWarehouseInitializer
     }
 
     /**
-     * Create aggregate job data.
-     *
-     * @param string $startDate
-     * @param string $endDate
-     * @param bool $append
-     */
-    public function aggregateAllJobs(
-        $startDate = null,
-        $endDate = null,
-        $append = null
-    ) {
-        $this->logger->info('Aggregating jobs');
-
-        if ($startDate === null || $endDate === null || $append === null) {
-            if ($startDate === null) {
-                $startDate = $this->aggregationStartDate;
-            }
-
-            if ($endDate === null) {
-                $endDate = $this->aggregationEndDate;
-            }
-
-            if ($append === null) {
-                $append = $this->append;
-            }
-        }
-
-        if ($startDate === null || $endDate === null) {
-            $msg = 'No new job data found, skipping aggregation';
-            $this->logger->notice($msg);
-            return;
-        }
-
-        if (strcmp($startDate, $endDate) > 0) {
-            $msg = "Invalid date range: '$startDate' to '$endDate'";
-            throw new Exception($msg);
-        }
-
-        $this->logger->debug("Date range: '$startDate' to '$endDate'");
-
-        $this->aggregate(
-            'JobTimeseriesAggregator',
-            $startDate,
-            $endDate,
-            $append
-        );
-    }
-
-    /**
      * Prefix a set of strings.
      *
      * @param string[] $names A set of names that need prefixing.
@@ -578,88 +423,10 @@ class DataWarehouseInitializer
     private function addPrefix(array $names = array(), $prefix)
     {
         return array_map(
-            function ($name) use ($prefix) { return $prefix . $name; },
+            function ($name) use ($prefix) {
+                return $prefix . $name;
+            },
             $names
         );
     }
-
-    /**
-     * Returns default date range for aggregation.
-     *
-     * Returns a date range starting with the minimum start date for
-     * jobs that have not been ingested into the warehouse and ending
-     * with today's date.  Since the dates depend on pre-ingested HPcDB
-     * data this method must be called after the staging data is
-     * ingested, but before HPcDB data is ingested, to return a useful
-     * date range.
-     *
-     * @return array
-     *   - Aggregation start date
-     *   - Aggregation end date
-     */
-    private function getDefaultAggregationDateParams()
-    {
-        $this->logger->debug('Determining aggregation date range');
-
-        $sql = '
-            SELECT
-                COUNT(*)    AS count,
-                MAX(job_id) AS max_job_id
-            FROM jobfact
-        ';
-        $this->logger->debug('Querying jobfact for max job_id: ' . $sql);
-        list($row) = $this->warehouseDb->query($sql);
-
-        if ($row['count'] == 0) {
-            $this->logger->debug('No data found in jobfact');
-
-            $sql = '
-                SELECT
-                    COUNT(*)                             AS count,
-                    DATE(FROM_UNIXTIME(MIN(start_time))) AS min_start_date
-                FROM hpcdb_jobs
-            ';
-            $msg = 'Querying hpcdb_jobs for start date: ' . $sql;
-            $this->logger->debug($msg);
-            list($row) = $this->hpcdbDb->query($sql);
-
-            if ($row['count'] == 0) {
-                return array(null, null, null);
-            }
-
-            $startDate = $row['min_start_date'];
-        } else {
-            $maxJobId = $row['max_job_id'];
-            $this->logger->debug("Found jobfact max job_id: $maxJobId");
-            $sql = '
-                SELECT
-                    COUNT(*)                             AS count,
-                    DATE(FROM_UNIXTIME(MIN(start_time))) AS min_start_date
-                FROM hpcdb_jobs
-                WHERE job_id > :job_id
-            ';
-            $params = array('job_id' => $maxJobId);
-            $msg = 'Querying hpcdb_jobs for start date: ' . $sql;
-            $this->logger->debug(array_merge(
-                array('message' => $msg),
-                $params
-            ));
-            list($row) = $this->hpcdbDb->query($sql, $params);
-
-            if ($row['count'] == 0) {
-                $this->logger->debug('No new data found in hpcdb_jobs');
-                return array(null, null, null);
-            }
-
-            $startDate = $row['min_start_date'];
-            $msg = "Found max start date in hpcdb_jobs: $startDate";
-            $this->logger->debug($msg);
-        }
-
-        $endDate = date('Y-m-d');
-        $this->logger->debug("Using current date for end date: $endDate");
-
-        return array($startDate, $endDate);
-    }
 }
-
