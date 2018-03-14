@@ -7,7 +7,6 @@
         "records": {
             "job_id": "sjh.job_id",
             "host_id": "h.id",
-            "resource_id": "sjh.resource_id",
             "order_id": "sjh.order_id"
         },
         "joins": [{
@@ -18,7 +17,7 @@
             "name": "hosts",
             "schema": "${DESTINATION_SCHEMA}",
             "alias": "h",
-            "on": "h.hostname = sjh.hostname AND h.resource_id = h.resource_id"
+            "on": "h.hostname = sjh.hostname AND h.resource_id = sjh.resource_id"
         }]
     }
 }

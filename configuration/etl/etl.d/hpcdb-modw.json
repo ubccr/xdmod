@@ -197,7 +197,7 @@
     }, {
         "name": "resource-allocated",
         "definition_file": "hpcdb-modw/resource-allocated.json",
-        "description": "resource spec records"
+        "description": "resource allocated records"
     }, {
         "name": "service-provider",
         "definition_file": "hpcdb-modw/service-provider.json",
@@ -210,11 +210,11 @@
         "name": "hosts",
         "class": "HpcdbHostsIngestor",
         "definition_file": "hpcdb-modw/host.json",
-        "description": "system account records"
+        "description": "hosts records"
     }, {
         "name": "job-hosts",
         "definition_file": "hpcdb-modw/jobhosts.json",
-        "description": "system account records"
+        "description": "job hosts records"
     }, {
         "name": "jobhosts-post-truncate",
         "namespace": "ETL\\Maintenance",

@@ -21,19 +21,18 @@
         }, {
             "name": "local_jobid",
             "type": "varchar(128)",
-            "nullable": true,
+            "nullable": false,
             "comment": "Job or vm instance identifier from resource manager"
         }, {
             "name": "local_job_array_index",
-            "type": "int(11) unsigned",
-            "nullable": true,
-            "default": null,
+            "type": "int(11)",
+            "nullable": false,
+            "default": -1,
             "comment": "Job Array index id"
         }, {
             "name": "local_job_id_raw",
             "type": "int(11) unsigned",
             "nullable": true,
-            "default": null,
             "comment": "Resource where the task executed"
         }, {
             "name": "resource_id",
@@ -73,7 +72,7 @@
         }, {
             "name": "submit_time_ts",
             "type": "int(11)",
-            "nullable": true,
+            "nullable": false,
             "comment": "Task submission time in seconds since epoch (UTC)"
         }, {
             "name": "start_time_ts",
@@ -127,7 +126,7 @@
         }, {
             "name": "cpu_time",
             "type": "decimal(18,0)",
-            "nullable": true,
+            "nullable": false,
             "comment": "The amount of the cpu time (processor_count * wallduration)"
         }, {
             "name": "local_charge_su",
