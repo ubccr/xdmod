@@ -29,7 +29,7 @@
             },
             {
                 "name": "fos_nsf_abbrev",
-                "type": "varchar(10)",
+                "type": "varchar(100)",
                 "nullable": true,
                 "comment": "The nsf abbreviation."
             },
