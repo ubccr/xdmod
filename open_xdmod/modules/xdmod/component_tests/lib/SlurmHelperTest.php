@@ -11,7 +11,6 @@ use CCR\DB;
 /**
  * @group OpenXDMoD
  * Test the xdmod-slurm-helper executable.
- * @group OpenXDMoD
  */
 class SlurmHelperTest extends \PHPUnit_Framework_TestCase
 {
