@@ -20,8 +20,6 @@ class XDUserTest extends BaseTest
 {
     private static $users = array();
 
-    const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
-
     /**
      * @dataProvider provideGetUserByUserName
      * @param string $userName the name of the user to be requested.
