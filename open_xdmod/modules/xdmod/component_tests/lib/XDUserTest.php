@@ -881,13 +881,14 @@ class XDUserTest extends BaseTest
     }
 
     /**
+     * @dataProvider provideSetActiveRoleForCenterDirectorWithValidOrgID
      * @throws Exception
      */
-    public function testSetActiveRoleForCenterStaffWithValidOrgID()
+    public function testSetActiveRoleForCenterStaffWithValidOrgID($validServiceProviderId)
     {
         $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
 
-        $user->setActiveRole(self::CENTER_STAFF_ACL_NAME, self::VALID_SERVICE_PROVIDER_ID);
+        $user->setActiveRole(self::CENTER_STAFF_ACL_NAME, $validServiceProviderId);
 
         $activeRole = $user->getActiveRole();
         $this->assertNotNull($activeRole);
@@ -1187,27 +1188,24 @@ class XDUserTest extends BaseTest
 
     /**
      * @dataProvider provideIsCenterDirectorOfOrganizationValidCenter
-     * @param string $userName
-     * @param bool $expected
+     * @param string $userName The name of the user to test
+     * @param int $organizationId The organization id to test
+     * @param bool $expected Expected value
      * @throws Exception
      */
-    public function testIsCenterDirectorOfOrganizationValidCenter($userName, $expected)
+    public function testIsCenterDirectorOfOrganizationValidCenter($userName, $organizationId, $expected)
     {
         $validOrganizationId = 1;
 
         $user = XDUser::getUserByUserName($userName);
-        $actual = $user->isCenterDirectorOfOrganization($validOrganizationId);
+        $actual = $user->isCenterDirectorOfOrganization($organizationId);
         $this->assertEquals($expected, $actual);
     }
 
     public function provideIsCenterDirectorOfOrganizationValidCenter()
     {
-        return array(
-            array(self::CENTER_DIRECTOR_USER_NAME, true),
-            array(self::CENTER_STAFF_USER_NAME, false),
-            array(self::PRINCIPAL_INVESTIGATOR_USER_NAME, false),
-            array(self::NORMAL_USER_USER_NAME, false),
-            array(self::PUBLIC_USER_NAME, false)
+        return Json::loadFile(
+            $this->getTestFiles()->getFile('acls', 'is_center_director_of_organization', 'input')
         );
     }
 
