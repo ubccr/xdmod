@@ -38,6 +38,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     private $testFiles = null;
 
+    /**
+    * The TestHarness\TestFiles class (found in the integration test directory) uses the TEST_ENV
+    * environment variable to select the proper test artifact directory for the requested file.
+    *
+    * @return TestFiles The TestFiles object
+    */
+
     public function getTestFiles()
     {
         if ( ! isset($this->testFiles) ) {
