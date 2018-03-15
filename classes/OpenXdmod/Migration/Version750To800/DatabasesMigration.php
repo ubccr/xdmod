@@ -79,7 +79,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 
         $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php '
             . '-c ' . CONFIG_DIR . '/etl/etl.json' . ' -p ' . $name .
-            ' -m ' . $start->format('Y-m-d') . ' -y ' . $end->format('Y-m-d');
+            ' -s ' . $start->format('Y-m-d') . ' -e ' . $end->format('Y-m-d') . ' -k year';
         $pipes = array();
         $this->logger->notice("Executing $command");
         $process = proc_open(
