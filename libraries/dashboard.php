@@ -4,7 +4,7 @@ namespace xd_dashboard;
 
 // -----------------------------------------------------------
 
-function deriveUserEnumerationQuery($group_filter = 'all', $role_filter = 'any', $exclude_unspecified_emails = false)
+function listUserEmailsByGroupAndAcl($group_filter = 'all', $acl_filter = 'any', $exclude_unspecified_emails = true)
 {
     $query = <<<SQL
 SELECT DISTINCT
@@ -19,9 +19,9 @@ SQL;
     $whereClauses = array();
     $params = array();
 
-    if ($role_filter !== 'any') {
+    if ($acl_filter !== 'any') {
         $whereClauses[] = 'a.acl_id = :acl_filter';
-        $params[':acl_filter'] = $role_filter;
+        $params[':acl_filter'] = $acl_filter;
     }
     if ($group_filter !== 'all') {
         $whereClauses[] = 'u.user_type = :user_type';
