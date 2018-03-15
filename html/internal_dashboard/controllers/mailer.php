@@ -73,8 +73,6 @@ switch ($operation) {
             $addresses[] = $r['email_address'];
         }
 
-        $addresses = array_unique($addresses);
-
         sort($addresses);
 
         $response['success'] = true;

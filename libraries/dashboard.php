@@ -38,13 +38,11 @@ SQL;
         $queryParts = array(
             $query,
             'WHERE',
-            $whereClause,
-            'ORDER BY u.last_name'
+            $whereClause
         );
     } else {
         $queryParts = array(
-            $query,
-            'ORDER BY u.last_name'
+            $query
         );
     }
     return array(
