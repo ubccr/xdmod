@@ -62,7 +62,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @return array The filtered array with specified keys removed
      */
 
-    protected function array_filter_keys_recursive(array $keyList, array $input)
+    protected function arrayFilterKeysRecursive(array $keyList, array $input)
     {
         $tmpArray = array();
         foreach ($input as $key => &$value)

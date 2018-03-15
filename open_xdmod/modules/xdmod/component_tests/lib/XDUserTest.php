@@ -49,8 +49,8 @@ class XDUserTest extends BaseTest
             'enabled'
         );
 
-        $actual = $this->array_filter_keys_recursive($keyList, $actual);
-        $expected = $this->array_filter_keys_recursive($keyList, $expected);
+        $actual = $this->arrayFilterKeysRecursive($keyList, $actual);
+        $expected = $this->arrayFilterKeysRecursive($keyList, $expected);
 
         $this->assertEquals($expected, $actual);
     }
