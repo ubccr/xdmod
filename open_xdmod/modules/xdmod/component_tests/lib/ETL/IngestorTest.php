@@ -9,9 +9,7 @@ namespace ComponentTests\ETL;
 use CCR\DB;
 
 /**
- * @group OpenXDMoD
  * Test various components of the ETLv2 ingestors.
- * @group OpenXDMoD
  */
 
 class IngestorTest extends \PHPUnit_Framework_TestCase
@@ -39,7 +37,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             $numWarnings++;
         }
 
-        $this->assertEquals(4, $numWarnings, 'Expected number of SQL warnings');
+        $this->assertGreaterThanOrEqual(4, $numWarnings, 'Expected number of SQL warnings');
         $this->assertEquals('', $result['stderr']);
     }
 
@@ -66,7 +64,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             $numWarnings++;
         }
 
-        $this->assertEquals(4, $numWarnings, 'Expected number of SQL warnings');
+        $this->assertGreaterThanOrEqual(4, $numWarnings, 'Expected number of SQL warnings');
         $this->assertEquals('', $result['stderr']);
     }
 
