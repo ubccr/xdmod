@@ -138,9 +138,10 @@ class IngestorOptions extends aOptions
             case 'hide_sql_warning_codes':
                 $value = ( is_array($value) ? $value : array($value) );
                 foreach ( $value as &$v ) {
+                    $origValue = $v;
                     $v = \xd_utilities\filter_var($v, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
                     if ( null === $v ) {
-                        $msg = get_class($this) . ": SQL warning code must be an integer or array of integers (type = " . gettype($v) . ")";
+                        $msg = get_class($this) . ": '$property' must be an integer or array of integers (type = " . gettype($origValue) . ")";
                         throw new Exception($msg);
                     }
                 }
@@ -152,7 +153,7 @@ class IngestorOptions extends aOptions
                 $value = ( is_array($value) ? $value : array($value) );
                 foreach ( $value as $v ) {
                     if ( ! is_string($v) ) {
-                        $msg = get_class($this) . ": resource code must be a string or array of strings (type = " . gettype($v) . ")";
+                        $msg = get_class($this) . ": '$property' must be a string or array of strings (type = " . gettype($v) . ")";
                         throw new Exception($msg);
                     }
                 }
