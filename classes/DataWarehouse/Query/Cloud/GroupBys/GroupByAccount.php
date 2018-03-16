@@ -3,8 +3,10 @@
 namespace DataWarehouse\Query\Cloud\GroupBys;
 
 use DataWarehouse\Query\Query;
+use DataWarehouse\Query\Model\OrderBy;
 use DataWarehouse\Query\Model\Schema;
 use DataWarehouse\Query\Model\Table;
+use DataWarehouse\Query\Model\TableField;
 use DataWarehouse\Query\Model\WhereCondition;
 
 /*
