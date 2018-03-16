@@ -173,7 +173,7 @@ abstract class aAggregator extends aRdbmsDestinationAction
                                   'action'         => (string) $this,
                                   'start_time'     => $totalStartTime,
                                   'end_time'       => $totalEndTime,
-                                  'elapsed_time'   => round(($totalEndTime - $totalStartTime)/60, 3) . "s"
+                                  'elapsed_time'   => round(($totalEndTime - $totalStartTime)/60, 3) . "m"
                                   ));
 
     }  // execute()
