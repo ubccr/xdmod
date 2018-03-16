@@ -97,8 +97,10 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
         // Parse the each table config and set the schema to be our destination schema
 
         foreach ( $this->options->definition_file_list as $defFile ) {
-            $defFile = $this->options->applyBasePath("paths->definition_file_dir", $defFile);
-            $this->logger->info("Parse table config: '" . $defFile . "'");
+            if ( isset($this->options->paths->definition_file_dir) ) {
+                $defFile = \xd_utilities\qualify_path($defFile, $this->options->paths->definition_file_dir);
+            }
+            $this->logger->info(sprintf("Parse table definition: '%s'", $defFile));
             $etlTable = new Table(
                 $defFile,
                 $this->destinationEndpoint->getSystemQuoteChar(),

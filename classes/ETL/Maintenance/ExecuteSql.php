@@ -89,10 +89,12 @@ class ExecuteSql extends aAction implements iAction
         $sqlFileList  = $this->options->sql_file_list;
 
         foreach ( $sqlFileList as &$sqlFile ) {
-            if ( is_object($sqlFile) && isset($sqlFile->sql_file) ) {
-                $sqlFile->sql_file = $this->options->applyBasePath("paths->sql_dir", $sqlFile->sql_file);
-            } else {
-                $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
+            if ( isset($this->options->paths->sql_dir) ) {
+                if ( is_object($sqlFile) && isset($sqlFile->sql_file) ) {
+                    $sqlFile->sql_file = \xd_utilities\qualify_path($sqlFile->sql_file, $this->options->paths->sql_dir);
+                } else {
+                    $sqlFile = \xd_utilities\qualify_path($sqlFile, $this->options->paths->sql_dir);
+                }
             }
         }
         unset($sqlFile); // Sever the reference with the last element

@@ -102,8 +102,12 @@ class VerifyDatabase extends aAction implements iAction
         } elseif ( isset($this->parsedDefinitionFile->source_query->sql_file) ) {
 
             $sqlFile = $this->parsedDefinitionFile->source_query->sql_file;
-            $sqlFile = $this->options->applyBasePath("paths->sql_dir", $sqlFile);
-            $this->logger->debug("Using SQL file: '$sqlFile'");
+
+            if ( isset($this->options->paths->sql_dir) ) {
+                $sqlFile = \xd_utilities\qualify_path($sqlFile, $this->options->paths->sql_dir);
+            }
+
+            $this->logger->debug(sprintf("Using SQL file: '%s'", $sqlFile));
 
             if ( ! file_exists($sqlFile) ) {
                 $this->logAndThrowException("SQL file does not exist '$sqlFile'");
