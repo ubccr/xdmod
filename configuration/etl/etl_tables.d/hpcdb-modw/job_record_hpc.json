@@ -62,12 +62,13 @@
             "wallduration": "${wallduration_statement}",
             "start_time_ts": "${start_time_ts_statement}",
             "end_time_ts": "j.end_time",
-
+            "eligible_time_ts": "j.eligible_time",
             "#": "Because the start_day_id and end_day_id will be compared to the modw.days table and modw.days records",
             "#": "are calculated based on the local timezone of the server (EDT in our case) we need to explicitly",
             "#": "convert to that time zone when calculating the start and end days",
             "start_day_id": "YEAR(FROM_UNIXTIME(${start_time_ts_statement})) * 100000 + DAYOFYEAR(FROM_UNIXTIME(${start_time_ts_statement}))",
             "end_day_id": "YEAR(FROM_UNIXTIME(j.end_time)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(j.end_time))",
+            "eligible_day_id": "YEAR(FROM_UNIXTIME(j.eligible_time)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(j.eligible_time))",
 
             "completed": 1,
             "memory_kb": -1,
@@ -81,8 +82,15 @@
             "#": "to the XDMoD data warehouse resource specs table",
             "processor_count": "j.processors",
             "#": "CPU time will be calculated in the post-processing step as wallduration * processor_count",
-            "cpu_time": 0
-
+            "cpu_time": 0,
+            "group_name": "j.groupname",
+            "gid_number": "j.gid_number",
+            "uid_number": "j.uid_number",
+            "exit_code": "j.exit_code",
+            "exit_state": "j.exit_state",
+            "cpu_req": "j.cpu_req",
+            "mem_req": "j.mem_req",
+            "timelimit": "j.timelimit"
         },
 
         "joins": [{
@@ -210,7 +218,6 @@
             "local_jobid": "local_job_id",
             "job_task_type_id": "job_task_type_id",
             "resource_id": "resource_id",
-
             "local_job_array_index": "local_job_array_index",
             "local_job_id_raw": "local_job_id_raw",
 
@@ -229,16 +236,18 @@
             "submit_time_ts": "submit_time_ts",
             "start_time_ts": "start_time_ts",
             "end_time_ts": "end_time_ts",
+            "eligible_time_ts": "eligible_time_ts",
             "start_day_id": "start_day_id",
             "end_day_id": "end_day_id",
-
-            "#local_charge_su": "local_charge_su",
-            "#adjusted_charge_su": "adjusted_charge_su",
-            "#local_charge_xdsu": "local_charge_xdsu",
-            "#adjusted_charge_xdsu": "adjusted_charge_xdsu",
-            "#local_charge_nu": "local_charge_nu",
-            "#adjusted_charge_nu": "adjusted_charge_nu",
-            "#conversion_factor": "conversion_factor",
+            "eligible_day_id": "eligible_day_id",
+            "group_name": "group_name",
+            "gid_number": "gid_number",
+            "uid_number": "uid_number",
+            "exit_code": "exit_code",
+            "exit_state": "exit_state",
+            "cpu_req": "cpu_req",
+            "mem_req": "mem_req",
+            "timelimit": "timelimit",
             "memory_kb": "memory_kb",
             "completed": "completed"
         }
