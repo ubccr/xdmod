@@ -146,6 +146,9 @@
             "j.end_time > 0"
         ],
 
+        "orderby": [
+            "j.job_id ASC"
+        ],
         "macros": [{
             "name": "wallduration_statement",
             "file": "hpcdb-modw-cloud/wallduration_calc.sql"

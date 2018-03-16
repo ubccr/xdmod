@@ -247,20 +247,20 @@ function main()
             }
             if ($ingestHpcdb) {
                 if(null === $startDate){
-                    $result = $dwDb->execute("SELECT
+                    $result = $dwDb->query("SELECT
                             FROM_UNIXTIME(hj.end_time) as end_time
                         FROM
                             mod_hpcdb.hpcdb_jobs hj
                         WHERE
                             hj.job_id = (
                                 SELECT
-                                    max(jf.job_id)
+                                    MAX(jf.job_id)
                                 FROM
                                     modw.job_tasks jf
                                 )
                         LIMIT 1"
                     );
-                    $etlParms['start-date'] = $result[0]['end_time'];
+                    $etlParams['start-date'] = $result[0]['end_time'];
                 }
                 runEtlPipeline('hpcdb-modw.ingest', $etlParams);
             }
@@ -407,7 +407,7 @@ Usage: xdmod-ingestor [-v]
         aggregation and ingestion.
         Default: 2038-01-18
 
-    --last-modified-start-date
+    --last-modified-start-date *date*
         Specify the last modified start date (YYYY-MM-DD) to be used during
         aggregation. Only jobs ingested on or after this date will be aggregated
         Default: now
