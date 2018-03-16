@@ -4,7 +4,7 @@
 
 1. Set `TEST_ENV` based on the tests that you would like to perform.  The default is to run the Open
 XDMoD tests (e.g., `TEST_ENV=xdmod`).
-2. Execute the tests: `./runtests`
+2. Execute the tests: `./runtests.sh`
 
 ## Environment Variables
 

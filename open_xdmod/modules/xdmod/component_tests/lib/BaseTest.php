@@ -68,7 +68,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         foreach ($input as $key => &$value)
         {
             if (is_array($value)) {
-                $value = $this->array_filter_keys_recursive($keyList, $value);
+                $value = $this->arrayFilterKeysRecursive($keyList, $value);
             } elseif ( ! in_array($key, $keyList) ) {
                 continue;
             }
