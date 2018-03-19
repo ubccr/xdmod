@@ -39,15 +39,14 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
                 gt.display as long_name
             FROM instance_type gt
             where 1
-            order by gt.order_id
-        "
+            order by gt.order_id"
         );
-        $this->_id_field_name = 'id';
-        $this->_long_name_field_name = 'long_name';
-        $this->_short_name_field_name = 'short_name';
+        $this->_id_field_name = 'instance_type_id';
+        $this->_long_name_field_name = 'display';
+        $this->_short_name_field_name = 'instance_type';
         $this->_order_id_field_name = 'instance_type_id';
         $this->modw_schema = new Schema('modw_cloud');
-        $this->configuration_table = new Table($this->modw_schema, 'instance_type', 'p');
+        $this->configuration_table = new Table($this->modw_schema, 'instance_type', 'it');
     }
 
     public function applyTo(Query &$query, Table $data_table, $multi_group = false)
@@ -66,7 +65,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 
         $query->addGroup($configurationtable_id_field);
 
-        $datatable_configuration_id_field = new TableField($data_table, 'configuration_id');
+        $datatable_configuration_id_field = new TableField($data_table, 'instance_type_id');
         $query->addWhereCondition(new WhereCondition($configurationtable_id_field, '=', $datatable_configuration_id_field));
 
         $this->addOrder($query, $multi_group);
@@ -78,14 +77,10 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
         $query->addTable($this->configuration_table);
 
         $configurationtable_id_field = new TableField($this->configuration_table, $this->_id_field_name);
-        $datatable_configuration_id_field = new TableField($data_table, 'configuration_id');
+        $datatable_configuration_id_field = new TableField($data_table, 'instance_type_id');
 
         // the where condition that specifies the join of the tables
-        $query->addWhereCondition(new WhereCondition(
-            $configurationtable_id_field,
-                                                    '=',
-                                                    $datatable_configuration_id_field
-                                                    ));
+        $query->addWhereCondition(new WhereCondition($configurationtable_id_field, '=', $datatable_configuration_id_field));
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
             $whereConstraint="(". implode(",", $whereConstraint) .")";
@@ -113,7 +108,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'configuration_id');
+        return parent::pullQueryParameters2($request, '_filter_', 'instance_type_id');
     }
 
     public function pullQueryParameterDescriptions(&$request)
