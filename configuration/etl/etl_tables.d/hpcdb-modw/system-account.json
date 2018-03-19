@@ -11,10 +11,12 @@
             "ts": "FROM_UNIXTIME(ts)",
             "uid": "uid"
         },
-        "joins": [{
-            "name": "hpcdb_system_accounts",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "saf"
-        }]
+        "joins": [
+            {
+                "name": "hpcdb_system_accounts",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "saf"
+            }
+        ]
     }
 }

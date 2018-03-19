@@ -2,7 +2,8 @@
     "table_definition": {
         "name": "peopleunderpi",
         "engine": "MyISAM",
-        "columns": [{
+        "columns": [
+            {
                 "name": "principalinvestigator_person_id",
                 "type": "int(11)",
                 "nullable": false
@@ -13,15 +14,17 @@
                 "nullable": false
             }
         ],
-        "indexes": [{
-            "name": "PRIMARY",
-            "columns": [
-                "principalinvestigator_person_id",
-                "person_id"
-            ],
-            "type": "BTREE",
-            "is_unique": true
-        }],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "principalinvestigator_person_id",
+                    "person_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
         "triggers": []
     }
 }

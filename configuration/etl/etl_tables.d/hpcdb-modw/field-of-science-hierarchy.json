@@ -13,11 +13,13 @@
             "directorate_abbrev": "directorate_abbrev",
             "order_id": "NULL"
         },
-        "joins": [{
-            "name": "hpcdb_fields_of_science_hierarchy",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "fosh"
-        }],
+        "joins": [
+            {
+                "name": "hpcdb_fields_of_science_hierarchy",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "fosh"
+            }
+        ],
         "orderby": [
             "description ASC"
         ]

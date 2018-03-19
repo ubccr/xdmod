@@ -2,7 +2,8 @@
     "table_definition": {
         "name": "serviceprovider",
         "engine": "MyISAM",
-        "columns": [{
+        "columns": [
+            {
                 "name": "organization_id",
                 "type": "int(11)",
                 "nullable": false
@@ -23,14 +24,16 @@
                 "nullable": true
             }
         ],
-        "indexes": [{
-            "name": "PRIMARY",
-            "columns": [
-                "organization_id"
-            ],
-            "type": "BTREE",
-            "is_unique": true
-        }],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "organization_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
         "triggers": []
     }
 }
