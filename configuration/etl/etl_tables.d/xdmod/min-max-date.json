@@ -2,7 +2,8 @@
     "table_definition": {
         "comment": "",
         "engine": "InnoDB",
-        "columns": [{
+        "columns": [
+            {
                 "type": "datetime",
                 "nullable": true,
                 "default": null,

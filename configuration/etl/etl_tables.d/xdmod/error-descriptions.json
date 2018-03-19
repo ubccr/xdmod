@@ -1,7 +1,8 @@
 {
     "table_definition": {
         "engine": "MyISAM",
-        "columns": [{
+        "columns": [
+            {
                 "type": "int(11)",
                 "nullable": false,
                 "default": null,
@@ -14,14 +15,16 @@
                 "name": "description"
             }
         ],
-        "indexes": [{
-            "columns": [
-                "id"
-            ],
-            "type": "BTREE",
-            "is_unique": true,
-            "name": "PRIMARY"
-        }],
+        "indexes": [
+            {
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true,
+                "name": "PRIMARY"
+            }
+        ],
         "triggers": [],
         "schema": "modw",
         "name": "error_descriptions"

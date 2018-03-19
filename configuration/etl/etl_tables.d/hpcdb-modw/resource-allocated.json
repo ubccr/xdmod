@@ -1,7 +1,7 @@
 {
     "table_definition": {
-            "$ref" : "etl_tables.d/xdmod/resource-allocated.json#/table_definition"
-        },
+        "$ref": "etl_tables.d/xdmod/resource-allocated.json#/table_definition"
+    },
     "source_query": {
         "records": {
             "resource_id": "rf.resource_id",
@@ -10,7 +10,8 @@
             "name": "rf.resource_name",
             "percent": "COALESCE(raf.percent, 100)"
         },
-        "joins": [{
+        "joins": [
+            {
                 "name": "hpcdb_resources",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "rf"

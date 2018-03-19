@@ -3,7 +3,8 @@
         "name": "allocationbreakdown",
         "engine": "MyISAM",
         "comment": "Assigns people to a part of an allocation.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
@@ -40,7 +41,8 @@
                 "comment": "How much the user has used in Sus."
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "alloc_pid",
                 "columns": [
                     "allocation_id",

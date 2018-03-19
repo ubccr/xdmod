@@ -9,9 +9,11 @@
             "allocation_id": "allocation_id",
             "percentage": "percentage"
         },
-        "joins": [{
-            "name": "hpcdb_allocation_breakdown",
-            "schema": "${SOURCE_SCHEMA}"
-        }]
+        "joins": [
+            {
+                "name": "hpcdb_allocation_breakdown",
+                "schema": "${SOURCE_SCHEMA}"
+            }
+        ]
     }
 }

@@ -3,7 +3,8 @@
         "name": "systemaccount",
         "engine": "MyISAM",
         "comment": "User's accounts on various resources.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
@@ -38,7 +39,8 @@
                 "nullable": true
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "fk_systemaccount_person1_idx",
                 "columns": [
                     "person_id"

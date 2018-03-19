@@ -1,5 +1,6 @@
 {
-    "table_definition": [{
+    "table_definition": [
+        {
             "$ref": "etl_tables.d/xdmod/hosts.json#/table_definition"
         },
         {
@@ -17,14 +18,14 @@
             "resource_id": "resource_id",
             "order_id": 1,
             "host_id": -1
-
         },
-        "joins": [{
-            "name": "hpcdb_jobs",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "jf"
-
-        }],
+        "joins": [
+            {
+                "name": "hpcdb_jobs",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jf"
+            }
+        ],
         "where": [
             "jf.node_list IS NOT NULL"
         ],

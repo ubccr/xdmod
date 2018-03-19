@@ -2,7 +2,8 @@
     "table_definition": {
         "name": "jobhosts",
         "engine": "MyISAM",
-        "columns": [{
+        "columns": [
+            {
                 "name": "job_id",
                 "type": "int(11)",
                 "nullable": false
@@ -18,15 +19,17 @@
                 "nullable": false
             }
         ],
-        "indexes": [{
-            "name": "PRIMARY",
-            "columns": [
-                "job_id",
-                "host_id"
-            ],
-            "type": "BTREE",
-            "is_unique": true
-        }],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "job_id",
+                    "host_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
         "triggers": []
     }
 }

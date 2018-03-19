@@ -17,22 +17,26 @@
             "short_name": "IF(pf.first_name IS NULL OR pf.first_name = '', pf.last_name, CONCAT(pf.last_name, ', ', SUBSTR(pf.first_name, 1, 1)))",
             "order_id": "NULL"
         },
-        "joins": [{
-            "name": "hpcdb_people",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "pf"
-        }, {
-            "name": "hpcdb_organizations",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "of",
-            "on": "of.organization_id = pf.organization_id"
-        }, {
-            "name": "hpcdb_email_addresses",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "ef",
-            "type": "LEFT OUTER",
-            "on": "pf.person_id = ef.person_id"
-        }],
+        "joins": [
+            {
+                "name": "hpcdb_people",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "pf"
+            },
+            {
+                "name": "hpcdb_organizations",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "of",
+                "on": "of.organization_id = pf.organization_id"
+            },
+            {
+                "name": "hpcdb_email_addresses",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ef",
+                "type": "LEFT OUTER",
+                "on": "pf.person_id = ef.person_id"
+            }
+        ],
         "orderby": [
             "long_name ASC"
         ]

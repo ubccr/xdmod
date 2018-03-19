@@ -2,7 +2,8 @@
     "table_definition": {
         "name": "job_times",
         "engine": "MyISAM",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(4)",
                 "nullable": false
@@ -23,7 +24,8 @@
                 "nullable": false
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "PRIMARY",
                 "columns": [
                     "id"

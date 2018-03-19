@@ -13,7 +13,8 @@
             "charge_number": "af.account_name",
             "order_id": "NULL"
         },
-        "joins": [{
+        "joins": [
+            {
                 "name": "hpcdb_allocations",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "alf"
