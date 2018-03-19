@@ -11,7 +11,16 @@
             "principalinvestigator_person_id": "pif.person_id",
             "fos_id": "reqf.primary_fos_id",
             "charge_number": "af.account_name",
-            "order_id": "NULL"
+            "order_id": "NULL",
+            "boardtype_id": 0,
+            "initial_allocation": 0,
+            "initial_start_date": "'0000-00-00'",
+            "initial_start_date_ts": 0,
+            "initial_end_date": "'0000-00-00'",
+            "base_allocation": 0,
+            "remaining_allocation": 0,
+            "end_date": "'0000-00-00'",
+            "end_date_ts": 0
         },
         "joins": [
             {

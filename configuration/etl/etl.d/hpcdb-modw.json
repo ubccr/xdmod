@@ -210,7 +210,12 @@
         "name": "hosts",
         "class": "HpcdbHostsIngestor",
         "definition_file": "hpcdb-modw/host.json",
-        "description": "hosts records"
+        "description": "hosts records",
+        "#": "there are currently duplications allowed here for ease of",
+        "#": "generating the query this might be cleaned up later.",
+        "hide_sql_warning_codes": [
+            1062
+        ]
     }, {
         "name": "job-hosts",
         "definition_file": "hpcdb-modw/jobhosts.json",
@@ -227,7 +232,12 @@
     }, {
         "name": "job-record",
         "definition_file": "hpcdb-modw/job_record_hpc.json",
-        "description": "HPC job records from the hpcdb"
+        "description": "HPC job records from the hpcdb",
+        "#": "job records will be duplicated for each job array",
+        "#": "this hides those warnings. This will be cleaned up later.",
+        "hide_sql_warning_codes": [
+            1062
+        ]
     }, {
         "name": "HpcdbPostIngestJobUpdates",
         "namespace": "ETL\\Maintenance",

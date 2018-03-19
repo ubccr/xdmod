@@ -6,7 +6,11 @@
         "records": {
             "id": "rf.request_id",
             "primary_fos_id": "rf.primary_fos_id",
-            "account_id": "rf.account_id"
+            "account_id": "rf.account_id",
+            "request_type_id": 0,
+            "grant_number": "''",
+            "start_date": "'0000-00-00'",
+            "end_date": "'0000-00-00'"
         },
         "joins": [
             {
