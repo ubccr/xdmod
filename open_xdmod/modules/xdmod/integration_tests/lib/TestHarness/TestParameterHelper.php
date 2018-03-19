@@ -55,7 +55,7 @@ class TestParameterHelper
     {
         $result = array();
         for ($i = 0; $i < $length; $i++) {
-            $result[] = self::$SOURCE[rand(0, PHP_INT_MAX - 1) % 62];
+            $result[] = self::$SOURCE[rand(0, 61)];
         }
 
         return implode('', $result);
@@ -66,7 +66,7 @@ class TestParameterHelper
     {
         $result = '';
         for ($i = 0; $i < $max; $i++) {
-            $result .= rand(0, PHP_INT_MAX - 1) % 10;
+            $result .= rand(0, 9);
         }
         return (int) $result;
     }
