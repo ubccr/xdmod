@@ -70,7 +70,14 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
             try {
                 self::removeUser($userId, $username);
             } catch (Exception $e) {
-                echo "Exception removing user [$userId, $username] during teardown: [{$e->getCode()}] {$e->getMessage()}: \n{$e->getTraceAsString()}\n";
+                echo sprintf(
+                    "Exception removing user [%d, %s] during teardown: [%d] %s: \n%s\n",
+                    $userId,
+                    $username,
+                    $e->getCode(),
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                );
             }
         }
     }
@@ -115,18 +122,49 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
 
         $actualSuccessMessage = $actualMessage ? 'true' : 'false';
 
-        if (strpos($actualMessage, 'user_does_not_exist') !== false) {
-            if ($actualSuccess !== false) {
-                throw new Exception("Remove User ['success'] Expected: false, Received: $actualSuccessMessage | $actualMessage");
+        // Begin determining if the response was as expected.
+        if (strpos($actualMessage, 'user_does_not_exist') === false) {
+            // If the user does exist...
+
+            // then we expect the 'success' property to be true. If not,
+            // throw an exception.
+            if ($actualSuccess !== true) {
+                throw new Exception(
+                    sprintf(
+                        "Remove User ['success'] Expected: true, Received: %s | %s",
+                        $actualSuccessMessage,
+                        $actualMessage
+                    )
+                );
+            }
+
+            // then we expect that the users name will be in the returned
+            // message. If it's not then throw an exception.
+            if (strpos($actualMessage, $username) === false) {
+                throw new Exception(
+                    sprintf(
+                        "Remove User ['message'] did not contain username: %s. Received: %s",
+                        $username,
+                        $actualMessage
+                    )
+                );
             }
         } else {
-            if ($actualSuccess !== true) {
-                throw new Exception("Remove User ['success'] Expected: false, Received: $actualSuccessMessage | $actualMessage");
-            }
-            if (strpos($actualMessage, $username) === false) {
-                throw new Exception("Remove User ['message'] did not contain username: $username. Received: " . $actualMessage);
+            // If the user is not found
+
+            // And the 'success' property is not false ( as expected ) then throw
+            // an exception.
+            if ($actualSuccess !== false) {
+                throw new Exception(
+                    sprintf(
+                        "Remove User ['success'] Expected: false, Received: %s | %s",
+                        $actualSuccessMessage,
+                        $actualMessage
+                    )
+                );
             }
         }
+
         $helper->logoutDashboard();
     }
 

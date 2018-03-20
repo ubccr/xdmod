@@ -449,15 +449,15 @@ class UserAdminTest extends BaseUserAdminTest
             $actualStats = $actual['stats'];
             $expectedStats = $expected['stats'];
 
+            $expectedDifferences = array('visit_frequency', 'timeframe');
             $allFound = true;
-            $notFound = array();
 
             foreach ($expectedStats as $key => $expectedStat) {
                 $entryExists = $this->entryExists(
                     $actualStats,
-                    function ($key, $value) use ($expectedStat, &$notFound, $expectedOutput) {
+                    function ($key, $value) use ($expectedStat, $expectedDifferences) {
                         $diff = array_diff_assoc($expectedStat, $value);
-                        $missingDiff = array_diff(array_keys($diff), array('visit_frequency', 'timeframe'));
+                        $missingDiff = array_diff(array_keys($diff), $expectedDifferences);
                         if (count($missingDiff) === 0) {
                             return true;
                         }
@@ -469,7 +469,13 @@ class UserAdminTest extends BaseUserAdminTest
                     break;
                 }
             }
-            $this->assertTrue($allFound, "There were other differences besides the expected: ". json_encode($notFound));
+            $this->assertTrue(
+                $allFound,
+                sprintf(
+                    "There were other differences besides the expected: %s",
+                    json_encode($expectedDifferences)
+                )
+            );
         } elseif (array_key_exists('message', $expected)) {
             $this->assertArrayHasKey('message', $actual);
             $this->assertEquals($expected['message'], $actual['message']);
