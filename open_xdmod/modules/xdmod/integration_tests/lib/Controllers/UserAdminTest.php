@@ -593,7 +593,7 @@ class UserAdminTest extends BaseUserAdminTest
                 }
             }
         } else {
-            // If this test isn't expected to succed then it is assumed the output
+            // If this test isn't expected to succeed then it is assumed the output
             // is a json file. Process accordingly.
             $expectedJson = JSON::loadFile($expectedFileName);
             foreach($expectedJson as $key => $value) {
