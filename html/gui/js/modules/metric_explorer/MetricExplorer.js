@@ -4214,7 +4214,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             text: 'Select All',
             scope: this,
             handler: function( /*b, e*/ ) {
-                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Check All in Chart Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Select All in Chart Filters pane');
 
                 this.filtersStore.each(function (r) {
                     r.set('checked', true);
@@ -4228,7 +4228,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             text: 'Clear All',
             scope: this,
             handler: function( /*b, e*/ ) {
-                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Uncheck All in Chart Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Clear All in Chart Filters pane');
 
                 this.filtersStore.each(function (r) {
                     r.set('checked', false);
