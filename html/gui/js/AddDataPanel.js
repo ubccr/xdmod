@@ -278,7 +278,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             text: 'Select All',
             scope: this,
             handler: function (b, e) {
-                XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Check All in Local Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Select All in Local Filters pane');
                 this.filtersStore.each(function (r) {
                     r.set('checked', true);
                 });
@@ -288,7 +288,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             text: 'Clear All',
             scope: this,
             handler: function (b, e) {
-                XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Uncheck All in Local Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Clear All in Local Filters pane');
                 this.filtersStore.each(function (r) {
                     r.set('checked', false);
                 });
