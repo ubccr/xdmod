@@ -586,11 +586,11 @@ class HighChartTimeseries2 extends HighChart2
                                 break;
                             }
                         }
-                        // Display markers for scatter plots, or for non-thumbnail plots
-                        // with fewer than 21 points or with a single y value.
+                        // Display markers for scatter plots, non-thumbnail plots of data series
+                        // with fewer than 21 points, or for any data series with a single y value.
                         $showMarker = $data_description->display_type == 'scatter' ||
-                            ( ($y_values_count == 1 || $values_count < 21) &&
-                            $this->_width > \DataWarehouse\Visualization::$thumbnail_width);
+                            ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
+                            $y_values_count == 1;
 
                         $isRemainder = $dataTruncated && ($yIndex === $numYAxisDataObjects - 1);
 
