@@ -532,10 +532,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'text/html; charset=UTF-8';
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
 
-        foreach($testData as $key => $value) {
-            $testData[$key] = TestParameterHelper::processParam($value);
-        }
-
         $data = array_merge(
             array(
                 'operation' => 'enum_target_addresses'
@@ -575,9 +571,11 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function provideEnumTargetAddresses()
     {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_target_addresses', 'input')
-        );
+        $data = JSON::loadFile($this->getTestFiles()->getFile('controllers', 'enum_target_addresses', 'input'));
+        foreach($data['data'] as $key => $value) {
+            $data['data'][$key] = TestParameterHelper::processParam($value);
+        }
+        return $data;
     }
 
     public function listUsers($groupFilter = 'all', $roleFilter = 'any', $contextFilter = '')

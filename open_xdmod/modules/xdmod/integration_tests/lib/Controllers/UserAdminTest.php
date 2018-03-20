@@ -561,6 +561,19 @@ class UserAdminTest extends BaseUserAdminTest
                 fclose($handle);
             }
 
+            $actualRows = count($actual);
+
+            // check that the number of rows are the same
+            $this->assertEquals(
+                $rows,
+                $actualRows,
+                sprintf(
+                    "Expected # of Lines: [%d] Received: [%d]",
+                    $rows,
+                    $actualRows
+                )
+            );
+
             // Now we can get down to the business of comparing...
             for ($i = 0; $i < $rows; $i++) {
                 if (isset($actual[$i]) && isset($expected[$i])) {
