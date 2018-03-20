@@ -31,22 +31,23 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
     public function __construct()
     {
         parent::__construct(
-            'instance_type',
+            'configuration',
             array(),
             "SELECT distinct
                 gt.id,
                 gt.instance_type as short_name,
-                gt.display as long_name
+                gt.display as long_name,
+                gt.instance_type_id as order_id
             FROM instance_type gt
             where 1
-            order by gt.order_id"
+            order by order_id"
         );
         $this->_id_field_name = 'instance_type_id';
         $this->_long_name_field_name = 'display';
         $this->_short_name_field_name = 'instance_type';
         $this->_order_id_field_name = 'instance_type_id';
         $this->modw_schema = new Schema('modw_cloud');
-        $this->configuration_table = new Table($this->modw_schema, 'instance_type', 'it');
+        $this->configuration_table = new Table($this->modw_schema, 'instance_type', 'p');
     }
 
     public function applyTo(Query &$query, Table $data_table, $multi_group = false)
@@ -115,7 +116,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
                 $request,
-                            "select long_name as field_label from modw_cloud.instance_type where id in (_filter_) order by order_id"
+                            "select long_name as field_label from modw_cloud.instance_type where id in (_filter_) order by instance_type_id"
             );
     }
 
