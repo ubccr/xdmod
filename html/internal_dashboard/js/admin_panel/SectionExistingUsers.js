@@ -54,6 +54,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
     cachedAutoSelectUserID: undefined,
 
     reloadUserList: function (user_type, select_user_with_id) {
+        // If a user_type is not supplied then use the currently selected user_type.
+        // The retrieval of the current user_type is made somewhat more difficult
+        // because the component used to control this property is a Split Button w/ menu
+        // as opposed to something like a ComboBox. With a ComboBox we could just
+        // do something like: `this.groupToggle.getValue()`. But instead we need
+        // to go through each of the menu items and determine which of them is
+        // selected ( which we base off of the components text property as it's
+        // updated w/ the currently selected menu item's text when clicked. )
         if (!user_type) {
             var currentType = this.groupToggle.text;
             var items = this.groupToggle.menu.items.items;
@@ -707,7 +715,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
 
         var roleSettings = new Ext.Panel({
-            title: 'Acl Assignment',
+            title: 'ACL Assignment',
             columns: 1,
             layout: 'fit',
             flex: 0.55,
@@ -810,7 +818,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 var intersection = CCR.intersect(dataAcls, acls);
 
                 if (intersection.length === 0) {
-                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
+                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag ACL for the user (i.e., anything not Manager or Developer).');
                     return;
                 }
 
@@ -822,6 +830,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
 
+                // When we are working on a 'Federated' user the cmbUserType will
+                // not have a value ( as it's hidden ). In that case use the
+                // cached_user_type variable which is populated when we fetch
+                // the users details.
+                var userType = cmbUserType.isVisible() ? cmbUserType.getValue() : cached_user_type;
                 var objParams = {
                     operation: 'update_user',
                     uid: selected_user_id,
@@ -833,7 +846,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     institution: (cmbInstitution.getValue().length === 0) ?
                                  '-1' :
                                  cmbInstitution.getValue(),
-                    user_type: cmbUserType.getValue()
+                    user_type: userType
                 };
 
                 Ext.Ajax.request({

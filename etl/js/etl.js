@@ -60,6 +60,13 @@ ETL.prototype.reportVersion = function() {
 	console.log('XDMoD ETL ' + version);
 };
 
+ETL.prototype.getTableDocumentation = function () {
+    config.profiles.forEach(function (etl_profile) {
+        var etlProfile = new ETLProfile(etl_profile);
+        etlProfile.getTableDocumentation();
+    });
+};
+
 ETL.prototype.createOutputTables = function(outputmode) {
 	var self = this;
 	if (outputmode == 'sql') {

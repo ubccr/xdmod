@@ -2,7 +2,8 @@
     "table_definition": {
         "name": "fieldofscience_hierarchy",
         "engine": "MyISAM",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false
@@ -58,7 +59,8 @@
                 "nullable": true
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "fos_h_directorate_id",
                 "columns": [
                     "directorate_id"

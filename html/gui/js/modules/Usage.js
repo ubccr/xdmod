@@ -2132,6 +2132,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 total: 0
                             },
 
+                            timeframe_label: self.getDurationSelector().getDurationLabel(),
                             start_date: self.getDurationSelector().getStartDate().format('Y-m-d'),
                             end_date: self.getDurationSelector().getEndDate().format('Y-m-d'),
                             start: chartToolbar.getOffset(),

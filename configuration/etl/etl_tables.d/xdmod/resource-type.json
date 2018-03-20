@@ -3,7 +3,8 @@
         "name": "resourcetype",
         "engine": "MyISAM",
         "comment": "The different types of resources.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
@@ -21,14 +22,16 @@
                 "nullable": false
             }
         ],
-        "indexes": [{
-            "name": "PRIMARY",
-            "columns": [
-                "id"
-            ],
-            "type": "BTREE",
-            "is_unique": true
-        }],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
         "triggers": []
     }
 }

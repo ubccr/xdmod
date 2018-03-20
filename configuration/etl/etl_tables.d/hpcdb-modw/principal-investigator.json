@@ -7,9 +7,11 @@
             "person_id": "person_id",
             "request_id": "request_id"
         },
-        "joins": [{
-            "name": "hpcdb_principal_investigators",
-            "schema": "${SOURCE_SCHEMA}"
-        }]
+        "joins": [
+            {
+                "name": "hpcdb_principal_investigators",
+                "schema": "${SOURCE_SCHEMA}"
+            }
+        ]
     }
 }

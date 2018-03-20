@@ -3,7 +3,7 @@
         "silex/silex": "~1.2",
         "simplesamlphp/simplesamlphp": "~1.14",
         "openid/php-openid": "dev-master#ee669c6a9d4d95b58ecd9b6945627276807694fb",
-        "greenlion/php-sql-parser": "~4.0.0",
+        "greenlion/php-sql-parser": "~4.1.0",
         "justinrainbow/json-schema": "~2.0",
         "symfony/process": "~2.0",
         "sencha/extjs-gpl": "3.4.*",
@@ -24,7 +24,9 @@
         "egulias/email-validator": "^1.2",
         "taq/pdooci": "^1.0",
         "phpmailer/phpmailer": "^5.2",
-        "ubccr/simplesamlphp-module-authglobus": "1.2.0"
+        "ubccr/simplesamlphp-module-authglobus": "1.2.0",
+        "ubccr/log": "1.13.2",
+        "google/recaptcha": "~1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*"
@@ -400,7 +402,7 @@
     },
     "config": {
         "platform": {
-            "php": "5.3.3"
+            "php": "5.4"
         },
         "secure-http": false
     },

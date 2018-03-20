@@ -5,11 +5,10 @@
 }
 
 .admin_panel_invalid_text_entry {
-    padding-left: 19px !important;
     background-color: #fdc6c8 !important;
     background-image: url('../../gui/images/exclamation.png') !important;
     background-repeat:  no-repeat !important;
-    background-position: 1px 2px !important;
+    background-position: right !important;
 }
 
 .testing {

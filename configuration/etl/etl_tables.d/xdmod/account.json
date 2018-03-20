@@ -3,7 +3,8 @@
         "name": "account",
         "engine": "MyISAM",
         "comment": "This table has records for all the accounts/projects.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
@@ -49,7 +50,8 @@
                 "nullable": true
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "PRIMARY",
                 "columns": [
                     "id"

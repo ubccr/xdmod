@@ -3,7 +3,8 @@
         "name": "queue",
         "engine": "MyISAM",
         "comment": "The queue names of the different resources.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "char(50)",
                 "nullable": false,
@@ -17,7 +18,8 @@
                 "comment": "The resource this queue belongs to."
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "fk_Queue_Resource_idx",
                 "columns": [
                     "resource_id"

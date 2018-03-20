@@ -60,7 +60,7 @@ class GroupByProvider extends \DataWarehouse\Query\Jobs\GroupBy
 
         $query->addGroup($id_field);
 
-        $datatable_organization_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'organization_id');
+        $datatable_organization_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'resource_organization_id');
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
                 $id_field,

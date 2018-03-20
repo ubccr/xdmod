@@ -3,13 +3,13 @@
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
-namespace OpenXdmod\Migration\Version701To710;
+namespace OpenXdmod\Migration\Version701To750;
 
 use CCR\Json;
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 
 /**
- * Update config files from version 7.0.1 To 7.1.0.
+ * Update config files from version 7.0.1 To 7.5.0.
  */
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {

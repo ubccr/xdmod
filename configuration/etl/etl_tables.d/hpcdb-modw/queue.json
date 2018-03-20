@@ -7,11 +7,13 @@
             "id": "DISTINCT COALESCE(queue, 'NA')",
             "resource_id": "resource_id"
         },
-        "joins": [{
-            "name": "hpcdb_jobs",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "j"
-        }],
+        "joins": [
+            {
+                "name": "hpcdb_jobs",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "j"
+            }
+        ],
         "where": [
             "j.nodecount <> 0",
             "j.nodecount IS NOT NULL"

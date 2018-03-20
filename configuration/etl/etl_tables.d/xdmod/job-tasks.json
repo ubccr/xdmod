@@ -3,238 +3,347 @@
         "name": "job_tasks",
         "engine": "MyISAM",
         "comment": "Consumption of resources",
-        "columns": [{
-            "name": "job_record_id",
-            "type": "bigint(20) unsigned",
-            "nullable": false,
-            "comment": "Job record this task falls under"
-        }, {
-            "name": "job_id",
-            "type": "bigint(20) unsigned",
-            "nullable": false,
-            "comment": "Unique job_id"
-        }, {
-            "name": "creation_time",
-            "type": "datetime",
-            "nullable": false,
-            "comment": "Time that the data was originally recorded at the source"
-        }, {
-            "name": "local_jobid",
-            "type": "varchar(128)",
-            "nullable": true,
-            "comment": "Job or vm instance identifier from resource manager"
-        }, {
-            "name": "local_job_array_index",
-            "type": "int(11) unsigned",
-            "nullable": true,
-            "default": null,
-            "comment": "Job Array index id"
-        }, {
-            "name": "local_job_id_raw",
-            "type": "int(11) unsigned",
-            "nullable": true,
-            "default": null,
-            "comment": "Resource where the task executed"
-        }, {
-            "name": "resource_id",
-            "type": "int(11) unsigned",
-            "nullable": false,
-            "comment": "Resource where the task executed"
-        }, {
-            "name": "systemaccount_id",
-            "type": "int(11)",
-            "nullable": false,
-            "comment": "DIMENSION: The id of the resource system account (local username) under which the job ran. References systemaccount.id"
-        }, {
-            "name": "person_id",
-            "type": "int(11) unsigned",
-            "nullable": false,
-            "comment": "Person executing this task"
-        }, {
-            "name": "person_organization_id",
-            "type": "int(11)",
-            "nullable": false,
-            "comment": "The organization of the person who ran the task"
-        }, {
-            "name": "person_nsfstatuscode_id",
-            "type": "int(11)",
-            "nullable": false,
-            "comment": "The NSF status code of the person who ran the task"
-        }, {
-            "name": "job_task_type_id",
-            "type": "int(11) unsigned",
-            "nullable": false,
-            "comment": "Task type or event"
-        }, {
-            "name": "name",
-            "type": "varchar(256)",
-            "nullable": true,
-            "comment": "User-specified job name"
-        }, {
-            "name": "submit_time_ts",
-            "type": "int(11)",
-            "nullable": true,
-            "comment": "Task submission time in seconds since epoch (UTC)"
-        }, {
-            "name": "start_time_ts",
-            "type": "int(11)",
-            "nullable": false,
-            "comment": "Task start time in seconds since epoch (UTC)"
-        }, {
-            "name": "end_time_ts",
-            "type": "int(11)",
-            "nullable": false,
-            "comment": "Task completion time in seconds since epoch (UTC)"
-        }, {
-            "name": "start_day_id",
-            "type": "int(11) unsigned",
-            "nullable": false,
-            "comment": "Day id of the job start time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
-
-        }, {
-            "name": "end_day_id",
-            "type": "int(11) unsigned",
-            "nullable": false,
-            "comment": "Day id of the job end time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
-        }, {
-            "name": "node_count",
-            "type": "int(11)",
-            "nullable": false,
-            "default": "-1",
-            "comment": "Number of nodes consumed"
-        }, {
-            "name": "processor_count",
-            "type": "int(11)",
-            "nullable": false,
-            "default": "-1",
-            "comment": "Number of processor cores consumed"
-        }, {
-            "name": "memory_kb",
-            "type": "int(11)",
-            "nullable": false,
-            "default": "-1",
-            "comment": "Memory consumed"
-        }, {
-            "name": "wallduration",
-            "type": "int(11)",
-            "nullable": false,
-            "comment": "Overall job duration in seconds"
-        }, {
-            "name": "waitduration",
-            "type": "int(11)",
-            "nullable": false,
-            "comment": "Time the job waited in the queue"
-        }, {
-            "name": "cpu_time",
-            "type": "decimal(18,0)",
-            "nullable": true,
-            "comment": "The amount of the cpu time (processor_count * wallduration)"
-        }, {
-            "name": "local_charge_su",
-            "type": "decimal(18,3)",
-            "nullable": false,
-            "default": "0.000",
-            "comment": "Local resource SUs charged"
-        }, {
-            "name": "adjusted_charge_su",
-            "type": "decimal(18,3)",
-            "nullable": false,
-            "default": "0.000",
-            "comment": "Local resource SUs charged after SP adjustments"
-        }, {
-            "name": "local_charge_xdsu",
-            "type": "decimal(18,3)",
-            "nullable": true,
-            "comment": "XDSUs charged. Uses current resource conv factor"
-        }, {
-            "name": "adjusted_charge_xdsu",
-            "type": "decimal(18,3)",
-            "nullable": true,
-            "comment": "XDSUs charged after SP adjustments"
-        }, {
-            "name": "local_charge_nu",
-            "type": "decimal(18,3)",
-            "nullable": true,
-            "comment": "NUs charged. XDSU * 21.576"
-        }, {
-            "name": "adjusted_charge_nu",
-            "type": "decimal(18,3)",
-            "nullable": true,
-            "comment": "NUs charged after SP adjustments. XDSU & 21.576"
-        }, {
-            "name": "conversion_factor",
-            "type": "double",
-            "nullable": true,
-            "comment": "Factor used to normalize local SU to TG Roaming (XDSU)"
-        }, {
-            "name": "completed",
-            "type": "tinyint(1)",
-            "nullable": false,
-            "default": 0,
-            "comment": "Boolean flag 1 = job complete"
-        }, {
-            "name": "last_modified",
-            "type": "timestamp"
-        }, {
-            "name": "is_deleted",
-            "type": "tinyint(1)",
-            "nullable": false,
-            "default": 0,
-            "comment": "Boolean flag 1 = job has been deleted"
-        }],
-        "indexes": [{
-            "name": "PRIMARY",
-            "columns": [
-                "job_record_id",
-                "creation_time",
-                "job_id"
-            ],
-            "type": "BTREE",
-            "is_unique": true
-        }, {
-            "name": "completed",
-            "columns": [
-                "completed"
-            ],
-            "type": "BTREE",
-            "is_unique": false
-        }, {
-            "name": "fk_job_task_type",
-            "columns": [
-                "job_task_type_id"
-            ],
-            "type": "BTREE",
-            "is_unique": false
-        }, {
-            "name": "fk_person",
-            "columns": [
-                "person_id"
-            ],
-            "type": "BTREE",
-            "is_unique": false
-        }, {
-            "name": "fk_resource",
-            "columns": [
-                "resource_id"
-            ],
-            "type": "BTREE",
-            "is_unique": false
-        }, {
-            "name": "aggregation_index",
-            "columns": [
-                "start_day_id",
-                "end_day_id"
-            ],
-            "type": "BTREE",
-            "is_unique": false
-        }, {
-            "name": "deleted",
-            "columns": [
-                "is_deleted"
-            ],
-            "type": "BTREE",
-            "is_unique": false
-        }],
+        "columns": [
+            {
+                "name": "job_record_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Job record this task falls under"
+            },
+            {
+                "name": "job_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Unique job_id"
+            },
+            {
+                "name": "creation_time",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "Time that the data was originally recorded at the source"
+            },
+            {
+                "name": "local_jobid",
+                "type": "varchar(128)",
+                "nullable": false,
+                "comment": "Job or vm instance identifier from resource manager"
+            },
+            {
+                "name": "local_job_array_index",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Job Array index id"
+            },
+            {
+                "name": "local_job_id_raw",
+                "type": "int(11) unsigned",
+                "nullable": true,
+                "comment": "Resource where the task executed"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Resource where the task executed"
+            },
+            {
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the resource system account (local username) under which the job ran. References systemaccount.id"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Person executing this task"
+            },
+            {
+                "name": "person_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The organization of the person who ran the task"
+            },
+            {
+                "name": "person_nsfstatuscode_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The NSF status code of the person who ran the task"
+            },
+            {
+                "name": "job_task_type_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Task type or event"
+            },
+            {
+                "name": "name",
+                "type": "varchar(256)",
+                "nullable": true,
+                "comment": "User-specified job name"
+            },
+            {
+                "name": "submit_time_ts",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Task submission time in seconds since epoch (UTC)"
+            },
+            {
+                "name": "start_time_ts",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Task start time in seconds since epoch (UTC)"
+            },
+            {
+                "name": "end_time_ts",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Task completion time in seconds since epoch (UTC)"
+            },
+            {
+                "name": "eligible_time_ts",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The eligible time in Unix time."
+            },
+            {
+                "name": "start_day_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Day id of the job start time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
+            },
+            {
+                "name": "end_day_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Day id of the job end time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
+            },
+            {
+                "name": "eligible_day_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Day id of the job eligible time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
+            },
+            {
+                "name": "node_count",
+                "type": "int(11)",
+                "nullable": false,
+                "default": "-1",
+                "comment": "Number of nodes consumed"
+            },
+            {
+                "name": "processor_count",
+                "type": "int(11)",
+                "nullable": false,
+                "default": "-1",
+                "comment": "Number of processor cores consumed"
+            },
+            {
+                "name": "memory_kb",
+                "type": "int(11)",
+                "nullable": false,
+                "default": "-1",
+                "comment": "Memory consumed"
+            },
+            {
+                "name": "wallduration",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Overall job duration in seconds"
+            },
+            {
+                "name": "waitduration",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Time the job waited in the queue"
+            },
+            {
+                "name": "cpu_time",
+                "type": "decimal(18,0)",
+                "nullable": false,
+                "comment": "The amount of the cpu time (processor_count * wallduration)"
+            },
+            {
+                "name": "local_charge_su",
+                "type": "decimal(18,3)",
+                "nullable": false,
+                "default": "0.000",
+                "comment": "Local resource SUs charged"
+            },
+            {
+                "name": "adjusted_charge_su",
+                "type": "decimal(18,3)",
+                "nullable": false,
+                "default": "0.000",
+                "comment": "Local resource SUs charged after SP adjustments"
+            },
+            {
+                "name": "local_charge_xdsu",
+                "type": "decimal(18,3)",
+                "nullable": true,
+                "comment": "XDSUs charged. Uses current resource conv factor"
+            },
+            {
+                "name": "adjusted_charge_xdsu",
+                "type": "decimal(18,3)",
+                "nullable": true,
+                "comment": "XDSUs charged after SP adjustments"
+            },
+            {
+                "name": "local_charge_nu",
+                "type": "decimal(18,3)",
+                "nullable": true,
+                "comment": "NUs charged. XDSU * 21.576"
+            },
+            {
+                "name": "adjusted_charge_nu",
+                "type": "decimal(18,3)",
+                "nullable": true,
+                "comment": "NUs charged after SP adjustments. XDSU & 21.576"
+            },
+            {
+                "name": "group_name",
+                "type": "varchar(255)",
+                "nullable": true,
+                "default": null,
+                "comment": "The name of the group that ran the job."
+            },
+            {
+                "name": "gid_number",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "default": null,
+                "comment": "The GID of the group that ran the job."
+            },
+            {
+                "name": "uid_number",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "default": null,
+                "comment": "The UID of the user that ran the job."
+            },
+            {
+                "name": "exit_code",
+                "type": "varchar(32)",
+                "nullable": true,
+                "default": null,
+                "comment": "The code that the job exited with."
+            },
+            {
+                "name": "exit_state",
+                "type": "varchar(32)",
+                "nullable": true,
+                "default": null,
+                "comment": "The state of the job when it completed."
+            },
+            {
+                "name": "cpu_req",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "default": null,
+                "comment": "The number of CPUs required by the job."
+            },
+            {
+                "name": "mem_req",
+                "type": "varchar(32)",
+                "nullable": true,
+                "default": null,
+                "comment": "The amount of memory required by the job."
+            },
+            {
+                "name": "timelimit",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "default": null,
+                "comment": "The time limit of the job in seconds."
+            },
+            {
+                "name": "conversion_factor",
+                "type": "double",
+                "nullable": true,
+                "comment": "Factor used to normalize local SU to TG Roaming (XDSU)"
+            },
+            {
+                "name": "completed",
+                "type": "tinyint(1)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Boolean flag 1 = job complete"
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp"
+            },
+            {
+                "name": "is_deleted",
+                "type": "tinyint(1)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Boolean flag 1 = job has been deleted"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "job_record_id",
+                    "creation_time",
+                    "job_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "completed",
+                "columns": [
+                    "completed"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_job_task_type",
+                "columns": [
+                    "job_task_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_person",
+                "columns": [
+                    "person_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_resource",
+                "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "aggregation_index",
+                "columns": [
+                    "start_day_id",
+                    "end_day_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "deleted",
+                "columns": [
+                    "is_deleted"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
         "triggers": []
     }
 }

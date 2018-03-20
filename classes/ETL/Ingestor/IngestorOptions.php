@@ -93,8 +93,14 @@ class IngestorOptions extends aOptions
             // roughly 40% better than REPLACE INTO when updating rows that already exist in the
             // database. Setting this option to TRUE will force the ingestor to use LOAD DATA
             // INFILE...REPLACE INTO instead.
-            "force_load_data_infile_replace_into" => false
-            );
+            "force_load_data_infile_replace_into" => false,
+
+            // Hide all SQL warnings returned by the database.
+            "hide_sql_warnings" => false,
+
+            // Hide SQL warnings with any of the codes specified in this array.
+            "hide_sql_warning_codes" => null
+        );
 
         $this->options = array_merge($this->options, $localOptions);
 
@@ -120,6 +126,7 @@ class IngestorOptions extends aOptions
             case 'disable_keys':
             case 'ignore_source':
             case 'force_load_data_infile_replace_into':
+            case 'hide_sql_warnings':
                 $origValue = $value;
                 $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                 if ( null === $value ) {
@@ -128,12 +135,25 @@ class IngestorOptions extends aOptions
                 }
                 break;
 
+            case 'hide_sql_warning_codes':
+                $value = ( is_array($value) ? $value : array($value) );
+                foreach ( $value as &$v ) {
+                    $origValue = $v;
+                    $v = \xd_utilities\filter_var($v, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+                    if ( null === $v ) {
+                        $msg = get_class($this) . ": '$property' must be an integer or array of integers (type = " . gettype($origValue) . ")";
+                        throw new Exception($msg);
+                    }
+                }
+                unset($v);
+                break;
+
             case 'include_only_resource_codes':
             case 'exclude_resource_codes':
                 $value = ( is_array($value) ? $value : array($value) );
                 foreach ( $value as $v ) {
                     if ( ! is_string($v) ) {
-                        $msg = get_class($this) . ": resource code must be a string or array of strings (type = " . gettype($v) . ")";
+                        $msg = get_class($this) . ": '$property' must be a string or array of strings (type = " . gettype($v) . ")";
                         throw new Exception($msg);
                     }
                 }

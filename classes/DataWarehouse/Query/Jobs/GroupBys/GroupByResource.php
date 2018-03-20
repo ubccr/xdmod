@@ -61,7 +61,7 @@ class GroupByResource extends \DataWarehouse\Query\Jobs\GroupBy
         $query->addField($resourcefact_shortname_field);
         $query->addGroup($id_field);
 
-        $datatable_resource_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'resource_id', $this->getIdColumnName($multi_group));
+        $datatable_resource_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'task_resource_id', $this->getIdColumnName($multi_group));
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
                 $id_field,
@@ -84,7 +84,7 @@ class GroupByResource extends \DataWarehouse\Query\Jobs\GroupBy
 
         $id_field = new \DataWarehouse\Query\Model\TableField($this->resourcefact_table, $this->_id_field_name);
 
-        $datatable_resource_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'resource_id');
+        $datatable_resource_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'task_resource_id');
         // the where condition that specifies the join of the tables
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(

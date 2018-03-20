@@ -8,8 +8,8 @@ build:
         - /root/.composer
         - /root/.npm
     pre_ci_boot:
-        image_name: tas-tools-ext-01.ccr.xdmod.org/centos7-xdmod7.0.1
-        image_tag: version6
+        image_name: tas-tools-ext-01.ccr.xdmod.org/xdmod-centos7
+        image_tag: open7.5-v4
         pull: true
         options: "--user root -e HOME=/root"
     ci:
@@ -17,7 +17,7 @@ build:
         - ~/bin/buildrpm xdmod
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/bootstrap.sh
         - composer install --no-progress
-        - cp ~/assets/secrets open_xdmod/modules/xdmod/integration_tests/.secrets.json
+        - cp ~/assets/secrets.json open_xdmod/modules/xdmod/integration_tests/.secrets.json
         - ./open_xdmod/modules/xdmod/tests/artifacts/update-artifacts.sh
         - ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
         - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-integration.xml

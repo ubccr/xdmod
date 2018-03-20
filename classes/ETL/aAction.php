@@ -99,7 +99,12 @@ abstract class aAction extends aEtlObject
 
             // Set up the path to the definition file for this action
 
-            $this->definitionFile = \xd_utilities\qualify_path($this->options->definition_file, $this->options->paths->definition_file_dir);
+            if ( isset($this->options->paths->definition_file_dir) ) {
+                $this->definitionFile = \xd_utilities\qualify_path(
+                    $this->options->definition_file,
+                    $this->options->paths->definition_file_dir
+                );
+            }
             $this->definitionFile = \xd_utilities\resolve_path($this->definitionFile);
 
             // Parse the action definition so it is available before initialize() is called. If it
@@ -368,15 +373,19 @@ abstract class aAction extends aEtlObject
         // Set the default time zone and make it available as a variable
         $this->variableMap['TIMEZONE'] = date_default_timezone_get();
 
-        // Make the ETL log email available to actions as a macro
+        // Make the ETL log email available to actions as a macro. If it is not available use
+        // the the debug email instead.
 
         try {
             $section = \xd_utilities\getConfigurationSection("general");
-            if ( array_key_exists("dw_etl_log_recipient", $section) ) {
+            if ( array_key_exists('dw_etl_log_recipient', $section) && ! empty($section['dw_etl_log_recipient']) ) {
                 $this->variableMap['DW_ETL_LOG_RECIPIENT'] = $section['dw_etl_log_recipient'];
+            } elseif ( array_key_exists('debug_recipient', $section) && ! empty($section['debug_recipient']) ) {
+                $this->variableMap['DW_ETL_LOG_RECIPIENT'] = $section['debug_recipient'];
             } else {
-                $msg = "XDMoD configuration option general.dw_etl_log_recipient is not set";
-                $this->logger->warning($msg);
+                $this->logger->warning(
+                    "Cannot set ETL macro DW_ETL_LOG_RECIPIENT - XDMoD configuration option general.debug_recipient is not set or is empty."
+                );
             }
         } catch (\Exception $e) {
             $msg = "'general' section not defined in XDMoD configuration";

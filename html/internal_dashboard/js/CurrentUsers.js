@@ -1,4 +1,4 @@
-/* global document, window, DateUtilities, processLDIFExport */
+/* global document, window, DateUtilities */
 Ext.ns('XDMoD');
 
 XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
@@ -212,7 +212,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
             var color;
             var d;
 
-            if (val) {
+            if (val !== '0') {
                 var millis = val.split('.')[0] * 1000;
 
                 color = '#000';
@@ -406,21 +406,6 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
                     },
 
                     '|',
-
-                    {
-                        xtype: 'button',
-                        iconCls: 'btn_ldif',
-                        text: 'Generate LDIF',
-                        tooltip: 'LDAP Data Interchange Format',
-                        handler: function () {
-                            processLDIFExport({
-                                group_filter: current_state.group,
-                                role_filter: current_state.role,
-                                context_filter: current_state.context
-                            });
-                        }
-                    },
-
                     {
                         xtype: 'button',
                         iconCls: 'btn_email',
@@ -430,7 +415,6 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
                             w.show();
                         }
                     },
-
                     {
                         xtype: 'buttongroup',
                         items: [
@@ -528,4 +512,3 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
     }// initComponent
 
 });// XDMoD.CurrentUsers
-

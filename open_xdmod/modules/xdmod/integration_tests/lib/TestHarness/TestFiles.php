@@ -51,7 +51,7 @@ class TestFiles
 
     public function getFile($testGroup, $fileName, $type = 'output')
     {
-        return implode(
+        return \xd_utilities\resolve_path(implode(
             DIRECTORY_SEPARATOR,
             array(
                 $this->baseDir,
@@ -61,6 +61,6 @@ class TestFiles
                 $type,
                 $fileName . '.json',
             )
-        );
+        ));
     }
 }

@@ -8,7 +8,7 @@ class JobSizeWeightedByCPUHours extends \DataWarehouse\Query\Jobs\Statistic
     {
         parent::__construct(
             'COALESCE(
-                SUM(jf.processors * jf.cpu_time) / SUM(jf.cpu_time),
+                SUM(jf.processor_count * jf.cpu_time) / SUM(jf.cpu_time),
                 0
             )',
             'avg_job_size_weighted_by_cpu_hours',

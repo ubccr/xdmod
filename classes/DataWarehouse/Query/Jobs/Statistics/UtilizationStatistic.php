@@ -45,13 +45,13 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
                                  modw.resource_allocated ra,
                                  modw.days inner_days
                             WHERE
-                                inner_days.day_middle_ts BETWEEN ra.start_date_ts AND coalesce(ra.end_date_ts, 2147483647) AND
-                                inner_days.day_middle_ts BETWEEN rs.start_date_ts AND coalesce(rs.end_date_ts, 2147483647) AND
-                                inner_days.day_middle_ts BETWEEN $date_table_start_ts AND $date_table_end_ts AND
+                                inner_days.id BETWEEN YEAR(FROM_UNIXTIME(ra.start_date_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(ra.start_date_ts)) AND COALESCE(YEAR(FROM_UNIXTIME(ra.end_date_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(ra.end_date_ts)), 999999999) AND
+                                inner_days.id BETWEEN YEAR(FROM_UNIXTIME(rs.start_date_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(rs.start_date_ts)) AND COALESCE(YEAR(FROM_UNIXTIME(rs.end_date_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(rs.end_date_ts)), 999999999) AND
+                                inner_days.id BETWEEN YEAR(FROM_UNIXTIME($date_table_start_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME($date_table_start_ts)) AND YEAR(FROM_UNIXTIME($date_table_end_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME($date_table_end_ts)) AND
                                 ra.resource_id = rs.resource_id
                                 AND FIND_IN_SET(
                                     rs.resource_id,
-                                    GROUP_CONCAT(DISTINCT jf.resource_id)
+                                    GROUP_CONCAT(DISTINCT jf.task_resource_id)
                                 ) <> 0
                         ),
                         0
@@ -81,4 +81,3 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
             . " their system specifications, over time.";
     }
 }
-

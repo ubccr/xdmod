@@ -1,24 +1,25 @@
 <?php
-/* ==========================================================================================
+/** =========================================================================================
  * Read and parse a JSON configuration file containing keys with associated values
  * (scalar, object, array). Values that are objects are considered to be fixed entities
  * that define something in the configuration. Key transformers may also be added allowing
  * us to dynamically extend functionality and transform keys and their associated
  * values. For example, a comment transformer may strip comments from the file so
- * downstream processing does not need to deal with them or may provide the ability to
- * reference keys within other files.
+ * downstream processing does not need to deal with them and a reference transformer may provide
+ * the ability to reference keys/data within other files to promote reuse.
  *
  * No interpretation of the data is performed in this class. The file is simply parsed,
- * transformed, and put into a structure with section (key) names and the data associated
- * with each section. To interpret the data, a child class should override
+ * transformed, and put into a data structure with section (key) names and the data associated
+ * with each section. During processing, the data is kept in the $transformedConfig property but is
+ * cleared in Configuration::cleanup(). To interpret the data, a child class should override
  * Configuration::interpretData().
  *
  * The process for applying transformers to the configuration is as follows:
  *
  * 1. Define key transformers that implement the `iConfigFileKeyTransformer` interface.
  *    Multiple transformers could be defined for the same key.
- * 2. Attach transformers to the Config object. Transformers will be processed in the
- *    order that they are added.
+ * 2. Add transformers to the Config object using addKeyTransformer(). Transformers will be
+ *    processed in the order that they are added.
  * 3. Parse the JSON file
  * 4. Traverse the keys of the JSON file, checking all transformers against each key
  *    4a. If the transformer matches the key, process the value
@@ -37,12 +38,12 @@
  *
  * 1. preTransformTasks()
  *
- * Perform any pre-transformation tasks such as setting or adding key transformers
+ * Perform any pre-transformation tasks such as adding key transformers.
  *
  * 2. interpretData()
  *
- * Apply any logic to interpret the configuration data such as handling defaults,
- * registering ETL actions, etc.
+ * This is an empty method and is supplied so that a child class may apply any logic to interpret
+ * the configuration data such as handling defaults, registering ETL actions, etc.
  *
  * 3. processLocalConfig()
  *
@@ -51,11 +52,14 @@
  *
  * 4. merge()
  *
- * Merge data from local configuration files into the global namespace.
+ * Merge data from local configuration files into the global namespace, calling cleanup() on local
+ * files.
  *
- * 5. cleanup()
+ * 5. postMergeTasks()
  *
- * Perform any necessary data structure cleanup.
+ * Perform any tasks that need to occur after the merging of the local configuration objects (if
+ * any) into the global configuration object. This is useful for massaging the final configuration
+ * object.
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2016-06-15
@@ -63,6 +67,8 @@
  * @date 2017-04-11 - Added dynamic key transformers
  *
  * @date 2017-04-18 - Moved parsing of local configuration files into this class
+ *
+ * @date 2018-03-09 - Added postMergeTasks()
  * ==========================================================================================
  */
 
@@ -79,46 +85,77 @@ use ETL\DataEndpoint;
 
 class Configuration extends Loggable implements \Iterator
 {
-    // Key transformers will be used to dynamically add functionality for matching keys and
-    // must implement the iConfigFileKeyTransformer interface.
-
-    private $keyTransformers = array();
-
     // NOTE: Any properties that need to be accessed in a transformer defined in a subclass cannot be
     // private.
 
-    // Configuraiton filename
+    /**
+     * Key transformers will be used to dynamically add functionality for matching keys and
+     * must implement the iConfigFileKeyTransformer interface.
+     * @var array(iConfigFileKeyTransformer)
+     */
+
+    private $keyTransformers = array();
+
+    /**
+    * Configuration file name
+    * @var string
+    */
+
     protected $filename = null;
 
-    // The base directory for any paths that are not fully qualified
+    /**
+    * The base directory for any paths that are not fully qualified
+    * @var string
+    */
+
     protected $baseDir = null;
 
-    // The parsed configuration file prior to manipulation
+    /**
+     * The parsed configuration file prior to manipulation
+     * @var stdClass
+     */
+
     protected $parsedConfig = null;
 
-    // The configuration constructed from the parsed file after processing any transformers and
-    // performing manipulations
+    /**
+     * The configuration constructed from the parsed file after processing any transformers and
+     * performing manipulations. Note that this is cleared if cleanup() is called.
+     * @var stdClass
+     */
+
     protected $transformedConfig = null;
 
-    // An associative array where keys are section names and values the data associated with that
-    // section.
+    /**
+     * An associative array where keys are section names and values the data associated with that
+     * section.
+     * @var array(stdclass)
+     */
+
     protected $sectionData = array();
 
-    // TRUE if this is a local configuration file as opposed to the main configuration file
+    /**
+     * TRUE if this is a local configuration file as opposed to the main configuration file
+     * @var boolean
+     */
+
     protected $isLocalConfig = false;
 
-    // Directory to look for local configuration files (e.g. sub-configs)
+    /**
+     * Directory to look for local configuration files (e.g. sub-configs)
+     * @var string
+     */
+
     protected $localConfigDir = null;
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
-     * @param $filename Name of the JSON configuration file to parse
-     * @param $baseDir Base directory for configuration files. Overrides the base dir provided in
+     * @param string $filename Name of the JSON configuration file to parse
+     * @param string $baseDir Base directory for configuration files. Overrides the base dir provided in
      *   the top-level config file. If not set, use the same directory as the config file.
-     * @param $logger A PEAR Log object or null to use the null logger.
-     * @param $options An associative array of additional options passed from the parent. These
-     *   include:
+     * @param Log $logger A PEAR Log object or null to use the null logger.
+     * @param array $options An associative array of additional options passed from the parent.
+     *   These include:
      *   local_config_dir: Directory to look for local configuration files
      *   is_local_config: TRUE if this filename is a local config file as opposed to the main file
      * ------------------------------------------------------------------------------------------
@@ -164,7 +201,7 @@ class Configuration extends Loggable implements \Iterator
 
     }  // __construct()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Initialize the configuration object.
      * ------------------------------------------------------------------------------------------
      */
@@ -232,15 +269,17 @@ class Configuration extends Loggable implements \Iterator
 
         }  // if ( null !== $confSubdirectory )
 
+        $this->postMergeTasks();
+
     }  // initialize()
 
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Parse the configuration file.
      *
-     * @param $force TRUE if the configuration file should be re-parsed.
+     * @param boolean $force TRUE if the configuration file should be re-parsed.
      *
-     * @return This object to support method chaining.
+     * @return Configuration This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -267,12 +306,12 @@ class Configuration extends Loggable implements \Iterator
 
     }  // parse()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Perform any tasks that must happen after parsing but before we continue on to
      * transformation. For example, in a configuration file we may want to apply a base
      * path to some elements before transforming JSON reference pointers.
      *
-     * @return This object to support method chaining.
+     * @return Configuration This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -283,10 +322,10 @@ class Configuration extends Loggable implements \Iterator
         return $this;
     }  //preTransformTasks()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Perform transformation by running any key transformers that have been added.
      *
-     * @return This object to support method chaining.
+     * @return Configuration This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -302,12 +341,12 @@ class Configuration extends Loggable implements \Iterator
 
     }  // transform()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Interpret the transformed data in the configuration file. By default no
      * interpretation is performed by this class so child classes should override this
      * method as needed.
      *
-     * @return This object to support method chaining.
+     * @return Configuration This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -316,14 +355,14 @@ class Configuration extends Loggable implements \Iterator
         return $this;
     }  // interpretData()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Given a path to a local configuration file, create a Configuration object and parse
      * the file. This functionality is broken out so child classes can apply any necessary
      * options and object types.
      *
      * @param string $localConfigFile The path to the local configuration file
      *
-     * @return A Configuration object containing the parsed config.
+     * @return stdClass A Configuration object containing the parsed config.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -334,14 +373,18 @@ class Configuration extends Loggable implements \Iterator
             'is_local_config' => true
         );
 
-        $localConfigObj = new Configuration($localConfigFile, $this->baseDir, $this->logger, $options);
+        // The static keyword uses late binding to create an instance of the class that you called
+        // the method on. This allows classes extending Configuration to create instances of
+        // themselves when calling this method if they have not overriden it.
+
+        $localConfigObj = new static($localConfigFile, $this->baseDir, $this->logger, $options);
         $localConfigObj->initialize();
 
         return $localConfigObj;
 
     }  // processLocalConfig()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Merge data from the specified local configuration object, either overwriting or
      * merging data from local configuration objects into the current object. If
      * $overwrite is TRUE, overwrite data for a given key in this Configuration object
@@ -358,7 +401,7 @@ class Configuration extends Loggable implements \Iterator
      * @param bool $overwrite If TRUE, overwrite data (e.g. a key) in this Configuration
      *   with data found in a local configuration.
      *
-     * @return This object to support method chaining
+     * @return Configuration This object to support method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -395,7 +438,20 @@ class Configuration extends Loggable implements \Iterator
 
     }  // merge()
 
-    /* ------------------------------------------------------------------------------------------
+    /**
+     * Perform any tasks that need to occur after merging the local configuration objects into the
+     * global configuration object. By default no actions are performed, allowing child classes to
+     * customize the global configuration object as needed.
+     *
+     * @return Configuration This object to support method chaining.
+     */
+
+    protected function postMergeTasks()
+    {
+        return $this;
+    }  // postMergeTasks()
+
+    /** -----------------------------------------------------------------------------------------
      * Clean up intermediate information that we don't need to keep around after processing. This
      * includes parsed and constructed JSON.
      * ------------------------------------------------------------------------------------------
@@ -407,13 +463,13 @@ class Configuration extends Loggable implements \Iterator
         $this->transformedConfig = null;
     }  // cleanup()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Compare object keys against the list of key transformers and recursively apply
      * transformers where they match.
      *
-     * @param $stdClass $obj The object that we are transforming.
+     * @param stdClass $obj The object that we are transforming.
      *
-     * @return The transformed object, although this is not strictly necessary since PHP
+     * @return stdClass The transformed object, although this is not strictly necessary since PHP
      *   passes objects by reference.
      * ------------------------------------------------------------------------------------------
      */
@@ -504,10 +560,10 @@ class Configuration extends Loggable implements \Iterator
 
     }  // processKeyTransformers()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of section names.
      *
-     * @return An array of section names
+     * @return array An array of section names
      * ------------------------------------------------------------------------------------------
      */
 
@@ -516,10 +572,10 @@ class Configuration extends Loggable implements \Iterator
         return array_keys($this->sectionData);
     }  // getSectionNames()
 
-    /* ------------------------------------------------------------------------------------------
-     * @param $name The name of the section to examine.
+    /** -----------------------------------------------------------------------------------------
+     * @param string $name The name of the section to examine.
      *
-     * @return TRUE if a section is defined
+     * @return array TRUE if a section is defined
      * ------------------------------------------------------------------------------------------
      */
 
@@ -528,10 +584,10 @@ class Configuration extends Loggable implements \Iterator
         return array_key_exists($name, $this->sectionData);
     }  // sectionExists()
 
-    /* ------------------------------------------------------------------------------------------
-     * @param $name The name of the section to examine.
+    /** -----------------------------------------------------------------------------------------
+     * @param string $name The name of the section to examine.
      *
-     * @return TRUE if a section is defined
+     * @return boolean TRUE if a section is defined
      * ------------------------------------------------------------------------------------------
      */
 
@@ -543,16 +599,16 @@ class Configuration extends Loggable implements \Iterator
             );
     }  // getSectionData()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Add a new section to the internal data structures if it doesn't already exist or
      * update the data associated with the section if it does exist (unless $overwrite ==
      * false)
      *
-     * @param $name The name of the new section
-     * @param $data The data associated with the new section
-     * @param $overwrite TRUE if any existing data for the given section should be overwritten
+     * @param string $name The name of the new section
+     * @param stdClass $data The data associated with the new section
+     * @param boolean $overwrite TRUE if any existing data for the given section should be overwritten
      *
-     * @return This object for method chaining
+     * @return Configuration This object for method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -568,12 +624,12 @@ class Configuration extends Loggable implements \Iterator
 
     }  // addSection()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Remove a section from the internal data structures.
      *
-     * @param $name The name of the section
+     * @param string $name The name of the section
      *
-     * @return This object for method chaining
+     * @return Configuration This object for method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -622,12 +678,12 @@ class Configuration extends Loggable implements \Iterator
      * ==========================================================================================
      */
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Add a key transformer to the configuration, warning and overwriting if a duplicate is added.
      *
      * @param iConfigFileKeyTransformer $transformer A key transformer to add.
      *
-     * @return This object for method chaining
+     * @return Configuration This object for method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -647,12 +703,12 @@ class Configuration extends Loggable implements \Iterator
 
     }  // addKeyTransformer()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Return TRUE if the transformer has already been added to this configuration file.
      *
-     * @param (string || iConfigFileKeyTransformer) $transformer A key transformer object or class name
+     * @param string|iConfigFileKeyTransformer $transformer A key transformer object or class name
      *
-     * @return TRUE if the transformer has already been added to this configuration file.
+     * @return boolean TRUE if the transformer has already been added to this configuration file.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -676,10 +732,10 @@ class Configuration extends Loggable implements \Iterator
 
     }  // hasKeyTransformer()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get all key transformers for this configuration file.
      *
-     * @return An associative array of where the key is the transformer class name and the
+     * @return array An associative array of where the key is the transformer class name and the
      *   value is the transformer object.
      * ------------------------------------------------------------------------------------------
      */
@@ -690,13 +746,13 @@ class Configuration extends Loggable implements \Iterator
 
     }  // getKeyTransformers()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Delete a key handler and return it.
      *
-     * @param (string || iConfigFileKeyTransformer) $transformer A key transformer object or class
+     * @param string|iConfigFileKeyTransformer $transformer A key transformer object or class
      *   name configuration)
      *
-     * @return The callable key handler, or FALSE if no handler was defined.
+     * @return Configuration This object for method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -728,10 +784,10 @@ class Configuration extends Loggable implements \Iterator
 
     }  // deleteKeyHandler()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the base directory for this configuration.
      *
-     * @return The base directory for this configuration.
+     * @return string The base directory for this configuration.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -740,10 +796,10 @@ class Configuration extends Loggable implements \Iterator
         return $this->baseDir;
     }  // getBaseDir()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the configuration after applying transforms.
      *
-     * @return The transformed configuration.
+     * @return stdClass The transformed configuration.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -752,14 +808,14 @@ class Configuration extends Loggable implements \Iterator
         return $this->transformedConfig;
     }  // getTransformedConfig()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Getter method for accessing data keys using object notation.
      *
      * NOTE: When querying for existance we can't use isset() and must use NULL === $options->key
      *
-     * @param $property The name of the property to retrieve
+     * @param string $property The name of the property to retrieve
      *
-     * @return The property, or NULL if the property doesn't exist.
+     * @return mixed The property, or NULL if the property doesn't exist.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -772,12 +828,12 @@ class Configuration extends Loggable implements \Iterator
         return null;
     }  // __get()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Return TRUE if a property is set and is not NULL.
      *
-     * @param $property The name of the property to retrieve
+     * @param string $property The name of the property to retrieve
      *
-     * @return TRUE if the property exists and is not NULL, or FALSE otherwise.
+     * @return boolean TRUE if the property exists and is not NULL, or FALSE otherwise.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -786,10 +842,10 @@ class Configuration extends Loggable implements \Iterator
         return ( array_key_exists($property, $this->sectionData) && null !== $this->sectionData[$property] );
     }  // __isset()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Return the JSON representation of the parsed and translated Configuration.
      *
-     * @return A JSON representation of the Configuration object.
+     * @return string A JSON representation of the Configuration object.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -798,11 +854,11 @@ class Configuration extends Loggable implements \Iterator
         return json_encode($this->transformedConfig);
     }  // toJson()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Generate a string representation of this object. Typically the name, plus other pertinant
      * information as appropriate.
      *
-     * @return A string representation of the object
+     * @return string A string representation of the object
      * ------------------------------------------------------------------------------------------
      */
 

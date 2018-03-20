@@ -52,7 +52,17 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             root: 'user_types',
             baseParams: { 'operation' : 'enum_user_types' },
             fields: ['id', 'type'],
-            autoLoad: true
+            autoLoad: true,
+            listeners: {
+                load: function (store, records) {
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        if (parseInt(record.data.id, 10) === CCR.xdmod.FEDERATED_USER_TYPE) {
+                            store.remove(record);
+                        }
+                    }
+                }
+            }
         });
 
         var cmbUserType = new Ext.form.ComboBox({
@@ -314,7 +324,12 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         };
 
         this.displayUserGrid = function (users) {
-            var userFields, usersArray, usersStore, grid, win;
+            var userFields;
+            var usersArray;
+            var usersStore;
+            var grid;
+            var win;
+            var selectedUser = null;
 
             userFields = [
                 'person_id',
@@ -343,6 +358,32 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             }, this);
 
             usersStore.loadData(usersArray);
+
+            var okButton = new Ext.Button({
+                tooltip: 'Select User',
+                text: 'OK',
+                scope: this,
+                handler: function () {
+                    if (selectedUser === null) {
+                        CCR.xdmod.ui.userManagementMessage('Select a user from the list.', false);
+                    } else {
+                        cmbUserMapping.initializeWithValue(
+                            selectedUser.get('person_id'),
+                            selectedUser.get('person_name')
+                        );
+                        win.close();
+                    }
+                }
+            });
+
+            var cancelButton = new Ext.Button({
+                tooltip: 'Cancel',
+                text: 'Cancel',
+                scope: this,
+                handler: function () {
+                    win.close();
+                }
+            });
 
             grid = new Ext.grid.GridPanel({
                 store: usersStore,
@@ -383,19 +424,23 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 ],
 
                 listeners: {
-                    rowdblclick: function (grid, rowIndex) {
-                        var user = usersStore.getAt(rowIndex);
-                        cmbUserMapping.initializeWithValue(
-                            user.get('person_id'),
-                            user.get('person_name')
-                        );
-                        win.close();
+                    rowclick: function (thisGrid, rowIndex) {
+                        selectedUser = usersStore.getAt(rowIndex);
+                    },
+                    rowdblclick: function (thisGrid, rowIndex) {
+                        selectedUser = usersStore.getAt(rowIndex);
+                        okButton.handler();
                     }
-                }
+                },
+
+                fbar: [
+                    okButton,
+                    cancelButton
+                ]
             });
 
             win = new Ext.Window({
-                title: 'No exact match found, select one',
+                title: 'No exact user match found, please select a user.',
                 autoShow: true,
                 layout: 'fit',
                 border: false,
@@ -461,7 +506,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         };
 
         var fsRoleAssignment = new Ext.form.FieldSet({
-            title: 'Acl Assignment',
+            title: 'ACL Assignment',
 
             items: [
                 newUserRoleGrid
@@ -533,7 +578,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 var intersection = CCR.intersect(dataAcls, acls);
 
                 if (intersection.length === 0) {
-                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag acl for the user. ( i.e. anything not Manager or Developer ');
+                    CCR.xdmod.ui.userManagementMessage('You must select a non-flag ACL for the user (i.e., anything not Manager or Developer).');
                     return;
                 }
 
@@ -661,4 +706,3 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         XDMoD.CreateUser.superclass.onRender.call(this, ct, position);
     }
 });
-
