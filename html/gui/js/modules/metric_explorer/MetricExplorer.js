@@ -4207,7 +4207,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         this.filtersStore.on('clear', function () {
             this.saveQuery();
-        }, this);            
+        }, this);
         // ---------------------------------------------------------
 
         var selectAllButton = new Ext.Button({
