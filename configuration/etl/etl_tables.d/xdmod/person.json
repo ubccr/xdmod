@@ -6,7 +6,8 @@
             {
                 "name": "id",
                 "type": "int(11)",
-                "nullable": false
+                "nullable": false,
+                "extra": "auto_increment"
             },
             {
                 "name": "organization_id",
@@ -109,6 +110,12 @@
                 "name": "order_id",
                 "type": "int(11)",
                 "nullable": true
+            },
+            {
+                "name": "origin_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": "0"
             }
         ],
         "indexes": [
@@ -116,6 +123,15 @@
                 "name": "PRIMARY",
                 "columns": [
                     "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "organization_id",
+                "columns": [
+                    "organization_id",
+                    "origin_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true

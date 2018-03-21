@@ -1,0 +1,20 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/resource-allocated.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "(SELECT id FROM ${DESTINATION_SCHEMA}.resourcefact WHERE origin_id = resource_id AND organization_id=(SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))))",
+            "start_date_ts": "start_date_ts",
+            "end_date_ts": "end_date_ts",
+            "name": "name",
+            "percent": "percent"
+        },
+        "joins": [
+            {
+                "name": "resource_allocated",
+                "schema": "${SOURCE_SCHEMA}"
+            }
+        ]
+    }
+}

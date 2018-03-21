@@ -1,0 +1,37 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/queue.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "CONCAT (oqf.id, ' (', oof.abbrev ,'-', rf.code, ')')",
+            "origin_id": "oqf.id",
+            "resource_id": "rf.id"
+        },
+        "joins": [
+            {
+                "name": "queue",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "oqf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "orf",
+                "on": "orf.id = oqf.resource_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "organization",
+                "alias": "oof",
+                "on": "oof.id = orf.organization_id AND oqf.resource_id = orf.id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "rf",
+                "on": "rf.origin_id = oqf.resource_id AND rf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE oof.id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+            }
+        ]
+    }
+}

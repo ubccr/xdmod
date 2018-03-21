@@ -1,0 +1,55 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/jobhosts.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "job_id": "djt.job_id",
+            "host_id": "dh.id",
+            "order_id": "sjh.order_id"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "jobhosts",
+                "alias": "sjh"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hosts",
+                "alias": "sh",
+                "on": "sjh.host_id = id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "sr",
+                "on": "sh.resource_id = sr.id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "organization",
+                "alias": "do",
+                "on": "do.origin_id = sr.organization_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "drf",
+                "on": "drf.organization_id = do.id and drf.origin_id = sh.resource_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "job_tasks",
+                "alias": "djt",
+                "on": "djt.origin_id = sjh.job_id AND djt.resource_id = drf.id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "hosts",
+                "alias": "dh",
+                "on": "dh.resource_id = drf.id AND sh.id = dh.origin_id"
+            }
+        ]
+    }
+}

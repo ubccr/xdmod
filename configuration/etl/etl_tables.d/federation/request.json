@@ -1,0 +1,36 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/request.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "origin_id": "rf.id",
+            "request_type_id": "request_type_id",
+            "primary_fos_id": "primary_fos_id",
+            "account_id": "af.id",
+            "proposal_title": "proposal_title",
+            "expedite": "expedite",
+            "project_title": "project_title",
+            "primary_reviewer": "primary_reviewer",
+            "proposal_number": "proposal_number",
+            "grant_number": "grant_number",
+            "comments": "comments",
+            "start_date": "start_date",
+            "end_date": "end_date",
+            "boardtype_id": "boardtype_id"
+        },
+        "joins": [
+            {
+                "name": "request",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rf"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "account",
+                "alias": "af",
+                "on": "af.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) AND af.origin_id = rf.account_id"
+            }
+        ]
+    }
+}

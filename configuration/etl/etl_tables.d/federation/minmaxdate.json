@@ -1,0 +1,18 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/minmaxdate.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "min_job_date": "min(`start_time`)",
+            "max_job_date": "max(`end_time`)"
+        },
+        "joins": [
+            {
+                "name": "jobfact",
+                "schema": "${DESTINATION_SCHEMA}"
+            }
+        ],
+        "where": []
+    }
+}

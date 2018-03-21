@@ -1,0 +1,58 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/allocation-breakdown.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "origin_id": "abdf.id",
+            "person_id": "dpf.id",
+            "allocation_id": "daf.id",
+            "percentage": "abdf.percentage",
+            "alloc_limit": "abdf.alloc_limit",
+            "used_allocation": "abdf.used_allocation"
+        },
+        "joins": [
+            {
+                "name": "allocationbreakdown",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "abdf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "person",
+                "alias": "opf",
+                "on": "abdf.person_id = opf.id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "dpf",
+                "on": "dpf.origin_id = abdf.person_id AND dpf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) AND origin_id = opf.organization_id)"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "allocation",
+                "alias": "oaf",
+                "on": "oaf.id = abdf.allocation_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "orf",
+                "on": "orf.id = oaf.resource_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "drf",
+                "on": "drf.origin_id = orf.id AND drf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) AND origin_id = orf.organization_id)"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "allocation",
+                "alias": "daf",
+                "on": "daf.origin_id = abdf.allocation_id AND daf.resource_id = drf.id"
+            }
+        ]
+    }
+}

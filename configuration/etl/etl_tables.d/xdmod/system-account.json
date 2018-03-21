@@ -8,7 +8,13 @@
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
+                "extra": "auto_increment",
                 "comment": "the id of the record"
+            },
+            {
+                "name": "origin_id",
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "person_id",
@@ -65,6 +71,15 @@
                 ],
                 "type": "BTREE",
                 "is_unique": false
+            },
+            {
+                "name": "origin_id",
+                "columns": [
+                    "origin_id",
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
             },
             {
                 "name": "PRIMARY",

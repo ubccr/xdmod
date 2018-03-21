@@ -1,0 +1,37 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/hosts.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "origin_id": "hf.id",
+            "resource_id": "drf.id",
+            "hostname": "hostname"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hosts",
+                "alias": "hf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "orf",
+                "on": "hf.resource_id = orf.id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "organization",
+                "alias": "of",
+                "on": "of.origin_id = orf.organization_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "drf",
+                "on": "drf.organization_id = of.id and drf.origin_id = hf.resource_id"
+            }
+        ]
+    }
+}

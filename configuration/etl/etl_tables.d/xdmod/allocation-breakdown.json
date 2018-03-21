@@ -8,7 +8,13 @@
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
+                "extra": "auto_increment",
                 "comment": "The id of the record."
+            },
+            {
+                "name": "origin_id",
+                "type": "int(10)",
+                "nullable": false
             },
             {
                 "name": "person_id",

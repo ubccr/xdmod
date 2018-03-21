@@ -1,0 +1,52 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/peopleonaccount.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "drf.id",
+            "account_id": "daf.id",
+            "person_id": "dpf.id",
+            "start_time_ts": "start_time_ts",
+            "end_time_ts": "end_time_ts",
+            "allocationstate_id": "allocationstate_id"
+        },
+        "joins": [
+            {
+                "name": "peopleonaccount",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "opoa"
+            },
+            {
+                "name": "person",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "opf",
+                "on": "opf.id = opoa.person_id"
+            },
+            {
+                "name": "resourcefact",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "orf",
+                "on": "orf.id = opoa.resource_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "dpf",
+                "on": "dpf.origin_id = opf.id AND dpf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE opf.organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "account",
+                "alias": "daf",
+                "on": "daf.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) AND daf.origin_id = opoa.account_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "drf",
+                "on": "drf.origin_id = orf.id AND drf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+            }
+        ]
+    }
+}

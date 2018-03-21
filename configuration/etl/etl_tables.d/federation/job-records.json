@@ -1,0 +1,79 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/job-records.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "origin_id": "job_record_id",
+            "resource_id": "rf.id",
+            "resourcetype_id": "jr.resourcetype_id",
+            "request_id": "alf.request_id",
+            "account_id": "af.id",
+            "allocation_id": "alf.id",
+            "allocation_resource_id": "alf.resource_id",
+            "fos_id": "jr.fos_id",
+            "queue": "CONCAT (jr.queue, ' (', jrof.abbrev ,'-', rf.code, ')')",
+            "person_id": "pf.id",
+            "person_organization_id": "pf.organization_id",
+            "person_nsfstatuscode_id": "pf.nsfstatuscode_id",
+            "principalinvestigator_person_id": "pif.id",
+            "piperson_organization_id": "pif.organization_id",
+            "resource_state_id": "jr.resource_state_id",
+            "resource_country_id": "jr.resource_country_id",
+            "resource_organization_id": "jr.resource_organization_id /* fix this */",
+            "resource_organization_type_id": "jr.resource_organization_type_id",
+            "job_record_type_id": "jr.job_record_type_id",
+            "submission_venue_id": "jr.submission_venue_id",
+            "submit_time_ts": "jr.submit_time_ts",
+            "start_time_ts": "jr.start_time_ts",
+            "end_time_ts": "jr.end_time_ts",
+            "start_day_id": "jr.start_day_id",
+            "end_day_id": "jr.end_day_id",
+            "completed": "jr.completed",
+            "origin_database_prefix": "(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+        },
+        "joins": [
+            {
+                "name": "job_records",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jr"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "organization",
+                "alias": "jrof",
+                "on": "jr.resource_organization_id = jrof.origin_id AND jrof.origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "rf",
+                "on": "jr.resource_id = rf.origin_id AND rf.organization_id = jrof.id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "pf",
+                "on": "pf.origin_id = jr.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jr.person_organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "pif",
+                "on": "pif.origin_id = jr.principalinvestigator_person_id AND pif.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jr.piperson_organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "account",
+                "alias": "af",
+                "on": "af.origin_id = jr.account_id AND af.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "allocation",
+                "alias": "alf",
+                "on": "alf.origin_id = jr.allocation_id AND alf.resource_id = rf.id"
+            }
+        ]
+    }
+}

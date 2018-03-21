@@ -15,14 +15,14 @@
                 "name": "resourcetype_id",
                 "type": "int(11)",
                 "nullable": true,
-                "default": "0",
+                "default": 0,
                 "comment": "The resource type id."
             },
             {
                 "name": "organization_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": "0",
+                "default": 1,
                 "comment": "The organization of the resource."
             },
             {
@@ -70,13 +70,19 @@
                 "name": "shared_jobs",
                 "type": "int(1)",
                 "nullable": false,
-                "default": "0"
+                "default": 0
             },
             {
                 "name": "timezone",
                 "type": "varchar(30)",
                 "nullable": false,
                 "default": "UTC"
+            },
+            {
+                "name": "origin_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1
             }
         ],
         "indexes": [
@@ -108,8 +114,9 @@
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "id",
-                    "start_date_ts"
+                    "organization_id",
+                    "name",
+                    "start_date"
                 ],
                 "type": "BTREE",
                 "is_unique": true
