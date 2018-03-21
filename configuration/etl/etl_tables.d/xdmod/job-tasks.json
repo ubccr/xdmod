@@ -295,6 +295,22 @@
                 "is_unique": true
             },
             {
+                "name": "jobid",
+                "columns": [
+                    "job_id"
+                ],
+                "type": "BTREE"
+            },
+            {
+                "name": "localjobid",
+                "columns": [
+                    "local_jobid",
+                    "local_job_array_index",
+                    "resource_id"
+                ],
+                "type": "BTREE"
+            },
+            {
                 "name": "completed",
                 "columns": [
                     "completed"
@@ -321,6 +337,24 @@
             {
                 "name": "fk_resource",
                 "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "index_supremm_lookup",
+                "columns": [
+                    "local_job_id_raw",
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "index_start_time_resource_id",
+                "columns": [
+                    "start_time_ts",
                     "resource_id"
                 ],
                 "type": "BTREE",
