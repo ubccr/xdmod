@@ -3,18 +3,18 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 
 /*
 * @author Rudra Chakraborty
-* @date 03-21-2018
+* @date 03-22-2018
 *
-* Sum of memory reserved on active virtual machines
+* Greatest amount of memory reserved on active virtual machines
 */
-class MemoryReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class MaxMemoryReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.memory_mb),0)',
-            'memory_mb',
-            'Amount of Memory Reserved',
+            'COALESCE(MAX(jf.memory_mb),0)',
+            'max_memory_mb',
+            'Maximum Memory Reserved',
             'Memory in MBs',
             0
         );
@@ -22,7 +22,7 @@ class MemoryReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total amount of memory (in megabytes) reserved by active VM instances.<br/>
+        return 'The single highest amount of memory (in megabytes) reserved by active VM instances.<br/>
             <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.';
     }
 }
