@@ -1,8 +1,7 @@
 {
     "#": "Aggregation of HPC job records and tasks ingested from the XDCDB",
-
     "table_definition": {
-        "$ref" : "etl_tables.d/xdmod/jobfact_by_.json#/table_definition"
+        "$ref": "etl_tables.d/xdmod/jobfact_by_.json#/table_definition"
     },
 
     "#": "The aggregation period query determines which periods need to be aggregated based on added or modified",
@@ -10,7 +9,6 @@
     "#": "aggregation. If this clause is not specified or no restrictions match then all records will be",
     "#": "considered. The first table specified in source_query.joins will be used to determine periods that",
     "#": "need aggregation.",
-
     "aggregation_period_query": {
         "overseer_restrictions": {
             "last_modified_start_date": "last_modified >= ${VALUE}",
@@ -25,21 +23,17 @@
     "#": "are specified then the entire aggregation period will be deleted. Note that if there is a restriction",
     "#": "on the source_query block it is possible to delete an aggregation period from the destination table",
     "#": "with no restictions and replace it with aggregated data that has been restricted.",
-
     "destination_query": {
         "overseer_restrictions": {
             "include_only_resource_codes": "record_resource_id IN ${VALUE}",
             "exclude_resource_codes": "record_resource_id NOT IN ${VALUE}"
         }
     },
-
     "source_query": {
-
         "overseer_restrictions": {
             "include_only_resource_codes": "record.resource_id IN ${VALUE}",
             "exclude_resource_codes": "record.resource_id NOT IN ${VALUE}"
         },
-
         "query_hint": "SQL_NO_CACHE",
         "records": {
             "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
@@ -72,19 +66,18 @@
             "started_job_count": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0) )",
             "running_job_count": "SUM(1)",
             "wallduration": "COALESCE(SUM( ${wallduration_case_statement}), 0)",
-            "sum_wallduration_squared": "COALESCE(SUM( pow(${wallduration_case_statement}, 2)), 0)",
-            "waitduration": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, task.waitduration, 0) )",
-            "sum_waitduration_squared": "SUM( IF(task.start_day_id = ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, pow(task.waitduration, 2), 0) )",
+            "sum_wallduration_squared": "COALESCE(SUM( CAST(POW(${wallduration_case_statement}, 2) AS DECIMAL(36,4)) ), 0)",
+            "waitduration": "SUM( IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, task.waitduration, NULL) )",
+            "sum_waitduration_squared": "SUM( CAST(IF(task.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, pow(task.waitduration, 2), NULL) AS DECIMAL(36,4)) )",
             "local_charge_xdsu": "SUM(${local_charge_xdsu_case_statement})",
-            "sum_local_charge_xdsu_squared": "SUM(pow(${local_charge_xdsu_case_statement}, 2))",
+            "sum_local_charge_xdsu_squared": "SUM( CAST(POW(${local_charge_xdsu_case_statement}, 2) AS DECIMAL(36,4)) )",
             "cpu_time": "COALESCE(SUM(task.processor_count * ${wallduration_case_statement}), 0)",
-            "sum_cpu_time_squared": "COALESCE(SUM(pow(task.processor_count * ${wallduration_case_statement}, 2)), 0)",
+            "sum_cpu_time_squared": "COALESCE(SUM( CAST(POW(task.processor_count * ${wallduration_case_statement}, 2) AS DECIMAL(36,4)) ), 0)",
             "node_time": "COALESCE(SUM(task.node_count * ${wallduration_case_statement}), 0)",
-            "sum_node_time_squared": "COALESCE(SUM( pow(task.node_count * ${wallduration_case_statement}, 2)), 0)",
+            "sum_node_time_squared": "COALESCE(SUM( CAST(POW(task.node_count * ${wallduration_case_statement}, 2) AS DECIMAL(36,4)) ), 0)",
             "sum_weighted_expansion_factor": "SUM( ((task.wallduration + task.waitduration) / task.wallduration) * task.node_count * COALESCE(${wallduration_case_statement}, 0))",
             "sum_job_weights": "SUM(task.node_count * COALESCE(${wallduration_case_statement}, 0))"
         },
-
         "groupby": [
             "${AGGREGATION_UNIT}_id",
             "year",
@@ -106,57 +99,62 @@
             "allocation_id",
             "principalinvestigator_person_id"
         ],
-
-        "joins": [{
-            "name": "job_tasks",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "task"
-        }, {
-            "name": "job_records",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "record",
-            "on": "record.job_record_id = task.job_record_id",
-            "type": "STRAIGHT"
-        }, {
-            "name": "resourcefact",
-            "schema": "${UTILITY_SCHEMA}",
-            "alias": "requested_resource",
-            "on": "requested_resource.id = record.resource_id"
-        }, {
-            "name": "resourcefact",
-            "schema": "${UTILITY_SCHEMA}",
-            "alias": "task_resource",
-            "on": "task_resource.id = task.resource_id"
-        }],
-
+        "joins": [
+            {
+                "name": "job_tasks",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "task"
+            },
+            {
+                "name": "job_records",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "record",
+                "on": "record.job_record_id = task.job_record_id",
+                "type": "STRAIGHT"
+            },
+            {
+                "name": "resourcefact",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "requested_resource",
+                "on": "requested_resource.id = record.resource_id"
+            },
+            {
+                "name": "resourcefact",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "task_resource",
+                "on": "task_resource.id = task.resource_id"
+            }
+        ],
         "where": [
             "task.start_day_id <= ${:PERIOD_END_DAY_ID} AND task.end_day_id >= ${:PERIOD_START_DAY_ID}",
             "task.is_deleted = 0"
         ],
-
-        "macros": [{
-            "name": "wallduration_case_statement",
-            "file": "statistic_ratio_case.sql",
-            "args": {
-                "statistic": "task.wallduration",
-                "max": "${:PERIOD_SECONDS}",
-                "src_start_ts": "task.start_time_ts",
-                "src_end_ts": "task.end_time_ts",
-                "dest_start_ts": "${:PERIOD_START_TS}",
-                "dest_end_ts": "${:PERIOD_END_TS}"
+        "macros": [
+            {
+                "name": "wallduration_case_statement",
+                "file": "statistic_ratio_case.sql",
+                "args": {
+                    "statistic": "task.wallduration",
+                    "max": "${:PERIOD_SECONDS}",
+                    "src_start_ts": "task.start_time_ts",
+                    "src_end_ts": "task.end_time_ts",
+                    "dest_start_ts": "${:PERIOD_START_TS}",
+                    "dest_end_ts": "${:PERIOD_END_TS}"
+                }
+            },
+            {
+                "name": "local_charge_xdsu_case_statement",
+                "file": "statistic_ratio_as_datatype_case.sql",
+                "args": {
+                    "data_type": "DECIMAL(18,3)",
+                    "statistic": "task.local_charge_xdsu",
+                    "max": "${:PERIOD_SECONDS}",
+                    "src_start_ts": "task.start_time_ts",
+                    "src_end_ts": "task.end_time_ts",
+                    "dest_start_ts": "${:PERIOD_START_TS}",
+                    "dest_end_ts": "${:PERIOD_END_TS}"
+                }
             }
-        }, {
-            "name": "local_charge_xdsu_case_statement",
-            "file": "statistic_ratio_as_datatype_case.sql",
-            "args": {
-                "data_type": "DECIMAL(18,3)",
-                "statistic": "task.local_charge_xdsu",
-                "max": "${:PERIOD_SECONDS}",
-                "src_start_ts": "task.start_time_ts",
-                "src_end_ts": "task.end_time_ts",
-                "dest_start_ts": "${:PERIOD_START_TS}",
-                "dest_end_ts": "${:PERIOD_END_TS}"
-            }
-        }]
+        ]
     }
 }

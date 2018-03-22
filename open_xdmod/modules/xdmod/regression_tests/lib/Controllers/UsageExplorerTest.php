@@ -17,7 +17,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
     protected static $replacements = array(
         'REPLACED'
     );
-    private $delta = 1.0e-7;
+    private $delta = 1.0e-2;
     /*
      * Allow for skipping of certain tests that have known issues
      */

@@ -740,7 +740,7 @@ class pdoAggregator extends aAggregator
         $numAggregationPeriods = count($aggregationPeriodList);
         $firstPeriod = current($aggregationPeriodList);
         $periodSize = $firstPeriod['period_end_day_id'] - $firstPeriod['period_start_day_id'];
-        $batchSliceSize = $this->options->experimental_batch_aggregation_periods_per_batch;
+        $batchSliceSize = $this->options->batch_aggregation_periods_per_batch;
         $tmpTableName = null;
         $qualifiedTmpTableName = null;
 
@@ -749,18 +749,18 @@ class pdoAggregator extends aAggregator
         //
         // Nperiod = # periods to process = $numAggregationPeriods
         // Psize = # days per period = $period['period_end_day_id'] - $period['period_start_day_id']
-        // Bsize = # Periods per batch = $this->options->experimental_batch_aggregation_periods_per_bin
-        // Threshold1 = $this->options->experimental_batch_aggregation_min_num_periods = 25
-        // Threshold2 = $this->options->experimental_batch_aggregation_max_num_days_per_batch = 300
+        // Bsize = # Periods per batch = $this->options->batch_aggregation_periods_per_bin
+        // Threshold1 = $this->options->batch_aggregation_min_num_periods = 25
+        // Threshold2 = $this->options->batch_aggregation_max_num_days_per_batch = 300
         //
         // Enable = ( Nperiod >= Threshold1 (25) ) && ( Psize * Bsize <= Threshold2 (300) )
 
         $enableBatchAggregation =
-            $this->options->experimental_enable_batch_aggregation
-            && $numAggregationPeriods >= $this->options->experimental_batch_aggregation_min_num_periods
-            && ($periodSize * $batchSliceSize) <= $this->options->experimental_batch_aggregation_max_num_days_per_batch;
+            $this->options->enable_batch_aggregation
+            && $numAggregationPeriods >= $this->options->batch_aggregation_min_num_periods
+            && ($periodSize * $batchSliceSize) <= $this->options->batch_aggregation_max_num_days_per_batch;
 
-        $this->logger->debug("[EXPERIMENTAL] Enable batch aggregation: " . ($enableBatchAggregation ? "true" : "false"));
+        $this->logger->debug("Enable batch aggregation: " . ($enableBatchAggregation ? "true" : "false"));
 
         if ( $enableBatchAggregation ) {
             $tmpTableName = self::BATCH_TMP_TABLE_NAME;
@@ -769,7 +769,7 @@ class pdoAggregator extends aAggregator
 
         if ( $enableBatchAggregation && ! $this->etlSourceQueryModified ) {
 
-            $this->logger->info("[EXPERIMENTAL] Replace first table with temp table");
+            $this->logger->info("[batch aggregation] Replace first table with temp table");
 
             // Optimize for large numbers of periods. Modify the source query to use the temporary table
             // Remove the first join (from) and replace it with the temporary table that we are
@@ -789,7 +789,7 @@ class pdoAggregator extends aAggregator
 
         } elseif ( ! $enableBatchAggregation && $this->etlSourceQueryModified ) {
 
-            $this->logger->info("[EXPERIMENTAL] Restore original first table");
+            $this->logger->info("[batch aggregation] Restore original first table");
 
             // We are not optimizing but have previously, restore the original FROM clause
 
@@ -903,7 +903,7 @@ class pdoAggregator extends aAggregator
 
                 // Process the aggregation periods in batches
 
-                $this->logger->debug("[EXPERIMENTAL] Processing batch offset $aggregationPeriodListOffset - " . ($aggregationPeriodListOffset + $batchSliceSize));
+                $this->logger->debug("[batch aggregation] Processing batch offset $aggregationPeriodListOffset - " . ($aggregationPeriodListOffset + $batchSliceSize));
 
                 $batchStartTime = microtime(true);
 
@@ -931,7 +931,7 @@ class pdoAggregator extends aAggregator
 
                 // Set up the temporary table that we are going to use
 
-                $this->logger->debug("[EXPERIMENTAL] Create temporary table $qualifiedTmpTableName with min period = $minDayId, max period = $maxDayId");
+                $this->logger->debug("[batch aggregation] Create temporary table $qualifiedTmpTableName with min period = $minDayId, max period = $maxDayId");
 
                 $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
 
@@ -1009,7 +1009,7 @@ class pdoAggregator extends aAggregator
                         "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
                         . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
                     $this->logger->debug(
-                        sprintf("[EXPERIMENTAL] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
+                        sprintf("[batch aggregation] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
                     );
                     $result = $this->sourceHandle->execute($sql, $usedParams);
                 } catch (PDOException $e ) {
@@ -1019,7 +1019,7 @@ class pdoAggregator extends aAggregator
                     );
                 }
 
-                $this->logger->info("[EXPERIMENTAL] Setup for batch $minPeriodId - $maxPeriodId (day_id $minDayId - $maxDayId): "
+                $this->logger->info("[batch aggregation] Setup for batch $minPeriodId - $maxPeriodId (day_id $minDayId - $maxDayId): "
                                     . round((microtime(true) - $batchStartTime), 2) . "s");
 
                 $this->processAggregationPeriods(
@@ -1033,7 +1033,7 @@ class pdoAggregator extends aAggregator
                 );
 
                 $this->logger->info(
-                    "[EXPERIMENTAL] Total time for batch (day_id $minDayId - $maxDayId): "
+                    "[batch aggregation] Total time for batch (day_id $minDayId - $maxDayId): "
                     . round((microtime(true) - $batchStartTime), 2) . "s "
                     . "(" . round((microtime(true) - $batchStartTime) / count($aggregationPeriodSlice), 3) . "s/period)"
                 );
@@ -1043,7 +1043,7 @@ class pdoAggregator extends aAggregator
             }  // while ( ! $done )
 
             $sql = "DROP TEMPORARY TABLE IF EXISTS $tmpTableName";
-            
+
             try {
                 $result = $this->sourceHandle->execute($sql);
             } catch (PDOException $e ) {

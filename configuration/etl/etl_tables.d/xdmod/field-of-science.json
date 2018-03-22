@@ -3,7 +3,8 @@
         "name": "fieldofscience",
         "engine": "MyISAM",
         "comment": "The various fields of science.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
@@ -29,7 +30,7 @@
             },
             {
                 "name": "fos_nsf_abbrev",
-                "type": "varchar(10)",
+                "type": "varchar(100)",
                 "nullable": true,
                 "comment": "The nsf abbreviation."
             },
@@ -40,7 +41,8 @@
                 "comment": "The id of the NSF directorate of this field of science."
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "fk_science_science1_idx",
                 "columns": [
                     "parent_id"

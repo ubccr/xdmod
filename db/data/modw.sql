@@ -17,7 +17,7 @@ INSERT INTO `error_descriptions` VALUES (0,'Metric OK'),
 /*!40000 ALTER TABLE `error_descriptions` ENABLE KEYS */;
 UNLOCK TABLES;
 
-INSERT INTO `schema_version_history` VALUES ('modw', '6.6.0', NOW(), 'created', 'N/A');
+INSERT INTO `schema_version_history` VALUES ('modw', '8.0.0', NOW(), 'created', 'N/A');
 
 INSERT INTO `person` (id, organization_id, nsfstatuscode_id, first_name, last_name, long_name, short_name, order_id) VALUES
   (-1, -1, -1, 'Unknown', 'Unknown', 'Unknown', 'Unknown', -1), (-2, -2, -2, 'unassociated', 'unassociated', 'unassociated', 'unassociated', -2);

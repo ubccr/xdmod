@@ -2,7 +2,8 @@
     "table_definition": {
         "name": "nodecount",
         "engine": "InnoDB",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false
@@ -13,7 +14,8 @@
                 "nullable": false
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "nodes_UNIQUE",
                 "columns": [
                     "nodes"

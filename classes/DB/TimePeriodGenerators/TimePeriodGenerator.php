@@ -195,23 +195,17 @@ abstract class TimePeriodGenerator
     /**
      * Generate the main database table for this unit.
      *
-     * @param iDatabase $db The database the tables are being generated for.
-     *                      A schema should be in use by this connection.
+     * this should only be called on setup or migration
+     *
+     * @param  iDatabase $db The database the tables are being generated for.
+     *                       A schema should be in use by this connection.
      */
     public function generateMainTable(iDatabase $db)
     {
-        // Get the minimum (inclusive) and maximum (exclusive) DateTimes for
-        // the range of time to generate time periods for.
-        $datetime_query_results = $db->query(
-            "SELECT
-                DATE_SUB(min_job_date, INTERVAL 1 DAY) AS min_datetime,
-                max_job_date AS max_datetime
-            FROM
-                modw.minmaxdate"
-        );
-        $min_datetime = $this->getDatabaseDateTime($datetime_query_results[0]['min_datetime']);
-        $max_datetime = $this->getDatabaseDateTime($datetime_query_results[0]['max_datetime']);
+        // The min and max are always going to be the start and end of "time"
 
+        $min_datetime = new \DateTime('2000-01-01');
+        $max_datetime = new \DateTime('2038-01-18');
         // Get the target database table and parameter names.
         // (Parameter names are the table column names prefixed with a colon.)
         $db_table = $this->getDatabaseMainTableName();
@@ -223,18 +217,9 @@ abstract class TimePeriodGenerator
         $db_end_ts_param = ":{$db_unit}_end_ts";
         $db_middle_ts_param = ":{$db_unit}_middle_ts";
 
-        // Delete any table entries before the start of the time range.
+        // Truncate this table in case this is part of migration
         $current_start_datetime = $this->getTimePeriodStart($min_datetime);
-        $db_start_column = substr($db_start_param, 1);
-        $db->execute(
-            "DELETE FROM
-                $db_table
-            WHERE
-                $db_start_column < $db_start_param",
-            array(
-            $db_start_param => $this->getDatabaseDateTimeString($current_start_datetime),
-            )
-        );
+        $db->execute("TRUNCATE $db_table");
 
         // Create a database entry for each time period in the range.
         $insert_statement = null;
@@ -281,31 +266,13 @@ abstract class TimePeriodGenerator
                     },
                     $insert_params
                 );
-                $update_columns = array(
-                    substr($db_start_param, 1),
-                    substr($db_end_param, 1),
-                    'hours',
-                    'seconds',
-                    substr($db_start_ts_param, 1),
-                    substr($db_end_ts_param, 1),
-                    substr($db_middle_ts_param, 1),
-                );
 
                 $insert_columns_str = implode(', ', $insert_columns);
                 $insert_params_str = implode(', ', $insert_params);
-                $update_str = implode(
-                    ', ',
-                    array_map(
-                        function ($update_column) {
-                            return "${update_column} = VALUES(${update_column})";
-                        },
-                        $update_columns
-                    )
-                );
+
                 $insert_statement =
                     "INSERT INTO $db_table ($insert_columns_str)
-                    VALUES ($insert_params_str)
-                    ON DUPLICATE KEY UPDATE $update_str";
+                    VALUES ($insert_params_str)";
             }
 
             $db->execute($insert_statement, $insert_param_values);
@@ -313,16 +280,5 @@ abstract class TimePeriodGenerator
             // Get the start of the next time period for the next entry.
             $current_start_datetime = $this->getNextTimePeriodStart($current_start_datetime);
         } // while
-
-        // Delete any table entries after the end of the time range.
-        $db->execute(
-            "DELETE FROM
-                $db_table
-            WHERE
-                $db_start_column >= $db_start_param",
-            array(
-                $db_start_param => $this->getDatabaseDateTimeString($current_start_datetime),
-            )
-        );
     }
 }

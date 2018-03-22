@@ -206,7 +206,7 @@ class PDODBMultiIngestor implements Ingestor
                         !isset($srcRow[$insert_field])
                         ? '\N'
                         : (
-                            empty($srcRow[$insert_field])
+                            '' === $srcRow[$insert_field]
                             ? $string_enc . '' . $string_enc
                             : str_replace('\\', '\\\\', $srcRow[$insert_field])
                         )
@@ -262,9 +262,10 @@ class PDODBMultiIngestor implements Ingestor
                         );
                     }
 
+                    fclose($f);
+
                     $this->_dest_helper->executeStatement($load_statement);
 
-                    fclose($f);
                     $f = fopen($infile_name, 'w');
                 }
                 catch (Exception $e) {

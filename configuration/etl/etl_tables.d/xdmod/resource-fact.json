@@ -3,7 +3,8 @@
         "name": "resourcefact",
         "engine": "MyISAM",
         "comment": "Information about resources.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
@@ -78,7 +79,8 @@
                 "default": "UTC"
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "aggregation_index",
                 "columns": [
                     "resourcetype_id",

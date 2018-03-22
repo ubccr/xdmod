@@ -2,7 +2,8 @@
     "table_definition": {
         "name": "staging_jobhosts",
         "engine": "MyISAM",
-        "columns": [{
+        "columns": [
+            {
                 "name": "job_id",
                 "type": "int(11)",
                 "nullable": false

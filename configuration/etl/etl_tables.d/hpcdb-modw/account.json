@@ -10,10 +10,12 @@
             "long_name": "account_name",
             "short_name": "account_name"
         },
-        "joins": [{
-            "name": "hpcdb_accounts",
-            "schema": "${SOURCE_SCHEMA}",
-            "alias": "af"
-        }]
+        "joins": [
+            {
+                "name": "hpcdb_accounts",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "af"
+            }
+        ]
     }
 }

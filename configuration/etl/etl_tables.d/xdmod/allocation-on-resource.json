@@ -3,7 +3,8 @@
         "name": "allocationonresource",
         "engine": "MyISAM",
         "comment": "state of alloc wrt resources.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "allocation_id",
                 "type": "int(11)",
                 "nullable": false,
@@ -22,7 +23,8 @@
                 "comment": "The state of the allocation."
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "fk_allocation_on_resource_allocation1_idx",
                 "columns": [
                     "allocation_id"

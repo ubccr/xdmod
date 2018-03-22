@@ -14,7 +14,7 @@ General Usage
 -------------
 
 By default, the ingestor with process new job data entered into the
-Open XDMoD database.
+Open XDMoD database whose end times are within the past 7 days.
 
     $ xdmod-ingestor
 
@@ -51,3 +51,13 @@ and end date, formatted as YYYY-MM-DD,  that include the dates
 associated with the modified data.
 
     $ xdmod-ingestor --start-date *start-date* --end-date *end-date*
+
+
+Last Modified Start Date
+------------------
+
+When aggregating data use this date as the basis of what jobs to include.
+Only jobs ingested on or after this date will be aggregated
+This defaults to the start of the ingest and aggregation process.
+
+    $ xdmod-ingestor --last-modified-start-date *YYYY-MM-DD*

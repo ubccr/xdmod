@@ -48,6 +48,19 @@ Want to be notified about XDMoD releases and news? Subscribe to our
 
 [listserv]: http://listserv.buffalo.edu/cgi-bin/wa?SUBED1=ccr-xdmod-list&A=1
 
+Referencing XDMoD
+-----------------
+
+When referencing XDMoD, please cite the following publication:
+
+Jeffrey T. Palmer, Steven M. Gallo, Thomas R. Furlani, Matthew D. Jones,
+Robert L. DeLeon, Joseph P. White, Nikolay Simakov, Abani K. Patra,
+Jeanette Sperhac, Thomas Yearke, Ryan Rathsam, Martins Innus, Cynthia D. Cornelius,
+James C. Browne, William L. Barth, Richard T. Evans,
+"Open XDMoD: A Tool for the Comprehensive Management of High-Performance Computing Resources",
+*Computing in Science &amp; Engineering*, Vol 17, Issue 4, 2015, pp. 52-62.
+[10.1109/MCSE.2015.68](http://dx.doi.org/10.1109/MCSE.2015.68)
+
 License
 -------
 

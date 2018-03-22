@@ -3,7 +3,8 @@
         "name": "allocation",
         "engine": "MyISAM",
         "comment": "Holds allocation records.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
@@ -157,7 +158,6 @@
                 "type": "BTREE",
                 "is_unique": false
             }
-
         ],
         "triggers": []
     }
