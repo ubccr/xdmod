@@ -246,7 +246,7 @@ function main()
                 $dwi->ingestAllStaging($startDate, $endDate);
             }
             if ($ingestHpcdb) {
-                if(null === $startDate){
+                if (null === $startDate) {
                     $result = $dwDb->query("SELECT
                             FROM_UNIXTIME(hj.end_time) as end_time
                         FROM
@@ -260,7 +260,9 @@ function main()
                                 )
                         LIMIT 1"
                     );
-                    $etlParams['start-date'] = $result[0]['end_time'];
+                    if (count($result) > 0) {
+                        $etlParams['start-date'] = $result[0]['end_time'];
+                    }
                 }
                 runEtlPipeline('hpcdb-modw.ingest', $etlParams);
             }
