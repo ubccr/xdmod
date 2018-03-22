@@ -110,7 +110,19 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             total: ret.length
         };
     },
+    numberOfFiltersSelected: function () {
+        var filtersSelected = 0;
+        this.filtersStore.each(function (record) {
+            if (record.get('checked')) {
+                filtersSelected++;
+            }
+        });
+
+        return filtersSelected;
+    },
     initComponent: function () {
+        var filterButtonHandler;
+
         if (!this.record && this.store) {
             this.record = CCR.xdmod.ui.AddDataPanel.initRecord(this.store, this.config, this.getSelectedFilters(), this.timeseries);
         }
@@ -123,6 +135,15 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         var filterItems = [];
         var filterMap = {};
         filtersMenu.removeAll(true);
+
+        this.addFilterButton = new Ext.Button({
+            text: 'Add Filter',
+            xtype: 'button',
+            iconCls: 'add_filter',
+            scope: this,
+            menu: filtersMenu
+        });
+
         var realm_dimensions = this.realms[this.record.data.realm]['dimensions'];
         for (x in realm_dimensions) {
             if (x == 'none' || realm_dimensions[x].text == undefined) continue;
@@ -136,7 +157,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                     scope: this,
                     handler: function (b, e) {
                         XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected filter from menu', b.text);
-                        filterButtonHandler.call(b.scope, filtersGridPanel.toolbars[0].el, b.dimension, b.text, b.realms);
+                        filterButtonHandler.call(b.scope, b.dimension, b.text, b.realms);
                     }
                 });
             } else {
@@ -157,7 +178,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             }
         );
         filtersMenu.addItem(filterItems);
-        var filterButtonHandler = function (el, dim_id, dim_label, realms) {
+        filterButtonHandler = function (dim_id, dim_label, realms) {
             if (!dim_id || !dim_label) return;
             var filterDimensionPanel = new CCR.xdmod.ui.FilterDimensionPanel({
                 origin_module: 'Metric Explorer',
@@ -174,9 +195,10 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 addFilterMenu.hide();
             });
             filterDimensionPanel.on('ok', function () {
+                this.editFiltersButton.setText('Filters (' + this.numberOfFiltersSelected() + ')');
                 addFilterMenu.closable = true;
                 addFilterMenu.hide();
-            });
+            }.bind(this));
             var addFilterMenu = new Ext.menu.Menu({
                 showSeparator: false,
                 items: [filterDimensionPanel],
@@ -196,7 +218,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             });
             addFilterMenu.ownerCt = this;
             addFilterMenu = Ext.menu.MenuMgr.get(addFilterMenu);
-            addFilterMenu.show(el, 'tl-bl?');
+            addFilterMenu.show(this.addFilterButton.el, 'tl-bl?');
         }
         var realmData = [];
         for (realm in this.realms) {
@@ -217,16 +239,15 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             header: 'Local',
             tooltip: 'Check this column to apply filter to this dataset',
             scope: this,
-            width: 50,
+            width: 10,
             hidden: false,
             checkchange: function (record, data_index, checked) {
-                this.scope.record.set('filters', this.scope.getSelectedFilters());
                 XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Toggled filter checkbox', Ext.encode({
                     dimension: record.data.dimension_id,
                     value: record.data.value_name,
                     checked: checked
                 }));
-            } //checkchange
+            } // checkchange
         });
         this.filtersStore = new Ext.data.GroupingStore({
             autoDestroy: true,
@@ -253,26 +274,38 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             var currentFilters = jQuery.extend({}, this.record.data.filters);
             this.filtersStore.loadData(currentFilters, false);
         }
-        var checkAllButton = new Ext.Button({
-            text: 'Check All',
+        var selectAllButton = new Ext.Button({
+            text: 'Select All',
             scope: this,
             handler: function (b, e) {
-                XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Check All in Local Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Select All in Local Filters pane');
                 this.filtersStore.each(function (r) {
                     r.set('checked', true);
                 });
             }
         });
-        var uncheckAllButton = new Ext.Button({
-            text: 'Uncheck All',
+        var clearAllButton = new Ext.Button({
+            text: 'Clear All',
             scope: this,
             handler: function (b, e) {
-                XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Uncheck All in Local Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Clear All in Local Filters pane');
                 this.filtersStore.each(function (r) {
                     r.set('checked', false);
                 });
             }
         });
+
+        var applyFilterSelection = new Ext.Button({
+            tooltip: 'Apply selected filter(s)',
+            text: 'Apply',
+            scope: this,
+            handler: function () {
+                this.record.set('filters', this.getSelectedFilters());
+                this.filtersStore.commitChanges();
+                this.editFiltersButton.setText('Filters (' + this.numberOfFiltersSelected() + ')');
+            } // handler
+        }); // applyFilterSelection
+
         var removeFilterItem = new Ext.Button({
             iconCls: 'delete_filter',
             tooltip: 'Delete highlighted filter(s)',
@@ -291,9 +324,23 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 filtersGridPanel.store.remove(records);
             }
         });
+
+        var cancelFilterSelection = new Ext.Button({
+            tooltip: 'Cancel filter selections',
+            text: 'Cancel',
+            scope: this,
+            handler: function () {
+                this.filtersStore.rejectChanges();
+            }
+        });
+
+        var viewer = CCR.xdmod.ui.Viewer.getViewer();
+        var datasetsMenuDefaultWidth = 1150;
+        var viewerWidth = viewer.getWidth();
+
         var filtersGridPanel = new Ext.grid.GridPanel({
             header: false,
-            height: 130,
+            height: 250,
             id: 'grid_filters_' + this.id,
             useArrows: true,
             autoScroll: true,
@@ -301,6 +348,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             enableHdMenu: false,
             loadMask: true,
             margins: '0 0 0 0',
+            buttonAlign: 'left',
             view: new Ext.grid.GroupingView({
                 emptyText: 'No filters created.<br/> Click on <img class="x-panel-inline-icon add_filter" src="gui/lib/extjs/resources/images/default/s.gif" alt=""> to create filters.',
                 forceFit: true,
@@ -350,23 +398,31 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                     dataIndex: 'value_name'
                 }
             ],
-            tbar: [{
-                    scope: this,
-                    iconCls: 'add_filter',
-                    text: 'Add Filter',
-                    handler: function () {
-                        XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Clicked on Create Filter');
-                    },
-                    menu: filtersMenu
-                },
-                '->',
-                '-',
-                checkAllButton,
-                '-',
-                uncheckAllButton,
-                '-',
+            tbar: [
                 removeFilterItem
+            ],
+            fbar: [
+                clearAllButton,
+                '-',
+                selectAllButton,
+                '->',
+                applyFilterSelection,
+                '-',
+                cancelFilterSelection
             ]
+        });
+
+        this.editFiltersButton = new Ext.Button({
+            xtype: 'button',
+            text: 'Filters (' + this.numberOfFiltersSelected() + ')',
+            iconCls: 'filter',
+            scope: this,
+            menu: new Ext.menu.Menu({
+                showSeparator: false,
+                items: filtersGridPanel,
+                width: viewerWidth < datasetsMenuDefaultWidth ? viewerWidth : datasetsMenuDefaultWidth,
+                renderTo: document.body
+            })
         });
 
         function updateFilters() {
@@ -374,7 +430,6 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         }
         this.filtersStore.on('add', updateFilters, this);
         this.filtersStore.on('remove', updateFilters, this);
-        this.filtersStore.on('update', updateFilters, this);
         this.has_std_err = this.realms[this.record.data.realm]['metrics'][this.record.data.metric].std_err;
         this.stdErrorCheckBox = new Ext.form.Checkbox({
             fieldLabel: 'Std Err Bars',
@@ -886,9 +941,12 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             },
             this.enabledDatasetCheckBox, {
                 fieldLabel: 'Local Filters',
-                xtype: 'panel',
-                layout: 'fit',
-                items: filtersGridPanel
+                xtype: 'container',
+                layout: 'hbox',
+                items: [
+                    this.addFilterButton,
+                    this.editFiltersButton
+                ]
             }, {
                 fieldLabel: 'Ignore Chart Filters',
                 name: 'ignore_global',

@@ -19,8 +19,8 @@ describe('Metric Explorer', function metricExplorer() {
             contextMenu: {
                 open: function chartContextMenuOpen() {
                     it('Open Chart Context Menu', function () {
-                            //  TODO: Find a better way to open this.  Currently there is a chance
-                            //  that the click will open the dataseries menu
+                        //  TODO: Find a better way to open this.  Currently there is a chance
+                        //  that the click will open the dataseries menu
                         browser.waitAndClick('#hc-panelmetric_explorer', 10000);
                     });
                 },
@@ -82,6 +82,21 @@ describe('Metric Explorer', function metricExplorer() {
         });
     });
     describe('Basic Scenarios', function basicScenarios() {
+        it('Add/Edit Filters in Toolbar', function () {
+            me.loadExistingChartByName(chartName);
+            me.addFiltersFromToolbar();
+            me.cancelFiltersFromToolbar();
+            me.editFiltersFromToolbar();
+            me.clear();
+        });
+        it('Add/Edit Filters in Data Series Definition', function () {
+            me.clickLogoAndWaitForMask();
+            me.loadExistingChartByName(chartName);
+            me.addFiltersFromDataSeriesDefinition();
+            me.cancelFiltersFromDataSeriesDefinition();
+            me.editFiltersFromDataSeriesDefinition();
+            me.clear();
+        });
         it('Has Instructions', function meConfirmInstructions() {
             me.verifyInstructions();
         });

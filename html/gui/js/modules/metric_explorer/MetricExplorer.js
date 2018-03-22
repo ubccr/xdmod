@@ -2250,7 +2250,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         var config = this.getConfig();
         var rec = this.getCurrentRecord();
 
-      if (config.featured === JSON.parse(this.currentQueryRecord.data.config).featured &&
+        if (config.featured === JSON.parse(this.currentQueryRecord.data.config).featured &&
           !this.currentQueryRecord.stack.isMarked()) {
             this.summaryDirty = true;
         }
@@ -2882,7 +2882,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                         disabled: false,
                                         handler: function(b /*, e*/ ) {
                                             XDMoD.TrackEvent('Metric Explorer', 'Selected a filter from the Create Filter menu', b.text);
-
                                             // Limit the results to the realms which
                                             // have metrics on the chart. (An empty
                                             // list of realms will get results for all
@@ -4198,50 +4197,44 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         this.filtersStore.on('load', this.filterStoreLoad, this);
 
-        this.filtersStore.on('add', function() {
+        this.filtersStore.on('add', function () {
             this.saveQuery();
         }, this);
 
-        this.filtersStore.on('remove', function() {
+        this.filtersStore.on('remove', function () {
             this.saveQuery();
         }, this);
 
         this.filtersStore.on('clear', function () {
             this.saveQuery();
         }, this);
+        // ---------------------------------------------------------
 
-        this.filtersStore.on('update', function(t, record, op) {
-            record.commit(true);
-            this.saveQuery();
-        }, this);
+        var selectAllButton = new Ext.Button({
+            text: 'Select All',
+            scope: this,
+            handler: function( /*b, e*/ ) {
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Select All in Chart Filters pane');
+
+                this.filtersStore.each(function (r) {
+                    r.set('checked', true);
+                });
+            } // handler
+        }); // selectAllButton
 
         // ---------------------------------------------------------
 
-        var checkAllButton = new Ext.Button({
-            text: 'Check All',
+        var clearAllButton = new Ext.Button({
+            text: 'Clear All',
             scope: this,
             handler: function( /*b, e*/ ) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Clicked on Check All in Chart Filters pane');
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Clear All in Chart Filters pane');
 
-                    this.filtersStore.each(function(r) {
-                        r.set('checked', true);
-                    });
-                } //handler
-        }); //checkAllButton
-
-        // ---------------------------------------------------------
-
-        var uncheckAllButton = new Ext.Button({
-            text: 'Uncheck All',
-            scope: this,
-            handler: function( /*b, e*/ ) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Clicked on Uncheck All in Chart Filters pane');
-
-                    this.filtersStore.each(function(r) {
-                        r.set('checked', false);
-                    });
-                } //handler
-        }); //uncheckAllButton
+                this.filtersStore.each(function (r) {
+                    r.set('checked', false);
+                });
+            } // handler
+        }); // clearAllButton
 
         // ---------------------------------------------------------
 
@@ -4254,14 +4247,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             scope: this,
             width: 50,
             hidden: false,
-            checkchange: function(record, data_index, checked) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Toggled filter checkbox', Ext.encode({
-                        dimension: record.data.dimension_id,
-                        value: record.data.value_name,
-                        checked: checked
-                    }));
-                } //checkchange
-        }); //activeFilterCheckColumn
+            checkchange: function (record, data_index, checked) {
+                XDMoD.TrackEvent('Metric Explorer', 'Toggled filter checkbox', Ext.encode({
+                    dimension: record.data.dimension_id,
+                    value: record.data.value_name,
+                    checked: checked
+                }));
+            } // checkchange
+        }); // activeFilterCheckColumn
 
         // ---------------------------------------------------------
 
@@ -4287,6 +4280,28 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 } //handler
         }); //removeFilterItem
 
+        //----------------------------------------------------------
+
+        var applyFilterSelection = new Ext.Button({
+            tooltip: 'Apply selected filter(s)',
+            text: 'Apply',
+            scope: this,
+            handler: function () {
+                XDMoD.TrackEvent('Metic Explorer', 'Clicked on Apply filter in Chart Filters pane');
+                self.saveQuery();
+                this.filtersStore.commitChanges();
+            } // handler
+        }); // applyFilterSelection
+
+        var cancelFilterSelection = new Ext.Button({
+            tooltip: 'Cancel filter selections',
+            text: 'Cancel',
+            scope: this,
+            handler: function () {
+                this.filtersStore.rejectChanges();
+            }
+        });
+
         // ---------------------------------------------------------
 
         this.filtersGridPanel = new Ext.grid.GridPanel({
@@ -4298,6 +4313,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             sortable: false,
             enableHdMenu: false,
             margins: '0 0 0 0',
+            buttonAlign: 'left',
             sm: new Ext.grid.RowSelectionModel({
                 singleSelect: false,
                 listeners: {
@@ -4319,7 +4335,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 } //listeners
             }), //Ext.grid.RowSelectionModel
             plugins: [
-                activeFilterCheckColumn //,
+                activeFilterCheckColumn
             ],
             autoExpandColumn: 'value_name',
             store: this.filtersStore,
@@ -4370,13 +4386,18 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
             ],
             tbar: [
-                checkAllButton,
-                '-',
-                uncheckAllButton,
-                '-',
                 removeFilterItem
+            ],
+            fbar: [
+                clearAllButton,
+                '-',
+                selectAllButton,
+                '->',
+                applyFilterSelection,
+                '-',
+                cancelFilterSelection
             ]
-        }); //this.filtersGridPanel
+        }); // this.filtersGridPanel
 
         // ---------------------------------------------------------
 
@@ -5435,7 +5456,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }
 
         chartStore.on('beforeload', function() {
-
             if (!this.getDurationSelector().validate()) {
                 return;
             }
@@ -5450,7 +5470,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         chartStore.on('load', function(chartStore) {
-
             this.firstChange = true;
 
             if (chartStore.getCount() != 1) {
