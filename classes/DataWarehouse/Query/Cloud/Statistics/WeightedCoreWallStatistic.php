@@ -3,11 +3,11 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 
 /*
 * @author Rudra Chakraborty
-* @date 03-21-2018
+* @date 03-22-2018
 *
-* Sum of cores reserved on active virtual machines
+* Sum of cores reserved on active virtual machines, weighted
 */
-class CoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class WeightedCoreWallStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
