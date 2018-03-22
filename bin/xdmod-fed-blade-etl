@@ -57,7 +57,7 @@ for thisBlade in $blade ; do
     thisBlade=$(echo ${thisBlade} | sed 's/[^0-9,a-z,A-Z$_]/-/g')
     etlTemplate=$(< ${etlSource}/etl/etl_templates.d/etl.d/federation.json)
 
-    etlReplaced=$(printf "${etlTemplate}" | sed -e "s/{{blade}}/${thisBlade}/g")
+    etlReplaced=$(printf "${etlTemplate}" | sed -e "s/\${blade}/${thisBlade}/g")
 
     $(printf "${etlReplaced}" > ${etlDest}/etl/etl.d/fed-${thisBlade}.json)
     # this should not be hard codeded and should be able to use any etl_overseer

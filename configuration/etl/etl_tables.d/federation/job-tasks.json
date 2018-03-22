@@ -55,27 +55,20 @@
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "organization",
-                "alias": "jtof",
-                "on": "jr.resource_organization_id = jtof.origin_id AND jtof.origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "alias": "destorg",
+                "on": "destorg.origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "resourcefact",
                 "alias": "rf",
-                "on": "jt.resource_id = rf.origin_id AND rf.organization_id = jtof.id"
+                "on": "jt.resource_id = rf.origin_id AND rf.`organization_id` = destorg.id AND destorg.`origin_database_prefix` = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) "
             },
-
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "person",
                 "alias": "pf",
                 "on": "pf.origin_id = jt.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jt.person_organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
-            },
-            {
-                "schema": "${DESTINATION_SCHEMA}",
-                "name": "person",
-                "alias": "pif",
-                "on": "pif.origin_id = jr.principalinvestigator_person_id AND pif.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jr.piperson_organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
             }
         ]
     }

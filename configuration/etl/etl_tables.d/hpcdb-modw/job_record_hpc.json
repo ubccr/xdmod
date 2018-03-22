@@ -168,6 +168,7 @@
     "destination_record_map": {
         "job_records": {
             "job_record_id": "job_record_id",
+            "origin_id": "job_record_id",
             "resource_id": "resource_id",
             "resourcetype_id": "resourcetype_id",
             "request_id": "request_id",
@@ -204,6 +205,7 @@
         "job_tasks": {
             "job_record_id": "job_record_id",
             "job_id": "job_id",
+            "origin_id": "job_id",
             "creation_time": "creation_time",
             "local_jobid": "local_job_id",
             "job_task_type_id": "job_task_type_id",

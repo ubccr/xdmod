@@ -6,7 +6,7 @@
                     "type": "mysql",
                     "name": "blade source",
                     "config": "datawarehouse",
-                    "schema": "{{blade}}-modw"
+                    "schema": "${blade}-modw"
                 },
                 "destination": {
                     "type": "mysql",
@@ -16,13 +16,13 @@
                 }
             }
         },
-        "fed.{{blade}}.bootstrap": {
+        "fed.${blade}.bootstrap": {
             "endpoints": {
                 "destination": {
                     "type": "mysql",
                     "name": "blade source",
                     "config": "datawarehouse",
-                    "schema": "{{blade}}-modw",
+                    "schema": "${blade}-modw",
                     "create_schema_if_not_exists": true
                 }
             },
@@ -31,17 +31,17 @@
             "options_class": "IngestorOptions",
             "enabled": true
         },
-        "fed.{{blade}}.ingest": {
+        "fed.${blade}.ingest": {
             "class": "DatabaseIngestor",
             "namespace": "ETL\\\\\\Ingestor",
             "options_class": "IngestorOptions",
             "enabled": true
         }
     },
-    "fed.{{blade}}.bootstrap": {
+    "fed.${blade}.bootstrap": {
         "$ref": "etl_pipelines.d/datawarehouse.json#/bootstrap"
     },
-    "fed.{{blade}}.ingest": {
+    "fed.${blade}.ingest": {
         "$ref": "etl_pipelines.d/federation.json#/ingest"
     }
 }

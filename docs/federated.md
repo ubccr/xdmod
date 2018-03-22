@@ -15,7 +15,7 @@ The use of master, slave, and client are different depending on what part of the
 
 - Blade
 
-  - XdMoD instance that contains a single copy of data (jobfacts, etc...)
+  - XDMoD instance that contains a single copy of data (jobfacts, etc...)
   - Federation Slave
   - Tungsten Master
 

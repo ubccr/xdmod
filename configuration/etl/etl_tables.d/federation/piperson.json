@@ -6,8 +6,8 @@
         "records": {
             "person_id": "pf.id",
             "organization_id": "pf.organization_id",
-            "long_name": "pif.long_name",
-            "short_name": "pif.short_name",
+            "long_name": "pf.long_name",
+            "short_name": "pf.short_name",
             "order_id": "pif.order_id"
         },
         "joins": [

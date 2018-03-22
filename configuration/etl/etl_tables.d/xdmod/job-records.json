@@ -318,6 +318,15 @@
                 ],
                 "type": "BTREE",
                 "is_unique": false
+            },
+            {
+                "name": "uniq",
+                "columns": [
+                    "origin_id",
+                    "origin_database_prefix"
+                ],
+                "type": "BTREE",
+                "is_unique": true
             }
         ],
         "triggers": []
