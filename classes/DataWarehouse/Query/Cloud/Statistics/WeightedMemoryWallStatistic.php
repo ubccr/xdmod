@@ -14,7 +14,7 @@ class WeightedMemoryWallStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.memory_mb * jf.wallduration) / SUM(jf.memory_mb),0)',
             'weighted_memory_mb',
-            'Amount of Memory Reserved',
+            'Weighted Amount of Memory Reserved',
             'Memory in MBs',
             0
         );
