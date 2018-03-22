@@ -11,7 +11,8 @@
             "fos_nsf_abbrev": "fos.abbrev",
             "directorate_fos_id": "fosh.directorate_id"
         },
-        "joins": [{
+        "joins": [
+            {
                 "name": "hpcdb_fields_of_science_hierarchy",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "fosh"

@@ -185,6 +185,105 @@ class MetricExplorer {
         browser.click(this.selectors.toolbar.buttonByName('Save'));
         browser.waitAndClick('//span[@class="x-menu-item-text" and contains(text(),"Save Changes")]');
     }
+    addFiltersFromToolbar() {
+        let filterByDialogBox = '//div[contains(@class,"x-panel-header")]/span[@class="x-panel-header-text" and contains(text(),"Filter by")]/ancestor::node()[4]';
+        this.clickSelectorAndWaitForMask(this.selectors.toolbar.buttonByName('Add Filter'));
+        browser.waitAndClick('//div[@id="metric-explorer-chartoptions-add-filter-menu"]//span[@class="x-menu-item-text" and text() = "PI"]');
+        browser.waitForVisible(filterByDialogBox + '//div[@class="x-grid3-check-col x-grid3-cc-checked"]', 3000);
+        let checkboxes = browser.elements(filterByDialogBox + '//div[@class="x-grid3-check-col x-grid3-cc-checked"]');
+        if (checkboxes.value.length !== 0) {
+            for (let i = 0; i < checkboxes.value.length; i++) {
+                browser.elementIdClick(checkboxes.value[i].ELEMENT);
+            }
+        }
+        this.waitForChartToChange(function () {
+            browser.waitAndClick(filterByDialogBox + '//button[@class=" x-btn-text" and contains(text(), "Ok")]');
+        });
+        expect(browser.element(this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]')).to.exist;
+    }
+    editFiltersFromToolbar() {
+        let subtitleSelector = this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]';
+        let subtitle = browser.getText(subtitleSelector);
+        for (let i = 0; i < 100; i++) {
+            if (browser.isVisible('//div[@id="grid_filters_metric_explorer"]')) {
+                break;
+            }
+            browser.click(this.selectors.toolbar.buttonByName('Filters'));
+        }
+        browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//div[contains(@class, "x-grid3-check-col-on")]');
+        this.waitForChartToChange(function () {
+            browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
+        });
+        expect(browser.getText(subtitleSelector)).to.not.equal(subtitle);
+    }
+    cancelFiltersFromToolbar() {
+        this.clickLogoAndWaitForMask();
+        let checkboxSelector = '//div[@id="grid_filters_metric_explorer"]//div[contains(@class, "x-grid3-check-col-on")]';
+        browser.waitAndClick(this.selectors.toolbar.buttonByName('Filters'));
+        browser.waitForVisible(checkboxSelector, 3000);
+        let checkboxes = browser.elements(checkboxSelector);
+        if (checkboxes.value.length !== 0) {
+            for (let i = 0; i < 2; i++) {
+                browser.elementIdClick(checkboxes.value[i].ELEMENT);
+            }
+        }
+        browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Cancel")]');
+        expect(browser.elements(checkboxSelector).value.length).to.equal(checkboxes.value.length);
+        this.clickLogoAndWaitForMask();
+    }
+    openDataSeriesDefinitionFromDataPoint() {
+        this.clickLogoAndWaitForMask();
+        this.clickFirstDataPoint();
+        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="Edit Dataset"]');
+    }
+    addFiltersFromDataSeriesDefinition() {
+        this.clickLogoAndWaitForMask();
+        let legend = browser.getText(this.selectors.chart.legend());
+        this.openDataSeriesDefinitionFromDataPoint();
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "add_filter") and text() = "Add Filter"]');
+        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="PI"]');
+        browser.waitForVisible('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]', 3000);
+        let checkboxes = browser.elements('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]');
+        if (checkboxes.value.length !== 0) {
+            for (let i = 0; i < checkboxes.value.length; i++) {
+                browser.elementIdClick(checkboxes.value[i].ELEMENT);
+            }
+        }
+        this.waitForChartToChange(function () {
+            browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
+            browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
+        });
+        expect(browser.getText(this.selectors.chart.legend())).to.not.equal(legend);
+    }
+    editFiltersFromDataSeriesDefinition() {
+        this.clickLogoAndWaitForMask();
+        let legend = browser.getText(this.selectors.chart.legend());
+        this.openDataSeriesDefinitionFromDataPoint();
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "filter") and contains(text(), "Filters")]');
+        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//td[contains(@class, "x-grid3-check-col-td")]');
+        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
+        browser.waitForChart();
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//div[contains(@class, "x-panel-header")]');
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
+        expect(browser.getText(this.selectors.chart.legend())).to.not.equal(legend);
+    }
+    cancelFiltersFromDataSeriesDefinition() {
+        this.clickLogoAndWaitForMask();
+        let checkboxSelector = '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[contains(@class, "x-grid3-check-col-on")]';
+        this.openDataSeriesDefinitionFromDataPoint();
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "filter") and contains(text(), "Filters")]');
+        browser.waitForVisible(checkboxSelector, 3000);
+        let checkboxes = browser.elements(checkboxSelector);
+        if (checkboxes.value.length !== 0) {
+            for (let i = 0; i < 2; i++) {
+                browser.elementIdClick(checkboxes.value[i].ELEMENT);
+            }
+        }
+        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Cancel")]');
+        expect(browser.elements(checkboxSelector).value.length).to.equal(checkboxes.value.length);
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//div[contains(@class, "x-panel-header")]');
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
+    }
     clear() {
         browser.refresh();
         browser.waitForVisible('#logout_link', 3000);
@@ -235,6 +334,7 @@ class MetricExplorer {
         browser.waitForInvisible(this.selectors.dataSeriesDefinition.dialogBox);
     }
     loadExistingChartByName(name) {
+        browser.waitUntilAnimEnd(this.selectors.catalog.collapseButton, 5000, 50);
         browser.waitForVisible(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.click(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.waitForVisible(this.selectors.load.dialog);
@@ -403,9 +503,9 @@ class MetricExplorer {
     }
     genericStartingPoint() {
         browser.waitAndClick(this.selectors.addData.button);
-            // Click on Jobs (5 on original site)
+        // Click on Jobs (5 on original site)
         browser.waitAndClick(this.selectors.buttonMenu.firstLevel + ' ul li:nth-child(3)');
-            // click on CPU Hours: Total
+        // click on CPU Hours: Total
         browser.waitAndClick(this.selectors.addData.secondLevel + ' ul li:nth-child(3)', 1000);
         this.addDataSeriesByDefinition();
     }
@@ -429,7 +529,7 @@ class MetricExplorer {
 
     undoAggregateOrTrendLine($container) {
         browser.waitAndClick(this.undo($container));
-            // The mouse stays and causes a hover, lets move the mouse somewhere else
+        // The mouse stays and causes a hover, lets move the mouse somewhere else
         this.clickLogoAndWaitForMask();
     }
 

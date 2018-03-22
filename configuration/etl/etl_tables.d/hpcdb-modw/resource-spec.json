@@ -13,7 +13,8 @@
             "comments": "rsf.comments",
             "name": "rf.resource_name"
         },
-        "joins": [{
+        "joins": [
+            {
                 "name": "hpcdb_resources",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "rf"

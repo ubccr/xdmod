@@ -3,7 +3,8 @@
         "name": "organization",
         "engine": "MyISAM",
         "comment": "The various organization.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
@@ -98,7 +99,8 @@
                 "nullable": true
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "amie_name_UNIQUE",
                 "columns": [
                     "amie_name"
@@ -131,7 +133,7 @@
                 "is_unique": false
             },
             {
-                "name": "PRIMARY",
+                "name": "id",
                 "columns": [
                     "id"
                 ],

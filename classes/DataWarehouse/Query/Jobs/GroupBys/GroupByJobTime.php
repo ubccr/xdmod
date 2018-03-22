@@ -74,7 +74,7 @@ class GroupByJobTime extends \DataWarehouse\Query\Jobs\GroupBy
 
         $query->addGroup($job_times_id_field);
 
-        $datatable_jobtime_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'jobtime_id');
+        $datatable_jobtime_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'job_time_bucket_id');
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
                 $datatable_jobtime_id_field,
@@ -91,7 +91,7 @@ class GroupByJobTime extends \DataWarehouse\Query\Jobs\GroupBy
         $query->addTable($this->job_times_table);
 
         $job_times_id_field = new \DataWarehouse\Query\Model\TableField($this->job_times_table, $this->_id_field_name);
-        $datatable_jobtime_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'jobtime_id');
+        $datatable_jobtime_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'job_time_bucket_id');
 
         $query->addWhereCondition(
             new \DataWarehouse\Query\Model\WhereCondition(
@@ -127,7 +127,7 @@ class GroupByJobTime extends \DataWarehouse\Query\Jobs\GroupBy
     }
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'jobtime_id');
+        return parent::pullQueryParameters2($request, '_filter_', 'job_time_bucket_id');
     }
     public function pullQueryParameterDescriptions(&$request)
     {

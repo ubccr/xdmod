@@ -534,6 +534,14 @@ class pdoIngestor extends aIngestor
             sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
         );
 
+        // Display any warnings returned by the SQL
+
+        $warnings = $this->destinationHandle->query("SHOW WARNINGS");
+
+        if ( count($warnings) > 0 ) {
+            $this->logSqlWarnings($warnings, $qualifiedDestTableName);
+        }
+
         return $totalRecordsProcessed;
 
     }  // singleDatabaseIngest()
@@ -594,7 +602,8 @@ class pdoIngestor extends aIngestor
             if ( $this->options->force_load_data_infile_replace_into ) {
                 $loadStatement = "LOAD DATA LOCAL INFILE '$infileName' replace into table $qualifiedDestTableName "
                     . "fields terminated by 0x1e optionally enclosed by 0x1f lines terminated by 0x1d "
-                    . "(" . implode(',', $destColumnList) . ")";
+                    . "(" . implode(',', $destColumnList) . ") "
+                    . "SHOW WARNINGS";
             } else {
                 $tmpTable = $etlTable->getSchema(true)
                     . "."
@@ -614,6 +623,7 @@ class pdoIngestor extends aIngestor
                     . "LOAD DATA LOCAL INFILE '$infileName' INTO TABLE $tmpTable "
                     . "FIELDS TERMINATED BY 0x1e OPTIONALLY ENCLOSED BY 0x1f LINES TERMINATED BY 0x1d "
                     . "($destColumns); "
+                    . "SHOW WARNINGS; "
                     . "INSERT INTO $qualifiedDestTableName ($destColumns) "
                     . "SELECT $destColumns FROM $tmpTable ON DUPLICATE KEY UPDATE $updateColumns; "
                     . "DROP TABLE $tmpTable;";
@@ -818,10 +828,15 @@ class pdoIngestor extends aIngestor
                     foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                         try {
                             fflush($outFdList[$etlTableKey]);
-                            $this->_dest_helper->executeStatement($loadStatement);
+                            $output = $this->_dest_helper->executeStatement($loadStatement);
+
                             $this->logger->debug(
                                 sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
                             );
+
+                            if ( count($output) > 0 ) {
+                                $this->logSqlWarnings($output, $etlTableKey);
+                            }
 
                             // Clear the infile
 
@@ -860,10 +875,16 @@ class pdoIngestor extends aIngestor
             foreach ( $loadStatementList as $etlTableKey => $loadStatement ) {
                 try {
                     fclose($outFdList[$etlTableKey]);
-                    $this->_dest_helper->executeStatement($loadStatement);
+                    $output = $this->_dest_helper->executeStatement($loadStatement);
+
                     $this->logger->debug(
                         sprintf("Loaded %s records into '%s'", number_format($numRecordsInFile), $etlTableKey)
                     );
+
+                    if ( count($output) > 0 ) {
+                        $this->logSqlWarnings($output, $etlTableKey);
+                    }
+
                 }
                 catch (Exception $e) {
                     $msg = array('message'    => $e->getMessage(),
@@ -932,7 +953,7 @@ class pdoIngestor extends aIngestor
             if ( null === $value ) {
                 // Transform NULL values for MySQL LOAD FILE
                 $value = '\N';
-            } elseif ( empty($value) ) {
+            } elseif ( '' === $value ) {
                 $value = $this->stringEnclosure . '' . $this->stringEnclosure;
             } else {
                 // Handle proper escaping of backslashes to preserve source data containing them.
@@ -958,6 +979,7 @@ class pdoIngestor extends aIngestor
     protected function allowSingleDatabaseOptimization()
     {
         if ( ! $this->options->optimize_query ) {
+            $this->logger->debug("Query optimization disabled");
             return false;
         }
 

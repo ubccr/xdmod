@@ -2,7 +2,8 @@
     "table_definition": {
         "name": "resource_allocated",
         "engine": "InnoDB",
-        "columns": [{
+        "columns": [
+            {
                 "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false
@@ -29,7 +30,8 @@
                 "default": "100"
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",

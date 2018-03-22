@@ -3,7 +3,8 @@
         "name": "principalinvestigator",
         "engine": "MyISAM",
         "comment": "Only PIs are allowed to make requests.",
-        "columns": [{
+        "columns": [
+            {
                 "name": "person_id",
                 "type": "int(11)",
                 "nullable": false,
@@ -16,7 +17,8 @@
                 "comment": "The request id."
             }
         ],
-        "indexes": [{
+        "indexes": [
+            {
                 "name": "fk_princialinvestigator_person1_idx",
                 "columns": [
                     "person_id"
