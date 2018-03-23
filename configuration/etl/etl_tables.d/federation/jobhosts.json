@@ -30,7 +30,7 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "organization",
                 "alias": "do",
-                "on": "do.origin_id = sr.organization_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "do.origin_id = sr.organization_id AND federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
@@ -49,6 +49,11 @@
                 "name": "hosts",
                 "alias": "dh",
                 "on": "dh.resource_id = drf.id AND sh.id = dh.origin_id"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

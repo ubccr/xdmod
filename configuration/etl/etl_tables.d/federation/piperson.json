@@ -20,7 +20,12 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "person",
                 "alias": "pf",
-                "on": "pf.origin_id = pif.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE pif.organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+                "on": "pf.origin_id = pif.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE pif.organization_id = origin_id AND federation_blade_id = ${blade_id})"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

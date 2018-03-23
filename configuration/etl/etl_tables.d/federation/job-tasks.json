@@ -50,25 +50,30 @@
                 "name": "job_records",
                 "schema": "${DESTINATION_SCHEMA}",
                 "alias": "jr",
-                "on": "jr.origin_id = jt.job_record_id AND jr.origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "jr.origin_id = jt.job_record_id AND jr.federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "organization",
                 "alias": "destorg",
-                "on": "destorg.origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "destorg.federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "resourcefact",
                 "alias": "rf",
-                "on": "jt.resource_id = rf.origin_id AND rf.`organization_id` = destorg.id AND destorg.`origin_database_prefix` = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) "
+                "on": "jt.resource_id = rf.origin_id AND rf.`organization_id` = destorg.id AND destorg.`federation_blade_id` = ${blade_id} "
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "person",
                 "alias": "pf",
-                "on": "pf.origin_id = jt.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jt.person_organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+                "on": "pf.origin_id = jt.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jt.person_organization_id = origin_id AND federation_blade_id = ${blade_id})"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

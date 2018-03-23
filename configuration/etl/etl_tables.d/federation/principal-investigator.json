@@ -29,19 +29,24 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "person",
                 "alias": "dpf",
-                "on": "dpf.origin_id = opf.id AND dpf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE opf.organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+                "on": "dpf.origin_id = opf.id AND dpf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE opf.organization_id = origin_id AND federation_blade_id = ${blade_id})"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "account",
                 "alias": "daf",
-                "on": "daf.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) AND daf.origin_id = orf.account_id"
+                "on": "daf.federation_blade_id = ${blade_id} AND daf.origin_id = orf.account_id"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "request",
                 "alias": "drf",
                 "on": "drf.origin_id = orf.id AND drf.account_id = daf.id"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

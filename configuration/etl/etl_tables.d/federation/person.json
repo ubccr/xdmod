@@ -41,11 +41,16 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "organization",
                 "alias": "dof",
-                "on": "dof.origin_id = oof.id AND dof.origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "dof.origin_id = oof.id AND dof.federation_blade_id = ${blade_id}"
             }
         ],
         "where": [
             "first_name NOT IN ('Unknown', 'unassociated')"
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
         ]
     }
 }

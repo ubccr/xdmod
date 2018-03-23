@@ -24,13 +24,18 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "organization",
                 "alias": "of",
-                "on": "of.origin_id = orf.organization_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "of.origin_id = orf.organization_id AND federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "resourcefact",
                 "alias": "drf",
                 "on": "drf.organization_id = of.id and drf.origin_id = hf.resource_id"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

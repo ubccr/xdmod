@@ -56,10 +56,10 @@
                 "nullable": true
             },
             {
-                "name": "origin_database_prefix",
-                "type": "varchar(50)",
+                "name": "federation_blade_id",
+                "type": "int(11) unsigned",
                 "nullable": false,
-                "default": ""
+                "default": 0
             }
         ],
         "indexes": [
@@ -108,7 +108,7 @@
                 "name": "PRIMARY",
                 "columns": [
                     "origin_id",
-                    "origin_database_prefix"
+                    "federation_blade_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true

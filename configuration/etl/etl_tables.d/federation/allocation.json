@@ -37,7 +37,7 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "account",
                 "alias": "af",
-                "on": "af.origin_id = alf.account_id AND af.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "af.origin_id = alf.account_id AND af.federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
@@ -55,7 +55,7 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "person",
                 "alias": "pif",
-                "on": "pif.origin_id = alf.principalinvestigator_person_id AND pif.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE opif.organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+                "on": "pif.origin_id = alf.principalinvestigator_person_id AND pif.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE opif.organization_id = origin_id AND federation_blade_id=${blade_id})"
             },
             {
                 "schema": "${SOURCE_SCHEMA}",
@@ -73,7 +73,12 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "resourcefact",
                 "alias": "rf",
-                "on": "rf.origin_id = alf.resource_id AND rf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE oof.id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+                "on": "rf.origin_id = alf.resource_id AND rf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE oof.id = origin_id AND federation_blade_id=${blade_id})"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

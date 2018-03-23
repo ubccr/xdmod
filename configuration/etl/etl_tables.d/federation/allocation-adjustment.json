@@ -32,13 +32,18 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "resourcefact",
                 "alias": "darf",
-                "on": "darf.origin_id = oarf.id AND oarf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) AND origin_id = oarf.organization_id)"
+                "on": "darf.origin_id = oarf.id AND oarf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE federation_blade_id = ${blade_id} AND origin_id = oarf.organization_id)"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "resourcefact",
                 "alias": "dsrf",
-                "on": "dsrf.origin_id = osrf.id AND osrf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) AND origin_id = osrf.organization_id)"
+                "on": "dsrf.origin_id = osrf.id AND osrf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE federation_blade_id = ${blade_id} AND origin_id = osrf.organization_id)"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

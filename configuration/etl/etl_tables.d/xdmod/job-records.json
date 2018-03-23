@@ -211,9 +211,10 @@
                 "comment": "Boolean flag 1 = job complete"
             },
             {
-                "name": "origin_database_prefix",
-                "type": "varchar(50)",
-                "nullable": true
+                "name": "federation_blade_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 0
             },
             {
                 "name": "last_modified",
@@ -233,7 +234,7 @@
                 "columns": [
                     "job_record_id",
                     "origin_id",
-                    "origin_database_prefix"
+                    "federation_blade_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true
@@ -323,7 +324,7 @@
                 "name": "uniq",
                 "columns": [
                     "origin_id",
-                    "origin_database_prefix"
+                    "federation_blade_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true

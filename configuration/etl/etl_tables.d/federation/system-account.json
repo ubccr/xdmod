@@ -33,7 +33,7 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "organization",
                 "alias": "rof",
-                "on": "rof.origin_id = orf.organization_id AND rof.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "rof.origin_id = orf.organization_id AND rof.federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
@@ -45,13 +45,18 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "organization",
                 "alias": "pof",
-                "on": "pof.origin_id = opf.organization_id AND pof.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "pof.origin_id = opf.organization_id AND pof.federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "person",
                 "alias": "pf",
                 "on": "pf.origin_id = saf.person_id AND pf.organization_id = pof.id"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

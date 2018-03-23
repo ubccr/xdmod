@@ -5,7 +5,7 @@
     "source_query": {
         "records": {
             "origin_id": "id",
-            "origin_database_prefix": "(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))",
+            "federation_blade_id": "${blade_id}",
             "organizationtype_id": "organizationtype_id",
             "abbrev": "abbrev",
             "name": "name",
@@ -26,6 +26,11 @@
             {
                 "name": "organization",
                 "schema": "${SOURCE_SCHEMA}"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

@@ -5,7 +5,7 @@
     "source_query": {
         "records": {
             "origin_id": "id",
-            "origin_database_prefix": "(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))",
+            "federation_blade_id": "${blade_id}",
             "parent_id": "parent_id",
             "charge_number": "charge_number",
             "creator_organization_id": "creator_organization_id",
@@ -21,8 +21,13 @@
                 "alias": "af"
             }
         ],
-        "where" : [
+        "where": [
             "af.id != -1"
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
         ]
     }
 }

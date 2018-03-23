@@ -4,7 +4,7 @@
     },
     "source_query": {
         "records": {
-            "resource_id": "(SELECT id FROM ${DESTINATION_SCHEMA}.resourcefact WHERE origin_id = resource_id AND organization_id=(SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))))",
+            "resource_id": "(SELECT id FROM ${DESTINATION_SCHEMA}.resourcefact WHERE origin_id = resource_id AND organization_id=(SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE federation_blade_id = ${blade_id}))",
             "start_date_ts": "start_date_ts",
             "end_date_ts": "end_date_ts",
             "name": "name",
@@ -14,6 +14,11 @@
             {
                 "name": "resource_allocated",
                 "schema": "${SOURCE_SCHEMA}"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

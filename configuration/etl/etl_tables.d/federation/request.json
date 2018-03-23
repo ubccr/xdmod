@@ -29,7 +29,12 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "account",
                 "alias": "af",
-                "on": "af.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')) AND af.origin_id = rf.account_id"
+                "on": "af.federation_blade_id = ${blade_id} AND af.origin_id = rf.account_id"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }

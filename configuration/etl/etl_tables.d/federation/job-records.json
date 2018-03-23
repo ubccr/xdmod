@@ -21,7 +21,7 @@
             "resource_state_id": "jr.resource_state_id",
             "resource_country_id": "jr.resource_country_id",
             "resource_organization_id": "jrof.id",
-            "resource_organization_type_id": "jrof.organizationtype_id",
+            "resource_organization_type_id": "COALESCE(jrof.organizationtype_id,0)",
             "job_record_type_id": "jr.job_record_type_id",
             "submission_venue_id": "jr.submission_venue_id",
             "submit_time_ts": "jr.submit_time_ts",
@@ -30,7 +30,7 @@
             "start_day_id": "jr.start_day_id",
             "end_day_id": "jr.end_day_id",
             "completed": "jr.completed",
-            "origin_database_prefix": "(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+            "federation_blade_id": "${blade_id}"
         },
         "joins": [
             {
@@ -42,7 +42,7 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "organization",
                 "alias": "jrof",
-                "on": "jr.resource_organization_id = jrof.origin_id AND jrof.origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "jr.resource_organization_id = jrof.origin_id AND jrof.federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
@@ -54,25 +54,30 @@
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "person",
                 "alias": "pf",
-                "on": "pf.origin_id = jr.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jr.person_organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+                "on": "pf.origin_id = jr.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jr.person_organization_id = origin_id AND federation_blade_id = ${blade_id})"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "person",
                 "alias": "pif",
-                "on": "pif.origin_id = jr.principalinvestigator_person_id AND pif.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jr.piperson_organization_id = origin_id AND origin_database_prefix=(SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}')))"
+                "on": "pif.origin_id = jr.principalinvestigator_person_id AND pif.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jr.piperson_organization_id = origin_id AND federation_blade_id = ${blade_id})"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "account",
                 "alias": "af",
-                "on": "af.origin_id = jr.account_id AND af.origin_database_prefix = (SELECT TRIM('_modw' FROM '${SOURCE_SCHEMA}'))"
+                "on": "af.origin_id = jr.account_id AND af.federation_blade_id = ${blade_id}"
             },
             {
                 "schema": "${DESTINATION_SCHEMA}",
                 "name": "allocation",
                 "alias": "alf",
                 "on": "alf.origin_id = jr.allocation_id AND alf.resource_id = rf.id"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
             }
         ]
     }
