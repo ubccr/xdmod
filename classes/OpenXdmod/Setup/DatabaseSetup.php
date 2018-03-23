@@ -134,7 +134,7 @@ EOT
          */
 
         $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php '
-            . '-c ' . CONFIG_DIR . '/etl/etl.json' . ' -p ' . 'hpcdb-modw.bootstrap';
+            . ' -p ' . 'hpcdb-modw.bootstrap';
         $pipes = array();
         $process = proc_open(
             $command,

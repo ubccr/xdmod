@@ -452,8 +452,6 @@ function createManagedTables()
         array(
             'php',
             BASE_DIR . '/tools/etl/etl_overseer.php',
-            '-c',
-            CONFIG_DIR . '/etl/etl.json',
             '-p',
             'acls-xdmod-management',
             '-v',
@@ -1301,7 +1299,7 @@ function createTab(iDatabase $db, $module, $tab)
         WHERE BINARY m.name = BINARY :module_name
     ) inc
     LEFT JOIN tabs cur
-        ON BINARY cur.name = BINARY inc.name       
+        ON BINARY cur.name = BINARY inc.name
     WHERE cur.tab_id IS NULL;
 SQL;
 

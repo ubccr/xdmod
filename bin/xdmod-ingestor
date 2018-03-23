@@ -337,10 +337,6 @@ function runEtlPipeline($name, $params = array()){
     }
     $etlParams['last-modified-start-date'] = $lastModified->format('Y-m-d\TH:i:s');
 
-    if(!array_key_exists('config-file', $etlParams)){
-        $etlParams['config-file'] = CONFIG_DIR . '/etl/etl.json';
-    }
-
     $argumentString = '';
     foreach ($etlParams as $key => $value) {
         if(null !== $value){
