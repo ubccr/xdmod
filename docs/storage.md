@@ -91,7 +91,6 @@ Ingest data:
 
 ```
 /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -c /etc/xdmod/etl/etl.json \
     -a StorageFileSystemIngestor \
     -a StorageUserIngestor \
     -a StorageDirectoryIngestor \
@@ -102,6 +101,5 @@ Aggregate data:
 
 ```
 /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -c /etc/xdmod/etl/etl.json \
     -a StorageUserUsageAggregator
 ```

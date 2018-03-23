@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ETL_TABLE_MANAGER=etl_table_manager.php
-ETL_CONFIG=../../configuration/etl/etl.json
 PRETTY_PRINTER="$HOME/bin/jq '.'"
 OUTPUT_DIR=.
 DATABASE=
@@ -18,7 +17,7 @@ while [[ $# > 1 ]]; do
 
     case $key in
         -c|--config-file)
-            ETL_CONFIG="$2"
+            ETL_CONFIG="-c $2"
             shift # past argument
             ;;
         -d|--database)
@@ -74,14 +73,14 @@ for table in $TABLE_LIST; do
 
     echo "Dumping $tablename to $outputfile"
 
-    php $ETL_TABLE_MANAGER -c $ETL_CONFIG --discover-table $tablename --table-key table_definition \
+    php $ETL_TABLE_MANAGER $ETL_CONFIG --discover-table $tablename --table-key table_definition \
         --output-format json --operation dump-discovered --output-file $tmpfile
 
     if [ 0 -ne $? ]; then
         echo "Error dumping table $tablename"
         exit 1
     fi
-    
+
     if [ -n "$PRETTY_PRINTER" ]; then
         CMD="cat $tmpfile | $PRETTY_PRINTER > $outputfile"
         eval $CMD
