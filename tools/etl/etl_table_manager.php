@@ -23,7 +23,7 @@ $supportedFormats = array("json", "sql");
 
 $scriptOptions = array(
     // ETL configuration file
-    'config-file'       => null,
+    'config-file'       => CONFIG_DIR . '/etl/etl.json',
     // Endpoint (defined in the ETL config) to use when querying tables
     'endpoint'          => "utility",
     // Table to use in discovery mode, needed for alter statement
