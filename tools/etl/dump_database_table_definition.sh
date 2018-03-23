@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ETL_TABLE_MANAGER=etl_table_manager.php
-PRETTY_PRINTER="$HOME/bin/jq '.'"
+PRETTY_PRINTER="jq '.'"
 OUTPUT_DIR=.
 DATABASE=
 DB_HOST=
@@ -69,7 +69,7 @@ for table in $TABLE_LIST; do
     tablename=${DATABASE}.${table}
 
     outputfile=${OUTPUT_DIR}/${tablename}.json
-    tmpfile=`tempfile`
+    tmpfile=`mktemp`
 
     echo "Dumping $tablename to $outputfile"
 
