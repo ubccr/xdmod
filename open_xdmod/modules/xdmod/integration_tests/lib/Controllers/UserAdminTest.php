@@ -691,11 +691,74 @@ class UserAdminTest extends BaseUserAdminTest
         );
     }
 
+    /**
+     * Executes a request to the
+     * 'internal_dashboard/controllers/controller.php?operation=enum_user_visits'
+     * endpoint. Validates the response and returned data structure.
+     *
+     * @param array $options
+     * @return null|int returns null if user is not found else it returns the
+     *                  users visit_frequency.
+     * @throws \Exception if there is a problem authenticating with the
+     *                    dashboard.
+     */
+    protected function getUserVisits(array $options)
+    {
+        $username = $options['username'];
+        $testData = $options['data'];
+
+        $expectedData = $options['expected'];
+        $expectedContentType = $expectedData['content_type'];
+
+        $this->helper->authenticateDashboard('mgr');
+
+        $data = array_merge(
+            array(
+                'operation' => 'enum_user_visits'
+            ),
+            $testData
+        );
+
+        $response = $this->helper->post("internal_dashboard/controllers/controller.php", null, $data);
+
+        $this->validateResponse($response, 200, $expectedContentType);
+
+        $actual = json_decode($response[0], true);
+
+        $this->assertArrayHasKey('success', $actual);
+        $this->assertArrayHasKey('stats', $actual);
+
+        $results = null;
+        $userStats = $actual['stats'];
+        foreach($userStats as $userStat) {
+            $this->assertArrayHasKey('username', $userStat);
+            $this->assertArrayHasKey('visit_frequency', $userStat);
+
+            if ($userStat['username'] === $username) {
+                $results = $userStat['visit_frequency'];
+                break;
+            }
+        }
+
+        $this->helper->logoutDashboard();
+
+        return $results;
+    }
+
+    /**
+     * Attempt to determine if an entry exists in the provided $source based on
+     * the return value of $predicate. If $predicate returns false for all
+     * entries in $source then the function will return false.
+     *
+     * @param array $source       the array to be searched
+     * @param callable $predicate If this method returns true then a match has
+     *                            been found.
+     * @return bool true if the entry exists, else false.
+     */
     protected function entryExists(array $source, callable $predicate)
     {
         foreach ($source as $key => $value) {
-            $found = $predicate($key, $value);
-            if ($found === true) {
+            if ($predicate($key, $value) === true) {
                 return true;
             }
         }
