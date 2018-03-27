@@ -68,7 +68,7 @@
                 "name": "is_reconciled",
                 "type": "tinyint(1)",
                 "nullable": true,
-                "default": "0"
+                "default": 0
             },
             {
                 "name": "citizenship_country_id",
@@ -115,7 +115,7 @@
                 "name": "origin_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": "0"
+                "default": 0
             }
         ],
         "indexes": [

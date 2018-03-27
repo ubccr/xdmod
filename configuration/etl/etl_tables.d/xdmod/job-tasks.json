@@ -136,21 +136,21 @@
                 "name": "node_count",
                 "type": "int(11)",
                 "nullable": false,
-                "default": "-1",
+                "default": -1,
                 "comment": "Number of nodes consumed"
             },
             {
                 "name": "processor_count",
                 "type": "int(11)",
                 "nullable": false,
-                "default": "-1",
+                "default": -1,
                 "comment": "Number of processor cores consumed"
             },
             {
                 "name": "memory_kb",
                 "type": "int(11)",
                 "nullable": false,
-                "default": "-1",
+                "default": -1,
                 "comment": "Memory consumed"
             },
             {

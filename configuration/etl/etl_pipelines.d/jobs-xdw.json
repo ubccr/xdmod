@@ -1,4 +1,6 @@
 {
+    "#": "This is used by multiple pipelines, specifically xdmod datawarehouse",
+    "#": "and federation blades to initialize tables and their default data",
     "bootstrap": [
         {
             "name": "table-create",
