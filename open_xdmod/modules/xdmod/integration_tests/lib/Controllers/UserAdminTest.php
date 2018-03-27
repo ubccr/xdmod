@@ -10,6 +10,10 @@ class UserAdminTest extends BaseUserAdminTest
 
     protected $testFiles;
 
+    /**
+     * @return TestFiles
+     * @throws \Exception
+     */
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
@@ -162,6 +166,7 @@ class UserAdminTest extends BaseUserAdminTest
      * @dataProvider provideCreateUsersSuccess
      * @group UserAdminTest.createUsers
      * @param array $user
+     * @throws \Exception
      */
     public function testCreateUsersSuccess(array $user)
     {
@@ -175,6 +180,10 @@ class UserAdminTest extends BaseUserAdminTest
         }
     }
 
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
     public function provideCreateUsersSuccess()
     {
         return JSON::loadFile(
@@ -201,6 +210,10 @@ class UserAdminTest extends BaseUserAdminTest
         self::$existingUsers[$username] = $userId;
     }
 
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
     public function provideThatExistingUsersCanBeRetrieved()
     {
         return Json::loadFile(
@@ -245,6 +258,10 @@ class UserAdminTest extends BaseUserAdminTest
         $this->assertEquals($expectedFilters, $filters);
     }
 
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
     public function provideTestUsersQuickFilters()
     {
         return Json::loadFile(
@@ -257,6 +274,7 @@ class UserAdminTest extends BaseUserAdminTest
      * @dataProvider provideGetMenus
      * @group UserAdminTest.createUsers
      * @param array $user
+     * @throws \Exception
      */
     public function testGetMenus(array $user)
     {
@@ -293,6 +311,10 @@ class UserAdminTest extends BaseUserAdminTest
         }
     }
 
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
     public function provideGetMenus()
     {
         return JSON::loadFile(
@@ -305,6 +327,7 @@ class UserAdminTest extends BaseUserAdminTest
      * @dataProvider provideGetTabs
      * @group UserAdminTest.createUsers
      * @param array $user
+     * @throws \Exception
      */
     public function testGetTabs(array $user)
     {
@@ -345,6 +368,10 @@ class UserAdminTest extends BaseUserAdminTest
         }
     }
 
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
     public function provideGetTabs()
     {
         return JSON::loadFile(
@@ -357,6 +384,7 @@ class UserAdminTest extends BaseUserAdminTest
      * @dataProvider provideGetDwDescripters
      * @group UserAdminTest.createUsers
      * @param array $user
+     * @throws \Exception
      */
     public function testGetDwDescripters(array $user)
     {
@@ -396,6 +424,10 @@ class UserAdminTest extends BaseUserAdminTest
 
     }
 
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
     public function provideGetDwDescripters()
     {
         return JSON::loadFile(
@@ -684,6 +716,10 @@ class UserAdminTest extends BaseUserAdminTest
         $this->helper->logoutDashboard();
     }
 
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
     public function provideGetUserVisits()
     {
         return JSON::loadFile(
