@@ -557,7 +557,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             $actual = $response[0];
         }
 
-
         $expected = JSON::loadFile($expectedFileName);
 
         $this->assertEquals($expected, $actual);
