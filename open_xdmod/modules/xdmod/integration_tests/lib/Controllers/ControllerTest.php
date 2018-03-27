@@ -572,8 +572,10 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function provideEnumTargetAddresses()
     {
         $data = JSON::loadFile($this->getTestFiles()->getFile('controllers', 'enum_target_addresses', 'input'));
-        foreach($data['data'] as $key => $value) {
-            $data['data'][$key] = TestParameterHelper::processParam($value);
+        foreach($data as $key => $test) {
+            foreach($test[0]['data'] as $dataKey => $value) {
+                $data[$key][0]['data'][$dataKey] = TestParameterHelper::processParam($value);
+            }
         }
         return $data;
     }
