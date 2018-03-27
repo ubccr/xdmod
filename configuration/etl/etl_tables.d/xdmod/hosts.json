@@ -10,6 +10,11 @@
                 "extra": "auto_increment"
             },
             {
+                "name": "origin_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
                 "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false
@@ -21,6 +26,15 @@
             }
         ],
         "indexes": [
+            {
+                "name": "origin",
+                "columns": [
+                    "origin_id",
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
             {
                 "name": "PRIMARY",
                 "columns": [

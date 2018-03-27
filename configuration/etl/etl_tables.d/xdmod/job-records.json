@@ -7,6 +7,12 @@
             {
                 "name": "job_record_id",
                 "type": "bigint(20) unsigned",
+                "extra": "auto_increment",
+                "nullable": false
+            },
+            {
+                "name": "origin_id",
+                "type": "bigint(20) unsigned",
                 "nullable": false
             },
             {
@@ -205,6 +211,12 @@
                 "comment": "Boolean flag 1 = job complete"
             },
             {
+                "name": "federation_blade_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 0
+            },
+            {
                 "name": "last_modified",
                 "type": "timestamp"
             },
@@ -220,7 +232,9 @@
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "job_record_id"
+                    "job_record_id",
+                    "origin_id",
+                    "federation_blade_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true
@@ -305,6 +319,15 @@
                 ],
                 "type": "BTREE",
                 "is_unique": false
+            },
+            {
+                "name": "uniq",
+                "columns": [
+                    "origin_id",
+                    "federation_blade_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
             }
         ],
         "triggers": []
