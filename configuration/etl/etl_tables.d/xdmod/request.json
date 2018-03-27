@@ -12,7 +12,7 @@
                 "comment": "The id of the request record."
             },
             {
-                "name": "origin_id",
+                "name": "request_origin_id",
                 "type": "int(11)",
                 "nullable": false
             },

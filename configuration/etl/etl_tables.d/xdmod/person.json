@@ -112,7 +112,7 @@
                 "nullable": true
             },
             {
-                "name": "origin_id",
+                "name": "person_origin_id",
                 "type": "int(11)",
                 "nullable": false,
                 "default": 0
@@ -149,7 +149,7 @@
                 "name": "organization_id",
                 "columns": [
                     "organization_id",
-                    "origin_id"
+                    "person_origin_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true

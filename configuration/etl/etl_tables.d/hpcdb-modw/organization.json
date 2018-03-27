@@ -10,7 +10,7 @@
             "short_name": "COALESCE(organization_abbrev, organization_name)",
             "long_name": "CASE WHEN ISNULL(organization_abbrev) THEN organization_name ELSE CONCAT(organization_abbrev, ' - ', organization_name) END",
             "order_id": "NULL",
-            "origin_id": "organization_id"
+            "organization_origin_id": "organization_id"
         },
         "joins": [
             {

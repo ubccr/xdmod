@@ -12,7 +12,7 @@
                 "comment": "The id of the record."
             },
             {
-                "name": "origin_id",
+                "name": "allocation_breakdown_origin_id",
                 "type": "int(10)",
                 "nullable": false
             },

@@ -4,24 +4,32 @@
         "engine": "InnoDB",
         "columns": [
             {
+                "name": "federation_blade_id",
                 "type": "int(11) unsigned",
                 "nullable": false,
-                "extra": "auto_increment",
-                "name": "federation_blade_id"
+                "extra": "auto_increment"
             },
             {
+                "name": "prefix",
                 "type": "varchar(191)",
                 "nullable": true,
                 "default": null,
-                "comment": "generally fqdn with . replaced by - 191 limit due to utf8mb4",
-                "name": "prefix"
+                "comment": "generally fqdn with . replaced by - 191 limit due to utf8mb4"
             },
             {
+                "name": "timezone",
+                "type": "varchar(191)",
+                "nullable": true,
+                "default": null,
+                "comment": "Timezone of the blade - 191 limit due to utf8mb4"
+            },
+            {
+                "name": "extra",
                 "type": "text",
                 "nullable": true,
                 "default": null,
-                "comment": "any extra information to be stored about the blade, ie. contact information",
-                "name": "extra"
+                "comment": "any extra information to be stored about the blade, ie. contact information"
+
             }
         ],
         "indexes": [

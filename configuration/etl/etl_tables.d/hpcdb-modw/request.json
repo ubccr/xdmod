@@ -11,7 +11,7 @@
             "grant_number": "''",
             "start_date": "'0000-00-00'",
             "end_date": "'0000-00-00'",
-            "origin_id": "rf.request_id"
+            "request_origin_id": "rf.request_id"
         },
         "joins": [
             {

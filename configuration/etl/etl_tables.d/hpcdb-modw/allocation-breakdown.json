@@ -8,7 +8,7 @@
             "person_id": "person_id",
             "allocation_id": "allocation_id",
             "percentage": "percentage",
-            "origin_id": "allocation_breakdown_id"
+            "allocation_breakdown_origin_id": "allocation_breakdown_id"
         },
         "joins": [
             {

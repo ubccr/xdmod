@@ -9,7 +9,7 @@
             "granttype_id": -1,
             "long_name": "account_name",
             "short_name": "account_name",
-            "origin_id": "account_id"
+            "account_origin_id": "account_id"
         },
         "joins": [
             {

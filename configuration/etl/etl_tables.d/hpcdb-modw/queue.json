@@ -6,7 +6,7 @@
         "records": {
             "id": "DISTINCT COALESCE(queue, 'NA')",
             "resource_id": "resource_id",
-            "origin_id": "COALESCE(queue, 'NA')"
+            "queue_origin_id": "COALESCE(queue, 'NA')"
         },
         "joins": [
             {

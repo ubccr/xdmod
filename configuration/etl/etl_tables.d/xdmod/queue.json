@@ -18,7 +18,7 @@
                 "comment": "The resource this queue belongs to."
             },
             {
-                "name": "origin_id",
+                "name": "queue_origin_id",
                 "type": "char(50)",
                 "nullable": true,
                 "default": "NULL"

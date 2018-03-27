@@ -18,7 +18,7 @@
                 "comment": "Unique job_id"
             },
             {
-                "name": "origin_id",
+                "name": "job_id_origin_id",
                 "type": "bigint(20) unsigned",
                 "nullable": false,
                 "comment": "Job_id from Origin"
@@ -387,7 +387,7 @@
                 "name": "uniq",
                 "columns": [
                     "local_job_id_raw",
-                    "origin_id",
+                    "job_id_origin_id",
                     "job_record_id"
                 ],
                 "type": "BTREE",

@@ -101,7 +101,7 @@
                 "default": 0
             },
             {
-                "name": "origin_id",
+                "name": "organization_origin_id",
                 "type": "int(11)",
                 "nullable": true
             },
@@ -171,7 +171,7 @@
             {
                 "name": "uniq",
                 "columns": [
-                    "origin_id",
+                    "organization_origin_id",
                     "federation_blade_id"
                 ],
                 "type": "BTREE",

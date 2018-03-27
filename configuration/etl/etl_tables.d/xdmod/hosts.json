@@ -10,7 +10,7 @@
                 "extra": "auto_increment"
             },
             {
-                "name": "origin_id",
+                "name": "host_origin_id",
                 "type": "int(11)",
                 "nullable": true
             },
@@ -26,15 +26,6 @@
             }
         ],
         "indexes": [
-            {
-                "name": "origin",
-                "columns": [
-                    "origin_id",
-                    "resource_id"
-                ],
-                "type": "BTREE",
-                "is_unique": true
-            },
             {
                 "name": "PRIMARY",
                 "columns": [

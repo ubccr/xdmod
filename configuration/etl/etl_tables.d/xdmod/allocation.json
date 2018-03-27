@@ -12,7 +12,7 @@
                 "comment": "The id of the allocation record."
             },
             {
-                "name": "origin_id",
+                "name": "allocation_origin_id",
                 "type": "int(10) unsigned",
                 "nullable": false
             },
@@ -167,7 +167,7 @@
                 "name": "uniq",
                 "columns": [
                     "resource_id",
-                    "origin_id"
+                    "allocation_origin_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true

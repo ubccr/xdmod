@@ -12,7 +12,7 @@
                 "comment": "the id of the record"
             },
             {
-                "name": "origin_id",
+                "name": "system_account_origin_id",
                 "type": "int(11)",
                 "nullable": true
             },
@@ -73,9 +73,9 @@
                 "is_unique": false
             },
             {
-                "name": "origin_id",
+                "name": "system_account_origin_id",
                 "columns": [
-                    "origin_id",
+                    "system_account_origin_id",
                     "resource_id"
                 ],
                 "type": "BTREE",

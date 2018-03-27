@@ -79,7 +79,7 @@
                 "default": "UTC"
             },
             {
-                "name": "origin_id",
+                "name": "resource_origin_id",
                 "type": "int(11)",
                 "nullable": false,
                 "default": 0
