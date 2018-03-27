@@ -1,0 +1,53 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/principal-investigator.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "person_id": "dpf.id",
+            "request_id": "drf.id"
+        },
+        "joins": [
+            {
+                "name": "principalinvestigator",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "opif"
+            },
+            {
+                "name": "person",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "opf",
+                "on": "opf.id = opif.person_id"
+            },
+            {
+                "name": "request",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "orf",
+                "on": "orf.id = opif.request_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "dpf",
+                "on": "dpf.origin_id = opf.id AND dpf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE opf.organization_id = origin_id AND federation_blade_id = ${blade_id})"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "account",
+                "alias": "daf",
+                "on": "daf.federation_blade_id = ${blade_id} AND daf.origin_id = orf.account_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "request",
+                "alias": "drf",
+                "on": "drf.origin_id = orf.id AND drf.account_id = daf.id"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

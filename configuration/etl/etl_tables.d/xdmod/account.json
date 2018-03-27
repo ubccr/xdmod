@@ -12,6 +12,12 @@
                 "comment": "The id of the account record."
             },
             {
+                "name": "origin_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": "0"
+            },
+            {
                 "name": "parent_id",
                 "type": "int(11)",
                 "nullable": true,
@@ -48,6 +54,12 @@
                 "name": "order_id",
                 "type": "int(11)",
                 "nullable": true
+            },
+            {
+                "name": "federation_blade_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 0
             }
         ],
         "indexes": [
@@ -91,6 +103,15 @@
                 ],
                 "type": "BTREE",
                 "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "origin_id",
+                    "federation_blade_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
             }
         ],
         "triggers": []

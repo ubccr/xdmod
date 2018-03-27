@@ -1,0 +1,33 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/account.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "origin_id": "id",
+            "federation_blade_id": "${blade_id}",
+            "parent_id": "parent_id",
+            "charge_number": "charge_number",
+            "creator_organization_id": "creator_organization_id",
+            "granttype_id": "granttype_id",
+            "long_name": "long_name",
+            "short_name": "short_name",
+            "order_id": "order_id"
+        },
+        "joins": [
+            {
+                "name": "account",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "af"
+            }
+        ],
+        "where": [
+            "af.id != -1"
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

@@ -1,0 +1,56 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/person.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "origin_id": "opf.id",
+            "organization_id": "dof.id",
+            "prefix": "opf.prefix",
+            "first_name": "opf.first_name",
+            "middle_name": "opf.middle_name",
+            "last_name": "opf.last_name",
+            "url": "opf.url",
+            "birth_month": "opf.birth_month",
+            "birth_day": "opf.birth_day",
+            "department": "opf.department",
+            "title": "opf.title",
+            "is_reconciled": "opf.is_reconciled",
+            "citizenship_country_id": "opf.citizenship_country_id",
+            "email_address": "opf.email_address",
+            "ts": "opf.ts",
+            "ts_ts": "opf.ts_ts",
+            "status": "opf.status",
+            "long_name": "CONCAT (opf.long_name, ' (', oof.abbrev  ,')')",
+            "short_name": "opf.short_name",
+            "order_id": "opf.order_id"
+        },
+        "joins": [
+            {
+                "name": "person",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "opf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "organization",
+                "alias": "oof",
+                "on": "oof.id = opf.organization_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "organization",
+                "alias": "dof",
+                "on": "dof.origin_id = oof.id AND dof.federation_blade_id = ${blade_id}"
+            }
+        ],
+        "where": [
+            "first_name NOT IN ('Unknown', 'unassociated')"
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

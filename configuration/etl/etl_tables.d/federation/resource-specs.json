@@ -1,0 +1,28 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/resource-specs.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "(SELECT id FROM ${DESTINATION_SCHEMA}.resourcefact WHERE origin_id = resource_id AND organization_id=(SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE federation_blade_id = ${blade_id}))",
+            "start_date_ts": "start_date_ts",
+            "end_date_ts": "end_date_ts",
+            "processors": "processors",
+            "q_nodes": "q_nodes",
+            "q_ppn": "q_ppn",
+            "comments": "comments",
+            "name": "name"
+        },
+        "joins": [
+            {
+                "name": "resourcespecs",
+                "schema": "${SOURCE_SCHEMA}"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

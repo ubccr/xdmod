@@ -1,0 +1,10 @@
+{
+    "getBladeId": {
+        "name": "blade_id",
+        "file": "federation/get-blade-id.sql",
+        "args": {
+            "src": "${SOURCE_SCHEMA}",
+            "dest": "${DESTINATION_SCHEMA}"
+        }
+    }
+}

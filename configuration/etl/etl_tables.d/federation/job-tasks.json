@@ -1,0 +1,80 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/job-tasks.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "job_record_id": "jr.job_record_id",
+            "origin_id": "job_id",
+            "creation_time": "creation_time",
+            "local_jobid": "local_jobid",
+            "job_task_type_id": "job_task_type_id",
+            "resource_id": "rf.id",
+            "local_job_array_index": "local_job_array_index",
+            "local_job_id_raw": "local_job_id_raw",
+            "name": "jt.name",
+            "node_count": "node_count",
+            "processor_count": "processor_count",
+            "systemaccount_id": "systemaccount_id",
+            "person_id": "pf.id",
+            "person_organization_id": "pf.organization_id",
+            "person_nsfstatuscode_id": "pf.nsfstatuscode_id",
+            "wallduration": "wallduration",
+            "waitduration": "waitduration",
+            "cpu_time": "cpu_time",
+            "submit_time_ts": "jt.submit_time_ts",
+            "start_time_ts": "jt.start_time_ts",
+            "end_time_ts": "jt.end_time_ts",
+            "eligible_time_ts": "jt.eligible_time_ts",
+            "start_day_id": "jt.start_day_id",
+            "end_day_id": "jt.end_day_id",
+            "eligible_day_id": "eligible_day_id",
+            "group_name": "group_name",
+            "gid_number": "gid_number",
+            "uid_number": "uid_number",
+            "exit_code": "exit_code",
+            "exit_state": "exit_state",
+            "cpu_req": "cpu_req",
+            "mem_req": "mem_req",
+            "timelimit": "timelimit",
+            "memory_kb": "memory_kb",
+            "completed": "jt.completed"
+        },
+        "joins": [
+            {
+                "name": "job_tasks",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jt"
+            },
+            {
+                "name": "job_records",
+                "schema": "${DESTINATION_SCHEMA}",
+                "alias": "jr",
+                "on": "jr.origin_id = jt.job_record_id AND jr.federation_blade_id = ${blade_id}"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "organization",
+                "alias": "destorg",
+                "on": "destorg.federation_blade_id = ${blade_id}"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "rf",
+                "on": "jt.resource_id = rf.origin_id AND rf.`organization_id` = destorg.id AND destorg.`federation_blade_id` = ${blade_id} "
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "pf",
+                "on": "pf.origin_id = jt.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE jt.person_organization_id = origin_id AND federation_blade_id = ${blade_id})"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

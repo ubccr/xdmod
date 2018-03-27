@@ -1,0 +1,37 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/organization.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "origin_id": "id",
+            "federation_blade_id": "${blade_id}",
+            "organizationtype_id": "organizationtype_id",
+            "abbrev": "abbrev",
+            "name": "name",
+            "url": "url",
+            "phone": "phone",
+            "nsf_org_code": "nsf_org_code",
+            "is_reconciled": "is_reconciled",
+            "amie_name": "amie_name",
+            "country_id": "country_id",
+            "state_id": "state_id",
+            "latitude": "latitude",
+            "longitude": "longitude",
+            "short_name": "short_name",
+            "long_name": "long_name",
+            "order_id": "order_id"
+        },
+        "joins": [
+            {
+                "name": "organization",
+                "schema": "${SOURCE_SCHEMA}"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

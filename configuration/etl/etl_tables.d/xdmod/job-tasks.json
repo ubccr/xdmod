@@ -14,7 +14,14 @@
                 "name": "job_id",
                 "type": "bigint(20) unsigned",
                 "nullable": false,
+                "extra": "auto_increment",
                 "comment": "Unique job_id"
+            },
+            {
+                "name": "origin_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Job_id from Origin"
             },
             {
                 "name": "creation_time",
@@ -287,9 +294,8 @@
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "job_record_id",
-                    "creation_time",
-                    "job_id"
+                    "job_id",
+                    "creation_time"
                 ],
                 "type": "BTREE",
                 "is_unique": true
@@ -376,6 +382,16 @@
                 ],
                 "type": "BTREE",
                 "is_unique": false
+            },
+            {
+                "name": "uniq",
+                "columns": [
+                    "local_job_id_raw",
+                    "origin_id",
+                    "job_record_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
             }
         ],
         "triggers": []

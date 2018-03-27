@@ -11,7 +11,8 @@
             "code": "r.resource_code",
             "description": "r.resource_description",
             "shared_jobs": "r.resource_shared_jobs",
-            "timezone": "r.resource_timezone"
+            "timezone": "r.resource_timezone",
+            "origin_id": "r.resource_id"
         },
         "joins": [
             {

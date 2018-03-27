@@ -1,0 +1,85 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/allocation.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "origin_id": "alf.id",
+            "resource_id": "rf.id",
+            "account_id": "af.id",
+            "request_id": "reqf.id",
+            "principalinvestigator_person_id": "pif.id",
+            "fos_id": "fos_id",
+            "boardtype_id": "alf.boardtype_id",
+            "initial_allocation": "alf.initial_allocation",
+            "initial_start_date": "alf.initial_start_date",
+            "initial_start_date_ts": "alf.initial_start_date_ts",
+            "initial_end_date": "alf.initial_end_date",
+            "base_allocation": "alf.base_allocation",
+            "remaining_allocation": "alf.remaining_allocation",
+            "end_date": "alf.end_date",
+            "end_date_ts": "alf.end_date_ts",
+            "allocation_type_id": "alf.allocation_type_id",
+            "charge_number": "alf.charge_number",
+            "conversion_factor": "alf.conversion_factor",
+            "xd_su_per_hour": "alf.xd_su_per_hour",
+            "long_name": "alf.long_name",
+            "short_name": "alf.short_name",
+            "order_id": "alf.order_id"
+        },
+        "joins": [
+            {
+                "name": "allocation",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "alf"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "account",
+                "alias": "af",
+                "on": "af.origin_id = alf.account_id AND af.federation_blade_id = ${blade_id}"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "request",
+                "alias": "reqf",
+                "on": "reqf.origin_id = alf.request_id AND reqf.account_id = af.id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "person",
+                "alias": "opif",
+                "on": "opif.id = alf.principalinvestigator_person_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "pif",
+                "on": "pif.origin_id = alf.principalinvestigator_person_id AND pif.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE opif.organization_id = origin_id AND federation_blade_id=${blade_id})"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "orf",
+                "on": "orf.id = alf.resource_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "organization",
+                "alias": "oof",
+                "on": "oof.id = orf.organization_id AND alf.resource_id = orf.id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "rf",
+                "on": "rf.origin_id = alf.resource_id AND rf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE oof.id = origin_id AND federation_blade_id=${blade_id})"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

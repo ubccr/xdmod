@@ -15,9 +15,11 @@ then
     rpm -qa | grep ^xdmod | xargs yum -y remove
     rm -rf /etc/xdmod
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
-    yum -y remove java-1.7.0-openjdk java-1.7.0-openjdk-devel
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
+    mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
+    FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do
         xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
@@ -34,5 +36,9 @@ if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
+    # Delete this once it is added to the docker build by default
+    mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
+    FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
 fi

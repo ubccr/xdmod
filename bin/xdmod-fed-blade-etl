@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Figure out how to use the xdmod paths using the php linker
+# turn these into sub commands maybe with something like:
+# https://github.com/basecamp/sub
+# or https://github.com/jeffreyroberts/sub for sub sub commands
+#
+etlSource="__XDMOD_ETC_PATH__"
+etlDest="__XDMOD_ETC_PATH__"
+
+usage() {
+    echo "Usage: $0 -b <string> [-s <string>] [-f] [-q]" 1>&2;
+    echo "-b Blades blade1.fqdn[,blade2.fqdn]"
+    echo "-e etl input (default: $etlSource)" 1>&2;
+    echo "-d etl output (default: $etlDest)" 1>&2;
+    echo "-q quiet" 1>&2;
+    exit 1;
+}
+
+quiet=false;
+
+log() {
+    if [ $quiet != "true" ] ; then
+        echo -e $1
+    fi
+}
+
+
+while getopts "b:e:d:q" o; do
+    case "${o}" in
+        b)
+            blade=${OPTARG}
+            ;;
+        e)
+            etlSource=${OPTARG}
+            ;;
+        d)
+            etlDest=${OPTARG}
+            ;;
+        q)
+            quiet=true
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${blade}" ] ; then
+    usage
+fi
+
+oldIFS=$IFS
+IFS=','
+for thisBlade in $blade ; do
+    thisBlade=$(echo ${thisBlade} | sed 's/[^0-9,a-z,A-Z$_]/-/g')
+    etlTemplate=$(< ${etlSource}/etl/etl_templates.d/etl.d/federation.json)
+
+    etlReplaced=$(printf "${etlTemplate}" | sed -e "s/\${blade}/${thisBlade}/g")
+
+    $(printf "${etlReplaced}" > ${etlDest}/etl/etl.d/fed-${thisBlade}.json)
+    # this should not be hard codeded and should be able to use any etl_overseer
+    # also add the ability to pass debugging flag
+    __XDMOD_SHARE_PATH__/tools/etl/etl_overseer.php -c /etc/xdmod/etl/etl.json -p fed.${thisBlade}.bootstrap
+done
+IFS=$oldIFS

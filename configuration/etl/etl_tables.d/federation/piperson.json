@@ -1,0 +1,32 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/piperson.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "person_id": "pf.id",
+            "organization_id": "pf.organization_id",
+            "long_name": "pf.long_name",
+            "short_name": "pf.short_name",
+            "order_id": "pif.order_id"
+        },
+        "joins": [
+            {
+                "name": "piperson",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "pif"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "pf",
+                "on": "pf.origin_id = pif.person_id AND pf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE pif.organization_id = origin_id AND federation_blade_id = ${blade_id})"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

@@ -403,7 +403,6 @@ class MySQLHelper
      * @param int $port MySQL server port number.
      * @param string $username MySQL username.
      * @param string $password MySQL password.
-     * @param string $dbName Database name.
      * @param string $localHost Host that the user will connect from.
      * @param string $dbUsername User granting privileges to.
      * @param string $dbPassword User password.
@@ -413,20 +412,23 @@ class MySQLHelper
         $port,
         $username,
         $password,
-        $dbName,
         $localHost,
         $dbUsername,
         $dbPassword
     ) {
-        $stmt = "GRANT ALL ON $dbName.* TO '$dbUsername'@'$localHost'"
-            . " IDENTIFIED BY '$dbPassword'";
 
+        $stmt = "GRANT TRIGGER, DROP, INDEX, CREATE, INSERT,"
+            . " SELECT, DELETE, UPDATE, CREATE VIEW, SHOW VIEW,"
+            . " ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES,"
+            . " LOCK TABLES"
+            . " ON *.* TO '$dbUsername'@'$localHost'"
+            . " IDENTIFIED BY '$dbPassword';FLUSH PRIVILEGES;";
         static::staticExecuteStatement(
             $host,
             $port,
             $username,
             $password,
-            $dbName,
+            '',
             $stmt
         );
     }

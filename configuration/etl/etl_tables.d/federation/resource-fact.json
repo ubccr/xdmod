@@ -1,0 +1,44 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/resource-fact.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "organization_id": "dof.id",
+            "name": "CONCAT (oof.abbrev, '-' , orf.code)",
+            "code": "orf.code",
+            "description": "orf.description",
+            "start_date": "orf.start_date",
+            "start_date_ts": "orf.start_date_ts",
+            "end_date": "orf.end_date",
+            "end_date_ts": "orf.end_date_ts",
+            "shared_jobs": "orf.shared_jobs",
+            "timezone": "orf.timezone",
+            "origin_id": "orf.id"
+        },
+        "joins": [
+            {
+                "name": "resourcefact",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "orf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "organization",
+                "alias": "oof",
+                "on": "oof.id = orf.organization_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "organization",
+                "alias": "dof",
+                "on": "dof.origin_id = oof.id AND dof.federation_blade_id = ${blade_id}"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

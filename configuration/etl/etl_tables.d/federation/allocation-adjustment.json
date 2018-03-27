@@ -1,0 +1,50 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/allocation-adjustment.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "allocation_resource_id": "darf.id",
+            "site_resource_id": "dsrf.id",
+            "conversion_factor": "oaaf.conversion_factor",
+            "start_date": "oaaf.start_date",
+            "end_date": "oaaf.end_date"
+        },
+        "joins": [
+            {
+                "name": "allocationadjustment",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "oaaf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "oarf",
+                "on": "oarf.id = oaaf.allocation_resource_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "osrf",
+                "on": "osrf.id = oaaf.site_resource_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "darf",
+                "on": "darf.origin_id = oarf.id AND oarf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE federation_blade_id = ${blade_id} AND origin_id = oarf.organization_id)"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "dsrf",
+                "on": "dsrf.origin_id = osrf.id AND osrf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE federation_blade_id = ${blade_id} AND origin_id = osrf.organization_id)"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

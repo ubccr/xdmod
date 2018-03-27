@@ -1,0 +1,37 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/gateway-person.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "person_id": "dpf.id",
+            "long_name": "ogpf.long_name",
+            "short_name": "ogpf.short_name",
+            "order_id": "ogpf.order_id"
+        },
+        "joins": [
+            {
+                "name": "gatewayperson",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ogpf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "person",
+                "alias": "opf",
+                "on": "opf.id = ogpf.person_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "person",
+                "alias": "dpf",
+                "on": "dpf.origin_id = ogpf.person_id AND dpf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE opf.organization_id = origin_id AND federation_blade_id = ${blade_id})"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

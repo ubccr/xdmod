@@ -1,0 +1,48 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/xdmod/allocation-on-resource.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "allocation_id": "daf.id",
+            "resource_id": "drf.id",
+            "allocation_state_id": "oaorf.allocation_state_id"
+        },
+        "joins": [
+            {
+                "name": "allocationonresource",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "oaorf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "allocation",
+                "alias": "oaf",
+                "on": "oaf.id = oaorf.allocation_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "orf",
+                "on": "orf.id = oaorf.resource_id"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "drf",
+                "on": "drf.origin_id = orf.id AND drf.organization_id = (SELECT id FROM ${DESTINATION_SCHEMA}.organization WHERE federation_blade_id = ${blade_id} AND origin_id = orf.organization_id)"
+            },
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "allocation",
+                "alias": "daf",
+                "on": "daf.origin_id = oaorf.allocation_id AND oaorf.resource_id = drf.id"
+            }
+        ],
+        "macros": [
+            {
+                "$ref": "etl_macros.d/federation/federation.json#/getBladeId"
+            }
+        ]
+    }
+}

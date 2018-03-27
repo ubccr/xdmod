@@ -8,6 +8,7 @@
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
+                "extra": "auto_increment",
                 "comment": "The id of the record."
             },
             {
@@ -94,6 +95,17 @@
                 "nullable": true
             },
             {
+                "name": "federation_blade_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "origin_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
                 "name": "order_id",
                 "type": "int(11)",
                 "nullable": true
@@ -152,6 +164,15 @@
                 "name": "nsf_org_code_UNIQUE",
                 "columns": [
                     "nsf_org_code"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "origin_id",
+                    "federation_blade_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true
