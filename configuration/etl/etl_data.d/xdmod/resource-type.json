@@ -1,4 +1,15 @@
 [
     ["id", "abbrev", "description"],
-    [0, "UNK", "Unknown"]
+    [0, "UNK", "Unknown"],
+    [1, "HPC", "High-performance computing"],
+    [2, "HTC", "High-throughput computing"],
+    [3, "DIC", "Data-intensive computing"],
+    [4, "Grid", "Grid of resources"],
+    [5, "Cloud", "Cloud resource"],
+    [6, "Vis", "Visualization system"],
+    [7, "VM", "Virtual Machine system"],
+    [8, "Tape", "Tape storage resource"],
+    [9, "Disk", "Disk storage resource"],
+    [10, "StGrid", "Storage grid"],
+    [11, "US", "User Support"]
 ]
