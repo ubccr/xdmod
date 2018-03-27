@@ -111,13 +111,13 @@
                 "name": "conversion_factor",
                 "type": "decimal(10,4)",
                 "nullable": false,
-                "default": "1.0000"
+                "default": 1.0000
             },
             {
                 "name": "xd_su_per_hour",
                 "type": "decimal(15,2)",
                 "nullable": false,
-                "default": "0.00"
+                "default": 0.00
             },
             {
                 "name": "long_name",

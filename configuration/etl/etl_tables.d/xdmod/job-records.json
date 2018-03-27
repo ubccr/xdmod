@@ -163,14 +163,14 @@
                 "name": "local_charge_su",
                 "type": "decimal(18,3)",
                 "nullable": false,
-                "default": "0.000",
+                "default": 0.000,
                 "comment": "Local resource SUs charged"
             },
             {
                 "name": "adjusted_charge_su",
                 "type": "decimal(18,3)",
                 "nullable": false,
-                "default": "0.000",
+                "default": 0.000,
                 "comment": "Local resource SUs charged after SP adjustments"
             },
             {
