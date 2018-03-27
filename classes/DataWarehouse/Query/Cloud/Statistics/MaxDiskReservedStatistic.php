@@ -12,7 +12,7 @@ class MaxDiskReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.disk_gb),0)',
+            'COALESCE(MAX(jf.disk_gb),0)',
             'max_disk_gb',
             'Maximum Disk Space Reserved',
             'Disk Space in GBs',

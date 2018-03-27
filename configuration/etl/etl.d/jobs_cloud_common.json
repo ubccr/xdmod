@@ -102,6 +102,18 @@
                     "schema": "modw"
                 }
             }
+        },
+        {
+            "name": "memorybuckets",
+            "definition_file": "cloud_common/memory_buckets.json",
+            "description": "processorbuckets + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "processorbuckets data",
+                    "path": "cloud_common/memory_buckets.json"
+                }
+            }
         }
     ]
 }

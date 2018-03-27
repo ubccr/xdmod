@@ -11,8 +11,10 @@ class WeightedMemoryWallStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
+        $vm_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'num_vms_ended' : 'num_vms_running';
+        
         parent::__construct(
-            'COALESCE(SUM(jf.memory_mb * jf.wallduration) / SUM(jf.memory_mb),0)',
+            'COALESCE(SUM(jf.memory_mb * (jf.wallduration/3600.0)/sum(jf.' . $vm_count_formula . ')) / SUM(jf.memory_mb),0)',
             'weighted_memory_mb',
             'Weighted Amount of Memory Reserved',
             'Memory in MBs',
