@@ -557,13 +557,29 @@ class UserAdminTest extends BaseUserAdminTest
         $expectedContentType = $expectedSuccess ? 'application/xls' : 'text/html; charset=UTF-8';
         $this->validateResponse($response, 200, $expectedContentType);
 
+
         $actual = array();
         if (true === $expectedSuccess) {
+            /* If we expected the request to succeed then the returned data should
+             * be 'csv', process accordingly to ensure we're comparing apples to
+             * apples.
+             */
             $actualLines = explode("\n", $response[0]);
-            foreach($actualLines as $line) {
-                $actual[] = str_getcsv($line);
+            for($i = 0; $i < count($actualLines); $i++) {
+                // skip the first line as it's a header
+                if ($i === 0) {
+                    continue;
+                }
+
+                $row = str_getcsv($actualLines[$i]);
+
+                // Make sure to skip empty lines
+                if (!empty($row) && $row[0] !== null) {
+                    $actual[] = $row;
+                }
             }
         } else {
+            // we expect the incoming data to be json formatted.
             $actualLines = json_decode($response[0], true);
             foreach($actualLines as $key => $value) {
                 $actual[] = array($key, $value);
@@ -594,47 +610,65 @@ class UserAdminTest extends BaseUserAdminTest
                             $index = array_search($key, $data);
                             $ignoredColumns[$key] = $index;
                         }
+                    } else {
+                        if (!empty($data) && $data[0] !== null) {
+                            $expected[] = $data;
+                        }
                     }
-                    $rows++;
                     $num = count($data);
                     if ($num > $length) {
                         $length = $num;
                     }
-                    $expected[] = $data;
+                    $rows++;
                 }
                 fclose($handle);
             }
 
+            $expectedRows = count($expected);
             $actualRows = count($actual);
 
             // check that the number of rows are the same
             $this->assertEquals(
-                $rows,
+                $expectedRows,
                 $actualRows,
                 sprintf(
-                    "Expected # of Lines: [%d] Received: [%d]",
-                    $rows,
-                    $actualRows
+                    "Expected # of Lines: [%d] [%s] Received: [%d] [%s]",
+                    $expectedRows,
+                    json_encode($expected),
+                    $actualRows,
+                    json_encode($actual)
                 )
             );
 
-            // Now we can get down to the business of comparing...
-            for ($i = 0; $i < $rows; $i++) {
-                if (isset($actual[$i]) && isset($expected[$i])) {
-                    $actualLine = $actual[$i];
-                    $expectedLine = $expected[$i];
-                    for ($col = 0; $col < $length; $col++) {
-                        // We only do a comparison if we're not ignoring this
-                        // column *and* we have column values in both lines.
-                        if (!in_array($col, $ignoredColumns) &&
-                            isset($actualLine[$col]) &&
-                            isset($expectedLine[$col])) {
-                            $actualCol = $actualLine[$col];
-                            $expectedCol = $expectedLine[$col];
-                            $this->assertEquals($expectedCol, $actualCol, "Column: $col was different. ". json_encode($ignoredColumns));
+            /**
+             * Do to the structure of the returned data, finding out whether or
+             * not a row that was returned was expected is a little convoluted.
+             * - We first iterate over all of the returned rows
+             * - Then, using the current returned row we search through the
+             *   expected rows
+             * - Each row is defined as an associative array.
+             * - Rows match iff every key ( that is not an ignored column )
+             *   and its associated value exactly match an expected rows
+             *   keys / values
+             */
+            foreach($actual as $actualRow) {
+                $exists = $this->entryExists(
+                    $expected,
+                    function ($key, $expectedRow) use ($actualRow, $ignoredColumns) {
+                        $found = true;
+                        foreach($actualRow as $actualKey => $actualValue) {
+                            if (!in_array($actualKey, array_values($ignoredColumns))) {
+                                if ($expectedRow[$actualKey] !== $actualValue) {
+                                    $found = false;
+                                    break;
+                                }
+                            }
                         }
+                        return $found;
                     }
-                }
+                );
+
+                $this->assertTrue($exists, "Unable to find: " . json_encode($actualRow));
             }
         } else {
             // If this test isn't expected to succeed then it is assumed the output
