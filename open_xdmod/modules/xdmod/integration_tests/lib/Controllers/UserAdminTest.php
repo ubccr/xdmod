@@ -487,6 +487,48 @@ class UserAdminTest extends BaseUserAdminTest
     }
 
     /**
+     * @dataProvider provideGetUserVisitsIncrements
+     *
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testGetUserVisitsIncrements(array $options)
+    {
+        $user = $options['user'];
+        $difference = $options['difference'];
+
+        $before = $this->getUserVisits($options);
+
+        $this->helper->authenticate($user);
+
+        $this->helper->logout();
+
+        $after = $this->getUserVisits($options);
+
+        $this->assertTrue(
+            $after === $before + $difference,
+            sprintf(
+                "Before: [%d] After: [%d] Expected Difference [%d] Actual Difference [%d]",
+                $before,
+                $after,
+                $difference,
+                $after - $before
+            )
+        );
+    }
+
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
+    public function provideGetUserVisitsIncrements()
+    {
+        return JSON::loadFile(
+            $this->getTestFiles()->getFile('user_admin', 'get_user_visits_increment', 'input')
+        );
+    }
+
+    /**
      * @dataProvider provideGetUserVisits
      *
      * @param array $options
@@ -534,15 +576,17 @@ class UserAdminTest extends BaseUserAdminTest
         $rows = 0;
         $length = 1;
         $expected = array();
-        $ignoredColumns = array('visit_frequency' => null);
+        $ignoredColumns = array('visit_frequency' => null, 'timeframe' => null) ;
 
         if (true === $expectedSuccess) {
-            // We need a bit of meta-data from the expected file. Read through the
-            // expected file and retrieve:
-            //   - the column index of any columns that are to be ignored
-            //   - the number of rows we expect.
-            //   - the largest number of columns seen for a line
-            //   - the expected row itself to be saved for later comparison.
+            /**
+             * We need a bit of meta-data from the expected file. Read through the
+             * expected file and retrieve:
+             *   - the column index of any columns that are to be ignored
+             *   - the number of rows we expect.
+             *   - the largest number of columns seen for a line
+             *   - the expected row itself to be saved for later comparison.
+             */
             if (($handle = fopen($expectedFileName, 'r')) !== false) {
                 while (($data = fgetcsv($handle))) {
                     if ($rows === 0) {
