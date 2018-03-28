@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "etl_tables.d/xdmod/allocation-on-resource.json#/table_definition"
+        "$ref": "etl_tables.d/jobs/xdw/allocation-on-resource.json#/table_definition"
     },
     "source_query": {
         "records": {

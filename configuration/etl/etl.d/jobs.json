@@ -1,0 +1,46 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        },
+        "jobs-xdw.bootstrap": {
+            "class": "StructuredFileIngestor",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "enabled": true
+        },
+        "jobs-xdw.aggregate": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Job Record/Task database",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
+                    "schema": "modw_aggregates",
+                    "create_schema_if_not_exists": true
+                }
+            },
+            "enabled": true
+        }
+    },
+
+    "jobs-xdw.bootstrap": {
+        "$ref": "etl_pipelines.d/jobs-xdw.json#/bootstrap"
+    },
+    "jobs-xdw.aggregate": {
+        "$ref": "etl_pipelines.d/jobs-xdw.json#/aggregate"
+    }
+}

@@ -17,13 +17,7 @@
                 }
             }
         },
-        "hpcdb-modw.bootstrap": {
-            "class": "StructuredFileIngestor",
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions",
-            "enabled": true
-        },
-        "hpcdb-modw.ingest": {
+        "hpcdb-xdw.ingest": {
             "class": "DatabaseIngestor",
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
@@ -31,100 +25,97 @@
         }
     },
 
-    "#": "New job ingestion from mod_hpcdb to modw",
-    "hpcdb-modw.bootstrap": {
-        "$ref": "etl_pipelines.d/jobs-xdw.json#/bootstrap"
-    },
-    "hpcdb-modw.ingest": [{
+    "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
+    "hpcdb-xdw.ingest": [{
         "name": "account",
-        "definition_file": "hpcdb-modw/account.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/account.json",
         "description": "Account records"
     }, {
         "name": "allocation-breakdown",
-        "definition_file": "hpcdb-modw/allocation-breakdown.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/allocation-breakdown.json",
         "description": "allocation breakdown records"
     }, {
         "name": "allocation",
-        "definition_file": "hpcdb-modw/allocation.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/allocation.json",
         "description": "allocation records"
     }, {
         "name": "resource",
-        "definition_file": "hpcdb-modw/resource-fact.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/resource-fact.json",
         "description": "resource records"
     }, {
         "name": "allocation-on-resource",
-        "definition_file": "hpcdb-modw/allocation-on-resource.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/allocation-on-resource.json",
         "description": "allocations on resource records"
     }, {
         "name": "field-of-science",
-        "definition_file": "hpcdb-modw/field-of-science.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/field-of-science.json",
         "description": "field of science records"
     }, {
         "name": "field-of-science-hierarchy",
-        "definition_file": "hpcdb-modw/field-of-science-hierarchy.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/field-of-science-hierarchy.json",
         "description": "field of science hierarchy records"
     }, {
         "name": "organization",
-        "definition_file": "hpcdb-modw/organization.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/organization.json",
         "description": "organization records",
         "#": "disable to allow order_id to be set",
         "optimize_query": false
     }, {
         "name": "node-count",
-        "definition_file": "hpcdb-modw/node-count.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/node-count.json",
         "description": "node count records"
     }, {
         "name": "pi-person",
-        "definition_file": "hpcdb-modw/piperson.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/piperson.json",
         "description": "PI Person records",
         "#": "disable to allow order_id to be set",
         "optimize_query": false
     }, {
         "name": "person",
-        "definition_file": "hpcdb-modw/person.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/person.json",
         "description": "person records",
         "#": "disable to allow order_id to be set",
         "optimize_query": false
     }, {
         "name": "people-under-pi",
-        "definition_file": "hpcdb-modw/people-under-pi.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/people-under-pi.json",
         "description": "people under pi records"
     }, {
         "name": "principal-investigator",
-        "definition_file": "hpcdb-modw/principal-investigator.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/principal-investigator.json",
         "description": "principal investigator records"
     }, {
         "name": "queue",
-        "definition_file": "hpcdb-modw/queue.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/queue.json",
         "description": "queue records"
     }, {
         "name": "request",
-        "definition_file": "hpcdb-modw/request.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/request.json",
         "description": "request records"
     }, {
         "name": "resource-type",
-        "definition_file": "hpcdb-modw/resource-type.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/resource-type.json",
         "description": "resource type records"
     }, {
         "name": "resource-spec",
-        "definition_file": "hpcdb-modw/resource-spec.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/resource-spec.json",
         "description": "resource spec records"
     }, {
         "name": "resource-allocated",
-        "definition_file": "hpcdb-modw/resource-allocated.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/resource-allocated.json",
         "description": "resource allocated records"
     }, {
         "name": "service-provider",
-        "definition_file": "hpcdb-modw/service-provider.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/service-provider.json",
         "description": "service provider records"
     }, {
         "name": "system-account",
-        "definition_file": "hpcdb-modw/system-account.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/system-account.json",
         "description": "system account records"
     }, {
         "name": "hosts",
         "class": "HpcdbHostsIngestor",
-        "definition_file": "hpcdb-modw/host.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/host.json",
         "description": "hosts records",
         "#": "there are currently duplications allowed here for ease of",
         "#": "generating the query this might be cleaned up later.",
@@ -133,7 +124,7 @@
         ]
     }, {
         "name": "job-hosts",
-        "definition_file": "hpcdb-modw/jobhosts.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/jobhosts.json",
         "description": "job hosts records"
     }, {
         "name": "jobhosts-post-truncate",
@@ -142,11 +133,11 @@
         "description": "Post-updates for HPCDB job hosts",
         "class": "ExecuteSql",
         "sql_file_list": [
-            "hpcdb-modw/jobhosts-post-ingest-truncate.sql"
+            "jobs/jobhosts-post-ingest-truncate.sql"
         ]
     }, {
-        "name": "job-record",
-        "definition_file": "hpcdb-modw/job_record_hpc.json",
+        "name": "job-records-job-tasks",
+        "definition_file": "actions/jobs/xdw/hpcdb/job-records-job-tasks.json",
         "description": "HPC job records from the hpcdb",
         "#": "job records will be duplicated for each job array",
         "#": "this hides those warnings. This will be cleaned up later.",
@@ -160,39 +151,12 @@
         "description": "Post-updates for HPCDB job records",
         "class": "ExecuteSql",
         "sql_file_list": [
-            "hpcdb-modw/job_record_hpc_post_ingest_updates.sql"
+            "jobs/job-record-hpc-post-ingest.sql"
         ]
     }, {
         "name": "min-max-date",
-        "definition_file": "hpcdb-modw/min-max-date.json",
+        "definition_file": "actions/jobs/xdw/hpcdb/min-max-date.json",
         "description": "Job Record min and max job dates",
         "truncate_destination": true
-    }],
-    "hpcdb-modw.aggregate": [{
-        "name": "aggregate",
-        "endpoints": {
-            "source": {
-                "type": "mysql",
-                "name": "Job Record/Task database",
-                "config": "datawarehouse",
-                "schema": "modw"
-            },
-            "destination": {
-                "type": "mysql",
-                "name": "Aggregates Database",
-                "config": "datawarehouse",
-                "schema": "modw_aggregates",
-                "create_schema_if_not_exists": true
-            }
-        },
-        "namespace": "ETL\\Aggregator",
-        "options_class": "AggregatorOptions",
-        "class": "SimpleAggregator",
-        "description": "Aggregate HPC job records",
-        "definition_file": "hpcdb-modw/jobfact_hpc_aggregation.json",
-        "table_prefix": "jobfact_by_",
-        "aggregation_units": [
-            "day", "month", "quarter", "year"
-        ]
     }]
 }

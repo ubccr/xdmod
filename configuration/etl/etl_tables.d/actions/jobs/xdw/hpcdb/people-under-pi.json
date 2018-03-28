@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "etl_tables.d/xdmod/people-under-pi.json#/table_definition"
+        "$ref": "etl_tables.d/jobs/xdw/people-under-pi.json#/table_definition"
     },
     "source_query": {
         "records": {

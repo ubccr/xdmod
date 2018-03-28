@@ -1,7 +1,7 @@
 {
     "#": "Aggregation of HPC job records and tasks ingested from the XDCDB",
     "table_definition": {
-        "$ref": "etl_tables.d/xdmod/jobfact_by_.json#/table_definition"
+        "$ref": "etl_tables.d/jobs/xdw/jobfact_by_.json#/table_definition"
     },
 
     "#": "The aggregation period query determines which periods need to be aggregated based on added or modified",

@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "etl_tables.d/xdmod/request.json#/table_definition"
+        "$ref": "etl_tables.d/jobs/xdw/request.json#/table_definition"
     },
     "source_query": {
         "records": {

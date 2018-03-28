@@ -18,12 +18,13 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         parent::execute();
 
         $this->updateTimePeriods();
-        $this->runEtlPipeline('hpcdb-modw.bootstrap');
+        $this->runEtlPipeline('jobs-xdw.bootstrap');
         $this->logger->notice(
             "Data is going to be migrated away from modw.jobfact into\n" .
-            "modw.job_records and modw.jobtasks, this might take a while.\n"
+            "modw.job_records and modw.jobtasks, this might take a while.\n" .
+            "approx 30k records / minute \n"
         );
-        $this->runEtlPipeline('hpcdb-modw.ingest');
+        $this->runEtlPipeline('hpcdb-xdw.ingest');
         $this->validateJobTasks();
         $this->logger->notice('Rebuilding filter lists');
         try {
@@ -55,7 +56,8 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         if($results[0]['facts'] === $results[0]['tasks']){
             $this->logger->notice(
                 "Migration Complete.\n\tThe modw.jobfact table is no longer needed " .
-                "it can now be deleted.\n"
+                "it can now be deleted.\n" .
+                "\t It is suggested you run a full reaggregation of your data.\n"
             );
         }
         else {
