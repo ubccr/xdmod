@@ -20,7 +20,8 @@
             "base_allocation": 0,
             "remaining_allocation": 0,
             "end_date": "'0000-00-00'",
-            "end_date_ts": 0
+            "end_date_ts": 0,
+            "allocation_origin_id": "alf.allocation_id"
         },
         "joins": [
             {

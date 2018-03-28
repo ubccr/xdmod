@@ -12,6 +12,11 @@
                 "comment": "The id of the request record."
             },
             {
+                "name": "request_origin_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
                 "name": "request_type_id",
                 "type": "int(11)",
                 "nullable": false,

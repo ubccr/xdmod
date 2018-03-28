@@ -16,6 +16,12 @@
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "The resource this queue belongs to."
+            },
+            {
+                "name": "queue_origin_id",
+                "type": "char(50)",
+                "nullable": true,
+                "default": "NULL"
             }
         ],
         "indexes": [

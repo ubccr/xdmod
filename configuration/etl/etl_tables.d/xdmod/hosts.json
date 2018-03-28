@@ -10,6 +10,11 @@
                 "extra": "auto_increment"
             },
             {
+                "name": "host_origin_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
                 "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false

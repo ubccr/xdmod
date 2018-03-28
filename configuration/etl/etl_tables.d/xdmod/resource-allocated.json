@@ -27,7 +27,7 @@
                 "name": "percent",
                 "type": "int(11)",
                 "nullable": false,
-                "default": "100"
+                "default": 100
             }
         ],
         "indexes": [

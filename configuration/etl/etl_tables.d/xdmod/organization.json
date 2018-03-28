@@ -8,6 +8,7 @@
                 "name": "id",
                 "type": "int(11)",
                 "nullable": false,
+                "extra": "auto_increment",
                 "comment": "The id of the record."
             },
             {
@@ -50,7 +51,7 @@
                 "name": "is_reconciled",
                 "type": "tinyint(1)",
                 "nullable": true,
-                "default": "0",
+                "default": 0,
                 "comment": "Whether this record is reconciled."
             },
             {
@@ -94,6 +95,17 @@
                 "nullable": true
             },
             {
+                "name": "federation_blade_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "organization_origin_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
                 "name": "order_id",
                 "type": "int(11)",
                 "nullable": true
@@ -133,7 +145,7 @@
                 "is_unique": false
             },
             {
-                "name": "id",
+                "name": "PRIMARY",
                 "columns": [
                     "id"
                 ],
@@ -152,6 +164,15 @@
                 "name": "nsf_org_code_UNIQUE",
                 "columns": [
                     "nsf_org_code"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "uniq",
+                "columns": [
+                    "organization_origin_id",
+                    "federation_blade_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true

@@ -9,7 +9,8 @@
             "resource_id": "resource_id",
             "username": "username",
             "ts": "FROM_UNIXTIME(ts)",
-            "uid": "uid"
+            "uid": "uid",
+            "system_account_origin_id": "system_account_id"
         },
         "joins": [
             {

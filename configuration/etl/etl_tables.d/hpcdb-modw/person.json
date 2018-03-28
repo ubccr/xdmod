@@ -16,7 +16,8 @@
             "long_name": "IF(pf.first_name IS NULL OR pf.first_name = '', pf.last_name, CONCAT(pf.last_name, ', ', pf.first_name, COALESCE( CONCAT(' ', pf.middle_name), '')))",
             "short_name": "IF(pf.first_name IS NULL OR pf.first_name = '', pf.last_name, CONCAT(pf.last_name, ', ', SUBSTR(pf.first_name, 1, 1)))",
             "order_id": "NULL",
-            "nsfstatuscode_id": 0
+            "nsfstatuscode_id": 0,
+            "person_origin_id": "pf.person_id"
         },
         "joins": [
             {

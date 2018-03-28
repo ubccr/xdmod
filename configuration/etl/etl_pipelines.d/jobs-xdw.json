@@ -1,0 +1,129 @@
+{
+    "#": "This is used by multiple pipelines, specifically xdmod datawarehouse",
+    "#": "and federation blades to initialize tables and their default data",
+    "bootstrap": [
+        {
+            "name": "table-create",
+            "description": "Setup tables",
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "xdmod/account.json",
+                "xdmod/allocation-breakdown.json",
+                "xdmod/allocation-on-resource.json",
+                "xdmod/allocation.json",
+                "xdmod/error-descriptions.json",
+                "xdmod/federation-blades.json",
+                "xdmod/field-of-science-hierarchy.json",
+                "xdmod/field-of-science.json",
+                "xdmod/hosts.json",
+                "xdmod/job-records.json",
+                "xdmod/job-tasks.json",
+                "xdmod/job-times.json",
+                "xdmod/jobhosts.json",
+                "xdmod/min-max-date.json",
+                "xdmod/node-count.json",
+                "xdmod/organization.json",
+                "xdmod/people-under-pi.json",
+                "xdmod/person.json",
+                "xdmod/piperson.json",
+                "xdmod/principal-investigator.json",
+                "xdmod/processor-buckets.json",
+                "xdmod/queue.json",
+                "xdmod/request.json",
+                "xdmod/resource-allocated.json",
+                "xdmod/resource-fact.json",
+                "xdmod/resource-specs.json",
+                "xdmod/resource-type.json",
+                "xdmod/service-provider.json",
+                "xdmod/staging-jobhosts.json",
+                "xdmod/system-account.json"
+            ]
+        },
+        {
+            "name": "jobtimes",
+            "definition_file": "xdmod/job-times.json",
+            "description": "job times + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "job times data",
+                    "path": "xdmod/job-times.json"
+                }
+            }
+        },
+        {
+            "name": "error-descriptions",
+            "definition_file": "xdmod/error-descriptions.json",
+            "description": "error descriptions + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "job times data",
+                    "path": "xdmod/error-descriptions.json"
+                }
+            }
+        },
+        {
+            "name": "processorbuckets",
+            "definition_file": "xdmod/processor-buckets.json",
+            "description": "processorbuckets + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "processorbuckets data",
+                    "path": "xdmod/processor-buckets.json"
+                }
+            }
+        },
+        {
+            "name": "account",
+            "definition_file": "xdmod/account.json",
+            "description": "account + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown account data data",
+                    "path": "xdmod/account.json"
+                }
+            }
+        },
+        {
+            "name": "person",
+            "definition_file": "xdmod/person.json",
+            "description": "person + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown person data data",
+                    "path": "xdmod/person.json"
+                }
+            }
+        },
+        {
+            "name": "pi-person",
+            "definition_file": "xdmod/piperson.json",
+            "description": "pi person + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown pi-person data data",
+                    "path": "xdmod/pi-person.json"
+                }
+            }
+        },
+        {
+            "name": "resource-type",
+            "definition_file": "xdmod/resource-type.json",
+            "description": "resource-type + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown resource type data data",
+                    "path": "xdmod/resource-type.json"
+                }
+            }
+        }
+    ]
+}
