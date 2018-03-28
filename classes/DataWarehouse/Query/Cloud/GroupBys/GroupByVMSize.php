@@ -1,6 +1,6 @@
 <?php
 
-namespace DataWarehouse\Query\Jobs\GroupBys;
+namespace DataWarehouse\Query\Cloud\GroupBys;
 
 /*
 * @author Rudra Chakraborty
@@ -9,7 +9,7 @@ namespace DataWarehouse\Query\Jobs\GroupBys;
 * Group By VM Size
 */
 
-class GroupByVMSize extends \DataWarehouse\Query\Jobs\GroupBy
+class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public function __construct()
     {
