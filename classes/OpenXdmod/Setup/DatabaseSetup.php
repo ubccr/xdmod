@@ -133,7 +133,7 @@ EOT
          *  ETLv2 database bootstrap start
          */
 
-        $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php -p hpcdb-modw.bootstrap';
+        $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php -p jobs-xdw.bootstrap';
         $pipes = array();
         $process = proc_open(
             $command,

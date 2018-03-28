@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "etl_tables.d/xdmod/piperson.json#/table_definition"
+        "$ref": "etl_tables.d/jobs/xdw/piperson.json#/table_definition"
     },
     "source_query": {
         "records": {

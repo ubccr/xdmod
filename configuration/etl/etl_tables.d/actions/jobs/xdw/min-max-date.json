@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "etl_tables.d/xdmod/min-max-date.json#/table_definition"
+        "$ref": "etl_tables.d/jobs/xdw/min-max-date.json#/table_definition"
     },
     "source_query": {
         "records": {
