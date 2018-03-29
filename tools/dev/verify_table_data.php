@@ -50,6 +50,8 @@ $scriptOptions = array(
     'num-missing-rows' => null,
     // Use a percent of experimental error when comparing these columns
     'pct-error-columns'    => array(),
+    // Show the columns that are different between source and destination rows
+    'show-row-differences' => null,
     // Source table schema
     'source-schema'    => null,
     // Truncate these columns before comparing
@@ -74,6 +76,7 @@ $options = array(
     'm:'  => 'map-column:',
     'n:'  => 'num-missing-rows:',
     'p:'  => 'pct-error-column:',
+    '5'   => 'show-row-differences',
     's:'  => 'source-schema:',
     't:'  => 'table:',
     '4:'  => 'truncate-column:',
@@ -146,6 +149,10 @@ foreach ($args as $arg => $value) {
                 $scriptOptions['pct-error-columns'],
                 ( is_array($value) ? $value : array($value) )
             );
+            break;
+
+        case 'show-row-differences':
+            $scriptOptions['show-row-differences'] = true;
             break;
 
         case 's':
@@ -520,6 +527,57 @@ ORDER BY ordinal_position ASC";
     return $retval;
 }  // getTableColumns()
 
+/** ------------------------------------------------------------------------------------------
+ * Query the information schema for table primary key.
+ * -------------------------------------------------------------------------------------------
+ */
+
+function getTablePrimaryKeyColumns($table, $schema)
+{
+    global $dbh, $logger;
+    $tableName = "`$schema`.`$table`";
+
+    $where = array(
+        "table_schema = :schema",
+        "table_name = :tablename",
+        "column_key = 'PRI'"
+    );
+
+    // If we need the order of the columns in the index, use the STATISTICS table.
+    $sql = "SELECT
+column_name as name
+FROM information_schema.columns
+" . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" ) . "
+ORDER BY ordinal_position ASC";
+
+    $params = array(
+        ":schema" => $schema,
+        ":tablename"  => $table
+    );
+
+    try {
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute($params);
+    } catch ( Exception $e ) {
+        $logger->err("Error retrieving column names for '$tableName': " . $e->getMessage());
+        exit();
+    }
+
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ( 0 == count($result) ) {
+        $logger->err("Table '$tableName' does not exist or does not have a primary key");
+        return false;
+    }
+
+    $retval = array();
+
+    foreach ( $result as $row) {
+        $retval[] = $row['name'];
+    }
+
+    return $retval;
+}  // getTablePrimaryKeyColumns()
+
 /* ------------------------------------------------------------------------------------------
  * Query the information schema for the number of table rows
  * -------------------------------------------------------------------------------------------
@@ -723,8 +781,87 @@ function compareTableData(
     if ( 0 != $numRows ) {
         $logger->warning(sprintf("Missing %d rows in %s.%s", $numRows, $destSchema, $destTable));
         while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
-            $logger->warning(sprintf("Missing row: %s", print_r($row, 1)));
+
+            // Remove columns that we have excluded
+
+            foreach ( $row as $k => $v ) {
+                if ( in_array($k, $scriptOptions['exclude-columns']) ) {
+                    unset($row[$k]);
+                }
+            }
+
+            if ( $scriptOptions['show-row-differences'] ) {
+
+                // Figure out what columns differ between the source and destination and display
+                // only those differences. Ignored columns are not displayed.
+
+                $keyColumns = getTablePrimaryKeyColumns($srcTable, $srcSchema);
+
+                $constraints = array();  // JOIN constraints
+                $where = array();        // WHERE clause with parameters
+                $parameters = array();   // Parameters for WHERE
+                $pkDisplay = array();    // Primary key for display
+
+                foreach ( $keyColumns as $col ) {
+                    $constraints[] = sprintf('src.%s = dest.%s', $col, $col);
+                    $where[] = sprintf('src.%s = :%s', $col, $col);
+                    $parameters[':' . $col] = $row[ $col ];
+                    $pkDisplay[] = sprintf('%s = %s', $col, $row[$col]);
+                }
+                $pkDisplay = implode(', ', $pkDisplay);
+
+                $sql = "
+                SELECT dest.*
+                FROM $srcTableName src
+                JOIN $destTableName dest ON (" . join("\nAND ", $constraints) . ")"
+                . ( 0 != count($where) ? "\nWHERE " . implode("\nAND ", $where) : "" );
+
+                $deltaStmt = $dbh->prepare($sql);
+                $deltaStmt->execute($parameters);
+
+                if ( 0 == $deltaStmt->rowCount() ) {
+                    $logger->warning(
+                        sprintf("Primary key does not exist in destination: (%s)", $pkDisplay)
+                    );
+                } else {
+                    $deltaRow = $deltaStmt->fetch(PDO::FETCH_ASSOC);
+
+                    // Remove rows that have been excluded
+
+                    foreach ( $deltaRow as $k => $v ) {
+                        if ( in_array($k, $scriptOptions['exclude-columns']) ) {
+                            unset($deltaRow[$k]);
+                        }
+                    }
+
+                    $srcValueDiff = array_diff_assoc($row, $deltaRow);
+                    $destValueDiff = array_diff_assoc($deltaRow, $row);
+
+                    // Calculate the proper padding for visual display
+
+                    $padding = array_reduce(
+                        array_keys($srcValueDiff),
+                        function ($carry, $col) use ($row) {
+                            return (strlen($col) > $carry ? strlen($col) : $carry);
+                        },
+                        0
+                    );
+
+                    $display = array_map(
+                        function ($col) use ($srcValueDiff, $destValueDiff, $padding) {
+                            return sprintf("%" . $padding . "s: '%s' != '%s'", $col, $srcValueDiff[$col], $destValueDiff[$col]);
+                        },
+                        array_keys($srcValueDiff)
+                    );
+                    $logger->warning(
+                        sprintf("Rows differ for primary key: (%s)\n%s", $pkDisplay, implode(PHP_EOL, $display))
+                    );
+                }
+            }
+
+            $logger->trace(sprintf("Missing row: %s", print_r($row, 1)));
         }
+
     } else {
         $logger->notice("Identical");
     }
@@ -784,6 +921,9 @@ Usage: {$argv[0]}
 
     -p, --pct=error-column <column>[,error>]
     Compute the percent error between the source and destination columns and ensure that it is less than <error> (default {$defaultPctError}). This is useful when comparing doubles or values that have been computed and may differ in decimal precision. See --truncate-column.
+
+    --show-row-differences
+    Show the columns that are different between source and destination rows with the same key. Ignored columns are not displayed.
 
     -s, --source-schema <source_schema>
     The schema for the source tables.
