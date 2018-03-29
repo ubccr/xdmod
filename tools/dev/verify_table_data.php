@@ -76,7 +76,7 @@ $options = array(
     'm:'  => 'map-column:',
     'n:'  => 'num-missing-rows:',
     'p:'  => 'pct-error-column:',
-    '4'   => 'show-row-differences',
+    '5'   => 'show-row-differences',
     's:'  => 'source-schema:',
     't:'  => 'table:',
     '4:'  => 'truncate-column:',
@@ -848,7 +848,7 @@ function compareTableData(
                     );
 
                     $display = array_map(
-                        function($col) use ($srcValueDiff, $destValueDiff, $padding) {
+                        function ($col) use ($srcValueDiff, $destValueDiff, $padding) {
                             return sprintf("%" . $padding . "s: '%s' != '%s'", $col, $srcValueDiff[$col], $destValueDiff[$col]);
                         },
                         array_keys($srcValueDiff)
@@ -912,6 +912,9 @@ Usage: {$argv[0]}
 
     --ignore-column-type
     Ignore the column types between tables, useful for comparing the effect of data type changes.
+
+    -m <src>=<dest>, --map-column <src>=<dest>
+    Map a column in the source table to a different column in the destination table. This is useful for testing columns that have been renamed.
 
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
