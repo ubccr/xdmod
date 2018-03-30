@@ -1,0 +1,34 @@
+{
+    "#": "Load unique hosts into the dimension table. Do not load unknown hosts as these are",
+    "#": "handled by a separate action",
+
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_common/host.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "hostname": "raw.hostname"
+        },
+
+        "joins": [
+            {
+                "name": "atmosphere_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+
+        "where": [
+            "hostname IS NOT NULL"
+        ],
+
+        "groupby": [
+            "resource_id",
+            "hostname"
+        ]
+    }
+}

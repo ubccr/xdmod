@@ -1,0 +1,51 @@
+{
+    "#": "Associate START events with instance root volume assets. Event logs do not explicitly",
+    "#": "specify the root volume for an instance and Euca does not provide a volume name so we",
+    "#": "look at START (id=2) events and use 'root-vol-' + instance name to associate the root volume.",
+
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_common/event_asset.json#/table_definition"
+        }
+    ],
+
+    "#": "Also bring in root volumes",
+
+    "source_query": {
+        "records": {
+            "resource_id": "staging.resource_id",
+            "event_id": "staging.event_id",
+            "asset_id": "a.asset_id"
+        },
+
+        "joins": [
+            {
+                "name": "atmosphere_staging_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "staging"
+            },
+            {
+                "name": "instance",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "i",
+                "on": "i.instance_id = staging.instance_id AND i.resource_id = staging.resource_id"
+            },
+            {
+                "name": "asset",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "a",
+                "on": "a.resource_id = staging.resource_id AND a.provider_identifier = CONCAT('root-vol-', i.provider_identifier)"
+            },
+            {
+                "name": "event_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "etype",
+                "on": "etype.event_type_id = staging.event_type_id"
+            }
+        ],
+
+        "where": [
+            "etype.event_type = 'START'"
+        ]
+    }
+}
