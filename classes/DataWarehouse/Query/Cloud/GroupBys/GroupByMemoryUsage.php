@@ -46,7 +46,7 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
         $this->_long_name_field_name = 'description';
         $this->_short_name_field_name = 'min_memory';
         $this->_order_id_field_name = 'min_memory';
-        $this->modw_schema = new Schema('modw_cloud');
+        $this->modw_schema = new Schema('modw');
         $this->bucket_table = new Table($this->modw_schema, 'memory_buckets', 'p');
     }
 
@@ -116,7 +116,7 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
                 $request,
-                            "select long_name as field_label from modw_cloud.memory_buckets where id in (_filter_) order by min_memory"
+                            "select long_name as field_label from modw.memory_buckets where id in (_filter_) order by min_memory"
             );
     }
 
