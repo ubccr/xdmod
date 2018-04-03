@@ -4,10 +4,10 @@
 
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_eucalyptus/raw_event.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_eucalyptus/raw_event.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud_eucalyptus/raw_instance_type.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_eucalyptus/raw_instance_type.json#/table_definition"
         }
     ],
 

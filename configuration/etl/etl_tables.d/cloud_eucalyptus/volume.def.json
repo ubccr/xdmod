@@ -1,7 +1,7 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_common/asset.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/asset.json#/table_definition"
         }
     ],
 

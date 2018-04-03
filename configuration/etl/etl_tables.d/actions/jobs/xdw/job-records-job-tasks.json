@@ -6,10 +6,10 @@
     "#": "more tasks.",
     "table_definition": [
         {
-            "$ref": "etl_tables.d/jobs/xdw/job-records.json#/table_definition"
+            "$ref": "${table_definition_dir}/jobs/xdw/job-records.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/jobs/xdw/job-tasks.json#/table_definition"
+            "$ref": "${table_definition_dir}/jobs/xdw/job-tasks.json#/table_definition"
         }
     ],
     "source_query": {

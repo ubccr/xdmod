@@ -5,7 +5,7 @@
 
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_common/event_asset.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/event_asset.json#/table_definition"
         }
     ],
 

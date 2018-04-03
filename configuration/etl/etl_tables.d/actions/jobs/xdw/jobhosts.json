@@ -1,7 +1,7 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/jobs/xdw/jobhosts.json#/table_definition"
+            "$ref": "${table_definition_dir}/jobs/xdw/jobhosts.json#/table_definition"
         }
     ],
     "source_query": {

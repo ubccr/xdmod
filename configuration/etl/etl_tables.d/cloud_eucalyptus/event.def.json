@@ -1,10 +1,10 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_common/instance_data.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/instance_data.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud_common/event.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/event.json#/table_definition"
         }
     ],
 

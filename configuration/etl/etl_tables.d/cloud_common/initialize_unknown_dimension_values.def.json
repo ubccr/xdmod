@@ -15,25 +15,25 @@
 
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_common/account.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/account.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud_common/avail_zone.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/avail_zone.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud_common/host.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/host.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud_common/image.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/image.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud_common/instance.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/instance.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud_common/instance_type.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/instance_type.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/cloud_common/region.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/region.json#/table_definition"
         }
     ],
 

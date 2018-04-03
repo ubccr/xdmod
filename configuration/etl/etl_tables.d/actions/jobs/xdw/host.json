@@ -1,10 +1,10 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/jobs/xdw/hosts.json#/table_definition"
+            "$ref": "${table_definition_dir}/jobs/xdw/hosts.json#/table_definition"
         },
         {
-            "$ref": "etl_tables.d/jobs/xdw/staging-jobhosts.json#/table_definition"
+            "$ref": "${table_definition_dir}/jobs/xdw/staging-jobhosts.json#/table_definition"
         }
     ],
     "source_query": {
