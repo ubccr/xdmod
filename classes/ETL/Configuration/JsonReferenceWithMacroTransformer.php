@@ -4,7 +4,7 @@
  * the `$ref` gets logically replaced with the thing that it points to. Support path macros
  * in the reference value.  For example,
  *
- * { "$ref": "${definition_file_dir}/jobs/job_records.json" }
+ * { "$ref": "${table_definition_dir}/jobs/job_records.json" }
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
  * @date 2017-04-11

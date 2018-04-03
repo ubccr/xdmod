@@ -99,10 +99,10 @@ abstract class aAction extends aEtlObject
 
             // Set up the path to the definition file for this action
 
-            if ( isset($this->options->paths->definition_file_dir) ) {
+            if ( isset($this->options->paths->action_definition_dir) ) {
                 $this->definitionFile = \xd_utilities\qualify_path(
                     $this->options->definition_file,
-                    $this->options->paths->definition_file_dir
+                    $this->options->paths->action_definition_dir
                 );
             }
             $this->definitionFile = \xd_utilities\resolve_path($this->definitionFile);
