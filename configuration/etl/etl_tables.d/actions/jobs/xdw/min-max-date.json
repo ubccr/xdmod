@@ -1,0 +1,17 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/jobs/xdw/min-max-date.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "min_job_date": "FROM_UNIXTIME(LEAST(MIN(start_time_ts), MIN(end_time_ts), MIN(submit_time_ts)))",
+            "max_job_date": "FROM_UNIXTIME(GREATEST(MAX(start_time_ts), MAX(end_time_ts), MAX(submit_time_ts)))"
+        },
+        "joins": [
+            {
+                "name": "job_tasks",
+                "schema": "${DESTINATION_SCHEMA}"
+            }
+        ]
+    }
+}

@@ -50,6 +50,8 @@ $scriptOptions = array(
     'num-missing-rows' => null,
     // Use a percent of experimental error when comparing these columns
     'pct-error-columns'    => array(),
+    // Show the columns that are different between source and destination rows
+    'show-row-differences' => null,
     // Source table schema
     'source-schema'    => null,
     // Truncate these columns before comparing
@@ -71,8 +73,10 @@ $options = array(
     'h'   => 'help',
     '1'   => 'ignore-column-count',
     '2'   => 'ignore-column-type',
+    'm:'  => 'map-column:',
     'n:'  => 'num-missing-rows:',
     'p:'  => 'pct-error-column:',
+    '5'   => 'show-row-differences',
     's:'  => 'source-schema:',
     't:'  => 'table:',
     '4:'  => 'truncate-column:',
@@ -116,8 +120,25 @@ foreach ($args as $arg => $value) {
             $scriptOptions['ignore-column-type'] = true;
             break;
 
+        case 'm':
+        case 'map-column':
+            $value = ( is_array($value) ? $value : array($value) );
+            foreach ( $value as $option ) {
+                $parts = explode('=', $option);
+                if ( 2 == count($parts) ) {
+                    $scriptOptions['map-columns'][$parts[0]] = $parts[1];
+                } else {
+                    usage_and_exit("Mapped columns must be in the form 'source_col=dest_col'");
+                }
+            }
+            break;
+
         case 'n':
         case 'num-missing-rows':
+            $origValue = $value;
+            if ( false === ($value = filter_var($value, FILTER_VALIDATE_INT)) ) {
+                usage_and_exit("Invalid value for -n: '$origValue'");
+            }
             $scriptOptions['num-missing-rows'] = $value;
             break;
 
@@ -128,6 +149,10 @@ foreach ($args as $arg => $value) {
                 $scriptOptions['pct-error-columns'],
                 ( is_array($value) ? $value : array($value) )
             );
+            break;
+
+        case 'show-row-differences':
+            $scriptOptions['show-row-differences'] = true;
             break;
 
         case 's':
@@ -296,9 +321,8 @@ function compareTables($srcTable, $destTable)
 
     if ( $qualifiedSrcTable == $qualifiedDestTable ){
         $logger->warning(sprintf(
-            "Cannot compare a table to itself: %s.%s == %s.%s",
-            $qualifiedSrcTable,
-            $qualifiedDestTable
+            "Cannot compare a table to itself: %s",
+            $qualifiedSrcTable
         ));
         return false;
     }
@@ -326,35 +350,92 @@ function compareTables($srcTable, $destTable)
         return false;
     }
 
-    $missing = array_diff(array_keys($srcTableColumns), array_keys($destTableColumns));
-    if ( 0 != count($missing) ) {
-        $logger->err(sprintf("%s missing columns: %s", $qualifiedDestTable, implode(', ', $missing)));
+    // If we are not mapping any columns we can do a simple array_diff, but if we are mapping
+    // columns we need check if missing values in the list of columns to be mapped.
+
+    $missingDestColumns = array_diff(array_keys($srcTableColumns), array_keys($destTableColumns));
+
+    if ( 0 != count($scriptOptions['map-columns']) ) {
+
+        // Skip any invalid mapping specifications
+
+        foreach ( $scriptOptions['map-columns'] as $srcCol => $destCol ) {
+            if ( ! array_key_exists($srcCol, $srcTableColumns) ) {
+                $logger->warning(sprintf(
+                    "Source column %s does not exist in source table, skipping mapping: %s -> %s",
+                    $srcCol,
+                    $srcCol,
+                    $scriptOptions['map-columns'][$srcCol]
+                ));
+                unset($scriptOptions['map-columns'][$srcCol]);
+            } elseif ( ! array_key_exists($scriptOptions['map-columns'][$srcCol], $destTableColumns) ) {
+                $logger->warning(sprintf(
+                    "Destination column %s does not exist in destination table, skipping mapping: %s -> %s",
+                    $scriptOptions['map-columns'][$srcCol],
+                    $srcCol,
+                    $scriptOptions['map-columns'][$srcCol]
+                ));
+                unset($scriptOptions['map-columns'][$srcCol]);
+            }
+        }
+
+        // Remove any missing columns that are mapped from the source table columns
+        foreach ( $missingDestColumns as $missingCol ) {
+            if (
+                array_key_exists($missingCol, $scriptOptions['map-columns']) &&
+                array_key_exists($scriptOptions['map-columns'][$missingCol], $destTableColumns)
+            ) {
+                unset($missingDestColumns[ array_search($missingCol, $missingDestColumns) ]);
+            }
+        }
+    }
+
+    if ( 0 != count($missingDestColumns) ) {
+        $logger->err(sprintf("%s missing columns: %s", $qualifiedDestTable, implode(', ', $missingDestColumns)));
         return false;
     }
 
     $logger->info(sprintf("%d columns", $numSrcColumns));
 
     $mismatch = false;
-    foreach ( $srcTableColumns as $k => $v ) {
-        if ( ! array_key_exists($k, $destTableColumns) ) {
-            $logger->warning(
-                sprintf("Dest missing %s type=%s key=%s", $k, $v['type'], $v['key_type'])
-            );
-            $mismatch = true;
-        } elseif ( $v != $destTableColumns[$k] && ! $scriptOptions['ignore-column-type'] ) {
+    foreach ( $srcTableColumns as $srcCol => $srcInfo ) {
+
+        $srcColDisplay = $srcCol;
+        $destCol = $srcCol;
+        $destInfo = null;
+
+        // Use the mapped destination column name if necessary
+
+        if ( array_key_exists($srcCol, $scriptOptions['map-columns']) ) {
+            $destCol = $scriptOptions['map-columns'][$srcCol];
+        }
+
+        $destInfo = $destTableColumns[$destCol];
+
+        // If mapping, remove the name from the comparison so we don't need to specify each array
+        // element in the comparison.
+
+        if ( array_key_exists($srcCol, $scriptOptions['map-columns']) ) {
+            unset($destInfo['name']);
+            unset($srcInfo['name']);
+        }
+
+        if ( $srcInfo != $destInfo && ! $scriptOptions['ignore-column-type'] ) {
             $logger->err(sprintf(
-                "Column mismatch %s: src type=%s is_nullable=%s %s, dest type=%s is_nullable=%s %s",
-                $k,
-                $v['type'],
-                $v['is_nullable'],
-                ( "" != $v['key_type'] ? "key=" . $v['key_type'] : "" ),
-                $destTableColumns[$k]['type'],
-                $destTableColumns[$k]['is_nullable'],
-                ( "" != $destTableColumns[$k]['key_type'] ? "key=" . $destTableColumns[$k]['key_type'] : "" )
+                "Column mismatch (name=%s, type=%s, is_nullable=%s%s) != (name=%s, type=%s, is_nullable=%s%s)",
+                $srcCol,
+                $srcInfo['type'],
+                $srcInfo['is_nullable'],
+                ( "" != $srcInfo['key_type'] ? "key=" . $srcInfo['key_type'] : "" ),
+                $destCol,
+                $destInfo['type'],
+                $destInfo['is_nullable'],
+                ( "" != $destInfo['key_type'] ? " key=" . $destInfo['key_type'] : "" )
             ));
             $mismatch = true;
         }
     }
+
     if ( $mismatch ) {
         return false;
     }
@@ -446,6 +527,57 @@ ORDER BY ordinal_position ASC";
     return $retval;
 }  // getTableColumns()
 
+/** ------------------------------------------------------------------------------------------
+ * Query the information schema for table primary key.
+ * -------------------------------------------------------------------------------------------
+ */
+
+function getTablePrimaryKeyColumns($table, $schema)
+{
+    global $dbh, $logger;
+    $tableName = "`$schema`.`$table`";
+
+    $where = array(
+        "table_schema = :schema",
+        "table_name = :tablename",
+        "column_key = 'PRI'"
+    );
+
+    // If we need the order of the columns in the index, use the STATISTICS table.
+    $sql = "SELECT
+column_name as name
+FROM information_schema.columns
+" . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" ) . "
+ORDER BY ordinal_position ASC";
+
+    $params = array(
+        ":schema" => $schema,
+        ":tablename"  => $table
+    );
+
+    try {
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute($params);
+    } catch ( Exception $e ) {
+        $logger->err("Error retrieving column names for '$tableName': " . $e->getMessage());
+        exit();
+    }
+
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ( 0 == count($result) ) {
+        $logger->err("Table '$tableName' does not exist or does not have a primary key");
+        return false;
+    }
+
+    $retval = array();
+
+    foreach ( $result as $row) {
+        $retval[] = $row['name'];
+    }
+
+    return $retval;
+}  // getTablePrimaryKeyColumns()
+
 /* ------------------------------------------------------------------------------------------
  * Query the information schema for the number of table rows
  * -------------------------------------------------------------------------------------------
@@ -519,20 +651,28 @@ function compareTableData(
     if ( $scriptOptions['autodetect-column-comparison'] ) {
         $dataTypes = array('DECIMAL', 'NUMERIC', 'DOUBLE', 'FLOAT');
 
-        foreach ( $srcTableColumnInfo as $key => $srcColInfo ) {
-            if ( ! array_key_exists($key, $destTableColumnInfo) ) {
+        foreach ( $srcTableColumnInfo as $srcKey => $srcColInfo ) {
+
+            $destColInfo = $destTableColumnInfo[$srcKey];
+
+            if (
+                array_key_exists($srcKey, $scriptOptions['map-columns']) &&
+                array_key_exists($scriptOptions['map-columns'][$srcKey], $destTableColumnInfo)
+            ) {
+                // Override the destination column info with the mapped column
+                $destColInfo = $destTableColumnInfo[ $scriptOptions['map-columns'][$srcKey] ];
+            } elseif ( ! array_key_exists($srcKey, $destTableColumnInfo) ) {
                 continue;
             }
-            $destColInfo = $destTableColumnInfo[$key];
 
             if ( 'YES' == $srcColInfo['is_nullable'] || 'YES' == $destColInfo['is_nullable'] ) {
-                $coalesceColumns[$key] = DEFAULT_COALESCE_VALUE;
+                $coalesceColumns[$srcKey] = DEFAULT_COALESCE_VALUE;
             }
 
             if ( in_array($srcColInfo['data_type'], $dataTypes) || in_array($destColInfo['data_type'], $dataTypes) ) {
-                $truncateColumns[$key] = DEFAULT_TRUNCATE_DIGITS;
+                $truncateColumns[$srcKey] = DEFAULT_TRUNCATE_DIGITS;
                 // Divide by 100 to remove the "* 100" from the pct error formula.
-                $errorColumns[$key] = DEFAULT_ERROR_PERECENT / 100;
+                $errorColumns[$srcKey] = DEFAULT_ERROR_PERECENT / 100;
             }
         }
     }
@@ -579,10 +719,13 @@ function compareTableData(
     // present in the destination table that do not exist in the source table.
 
     $constraints = array_map(
-        function ($col) use ($errorColumns, $coalesceColumns, $truncateColumns) {
+        function ($col) use ($errorColumns, $coalesceColumns, $truncateColumns, $scriptOptions) {
 
             $srcCol = sprintf('src.%s', $col);
-            $destCol = sprintf('dest.%s', $col);
+            $destCol = sprintf(
+                'dest.%s',
+                ( array_key_exists($col, $scriptOptions['map-columns']) ? $scriptOptions['map-columns'][$col] : $col )
+            );
 
             if ( array_key_exists($col, $coalesceColumns) ) {
                 $srcCol = sprintf('COALESCE(%s, %s)', $srcCol, $coalesceColumns[$col]);
@@ -620,14 +763,14 @@ function compareTableData(
         $where = array_merge($where, $scriptOptions['wheres']);
     }
 
-    $sql = "
-SELECT src.*
-FROM $srcTableName src
-LEFT OUTER JOIN $destTableName dest ON (" . join("\nAND ", $constraints) . ")"
-        . ( 0 != count($where) ? "\nWHERE " . implode("\nAND ", $where) : "" )
-        . ( null !== $scriptOptions['num-missing-rows']
-            ? "\nLIMIT " . $scriptOptions['num-missing-rows']
-            : "" );
+    $sql = sprintf(
+        "SELECT src.*\nFROM %s src\nLEFT OUTER JOIN %s dest ON (\n%s\n)\nWHERE %s%s",
+        $srcTableName,
+        $destTableName,
+        join("\nAND ", $constraints),
+        implode("\nAND ", $where),
+        ( null !== $scriptOptions['num-missing-rows'] ? "\nLIMIT " . $scriptOptions['num-missing-rows'] : "" )
+    );
 
     $logger->debug($sql);
 
@@ -638,8 +781,87 @@ LEFT OUTER JOIN $destTableName dest ON (" . join("\nAND ", $constraints) . ")"
     if ( 0 != $numRows ) {
         $logger->warning(sprintf("Missing %d rows in %s.%s", $numRows, $destSchema, $destTable));
         while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
-            $logger->warning(sprintf("Missing row: %s", print_r($row, 1)));
+
+            // Remove columns that we have excluded
+
+            foreach ( $row as $k => $v ) {
+                if ( in_array($k, $scriptOptions['exclude-columns']) ) {
+                    unset($row[$k]);
+                }
+            }
+
+            if ( $scriptOptions['show-row-differences'] ) {
+
+                // Figure out what columns differ between the source and destination and display
+                // only those differences. Ignored columns are not displayed.
+
+                $keyColumns = getTablePrimaryKeyColumns($srcTable, $srcSchema);
+
+                $constraints = array();  // JOIN constraints
+                $where = array();        // WHERE clause with parameters
+                $parameters = array();   // Parameters for WHERE
+                $pkDisplay = array();    // Primary key for display
+
+                foreach ( $keyColumns as $col ) {
+                    $constraints[] = sprintf('src.%s = dest.%s', $col, $col);
+                    $where[] = sprintf('src.%s = :%s', $col, $col);
+                    $parameters[':' . $col] = $row[ $col ];
+                    $pkDisplay[] = sprintf('%s = %s', $col, $row[$col]);
+                }
+                $pkDisplay = implode(', ', $pkDisplay);
+
+                $sql = "
+                SELECT dest.*
+                FROM $srcTableName src
+                JOIN $destTableName dest ON (" . join("\nAND ", $constraints) . ")"
+                . ( 0 != count($where) ? "\nWHERE " . implode("\nAND ", $where) : "" );
+
+                $deltaStmt = $dbh->prepare($sql);
+                $deltaStmt->execute($parameters);
+
+                if ( 0 == $deltaStmt->rowCount() ) {
+                    $logger->warning(
+                        sprintf("Primary key does not exist in destination: (%s)", $pkDisplay)
+                    );
+                } else {
+                    $deltaRow = $deltaStmt->fetch(PDO::FETCH_ASSOC);
+
+                    // Remove rows that have been excluded
+
+                    foreach ( $deltaRow as $k => $v ) {
+                        if ( in_array($k, $scriptOptions['exclude-columns']) ) {
+                            unset($deltaRow[$k]);
+                        }
+                    }
+
+                    $srcValueDiff = array_diff_assoc($row, $deltaRow);
+                    $destValueDiff = array_diff_assoc($deltaRow, $row);
+
+                    // Calculate the proper padding for visual display
+
+                    $padding = array_reduce(
+                        array_keys($srcValueDiff),
+                        function ($carry, $col) use ($row) {
+                            return (strlen($col) > $carry ? strlen($col) : $carry);
+                        },
+                        0
+                    );
+
+                    $display = array_map(
+                        function ($col) use ($srcValueDiff, $destValueDiff, $padding) {
+                            return sprintf("%" . $padding . "s: '%s' != '%s'", $col, $srcValueDiff[$col], $destValueDiff[$col]);
+                        },
+                        array_keys($srcValueDiff)
+                    );
+                    $logger->warning(
+                        sprintf("Rows differ for primary key: (%s)\n%s", $pkDisplay, implode(PHP_EOL, $display))
+                    );
+                }
+            }
+
+            $logger->trace(sprintf("Missing row: %s", print_r($row, 1)));
         }
+
     } else {
         $logger->notice("Identical");
     }
@@ -691,11 +913,17 @@ Usage: {$argv[0]}
     --ignore-column-type
     Ignore the column types between tables, useful for comparing the effect of data type changes.
 
+    -m <src>=<dest>, --map-column <src>=<dest>
+    Map a column in the source table to a different column in the destination table. This is useful for testing columns that have been renamed.
+
     -n, --num-missing-rows <number_of_rows>
     Display this number of missing rows. If not specified, all missing rows are displayed.
 
     -p, --pct=error-column <column>[,error>]
-        Compute the percent error between the source and destination columns and ensure that it is less than <error> (default {$defaultPctError}). This is useful when comparing doubles or values that have been computed and may differ in decimal precision. See --truncate-column.
+    Compute the percent error between the source and destination columns and ensure that it is less than <error> (default {$defaultPctError}). This is useful when comparing doubles or values that have been computed and may differ in decimal precision. See --truncate-column.
+
+    --show-row-differences
+    Show the columns that are different between source and destination rows with the same key. Ignored columns are not displayed.
 
     -s, --source-schema <source_schema>
     The schema for the source tables.

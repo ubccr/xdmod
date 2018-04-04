@@ -1,0 +1,22 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/jobs/xdw/account.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "account_id",
+            "charge_number": "account_name",
+            "granttype_id": -1,
+            "long_name": "account_name",
+            "short_name": "account_name",
+            "account_origin_id": "account_id"
+        },
+        "joins": [
+            {
+                "name": "hpcdb_accounts",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "af"
+            }
+        ]
+    }
+}

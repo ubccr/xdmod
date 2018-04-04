@@ -246,7 +246,7 @@ function main()
                 $dwi->ingestAllStaging($startDate, $endDate);
             }
             if ($ingestHpcdb) {
-                if(null === $startDate){
+                if (null === $startDate) {
                     $result = $dwDb->query("SELECT
                             FROM_UNIXTIME(hj.end_time) as end_time
                         FROM
@@ -260,9 +260,11 @@ function main()
                                 )
                         LIMIT 1"
                     );
-                    $etlParams['start-date'] = $result[0]['end_time'];
+                    if (count($result) > 0) {
+                        $etlParams['start-date'] = $result[0]['end_time'];
+                    }
                 }
-                runEtlPipeline('hpcdb-modw.ingest', $etlParams);
+                runEtlPipeline('hpcdb-xdw.ingest', $etlParams);
             }
         } catch (Exception $e) {
             $logger->crit(array(
@@ -277,7 +279,7 @@ function main()
     if ($aggregate) {
         $logger->info('Aggregating data');
         try {
-            runEtlPipeline('hpcdb-modw.aggregate', $etlParams);
+            runEtlPipeline('jobs-xdw.aggregate', $etlParams);
         } catch (Exception $e) {
             $logger->crit(array(
                 'message'    => 'Aggregation failed: ' . $e->getMessage(),
@@ -336,10 +338,6 @@ function runEtlPipeline($name, $params = array()){
         $lastModified = new \DateTime(date('Y-m-d H:i:s'));
     }
     $etlParams['last-modified-start-date'] = $lastModified->format('Y-m-d\TH:i:s');
-
-    if(!array_key_exists('config-file', $etlParams)){
-        $etlParams['config-file'] = CONFIG_DIR . '/etl/etl.json';
-    }
 
     $argumentString = '';
     foreach ($etlParams as $key => $value) {

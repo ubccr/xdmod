@@ -1,0 +1,17 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/jobs/xdw/principal-investigator.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "person_id": "person_id",
+            "request_id": "request_id"
+        },
+        "joins": [
+            {
+                "name": "hpcdb_principal_investigators",
+                "schema": "${SOURCE_SCHEMA}"
+            }
+        ]
+    }
+}

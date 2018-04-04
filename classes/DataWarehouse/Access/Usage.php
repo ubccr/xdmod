@@ -696,6 +696,7 @@ class Usage extends Common
 
                 // For each data series...
                 $primaryDataSeriesRank = $usageOffset;
+
                 array_walk($meChart['series'], function (
                     &$meDataSeries,
                     $meDataSeriesIndex
@@ -743,9 +744,22 @@ class Usage extends Common
 
                     // If this is the primary data series and the chart is not a
                     // thumbnail, use line markers if and only if the number of
-                    // points is less than or equal to 30.
+                    // data points is less than or equal to 30,
+                    // or if there's a single y series data point.
                     if ($isPrimaryDataSeries && !$thumbnailRequested) {
-                        $meDataSeries['marker']['enabled'] = count($meDataSeries['data']) <= 30;
+                        // is there a single y data point?
+                        $y_values_count = 0;
+                        foreach ($meDataSeries['data'] as $value) {
+                            if ($value['y'] !== null ) {
+                                ++$y_values_count;
+                            }
+                            // we are only interested in the == 1 case
+                            if ($y_values_count > 1) {
+                                break;
+                            }
+                        }
+                        $meDataSeries['marker']['enabled'] = $y_values_count == 1 ||
+                                            count($meDataSeries['data']) <= 30;
                     }
 
                     // If this is a trend line data series...

@@ -1,0 +1,35 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/jobs/xdw/service-provider.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "organization_id": "DISTINCT of.organization_id",
+            "short_name": "COALESCE(of.organization_abbrev, of.organization_name)",
+            "long_name": "CASE WHEN ISNULL(of.organization_abbrev) THEN of.organization_name ELSE CONCAT(of.organization_abbrev, ' - ', of.organization_name) END",
+            "order_id": "NULL"
+        },
+        "joins": [
+            {
+                "name": "hpcdb_organizations",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "of"
+            },
+            {
+                "name": "hpcdb_resources",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rf",
+                "on": "of.organization_id = rf.organization_id"
+            },
+            {
+                "name": "hpcdb_jobs",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jf",
+                "on": "jf.resource_id = rf.resource_id"
+            }
+        ],
+        "orderby": [
+            "long_name"
+        ]
+    }
+}

@@ -1,0 +1,335 @@
+{
+    "table_definition": {
+        "name": "job_records",
+        "engine": "MyISAM",
+        "comment": "Request for resources by a user",
+        "columns": [
+            {
+                "name": "job_record_id",
+                "type": "bigint(20) unsigned",
+                "extra": "auto_increment",
+                "nullable": false
+            },
+            {
+                "name": "job_record_origin_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Resource where the job was initiated"
+            },
+            {
+                "name": "resourcetype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The type of the resource on which the jobs ran. References the resourcetype.id"
+            },
+            {
+                "name": "resource_state_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The state where the resource resides"
+            },
+            {
+                "name": "resource_country_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The country where the resource resides"
+            },
+            {
+                "name": "resource_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The organization where the resource resides"
+            },
+            {
+                "name": "resource_organization_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The type of organization where the resource resides"
+            },
+            {
+                "name": "allocation_resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Resource associated with the allocation. May be a grid resource."
+            },
+            {
+                "name": "person_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Person requesting resources"
+            },
+            {
+                "name": "person_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The organization of the person requesting resources"
+            },
+            {
+                "name": "person_nsfstatuscode_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The NSF status code of the person requesting resources. References person.nsfstatuscode_id"
+            },
+            {
+                "name": "account_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Account the job will be charged to"
+            },
+            {
+                "name": "allocation_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Allocation (resource, account) that will be charged for this job"
+            },
+            {
+                "name": "request_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Request record for this allocation (used for primary field of science)"
+            },
+            {
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The field of science of the project to which the jobs belong"
+            },
+            {
+                "name": "principalinvestigator_person_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "The PI that owns the allocation. XDMoD adds this on ingest, otherwise it is linked to a request in XDCDB. References principalinvestigator.person_id"
+            },
+            {
+                "name": "piperson_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The organization of the PI that owns the allocation. References piperson.organization_id"
+            },
+            {
+                "name": "job_record_type_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Type of job: hpc, cloud, hpc-reservation, ..."
+            },
+            {
+                "name": "submission_venue_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Method used to submit this job: cli, gateway, ..."
+            },
+            {
+                "name": "queue",
+                "type": "varchar(32)",
+                "nullable": true,
+                "comment": "Resource queue where the job ran"
+            },
+            {
+                "name": "submit_time_ts",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "Job submission time in seconds since epoch (UTC)"
+            },
+            {
+                "name": "start_time_ts",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Job start time in seconds since epoch (UTC)"
+            },
+            {
+                "name": "end_time_ts",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "Job completion time in seconds since epoch (UTC), may be unknown"
+            },
+            {
+                "name": "start_day_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Day id of the job start time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
+            },
+            {
+                "name": "end_day_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "Day id of the job end time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
+            },
+            {
+                "name": "local_charge_su",
+                "type": "decimal(18,3)",
+                "nullable": false,
+                "default": 0.000,
+                "comment": "Local resource SUs charged"
+            },
+            {
+                "name": "adjusted_charge_su",
+                "type": "decimal(18,3)",
+                "nullable": false,
+                "default": 0.000,
+                "comment": "Local resource SUs charged after SP adjustments"
+            },
+            {
+                "name": "local_charge_xdsu",
+                "type": "decimal(18,3)",
+                "nullable": true,
+                "comment": "XDSUs charged. Uses current resource conv factor"
+            },
+            {
+                "name": "adjusted_charge_xdsu",
+                "type": "decimal(18,3)",
+                "nullable": true,
+                "comment": "XDSUs charged after SP adjustments"
+            },
+            {
+                "name": "local_charge_nu",
+                "type": "decimal(18,3)",
+                "nullable": true,
+                "comment": "NUs charged. XDSU * 21.576"
+            },
+            {
+                "name": "adjusted_charge_nu",
+                "type": "decimal(18,3)",
+                "nullable": true,
+                "comment": "NUs charged after SP adjustments. XDSU * 21.576"
+            },
+            {
+                "name": "conversion_factor",
+                "type": "double",
+                "nullable": true,
+                "comment": "Factor used to normalize local SU to TG Roaming (XDSU)"
+            },
+            {
+                "name": "completed",
+                "type": "tinyint(1)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Boolean flag 1 = job complete"
+            },
+            {
+                "name": "federation_blade_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp"
+            },
+            {
+                "name": "is_deleted",
+                "type": "tinyint(1)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Boolean flag 1 = job has been deleted"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "job_record_id",
+                    "job_record_origin_id",
+                    "federation_blade_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "completed",
+                "columns": [
+                    "completed"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_account",
+                "columns": [
+                    "account_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_allocation",
+                "columns": [
+                    "allocation_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_request",
+                "columns": [
+                    "request_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_job_record_type",
+                "columns": [
+                    "job_record_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_person",
+                "columns": [
+                    "person_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_resource",
+                "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_submission_venue",
+                "columns": [
+                    "submission_venue_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "deleted",
+                "columns": [
+                    "is_deleted"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "aggregation_index",
+                "columns": [
+                    "start_day_id",
+                    "end_day_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "uniq",
+                "columns": [
+                    "job_record_origin_id",
+                    "federation_blade_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

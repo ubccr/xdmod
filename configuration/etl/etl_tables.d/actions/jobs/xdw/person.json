@@ -1,0 +1,46 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/jobs/xdw/person.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "pf.person_id",
+            "organization_id": "pf.organization_id",
+            "prefix": "pf.prefix",
+            "first_name": "COALESCE(TRIM(pf.first_name), '')",
+            "middle_name": "COALESCE(TRIM(pf.middle_name), '')",
+            "last_name": "COALESCE(TRIM(pf.last_name), '')",
+            "department": "pf.department",
+            "title": "pf.title",
+            "email_address": "ef.email_address",
+            "long_name": "IF(pf.first_name IS NULL OR pf.first_name = '', pf.last_name, CONCAT(pf.last_name, ', ', pf.first_name, COALESCE( CONCAT(' ', pf.middle_name), '')))",
+            "short_name": "IF(pf.first_name IS NULL OR pf.first_name = '', pf.last_name, CONCAT(pf.last_name, ', ', SUBSTR(pf.first_name, 1, 1)))",
+            "order_id": "NULL",
+            "nsfstatuscode_id": 0,
+            "person_origin_id": "pf.person_id"
+        },
+        "joins": [
+            {
+                "name": "hpcdb_people",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "pf"
+            },
+            {
+                "name": "hpcdb_organizations",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "of",
+                "on": "of.organization_id = pf.organization_id"
+            },
+            {
+                "name": "hpcdb_email_addresses",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ef",
+                "type": "LEFT OUTER",
+                "on": "pf.person_id = ef.person_id"
+            }
+        ],
+        "orderby": [
+            "long_name ASC"
+        ]
+    }
+}

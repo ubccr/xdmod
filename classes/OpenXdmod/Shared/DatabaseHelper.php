@@ -35,6 +35,23 @@ class DatabaseHelper
             $console = Console::factory();
         }
 
+        $console->displayMessage(
+            'Creating User ' . $settings['db_user']
+        );
+        // TODO: If db_host is not localhost, need to set $localHost to
+        // the correct hostname or IP address.
+        $localHost = $settings['db_host'];
+
+        MySQLHelper::grantAllPrivileges(
+            $settings['db_host'],
+            $settings['db_port'],
+            $username,
+            $password,
+            $localHost,
+            $settings['db_user'],
+            $settings['db_pass']
+        );
+
         foreach ($databases as $database) {
             $console->displayBlankLine();
 
@@ -87,7 +104,7 @@ class DatabaseHelper
             $console->displayMessage(
                 "Granting privileges on database `$database`."
             );
-            MySQLHelper::grantAllPrivileges(
+            MySQLHelper::grantAllPrivilegesOnDatabase(
                 $settings['db_host'],
                 $settings['db_port'],
                 $username,

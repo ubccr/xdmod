@@ -1,0 +1,49 @@
+{
+    "table_definition": {
+        "name": "hosts",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "host_origin_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "hostname",
+                "type": "varchar(255)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "resource_id",
+                "columns": [
+                    "resource_id",
+                    "hostname"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

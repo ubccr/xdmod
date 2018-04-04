@@ -19,8 +19,6 @@ MSG;
         $sectionMessage = $this->sectionMessage.$scriptName;
         $etlSection = $this->defaultSection;
 
-        $configFile = realpath(CONFIG_DIR.'/etl/etl.json');
-
         $this->console->displaySectionHeader($this->sectionHeader);
         $this->console->displayMessage($sectionMessage);
         $this->console->displayBlankLine();

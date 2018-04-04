@@ -1,0 +1,162 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB",
+                    "config": "datawarehouse",
+                    "schema": "mod_hpcdb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud timing test DB",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        },
+        "hpcdb-xdw.ingest": {
+            "class": "DatabaseIngestor",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "enabled": true
+        }
+    },
+
+    "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
+    "hpcdb-xdw.ingest": [{
+        "name": "account",
+        "definition_file": "actions/jobs/xdw/account.json",
+        "description": "Account records"
+    }, {
+        "name": "allocation-breakdown",
+        "definition_file": "actions/jobs/xdw/allocation-breakdown.json",
+        "description": "allocation breakdown records"
+    }, {
+        "name": "allocation",
+        "definition_file": "actions/jobs/xdw/allocation.json",
+        "description": "allocation records"
+    }, {
+        "name": "resource",
+        "definition_file": "actions/jobs/xdw/resource-fact.json",
+        "description": "resource records"
+    }, {
+        "name": "allocation-on-resource",
+        "definition_file": "actions/jobs/xdw/allocation-on-resource.json",
+        "description": "allocations on resource records"
+    }, {
+        "name": "field-of-science",
+        "definition_file": "actions/jobs/xdw/field-of-science.json",
+        "description": "field of science records"
+    }, {
+        "name": "field-of-science-hierarchy",
+        "definition_file": "actions/jobs/xdw/field-of-science-hierarchy.json",
+        "description": "field of science hierarchy records"
+    }, {
+        "name": "organization",
+        "definition_file": "actions/jobs/xdw/organization.json",
+        "description": "organization records",
+        "#": "disable to allow order_id to be set",
+        "optimize_query": false
+    }, {
+        "name": "node-count",
+        "definition_file": "actions/jobs/xdw/node-count.json",
+        "description": "node count records"
+    }, {
+        "name": "pi-person",
+        "definition_file": "actions/jobs/xdw/piperson.json",
+        "description": "PI Person records",
+        "#": "disable to allow order_id to be set",
+        "optimize_query": false
+    }, {
+        "name": "person",
+        "definition_file": "actions/jobs/xdw/person.json",
+        "description": "person records",
+        "#": "disable to allow order_id to be set",
+        "optimize_query": false
+    }, {
+        "name": "people-under-pi",
+        "definition_file": "actions/jobs/xdw/people-under-pi.json",
+        "description": "people under pi records"
+    }, {
+        "name": "principal-investigator",
+        "definition_file": "actions/jobs/xdw/principal-investigator.json",
+        "description": "principal investigator records"
+    }, {
+        "name": "queue",
+        "definition_file": "actions/jobs/xdw/queue.json",
+        "description": "queue records"
+    }, {
+        "name": "request",
+        "definition_file": "actions/jobs/xdw/request.json",
+        "description": "request records"
+    }, {
+        "name": "resource-type",
+        "definition_file": "actions/jobs/xdw/resource-type.json",
+        "description": "resource type records"
+    }, {
+        "name": "resource-spec",
+        "definition_file": "actions/jobs/xdw/resource-spec.json",
+        "description": "resource spec records"
+    }, {
+        "name": "resource-allocated",
+        "definition_file": "actions/jobs/xdw/resource-allocated.json",
+        "description": "resource allocated records"
+    }, {
+        "name": "service-provider",
+        "definition_file": "actions/jobs/xdw/service-provider.json",
+        "description": "service provider records"
+    }, {
+        "name": "system-account",
+        "definition_file": "actions/jobs/xdw/system-account.json",
+        "description": "system account records"
+    }, {
+        "name": "hosts",
+        "class": "HpcdbHostsIngestor",
+        "definition_file": "actions/jobs/xdw/host.json",
+        "description": "hosts records",
+        "#": "there are currently duplications allowed here for ease of",
+        "#": "generating the query this might be cleaned up later.",
+        "hide_sql_warning_codes": [
+            1062
+        ]
+    }, {
+        "name": "job-hosts",
+        "definition_file": "actions/jobs/xdw/jobhosts.json",
+        "description": "job hosts records"
+    }, {
+        "name": "jobhosts-post-truncate",
+        "namespace": "ETL\\Maintenance",
+        "options_class": "MaintenanceOptions",
+        "description": "Post-updates for HPCDB job hosts",
+        "class": "ExecuteSql",
+        "sql_file_list": [
+            "jobs/jobhosts-post-ingest-truncate.sql"
+        ]
+    }, {
+        "name": "job-records-job-tasks",
+        "definition_file": "actions/jobs/xdw/job-records-job-tasks.json",
+        "description": "HPC job records from the hpcdb",
+        "#": "job records will be duplicated for each job array",
+        "#": "this hides those warnings. This will be cleaned up later.",
+        "hide_sql_warning_codes": [
+            1062
+        ]
+    }, {
+        "name": "HpcdbPostIngestJobUpdates",
+        "namespace": "ETL\\Maintenance",
+        "options_class": "MaintenanceOptions",
+        "description": "Post-updates for HPCDB job records",
+        "class": "ExecuteSql",
+        "sql_file_list": [
+            "jobs/job-record-hpc-post-ingest.sql"
+        ]
+    }, {
+        "name": "min-max-date",
+        "definition_file": "actions/jobs/xdw/min-max-date.json",
+        "description": "Job Record min and max job dates",
+        "truncate_destination": true
+    }]
+}

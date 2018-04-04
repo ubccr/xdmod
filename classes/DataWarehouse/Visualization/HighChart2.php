@@ -1181,6 +1181,12 @@ class HighChart2
                 $pointClick = 'function(event){'.($this->_showContextMenu?'XDMoD.Module.MetricExplorer.pointContextMenu(this,'.
                             $data_description->id.');':'').'}';
 
+                // Display markers for scatter plots, non-thumbnail plots
+                // with fewer than 21 points, or for plots with a single y value.
+                $showMarker = $data_description->display_type == 'scatter' ||
+                    ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
+                    $values_count == 1;
+
                 $data_series_desc = array(
                     'name' => $lookupDataSeriesName,
                     'otitle' => $formattedDataSeriesName,
@@ -1200,9 +1206,7 @@ class HighChart2
                     'lineWidth' => $data_description->display_type !== 'scatter' ?
                                                         $data_description->line_width + $font_size / 4 : 0,
                     'marker' => array(
-                        'enabled' => $data_description->display_type == 'scatter' ||
-                                                        ($values_count < 21 &&
-                                                        $this->_width > \DataWarehouse\Visualization::$thumbnail_width),
+                        'enabled' => $showMarker,
                         'lineWidth' => 1,
                         'lineColor' => $lineColor,
                         'radius' => $font_size / 4 + 5

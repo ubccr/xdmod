@@ -1,0 +1,20 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/jobs/xdw/allocation-breakdown.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "allocation_breakdown_id",
+            "person_id": "person_id",
+            "allocation_id": "allocation_id",
+            "percentage": "percentage",
+            "allocation_breakdown_origin_id": "allocation_breakdown_id"
+        },
+        "joins": [
+            {
+                "name": "hpcdb_allocation_breakdown",
+                "schema": "${SOURCE_SCHEMA}"
+            }
+        ]
+    }
+}

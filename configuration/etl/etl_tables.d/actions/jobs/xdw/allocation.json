@@ -1,0 +1,52 @@
+{
+    "table_definition": {
+        "$ref": "etl_tables.d/jobs/xdw/allocation.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "alf.allocation_id",
+            "resource_id": "alf.resource_id",
+            "account_id": "alf.account_id",
+            "request_id": "reqf.request_id",
+            "principalinvestigator_person_id": "pif.person_id",
+            "fos_id": "reqf.primary_fos_id",
+            "charge_number": "af.account_name",
+            "order_id": "NULL",
+            "boardtype_id": 0,
+            "initial_allocation": 0,
+            "initial_start_date": "'0000-00-00'",
+            "initial_start_date_ts": 0,
+            "initial_end_date": "'0000-00-00'",
+            "base_allocation": 0,
+            "remaining_allocation": 0,
+            "end_date": "'0000-00-00'",
+            "end_date_ts": 0,
+            "allocation_origin_id": "alf.allocation_id"
+        },
+        "joins": [
+            {
+                "name": "hpcdb_allocations",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "alf"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_accounts",
+                "alias": "af",
+                "on": "af.account_id = alf.account_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_requests",
+                "alias": "reqf",
+                "on": "reqf.account_id = alf.account_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_principal_investigators",
+                "alias": "pif",
+                "on": "reqf.request_id = pif.request_id"
+            }
+        ]
+    }
+}
