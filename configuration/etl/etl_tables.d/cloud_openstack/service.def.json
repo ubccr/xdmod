@@ -1,0 +1,29 @@
+{
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_openstack/service.json#/table_definition"
+        }
+    ],
+
+    "#": "Note that there are events that do not include an account number/identifier.",
+    "#": "Note that there are events that do not include an instance identifier.",
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "service": "raw.service"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+	"groupby": [
+		"resource_id",
+		"service"	
+	]
+    }
+}

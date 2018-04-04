@@ -1,0 +1,51 @@
+{
+    "#": "Load unique instance types into the dimension table. Do not load unknown types as these are",
+    "#": "loaded by a separate action",
+
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_common/instance_type.json#/table_definition"
+        }
+    ],
+
+    "#": "Note that we need to update the start time if an older record is found for the same",
+    "#": "instance type. This is ideally done with ON DUPLICATE KEY UPDATE",
+    "#": "start_time = IF(start_time < VALUES(start_time), start_time, VALUES(start_time) but ETLv2",
+    "#": "does not support explicitly setting that clause at this time. We solve this with a join",
+    "#": "to the existing instance types and calculating the earliest start time.",
+
+    "source_query": {
+        "records": {
+            "instance_type": "raw.instance_type",
+            "resource_id": "raw.resource_id",
+            "display": "raw.display",
+            "description": "raw.description",
+            "num_cores": "raw.num_cores",
+            "memory_mb": "raw.memory_mb",
+            "disk_gb": "raw.disk_gb",
+            "start_time": "IF(existing.start_time IS NULL OR raw.start_time < existing.start_time, raw.start_time, existing.start_time)"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_raw_instance_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            },{
+                "name": "instance_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "existing",
+                "on": "raw.resource_id = existing.resource_id AND raw.instance_type = existing.instance_type AND raw.display = existing.display AND raw.num_cores = existing.num_cores AND raw.memory_mb = existing.memory_mb and raw.disk_gb = existing.disk_gb",
+                "type": "left outer"
+            }
+        ],
+
+        "where": [
+            "raw.instance_type IS NOT NULL"
+        ],
+
+        "groupby": [
+            "resource_id", "instance_type", "display", "num_cores", "memory_mb", "disk_gb"
+        ]
+    }
+}

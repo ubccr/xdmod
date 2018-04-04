@@ -1,0 +1,46 @@
+{
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_common/asset.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "account_id": "act.account_id",
+            "provider_identifier": "raw.openstack_resource_id",
+            "create_time_utc": "MAX(CASE WHEN etype.openstack_event_type = 'volume.create.start' THEN raw.event_time_utc END)",
+	    "destroy_time_utc": "MAX(CASE WHEN etype.openstack_event_type = 'volume.delete.end' THEN raw.event_time_utc END)",
+            "size": "raw.disk_gb"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            },
+            {
+                "name": "account",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "act",
+                "on": "act.provider_account = raw.provider_account"
+            },
+            {
+                "name": "event_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "etype",
+                "on": "etype.openstack_event_type = raw.event_type"
+            }
+        ],
+
+	"where": [
+		"etype.openstack_event_type IN ('volume.create.start', 'volume.delete.end')"
+	],
+
+	"groupby": [
+		"raw.openstack_resource_id"
+	]
+    }
+}

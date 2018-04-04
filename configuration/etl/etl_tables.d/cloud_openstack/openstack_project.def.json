@@ -1,0 +1,30 @@
+{
+    "#": "Load unique accounts into the dimension table. Do not load unknown accounts as these are",
+    "#": "handled by a separate action",
+
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_openstack/openstack_project.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "openstack_project_id": "raw.project_id",
+            "display": "raw.project_name"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+        "groupby": [
+            "resource_id",
+            "project_id"
+        ]
+    }
+}

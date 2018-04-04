@@ -1,0 +1,39 @@
+{
+    "#": "Associate events with assets. Event logs specify an event_data key with an asset",
+    "#": "identifier that we can use to make the association.",
+    "#": "See also event_asset_root_volume.def.json",
+
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_common/event_asset.json#/table_definition"
+        }
+    ],
+
+    "#": "Also bring in root volumes",
+
+    "source_query": {
+        "records": {
+            "resource_id": "staging.resource_id",
+            "event_id": "staging.event_id",
+            "asset_id": "a.asset_id"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_staging_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "staging"
+            },
+            {
+                "name": "asset",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "a",
+                "on": "a.resource_id = staging.resource_id AND a.provider_identifier = staging.event_data"
+            }
+        ],
+
+        "where": [
+            "staging.event_data IS NOT NULL"
+        ]
+    }
+}

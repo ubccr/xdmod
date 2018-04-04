@@ -33,7 +33,6 @@
             "class": "StructuredFileIngestor",
             "definition_file": "cloud_openstack/raw_cloud_job_logs.def.json",
             "truncate_destination": true,
-            "stop_on_exception": false,
             "endpoints": {
                 "source": {
                     "type": "directoryscanner",
@@ -44,8 +43,8 @@
                     "recursion_depth": 1,
                     "handler": {
                         "type": "jsonfile",
-                        "record_separator": "},",
-                        "record_schema_path": "cloud/event.schema.json",
+                        "record_separator": "\n",
+                        "record_schema_path": "cloud_openstack/event.schema.json",
                         "field_names": [
                               "event_type",
                               "generated",
@@ -54,11 +53,90 @@
                               "instance_type",
                               "project_name",
                               "user_name",
-                              "raw"
-                        ]
+                              "resource_id",
+			      "project_id",
+			      "request_id",
+			      "vcpus",
+			      "memory_mb",
+			      "disk_gb",
+			      "state",
+			      "service",
+			      "record_type",
+			      "size",
+			      "created_at"
+                        ],
+			"filters": [{
+		              "type": "external",
+		              "name": "jq",
+		              "path": "jq",
+		              "arguments" :"-c '.[] | .[\"record_type\"] += if .[\"event_type\"] == \"compute.instance.exists\" then \"ADMINISTRATIVE\" else \"ACCOUNTING\" end'"
+		        }]
                     }
                 }
             }
+        },
+	{
+            "name": "OpenStackCloudAccountIngestor",
+            "description": "OpenStack cloud account data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/account.def.json"
+        },
+        {
+            "name": "OpenStackCloudHostIngestor",
+            "description": "OpenStack cloud host data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/host.def.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeIngestor",
+            "description": "Open Stack cloud instance type data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/instance_type.def.json"
+        },
+	{
+            "name": "OpenStackVolumeIngestor",
+            "description": "Open Stack volumes",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/volume.def.json"
+        },
+	{
+            "name": "OpenStackCloudServiceIngestor",
+            "description": "Open Stack cloud service types",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/service.def.json"
+        },
+	{
+            "name": "OpenStackCloudProjectIngestor",
+            "description": "Open Stack cloud service types",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/openstack_project.def.json"
+        },
+        {
+            "name": "OpenStackInstanceIngestor",
+            "description": "Open Stack cloud instance data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/instance.def.json"
+        },
+        {
+            "#": "Events must be ingested after all other dimensions",
+            "name": "OpenStackCloudStagingEventIngestor",
+            "description": "OpenStack staging data for cloud events",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/staging_event.def.json"
+        },
+        {
+            "#": "Instance data must be ingested after staging events",
+            "name": "OpenStackCloudEventIngestor",
+            "description": "OpenStack cloud event and instance data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/event.def.json"
+        },
+        {
+            "#": "Asset data must be ingested after events",
+            "name": "OpenStackCloudEventAssetIngestor",
+            "description": "OpenStack cloud assets associated with events",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/event_asset.def.json"
         }
     ]
 }

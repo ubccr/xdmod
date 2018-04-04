@@ -1,0 +1,44 @@
+{
+    "#": "Add IP addresses to the assets based on REQUEST_IP_ATTACH events",
+
+    "table_definition": [
+        {
+            "$ref": "etl_tables.d/cloud_common/asset.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "staging.resource_id",
+            "asset_type_id": "atype.asset_type_id",
+            "provider_identifier": "staging.event_data",
+            "account_id": "staging.account_id",
+            "create_time_utc": "staging.event_time_utc"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_staging_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "staging"
+            },
+            {
+                "name": "event_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "etype",
+                "on": "etype.event_type_id = staging.event_type_id"
+            },
+            {
+                "name": "asset_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "atype"
+            }
+        ],
+
+        "where": [
+            "staging.event_data IS NOT NULL",
+            "atype.asset_type = 'ip'",
+            "etype.event_type = 'REQUEST_IP_ATTACH'"
+        ]
+    }
+}
