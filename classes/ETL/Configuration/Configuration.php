@@ -512,7 +512,7 @@ class Configuration extends Loggable implements \Iterator
                     continue;
                 }
 
-                $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this, $this->options) );
+                $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this) );
 
                 if ( null === $transformKey && null === $value ) {
 
