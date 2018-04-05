@@ -7,7 +7,8 @@
                     "type": "mysql",
                     "name": "Cloud DB",
                     "config": "datawarehouse",
-                    "schema": "modw_cloud"
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",

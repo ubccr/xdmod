@@ -6,7 +6,8 @@
                     "type": "mysql",
                     "name": "HPCDB",
                     "config": "datawarehouse",
-                    "schema": "mod_hpcdb"
+                    "schema": "mod_hpcdb",
+                    "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",
@@ -28,94 +29,94 @@
     "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
     "hpcdb-xdw.ingest": [{
         "name": "account",
-        "definition_file": "actions/jobs/xdw/account.json",
+        "definition_file": "jobs/xdw/account.json",
         "description": "Account records"
     }, {
         "name": "allocation-breakdown",
-        "definition_file": "actions/jobs/xdw/allocation-breakdown.json",
+        "definition_file": "jobs/xdw/allocation-breakdown.json",
         "description": "allocation breakdown records"
     }, {
         "name": "allocation",
-        "definition_file": "actions/jobs/xdw/allocation.json",
+        "definition_file": "jobs/xdw/allocation.json",
         "description": "allocation records"
     }, {
         "name": "resource",
-        "definition_file": "actions/jobs/xdw/resource-fact.json",
+        "definition_file": "jobs/xdw/resource-fact.json",
         "description": "resource records"
     }, {
         "name": "allocation-on-resource",
-        "definition_file": "actions/jobs/xdw/allocation-on-resource.json",
+        "definition_file": "jobs/xdw/allocation-on-resource.json",
         "description": "allocations on resource records"
     }, {
         "name": "field-of-science",
-        "definition_file": "actions/jobs/xdw/field-of-science.json",
+        "definition_file": "jobs/xdw/field-of-science.json",
         "description": "field of science records"
     }, {
         "name": "field-of-science-hierarchy",
-        "definition_file": "actions/jobs/xdw/field-of-science-hierarchy.json",
+        "definition_file": "jobs/xdw/field-of-science-hierarchy.json",
         "description": "field of science hierarchy records"
     }, {
         "name": "organization",
-        "definition_file": "actions/jobs/xdw/organization.json",
+        "definition_file": "jobs/xdw/organization.json",
         "description": "organization records",
         "#": "disable to allow order_id to be set",
         "optimize_query": false
     }, {
         "name": "node-count",
-        "definition_file": "actions/jobs/xdw/node-count.json",
+        "definition_file": "jobs/xdw/node-count.json",
         "description": "node count records"
     }, {
         "name": "pi-person",
-        "definition_file": "actions/jobs/xdw/piperson.json",
+        "definition_file": "jobs/xdw/piperson.json",
         "description": "PI Person records",
         "#": "disable to allow order_id to be set",
         "optimize_query": false
     }, {
         "name": "person",
-        "definition_file": "actions/jobs/xdw/person.json",
+        "definition_file": "jobs/xdw/person.json",
         "description": "person records",
         "#": "disable to allow order_id to be set",
         "optimize_query": false
     }, {
         "name": "people-under-pi",
-        "definition_file": "actions/jobs/xdw/people-under-pi.json",
+        "definition_file": "jobs/xdw/people-under-pi.json",
         "description": "people under pi records"
     }, {
         "name": "principal-investigator",
-        "definition_file": "actions/jobs/xdw/principal-investigator.json",
+        "definition_file": "jobs/xdw/principal-investigator.json",
         "description": "principal investigator records"
     }, {
         "name": "queue",
-        "definition_file": "actions/jobs/xdw/queue.json",
+        "definition_file": "jobs/xdw/queue.json",
         "description": "queue records"
     }, {
         "name": "request",
-        "definition_file": "actions/jobs/xdw/request.json",
+        "definition_file": "jobs/xdw/request.json",
         "description": "request records"
     }, {
         "name": "resource-type",
-        "definition_file": "actions/jobs/xdw/resource-type.json",
+        "definition_file": "jobs/xdw/resource-type.json",
         "description": "resource type records"
     }, {
         "name": "resource-spec",
-        "definition_file": "actions/jobs/xdw/resource-spec.json",
+        "definition_file": "jobs/xdw/resource-spec.json",
         "description": "resource spec records"
     }, {
         "name": "resource-allocated",
-        "definition_file": "actions/jobs/xdw/resource-allocated.json",
+        "definition_file": "jobs/xdw/resource-allocated.json",
         "description": "resource allocated records"
     }, {
         "name": "service-provider",
-        "definition_file": "actions/jobs/xdw/service-provider.json",
+        "definition_file": "jobs/xdw/service-provider.json",
         "description": "service provider records"
     }, {
         "name": "system-account",
-        "definition_file": "actions/jobs/xdw/system-account.json",
+        "definition_file": "jobs/xdw/system-account.json",
         "description": "system account records"
     }, {
         "name": "hosts",
         "class": "HpcdbHostsIngestor",
-        "definition_file": "actions/jobs/xdw/host.json",
+        "definition_file": "jobs/xdw/host.json",
         "description": "hosts records",
         "#": "there are currently duplications allowed here for ease of",
         "#": "generating the query this might be cleaned up later.",
@@ -124,7 +125,7 @@
         ]
     }, {
         "name": "job-hosts",
-        "definition_file": "actions/jobs/xdw/jobhosts.json",
+        "definition_file": "jobs/xdw/jobhosts.json",
         "description": "job hosts records"
     }, {
         "name": "jobhosts-post-truncate",
@@ -137,7 +138,7 @@
         ]
     }, {
         "name": "job-records-job-tasks",
-        "definition_file": "actions/jobs/xdw/job-records-job-tasks.json",
+        "definition_file": "jobs/xdw/job-records-job-tasks.json",
         "description": "HPC job records from the hpcdb",
         "#": "job records will be duplicated for each job array",
         "#": "this hides those warnings. This will be cleaned up later.",
@@ -155,7 +156,7 @@
         ]
     }, {
         "name": "min-max-date",
-        "definition_file": "actions/jobs/xdw/min-max-date.json",
+        "definition_file": "jobs/xdw/min-max-date.json",
         "description": "Job Record min and max job dates",
         "truncate_destination": true
     }]

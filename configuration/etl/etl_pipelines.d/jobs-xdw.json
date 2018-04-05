@@ -147,7 +147,7 @@
         "options_class": "AggregatorOptions",
         "class": "SimpleAggregator",
         "description": "Aggregate HPC job records",
-        "definition_file": "actions/jobs/hpc-aggregation.json",
+        "definition_file": "jobs/hpc-aggregation.json",
         "table_prefix": "jobfact_by_",
         "aggregation_units": [
             "day", "month", "quarter", "year"
