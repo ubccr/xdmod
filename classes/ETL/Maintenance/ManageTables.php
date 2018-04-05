@@ -57,9 +57,6 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
             $this->logAndThrowException($msg);
         }
 
-        $list = $options->definition_file_list;
-        $options->definition_file = current($list);
-
         parent::__construct($options, $etlConfig, $logger);
 
     }  // __construct()
