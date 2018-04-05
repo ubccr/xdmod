@@ -16,6 +16,7 @@ use Log;
 use stdClass;
 use ETL\Loggable;
 use ETL\JsonPointer;
+use ETL\Utilities;
 
 class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransformer
 {
@@ -96,7 +97,9 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
 
         $parsedUrl = parse_url($value);
         $path = $this->qualifyPath($parsedUrl['path'], $config);
-        $this->logger->debug("Resolve JSON reference '$value' to file '$path'");
+        $this->logger->debug(
+            sprintf("(%s) Resolve JSON reference '%s' to file '%s'", get_class($this), $value, $path)
+        );
 
         $fragment = ( array_key_exists('fragment', $parsedUrl) ? $parsedUrl['fragment'] : '' );
 
@@ -145,7 +148,12 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
 
     protected function qualifyPath($path, Configuration $config)
     {
-        $this->logger->debug(get_class($this));
+        $options = $config->getOptions();
+        if ( array_key_exists('variables', $options) ) {
+            $variableMap = $options['variables'];
+            $path = Utilities::substituteVariables($path, $variableMap, $this);
+        }
+
         return \xd_utilities\qualify_path($path, $config->getBaseDir());
     }
 }  // class JsonReferenceTransformer
