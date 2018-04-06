@@ -33,6 +33,7 @@ More information on how to set these up can be found in the [SimpleSAMLphp Servi
 
 You will need to modify the `config.php` file and make sure you modify the `metadata.sources` and the `certdir` keys to have the **full path** to directories containing the configurations:
 
+**note** make sure the file has opening `<?php`
 ```php
   ...
   'certdir' => '/etc/xdmod/simplesamlphp/cert/',
@@ -42,6 +43,14 @@ You will need to modify the `config.php` file and make sure you modify the `meta
       'directory' => '/etc/xdmod/simplesamlphp/metadata/'
     ),
   ),
+  ...
+```
+two other keys that might need to be set if you are having errors
+```php
+  ...
+  'session.phpsession.cookiename' => null,
+  ...
+  'trusted.url.domains' => array('f.q.dn.of.xdmod'),
   ...
 ```
 

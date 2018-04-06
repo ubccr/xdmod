@@ -13,6 +13,7 @@ build:
         pull: true
         options: "--user root -e HOME=/root"
     ci:
+        - yum install php-mbstring -y
         - composer install --no-progress
         - ~/bin/buildrpm xdmod
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/bootstrap.sh

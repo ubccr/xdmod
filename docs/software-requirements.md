@@ -18,6 +18,7 @@ Open XDMoD requires the following software:
     - [XMLWriter][php-xmlwriter]
     - [PEAR MDB2 Package][pear-mdb2]
     - [PEAR MDB2 MySQL Driver][pear-mdb2-mysql]
+    - [mbstring][php-mbstring]
 - [Java][] 1.8 including the [JDK][]
 - [PhantomJS][] 2.1+
 - [ghostscript][] 9+
@@ -26,31 +27,32 @@ Open XDMoD requires the following software:
 - [MTA][] with `sendmail` compatibility (e.g. [postfix][], [exim][] or
   [sendmail][])
 
-[apache]:          http://httpd.apache.org/
-[mod_rewrite]:     http://httpd.apache.org/docs/current/mod/mod_rewrite.html
+[apache]:          https://httpd.apache.org/
+[mod_rewrite]:     https://httpd.apache.org/docs/current/mod/mod_rewrite.html
 [mariadb]:         https://mariadb.org/
-[mysql]:           http://mysql.com/
-[php]:             http://php.net/
-[pdo]:             http://php.net/manual/en/book.pdo.php
-[pdo-mysql]:       http://php.net/manual/en/ref.pdo-mysql.php
-[php-gd]:          http://php.net/manual/en/book.image.php
-[php-gmp]:         http://php.net/manual/en/book.gmp.php
-[php-mcrypt]:      http://php.net/manual/en/book.mcrypt.php
-[php-curl]:        http://php.net/manual/en/book.curl.php
-[php-dom]:         http://php.net/manual/en/book.dom.php
-[php-xmlwriter]:   http://php.net/manual/en/book.xmlwriter.php
-[pear-mdb2]:       http://pear.php.net/package/MDB2
-[pear-mdb2-mysql]: http://pear.php.net/package/MDB2_Driver_mysql
-[java]:            http://java.com/
+[mysql]:           https://mysql.com/
+[php]:             https://secure.php.net/
+[pdo]:             https://secure.php.net/manual/en/book.pdo.php
+[pdo-mysql]:       https://secure.php.net/manual/en/ref.pdo-mysql.php
+[php-gd]:          https://secure.php.net/manual/en/book.image.php
+[php-gmp]:         https://secure.php.net/manual/en/book.gmp.php
+[php-mcrypt]:      https://secure.php.net/manual/en/book.mcrypt.php
+[php-curl]:        https://secure.php.net/manual/en/book.curl.php
+[php-dom]:         https://secure.php.net/manual/en/book.dom.php
+[php-xmlwriter]:   https://secure.php.net/manual/en/book.xmlwriter.php
+[pear-mdb2]:       https://pear.php.net/package/MDB2
+[pear-mdb2-mysql]: https://pear.php.net/package/MDB2_Driver_mysql
+[php-mbstring]:    https://secure.php.net/manual/en/book.mbstring.php
+[java]:            https://java.com/
 [jdk]:             http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [phantomjs]:       http://phantomjs.org/
 [ghostscript]:     https://www.ghostscript.com/
 [cron]:            https://en.wikipedia.org/wiki/Cron
-[logrotate]:       http://linux.die.net/man/8/logrotate
-[mta]:             http://en.wikipedia.org/wiki/Mail_transfer_agent
+[logrotate]:       https://linux.die.net/man/8/logrotate
+[mta]:             https://en.wikipedia.org/wiki/Message_transfer_agent
 [postfix]:         http://www.postfix.org/
-[exim]:            http://www.exim.org/
-[sendmail]:        http://www.sendmail.org/
+[exim]:            https://www.exim.org/
+[sendmail]:        https://www.proofpoint.com/us/open-source-email-solution
 
 Linux Distribution Packages
 ---------------------------
@@ -64,7 +66,7 @@ available from these distributions.
 ### CentOS 7
 
 **NOTE**: The package list below includes packages included with
-[EPEL](http://fedoraproject.org/wiki/EPEL).  This repository can be
+[EPEL](https://fedoraproject.org/wiki/EPEL).  This repository can be
 added with this command for CentOS 7:
 
     # yum install epel-release
@@ -74,7 +76,7 @@ added with this command for CentOS 7:
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   java-1.7.0-openjdk java-1.7.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
-                  ghostscript
+                  ghostscript php-mbstring
 
 **NOTE**: Neither the CentOS repositories nor EPEL include PhantomJS,
 so that must be installed manually.  Packages are available for
@@ -99,7 +101,7 @@ by adding the following, but substituting your timezone:
 
 The PHP website contains the full list of supported [timezones][].
 
-[timezones]: http://php.net/manual/en/timezones.php
+[timezones]: https://secure.php.net/manual/en/timezones.php
 
 ### Apache
 
