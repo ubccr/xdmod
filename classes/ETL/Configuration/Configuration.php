@@ -811,10 +811,10 @@ class Configuration extends Loggable implements \Iterator
         return $this->baseDir;
     }  // getBaseDir()
 
-    /** -----------------------------------------------------------------------------------------
-     * Get the base directory for this configuration.
-     *
-     * @return string The base directory for this configuration.
+    /**
+     * ------------------------------------------------------------------------------------------
+     * @return array The associative array of options that was passed in from the parent, and
+     *   possibly augmented locally.
      * ------------------------------------------------------------------------------------------
      */
 
