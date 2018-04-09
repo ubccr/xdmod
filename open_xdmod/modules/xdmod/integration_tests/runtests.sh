@@ -12,4 +12,8 @@ fi
 
 ./artifacts/update-artifacts.sh
 
-$phpunit ${PHPUNITARGS} .
+# Run the tests in UserAdminTest.createUsers
+$phpunit ${PHPUNITARGS} . --group UserAdminTest.createUsers
+
+# Run everything else
+$phpunit ${PHPUNITARGS} . --exclude-group UserAdminTest.createUsers

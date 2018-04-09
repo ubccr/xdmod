@@ -49,7 +49,7 @@ class TestFiles
         $this->env = $testEnv !== false ? $testEnv : $this->defaultEnvironment;
     }
 
-    public function getFile($testGroup, $fileName, $type = 'output')
+    public function getFile($testGroup, $fileName, $type = 'output', $extension = '.json')
     {
         return \xd_utilities\resolve_path(implode(
             DIRECTORY_SEPARATOR,
@@ -59,7 +59,7 @@ class TestFiles
                 $this->env,
                 $testGroup,
                 $type,
-                $fileName . '.json',
+                $fileName . $extension,
             )
         ));
     }
