@@ -109,6 +109,7 @@ sed -i -- 's%#</Directory>%</Directory>%' /etc/httpd/conf.d/xdmod.conf
 
 cp /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config-templates/config.php /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
 sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('localhost:8080'),/" /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
+sed -i -- "s/'session.phpsession.cookiename' => 'SimpleSAML',/'session.phpsession.cookiename' => null,/" /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
 
 cat > /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/authsources.php <<EOF
 <?php
