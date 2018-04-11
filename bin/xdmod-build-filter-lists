@@ -24,7 +24,7 @@ if ($args === false) {
     usageAndExit("Failed to parse arguments\n");
 }
 $realms = array();
-$logLevel = Log::NOTICE;
+$logLevel = -1;
 foreach ($args as $key => $value) {
     if (is_array($value) && !in_array($key, array('v', 'r'))) {
         usageAndExit("Multiple values not allowed for '$key'");
@@ -58,7 +58,7 @@ foreach ($args as $key => $value) {
             }
             break;
         case 'r':
-        case 'realms':
+        case 'realm':
             $realms = is_array($value) ? $value : array($value);
             break;
         default:
@@ -66,6 +66,11 @@ foreach ($args as $key => $value) {
             break;
     }
 }
+
+if ($logLevel === -1) {
+    $logLevel = Log::NOTICE;
+}
+
 $logger = Log::factory(
     'xdmod-build-filter-lists',
     array(

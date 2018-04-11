@@ -27,7 +27,6 @@ then
     xdmod-ingestor
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     xdmod-ingestor
-    xdmod-build-filter-lists -r Jobs
     php /root/bin/createusers.php
     acl-import
 fi

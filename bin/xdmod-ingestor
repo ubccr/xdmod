@@ -280,6 +280,11 @@ function main()
         $logger->info('Aggregating data');
         try {
             runEtlPipeline('jobs-xdw.aggregate', $etlParams);
+
+            $filterListBuilder = new FilterListBuilder();
+            $filterListBuilder->setLogger($logger);
+            $filterListBuilder->buildRealmLists('Jobs');
+
         } catch (Exception $e) {
             $logger->crit(array(
                 'message'    => 'Aggregation failed: ' . $e->getMessage(),
