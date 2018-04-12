@@ -28,7 +28,7 @@ var remapSql = function (sql) {
     return output;
 };
 
-var mkdirandwrite = function (dirname, filename, data) {
+var mkdirAndWrite = function (dirname, filename, data) {
     try {
         fs.mkdirSync(dirname);
     } catch (exception) {
@@ -311,17 +311,17 @@ module.exports = {
 
                 [true, false].forEach(function (hasJobList) {
                     var actionDefn = module.exports.createAggregateTableAction(table, hasJobList);
-                    mkdirandwrite(actionDefnDir, generateAggTableIdentifier(table, hasJobList), actionDefn);
+                    mkdirAndWrite(actionDefnDir, generateAggTableIdentifier(table, hasJobList), actionDefn);
 
                     var tableDefn = module.exports.createAggregateTableDefinition(table, hasJobList);
-                    mkdirandwrite(tableDefnDir, generateAggTableIdentifier(table, hasJobList), tableDefn);
+                    mkdirAndWrite(tableDefnDir, generateAggTableIdentifier(table, hasJobList), tableDefn);
                 });
 
                 let joblistActionDefn = module.exports.createJobListTableAction(table);
-                mkdirandwrite(actionDefnDir, generateJobListTableIdentifier(table), joblistActionDefn);
+                mkdirAndWrite(actionDefnDir, generateJobListTableIdentifier(table), joblistActionDefn);
 
                 let joblistTableDefn = module.exports.createJobListTableDefinition(table);
-                mkdirandwrite(tableDefnDir, generateJobListTableIdentifier(table), joblistTableDefn);
+                mkdirAndWrite(tableDefnDir, generateJobListTableIdentifier(table), joblistTableDefn);
             }
         }
     }
