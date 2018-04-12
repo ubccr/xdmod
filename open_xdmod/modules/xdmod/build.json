@@ -64,7 +64,6 @@
             "configuration/portal_settings.ini",
             "configuration/processor_buckets.json",
             "configuration/resource_specs.json",
-            "configuration/resource_types.json",
             "configuration/resources.json",
             "configuration/roles.json",
             "configuration/rest.json",

@@ -335,7 +335,9 @@ Defines the organization name and abbreviation.
 ### resources.json
 
 Defines resource names and types.  Each object in the array represents
-the configuration for a single resource.
+the configuration for a single resource.  The resource types are defined
+in `etl/etl_data.d/jobs/xdw/resource-type.json` in your configuration
+directory.
 
 Optionally, allows specifying a column in the resource specific job
 table to identify the PI.  The column names that may be used with this
@@ -420,25 +422,6 @@ warehouse.  If this data is omitted, it is assumed that the resource is
             "processors": 520,
             "ppn": 8,
             "percent_allocated": 90
-        }
-    ]
-
-
-### resource_types.json
-
-Defines resource types.  If you have multiple resources you may assign
-types to each resources.
-
-    [
-        {
-            "id": 1,
-            "abbrev": "T1",
-            "description": "Example Type 1"
-        },
-        {
-            "id": 2,
-            "abbrev": "T2",
-            "description": "Example Type 2"
         }
     ]
 
