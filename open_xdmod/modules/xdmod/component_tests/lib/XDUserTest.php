@@ -35,6 +35,12 @@ class XDUserTest extends BaseTest
         );
         $actual = json_decode(json_encode($user), true);
 
+        if ($expected['_password'] !== null) {
+            // The test user accounts intentionally have the password identical
+            // to the username.
+            $this->assertTrue(password_verify($userName, $actual['_password']));
+        }
+
         // Compare only keys that we care about, remove all others.
         $keyList = array(
             '_username',
@@ -940,7 +946,7 @@ class XDUserTest extends BaseTest
         $password = $reflection->getProperty('_password');
         $password->setAccessible(true);
         $newPassword = $password->getValue($updatedUser);
-        $this->assertEquals(md5(self::INVALID_ACL_NAME), $newPassword);
+        $this->assertTrue(password_verify(self::INVALID_ACL_NAME, $newPassword));
 
         $user->setPassword(self::CENTER_STAFF_USER_NAME);
         $user->saveUser();

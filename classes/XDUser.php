@@ -696,21 +696,34 @@ SQL;
 
         $pdo = DB::factory('database');
 
-        $userCheck = $pdo->query("SELECT id
+        $userCheck = $pdo->query("SELECT id, password
         FROM Users
         WHERE username=:username
-        AND password=MD5(:password)
         AND user_type != :federated_user_type",
             array(
                 'username' => $uname,
-                'password' => $pass,
                 'federated_user_type' => FEDERATED_USER_TYPE
             )
         );
         if (count($userCheck) == 0) {
             return NULL;
         }
-        return self::getUserByID($userCheck[0]['id']);
+
+        if (password_verify($pass, $userCheck[0]['password'])) {
+            return self::getUserByID($userCheck[0]['id']);
+        }
+
+        // Fallback case for older MD5 passwords
+        if (md5($pass) == $userCheck[0]['password']) {
+            $new_hash = password_hash($pass, PASSWORD_DEFAULT);
+            if ($new_hash !== false) {
+                $updatestmt = $pdo->prepare("UPDATE Users SET password = :password_hash WHERE id = :id");
+                $updatestmt->execute(array('password_hash' => $new_hash, 'id' => $userCheck[0]['id']));
+            }
+            return self::getUserByID($userCheck[0]['id']);
+        }
+
+        return null;
 
     }//authenticate
 
@@ -884,7 +897,7 @@ SQL;
             if ($this->_password == "" || is_null($this->_password)) {
                 $update_data['password'] = NULL;
             } else {
-                $update_data['password'] = md5($this->_password);
+                $update_data['password'] = password_hash($this->_password, PASSWORD_DEFAULT);
             }
             $update_data['password_last_updated'] = 'NOW()';
         }
