@@ -26,22 +26,23 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         // The test files need to be in the same location that the expected results were
         // generated from or paths stored in the expected result will not match!
 
-        @mkdir(self::TMPDIR . '/etl.d', 0755, true);
-        copy(self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_etl_config.json', self::TMPDIR . '/xdmod_etl_config.json');
-        copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl.d/maintenance.json', self::TMPDIR . '/etl.d/maintenance.json');
-        copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl.d/jobs_cloud.json', self::TMPDIR . '/etl.d/jobs_cloud.json');
+        @mkdir(self::TMPDIR . '/etl_8.0.0.d', 0755, true);
+        copy(self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_etl_config_8.0.0.json', self::TMPDIR . '/xdmod_etl_config_8.0.0.json');
+        copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/maintenance.json', self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
+        copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/jobs_cloud.json', self::TMPDIR . '/etl_8.0.0.d/jobs_cloud.json');
 
-        $configObj = new EtlConfiguration(self::TMPDIR . '/xdmod_etl_config.json', self::TMPDIR);
+        $configObj = new EtlConfiguration(self::TMPDIR . '/xdmod_etl_config_8.0.0.json', self::TMPDIR);
         $configObj->initialize();
         $generated = json_decode($configObj->toJson());
-        $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config.json'));
+        $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_8.0.0.json'));
+        file_put_contents("/tmp/xdmod_etl_config_8.0.0.json", $configObj->toJson());
 
         // Cleanup
 
-        unlink(self::TMPDIR . '/xdmod_etl_config.json');
-        unlink(self::TMPDIR . '/etl.d/maintenance.json');
-        unlink(self::TMPDIR . '/etl.d/jobs_cloud.json');
-        rmdir(self::TMPDIR . '/etl.d');
+        unlink(self::TMPDIR . '/xdmod_etl_config_8.0.0.json');
+        unlink(self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
+        unlink(self::TMPDIR . '/etl_8.0.0.d/jobs_cloud.json');
+        rmdir(self::TMPDIR . '/etl_8.0.0.d');
         rmdir(self::TMPDIR );
 
         $this->assertEquals($generated, $expected);

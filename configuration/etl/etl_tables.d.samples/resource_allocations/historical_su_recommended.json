@@ -3,7 +3,7 @@
 
     "#": "Include the resource allocaitons table definition",
     "table_definition": {
-        "$ref": "etl_tables.d/resource_allocations/resource_allocations.json#/table_definition"
+        "$ref": "${table_definition_dir}/resource_allocations/resource_allocations.json#/table_definition"
     },
 
     "#": "Generate UPDATE table SET recommended = ? WHERE id = ? AND start_alloc_date = ?",

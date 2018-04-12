@@ -34,6 +34,9 @@ abstract class aAggregator extends aRdbmsDestinationAction
 
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
+        $requiredKeys = array("definition_file");
+        $this->verifyRequiredConfigKeys($requiredKeys, $options);
+
         parent::__construct($options, $etlConfig, $logger);
 
         if ( ! $options instanceof AggregatorOptions ) {

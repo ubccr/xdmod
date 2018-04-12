@@ -208,7 +208,7 @@ class EtlOverseer extends Loggable implements iEtlOverseer
 
                 $actionObjectList[$actionName] = $this->verifyAction($etlConfig, $options);
             } catch ( Exception $e ) {
-                $messages[] = "(" . $e->getMessage() . ")";
+                $messages[] = "$actionName (" . $e->getMessage() . ")";
             }
         }  // foreach ( $actionNameList as $actionName )
 
