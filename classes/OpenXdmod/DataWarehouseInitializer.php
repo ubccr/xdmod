@@ -69,9 +69,6 @@ class DataWarehouseInitializer
      */
     protected $stagingIngestors = array(
 
-        // Constant data.
-        'ResourceTypes',
-
         // Entity data.
         'Organizations',
         'Resources',
