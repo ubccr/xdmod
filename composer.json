@@ -26,7 +26,8 @@
         "phpmailer/phpmailer": "^5.2",
         "ubccr/simplesamlphp-module-authglobus": "1.2.0",
         "ubccr/log": "1.13.2",
-        "google/recaptcha": "~1.1"
+        "google/recaptcha": "~1.1",
+        "ircmaxell/password-compat": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*"
