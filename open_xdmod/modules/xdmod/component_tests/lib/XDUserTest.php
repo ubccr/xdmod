@@ -662,7 +662,7 @@ class XDUserTest extends BaseTest
 
         $this->assertEquals('0', $user->getUserID());
 
-        $user->setUserType(FEDERATED_USER_TYPE);
+        $user->setUserType(SSO_USER_TYPE);
 
         $user->saveUser();
 
@@ -678,7 +678,7 @@ class XDUserTest extends BaseTest
         $user = self::getUser(null, 'test', 'a', 'user', array());
         $this->assertEquals('0', $user->getUserID());
 
-        $user->setUserType(FEDERATED_USER_TYPE);
+        $user->setUserType(SSO_USER_TYPE);
 
         $user->saveUser();
         $this->assertNotNull($user->getUserID());
@@ -715,7 +715,7 @@ class XDUserTest extends BaseTest
     {
         $username = array_keys(self::$users)[count(self::$users) - 1];
         $anotherUser = self::getUser(null, 'test', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, null, $username);
-        $anotherUser->setUserType(FEDERATED_USER_TYPE);
+        $anotherUser->setUserType(SSO_USER_TYPE);
         $anotherUser->saveUser();
     }
 

@@ -17,7 +17,6 @@ class UserControllerProviderTest extends BaseUserAdminTest
     public function testGetCurrentUser(array $options)
     {
         $user = $options['user'];
-
         $expected = $options['expected'];
         $expectedFile = $expected['file'];
         $expectedHttpCode = $expected['http_code'];
@@ -52,7 +51,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
     public function provideGetCurrentUser()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_controller', 'get_current_user', 'input')
+            $this->getTestFiles()->getFile('user_controller', 'get_current_user-8.0.0', 'input')
         );
     }
 }

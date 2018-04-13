@@ -28,7 +28,7 @@ build:
         - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/samlSetup.sh
-        - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults --federated
+        - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
 
     on_failure:
         - cat /var/log/xdmod/*
