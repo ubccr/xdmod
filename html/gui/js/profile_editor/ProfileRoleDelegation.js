@@ -7,6 +7,24 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
     title: 'Role Delegation',
     cls: 'role_manager',
 
+    reloadEligibleUsers: function (userId) {
+        // if userId is specified then attempt to select it after the store has
+        // reloaded.
+        this.storeCenterStaff.on('load', function () {
+            if (userId !== undefined && this.storeCenterStaff.getById(userId) !== undefined) {
+                // we just need to select the user as the UI is already setup
+                // to handle this case.
+                this.cmbCenterStaff.select(userId);
+            } else {
+                // The user that was modified was not found in the current list
+                // of users. We need to update the UI to reflect this new state.
+                this.btnElevateUser.setVisible(false);
+                this.btnDowngradeUser.setVisible(false);
+                this.lblMemberStatus.update('Select a staff member using the list above.');
+            }
+        }, this, { single: true });
+    },
+
     initComponent: function () {
         var self = this;
 
@@ -15,6 +33,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
             baseParams: { operation: 'enum_center_staff_members' },
             root: 'members',
             autoLoad: true,
+            idProperty: 'id',
             fields: ['id', 'name']
         });// storeCenterStaff
 
@@ -32,6 +51,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
 
             XDMoD.utils.syncWindowShadow(self);
         });
+        this.storeCenterStaff = storeCenterStaff;
 
         // ---------------------------------------------------------
 
@@ -84,6 +104,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
                 }// select
             }// listeners
         });// cmbCenterStaff
+        this.cmbCenterStaff = cmbCenterStaff;
 
         var sectionAssign = new Ext.Panel({
             hidden: true,
@@ -145,6 +166,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
                 });// conn.request
             }// handler
         });// btnElevateUser
+        this.btnElevateUser = btnElevateUser;
 
         // ---------------------------------------------------------
 
@@ -173,6 +195,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
                                 lblMemberStatus.update('');
 
                                 XDMoD.utils.syncWindowShadow(self);
+                                self.reloadEligibleUsers(cmbCenterStaff.getValue());
                             } else {
                                 Ext.MessageBox.alert('Role Manager', json.message);
                             }
@@ -183,6 +206,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
                 });// conn.request
             }// handler
         });// btnDowngradeUser
+        this.btnDowngradeUser = btnDowngradeUser;
 
         var lblMemberStatus = new Ext.BoxComponent({
             hidden: true,
@@ -190,6 +214,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
             autoHeight: true,
             html: 'Select a staff member using the list above.'
         });
+        this.lblMemberStatus = lblMemberStatus;
 
         var lblStatus = new Ext.BoxComponent({
             hidden: true,
