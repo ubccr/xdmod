@@ -702,7 +702,7 @@ SQL;
             FROM
                 Users
             WHERE
-                username=:username
+                username = :username
                 AND user_type != :user_type",
             array(
                 'username' => $uname,

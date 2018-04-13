@@ -207,7 +207,7 @@ class XDSamlAuthentication
                 print_r($samlAttributes, true);
         }
         if ($error) {
-            $this->logger->err("Error Creating Signle Sign On user" . $body);
+            $this->logger->err("Error Creating Single Sign On user" . $body);
         } else {
             $this->logger->notice("New " . ($linked ? "linked": "unlinked") . " Single Sign On user created" . $body);
         }
