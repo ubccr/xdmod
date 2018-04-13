@@ -38,8 +38,8 @@ secrets.url = process.env.TEST_URL ? process.env.TEST_URL : secrets.url;
 var excludes = [
     './test/**/*.page.js'
 ];
-if (!process.env.FEDERATED) {
-    excludes.push('./test/specs/xdmod/federatedLogin.js');
+if (!process.env.SSO) {
+    excludes.push('./test/specs/xdmod/SSOLogin.js');
 }
 var capabilities = [Chrome];
 var services = ['selenium-standalone'];
@@ -89,8 +89,8 @@ exports.config = {
     // Patterns to exclude.
     exclude: excludes,
     suites: {
-        federatedLogin: [
-            './test/specs/xdmod/federatedLogin.js'
+        SSOLogin: [
+            './test/specs/xdmod/SSOLogin.js'
         ]
     },
     //

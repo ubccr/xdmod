@@ -1,12 +1,12 @@
-describe('Federated Login', () => {
-    it('Should have the federated option', () => {
+describe('Single Sign On Login', () => {
+    it('Should have the Single Sign On option', () => {
         browser.url('/');
         browser.waitForInvisible('.ext-el-mask-msg');
         browser.waitAndClick('a[href*=actionLogin]');
-        browser.waitForVisible('#federatedLoginLink');
-        browser.waitAndClick('#federatedLoginLink');
+        browser.waitForVisible('#SSOLoginLink');
+        browser.waitAndClick('#SSOLoginLink');
     });
-    it('Should goto the federated login page and login', () => {
+    it('Should goto the Single Sign On login page and login', () => {
         browser.waitForExist('form[action="/sso"]');
         browser.submitForm('form[action="/sso"]');
     });

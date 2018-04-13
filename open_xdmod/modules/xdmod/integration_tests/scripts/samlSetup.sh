@@ -115,7 +115,7 @@ cat > /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/authsources.php
 <?php
 \$config = array(
   /*
-   * If you want to support both local auth and federated auth look into
+   * If you want to support both local auth and Single Sign On auth look into
    * https://simplesamlphp.org/docs/stable/multiauth:multiauth
    * https://simplesamlphp.org/docs/stable/sqlauth:sql
    * An updated example will be provided when this is implemented.

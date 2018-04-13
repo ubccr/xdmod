@@ -21,9 +21,9 @@ npm install --quiet
 
 ./artifacts/update-artifacts.sh
 
-if [ "$4" = "--federated" ];
+if [ "$4" = "--sso" ];
 then
-    npm run test-federated
+    npm run test-sso
 else
     npm test
 fi

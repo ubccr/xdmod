@@ -146,7 +146,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
 
         // ------------------------------------------------
 
-        var active_layout_index = CCR.xdmod.ui.userIsFederated ? XDMoD.ProfileEditorConstants.FEDERATED_USER : XDMoD.ProfileEditorConstants.PASSWORD;
+        var active_layout_index = CCR.xdmod.ui.userIsSSO ? XDMoD.ProfileEditorConstants.SSO_USER : XDMoD.ProfileEditorConstants.PASSWORD;
 
 
         // ------------------------------------------------
@@ -179,10 +179,10 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
                 // ================================================
 
                 // active_layout_index = XDMoD.ProfileEditorConstants.PASSWORD;
-                if (data.results.is_federated_user && data.results.email_address.length === 0) {
+                if (data.results.is_sso_user && data.results.email_address.length === 0) {
                     XDMoD.Profile.logoutOnClose = true;
                 }
-                if (data.results.is_federated_user === true) {
+                if (data.results.is_sso_user === true) {
                     if (data.results.first_time_login) {
                         // If the user is logging in for the first time, prompt them to validate their email address
                         active_layout_index = XDMoD.ProfileEditorConstants.WELCOME_EMAIL_CHANGE;
@@ -349,7 +349,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             ]
         }); // sectionPassword
 
-        var sectionFederatedUser = new Ext.Panel({
+        var sectionSSOUser = new Ext.Panel({
             labelWidth: 95,
             frame: false,
             bodyStyle: 'padding:0px 5px',
@@ -361,7 +361,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             }]
         });
 
-        var sectionFederatedEmail = new Ext.Panel({
+        var sectionSSOEmail = new Ext.Panel({
             labelWidth: 95,
             frame: false,
             bodyStyle: 'padding:0px 5px',
@@ -378,11 +378,11 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
         // ------------------------------------------------
 
         var bottomItems = [
-            sectionFederatedEmail,
-            sectionFederatedUser
+            sectionSSOEmail,
+            sectionSSOUser
         ];
 
-        if (!CCR.xdmod.ui.userIsFederated) {
+        if (!CCR.xdmod.ui.userIsSSO) {
             bottomItems.unshift(sectionPassword);
         }
 

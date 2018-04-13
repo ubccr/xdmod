@@ -236,7 +236,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 load: function (store, records) {
                     for (var i = 0; i < records.length; i++) {
                         var record = records[i];
-                        if (parseInt(record.data.id, 10) === CCR.xdmod.FEDERATED_USER_TYPE) {
+                        if (parseInt(record.data.id, 10) === CCR.xdmod.SSO_USER_TYPE) {
                             store.remove(record);
                         }
                     }
@@ -641,7 +641,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
             validator: function (value) {
                 // If the user is an XSEDE user, an email address is not required.
-                if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
+                if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
                     return true;
                 }
 
@@ -728,7 +728,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var lblXSEDEUser = new Ext.form.Label({
             fieldLabel: 'User Type',
-            html: '<b style="color: #00f">Federated User</b>'
+            html: '<b style="color: #00f">SSO User</b>'
         });
 
         lblXSEDEUser.hide();
@@ -830,7 +830,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
 
-                // When we are working on a 'Federated' user the cmbUserType will
+                // When we are working on a 'Single Sign On' user the cmbUserType will
                 // not have a value ( as it's hidden ). In that case use the
                 // cached_user_type variable which is populated when we fetch
                 // the users details.
@@ -1148,7 +1148,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         cached_user_type = parseInt(json.user_information.user_type);
                         cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
 
-                        if (cached_user_type === CCR.xdmod.FEDERATED_USER_TYPE) {
+                        if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
                             // XSEDE-derived User: Can't change user type
                             cmbUserType.hide();
                             lblXSEDEUser.show();
