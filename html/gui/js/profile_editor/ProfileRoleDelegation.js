@@ -23,6 +23,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
                 this.lblMemberStatus.update('Select a staff member using the list above.');
             }
         }, this, { single: true });
+        this.storeCenterStaff.reload();
     },
 
     initComponent: function () {
