@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/jobs/xdw/allocation-on-resource.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "allocation_id": "aorf.allocation_id",
+            "resource_id": "aorf.resource_id",
+            "allocation_state_id": 0
+        },
+        "joins": [
+            {
+                "name": "hpcdb_allocations_on_resources",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "aorf"
+            }
+        ]
+    }
+}

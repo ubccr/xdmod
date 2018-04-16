@@ -1,0 +1,119 @@
+{
+    "table_definition": {
+        "name": "account",
+        "engine": "MyISAM",
+        "comment": "This table has records for all the accounts/projects.",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "The id of the account record."
+            },
+            {
+                "name": "account_origin_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "parent_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The id of the parent account record, if any."
+            },
+            {
+                "name": "charge_number",
+                "type": "varchar(200)",
+                "nullable": false,
+                "comment": "The charge number associated with the allocation."
+            },
+            {
+                "name": "creator_organization_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The id of the organization who created this account."
+            },
+            {
+                "name": "granttype_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "long_name",
+                "type": "varchar(500)",
+                "nullable": true
+            },
+            {
+                "name": "short_name",
+                "type": "varchar(500)",
+                "nullable": true
+            },
+            {
+                "name": "order_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "federation_blade_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 0
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "index_charge",
+                "columns": [
+                    "charge_number",
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_account_account1_idx",
+                "columns": [
+                    "parent_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_account_granttype1_idx",
+                "columns": [
+                    "granttype_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_account_organization1_idx",
+                "columns": [
+                    "creator_organization_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "uniq",
+                "columns": [
+                    "account_origin_id",
+                    "federation_blade_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

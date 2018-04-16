@@ -1,0 +1,156 @@
+{
+    "#": "This is used by multiple pipelines, specifically xdmod datawarehouse",
+    "#": "and federation blades to initialize tables and their default data",
+    "bootstrap": [
+        {
+            "name": "table-create",
+            "description": "Setup tables",
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "jobs/xdw/account.json",
+                "jobs/xdw/allocation-breakdown.json",
+                "jobs/xdw/allocation-on-resource.json",
+                "jobs/xdw/allocation.json",
+                "jobs/xdw/error-descriptions.json",
+                "jobs/xdw/federation-blades.json",
+                "jobs/xdw/field-of-science-hierarchy.json",
+                "jobs/xdw/field-of-science.json",
+                "jobs/xdw/hosts.json",
+                "jobs/xdw/job-records.json",
+                "jobs/xdw/job-tasks.json",
+                "jobs/xdw/job-times.json",
+                "jobs/xdw/jobhosts.json",
+                "jobs/xdw/min-max-date.json",
+                "jobs/xdw/node-count.json",
+                "jobs/xdw/organization.json",
+                "jobs/xdw/people-under-pi.json",
+                "jobs/xdw/person.json",
+                "jobs/xdw/piperson.json",
+                "jobs/xdw/principal-investigator.json",
+                "jobs/xdw/processor-buckets.json",
+                "jobs/xdw/queue.json",
+                "jobs/xdw/request.json",
+                "jobs/xdw/resource-allocated.json",
+                "jobs/xdw/resource-fact.json",
+                "jobs/xdw/resource-specs.json",
+                "jobs/xdw/resource-type.json",
+                "jobs/xdw/service-provider.json",
+                "jobs/xdw/staging-jobhosts.json",
+                "jobs/xdw/system-account.json"
+            ]
+        },
+        {
+            "name": "jobtimes",
+            "definition_file": "jobs/xdw/job-times.json",
+            "description": "job times + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "job times data",
+                    "path": "jobs/xdw/job-times.json"
+                }
+            }
+        },
+        {
+            "name": "error-descriptions",
+            "definition_file": "jobs/xdw/error-descriptions.json",
+            "description": "error descriptions + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "job times data",
+                    "path": "jobs/xdw/error-descriptions.json"
+                }
+            }
+        },
+        {
+            "name": "processorbuckets",
+            "definition_file": "jobs/xdw/processor-buckets.json",
+            "description": "processorbuckets + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "processorbuckets data",
+                    "path": "jobs/xdw/processor-buckets.json"
+                }
+            }
+        },
+        {
+            "name": "account",
+            "definition_file": "jobs/xdw/account.json",
+            "description": "account + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown account data data",
+                    "path": "jobs/xdw/account.json"
+                }
+            }
+        },
+        {
+            "name": "person",
+            "definition_file": "jobs/xdw/person.json",
+            "description": "person + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown person data data",
+                    "path": "jobs/xdw/person.json"
+                }
+            }
+        },
+        {
+            "name": "pi-person",
+            "definition_file": "jobs/xdw/piperson.json",
+            "description": "pi person + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown pi-person data data",
+                    "path": "jobs/xdw/pi-person.json"
+                }
+            }
+        },
+        {
+            "name": "resource-type",
+            "definition_file": "jobs/xdw/resource-type.json",
+            "description": "resource-type + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown resource type data data",
+                    "path": "jobs/xdw/resource-type.json"
+                }
+            }
+        }
+    ],
+    "aggregate": [{
+        "name": "aggregate",
+        "endpoints": {
+            "source": {
+                "type": "mysql",
+                "name": "Job Record/Task database",
+                "config": "datawarehouse",
+                "schema": "modw"
+            },
+            "destination": {
+                "type": "mysql",
+                "name": "Aggregates Database",
+                "config": "datawarehouse",
+                "schema": "modw_aggregates",
+                "create_schema_if_not_exists": true
+            }
+        },
+        "namespace": "ETL\\Aggregator",
+        "options_class": "AggregatorOptions",
+        "class": "SimpleAggregator",
+        "description": "Aggregate HPC job records",
+        "definition_file": "jobs/hpc-aggregation.json",
+        "table_prefix": "jobfact_by_",
+        "aggregation_units": [
+            "day", "month", "quarter", "year"
+        ]
+    }]
+}

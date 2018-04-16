@@ -31,7 +31,7 @@ $scriptOptions = array(
     // Base path for relative file locations
     'base-dir'          => null,
     // ETL configuration file
-    'config-file'       => null,
+    'config-file'       => CONFIG_DIR . '/etl/etl.json',
     // List of action state objects to delete
     'delete-objects'    => array(),
     // Run in dryrun mode performing all operations except execution of the actions

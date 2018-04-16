@@ -1,0 +1,127 @@
+{
+    "table_definition": {
+        "name": "resourcefact",
+        "engine": "MyISAM",
+        "comment": "Information about resources.",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "The id of the resource record"
+            },
+            {
+                "name": "resourcetype_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": 0,
+                "comment": "The resource type id."
+            },
+            {
+                "name": "organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1,
+                "comment": "The organization of the resource."
+            },
+            {
+                "name": "name",
+                "type": "varchar(200)",
+                "nullable": true,
+                "comment": "The name of the resource."
+            },
+            {
+                "name": "code",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "The short name of the resource."
+            },
+            {
+                "name": "description",
+                "type": "varchar(1000)",
+                "nullable": true,
+                "comment": "The description of the resource."
+            },
+            {
+                "name": "start_date",
+                "type": "datetime",
+                "nullable": true,
+                "comment": "The date the resource was put into commission."
+            },
+            {
+                "name": "start_date_ts",
+                "type": "int(14)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "end_date",
+                "type": "datetime",
+                "nullable": true,
+                "comment": "The end date of the resource."
+            },
+            {
+                "name": "end_date_ts",
+                "type": "int(14)",
+                "nullable": true
+            },
+            {
+                "name": "shared_jobs",
+                "type": "int(1)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "timezone",
+                "type": "varchar(30)",
+                "nullable": false,
+                "default": "UTC"
+            },
+            {
+                "name": "resource_origin_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            }
+        ],
+        "indexes": [
+            {
+                "name": "aggregation_index",
+                "columns": [
+                    "resourcetype_id",
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_Resource_Organization1_idx",
+                "columns": [
+                    "organization_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_resource_resourcetype1_idx",
+                "columns": [
+                    "resourcetype_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "organization_id",
+                    "name",
+                    "start_date"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

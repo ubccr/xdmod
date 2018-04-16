@@ -307,7 +307,7 @@ XDMoD.UserStatsComponents.Visitation = Ext.extend(Ext.Panel, {
             },
 
             {
-                 boxLabel: '<span style="color: #b914f6">Federated Users</span>',
+                 boxLabel: '<span style="color: #b914f6">SSO Users</span>',
                name: 'rb',
                  inputValue: '5',
                checked: true

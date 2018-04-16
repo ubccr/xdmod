@@ -2,6 +2,7 @@
 
 use CCR\Json;
 use TestHarness\TestFiles;
+use TestHarness\TestParameterHelper;
 use TestHarness\XdmodTestHelper;
 
 class ControllerTest extends \PHPUnit_Framework_TestCase
@@ -108,7 +109,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumUserTypes()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_user_types')
+            $this->getTestFiles()->getFile('controllers', 'enum_user_types-8.0.0')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -274,7 +275,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumUserTypesAndRoles()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-xsede_to_federated')
+            $this->getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-8.0.0')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -513,6 +514,69 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedMessage, $data['message'], "Expected the 'message' property to be: $expectedMessage received: " . $data['message']);
 
         $this->helper->logoutDashboard();
+    }
+
+    /**
+     * @dataProvider provideEnumTargetAddresses
+     *
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testEnumTargetAddresses(array $options)
+    {
+        $testData = $options['data'];
+        $expected = $options['expected'];
+
+        $expectedFile = $expected['file'];
+        $expectedFileName = $this->getTestFiles()->getFile('controllers', $expectedFile);
+        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'text/html; charset=UTF-8';
+        $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
+
+        $data = array_merge(
+            array(
+                'operation' => 'enum_target_addresses'
+            ),
+            $testData
+        );
+
+        $this->helper->authenticateDashboard('mgr');
+
+        $response = $this->helper->post("internal_dashboard/controllers/mailer.php", null, $data);
+
+        $this->assertEquals($expectedContentType, $response[1]['content_type']);
+        $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
+
+        // the current responses are json but specify the text/html; charset=UTF-8;
+        // content_type. Where as some of the exception cases specify
+        // application/json but do not return valid json. To account for these
+        // two cases we just default to attempting to decode the response data
+        // and if that fails then just fallback to the full response body as is.
+        try {
+            $actual = json_decode($response[0], true);
+        } catch (\Exception $e) {
+            $actual = $response[0];
+        }
+
+        $expected = JSON::loadFile($expectedFileName);
+
+        $this->assertEquals($expected, $actual);
+
+        $this->helper->logoutDashboard();
+    }
+
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
+    public function provideEnumTargetAddresses()
+    {
+        $data = JSON::loadFile($this->getTestFiles()->getFile('controllers', 'enum_target_addresses', 'input'));
+        foreach($data as $key => $test) {
+            foreach($test[0]['data'] as $dataKey => $value) {
+                $data[$key][0]['data'][$dataKey] = TestParameterHelper::processParam($value);
+            }
+        }
+        return $data;
     }
 
     public function listUsers($groupFilter = 'all', $roleFilter = 'any', $contextFilter = '')

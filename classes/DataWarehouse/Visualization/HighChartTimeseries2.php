@@ -536,6 +536,7 @@ class HighChartTimeseries2 extends HighChart2
                 // @refer HighChart2 line 866
 
                 $numYAxisDataObjects = count($yAxisDataObjectsArray);
+
                 foreach($yAxisDataObjectsArray as $yIndex => $yAxisDataObject)
                 {
                     if( $yAxisDataObject != null)
@@ -571,7 +572,25 @@ class HighChartTimeseries2 extends HighChart2
                         }
 
                         $values = $yAxisDataObject->getValues();
+
+                        // Decide whether to show data point markers:
                         $values_count = count($values);
+                        // Count datapoints having actual, non-null y values:
+                        $y_values_count = 0;
+                        foreach ($values as $y_value) {
+                            if ($y_value !== null) {
+                                ++$y_values_count;
+                            }
+                            // we are only interested in the == 1 case.
+                            if ($y_values_count > 1) {
+                                break;
+                            }
+                        }
+                        // Display markers for scatter plots, non-thumbnail plots of data series
+                        // with fewer than 21 points, or for any data series with a single y value.
+                        $showMarker = $data_description->display_type == 'scatter' ||
+                            ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
+                            $y_values_count == 1;
 
                         $isRemainder = $dataTruncated && ($yIndex === $numYAxisDataObjects - 1);
 
@@ -721,7 +740,7 @@ class HighChartTimeseries2 extends HighChart2
                             //'innerSize' => min(100,(100.0/$totalSeries)*count($this->_chart['series'])).'%',
                             'connectNulls' => $data_description->display_type == 'line' || $data_description->display_type == 'spline',
                             'marker' => array(
-                                'enabled' =>$data_description->display_type == 'scatter' || ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width),
+                                'enabled' => $showMarker,
                                 'lineWidth' => 1,
                                 'lineColor' => $lineColor,
                                 'radius' => $font_size/4 + 5

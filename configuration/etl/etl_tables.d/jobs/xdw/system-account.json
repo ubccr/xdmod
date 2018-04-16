@@ -1,0 +1,103 @@
+{
+    "table_definition": {
+        "name": "systemaccount",
+        "engine": "MyISAM",
+        "comment": "User's accounts on various resources.",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "the id of the record"
+            },
+            {
+                "name": "system_account_origin_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The person to whom this system account belongs"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The resource for which this is an account."
+            },
+            {
+                "name": "username",
+                "type": "varchar(30)",
+                "nullable": false,
+                "comment": "The username to log on to the resource."
+            },
+            {
+                "name": "ts",
+                "type": "datetime",
+                "nullable": true
+            },
+            {
+                "name": "uid",
+                "type": "int(11)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_systemaccount_person1_idx",
+                "columns": [
+                    "person_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_systemaccount_resourcefact1_idx",
+                "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "index_resource_username_id",
+                "columns": [
+                    "resource_id",
+                    "username",
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "system_account_origin_id",
+                "columns": [
+                    "system_account_origin_id",
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "systemaccount_username",
+                "columns": [
+                    "username"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": []
+    }
+}

@@ -26,7 +26,7 @@ class HpcdbHostsIngestor extends pdoIngestor implements iAction
         /**
          * call HostListParser to expand host names and updates
          * this record to be able to be turned into something that
-         * can then be used in hpcdb-modw.ingest.job-hosts action to
+         * can then be used in hpcdb-xdw.ingest.job-hosts action to
          *  the job hosts table.
          * @see Xdmod\HostListParser
          */

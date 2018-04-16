@@ -1,0 +1,150 @@
+{
+    "table_definition": {
+        "name": "request",
+        "engine": "MyISAM",
+        "comment": "Requests by PIs for allocations on TG.",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "The id of the request record."
+            },
+            {
+                "name": "request_origin_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "request_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The type of the request. Links to transactiontype table."
+            },
+            {
+                "name": "primary_fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The field of science associated with  the project of this request."
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The account pertaining to this request."
+            },
+            {
+                "name": "proposal_title",
+                "type": "varchar(1000)",
+                "nullable": true,
+                "comment": "The title of the proposal for the allocation request."
+            },
+            {
+                "name": "expedite",
+                "type": "tinyint(1)",
+                "nullable": true,
+                "comment": "The date this request expires."
+            },
+            {
+                "name": "project_title",
+                "type": "varchar(300)",
+                "nullable": true,
+                "comment": "The project title related to this request."
+            },
+            {
+                "name": "primary_reviewer",
+                "type": "varchar(100)",
+                "nullable": true,
+                "comment": "The name of the primary reviewer."
+            },
+            {
+                "name": "proposal_number",
+                "type": "varchar(20)",
+                "nullable": true,
+                "comment": "The number of the proposal  of the project."
+            },
+            {
+                "name": "grant_number",
+                "type": "varchar(200)",
+                "nullable": false,
+                "comment": "The grant number."
+            },
+            {
+                "name": "comments",
+                "type": "varchar(2000)",
+                "nullable": true,
+                "comment": "Any comments."
+            },
+            {
+                "name": "start_date",
+                "type": "date",
+                "nullable": false,
+                "comment": "The start date of the request."
+            },
+            {
+                "name": "end_date",
+                "type": "date",
+                "nullable": false,
+                "comment": "The end of the request."
+            },
+            {
+                "name": "boardtype_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The board type."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_request_account1_idx",
+                "columns": [
+                    "account_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_request_boardtype1_idx",
+                "columns": [
+                    "boardtype_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_request_fieldofscience1_idx",
+                "columns": [
+                    "primary_fos_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_request_transactiontype1_idx",
+                "columns": [
+                    "request_type_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "index6",
+                "columns": [
+                    "grant_number"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

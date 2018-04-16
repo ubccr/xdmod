@@ -94,8 +94,15 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
         this.summaryStore.on('exception', function (dp, type, action, opt, response, arg) {
             if (response.success == false) {
-        // todo: show a re-login box instead of logout
-                Ext.MessageBox.alert('Error', response.message || 'Unknown Error');
+                // todo: show a re-login box instead of logout
+                Ext.MessageBox.alert(
+                    'Error',
+                    response.message || 'Unknown Error',
+                    function () {
+                        // Remove Mask on body after closing error
+                        CCR.xdmod.ui.Viewer.getViewer().el.unmask();
+                    }
+                );
 
                 if (response.message == 'Session Expired') {
                     CCR.xdmod.ui.actionLogout.defer(1000);

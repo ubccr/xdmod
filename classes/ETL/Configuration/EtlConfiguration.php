@@ -158,10 +158,7 @@ class EtlConfiguration extends Configuration
             $this->localConfigDir = $this->paths->local_config_dir;
         }
 
-        $this->addKeyTransformer(new CommentTransformer($this->logger));
-        $this->addKeyTransformer(new JsonReferenceWithMacroTransformer($this->logger));
-
-        return $this;
+        return parent::preTransformTasks();
 
     }  // preTransformTasks()
 

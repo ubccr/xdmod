@@ -3,6 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
+use Exception;
 use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
 
@@ -66,7 +67,18 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         foreach (self::$newUsers as $username => $userId) {
-            self::removeUser($userId, $username);
+            try {
+                self::removeUser($userId, $username);
+            } catch (Exception $e) {
+                echo sprintf(
+                    "Exception removing user [%d, %s] during teardown: [%d] %s: \n%s\n",
+                    $userId,
+                    $username,
+                    $e->getCode(),
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                );
+            }
         }
     }
 
@@ -105,13 +117,52 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
             throw new Exception("Expected http code: $expectedHttpCode. Received: $actualHttpCode");
         }
 
-        $actualSuccess = $response[0]['success'];
+        $actualSuccess = (bool) $response[0]['success'];
         $actualMessage = $response[0]['message'];
-        if ($actualSuccess !== true) {
-            throw new Exception("Remove User ['success'] Expected: false, Received: $actualSuccess");
-        }
-        if (strpos($actualMessage, $username) === false) {
-            throw new Exception("Remove User ['message'] did not contain username: $username. Received: " . $actualMessage);
+
+        $actualSuccessMessage = $actualMessage ? 'true' : 'false';
+
+        // Begin determining if the response was as expected.
+        if (strpos($actualMessage, 'user_does_not_exist') === false) {
+            // If the user does exist...
+
+            // then we expect the 'success' property to be true. If not,
+            // throw an exception.
+            if ($actualSuccess !== true) {
+                throw new Exception(
+                    sprintf(
+                        "Remove User ['success'] Expected: true, Received: %s | %s",
+                        $actualSuccessMessage,
+                        $actualMessage
+                    )
+                );
+            }
+
+            // then we expect that the users name will be in the returned
+            // message. If it's not then throw an exception.
+            if (strpos($actualMessage, $username) === false) {
+                throw new Exception(
+                    sprintf(
+                        "Remove User ['message'] did not contain username: %s. Received: %s",
+                        $username,
+                        $actualMessage
+                    )
+                );
+            }
+        } else {
+            // If the user is not found
+
+            // And the 'success' property is not false ( as expected ) then throw
+            // an exception.
+            if ($actualSuccess !== false) {
+                throw new Exception(
+                    sprintf(
+                        "Remove User ['success'] Expected: false, Received: %s | %s",
+                        $actualSuccessMessage,
+                        $actualMessage
+                    )
+                );
+            }
         }
 
         $helper->logoutDashboard();
@@ -330,7 +381,7 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         $actualContentType = $response[1]['content_type'];
         $actualHttpCode = $response[1]['http_code'];
         $this->assertTrue(
-            strpos($actualContentType, $expectedContentType) >= 0,
+            strpos($actualContentType, $expectedContentType) !== false,
             "Expected content-type: $expectedContentType. Received: $actualContentType"
         );
         $this->assertEquals(

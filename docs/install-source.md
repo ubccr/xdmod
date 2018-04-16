@@ -47,7 +47,7 @@ Update log directory and file ownership and permissions:
     # chown apache:xdmod /opt/xdmod/logs/exceptions.log
     # touch /opt/xdmod/logs/query.log
     # chmod 664 /opt/xdmod/logs/query.log
-    # chmod apache:xdmod /opt/xdmod/logs/query.log
+    # chown apache:xdmod /opt/xdmod/logs/query.log
 
 The `exceptions.log` and `query.log` may be written to by both Apache and Open
 XDMoD commands.

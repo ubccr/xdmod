@@ -1,10 +1,10 @@
 ---
-title: Federated Authentication Guide
+title: Single Sign On Guide
 ---
 
 ----------
 
-Documentation only covers using [SimpleSAMLphp][ssp] for SAML federated authentication.
+Documentation only covers using [SimpleSAMLphp][ssp] for Single Sign On.
 
 ----------
 
@@ -23,7 +23,7 @@ First you will need to create the folders for the SimpleSAMLphp files to live:
 # mkdir -p /etc/xdmod/simplesamlphp/cert
 ```
 
-Required configuration files to be added to support federated authentication:
+Required configuration files to be added to support Single Sign On:
 
 *   `/etc/xdmod/simplesamlphp/config/config.php`
 *   `/etc/xdmod/simplesamlphp/config/authsources.php`
@@ -33,6 +33,7 @@ More information on how to set these up can be found in the [SimpleSAMLphp Servi
 
 You will need to modify the `config.php` file and make sure you modify the `metadata.sources` and the `certdir` keys to have the **full path** to directories containing the configurations:
 
+**note** make sure the file has opening `<?php`
 ```php
   ...
   'certdir' => '/etc/xdmod/simplesamlphp/cert/',
@@ -42,6 +43,14 @@ You will need to modify the `config.php` file and make sure you modify the `meta
       'directory' => '/etc/xdmod/simplesamlphp/metadata/'
     ),
   ),
+  ...
+```
+two other keys that might need to be set if you are having errors
+```php
+  ...
+  'session.phpsession.cookiename' => null,
+  ...
+  'trusted.url.domains' => array('f.q.dn.of.xdmod'),
   ...
 ```
 
@@ -62,7 +71,7 @@ Here is an example:
 <?php
 $config = array(
   /*
-   * If you want to support both local auth and federated auth look into
+   * If you want to support both local auth and Single Sign On auth look into
    * https://simplesamlphp.org/docs/stable/multiauth:multiauth
    * https://simplesamlphp.org/docs/stable/sqlauth:sql
    * An updated example will be provided when this is implemented.

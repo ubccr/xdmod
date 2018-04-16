@@ -291,13 +291,13 @@ class XDUser extends ETL\Loggable implements JsonSerializable
 
         }
 
-        // We don't want to acknowledge Federated-derived accounts...
+        // We don't want to acknowledge Single Sign On-derived accounts...
 
         $userCheck = $pdo->query(
             $user_check_query,
             array(
                 'email_address' => $email_address,
-                'user_type' => FEDERATED_USER_TYPE
+                'user_type' => SSO_USER_TYPE
             )
         );
 
@@ -545,7 +545,7 @@ SQL;
 
     public function setPassword($raw_password)
     {
-        if ($this->getUserType() === FEDERATED_USER_TYPE) {
+        if ($this->getUserType() === SSO_USER_TYPE) {
             throw new AccessDeniedException("Permission Denied. Only local accounts may have their passwords modified.");
         }
 
@@ -691,26 +691,43 @@ SQL;
     {
 
         if (strlen($uname) == 0 || strlen($pass) == 0) {
-            return NULL;
+            return null;
         }
 
         $pdo = DB::factory('database');
 
-        $userCheck = $pdo->query("SELECT id
-        FROM Users
-        WHERE username=:username
-        AND password=MD5(:password)
-        AND user_type != :federated_user_type",
+        $userCheck = $pdo->query(
+            "SELECT
+                id, password
+            FROM
+                Users
+            WHERE
+                username = :username
+                AND user_type != :user_type",
             array(
                 'username' => $uname,
-                'password' => $pass,
-                'federated_user_type' => FEDERATED_USER_TYPE
+                'user_type' => SSO_USER_TYPE
             )
         );
         if (count($userCheck) == 0) {
-            return NULL;
+            return null;
         }
-        return self::getUserByID($userCheck[0]['id']);
+
+        if (password_verify($pass, $userCheck[0]['password'])) {
+            return self::getUserByID($userCheck[0]['id']);
+        }
+
+        // Fallback case for older MD5 passwords
+        if (md5($pass) == $userCheck[0]['password']) {
+            $new_hash = password_hash($pass, PASSWORD_DEFAULT);
+            if ($new_hash !== false) {
+                $updatestmt = $pdo->prepare("UPDATE Users SET password = :password_hash WHERE id = :id");
+                $updatestmt->execute(array('password_hash' => $new_hash, 'id' => $userCheck[0]['id']));
+            }
+            return self::getUserByID($userCheck[0]['id']);
+        }
+
+        return null;
 
     }//authenticate
 
@@ -847,8 +864,8 @@ SQL;
         // A common e-mail address CAN be shared among multiple XSEDE accounts...
         // Each XDMoD (local) account must have a distinct e-mail address (unless that e-mail address is present in moddb.ExceptionEmailAddresses)
 
-        // The second condition is in place to account for the case where a new Federated user is being created (and is not currently in the XDMoD DB)
-        if (($id_of_user_holding_email_address != INVALID) && ($this->getUserType() != FEDERATED_USER_TYPE)) {
+        // The second condition is in place to account for the case where a new Single Sign On user is being created (and is not currently in the XDMoD DB)
+        if (($id_of_user_holding_email_address != INVALID) && ($this->getUserType() != SSO_USER_TYPE)) {
 
             if (!isset($this->_id)) {
                 // This user has no record in the database (never saved).  If $id_of_user_holding_email_address
@@ -884,7 +901,7 @@ SQL;
             if ($this->_password == "" || is_null($this->_password)) {
                 $update_data['password'] = NULL;
             } else {
-                $update_data['password'] = md5($this->_password);
+                $update_data['password'] = password_hash($this->_password, PASSWORD_DEFAULT);
             }
             $update_data['password_last_updated'] = 'NOW()';
         }
@@ -2776,7 +2793,7 @@ SQL;
     // --------------------------------
 
     /*
-     * @function isFederatedUser
+     * @function isSSOUser
      *
      * Determines whether the user is an XSEDE-oriented user
      *
@@ -2784,12 +2801,12 @@ SQL;
      *
      */
 
-    public function isFederatedUser()
+    public function isSSOUser()
     {
 
-        return ($this->getUserType() == FEDERATED_USER_TYPE);
+        return ($this->getUserType() == SSO_USER_TYPE);
 
-    }//isFederatedUser
+    }
 
     // --------------------------------
 

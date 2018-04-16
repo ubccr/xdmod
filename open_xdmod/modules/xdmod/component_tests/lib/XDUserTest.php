@@ -35,6 +35,12 @@ class XDUserTest extends BaseTest
         );
         $actual = json_decode(json_encode($user), true);
 
+        if ($expected['_password'] !== null) {
+            // The test user accounts intentionally have the password identical
+            // to the username.
+            $this->assertTrue(password_verify($userName, $actual['_password']));
+        }
+
         // Compare only keys that we care about, remove all others.
         $keyList = array(
             '_username',
@@ -656,7 +662,7 @@ class XDUserTest extends BaseTest
 
         $this->assertEquals('0', $user->getUserID());
 
-        $user->setUserType(FEDERATED_USER_TYPE);
+        $user->setUserType(SSO_USER_TYPE);
 
         $user->saveUser();
 
@@ -672,7 +678,7 @@ class XDUserTest extends BaseTest
         $user = self::getUser(null, 'test', 'a', 'user', array());
         $this->assertEquals('0', $user->getUserID());
 
-        $user->setUserType(FEDERATED_USER_TYPE);
+        $user->setUserType(SSO_USER_TYPE);
 
         $user->saveUser();
         $this->assertNotNull($user->getUserID());
@@ -709,7 +715,7 @@ class XDUserTest extends BaseTest
     {
         $username = array_keys(self::$users)[count(self::$users) - 1];
         $anotherUser = self::getUser(null, 'test', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, null, $username);
-        $anotherUser->setUserType(FEDERATED_USER_TYPE);
+        $anotherUser->setUserType(SSO_USER_TYPE);
         $anotherUser->saveUser();
     }
 
@@ -940,7 +946,7 @@ class XDUserTest extends BaseTest
         $password = $reflection->getProperty('_password');
         $password->setAccessible(true);
         $newPassword = $password->getValue($updatedUser);
-        $this->assertEquals(md5(self::INVALID_ACL_NAME), $newPassword);
+        $this->assertTrue(password_verify(self::INVALID_ACL_NAME, $newPassword));
 
         $user->setPassword(self::CENTER_STAFF_USER_NAME);
         $user->saveUser();

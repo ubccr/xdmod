@@ -26,17 +26,6 @@ class AclEtl
     public function execute()
     {
         // Validation / Default Values
-        if ($this->configFile === null) {
-            $this->configFile = implode(
-                DIRECTORY_SEPARATOR,
-                array(
-                    CONFIG_DIR,
-                    'etl',
-                    'etl.json'
-                )
-            );
-        }
-
         $etlScript = implode(
             DIRECTORY_SEPARATOR,
             array(
@@ -49,13 +38,16 @@ class AclEtl
 
         $params = array(
             $etlScript,
-            '-c',
-            $this->configFile,
             '-p',
             $this->section,
             '-v',
             $this->logLevel
         );
+
+        if(null !== $this->configFile){
+            $params[] = '-c';
+            $params[] = $this->configFile;
+        }
 
         $cmd = implode(' ', array_map('escapeshellcmd', $params));
         if ($this->logLevel !== 'quiet') {

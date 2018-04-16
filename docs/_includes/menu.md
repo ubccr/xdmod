@@ -25,7 +25,7 @@ Installing
    - [RPM Installation Guide](install-rpm.html)
    - [Source Installation Guide](install-source.html)
 - [Configuration Guide](configuration.html)
-   - [Federated Authentication](simpleSAMLphp.html)
+   - [Single Sign On Authentication](simpleSAMLphp.html)
      - [LDAP Authentication](simpleSAMLphp-ldap.html)
 - [Database Guide](databases.html)
 - [Upgrade Guide](upgrade.html)

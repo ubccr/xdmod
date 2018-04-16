@@ -29,11 +29,11 @@ class XDSamlAuthentication
     protected $_isConfigured = false;
 
     /**
-     * Whether or not we allow federated users local access. Defaults to true.
+     * Whether or not we allow Single Sign On users local access. Defaults to true.
      *
      * @var boolean
      */
-    protected $_allowLocalAccessViaFederation = true;
+    protected $_allowLocalAccessViaSSO = true;
     private $logger = null;
 
     public function __construct()
@@ -49,7 +49,7 @@ class XDSamlAuthentication
         );
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
         try {
-            $this->_allowLocalAccessViaFederation = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false: true;
+            $this->_allowLocalAccessViaSSO = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false: true;
         } catch (Exception $e) {
         }
         if ($this->isSamlConfigured()) {
@@ -99,7 +99,7 @@ class XDSamlAuthentication
             $xdmodUserId = \XDUser::userExistsWithUsername($thisUserName);
             if ($xdmodUserId !== INVALID) {
                 return \XDUser::getUserByID($xdmodUserId);
-            } elseif ($this->_allowLocalAccessViaFederation && isset($samlAttrs['email_address'])) {
+            } elseif ($this->_allowLocalAccessViaSSO && isset($samlAttrs['email_address'])) {
                 $xdmodUserId = \XDUser::userExistsWithEmailAddress($samlAttrs['email_address'][0]);
                 if ($xdmodUserId === AMBIGUOUS) {
                     return "AMBIGUOUS";
@@ -135,7 +135,7 @@ class XDSamlAuthentication
             } catch (Exception $e) {
                 return "EXISTS";
             }
-            $newUser->setUserType(FEDERATED_USER_TYPE);
+            $newUser->setUserType(SSO_USER_TYPE);
             try {
                 $newUser->saveUser();
             } catch (Exception $e) {
@@ -172,7 +172,7 @@ class XDSamlAuthentication
             }
             if ($orgDisplay === "") {
                 $orgDisplay = array(
-                    'en' => 'Federation'
+                    'en' => 'Single Sign On'
                 );
             }
             return array(
@@ -190,8 +190,8 @@ class XDSamlAuthentication
      *
      * @param \XDUser $user The newly minted XDMoD user
      * @param array $samlAttributes SAML attributes associated with this user
-     * @param boolean $linked whether federated user is linked to this account
-     * @param boolean $error whether or not we had issues creating federated user
+     * @param boolean $linked whether Single Sign On user is linked to this account
+     * @param boolean $error whether or not we had issues creating Single Sign On user
      */
     private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
     {
@@ -207,9 +207,9 @@ class XDSamlAuthentication
                 print_r($samlAttributes, true);
         }
         if ($error) {
-            $this->logger->err("Error Creating federated user" . $body);
+            $this->logger->err("Error Creating Single Sign On user" . $body);
         } else {
-            $this->logger->notice("New " . ($linked ? "linked": "unlinked") . " federated user created" . $body);
+            $this->logger->notice("New " . ($linked ? "linked": "unlinked") . " Single Sign On user created" . $body);
         }
     }
 }

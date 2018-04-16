@@ -147,6 +147,17 @@ class Configuration extends Loggable implements \Iterator
 
     protected $localConfigDir = null;
 
+    /**
+     * An associative array of options that was passed in from the parent. This is useful for
+     * providing additional customized information to the implementation such as additional
+     * parameters used by child classes or variables and values that the transformers may use to
+     * support variable substitution.
+     * @var array
+     */
+
+    protected $options = array();
+
+
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
@@ -155,9 +166,11 @@ class Configuration extends Loggable implements \Iterator
      *   the top-level config file. If not set, use the same directory as the config file.
      * @param Log $logger A PEAR Log object or null to use the null logger.
      * @param array $options An associative array of additional options passed from the parent.
-     *   These include:
+     *   These include, but are not limited to:
      *   local_config_dir: Directory to look for local configuration files
-     *   is_local_config: TRUE if this filename is a local config file as opposed to the main file
+     *   is_local_config: TRUE if this filename is a local config file as opposed to the global file
+     *   variables: An associative array of variables and their value. These may be used by
+     *     transformers to support variable substitution.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -193,6 +206,8 @@ class Configuration extends Loggable implements \Iterator
         }
 
         $this->isLocalConfig = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
+
+        $this->options = $options;
 
         // Clean up directory paths
         $this->filename = \xd_utilities\resolve_path($this->filename);
@@ -795,6 +810,18 @@ class Configuration extends Loggable implements \Iterator
     {
         return $this->baseDir;
     }  // getBaseDir()
+
+    /**
+     * ------------------------------------------------------------------------------------------
+     * @return array The associative array of options that was passed in from the parent, and
+     *   possibly augmented locally.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getOptions()
+    {
+        return $this->options;
+    }  // getOptions()
 
     /** -----------------------------------------------------------------------------------------
      * Get the configuration after applying transforms.
