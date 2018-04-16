@@ -242,7 +242,7 @@ DROP TABLE IF EXISTS `Users`;
 CREATE TABLE `Users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(200) DEFAULT NULL,
-  `password` char(32) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `email_address` varchar(200) DEFAULT NULL,
   `first_name` varchar(50) DEFAULT NULL,
   `middle_name` varchar(50) DEFAULT '',

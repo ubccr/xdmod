@@ -28,19 +28,19 @@ class SqlParserTest extends \PHPUnit_Framework_TestCase
     {
         // Use existing test files from the EtlConfigurationTest
 
-        @mkdir(self::TMPDIR . '/etl.d', 0755, true);
-        copy(self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_etl_config.json', self::TMPDIR . '/xdmod_etl_config.json');
-        copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl.d/maintenance.json', self::TMPDIR . '/etl.d/maintenance.json');
+        @mkdir(self::TMPDIR . '/etl_8.0.0.d', 0755, true);
+        copy(self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_etl_config_8.0.0.json', self::TMPDIR . '/xdmod_etl_config_8.0.0.json');
+        copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/maintenance.json', self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
 
         // Create a fake table definition file so the ETL verification steps don't fail
 
-        @mkdir(self::TMPDIR . '/etl_tables.d', 0755, true);
-        file_put_contents(self::TMPDIR . '/etl_tables.d/jobfactstatus.json', '{ "table_definition": {} }');
+        @mkdir(self::TMPDIR . '/etl_tables_8.0.0.d', 0755, true);
+        file_put_contents(self::TMPDIR . '/etl_tables_8.0.0.d/jobfactstatus.json', '{ "table_definition": {} }');
 
         // Rather than call the SQL parser directly, use the same methods that an ETL action would use.
         // This requires that we instantiate a class that extends aRdbmsDestinationAction.
 
-        $etlConfig = new EtlConfiguration(self::TMPDIR . '/xdmod_etl_config.json', self::TMPDIR);
+        $etlConfig = new EtlConfiguration(self::TMPDIR . '/xdmod_etl_config_8.0.0.json', self::TMPDIR);
         $etlConfig->initialize();
         // The "TableManagement" action is defined in etl.d/maintenance.json
         $options = $etlConfig->getActionOptions('TableManagement');
@@ -69,11 +69,11 @@ SQL;
 
         // Cleanup
 
-        unlink(self::TMPDIR . '/xdmod_etl_config.json');
-        unlink(self::TMPDIR . '/etl.d/maintenance.json');
-        rmdir(self::TMPDIR . '/etl.d');
-        unlink(self::TMPDIR . '/etl_tables.d/jobfactstatus.json');
-        rmdir(self::TMPDIR . '/etl_tables.d');
+        unlink(self::TMPDIR . '/xdmod_etl_config_8.0.0.json');
+        unlink(self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
+        rmdir(self::TMPDIR . '/etl_8.0.0.d');
+        unlink(self::TMPDIR . '/etl_tables_8.0.0.d/jobfactstatus.json');
+        rmdir(self::TMPDIR . '/etl_tables_8.0.0.d');
         rmdir(self::TMPDIR);
 
         $this->assertEquals($generatedColumnNames, $expectedColumnNames);

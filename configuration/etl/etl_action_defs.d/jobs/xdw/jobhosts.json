@@ -1,0 +1,27 @@
+{
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/jobs/xdw/jobhosts.json#/table_definition"
+        }
+    ],
+    "source_query": {
+        "records": {
+            "job_id": "sjh.job_id",
+            "host_id": "h.id",
+            "order_id": "sjh.order_id"
+        },
+        "joins": [
+            {
+                "name": "staging_jobhosts",
+                "schema": "${DESTINATION_SCHEMA}",
+                "alias": "sjh"
+            },
+            {
+                "name": "hosts",
+                "schema": "${DESTINATION_SCHEMA}",
+                "alias": "h",
+                "on": "h.hostname = sjh.hostname AND h.resource_id = sjh.resource_id"
+            }
+        ]
+    }
+}

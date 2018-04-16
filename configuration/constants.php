@@ -27,7 +27,7 @@ define('INVALID', '-1p');
 define('AMBIGUOUS', '-2p');
 define('NO_MAPPING', '-3p');
 define('NO_EMAIL_ADDRESS_SET', 'no_email_address_set');
-define('FEDERATED_USER_TYPE', 5);
+define('SSO_USER_TYPE', 5);
 define('DEMO_USER_TYPE', 4);
 define('UNKNOWN_USER_TYPE', -1);
 

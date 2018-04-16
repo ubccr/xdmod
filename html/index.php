@@ -267,8 +267,8 @@ use Models\Services\Realms;
                print "CCR.xdmod.ui.fullName = " . json_encode($user->getFormalName()) . ";\n";
                $userType = $user->getUserType();
                print "CCR.xdmod.ui.usertype = '$userType';\n";
-               $userIsFederated = ($userType === FEDERATED_USER_TYPE ) ? "true" : "false";
-               print "CCR.xdmod.ui.userIsFederated = $userIsFederated;\n";
+               $userIsSSO= ($userType === SSO_USER_TYPE ) ? "true" : "false";
+               print "CCR.xdmod.ui.userIsSSO = $userIsSSO;\n";
                print "CCR.xdmod.ui.mappedPID = '{$user->getPersonID(TRUE)}';\n";
 
                $obj_warehouse = new XDWarehouse();
@@ -310,10 +310,10 @@ use Models\Services\Realms;
                   // This will catch when a configuration directory does not exist if it is set in the environment level
                }
                if ($auth && $auth->isSamlConfigured()) {
-                    print "CCR.xdmod.isFederationConfigured = true;\n";
-                    print "CCR.xdmod.federationLoginLink = " . json_encode($auth->getLoginLink('/gui/general/login.php')) . ";\n";
+                    print "CCR.xdmod.isSSOConfigured = true;\n";
+                    print "CCR.xdmod.SSOLoginLink = " . json_encode($auth->getLoginLink('/gui/general/login.php')) . ";\n";
                } else {
-                  print "CCR.xdmod.isFederationConfigured = false;";
+                  print "CCR.xdmod.isSSOConfigured = false;";
                }
             }
             if ($userLoggedIn) {
@@ -499,12 +499,12 @@ use Models\Services\Realms;
             $profile_editor_init_flag = '';
             $usersFirstLogin = ($user->getCreationTimestamp() == $user->getLastLoginTimestamp());
 
-            // If the user logging in is an XSEDE/Federated user, he/she may or may not have
+            // If the user logging in is an XSEDE/Single Sign On user, they may or may not have
             // an e-mail address set. The logic below assists in presenting the Profile Editor
             // with the appropriate (initial) view
             $userEmail = $user->getEmailAddress();
             $userEmailSpecified = ($userEmail != NO_EMAIL_ADDRESS_SET && !empty($userEmail));
-            if ($user->isFederatedUser() == true || $usersFirstLogin) {
+            if ($user->isSSOUser() == true || $usersFirstLogin) {
 
                // NOTE: $_SESSION['suppress_profile_autoload'] will be set only upon update of the user's profile (see respective REST call)
 

@@ -109,7 +109,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumUserTypes()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_user_types')
+            $this->getTestFiles()->getFile('controllers', 'enum_user_types-8.0.0')
         );
 
         $this->helper->authenticateDashboard('mgr');

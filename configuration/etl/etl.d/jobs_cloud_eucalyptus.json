@@ -35,7 +35,7 @@
             "name": "EucalyptusRawCloudEventLogIngestor",
             "description": "Raw Eucalyptus cloud instance data from log files",
             "class": "StructuredFileIngestor",
-            "definition_file": "cloud_eucalyptus/raw_cloud_job_logs.def.json",
+            "definition_file": "cloud_eucalyptus/raw_cloud_job_logs.json",
             "truncate_destination": true,
             "endpoints": {
                 "source": {
@@ -80,7 +80,7 @@
             "name": "EucalyptusRawCloudVolumeIngestor",
             "description": "Raw Eucalyptus block devices associated with an event",
             "class": "StructuredFileIngestor",
-            "definition_file": "cloud_eucalyptus/raw_volume.def.json",
+            "definition_file": "cloud_eucalyptus/raw_volume.json",
             "truncate_destination": true,
             "endpoints": {
                 "source": {
@@ -114,37 +114,37 @@
             "name": "EucalyptusCloudAccountIngestor",
             "description": "Eucalyptus cloud account data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/account.def.json"
+            "definition_file": "cloud_eucalyptus/account.json"
         },
         {
             "name": "EucalyptusCloudHostIngestor",
             "description": "Eucalyptus cloud host data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/host.def.json"
+            "definition_file": "cloud_eucalyptus/host.json"
         },
         {
             "name": "EucalyptusCloudImageIngestor",
             "description": "Eucalyptus cloud image data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/image.def.json"
+            "definition_file": "cloud_eucalyptus/image.json"
         },
         {
             "name": "EucalyptusCloudInstanceTypeIngestor",
             "description": "Eucalyptus cloud instance type data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/instance_type.def.json"
+            "definition_file": "cloud_eucalyptus/instance_type.json"
         },
         {
             "name": "EucalyptusCloudInstanceIngestor",
             "description": "Eucalyptus cloud instance data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/instance.def.json"
+            "definition_file": "cloud_eucalyptus/instance.json"
         },
         {
             "name": "EucalyptusCloudVolumeAssetIngestor",
             "description": "Eucalyptus cloud attachable volume (block device) data from raw logs",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/volume.def.json"
+            "definition_file": "cloud_eucalyptus/volume.json"
         },
         {
             "name": "EucalyptusCloudPostIngestUpdates",
@@ -161,42 +161,42 @@
             "name": "EucalyptusCloudStagingEventIngestor",
             "description": "Eucalyptus staging data for cloud events",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/staging_event.def.json"
+            "definition_file": "cloud_eucalyptus/staging_event.json"
         },
         {
             "#": "Instance data must be ingested after staging events",
             "name": "EucalyptusCloudRootVolumeAssetIngestor",
             "description": "Infer Eucalyptus instance root volume data from instance types",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/root_volume.def.json"
+            "definition_file": "cloud_eucalyptus/root_volume.json"
         },
         {
             "#": "Instance data must be ingested after staging events",
             "name": "EucalyptusCloudIpAddressAssetIngestor",
             "description": "Eucalyptus cloud attachable IP address data from staging events",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/ip_address.def.json"
+            "definition_file": "cloud_eucalyptus/ip_address.json"
         },
         {
             "#": "Instance data must be ingested after staging events",
             "name": "EucalyptusCloudEventIngestor",
             "description": "Eucalyptus cloud event and instance data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/event.def.json"
+            "definition_file": "cloud_eucalyptus/event.json"
         },
         {
             "#": "Asset data must be ingested after events",
             "name": "EucalyptusCloudEventAssetRootVolumeIngestor",
             "description": "Eucalyptus cloud instance root volume assets associated with START events",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/event_asset_root_volume.def.json"
+            "definition_file": "cloud_eucalyptus/event_asset_root_volume.json"
         },
         {
             "#": "Asset data must be ingested after events",
             "name": "EucalyptusCloudEventAssetIngestor",
             "description": "Eucalyptus cloud assets associated with events",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/event_asset.def.json"
+            "definition_file": "cloud_eucalyptus/event_asset.json"
         }
     ]
 }

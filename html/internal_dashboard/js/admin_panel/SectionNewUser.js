@@ -57,7 +57,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 load: function (store, records) {
                     for (var i = 0; i < records.length; i++) {
                         var record = records[i];
-                        if (parseInt(record.data.id, 10) === CCR.xdmod.FEDERATED_USER_TYPE) {
+                        if (parseInt(record.data.id, 10) === CCR.xdmod.SSO_USER_TYPE) {
                             store.remove(record);
                         }
                     }

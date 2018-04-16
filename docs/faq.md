@@ -23,7 +23,7 @@ extensively, so we recommend MySQL 5.1 or 5.5.
 
 ### How do I enable LDAP Authentication?
 
-Open XDMoD has support for [federated authentication](simpleSAMLphp.html)
+Open XDMoD has support for [Single Sign On](simpleSAMLphp.html)
 using [simpleSAMLphp][simplesaml].  Basic support for [LDAP Authentication](simpleSAMLphp-ldap.html) is also provided.
 
 [simplesaml]: https://simplesamlphp.org/
