@@ -112,18 +112,6 @@
                     "path": "jobs/xdw/pi-person.json"
                 }
             }
-        },
-        {
-            "name": "resource-type",
-            "definition_file": "jobs/xdw/resource-type.json",
-            "description": "resource-type + data",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "unknown resource type data data",
-                    "path": "jobs/xdw/resource-type.json"
-                }
-            }
         }
     ],
     "aggregate": [{
