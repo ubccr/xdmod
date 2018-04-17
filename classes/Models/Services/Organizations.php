@@ -90,18 +90,22 @@ SQL;
     }
 
     /**
-     * Retrieve a listing of all organizations.
+     * Attempt to retrieve the organization id associated with the provided
+     * $organizationName.
      *
-     * @return array containing all organizations that XDMoD currently knows about.
-     * @throws \Exception if there is a problem retrieving a db connection or executing the sql
-     * query.
+     * @param string $organizationName the name of the organization to retrieve.
+     * @return int|null null if no record is found else the organization_id as an int.
+     * @throws \Exception if there is a problem retrieving a db connection.
+     * @throws \Exception if there is a problem executing the sql statement.
      */
-    public static function getOrganizations()
+    public static function getIdByName($organizationName)
     {
         $db = DB::factory('database');
-        return $db->query(
-            "SELECT o.* FROM modw.organization o;"
+        $rows = $db->query(
+            "SELECT o.id FROM modw.organization o WHERE o.name = :organization_name;",
+            array(':organization_name' => $organizationName)
         );
+        return !empty($rows) ? $rows[0]['id'] : -1;
     }
 
     /**

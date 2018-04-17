@@ -99,6 +99,8 @@ provideInput {Organization Name:} Screwdriver
 provideInput {Organization Abbreviation:} screw
 confirmFileWrite yes
 enterToContinue
+confirmFileWrite yes
+enterToContinue
 
 selectMenuOption 4
 foreach resource $resources {
