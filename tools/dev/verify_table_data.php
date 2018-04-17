@@ -429,7 +429,7 @@ function compareTables($srcTable, $destTable)
                 $srcCol,
                 $srcInfo['type'],
                 $srcInfo['is_nullable'],
-                ( "" != $srcInfo['key_type'] ? "key=" . $srcInfo['key_type'] : "" ),
+                ( "" != $srcInfo['key_type'] ? " key=" . $srcInfo['key_type'] : "" ),
                 $destCol,
                 $destInfo['type'],
                 $destInfo['is_nullable'],
