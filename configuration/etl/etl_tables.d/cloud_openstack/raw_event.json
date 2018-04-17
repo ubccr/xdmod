@@ -3,8 +3,6 @@
 
     "#": "Note that almost any field in the raw event logs can be NULL so most fields are nullable.",
     "#": "These will be stored here and filtered out later. For example, several events with type",
-    "#": "REQUEST_START have no instance id",
-
     "table_definition": {
         "name": "openstack_raw_event",
         "engine": "MyISAM",
@@ -29,7 +27,7 @@
                 "default": "0000-00-00 00:00:00",
                 "comment": "The time of the event in UTC."
             },
-{
+            {
                 "name": "create_time_utc",
                 "type": "datetime",
                 "nullable": true,
@@ -45,10 +43,22 @@
                 "name": "record_type",
                 "type": "varchar(64)",
                 "nullable": true,
-		"default": "ACCOUNTNG"
+		            "default": null
             },
             {
                 "name": "hostname",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "user_name",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "user_id",
                 "type": "varchar(64)",
                 "nullable": true,
                 "default": null
@@ -72,48 +82,37 @@
                 "nullable": true,
                 "default": null
             },
-	    {
-		"name": "project_id",
-		"type": "varchar(64)",
-		"nullable": true,
-		"default": null
-	    },
-	    {
-		"name": "request_id",
-		"type": "varchar(64)",
-		"nullable": true,
-		"default": null
-	    },
+      	    {
+            		"name": "project_id",
+            		"type": "varchar(64)",
+            		"nullable": true,
+            		"default": null
+      	    },
+      	    {
+            		"name": "request_id",
+            		"type": "varchar(64)",
+            		"nullable": true,
+            		"default": null
+      	    },
             {
                 "name": "event_data",
                 "type": "varchar(256)",
                 "nullable": true,
                 "default": null,
                 "comment": "Additional data specific to an event (e.g., volume, IP address, etc.)"
-            },{
-	    	"name": "openstack_resource_id",
-		"type": "varchar(64)",
-		"nullable": true,
-		"default": null
-  	    },
-	    {
-		"name": "state",
-		"type": "varchar(64)",
-		"nullable": true,
-		"default": null
-	    },
-	    {
-		"name": "service",
-		"type": "varchar(64)",
-		"nullable": true,
-		"default": null
-	    },
-	    {
-		"name": "disk_gb",
-		"type": "varchar(10)",
-		"nullable": true,
-		"default": null
-	    }
+            },
+            {
+        	    	"name": "openstack_resource_id",
+        		    "type": "varchar(64)",
+        		    "nullable": true,
+        		    "default": null
+          	},
+      	    {
+            		"name": "disk_gb",
+            		"type": "varchar(10)",
+            		"nullable": true,
+            		"default": null
+      	    }
         ],
         "indexes": [
             {

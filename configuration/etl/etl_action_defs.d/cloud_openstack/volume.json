@@ -1,7 +1,7 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_common/asset.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/asset.json#/table_definition"
         }
     ],
 
@@ -28,7 +28,7 @@
                 "on": "act.provider_account = raw.provider_account"
             },
             {
-                "name": "event_type",
+                "name": "openstack_event_map",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "etype",
                 "on": "etype.openstack_event_type = raw.event_type"

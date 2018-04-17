@@ -4,15 +4,15 @@
 
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_openstack/openstack_project.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_openstack/user.json#/table_definition"
         }
     ],
 
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "openstack_project_id": "raw.project_id",
-            "display": "raw.project_name"
+            "provider_account": "raw.user_id",
+            "display": "raw.user_name"
         },
 
         "joins": [
@@ -22,9 +22,14 @@
                 "alias": "raw"
             }
         ],
+
+        "where": [
+            "user_id IS NOT NULL"
+        ],
+
         "groupby": [
             "resource_id",
-            "project_id"
+            "user_id"
         ]
     }
 }

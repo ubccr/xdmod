@@ -4,7 +4,7 @@
 
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_common/instance_type.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/instance_type.json#/table_definition"
         }
     ],
 

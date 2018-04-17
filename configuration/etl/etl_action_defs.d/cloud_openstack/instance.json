@@ -1,7 +1,7 @@
 {
     "table_definition": [
         {
-            "$ref": "etl_tables.d/cloud_common/instance.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_common/instance.json#/table_definition"
         }
     ],
 
@@ -12,7 +12,8 @@
         "records": {
             "resource_id": "raw.resource_id",
             "account_id": "COALESCE(act.account_id, 1)",
-            "provider_identifier": "COALESCE(raw.provider_instance_identifier, 'unknown')"
+            "provider_identifier": "COALESCE(raw.provider_instance_identifier, 'unknown')",
+            "person_id": "COALESCE(u.account_id, 1)"
         },
 
         "joins": [
@@ -26,6 +27,13 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "act",
                 "on": "act.provider_account = raw.provider_account",
+                "type": "LEFT OUTER"
+            },
+            {
+                "name": "user",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "u",
+                "on": "u.provider_account = raw.user_id",
                 "type": "LEFT OUTER"
             }
         ],
