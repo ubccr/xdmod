@@ -323,7 +323,7 @@ class MetricExplorer extends Common
                     $exportedData = $dataset->exportJsonStore();
                     $exportedData['restrictedByRoles'] = $datasetsRestricted[$datasetIndex];
                     $exportedData['roleRestrictionsMessage'] = $datasetsRestrictedMessages[$datasetIndex];
-                    $exportedDatas[] = \xd_charting\encodeJSON($exportedData);
+                    $exportedDatas[] = json_encode($exportedData);
                 }
 
 

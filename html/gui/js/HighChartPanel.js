@@ -36,7 +36,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
 
         var self = this;
 
-        this.baseChartOptions = {
+        this.baseChartOptions = jQuery.extend(true, {}, {
             chart: {
                 renderTo: this.id,
                 width: this.width,
@@ -67,7 +67,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
             credits: {
                 enabled: true
             }
-        };
+        }, this.baseChartOptions);
 
         this.on('render', function () {
             this.initNewChart.call(this);
@@ -128,7 +128,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
         } else {
             jQuery.extend(true, finalChartOptions, this.baseChartOptions, this.chartOptions);
         }
-        this.chart = new Highcharts.Chart(finalChartOptions);
+        this.chart = XDMoD.utils.createChart(finalChartOptions);
     },
 
     /**
