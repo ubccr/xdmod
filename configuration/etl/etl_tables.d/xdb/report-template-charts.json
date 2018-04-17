@@ -1,0 +1,82 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "template_id"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "ordering"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_date_description"
+      },
+      {
+        "type": "varchar(100)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_title"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_drill_details"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "timeframe_type"
+      }
+    ],
+    "indexes": [],
+    "triggers": [],
+    "schema": "moddb",
+    "name": "ReportTemplateCharts"
+  }
+}

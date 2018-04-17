@@ -1,0 +1,51 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "type": "char(8)",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "color"
+      },
+      {
+        "type": "varchar(45)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "description"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "order"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "color"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "triggers": [],
+    "schema": "moddb",
+    "name": "Colors"
+  }
+}

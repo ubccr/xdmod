@@ -1,0 +1,8 @@
+[
+    ["id", "type", "color"],
+    [1, "External", "#000000"],
+    [2, "Internal", "#0000ff"],
+    [3, "Testing", "#008800"],
+    [4, "Demo", "#808000"],
+    [5, "Single Sign On", "#b914f6"]
+]

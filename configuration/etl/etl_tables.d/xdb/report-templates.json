@@ -1,0 +1,151 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment",
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "id"
+      },
+      {
+        "type": "varchar(1000)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "name"
+      },
+      {
+        "type": "varchar(1000)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "description"
+      },
+      {
+        "type": "varchar(30)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "template"
+      },
+      {
+        "type": "varchar(1000)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "title"
+      },
+      {
+        "type": "varchar(1000)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "header"
+      },
+      {
+        "type": "varchar(1000)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "footer"
+      },
+      {
+        "type": "enum('Pdf','Pptx','Doc','Xls','Html')",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "format"
+      },
+      {
+        "type": "enum('Times','Arial')",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "font"
+      },
+      {
+        "type": "enum('Once','Daily','Weekly','Monthly','Quarterly','Semi-annually','Annually')",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "schedule"
+      },
+      {
+        "type": "enum('Download','E-mail')",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "delivery"
+      },
+      {
+        "type": "int(1)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "charts_per_page"
+      },
+      {
+        "type": "tinyint(1)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "use_submenu"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "triggers": [],
+    "schema": "moddb",
+    "name": "ReportTemplates"
+  }
+}

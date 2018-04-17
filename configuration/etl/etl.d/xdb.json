@@ -1,0 +1,153 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        },
+        "xdb.bootstrap": {
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions"
+        }
+    },
+
+    "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
+    "xdb.bootstrap": [
+        {
+            "name": "xdb-table-create",
+            "description": "Setup tables",
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "xdb/account-requests.json",
+                "xdb/api-keys.json",
+                "xdb/chart-pool.json",
+                "xdb/colors.json",
+                "xdb/exception-email-addresses.json",
+                "xdb/group-bys.json",
+                "xdb/hierarchies.json",
+                "xdb/module-versions.json",
+                "xdb/modules.json",
+                "xdb/realms.json",
+                "xdb/report-charts.json",
+                "xdb/report-template-acl.json",
+                "xdb/report-template-charts.json",
+                "xdb/report-templates.json",
+                "xdb/reports.json",
+                "xdb/restx509.json",
+                "xdb/roles.json",
+                "xdb/schema-version-history.json",
+                "xdb/session-manager.json",
+                "xdb/statistics.json",
+                "xdb/tabs.json",
+                "xdb/user-profiles.json",
+                "xdb/user-role-parameters.json",
+                "xdb/user-roles.json",
+                "xdb/user-types.json",
+                "xdb/user_acl_group_by_parameters.json",
+                "xdb/user_acls.json",
+                "xdb/users.json",
+                "xdb/version-check.json"
+            ]
+        },
+        {
+            "name": "colors",
+            "definition_file": "xdb/colors.json",
+            "description": "colors + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "colors",
+                    "path": "xdb/colors.json"
+                }
+            }
+        },
+        {
+            "name": "report-templates-acl",
+            "definition_file": "xdb/report-template-acl.json",
+            "description": "report-template-acl + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "report-template-acl",
+                    "path": "xdb/report-template-acl.json"
+                }
+            }
+        },
+        {
+            "name": "report-templates-charts",
+            "definition_file": "xdb/report-template-charts.json",
+            "description": "report-template-charts + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "report-template-charts",
+                    "path": "xdb/report-template-charts.json"
+                }
+            }
+        },
+        {
+            "name": "report-templates",
+            "definition_file": "xdb/report-templates.json",
+            "description": "report-templates + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "report-templates",
+                    "path": "xdb/report-templates.json"
+                }
+            }
+        },
+        {
+            "name": "roles",
+            "definition_file": "xdb/roles.json",
+            "description": "roles + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "roles",
+                    "path": "xdb/roles.json"
+                }
+            }
+        },
+        {
+            "name": "schema-version",
+            "definition_file": "xdb/schema-version-history.json",
+            "description": "Schema Version History + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "schema version history",
+                    "path": "xdb/schema-version-history.json"
+                }
+            }
+        },
+        {
+            "name": "user-types",
+            "definition_file": "xdb/user-types.json",
+            "description": "User Types + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "user-types",
+                    "path": "xdb/user-types.json"
+                }
+            }
+        }
+    ]
+}

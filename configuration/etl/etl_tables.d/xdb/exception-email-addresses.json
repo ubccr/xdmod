@@ -1,0 +1,22 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "type": "varchar(200)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "email_address"
+      }
+    ],
+    "indexes": [],
+    "triggers": [],
+    "schema": "moddb",
+    "name": "ExceptionEmailAddresses"
+  }
+}

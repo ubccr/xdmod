@@ -1,0 +1,162 @@
+{
+  "table_definition": {
+    "comment": "autogen - one rec for each day of TG.",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "type": "int(10) unsigned",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "The id of the day record.",
+        "hints": null,
+        "rename": null,
+        "name": "id"
+      },
+      {
+        "type": "smallint(5) unsigned",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "The year.",
+        "hints": null,
+        "rename": null,
+        "name": "year"
+      },
+      {
+        "type": "smallint(5) unsigned",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "The day of year starting at 1.",
+        "hints": null,
+        "rename": null,
+        "name": "day"
+      },
+      {
+        "type": "datetime",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "The datetime of the start of this day down to the second.",
+        "hints": null,
+        "rename": null,
+        "name": "day_start"
+      },
+      {
+        "type": "datetime",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "the end datetime of this day down to the second.",
+        "hints": null,
+        "rename": null,
+        "name": "day_end"
+      },
+      {
+        "type": "tinyint(3) unsigned",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "The number of hours in this day. Could be less than 24 in case the last job record fell in the middle of this day.",
+        "hints": null,
+        "rename": null,
+        "name": "hours"
+      },
+      {
+        "type": "mediumint(8) unsigned",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "number of seconds n the day",
+        "hints": null,
+        "rename": null,
+        "name": "seconds"
+      },
+      {
+        "type": "int(10) unsigned",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "The start in epochs.",
+        "hints": null,
+        "rename": null,
+        "name": "day_start_ts"
+      },
+      {
+        "type": "int(10) unsigned",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": "The end in epochs.",
+        "hints": null,
+        "rename": null,
+        "name": "day_end_ts"
+      },
+      {
+        "type": "int(10) unsigned",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "day_middle_ts"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "id",
+          "seconds",
+          "day_start_ts",
+          "day_end_ts"
+        ],
+        "type": "BTREE",
+        "is_unique": false,
+        "name": "days_index"
+      },
+      {
+        "columns": [
+          "id",
+          "day_start_ts",
+          "day_middle_ts"
+        ],
+        "type": "BTREE",
+        "is_unique": false,
+        "name": "days_index2"
+      },
+      {
+        "columns": [
+          "day_start",
+          "day_end",
+          "day",
+          "year"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "days_pk2"
+      },
+      {
+        "columns": [
+          "year",
+          "day"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "days_yd"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "triggers": [],
+    "schema": "modw",
+    "name": "days"
+  }
+}

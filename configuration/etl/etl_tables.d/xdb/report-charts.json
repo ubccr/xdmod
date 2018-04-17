@@ -1,0 +1,132 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "InnoDB",
+    "columns": [
+      {
+        "type": "varchar(100)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "report_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "user_id"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_type"
+      },
+      {
+        "type": "enum('image','datasheet')",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "type"
+      },
+      {
+        "type": "tinyint(1)",
+        "nullable": true,
+        "default": "0",
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "selected"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": "0",
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "ordering"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_date_description"
+      },
+      {
+        "type": "varchar(100)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_title"
+      },
+      {
+        "type": "text",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "chart_drill_details"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "timeframe_type"
+      },
+      {
+        "type": "longblob",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "image_data"
+      }
+    ],
+    "indexes": [],
+    "triggers": [],
+    "schema": "moddb",
+    "name": "ReportCharts"
+  }
+}

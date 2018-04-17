@@ -1,0 +1,92 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "user_id"
+      },
+      {
+        "type": "int(4)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "role_id"
+      },
+      {
+        "type": "varchar(255)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "param_name"
+      },
+      {
+        "type": "enum('>','>=','=','<','<=','IS','IS NOT','IN')",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "param_op"
+      },
+      {
+        "type": "varchar(1024)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "param_value"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "is_primary"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "is_active"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "promoter"
+      }
+    ],
+    "indexes": [],
+    "triggers": [],
+    "schema": "moddb",
+    "name": "UserRoleParameters"
+  }
+}

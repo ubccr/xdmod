@@ -1,0 +1,71 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment",
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "id"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "distinguished_name"
+      },
+      {
+        "type": "varchar(100)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "api_key"
+      },
+      {
+        "type": "text",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "description"
+      },
+      {
+        "type": "timestamp",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "extra": "on update CURRENT_TIMESTAMP",
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "time_cert_signed"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "triggers": [],
+    "schema": "moddb",
+    "name": "RESTx509"
+  }
+}

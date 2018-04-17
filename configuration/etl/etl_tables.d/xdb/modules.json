@@ -1,0 +1,71 @@
+{
+  "table_definition": {
+    "comment": "Currently installed modules",
+    "engine": "InnoDB",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment",
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "module_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "current_version_id"
+      },
+      {
+        "type": "varchar(255)",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "name"
+      },
+      {
+        "type": "varchar(1024)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "display"
+      },
+      {
+        "type": "tinyint(1)",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "enabled"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "module_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "triggers": [],
+    "schema": "moddb",
+    "name": "modules"
+  }
+}

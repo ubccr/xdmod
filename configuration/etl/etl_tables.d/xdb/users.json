@@ -1,0 +1,218 @@
+{
+  "table_definition": {
+    "comment": "",
+    "engine": "InnoDB",
+    "columns": [
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": null,
+        "extra": "auto_increment",
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "id"
+      },
+      {
+        "type": "varchar(200)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "username"
+      },
+      {
+        "type": "varchar(255)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "password"
+      },
+      {
+        "type": "varchar(200)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "email_address"
+      },
+      {
+        "type": "varchar(50)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "first_name"
+      },
+      {
+        "type": "varchar(50)",
+        "nullable": true,
+        "default": "",
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "middle_name"
+      },
+      {
+        "type": "varchar(50)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "last_name"
+      },
+      {
+        "type": "datetime",
+        "nullable": false,
+        "default": "0000-00-00 00:00:00",
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "time_created"
+      },
+      {
+        "type": "timestamp",
+        "nullable": false,
+        "default": "0000-00-00 00:00:00",
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "time_last_updated"
+      },
+      {
+        "type": "timestamp",
+        "nullable": false,
+        "default": "0000-00-00 00:00:00",
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "password_last_updated"
+      },
+      {
+        "type": "tinyint(1) unsigned",
+        "nullable": false,
+        "default": "0",
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "account_is_active"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": "references TGcDB.people.person_id",
+        "hints": null,
+        "rename": null,
+        "name": "person_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": "references TGcDB.organizations.organization_id",
+        "hints": null,
+        "rename": null,
+        "name": "organization_id"
+      },
+      {
+        "type": "int(11)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "field_of_science"
+      },
+      {
+        "type": "varchar(32)",
+        "nullable": true,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "token"
+      },
+      {
+        "type": "timestamp",
+        "nullable": false,
+        "default": "0000-00-00 00:00:00",
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "token_expiration"
+      },
+      {
+        "type": "int(11)",
+        "nullable": false,
+        "default": null,
+        "extra": null,
+        "comment": null,
+        "hints": null,
+        "rename": null,
+        "name": "user_type"
+      }
+    ],
+    "indexes": [
+      {
+        "columns": [
+          "person_id"
+        ],
+        "type": "BTREE",
+        "is_unique": false,
+        "name": "person_id_idx"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "type": "BTREE",
+        "is_unique": true,
+        "name": "PRIMARY"
+      }
+    ],
+    "triggers": [
+      {
+        "time": "BEFORE",
+        "event": "INSERT",
+        "table": "Users",
+        "body": "\n\n\tSET NEW.time_created = NOW();\n\n\tSET NEW.time_last_updated = NOW();\n\n",
+        "definer": "xdmod@localhost",
+        "schema": "moddb",
+        "name": "users_insert_timestamp"
+      },
+      {
+        "time": "BEFORE",
+        "event": "UPDATE",
+        "table": "Users",
+        "body": "\n\n\tIF NEW.password <> OLD.password THEN\n\n\t\tSET NEW.password_last_updated = NOW(); \n\n\tEND IF; \n\n\tSET NEW.time_last_updated = NOW();\n\n",
+        "definer": "xdmod@localhost",
+        "schema": "moddb",
+        "name": "users_update_timestamp"
+      }
+    ],
+    "schema": "moddb",
+    "name": "Users"
+  }
+}
