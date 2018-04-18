@@ -4,6 +4,7 @@ namespace OpenXdmod\Migration\Version750To800;
 use CCR\DB;
 use FilterListBuilder;
 use TimePeriodGenerator;
+use OpenXdmod\Ingestor\Staging\ResourceTypes;
 
 /**
  * Migrate databases from version 7.5.0 to 8.0.0.
@@ -17,6 +18,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
     {
         parent::execute();
 
+        $this->updateResourceTypes();
         $this->updateTimePeriods();
         $this->runEtlPipeline('jobs-xdw.bootstrap');
         $this->logger->notice(
@@ -122,5 +124,17 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
             $tpg = TimePeriodGenerator::getGeneratorForUnit($aggUnit);
             $tpg->generateMainTable(DB::factory('datawarehouse'));
         }
+    }
+
+    /**
+     * Update resource types in the mod_hpcdb database.
+     */
+    private function updateResourceTypes()
+    {
+        $shredderDb = DB::factory('shredder');
+        $hpcdbDb    = DB::factory('hpcdb');
+        $ingestor = new ResourceTypes($hpcdbDb, $shredderDb);
+        $ingestor->setLogger($this->logger);
+        $ingestor->ingest();
     }
 }
