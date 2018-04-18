@@ -108,12 +108,9 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <title><?php print $page_title; ?></title>
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
-    <script type="text/javascript"
-            src="gui/lib/oldie-console-patch.js"></script>
-    <script type="text/javascript"
-            src="gui/lib/oldie-array-includes-polyfill.js"></script>
-    <script type="text/javascript"
-            src="gui/lib/ie-object-values-polyfill.js"></script>
+    <script type="text/javascript" src="gui/lib/oldie-console-patch.js"></script>
+    <script type="text/javascript" src="gui/lib/oldie-array-includes-polyfill.js"></script>
+    <script type="text/javascript" src="gui/lib/ie-object-values-polyfill.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
@@ -127,13 +124,10 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php
     ExtJS::loadSupportScripts('gui/lib');
     ?>
-    <script type="text/javascript"
-            src="gui/lib/ext-oldie-history-patch.js"></script>
-    <script type="text/javascript"
-            src="gui/lib/jquery/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="gui/lib/ext-oldie-history-patch.js"></script>
+    <script type="text/javascript" src="gui/lib/jquery/jquery-1.12.4.min.js"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/lib/jquery-plugins/base64/jquery.base64.js"></script>
+        <script type="text/javascript" src="gui/lib/jquery-plugins/base64/jquery.base64.js"></script>
     <?php endif; ?>
     <script type="text/javascript">
         <?php if ($userLoggedIn): ?>
@@ -158,8 +152,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <!-- Non-GUI JS Class Definitions -->
     <script type="text/javascript" src="js_classes/DateUtilities.js"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="js_classes/StringUtilities.js"></script>
+        <script type="text/javascript" src="js_classes/StringUtilities.js"></script>
     <?php endif; ?>
 
     <!-- Globals -->
@@ -167,10 +160,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/globals.js"></script>
     <script type="text/javascript" src="gui/js/StringExtensions.js"></script>
     <!-- Plugins -->
-    <script type="text/javascript"
-            src="gui/js/plugins/ContextSensitiveHelper.js"></script>
-    <script type="text/javascript"
-            src="gui/js/plugins/CollapsedPanelTitlePlugin.js"></script>
+    <script type="text/javascript" src="gui/js/plugins/ContextSensitiveHelper.js"></script>
+    <script type="text/javascript" src="gui/js/plugins/CollapsedPanelTitlePlugin.js"></script>
 
     <!-- Libraries -->
     <script type="text/javascript" src="gui/js/libraries/utilities.js"></script>
@@ -186,11 +177,9 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/REST.js"></script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/MultiSelect.css"/>
-    <link rel="stylesheet" type="text/css"
-          href="gui/lib/extjs/examples/ux/css/Spinner.css"/>
+    <link rel="stylesheet" type="text/css" href="gui/lib/extjs/examples/ux/css/Spinner.css"/>
     <?php if ($userLoggedIn): ?>
-        <link rel="stylesheet" type="text/css"
-              href="gui/lib/extjs/examples/ux/css/LockingGridView.css"/>
+        <link rel="stylesheet" type="text/css" href="gui/lib/extjs/examples/ux/css/LockingGridView.css"/>
     <?php endif; ?>
     <link rel="stylesheet" type="text/css" href="gui/css/aboutus.css"/>
     <?php if ($userLoggedIn): ?>
@@ -198,34 +187,23 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/LockingGridView.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/ProgressBarPager.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/treegrid/TreeGrid.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/extjs/examples/ux/GroupTabPanel.js"></script>
-        <script type="text/javascript"
-                src="../gui/lib/extjs/examples/ux/GroupTab.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/LockingGridView.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/ProgressBarPager.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGrid.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/GroupTabPanel.js"></script>
+        <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTab.js"></script>
     <?php endif; ?>
 
     <script type="text/javascript" src="gui/lib/MultiSelect.js"></script>
     <script type="text/javascript" src="gui/lib/ItemSelector.js"></script>
 
     <script type="text/javascript" src="gui/lib/NumberFormat.js"></script>
-    <script type="text/javascript"
-            src="gui/js/multiline-tree-nodes.js"></script>
+    <script type="text/javascript" src="gui/js/multiline-tree-nodes.js"></script>
 
     <script type="text/javascript" src="gui/lib/MessageWindow.js"></script>
 
@@ -233,8 +211,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/RESTDataProxy.js"></script>
     <script type="text/javascript" src="gui/js/CustomHttpProxy.js"></script>
 
-    <script type="text/javascript"
-            src="gui/lib/printer/Printer-all.js"></script>
+    <script type="text/javascript" src="gui/lib/printer/Printer-all.js"></script>
 
     <script type="text/javascript" src="gui/js/TGUserDropDown.js"></script>
 
@@ -359,93 +336,61 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php if ($userLoggedIn): ?>
         <!-- Profile Editor -->
 
-        <link rel="stylesheet" type="text/css"
-              href="gui/css/ProfileEditor.css"/>
-        <script type="text/javascript"
-                src="gui/js/profile_editor/ProfileGeneralSettings.js"></script>
-        <script type="text/javascript"
-                src="gui/js/profile_editor/ProfileRoleDelegation.js"></script>
-        <script type="text/javascript"
-                src="gui/js/profile_editor/ProfileEditor.js"></script>
+        <link rel="stylesheet" type="text/css" href="gui/css/ProfileEditor.css"/>
+        <script type="text/javascript" src="gui/js/profile_editor/ProfileGeneralSettings.js"></script>
+        <script type="text/javascript" src="gui/js/profile_editor/ProfileRoleDelegation.js"></script>
+        <script type="text/javascript" src="gui/js/profile_editor/ProfileEditor.js"></script>
     <?php endif; ?>
 
     <!-- Data Warehouse -->
-    <script type="text/javascript"
-            src="gui/js/common/data_warehouse/AddFilterWindow.js"></script>
-    <script type="text/javascript"
-            src="gui/js/common/data_warehouse/FilterStore.js"></script>
-    <script type="text/javascript"
-            src="gui/js/common/data_warehouse/QuickFilterStore.js"></script>
-    <script type="text/javascript"
-            src="gui/js/common/data_warehouse/QuickFilterButton.js"></script>
-    <script type="text/javascript"
-            src="gui/js/common/data_warehouse/QuickFilterToolbar.js"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/AddFilterWindow.js"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/FilterStore.js"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterStore.js"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterButton.js"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterToolbar.js"></script>
 
     <!-- Reporting  -->
 
     <?php if ($userLoggedIn): ?>
-        <link rel="stylesheet" type="text/css"
-              href="gui/css/ChartDateEditor.css"/>
-        <link rel="stylesheet" type="text/css"
-              href="gui/css/ReportManager.css"/>
-        <link rel="stylesheet" type="text/css"
-              href="gui/css/AvailableCharts.css"/>
+        <link rel="stylesheet" type="text/css" href="gui/css/ChartDateEditor.css"/>
+        <link rel="stylesheet" type="text/css" href="gui/css/ReportManager.css"/>
+        <link rel="stylesheet" type="text/css" href="gui/css/AvailableCharts.css"/>
     <?php endif; ?>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ChartThumbPreview.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ReportExportMenu.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ReportCloneMenu.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ChartDateEditor.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/Reporting.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ReportManager.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/AvailableCharts.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/SaveReportAsDialog.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ReportCreatorGrid.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ReportCreator.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ReportsOverview.js"></script>
-        <script type="text/javascript"
-                src="gui/js/report_builder/ReportPreview.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ChartThumbPreview.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportExportMenu.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportCloneMenu.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ChartDateEditor.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/Reporting.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportManager.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/AvailableCharts.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/SaveReportAsDialog.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportCreatorGrid.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportCreator.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportsOverview.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportPreview.js"></script>
     <?php endif; ?>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/lib/moment/moment.min.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
+        <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
+        <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
     <?php endif; ?>
 
-    <script type="text/javascript"
-            src="gui/lib/highcharts/js/highcharts.src.js"></script>
-    <script type="text/javascript"
-            src="gui/lib/highcharts/js/highcharts-more.js"></script>
-    <script type="text/javascript"
-            src="gui/lib/highchartsDateformats.src.js"></script>
+    <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
+    <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>
+    <script type="text/javascript" src="gui/lib/highchartsDateformats.src.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript"
                 src="gui/lib/highchartsChartClicks.src.js"></script>
     <?php endif; ?>
-    <script type="text/javascript"
-            src="gui/lib/highchartsDottedLineNullPlot.src.js"></script>
-    <script type="text/javascript"
-            src="gui/lib/highcharts/js/modules/exporting.src.js"></script>
+    <script type="text/javascript" src="gui/lib/highchartsDottedLineNullPlot.src.js"></script>
+    <script type="text/javascript" src="gui/lib/highcharts/js/modules/exporting.src.js"></script>
 
     <script type="text/javascript" src="gui/js/HighChartPanel.js"></script>
 
     <?php if ($userLoggedIn): ?>
-        <link rel="stylesheet" type="text/css"
-              href="gui/css/ChartDragDrop.css"/>
+        <link rel="stylesheet" type="text/css" href="gui/css/ChartDragDrop.css"/>
     <?php endif; ?>
 
     <script type="text/javascript" src="gui/js/CustomJsonStore.js"></script>
@@ -455,8 +400,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/TreeCheckbox.css"/>
-        <link rel="stylesheet" type="text/css"
-              href="gui/css/TriStateNodeUI.css"/>
+        <link rel="stylesheet" type="text/css" href="gui/css/TriStateNodeUI.css"/>
 
         <script type="text/javascript" src="gui/js/TreeCheckbox.js"></script>
         <script type="text/javascript" src="gui/js/TriStateNodeUI.js"></script>
@@ -470,8 +414,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/CustomDateField.js"></script>
     <script type="text/javascript" src="gui/js/CustomSplitButton.js"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/js/CustomTwinTriggerField.js"></script>
+        <script type="text/javascript" src="gui/js/CustomTwinTriggerField.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="gui/js/CustomRowNumberer.js"></script>
     <script type="text/javascript" src="gui/js/CustomPagingToolbar.js"></script>
@@ -482,10 +425,8 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/DrillDownMenu.js"></script>
 
     <script type="text/javascript" src="gui/js/ChartDragDrop.js"></script>
-    <script type="text/javascript"
-            src="gui/lib/extjs/examples/ux/DataView-more.js"></script>
-    <script type="text/javascript"
-            src="gui/js/FilterDimensionPanel.js"></script>
+    <script type="text/javascript" src="gui/lib/extjs/examples/ux/DataView-more.js"></script>
+    <script type="text/javascript" src="gui/js/FilterDimensionPanel.js"></script>
 
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/CustomMenu.js"></script>
@@ -500,8 +441,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
     <script type="text/javascript" src="gui/js/ContactDialog.js"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/js/RealTimeValidatingTextField.js"></script>
+        <script type="text/javascript" src="gui/js/RealTimeValidatingTextField.js"></script>
     <?php endif; ?>
 
     <script type="text/javascript" src="gui/js/PortalModule.js"></script>
@@ -511,44 +451,29 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/js/modules/Summary.js"></script>
     <script type="text/javascript" src="gui/js/modules/Usage.js"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/js/modules/ReportGenerator.js"></script>
+        <script type="text/javascript" src="gui/js/modules/ReportGenerator.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="gui/js/modules/About.js"></script>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/js/modules/metric_explorer/MetricExplorer.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/metric_explorer/StatusButton.js"></script>
+        <script type="text/javascript" src="gui/js/modules/metric_explorer/MetricExplorer.js"></script>
+        <script type="text/javascript" src="gui/js/modules/metric_explorer/StatusButton.js"></script>
         <script type="text/javascript" src="gui/js/ChangeStack.js"></script>
 
     <?php /* Single Job Viewer */ ?>
     <?php if (xd_utilities\getConfiguration('features', 'singlejobviewer') == 'on'): ?>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/JobViewer.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/ChartPanel.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/ChartTab.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/GanttChart.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/AnalyticChartPanel.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/TimeSeriesStore.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/SearchPanel.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/SearchHistoryTree.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/SearchHistoryPanel.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/JobPanel.js"></script>
-        <script type="text/javascript"
-                src="gui/js/modules/job_viewer/NestedViewPanel.js"></script>
-        <script type="text/javascript"
-                src="gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/JobViewer.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/ChartPanel.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/ChartTab.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/GanttChart.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/AnalyticChartPanel.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/TimeSeriesStore.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchPanel.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchHistoryTree.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchHistoryPanel.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/JobPanel.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/NestedViewPanel.js"></script>
+        <script type="text/javascript" src="gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js"></script>
         <script type="text/javascript" src="gui/lib/groupdataview.js"></script>
         <script type="text/javascript" src="gui/lib/groupcombo.js"></script>
     <?php endif; ?>
