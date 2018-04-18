@@ -4,7 +4,7 @@ namespace OpenXdmod\Migration\Version750To800;
 use CCR\DB;
 use FilterListBuilder;
 use TimePeriodGenerator;
-use  OpenXdmod\Ingestor\Staging\ResourceTypes;
+use OpenXdmod\Ingestor\Staging\ResourceTypes;
 
 /**
  * Migrate databases from version 7.5.0 to 8.0.0.
