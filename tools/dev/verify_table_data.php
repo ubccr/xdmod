@@ -204,6 +204,9 @@ foreach ($args as $arg => $value) {
         case 'v':
         case 'verbosity':
             switch ( $value ) {
+                case 'trace':
+                    $scriptOptions['verbosity'] = Log::TRACE;
+                    break;
                 case 'debug':
                     $scriptOptions['verbosity'] = Log::DEBUG;
                     break;
@@ -426,7 +429,7 @@ function compareTables($srcTable, $destTable)
                 $srcCol,
                 $srcInfo['type'],
                 $srcInfo['is_nullable'],
-                ( "" != $srcInfo['key_type'] ? "key=" . $srcInfo['key_type'] : "" ),
+                ( "" != $srcInfo['key_type'] ? " key=" . $srcInfo['key_type'] : "" ),
                 $destCol,
                 $destInfo['type'],
                 $destInfo['is_nullable'],
@@ -563,13 +566,14 @@ ORDER BY ordinal_position ASC";
         exit();
     }
 
+    $retval = array();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     if ( 0 == count($result) ) {
         $logger->err("Table '$tableName' does not exist or does not have a primary key");
-        return false;
+        return $retval;
     }
 
-    $retval = array();
 
     foreach ( $result as $row) {
         $retval[] = $row['name'];
@@ -796,6 +800,10 @@ function compareTableData(
                 // only those differences. Ignored columns are not displayed.
 
                 $keyColumns = getTablePrimaryKeyColumns($srcTable, $srcSchema);
+
+                if ( 0 == count($keyColumns) ) {
+                    continue;
+                }
 
                 $constraints = array();  // JOIN constraints
                 $where = array();        // WHERE clause with parameters

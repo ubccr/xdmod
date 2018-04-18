@@ -99,10 +99,12 @@ abstract class aAction extends aEtlObject
 
             // Set up the path to the definition file for this action
 
-            if ( isset($this->options->paths->definition_file_dir) ) {
+            $this->definitionFile = $this->options->definition_file;
+
+            if ( isset($this->options->paths->action_definition_dir) ) {
                 $this->definitionFile = \xd_utilities\qualify_path(
                     $this->options->definition_file,
-                    $this->options->paths->definition_file_dir
+                    $this->options->paths->action_definition_dir
                 );
             }
             $this->definitionFile = \xd_utilities\resolve_path($this->definitionFile);
@@ -110,11 +112,17 @@ abstract class aAction extends aEtlObject
             // Parse the action definition so it is available before initialize() is called. If it
             // has already been set by a child constructor leave it alone.
 
+            $options = array();
+            foreach ( $this->options->paths as $name => $value ) {
+                $options['variables'][$name] = $value;
+            }
+
             if ( null === $this->parsedDefinitionFile ) {
                 $this->parsedDefinitionFile = new Configuration(
                     $this->definitionFile,
                     $this->options->paths->base_dir,
-                    $logger
+                    $logger,
+                    $options
                 );
                 $this->parsedDefinitionFile->initialize();
                 $this->parsedDefinitionFile->cleanup();

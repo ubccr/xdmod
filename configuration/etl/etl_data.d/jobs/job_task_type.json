@@ -1,7 +1,8 @@
 [
-    ["job_task_type_id", "job_task_type", "display", "description"],
-    [-1, "unknown",      "Unknown",           "Unknown" ],
-    [1,  "start",        "Job Start",         "Start of a job" ],
-    [2,  "end",          "Job End", "End of a job" ],
-    [3,  "intermediate", "Intermediate",   "Intermediate job reporting" ]
+    ["job_task_type_id",   "job_task_type", "display", "description"],
+    [-1, "unknown",        "Unknown",           "Unknown" ],
+    [1,  "start",          "Job Start",         "Start of a job" ],
+    [2,  "end",            "Job End", "End of a job" ],
+    [3,  "intermediate",   "Intermediate",   "Intermediate job reporting" ],
+    [4,  "job_array_task", "Job Array Task", "Job array task" ]
 ]

@@ -22,7 +22,7 @@ if ($auth && $auth->isSamlConfigured()) {
         $samlError = $xdmodUser;
     }
 }
-// Used for Federated login or samlErrors
+// Used for Single Sign On  or samlErrors
 ?>
 <!DOCTYPE html>
 <html>

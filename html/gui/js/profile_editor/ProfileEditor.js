@@ -6,7 +6,7 @@ XDMoD.ProfileEditorConstants = {
 
    PASSWORD:             0,
     WELCOME_EMAIL_CHANGE: 1, // designates if we're displaying first time login prompt to validate email
-    FEDERATED_USER: 5 // designates whether or not this is a federated user
+    SSO_USER: 5 // designates whether or not this is a Single Sign On user
 
 };//XDMoD.ProfileEditorConstants
 

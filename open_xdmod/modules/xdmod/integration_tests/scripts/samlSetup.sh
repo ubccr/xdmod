@@ -109,12 +109,13 @@ sed -i -- 's%#</Directory>%</Directory>%' /etc/httpd/conf.d/xdmod.conf
 
 cp /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config-templates/config.php /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
 sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('localhost:8080'),/" /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
+sed -i -- "s/'session.phpsession.cookiename' => 'SimpleSAML',/'session.phpsession.cookiename' => null,/" /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
 
 cat > /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/authsources.php <<EOF
 <?php
 \$config = array(
   /*
-   * If you want to support both local auth and federated auth look into
+   * If you want to support both local auth and Single Sign On auth look into
    * https://simplesamlphp.org/docs/stable/multiauth:multiauth
    * https://simplesamlphp.org/docs/stable/sqlauth:sql
    * An updated example will be provided when this is implemented.

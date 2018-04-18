@@ -121,7 +121,7 @@ class GroupByResource extends \DataWarehouse\Query\Jobs\GroupBy
     }
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'resource_id');
+        return parent::pullQueryParameters2($request, '_filter_', 'task_resource_id');
     }
     public function pullQueryParameterDescriptions(&$request)
     {

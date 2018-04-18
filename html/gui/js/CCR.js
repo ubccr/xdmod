@@ -459,7 +459,7 @@ CCR.xdmod.ui.smallChartScale = 0.61;
 CCR.xdmod.ui.thumbWidth = 400;
 CCR.xdmod.ui.thumbHeight = CCR.xdmod.ui.thumbWidth * CCR.xdmod.ui.thumbAspect;
 
-CCR.xdmod.FEDERATED_USER_TYPE = 5;
+CCR.xdmod.SSO_USER_TYPE = 5;
 
 CCR.xdmod.UserTypes = {
     ProgramOfficer: 'po',
@@ -946,7 +946,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     });
 
     var loginItems = [];
-    var accountName = CCR.xdmod.federationLoginLink && CCR.xdmod.federationLoginLink.organization.en !== 'Federation' ? CCR.xdmod.federationLoginLink.organization.en : CCR.xdmod.org_name;
+    var accountName = CCR.xdmod.SSOLoginLink && CCR.xdmod.SSOLoginLink.organization.en !== 'Single Sign On' ? CCR.xdmod.SSOLoginLink.organization.en : CCR.xdmod.org_name;
 
     var signInWithLocalAccount = function () {
         if (txtLoginUsername.getValue().length === 0) {
@@ -1037,16 +1037,16 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         })]
     })];
 
-    var federatedLoginFrm = CCR.xdmod.isFederationConfigured ? new Ext.form.FormPanel({
-        id: 'federated_login_form',
+    var SSOLoginFrm = CCR.xdmod.isSSOConfigured ? new Ext.form.FormPanel({
+        id: 'sso_login_form',
         title: 'Sign in with ' + accountName + ':',
         items: [{
             xtype: 'button',
-            text: '<img src="' + CCR.xdmod.federationLoginLink.icon + '" alt="Login here."></img>',
+            text: '<img src="' + CCR.xdmod.SSOLoginLink.icon + '" alt="Login here."></img>',
             anchor: '100%',
-            id: 'federatedLoginLink',
+            id: 'SSOLoginLink',
             handler: function () {
-                document.location = CCR.xdmod.federationLoginLink.url;
+                document.location = CCR.xdmod.SSOLoginLink.url;
             }
         }]
     }) : null;
@@ -1068,8 +1068,8 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     var title = 'Sign into XDMoD';
 
-    if (CCR.xdmod.isFederationConfigured) {
-        loginItems.push(federatedLoginFrm);
+    if (CCR.xdmod.isSSOConfigured) {
+        loginItems.push(SSOLoginFrm);
         loginItems.push(localLoginFrm);
     } else {
         loginItems.push(localLoginFrm);

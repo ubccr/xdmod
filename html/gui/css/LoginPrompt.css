@@ -47,7 +47,7 @@
     background-position: 0 -18px;
 }
 
-#federated_login_form .x-panel-body, #local_login_form .x-panel-body, #forgot_password_form .x-panel-body {
+#sso_login_form .x-panel-body, #local_login_form .x-panel-body, #forgot_password_form .x-panel-body {
     background-color: #e8e8e8 !important;
     border: 1px;
     border-color: #bbb;
@@ -58,15 +58,15 @@
     padding: 15px;
 }
 
-#federated_login_form form, #local_login_form form, #forgot_password_form form {
+#sso_login_form form, #local_login_form form, #forgot_password_form form {
     padding: 15px;
 }
 
-#federatedLoginLink button {
+#SSOLoginLink button {
     height: 100%;
 }
 
-#federatedLoginLink img {
+#SSOLoginLink img {
     margin: 4px;
 }
 

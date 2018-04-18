@@ -135,7 +135,7 @@ class Trigger extends SchemaEntity implements iEntity
     {
         // Triggers queried from MySQL contain the begin/end but the body in the JSON may or may not.
 
-        $addBeginEnd = ( 0 !== strpos($this->body, "BEGIN") );
+        $addBeginEnd = ( 0 !== stripos($this->body, "BEGIN") );
         $name = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
         $tableName = ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
             $this->quote($this->table);

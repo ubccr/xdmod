@@ -3,7 +3,8 @@
     "#": "defaults and actions.",
 
     "paths": {
-        "definition_file_dir": "etl_tables.d",
+        "action_definition_dir": "etl_action_defs.d",
+        "table_definition_dir": "etl_tables.d",
         "schema_dir": "etl_schemas.d",
         "macro_dir": "etl_macros.d",
         "sql_dir": "etl_sql.d",

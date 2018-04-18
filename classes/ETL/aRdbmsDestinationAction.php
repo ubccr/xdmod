@@ -73,7 +73,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null)
     {
-        $requiredKeys = array("destination", "definition_file");
+        $requiredKeys = array("destination");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         parent::__construct($options, $etlConfig, $logger);
@@ -104,7 +104,7 @@ abstract class aRdbmsDestinationAction extends aAction
             );
         }
 
-        if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
+        if ( isset($this->parsedDefinitionFile) && ! isset($this->parsedDefinitionFile->table_definition) ) {
             $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
         }
 

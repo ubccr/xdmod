@@ -5,15 +5,16 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Cloud DB",
+                    "name": "Utility DB",
                     "config": "datawarehouse",
-                    "schema": "modw_cloud"
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Cloud DB",
+                    "name": "Utility DB",
                     "config": "datawarehouse",
-                    "schema": "modw_cloud",
+                    "schema": "modw",
                     "create_schema_if_not_exists": true
                 }
             }

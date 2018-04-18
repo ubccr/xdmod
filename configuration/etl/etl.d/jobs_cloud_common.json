@@ -93,7 +93,7 @@
             "name": "CloudUnknownDimensionInitializer",
             "description": "Initialize values for unknown hosts, images, etc. that are specific to a resource",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_common/initialize_unknown_dimension_values.def.json",
+            "definition_file": "cloud_common/initialize_unknown_dimension_values.json",
             "endpoints": {
                 "source": {
                     "type": "mysql",

@@ -1,0 +1,34 @@
+{
+    "#": "Load unique images into the dimension table. Do not load unknown images as these are",
+    "#": "handled by a separate action",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/image.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "image": "raw.image"
+        },
+
+        "joins": [
+            {
+                "name": "eucalyptus_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+
+        "where": [
+            "image IS NOT NULL"
+        ],
+
+        "groupby": [
+            "resource_id",
+            "image"
+        ]
+    }
+}

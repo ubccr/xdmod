@@ -112,18 +112,6 @@
                     "path": "jobs/xdw/pi-person.json"
                 }
             }
-        },
-        {
-            "name": "resource-type",
-            "definition_file": "jobs/xdw/resource-type.json",
-            "description": "resource-type + data",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "unknown resource type data data",
-                    "path": "jobs/xdw/resource-type.json"
-                }
-            }
         }
     ],
     "aggregate": [{
@@ -147,7 +135,7 @@
         "options_class": "AggregatorOptions",
         "class": "SimpleAggregator",
         "description": "Aggregate HPC job records",
-        "definition_file": "actions/jobs/hpc-aggregation.json",
+        "definition_file": "jobs/hpc-aggregation.json",
         "table_prefix": "jobfact_by_",
         "aggregation_units": [
             "day", "month", "quarter", "year"

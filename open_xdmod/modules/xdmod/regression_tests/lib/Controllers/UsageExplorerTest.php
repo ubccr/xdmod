@@ -162,9 +162,20 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     '/' . $testName .
                     '/' . $k .
                     '-' . (empty($envUserrole) ? 'public' : $envUserrole) .
-                    '.csv';
+                    '-8.0.0.csv';
                 if (file_exists($expectedFile) ) {
                     $testCase[2] = $expectedFile;
+                } else {
+                    $expectedFile = self::$baseDir .
+                        '/expected/' .
+                        $expectedEndpoint .
+                        '/' . $testName .
+                        '/' . $k .
+                        '-' . (empty($envUserrole) ? 'public' : $envUserrole) .
+                        '.csv';
+                    if (file_exists($expectedFile) ) {
+                        $testCase[2] = $expectedFile;
+                    }
                 }
                 $testData[$testName. '-' . $k . '-' . (empty($envUserrole) ? 'public' : $envUserrole)] = $testCase;
             }
