@@ -381,8 +381,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>
     <script type="text/javascript" src="gui/lib/highchartsDateformats.src.js"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript"
-                src="gui/lib/highchartsChartClicks.src.js"></script>
+        <script type="text/javascript" src="gui/lib/highchartsChartClicks.src.js"></script>
     <?php endif; ?>
     <script type="text/javascript" src="gui/lib/highchartsDottedLineNullPlot.src.js"></script>
     <script type="text/javascript" src="gui/lib/highcharts/js/modules/exporting.src.js"></script>
