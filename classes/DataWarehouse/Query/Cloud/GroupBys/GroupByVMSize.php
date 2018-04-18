@@ -15,7 +15,7 @@ class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
     {
         parent::__construct(
             'vm_size',
-            array('avg_waitduration_hours','sem_avg_waitduration_hours'),
+            array(),
         "
 			select
 				gt.id,

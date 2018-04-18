@@ -47,6 +47,11 @@
                     "nullable": false,
                     "comment": "DIMENSION: The ID of the instance itself."
                 },{
+                    "name": "processorbucket_id",
+                    "type": "int(4)",
+                    "nullable": true,
+                    "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id"
+                },{
                     "name": "start_event_id",
                     "type": "int(11) unsigned",
                     "nullable": false,
@@ -66,6 +71,11 @@
                     "type": "int(11)",
                     "nullable": false,
                     "comment": "DIMENSION: Number of cores on a VM."
+                },{
+                    "name": "core_time",
+                    "type": "bigint(42)",
+                    "nullable": false,
+                    "comment": "FACT: Core hours reserved by a VM."
                 },{
                     "name": "memory_mb",
                     "type": "int(11)",
@@ -166,23 +176,25 @@
                 "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
-                "host_resource_id": "euca_events_transient.resource_id",
+                "host_resource_id": "eet.resource_id",
                 "account_id": "instance.account_id",
                 "person_id": "instance.person_id",
-                "start_event_id": "euca_events_transient.start_event_id",
-                "instance": "euca_events_transient.instance",
-                "instance_id": "euca_events_transient.id",
-                "instance_type_id": "euca_events_transient.instance_type_id",
-                "configuration": "euca_events_transient.configuration",
-                "num_cores": "SUM(euca_events_transient.num_cores)",
-                "memory_mb": "SUM(euca_events_transient.memory_mb)",
-                "disk_gb": "SUM(euca_events_transient.disk_gb)",
-                "start_event": "euca_events_transient.start_event",
-                "end_event": "euca_events_transient.end_event",
-                "start_event_time": "euca_events_transient.start_event_time",
-                "end_event_time": "euca_events_transient.end_event_time",
-                "num_vms_started": "SUM(IF(euca_events_transient.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.start_event = 'START', 1, 0))",
-                "num_vms_ended": "SUM(IF(euca_events_transient.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_event = 'TERMINATE', 1, 0))",
+                "start_event_id": "eet.start_event_id",
+                "instance": "eet.instance",
+                "instance_id": "eet.id",
+                "instance_type_id": "eet.instance_type_id",
+                "processorbucket_id": "(SELECT id FROM ${UTILITY_SCHEMA}.processor_buckets pb WHERE eet.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
+                "configuration": "eet.configuration",
+                "num_cores": "SUM(eet.num_cores)",
+                "core_time": "COALESCE(SUM(eet.num_cores * ${wallduration_case_statement}), 0)",
+                "memory_mb": "SUM(eet.memory_mb)",
+                "disk_gb": "SUM(eet.disk_gb)",
+                "start_event": "eet.start_event",
+                "end_event": "eet.end_event",
+                "start_event_time": "eet.start_event_time",
+                "end_event_time": "eet.end_event_time",
+                "num_vms_started": "SUM(IF(eet.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND eet.start_event = 'START', 1, 0))",
+                "num_vms_ended": "SUM(IF(eet.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND eet.end_event = 'TERMINATE', 1, 0))",
                 "num_vms_running": "SUM(1)",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)"
             },
@@ -200,27 +212,33 @@
             "joins":[
               {
                   "name": "euca_events_transient",
+                  "alias": "eet",
                   "schema": "${SOURCE_SCHEMA}"
               },{
                   "name": "instance",
                   "schema": "${SOURCE_SCHEMA}",
-                  "on": "instance.instance_id = euca_events_transient.id and instance.resource_id = euca_events_transient.resource_id"
+                  "on": "instance.instance_id = eet.id and instance.resource_id = eet.resource_id"
+              },{
+                  "name": "resourcefact",
+                  "schema": "${UTILITY_SCHEMA}",
+                  "alias": "task_resource",
+                  "on": "task_resource.id = eet.resource_id"
               }
             ],
             "where": [
-              "euca_events_transient.start_day_id <= ${:PERIOD_END_DAY_ID} AND euca_events_transient.end_day_id >= ${:PERIOD_START_DAY_ID}",
-              "euca_events_transient.configuration != \"Unknown\"",
-              "euca_events_transient.instance !=\"Unknown\"",
-              "euca_events_transient.num_cores != 0"
+              "eet.start_day_id <= ${:PERIOD_END_DAY_ID} AND eet.end_day_id >= ${:PERIOD_START_DAY_ID}",
+              "eet.configuration != \"Unknown\"",
+              "eet.instance !=\"Unknown\"",
+              "eet.num_cores != 0"
           ],
             "macros": [{
                 "name": "wallduration_case_statement",
                 "file": "statistic_ratio_case.sql",
                 "args": {
-                    "statistic": "euca_events_transient.wallduration",
+                    "statistic": "eet.wallduration",
                     "max": "${:PERIOD_SECONDS}",
-                    "src_start_ts": "euca_events_transient.start_time_ts",
-                    "src_end_ts": "euca_events_transient.end_time_ts",
+                    "src_start_ts": "eet.start_time_ts",
+                    "src_end_ts": "eet.end_time_ts",
                     "dest_start_ts": "${:PERIOD_START_TS}",
                     "dest_end_ts": "${:PERIOD_END_TS}"
                 }
