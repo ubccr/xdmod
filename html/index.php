@@ -272,7 +272,8 @@ use Models\Services\Realms;
                print "CCR.xdmod.ui.mappedPID = '{$user->getPersonID(TRUE)}';\n";
 
                $obj_warehouse = new XDWarehouse();
-               print "CCR.xdmod.ui.mappedPName = '{$obj_warehouse->resolveName($user->getPersonID(TRUE))}';\n";
+               $pName = rawurlencode($obj_warehouse->resolveName($user->getPersonID(TRUE)));
+               print "CCR.xdmod.ui.mappedPName = '{$pName}';\n";
 
                print "CCR.xdmod.ui.isManager = $manager;\n";
                print "CCR.xdmod.ui.isDeveloper = $developer;\n";
