@@ -154,6 +154,10 @@ class AggregationTable extends Table
         foreach ( $columnJson as $def ) {
             if ( null !== $variableMap ) {
                 foreach ( $def as $key => &$value ) {
+                    // Variables are not substituted in processing hints
+                    if ( 'hints' == $key ) {
+                        continue;
+                    }
                     $value = Utilities::substituteVariables($value, $variableMap);
                 }
                 unset($value); // Sever the reference with the last element

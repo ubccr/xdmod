@@ -617,6 +617,7 @@ ORDER BY trigger_name ASC";
 
         foreach ( $dropColNames as $name ) {
             $alterList[] = "DROP COLUMN " . $this->quote($name);
+            $this->logger->warning(sprintf("Dropping column %s!", $this->quote($name)));
         }
 
         foreach ( $changeColNames as $name ) {
