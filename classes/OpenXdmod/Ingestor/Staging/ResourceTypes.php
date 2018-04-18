@@ -11,10 +11,6 @@ class ResourceTypes extends ArrayIngestor
     {
         $config = Config::factory();
 
-        $types = array(
-                array(0, 'UNKNOWN', 'Unknown resource type'),
-        );
-
         foreach ($config['resource_types'] as $type) {
             $types[] = array(
                 $type['id'],
@@ -35,4 +31,3 @@ class ResourceTypes extends ArrayIngestor
         );
     }
 }
-
