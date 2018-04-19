@@ -1,73 +1,46 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "char(64)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "database_name"
-      },
-      {
-        "type": "char(64)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "schema_version"
-      },
-      {
-        "type": "datetime",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "action_datetime"
-      },
-      {
-        "type": "enum('created','upgraded')",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "action_type"
-      },
-      {
-        "type": "varchar(255)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "script_name"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "schema_version_history",
+        "engine": "MyISAM",
         "columns": [
-          "database_name",
-          "schema_version",
-          "action_datetime"
+            {
+                "name": "database_name",
+                "type": "char(64)",
+                "nullable": false
+            },
+            {
+                "name": "schema_version",
+                "type": "char(64)",
+                "nullable": false
+            },
+            {
+                "name": "action_datetime",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "action_type",
+                "type": "enum('created','upgraded')",
+                "nullable": false
+            },
+            {
+                "name": "script_name",
+                "type": "varchar(255)",
+                "nullable": false
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "schema_version_history"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "database_name",
+                    "schema_version",
+                    "action_datetime"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

@@ -1,24 +1,18 @@
 {
     "table_definition": {
-        "comment": "",
+        "name": "minmaxdate",
         "engine": "InnoDB",
         "columns": [
             {
-                "type": "datetime",
-                "nullable": true,
-                "default": null,
-                "name": "min_job_date"
+                "name": "min_job_date",
+                "type": "datetime"
             },
             {
-                "type": "datetime",
-                "nullable": true,
-                "default": null,
-                "name": "max_job_date"
+                "name": "max_job_date",
+                "type": "datetime"
             }
         ],
         "indexes": [],
-        "triggers": [],
-        "schema": "modw",
-        "name": "minmaxdate"
+        "triggers": []
     }
 }

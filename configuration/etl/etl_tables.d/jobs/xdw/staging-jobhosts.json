@@ -10,15 +10,11 @@
             },
             {
                 "name": "hostname",
-                "type": "varchar(248)",
-                "nullable": true,
-                "default": null
+                "type": "varchar(248)"
             },
             {
                 "name": "resource_id",
-                "type": "int(11)",
-                "nullable": true,
-                "default": null
+                "type": "int(11)"
             },
             {
                 "name": "order_id",

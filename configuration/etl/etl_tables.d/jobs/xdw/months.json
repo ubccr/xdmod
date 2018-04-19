@@ -1,162 +1,120 @@
 {
-  "table_definition": {
-    "comment": "autogen - one rec for each month of TG operation.",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "int(10) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The id of the month record.",
-        "hints": null,
-        "rename": null,
-        "name": "id"
-      },
-      {
-        "type": "smallint(5) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The year of the month.",
-        "hints": null,
-        "rename": null,
-        "name": "year"
-      },
-      {
-        "type": "tinyint(3) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The month of the year. Starts at 1.",
-        "hints": null,
-        "rename": null,
-        "name": "month"
-      },
-      {
-        "type": "datetime",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The datetime start of the month down to the second.",
-        "hints": null,
-        "rename": null,
-        "name": "month_start"
-      },
-      {
-        "type": "datetime",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The month end datetime down to the second.",
-        "hints": null,
-        "rename": null,
-        "name": "month_end"
-      },
-      {
-        "type": "smallint(5) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The number of hours in this month. This is variable based on duration of the month. Also in case the last job record fell in the middle of this month it will be somewhere between 1 and 31.",
-        "hints": null,
-        "rename": null,
-        "name": "hours"
-      },
-      {
-        "type": "int(10) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The number of seconds in this month. The last month might be partial.",
-        "hints": null,
-        "rename": null,
-        "name": "seconds"
-      },
-      {
-        "type": "int(10) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The start timestamp of this month in epochs.",
-        "hints": null,
-        "rename": null,
-        "name": "month_start_ts"
-      },
-      {
-        "type": "int(10) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": "The end of this month in epochs. May be less than expected if the end of the last job fell during this month. ",
-        "hints": null,
-        "rename": null,
-        "name": "month_end_ts"
-      },
-      {
-        "type": "int(10) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "month_middle_ts"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "months",
+        "comment": "autogen - one rec for each month of TG operation.",
+        "engine": "MyISAM",
         "columns": [
-          "year",
-          "month",
-          "month_start",
-          "month_end"
+            {
+                "name": "id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The id of the month record."
+            },
+            {
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "The year of the month."
+            },
+            {
+                "name": "month",
+                "type": "tinyint(3) unsigned",
+                "nullable": false,
+                "comment": "The month of the year. Starts at 1."
+            },
+            {
+                "name": "month_start",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "The datetime start of the month down to the second."
+            },
+            {
+                "name": "month_end",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "The month end datetime down to the second."
+            },
+            {
+                "name": "hours",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "The number of hours in this month. This is variable based on duration of the month. Also in case the last job record fell in the middle of this month it will be somewhere between 1 and 31."
+            },
+            {
+                "name": "seconds",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The number of seconds in this month. The last month might be partial."
+            },
+            {
+                "name": "month_start_ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The start timestamp of this month in epochs."
+            },
+            {
+                "name": "month_end_ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The end of this month in epochs. May be less than expected if the end of the last job fell during this month. "
+            },
+            {
+                "name": "month_middle_ts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "months_pk2"
-      },
-      {
-        "columns": [
-          "id",
-          "seconds",
-          "month_start_ts",
-          "month_end_ts"
+        "indexes": [
+            {
+                "name": "months_pk2",
+                "columns": [
+                    "year",
+                    "month",
+                    "month_start",
+                    "month_end"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "month_index",
+                "columns": [
+                    "id",
+                    "seconds",
+                    "month_start_ts",
+                    "month_end_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "month_index2",
+                "columns": [
+                    "id",
+                    "month_start_ts",
+                    "month_middle_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "month_ym",
+                "columns": [
+                    "year",
+                    "month"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
         ],
-        "type": "BTREE",
-        "is_unique": false,
-        "name": "month_index"
-      },
-      {
-        "columns": [
-          "id",
-          "month_start_ts",
-          "month_middle_ts"
-        ],
-        "type": "BTREE",
-        "is_unique": false,
-        "name": "month_index2"
-      },
-      {
-        "columns": [
-          "year",
-          "month"
-        ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "month_ym"
-      },
-      {
-        "columns": [
-          "id"
-        ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "modw",
-    "name": "months"
-  }
+        "triggers": []
+    }
 }

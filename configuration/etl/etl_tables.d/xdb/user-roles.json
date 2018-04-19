@@ -1,70 +1,52 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "InnoDB",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": "0",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "user_id"
-      },
-      {
-        "type": "int(4)",
-        "nullable": false,
-        "default": "0",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "role_id"
-      },
-      {
-        "type": "tinyint(1) unsigned",
-        "nullable": false,
-        "default": "0",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "is_primary"
-      },
-      {
-        "type": "tinyint(1) unsigned",
-        "nullable": false,
-        "default": "0",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "is_active"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "UserRoles",
+        "engine": "InnoDB",
         "columns": [
-          "user_id",
-          "role_id"
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "role_id",
+                "type": "int(4)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "is_primary",
+                "type": "tinyint(1) unsigned",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "is_active",
+                "type": "tinyint(1) unsigned",
+                "nullable": false,
+                "default": 0
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      },
-      {
-        "columns": [
-          "role_id"
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "user_id",
+                    "role_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "UserRoles__ibfk_2",
+                "columns": [
+                    "role_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
         ],
-        "type": "BTREE",
-        "is_unique": false,
-        "name": "UserRoles__ibfk_2"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "UserRoles"
-  }
+        "triggers": []
+    }
 }

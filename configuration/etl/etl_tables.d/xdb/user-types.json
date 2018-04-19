@@ -1,51 +1,33 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": "auto_increment",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "id"
-      },
-      {
-        "type": "varchar(50)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "type"
-      },
-      {
-        "type": "char(7)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "color"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "UserTypes",
+        "engine": "MyISAM",
         "columns": [
-          "id"
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "type",
+                "type": "varchar(50)"
+            },
+            {
+                "name": "color",
+                "type": "char(7)"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "UserTypes"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

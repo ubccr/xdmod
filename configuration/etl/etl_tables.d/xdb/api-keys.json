@@ -1,61 +1,37 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": "auto_increment",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "id"
-      },
-      {
-        "type": "varchar(16)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "api_key"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "public_key"
-      },
-      {
-        "type": "varchar(100)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "identifier"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "APIKeys",
+        "engine": "MyISAM",
         "columns": [
-          "id"
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "api_key",
+                "type": "varchar(16)"
+            },
+            {
+                "name": "public_key",
+                "type": "text"
+            },
+            {
+                "name": "identifier",
+                "type": "varchar(100)"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "APIKeys"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

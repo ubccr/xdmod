@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "allocation",
-        "engine": "MyISAM",
         "comment": "Holds allocation records.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -99,40 +99,35 @@
             {
                 "name": "allocation_type_id",
                 "type": "int(11)",
-                "nullable": true,
                 "comment": "The type of the allocation (extension, supplement, transfer, new, renewal, advance, adjustment)"
             },
             {
                 "name": "charge_number",
-                "type": "varchar(200)",
-                "nullable": true
+                "type": "varchar(200)"
             },
             {
                 "name": "conversion_factor",
                 "type": "decimal(10,4)",
                 "nullable": false,
-                "default": 1.0000
+                "default": 1
             },
             {
                 "name": "xd_su_per_hour",
                 "type": "decimal(15,2)",
                 "nullable": false,
-                "default": 0.00
+                "default": 0
             },
             {
                 "name": "long_name",
-                "type": "varchar(500)",
-                "nullable": true
+                "type": "varchar(500)"
             },
             {
                 "name": "short_name",
-                "type": "varchar(500)",
-                "nullable": true
+                "type": "varchar(500)"
             },
             {
                 "name": "order_id",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             }
         ],
         "indexes": [

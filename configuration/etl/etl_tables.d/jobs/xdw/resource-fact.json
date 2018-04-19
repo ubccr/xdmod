@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "resourcefact",
-        "engine": "MyISAM",
         "comment": "Information about resources.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -14,7 +14,6 @@
             {
                 "name": "resourcetype_id",
                 "type": "int(11)",
-                "nullable": true,
                 "default": 0,
                 "comment": "The resource type id."
             },
@@ -28,7 +27,6 @@
             {
                 "name": "name",
                 "type": "varchar(200)",
-                "nullable": true,
                 "comment": "The name of the resource."
             },
             {
@@ -40,13 +38,11 @@
             {
                 "name": "description",
                 "type": "varchar(1000)",
-                "nullable": true,
                 "comment": "The description of the resource."
             },
             {
                 "name": "start_date",
                 "type": "datetime",
-                "nullable": true,
                 "comment": "The date the resource was put into commission."
             },
             {
@@ -58,13 +54,11 @@
             {
                 "name": "end_date",
                 "type": "datetime",
-                "nullable": true,
                 "comment": "The end date of the resource."
             },
             {
                 "name": "end_date_ts",
-                "type": "int(14)",
-                "nullable": true
+                "type": "int(14)"
             },
             {
                 "name": "shared_jobs",

@@ -1,32 +1,18 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "template_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "role_id"
-      }
-    ],
-    "indexes": [],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "ReportTemplateACL"
-  }
+    "table_definition": {
+        "name": "ReportTemplateACL",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "template_id",
+                "type": "int(11)"
+            },
+            {
+                "name": "role_id",
+                "type": "int(11)"
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    }
 }

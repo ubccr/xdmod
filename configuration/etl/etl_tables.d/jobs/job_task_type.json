@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "job_task_type",
-        "engine": "MyISAM",
         "comment": "hpc, provisioning, boot, suspend, resume, etc.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "job_task_type_id",
@@ -12,8 +12,6 @@
             {
                 "name": "job_record_type_id",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null,
                 "comment": "Reference to record type for type-specific task events"
             },
             {
@@ -30,8 +28,7 @@
             },
             {
                 "name": "description",
-                "type": "varchar(1024)",
-                "nullable": true
+                "type": "varchar(1024)"
             }
         ],
         "indexes": [

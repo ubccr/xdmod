@@ -1,71 +1,42 @@
 {
-  "table_definition": {
-    "comment": "Tracks which `Users` have which `acls`",
-    "engine": "InnoDB",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": "auto_increment",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "user_acl_parameter_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "user_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "acl_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "group_by_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "value"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "user_acl_group_by_parameters",
+        "comment": "Tracks which `Users` have which `acls`",
+        "engine": "InnoDB",
         "columns": [
-          "user_acl_parameter_id"
+            {
+                "name": "user_acl_parameter_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "user_id",
+                "type": "int(11)"
+            },
+            {
+                "name": "acl_id",
+                "type": "int(11)"
+            },
+            {
+                "name": "group_by_id",
+                "type": "int(11)"
+            },
+            {
+                "name": "value",
+                "type": "int(11)"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "user_acl_group_by_parameters"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "user_acl_parameter_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

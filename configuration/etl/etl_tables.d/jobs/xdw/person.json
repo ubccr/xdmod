@@ -21,18 +21,15 @@
             },
             {
                 "name": "prefix",
-                "type": "varchar(10)",
-                "nullable": true
+                "type": "varchar(10)"
             },
             {
                 "name": "first_name",
-                "type": "varchar(100)",
-                "nullable": true
+                "type": "varchar(100)"
             },
             {
                 "name": "middle_name",
-                "type": "varchar(60)",
-                "nullable": true
+                "type": "varchar(60)"
             },
             {
                 "name": "last_name",
@@ -41,75 +38,61 @@
             },
             {
                 "name": "url",
-                "type": "varchar(500)",
-                "nullable": true
+                "type": "varchar(500)"
             },
             {
                 "name": "birth_month",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "birth_day",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "department",
-                "type": "varchar(300)",
-                "nullable": true
+                "type": "varchar(300)"
             },
             {
                 "name": "title",
-                "type": "varchar(300)",
-                "nullable": true
+                "type": "varchar(300)"
             },
             {
                 "name": "is_reconciled",
                 "type": "tinyint(1)",
-                "nullable": true,
                 "default": 0
             },
             {
                 "name": "citizenship_country_id",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "email_address",
-                "type": "varchar(200)",
-                "nullable": true
+                "type": "varchar(200)"
             },
             {
                 "name": "ts",
-                "type": "datetime",
-                "nullable": true
+                "type": "datetime"
             },
             {
                 "name": "ts_ts",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "status",
                 "type": "varchar(10)",
-                "nullable": true,
                 "comment": "links to allocationstate"
             },
             {
                 "name": "long_name",
-                "type": "varchar(700)",
-                "nullable": true
+                "type": "varchar(700)"
             },
             {
                 "name": "short_name",
-                "type": "varchar(101)",
-                "nullable": true
+                "type": "varchar(101)"
             },
             {
                 "name": "order_id",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "person_origin_id",

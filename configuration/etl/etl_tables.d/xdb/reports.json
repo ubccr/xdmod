@@ -1,152 +1,79 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "varchar(100)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "report_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "user_id"
-      },
-      {
-        "type": "varchar(1000)",
-        "nullable": true,
-        "default": "TAS Report",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "name"
-      },
-      {
-        "type": "varchar(1000)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "derived_from"
-      },
-      {
-        "type": "varchar(1000)",
-        "nullable": true,
-        "default": "TAS Report",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "title"
-      },
-      {
-        "type": "varchar(1000)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "header"
-      },
-      {
-        "type": "varchar(1000)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "footer"
-      },
-      {
-        "type": "enum('Pdf','Pptx','Doc','Xls','Html')",
-        "nullable": false,
-        "default": "Pdf",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "format"
-      },
-      {
-        "type": "enum('Times','Arial')",
-        "nullable": false,
-        "default": "Arial",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "font"
-      },
-      {
-        "type": "enum('Once','Daily','Weekly','Monthly','Quarterly','Semi-annually','Annually')",
-        "nullable": false,
-        "default": "Once",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "schedule"
-      },
-      {
-        "type": "enum('Download','E-mail')",
-        "nullable": false,
-        "default": "E-mail",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "delivery"
-      },
-      {
-        "type": "tinyint(1)",
-        "nullable": false,
-        "default": "0",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "selected"
-      },
-      {
-        "type": "int(1)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "charts_per_page"
-      },
-      {
-        "type": "varchar(30)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "active_role"
-      }
-    ],
-    "indexes": [],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "Reports"
-  }
+    "table_definition": {
+        "name": "Reports",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "report_id",
+                "type": "varchar(100)"
+            },
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "name",
+                "type": "varchar(1000)",
+                "default": "TAS Report"
+            },
+            {
+                "name": "derived_from",
+                "type": "varchar(1000)"
+            },
+            {
+                "name": "title",
+                "type": "varchar(1000)",
+                "default": "TAS Report"
+            },
+            {
+                "name": "header",
+                "type": "varchar(1000)"
+            },
+            {
+                "name": "footer",
+                "type": "varchar(1000)"
+            },
+            {
+                "name": "format",
+                "type": "enum('Pdf','Pptx','Doc','Xls','Html')",
+                "nullable": false,
+                "default": "Pdf"
+            },
+            {
+                "name": "font",
+                "type": "enum('Times','Arial')",
+                "nullable": false,
+                "default": "Arial"
+            },
+            {
+                "name": "schedule",
+                "type": "enum('Once','Daily','Weekly','Monthly','Quarterly','Semi-annually','Annually')",
+                "nullable": false,
+                "default": "Once"
+            },
+            {
+                "name": "delivery",
+                "type": "enum('Download','E-mail')",
+                "nullable": false,
+                "default": "E-mail"
+            },
+            {
+                "name": "selected",
+                "type": "tinyint(1)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "charts_per_page",
+                "type": "int(1)"
+            },
+            {
+                "name": "active_role",
+                "type": "varchar(30)"
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    }
 }

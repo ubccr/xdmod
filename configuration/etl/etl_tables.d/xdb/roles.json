@@ -1,51 +1,34 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "InnoDB",
-    "columns": [
-      {
-        "type": "int(4)",
-        "nullable": false,
-        "default": "0",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "role_id"
-      },
-      {
-        "type": "varchar(20)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "abbrev"
-      },
-      {
-        "type": "varchar(30)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "description"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "Roles",
+        "engine": "InnoDB",
         "columns": [
-          "role_id"
+            {
+                "name": "role_id",
+                "type": "int(4)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "abbrev",
+                "type": "varchar(20)",
+                "nullable": false
+            },
+            {
+                "name": "description",
+                "type": "varchar(30)"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "Roles"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "role_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

@@ -1,101 +1,58 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "varchar(40)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "session_token"
-      },
-      {
-        "type": "text",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "session_id"
-      },
-      {
-        "type": "int(11) unsigned",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "user_id"
-      },
-      {
-        "type": "varchar(40)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "ip_address"
-      },
-      {
-        "type": "varchar(255)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "user_agent"
-      },
-      {
-        "type": "varchar(100)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "init_time"
-      },
-      {
-        "type": "varchar(100)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "last_active"
-      },
-      {
-        "type": "tinyint(1) unsigned",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "used_logout"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "SessionManager",
+        "engine": "MyISAM",
         "columns": [
-          "session_token"
+            {
+                "name": "session_token",
+                "type": "varchar(40)",
+                "nullable": false
+            },
+            {
+                "name": "session_id",
+                "type": "text",
+                "nullable": false
+            },
+            {
+                "name": "user_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "ip_address",
+                "type": "varchar(40)",
+                "nullable": false
+            },
+            {
+                "name": "user_agent",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "init_time",
+                "type": "varchar(100)",
+                "nullable": false
+            },
+            {
+                "name": "last_active",
+                "type": "varchar(100)",
+                "nullable": false
+            },
+            {
+                "name": "used_logout",
+                "type": "tinyint(1) unsigned"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "SessionManager"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "session_token"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

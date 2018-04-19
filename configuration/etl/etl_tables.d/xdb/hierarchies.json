@@ -1,61 +1,40 @@
 {
-  "table_definition": {
-    "comment": "Tracks the module installed `hierarchies`.",
-    "engine": "InnoDB",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": "auto_increment",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "hierarchy_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "module_id"
-      },
-      {
-        "type": "varchar(255)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "name"
-      },
-      {
-        "type": "varchar(1024)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "display"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "hierarchies",
+        "comment": "Tracks the module installed `hierarchies`.",
+        "engine": "InnoDB",
         "columns": [
-          "hierarchy_id"
+            {
+                "name": "hierarchy_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "module_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "display",
+                "type": "varchar(1024)"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "hierarchies"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "hierarchy_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "request",
-        "engine": "MyISAM",
         "comment": "Requests by PIs for allocations on TG.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -37,31 +37,26 @@
             {
                 "name": "proposal_title",
                 "type": "varchar(1000)",
-                "nullable": true,
                 "comment": "The title of the proposal for the allocation request."
             },
             {
                 "name": "expedite",
                 "type": "tinyint(1)",
-                "nullable": true,
                 "comment": "The date this request expires."
             },
             {
                 "name": "project_title",
                 "type": "varchar(300)",
-                "nullable": true,
                 "comment": "The project title related to this request."
             },
             {
                 "name": "primary_reviewer",
                 "type": "varchar(100)",
-                "nullable": true,
                 "comment": "The name of the primary reviewer."
             },
             {
                 "name": "proposal_number",
                 "type": "varchar(20)",
-                "nullable": true,
                 "comment": "The number of the proposal  of the project."
             },
             {
@@ -73,7 +68,6 @@
             {
                 "name": "comments",
                 "type": "varchar(2000)",
-                "nullable": true,
                 "comment": "Any comments."
             },
             {
@@ -91,7 +85,6 @@
             {
                 "name": "boardtype_id",
                 "type": "int(11)",
-                "nullable": true,
                 "comment": "The board type."
             }
         ],

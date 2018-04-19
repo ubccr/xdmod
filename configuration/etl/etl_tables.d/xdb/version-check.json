@@ -1,99 +1,58 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "datetime",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "entry_date"
-      },
-      {
-        "type": "varchar(15)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "ip_address"
-      },
-      {
-        "type": "varchar(255)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": "Log of xdmod version checks",
-        "hints": null,
-        "rename": null,
-        "name": "name"
-      },
-      {
-        "type": "varchar(255)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "email"
-      },
-      {
-        "type": "varchar(255)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "organization"
-      },
-      {
-        "type": "varchar(16)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "current_version"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "all_params"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "VersionCheck",
+        "engine": "MyISAM",
         "columns": [
-          "entry_date"
+            {
+                "name": "entry_date",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "ip_address",
+                "type": "varchar(15)",
+                "nullable": false
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "comment": "Log of xdmod version checks"
+            },
+            {
+                "name": "email",
+                "type": "varchar(255)"
+            },
+            {
+                "name": "organization",
+                "type": "varchar(255)"
+            },
+            {
+                "name": "current_version",
+                "type": "varchar(16)"
+            },
+            {
+                "name": "all_params",
+                "type": "text"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": false,
-        "name": "entry_date"
-      },
-      {
-        "columns": [
-          "ip_address"
+        "indexes": [
+            {
+                "name": "entry_date",
+                "columns": [
+                    "entry_date"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "ip",
+                "columns": [
+                    "ip_address"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
         ],
-        "type": "BTREE",
-        "is_unique": false,
-        "name": "ip"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "VersionCheck"
-  }
+        "triggers": []
+    }
 }

@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "organization",
-        "engine": "MyISAM",
         "comment": "The various organization.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -14,85 +14,71 @@
             {
                 "name": "organizationtype_id",
                 "type": "int(11)",
-                "nullable": true,
                 "comment": "The type of the organization."
             },
             {
                 "name": "abbrev",
                 "type": "varchar(100)",
-                "nullable": true,
                 "comment": "Abbreviated name."
             },
             {
                 "name": "name",
                 "type": "varchar(300)",
-                "nullable": true,
                 "comment": "Long name for this organization."
             },
             {
                 "name": "url",
                 "type": "varchar(500)",
-                "nullable": true,
                 "comment": "The internet URL."
             },
             {
                 "name": "phone",
                 "type": "varchar(30)",
-                "nullable": true,
                 "comment": "Phone number."
             },
             {
                 "name": "nsf_org_code",
                 "type": "varchar(45)",
-                "nullable": true,
                 "comment": "NSF code for this organization."
             },
             {
                 "name": "is_reconciled",
                 "type": "tinyint(1)",
-                "nullable": true,
                 "default": 0,
                 "comment": "Whether this record is reconciled."
             },
             {
                 "name": "amie_name",
                 "type": "varchar(6)",
-                "nullable": true,
                 "comment": "The amie name."
             },
             {
                 "name": "country_id",
                 "type": "int(11)",
-                "nullable": true,
                 "comment": "The country this organization is in."
             },
             {
                 "name": "state_id",
                 "type": "int(11)",
-                "nullable": true,
                 "comment": "The state this organization is in."
             },
             {
                 "name": "latitude",
                 "type": "decimal(13,10)",
-                "nullable": true,
                 "comment": "The latitude of the organization."
             },
             {
                 "name": "longitude",
                 "type": "decimal(13,10)",
-                "nullable": true,
                 "comment": "The longitude of the organization."
             },
             {
                 "name": "short_name",
-                "type": "varchar(300)",
-                "nullable": true
+                "type": "varchar(300)"
             },
             {
                 "name": "long_name",
-                "type": "varchar(300)",
-                "nullable": true
+                "type": "varchar(300)"
             },
             {
                 "name": "federation_blade_id",
@@ -102,13 +88,11 @@
             },
             {
                 "name": "organization_origin_id",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "order_id",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             }
         ],
         "indexes": [

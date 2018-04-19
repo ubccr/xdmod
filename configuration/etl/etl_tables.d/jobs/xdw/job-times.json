@@ -10,13 +10,11 @@
             },
             {
                 "name": "min_duration",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "max_duration",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "description",

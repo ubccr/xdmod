@@ -11,8 +11,7 @@
             },
             {
                 "name": "host_origin_id",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "resource_id",

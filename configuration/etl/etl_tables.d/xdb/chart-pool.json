@@ -1,111 +1,58 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "user_id"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "chart_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": "auto_increment",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "insertion_rank"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "chart_title"
-      },
-      {
-        "type": "text",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "chart_drill_details"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "chart_date_description"
-      },
-      {
-        "type": "enum('image','datasheet')",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "type"
-      },
-      {
-        "type": "varchar(30)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "active_role"
-      },
-      {
-        "type": "longblob",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "image_data"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "ChartPool",
+        "engine": "MyISAM",
         "columns": [
-          "insertion_rank"
+            {
+                "name": "user_id",
+                "type": "int(11)"
+            },
+            {
+                "name": "chart_id",
+                "type": "text"
+            },
+            {
+                "name": "insertion_rank",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "chart_title",
+                "type": "text"
+            },
+            {
+                "name": "chart_drill_details",
+                "type": "text",
+                "nullable": false
+            },
+            {
+                "name": "chart_date_description",
+                "type": "text"
+            },
+            {
+                "name": "type",
+                "type": "enum('image','datasheet')"
+            },
+            {
+                "name": "active_role",
+                "type": "varchar(30)"
+            },
+            {
+                "name": "image_data",
+                "type": "longblob"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "ChartPool"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "insertion_rank"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

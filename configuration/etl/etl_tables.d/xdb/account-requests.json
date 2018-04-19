@@ -1,131 +1,68 @@
 {
-  "table_definition": {
-    "comment": "",
-    "engine": "MyISAM",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": "auto_increment",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "id"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "first_name"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "last_name"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "organization"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "title"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "email_address"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "field_of_science"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "additional_information"
-      },
-      {
-        "type": "timestamp",
-        "nullable": false,
-        "default": "CURRENT_TIMESTAMP",
-        "extra": "on update CURRENT_TIMESTAMP",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "time_submitted"
-      },
-      {
-        "type": "varchar(100)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "status"
-      },
-      {
-        "type": "text",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "comments"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "AccountRequests",
+        "engine": "MyISAM",
         "columns": [
-          "id"
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "first_name",
+                "type": "text"
+            },
+            {
+                "name": "last_name",
+                "type": "text"
+            },
+            {
+                "name": "organization",
+                "type": "text"
+            },
+            {
+                "name": "title",
+                "type": "text"
+            },
+            {
+                "name": "email_address",
+                "type": "text"
+            },
+            {
+                "name": "field_of_science",
+                "type": "text"
+            },
+            {
+                "name": "additional_information",
+                "type": "text"
+            },
+            {
+                "name": "time_submitted",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
+            },
+            {
+                "name": "status",
+                "type": "varchar(100)"
+            },
+            {
+                "name": "comments",
+                "type": "text"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "AccountRequests"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

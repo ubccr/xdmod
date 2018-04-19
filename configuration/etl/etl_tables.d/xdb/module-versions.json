@@ -1,101 +1,63 @@
 {
-  "table_definition": {
-    "comment": "Tracks per module versions.",
-    "engine": "InnoDB",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": "auto_increment",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "module_version_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "module_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": "0",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "version_major"
-      },
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": "0",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "version_minor"
-      },
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": "1",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "version_patch"
-      },
-      {
-        "type": "varchar(12)",
-        "nullable": false,
-        "default": "",
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "version_pre_release"
-      },
-      {
-        "type": "timestamp",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "created_on"
-      },
-      {
-        "type": "timestamp",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "last_modified_on"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "module_versions",
+        "comment": "Tracks per module versions.",
+        "engine": "InnoDB",
         "columns": [
-          "module_version_id"
+            {
+                "name": "module_version_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "module_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "version_major",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "version_minor",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "version_patch",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 1
+            },
+            {
+                "name": "version_pre_release",
+                "type": "varchar(12)",
+                "nullable": false,
+                "default": ""
+            },
+            {
+                "name": "created_on",
+                "type": "timestamp"
+            },
+            {
+                "name": "last_modified_on",
+                "type": "timestamp"
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "module_versions"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "module_version_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

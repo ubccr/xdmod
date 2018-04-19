@@ -1,61 +1,40 @@
 {
-  "table_definition": {
-    "comment": "Tracks which `tabs` are available to the system",
-    "engine": "InnoDB",
-    "columns": [
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": "auto_increment",
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "tab_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "module_id"
-      },
-      {
-        "type": "int(11)",
-        "nullable": true,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "parent_tab_id"
-      },
-      {
-        "type": "varchar(255)",
-        "nullable": false,
-        "default": null,
-        "extra": null,
-        "comment": null,
-        "hints": null,
-        "rename": null,
-        "name": "name"
-      }
-    ],
-    "indexes": [
-      {
+    "table_definition": {
+        "name": "tabs",
+        "comment": "Tracks which `tabs` are available to the system",
+        "engine": "InnoDB",
         "columns": [
-          "tab_id"
+            {
+                "name": "tab_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "module_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "parent_tab_id",
+                "type": "int(11)"
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "nullable": false
+            }
         ],
-        "type": "BTREE",
-        "is_unique": true,
-        "name": "PRIMARY"
-      }
-    ],
-    "triggers": [],
-    "schema": "moddb",
-    "name": "tabs"
-  }
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "tab_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
 }

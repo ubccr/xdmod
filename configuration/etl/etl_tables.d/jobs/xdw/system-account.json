@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "systemaccount",
-        "engine": "MyISAM",
         "comment": "User's accounts on various resources.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -13,8 +13,7 @@
             },
             {
                 "name": "system_account_origin_id",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             },
             {
                 "name": "person_id",
@@ -36,13 +35,11 @@
             },
             {
                 "name": "ts",
-                "type": "datetime",
-                "nullable": true
+                "type": "datetime"
             },
             {
                 "name": "uid",
-                "type": "int(11)",
-                "nullable": true
+                "type": "int(11)"
             }
         ],
         "indexes": [
