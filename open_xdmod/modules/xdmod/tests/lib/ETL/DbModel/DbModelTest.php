@@ -271,8 +271,9 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
             "Undefined macros found in source query"
         );
 
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/resource_allocations.sql'));
-        $this->assertEquals($expected, $generated);
+        $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/resource_allocations_8.0.0.sql';
+        $expected = trim(file_get_contents($file));
+        $this->assertEquals($expected, $generated, "expected output in $file");
     }
 
     /**
@@ -304,7 +305,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
 
         $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/resourceallocationfact_by.aggregation.sql';
         $expected = trim(file_get_contents($file));
-        $this->assertEquals($expected, $generated);
+        $this->assertEquals($expected, $generated, "expected output in $file");
     }
 
     /**
@@ -339,9 +340,9 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
             "Undefined macros found in source query"
         );
 
-        $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/resourceallocationfact_by.query.sql';
+        $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/resourceallocationfact_by.query_8.0.0.sql';
         $expected = trim(file_get_contents($file));
-        $this->assertEquals($expected, $generated);
+        $this->assertEquals($expected, $generated, "expected output in $file");
     }
 
     /**
@@ -369,8 +370,10 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
             $newQuery,
             "Undefined macros found in source query"
         );
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/resource_allocations.sql'));
-        $this->assertEquals($expected, $generated);
+
+        $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/resource_allocations_8.0.0.sql';
+        $expected = trim(file_get_contents($file));
+        $this->assertEquals($expected, $generated, "expected output in $file");
     }
 
     /**
