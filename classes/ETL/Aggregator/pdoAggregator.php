@@ -1323,14 +1323,14 @@ class pdoAggregator extends aAggregator
 
         $this->insertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
             "("
-            . implode(",\n", array_keys($this->etlSourceQuery->records))
+            . implode(",\n", $this->quoteIdentifierNames(array_keys($this->etlSourceQuery->records)))
             . ")\nVALUES\n("
             . implode(",\n", Utilities::createPdoBindVarsFromArrayKeys($this->etlSourceQuery->records))
             . ")";
 
         $this->optimizedInsertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
             "(" .
-            implode(",\n", array_keys($this->etlSourceQuery->records))
+            implode(",\n", $this->quoteIdentifierNames(array_keys($this->etlSourceQuery->records)))
             . ")\n" .
             $this->selectSql;
 

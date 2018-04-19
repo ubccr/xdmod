@@ -191,7 +191,10 @@ class StructuredFileIngestor extends aIngestor implements iAction
                 $destinationFields
             );
 
-            // Generate one SQL statement per destination table
+            // Generate one SQL statement per destination table. Quote the field names to handle
+            // SQL reserved words.
+
+            $destinationFields = $this->quoteIdentifierNames($destinationFields);
 
             $sql = sprintf(
                 'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s',
@@ -202,7 +205,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
                     function ($destField) {
                         return "$destField = COALESCE(VALUES($destField), $destField)";
                     },
-                    array_keys($destFieldToSourceFieldMap)
+                    $destinationFields
                 ))
             );
 

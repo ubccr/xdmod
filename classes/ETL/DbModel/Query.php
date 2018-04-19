@@ -377,9 +377,15 @@ class Query extends Entity implements iEntity
         $columnList = array();
         $thisObj = $this;
         foreach ( $this->records as $columnName => $formula ) {
-
-            // Do not quote field names because we may have functions in the query. -smg
-            $columnList[] = "$formula AS $columnName";
+            // Do not quote the source field names because we may have functions in the query, but
+            // do quote the destination names.
+            $columnList[] = sprintf(
+                "%s AS %s%s%s",
+                $formula,
+                $this->systemQuoteChar,
+                $columnName,
+                $this->systemQuoteChar
+            );
         }
 
         // Use the first join as the main FROM table, followined by other joins.
