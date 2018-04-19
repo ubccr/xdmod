@@ -511,6 +511,7 @@ class pdoIngestor extends aIngestor
         if ( $this->options->force_load_data_infile_replace_into ) {
             $sql = "REPLACE INTO $qualifiedDestTableName (" . implode(',', $destColumnList) . ")\n" . $this->sourceQueryString;
         } else {
+            $destColumnList = $this->quoteIdentifierNames($destColumnList);
             $destColumns = implode(',', $destColumnList);
             $updateColumnList = array_map(
                 function ($s) {
@@ -609,6 +610,7 @@ class pdoIngestor extends aIngestor
                     . "."
                     . $this->destinationEndpoint->quoteSystemIdentifier("tmp_" . $etlTable->name . "_" . time());
 
+                $destColumnList = $this->quoteIdentifierNames($destColumnList);
                 $destColumns = implode(',', $destColumnList);
                 $updateColumnList = array_map(
                     function ($s) {
