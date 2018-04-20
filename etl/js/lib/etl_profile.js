@@ -21,6 +21,7 @@ var events = require('events'),
     DatasetProcessor = require('./dataset_processor.js'),
 	ce = require('cloneextend'),
 	config = require('../config.js');
+var etlv2 = require('./etlv2.js');
 var fs = require('fs');
 
 var ETLProfile = module.exports = function (etlProfile) {
@@ -444,44 +445,11 @@ ETLProfile.prototype.getAggregationTables = function () {
 /*
 * Creates and updates an aggregated table per dynamic tables in the etl profile. 
 */
-ETLProfile.prototype.aggregate = function (recreate) {
+ETLProfile.prototype.aggregate = function () {
     var self = this;
 	try { 
         if (this.output.dbEngine === 'mysqldb') {
-            var tables = this.getAggregationTables();
-
-			for (var t in tables) {
-                var table = tables[t];
-				self.emit('message', 'Processing table: ' + table.schema + '.' + table.name);
-				
-				//print out the names and info of columns into a file for the aggregator
-				var tableColumns = table.getAggregationTableFields();
-				var tableMeta = {
-					name: table.name,
-					schema: table.schema,
-					start_ts: null,
-					end_ts: null, 
-					columns: tableColumns,
-					etlProfileName: self.name,
-					etlProfileVersion: self.version
-				};
-				
-				var directory = config.xdmodConfigDir + '/aggregation_meta';
-				if(!fs.existsSync(directory)) {
-					fs.mkdirSync(directory, 0755, function(err) {
-						if(err) { 
-							self.emit('error', "Can't make the directory: " + err);
-						}
-					});    
-				}
-               	var outfile = directory + '/' + table.schema + '.' + table.name + '_aggregation_meta.json';
-				self.emit('message', 'Writing file: ' + outfile);
-				require('fs').writeFileSync(outfile, JSON.stringify(tableMeta, null, 4));
-				self.emit('message', 'Done Writing: ' + outfile);
-				
-				//todo: modify datawarehouse.json to list all metrics
-            }
-         
+            etlv2.generateAggregates(this, config.xdmodConfigDir);
         } else {
             //other db engines not yet supported. , this class can be specialized 
 			//or modularized at that time. 

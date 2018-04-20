@@ -1,5 +1,11 @@
 {
   "env": {
     "node": true
+  },
+  "parserOptions": {
+      "ecmaVersion": 6
+  },
+  "rules": {
+      "no-template-curly-in-string": 0
   }
 }
