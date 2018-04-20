@@ -284,6 +284,119 @@
                     "class": "LogicalUtilizationStatistic"
                 }
             ]
+        },
+        "Cloud": {
+            "schema": "modw_cloud",
+            "table": "cm_euca_fact",
+            "datasource": "Cloud",
+            "group_bys": [{
+                    "name": "none",
+                    "class": "GroupByNone"
+                },
+                {
+                    "name": "person",
+                    "class": "GroupByPerson"
+                },
+                {
+                    "name": "account",
+                    "class": "GroupByAccount"
+                },
+                {
+                    "name": "configuration",
+                    "class": "GroupByConfiguration"
+                },
+                {
+                    "name": "resource",
+                    "class": "GroupByResource"
+                },
+                {
+                    "name": "day",
+                    "class": "GroupByDay"
+                },
+                {
+                    "name": "month",
+                    "class": "GroupByMonth"
+                },
+                {
+                    "name": "quarter",
+                    "class": "GroupByQuarter"
+                },
+                {
+                    "name": "year",
+                    "class": "GroupByYear"
+                },
+                {
+                    "name": "memory_buckets",
+                    "class": "GroupByMemoryUsage"
+                },
+                {
+                    "name": "vm_size",
+                    "class": "GroupByVMSize"
+                }
+            ],
+            "statistics": [{
+                    "name": "num_vms_ended",
+                    "class": "VMCountStatistic"
+                },
+                {
+                    "name": "num_vms_running",
+                    "class": "RunningVMCountStatistic",
+                    "control": true
+                },
+                {
+                    "name": "num_vms_started",
+                    "class": "StartedVMCountStatistic",
+                    "control": true
+                },
+                {
+                    "name": "avg_wallduration_hours",
+                    "class": "AverageWallHoursStatistic"
+                },
+                {
+                    "name": "num_cores",
+                    "class": "CoresReservedStatistic"
+                },
+                {
+                    "name": "disk_gb",
+                    "class": "DiskReservedStatistic"
+                },
+                {
+                    "name": "memory_mb",
+                    "class": "MemoryReservedStatistic"
+                },
+                {
+                    "name": "min_num_cores",
+                    "class": "MinCoresReservedStatistic"
+                },
+                {
+                    "name": "min_memory_mb",
+                    "class": "MinMemoryReservedStatistic"
+                },
+                {
+                    "name": "max_num_cores",
+                    "class": "MaxCoresReservedStatistic"
+                },
+                {
+                    "name": "max_disk_gb",
+                    "class": "MaxDiskReservedStatistic"
+                },
+                {
+                    "name": "max_memory_mb",
+                    "class": "MaxMemoryReservedStatistic"
+                },
+                {
+                    "name": "weighted_memory_mb",
+                    "class": "WeightedMemoryWallStatistic"
+                },
+                {
+                    "name": "weighted_num_cores",
+                    "class": "WeightedCoreWallStatistic"
+                },
+                {
+                    "name": "core_time",
+                    "class": "CoreHoursStatistic"
+                }
+            ]
         }
     }
 }

@@ -37,30 +37,10 @@
                     "nullable": false,
                     "comment": "DIMENSION: The person id associated with a VM instance."
                 },{
-                    "name": "instance",
-                    "type": "varchar(256)",
-                    "nullable": false,
-                    "comment": "DIMENSION: The provider identifier of the instance itself."
-                },{
-                    "name": "instance_id",
-                    "type": "int(11)",
-                    "nullable": false,
-                    "comment": "DIMENSION: The ID of the instance itself."
-                },{
                     "name": "processorbucket_id",
                     "type": "int(4)",
                     "nullable": true,
                     "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id"
-                },{
-                    "name": "start_event_id",
-                    "type": "int(11) unsigned",
-                    "nullable": false,
-                    "comment": "DIMENSION: Starting event id."
-                },{
-                    "name": "instance_type_id",
-                    "type": "int(11) unsigned",
-                    "nullable": false,
-                    "comment": "DIMENSION: Type of instance on which an event occurred."
                 },{
                     "name": "configuration",
                     "type": "varchar(256)",
@@ -86,26 +66,6 @@
                     "type": "int(11)",
                     "nullable": false,
                     "comment": "DIMENSION: Disk size in GB reserved by a VM."
-                },{
-                    "name": "start_event_time",
-                    "type": "datetime",
-                    "nullable": false,
-                    "comment": "DIMENSION: The start time of this instance's run."
-                },{
-                    "name": "start_event",
-                    "type": "varchar(256)",
-                    "nullable": false,
-                    "comment": "DIMENSION: Type of start event (start, resume)."
-                },{
-                    "name": "end_event_time",
-                    "type": "datetime",
-                    "nullable": false,
-                    "comment": "DIMENSION: The end time of this instance's run."
-                },{
-                    "name": "end_event",
-                    "type": "varchar(256)",
-                    "nullable": false,
-                    "comment": "DIMENSION: Type of end event (suspend, stop, terminate)."
                 },{
                     "name": "num_vms_running",
                     "type": "int(11)",
@@ -179,20 +139,12 @@
                 "host_resource_id": "eet.resource_id",
                 "account_id": "instance.account_id",
                 "person_id": "instance.person_id",
-                "start_event_id": "eet.start_event_id",
-                "instance": "eet.instance",
-                "instance_id": "eet.id",
-                "instance_type_id": "eet.instance_type_id",
                 "processorbucket_id": "(SELECT id FROM ${UTILITY_SCHEMA}.processor_buckets pb WHERE eet.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
                 "configuration": "eet.configuration",
                 "num_cores": "SUM(eet.num_cores)",
                 "core_time": "COALESCE(SUM(eet.num_cores * ${wallduration_case_statement}), 0)",
                 "memory_mb": "SUM(eet.memory_mb)",
                 "disk_gb": "SUM(eet.disk_gb)",
-                "start_event": "eet.start_event",
-                "end_event": "eet.end_event",
-                "start_event_time": "eet.start_event_time",
-                "end_event_time": "eet.end_event_time",
                 "num_vms_started": "SUM(IF(eet.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND eet.start_event = 'START', 1, 0))",
                 "num_vms_ended": "SUM(IF(eet.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND eet.end_event = 'TERMINATE', 1, 0))",
                 "num_vms_running": "SUM(1)",
@@ -203,11 +155,9 @@
               "year",
               "${AGGREGATION_UNIT}",
               "configuration",
-              "instance_type_id",
+              "processorbucket_id",
               "account_id",
-              "person_id",
-              "instance",
-              "instance_id"
+              "person_id"
             ],
             "joins":[
               {

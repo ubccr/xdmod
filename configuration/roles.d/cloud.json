@@ -1,0 +1,159 @@
+{
+    "+roles": {
+        "+usr": {
+            "+query_descripters": [{
+                    "realm": "Cloud",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "person"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "account"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "configuration"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "memory_buckets"
+                }
+            ]
+        },
+        "+mgr": {
+            "+query_descripters": [{
+                    "realm": "Cloud",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "person"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "account"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "configuration"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "memory_buckets"
+                }
+            ]
+        },
+        "+cd": {
+            "+query_descripters": [{
+                    "realm": "Cloud",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "person"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "account"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "configuration"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "memory_buckets"
+                }
+            ]
+        },
+        "+cs": {
+            "+query_descripters": [{
+                    "realm": "Cloud",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "person"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "account"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "configuration"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "memory_buckets"
+                }
+            ]
+        },
+        "+pub": {
+            "+query_descripters": [{
+                    "realm": "Cloud",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "person"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "account"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "configuration"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "memory_buckets"
+                }
+            ]
+        }
+    }
+}
