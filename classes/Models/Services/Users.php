@@ -217,7 +217,7 @@ FROM Users u
     SELECT DISTINCT
       uagbp.user_id,
       uagbp.value
-    FROM user_acl_group_by_parameters uagbp
+    FROM moddb.user_acl_group_by_parameters uagbp
       JOIN acls a ON uagbp.acl_id = a.acl_id
     WHERE a.name = 'cd'
   ) has_cd
