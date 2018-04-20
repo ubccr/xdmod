@@ -153,7 +153,12 @@ SELECT DISTINCT
   CONCAT(u.last_name, ', ', u.first_name, ' [', o.abbrev, ']') AS name
 FROM Users u
   -- This left join retrieves the correct center associated with this user.
-  LEFT JOIN
+  -- The order of precedence is as follows: 
+  --   - a record in user_acl_group_by_parameters for a center
+  --   - a Users.organization_id that is a valid center
+  --   - a modw.person.organization_id that is a valid center and is related via their 
+  --     Users.person_id value
+  JOIN
   (
     -- This retrieves all of the centers for a particular user
     SELECT DISTINCT
@@ -183,26 +188,28 @@ FROM Users u
     ON uo.user_id = u.id
   -- This left join retrieves the correct center value for the specified :user_id
   -- i.e. the user running this query.
-  LEFT JOIN
+  JOIN
   (
-    SELECT DISTINCT uagbp.value organization_id
+  SELECT DISTINCT * FROM (
+    SELECT DISTINCT uagbp.value organization_id, 1
     FROM user_acl_group_by_parameters uagbp
       JOIN modw.organization o ON uagbp.value = o.id
       JOIN modw.resourcefact rf ON o.id = rf.organization_id
     WHERE uagbp.user_id = :user_id
     UNION
-    SELECT DISTINCT u.organization_id
+    SELECT DISTINCT u.organization_id, 2
     FROM moddb.Users u
       JOIN modw.organization o ON o.id = u.organization_id
       JOIN modw.resourcefact rf ON o.id = rf.organization_id
     WHERE u.id = :user_id
     UNION
-    SELECT DISTINCT o.id organization_id
+    SELECT DISTINCT o.id organization_id, 3
     FROM moddb.Users u
       JOIN modw.person p ON p.id = u.person_id
       JOIN modw.organization o ON o.id = p.organization_id
       JOIN modw.resourcefact rf ON o.id = rf.organization_id
     WHERE u.id = :user_id
+    ) user_org ORDER BY 2 LIMIT 1
   ) co ON uo.organization_id = co.organization_id
   -- This left join retrieves all users that have a 'cd' record and the associated center id (value)
   LEFT JOIN

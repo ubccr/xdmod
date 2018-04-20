@@ -45,7 +45,8 @@ class Centers
      * @param $userId
      * @param $centerId
      * @param $centerAclName
-     * @return bool
+     * @return bool true if the user has a relationship w/ the acl identified by $centerAclName and a
+     * corresponding record in user_acl_group_by_parameters else false.
      * @throws Exception if there is a problem obtaining a database connection
      * @throws Exception if there is a problem executing a sql statement
      */
@@ -92,14 +93,14 @@ SQL;
 DELETE FROM moddb.UserRoleParameters
 WHERE 
   user_id = :user_id                                             AND
-  role_id = (SELECT role_id FROM moddb.Roles WHERE abbrev = :acl_name) AND
+  role_id = (SELECT r.role_id FROM moddb.Roles r WHERE r.abbrev = :acl_name) AND
   param_value = :center_id;
 SQL;
         $query = <<<SQL
 DELETE FROM moddb.user_acl_group_by_parameters 
 WHERE 
   user_id = :user_id                                         AND 
-  acl_id  = (SELECT acl_id FROM moddb.acls WHERE name = :acl_name) AND
+  acl_id  = (SELECT a.acl_id FROM moddb.acls a WHERE a.name = :acl_name) AND
   value = :center_id;
 SQL;
 
