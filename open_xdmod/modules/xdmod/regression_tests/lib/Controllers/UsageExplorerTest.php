@@ -85,7 +85,6 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
              * user to pass, need to figure out a more robust way for
              * public user not having access to pass
              */
-            //$this->assertEquals($curldata['content_type'], "application/xls");
 
             $csvdata = preg_replace(self::$replaceRegex, self::$replacements, $csvdata);
             $expected = preg_replace(self::$replaceRegex, self::$replacements, $expected);
@@ -94,7 +93,6 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals($expected, $csvdata);
             }
             else {
-                #$this->markTestIncomplete( $testName . "Requires more analysis\n");
                 $this->csvDataDiff($expected, $csvdata, $fullTestName);
             }
         }
@@ -244,13 +242,15 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                         $index .
                         ' row ' . $i;
                     if(is_numeric($expectedRowValue)){
+                        $errorFormula = "| {expected} $expectedRowValue - {actual} $providedRowValue |";
                         if(abs($expectedRowValue) > 1.0e-30) {
                             $relativeError = abs($expectedRowValue - $providedRowValue) / $expectedRowValue;
+                            $errorFormula .= " / $expectedRowValue";
                         } else {
                             $relativeError = abs($expectedRowValue - $providedRowValue);
                         }
 
-                        $this->assertTrue($relativeError < $this->delta, $testName . ' ' . $relativeError . ' > ' . $this->delta . ' for ' . $expectedRowValue . ' and ' . $providedRowValue);
+                        $this->assertTrue($relativeError < $this->delta, $testName . " ( $errorFormula ) => " . $relativeError  . ' > ' . $this->delta );
                     }
                     else {
                         $this->assertEquals($expectedRowValue, $providedRowValue, $rowMessage);
