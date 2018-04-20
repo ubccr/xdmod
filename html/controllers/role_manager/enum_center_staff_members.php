@@ -6,7 +6,7 @@ try {
 
     $activeUser = \xd_security\getLoggedInUser();
 
-    $members = Users::getUsersForPromotion($activeUser->getUserID());
+    $members = Users::getUsersAssociatedWithCenter($activeUser->getUserID());
 
     $returnData = array();
 
