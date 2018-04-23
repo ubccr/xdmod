@@ -13,6 +13,18 @@
                     "class": "GroupByPerson"
                 },
                 {
+                    "name": "account",
+                    "class": "GroupByAccount"
+                },
+                {
+                    "name": "configuration",
+                    "class": "GroupByConfiguration"
+                },
+                {
+                    "name": "resource",
+                    "class": "GroupByResource"
+                },
+                {
                     "name": "day",
                     "class": "GroupByDay"
                 },
@@ -27,6 +39,14 @@
                 {
                     "name": "year",
                     "class": "GroupByYear"
+                },
+                {
+                    "name": "memory_buckets",
+                    "class": "GroupByMemoryUsage"
+                },
+                {
+                    "name": "vm_size",
+                    "class": "GroupByVMSize"
                 }
             ],
             "statistics": [{
@@ -46,6 +66,42 @@
                 {
                     "name": "avg_wallduration_hours",
                     "class": "AverageWallHoursStatistic"
+                },
+                {
+                    "name": "core_time",
+                    "class": "CoreHoursStatistic"
+                },
+                {
+                    "name": "num_cores",
+                    "class": "CoresReservedStatistic"
+                },
+                {
+                    "name": "min_num_cores",
+                    "class": "MinCoresReservedStatistic"
+                },
+                {
+                    "name": "min_memory_mb",
+                    "class": "MinMemoryReservedStatistic"
+                },
+                {
+                    "name": "max_num_cores",
+                    "class": "MaxCoresReservedStatistic"
+                },
+                {
+                    "name": "max_disk_gb",
+                    "class": "MaxDiskReservedStatistic"
+                },
+                {
+                    "name": "max_memory_mb",
+                    "class": "MaxMemoryReservedStatistic"
+                },
+                {
+                    "name": "weighted_memory_mb",
+                    "class": "WeightedMemoryWallStatistic"
+                },
+                {
+                    "name": "weighted_num_cores",
+                    "class": "WeightedCoreWallStatistic"
                 }
             ]
         }
