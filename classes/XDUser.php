@@ -2015,8 +2015,29 @@ SQL;
         if (empty($this->_id)) {
             throw new Exception("This user must be saved prior to calling getActiveOrganization()");
         }
-
-        $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev='cd' AND urp.user_id=:user_id AND urp.param_name='provider' AND urp.is_active=1";
+        $query = <<<SQL
+SELECT
+  COALESCE(uagbp.value, o.id, po.id) as param_value
+FROM Users u
+  LEFT JOIN user_acl_group_by_parameters uagbp
+    ON uagbp.user_id = u.id AND
+    uagbp.group_by_id IN (
+      SELECT gb.group_by_id FROM group_bys gb
+      WHERE gb.name = 'provider'
+    ) AND
+    uagbp.value IN (
+      SELECT o.id FROM modw.organization o
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    )
+  LEFT JOIN modw.organization o
+    ON o.id = u.organization_id AND
+       o.id IN
+       (SELECT DISTINCT rf.organization_id
+        FROM modw.resourcefact rf)
+  LEFT JOIN modw.person p ON p.id = u.person_id
+  LEFT JOIN modw.organization po ON po.id = p.organization_id
+WHERE u.id = :user_id;
+SQL;
 
         $results = $this->_pdo->query($query, array(
             ':user_id' => $this->_id,
@@ -2380,7 +2401,7 @@ SQL;
 
         if ($active_role == ROLE_ID_CENTER_DIRECTOR || $active_role == ROLE_ID_CENTER_STAFF) {
 
-            if ($role_param == NULL) {
+            if ($role_param === NULL) {
                 throw new Exception("An additional parameter must be passed for this role (organization id)");
             }
 
