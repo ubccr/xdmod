@@ -302,7 +302,6 @@ external_libraries/
 .secrets
 
 # ETL Generated files / folders
-configuration/datawarehouse.d/
 configuration/rawstatisticsconfig.json
 configuration/roles.d/supremm.json
 configuration/supremmconfig.json
