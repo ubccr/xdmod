@@ -1,6 +1,6 @@
 {
     "+roles": {
-        "+usr": {,
+        "+usr": {
             "+query_descripters": [{
                     "realm": "Cloud",
                     "group_by": "none"
@@ -31,7 +31,7 @@
                 }
             ]
         },
-        "+mgr": {,
+        "+mgr": {
             "+query_descripters": [{
                     "realm": "Cloud",
                     "group_by": "none"
