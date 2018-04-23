@@ -275,7 +275,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testEnumUserTypesAndRoles()
     {
         $expected = JSON::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-8.0.0')
+            $this->getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-update_enum_user_types_and_roles')
         );
 
         $this->helper->authenticateDashboard('mgr');
@@ -570,7 +570,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function provideEnumTargetAddresses()
     {
-        $data = JSON::loadFile($this->getTestFiles()->getFile('controllers', 'enum_target_addresses', 'input'));
+        $data = JSON::loadFile($this->getTestFiles()->getFile('controllers', 'enum_target_addresses-update_enum_user_types_and_roles', 'input'));
         foreach($data as $key => $test) {
             foreach($test[0]['data'] as $dataKey => $value) {
                 $data[$key][0]['data'][$dataKey] = TestParameterHelper::processParam($value);
