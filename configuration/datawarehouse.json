@@ -353,32 +353,28 @@
                     "class": "AverageWallHoursStatistic"
                 },
                 {
+                    "name": "core_time",
+                    "class": "CoreHoursStatistic"
+                },
+                {
                     "name": "num_cores",
                     "class": "CoresReservedStatistic"
-                },
-                {
-                    "name": "disk_gb",
-                    "class": "DiskReservedStatistic"
-                },
-                {
-                    "name": "memory_mb",
-                    "class": "MemoryReservedStatistic"
                 },
                 {
                     "name": "min_num_cores",
                     "class": "MinCoresReservedStatistic"
                 },
                 {
-                    "name": "min_memory_mb",
-                    "class": "MinMemoryReservedStatistic"
-                },
-                {
                     "name": "max_num_cores",
                     "class": "MaxCoresReservedStatistic"
                 },
                 {
-                    "name": "max_disk_gb",
-                    "class": "MaxDiskReservedStatistic"
+                    "name": "weighted_num_cores",
+                    "class": "WeightedCoreWallStatistic"
+                },
+                {
+                    "name": "min_memory_mb",
+                    "class": "MinMemoryReservedStatistic"
                 },
                 {
                     "name": "max_memory_mb",
@@ -389,12 +385,8 @@
                     "class": "WeightedMemoryWallStatistic"
                 },
                 {
-                    "name": "weighted_num_cores",
-                    "class": "WeightedCoreWallStatistic"
-                },
-                {
-                    "name": "core_time",
-                    "class": "CoreHoursStatistic"
+                    "name": "max_disk_gb",
+                    "class": "MaxDiskReservedStatistic"
                 }
             ]
         }
