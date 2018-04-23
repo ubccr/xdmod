@@ -164,7 +164,7 @@ FROM Users u
       SELECT DISTINCT
         uagbp.user_id,
         uagbp.value organization_id
-      FROM user_acl_group_by_parameters uagbp
+      FROM moddb.user_acl_group_by_parameters uagbp
         JOIN modw.organization o ON uagbp.value = o.id
         JOIN modw.resourcefact rf ON o.id = rf.organization_id
         JOIN moddb.group_bys gb
@@ -272,12 +272,12 @@ SQL;
 SELECT
   u.id,
   CONCAT(u.last_name, ', ', u.first_name, ' [', uo.abbrev,']') AS name
-FROM Users u
+FROM moddb.Users u
   LEFT JOIN
   (
     SELECT DISTINCT uagbp.value organization_id,
     o.abbrev
-    FROM user_acl_group_by_parameters uagbp
+    FROM moddb.user_acl_group_by_parameters uagbp
       JOIN modw.organization o ON uagbp.value = o.id
       JOIN modw.resourcefact rf ON o.id = rf.organization_id
     WHERE uagbp.user_id = :user_id
@@ -299,8 +299,8 @@ FROM Users u
   LEFT JOIN
   (
     SELECT DISTINCT uagbp.user_id
-    FROM user_acl_group_by_parameters uagbp
-      JOIN acls a ON uagbp.acl_id = a.acl_id
+    FROM moddb.user_acl_group_by_parameters uagbp
+      JOIN moddb.acls a ON uagbp.acl_id = a.acl_id
     WHERE a.name = 'cd' AND
           uagbp.value = :organization_id
   ) has_cd ON has_cd.user_id = u.id
