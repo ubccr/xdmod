@@ -1,8 +1,6 @@
 {
     "+roles": {
-        "+usr": {
-            "display": "Cloud",
-            "type": "data",
+        "+usr": {,
             "+query_descripters": [{
                     "realm": "Cloud",
                     "group_by": "none"
@@ -33,9 +31,7 @@
                 }
             ]
         },
-        "+mgr": {
-            "display": "Cloud",
-            "type": "data",
+        "+mgr": {,
             "+query_descripters": [{
                     "realm": "Cloud",
                     "group_by": "none"
@@ -67,8 +63,6 @@
             ]
         },
         "+cd": {
-            "display": "Cloud",
-            "type": "data",
             "+query_descripters": [{
                     "realm": "Cloud",
                     "group_by": "none"
@@ -133,8 +127,6 @@
             ]
         },
         "+pub": {
-            "display": "Cloud",
-            "type": "data",
             "+query_descripters": [{
                     "realm": "Cloud",
                     "group_by": "none"
