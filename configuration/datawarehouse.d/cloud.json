@@ -2,7 +2,7 @@
     "+realms": {
         "Cloud": {
             "schema": "modw_cloud",
-            "table": "cm_euca_fact",
+            "table": "cloud_fact",
             "datasource": "Cloud",
             "group_bys": [{
                     "name": "none",

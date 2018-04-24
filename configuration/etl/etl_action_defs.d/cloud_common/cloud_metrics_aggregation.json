@@ -1,8 +1,8 @@
 {
     "#": "Aggregation of Cloud Data ingested from Eucalyptus",
         "table_definition": {
-            "name": "cm_euca_fact_by_",
-            "table_prefix": "cm_euca_fact_by_",
+            "name": "cloud_fact_by",
+            "table_prefix": "cloud_fact_by",
             "engine": "MyISAM",
             "comment": "Euca facts aggregated by ${AGGREGATION_UNIT}.",
             "columns": [
@@ -41,6 +41,16 @@
                     "type": "int(4)",
                     "nullable": true,
                     "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id"
+                },{
+                    "name": "memorybucket_id",
+                    "type": "int(4)",
+                    "nullable": true,
+                    "comment": "FACT: Pre-determined memory bucket sizes. References memorybucket.id"
+                },{
+                    "name": "instance_type_id",
+                    "type": "int(11) unsigned",
+                    "nullable": false,
+                    "comment": "DIMENSION: Type of instance on which an event occurred."
                 },{
                     "name": "configuration",
                     "type": "varchar(256)",
@@ -140,6 +150,7 @@
                 "account_id": "instance.account_id",
                 "person_id": "instance.person_id",
                 "processorbucket_id": "(SELECT id FROM ${UTILITY_SCHEMA}.processor_buckets pb WHERE eet.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
+                "memorybucket_id": "(SELECT id FROM ${UTILITY_SCHEMA}.memory_buckets p WHERE eet.memory_mb BETWEEN p.min_memory AND p.max_memory)",
                 "configuration": "eet.configuration",
                 "num_cores": "SUM(eet.num_cores)",
                 "core_time": "COALESCE(SUM(eet.num_cores * ${wallduration_case_statement}), 0)",

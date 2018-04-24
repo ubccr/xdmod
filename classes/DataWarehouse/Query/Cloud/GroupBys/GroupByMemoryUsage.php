@@ -37,15 +37,14 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
                 gt.id,
                 gt.min_memory as short_name,
                 gt.description as long_name,
-                gt.min_memory as order_id
             FROM memory_buckets gt
             where 1
-            order by order_id"
+            order by gt.id"
         );
         $this->_id_field_name = 'id';
         $this->_long_name_field_name = 'description';
         $this->_short_name_field_name = 'min_memory';
-        $this->_order_id_field_name = 'min_memory';
+        $this->_order_id_field_name = 'id';
         $this->modw_schema = new Schema('modw');
         $this->bucket_table = new Table($this->modw_schema, 'memory_buckets', 'p');
     }
@@ -66,7 +65,7 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
 
         $query->addGroup($buckettable_id_field);
 
-        $datatable_bucket_id_field = new TableField($data_table, 'min_memory');
+        $datatable_bucket_id_field = new TableField($data_table, 'memorybucket_id');
         $query->addWhereCondition(new WhereCondition($buckettable_id_field, '=', $datatable_bucket_id_field));
 
         $this->addOrder($query, $multi_group);
@@ -78,7 +77,7 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
         $query->addTable($this->bucket_table);
 
         $buckettable_id_field = new TableField($this->bucket_table, $this->_id_field_name);
-        $datatable_bucket_id_field = new TableField($data_table, 'min_memory');
+        $datatable_bucket_id_field = new TableField($data_table, 'memorybucket_id');
 
         // the where condition that specifies the join of the tables
         $query->addWhereCondition(new WhereCondition($buckettable_id_field, '=', $datatable_bucket_id_field));
@@ -109,14 +108,14 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function pullQueryParameters(&$request)
     {
-        return parent::pullQueryParameters2($request, '_filter_', 'min_memory');
+        return parent::pullQueryParameters2($request, '_filter_', 'memorybucket_id');
     }
 
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
                 $request,
-                            "select long_name as field_label from modw.memory_buckets where id in (_filter_) order by min_memory"
+                            "select long_name as field_label from modw.memory_buckets where id in (_filter_) order by id"
             );
     }
 

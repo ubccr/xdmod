@@ -198,20 +198,6 @@
             "description": "Eucalyptus cloud assets associated with events",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_eucalyptus/event_asset.def.json"
-        },
-        {
-            "#": "Asset data must be aggregated post ingestion",
-            "name": "EucalyptusCloudEventAggregator",
-            "namespace": "ETL\\Aggregator",
-            "options_class": "AggregatorOptions",
-            "class": "SimpleAggregator",
-            "description": "Aggregate Eucalyptus cloud records.",
-            "definition_file": "cloud_eucalyptus/cloud_metrics_euca_aggregation.json",
-            "truncate_destination": true,
-            "table_prefix": "cm_euca_fact_by_",
-            "aggregation_units": [
-                "day", "month", "quarter", "year"
-            ]
         }
     ]
 }

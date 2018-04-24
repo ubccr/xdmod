@@ -208,7 +208,7 @@
             "description": "Aggregate Eucalyptus cloud records.",
             "definition_file": "cloud_eucalyptus/cloud_metrics_euca_aggregation.json",
             "truncate_destination": true,
-            "table_prefix": "cm_euca_fact_by_",
+            "table_prefix": "cloud_fact_by",
             "aggregation_units": [
                 "day", "month", "quarter", "year"
             ]

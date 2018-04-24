@@ -21,7 +21,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
         parent::__construct(
             'Cloud',
             'modw_cloud',
-            'cm_euca_fact',
+            'cloud_fact',
             array('num_vms_started', 'num_vms_running'),
             $aggregation_unit_name,
             $start_date,

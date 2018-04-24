@@ -17,7 +17,7 @@ class Raw extends \DataWarehouse\Query\Query
         $start_date,
         $end_date,
         $db_profile = 'datawarehouse',
-        $db_tablename = 'cm_euca_fact',
+        $db_tablename = 'cloud_fact',
         array $parameters = array(),
         array $parameterDescriptions = array(),
         $single_stat = false
