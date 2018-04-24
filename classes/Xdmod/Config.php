@@ -103,10 +103,10 @@ class Config implements ArrayAccess
      * @param string $section the section to retrieve
      * @return mixed
      */
-    public function getModuleSection($section)
+    public function getModuleSection($section, array $modules = array())
     {
         if (!isset($this->moduleSections[$section])) {
-            $this->moduleSections[$section] = $this->loadModuleSection($section);
+            $this->moduleSections[$section] = $this->loadModuleSection($section, $modules);
         }
         return $this->moduleSections[$section];
     }
@@ -142,7 +142,7 @@ class Config implements ArrayAccess
      *
      * @return mixed
      **/
-    private function loadModuleSection($section)
+    private function loadModuleSection($section, array $modules = array())
     {
         $file = $this->getFilePath($section);
 
@@ -161,6 +161,9 @@ class Config implements ArrayAccess
 
         foreach ($partialFiles as $file) {
             $module = $this->getModule(pathinfo($file, PATHINFO_FILENAME));
+            if (!in_array($module, $modules)) {
+                $module = DEFAULT_MODULE_NAME;
+            }
 
             $partialData = Json::loadFile($file);
             if (!empty($partialData)) {

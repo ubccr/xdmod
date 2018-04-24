@@ -123,15 +123,19 @@ function main()
     if (isset($modules['#'])) {
         unset($modules['#']);
     }
+    if (isset($modules['WARNING'])) {
+        unset($modules['WARNING']);
+    }
+    $moduleNames = array_keys($modules);
     $moduleHierarchies = array();
 
     // Role Retrieval
     $allRoles = Roles::getRoleNames($blacklist);
 
     // Retrieve the annotated combined config information for each section.
-    $rawHierarchies = $config->getModuleSection('hierarchies');
-    $rawRoles = $config->getModuleSection('roles');
-    $rawRealms = $config->getModuleSection('datawarehouse');
+    $rawHierarchies = $config->getModuleSection('hierarchies', $moduleNames);
+    $rawRoles = $config->getModuleSection('roles', $moduleNames);
+    $rawRealms = $config->getModuleSection('datawarehouse', $moduleNames);
 
 
     foreach ($modules as $module => $moduleData) {
