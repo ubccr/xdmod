@@ -1,8 +1,8 @@
 {
     "#": "Aggregation of Cloud Data ingested from Eucalyptus",
         "table_definition": {
-            "name": "cloud_fact_by",
-            "table_prefix": "cloud_fact_by",
+            "name": "cloud_fact_by_",
+            "table_prefix": "cloud_fact_by_",
             "engine": "MyISAM",
             "comment": "Euca facts aggregated by ${AGGREGATION_UNIT}.",
             "columns": [
@@ -106,12 +106,6 @@
             },{
                 "name": "index_person",
                 "columns": [ "person_id" ]
-            },{
-                "name": "index_start_event_id",
-                "columns": [ "start_event_id" ]
-            },{
-                "name": "index_instance_type_id",
-                "columns": [ "instance_type_id" ]
             },{
                 "name": "index_resource",
                 "columns": [ "host_resource_id" ]
