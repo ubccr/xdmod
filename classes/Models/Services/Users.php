@@ -1,6 +1,8 @@
 <?php namespace Models\Services;
 
+use Exception;
 use CCR\DB;
+use XDUser;
 
 class Users
 {
@@ -23,6 +25,8 @@ class Users
      *                                    have a valid email address to be
      *                                    included
      * @return array of users matching the specified parameters.
+     * @throws Exception if there is a problem obtaining a database connection
+     * @throws Exception if there is a problem executing a sql statement
      */
     public static function getUsers($userTypeId, $aclId, $searchFragment, $requireEmailAddress = false)
     {
@@ -127,5 +131,266 @@ SQLF;
             : implode("\n", array($sql, $additionalJoins));
 
         return $db->query($query, $params);
+    }
+
+    /**
+     * Attempt to retrieve the list of users who are associated with the $promoters
+     * center that are eligible for "promotion". Promotion is defined in this
+     * context as granting the "center staff" acl w/ associated parameter record
+     * for the promoters center.
+     *
+     * @param integer $userId the id of the user to be used when determining which
+     *                users are eligible for promotion.
+     * @return array populated if users were found, else an empty array.
+     * @throws Exception if unable to query the database.
+     */
+    public static function getUsersAssociatedWithCenter($userId)
+    {
+        $db = DB::factory(self::DB_SECTION_NAME);
+        $query = <<<SQL
+SELECT DISTINCT
+  u.id,
+  CONCAT(u.last_name, ', ', u.first_name, ' [', o.abbrev, ']') AS name
+FROM Users u
+  -- This left join retrieves the correct center associated with this user.
+  -- The order of precedence is as follows:
+  --   - a record in user_acl_group_by_parameters for a center
+  --   - a Users.organization_id that is a valid center
+  --   - a modw.person.organization_id that is a valid center and is related via their
+  --     Users.person_id value
+  JOIN
+  (
+      -- This retrieves all of the centers for a particular user
+      SELECT DISTINCT
+        uagbp.user_id,
+        uagbp.value organization_id
+      FROM moddb.user_acl_group_by_parameters uagbp
+        JOIN modw.organization o ON uagbp.value = o.id
+        JOIN modw.resourcefact rf ON o.id = rf.organization_id
+        JOIN moddb.group_bys gb
+          ON uagbp.group_by_id = gb.group_by_id AND gb.name = 'provider'
+   UNION
+      -- this retrieves all of the centers that a user is directly associated with
+      SELECT DISTINCT
+        u.id user_id,
+        u.organization_id
+      FROM moddb.Users u
+        JOIN modw.organization o ON o.id = u.organization_id
+        JOIN modw.resourcefact rf ON o.id = rf.organization_id
+      UNION
+      -- this retrieves all centers that a users person is directly associated with
+      SELECT DISTINCT
+        u.id user_id,
+        o.id organization_id
+      FROM moddb.Users u
+        JOIN modw.person p ON p.id = u.person_id
+        JOIN modw.organization o ON o.id = p.organization_id
+        JOIN modw.resourcefact rf ON o.id = rf.organization_id
+  ) uo
+    ON uo.user_id = u.id
+  -- This left join retrieves the correct center value for the specified :user_id
+  -- i.e. the user running this query.
+  -- The order of precedence is as follows:
+  --   - a record in user_acl_group_by_parameters for a center
+  --   - a Users.organization_id that is a valid center
+  --   - a modw.person.organization_id that is a valid center and is related via their
+  --     Users.person_id value
+  JOIN
+  (
+    SELECT DISTINCT organization_id
+    FROM (
+           SELECT DISTINCT uagbp.value organization_id, 1
+           FROM moddb.user_acl_group_by_parameters uagbp
+             JOIN modw.organization o ON uagbp.value = o.id
+             JOIN modw.resourcefact rf ON o.id = rf.organization_id
+             JOIN moddb.group_bys gb ON uagbp.group_by_id = gb.group_by_id AND gb.name = 'provider'
+             JOIN moddb.acls a ON uagbp.acl_id = a.acl_id AND a.name = 'cd'
+           WHERE uagbp.user_id = :user_id
+           UNION
+           SELECT DISTINCT u.organization_id, 2
+           FROM moddb.Users u
+             JOIN modw.organization o ON o.id = u.organization_id
+             JOIN modw.resourcefact rf ON o.id = rf.organization_id
+           WHERE u.id = :user_id
+           UNION
+           SELECT DISTINCT o.id organization_id, 3
+           FROM moddb.Users u
+             JOIN modw.person p ON p.id = u.person_id
+             JOIN modw.organization o ON o.id = p.organization_id
+             JOIN modw.resourcefact rf ON o.id = rf.organization_id
+           WHERE u.id = :user_id
+         ) user_org
+    ORDER BY 2
+    LIMIT 1
+  ) co ON uo.organization_id = co.organization_id
+  -- This left join retrieves all users that have a 'cd' record and the associated center id (value)
+  -- The reason we need this information is so that we can exclude all users who are center 
+  -- directors for the center of the user running this query. ( Center Directors cannot demote 
+  -- other center directors ).
+  LEFT JOIN
+  (
+    SELECT DISTINCT
+      uagbp.user_id,
+      uagbp.value
+    FROM moddb.user_acl_group_by_parameters uagbp
+      JOIN acls a ON uagbp.acl_id = a.acl_id
+    WHERE a.name = 'cd'
+  ) has_cd
+    ON has_cd.user_id = u.id AND has_cd.value = co.organization_id
+  -- This join allows us to retrieve more information about the current users center.
+  JOIN modw.organization o
+    ON o.id = co.organization_id
+WHERE
+  -- We also only want users that do not have the 'cd' acl
+  has_cd.user_id IS NULL;
+SQL;
+        $params = array(
+            ':user_id' => $userId
+        );
+
+        return $db->query($query, $params);
+    }
+
+    /**
+     * Retrieves whether or not a user is "associated" with a given center.
+     * In this context "associated" means that $centerId equals one of the
+     * following:
+     *   - If the users User record has an 'organization_id' record that also
+     *     corresponds to a record in resourcefact ( i.e. a center ) prefer
+     *     this value.
+     *   - If the User instead has a 'person_id' then use this persons
+     *     'organization_id' if it is also a center.
+     * @param $userId
+     * @param $centerId
+     * @return mixed
+     * @throws Exception if there is a problem retrieving a db connection
+     * @throws Exception if there is a problem executing the sql statement.
+     */
+    public static function userIsAssociatedWithCenter($userId, $centerId)
+    {
+        $query = <<<SQL
+SELECT
+  u.id,
+  CONCAT(u.last_name, ', ', u.first_name, ' [', uo.abbrev,']') AS name
+FROM moddb.Users u
+  LEFT JOIN
+  (
+    SELECT DISTINCT uagbp.value organization_id,
+    o.abbrev
+    FROM moddb.user_acl_group_by_parameters uagbp
+      JOIN modw.organization o ON uagbp.value = o.id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE uagbp.user_id = :user_id
+    UNION
+    SELECT DISTINCT u.organization_id, o.abbrev
+    FROM moddb.Users u
+      JOIN modw.organization o ON o.id = u.organization_id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE u.id = :user_id
+    UNION
+    SELECT DISTINCT o.id organization_id, o.abbrev
+    FROM moddb.Users u
+      JOIN modw.person p ON p.id = u.person_id
+      JOIN modw.organization o ON o.id = p.organization_id
+      JOIN modw.resourcefact rf ON o.id = rf.organization_id
+    WHERE u.id = :user_id
+  ) uo ON uo.organization_id = :organization_id
+  -- exclude users that are 'cd' for the given organization.
+  LEFT JOIN
+  (
+    SELECT DISTINCT uagbp.user_id
+    FROM moddb.user_acl_group_by_parameters uagbp
+      JOIN moddb.acls a ON uagbp.acl_id = a.acl_id
+    WHERE a.name = 'cd' AND
+          uagbp.value = :organization_id
+  ) has_cd ON has_cd.user_id = u.id
+WHERE
+  u.id = :user_id AND
+  -- exclude users that are a 'cd' for the given organization.*/
+  has_cd.user_id IS NULL AND
+  uo.organization_id = :organization_id;
+SQL;
+        $params = array(
+            ':user_id' => $userId,
+            ':organization_id' => $centerId
+        );
+        $db = DB::factory(self::DB_SECTION_NAME);
+        return count($db->query($query, $params)) > 0;
+    }
+
+    /**
+     * Retrieves the set of centers that a user has a relation to.
+     *
+     * @param XDUser $user
+     * @return mixed
+     * @throws Exception if there is a problem retrieving a db connection
+     * @throws Exception if there is a problem executing the sql statement.
+     */
+    public static function getCentersFor(XDUser $user)
+    {
+        $query = <<<SQL
+SELECT DISTINCT 
+  uagbp.value 
+FROM moddb.user_acl_group_by_parameters uagbp
+WHERE uagbp.user_id = :user_id
+SQL;
+        $params = array(
+            ':user_id' => $user->getUserID()
+        );
+
+        $db = DB::factory('database');
+        return $db->query($query, $params);
+    }
+
+    /**
+     * Promote the provided $user to 'Center Staff' of the center identified by
+     * $centerId.
+     *
+     * @param XDUser $user
+     * @param $centerId
+     * @throws Exception if there is a problem retrieving a db connection
+     * @throws Exception if there is a problem executing the sql statement.
+     */
+    public static function promoteUserToCenterStaff(XDUser $user, $centerId)
+    {
+        if (!$user->hasAcl(ROLE_ID_CENTER_STAFF)) {
+            // Add the Center Staff acl to the user.
+            $user->setRoles(array_merge($user->getAcls(true), array(ROLE_ID_CENTER_STAFF)));
+
+            // Save changes
+            $user->saveUser();
+        }
+
+        $centerConfig = array();
+        $centerConfig[$centerId] = array('active' => true, 'primary' => true);
+        // Add which center the users new center staff acl is related it.
+        $user->setOrganizations($centerConfig, ROLE_ID_CENTER_STAFF);
+    }
+
+    /**
+     * Demote the provided $user from having a relation ( via Center Staff ) to
+     * the center identified by $centerId.
+     *
+     * @param XDUser $user
+     * @param $centerId
+     * @throws Exception if there is a problem retrieving a db connection
+     * @throws Exception if there is a problem executing the sql statement.
+     */
+    public static function demoteUserFromCenterStaff(XDUser $user, $centerId)
+    {
+        $currentCenters = array_pop(array_values(Users::getCentersFor($user)));
+
+        // If this user has no more center staff centers then remove the center
+        // staff acl.
+        if (count(array_diff(array_values($currentCenters), array((string)$centerId))) === 0) {
+            // Remove the center staff acl from the user.
+            $user->setRoles(array_diff($user->getAcls(true), array(ROLE_ID_CENTER_STAFF)));
+
+            // Save the acl changes.
+            $user->saveUser();
+        }
+
+        // Remove the center relation from the user.
+        Centers::removeCenterRelation($user->getUserID(), $centerId, ROLE_ID_CENTER_STAFF);
     }
 }

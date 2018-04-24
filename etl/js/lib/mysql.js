@@ -129,16 +129,17 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
 			}
 		}
 		
-		var allDims = [
-			'    _id INT NOT NULL AUTO_INCREMENT',
-			reqDims.join(',\n    '), 
-			restDims.join(',\n    '), 
-			metrics.join(',\n    '), 
-			'_version INT NOT NULL',
-			'UNIQUE KEY pk_index (' + this.meta.unique.join(',') + ')',
-			this.extras.join(',\n    '),
-			'PRIMARY KEY (_id)'
-		];
+    var allDims = [
+        '    _id INT NOT NULL AUTO_INCREMENT',
+        reqDims.join(',\n    '),
+        restDims.join(',\n    '),
+        metrics.join(',\n    '),
+        '_version INT NOT NULL',
+        '`last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+        'UNIQUE KEY pk_index (' + this.meta.unique.join(',') + ')',
+        this.extras.join(',\n    '),
+        'PRIMARY KEY (_id)'
+    ];
 		
     var ret = ['CREATE TABLE IF NOT EXISTS ' + this.name + '(\n' + allDims.join(',\n    ') + '\n) engine = myisam'];
 
@@ -232,29 +233,25 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
 	}
 }
 
-var sqlType = module.exports.sqlType = function(type, length) {
-	switch(type) {
-		case 'uint32':
-			return 'int unsigned';
-			break;
-		case "int32":
-			return 'int';
-			break;
+module.exports.sqlType = function (type, length) {
+    switch (type) {
+        case 'uint32':
+            return 'int(11) unsigned';
+        case 'int32':
+            return 'int(11)';
         case 'tinyint':
-            return 'tinyint';
-            break;
-		case "double":
-			return 'double';
-			break;
-		case 'string':				
-			return 'varchar(' + (length !== undefined ? length : 50) + ')';
-			break;
-		case "array":
-			throw Error('Type '+ type + ' should not be in a table as a column');				
-		default:
-			throw Error('Type '+ type + ' is unknown');
-	}
-}
+            return 'tinyint(4)';
+        case 'double':
+            return 'double';
+        case 'string':
+            return 'varchar(' + (length !== undefined ? length : 50) + ')';
+        case 'array':
+            throw Error('Type ' + type + ' should not be in a table as a column');
+        default:
+            throw Error('Type ' + type + ' is unknown');
+    }
+};
+var sqlType = module.exports.sqlType;
 
 var queryFormat = module.exports.queryFormat = function (query, values) {
     if (!values) return query;

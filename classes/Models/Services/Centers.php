@@ -1,15 +1,8 @@
 <?php namespace Models\Services;
 
 use Exception;
-use PDO;
 
 use CCR\DB;
-use CCR\DB\iDatabase;
-use Models\Acl;
-use Models\GroupBy;
-use Models\Realm;
-use Models\Statistic;
-use XDUser;
 
 /**
  * Class Centers
@@ -24,6 +17,13 @@ use XDUser;
 class Centers
 {
 
+    /**
+     * Retrieves a listing of the current centers in XDMoD.
+     *
+     * @return array
+     * @throws Exception if there is a problem retrieving a db connection
+     * @throws Exception if there is a problem executing the sql statement.
+     */
     public static function getCenters()
     {
         $db = DB::factory('database');
@@ -35,39 +35,87 @@ class Centers
 ");
     }
 
-    public static function getCenterStaffMembers(XDUser $user)
+    /**
+     * Retrieves whether or not the User identified by $userId has a "valid"
+     * relation with the Center identified by $centerId.
+     * In this context "valid" means:
+     *   - The user has a user_acl record for $centerAclName
+     *   - The user has a corresponding user_acl_group_by_parameter record for
+     *     $centerAclName / $centerId
+     * @param $userId
+     * @param $centerId
+     * @param $centerAclName
+     * @return bool true if the user has a relationship w/ the acl identified by $centerAclName and a
+     * corresponding record in user_acl_group_by_parameters else false.
+     * @throws Exception if there is a problem obtaining a database connection
+     * @throws Exception if there is a problem executing a sql statement
+     */
+    public static function hasCenterRelation($userId, $centerId, $centerAclName)
     {
-        $userId = $user->getUserID();
-        if ($userId === '0') {
-            throw new Exception('User must be saved before retrieving center staff members.');
-        }
-
-        $query = <<< SQL
+        $query = <<<SQL
 SELECT DISTINCT
   u.id,
-  CONCAT(u.last_name, ', ', u.first_name, ' [', o.abbrev, ']') as name
-FROM user_acl_group_by_parameters uagbp
-  JOIN Users u ON u.id = uagbp.user_id
-  JOIN acls a ON uagbp.acl_id = a.acl_id
-  JOIN group_bys gb ON uagbp.group_by_id = gb.group_by_id
-  JOIN (
-    SELECT DISTINCT
-      uagbp.value
-    FROM user_acl_group_by_parameters uagbp
-      JOIN group_bys gb ON uagbp.group_by_id = gb.group_by_id
-      JOIN acls a ON uagbp.acl_id = a.acl_id
-    WHERE
-      gb.name = 'provider' AND
-      a.name = 'cd' AND
-      uagbp.user_id = :user_id
-    ) cdo ON uagbp.value = cdo.value
-  LEFT JOIN modw.organization o ON o.id = uagbp.value  
-WHERE a.name = 'cs'
+  u.username,
+  ua.*,
+  uagbp.value
+FROM Users u
+JOIN user_acls ua ON u.id = ua.user_id
+JOIN acls a ON ua.acl_id = a.acl_id
+JOIN user_acl_group_by_parameters uagbp
+ON u.id = uagbp.user_id
+   AND uagbp.acl_id = a.acl_id
+WHERE a.name = :acl_name AND
+  uagbp.value = :center_id AND
+      u.id = :user_id;
 SQL;
-        $params = array(':user_id' => $userId);
+        $params = array(
+            ':user_id' => $userId,
+            ':center_id' => $centerId,
+            ':acl_name' => $centerAclName
+        );
+        $db = DB::factory('database');
+        return count($db->query($query, $params)) > 0;
+    }
+
+    /**
+     * Remove a center relation for the center identified by $centerId / $aclName
+     * from the user identified by $userId.
+     *
+     * @param integer $userId
+     * @param integer $centerId
+     * @param string $aclName
+     * @throws Exception if there is a problem obtaining a database connection
+     * @throws Exception if there is a problem executing a sql statement
+     */
+    public static function removeCenterRelation($userId, $centerId, $aclName)
+    {
+        $legacyQuery = <<< SQL
+DELETE FROM moddb.UserRoleParameters
+WHERE 
+  user_id = :user_id                                             AND
+  role_id = (SELECT r.role_id FROM moddb.Roles r WHERE r.abbrev = :acl_name) AND
+  param_value = :center_id;
+SQL;
+        $query = <<<SQL
+DELETE FROM moddb.user_acl_group_by_parameters 
+WHERE 
+  user_id = :user_id                                         AND 
+  acl_id  = (SELECT a.acl_id FROM moddb.acls a WHERE a.name = :acl_name) AND
+  value = :center_id;
+SQL;
+
+        $params = array(
+            ':user_id' => $userId,
+            ':center_id' => $centerId,
+            ':acl_name' => $aclName
+        );
 
         $db = DB::factory('database');
 
-        return $db->query($query, $params);
+        // Ensure the center relation is removed from the legacy table
+        $db->execute($legacyQuery, $params);
+
+        // Ensure that the center relation is removed from the current table.
+        $db->execute($query, $params);
     }
 }

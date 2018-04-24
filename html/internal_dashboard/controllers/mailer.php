@@ -61,19 +61,17 @@ switch ($operation) {
         break;
     case 'enum_target_addresses':
         $group_filter = \xd_security\assertParameterSet('group_filter');
-        $role_filter = \xd_security\assertParameterSet('role_filter');
+        $acl_filter = \xd_security\assertParameterSet('role_filter');
 
-        $query = \xd_dashboard\deriveUserEnumerationQuery($group_filter, $role_filter, '', true);
+        list($query, $params) = \xd_dashboard\listUserEmailsByGroupAndAcl($group_filter, $acl_filter);
 
-        $results = $pdo->query($query);
+        $results = $pdo->query($query, $params);
 
         $addresses = array();
 
         foreach ($results as $r) {
             $addresses[] = $r['email_address'];
         }
-
-        $addresses = array_unique($addresses);
 
         sort($addresses);
 
