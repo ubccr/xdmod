@@ -102,6 +102,10 @@
                 {
                     "name": "weighted_num_cores",
                     "class": "WeightedCoreWallStatistic"
+                },
+                {
+                    "name": "memory_reservation",
+                    "class": "MemoryReservationStatistic"
                 }
             ]
         }

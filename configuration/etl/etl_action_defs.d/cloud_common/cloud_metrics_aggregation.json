@@ -149,6 +149,7 @@
                 "configuration": "eet.configuration",
                 "num_cores": "SUM(eet.num_cores)",
                 "core_time": "COALESCE(SUM(eet.num_cores * ${wallduration_case_statement}), 0)",
+                "memory_reserved": "COALESCE(SUM(eet.memory_mb * ${wallduration_case_statement}), 0)",
                 "memory_mb": "SUM(eet.memory_mb)",
                 "disk_gb": "SUM(eet.disk_gb)",
                 "num_vms_started": "SUM(IF(eet.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND eet.start_event = 'START', 1, 0))",

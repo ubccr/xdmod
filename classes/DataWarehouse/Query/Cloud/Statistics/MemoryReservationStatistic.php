@@ -7,22 +7,22 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 *
 * The total core reservation time of virtual machines, in hours
 */
-class CoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.core_time) / 3600.0 ,0)',
-            'core_time',
-            'Core Hours: Total',
-            'Core Hours',
+            'COALESCE((SUM(jf.memory_reserved) / 3600.0) / jf.wallduration,0)',
+            'memory_reserved',
+            'Average Memory Consumption',
+            'Megabytes',
             0
         );
     }
 
     public function getInfo()
     {
-        return 'The total core reservation time of virtual machines, in hours.<br/>
+        return 'The average memory reserved by a VM in a given period.<br/>
             <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.';
     }
 }
