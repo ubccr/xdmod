@@ -63,6 +63,9 @@ class EtlOverseerOptions extends Loggable
     // A mapping of resource codes to resource ids.
     private $resourceCodeToIdMap = array();
 
+    // SQL query used to populate the resource code to resource id map
+    private $resourcecodeToIdMapSql = null;
+
     // A list of all requested section names
     private $sectionNames = array();
 
@@ -154,6 +157,9 @@ class EtlOverseerOptions extends Loggable
                     break;
                 case 'resource-code-map':
                     $this->setResourceCodeToIdMap($value);
+                    break;
+                case 'resource-code-map-sql':
+                    $this->setResourceCodeToIdMapSql($value);
                     break;
                 case 'process-sections':
                     $this->setSectionNames($value);
@@ -692,6 +698,43 @@ class EtlOverseerOptions extends Loggable
         return $this;
     }  // setResourceCodeToIdMap()
 
+    /* ------------------------------------------------------------------------------------------
+     * @return array An associative array where the keys are resource codes and the values are the
+     *   database ids associated with those codes.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getResourceCodeToIdMap()
+    {
+        return $this->resourceCodeToIdMap;
+    }  // getResourceCodeToIdMap()
+
+    /* ------------------------------------------------------------------------------------------
+     * Set the SQL query that will be used to generate the mapping between resource codes and
+     * resource Ids.
+     *
+     * @param $map An associative array where the keys are resource codes and the values are the
+     *   resource ids that those codes map to.
+     *
+     * @return This object for method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function setResourceCodeToIdMapSql($sql)
+    {
+        $this->resourceCodeToIdMapSql = $sql;
+        return $this;
+    }  // setResourceCodeToIdMapSql()
+
+    /* ------------------------------------------------------------------------------------------
+     * @return string The SQL query to be used when populating the resource code to id map.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getResourceCodeToIdMapSql()
+    {
+        return $this->resourceCodeToIdMapSql;
+    }  // getResourceCodeToIdMapSql()
 
     /* ------------------------------------------------------------------------------------------
      * Map an array of resource codes to their ids.

@@ -152,6 +152,13 @@ class EtlOverseer extends Loggable implements iEtlOverseer
         $action = forward_static_call(array($options->factory, "factory"), $options, $etlConfig, $this->logger);
         $this->logger->info("Verifying action: " . $action);
 
+        // If this action specifies resource codes we will need to load the mapping between codes
+        // and ids. This is done on demand so it will not break bootstrapping processes.
+
+        if ( isset($options->include_only_resource_codes) || isset($options->exclude_resource_codes) ) {
+            $this->queryResourceCodeToIdMap($etlConfig);
+        }
+
         $action->initialize($this->etlOverseerOptions);
 
         return $action;
@@ -264,6 +271,42 @@ class EtlOverseer extends Loggable implements iEtlOverseer
 
     }  // verifySections()
 
+    /**
+     * Query the database and set the mapping of resource codes to ids. This is needed to map the codes
+     * specified on the command line and in action definitions to their database ids for queries executed
+     * by the actions and is done one demand only when needed.
+     *
+     * @param EtlConfiguration $etlConfig The configuration that we are currently using
+     */
+
+    protected function queryResourceCodeToIdMap(EtlConfiguration $etlConfig)
+    {
+        // We don't need to query if the map is already set
+
+        if ( 0 != count($this->etlOverseerOptions->getResourceCodeToIdMap()) ) {
+            return;
+        }
+
+        $map = array();
+
+        try {
+            $sql = $this->etlOverseerOptions->getResourceCodeToIdMapSql();
+            $utilityEndpoint = $etlConfig->getGlobalEndpoint('utility');
+            $this->logger->debug(sprintf("Loading resource code to id map %s:\n%s", $utilityEndpoint, $sql));
+            $result = $utilityEndpoint->getHandle()->query($sql);
+        } catch (Exception $e) {
+            $this->logAndThrowException(
+                sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
+            );
+        }
+
+        foreach ( $result as $row ) {
+            $map[ $row['code'] ] = $row['id'];
+        }
+
+        $this->etlOverseerOptions->setResourceCodeToIdMap($map);
+    }
+
     /* ------------------------------------------------------------------------------------------
      * @see iEtlOverseer::execute()
      * ------------------------------------------------------------------------------------------
@@ -271,6 +314,18 @@ class EtlOverseer extends Loggable implements iEtlOverseer
 
     public function execute(EtlConfiguration $etlConfig)
     {
+        // If resource codes were specified on the command line we will need to load the map of
+        // codes to database ids. If no codes were specified, actions may have specified them so we
+        // will check prior to initializing actions as well. This is done on demand so it will not
+        // break bootstrapping processes.
+
+        if (
+            count($this->etlOverseerOptions->getIncludeOnlyResourceCodes()) > 0
+            || count($this->etlOverseerOptions->getExcludeResourceCodes()) > 0
+        ) {
+            $this->queryResourceCodeToIdMap($etlConfig);
+        }
+
         // Verify connections to the data endpoints prior to verifying the actions. Action
         // initialization may need to connect to a data endpoint to obtain the handle so these need
         // to be done first.
