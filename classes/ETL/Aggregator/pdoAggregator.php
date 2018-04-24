@@ -1153,7 +1153,7 @@ class pdoAggregator extends aAggregator
                         $restrictions = $dummyQuery->getOverseerRestrictionValues();
                     }  // if ( isset($this->parsedDefinitionFile->destination_query) ... )
 
-                    $this->deleteDestinationRecords($aggregationUnit, $periodId, $restrictions);
+                    $this->deleteAggregationPeriodData($aggregationUnit, $periodId, $restrictions);
 
                 } catch (PDOException $e ) {
                     $this->logAndThrowException(
@@ -1233,25 +1233,48 @@ class pdoAggregator extends aAggregator
 
     }  // processAggregationPeriods()
 
-    /* ------------------------------------------------------------------------------------------
-     * Delete the old records from the destination tables that will be replaced with the
-     * new data.
+    /**
+     * Delete data associated with a particular aggregation period from the current aggregation
+     * table. Note that we can't simply insert and update on duplicate key because we won't know if
+     * a group-by has changed or if data for a particular dimension has been removed. If additional
+     * data must be deleted, a child class may override this method.
+     *
+     * @param string $aggregationUnit The aggregation unit granularity that we are currently processing
+     *    (e.g., day, month, etc.)
+     * @param string $aggregationUnitId The id of the current aggregation unit that we are processing
+     *    (e.g., specific day)
+     * @param array $sqlRestrictions A list of additional restrictions to add to the SQL DELETE statement,
+     *    such as restricting to a particular resource.
+     *
+     * @return int The total number of rows deleted from all tables.
      */
-    protected function deleteDestinationRecords($aggregationUnit, $periodId, array $restrictions)
+
+    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodId, array $sqlRestrictions = array())
     {
+        $totalRowsDeleted = 0;
+
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
+            $deleteSql = sprintf(
+                "DELETE FROM %s WHERE %s_id = %s",
+                $qualifiedDestTableName,
+                $aggregationUnit,
+                $aggregationPeriodId
+            );
 
-            $deleteSql = "DELETE FROM $qualifiedDestTableName WHERE {$aggregationUnit}_id = $periodId";
-
-            if ( count($restrictions) > 0 ) {
-                $deleteSql .= " AND " . implode(" AND ", $restrictions);
+            if ( count($sqlRestrictions) > 0 ) {
+                $deleteSql .= " AND " . implode(" AND ", $sqlRestrictions);
             }
 
-            $this->logger->debug("Delete aggregation unit SQL " . $this->destinationEndpoint . ":\n$deleteSql");
-            $this->destinationHandle->execute($deleteSql);
+            $this->logger->debug(
+                sprintf("Delete aggregation unit SQL %s:\n%s", $this->destinationEndpoint, $deleteSql)
+            );
+            $totalRowsDeleted += $this->destinationHandle->execute($deleteSql);
         }
-    }
+
+        return $totalRowsDeleted;
+
+    } // deleteAggregationPeriodData()
 
     /* ------------------------------------------------------------------------------------------
      * Determine if our source and destination databases are the same and we can enable query
