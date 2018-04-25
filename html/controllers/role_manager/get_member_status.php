@@ -1,80 +1,58 @@
 <?php
 
-   \xd_security\assertParameterSet('member_id', RESTRICTION_UID);
-	 
-	// -----------------------------
-	
-	$member = XDUser::getUserByID($_POST['member_id']);
-	
-	if ($member == NULL){
-      \xd_response\presentError('user_does_not_exist');
-	}
-	
-	// -----------------------------
+use Models\Services\Centers;
+use Models\Services\Users;
 
-	try {
-	
-      $active_user = \xd_security\getLoggedInUser();
-      
-      $member_staff_organizations = $member->getOrganizationCollection(ROLE_ID_CENTER_STAFF);
-            
-      if (!in_array($active_user->getActiveOrganization(), $member_staff_organizations)) {
-         \xd_response\presentError('center_mismatch_between_member_and_director');
-      }
+\xd_security\assertParameterSet('member_id', RESTRICTION_UID);
 
-   	// -----------------------------
-   
-      $member_director_organizations = $member->getOrganizationCollection(ROLE_ID_CENTER_DIRECTOR);
-            
-      if (in_array($active_user->getActiveOrganization(), $member_director_organizations)) {
+try {
+    $member = XDUser::getUserByID($_POST['member_id']);
 
-         // This member is already capable of becoming a center director of this center
-      
-         $promoter = $member->getPromoter(ROLE_ID_CENTER_DIRECTOR, $active_user->getActiveOrganization());
-         
-         $returnData['success'] = false;
-         $returnData['message'] = "is already a Center Director";
-         
-         if ($promoter != -1) {
-         
-            // This member was promoted to a Center Director by another user...
-            
-            if ($active_user->getUserId() == $promoter) {
-            
-               $returnData['success'] = true;
-               $returnData['eligible'] = false;
-               
-            }
-         
-            $promoter_user = XDUser::getUserById($promoter);
-            $promoter_name = $promoter_user->getFormalName();
-            
-            $returnData['message'] = "has been upgraded to Center Director<br />(promoted by $promoter_name)";
-            
-         }
-         
-         \xd_controller\returnJSON($returnData);
-           
-      }//if (in_array($active_user->getActiveOrganization(), $member_director_organizations))
-      
-   	// -----------------------------   
-   
-      $returnData['success'] = true;
-      $returnData['message'] = '';
-      $returnData['eligible'] = true;
-      
-      echo json_encode($returnData);
+    if ($member === null) {
+        \xd_response\presentError('user_does_not_exist');
+    }
 
-	}
-   catch (SessionExpiredException $see) {
-      // TODO: Refactor generic catch block below to handle specific exceptions,
-      //       which would allow this block to be removed.
-      throw $see;
-   }
-   catch (\Exception $e){
-   
-      \xd_response\presentError($e->getMessage());
-      
-   }
+    $returnData = array(
+        'success' => true,
+        'message' => '',
+        'eligible' => true
+    );
 
-?>
+    $activeUser = \xd_security\getLoggedInUser();
+    $organization = $activeUser->getActiveOrganization();
+    $memberUserId = $member->getUserID();
+
+    // An eligible user must be associated with the currently logged in users center.
+    if (!Users::userIsAssociatedWithCenter($memberUserId, $organization)) {
+        \xd_response\presentError('center_mismatch_between_member_and_director');
+    }
+
+    // They must not already be a Center Director for the organization.
+    if (Centers::hasCenterRelation($memberUserId, $organization, ROLE_ID_CENTER_DIRECTOR)) {
+        $returnData['success'] = false;
+        $returnData['message'] = "is a Center Director";
+        \xd_controller\returnJSON($returnData);
+    }
+
+    // This makes them ineligible for promotion, but eligible for demotion.
+    if (Centers::hasCenterRelation($memberUserId, $organization, ROLE_ID_CENTER_STAFF)) {
+        $returnData['eligible'] = false;
+    }
+
+    // They must be active
+    if (!$member->getAccountStatus()) {
+        $returnData['success'] = false;
+        $returnData['message'] = "User is disabled";
+        \xd_controller\returnJSON($returnData);
+    }
+
+    echo json_encode($returnData);
+} catch (SessionExpiredException $see) {
+    // TODO: Refactor generic catch block below to handle specific exceptions,
+    //       which would allow this block to be removed.
+    throw $see;
+} catch (\Exception $e) {
+
+    \xd_response\presentError($e->getMessage());
+
+}

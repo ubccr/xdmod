@@ -928,4 +928,30 @@ abstract class aRdbmsDestinationAction extends aAction
         return $numWarningsLogged;
 
     }  // logSqlWarnings()
+
+    /**
+     * Quote a list of strings with a database system quote character. This is used to ensure that
+     * database reserver words are properly handled. By default, the destination endpoint is used.
+     *
+     * @param array $names The list of names to quote
+     * @param iRdbmsEndpoint $endpoint The endpoint to use when determining the system quote character.
+     *
+     * @return array The list of names quoted with the appropriate system quote character
+     */
+
+    protected function quoteIdentifierNames(array $names, iRdbmsEndpoint $endpoint = null)
+    {
+        // Default to the destination endpoint
+        $endpoint = ( null === $endpoint ? $this->destinationEndpoint : $endpoint);
+
+        $quoteChar = $endpoint->getSystemQuoteChar();
+        $quotedNames = array();
+
+        foreach ( $names as $name ) {
+            $quotedNames[] = sprintf("%s%s%s", $quoteChar, $name, $quoteChar);
+        }
+
+        return $quotedNames;
+
+    }  // quoteIdentifierNames()
 }  // abstract class aRdbmsDestinationAction
