@@ -106,6 +106,10 @@
                 {
                     "name": "memory_reservation",
                     "class": "MemoryReservationStatistic"
+                },
+                {
+                    "name": "disk_reservation",
+                    "class": "DiskReservationStatistic"
                 }
             ]
         }

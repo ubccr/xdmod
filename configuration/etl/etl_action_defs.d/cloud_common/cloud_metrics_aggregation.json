@@ -67,6 +67,16 @@
                     "nullable": false,
                     "comment": "FACT: Core hours reserved by a VM."
                 },{
+                    "name": "memory_reserved",
+                    "type": "bigint(42)",
+                    "nullable": false,
+                    "comment": "FACT: Memory reserved by a VM."
+                },{
+                    "name": "disk_reserved",
+                    "type": "bigint(42)",
+                    "nullable": false,
+                    "comment": "FACT: Disk space reserved by a VM."
+                },{
                     "name": "memory_mb",
                     "type": "int(11)",
                     "nullable": false,
@@ -150,6 +160,7 @@
                 "num_cores": "SUM(eet.num_cores)",
                 "core_time": "COALESCE(SUM(eet.num_cores * ${wallduration_case_statement}), 0)",
                 "memory_reserved": "COALESCE(SUM(eet.memory_mb * ${wallduration_case_statement}), 0)",
+                "disk_reserved": "COALESCE(SUM(eet.disk_gb * ${wallduration_case_statement}), 0)",
                 "memory_mb": "SUM(eet.memory_mb)",
                 "disk_gb": "SUM(eet.disk_gb)",
                 "num_vms_started": "SUM(IF(eet.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND eet.start_event = 'START', 1, 0))",
