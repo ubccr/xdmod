@@ -71,6 +71,9 @@
         },
         "vcpus": {
             "type": "integer"
+        },
+        "volume_id": {
+            "type": "string"
         }
       }
   ]

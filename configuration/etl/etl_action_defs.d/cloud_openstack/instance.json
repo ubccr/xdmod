@@ -26,7 +26,7 @@
                 "name": "account",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "act",
-                "on": "act.provider_account = raw.provider_account",
+                "on": "act.provider_account = raw.project_id",
                 "type": "LEFT OUTER"
             },
             {
@@ -39,8 +39,8 @@
         ],
 
         "groupby": [
-            "resource_id",
-            "provider_instance_identifier"
+            "raw.resource_id",
+            "raw.provider_instance_identifier"
         ]
     }
 }

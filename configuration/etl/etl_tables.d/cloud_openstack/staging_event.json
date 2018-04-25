@@ -79,18 +79,20 @@
                 "default": 1,
                 "comment": "Asset type of the root volume as defined by the instance type. Unknown = 1"
             },
-	    {
-		"name": "service_id",
-		"type": "varchar(100)",
-		"nullable": true,
-		"default": null
-	    },
-	    {
-		"name": "project_id",
-		"type": "varchar(64)",
-		"nullable": true,
-		"default": null
-	    }
+            {
+                "name": "image_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "default": 1,
+                "comment": "Image associated with the event. Unknown = 1"
+            },
+            {
+                "name": "volume_id",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null,
+                "comment": "Volume associated with the event."
+            }
         ],
 
         "#": "Note that the primary key is (resource, instance, event_time, event_type, ...) rather than",
@@ -107,8 +109,7 @@
                     "event_type_id",
                     "record_type_id",
                     "account_id",
-                    "host_id",
-		    "service_id"
+                    "host_id"
                 ],
                 "is_unique": true
             },

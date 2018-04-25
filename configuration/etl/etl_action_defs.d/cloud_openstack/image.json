@@ -11,7 +11,7 @@
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "image": "raw.image"
+            "image": "raw.openstack_resource_id"
         },
 
         "joins": [
@@ -23,12 +23,12 @@
         ],
 
         "where": [
-            "image IS NOT NULL"
+            "raw.event_type LIKE 'image.%' AND raw.openstack_resource_id IS NOT NULL"
         ],
 
         "groupby": [
-            "resource_id",
-            "image"
+            "raw.resource_id",
+            "raw.openstack_resource_id"
         ]
     }
 }

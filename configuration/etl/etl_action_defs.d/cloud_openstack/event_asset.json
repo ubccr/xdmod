@@ -28,12 +28,12 @@
                 "name": "asset",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "a",
-                "on": "a.resource_id = staging.resource_id AND a.provider_identifier = staging.event_data"
+                "on": "a.resource_id = staging.resource_id AND a.provider_identifier = staging.volume_id"
             }
         ],
 
         "where": [
-            "staging.event_data IS NOT NULL"
+            "staging.volume_id IS NOT NULL"
         ]
     }
 }

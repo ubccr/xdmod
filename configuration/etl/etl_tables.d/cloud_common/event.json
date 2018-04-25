@@ -49,18 +49,6 @@
                 "type": "int(11) unsigned",
                 "nullable": false,
                 "comment": "Host where the event occured. Unknown = 1"
-            },
-	    {
-                "name": "openstack_service",
-                "type": "int(11) unsigned",
-                "nullable": true,
-                "comment": "Service an event is associated with in Open Stack"
-            },
-	    {
-                "name": "openstack_project",
-                "type": "int(11) unsigned",
-                "nullable": true,
-                "comment": "Project an event is associated with in Open Stack"
             }
         ],
         "indexes": [

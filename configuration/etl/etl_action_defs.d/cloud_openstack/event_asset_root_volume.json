@@ -1,7 +1,7 @@
 {
     "#": "Associate START events with instance root volume assets. Event logs do not explicitly",
-    "#": "specify the root volume for an instance and Euca does not provide a volume name so we",
-    "#": "look at START (id=2) events and use 'root-vol-' + instance name to associate the root volume.",
+    "#": "specify the root volume for an instance look at START (id=2) events and use",
+    "#": "'root-vol-' + instance name to associate the root volume.",
 
     "table_definition": [
         {

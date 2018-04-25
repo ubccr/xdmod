@@ -23,12 +23,12 @@
         ],
 
         "where": [
-            "hostname IS NOT NULL"
+            "raw.hostname IS NOT NULL"
         ],
 
         "groupby": [
-            "resource_id",
-            "hostname"
+            "raw.resource_id",
+            "raw.hostname"
         ]
     }
 }

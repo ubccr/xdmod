@@ -30,7 +30,9 @@
     	      "request_id": "request_id",
     	      "project_id": "project_id",
     	      "openstack_resource_id": "resource_id",
-    	      "disk_gb": "size"
+    	      "disk_gb": "disk_gb",
+            "size": "size",
+            "volume_id": "volume_id"
         },
         "openstack_raw_instance_type": {
             "instance_type": "instance_type",

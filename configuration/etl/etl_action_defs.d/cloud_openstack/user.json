@@ -24,12 +24,12 @@
         ],
 
         "where": [
-            "user_id IS NOT NULL"
+            "raw.user_id IS NOT NULL"
         ],
 
         "groupby": [
-            "resource_id",
-            "user_id"
+            "raw.resource_id",
+            "raw.user_id"
         ]
     }
 }

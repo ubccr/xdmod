@@ -109,7 +109,19 @@
           	},
       	    {
             		"name": "disk_gb",
-            		"type": "varchar(10)",
+            		"type": "int(11)",
+            		"nullable": true,
+            		"default": null
+      	    },
+            {
+            		"name": "size",
+            		"type": "int(11)",
+            		"nullable": true,
+            		"default": null
+      	    },
+            {
+            		"name": "volume_id",
+            		"type": "varchar(64)",
             		"nullable": true,
             		"default": null
       	    }

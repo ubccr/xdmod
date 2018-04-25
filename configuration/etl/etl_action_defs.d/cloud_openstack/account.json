@@ -1,6 +1,6 @@
 {
     "#": "Load unique accounts into the dimension table. Do not load unknown accounts as these are",
-    "#": "handled by a separate action",
+    "#": "handled by a separate action. Accounts in Open Stack can be accessed by different users",
 
     "table_definition": [
         {
@@ -24,12 +24,12 @@
         ],
 
         "where": [
-            "project_id IS NOT NULL"
+            "raw.project_id IS NOT NULL"
         ],
 
         "groupby": [
-            "resource_id",
-            "project_id"
+            "raw.resource_id",
+            "raw.project_id"
         ]
     }
 }

@@ -1,5 +1,5 @@
 {
-    "#": "Load raw block devices from transformed Euca event log files",
+    "#": "Load raw block devices from Open Stack raw logs",
 
     "table_definition": [
         {
