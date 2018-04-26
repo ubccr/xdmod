@@ -42,50 +42,85 @@ use ETL\DataEndpoint\DataEndpointOptions;
 
 class EtlConfiguration extends Configuration
 {
-    // The key used to identify global defaults to apply across all sections regardless of name. This
-    // must also be present in the $etlConfigReservedKeys array.
+
+    /**
+     * The key used to identify global defaults to apply across all sections regardless of name. This
+     * must also be present in the $etlConfigReservedKeys array.
+     * @var string
+     */
     const GLOBAL_DEFAULTS = "global";
 
-    // JSON object key represeting a list of data endpoints
+    /**
+     * Key used to identify the JSON object key represeting a list of data endpoints
+     * @var string
+     */
     const DATA_ENDPOINT_KEY = "endpoints";
 
-    // JSON object key represeting a set of filw and directory paths
+    /**
+     * Key used to identify the JSON object key represeting a set of filw and directory paths
+     * @var string
+     */
     const PATHS_KEY = "paths";
 
-    // Reserved keys in the top level of the configuration file. ETL section names cannot use one of
-    // these keys.
+    /**
+     * Reserved keys in the top level of the configuration file. ETL section names cannot use one of
+     * these keys.
+     * @var array
+     */
     private $etlConfigReservedKeys =
         array("defaults",
               self::DATA_ENDPOINT_KEY,
               self::PATHS_KEY,
               self::GLOBAL_DEFAULTS);
 
-    // If this is a local configuration file we have the option of using global defaults from the parent
+    /**
+     * If this is a local configuration file we have the option of using global defaults from the parent.
+     * @var stdclass
+     */
     private $parentDefaults = null;
 
-    // An array of endpoints defined in the global defaults section. The keys are the endpoint names
-    // (utility, source, destination, etc.) the values are endpoint keys used to reference the
-    // $endpoints array.
+    /**
+     * An array of data endpoints defined in the global defaults section. The keys are the endpoint
+     * names (utility, source, destination, etc.) the values are endpoint keys used to reference the
+     * $endpoints array.
+     * @var array
+     */
     private $globalEndpoints = array();
 
-    // Associative array where the key is the endpoint key and the value is a DataEndpoint object
+    /**
+     * Associative array where the key is the generated endpoint key and the value is a DataEndpoint object.
+     * @var array
+     */
     private $endpoints = array();
 
-    // An associative array where keys are section names and values are an array of action option
-    // objects.
+    /**
+     * An associative array where keys are section names and values are an array of action option
+     * objects.
+     * @var array
+     */
     private $actionOptions = array();
 
-    // An array of key/value pairs (2-element arrays) containing options to either add to or
-    // override individual action options. These will be applied to all actions, if present.
+    /**
+     * An associative array containing options to either add to or override individual action
+     * options. These will be applied to all actions, if present.
+     * @var array
+     */
     private $optionOverrides = null;
 
-    // Path information for various configuration files and directories
+    /**
+     * A class containing path information for various configuration files and directories.
+     * @var stdclass
+     */
     private $paths = null;
 
-    // Path information for various configuration files and directories
+    /**
+     * Local default values merged with parent defaults. Note that local defaults take precedence
+     * and parent default values are used only when local values are not present.
+     * @var stdClass
+     */
     private $localDefaults = null;
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
      * @param $filename Name of the JSON configuration file to parse
@@ -129,7 +164,7 @@ class EtlConfiguration extends Configuration
 
     }  // __construct()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see Configuration::preTransformTasks()
      * ------------------------------------------------------------------------------------------
      */
@@ -151,7 +186,7 @@ class EtlConfiguration extends Configuration
 
     }  // preTransformTasks()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Perform additional operations on the parsed configuration file. This includes
      * handling ETL-specific components such as the "paths" block, applying defaults, and
      * initializing data endpoints and action objects.
@@ -288,7 +323,7 @@ class EtlConfiguration extends Configuration
 
     }  // interpretData()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Handle creation of an EtlConfiguration object for the given class.
      *
      * @see Configuration::processLocalConfig()
@@ -311,7 +346,7 @@ class EtlConfiguration extends Configuration
 
     }  // processLocalConfig()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Merge data from the specified local configuration object, either overwriting or
      * merging data from local configuration objects into the current object.  Overrides
      * Configuration::merge().
@@ -381,7 +416,7 @@ class EtlConfiguration extends Configuration
 
     }  // merge()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Clean up intermediate information that we don't need to keep around after processing. This
      * includes parsed and constructed JSON as well as defaults.
      * ------------------------------------------------------------------------------------------
@@ -394,7 +429,7 @@ class EtlConfiguration extends Configuration
         $this->localDefaults = null;
     }  // cleanup()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Apply the base path to all relative paths in the "paths" block.
      * ------------------------------------------------------------------------------------------
      */
@@ -473,7 +508,7 @@ class EtlConfiguration extends Configuration
         return false !== current($this->actionOptions);
     }  // valid()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Add a new section to the internal data structures if it doesn't already exist or
      * update the data associated with the section if it does exist (unless $overwrite ==
      * false)
@@ -504,7 +539,7 @@ class EtlConfiguration extends Configuration
 
     }  // addSection()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Apply both global and section-specific (local) defaults to a action config block.
      *
      * @param $actionConfig Reference to the configuration block for the action
@@ -586,7 +621,7 @@ class EtlConfiguration extends Configuration
 
     }  // applyDefaultsToAction()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Register an action and also register any data endpoints that it has.  Registered actions
      * have their options set up but they are not instantiated.
      *
@@ -706,7 +741,7 @@ class EtlConfiguration extends Configuration
 
     }  // registerAction()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Add an action to the list of actions for the specified section.
      *
      * @param $sectionName The name of the section that we are adding the action to
@@ -721,7 +756,7 @@ class EtlConfiguration extends Configuration
         $this->actionOptions[$sectionName][$options->name] = $options;
     }  // addAction()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Add a data endpoint if it hasn't already been added.  We will maintain a list of data endpoints
      * referenced by keys to use during the ingestion process so we don't maintain potentially 10's of
      * the same endpoint.
@@ -763,7 +798,7 @@ class EtlConfiguration extends Configuration
      * ==========================================================================================
      */
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of enabled action names. This includes actions that are properly configured
      * and enabled.
      *
@@ -793,7 +828,7 @@ class EtlConfiguration extends Configuration
 
     }  // getEnabledActionNames()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Search for an action name across all sections and return the sections where it was found.
      *
      * @param $actionName The name of the action to search for.
@@ -817,7 +852,7 @@ class EtlConfiguration extends Configuration
 
     }  // findActionSections()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @param $actionName The name of the action to search for.
      * @param $sectionName Optional section name to look for the action
      *
@@ -838,7 +873,7 @@ class EtlConfiguration extends Configuration
 
     }  // actionExists()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of configured action names. This includes all actions that are properly
      * configured whether they are enabled or disabled.
      *
@@ -859,7 +894,7 @@ class EtlConfiguration extends Configuration
 
     }  // getConfiguredActionNames()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of disabled action names. These are actions that are configured, but have been
      * marked as disabled.
      *
@@ -880,7 +915,7 @@ class EtlConfiguration extends Configuration
 
     }  // getDisabledActionNames()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of option objects for the specified section. Only options for configured ingestors
      * are available.
      *
@@ -900,7 +935,7 @@ class EtlConfiguration extends Configuration
 
     }  // getSectionActionOptions()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of option objects for the specified section. Only options for configured ingestors
      * are available.
      *
@@ -920,7 +955,7 @@ class EtlConfiguration extends Configuration
 
     }  // getSectionActionNames()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get an individual option object for the specified action in the specified section. If the
      * section is not provided all sections will be searched for the action. If an action is found
      * in multiple sections an exception will be thrown so a section name should be provided where
@@ -963,7 +998,7 @@ class EtlConfiguration extends Configuration
 
     }  // getActionOptions()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get a globally defined endpoint, or FALSE if it is not defined.
      *
      * @param $name The name of the global endpoint (e.g., utility, source, destination)
@@ -979,7 +1014,7 @@ class EtlConfiguration extends Configuration
                  : false );
     }  // getGlobalEndpoint()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of data endpoints. Only data endpoints for enabled ingestors are available.
      *
      * @return An array of object implementing the iDataEndpoint interface
@@ -991,7 +1026,7 @@ class EtlConfiguration extends Configuration
         return $this->endpoints;
     }  // getDataEndpoints()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the named data endpoint.
      *
      * @param string $name The name/identifier for the data endpoint
@@ -1008,7 +1043,7 @@ class EtlConfiguration extends Configuration
         return ( array_key_exists($name, $this->endpoints) ? $this->endpoints[$name] : false );
     }  // getDataEndpoint()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @return The configured paths object.
      * ------------------------------------------------------------------------------------------
      */
