@@ -1760,6 +1760,18 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
     }
 
+    private function encodeFloatArray(array $in) {
+        $out = array();
+        foreach ($in as $key => $value) {
+            if (is_float($value) && is_nan($value)) {
+                $out[$key] = 'NaN';
+            } else {
+                $out[$key] = $value;
+            }
+        }
+        return $out;
+    }
+
     private function _getJobSummary(Application $app, \XDUser $user, $realm, $jobId, $action, $actionName)
     {
         $queryclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
@@ -1774,14 +1786,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $name = "$key";
             if (is_array($val)) {
                 if (array_key_exists('avg', $val) && !is_array($val['avg'])) {
-                    $result[] = array_merge(array("name" => $name, "leaf" => true), $val);
+                    $result[] = array_merge(array("name" => $name, "leaf" => true), $this->encodeFloatArray($val));
                 } else {
                     $l1data = array("name" => $name, "avg" => "", "expanded" => "true", "children" => array());
                     foreach ($val as $subkey => $subval) {
                         $subName = "$subkey";
                         if (is_array($subval)) {
                             if (array_key_exists('avg', $subval) && !is_array($subval['avg'])) {
-                                $l1data['children'][] = array_merge(array("name" => $subName, "leaf" => true), $subval);
+                                $l1data['children'][] = array_merge(array("name" => $subName, "leaf" => true), $this->encodeFloatArray($subval));
                             } else {
                                 $l2data = array("name" => $subName, "avg" => "", "expanded" => "true", "children" => array());
 
@@ -1789,7 +1801,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                                     $subSubName = "$subsubkey";
                                     if (is_array($subsubval)) {
                                         if (array_key_exists('avg', $subsubval) && !is_array($subsubval['avg'])) {
-                                            $l2data['children'][] = array_merge(array("name" => $subSubName, "leaf" => true), $subsubval);
+                                            $l2data['children'][] = array_merge(array("name" => $subSubName, "leaf" => true), $this->encodeFloatArray($subsubval));
                                         }
                                     }
                                 }
