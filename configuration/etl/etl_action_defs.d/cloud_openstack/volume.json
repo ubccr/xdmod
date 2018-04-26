@@ -1,4 +1,6 @@
 {
+    "#": "Load information about volumes created from the volume.create.start event",
+
     "table_definition": [
         {
             "$ref": "${table_definition_dir}/cloud_common/asset.json#/table_definition"

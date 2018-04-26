@@ -1,6 +1,6 @@
 {
     "#": "The root volume for the instance is not explicitly provided in the logs but is inferred",
-    "#": "using the root_type key and the size specified in the instance_type for START events.",
+    "#": "using the root_type key and the size specified in the instance_type for compute.instance.create.start events.",
     "#": "These volumes do not have their own names so create one from the instance identifier",
     "#": "using 'root-vol-' + instance name. Also note that not all events include the",
     "#": "instance_type therefore we cannot infer from these events.",

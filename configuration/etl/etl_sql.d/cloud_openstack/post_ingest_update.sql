@@ -1,5 +1,5 @@
--- Update destroy times of volume assets. This updates both volumes that are explicitly
--- attached to instances and also root volumes which are inferred from compute.instance.create
+-- Update destroy times of volume assets. This updates both volumes that are destoyed
+-- in volume.delete.end evens and also root volumes which are inferred from compute.instance.create
 -- events.
 
 UPDATE
@@ -28,3 +28,12 @@ SET
 	a.destroy_time_utc = staging.event_time_utc
 WHERE
 	staging.event_type_id = 4;
+//
+
+-- Truncate raw and staging tables once the data is no longer needed
+
+TRUNCATE ${DESTINATION_SCHEMA}.openstack_raw_event;
+
+TRUNCATE ${DESTINATION_SCHEMA}.openstack_raw_instance_type;
+
+TRUNCATE ${DESTINATION_SCHEMA}.openstack_staging_event;
