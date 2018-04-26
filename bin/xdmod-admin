@@ -255,8 +255,8 @@ function truncateJobs()
         array(
             'db'     => $modwDb,
             'tables' => array(
-                'modw.jobfact',
-                'modw.jobfactstatus',
+                'modw.job_records',
+                'modw.job_tasks',
                 'modw.jobhosts',
                 'modw_aggregates.jobfact_by_year',
                 'modw_aggregates.jobfact_by_quarter',
