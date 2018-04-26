@@ -42,17 +42,6 @@ use ETL\DataEndpoint\DataEndpointOptions;
 
 class EtlConfiguration extends Configuration
 {
-    // Named ETL sections are defined here for ease of reference but any section can be defined in
-    // the configuration file.
-    const MAINTENANCE = "maintenance";
-    const INGESTORS = "ingestors";
-    const AGGREGATORS = "aggregators";
-
-    // Default class names for section options, if not specified in the configuration file
-    const DEFAULT_MAINTENANCE_OPTIONS_CLASS = "\\ETL\\Maintenance\\MaintenanceOptions";
-    const DEFAULT_INGESTOR_OPTIONS_CLASS = "\\ETL\\Ingestor\\IngestorOptions";
-    const DEFAULT_AGGREGATOR_OPTIONS_CLASS = "\\ETL\\Aggregator\\AggregatorOptions";
-
     // The key used to identify global defaults to apply across all sections regardless of name. This
     // must also be present in the $etlConfigReservedKeys array.
     const GLOBAL_DEFAULTS = "global";
@@ -633,26 +622,6 @@ class EtlConfiguration extends Configuration
         if ( ! isset($config->class) ) {
             $config->class = $config->name;
         }
-
-        // Verify that we have a class name for the options and it exists.  Ingestors and Aggregators
-        // have default options classes if they are not otherwise specified.
-
-        if ( ! isset($config->options_class) ) {
-            switch ( $sectionName ) {
-                case self::MAINTENANCE:
-                    $config->options_class = self::DEFAULT_MAINTENANCE_OPTIONS_CLASS;
-                    break;
-                case self::INGESTORS:
-                    $config->options_class = self::DEFAULT_INGESTOR_OPTIONS_CLASS;
-                    break;
-                case self::AGGREGATORS:
-                    $config->options_class = self::DEFAULT_AGGREGATOR_OPTIONS_CLASS;
-                    break;
-                default:
-                    $this->logAndThrowException("Options class not specified for '$config->name'");
-                    break;
-            }
-        }  // if ( ! isset($config->options_class) )
 
         // If the options class name does not include a namespace designation, use the namespace from
         // the action configuration.
