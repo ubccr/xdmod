@@ -426,20 +426,21 @@ warehouse.  If this data is omitted, it is assumed that the resource is
 
 ### resource_types.json
 
-Defines resource types.  If you have multiple resources you may assign
-types to each resources.
+Defines resource types.  Each resource in `resources.json` should reference a
+resource type from this file.
 
     [
         {
-            "id": 1,
-            "abbrev": "T1",
-            "description": "Example Type 1"
+            "id": 0,
+            "abbrev": "UNK",
+            "description": "Unknown"
         },
         {
-            "id": 2,
-            "abbrev": "T2",
-            "description": "Example Type 2"
-        }
+            "id": 1,
+            "abbrev": "HPC",
+            "description": "High-performance computing"
+        },
+        ...
     ]
 
 ### update_check.json

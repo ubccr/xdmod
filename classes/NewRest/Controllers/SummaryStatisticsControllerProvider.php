@@ -257,7 +257,7 @@ extends BaseControllerProvider
 
 $sql = "select
 count(distinct account_id) as num_projects, count(distinct person_id) as num_people,
-sum(job_count) as num_jobs_run, sum(local_charge) as xdsu_charged
+sum(job_count) as num_jobs_run, sum(local_charge_su) as xdsu_charged
 from modw_aggregates.jobfact_by_day job
 join modw.days d on d.id = job.day_id
 where d.day_start between date(date_sub(now(), interval :num_intervals " . $options['interval'] . ")) and now()";
@@ -318,7 +318,7 @@ left outer join (
   select
   state.id as state_id,
   count(distinct account_id) as num_projects, count(distinct person_id) as num_people,
-  sum(job_count) as num_jobs_run, sum(local_charge) as xdsu_charged
+  sum(job_count) as num_jobs_run, sum(local_charge_su) as xdsu_charged
   from modw_aggregates.jobfact_by_day job
   join modw.days d on d.id = job.day_id
   join modw.organization org on org.id = job.piperson_organization_id

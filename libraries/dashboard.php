@@ -1,66 +1,55 @@
 <?php
 
-   namespace xd_dashboard;
+namespace xd_dashboard;
 
-   // -----------------------------------------------------------
-   
-   function deriveUserEnumerationQuery($group_filter = 'all', $role_filter = 'any', $context_filter = '', $exclude_unspecified_emails = false) {   
+// -----------------------------------------------------------
 
-      $query  = "SELECT DISTINCT CONCAT(u.first_name, ' ', u.last_name) AS formal_name, u.id, u.username, u.first_name, u.last_name, u.email_address, u.user_type, ";
-      $query .= "(SELECT GROUP_CONCAT(r.description SEPARATOR ', ') FROM moddb.UserRoles AS ur, moddb.Roles AS r WHERE ur.role_id = r.role_id AND ur.user_id=u.id) AS role_type, "; 
-      
-      $query .= "CASE WHEN (SELECT init_time FROM SessionManager WHERE user_id=u.id ORDER BY init_time DESC LIMIT 1) IS NULL ";
-      $query .= "THEN '0' ";
-      $query .= "ELSE (SELECT init_time FROM SessionManager WHERE user_id=u.id ORDER BY init_time DESC LIMIT 1) ";
-      $query .= "END AS last_logged_in ";  
-          
-      $query .= "FROM moddb.Users AS u, moddb.UserRoles AS ur, moddb.Roles AS r ";
-      
-      // ===================
-            
-      if ( ($role_filter != "any") && ($group_filter != "all") ) { 
-            
-         $query .= "WHERE u.id = ur.user_id AND r.role_id = ur.role_id AND ur.role_id=$role_filter AND u.user_type=$group_filter ";
-         
-      }
-      else if ($role_filter != "any") {
+function listUserEmailsByGroupAndAcl($group_filter = 'all', $acl_filter = 'any', $exclude_unspecified_emails = true)
+{
+    $query = <<<SQL
+SELECT DISTINCT
+  u.email_address
+FROM Users u
+  JOIN user_acls ua
+    ON ua.user_id = u.id
+  JOIN acls a
+    ON ua.acl_id = a.acl_id
+SQL;
 
-         $query .= "WHERE u.id = ur.user_id AND r.role_id = ur.role_id AND ur.role_id=$role_filter ";
-                  
-      }
-      else if ($group_filter != "all") {
+    $whereClauses = array();
+    $params = array();
 
-         $query .= "WHERE u.id = ur.user_id AND r.role_id = ur.role_id AND u.user_type=$group_filter ";
-                  
-      }  
-      else {
-        
-         $query .= "WHERE u.id = ur.user_id AND r.role_id = ur.role_id ";
+    if ($acl_filter !== 'any') {
+        $whereClauses[] = 'a.acl_id = :acl_filter';
+        $params[':acl_filter'] = $acl_filter;
+    }
+    if ($group_filter !== 'all') {
+        $whereClauses[] = 'u.user_type = :user_type';
+        $params[':user_type'] = $group_filter;
+    }
+    if (true === $exclude_unspecified_emails) {
+        $whereClauses[] = 'u.email_address != :unspecified_email_constant';
+        $params[':unspecified_email_constant'] = 'no_email_address_set';
+    }
 
-      }    
-      
-      if ($exclude_unspecified_emails == true) {
-      
-         $query .= "AND u.email_address != '".NO_EMAIL_ADDRESS_SET."' ";
-      
-      }
+    $whereClause = implode(" AND\n", $whereClauses);
 
-      if (!empty($context_filter)) {
-         $query .= "AND (" . 
-                   "u.username LIKE CONCAT('%', :filter, '%') " .
-                   "OR u.first_name LIKE CONCAT('%', :filter, '%') " .
-                   "OR u.last_name LIKE CONCAT('%', :filter, '%') " .
-                   ") ";
-      }
-            
-      // ===================
-            
-      $query .= "ORDER BY u.last_name";
-      
-      //print $query;
-      
-      return $query;
-         
-   }//deriveUserEnumerationQuery
-
-?>
+    if (count($whereClauses) > 0) {
+        $queryParts = array(
+            $query,
+            'WHERE',
+            $whereClause
+        );
+    } else {
+        $queryParts = array(
+            $query
+        );
+    }
+    return array(
+        implode(
+            "\n",
+            $queryParts
+        ),
+        $params
+    );
+}// deriveUserEnumerationQuery

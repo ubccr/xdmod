@@ -34,12 +34,10 @@ class Column extends NamedEntity implements iEntity
         'default'  => null,
          // Column extra (see http://dev.mysql.com/doc/refman/5.7/en/create-table.html)
         'extra'    => null,
-        // The trigger definer for ACL purposes
+        // The column comment
         'comment'   => null,
-        // Column hints object
-        'hints'     => null,
-        // The trigger definer for ACL purposes
-        'rename'    => null
+        // Column hints object used to control behavior such as renaming columns
+        'hints'     => null
     );
 
     /* ------------------------------------------------------------------------------------------

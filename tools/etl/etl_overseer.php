@@ -78,6 +78,8 @@ $scriptOptions = array(
     'exclude-resource-codes' => array(),
     // List of sections to process (e.g., ingestors, aggregators)
     'process-sections'  => array(),
+    // SQL query to use when generating the resource code map
+    'resource-code-map-sql' => null,
     // ETL start date
     'start-date'        => null,
     'verbosity'         => Log::NOTICE
@@ -569,22 +571,9 @@ if ( $showList ) {
     exit(0);
 }  // if ( $showList )
 
-// ------------------------------------------------------------------------------------------
-// Look up resource ids and generate the mapping for resource codes to ids. This can be stored in
-// the overseer and used by actions if needed.
+// Set the SQL query used to look up resource ids and generate the mapping for resource codes to ids.
 
-try {
-    $result = $utilityEndpoint->getHandle()->query("SELECT id, code from {$utilitySchema}.resourcefact");
-} catch (Exception $e) {
-    log_error_and_exit(
-        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
-    );
-}
-$scriptOptions['resource-code-map'] = array();
-
-foreach ( $result as $row ) {
-    $scriptOptions['resource-code-map'][ $row['code'] ] = $row['id'];
-}
+$scriptOptions['resource-code-map-sql'] = sprintf("SELECT id, code from %s.resourcefact", $utilitySchema);
 
 try {
     $overseerOptions = new EtlOverseerOptions($scriptOptions, $logger);

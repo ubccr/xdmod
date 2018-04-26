@@ -1153,22 +1153,7 @@ class pdoAggregator extends aAggregator
                         $restrictions = $dummyQuery->getOverseerRestrictionValues();
                     }  // if ( isset($this->parsedDefinitionFile->destination_query) ... )
 
-                    foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
-                        $qualifiedDestTableName = $etlTable->getFullName();
-
-                        // This will need to get switch back once we start using period_id rather than
-                        // month_id, year_id, etc.
-                        // $deleteSql = "DELETE FROM {$this->qualifiedDestTableName} WHERE period_id = $period_id";
-
-                        $deleteSql = "DELETE FROM $qualifiedDestTableName WHERE {$aggregationUnit}_id = $periodId";
-
-                        if ( count($restrictions) > 0 ) {
-                            $deleteSql .= " AND " . implode(" AND ", $dummyQuery->getOverseerRestrictionValues());
-                        }
-
-                        $this->logger->debug("Delete aggregation unit SQL " . $this->destinationEndpoint . ":\n$deleteSql");
-                        $this->destinationHandle->execute($deleteSql);
-                    }
+                    $this->deleteAggregationPeriodData($aggregationUnit, $periodId, $restrictions);
 
                 } catch (PDOException $e ) {
                     $this->logAndThrowException(
@@ -1248,6 +1233,49 @@ class pdoAggregator extends aAggregator
 
     }  // processAggregationPeriods()
 
+    /**
+     * Delete data associated with a particular aggregation period from the current aggregation
+     * table. Note that we can't simply insert and update on duplicate key because we won't know if
+     * a group-by has changed or if data for a particular dimension has been removed. If additional
+     * data must be deleted, a child class may override this method.
+     *
+     * @param string $aggregationUnit The aggregation unit granularity that we are currently processing
+     *    (e.g., day, month, etc.)
+     * @param string $aggregationUnitId The id of the current aggregation unit that we are processing
+     *    (e.g., specific day)
+     * @param array $sqlRestrictions A list of additional restrictions to add to the SQL DELETE statement,
+     *    such as restricting to a particular resource.
+     *
+     * @return int The total number of rows deleted from all tables.
+     */
+
+    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodId, array $sqlRestrictions = array())
+    {
+        $totalRowsDeleted = 0;
+
+        foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
+            $qualifiedDestTableName = $etlTable->getFullName();
+            $deleteSql = sprintf(
+                "DELETE FROM %s WHERE %s_id = %s",
+                $qualifiedDestTableName,
+                $aggregationUnit,
+                $aggregationPeriodId
+            );
+
+            if ( count($sqlRestrictions) > 0 ) {
+                $deleteSql .= " AND " . implode(" AND ", $sqlRestrictions);
+            }
+
+            $this->logger->debug(
+                sprintf("Delete aggregation unit SQL %s:\n%s", $this->destinationEndpoint, $deleteSql)
+            );
+            $totalRowsDeleted += $this->destinationHandle->execute($deleteSql);
+        }
+
+        return $totalRowsDeleted;
+
+    } // deleteAggregationPeriodData()
+
     /* ------------------------------------------------------------------------------------------
      * Determine if our source and destination databases are the same and we can enable query
      * optimization. This is done using the host and port for each connection. If they are the same,
@@ -1323,14 +1351,14 @@ class pdoAggregator extends aAggregator
 
         $this->insertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
             "("
-            . implode(",\n", array_keys($this->etlSourceQuery->records))
+            . implode(",\n", $this->quoteIdentifierNames(array_keys($this->etlSourceQuery->records)))
             . ")\nVALUES\n("
             . implode(",\n", Utilities::createPdoBindVarsFromArrayKeys($this->etlSourceQuery->records))
             . ")";
 
         $this->optimizedInsertSql = "INSERT INTO " . $this->etlDestinationTable->getFullName($includeSchema) . "\n" .
             "(" .
-            implode(",\n", array_keys($this->etlSourceQuery->records))
+            implode(",\n", $this->quoteIdentifierNames(array_keys($this->etlSourceQuery->records)))
             . ")\n" .
             $this->selectSql;
 
