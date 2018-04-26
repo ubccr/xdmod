@@ -12,10 +12,10 @@ class DiskReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE((SUM(jf.disk_reserved) / 3600.0) / jf.wallduration,0)',
+            'COALESCE(SUM(jf.disk_reserved) / SUM(jf.wallduration),0)',
             'disk_reserved',
             'Average Disk Space Consumption',
-            'Gigabytes',
+            'Bytes',
             0
         );
     }

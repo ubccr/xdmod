@@ -96,10 +96,6 @@
                     "class": "MaxMemoryReservedStatistic"
                 },
                 {
-                    "name": "weighted_memory_mb",
-                    "class": "WeightedMemoryWallStatistic"
-                },
-                {
                     "name": "weighted_num_cores",
                     "class": "WeightedCoreWallStatistic"
                 },

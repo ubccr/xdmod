@@ -14,8 +14,8 @@ class CoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.num_cores),0)',
             'num_cores',
-            'Total Number of Cores Reserved',
-            'Core Count',
+            'Cores Reserved: Total',
+            'Cores',
             0
         );
     }

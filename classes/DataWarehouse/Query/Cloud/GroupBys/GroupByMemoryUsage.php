@@ -46,7 +46,7 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
         $this->_short_name_field_name = 'min_memory';
         $this->_order_id_field_name = 'id';
         $this->modw_schema = new Schema('modw');
-        $this->bucket_table = new Table($this->modw_schema, 'memory_buckets', 'p');
+        $this->bucket_table = new Table($this->modw_schema, 'memory_buckets', 'mb');
     }
 
     public function applyTo(Query &$query, Table $data_table, $multi_group = false)

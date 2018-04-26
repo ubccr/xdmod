@@ -14,8 +14,8 @@ class WeightedCoreWallStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.num_cores * jf.core_time) / SUM(jf.core_time),0)',
             'weighted_num_cores',
-            'Weighted Number of Cores Reserved',
-            'Core Count',
+            'Cores Reserved: Weighted',
+            'Cores',
             0
         );
     }

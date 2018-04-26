@@ -63,8 +63,6 @@
             ]
         },
         "+cs": {
-            "display": "Cloud",
-            "type": "data",
             "+query_descripters": [{
                     "realm": "Cloud",
                     "group_by": "none"

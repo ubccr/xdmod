@@ -68,6 +68,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 
         $datatable_configuration_id_field = new TableField($data_table, 'instance_type_id');
         $query->addWhereCondition(new WhereCondition($configurationtable_id_field, '=', $datatable_configuration_id_field));
+        $query->addWhereCondition(new WhereCondition(new TableField($this->configuration_table, 'resource_id'), '=', new TableField($data_table, 'host_resource_id')));
 
         $this->addOrder($query, $multi_group);
     }
@@ -82,6 +83,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 
         // the where condition that specifies the join of the tables
         $query->addWhereCondition(new WhereCondition($configurationtable_id_field, '=', $datatable_configuration_id_field));
+        $query->addWhereCondition(new WhereCondition(new TableField($this->configuration_table, 'resource_id'), '=', new TableField($data_table, 'host_resource_id')));
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
             $whereConstraint="(". implode(",", $whereConstraint) .")";

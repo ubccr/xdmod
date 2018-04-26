@@ -12,10 +12,10 @@ class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE((SUM(jf.memory_reserved) / 3600.0) / jf.wallduration,0)',
+            'COALESCE(SUM(jf.memory_reserved) / SUM(jf.wallduration),0)',
             'memory_reserved',
             'Average Memory Consumption',
-            'Megabytes',
+            'Bytes',
             0
         );
     }
