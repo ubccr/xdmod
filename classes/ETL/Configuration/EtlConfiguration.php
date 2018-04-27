@@ -134,9 +134,9 @@ class EtlConfiguration extends Configuration
      * @param $baseDir Base directory for configuration files. Overrides the base dir provided in
      *   the top-level config file
      * @param $logger A PEAR Log object or null to use the null logger.
-     * @param $options An associative array of additional options passed from the parent. These
-     *   include:
-     *   is_local_config: TRUE if this is a local configuration file
+     * @param $options An associative array of additional options passed from the parent. In
+     *   addition to the options supported by Configuration, the following options are also
+     *   supported:
      *   option_overrides: An array of key/value pairs (2-element arrays) containing options to
      *      either add to or override individual action options. These will be applied to all
      *      actions, if present.
@@ -160,42 +160,42 @@ class EtlConfiguration extends Configuration
                 continue;
             }
             switch ( $option ) {
-            case 'option_overrides':
-                if ( ! is_array($value) ) {
-                    $this->logAndThrowException(sprintf("%s must be an array, %s provided", $option, gettype($value)));
-                } else if ( 0 !== count($value) ) {
-                    $this->optionOverrides = $value;
-                }
-                break;
+                case 'option_overrides':
+                    if ( ! is_array($value) ) {
+                        $this->logAndThrowException(sprintf("%s must be an array, %s provided", $option, gettype($value)));
+                    } elseif ( 0 !== count($value) ) {
+                        $this->optionOverrides = $value;
+                    }
+                    break;
 
-            case 'parent_defaults':
-                if ( ! is_object($value) ) {
-                    $this->logAndThrowException(sprintf("%s must be an object, %s provided", $option, gettype($value)));
-                } else if ( 0 !== count($value) ) {
-                    $this->parentDefaults = $value;
-                }
-                break;
+                case 'parent_defaults':
+                    if ( ! is_object($value) ) {
+                        $this->logAndThrowException(sprintf("%s must be an object, %s provided", $option, gettype($value)));
+                    } elseif ( 0 !== count($value) ) {
+                        $this->parentDefaults = $value;
+                    }
+                    break;
 
-            case 'variable_overrides':
-                if ( ! is_array($value) ) {
-                    $this->logAndThrowException(sprintf("%s must be an array, %s provided", $option, gettype($value)));
-                } else if ( 0 !== count($value) ) {
-                    $this->variableOverrides = $value;
-                }
-                break;
+                case 'variable_overrides':
+                    if ( ! is_array($value) ) {
+                        $this->logAndThrowException(sprintf("%s must be an array, %s provided", $option, gettype($value)));
+                    } elseif ( 0 !== count($value) ) {
+                        $this->variableOverrides = $value;
+                    }
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
         }
 
-        if ( null !== $this->optionOverrides ) {
-            $this->logger->notice("Overrides\n" . print_r($this->optionOverrides, true));
-        }
-        if ( null !== $this->variableOverrides ) {
-            $this->logger->notice("Variables\n" . print_r($this->variableOverrides, true));
-        }
+        // Make variable overrides available immediately
 
+        if ( null !== $this->variableOverrides ) {
+            foreach ( $this->variableOverrides as $variable => $value ) {
+                $this->variableStore->$variable = $value;
+            }
+        }
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
