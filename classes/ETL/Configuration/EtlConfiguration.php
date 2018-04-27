@@ -120,6 +120,13 @@ class EtlConfiguration extends Configuration
      */
     private $localDefaults = null;
 
+    /**
+     * An associative array of ETL variable names and values that will be added to each action,
+     * overriding any variables of the same name that are already defined for that action.
+     * @var array
+     */
+    private $variableOverrides = null;
+
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
@@ -133,6 +140,8 @@ class EtlConfiguration extends Configuration
      *   option_overrides: An array of key/value pairs (2-element arrays) containing options to
      *      either add to or override individual action options. These will be applied to all
      *      actions, if present.
+     *   variable_overrides: An array of key/value pairs containing ETL variables and values that
+     *      take precedence over those defined in configuration files or by actions.
      *   parent_defaults: The defaults class from the parent configuration file, if we are
      *      processing a configuration file in a subdirectory.
      * ------------------------------------------------------------------------------------------
@@ -146,20 +155,45 @@ class EtlConfiguration extends Configuration
     ) {
         parent::__construct($filename, $baseDir, $logger, $options);
 
-        if ( array_key_exists('option_overrides', $options) && null !== $options['option_overrides'] ) {
-            if ( ! is_array($options['option_overrides']) ) {
-                $this->logAndThrowException("Option overrides must be an array");
-            } elseif ( 0 !== count($options['option_overrides']) ) {
-                $this->optionOverrides = $options['option_overrides'];
+        foreach ( $options as $option => $value ) {
+            if ( null === $value ) {
+                continue;
+            }
+            switch ( $option ) {
+            case 'option_overrides':
+                if ( ! is_array($value) ) {
+                    $this->logAndThrowException(sprintf("%s must be an array, %s provided", $option, gettype($value)));
+                } else if ( 0 !== count($value) ) {
+                    $this->optionOverrides = $value;
+                }
+                break;
+
+            case 'parent_defaults':
+                if ( ! is_object($value) ) {
+                    $this->logAndThrowException(sprintf("%s must be an object, %s provided", $option, gettype($value)));
+                } else if ( 0 !== count($value) ) {
+                    $this->parentDefaults = $value;
+                }
+                break;
+
+            case 'variable_overrides':
+                if ( ! is_array($value) ) {
+                    $this->logAndThrowException(sprintf("%s must be an array, %s provided", $option, gettype($value)));
+                } else if ( 0 !== count($value) ) {
+                    $this->variableOverrides = $value;
+                }
+                break;
+
+            default:
+                break;
             }
         }
 
-        if ( array_key_exists('parent_defaults', $options) && null !== $options['parent_defaults'] ) {
-            if ( ! is_object($options['parent_defaults']) ) {
-                $this->logAndThrowException("Parent defaults must be an object");
-            } else {
-                $this->parentDefaults = $options['parent_defaults'];
-            }
+        if ( null !== $this->optionOverrides ) {
+            $this->logger->notice("Overrides\n" . print_r($this->optionOverrides, true));
+        }
+        if ( null !== $this->variableOverrides ) {
+            $this->logger->notice("Variables\n" . print_r($this->variableOverrides, true));
         }
 
     }  // __construct()
@@ -333,10 +367,11 @@ class EtlConfiguration extends Configuration
     protected function processLocalConfig($localConfigFile)
     {
         $options = array(
-            'local_config_dir' => $this->localConfigDir,
-            'is_local_config'  => true,
-            'option_overrides' => $this->optionOverrides,
-            'parent_defaults'  => $this->localDefaults
+            'local_config_dir'   => $this->localConfigDir,
+            'is_local_config'    => true,
+            'option_overrides'   => $this->optionOverrides,
+            'variable_overrides' => $this->variableOverrides,
+            'parent_defaults'    => $this->localDefaults
         );
 
         $localConfigObj = new EtlConfiguration($localConfigFile, $this->baseDir, $this->logger, $options);
