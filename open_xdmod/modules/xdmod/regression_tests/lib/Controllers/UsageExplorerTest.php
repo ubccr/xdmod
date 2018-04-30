@@ -341,11 +341,12 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     $index = $useAssoc ? $value : $key;
                     $expectedRowValue = $expectedRow[$index];
                     $providedRowValue = $providedRow[$index];
+
                     $rowMessage =
                         $testName . ' values do not match for column ' .
                         $index .
                         ' row ' . $i;
-                    if(is_numeric($expectedRowValue)){
+                    if($providedRowValue !== $expectedRowValue && is_numeric($expectedRowValue)){
                         $errorFormula = "| {expected} $expectedRowValue - {actual} $providedRowValue |";
                         if(abs($expectedRowValue) > 1.0e-30) {
                             $relativeError = abs($expectedRowValue - $providedRowValue) / $expectedRowValue;
@@ -355,6 +356,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                         }
                         try {
                             $this->assertTrue($relativeError < $this->delta, $testName . " ( $errorFormula ) => " . $relativeError  . ' > ' . $this->delta );
+                            self::$messages[] = $testName . " ( $errorFormula ) => " . $relativeError  . ', ' . $this->delta;
                         } catch(PHPUnit_Framework_ExpectationFailedException $e) {
                             $failures[] = $e->getMessage();
                         }
