@@ -339,12 +339,13 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 }
                 foreach($expectedHeader as $key => $value){
                     $index = $useAssoc ? $value : $key;
+                    $columnName = $useAssoc ? $index : $expectedHeader[$index];
                     $expectedRowValue = $expectedRow[$index];
                     $providedRowValue = $providedRow[$index];
 
                     $rowMessage =
                         $testName . ' values do not match for column ' .
-                        $index .
+                        $columnName .
                         ' row ' . $i;
                     if($providedRowValue !== $expectedRowValue && is_numeric($expectedRowValue)){
                         $errorFormula = "| {expected} $expectedRowValue - {actual} $providedRowValue |";
@@ -356,7 +357,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                         }
                         try {
                             $this->assertTrue($relativeError < $this->delta, $testName . " ( $errorFormula ) => " . $relativeError  . ' > ' . $this->delta );
-                            self::$messages[] = $testName . " ( $errorFormula ) => " . $relativeError  . ', ' . $this->delta;
+                            self::$messages[] = $testName . " column: $columnName, row: $i ( $errorFormula ) => " . $relativeError  . ' < ' . $this->delta;
                         } catch(PHPUnit_Framework_ExpectationFailedException $e) {
                             $failures[] = $e->getMessage();
                         }
