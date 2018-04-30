@@ -48,7 +48,7 @@ class EtlConfiguration extends Configuration
      * must also be present in the $etlConfigReservedKeys array.
      * @var string
      */
-    const GLOBAL_DEFAULTS = "global";
+    const GLOBAL_DEFAULT_KEY = "global";
 
     /**
      * Key used to identify the JSON object key represeting a list of data endpoints
@@ -57,21 +57,29 @@ class EtlConfiguration extends Configuration
     const DATA_ENDPOINT_KEY = "endpoints";
 
     /**
-     * Key used to identify the JSON object key represeting a set of filw and directory paths
+     * Key used to identify the JSON object key represeting a set of file and directory paths
      * @var string
      */
     const PATHS_KEY = "paths";
+
+    /**
+     * Key used to identify the JSON object key represeting a set of ETL variables.
+     * @var string
+     */
+    const VARIABLES_KEY = "variables";
 
     /**
      * Reserved keys in the top level of the configuration file. ETL section names cannot use one of
      * these keys.
      * @var array
      */
-    private $etlConfigReservedKeys =
-        array("defaults",
-              self::DATA_ENDPOINT_KEY,
-              self::PATHS_KEY,
-              self::GLOBAL_DEFAULTS);
+    private $etlConfigReservedKeys = array(
+         "defaults",
+         self::DATA_ENDPOINT_KEY,
+         self::PATHS_KEY,
+         self::GLOBAL_DEFAULT_KEY,
+         self::VARIABLES_KEY
+     );
 
     /**
      * If this is a local configuration file we have the option of using global defaults from the parent.
@@ -241,7 +249,7 @@ class EtlConfiguration extends Configuration
 
         $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
-        $defaultSectionNames = array_merge(array(self::GLOBAL_DEFAULTS, self::DATA_ENDPOINT_KEY), $etlSectionNames);
+        $defaultSectionNames = array_merge(array(self::GLOBAL_DEFAULT_KEY, self::DATA_ENDPOINT_KEY), $etlSectionNames);
 
         // ------------------------------------------------------------------------------------------
         // Manage default values.  There can be a global default section, plus one for each section
@@ -288,7 +296,7 @@ class EtlConfiguration extends Configuration
                         sprintf("In section '%s', expected action object, got %s", $sectionName, gettype($actionConfig))
                     );
                 }
-                $this->applyDefaultsToAction($actionConfig, $sectionName, $this->localDefaults);
+                $this->applyDefaultsToActionConfig($actionConfig, $sectionName, $this->localDefaults);
             }
         }  // foreach ( $etlSectionNames as $typeName )
 
@@ -583,78 +591,69 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function applyDefaultsToAction(stdClass &$actionConfig, $sectionName, stdClass $defaults)
+    protected function applyDefaultsToActionConfig(stdClass &$actionConfig, $sectionName, stdClass $defaults)
     {
-        // Apply defaults where applicable and insure that a source and destination endpoint are defined
-        // for each aggregator.  We will check for errors later when instantiating the individual classes.
+        // Apply defaults where applicable. We will check for errors later when instantiating the
+        // individual classes.
 
-        // ------------------------------------------------------------------------------------------
-        // Apply local (section) defaults first as they override globals
+        // The order of precedence is local action defaults, followed by section and then global
+        // defaults. Options specified on the command line override all of these but those are
+        // handled prior to action instantiation.
 
-        if ( isset($defaults->$sectionName) ) {
-            foreach ( $defaults->$sectionName as $propertyKey => $propertyValue ) {
+        $defaultSectionKeys = array($sectionName, self::GLOBAL_DEFAULT_KEY);
+
+        foreach ( $defaultSectionKeys as $defaultSectionKey ) {
+
+            if ( ! isset($defaults->$defaultSectionKey) ) {
+                continue;
+            }
+
+            foreach ( $defaults->$defaultSectionKey as $propertyKey => $propertyValue ) {
 
                 // The action config doesn't have the property at all, set it.
 
                 if ( ! isset($actionConfig->$propertyKey) ) {
                     $actionConfig->$propertyKey = $propertyValue;
-                } elseif ( self::DATA_ENDPOINT_KEY == $propertyKey ) {
+                } elseif ( in_array($propertyKey, array(self::DATA_ENDPOINT_KEY, self::VARIABLES_KEY)) ) {
 
-                    // This is the data endpoint property. Only apply endpoints that are not defined in the
-                    // action config
+                    if ( ! is_object($propertyValue) ) {
+                        $this->logAndThrowException(
+                            sprintf(
+                                "Expected value of %s to be an object, %s provided",
+                                $propertyKey,
+                                gettype($propertyValue)
+                            )
+                        );
+                    }
 
-                    foreach ( $propertyValue as $endpointName => $endpointConfig ) {
-                        if ( ! isset($actionConfig->$propertyKey->$endpointName) ) {
-                            $actionConfig->$propertyKey->$endpointName = $endpointConfig;
+                    // Merge in any key definitions that are not already present in the action
+                    // config
+
+                    foreach ( $propertyValue as $key => $value ) {
+                        if ( ! isset($actionConfig->$propertyKey->$key) ) {
+                            $actionConfig->$propertyKey->$key = $value;
                         }
                     }
-                }  // elseif ( self::DATA_ENDPOINT_KEY == $property )
-
-            }  // foreach ( $defaults->$sectionName as $propertyKey => $value )
-        }  // if ( isset($defaults->$sectionName) )
-
-        // ------------------------------------------------------------------------------------------
-        // Apply global defaults
-
-        $globalDefaultKey = self::GLOBAL_DEFAULTS;
-
-        if ( isset($defaults->$globalDefaultKey) ) {
-            foreach ( $defaults->$globalDefaultKey as $propertyKey => $propertyValue ) {
-
-                // The action config doesn't have the property at all, set it.
-
-                if ( ! isset($actionConfig->$propertyKey) ) {
-                    $actionConfig->$propertyKey = $propertyValue;
                 }
 
-                // This is the data endpoint property. Only apply endpoints that are not defined in the
-                // action config
+            }
 
-                if ( self::DATA_ENDPOINT_KEY == $propertyKey ) {
-                    foreach ( $propertyValue as $endpointName => $endpointConfig ) {
-                        if ( ! isset($actionConfig->$propertyKey->$endpointName) ) {
-                            $actionConfig->$propertyKey->$endpointName = $endpointConfig;
-                        }
-                    }
-                }  // elseif ( self::DATA_ENDPOINT_KEY == $propertyKey )
+        }
 
-            }  // foreach ( $defaults->$globalDefaultKey as $propertyKey => $propertyValue )
-        }  // if ( isset($defaults->$globalDefaultKey )
-
-        // ------------------------------------------------------------------------------------------
         // Now apply default paths to the endpoints.
 
         $pathsKey = self::PATHS_KEY;
 
+        $globalDefaultKey = self::GLOBAL_DEFAULT_KEY;
         if ( isset($defaults->$globalDefaultKey->$pathsKey) && isset($actionConfig->endpoints) ) {
             foreach ( $actionConfig->endpoints as $endpointName => &$endpointConfig ) {
                 if ( ! isset($endpointConfig->paths) ) {
                     $endpointConfig->paths = $defaults->$globalDefaultKey->$pathsKey;
                 }
             }
-        }  // if ( isset($defaults->$globalDefaultKey->$pathsKey) && isset($actionConfig->endpoints) )
+        }
 
-    }  // applyDefaultsToAction()
+    }  // applyDefaultsToActionConfig()
 
     /** -----------------------------------------------------------------------------------------
      * Register an action and also register any data endpoints that it has.  Registered actions
