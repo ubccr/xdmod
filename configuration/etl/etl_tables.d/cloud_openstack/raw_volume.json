@@ -1,5 +1,5 @@
 {
-    "#": "Raw volume information from the Eucalyptus log files.",
+    "#": "Raw volume information from the Open Stack log files.",
 
     "#": "Note that almost any field in the raw event logs can be NULL so most fields are nullable.",
     "#": "These will be stored here and filtered out later. For example, several events with type",

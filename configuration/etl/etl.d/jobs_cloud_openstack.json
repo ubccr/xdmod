@@ -73,6 +73,8 @@
                             "volume_id"
                         ],
                         "filters": [{
+                          "#": "Open Stack records do not contain a record_type field so we determine it by looking at the",
+                          "#": "event type of a record.",
                           "type": "external",
                           "name": "jq",
                           "path": "jq",
@@ -177,7 +179,7 @@
         },
         {
             "name": "OpenStackCloudPostIngestUpdates",
-            "description": "Post-ingest updates for massaging Eucalyptus data",
+            "description": "Post-ingest updates for massaging Open Stack data",
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "class": "ExecuteSql",

@@ -1,5 +1,5 @@
 {
-    "#": "Event types are global to all cloud resources",
+    "#": "Maps Open Stack events types to existing list of events types in event_type table",
 
     "table_definition": {
         "name": "openstack_event_map",

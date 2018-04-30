@@ -1,5 +1,5 @@
 -- Update destroy times of volume assets. This updates both volumes that are destoyed
--- in volume.delete.end evens and also root volumes which are inferred from compute.instance.create
+-- in volume.delete.end events and also root volumes which are inferred from compute.instance.create
 -- events.
 
 UPDATE
