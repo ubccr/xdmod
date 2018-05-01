@@ -128,13 +128,6 @@ class EtlConfiguration extends Configuration
      */
     private $localDefaults = null;
 
-    /**
-     * An associative array of ETL variable names and values that will be added to each action,
-     * overriding any variables of the same name that are already defined for that action.
-     * @var array
-     */
-    private $variableOverrides = null;
-
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
@@ -148,8 +141,6 @@ class EtlConfiguration extends Configuration
      *   option_overrides: An array of key/value pairs (2-element arrays) containing options to
      *      either add to or override individual action options. These will be applied to all
      *      actions, if present.
-     *   variable_overrides: An array of key/value pairs containing ETL variables and values that
-     *      take precedence over those defined in configuration files or by actions.
      *   parent_defaults: The defaults class from the parent configuration file, if we are
      *      processing a configuration file in a subdirectory.
      * ------------------------------------------------------------------------------------------
@@ -184,26 +175,11 @@ class EtlConfiguration extends Configuration
                     }
                     break;
 
-                case 'variable_overrides':
-                    if ( ! is_array($value) ) {
-                        $this->logAndThrowException(sprintf("%s must be an array, %s provided", $option, gettype($value)));
-                    } elseif ( 0 !== count($value) ) {
-                        $this->variableOverrides = $value;
-                    }
-                    break;
-
                 default:
                     break;
             }
         }
 
-        // Make variable overrides available immediately
-
-        if ( null !== $this->variableOverrides ) {
-            foreach ( $this->variableOverrides as $variable => $value ) {
-                $this->variableStore->$variable = $value;
-            }
-        }
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
@@ -247,8 +223,8 @@ class EtlConfiguration extends Configuration
         // Now that the local defaults are stored in the object remove them from the config.
         unset($this->parsedConfig->defaults);
 
-        // Make all paths available as variables, although variables defined on the command line
-        // still take precedence.
+        // Make all paths available as variables, although variables defined via the
+        // 'config_variables' option (e.g., on the command line) still take precedence.
 
         foreach ( $this->localDefaults->global->paths as $variable => $value ) {
             $this->variableStore->$variable = $value;
@@ -382,7 +358,7 @@ class EtlConfiguration extends Configuration
             'local_config_dir'   => $this->localConfigDir,
             'is_local_config'    => true,
             'option_overrides'   => $this->optionOverrides,
-            'variable_overrides' => $this->variableOverrides,
+            'variable_store'     => $this->variableStore,
             'parent_defaults'    => $this->localDefaults
         );
 

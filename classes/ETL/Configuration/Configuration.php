@@ -178,13 +178,17 @@ class Configuration extends Loggable implements \Iterator
      *   These include, but are not limited to:
      *   local_config_dir: Directory to look for local configuration files
      *   is_local_config: TRUE if this filename is a local config file as opposed to the global file
-     *   variable_store: An associative array of variable and value pairs that will be used to
-     *     initialize the variable store. This is useful when parsing existing variables into a new
-     *     Configuration.
+     *   variable_store: An existing VariableStore object that will be used to initialize the list
+     *     of available configuration variables.  This is useful when passing existing variables
+     *     into a new Configuration object such as parsing local configuration files.
+     *   config_variables: An associative array of variables=value pairs that can be substituted in
+     *     the configuration file.  These variables take precedence over any that were passed in
+     *     via the variable_store option.
      *
      *   DEPRECATED:
      *   variables: An associative array of variables and their value. These may be used by
-     *     transformers to support variable substitution.
+     *     transformers to support variable substitution. NOTE: JsonReferenceTransforer must
+     *     be modified to use the VariableStore.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -228,8 +232,21 @@ class Configuration extends Loggable implements \Iterator
         $this->baseDir = \xd_utilities\resolve_path($this->baseDir);
         $this->localConfigDir = \xd_utilities\resolve_path($this->localConfigDir);
 
-        $initialVariables = ( isset($options['variable_store']) ? $options['variable_store'] : array() );
-        $this->variableStore = new VariableStore($initialVariables);
+        if ( isset($options['variable_store']) && $options['variable_store'] instanceof VariableStore ) {
+            $this->variableStore = $options['variable_store'];
+        } else {
+            $this->variableStore = new VariableStore();
+        }
+
+        // Make any configuration variables available immediately and override any existing
+        // variables. These will then be available to any local configuration files.
+
+        if ( isset($options['config_variables']) && is_array($options['config_variables']) ) {
+            foreach ( $options['config_variables'] as $variable => $value ) {
+                $this->variableStore->overwrite($variable, $value);
+            }
+        }
+
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
@@ -401,7 +418,8 @@ class Configuration extends Loggable implements \Iterator
     {
         $options = array(
             'local_config_dir' => $this->localConfigDir,
-            'is_local_config' => true
+            'is_local_config'  => true,
+            'variable_store'   => $this->variableStore
         );
 
         // The static keyword uses late binding to create an instance of the class that you called
@@ -879,6 +897,17 @@ class Configuration extends Loggable implements \Iterator
     {
         return $this->options;
     }  // getOptions()
+
+    /**
+     * ------------------------------------------------------------------------------------------
+     * @return VariableStore The VariableStore currently in use for this configuration.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getVariableStore()
+    {
+        return $this->variableStore;
+    }  // getVariableStore()
 
     /** -----------------------------------------------------------------------------------------
      * Get the configuration after applying transforms.
