@@ -13,16 +13,20 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function __construct($query_instance)
     {
         $vm_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'num_vms_ended' : 'num_vms_running';
-        parent::__construct('coalesce(sum(jf.wallduration/3600.0)/sum(jf.' . $vm_count_formula . '),0)', 'avg_wallduration_hours', 'Wall Hours Per VM', 'Hour', 2);
+        parent::__construct(
+            'coalesce(sum(jf.wallduration/3600.0)/sum(jf.' . $vm_count_formula . '),0)',
+            'avg_wallduration_hours',
+            'Average Wall Hours per VM',
+            'Hour',
+            2
+        );
     }
 
     public function getInfo()
     {
-        return "The average time, in hours, in which a virtual machine was running.<br/>
+        return "The average time in hours in which a virtual machine was running.<br/>
             In timeseries view mode, the statistic shows the average wall time per job per
-            time period. In aggregate view mode, this statistic is approximate. The
-            approximation is accurate when the average job walltime is small compared to
-            the aggregation period.<br />
+            time period. This statistic is only approximate in agggregate view.<br />
             <i>Wall Time:</i> Wall time is defined as the linear duration between the start and end times of discrete virtual machine runs.";
     }
 }

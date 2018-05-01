@@ -15,7 +15,7 @@ class CoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
             'COALESCE(SUM(jf.core_time) / 3600.0 ,0)',
             'core_time',
             'Core Hours: Total',
-            'Core Hours',
+            'Hours',
             0
         );
     }

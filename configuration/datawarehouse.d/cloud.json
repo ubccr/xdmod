@@ -68,6 +68,10 @@
                     "class": "AverageWallHoursStatistic"
                 },
                 {
+                    "name": "avg_core_time",
+                    "class": "AverageCoreHoursStatistic"
+                },
+                {
                     "name": "core_time",
                     "class": "CoreHoursStatistic"
                 },
