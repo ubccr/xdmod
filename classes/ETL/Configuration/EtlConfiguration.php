@@ -224,6 +224,36 @@ class EtlConfiguration extends Configuration
             $this->localConfigDir = $this->paths->local_config_dir;
         }
 
+        // Manage default values from the parent into defaults optionally specified for the local
+        // config.  There can be a global default section, plus one for each section defined in the
+        // configuration file (defaults are applied as long as the name of the  entries in the
+        // default and section blocks match.  If we are processing a local configuration file merge
+        // the defaults from the parent with local defaults taking precedence. If local defaults are
+        // not present but there are parent defaults, use all of them.
+
+        if ( isset($this->parsedConfig->defaults) ) {
+
+            // Note: The config object may contain nested objects so we cannot simply cast it to an
+            // array and call array_replace_recursive(). json_decode() can convert objects to arrays
+            // recursively and after the merge appears to correctly decode arrays and objects.
+
+            $parentDefaults = ( null !== $this->parentDefaults ? json_decode(json_encode($this->parentDefaults), true) : array() );
+            $localDefaults = json_decode(json_encode($this->parsedConfig->defaults), true);
+            $this->localDefaults = json_decode(json_encode(array_replace_recursive($parentDefaults, $localDefaults)));
+        } elseif ( null !== $this->parentDefaults ) {
+            $this->localDefaults = $this->parentDefaults;
+        }
+
+        // Now that the local defaults are stored in the object remove them from the config.
+        unset($this->parsedConfig->defaults);
+
+        // Make all paths available as variables, although variables defined on the command line
+        // still take precedence.
+
+        foreach ( $this->localDefaults->global->paths as $variable => $value ) {
+            $this->variableStore->$variable = $value;
+        }
+
         return parent::preTransformTasks();
 
     }  // preTransformTasks()
@@ -250,32 +280,6 @@ class EtlConfiguration extends Configuration
         $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
         $defaultSectionNames = array_merge(array(self::GLOBAL_DEFAULT_KEY, self::DATA_ENDPOINT_KEY), $etlSectionNames);
-
-        // ------------------------------------------------------------------------------------------
-        // Manage default values.  There can be a global default section, plus one for each section
-        // defined in the configuration file.  Defaults are applied as long as the name of the entries
-        // in the default and section blocks match.  If we are processing a local configuration file merge
-        // the defaults from the parent with local defaults taking precedence. If local defaults are
-        // not present but there are parent defaults, use all of them. All defaults are propogated,
-        // not only those for sections defined here.
-
-        if ( isset($config->defaults) ) {
-
-            // Note: The config object may contain nested objects so we cannot simply cast it to an
-            // array and call array_replace_recursive(). json_decode() can convert objects to arrays
-            // recursively and after the merge appears to correctly decode arrays and objects.
-
-            $parentDefaults = ( null !== $this->parentDefaults ? json_decode(json_encode($this->parentDefaults), true) : array() );
-            $localDefaults = json_decode(json_encode($config->defaults), true);
-            $this->localDefaults = json_decode(json_encode(array_replace_recursive($parentDefaults, $localDefaults)));
-
-        } elseif ( null !== $this->parentDefaults ) {
-            $this->localDefaults = $this->parentDefaults;
-        }
-
-        // Now that the local defaults are stored in the object remove them from the constructed
-        // config.
-        unset($config->defaults);
 
         // Apply global and section-specific (local) defaults. Section-specific defaults take
         // precedence over globals.
@@ -429,7 +433,7 @@ class EtlConfiguration extends Configuration
                 if ( $this->actionExists($localActionName, $localSectionName) ) {
 
                     $msg = sprintf(
-                        "Duplicate action '%s' found in '%s' section '%s'",
+                        "Duplicate action '%s' found in '%s' secti/localon '%s'",
                         $localActionName,
                         $this->filename,
                         $localSectionName
@@ -473,24 +477,37 @@ class EtlConfiguration extends Configuration
     }  // cleanup()
 
     /** -----------------------------------------------------------------------------------------
-     * Apply the base path to all relative paths in the "paths" block.
+     * Perform verification that the paths block exists in the global configuration and apply the
+     * base path to all relative paths in the "paths" block.
      * ------------------------------------------------------------------------------------------
      */
 
     protected function addBaseDirToPaths()
     {
-        // Base paths are only supported in the main configuration file.
+        // The global configuration file must have a paths block set and it must be an object.
 
-        if ( $this->isLocalConfig ) {
-            return;
+        if ( ! $this->isLocalConfig && ! isset($this->parsedConfig->paths) ) {
+            $this->logAndThrowException(sprintf(
+                "Required configuration 'paths' not found in config file: %s",
+                $this->filename
+            ));
+        } elseif ( isset($this->parsedConfig->paths) && ! is_object($this->parsedConfig->paths) ) {
+            $this->logAndThrowException(sprintf(
+                "Configuration 'paths' must be an object in config file: %s",
+                $this->filename
+            ));
         }
 
-        // The paths object must be present
+        // Warn if the paths block is found inside of the defaults rather than outside.
+
+        if ( isset($this->parsedConfig->defaults->paths) && is_object($this->parsedConfig->defaults->paths) ) {
+            $this->logger->warning("Configuration 'paths' found in 'defaults' but expected at root");
+        }
+
+        // Add the base directory to each path
 
         if ( ! isset($this->parsedConfig->paths) ) {
-            $this->logAndThrowException("Required configuration 'paths' not found in config file");
-        } elseif ( ! is_object($this->parsedConfig->paths) ) {
-            $this->logAndThrowException("Configuration 'paths' must be an object");
+            return;
         }
 
         foreach ( $this->parsedConfig->paths as $key => &$value ) {
@@ -502,13 +519,14 @@ class EtlConfiguration extends Configuration
         // Add the base directory to the paths configuration so it is easily accessible
         $this->parsedConfig->paths->base_dir = $this->baseDir;
 
-        // Place the path block into the global defaults so it is automatically propogated to all
-        // actions when defaults are applied.
+        // Place the path block into the global defaults section so it is automatically propagated
+        // to all actions when defaults are applied.
 
         if ( ! isset($this->parsedConfig->defaults) ) {
             $this->parsedConfig->defaults = new stdClass;
-            $this->parsedConfig->defaults->global = new stdClass;
-        } elseif ( ! isset($this->parsedConfig->defaults->global) ) {
+        }
+
+        if ( ! isset($this->parsedConfig->defaults->global) ) {
             $this->parsedConfig->defaults->global = new stdClass;
         }
 
@@ -635,9 +653,7 @@ class EtlConfiguration extends Configuration
                         }
                     }
                 }
-
             }
-
         }
 
         // Now apply default paths to the endpoints.

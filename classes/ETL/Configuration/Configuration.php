@@ -480,7 +480,6 @@ class Configuration extends Loggable implements \Iterator
     protected function postMergeTasks()
     {
         $this->transformedConfig = $this->substituteVariables($this->transformedConfig);
-        print_r($this->transformedConfig);
         return $this;
     }  // postMergeTasks()
 
