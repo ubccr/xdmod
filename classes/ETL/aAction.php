@@ -14,6 +14,7 @@ namespace ETL;
 
 use Log;
 use ETL\EtlOverseerOptions;
+use ETL\VariableStore;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\Configuration\Configuration;
@@ -40,6 +41,7 @@ abstract class aAction extends aEtlObject
     // variables in queries or other strings. Note that keys do not include ${}, only the name of the
     // variable.
     protected $variableMap = array();
+    protected $variableStore = null;
 
     // Path to the JSON configuration file containing ETL table and source query configurations, among
     // other things.
@@ -95,7 +97,13 @@ abstract class aAction extends aEtlObject
         $this->etlConfig = $etlConfig;
         $this->logger->info("Create action " . $this);
 
-        if ( null !== $this->options->definition_file ) {
+        $this->variableStore = new VariableStore(
+            isset($this->options->variables)
+            ? $this->options->variables
+            : null
+        );
+
+        if ( isset($this->options->definition_file) ) {
 
             // Set up the path to the definition file for this action
 
@@ -112,12 +120,10 @@ abstract class aAction extends aEtlObject
             // Parse the action definition so it is available before initialize() is called. If it
             // has already been set by a child constructor leave it alone.
 
-            $options = array();
-            foreach ( $this->options->paths as $name => $value ) {
-                $options['variables'][$name] = $value;
-            }
-
             if ( null === $this->parsedDefinitionFile ) {
+                $options = array(
+                    'variable_store' => $this->variableStore
+                );
                 $this->parsedDefinitionFile = new Configuration(
                     $this->definitionFile,
                     $this->options->paths->base_dir,

@@ -40,13 +40,25 @@ class VariableStore extends \stdClass
     /**
      * Initialize the variable store with the values, if specified.
      *
-     * @param array $variables An associative array of variable = value pairs
+     * @param mixed $store An existing VariableStore object, Traversable, or associative array of
+     *   variable = value pairs used to initialize this store.
      */
 
-    public function __construct(array $variables = array())
+    public function __construct($store = null)
     {
-        foreach ( $variables as $variable => $value ) {
-            $this->$variable = $value;
+        if ( null === $store ) {
+            return;
+        } elseif ( is_array($store) || $store instanceof \stdClass || $store instanceof \Traversable ) {
+            foreach ( $store as $variable => $value ) {
+                $this->$variable = $value;
+            }
+        } else {
+            throw new \Exception(sprintf(
+                "%s::%s() Expected array or VariableStore, got %s",
+                get_class($this),
+                __FUNCTION__,
+                gettype($store)
+            ));
         }
     }  // __construct()
 

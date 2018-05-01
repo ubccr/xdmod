@@ -148,12 +148,7 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
 
     protected function qualifyPath($path, Configuration $config)
     {
-        $options = $config->getOptions();
-        if ( array_key_exists('variables', $options) ) {
-            $variableMap = $options['variables'];
-            $path = Utilities::substituteVariables($path, $variableMap, $this);
-        }
-
+        $path = $config->getVariableStore()->substitute($path);
         return \xd_utilities\qualify_path($path, $config->getBaseDir());
     }
 }  // class JsonReferenceTransformer
