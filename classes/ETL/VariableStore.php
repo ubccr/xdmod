@@ -123,6 +123,15 @@ class VariableStore extends \stdClass
     }  // __isset()
 
     /**
+     * @return array The variables and values as an associative array.
+     */
+
+    public function toArray()
+    {
+        return $this->variables;
+    }  // toArray()
+
+    /**
      * Perform variable substitution on a string replacing any variables in the string that match
      * those in the VariableStore with their associated values.  Variables in the string are
      * identified using the ${} wrapper (e.g., ${VARIABLE}) and are case sensitive.

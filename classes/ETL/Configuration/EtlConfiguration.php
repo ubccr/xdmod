@@ -309,8 +309,24 @@ class EtlConfiguration extends Configuration
             }
 
             $this->addSection($sectionName);
+            $priorityVariables = $this->variableStore->toArray();
 
             foreach ( $config->$sectionName as &$actionConfig ) {
+
+                // At this point, the variables specified in the action configuration don't contain
+                // priority variables such as those defined on the command line or the path
+                // variables so merge them together.
+
+                if ( 0 != count($priorityVariables) ) {
+                    if ( ! isset($actionConfig->variables) ) {
+                        $actionConfig->variables = $priorityVariables;
+                    } else {
+                        $actionConfig->variables = (object) array_replace(
+                            (array) $actionConfig->variables,
+                            $priorityVariables
+                        );
+                    }
+                }
 
                 // Intercept the action configuration and add/override options provided on the
                 // command line.
