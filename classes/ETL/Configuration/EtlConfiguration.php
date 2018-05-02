@@ -44,41 +44,16 @@ class EtlConfiguration extends Configuration
 {
 
     /**
-     * The key used to identify global defaults to apply across all sections regardless of name. This
-     * must also be present in the $etlConfigReservedKeys array.
-     * @var string
-     */
-    const GLOBAL_DEFAULT_KEY = "global";
-
-    /**
-     * Key used to identify the JSON object key represeting a list of data endpoints
-     * @var string
-     */
-    const DATA_ENDPOINT_KEY = "endpoints";
-
-    /**
-     * Key used to identify the JSON object key represeting a set of file and directory paths
-     * @var string
-     */
-    const PATHS_KEY = "paths";
-
-    /**
-     * Key used to identify the JSON object key represeting a set of ETL variables.
-     * @var string
-     */
-    const VARIABLES_KEY = "variables";
-
-    /**
      * Reserved keys in the top level of the configuration file. ETL section names cannot use one of
      * these keys.
      * @var array
      */
     private $etlConfigReservedKeys = array(
-         "defaults",
-         self::DATA_ENDPOINT_KEY,
-         self::PATHS_KEY,
-         self::GLOBAL_DEFAULT_KEY,
-         self::VARIABLES_KEY
+         'defaults',
+         'endpoints',
+         'paths',
+         'global',
+         'variables'
      );
 
     /**
@@ -249,7 +224,7 @@ class EtlConfiguration extends Configuration
 
         $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
-        $defaultSectionNames = array_merge(array(self::GLOBAL_DEFAULT_KEY, self::DATA_ENDPOINT_KEY), $etlSectionNames);
+        $defaultSectionNames = array_merge(array('global', 'endpoints'), $etlSectionNames);
 
         // Apply global and section-specific (local) defaults. Section-specific defaults take
         // precedence over globals.
@@ -612,7 +587,7 @@ class EtlConfiguration extends Configuration
         // defaults. Options specified on the command line override all of these but those are
         // handled prior to action instantiation.
 
-        $defaultSectionKeys = array($sectionName, self::GLOBAL_DEFAULT_KEY);
+        $defaultSectionKeys = array($sectionName, 'global');
 
         foreach ( $defaultSectionKeys as $defaultSectionKey ) {
 
@@ -626,7 +601,7 @@ class EtlConfiguration extends Configuration
 
                 if ( ! isset($actionConfig->$propertyKey) ) {
                     $actionConfig->$propertyKey = $propertyValue;
-                } elseif ( in_array($propertyKey, array(self::DATA_ENDPOINT_KEY, self::VARIABLES_KEY)) ) {
+                } elseif ( in_array($propertyKey, array('endpoints', 'variables')) ) {
 
                     if ( ! is_object($propertyValue) ) {
                         $this->logAndThrowException(
@@ -652,13 +627,10 @@ class EtlConfiguration extends Configuration
 
         // Now apply default paths to the endpoints.
 
-        $pathsKey = self::PATHS_KEY;
-
-        $globalDefaultKey = self::GLOBAL_DEFAULT_KEY;
-        if ( isset($defaults->$globalDefaultKey->$pathsKey) && isset($actionConfig->endpoints) ) {
+        if ( isset($defaults->global->paths) && isset($actionConfig->endpoints) ) {
             foreach ( $actionConfig->endpoints as $endpointName => &$endpointConfig ) {
                 if ( ! isset($endpointConfig->paths) ) {
-                    $endpointConfig->paths = $defaults->$globalDefaultKey->$pathsKey;
+                    $endpointConfig->paths = $defaults->global->paths;
                 }
             }
         }
@@ -743,8 +715,7 @@ class EtlConfiguration extends Configuration
             // for each unique key. We need to register the endpoints first because the actions will
             // need the keys when they are executed.
 
-            $endpointKey = self::DATA_ENDPOINT_KEY;
-            foreach ($config->$endpointKey as $endpointName => $endpointConfig) {
+            foreach ($config->endpoints as $endpointName => $endpointConfig) {
                 try {
                     $this->addDataEndpoint($endpointConfig);
                 } catch (Exception $e) {
@@ -753,15 +724,15 @@ class EtlConfiguration extends Configuration
                         . $e->getMessage()
                     );
                 }
-            }  // foreach ($config->$endpointKey as $endpointName => $endpointConfig)
+            }  // foreach ($config->endpoints as $endpointName => $endpointConfig)
 
             foreach ( $config as $key => $value ) {
 
                 // The source, destination, and utility entries are data endpoints and need the key to
                 // reference the endpoints.
 
-                if ( self::DATA_ENDPOINT_KEY == $key ) {
-                    foreach ($config->$endpointKey as $endpointName => $endpointConfig) {
+                if ( 'endpoints' == $key ) {
+                    foreach ($config->endpoints as $endpointName => $endpointConfig) {
                         if ( isset($endpointConfig->key) ) {
                             $options->$endpointName = $endpointConfig->key;
                         }
