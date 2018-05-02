@@ -250,7 +250,7 @@ class Configuration extends Loggable implements \Iterator
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
-     * Initialize the configuration object.
+     * Initialize the configuration objecton
      * ------------------------------------------------------------------------------------------
      */
 
@@ -379,8 +379,9 @@ class Configuration extends Loggable implements \Iterator
 
     private function transform()
     {
-        // To keep the original parsed config we need to use unserialize(serialize()) to
-        // break the reference.
+        // Objects are passed by reference so to keep the original parsed config we need to use
+        // unserialize(serialize()) to break the reference. Cloning only produces a shallow copy and
+        // any properties that are references to other variables will remain references
 
         $tmp = unserialize(serialize($this->parsedConfig));
         $this->transformedConfig = $this->processKeyTransformers($tmp);

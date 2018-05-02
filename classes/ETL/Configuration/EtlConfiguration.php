@@ -121,13 +121,6 @@ class EtlConfiguration extends Configuration
      */
     private $paths = null;
 
-    /**
-     * Local default values merged with parent defaults. Note that local defaults take precedence
-     * and parent default values are used only when local values are not present.
-     * @var stdClass
-     */
-    private $localDefaults = null;
-
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
@@ -196,16 +189,18 @@ class EtlConfiguration extends Configuration
 
         $this->addBaseDirToPaths();
 
-        if ( isset($this->paths->local_config_dir) ) {
-            $this->localConfigDir = $this->paths->local_config_dir;
+        if ( isset($this->parsedConfig->defaults->global->paths->local_config_dir) ) {
+            $this->localConfigDir = $this->parsedConfig->defaults->global->paths->local_config_dir;
         }
-
-        // Manage default values from the parent into defaults optionally specified for the local
-        // config.  There can be a global default section, plus one for each section defined in the
-        // configuration file (defaults are applied as long as the name of the  entries in the
-        // default and section blocks match.  If we are processing a local configuration file merge
+        // Merge default values from the parent into defaults optionally specified for the local
+        // config.  There can be a set of global defaults, plus one set for each section defined in
+        // the configuration file (defaults are applied as long as the name of the entries in the
+        // default and section blocks match).  If we are processing a local configuration file merge
         // the defaults from the parent with local defaults taking precedence. If local defaults are
-        // not present but there are parent defaults, use all of them.
+        // not present use all of the parent defaults.
+        //
+        // NOTE: Since path variables must be available during the transform step the merging of
+        // local and parent defaults needs to happen in preTransformTasks().
 
         if ( isset($this->parsedConfig->defaults) ) {
 
@@ -215,18 +210,17 @@ class EtlConfiguration extends Configuration
 
             $parentDefaults = ( null !== $this->parentDefaults ? json_decode(json_encode($this->parentDefaults), true) : array() );
             $localDefaults = json_decode(json_encode($this->parsedConfig->defaults), true);
-            $this->localDefaults = json_decode(json_encode(array_replace_recursive($parentDefaults, $localDefaults)));
+            $this->parsedConfig->defaults = json_decode(json_encode(array_replace_recursive($parentDefaults, $localDefaults)));
         } elseif ( null !== $this->parentDefaults ) {
-            $this->localDefaults = $this->parentDefaults;
+            $this->parsedConfig->defaults = $this->parentDefaults;
         }
 
-        // Now that the local defaults are stored in the object remove them from the config.
-        unset($this->parsedConfig->defaults);
-
         // Make all paths available as variables, although variables defined via the
-        // 'config_variables' option (e.g., on the command line) still take precedence.
+        // 'config_variables' option (e.g., on the command line) still take precedence. The paths
+        // need to be available for the transformers and can only contain variables specified by the
+        // 'config_variables' option.
 
-        foreach ( $this->localDefaults->global->paths as $variable => $value ) {
+        foreach ( $this->parsedConfig->defaults->global->paths as $variable => $value ) {
             $this->variableStore->$variable = $value;
         }
 
@@ -276,7 +270,7 @@ class EtlConfiguration extends Configuration
                         sprintf("In section '%s', expected action object, got %s", $sectionName, gettype($actionConfig))
                     );
                 }
-                $this->applyDefaultsToActionConfig($actionConfig, $sectionName, $this->localDefaults);
+                $this->applyDefaultsToActionConfig($actionConfig, $sectionName, $this->transformedConfig->defaults);
             }
         }  // foreach ( $etlSectionNames as $typeName )
 
@@ -288,15 +282,15 @@ class EtlConfiguration extends Configuration
 
         $this->endpoints = array();
 
-        if ( ! $this->isLocalConfig && isset($this->localDefaults->global->endpoints->utility) ) {
+        if ( ! $this->isLocalConfig && isset($this->transformedConfig->defaults->global->endpoints->utility) ) {
             $name = 'utility';
             try {
-                $endpoint = $this->addDataEndpoint($this->localDefaults->global->endpoints->utility);
+                $endpoint = $this->addDataEndpoint($this->transformedConfig->defaults->global->endpoints->utility);
                 $this->globalEndpoints[$name] = $endpoint->getKey();
             } catch (Exception $e) {
                 $this->logAndThrowException("Error registering default endpoint '$name': " . $e->getMessage());
             }
-        }  // if ( isset(($this->localDefaults->global->endpoints) )
+        }
 
         // --------------------------------------------------------------------------------
         // Register individual actions discovered in the configuration file
@@ -375,7 +369,7 @@ class EtlConfiguration extends Configuration
             'is_local_config'    => true,
             'option_overrides'   => $this->optionOverrides,
             'variable_store'     => $this->variableStore,
-            'parent_defaults'    => $this->localDefaults
+            'parent_defaults'    => $this->transformedConfig->defaults
         );
 
         $localConfigObj = new EtlConfiguration($localConfigFile, $this->baseDir, $this->logger, $options);
@@ -455,6 +449,18 @@ class EtlConfiguration extends Configuration
 
     }  // merge()
 
+    /**
+     * @see Configuration::postMergeTasts()
+     */
+
+    protected function postMergeTasks()
+    {
+        // Clean up default values that are no longer needed after processing the config
+        unset($this->parsedConfig->defaults);
+        unset($this->transformedConfig->defaults);
+        return parent::postMergeTasks();
+    }  // postMergeTasks()
+
     /** -----------------------------------------------------------------------------------------
      * Clean up intermediate information that we don't need to keep around after processing. This
      * includes parsed and constructed JSON as well as defaults.
@@ -465,7 +471,6 @@ class EtlConfiguration extends Configuration
     {
         parent::cleanup();
         $this->parentDefaults = null;
-        $this->localDefaults = null;
     }  // cleanup()
 
     /** -----------------------------------------------------------------------------------------
@@ -512,7 +517,7 @@ class EtlConfiguration extends Configuration
         $this->parsedConfig->paths->base_dir = $this->baseDir;
 
         // Place the path block into the global defaults section so it is automatically propagated
-        // to all actions when defaults are applied.
+        // to all actions when defaults are applied and remove it from the config.
 
         if ( ! isset($this->parsedConfig->defaults) ) {
             $this->parsedConfig->defaults = new stdClass;
@@ -523,9 +528,6 @@ class EtlConfiguration extends Configuration
         }
 
         $this->parsedConfig->defaults->global->paths = $this->parsedConfig->paths;
-
-        // Save it for later and remove it from the config.
-
         $this->paths = $this->parsedConfig->paths;
         unset($this->parsedConfig->paths);
 
