@@ -1,0 +1,35 @@
+{
+    "#": "Load unique accounts into the dimension table. Do not load unknown accounts as these are",
+    "#": "handled by a separate action. Accounts in Open Stack can be accessed by multiple users",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/account.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "provider_account": "raw.project_id",
+            "display": "raw.project_name"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            }
+        ],
+
+        "where": [
+            "raw.project_id IS NOT NULL"
+        ],
+
+        "groupby": [
+            "raw.resource_id",
+            "raw.project_id"
+        ]
+    }
+}

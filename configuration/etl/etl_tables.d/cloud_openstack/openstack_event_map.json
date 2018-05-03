@@ -1,0 +1,44 @@
+{
+    "#": "Maps Open Stack events types to existing list of events types in event_type table",
+
+    "table_definition": {
+        "name": "openstack_event_map",
+        "engine": "MyISAM",
+        "comment": "Maps Open Stack events to list of defined events in event_type table",
+        "columns": [
+            {
+                "name": "openstack_event_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "event_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Unknown = -1 for global dimensions"
+            },
+	    {
+		"name": "openstack_event_type",
+		"type": "varchar(256)",
+		"nullable": true
+	    }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "openstack_event_type_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "openstack_event_type",
+                "columns": [
+                    "openstack_event_type"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

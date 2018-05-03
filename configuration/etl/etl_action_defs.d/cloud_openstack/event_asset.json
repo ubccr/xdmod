@@ -1,0 +1,39 @@
+{
+    "#": "Associate events with assets. Only volume assets are associated as they are",
+    "#": "the only assets that we have data for to associate with instances using the",
+    "#": "volume_id field. See also event_asset_root_volume.def.json",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/event_asset.json#/table_definition"
+        }
+    ],
+
+    "#": "Also bring in root volumes",
+
+    "source_query": {
+        "records": {
+            "resource_id": "staging.resource_id",
+            "event_id": "staging.event_id",
+            "asset_id": "a.asset_id"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_staging_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "staging"
+            },
+            {
+                "name": "asset",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "a",
+                "on": "a.resource_id = staging.resource_id AND a.provider_identifier = staging.volume_id"
+            }
+        ],
+
+        "where": [
+            "staging.volume_id IS NOT NULL"
+        ]
+    }
+}

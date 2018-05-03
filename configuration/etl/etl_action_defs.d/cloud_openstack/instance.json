@@ -1,0 +1,46 @@
+{
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/instance.json#/table_definition"
+        }
+    ],
+
+    "#": "Note that there are events that do not include an account number/identifier.",
+    "#": "Note that there are events that do not include an instance identifier.",
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "account_id": "COALESCE(act.account_id, 1)",
+            "provider_identifier": "COALESCE(raw.provider_instance_identifier, 'unknown')",
+            "person_id": "COALESCE(u.account_id, 1)"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            },
+            {
+                "name": "account",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "act",
+                "on": "act.provider_account = raw.project_id",
+                "type": "LEFT OUTER"
+            },
+            {
+                "name": "user",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "u",
+                "on": "u.provider_account = raw.user_id",
+                "type": "LEFT OUTER"
+            }
+        ],
+
+        "groupby": [
+            "raw.resource_id",
+            "raw.provider_instance_identifier"
+        ]
+    }
+}
