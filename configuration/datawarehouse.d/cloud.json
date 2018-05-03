@@ -84,20 +84,8 @@
                     "class": "MinCoresReservedStatistic"
                 },
                 {
-                    "name": "min_memory_mb",
-                    "class": "MinMemoryReservedStatistic"
-                },
-                {
                     "name": "max_num_cores",
                     "class": "MaxCoresReservedStatistic"
-                },
-                {
-                    "name": "max_disk_gb",
-                    "class": "MaxDiskReservedStatistic"
-                },
-                {
-                    "name": "max_memory_mb",
-                    "class": "MaxMemoryReservedStatistic"
                 },
                 {
                     "name": "weighted_num_cores",
