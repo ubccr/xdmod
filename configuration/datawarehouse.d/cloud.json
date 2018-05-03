@@ -96,19 +96,19 @@
                     "class": "WeightedCoreWallStatistic"
                 },
                 {
-                    "name": "memory_reservation",
+                    "name": "memory_reserved",
                     "class": "MemoryReservationStatistic"
                 },
                 {
-                    "name": "disk_reservation",
+                    "name": "disk_reserved",
                     "class": "DiskReservationStatistic"
                 },
                 {
-                    "name": "avg_memory_reservation",
+                    "name": "avg_memory_reserved",
                     "class": "AverageMemoryReservationStatistic"
                 },
                 {
-                    "name": "avg_disk_reservation",
+                    "name": "avg_disk_reserved",
                     "class": "AverageDiskReservationStatistic"
                 }
             ]
