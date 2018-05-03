@@ -37,16 +37,16 @@ CASE
       ${src_start_ts} < ${dest_start_ts}
       AND ${src_end_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts}
     )
-    THEN ${statistic} * ( ${src_end_ts} - ${dest_start_ts} + 1 ) / ( ${src_end_ts} - ${src_start_ts} + 1 )
+    THEN ${statistic} * ( ${src_end_ts} - ${dest_start_ts}) / ( ${src_end_ts} - ${src_start_ts})
   WHEN (
         ${src_start_ts} BETWEEN ${dest_start_ts} AND ${dest_end_ts}
         AND ${src_end_ts} > ${dest_end_ts}
     )
-    THEN ${statistic} * ( ${dest_end_ts} - ${src_start_ts} + 1 ) / (${src_end_ts} - ${src_start_ts} + 1 )
+    THEN ${statistic} * ( ${dest_end_ts} - ${src_start_ts} + 1 ) / (${src_end_ts} - ${src_start_ts})
   WHEN (
       ${src_start_ts} < ${dest_start_ts}
       AND ${src_end_ts} > ${dest_end_ts}
     )
-    THEN ${statistic} * ${max} / ( ${src_end_ts} - ${src_start_ts} + 1 )
+    THEN ${statistic} * ${max} / ( ${src_end_ts} - ${src_start_ts})
   ELSE ${statistic}
 END

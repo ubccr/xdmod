@@ -75,13 +75,13 @@ class Aggregator extends Loggable
                     THEN $stat
                 WHEN ($s1 < $s2 AND
                         $e1 BETWEEN $s2 AND $e2 )
-                    THEN $stat * ($e1 - $s2 + 1) / ($e1 - $s1 + 1 )
+                    THEN $stat * ($e1 - $s2) / ($e1 - $s1)
                 WHEN ($s1 BETWEEN $s2 AND $e2 AND
                         $e1 > $e2 )
-                    THEN	 $stat * ( $e2 - $s1 + 1 ) / ($e1 - $s1 + 1 )
+                    THEN	 $stat * ( $e2 - $s1 + 1 ) / ($e1 - $s1)
                 WHEN ($s1 < $s2 AND
                         $e1 > $e2 )
-                    THEN	$stat * ( $max ) / ($e1 - $s1 + 1 )
+                    THEN	$stat * ( $max ) / ($e1 - $s1)
                 ELSE $stat
             END";
     }
@@ -99,13 +99,13 @@ class Aggregator extends Loggable
                     THEN $stat
                 WHEN ($s1 < $s2 AND
                         $e1 BETWEEN $s2 AND $e2 )
-                    THEN CAST( $stat * ($e1 - $s2 + 1) / ($e1 - $s1 + 1) AS $dtype )
+                    THEN CAST( $stat * ($e1 - $s2) / ($e1 - $s1) AS $dtype )
                 WHEN ($s1 BETWEEN $s2 AND $e2 AND
                         $e1 > $e2 )
-                   THEN CAST( $stat * ( $e2 - $s1 + 1) / ($e1 - $s1 + 1) AS $dtype )
+                   THEN CAST( $stat * ( $e2 - $s1 + 1) / ($e1 - $s1) AS $dtype )
                 WHEN ($s1 < $s2 AND
                         $e1 > $e2 )
-                    THEN CAST( $stat * ( $max ) / ($e1 - $s1 + 1) AS $dtype )
+                    THEN CAST( $stat * ( $max ) / ($e1 - $s1) AS $dtype )
                 ELSE $stat
             END";
     }
