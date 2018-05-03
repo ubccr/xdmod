@@ -76,6 +76,10 @@
                     "class": "CoreHoursStatistic"
                 },
                 {
+                    "name": "avg_num_cores",
+                    "class": "AverageCoresReservedStatistic"
+                },
+                {
                     "name": "num_cores",
                     "class": "CoresReservedStatistic"
                 },
@@ -98,6 +102,14 @@
                 {
                     "name": "disk_reservation",
                     "class": "DiskReservationStatistic"
+                },
+                {
+                    "name": "avg_memory_reservation",
+                    "class": "AverageMemoryReservationStatistic"
+                },
+                {
+                    "name": "avg_disk_reservation",
+                    "class": "AverageDiskReservationStatistic"
                 }
             ]
         }

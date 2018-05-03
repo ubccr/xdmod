@@ -22,7 +22,7 @@ class WeightedCoreWallStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'Weighted average core size of VM instances, weighted by core time.<br/>
+        return 'The number of cores reserved by VM instances, weighted by core time.<br/>
             <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.';
     }
 }

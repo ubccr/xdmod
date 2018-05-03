@@ -16,14 +16,15 @@ class AverageCoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
             'COALESCE((SUM(jf.core_time) / 3600.0) / SUM(jf.' . $vm_count_formula . '),0)',
             'avg_core_time',
             'Average Core Hours Per VM',
-            'Hour',
+            'Hours',
             0
         );
     }
 
     public function getInfo()
     {
-        return 'The average core reservation time of virtual machines, in hours. Approximation only in aggregate view.<br/>
-            <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.';
+        return 'The average core time of virtual machines, in hours in a given period.<br/><i>Only approximate in aggregate view.</i><br/>
+            <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.<br/>
+            <i>Core Time:</i> A product of the number of cores reserved by a VM and its wall time.';
     }
 }
