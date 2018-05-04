@@ -66,8 +66,7 @@ function main()
         array('q', 'quiet'),
         array('',  'config-files'),
         array('',  'databases'),
-        array('',  'current-version:'),
-        array('',  'batch-mode'),
+        array('',  'current-version:')
     );
 
     $shortOptions = implode(
@@ -299,11 +298,5 @@ Usage: xdmod-upgrade [-v]
         databases that you are upgrading.  This option is necessary when
         the version number in portal_settings.ini does not match the
         version of your config files and databases.
-
-    --batch-mode
-        Automatically run the upgrade process without any interactive
-        prompts. WARNING THIS WILL UPDATE THE FILES AND DATABASE WITHOUT
-        ANY OTHER CONFIRMATION PROMPTS.
-
 EOF;
 }
