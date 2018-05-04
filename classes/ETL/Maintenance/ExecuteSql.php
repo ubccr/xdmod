@@ -140,8 +140,8 @@ class ExecuteSql extends aAction implements iAction
             'LAST_MODIFIED_END_DATE'
         );
 
-        $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableMap, $this->destinationEndpoint);
-        $this->variableMap = array_merge($this->variableMap, $localVariableMap);
+        $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableStore, $this->destinationEndpoint);
+        $this->variableStore->add($localVariableMap, true);
 
         $this->initialized = true;
 
@@ -196,10 +196,8 @@ class ExecuteSql extends aAction implements iAction
             $this->logger->info("Processing SQL file '$filename' with delimiter '$delimiter'");
 
             $sqlFileContents = file_get_contents($filename);
-            $sqlFileContents = Utilities::substituteVariables(
+            $sqlFileContents = $this->variableStore->substitute(
                 $sqlFileContents,
-                $this->variableMap,
-                $this,
                 "Undefined macros found in SQL"
             );
 

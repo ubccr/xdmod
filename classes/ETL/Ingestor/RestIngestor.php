@@ -246,15 +246,10 @@ class RestIngestor extends aIngestor implements iAction
 
         if ( null !== $this->etlSourceQuery ) {
 
-            $sql = $this->etlSourceQuery->getSql();
-            if ( null !== $this->variableMap ) {
-                $sql = Utilities::substituteVariables(
-                    $sql,
-                    $this->variableMap,
-                    $this,
-                    "Undefined macros found in SQL"
-                );
-            }
+            $sql = $this->variableStore->substitute(
+                $this->etlSourceQuery->getSql(),
+                "Undefined macros found in SQL"
+            );
 
             $this->logger->debug("REST source query:\n$sql");
             $this->etlSourceQueryResult = $this->utilityHandle->query($sql, array(), true);
@@ -574,7 +569,7 @@ class RestIngestor extends aIngestor implements iAction
 
         foreach( $this->restRequestConfig->parameters as $parameter => $value ) {
 
-            $value = Utilities::substituteVariables($value, $this->variableMap);
+            $value = $this->variableStore->substitute($value);
             $this->setParameter($parameter, $value);
             $numParameters++;
 

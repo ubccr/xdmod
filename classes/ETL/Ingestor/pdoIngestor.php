@@ -315,16 +315,10 @@ class pdoIngestor extends aIngestor
             );
         }
 
-        $sql = $this->etlSourceQuery->getSql();
-
-        if ( null !== $this->variableMap ) {
-            $sql = Utilities::substituteVariables(
-                $sql,
-                $this->variableMap,
-                $this,
-                "Undefined macros found in source query"
-            );
-        }
+        $sql = $this->variableStore->substitute(
+            $this->etlSourceQuery->getSql(),
+            "Undefined macros found in source query"
+        );
 
         return $sql;
 

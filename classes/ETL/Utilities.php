@@ -297,26 +297,26 @@ class Utilities
     }  // createPdoBindVarsFromArrayKeys()
 
     /* ------------------------------------------------------------------------------------------
-     * Given a list of variable names and a variable map, generate an array containing a
-     * list of all variables names present in the map with the valus quoted as appropriate
+     * Given a list of variable names and a variable store, generate an array containing a
+     * list of all variables names present in the map with the values quoted as appropriate
      * for the specified data endpoint. Variables with a NULL value will be ignored.
      *
-     * @param $variables An array of variable names to be quoted
-     * @param $variableMap An associative array of tuples (variable, value) used to map
-     *   variables to the given value
-     * @param $endpoint The DataEndpoint to use when quoting the variable valye
+     * @param array $variables An array of variable names to be quoted
+     * @param VariableStore $variableStore An associative array of tuples (variable, value) used to
+     *   map variables to the given value
+     * @param iDataEndpoint $endpoint The DataEndpoint to use when quoting the variable valye
      *
-     * @return An associative array of tuples (variable, quoted value)
+     * @return array An associative array of tuples (variable, quoted value)
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function quoteVariables(array $variables, array $variableMap, \ETL\DataEndpoint\iDataEndpoint $endpoint)
+    public static function quoteVariables(array $variables, VariableStore $variableStore, \ETL\DataEndpoint\iDataEndpoint $endpoint)
     {
         $localVariableMap = array();
 
         foreach ( $variables as $var ) {
-            if ( array_key_exists($var, $variableMap) && null !== $variableMap[$var] ) {
-                $localVariableMap[$var] = $endpoint->quote($variableMap[$var]);
+            if ( isset($variableStore->$var) ) {
+                $localVariableMap[$var] = $endpoint->quote($variableStore->$var);
             }
         }
 
