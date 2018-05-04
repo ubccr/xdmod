@@ -37,7 +37,7 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
             "
                 100.0 * (
                     COALESCE(
-                        SUM(jf.cpu_time / 3600.0)
+                        SUM(jf.cpu_time)
                         /
                         (
                             SELECT SUM( ra.percent * inner_days.hours * rs.processors / 100.0 )
@@ -55,7 +55,7 @@ class UtilizationStatistic extends \DataWarehouse\Query\Jobs\Statistic
                                 ) <> 0
                         ),
                         0
-                    )
+                    ) /3600.0
                 )
             ",
             'utilization',

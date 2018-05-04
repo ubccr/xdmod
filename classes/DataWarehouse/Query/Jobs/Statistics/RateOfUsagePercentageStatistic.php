@@ -26,10 +26,35 @@ class RateOfUsagePercentageStatistic extends \DataWarehouse\Query\Jobs\Statistic
                  ), 1.0)";
 
         parent::__construct(
-            "100.00*coalesce((sum(jf.local_charge_su)/".($query_instance != null ? $query_instance->getDurationFormula() : 1) . ")
+            "100.00
+            *
+            COALESCE(
+                (
+                    SUM(jf.local_charge_su)
+                    /
+                    " . ($query_instance != null ? $query_instance->getDurationFormula() : 1) . "
+                )
                 /
-                (select sum(alc.base_allocation*$coversion_factor_statement/((unix_timestamp(alc.end_date) - unix_timestamp(alc.initial_start_date))/3600.0)) from modw.allocation alc where find_in_set(alc.id,group_concat(distinct jf.allocation_id)) <> 0 ),0)
-            ",
+                (
+                    SELECT
+                        SUM(
+                            alc.base_allocation
+                            *
+                            $coversion_factor_statement
+                            /
+                            (
+                                (unix_timestamp(alc.end_date) - unix_timestamp(alc.initial_start_date))
+                            )
+                        )
+                    FROM
+                        modw.allocation alc
+                    WHERE
+                        find_in_set(alc.id, GROUP_CONCAT(DISTINCT jf.allocation_id)) <> 0
+                )
+                ,0
+            )
+            /
+            3600.0",
             'burn_rate',
             'Allocation Burn Rate',
             '%',

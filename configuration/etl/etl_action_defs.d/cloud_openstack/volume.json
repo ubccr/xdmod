@@ -1,0 +1,37 @@
+{
+    "#": "Load information about volumes created from the volume.create.start event",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/asset.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "raw.resource_id",
+            "account_id": "act.account_id",
+            "provider_identifier": "raw.openstack_resource_id",
+            "create_time_utc": "raw.event_time_utc",
+            "size": "raw.size"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_raw_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "raw"
+            },
+            {
+                "name": "account",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "act",
+                "on": "act.provider_account = raw.project_id"
+            }
+        ],
+
+      	"where": [
+      		"raw.event_type = 'volume.create.start'"
+      	]
+    }
+}

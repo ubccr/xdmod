@@ -14,28 +14,27 @@ class SEMAverageWallHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
     {
         $job_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'ended_job_count' : 'running_job_count';
         parent::__construct(
-            'COALESCE(
-                SQRT(
+            'SQRT(
+                COALESCE(
                     (
-                        SUM(jf.sum_wallduration_squared)
-                        /
-                        SUM(jf.' . $job_count_formula . ')
+                        (
+                            SUM(jf.sum_wallduration_squared)
+                            /
+                            SUM(jf.' . $job_count_formula . ')
+                        )
+                        -
+                        POW
+                        (
+                            SUM(jf.wallduration)
+                            /
+                            SUM(jf.' . $job_count_formula . ')
+                            , 2
+                        )
                     )
-                    -
-                    POW(
-                        SUM(jf.wallduration)
-                        /
-                        SUM(jf.' . $job_count_formula . ')
-                        ,
-                        2
-                    )
-                )
-                /
-                SQRT(
+                    /
                     SUM(jf.' . $job_count_formula . ')
+                    , 0
                 )
-                ,
-                0
             )
             /
             3600.0',

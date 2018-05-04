@@ -12,7 +12,7 @@ class AverageCPUHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(sum(jf.cpu_time/3600.0)/sum(jf.running_job_count),0)', 'avg_cpu_hours', 'CPU Hours: Per Job', 'CPU Hour', 2);
+        parent::__construct('coalesce(sum(jf.cpu_time)/sum(jf.running_job_count),0)/3600.0', 'avg_cpu_hours', 'CPU Hours: Per Job', 'CPU Hour', 2);
     }
 
     public function getInfo()

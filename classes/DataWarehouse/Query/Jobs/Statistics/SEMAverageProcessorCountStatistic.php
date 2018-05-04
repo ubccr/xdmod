@@ -14,27 +14,31 @@ class SEMAverageProcessorCountStatistic extends \DataWarehouse\Query\Jobs\Statis
     {
         $job_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'ended_job_count' : 'running_job_count';
         parent::__construct(
-            'COALESCE(
-                SQRT(
+            'SQRT(
+                COALESCE(
                     (
-                        SUM(
-                            POW(jf.processor_count,2)
-                            *
-                            jf.ended_job_count
+                        (
+                            SUM(
+                                POW(jf.processor_count, 2)
+                                *
+                                jf.ended_job_count
+                            )
+                            /
+                            SUM(jf.'.$job_count_formula.')
                         )
-                        /
-                        SUM(jf.'.$job_count_formula.')
+                        -
+                        POW(
+                            SUM(jf.processor_count * jf.'.$job_count_formula.')
+                            /
+                            SUM(jf.'.$job_count_formula.')
+                            , 2
+                        )
                     )
-                    -
-                    POW(
-                        SUM(jf.processor_count * jf.'.$job_count_formula.')
-                        /
-                        SUM(jf.'.$job_count_formula.'),
-                    2)
+                    /
+                    SUM(jf.'.$job_count_formula.')
+                    , 0
                 )
-                /
-                SQRT(SUM(jf.'.$job_count_formula.')),
-            0)',
+            )',
             'sem_avg_processors',
             'Std Dev: Job Size: Per Job',
             'Core Count',
