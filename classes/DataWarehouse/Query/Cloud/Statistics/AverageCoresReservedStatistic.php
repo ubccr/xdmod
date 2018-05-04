@@ -15,7 +15,7 @@ class AverageCoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.num_cores) / SUM(jf.' . $vm_count_formula . '),0)',
             'avg_num_cores',
-            'Cores Reserved: Average',
+            'Cores Reserved: Average Per VM',
             'Cores',
             0
         );

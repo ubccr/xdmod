@@ -20,12 +20,12 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public static function getLabel()
     {
-        return 'Memory Usage';
+        return 'VM Size: Memory';
     }
 
     public function getInfo()
     {
-        return "The amount of memory utilized by a VM.";
+        return "A categorization of virtual machines into discrete groups based on the amound of memory reserved by each VM.";
     }
 
     public function __construct()

@@ -14,7 +14,7 @@ class DiskReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.disk_reserved) / SUM(jf.wallduration),0)',
             'disk_reserved',
-            'Disk Space Reserved',
+            'Disk Space Utilized Per Period',
             'Bytes',
             0
         );
@@ -22,7 +22,7 @@ class DiskReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The amount of disk space in bytes reserved by virtual machines.<br/>
+        return 'The amount of disk space in bytes reserved by virtual machines divided by wall duration.<br/>
             <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.';
     }
 }

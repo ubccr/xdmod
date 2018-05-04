@@ -14,7 +14,7 @@ class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.memory_reserved) / SUM(jf.wallduration),0)',
             'memory_reserved',
-            'Memory Reserved',
+            'Memory Utilized Per Period',
             'Bytes',
             0
         );
@@ -22,7 +22,7 @@ class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The amount of memory in bytes reserved by virtual machines.<br/>
+        return 'The amount of memory in bytes reserved by virtual machines divided by wall duration.<br/>
             <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.';
     }
 }

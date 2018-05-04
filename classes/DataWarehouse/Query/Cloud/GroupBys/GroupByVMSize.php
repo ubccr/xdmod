@@ -38,12 +38,12 @@ class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return 	"A categorization of VM instances into discrete groups based on the number of cores used by each job.";
+        return 	"A categorization of virtual machines into discrete groups based on the number of cores used by each VM.";
     }
 
     public static function getLabel()
     {
-        return 'VM Size';
+        return 'VM Size: Cores';
     }
 
     public function getDefaultDatasetType()
