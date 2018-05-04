@@ -63,7 +63,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
 
         $expectedHashes = array();
 
-        $hashFile = realpath(__DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod') . '/regression/images/expected-1.json';
+        $hashFile = realpath(__DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod') . '/regression/images/expected-2.json';
         if (file_exists($hashFile)) {
             $expectedHashes = json_decode(file_get_contents($hashFile), true);
         }
