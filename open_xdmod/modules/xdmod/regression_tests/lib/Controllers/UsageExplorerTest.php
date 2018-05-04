@@ -172,6 +172,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
             'fieldofscience',
             'jobsize',
             'jobwalltime',
+            'jobwaittime',
             'nodecount',
             'none',
             'nsfdirectorate',
