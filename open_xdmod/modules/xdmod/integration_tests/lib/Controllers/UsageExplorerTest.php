@@ -16,7 +16,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         $this->helper = new \TestHarness\XdmodTestHelper();
         $this->testFiles = new TestFiles(__DIR__ . '/../../');
     }
-    
+
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
@@ -179,7 +179,7 @@ EOF;
         $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
 
         $expected = Json::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'aggregate_view')
+            $this->getTestFiles()->getFile('controllers', 'aggregate_view-1')
         );
 
         $this->assertEquals($expected['value'], $dataseries[0]['data'][0]['y'], '', 1.0e-6);

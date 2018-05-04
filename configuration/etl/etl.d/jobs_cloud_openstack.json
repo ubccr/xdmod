@@ -1,0 +1,191 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": "true"
+                },
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": "true"
+                }
+            }
+        },
+        "jobs-cloud-ingest-openstack": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true
+        },
+        "jobs-cloud-extract-openstack": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true
+        }
+    },
+
+    "jobs-cloud-ingest-openstack": [
+        {
+            "name": "OpenStackRawCloudEventIngestor",
+            "description": "Loading Open Stack data",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_openstack/raw_cloud_job_logs.json",
+            "endpoints": {
+                "source": {
+                    "type": "directoryscanner",
+                    "name": "Open Stack event logs",
+                    "path": "/path/to/data",
+                    "file_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}_[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.json/",
+                    "#": "Recursion depth is relative to the path",
+                    "recursion_depth": 1,
+                    "handler": {
+                        "type": "jsonfile",
+                        "record_separator": "\n",
+                        "record_schema_path": "cloud_openstack/event.schema.json",
+                        "field_names": [
+                            "event_type",
+                            "generated",
+                            "host",
+                            "instance_id",
+                            "instance_type",
+                            "project_name",
+                            "user_name",
+                            "user_id",
+                            "resource_id",
+                            "project_id",
+                            "request_id",
+                            "vcpus",
+                            "memory_mb",
+                            "disk_gb",
+                            "state",
+                            "service",
+                            "record_type",
+                            "size",
+                            "created_at",
+                            "volume_id"
+                        ],
+                        "filters": [{
+                          "#": "Open Stack records do not contain a record_type field so we determine it by looking at the",
+                          "#": "event type of a record.",
+                          "type": "external",
+                          "name": "jq",
+                          "path": "jq",
+                          "arguments" :"-c '.[] | .[\"record_type\"] += if .[\"event_type\"] == \"compute.instance.exists\" then \"ADMINISTRATIVE\" else \"ACCOUNTING\" end'"
+                        }]
+                    }
+                }
+            }
+        }
+    ],
+
+    "jobs-cloud-extract-openstack": [
+        {
+            "name": "OpenStackEventMapInitializer",
+            "description": "Initialize cloud event types including unknown",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_openstack/event_map.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Open Stack event type mapping",
+                    "path": "cloud_openstack/openstack_event_map.json"
+                }
+            }
+        },
+	      {
+            "name": "OpenStackCloudAccountIngestor",
+            "description": "OpenStack cloud account data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/account.json"
+        },
+        {
+            "name": "OpenStackCloudHostIngestor",
+            "description": "OpenStack cloud host data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/host.json"
+        },
+        {
+            "name": "OpenStackCloudImageIngestor",
+            "description": "Open Stack cloud image data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/image.json"
+        },
+        {
+            "name": "OpenStackCloudUserIngestor",
+            "description": "OpenStack cloud user data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/user.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeIngestor",
+            "description": "Open Stack cloud instance type data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/instance_type.json"
+        },
+	      {
+            "name": "OpenStackVolumeIngestor",
+            "description": "Open Stack volumes",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/volume.json"
+        },
+        {
+            "name": "OpenStackInstanceIngestor",
+            "description": "Open Stack cloud instance data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/instance.json"
+        },
+        {
+            "#": "Events must be ingested after all other dimensions",
+            "name": "OpenStackCloudStagingEventIngestor",
+            "description": "OpenStack staging data for cloud events",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/staging_event.json"
+        },
+        {
+            "#": "Events must be ingested after all other dimensions",
+            "name": "OpenStackCloudRootVolumeIngestor",
+            "description": "OpenStack root volume information",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/root_volume.json"
+        },
+        {
+            "#": "Instance data must be ingested after staging events",
+            "name": "OpenStackCloudEventIngestor",
+            "description": "OpenStack cloud event and instance data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/event.json"
+        },
+        {
+            "#": "Events must be ingested after all other dimensions",
+            "name": "OpenStackCloudEventAssetRootVolumeIngestor",
+            "description": "OpenStack root volume assets associated with START events",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/event_asset_root_volume.json"
+        },
+        {
+            "#": "Asset data must be ingested after events",
+            "name": "OpenStackCloudEventAssetIngestor",
+            "description": "OpenStack cloud assets associated with events",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/event_asset.json"
+        },
+        {
+            "name": "OpenStackCloudPostIngestUpdates",
+            "description": "Post-ingest updates for massaging Open Stack data",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_openstack/post_ingest_update.sql"
+            ]
+        }
+    ]
+}

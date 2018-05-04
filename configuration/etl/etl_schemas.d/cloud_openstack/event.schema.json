@@ -1,0 +1,80 @@
+{
+  "type": "object",
+  "description": "OpenStack job accounting data",
+  "properties": [
+      {
+        "disk_gb": {
+            "type": "string"
+        },
+        "ephermeral_gb": {
+            "type": "string"
+        },
+        "event_type": {
+            "type": "string"
+        },
+        "generated": {
+            "type": "string"
+        },
+        "host": {
+            "type": "string"
+        },
+        "instance_id": {
+            "type": "string"
+        },
+        "instance_type": {
+            "type": "string"
+        },
+        "instance_type_id": {
+            "type": "integer"
+        },
+        "launched_at": {
+            "type": "full-date"
+        },
+        "memory_mb": {
+            "type": "integer"
+        },
+        "message_id": {
+            "type": "string"
+        },
+        "project_id": {
+            "type": "string"
+        },
+        "project_name": {
+            "type": "string"
+        },
+        "request_id": {
+            "type": "string"
+        },
+        "resource_id": {
+            "type": "string"
+        },
+        "root_gb": {
+            "type": "integer"
+        },
+        "service": {
+            "type": "string"
+        },
+        "state": {
+            "type": "string"
+        },
+        "tenant_id": {
+            "type": "string"
+        },
+        "user_id": {
+            "type": "string"
+        },
+        "user_name": {
+            "type": "string"
+        },
+        "root_gb": {
+            "type": "integer"
+        },
+        "vcpus": {
+            "type": "integer"
+        },
+        "volume_id": {
+            "type": "string"
+        }
+      }
+  ]
+}
