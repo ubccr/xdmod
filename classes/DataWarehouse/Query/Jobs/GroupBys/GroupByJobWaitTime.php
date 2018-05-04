@@ -86,7 +86,7 @@ class GroupByJobWaitTime extends \DataWarehouse\Query\Jobs\GroupBy
         $this->addOrder($query, $multi_group, 'asc', true);
     }
 
-    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false, $operation, $whereConstraint)
+    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group, $operation, $whereConstraint)
     {
         $query->addTable($this->job_wait_times_table);
 
