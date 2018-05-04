@@ -421,7 +421,7 @@ try {
         $logger,
         array(
             'option_overrides'   => $scriptOptions['option-overrides'],
-            'variable_overrides' => $scriptOptions['variable-overrides']
+            'config_variables' => $scriptOptions['variable-overrides']
         )
     );
     $etlConfig->setLogger($logger);
@@ -433,10 +433,6 @@ try {
 }
 
 Utilities::setEtlConfig($etlConfig);
-
-if ( Log::DEBUG == $scriptOptions['verbosity'] ) {
-    // print_r($etlConfig);
-}
 
 // ------------------------------------------------------------------------------------------
 // Verify requested actions and sections
