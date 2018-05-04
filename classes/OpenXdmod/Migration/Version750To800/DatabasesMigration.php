@@ -37,20 +37,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
             )
         );
         $this->validateJobTasks();
-        $this->logger->notice('Rebuilding filter lists');
-        try {
-            $builder = new FilterListBuilder();
-            $builder->setLogger($this->logger);
-            $builder->buildAllLists();
-        } catch (Exception $e) {
-            $this->logger->notice('Failed BuildAllLists: '  . $e->getMessage());
-            $this->logger->crit(array(
-                'message'    => 'Filter list building failed: ' . $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString(),
-            ));
-            throw new \Exception('Filter list building failed: ' . $e->getMessage());
-        }
-        $this->logger->notice('Done building filter lists');
+
         $console = Console::factory();
         $console->displayMessage(<<<"EOT"
 There have been updates to aggregation statistics to make the data more accurate.
@@ -69,6 +56,20 @@ EOT
                     'last-modified-start-date' => date('Y-m-d', strtotime('2000-01-01')),
                 )
             );
+            $this->logger->notice('Rebuilding filter lists');
+            try {
+                $builder = new FilterListBuilder();
+                $builder->setLogger($this->logger);
+                $builder->buildAllLists();
+            } catch (Exception $e) {
+                $this->logger->notice('Failed BuildAllLists: '  . $e->getMessage());
+                $this->logger->crit(array(
+                    'message'    => 'Filter list building failed: ' . $e->getMessage(),
+                    'stacktrace' => $e->getTraceAsString(),
+                ));
+                throw new \Exception('Filter list building failed: ' . $e->getMessage());
+            }
+            $this->logger->notice('Done building filter lists');
         }
         else {
             $console->displayMessage(<<<"EOT"
