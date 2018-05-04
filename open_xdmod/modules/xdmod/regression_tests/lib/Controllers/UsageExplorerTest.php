@@ -62,6 +62,9 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
              * public user not having access to pass
              */
             if(gettype($csvdata) === "array"){
+                if($csvdata['message'] == 'Session Expired'){
+                    $this->markTestIncomplete($fullTestName . ' user session expired...');
+                }
                 $csvdata = print_r($csvdata, 1);
             }
             $csvdata = preg_replace(self::$replaceRegex, self::$replacements, $csvdata);
@@ -81,41 +84,32 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     self::$messages[] = "$fullTestName IS ONLY ==";
                     return;
                 }
-                else {
-                    if($userRole === 'public' || substr($expectedFile, -10) !== 'public.csv'){
-                        throw new PHPUnit_Framework_ExpectationFailedException(
-                            count($failures)." assertions failed:\n\t".implode("\n\t", $failures)
-                        );
-                    }
+                elseif(substr($expectedFile, -13) !== 'reference.csv'){
+                    throw new PHPUnit_Framework_ExpectationFailedException(
+                        count($failures)." assertions failed:\n\t".implode("\n\t", $failures)
+                    );
                 }
             }
 
-            if(empty($expectedFile) && $userRole !== 'public'){
-                $this->markTestIncomplete(
-                    'Cant create expected output for non public user before public user utput created.'
-                );
+            $endpoint = parse_url(self::$helper->getSiteUrl());
+            $outputDir = self::$baseDir .
+                '/expected/' .
+                $endpoint['host'] .
+                '/' . $testName .
+                '/'  ;
+            if(!file_exists($outputDir)){
+                mkdir($outputDir, 0777, true);
             }
-            else {
-                $endpoint = parse_url(self::$helper->getSiteUrl());
-                $outputDir = self::$baseDir .
-                    '/expected/' .
-                    $endpoint['host'] .
-                    '/' . $testName .
-                    '/'  ;
-                if(!file_exists($outputDir)){
-                    mkdir($outputDir, 0777, true);
-                }
-                $outputDir = realpath($outputDir);
+            $outputDir = realpath($outputDir);
 
-                $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . $userRole . '.csv';
-                file_put_contents(
-                    $outputFile,
-                    $csvdata
-                );
-                $this->markTestSkipped(
-                    'Created Expected output for ' . $fullTestName
-                );
-            }
+            $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . (empty($expectedFile) ? 'reference' : $userRole ) . '.csv';
+            file_put_contents(
+                $outputFile,
+                $csvdata
+            );
+            $this->markTestSkipped(
+                'Created Expected output for ' . $fullTestName
+            );
         }
     }
     protected function defaultSetup(){
@@ -204,7 +198,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         $expectedFile = $baseDir . '/expected/' . $expectedEndpoint .
             '/' . $testName;
         if(($expectedFilename = realpath($expectedFile . '-' . $role . '.csv' ) ) === false){
-            $expectedFilename = realpath($expectedFile . '-public.csv');
+            $expectedFilename = realpath($expectedFile . '-reference.csv');
         }
         return $expectedFilename;
     }
@@ -282,6 +276,9 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         $datasRegEx = '/(?<=---------\n)([\s\S]*)(?=\n---------)/';
         $matches;
         preg_match($datasRegEx, $raw, $matches, PREG_OFFSET_CAPTURE, 0);
+        if(count($matches) == 0){
+            return array();
+        }
         $csv = str_getcsv($matches[0][0], "\n"); //parse the rows
         foreach($csv as &$row){
             $row = str_getcsv($row); //parse the items in rows
@@ -302,11 +299,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         $providedCSV = $this->getResultAsCSV($provided);
 
         $expectedRows = count($expectedCSV);
-        try {
-            $this->assertCount($expectedRows, $providedCSV, $testName . ' Row count != ');
-        } catch(PHPUnit_Framework_ExpectationFailedException $e) {
-            $failures[] = $e->getMessage();
-        }
+
         if($expectedRows === count($providedCSV)){
             $expectedHeader = $expectedCSV[0];
             $providedHeader = $providedCSV[0];
@@ -372,6 +365,9 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     }
                 }
             }
+        }
+        else {
+            $failures[] = $testName . ' Row count != expected: ' . $expectedRows . '{actual}' . count($providedCSV);
         }
         return $failures;
     }
