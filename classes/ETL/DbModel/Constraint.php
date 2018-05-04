@@ -1,0 +1,172 @@
+<?php
+/**
+ * Class for managing table constraints in the data warehouse.  This is meant to
+ * be used as a component of Table.
+ *
+ * @see Table
+ * @see iEntity
+ */
+
+namespace ETL\DbModel;
+
+use Log;
+use stdClass;
+
+class Constraint extends NamedEntity implements iEntity
+{
+    /**
+     * Properties required by this class. These will be merged with other
+     * required properties up the call chain.
+     *
+     * @see Entity::$requiredProperties
+     */
+    private $localRequiredProperties = array(
+        'columns',
+        'referenced_table',
+        'referenced_columns',
+    );
+
+    /**
+     * Properties provided by this class. These will be merged with other
+     * properties up the call chain.
+     *
+     * @see Entity::$properties
+     */
+    private $localProperties = array(
+        'columns' => array(),
+        'referenced_table' => null,
+        'referenced_columns' => array(),
+    );
+
+    public function __construct(
+        $config,
+        $systemQuoteChar = null,
+        Log $logger = null
+    ) {
+        // Property merging is performed first so the values can be used in the
+        // constructor
+        parent::mergeProperties(
+            $this->localRequiredProperties,
+            $this->localProperties
+        );
+        parent::__construct($config, $systemQuoteChar, $logger);
+    }
+
+    public function initialize(stdClass $config)
+    {
+        if (!isset($config->name)) {
+            $config->name = $this->generateConstraintName($config->columns);
+        }
+
+        parent::initialize($config);
+    }
+
+    protected function filterAndVerifyValue($property, $value)
+    {
+        $value = parent::filterAndVerifyValue($property, $value);
+
+        switch ($property) {
+            case 'columns':
+                if (!is_array($value)) {
+                    $this->logAndThrowException(
+                        sprintf(
+                            '"%s" must be an array, "%s" given',
+                            $property,
+                            gettype($value)
+                        )
+                    );
+                } elseif (0 === count($value)) {
+                    $this->logAndThrowException(
+                        sprintf('"%s" must be a non-empty array', $property)
+                    );
+                }
+                break;
+            case 'referenced_table':
+                if (!is_string($value)) {
+                    $this->logAndThrowException(
+                        sprintf(
+                            '"%s" must be a string, "%s" given',
+                            $property,
+                            gettype($value)
+                        )
+                    );
+                }
+                break;
+            case 'referenced_columns':
+                if (!is_array($value)) {
+                    $this->logAndThrowException(
+                        sprintf(
+                            '"%s" must be an array, "%s" given',
+                            $property,
+                            gettype($value)
+                        )
+                    );
+                } elseif (0 === count($value)) {
+                    $this->logAndThrowException(
+                        sprintf('"%s" must be a non-empty array', $property)
+                    );
+                }
+                break;
+            default:
+                break;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Auto-generate an index name based on the columns included in the index.
+     * If the length of the index name would be too large use a hash.
+     *
+     * @param array $columns The array of index column names
+     *
+     * @return string The generated index name
+     */
+    private function generateConstraintName(array $columns)
+    {
+        $str = implode('_', $columns);
+        $name = ( strlen($str) <= 32 ? $str : md5($str) );
+        return 'constraint_' . $name;
+    }
+
+    /**
+     * Constraints are considered equal if all properties are the same.
+     */
+    public function compare(iEntity $cmp)
+    {
+        if (!$cmp instanceof Constraint) {
+            return 1;
+        }
+
+        if ($this->name != $cmp->name
+            || $this->columns != $cmp->columns
+            || $this->referenced_table != $cmp->referenced_table
+            || $this->referenced_columns != $cmp->referenced_columns
+        ) {
+            return -1;
+        }
+
+        return 0;
+    }
+
+    public function getSql($includeSchema = false)
+    {
+        $parts = array(
+            'CONSTRAINT',
+            $this->getName(true),
+            'FOREIGN KEY',
+        );
+        $parts[] = '('
+            . implode(', ', array_map(array($this, 'quote'), $this->columns))
+            . ')';
+        $parts[] = 'REFERENCES';
+        $parts[] = $this->quote($this->referenced_table);
+        $parts[] = '('
+            . implode(
+                ', ',
+                array_map(array($this, 'quote'), $this->referenced_columns)
+            )
+            . ')';
+        return implode(' ', $parts);
+    }
+}
