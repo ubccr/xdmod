@@ -23,6 +23,6 @@ class TotalWaitHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
     public function getInfo()
     {
         return "The total time, in hours, " . ORGANIZATION_NAME . " jobs waited before execution on their designated resource.<br/>
-        <i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.";
+		<i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.";
     }
 }

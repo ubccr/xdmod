@@ -22,6 +22,6 @@ class AverageWaitHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
     public function getInfo()
     {
         return "The average time, in hours, a " . ORGANIZATION_NAME . " job waits before execution on the designated resource.<br/>
-        <i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.";
+		<i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.";
     }
 }
