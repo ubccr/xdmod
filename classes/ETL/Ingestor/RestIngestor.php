@@ -107,7 +107,13 @@ class RestIngestor extends aIngestor implements iAction
         $this->etlDestinationTable = current($this->etlDestinationTableList);
         $etlTableKey = key($this->etlDestinationTableList);
         if ( count($this->etlDestinationTableList) > 1 ) {
-            $this->logger->warning($this . " does not support multiple ETL destination tables, using first table with key: '$etlTableKey'");
+            $this->logger->warning(
+                sprintf(
+                    "%s does not support multiple ETL destination tables, using first table with key: '%s'",
+                    $this,
+                    $etlTableKey
+                )
+            );
         }
 
         // If the source query is specified in the definition file use it to obtain parameters for the

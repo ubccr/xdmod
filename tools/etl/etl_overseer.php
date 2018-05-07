@@ -162,7 +162,7 @@ foreach ($args as $arg => $value) {
             break;
 
         case 'k':
-        case 'chunk-size-days':
+        case 'chunk-size':
             switch ( $value ) {
                 case 'none':
                     $scriptOptions['chunk-size-days'] = null;

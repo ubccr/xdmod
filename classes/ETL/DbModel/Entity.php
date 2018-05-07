@@ -370,7 +370,7 @@ class Entity extends Loggable
                 return $value->toStdClass();
             } else {
                 // If Error, don't know how to convert the object
-                $this->logger->debug(
+                $this->logger->trace(
                     sprintf("Object '%s' does not implement iEntity, using get_object_vars() to convert to stdClass", get_class($value))
                 );
                 return (object) get_object_vars($value);

@@ -241,27 +241,25 @@ class pdoAggregator extends aAggregator
         // If the etlDestinationTable is set, it will not be generated in aRdbmsDestinationAction
 
         if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
-            $msg = "Definition file does not contain a 'table_definition' key";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
         }
 
         // This action only supports 1 destination table so use the first one and log a warning if
         // there are multiple.
 
-        if ( is_array($this->parsedDefinitionFile->table_definition)
-             && count($this->parsedDefinitionFile->table_definition) > 0 )
-        {
+        if ( is_array($this->parsedDefinitionFile->table_definition) ) {
+            if ( count($this->parsedDefinitionFile->table_definition) > 1 ) {
+                $this->logger->warning(sprintf(
+                    "%s does not support multiple ETL destination tables, using first table",
+                    $this
+                ));
+            }
             $tableDefinition = $this->parsedDefinitionFile->table_definition;
             $this->parsedDefinitionFile->table_definition = array_shift($tableDefinition);
-            $msg = $this . " does not support multiple ETL destination tables, using first table.";
-            $this->logger->warning($msg);
         }
 
-        // Aggregation does not support multiple destination tables.
-
         if ( ! is_object($this->parsedDefinitionFile->table_definition) ) {
-            $msg = "Table definition must be an object. Aggregation does not currently support multiple destination tables.";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Table definition must be an object.");
         }
 
         $this->logger->debug("Create ETL destination aggregation table object");
