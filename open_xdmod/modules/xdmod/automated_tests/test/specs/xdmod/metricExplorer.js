@@ -1,4 +1,4 @@
-var expected = global.testHelpers.artifacts.getArtifact('metricExplorer');
+var expected = global.testHelpers.artifacts.getArtifact('metricExplorer-1');
 var logIn = require('./loginPage.page.js');
 var me = require('./metricExplorer.page.js');
 var cheerio = require('cheerio');

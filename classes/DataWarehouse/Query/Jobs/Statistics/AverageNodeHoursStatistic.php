@@ -13,7 +13,7 @@ class AverageNodeHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'coalesce(sum(jf.node_time/3600.0)/sum(jf.running_job_count),0)',
+            'coalesce(sum(jf.node_time)/sum(jf.running_job_count),0)/3600.0',
             'avg_node_hours',
             'Node Hours: Per Job',
             'Node Hour',

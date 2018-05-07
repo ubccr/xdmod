@@ -14,23 +14,27 @@ class SEMAverageCPUHoursStatistic extends \DataWarehouse\Query\Jobs\Statistic
     {
         $job_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'ended_job_count' : 'running_job_count';
         parent::__construct(
-            'COALESCE(
-                SQRT(
+            'SQRT(
+                COALESCE(
                     (
-                        SUM(jf.sum_cpu_time_squared)
-                        /
-                        SUM(jf.' . $job_count_formula . ')
+                        (
+                            SUM(jf.sum_cpu_time_squared)
+                            /
+                            SUM(jf.' . $job_count_formula . ')
+                        )
+                        -
+                        POW(
+                            SUM(jf.cpu_time)
+                            /
+                            SUM(jf.' . $job_count_formula . ')
+                            , 2
+                        )
                     )
-                    -
-                    POW(
-                        SUM(jf.cpu_time)
-                        /
-                        SUM(jf.' . $job_count_formula . '),
-                    2)
+                    /
+                    SUM(jf.' . $job_count_formula . ')
+                , 0
                 )
-                /
-                SQRT(SUM(jf.' . $job_count_formula . ')),
-            0)
+            )
             /
             3600.0',
             'sem_avg_cpu_hours',

@@ -5,6 +5,7 @@ use CCR\DB;
 use FilterListBuilder;
 use TimePeriodGenerator;
 use OpenXdmod\Ingestor\Staging\ResourceTypes;
+use OpenXdmod\Setup\Console;
 
 /**
  * Migrate databases from version 7.5.0 to 8.0.0.
@@ -20,13 +21,21 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 
         $this->updateResourceTypes();
         $this->updateTimePeriods();
-        $this->runEtlPipeline('jobs-xdw.bootstrap');
+
         $this->logger->notice(
             "Data is going to be migrated away from modw.jobfact into\n" .
             "modw.job_records and modw.jobtasks, this might take a while.\n" .
             "approx 30k records / minute \n"
         );
-        $this->runEtlPipeline('hpcdb-xdw.ingest');
+
+        $this->runEtl(
+            array(
+                'process-sections' => array(
+                    'jobs-xdw.bootstrap',
+                    'hpcdb-xdw.ingest'
+                )
+            )
+        );
         $this->validateJobTasks();
         $this->logger->notice('Rebuilding filter lists');
         try {
@@ -42,6 +51,32 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
             throw new \Exception('Filter list building failed: ' . $e->getMessage());
         }
         $this->logger->notice('Done building filter lists');
+        $console = Console::factory();
+        $console->displayMessage(<<<"EOT"
+There have been updates to aggregation statistics to make the data more accurate.
+It is recomennded that you reaggregate all jobs.  Depending on the amount of data
+this could take multiple hours.
+EOT
+        );
+        $runaggregation = $console->promptBool(
+            'Do you want to run aggregation now?',
+            false
+        );
+        if (true === $runaggregation) {
+            $this->runEtl(
+                array(
+                    'process-sections' => array('jobs-xdw.aggregate'),
+                    'last-modified-start-date' => date('Y-m-d', strtotime('2000-01-01')),
+                )
+            );
+        }
+        else {
+            $console->displayMessage(<<<"EOT"
+Aggregation not run.  To do this yourself you will need to run the following command:
+xdmod-ingestor --aggregate --last-modified-start-date '2000-01-01'
+EOT
+            );
+        }
     }
 
     private function validateJobTasks(){
@@ -58,8 +93,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         if($results[0]['facts'] === $results[0]['tasks']){
             $this->logger->notice(
                 "Migration Complete.\n\tThe modw.jobfact table is no longer needed " .
-                "it can now be deleted.\n" .
-                "\t It is suggested you run a full reaggregation of your data.\n"
+                "it can now be deleted.\n"
             );
         }
         else {
@@ -74,42 +108,30 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         }
     }
 
-    private function runEtlPipeline($name = null){
-        if(empty($name)){
-            throw new \Exception('ETL Pipeline not given');
+    private function runEtl($scriptOptions = array()){
+        if(count($scriptOptions) < 0 || (!array_key_exists('process-sections', $scriptOptions) && !array_key_exists('actions', $scriptOptions))){
+            throw new \Exception('ETL Pipeline / actions not given.');
         }
-        $start = new \DateTime('2000-01-01');
-        $end = new \DateTime('2038-01-18');
+        $scriptOptions['chunk-size-days'] = 365;
+        if(empty($scriptOptions['start-date'])){
+            $scriptOptions['start-date'] = date('Y-m-d', strtotime('2000-01-01'));
+        }
+        if(empty($scriptOptions['end-date'])){
+            $scriptOptions['end-date'] = date('Y-m-d', strtotime('2038-01-18'));
+        }
+        if(empty($scriptOptions['last-modified-start-date'])){
+            $scriptOptions['last-modified-start-date'] = date('Y-m-d');
+        }
 
-        $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php '
-            . ' -p ' . $name . ' -s ' . $start->format('Y-m-d')
-            . ' -e ' . $end->format('Y-m-d') . ' -k year';
-        $pipes = array();
-        $this->logger->notice("Executing $command");
-        $process = proc_open(
-            $command,
-            array(
-                0 => array('file', '/dev/null', 'r'),
-                1 => array('pipe', 'w'),
-                2 => array('pipe', 'w'),
-            ),
-            $pipes
-        );
-        if (!is_resource($process)) {
-            $this->logger->err('Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true));
-            throw new \Exception('Unable execute command: ' . $command . "\n" . print_r(error_get_last(), true));
+        $etlConfig = new \ETL\Configuration\EtlConfiguration(CONFIG_DIR . '/etl/etl.json', null, $this->logger, array());
+        $etlConfig->initialize();
+        \ETL\Utilities::setEtlConfig($etlConfig);
+        $overseerOptions = new \ETL\EtlOverseerOptions($scriptOptions, $this->logger);
+        $overseer = new \ETL\EtlOverseer($overseerOptions, $this->logger);
+        if($scriptOptions['process-sections'][0] == 'hpcdb-xdw.ingest'){
+
         }
-        $out = stream_get_contents($pipes[1]);
-        $err = stream_get_contents($pipes[2]);
-        foreach($pipes as $pipe){
-            fclose($pipe);
-        }
-        $return_value = proc_close($process);
-        if ($return_value != 0) {
-            $this->logger->err("$command returned $return_value, stdout:  $out stderr: $err");
-            throw new \Exception("$command returned $return_value, stdout:  $out stderr: $err");
-        }
-        $this->logger->notice("Execution Complete: $command");
+        $overseer->execute($etlConfig);
     }
 
     private function updateTimePeriods(){
