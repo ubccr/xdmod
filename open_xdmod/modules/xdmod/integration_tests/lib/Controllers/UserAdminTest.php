@@ -318,7 +318,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetMenus()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_menus', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'get_menus-1', 'input')
         );
     }
 
