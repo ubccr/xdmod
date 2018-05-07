@@ -116,14 +116,11 @@ abstract class aIngestor extends aRdbmsDestinationAction
                     . ")"
                 );
 
-                $localVariableMap = array(
-                    'START_DATE' => $this->currentStartDate,
-                    'END_DATE' => $this->currentEndDate
-                );
-                $this->variableMap = array_merge($this->variableMap, $localVariableMap);
+                $this->variableStore->overwrite('START_DATE', $this->currentStartDate);
+                $this->variableStore->overwrite('END_DATE', $this->currentEndDate);
 
                 $this->logger->debug(
-                    sprintf("Available Variables: %s", $this->getVariableMapDebugString())
+                    sprintf("Available Variables: %s", $this->variableStore->toDebugString())
                 );
 
                 $numRecordsProcessed = $this->_execute();

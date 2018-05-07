@@ -1,6 +1,14 @@
 #!/bin/sh
+set -e
 
-PHPUNITARGS="$@"
+UATCU=""
+UATXCU=""
+
+if [ "$1" = "--junit-output-dir" ];
+then
+    UATCU="--log-junit $2/xdmod-int-uat-cu.xml"
+    UATXCU="--log-junit $2/xdmod-int-uat-minus-cu.xml"
+fi
 
 cd $(dirname $0)
 phpunit="$(readlink -f ../../../../vendor/bin/phpunit)"
@@ -13,7 +21,7 @@ fi
 ./artifacts/update-artifacts.sh
 
 # Run the tests in UserAdminTest.createUsers
-$phpunit ${PHPUNITARGS} . --group UserAdminTest.createUsers
+$phpunit . --group UserAdminTest.createUsers $UATCU
 
 # Run everything else
-$phpunit ${PHPUNITARGS} . --exclude-group UserAdminTest.createUsers
+$phpunit . --exclude-group UserAdminTest.createUsers $UATXCU

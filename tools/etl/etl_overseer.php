@@ -82,6 +82,9 @@ $scriptOptions = array(
     'resource-code-map-sql' => null,
     // ETL start date
     'start-date'        => null,
+    // Variables defined on the command line
+    'variable-overrides' => array(),
+    // Log verbosity
     'verbosity'         => Log::NOTICE
 );
 
@@ -116,6 +119,7 @@ $options = array(
     'a:'  => 'action:',
     'b:'  => 'base-dir:',
     'c:'  => 'config-file:',
+    'd:'  => 'define:',
     'e:'  => 'end-date:',
     'f'   => 'force',
     'g:'  => 'group:',
@@ -187,6 +191,18 @@ foreach ($args as $arg => $value) {
         case 'c':
         case 'config-file':
             $scriptOptions['config-file'] = $value;
+            break;
+
+        case 'd':
+        case 'define':
+            $value = ( is_array($value) ? $value : array($value) );
+            foreach ( $value as $variable ) {
+                $parts = explode("=", $variable);
+                if ( 2 != count($parts) ) {
+                    usage_and_exit("Variables must be of the form variable=value: '$variable'");
+                }
+                $scriptOptions['variable-overrides'][trim($parts[0])] = trim($parts[1]);
+            }
             break;
 
         case 't':
@@ -403,7 +419,10 @@ try {
         $scriptOptions['config-file'],
         $scriptOptions['base-dir'],
         $logger,
-        array('option_overrides' => $scriptOptions['option-overrides'])
+        array(
+            'option_overrides'   => $scriptOptions['option-overrides'],
+            'config_variables' => $scriptOptions['variable-overrides']
+        )
     );
     $etlConfig->setLogger($logger);
     $etlConfig->initialize();
@@ -414,10 +433,6 @@ try {
 }
 
 Utilities::setEtlConfig($etlConfig);
-
-if ( Log::DEBUG == $scriptOptions['verbosity'] ) {
-    // print_r($etlConfig);
-}
 
 // ------------------------------------------------------------------------------------------
 // Verify requested actions and sections
@@ -664,6 +679,9 @@ Usage: {$argv[0]}
 
     -c, --config-file <file>
     ETL configuration file [default {$scriptOptions['config-file']}]
+
+    -d, --define <variable>=<value>
+    Define an ETL variable that will be set for all actions, possibly overriding existing values.  Note that variable names are case sensitive.
 
     -t, --dryrun
     Perform all steps except execution of the actions. Useful for validating the configuration or displaying queries.

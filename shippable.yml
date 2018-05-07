@@ -21,7 +21,7 @@ build:
         - cp ~/assets/secrets.json open_xdmod/modules/xdmod/integration_tests/.secrets.json
         - ./open_xdmod/modules/xdmod/tests/artifacts/update-artifacts.sh
         - ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
-        - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-integration.xml
+        - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
         - cp ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
         - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
         - ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-component.xml

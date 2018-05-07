@@ -231,7 +231,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
             if ( 0 != count($variableSourceFields[$etlTableKey]) ) {
                 foreach ( $variableSourceFields[$etlTableKey] as $variable ) {
                     $sourceFieldToValueMapTemplate[$etlTableKey][$variable] =
-                        Utilities::substituteVariables($variable, $this->variableMap, $this);
+                        $this->variableStore->substitute($variable);
                 }
             }
         }

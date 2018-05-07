@@ -109,11 +109,8 @@ abstract class aAggregator extends aRdbmsDestinationAction
                 . ")"
             );
 
-            $localVariableMap = array(
-                'START_DATE' => $this->currentStartDate,
-                'END_DATE' => $this->currentEndDate,
-            );
-            $this->variableMap = array_merge($this->variableMap, $localVariableMap);
+            $this->variableStore->overwrite('START_DATE', $this->currentStartDate);
+            $this->variableStore->overwrite('END_DATE', $this->currentEndDate);
 
             if ( false !== $this->performPreExecuteTasks() ) {
 
@@ -126,7 +123,7 @@ abstract class aAggregator extends aRdbmsDestinationAction
                         $etlTable->aggregation_unit = $aggregationUnit;
                     }
 
-                    $this->variableMap['AGGREGATION_UNIT'] = $aggregationUnit;
+                    $this->variableStore->overwrite('AGGREGATION_UNIT', $aggregationUnit);
 
                     if ( false === $this->performPreAggregationUnitTasks($aggregationUnit) ) {
                         $this->logger->notice("Pre-aggregation unit tasks failed, skipping unit '$aggregationUnit'");
@@ -139,7 +136,7 @@ abstract class aAggregator extends aRdbmsDestinationAction
                     $this->truncateDestination();
 
                     $this->logger->debug(
-                        sprintf("Available Variables: %s", $this->getVariableMapDebugString())
+                        sprintf("Available Variables: %s", $this->variableStore->toDebugString())
                     );
 
                     // Perform the dirty work
