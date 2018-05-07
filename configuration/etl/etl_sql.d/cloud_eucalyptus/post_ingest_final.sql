@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS euca_events_transient
+DROP TABLE IF EXISTS euca_events_transient;
+CREATE TABLE euca_events_transient
 SELECT
     it.provider_identifier as instance,
     consolidate.event_id as start_event_id,

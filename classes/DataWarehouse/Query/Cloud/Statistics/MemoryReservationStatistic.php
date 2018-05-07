@@ -22,7 +22,6 @@ class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The amount of memory in bytes reserved by virtual machines divided by wall duration.<br/>
-            <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.';
+        return 'The quotient of memory reserved by virtual machines over wall duration.<br/>';
     }
 }

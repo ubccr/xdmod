@@ -17,8 +17,7 @@ class RunningVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return  "The total number of running " . ORGANIZATION_NAME . " virtual machines.<br/> <i>VM Instance:
-            </i>An individual virtual machine (VM) spun up within a cloud.";
+        return  "The total number of running " . ORGANIZATION_NAME . " virtual machines.<br/>";
     }
 
     public function isVisible()

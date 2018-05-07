@@ -22,7 +22,6 @@ class CoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total number of cores reserved by active VM instances.<br/>
-            <i>VM Instance: </i>An individual virtual machine (VM) spun up within a cloud.';
+        return 'The total number of cores reserved by virtual machines.<br/>';
     }
 }
