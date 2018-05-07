@@ -42,70 +42,70 @@ use ETL\DataEndpoint\DataEndpointOptions;
 
 class EtlConfiguration extends Configuration
 {
-    // Named ETL sections are defined here for ease of reference but any section can be defined in
-    // the configuration file.
-    const MAINTENANCE = "maintenance";
-    const INGESTORS = "ingestors";
-    const AGGREGATORS = "aggregators";
 
-    // Default class names for section options, if not specified in the configuration file
-    const DEFAULT_MAINTENANCE_OPTIONS_CLASS = "\\ETL\\Maintenance\\MaintenanceOptions";
-    const DEFAULT_INGESTOR_OPTIONS_CLASS = "\\ETL\\Ingestor\\IngestorOptions";
-    const DEFAULT_AGGREGATOR_OPTIONS_CLASS = "\\ETL\\Aggregator\\AggregatorOptions";
+    /**
+     * Reserved keys in the top level of the configuration file. ETL section names cannot use one of
+     * these keys.
+     * @var array
+     */
+    private $etlConfigReservedKeys = array(
+         'defaults',
+         'endpoints',
+         'paths',
+         'global',
+         'variables'
+     );
 
-    // The key used to identify global defaults to apply across all sections regardless of name. This
-    // must also be present in the $etlConfigReservedKeys array.
-    const GLOBAL_DEFAULTS = "global";
-
-    // JSON object key represeting a list of data endpoints
-    const DATA_ENDPOINT_KEY = "endpoints";
-
-    // JSON object key represeting a set of filw and directory paths
-    const PATHS_KEY = "paths";
-
-    // Reserved keys in the top level of the configuration file. ETL section names cannot use one of
-    // these keys.
-    private $etlConfigReservedKeys =
-        array("defaults",
-              self::DATA_ENDPOINT_KEY,
-              self::PATHS_KEY,
-              self::GLOBAL_DEFAULTS);
-
-    // If this is a local configuration file we have the option of using global defaults from the parent
+    /**
+     * If this is a local configuration file we have the option of using global defaults from the parent.
+     * @var stdclass
+     */
     private $parentDefaults = null;
 
-    // An array of endpoints defined in the global defaults section. The keys are the endpoint names
-    // (utility, source, destination, etc.) the values are endpoint keys used to reference the
-    // $endpoints array.
+    /**
+     * An array of data endpoints defined in the global defaults section. The keys are the endpoint
+     * names (utility, source, destination, etc.) the values are endpoint keys used to reference the
+     * $endpoints array.
+     * @var array
+     */
     private $globalEndpoints = array();
 
-    // Associative array where the key is the endpoint key and the value is a DataEndpoint object
+    /**
+     * Associative array where the key is the generated endpoint key and the value is a DataEndpoint object.
+     * @var array
+     */
     private $endpoints = array();
 
-    // An associative array where keys are section names and values are an array of action option
-    // objects.
+    /**
+     * An associative array where keys are section names and values are an array of action option
+     * objects.
+     * @var array
+     */
     private $actionOptions = array();
 
-    // An array of key/value pairs (2-element arrays) containing options to either add to or
-    // override individual action options. These will be applied to all actions, if present.
+    /**
+     * An associative array containing options to either add to or override individual action
+     * options. These will be applied to all actions, if present.
+     * @var array
+     */
     private $optionOverrides = null;
 
-    // Path information for various configuration files and directories
+    /**
+     * A class containing path information for various configuration files and directories.
+     * @var stdclass
+     */
     private $paths = null;
 
-    // Path information for various configuration files and directories
-    private $localDefaults = null;
-
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
      * @param $filename Name of the JSON configuration file to parse
      * @param $baseDir Base directory for configuration files. Overrides the base dir provided in
      *   the top-level config file
      * @param $logger A PEAR Log object or null to use the null logger.
-     * @param $options An associative array of additional options passed from the parent. These
-     *   include:
-     *   is_local_config: TRUE if this is a local configuration file
+     * @param $options An associative array of additional options passed from the parent. In
+     *   addition to the options supported by Configuration, the following options are also
+     *   supported:
      *   option_overrides: An array of key/value pairs (2-element arrays) containing options to
      *      either add to or override individual action options. These will be applied to all
      *      actions, if present.
@@ -122,25 +122,35 @@ class EtlConfiguration extends Configuration
     ) {
         parent::__construct($filename, $baseDir, $logger, $options);
 
-        if ( array_key_exists('option_overrides', $options) && null !== $options['option_overrides'] ) {
-            if ( ! is_array($options['option_overrides']) ) {
-                $this->logAndThrowException("Option overrides must be an array");
-            } elseif ( 0 !== count($options['option_overrides']) ) {
-                $this->optionOverrides = $options['option_overrides'];
+        foreach ( $options as $option => $value ) {
+            if ( null === $value ) {
+                continue;
             }
-        }
+            switch ( $option ) {
+                case 'option_overrides':
+                    if ( ! is_array($value) ) {
+                        $this->logAndThrowException(sprintf("%s must be an array, %s provided", $option, gettype($value)));
+                    } elseif ( 0 !== count($value) ) {
+                        $this->optionOverrides = $value;
+                    }
+                    break;
 
-        if ( array_key_exists('parent_defaults', $options) && null !== $options['parent_defaults'] ) {
-            if ( ! is_object($options['parent_defaults']) ) {
-                $this->logAndThrowException("Parent defaults must be an object");
-            } else {
-                $this->parentDefaults = $options['parent_defaults'];
+                case 'parent_defaults':
+                    if ( ! is_object($value) ) {
+                        $this->logAndThrowException(sprintf("%s must be an object, %s provided", $option, gettype($value)));
+                    } elseif ( 0 !== count($value) ) {
+                        $this->parentDefaults = $value;
+                    }
+                    break;
+
+                default:
+                    break;
             }
         }
 
     }  // __construct()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see Configuration::preTransformTasks()
      * ------------------------------------------------------------------------------------------
      */
@@ -154,15 +164,46 @@ class EtlConfiguration extends Configuration
 
         $this->addBaseDirToPaths();
 
-        if ( isset($this->paths->local_config_dir) ) {
-            $this->localConfigDir = $this->paths->local_config_dir;
+        if ( isset($this->parsedConfig->defaults->global->paths->local_config_dir) ) {
+            $this->localConfigDir = $this->parsedConfig->defaults->global->paths->local_config_dir;
+        }
+        // Merge default values from the parent into defaults optionally specified for the local
+        // config.  There can be a set of global defaults, plus one set for each section defined in
+        // the configuration file (defaults are applied as long as the name of the entries in the
+        // default and section blocks match).  If we are processing a local configuration file merge
+        // the defaults from the parent with local defaults taking precedence. If local defaults are
+        // not present use all of the parent defaults.
+        //
+        // NOTE: Since path variables must be available during the transform step the merging of
+        // local and parent defaults needs to happen in preTransformTasks().
+
+        if ( isset($this->parsedConfig->defaults) ) {
+
+            // Note: The config object may contain nested objects so we cannot simply cast it to an
+            // array and call array_replace_recursive(). json_decode() can convert objects to arrays
+            // recursively and after the merge appears to correctly decode arrays and objects.
+
+            $parentDefaults = ( null !== $this->parentDefaults ? json_decode(json_encode($this->parentDefaults), true) : array() );
+            $localDefaults = json_decode(json_encode($this->parsedConfig->defaults), true);
+            $this->parsedConfig->defaults = json_decode(json_encode(array_replace_recursive($parentDefaults, $localDefaults)));
+        } elseif ( null !== $this->parentDefaults ) {
+            $this->parsedConfig->defaults = $this->parentDefaults;
+        }
+
+        // Make all paths available as variables, although variables defined via the
+        // 'config_variables' option (e.g., on the command line) still take precedence. The paths
+        // need to be available for the transformers and can only contain variables specified by the
+        // 'config_variables' option.
+
+        foreach ( $this->parsedConfig->defaults->global->paths as $variable => $value ) {
+            $this->variableStore->$variable = $value;
         }
 
         return parent::preTransformTasks();
 
     }  // preTransformTasks()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Perform additional operations on the parsed configuration file. This includes
      * handling ETL-specific components such as the "paths" block, applying defaults, and
      * initializing data endpoints and action objects.
@@ -183,33 +224,7 @@ class EtlConfiguration extends Configuration
 
         $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
-        $defaultSectionNames = array_merge(array(self::GLOBAL_DEFAULTS, self::DATA_ENDPOINT_KEY), $etlSectionNames);
-
-        // ------------------------------------------------------------------------------------------
-        // Manage default values.  There can be a global default section, plus one for each section
-        // defined in the configuration file.  Defaults are applied as long as the name of the entries
-        // in the default and section blocks match.  If we are processing a local configuration file merge
-        // the defaults from the parent with local defaults taking precedence. If local defaults are
-        // not present but there are parent defaults, use all of them. All defaults are propogated,
-        // not only those for sections defined here.
-
-        if ( isset($config->defaults) ) {
-
-            // Note: The config object may contain nested objects so we cannot simply cast it to an
-            // array and call array_replace_recursive(). json_decode() can convert objects to arrays
-            // recursively and after the merge appears to correctly decode arrays and objects.
-
-            $parentDefaults = ( null !== $this->parentDefaults ? json_decode(json_encode($this->parentDefaults), true) : array() );
-            $localDefaults = json_decode(json_encode($config->defaults), true);
-            $this->localDefaults = json_decode(json_encode(array_replace_recursive($parentDefaults, $localDefaults)));
-
-        } elseif ( null !== $this->parentDefaults ) {
-            $this->localDefaults = $this->parentDefaults;
-        }
-
-        // Now that the local defaults are stored in the object remove them from the constructed
-        // config.
-        unset($config->defaults);
+        $defaultSectionNames = array_merge(array('global', 'endpoints'), $etlSectionNames);
 
         // Apply global and section-specific (local) defaults. Section-specific defaults take
         // precedence over globals.
@@ -230,7 +245,7 @@ class EtlConfiguration extends Configuration
                         sprintf("In section '%s', expected action object, got %s", $sectionName, gettype($actionConfig))
                     );
                 }
-                $this->applyDefaultsToAction($actionConfig, $sectionName, $this->localDefaults);
+                $this->applyDefaultsToActionConfig($actionConfig, $sectionName, $this->transformedConfig->defaults);
             }
         }  // foreach ( $etlSectionNames as $typeName )
 
@@ -242,15 +257,15 @@ class EtlConfiguration extends Configuration
 
         $this->endpoints = array();
 
-        if ( ! $this->isLocalConfig && isset($this->localDefaults->global->endpoints->utility) ) {
+        if ( ! $this->isLocalConfig && isset($this->transformedConfig->defaults->global->endpoints->utility) ) {
             $name = 'utility';
             try {
-                $endpoint = $this->addDataEndpoint($this->localDefaults->global->endpoints->utility);
+                $endpoint = $this->addDataEndpoint($this->transformedConfig->defaults->global->endpoints->utility);
                 $this->globalEndpoints[$name] = $endpoint->getKey();
             } catch (Exception $e) {
                 $this->logAndThrowException("Error registering default endpoint '$name': " . $e->getMessage());
             }
-        }  // if ( isset(($this->localDefaults->global->endpoints) )
+        }
 
         // --------------------------------------------------------------------------------
         // Register individual actions discovered in the configuration file
@@ -263,8 +278,24 @@ class EtlConfiguration extends Configuration
             }
 
             $this->addSection($sectionName);
+            $priorityVariables = $this->variableStore->toArray();
 
             foreach ( $config->$sectionName as &$actionConfig ) {
+
+                // At this point, the variables specified in the action configuration don't contain
+                // priority variables such as those defined on the command line or the path
+                // variables so merge them together.
+
+                if ( 0 != count($priorityVariables) ) {
+                    if ( ! isset($actionConfig->variables) ) {
+                        $actionConfig->variables = $priorityVariables;
+                    } else {
+                        $actionConfig->variables = (object) array_replace(
+                            (array) $actionConfig->variables,
+                            $priorityVariables
+                        );
+                    }
+                }
 
                 // Intercept the action configuration and add/override options provided on the
                 // command line.
@@ -299,7 +330,7 @@ class EtlConfiguration extends Configuration
 
     }  // interpretData()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Handle creation of an EtlConfiguration object for the given class.
      *
      * @see Configuration::processLocalConfig()
@@ -309,10 +340,11 @@ class EtlConfiguration extends Configuration
     protected function processLocalConfig($localConfigFile)
     {
         $options = array(
-            'local_config_dir' => $this->localConfigDir,
-            'is_local_config'  => true,
-            'option_overrides' => $this->optionOverrides,
-            'parent_defaults'  => $this->localDefaults
+            'local_config_dir'   => $this->localConfigDir,
+            'is_local_config'    => true,
+            'option_overrides'   => $this->optionOverrides,
+            'variable_store'     => $this->variableStore,
+            'parent_defaults'    => $this->transformedConfig->defaults
         );
 
         $localConfigObj = new EtlConfiguration($localConfigFile, $this->baseDir, $this->logger, $options);
@@ -322,7 +354,7 @@ class EtlConfiguration extends Configuration
 
     }  // processLocalConfig()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Merge data from the specified local configuration object, either overwriting or
      * merging data from local configuration objects into the current object.  Overrides
      * Configuration::merge().
@@ -362,7 +394,7 @@ class EtlConfiguration extends Configuration
                 if ( $this->actionExists($localActionName, $localSectionName) ) {
 
                     $msg = sprintf(
-                        "Duplicate action '%s' found in '%s' section '%s'",
+                        "Duplicate action '%s' found in '%s' secti/localon '%s'",
                         $localActionName,
                         $this->filename,
                         $localSectionName
@@ -392,7 +424,19 @@ class EtlConfiguration extends Configuration
 
     }  // merge()
 
-    /* ------------------------------------------------------------------------------------------
+    /**
+     * @see Configuration::postMergeTasts()
+     */
+
+    protected function postMergeTasks()
+    {
+        // Clean up default values that are no longer needed after processing the config
+        unset($this->parsedConfig->defaults);
+        unset($this->transformedConfig->defaults);
+        return parent::postMergeTasks();
+    }  // postMergeTasks()
+
+    /** -----------------------------------------------------------------------------------------
      * Clean up intermediate information that we don't need to keep around after processing. This
      * includes parsed and constructed JSON as well as defaults.
      * ------------------------------------------------------------------------------------------
@@ -402,28 +446,40 @@ class EtlConfiguration extends Configuration
     {
         parent::cleanup();
         $this->parentDefaults = null;
-        $this->localDefaults = null;
     }  // cleanup()
 
-    /* ------------------------------------------------------------------------------------------
-     * Apply the base path to all relative paths in the "paths" block.
+    /** -----------------------------------------------------------------------------------------
+     * Perform verification that the paths block exists in the global configuration and apply the
+     * base path to all relative paths in the "paths" block.
      * ------------------------------------------------------------------------------------------
      */
 
     protected function addBaseDirToPaths()
     {
-        // Base paths are only supported in the main configuration file.
+        // The global configuration file must have a paths block set and it must be an object.
 
-        if ( $this->isLocalConfig ) {
-            return;
+        if ( ! $this->isLocalConfig && ! isset($this->parsedConfig->paths) ) {
+            $this->logAndThrowException(sprintf(
+                "Required configuration 'paths' not found in config file: %s",
+                $this->filename
+            ));
+        } elseif ( isset($this->parsedConfig->paths) && ! is_object($this->parsedConfig->paths) ) {
+            $this->logAndThrowException(sprintf(
+                "Configuration 'paths' must be an object in config file: %s",
+                $this->filename
+            ));
         }
 
-        // The paths object must be present
+        // Warn if the paths block is found inside of the defaults rather than outside.
+
+        if ( isset($this->parsedConfig->defaults->paths) && is_object($this->parsedConfig->defaults->paths) ) {
+            $this->logger->warning("Configuration 'paths' found in 'defaults' but expected at root");
+        }
+
+        // Add the base directory to each path
 
         if ( ! isset($this->parsedConfig->paths) ) {
-            $this->logAndThrowException("Required configuration 'paths' not found in config file");
-        } elseif ( ! is_object($this->parsedConfig->paths) ) {
-            $this->logAndThrowException("Configuration 'paths' must be an object");
+            return;
         }
 
         foreach ( $this->parsedConfig->paths as $key => &$value ) {
@@ -435,20 +491,18 @@ class EtlConfiguration extends Configuration
         // Add the base directory to the paths configuration so it is easily accessible
         $this->parsedConfig->paths->base_dir = $this->baseDir;
 
-        // Place the path block into the global defaults so it is automatically propogated to all
-        // actions when defaults are applied.
+        // Place the path block into the global defaults section so it is automatically propagated
+        // to all actions when defaults are applied and remove it from the config.
 
         if ( ! isset($this->parsedConfig->defaults) ) {
             $this->parsedConfig->defaults = new stdClass;
-            $this->parsedConfig->defaults->global = new stdClass;
-        } elseif ( ! isset($this->parsedConfig->defaults->global) ) {
+        }
+
+        if ( ! isset($this->parsedConfig->defaults->global) ) {
             $this->parsedConfig->defaults->global = new stdClass;
         }
 
         $this->parsedConfig->defaults->global->paths = $this->parsedConfig->paths;
-
-        // Save it for later and remove it from the config.
-
         $this->paths = $this->parsedConfig->paths;
         unset($this->parsedConfig->paths);
 
@@ -484,7 +538,7 @@ class EtlConfiguration extends Configuration
         return false !== current($this->actionOptions);
     }  // valid()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Add a new section to the internal data structures if it doesn't already exist or
      * update the data associated with the section if it does exist (unless $overwrite ==
      * false)
@@ -515,7 +569,7 @@ class EtlConfiguration extends Configuration
 
     }  // addSection()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Apply both global and section-specific (local) defaults to a action config block.
      *
      * @param $actionConfig Reference to the configuration block for the action
@@ -524,80 +578,66 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function applyDefaultsToAction(stdClass &$actionConfig, $sectionName, stdClass $defaults)
+    protected function applyDefaultsToActionConfig(stdClass &$actionConfig, $sectionName, stdClass $defaults)
     {
-        // Apply defaults where applicable and insure that a source and destination endpoint are defined
-        // for each aggregator.  We will check for errors later when instantiating the individual classes.
+        // Apply defaults where applicable. We will check for errors later when instantiating the
+        // individual classes.
 
-        // ------------------------------------------------------------------------------------------
-        // Apply local (section) defaults first as they override globals
+        // The order of precedence is local action defaults, followed by section and then global
+        // defaults. Options specified on the command line override all of these but those are
+        // handled prior to action instantiation.
 
-        if ( isset($defaults->$sectionName) ) {
-            foreach ( $defaults->$sectionName as $propertyKey => $propertyValue ) {
+        $defaultSectionKeys = array($sectionName, 'global');
 
-                // The action config doesn't have the property at all, set it.
+        foreach ( $defaultSectionKeys as $defaultSectionKey ) {
 
-                if ( ! isset($actionConfig->$propertyKey) ) {
-                    $actionConfig->$propertyKey = $propertyValue;
-                } elseif ( self::DATA_ENDPOINT_KEY == $propertyKey ) {
+            if ( ! isset($defaults->$defaultSectionKey) ) {
+                continue;
+            }
 
-                    // This is the data endpoint property. Only apply endpoints that are not defined in the
-                    // action config
-
-                    foreach ( $propertyValue as $endpointName => $endpointConfig ) {
-                        if ( ! isset($actionConfig->$propertyKey->$endpointName) ) {
-                            $actionConfig->$propertyKey->$endpointName = $endpointConfig;
-                        }
-                    }
-                }  // elseif ( self::DATA_ENDPOINT_KEY == $property )
-
-            }  // foreach ( $defaults->$sectionName as $propertyKey => $value )
-        }  // if ( isset($defaults->$sectionName) )
-
-        // ------------------------------------------------------------------------------------------
-        // Apply global defaults
-
-        $globalDefaultKey = self::GLOBAL_DEFAULTS;
-
-        if ( isset($defaults->$globalDefaultKey) ) {
-            foreach ( $defaults->$globalDefaultKey as $propertyKey => $propertyValue ) {
+            foreach ( $defaults->$defaultSectionKey as $propertyKey => $propertyValue ) {
 
                 // The action config doesn't have the property at all, set it.
 
                 if ( ! isset($actionConfig->$propertyKey) ) {
                     $actionConfig->$propertyKey = $propertyValue;
-                }
+                } elseif ( in_array($propertyKey, array('endpoints', 'variables')) ) {
 
-                // This is the data endpoint property. Only apply endpoints that are not defined in the
-                // action config
+                    if ( ! is_object($propertyValue) ) {
+                        $this->logAndThrowException(
+                            sprintf(
+                                "Expected value of %s to be an object, %s provided",
+                                $propertyKey,
+                                gettype($propertyValue)
+                            )
+                        );
+                    }
 
-                if ( self::DATA_ENDPOINT_KEY == $propertyKey ) {
-                    foreach ( $propertyValue as $endpointName => $endpointConfig ) {
-                        if ( ! isset($actionConfig->$propertyKey->$endpointName) ) {
-                            $actionConfig->$propertyKey->$endpointName = $endpointConfig;
+                    // Merge in any key definitions that are not already present in the action
+                    // config
+
+                    foreach ( $propertyValue as $key => $value ) {
+                        if ( ! isset($actionConfig->$propertyKey->$key) ) {
+                            $actionConfig->$propertyKey->$key = $value;
                         }
                     }
-                }  // elseif ( self::DATA_ENDPOINT_KEY == $propertyKey )
-
-            }  // foreach ( $defaults->$globalDefaultKey as $propertyKey => $propertyValue )
-        }  // if ( isset($defaults->$globalDefaultKey )
-
-        // ------------------------------------------------------------------------------------------
-        // Now apply default paths to the endpoints.
-
-        $pathsKey = self::PATHS_KEY;
-
-        if ( isset($defaults->$globalDefaultKey->$pathsKey) && isset($actionConfig->endpoints) ) {
-            foreach ( $actionConfig->endpoints as $endpointName => &$endpointConfig ) {
-                if ( ! isset($endpointConfig->paths) ) {
-                    $endpointConfig->paths = $defaults->$globalDefaultKey->$pathsKey;
                 }
             }
-        }  // if ( isset($defaults->$globalDefaultKey->$pathsKey) && isset($actionConfig->endpoints) )
+        }
 
-    }  // applyDefaultsToAction()
+        // Now apply default paths to the endpoints.
 
-    /* ------------------------------------------------------------------------------------------
+        if ( isset($defaults->global->paths) && isset($actionConfig->endpoints) ) {
+            foreach ( $actionConfig->endpoints as $endpointName => &$endpointConfig ) {
+                if ( ! isset($endpointConfig->paths) ) {
+                    $endpointConfig->paths = $defaults->global->paths;
+                }
+            }
+        }
+
+    }  // applyDefaultsToActionConfig()
+
+    /** -----------------------------------------------------------------------------------------
      * Register an action and also register any data endpoints that it has.  Registered actions
      * have their options set up but they are not instantiated.
      *
@@ -633,26 +673,6 @@ class EtlConfiguration extends Configuration
         if ( ! isset($config->class) ) {
             $config->class = $config->name;
         }
-
-        // Verify that we have a class name for the options and it exists.  Ingestors and Aggregators
-        // have default options classes if they are not otherwise specified.
-
-        if ( ! isset($config->options_class) ) {
-            switch ( $sectionName ) {
-                case self::MAINTENANCE:
-                    $config->options_class = self::DEFAULT_MAINTENANCE_OPTIONS_CLASS;
-                    break;
-                case self::INGESTORS:
-                    $config->options_class = self::DEFAULT_INGESTOR_OPTIONS_CLASS;
-                    break;
-                case self::AGGREGATORS:
-                    $config->options_class = self::DEFAULT_AGGREGATOR_OPTIONS_CLASS;
-                    break;
-                default:
-                    $this->logAndThrowException("Options class not specified for '$config->name'");
-                    break;
-            }
-        }  // if ( ! isset($config->options_class) )
 
         // If the options class name does not include a namespace designation, use the namespace from
         // the action configuration.
@@ -695,8 +715,7 @@ class EtlConfiguration extends Configuration
             // for each unique key. We need to register the endpoints first because the actions will
             // need the keys when they are executed.
 
-            $endpointKey = self::DATA_ENDPOINT_KEY;
-            foreach ($config->$endpointKey as $endpointName => $endpointConfig) {
+            foreach ($config->endpoints as $endpointName => $endpointConfig) {
                 try {
                     $this->addDataEndpoint($endpointConfig);
                 } catch (Exception $e) {
@@ -705,15 +724,15 @@ class EtlConfiguration extends Configuration
                         . $e->getMessage()
                     );
                 }
-            }  // foreach ($config->$endpointKey as $endpointName => $endpointConfig)
+            }  // foreach ($config->endpoints as $endpointName => $endpointConfig)
 
             foreach ( $config as $key => $value ) {
 
                 // The source, destination, and utility entries are data endpoints and need the key to
                 // reference the endpoints.
 
-                if ( self::DATA_ENDPOINT_KEY == $key ) {
-                    foreach ($config->$endpointKey as $endpointName => $endpointConfig) {
+                if ( 'endpoints' == $key ) {
+                    foreach ($config->endpoints as $endpointName => $endpointConfig) {
                         if ( isset($endpointConfig->key) ) {
                             $options->$endpointName = $endpointConfig->key;
                         }
@@ -737,7 +756,7 @@ class EtlConfiguration extends Configuration
 
     }  // registerAction()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Add an action to the list of actions for the specified section.
      *
      * @param $sectionName The name of the section that we are adding the action to
@@ -752,7 +771,7 @@ class EtlConfiguration extends Configuration
         $this->actionOptions[$sectionName][$options->name] = $options;
     }  // addAction()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Add a data endpoint if it hasn't already been added.  We will maintain a list of data endpoints
      * referenced by keys to use during the ingestion process so we don't maintain potentially 10's of
      * the same endpoint.
@@ -794,7 +813,7 @@ class EtlConfiguration extends Configuration
      * ==========================================================================================
      */
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of enabled action names. This includes actions that are properly configured
      * and enabled.
      *
@@ -824,7 +843,7 @@ class EtlConfiguration extends Configuration
 
     }  // getEnabledActionNames()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Search for an action name across all sections and return the sections where it was found.
      *
      * @param $actionName The name of the action to search for.
@@ -848,7 +867,7 @@ class EtlConfiguration extends Configuration
 
     }  // findActionSections()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @param $actionName The name of the action to search for.
      * @param $sectionName Optional section name to look for the action
      *
@@ -869,7 +888,7 @@ class EtlConfiguration extends Configuration
 
     }  // actionExists()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of configured action names. This includes all actions that are properly
      * configured whether they are enabled or disabled.
      *
@@ -890,7 +909,7 @@ class EtlConfiguration extends Configuration
 
     }  // getConfiguredActionNames()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of disabled action names. These are actions that are configured, but have been
      * marked as disabled.
      *
@@ -911,7 +930,7 @@ class EtlConfiguration extends Configuration
 
     }  // getDisabledActionNames()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of option objects for the specified section. Only options for configured ingestors
      * are available.
      *
@@ -931,7 +950,7 @@ class EtlConfiguration extends Configuration
 
     }  // getSectionActionOptions()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of option objects for the specified section. Only options for configured ingestors
      * are available.
      *
@@ -951,7 +970,7 @@ class EtlConfiguration extends Configuration
 
     }  // getSectionActionNames()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get an individual option object for the specified action in the specified section. If the
      * section is not provided all sections will be searched for the action. If an action is found
      * in multiple sections an exception will be thrown so a section name should be provided where
@@ -994,7 +1013,7 @@ class EtlConfiguration extends Configuration
 
     }  // getActionOptions()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get a globally defined endpoint, or FALSE if it is not defined.
      *
      * @param $name The name of the global endpoint (e.g., utility, source, destination)
@@ -1010,7 +1029,7 @@ class EtlConfiguration extends Configuration
                  : false );
     }  // getGlobalEndpoint()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the list of data endpoints. Only data endpoints for enabled ingestors are available.
      *
      * @return An array of object implementing the iDataEndpoint interface
@@ -1022,7 +1041,7 @@ class EtlConfiguration extends Configuration
         return $this->endpoints;
     }  // getDataEndpoints()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Get the named data endpoint.
      *
      * @param string $name The name/identifier for the data endpoint
@@ -1039,7 +1058,7 @@ class EtlConfiguration extends Configuration
         return ( array_key_exists($name, $this->endpoints) ? $this->endpoints[$name] : false );
     }  // getDataEndpoint()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @return The configured paths object.
      * ------------------------------------------------------------------------------------------
      */

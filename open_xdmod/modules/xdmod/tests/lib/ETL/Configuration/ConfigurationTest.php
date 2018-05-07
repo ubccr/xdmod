@@ -83,4 +83,22 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         unlink('/tmp/reference_target.json');
         $this->assertEquals($generated, $expected);
     }
+
+    /**
+     * Test variables in the configuration file.
+     */
+
+    public function testConfigurationVariables()
+    {
+        $configObj = new Configuration(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
+            null,
+            null,
+            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+        );
+        $configObj->initialize();
+        $generated = json_decode($configObj->toJson());
+        $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config.expected'));
+        $this->assertEquals($generated, $expected);
+    }
 } // class ConfigurationTest

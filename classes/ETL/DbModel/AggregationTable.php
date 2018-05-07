@@ -15,7 +15,7 @@
 
 namespace ETL\DbModel;
 
-use ETL\Utilities;
+use ETL\VariableStore;
 use Log;
 use stdClass;
 
@@ -124,7 +124,7 @@ class AggregationTable extends Table
      * ------------------------------------------------------------------------------------------
      */
 
-    public function copyAndApplyVariables(array $variableMap)
+    public function copyAndApplyVariables(VariableStore $variableStore)
     {
         // Save the JSON representation for columns, indexes, triggers
 
@@ -152,16 +152,14 @@ class AggregationTable extends Table
         $newTable->triggers = array();
 
         foreach ( $columnJson as $def ) {
-            if ( null !== $variableMap ) {
-                foreach ( $def as $key => &$value ) {
-                    // Variables are not substituted in processing hints
-                    if ( 'hints' == $key ) {
-                        continue;
-                    }
-                    $value = Utilities::substituteVariables($value, $variableMap);
+            foreach ( $def as $key => &$value ) {
+                // Variables are not substituted in processing hints
+                if ( 'hints' == $key ) {
+                    continue;
                 }
-                unset($value); // Sever the reference with the last element
+                $value = $variableStore->substitute($value);
             }
+            unset($value); // Sever the reference with the last element
 
             // Add the column, allowing duplicate column names to overwrite previous values. Without
             // overwrite turned on, the yearly aggregation tables with throw an exception and log a
@@ -172,22 +170,18 @@ class AggregationTable extends Table
         }
 
         foreach ( $indexJson as $def ) {
-            if ( null !== $variableMap ) {
-                foreach ( $def as $key => &$value ) {
-                    $value = Utilities::substituteVariables($value, $variableMap);
-                }
-                unset($value); // Sever the reference with the last element
+            foreach ( $def as $key => &$value ) {
+                $value = $variableStore->substitute($value);
             }
+            unset($value); // Sever the reference with the last element
             $newTable->addIndex($def);
         }
 
         foreach ( $triggerJson as $def ) {
-            if ( null !== $variableMap ) {
-                foreach ( $def as $key => &$value ) {
-                    $value = Utilities::substituteVariables($value, $variableMap);
-                }
-                unset($value); // Sever the reference with the last element
+            foreach ( $def as $key => &$value ) {
+                $value = $variableStore->substitute($value);
             }
+            unset($value); // Sever the reference with the last element
             $newTable->addTrigger($def);
         }
 

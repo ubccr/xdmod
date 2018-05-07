@@ -80,6 +80,7 @@ use Log;
 use Exception;
 use stdClass;
 use ETL\Loggable;
+use ETL\VariableStore;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint;
 
@@ -157,6 +158,14 @@ class Configuration extends Loggable implements \Iterator
 
     protected $options = array();
 
+    /**
+     * A collection of variable names and values available for substitution during the ETL process.
+     * Note that the contents of this collection may change over time as variables can be added via
+     * the command line, configuration files, or ETL actions themselves.
+     * @var VariableStore
+     */
+
+    protected $variableStore = null;
 
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
@@ -169,8 +178,17 @@ class Configuration extends Loggable implements \Iterator
      *   These include, but are not limited to:
      *   local_config_dir: Directory to look for local configuration files
      *   is_local_config: TRUE if this filename is a local config file as opposed to the global file
+     *   variable_store: An existing VariableStore object that will be used to initialize the list
+     *     of available configuration variables.  This is useful when passing existing variables
+     *     into a new Configuration object such as parsing local configuration files.
+     *   config_variables: An associative array of variables=value pairs that can be substituted in
+     *     the configuration file.  These variables take precedence over any that were passed in
+     *     via the variable_store option.
+     *
+     *   DEPRECATED:
      *   variables: An associative array of variables and their value. These may be used by
-     *     transformers to support variable substitution.
+     *     transformers to support variable substitution. NOTE: JsonReferenceTransforer must
+     *     be modified to use the VariableStore.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -201,11 +219,11 @@ class Configuration extends Loggable implements \Iterator
             $this->filename = \xd_utilities\qualify_path($filename, $this->baseDir);
         }
 
-        if ( array_key_exists('local_config_dir', $options) && null !== $options['local_config_dir'] ) {
+        if ( isset($options['local_config_dir']) ) {
             $this->localConfigDir = $options['local_config_dir'];
         }
 
-        $this->isLocalConfig = ( array_key_exists('is_local_config', $options) && $options['is_local_config'] );
+        $this->isLocalConfig = ( isset($options['is_local_config']) && $options['is_local_config'] );
 
         $this->options = $options;
 
@@ -214,10 +232,25 @@ class Configuration extends Loggable implements \Iterator
         $this->baseDir = \xd_utilities\resolve_path($this->baseDir);
         $this->localConfigDir = \xd_utilities\resolve_path($this->localConfigDir);
 
+        if ( isset($options['variable_store']) && $options['variable_store'] instanceof VariableStore ) {
+            $this->variableStore = $options['variable_store'];
+        } else {
+            $this->variableStore = new VariableStore();
+        }
+
+        // Make any configuration variables available immediately and override any existing
+        // variables. These will then be available to any local configuration files.
+
+        if ( isset($options['config_variables']) && is_array($options['config_variables']) ) {
+            foreach ( $options['config_variables'] as $variable => $value ) {
+                $this->variableStore->overwrite($variable, $value);
+            }
+        }
+
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
-     * Initialize the configuration object.
+     * Initialize the configuration objecton
      * ------------------------------------------------------------------------------------------
      */
 
@@ -346,8 +379,9 @@ class Configuration extends Loggable implements \Iterator
 
     private function transform()
     {
-        // To keep the original parsed config we need to use unserialize(serialize()) to
-        // break the reference.
+        // Objects are passed by reference so to keep the original parsed config we need to use
+        // unserialize(serialize()) to break the reference. Cloning only produces a shallow copy and
+        // any properties that are references to other variables will remain references
 
         $tmp = unserialize(serialize($this->parsedConfig));
         $this->transformedConfig = $this->processKeyTransformers($tmp);
@@ -385,7 +419,8 @@ class Configuration extends Loggable implements \Iterator
     {
         $options = array(
             'local_config_dir' => $this->localConfigDir,
-            'is_local_config' => true
+            'is_local_config'  => true,
+            'variable_store'   => $this->variableStore
         );
 
         // The static keyword uses late binding to create an instance of the class that you called
@@ -463,8 +498,49 @@ class Configuration extends Loggable implements \Iterator
 
     protected function postMergeTasks()
     {
+        $this->transformedConfig = $this->substituteVariables($this->transformedConfig);
         return $this;
     }  // postMergeTasks()
+
+    /**
+     * Perform variable substitution on an entity. The entity may be a simple string, an array, or
+     * more complex objects. Arrays and complex objects are recursively traversed.
+     *
+     * @param mixed $entity The entity that we are performing substitution on.
+     *
+     * @return mixed The entity after performing variable substitution.
+     */
+
+    protected function substituteVariables($entity)
+    {
+        if ( is_string($entity) ) {
+            return $this->variableStore->substitute($entity);
+        } elseif ( is_array($entity) || $entity instanceof \stdClass || $entity instanceof \Traversable ) {
+            return $this->recursivelySubstituteVariables($entity);
+        }
+        return $entity;
+    }
+
+    /**
+     * Recursively traverse a complex object and perform variable substitution on any values that are
+     * strings.
+     *
+     * @param  Traversable $traversable A traversable entity.
+     *
+     * @return Traversable The input parameter with variable substitution performed on string values.
+     */
+
+    private function recursivelySubstituteVariables($traversable)
+    {
+        foreach ( $traversable as $property => &$value ) {
+            if ( is_string($value) ) {
+                $value = $this->variableStore->substitute($value);
+            } elseif ( is_array($value) || $value instanceof \stdClass || $value instanceof \Traversable ) {
+                $value = $this->recursivelySubstituteVariables($value);
+            }
+        }
+        return $traversable;
+    }
 
     /** -----------------------------------------------------------------------------------------
      * Clean up intermediate information that we don't need to keep around after processing. This
@@ -822,6 +898,17 @@ class Configuration extends Loggable implements \Iterator
     {
         return $this->options;
     }  // getOptions()
+
+    /**
+     * ------------------------------------------------------------------------------------------
+     * @return VariableStore The VariableStore currently in use for this configuration.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getVariableStore()
+    {
+        return $this->variableStore;
+    }  // getVariableStore()
 
     /** -----------------------------------------------------------------------------------------
      * Get the configuration after applying transforms.
