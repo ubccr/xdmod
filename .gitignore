@@ -337,3 +337,5 @@ launch.json
 
 # External QA assets
 /.qa/
+ .eslintrc.json
+ phpcs.xml

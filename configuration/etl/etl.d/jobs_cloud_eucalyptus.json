@@ -42,7 +42,7 @@
                     "type": "directoryscanner",
                     "name": "Eucalyptus event logs",
                     "#": "Relative paths are searched in $BASEDIR/etl_data.d",
-                    "path": "cloud_eucalyptus/ccr-cbls-2/",
+                    "path": "/path/to/eucalyptus/log/files",
                     "directory_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}/",
                     "file_pattern": "/acct\\.json/",
                     "#": "Recursion depth is relative to the path",
@@ -198,20 +198,6 @@
             "description": "Eucalyptus cloud assets associated with events",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_eucalyptus/event_asset.json"
-        },
-        {
-            "#": "Asset data must be aggregated post ingestion",
-            "name": "EucalyptusCloudEventAggregator",
-            "namespace": "ETL\\Aggregator",
-            "options_class": "AggregatorOptions",
-            "class": "SimpleAggregator",
-            "description": "Aggregate Eucalyptus cloud records.",
-            "definition_file": "cloud_eucalyptus/cloud_metrics_euca_aggregation.json",
-            "truncate_destination": true,
-            "table_prefix": "cloud_fact_by_",
-            "aggregation_units": [
-                "day", "month", "quarter", "year"
-            ]
         }
     ]
 }
