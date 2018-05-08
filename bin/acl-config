@@ -419,6 +419,7 @@ function wipeManagedTables(iDatabase $db)
         'acl_tabs',
         'tabs',
         'acl_hierarchies',
+        'acl_group_bys',
         'acls',
         'acl_types',
         'group_bys',
