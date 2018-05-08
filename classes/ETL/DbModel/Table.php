@@ -14,7 +14,7 @@
  * The Table class makes use of the following classes:
  * - Column
  * - Index
- * - Constraint
+ * - ForeignKeyConstraint
  * - Trigger
  *
  * @author Steve Gallo <smgallo@buffalo.edu>
@@ -52,8 +52,8 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
         // Associative array where the keys are index names and the values are Index objects
         'indexes'  => array(),
 
-        // Associative array where the keys are constraint names and the values are Constraint objects
-        'constraints'  => array(),
+        // Associative array where the keys are foreign key constraint names and the values are ForeignKeyConstraint objects
+        'foreign_key_constraints'  => array(),
 
         // Associative array where the keys are trigger names and the values are Trigger objects
         'triggers' => array(),
@@ -104,7 +104,7 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
         switch ( $property ) {
             case 'columns':
             case 'indexes':
-            case 'constraints':
+            case 'foreign_key_constraints':
             case 'triggers':
                 // Note that we are only checking that the value is an array here and not
                 // the array elements. That must come later.
@@ -158,16 +158,16 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
             }
         }  // foreach ( $this->indexes as $index )
 
-        // Verify constraint columns match table columns
+        // Verify foreign key constraint columns match table columns
 
-        foreach ( $this->constraints as $constraint ) {
+        foreach ( $this->foreign_key_constraints as $constraint ) {
             $missingColumnNames = array_diff($constraint->columns, $columnNames);
             if ( 0 != count($missingColumnNames) ) {
                 $this->logAndThrowException(
-                    sprintf("Columns in constraint '%s' not found in table definition: %s", $constraint->name, implode(", ", $missingColumnNames))
+                    sprintf("Columns in foreign key constraint '%s' not found in table definition: %s", $constraint->name, implode(", ", $missingColumnNames))
                 );
             }
-        }  // foreach ( $this->constraints as $constraint )
+        }  // foreach ( $this->foreign_key_constraints as $constraint )
 
         return true;
 
@@ -310,7 +310,7 @@ ORDER BY index_name ASC";
             $this->addIndex((object) $row);
         }
 
-        // Query constraints.
+        // Query foreign key constraints.
 
         $sql = <<<SQL
 SELECT
@@ -334,13 +334,13 @@ SQL;
         try {
             $result = $endpoint->getHandle()->query($sql, $params);
         } catch (Exception $e) {
-            $this->logAndThrowException("Error discovering table '$qualifiedTableName' constraints: " . $e->getMessage());
+            $this->logAndThrowException("Error discovering table '$qualifiedTableName' foreign key constraints: " . $e->getMessage());
         }
 
         foreach ( $result as $row ) {
             $row['columns'] = explode(',', $row['columns']);
             $row['referenced_columns'] = explode(',', $row['referenced_columns']);
-            $this->addConstraint((object) $row);
+            $this->addForeignKeyConstraint((object) $row);
         }
 
         // Query triggers
@@ -486,7 +486,7 @@ ORDER BY trigger_name ASC";
     }  // getIndex()
 
     /* ------------------------------------------------------------------------------------------
-     * Add a constraint to this table.
+     * Add a foreign key constraint to this table.
      *
      * @param $config An object containing the column definition, or a Column object to add
      * @param $overwriteDuplicates TRUE to allow overwriting of duplicate column names. If false, throw
@@ -499,49 +499,49 @@ ORDER BY trigger_name ASC";
      * ------------------------------------------------------------------------------------------
      */
 
-    public function addConstraint($config, $overwriteDuplicates = false)
+    public function addForeignKeyConstraint($config, $overwriteDuplicates = false)
     {
-        $item = ( is_object($config) && $config instanceof Constraint
+        $item = ( is_object($config) && $config instanceof ForeignKeyConstraint
                   ? $config
-                  : new Constraint($config, $this->systemQuoteChar, $this->logger) );
+                  : new ForeignKeyConstraint($config, $this->systemQuoteChar, $this->logger) );
 
-        if ( array_key_exists($item->name, $this->constraints) && ! $overwriteDuplicates ) {
+        if ( array_key_exists($item->name, $this->foreign_key_constraints) && ! $overwriteDuplicates ) {
             $this->logAndThrowException(
-                sprintf("Cannot add duplicate constraint '%s'", $item->name)
+                sprintf("Cannot add duplicate foreign key constraint '%s'", $item->name)
             );
         }
 
-        $this->properties['constraints'][$item->name] = $item;
+        $this->properties['foreign_key_constraints'][$item->name] = $item;
 
         return $this;
 
-    }  // addConstraint()
+    }  // addForeignKeyConstraint()
 
     /* ------------------------------------------------------------------------------------------
-     * Get the list of constraint names.
+     * Get the list of foreign key constraint names.
      *
      * @return array An array of column names.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getConstraintNames()
+    public function getForeignKeyConstraintNames()
     {
-        return array_keys($this->constraints);
-    }  // getConstraintNames()
+        return array_keys($this->foreign_key_constraints);
+    }  // getForeignKeyConstraintNames()
 
     /* ------------------------------------------------------------------------------------------
-     * Get an Constraint object with the specified name.
+     * Get an ForeignKeyConstraint object with the specified name.
      *
-     * @param $name The name of the constraint to retrieve.
+     * @param $name The name of the foreign key constraint to retrieve.
      *
-     * @return The Constraint object with the specified name or FALSE if the trigger does not exist
+     * @return The ForeignKeyConstraint object with the specified name or FALSE if the trigger does not exist
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getConstraint($name)
+    public function getForeignKeyConstraint($name)
     {
-        return ( array_key_exists($name, $this->constraints) ? $this->properties['constraints'][$name] : false );
-    }  // getConstraint()
+        return ( array_key_exists($name, $this->foreign_key_constraints) ? $this->properties['foreign_key_constraints'][$name] : false );
+    }  // getForeignKeyConstraint()
 
     /* ------------------------------------------------------------------------------------------
      * Add a trigger to this table.
@@ -627,9 +627,9 @@ ORDER BY trigger_name ASC";
             $indexCreateList[$name] = $index->getSql($includeSchema);
         }
 
-        $constraintCreateList = array();
-        foreach ( $this->constraints as $name => $constraint ) {
-            $constraintCreateList[$name] = $constraint->getSql($includeSchema);
+        $foreignKeyConstraintCreateList = array();
+        foreach ( $this->foreign_key_constraints as $name => $constraint ) {
+            $foreignKeyConstraintCreateList[$name] = $constraint->getSql($includeSchema);
         }
 
         $triggerCreateList = array();
@@ -648,7 +648,7 @@ ORDER BY trigger_name ASC";
         $sqlList[] = "CREATE TABLE IF NOT EXISTS $tableName (\n" .
             "  " . implode(",\n  ", $columnCreateList) .
             ( 0 != count($indexCreateList) ? ",\n  " . implode(",\n  ", $indexCreateList) : "" ) .
-            ( 0 != count($constraintCreateList) ? ",\n  " . implode(",\n  ", $constraintCreateList) : "" ) .
+            ( 0 != count($foreignKeyConstraintCreateList) ? ",\n  " . implode(",\n  ", $foreignKeyConstraintCreateList) : "" ) .
             "\n" . ")" .
             ( null !== $this->engine ? " ENGINE = " . $this->engine : "" ) .
             ( null !== $this->comment && ! empty($this->comment) ? " COMMENT = '" . addslashes($this->comment) . "'" : "" ) .
@@ -791,32 +791,32 @@ ORDER BY trigger_name ASC";
         }
 
         // --------------------------------------------------------------------------------
-        // Processes constraints
+        // Processes foreign key constraints
 
-        $currentConstraintNames = $this->getConstraintNames();
-        $destConstraintNames = $destination->getConstraintNames();
+        $currentForeignKeyConstraintNames = $this->getForeignKeyConstraintNames();
+        $destForeignKeyConstraintNames = $destination->getForeignKeyConstraintNames();
 
-        $dropConstraintNames = array_diff($currentConstraintNames, $destConstraintNames);
-        $addConstraintNames = array_diff($destConstraintNames, $currentConstraintNames);
-        $changeConstraintNames = array_intersect($currentConstraintNames, $destConstraintNames);
+        $dropForeignKeyConstraintNames = array_diff($currentForeignKeyConstraintNames, $destForeignKeyConstraintNames);
+        $addForeignKeyConstraintNames = array_diff($destForeignKeyConstraintNames, $currentForeignKeyConstraintNames);
+        $changeForeignKeyConstraintNames = array_intersect($currentForeignKeyConstraintNames, $destForeignKeyConstraintNames);
 
-        foreach ( $dropConstraintNames as $name ) {
+        foreach ( $dropForeignKeyConstraintNames as $name ) {
             $alterList[] = 'DROP FOREIGN KEY ' . $this->quote($name);
         }
 
-        foreach ( $addConstraintNames as $name ) {
-            $alterList[] = 'ADD ' . $destination->getConstraint($name)->getSql($includeSchema);
+        foreach ( $addForeignKeyConstraintNames as $name ) {
+            $alterList[] = 'ADD ' . $destination->getForeignKeyConstraint($name)->getSql($includeSchema);
         }
 
-        // Altered constraints need to be dropped then added
-        foreach ( $changeConstraintNames as $name ) {
-            $destConstraint = $destination->getConstraint($name);
+        // Altered foreign key constraints need to be dropped then added
+        foreach ( $changeForeignKeyConstraintNames as $name ) {
+            $destForeignKeyConstraint = $destination->getForeignKeyConstraint($name);
             // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == $destConstraint->compare($this->getConstraint($name)) ) {
+            if ( 0 == $destForeignKeyConstraint->compare($this->getForeignKeyConstraint($name)) ) {
                 continue;
             }
-            $alterList[] = 'DROP FOREIGN KEY ' . $destConstraint->getName(true);
-            $alterList[] = 'ADD ' . $destConstraint->getSql($includeSchema);
+            $alterList[] = 'DROP FOREIGN KEY ' . $destForeignKeyConstraint->getName(true);
+            $alterList[] = 'ADD ' . $destForeignKeyConstraint->getSql($includeSchema);
         }
 
         // --------------------------------------------------------------------------------
@@ -900,7 +900,7 @@ ORDER BY trigger_name ASC";
 
         $data->columns = array_values((array) $data->columns);
         $data->indexes = array_values((array) $data->indexes);
-        $data->constraints = array_values((array) $data->constraints);
+        $data->foreign_key_constraints = array_values((array) $data->foreign_key_constraints);
         $data->triggers = array_values((array) $data->triggers);
 
         return $data;
@@ -915,7 +915,7 @@ ORDER BY trigger_name ASC";
     public function __set($property, $value)
     {
         // If we are not setting a property that is a special case, just call the main setter
-        $specialCaseProperties = array('columns', 'indexes', 'constraints', 'triggers');
+        $specialCaseProperties = array('columns', 'indexes', 'foreign_key_constraints', 'triggers');
 
         if ( ! in_array($property, $specialCaseProperties) ) {
             parent::__set($property, $value);
@@ -955,14 +955,14 @@ ORDER BY trigger_name ASC";
                 }
                 break;
 
-            case 'constraints':
+            case 'foreign_key_constraints':
                 $this->properties[$property] = array();
                 // Clear the array no matter what, that way NULL is handled properly.
                 if ( null !== $value ) {
                     foreach ( $value as $item ) {
-                        $constraint = ( is_object($item) && $item instanceof Constraint
+                        $constraint = ( is_object($item) && $item instanceof ForeignKeyConstraint
                                    ? $item
-                                   : new Constraint($item, $this->systemQuoteChar, $this->logger) );
+                                   : new ForeignKeyConstraint($item, $this->systemQuoteChar, $this->logger) );
                         $this->properties[$property][$constraint->name] = $constraint;
                     }
                 }

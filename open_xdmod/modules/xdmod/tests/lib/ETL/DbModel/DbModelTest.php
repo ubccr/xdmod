@@ -16,7 +16,7 @@ use ETL\DbModel\AggregationTable;
 use ETL\DbModel\Query;
 use ETL\DbModel\Column;
 use ETL\DbModel\Index;
-use ETL\DbModel\Constraint;
+use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Trigger;
 use ETL\Configuration\EtlConfiguration;
 
@@ -169,13 +169,13 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         );
 
         // Test with a system quote character
-        $obj = new Constraint($config, '`', $this->logger);
+        $obj = new ForeignKeyConstraint($config, '`', $this->logger);
         $generated = $obj->getSql();
         $expected = "CONSTRAINT `constraint_col1_col2` FOREIGN KEY (`col1`, `col2`) REFERENCES `other_table` (`col3`, `col4`)";
         $this->assertEquals($expected, $generated);
 
         // Test with no system quote character
-        $obj = new Constraint($config, null, $this->logger);
+        $obj = new ForeignKeyConstraint($config, null, $this->logger);
         $generated = $obj->getSql();
         $expected = "CONSTRAINT constraint_col1_col2 FOREIGN KEY (col1, col2) REFERENCES other_table (col3, col4)";
         $this->assertEquals($expected, $generated);
@@ -239,7 +239,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
             'referenced_table' => 'other_table',
             'referenced_columns' => array('other_column'),
         );
-        $destTable->addConstraint($config);
+        $destTable->addForeignKeyConstraint($config);
 
         $config = (object) array(
             'name' => 'before_ins',

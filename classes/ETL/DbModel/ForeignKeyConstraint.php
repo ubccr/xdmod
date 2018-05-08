@@ -1,7 +1,7 @@
 <?php
 /**
- * Class for managing table constraints in the data warehouse.  This is meant to
- * be used as a component of Table.
+ * Class for managing table foreign key constraints in the data warehouse.  This
+ * is meant to be used as a component of Table.
  *
  * @see Table
  * @see iEntity
@@ -12,7 +12,7 @@ namespace ETL\DbModel;
 use Log;
 use stdClass;
 
-class Constraint extends NamedEntity implements iEntity
+class ForeignKeyConstraint extends NamedEntity implements iEntity
 {
     /**
      * Properties required by this class. These will be merged with other
@@ -36,6 +36,8 @@ class Constraint extends NamedEntity implements iEntity
         'columns' => array(),
         'referenced_table' => null,
         'referenced_columns' => array(),
+        'on_delete' => null,
+        'on_update' => null,
     );
 
     public function __construct(
@@ -64,6 +66,10 @@ class Constraint extends NamedEntity implements iEntity
     protected function filterAndVerifyValue($property, $value)
     {
         $value = parent::filterAndVerifyValue($property, $value);
+
+        if ($value === null) {
+            return $value;
+        }
 
         switch ($property) {
             case 'columns':
@@ -107,6 +113,36 @@ class Constraint extends NamedEntity implements iEntity
                     );
                 }
                 break;
+            case 'on_delete':
+            case 'on_update':
+                if (!is_string($value)) {
+                    $this->logAndThrowException(
+                        sprintf(
+                            '"%s" must be a string, "%s" given',
+                            $property,
+                            gettype($value)
+                        )
+                    );
+                }
+                if (!in_array(
+                    strtoupper($value),
+                    array(
+                        'RESTRICT',
+                        'NO ACTION',
+                        'CASCADE',
+                        'SET NULL',
+                        'SET DEFAULT',
+                    )
+                )) {
+                    $this->logAndThrowException(
+                        sprintf(
+                            '"%s" action is not allowed for "%s"',
+                            $value,
+                            $property
+                        )
+                    );
+                }
+                break;
             default:
                 break;
         }
@@ -115,10 +151,13 @@ class Constraint extends NamedEntity implements iEntity
     }
 
     /**
-     * Auto-generate an index name based on the columns included in the index.
-     * If the length of the index name would be too large use a hash.
+     * Auto-generate a constraint name.
      *
-     * @param array $columns The array of index column names
+     * If this is a foreign key constraint use the columns included in the
+     * constraint.  If the length of the index name would be too large use a
+     * hash.
+     *
+     * @param array $columns The array of constraint column names
      *
      * @return string The generated index name
      */
@@ -126,11 +165,12 @@ class Constraint extends NamedEntity implements iEntity
     {
         $str = implode('_', $columns);
         $name = ( strlen($str) <= 32 ? $str : md5($str) );
+
         return 'constraint_' . $name;
     }
 
     /**
-     * Constraints are considered equal if all properties are the same.
+     * Constraints are considered equal if all non-null properties are the same.
      */
     public function compare(iEntity $cmp)
     {
@@ -142,6 +182,8 @@ class Constraint extends NamedEntity implements iEntity
             || $this->columns != $cmp->columns
             || $this->referenced_table != $cmp->referenced_table
             || $this->referenced_columns != $cmp->referenced_columns
+            || $this->on_delete != $cmp->on_delete
+            || $this->on_update != $cmp->on_update
         ) {
             return -1;
         }
@@ -167,6 +209,17 @@ class Constraint extends NamedEntity implements iEntity
                 array_map(array($this, 'quote'), $this->referenced_columns)
             )
             . ')';
+
+        if ($this->on_delete !== null) {
+            $parts[] = 'ON DELETE';
+            $parts[] = $this->on_delete;
+        }
+
+        if ($this->on_update !== null) {
+            $parts[] = 'ON UPDATE';
+            $parts[] = $this->on_update;
+        }
+
         return implode(' ', $parts);
     }
 }
