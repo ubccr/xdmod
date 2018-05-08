@@ -267,8 +267,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     public function moduleSectionProvider()
     {
-        $rolesExpected = Json::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'roles-config_for_cloud.json');
-        $datawarehouseExpected = Json::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'datawarehouse-fix_datawarehouse.json');
+        $rolesExpected = Json::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'roles-groupbywaittime.json');
+        $datawarehouseExpected = Json::loadFile(__DIR__ . self::TEST_ARTIFACT_OUTPUT_PATH . DIRECTORY_SEPARATOR . 'datawarehouse-groupbywaittime.json');
         return array(
             array(
                 'roles',

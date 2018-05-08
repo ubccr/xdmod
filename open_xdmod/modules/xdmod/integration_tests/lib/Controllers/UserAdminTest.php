@@ -304,7 +304,7 @@ class UserAdminTest extends BaseUserAdminTest
             $this->getTestFiles()->getFile('user_admin', $output)
         );
 
-        $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected [" . json_encode($expected) . "] Received [" . json_encode($actual) . "]");
+        $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected:\n\n[" . json_encode($expected) . "]\n\nReceived:\n\n[" . json_encode($actual) . "]");
 
         if ($username !== self::PUBLIC_USER_NAME) {
             $this->helper->logout();
@@ -318,7 +318,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetMenus()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_menus', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'get_menus-1', 'input')
         );
     }
 
@@ -431,7 +431,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetDwDescripters()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_dw_descripters', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'get_dw_descripters-1', 'input')
         );
     }
 

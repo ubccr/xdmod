@@ -91,8 +91,8 @@ class VerifyDatabase extends aAction implements iAction
             'LAST_MODIFIED_END_DATE'
         );
 
-        $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableMap, $this->sourceEndpoint);
-        $this->variableMap = array_merge($this->variableMap, $localVariableMap);
+        $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableStore, $this->sourceEndpoint);
+        $this->variableStore->add($localVariableMap, true);
 
         // Our source query can be either a query specified directly in the definition file, or a
         // more complex query defined in a separate file.
@@ -114,10 +114,8 @@ class VerifyDatabase extends aAction implements iAction
             }
 
             $this->sqlQueryString = file_get_contents($sqlFile);
-            $this->sqlQueryString = Utilities::substituteVariables(
+            $this->sqlQueryString = $this->variableStore->substitute(
                 $this->sqlQueryString,
-                $this->variableMap,
-                $this,
                 "Undefined macros found in source query"
             );
 
@@ -151,10 +149,8 @@ class VerifyDatabase extends aAction implements iAction
             $this->setOverseerRestrictionOverrides();
             $this->getEtlOverseerOptions()->applyOverseerRestrictions($sourceQuery, $this->sourceEndpoint, $this);
             $this->sqlQueryString = $sourceQuery->getSql();
-            $this->sqlQueryString = Utilities::substituteVariables(
+            $this->sqlQueryString = $this->variableStore->substitute(
                 $this->sqlQueryString,
-                $this->variableMap,
-                $this,
                 "Undefined macros found in source query"
             );
 
@@ -172,10 +168,8 @@ class VerifyDatabase extends aAction implements iAction
                 continue;
             }
 
-            $this->emailConfiguration[$option] =  Utilities::substituteVariables(
+            $this->emailConfiguration[$option] = $this->variableStore->substitute(
                 $verifyConfig->response->$option,
-                $this->variableMap,
-                $this,
                 "Undefined macros found in response $option"
             );
 

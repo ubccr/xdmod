@@ -63,6 +63,22 @@ class Loggable
         return $this->logger;
     }  // getLogger()
 
+    /**
+     * Determine the file and line from which the statement that executed this method was called.
+     * Since the backtrace includes the call to this method, we need to go back 2 steps in the
+     * backtrace.
+     *
+     * @return array A 2-element array containing the file and line number of the statement that
+     *   executed the calling function.
+     */
+
+    protected function getCallerInfo()
+    {
+        $backtrace = debug_backtrace();
+        $caller = next($backtrace);
+        return array($caller['file'], $caller['line']);
+    } // getCallerInfo()
+
     /* ------------------------------------------------------------------------------------------
      * Helper function to log errors in a consistent format and provide a mechanism to
      * supply additional, optional, parameters for greater detail.

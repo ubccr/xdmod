@@ -188,7 +188,7 @@ class pdoAggregator extends aAggregator
             ':PERIOD_END_DAY_ID' => ":period_end_day_id"
         );
 
-        $this->variableMap = array_merge($this->variableMap, $localParameters);
+        $this->variableStore->add($localParameters);
 
         // An individual action may override restrictions provided by the overseer.
         $this->setOverseerRestrictionOverrides();
@@ -241,27 +241,25 @@ class pdoAggregator extends aAggregator
         // If the etlDestinationTable is set, it will not be generated in aRdbmsDestinationAction
 
         if ( ! isset($this->parsedDefinitionFile->table_definition) ) {
-            $msg = "Definition file does not contain a 'table_definition' key";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Definition file does not contain a 'table_definition' key");
         }
 
         // This action only supports 1 destination table so use the first one and log a warning if
         // there are multiple.
 
-        if ( is_array($this->parsedDefinitionFile->table_definition)
-             && count($this->parsedDefinitionFile->table_definition) > 0 )
-        {
+        if ( is_array($this->parsedDefinitionFile->table_definition) ) {
+            if ( count($this->parsedDefinitionFile->table_definition) > 1 ) {
+                $this->logger->warning(sprintf(
+                    "%s does not support multiple ETL destination tables, using first table",
+                    $this
+                ));
+            }
             $tableDefinition = $this->parsedDefinitionFile->table_definition;
             $this->parsedDefinitionFile->table_definition = array_shift($tableDefinition);
-            $msg = $this . " does not support multiple ETL destination tables, using first table.";
-            $this->logger->warning($msg);
         }
 
-        // Aggregation does not support multiple destination tables.
-
         if ( ! is_object($this->parsedDefinitionFile->table_definition) ) {
-            $msg = "Table definition must be an object. Aggregation does not currently support multiple destination tables.";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("Table definition must be an object.");
         }
 
         $this->logger->debug("Create ETL destination aggregation table object");
@@ -352,7 +350,7 @@ class pdoAggregator extends aAggregator
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
 
             $qualifiedDestTableName = $etlTable->getFullName();
-            $substitutedEtlAggregationTable = $etlTable->copyAndApplyVariables($this->variableMap);
+            $substitutedEtlAggregationTable = $etlTable->copyAndApplyVariables($this->variableStore);
 
             $this->manageTable($substitutedEtlAggregationTable, $this->destinationEndpoint);
 
@@ -504,10 +502,8 @@ class pdoAggregator extends aAggregator
 
         if ( null === $startDayIdField || null === $endDayIdField ) {
 
-            $fromTable = Utilities::substituteVariables(
+            $fromTable = $this->variableStore->substitute(
                 $firstTable->getFullName(false),
-                $this->variableMap,
-                $this,
                 "Undefined macros found in FROM table name"
             );
 
@@ -952,12 +948,8 @@ class pdoAggregator extends aAggregator
                 try {
                     // Use the where clause from the aggregation query to create the temporary table
 
-                    $whereClause = implode(" AND ", $this->etlSourceQuery->where);
-
-                    $whereClause = Utilities::substituteVariables(
-                        $whereClause,
-                        $this->variableMap,
-                        $this,
+                    $whereClause = $this->variableStore->substitute(
+                        implode(" AND ", $this->etlSourceQuery->where),
                         "Undefined macros found in WHERE clause"
                     );
 
@@ -1326,7 +1318,7 @@ class pdoAggregator extends aAggregator
         $duplicateRecords = array();
 
         foreach ( $sourceRecords as $name => $formula ) {
-            $substitutedName = Utilities::substituteVariables($name, $this->variableMap);
+            $substitutedName = $this->variableStore->substitute($name);
 
             if ( in_array($substitutedName, $substitutedRecordNames) ) {
                 $duplicateRecords[$name] = $this->etlSourceQuery->removeRecord($name);
@@ -1362,30 +1354,20 @@ class pdoAggregator extends aAggregator
             . ")\n" .
             $this->selectSql;
 
-        if ( null !== $this->variableMap ) {
+        $this->selectSql = $this->variableStore->substitute(
+            $this->selectSql,
+            "Undefined macros found in select SQL"
+        );
 
-            $this->selectSql = Utilities::substituteVariables(
-                $this->selectSql,
-                $this->variableMap,
-                $this,
-                "Undefined macros found in select SQL"
-            );
+        $this->insertSql = $this->variableStore->substitute(
+            $this->insertSql,
+            "Undefined macros found in insert SQL"
+        );
 
-            $this->insertSql = Utilities::substituteVariables(
-                $this->insertSql,
-                $this->variableMap,
-                $this,
-                "Undefined macros found in insert SQL"
-            );
-
-            $this->optimizedInsertSql = Utilities::substituteVariables(
-                $this->optimizedInsertSql,
-                $this->variableMap,
-                $this,
-                "Undefined macros found in optimized insert SQL"
-            );
-
-        }
+        $this->optimizedInsertSql = $this->variableStore->substitute(
+            $this->optimizedInsertSql,
+            "Undefined macros found in optimized insert SQL"
+        );
 
         // Put any records that we removed back into the Query
 

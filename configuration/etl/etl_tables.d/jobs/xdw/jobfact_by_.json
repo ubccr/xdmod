@@ -138,6 +138,12 @@
                 "comment": "DIMENSION: Job time is bucketing of wall time based on prechosen intervals in the modw.job_times table."
             },
             {
+                "name": "job_wait_time_bucket_id",
+                "type": "int(4)",
+                "nullable": false,
+                "comment": "DIMENSION: Job wait time is bucketing of wait time based on prechosen intervals in the modw.job_wait_times table."
+            },
+            {
                 "name": "node_count",
                 "type": "int(11)",
                 "nullable": false,
@@ -341,6 +347,12 @@
                 "name": "index_job_time_bucket_id",
                 "columns": [
                     "job_time_bucket_id"
+                ]
+            },
+            {
+                "name": "index_job_wait_time_bucket_id",
+                "columns": [
+                    "job_wait_time_bucket_id"
                 ]
             },
             {

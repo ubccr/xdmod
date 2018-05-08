@@ -21,6 +21,7 @@
                 "jobs/xdw/job-records.json",
                 "jobs/xdw/job-tasks.json",
                 "jobs/xdw/job-times.json",
+                "jobs/xdw/job-wait-times.json",
                 "jobs/xdw/jobhosts.json",
                 "jobs/xdw/min-max-date.json",
                 "jobs/xdw/node-count.json",
@@ -50,6 +51,18 @@
                     "type": "jsonfile",
                     "name": "job times data",
                     "path": "jobs/xdw/job-times.json"
+                }
+            }
+        },
+        {
+            "name": "jobwaittimes",
+            "definition_file": "jobs/xdw/job-wait-times.json",
+            "description": "job wait times + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "job wait times data",
+                    "path": "jobs/xdw/job-wait-times.json"
                 }
             }
         },

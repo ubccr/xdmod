@@ -14,6 +14,7 @@ namespace ETL;
 
 use Log;
 use ETL\EtlOverseerOptions;
+use ETL\VariableStore;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\Configuration\Configuration;
@@ -39,7 +40,7 @@ abstract class aAction extends aEtlObject
     // A list of key/value pairs mapping a variable name to a value. This is used to substitute
     // variables in queries or other strings. Note that keys do not include ${}, only the name of the
     // variable.
-    protected $variableMap = array();
+    protected $variableStore = null;
 
     // Path to the JSON configuration file containing ETL table and source query configurations, among
     // other things.
@@ -95,7 +96,10 @@ abstract class aAction extends aEtlObject
         $this->etlConfig = $etlConfig;
         $this->logger->info("Create action " . $this);
 
-        if ( null !== $this->options->definition_file ) {
+        $variableInitializer = ( isset($this->options->variables) ? $this->options->variables : null );
+        $this->variableStore = new VariableStore($variableInitializer, $logger);
+
+        if ( isset($this->options->definition_file) ) {
 
             // Set up the path to the definition file for this action
 
@@ -112,12 +116,10 @@ abstract class aAction extends aEtlObject
             // Parse the action definition so it is available before initialize() is called. If it
             // has already been set by a child constructor leave it alone.
 
-            $options = array();
-            foreach ( $this->options->paths as $name => $value ) {
-                $options['variables'][$name] = $value;
-            }
-
             if ( null === $this->parsedDefinitionFile ) {
+                $options = array(
+                    'variable_store' => $this->variableStore
+                );
                 $this->parsedDefinitionFile = new Configuration(
                     $this->definitionFile,
                     $this->options->paths->base_dir,
@@ -148,7 +150,7 @@ abstract class aAction extends aEtlObject
             $this->setEtlOverseerOptions($etlOverseerOptions);
         }
 
-        $this->initializeVariableMap();
+        $this->initializeVariableStore();
         $this->initializeUtilityEndpoint()->initializeSourceEndpoint()->initializeDestinationEndpoint();
 
         // Set up the start and end dates, which may be null if not provided. Actions that
@@ -271,87 +273,38 @@ abstract class aAction extends aEtlObject
     }  // setOverseerRestrictionOverrides()
 
     /* ------------------------------------------------------------------------------------------
-     * @return An array containing the current variable to value mapping
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function getVariableMap()
-    {
-        return $this->variableMap;
-    }  // getVariableMap()
-
-    /* ------------------------------------------------------------------------------------------
-     * @return A string representation of the variable map suitable for debugging output.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function getVariableMapDebugString()
-    {
-        $map = $this->variableMap;
-        ksort($map);
-
-        return implode(
-            ', ',
-            array_map(
-                function ($k, $v) {
-                    return "$k='$v'";
-                },
-                array_keys($map),
-                $map
-            )
-        );
-    }  // getVariableMapDebugString()
-
-    /* ------------------------------------------------------------------------------------------
-     * Set the variable to value map to be used when substituting variables in strings.
-     *
-     * @param $map An array containing the updated variable map
-     *
-     * @return $this for object chaining
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function setVariableMap(array $map)
-    {
-        $this->variableMap = $map;
-        return $this;
-    }  // setVariableMap()
-
-    /* ------------------------------------------------------------------------------------------
      * Initialized the variable map based on ETL settings in the overseer options
      * ------------------------------------------------------------------------------------------
      */
 
-    private function initializeVariableMap()
+    private function initializeVariableStore()
     {
         if ( null === $this->etlOverseerOptions ) {
             return;
         }
 
-        $this->variableMap = array();
-
         // Set up any variables associated with the Overseer that should be available for
         // substitution in actions such as start and end dates, number of days, etc.
 
         if ( null !== ( $value = $this->etlOverseerOptions->getStartDate() ) ) {
-            $this->variableMap['START_DATE'] = $value;
+            $this->variableStore->START_DATE = $value;
         }
 
         if ( null !== ( $value = $this->etlOverseerOptions->getEndDate() ) ) {
-            $this->variableMap['END_DATE'] = $value;
+            $this->variableStore->END_DATE = $value;
         }
 
         if ( null !== ( $value = $this->etlOverseerOptions->getNumberOfDays() ) ) {
-            $this->variableMap['NUMBER_OF_DAYS'] = $value;
+            $this->variableStore->NUMBER_OF_DAYS = $value;
         }
 
         if ( null !== ( $value = $this->etlOverseerOptions->getLastModifiedStartDate() ) ) {
-            $this->variableMap['LAST_MODIFIED_START_DATE'] = $value;
-            $this->variableMap['LAST_MODIFIED'] = $value;
+            $this->variableStore->LAST_MODIFIED_START_DATE = $value;
+            $this->variableStore->LAST_MODIFIED = $value;
         }
 
         if ( null !== ( $value = $this->etlOverseerOptions->getLastModifiedEndDate() ) ) {
-            $this->variableMap['LAST_MODIFIED_END_DATE'] = $value;
+            $this->variableStore->LAST_MODIFIED_END_DATE = $value;
         }
 
         // If resource codes have been passed into the overseer, make the first resource id
@@ -374,12 +327,12 @@ abstract class aAction extends aEtlObject
                     )
                 );
             }
-            $this->variableMap['RESOURCE'] = $resourceCode;
-            $this->variableMap['RESOURCE_ID'] = $resourceId;
+            $this->variableStore->RESOURCE = $resourceCode;
+            $this->variableStore->RESOURCE_ID = $resourceId;
         }
 
         // Set the default time zone and make it available as a variable
-        $this->variableMap['TIMEZONE'] = date_default_timezone_get();
+        $this->variableStore->TIMEZONE = date_default_timezone_get();
 
         // Make the ETL log email available to actions as a macro. If it is not available use
         // the the debug email instead.
@@ -387,9 +340,9 @@ abstract class aAction extends aEtlObject
         try {
             $section = \xd_utilities\getConfigurationSection("general");
             if ( array_key_exists('dw_etl_log_recipient', $section) && ! empty($section['dw_etl_log_recipient']) ) {
-                $this->variableMap['DW_ETL_LOG_RECIPIENT'] = $section['dw_etl_log_recipient'];
+                $this->variableStore->DW_ETL_LOG_RECIPIENT = $section['dw_etl_log_recipient'];
             } elseif ( array_key_exists('debug_recipient', $section) && ! empty($section['debug_recipient']) ) {
-                $this->variableMap['DW_ETL_LOG_RECIPIENT'] = $section['debug_recipient'];
+                $this->variableStore->DW_ETL_LOG_RECIPIENT = $section['debug_recipient'];
             } else {
                 $this->logger->warning(
                     "Cannot set ETL macro DW_ETL_LOG_RECIPIENT - XDMoD configuration option general.debug_recipient is not set or is empty."
@@ -415,7 +368,7 @@ abstract class aAction extends aEtlObject
     {
         if ( false !== ($endpoint = $this->etlConfig->getDataEndpoint($this->options->utility)) ) {
             if ( $endpoint instanceof iRdbmsEndpoint ) {
-                $this->variableMap['UTILITY_SCHEMA'] = $endpoint->getSchema();
+                $this->variableStore->UTILITY_SCHEMA = $endpoint->getSchema();
             }
             $this->logger->debug("Utility endpoint: " . $endpoint);
             $this->utilityEndpoint = $endpoint;
@@ -435,7 +388,7 @@ abstract class aAction extends aEtlObject
     {
         if ( false !== ($endpoint = $this->etlConfig->getDataEndpoint($this->options->source)) ) {
             if ( $endpoint instanceof iRdbmsEndpoint ) {
-                $this->variableMap['SOURCE_SCHEMA'] = $endpoint->getSchema();
+                $this->variableStore->SOURCE_SCHEMA = $endpoint->getSchema();
             }
             $this->logger->debug("Source endpoint: " . $endpoint);
             $this->sourceEndpoint = $endpoint;
@@ -455,7 +408,7 @@ abstract class aAction extends aEtlObject
     {
         if ( false !== ($endpoint = $this->etlConfig->getDataEndpoint($this->options->destination)) ) {
             if ( $endpoint instanceof iRdbmsEndpoint ) {
-                $this->variableMap['DESTINATION_SCHEMA'] = $endpoint->getSchema();
+                $this->variableStore->DESTINATION_SCHEMA = $endpoint->getSchema();
             }
             $this->logger->debug("Destination endpoint: " . $endpoint);
             $this->destinationEndpoint = $endpoint;
