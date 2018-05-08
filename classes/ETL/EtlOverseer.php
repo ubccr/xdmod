@@ -82,7 +82,11 @@ class EtlOverseer extends Loggable implements iEtlOverseer
             }
         }
         foreach ( $this->etlOverseerOptions->getSectionNames() as $sectionName ) {
-            foreach ( $etlConfig->getSectionActionNames($sectionName) as $actionName ) {
+            $actionNameList = $etlConfig->getSectionActionNames($sectionName);
+            if ( ! $actionNameList ) {
+                throw new Exception(sprintf("section '%s' does not exist", $sectionName));
+            }
+            foreach ( $actionNameList as $actionName ) {
                 $options = $etlConfig->getActionOptions($actionName, $sectionName);
                 if ( ! $options->enabled ) {
                     continue;
@@ -246,11 +250,16 @@ class EtlOverseer extends Loggable implements iEtlOverseer
         $messages = array();
 
         foreach ( $sectionNameList as $sectionName ) {
-            $actionNameList = $etlConfig->getSectionActionNames($sectionName);
-            $actionObjectList = ( array_key_exists($sectionName, $sectionActionObjectList)
-                                      ? $sectionActionObjectList[$sectionName]
-                                      : array() );
             try {
+                $actionNameList = $etlConfig->getSectionActionNames($sectionName);
+                if ( ! $actionNameList ) {
+                    throw new Exception(sprintf("section '%s' does not exist", $sectionName));
+                }
+                $actionObjectList = (
+                    array_key_exists($sectionName, $sectionActionObjectList)
+                    ? $sectionActionObjectList[$sectionName]
+                    : array()
+                );
                 $sectionActionObjectList[$sectionName] = $this->verifyActions(
                     $etlConfig,
                     $actionNameList,
