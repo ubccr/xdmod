@@ -65,4 +65,5 @@ JOIN instance it ON it.resource_id = consolidate.resource_id and consolidate.ins
 -- We join instance_data to ensure that we properly link events with the appropriate instance + configuration
 JOIN instance_data itd on itd.event_id = consolidate.event_id and itd.resource_id = consolidate.resource_id
 JOIN instance_type itt ON itt.resource_id = consolidate.resource_id and itt.instance_type_id = itd.instance_type_id
+WHERE itt.num_cores != 0
 GROUP BY provider_identifier, start_event_type, consolidate.start_event_time;
