@@ -338,7 +338,7 @@ class EtlOverseer extends Loggable implements iEtlOverseer
             }
 
             if ( count($missing) > 0 ) {
-                log_error_and_exit(
+                $this->logAndThrowException(
                     sprintf("Unknown sections: %s", implode(", ", $missing))
                 );
             }
