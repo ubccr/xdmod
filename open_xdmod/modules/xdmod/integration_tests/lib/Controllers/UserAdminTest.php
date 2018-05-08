@@ -318,7 +318,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetMenus()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_menus', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'get_menus-1', 'input')
         );
     }
 
@@ -431,7 +431,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideGetDwDescripters()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_dw_descripters', 'input')
+            $this->getTestFiles()->getFile('user_admin', 'get_dw_descripters-1', 'input')
         );
     }
 
