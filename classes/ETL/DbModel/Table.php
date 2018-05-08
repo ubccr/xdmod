@@ -46,6 +46,12 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
         // Optional table engine
         'engine'   => null,
 
+        // Optional table default character set
+        'charset'  => null,
+
+        // Optional table collation
+        'collation' => null,
+
         // Associative array where the keys are column names and the values are Column objects
         'columns'  => array(),
 
@@ -118,6 +124,8 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
 
             case 'comment':
             case 'engine':
+            case 'charset':
+            case 'collation':
                 if ( ! is_string($value) ) {
                     $this->logAndThrowException(
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
@@ -230,8 +238,12 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
         // Query table properties
 
         $sql = "SELECT
-engine, table_comment as comment
-FROM information_schema.tables
+t.engine,
+ccsa.character_set_name as charset,
+t.table_collation as collation,
+t.table_comment as comment
+FROM information_schema.tables t
+JOIN collation_character_set_applicability ccsa ON t.collation_name = ccsa.collation_name
 WHERE table_schema = :schema
 AND table_name = :tablename";
 
@@ -256,6 +268,8 @@ AND table_name = :tablename";
         $this->name = $source;
         $this->schema = $schemaName;
         $this->engine = $row['engine'];
+        $this->charset = $row['charset'];
+        $this->collation = $row['collation'];
         $this->comment = $row['comment'];
 
         // Query columns. Querying for the default needs some explaining. The information schema stores
@@ -267,6 +281,8 @@ AND table_name = :tablename";
 
         $sql = "SELECT
 column_name as name, column_type as type, is_nullable as nullable,
+character_set_name as charset,
+collation_name as collation,
 column_default as " . $endpoint->quoteSystemIdentifier("default") . ",
 IF('' = extra, NULL, extra) as extra,
 IF('' = column_comment, NULL, column_comment) as " . $endpoint->quoteSystemIdentifier("comment") . "
@@ -651,6 +667,8 @@ ORDER BY trigger_name ASC";
             ( 0 != count($foreignKeyConstraintCreateList) ? ",\n  " . implode(",\n  ", $foreignKeyConstraintCreateList) : "" ) .
             "\n" . ")" .
             ( null !== $this->engine ? " ENGINE = " . $this->engine : "" ) .
+            ( null !== $this->charset ? " CHARSET = " . $this->charset : "" ) .
+            ( null !== $this->collation ? " COLLATE = " . $this->collation : "" ) .
             ( null !== $this->comment && ! empty($this->comment) ? " COMMENT = '" . addslashes($this->comment) . "'" : "" ) .
             ";";
 
@@ -718,6 +736,14 @@ ORDER BY trigger_name ASC";
 
         if ( $this->engine != $destination->engine ) {
             $alterList[] = "ENGINE = " . $destination->engine;
+        }
+
+        if ( $this->charset != $destination->charset ) {
+            $alterList[] = "CHARSET = " . $destination->charset;
+        }
+
+        if ( $this->collation != $destination->collation ) {
+            $alterList[] = "COLLATE = " . $destination->collation;
         }
 
         if ( $this->comment != $destination->comment ) {

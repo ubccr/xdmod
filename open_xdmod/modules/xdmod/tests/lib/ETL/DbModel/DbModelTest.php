@@ -46,14 +46,14 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     public function testParseJsonFile()
     {
         // Instantiate the reference table
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_8.0.0.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
         $table = new Table($config, '`', $this->logger);
         $table->verify();
 
         // Verify SQL generated from JSON
         $generated = $table->getSql();
         $generated = array_shift($generated);
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def_8.0.0.sql'));
+        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def-charset.sql'));
         $this->assertEquals($expected, $generated);
 
         // Run the generated JSON through and verify the generated SQL again.
@@ -71,13 +71,24 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     {
         $config = (object) array(
             'name' => "table_no_schema",
-            'columns' => array( (object) array(
-                'name' => 'column1',
-                'type' => 'int(11)',
-                'nullable' => true,
-                'default' => 0,
-                'comment' => 'This is my comment'
-            ))
+            'columns' => array(
+                (object) array(
+                    'name' => 'column1',
+                    'type' => 'int(11)',
+                    'nullable' => true,
+                    'default' => 0,
+                    'comment' => 'This is my comment'
+                ),
+                (object) array(
+                    'name' => 'column2',
+                    'type' => 'varchar(16)',
+                    'nullable' => false,
+                    'default' => 'Test Column',
+                    'charset' => 'utf8mb4',
+                    'collation' => 'utf8mb4_general_ci',
+                    'comment' => 'No comment',
+                ),
+            ),
         );
 
         $table = new Table($config, '`', $this->logger);
@@ -88,7 +99,8 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $generated = $table->getSql(false);
         $generated = array_shift($generated);
         $expected = "CREATE TABLE IF NOT EXISTS `table_no_schema` (
-  `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment'
+  `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment',
+  `column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
 );";
         $this->assertEquals($expected, $generated);
 
@@ -96,7 +108,8 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $generated = $table->getSql();
         $generated = array_shift($generated);
         $expected = "CREATE TABLE IF NOT EXISTS `my_schema`.`table_no_schema` (
-  `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment'
+  `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment',
+  `column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
 );";
         $this->assertEquals($expected, $generated);
     }
@@ -144,6 +157,21 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $obj = new Column($config, '`', $this->logger);
         $generated = $obj->getSql();
         $expected = "`column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment'";
+        $this->assertEquals($expected, $generated);
+
+        $config = (object) array(
+            'name' => 'column2',
+            'type' => 'varchar(16)',
+            'nullable' => false,
+            'default' => 'Test Column',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_general_ci',
+            'comment' => 'No comment',
+        );
+
+        $obj = new Column($config, '`', $this->logger);
+        $generated = $obj->getSql();
+        $expected = "`column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'";
         $this->assertEquals($expected, $generated);
 
         $config = (object) array(
@@ -206,26 +234,35 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     public function testAlterTable()
     {
         // Instantiate the reference table
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_8.0.0.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
         $currentTable = new Table($config, '`', $this->logger);
         $currentTable->verify();
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_2_8.0.0.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_2-charset.json';
         $destTable = new Table($config, '`', $this->logger);
         $destTable->verify();
 
         $generated = $currentTable->getAlterSql($destTable);
         $generated = array_shift($generated);
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table_8.0.0.sql'));
+        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table-charset.sql'));
         // Assert that there is no alter sql statement.
         $this->assertEquals($expected, $generated);
 
-        // Alter the table by manually adding a column, index, constraint and trigger.
+        // Alter the table by manually adding columns, index, and trigger.
 
         $config = (object) array(
             'name' => 'new_column',
             'type' => 'boolean',
             'nullable' => false,
             'default' => 0
+        );
+        $destTable->addColumn($config);
+
+        $config = (object) array(
+            'name' => 'new_column2',
+            'type' => 'char(64)',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_general_ci',
+            'nullable' => true,
         );
         $destTable->addColumn($config);
 
@@ -256,7 +293,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $alterTable = array_shift($generated);
         $trigger = array_shift($generated);
         $generated = $alterTable . PHP_EOL . $trigger;
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table_manually_8.0.0.sql'));
+        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table_manually-charset.sql'));
         $this->assertEquals($expected, $generated);
     }
 
@@ -267,7 +304,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     public function testDeleteTableElements()
     {
         // Instantiate the reference table
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_8.0.0.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
         $table = new Table($config, '`', $this->logger);
         $table->verify();
 
@@ -409,7 +446,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     public function testGenerateTableStdClass()
     {
         // Instantiate the reference table
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_8.0.0.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
         $table = new Table($config, '`', $this->logger);
         $table->verify();
 
@@ -419,7 +456,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $generated = $newTable->getSql();
         $generated = array_shift($generated);
 
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def_8.0.0.sql'));
+        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def-charset.sql'));
         $this->assertEquals($expected, $generated);
     }
 } // class ConfigurationTest
