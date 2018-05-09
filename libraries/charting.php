@@ -132,19 +132,6 @@
       
    }//processForThumbnail
    
-     // --------------------------------------------------
-
-   // @function encodeJSON
-    function encodeJSON($data)
-	{
-		$value_arr = array();
-		$replace_keys = array();
-		$start_index = 1;
-		\xd_charting\replace_functions($data, $value_arr, $replace_keys, $start_index);
-		$json = json_encode($data);
-		$json = str_replace($replace_keys, $value_arr, $json);
-		return $json;
-	}
    // --------------------------------------------------
 
    // @function exportHighchart
@@ -163,9 +150,9 @@
       $template = file_get_contents($html_dir . "/highchart_template.html");
    
       $template = str_replace('_html_dir_', $html_dir, $template);
-      $template = str_replace('_chartOptions_',encodeJSON($chartConfig), $template);
+      $template = str_replace('_chartOptions_', json_encode($chartConfig), $template);
       if ($globalChartConfig !== null) {
-          $template = str_replace('_globalChartOptions_', encodeJSON($globalChartConfig), $template);
+          $template = str_replace('_globalChartOptions_', json_encode($globalChartConfig), $template);
       } else {
           $template = str_replace('_globalChartOptions_', 'null', $template);
       }
@@ -293,32 +280,3 @@ EOC;
 
     return $out;
 }
-
-	function replace_functions(&$object, array &$value_arr, array &$replace_keys, &$xxx = 1)
-	{
-		foreach($object as $key => &$__value){
-		  if(is_array($__value))
-		  {
-			  replace_functions($__value,$value_arr, $replace_keys, $xxx);
-		  }
-		  else
-		   if(is_object($__value))
-		  {
-			  replace_functions($__value,$value_arr, $replace_keys, $xxx);
-		  }
-		  else
-		  // Look for values starting with 'function('
-		  //if(strpos($__value, 'function(')===0){
-		  if(preg_match('/^(\s*)function(.*)/', $__value,$matches)==1){
-
-			// Store function string.
-			$value_arr[] = $__value;
-			// Replace function string in $foo with a 'unique' special key.
-			$__value = '%' . $key. '_' . $xxx . '%';
-			// Later on, we'll look for the value, and replace it.
-			$replace_keys[] = '"' . $__value . '"';
-			$xxx++;
-		  }
-		}
-	}
-
