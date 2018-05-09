@@ -33,10 +33,10 @@ class Raw extends \DataWarehouse\Query\Query
     {
         $this->setDataTable("modw", $db_tablename);
 
-        if(strtotime($start_date) == false) {
+        if(strtotime($start_date) === false) {
             throw new \Exception("start_date must be a date");
         }
-        if(strtotime($end_date) == false) {
+        if(strtotime($end_date) === false) {
             throw new \Exception("end_date must be a date");
         }
 

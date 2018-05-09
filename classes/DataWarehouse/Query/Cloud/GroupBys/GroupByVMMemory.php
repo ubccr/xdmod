@@ -13,10 +13,10 @@ use DataWarehouse\Query\Model\WhereCondition;
 * @author Rudra Chakraborty
 * @date 03/27/2018
 *
-* Group By Memory Usage
+* Group By VM Size in Memory
 */
 
-class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
+class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public static function getLabel()
     {

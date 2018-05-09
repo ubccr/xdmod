@@ -6,10 +6,10 @@ namespace DataWarehouse\Query\Cloud\GroupBys;
 * @author Rudra Chakraborty
 * @date 03/28/2018
 *
-* Group By VM Size
+* Group By VM Size in Cores
 */
 
-class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
+class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public function __construct()
     {

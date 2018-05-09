@@ -42,11 +42,11 @@
                 },
                 {
                     "name": "memory_buckets",
-                    "class": "GroupByMemoryUsage"
+                    "class": "GroupByVMMemory"
                 },
                 {
                     "name": "vm_size",
-                    "class": "GroupByVMSize"
+                    "class": "GroupByVMCores"
                 }
             ],
             "statistics": [{
