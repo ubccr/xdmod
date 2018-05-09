@@ -23,7 +23,7 @@ class AverageCoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The average core time of virtual machines in a given period, in hours.<br/><i>Only approximate in aggregate view.</i><br/>
+        return 'The average core time of instantiated virtual machines in a given period, in hours.<br/><i>Only approximate in aggregate view.</i><br/>
             <b>Core Time</b>: The product of the number of cores reserved by a VM and its wall time.';
     }
 }

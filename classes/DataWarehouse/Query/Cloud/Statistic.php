@@ -7,8 +7,8 @@ namespace DataWarehouse\Query\Cloud;
 */
 class Statistic extends \DataWarehouse\Query\Statistic
 {
-	public function getWeightStatName()
-	{
-		return 'num_vms_running';
-	}
+    public function getWeightStatName()
+    {
+        return 'num_vms_running';
+    }
 }

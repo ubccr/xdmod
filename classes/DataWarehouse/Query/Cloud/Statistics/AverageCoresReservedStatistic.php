@@ -23,6 +23,6 @@ class AverageCoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The average number of cores reserved by virtual machines.<br/>.';
+        return 'The average number of cores reserved by instantiated virtual machines.<br/>.';
     }
 }

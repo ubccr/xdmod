@@ -16,7 +16,7 @@ class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
         parent::__construct(
             'vm_size',
             array(),
-        "
+            "
 			select
 				gt.id,
 				gt.description as short_name,
@@ -38,7 +38,7 @@ class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return 	"A categorization of virtual machines into discrete groups based on the number of cores used by each VM.";
+        return     "A categorization of virtual machines into discrete groups based on the number of cores used by each VM.";
     }
 
     public static function getLabel()
@@ -76,11 +76,13 @@ class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
 
         $query->addGroup($processor_buckets_id_field);
 
-        $query->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition(
-            new \DataWarehouse\Query\Model\TableField($data_table, 'processorbucket_id'),
-                                                    '=',
-                                                    new \DataWarehouse\Query\Model\TableField($this->processor_buckets_table, 'id')
-                                                    ));
+        $query->addWhereCondition(
+            new \DataWarehouse\Query\Model\WhereCondition(
+                new \DataWarehouse\Query\Model\TableField($data_table, 'processorbucket_id'),
+                '=',
+                new \DataWarehouse\Query\Model\TableField($this->processor_buckets_table, 'id')
+            )
+        );
 
         $this->addOrder($query, $multi_group, 'asc', true);
     }
@@ -91,22 +93,24 @@ class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
 
         $processor_buckets_id_field = new \DataWarehouse\Query\Model\TableField($this->processor_buckets_table, $this->_id_field_name);
 
-        $query->addWhereCondition(new \DataWarehouse\Query\Model\WhereCondition(
-                                        $processor_buckets_id_field,
-                                        '=',
-                                        new \DataWarehouse\Query\Model\TableField($data_table, 'processorbucket_id')
-        ));
+        $query->addWhereCondition(
+            new \DataWarehouse\Query\Model\WhereCondition(
+                $processor_buckets_id_field,
+                '=',
+                new \DataWarehouse\Query\Model\TableField($data_table, 'processorbucket_id')
+            )
+        );
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
             $whereConstraint="(". implode(",", $whereConstraint) .")";
         }
 
         $query->addWhereCondition(
-         new \DataWarehouse\Query\Model\WhereCondition(
-            $processor_buckets_id_field,
-            $operation,
-            $whereConstraint
-         )
+            new \DataWarehouse\Query\Model\WhereCondition(
+                $processor_buckets_id_field,
+                $operation,
+                $whereConstraint
+            )
         );
     } // addWhereJoin()
 
@@ -129,7 +133,7 @@ class GroupByVMSize extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-                            "select description as field_label from modw.processor_buckets  where id in (_filter_) order by id"
+            "select description as field_label from modw.processor_buckets  where id in (_filter_) order by id"
         );
     }
 }

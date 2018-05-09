@@ -20,12 +20,12 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public static function getLabel()
     {
-        return 'Configuration';
+        return 'Instance Type';
     }
 
     public function getInfo()
     {
-        return "The configuration type of a VM instance.";
+        return "The instance type of a virtual machine.";
     }
 
     public function __construct()
@@ -99,8 +99,8 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
     }
 
     public function addOrder(Query &$query, $multi_group = false, $dir = 'asc',
-        $prepend = false)
-    {
+        $prepend = false
+    ) {
         $orderField = new OrderBy(new TableField($this->configuration_table, $this->_order_id_field_name), $dir, $this->getName());
         if ($prepend === true) {
             $query->prependOrder($orderField);
@@ -117,9 +117,9 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
-                $request,
-                            "select long_name as field_label from modw_cloud.instance_type where id in (_filter_) order by instance_type_id"
-            );
+            $request,
+            "select long_name as field_label from modw_cloud.instance_type where id in (_filter_) order by instance_type_id"
+        );
     }
 
 }

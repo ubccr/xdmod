@@ -24,7 +24,7 @@ SELECT
 FROM (
     -- Match up instance stop events that occur after a start event
     SELECT
-		start_event.event_id,
+        start_event.event_id,
         start_event.start_event_type,
         start_event.start_event_time,
         end_event.end_event_type,
@@ -34,13 +34,13 @@ FROM (
     FROM (
         -- Find all events where an instance is starting
         SELECT
-			ev.event_id,
+            ev.event_id,
             ev.instance_id,
             ev.event_time_utc AS start_event_time,
             ev.resource_id,
             et.event_type AS start_event_type
         FROM event ev
-		JOIN event_type et ON et.event_type_id = ev.event_type_id
+        JOIN event_type et ON et.event_type_id = ev.event_type_id
         WHERE
             ev.event_type_id IN (2, 8)  -- START and RESUME
             AND ev.instance_id != 1  -- Skip unknowns
@@ -53,7 +53,7 @@ FROM (
             ev.resource_id,
             et.event_type AS end_event_type
         FROM event ev
-		JOIN event_type et ON et.event_type_id = ev.event_type_id
+        JOIN event_type et ON et.event_type_id = ev.event_type_id
         WHERE
             ev.event_type_id IN (4, 6)  -- STOP and TERMINATE
             AND ev.instance_id != 1  -- Skip unknowns

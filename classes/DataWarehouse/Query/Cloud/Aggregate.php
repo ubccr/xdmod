@@ -21,7 +21,7 @@ class Aggregate extends \DataWarehouse\Query\Query
         parent::__construct(
             'Cloud',
             'modw_cloud',
-            'cloud_fact',
+            'cloudfact',
             array('num_vms_started', 'num_vms_running'),
             $aggregation_unit_name,
             $start_date,

@@ -81,11 +81,13 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
         $datatable_person_id_field = new TableField($data_table, 'person_id');
 
         // the where condition that specifies the join of the tables
-        $query->addWhereCondition(new WhereCondition(
-            $persontable_id_field,
-                                                    '=',
-                                                    $datatable_person_id_field
-                                                    ));
+        $query->addWhereCondition(
+            new WhereCondition(
+                $persontable_id_field,
+                '=',
+                $datatable_person_id_field
+            )
+        );
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
             $whereConstraint="(". implode(",", $whereConstraint) .")";
@@ -101,8 +103,8 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
     }
 
     public function addOrder(Query &$query, $multi_group = false, $dir = 'asc',
-        $prepend = false)
-    {
+        $prepend = false
+    ) {
         $orderField = new OrderBy(new TableField($this->person_table, $this->_order_id_field_name), $dir, $this->getName());
         if ($prepend === true) {
             $query->prependOrder($orderField);
@@ -119,9 +121,9 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
-                $request,
-                            "select long_name as field_label from modw.person  where id in (_filter_) order by order_id"
-            );
+            $request,
+            "select long_name as field_label from modw.person  where id in (_filter_) order by order_id"
+        );
     }
 
     public function getPossibleValues($hint = null, $limit = null, $offset = null, array $parameters = array())

@@ -96,8 +96,8 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
     }
 
     public function addOrder(Query &$query, $multi_group = false, $dir = 'asc',
-        $prepend = false)
-    {
+        $prepend = false
+    ) {
         $orderField = new OrderBy(new TableField($this->bucket_table, $this->_order_id_field_name), $dir, $this->getName());
         if ($prepend === true) {
             $query->prependOrder($orderField);
@@ -114,9 +114,9 @@ class GroupByMemoryUsage extends \DataWarehouse\Query\Cloud\GroupBy
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
-                $request,
-                            "select long_name as field_label from modw.memory_buckets where id in (_filter_) order by id"
-            );
+            $request,
+            "select long_name as field_label from modw.memory_buckets where id in (_filter_) order by id"
+        );
     }
 
 }

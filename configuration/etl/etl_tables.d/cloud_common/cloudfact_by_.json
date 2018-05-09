@@ -1,0 +1,129 @@
+{
+    "table_definition": {
+        "name": "cloudfact_by_",
+        "table_prefix": "cloudfact_by_",
+        "engine": "MyISAM",
+        "comment": "Euca facts aggregated by ${AGGREGATION_UNIT}.",
+        "columns": [
+            {
+                "name": "${AGGREGATION_UNIT}_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+            },{
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+            },{
+                "name": "${AGGREGATION_UNIT}",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+            },{
+                "name": "host_resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The resource id of the host of a VM where event(s) occured."
+            },{
+                "name": "account_id",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The account id associated with the VM."
+            },{
+                "name": "person_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The person id associated with a VM instance."
+            },{
+                "name": "processorbucket_id",
+                "type": "int(4)",
+                "nullable": true,
+                "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id"
+            },{
+                "name": "memorybucket_id",
+                "type": "int(4)",
+                "nullable": true,
+                "comment": "FACT: Pre-determined memory bucket sizes. References memorybucket.id"
+            },{
+                "name": "instance_type_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: Type of instance on which an event occurred."
+            },{
+                "name": "configuration",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "DIMENSION: configuration name of a VM configuration."
+            },{
+                "name": "num_cores",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Number of cores on a VM."
+            },{
+                "name": "core_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Core hours reserved by a VM."
+            },{
+                "name": "memory_reserved",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Memory reserved by a VM."
+            },{
+                "name": "disk_reserved",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Disk space reserved by a VM."
+            },{
+                "name": "memory_mb",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Amount of memory in MB reserved by a VM."
+            },{
+                "name": "disk_gb",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: Disk size in GB reserved by a VM."
+            },{
+                "name": "num_vms_running",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: Number of VMs extant in some fashion in a given period."
+            },{
+                "name": "num_vms_started",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: Number of VMs started over a given period."
+            },{
+                "name": "num_vms_ended",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "FACT: Number of VMs ended over a given period."
+            },{
+                "name": "wallduration",
+                "type": "decimal(18,0)",
+                "nullable": true,
+                "comment": "FACT: (seconds) The wallduration of the VMs that were running during this period."
+            }
+        ],
+
+    "indexes": [
+        {
+            "name": "index_account",
+            "columns": [ "account_id" ]
+        },{
+            "name": "index_person",
+            "columns": [ "person_id" ]
+        },{
+            "name": "index_resource",
+            "columns": [ "host_resource_id" ]
+        },{
+            "name": "index_period_value",
+            "columns": [ "${AGGREGATION_UNIT}" ]
+        },{
+            "name": "index_period",
+            "columns": [ "${AGGREGATION_UNIT}_id" ]
+        }]
+    }
+}

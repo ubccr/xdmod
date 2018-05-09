@@ -38,8 +38,8 @@ class GroupByAccount extends \DataWarehouse\Query\Cloud\GroupBy
                 gt.short_name as short_name,
                 gt.long_name as long_name
             FROM account gt
-            where 1
-            order by gt.order_id
+            WHERE 1
+            ORDER BY gt.order_id
         "
         );
         $this->_id_field_name = 'id';
@@ -81,11 +81,13 @@ class GroupByAccount extends \DataWarehouse\Query\Cloud\GroupBy
         $datatable_account_id_field = new TableField($data_table, 'account_id');
 
         // the where condition that specifies the join of the tables
-        $query->addWhereCondition(new WhereCondition(
-            $accounttable_id_field,
-                                                    '=',
-                                                    $datatable_account_id_field
-                                                    ));
+        $query->addWhereCondition(
+            new WhereCondition(
+                $accounttable_id_field,
+                '=',
+                $datatable_account_id_field
+            )
+        );
         // the where condition that specifies the constraint on the joined table
         if (is_array($whereConstraint)) {
             $whereConstraint="(". implode(",", $whereConstraint) .")";
@@ -101,8 +103,8 @@ class GroupByAccount extends \DataWarehouse\Query\Cloud\GroupBy
     }
 
     public function addOrder(Query &$query, $multi_group = false, $dir = 'asc',
-        $prepend = false)
-    {
+        $prepend = false
+    ) {
         $orderField = new OrderBy(new TableField($this->account_table, $this->_order_id_field_name), $dir, $this->getName());
         if ($prepend === true) {
             $query->prependOrder($orderField);
@@ -119,8 +121,8 @@ class GroupByAccount extends \DataWarehouse\Query\Cloud\GroupBy
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2(
-                $request,
-                            "select long_name as field_label from modw.account  where id in (_filter_) order by order_id"
-            );
+            $request,
+            "select long_name as field_label from modw.account  where id in (_filter_) order by order_id"
+        );
     }
 }

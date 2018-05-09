@@ -17,7 +17,7 @@ class Raw extends \DataWarehouse\Query\Query
         $start_date,
         $end_date,
         $db_profile = 'datawarehouse',
-        $db_tablename = 'cloud_fact',
+        $db_tablename = 'cloudfact',
         array $parameters = array(),
         array $parameterDescriptions = array(),
         $single_stat = false
@@ -119,15 +119,6 @@ class Raw extends \DataWarehouse\Query\Query
 
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "wallduration", 'wall_time_seconds'));
         $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "waitduration", 'wait_time_seconds'));
-
-/*
-        $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "nodecount", "node_count"));
-        $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "processors", 'core_count'));
-        $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "local_charge", 'local_charge_su'));
-        $this->addField(new \DataWarehouse\Query\Model\TableField($dataTable, "adjusted_charge", 'adjusted_charge_su'));
-*/
-
-
         $this->addOrder(new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\Field("instance"), 'desc', 'instance'));
 
         $this->addWhereCondition(
