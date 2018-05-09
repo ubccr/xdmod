@@ -57,7 +57,7 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
     public function initialize(stdClass $config)
     {
         if (!isset($config->name)) {
-            $config->name = $this->generateConstraintName($config->columns);
+            $config->name = $this->generateForeignKeyConstraintName($config->columns);
         }
 
         parent::initialize($config);
@@ -151,30 +151,29 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
     }
 
     /**
-     * Auto-generate a constraint name.
+     * Auto-generate a foreign key constraint name.
      *
-     * If this is a foreign key constraint use the columns included in the
-     * constraint.  If the length of the index name would be too large use a
-     * hash.
+     * Uses the columns included in the foreign key constraint.  If the length
+     * of the constraint name would be too large use a hash.
      *
      * @param array $columns The array of constraint column names
      *
-     * @return string The generated index name
+     * @return string The generated foreign key constraint name
      */
-    private function generateConstraintName(array $columns)
+    private function generateForeignKeyConstraintName(array $columns)
     {
         $str = implode('_', $columns);
         $name = ( strlen($str) <= 32 ? $str : md5($str) );
 
-        return 'constraint_' . $name;
+        return 'fk_' . $name;
     }
 
     /**
-     * Constraints are considered equal if all non-null properties are the same.
+     * Foreign key constraints are considered equal if all properties are the same.
      */
     public function compare(iEntity $cmp)
     {
-        if (!$cmp instanceof Constraint) {
+        if (!$cmp instanceof ForeignKeyConstraint) {
             return 1;
         }
 
