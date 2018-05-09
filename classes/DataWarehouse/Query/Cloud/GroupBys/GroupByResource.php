@@ -20,6 +20,7 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return 'A resource is a remote computer that can host VM instances.';
     }
+
     public function __construct()
     {
         parent::__construct(
@@ -71,6 +72,7 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
         $this->addOrder($query, $multi_group);
 
     }
+
     public function addWhereJoin(
         \DataWarehouse\Query\Query &$query,
         \DataWarehouse\Query\Model\Table $data_table,
@@ -108,6 +110,7 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
             )
         );
     } // addWhereJoin
+
     public function addOrder(\DataWarehouse\Query\Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         $orderField = new \DataWarehouse\Query\Model\OrderBy(new \DataWarehouse\Query\Model\TableField($this->resourcefact_table, $this->_order_id_field_name), $dir, $this->getName());
@@ -118,10 +121,12 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
             $query->addOrder($orderField);
         }
     }
+
     public function pullQueryParameters(&$request)
     {
         return parent::pullQueryParameters2($request, '_filter_', 'host_resource_id');
     }
+
     public function pullQueryParameterDescriptions(&$request)
     {
         return parent::pullQueryParameterDescriptions2($request, "select code as field_label from modw.resourcefact  where id in (_filter_) order by code");

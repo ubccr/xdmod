@@ -77,4 +77,3 @@ class GroupByQuarter extends \DataWarehouse\Query\Cloud\GroupBy
         return $parameters;
     }
 }
-?>

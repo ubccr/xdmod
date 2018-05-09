@@ -118,5 +118,4 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
             "select long_name as field_label from modw.memory_buckets where id in (_filter_) order by id"
         );
     }
-
 }

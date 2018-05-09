@@ -74,4 +74,3 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
     }
 
 }
-?>

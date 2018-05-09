@@ -78,4 +78,3 @@ class GroupByMonth extends \DataWarehouse\Query\Cloud\GroupBy
         return $parameters;
     }
 }
-?>

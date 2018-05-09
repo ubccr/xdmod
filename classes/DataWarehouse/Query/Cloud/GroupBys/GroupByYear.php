@@ -77,4 +77,3 @@ class GroupByYear extends \DataWarehouse\Query\Cloud\GroupBy
         return $parameters;
     }
 }
-?>
