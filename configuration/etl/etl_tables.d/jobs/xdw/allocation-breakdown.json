@@ -31,17 +31,20 @@
             {
                 "name": "percentage",
                 "type": "decimal(5,2)",
-                "comment": "The percentage [0-100] of the allocation that the person can use. "
+                "comment": "The percentage [0-100] of the allocation that the person can use. ",
+                "nullable": true
             },
             {
                 "name": "alloc_limit",
                 "type": "decimal(18,4)",
-                "comment": "Usually set to the base_allocation of the allocation."
+                "comment": "Usually set to the base_allocation of the allocation.",
+                "nullable": true
             },
             {
                 "name": "used_allocation",
                 "type": "decimal(18,4)",
-                "comment": "How much the user has used in Sus."
+                "comment": "How much the user has used in Sus.",
+                "nullable": true
             }
         ],
         "indexes": [

@@ -11,15 +11,18 @@
             },
             {
                 "name": "requested_nodes",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "requested_cores",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "requested_seconds",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             }
         ],
         "indexes": [

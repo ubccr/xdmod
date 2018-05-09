@@ -10,15 +10,18 @@
             },
             {
                 "name": "long_name",
-                "type": "varchar(400)"
+                "type": "varchar(400)",
+                "nullable": true
             },
             {
                 "name": "short_name",
-                "type": "varchar(100)"
+                "type": "varchar(100)",
+                "nullable": true
             },
             {
                 "name": "order_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             }
         ],
         "indexes": [

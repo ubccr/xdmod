@@ -40,7 +40,8 @@
             },
             {
                 "name": "used_logout",
-                "type": "tinyint(1) unsigned"
+                "type": "tinyint(1) unsigned",
+                "nullable": true
             }
         ],
         "indexes": [

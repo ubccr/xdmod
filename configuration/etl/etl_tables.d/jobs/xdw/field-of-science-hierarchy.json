@@ -10,43 +10,53 @@
             },
             {
                 "name": "description",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             },
             {
                 "name": "description2",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             },
             {
                 "name": "parent_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "parent_description",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             },
             {
                 "name": "directorate_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "directorate_description",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             },
             {
                 "name": "directorate_abbrev",
-                "type": "varchar(100)"
+                "type": "varchar(100)",
+                "nullable": true
             },
             {
                 "name": "division_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "division_description",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             },
             {
                 "name": "order_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             }
         ],
         "indexes": [

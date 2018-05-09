@@ -5,11 +5,13 @@
         "columns": [
             {
                 "name": "min_job_date",
-                "type": "datetime"
+                "type": "datetime",
+                "nullable": true
             },
             {
                 "name": "max_job_date",
-                "type": "datetime"
+                "type": "datetime",
+                "nullable": true
             }
         ],
         "indexes": [],

@@ -22,7 +22,8 @@
             },
             {
                 "name": "display",
-                "type": "varchar(1024)"
+                "type": "varchar(1024)",
+                "nullable": true
             },
             {
                 "name": "enabled",

@@ -157,142 +157,170 @@
             {
                 "name": "processorbucket_id",
                 "type": "int(4)",
-                "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id"
+                "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id",
+                "nullable": true
             },
             {
                 "name": "submitted_job_count",
                 "type": "int(11)",
-                "comment": "FACT: The number of jobs that started during this day."
+                "comment": "FACT: The number of jobs that started during this day.",
+                "nullable": true
             },
             {
                 "name": "ended_job_count",
                 "type": "int(11)",
-                "comment": "FACT: The number of jobs that ended during this day."
+                "comment": "FACT: The number of jobs that ended during this day.",
+                "nullable": true
             },
             {
                 "name": "started_job_count",
                 "type": "int(11)",
-                "comment": "FACT: The number of jobs that started during this day."
+                "comment": "FACT: The number of jobs that started during this day.",
+                "nullable": true
             },
             {
                 "name": "running_job_count",
                 "type": "int(11)",
-                "comment": "FACT: The number of jobs that were running during this day."
+                "comment": "FACT: The number of jobs that were running during this day.",
+                "nullable": true
             },
             {
                 "name": "wallduration",
                 "type": "decimal(18,0)",
-                "comment": "FACT: (seconds) The wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days."
+                "comment": "FACT: (seconds) The wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days.",
+                "nullable": true
             },
             {
                 "name": "sum_wallduration_squared",
                 "type": "double",
-                "comment": "FACT: (seconds) The sum of the square of wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days."
+                "comment": "FACT: (seconds) The sum of the square of wallduration of the jobs that were running during this period. This will only count the walltime of the jobs that fell during this day. If a job started in the previous day(s) the wall time for that day will be added to that day. Same logic is true if a job ends not in this day, but upcoming days.",
+                "nullable": true
             },
             {
                 "name": "waitduration",
                 "type": "decimal(18,0)",
-                "comment": "FACT: (seconds) The amount of time jobs waited to execute during this day."
+                "comment": "FACT: (seconds) The amount of time jobs waited to execute during this day.",
+                "nullable": true
             },
             {
                 "name": "sum_waitduration_squared",
                 "type": "double",
-                "comment": "FACT: (seconds) The sum of the square of the amount of time jobs waited to execute during this day."
+                "comment": "FACT: (seconds) The sum of the square of the amount of time jobs waited to execute during this day.",
+                "nullable": true
             },
             {
                 "name": "local_charge_su",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "local_charge_xdsu",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "local_charge_nu",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_su",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_xdsu",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_nu",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "task_local_charge_su",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "task_local_charge_xdsu",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "task_local_charge_nu",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "task_adjusted_charge_su",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of local SUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "task_adjusted_charge_xdsu",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of XDSUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "task_adjusted_charge_nu",
                 "type": "decimal(18,0)",
-                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The amount of NUs charged to jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "sum_local_charge_xdsu_squared",
                 "type": "double",
-                "comment": "FACT: The sum of the square of local_charge of jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used."
+                "comment": "FACT: The sum of the square of local_charge of jobs pertaining to this day. If a job took more than one day, its local_charge is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "cpu_time",
                 "type": "decimal(18,0)",
-                "comment": "FACT: (seconds) The amount of the cpu time (processor_count * wallduration) of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used."
+                "comment": "FACT: (seconds) The amount of the cpu time (processor_count * wallduration) of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "sum_cpu_time_squared",
                 "type": "double",
-                "comment": "FACT: (seconds) The sum of the square of the amount of the cpu_time of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used."
+                "comment": "FACT: (seconds) The sum of the square of the amount of the cpu_time of the jobs pertaining to this day. If a job took more than one day, its cpu_time is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "node_time",
                 "type": "decimal(18,0)",
-                "comment": "FACT: (seconds) The amount of the node time (nodes * wallduration) of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used."
+                "comment": "FACT: (seconds) The amount of the node time (nodes * wallduration) of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "sum_node_time_squared",
                 "type": "double",
-                "comment": "FACT: (seconds) The sum of the square of the amount of the node_time of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used."
+                "comment": "FACT: (seconds) The sum of the square of the amount of the node_time of the jobs pertaining to this day. If a job took more than one day, its node_time is distributed linearly across the days it used.",
+                "nullable": true
             },
             {
                 "name": "sum_weighted_expansion_factor",
                 "type": "decimal(18,0)",
-                "comment": "FACT: This is the sum of expansion factor per job multiplied by node_count and the [adjusted] duration of jobs that ran in this days."
+                "comment": "FACT: This is the sum of expansion factor per job multiplied by node_count and the [adjusted] duration of jobs that ran in this days.",
+                "nullable": true
             },
             {
                 "name": "sum_job_weights",
                 "type": "decimal(18,0)",
-                "comment": "FACT: this is the sum of (node_count multipled by the [adjusted] duration) for jobs that ran in this days."
+                "comment": "FACT: this is the sum of (node_count multipled by the [adjusted] duration) for jobs that ran in this days.",
+                "nullable": true
             }
         ],
         "indexes": [

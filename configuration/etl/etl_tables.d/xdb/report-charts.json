@@ -5,7 +5,8 @@
         "columns": [
             {
                 "name": "report_id",
-                "type": "varchar(100)"
+                "type": "varchar(100)",
+                "nullable": true
             },
             {
                 "name": "user_id",
@@ -14,20 +15,24 @@
             },
             {
                 "name": "chart_type",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "type",
-                "type": "enum('image','datasheet')"
+                "type": "enum('image','datasheet')",
+                "nullable": true
             },
             {
                 "name": "selected",
                 "type": "tinyint(1)",
-                "default": 0
+                "default": 0,
+                "nullable": true
             },
             {
                 "name": "chart_id",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "ordering",
@@ -37,11 +42,13 @@
             },
             {
                 "name": "chart_date_description",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "chart_title",
-                "type": "varchar(100)"
+                "type": "varchar(100)",
+                "nullable": true
             },
             {
                 "name": "chart_drill_details",
@@ -50,11 +57,13 @@
             },
             {
                 "name": "timeframe_type",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "image_data",
-                "type": "longblob"
+                "type": "longblob",
+                "nullable": true
             }
         ],
         "indexes": [],

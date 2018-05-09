@@ -5,7 +5,8 @@
         "columns": [
             {
                 "name": "report_id",
-                "type": "varchar(100)"
+                "type": "varchar(100)",
+                "nullable": true
             },
             {
                 "name": "user_id",
@@ -15,24 +16,29 @@
             {
                 "name": "name",
                 "type": "varchar(1000)",
-                "default": "TAS Report"
+                "default": "TAS Report",
+                "nullable": true
             },
             {
                 "name": "derived_from",
-                "type": "varchar(1000)"
+                "type": "varchar(1000)",
+                "nullable": true
             },
             {
                 "name": "title",
                 "type": "varchar(1000)",
-                "default": "TAS Report"
+                "default": "TAS Report",
+                "nullable": true
             },
             {
                 "name": "header",
-                "type": "varchar(1000)"
+                "type": "varchar(1000)",
+                "nullable": true
             },
             {
                 "name": "footer",
-                "type": "varchar(1000)"
+                "type": "varchar(1000)",
+                "nullable": true
             },
             {
                 "name": "format",
@@ -66,11 +72,13 @@
             },
             {
                 "name": "charts_per_page",
-                "type": "int(1)"
+                "type": "int(1)",
+                "nullable": true
             },
             {
                 "name": "active_role",
-                "type": "varchar(30)"
+                "type": "varchar(30)",
+                "nullable": true
             }
         ],
         "indexes": [],

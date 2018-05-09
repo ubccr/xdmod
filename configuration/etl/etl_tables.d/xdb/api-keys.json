@@ -11,15 +11,18 @@
             },
             {
                 "name": "api_key",
-                "type": "varchar(16)"
+                "type": "varchar(16)",
+                "nullable": true
             },
             {
                 "name": "public_key",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "identifier",
-                "type": "varchar(100)"
+                "type": "varchar(100)",
+                "nullable": true
             }
         ],
         "indexes": [

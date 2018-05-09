@@ -11,11 +11,13 @@
             },
             {
                 "name": "type",
-                "type": "varchar(50)"
+                "type": "varchar(50)",
+                "nullable": true
             },
             {
                 "name": "color",
-                "type": "char(7)"
+                "type": "char(7)",
+                "nullable": true
             }
         ],
         "indexes": [

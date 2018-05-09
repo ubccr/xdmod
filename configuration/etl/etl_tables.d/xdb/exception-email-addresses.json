@@ -5,7 +5,8 @@
         "columns": [
             {
                 "name": "email_address",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             }
         ],
         "indexes": [],

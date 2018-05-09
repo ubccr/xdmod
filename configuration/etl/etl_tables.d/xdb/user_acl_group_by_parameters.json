@@ -12,19 +12,23 @@
             },
             {
                 "name": "user_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "acl_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "group_by_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "value",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             }
         ],
         "indexes": [

@@ -11,31 +11,38 @@
             },
             {
                 "name": "first_name",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "last_name",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "organization",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "title",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "email_address",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "field_of_science",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "additional_information",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "time_submitted",
@@ -46,11 +53,13 @@
             },
             {
                 "name": "status",
-                "type": "varchar(100)"
+                "type": "varchar(100)",
+                "nullable": true
             },
             {
                 "name": "comments",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             }
         ],
         "indexes": [

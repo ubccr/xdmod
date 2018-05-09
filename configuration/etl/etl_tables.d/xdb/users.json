@@ -11,28 +11,34 @@
             },
             {
                 "name": "username",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             },
             {
                 "name": "password",
-                "type": "varchar(255)"
+                "type": "varchar(255)",
+                "nullable": true
             },
             {
                 "name": "email_address",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             },
             {
                 "name": "first_name",
-                "type": "varchar(50)"
+                "type": "varchar(50)",
+                "nullable": true
             },
             {
                 "name": "middle_name",
                 "type": "varchar(50)",
-                "default": ""
+                "default": "",
+                "nullable": true
             },
             {
                 "name": "last_name",
-                "type": "varchar(50)"
+                "type": "varchar(50)",
+                "nullable": true
             },
             {
                 "name": "time_created",
@@ -61,20 +67,24 @@
             {
                 "name": "person_id",
                 "type": "int(11)",
-                "comment": "references TGcDB.people.person_id"
+                "comment": "references TGcDB.people.person_id",
+                "nullable": true
             },
             {
                 "name": "organization_id",
                 "type": "int(11)",
-                "comment": "references TGcDB.organizations.organization_id"
+                "comment": "references TGcDB.organizations.organization_id",
+                "nullable": true
             },
             {
                 "name": "field_of_science",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "token",
-                "type": "varchar(32)"
+                "type": "varchar(32)",
+                "nullable": true
             },
             {
                 "name": "token_expiration",

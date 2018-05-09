@@ -41,11 +41,13 @@
             },
             {
                 "name": "created_on",
-                "type": "timestamp"
+                "type": "timestamp",
+                "nullable": true
             },
             {
                 "name": "last_modified_on",
-                "type": "timestamp"
+                "type": "timestamp",
+                "nullable": true
             }
         ],
         "indexes": [

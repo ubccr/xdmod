@@ -12,7 +12,8 @@
             {
                 "name": "unit_id",
                 "type": "int(11)",
-                "comment": "Optional unit for this countable"
+                "comment": "Optional unit for this countable",
+                "nullable": true
             },
             {
                 "name": "countable_type",
@@ -28,7 +29,8 @@
             },
             {
                 "name": "description",
-                "type": "varchar(1024)"
+                "type": "varchar(1024)",
+                "nullable": true
             }
         ],
         "indexes": [

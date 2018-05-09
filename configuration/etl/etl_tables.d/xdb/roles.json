@@ -16,7 +16,8 @@
             },
             {
                 "name": "description",
-                "type": "varchar(30)"
+                "type": "varchar(30)",
+                "nullable": true
             }
         ],
         "indexes": [

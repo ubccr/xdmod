@@ -15,27 +15,33 @@
             },
             {
                 "name": "end_date_ts",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "processors",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "q_nodes",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "q_ppn",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "comments",
-                "type": "varchar(500)"
+                "type": "varchar(500)",
+                "nullable": true
             },
             {
                 "name": "name",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             }
         ],
         "indexes": [

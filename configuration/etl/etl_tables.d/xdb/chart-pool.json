@@ -5,11 +5,13 @@
         "columns": [
             {
                 "name": "user_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "chart_id",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "insertion_rank",
@@ -19,7 +21,8 @@
             },
             {
                 "name": "chart_title",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "chart_drill_details",
@@ -28,19 +31,23 @@
             },
             {
                 "name": "chart_date_description",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             },
             {
                 "name": "type",
-                "type": "enum('image','datasheet')"
+                "type": "enum('image','datasheet')",
+                "nullable": true
             },
             {
                 "name": "active_role",
-                "type": "varchar(30)"
+                "type": "varchar(30)",
+                "nullable": true
             },
             {
                 "name": "image_data",
-                "type": "longblob"
+                "type": "longblob",
+                "nullable": true
             }
         ],
         "indexes": [

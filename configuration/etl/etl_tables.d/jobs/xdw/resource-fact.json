@@ -15,7 +15,8 @@
                 "name": "resourcetype_id",
                 "type": "int(11)",
                 "default": 0,
-                "comment": "The resource type id."
+                "comment": "The resource type id.",
+                "nullable": true
             },
             {
                 "name": "organization_id",
@@ -27,7 +28,8 @@
             {
                 "name": "name",
                 "type": "varchar(200)",
-                "comment": "The name of the resource."
+                "comment": "The name of the resource.",
+                "nullable": true
             },
             {
                 "name": "code",
@@ -38,12 +40,14 @@
             {
                 "name": "description",
                 "type": "varchar(1000)",
-                "comment": "The description of the resource."
+                "comment": "The description of the resource.",
+                "nullable": true
             },
             {
                 "name": "start_date",
                 "type": "datetime",
-                "comment": "The date the resource was put into commission."
+                "comment": "The date the resource was put into commission.",
+                "nullable": true
             },
             {
                 "name": "start_date_ts",
@@ -54,11 +58,13 @@
             {
                 "name": "end_date",
                 "type": "datetime",
-                "comment": "The end date of the resource."
+                "comment": "The end date of the resource.",
+                "nullable": true
             },
             {
                 "name": "end_date_ts",
-                "type": "int(14)"
+                "type": "int(14)",
+                "nullable": true
             },
             {
                 "name": "shared_jobs",

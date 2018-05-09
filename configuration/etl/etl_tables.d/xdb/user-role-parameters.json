@@ -5,35 +5,43 @@
         "columns": [
             {
                 "name": "user_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "role_id",
-                "type": "int(4)"
+                "type": "int(4)",
+                "nullable": true
             },
             {
                 "name": "param_name",
-                "type": "varchar(255)"
+                "type": "varchar(255)",
+                "nullable": true
             },
             {
                 "name": "param_op",
-                "type": "enum('>','>=','=','<','<=','IS','IS NOT','IN')"
+                "type": "enum('>','>=','=','<','<=','IS','IS NOT','IN')",
+                "nullable": true
             },
             {
                 "name": "param_value",
-                "type": "varchar(1024)"
+                "type": "varchar(1024)",
+                "nullable": true
             },
             {
                 "name": "is_primary",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "is_active",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "promoter",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             }
         ],
         "indexes": [],

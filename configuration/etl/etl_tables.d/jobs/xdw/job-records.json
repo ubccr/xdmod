@@ -126,12 +126,14 @@
             {
                 "name": "queue",
                 "type": "varchar(32)",
-                "comment": "Resource queue where the job ran"
+                "comment": "Resource queue where the job ran",
+                "nullable": true
             },
             {
                 "name": "submit_time_ts",
                 "type": "int(11)",
-                "comment": "Job submission time in seconds since epoch (UTC)"
+                "comment": "Job submission time in seconds since epoch (UTC)",
+                "nullable": true
             },
             {
                 "name": "start_time_ts",
@@ -142,7 +144,8 @@
             {
                 "name": "end_time_ts",
                 "type": "int(11)",
-                "comment": "Job completion time in seconds since epoch (UTC), may be unknown"
+                "comment": "Job completion time in seconds since epoch (UTC), may be unknown",
+                "nullable": true
             },
             {
                 "name": "start_day_id",
@@ -173,27 +176,32 @@
             {
                 "name": "local_charge_xdsu",
                 "type": "decimal(18,3)",
-                "comment": "XDSUs charged. Uses current resource conv factor"
+                "comment": "XDSUs charged. Uses current resource conv factor",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_xdsu",
                 "type": "decimal(18,3)",
-                "comment": "XDSUs charged after SP adjustments"
+                "comment": "XDSUs charged after SP adjustments",
+                "nullable": true
             },
             {
                 "name": "local_charge_nu",
                 "type": "decimal(18,3)",
-                "comment": "NUs charged. XDSU * 21.576"
+                "comment": "NUs charged. XDSU * 21.576",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_nu",
                 "type": "decimal(18,3)",
-                "comment": "NUs charged after SP adjustments. XDSU * 21.576"
+                "comment": "NUs charged after SP adjustments. XDSU * 21.576",
+                "nullable": true
             },
             {
                 "name": "conversion_factor",
                 "type": "double",
-                "comment": "Factor used to normalize local SU to TG Roaming (XDSU)"
+                "comment": "Factor used to normalize local SU to TG Roaming (XDSU)",
+                "nullable": true
             },
             {
                 "name": "completed",
@@ -210,7 +218,8 @@
             },
             {
                 "name": "last_modified",
-                "type": "timestamp"
+                "type": "timestamp",
+                "nullable": true
             },
             {
                 "name": "is_deleted",

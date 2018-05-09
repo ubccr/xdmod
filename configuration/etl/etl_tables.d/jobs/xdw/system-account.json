@@ -13,7 +13,8 @@
             },
             {
                 "name": "system_account_origin_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             },
             {
                 "name": "person_id",
@@ -35,11 +36,13 @@
             },
             {
                 "name": "ts",
-                "type": "datetime"
+                "type": "datetime",
+                "nullable": true
             },
             {
                 "name": "uid",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             }
         ],
         "indexes": [

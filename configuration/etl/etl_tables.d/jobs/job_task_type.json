@@ -12,7 +12,8 @@
             {
                 "name": "job_record_type_id",
                 "type": "int(11)",
-                "comment": "Reference to record type for type-specific task events"
+                "comment": "Reference to record type for type-specific task events",
+                "nullable": true
             },
             {
                 "name": "job_task_type",
@@ -28,7 +29,8 @@
             },
             {
                 "name": "description",
-                "type": "varchar(1024)"
+                "type": "varchar(1024)",
+                "nullable": true
             }
         ],
         "indexes": [

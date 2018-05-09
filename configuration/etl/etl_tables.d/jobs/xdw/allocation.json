@@ -99,11 +99,13 @@
             {
                 "name": "allocation_type_id",
                 "type": "int(11)",
-                "comment": "The type of the allocation (extension, supplement, transfer, new, renewal, advance, adjustment)"
+                "comment": "The type of the allocation (extension, supplement, transfer, new, renewal, advance, adjustment)",
+                "nullable": true
             },
             {
                 "name": "charge_number",
-                "type": "varchar(200)"
+                "type": "varchar(200)",
+                "nullable": true
             },
             {
                 "name": "conversion_factor",
@@ -119,15 +121,18 @@
             },
             {
                 "name": "long_name",
-                "type": "varchar(500)"
+                "type": "varchar(500)",
+                "nullable": true
             },
             {
                 "name": "short_name",
-                "type": "varchar(500)"
+                "type": "varchar(500)",
+                "nullable": true
             },
             {
                 "name": "order_id",
-                "type": "int(11)"
+                "type": "int(11)",
+                "nullable": true
             }
         ],
         "indexes": [

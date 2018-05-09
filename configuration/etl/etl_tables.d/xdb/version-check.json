@@ -16,23 +16,28 @@
             {
                 "name": "name",
                 "type": "varchar(255)",
-                "comment": "Log of xdmod version checks"
+                "comment": "Log of xdmod version checks",
+                "nullable": true
             },
             {
                 "name": "email",
-                "type": "varchar(255)"
+                "type": "varchar(255)",
+                "nullable": true
             },
             {
                 "name": "organization",
-                "type": "varchar(255)"
+                "type": "varchar(255)",
+                "nullable": true
             },
             {
                 "name": "current_version",
-                "type": "varchar(16)"
+                "type": "varchar(16)",
+                "nullable": true
             },
             {
                 "name": "all_params",
-                "type": "text"
+                "type": "text",
+                "nullable": true
             }
         ],
         "indexes": [

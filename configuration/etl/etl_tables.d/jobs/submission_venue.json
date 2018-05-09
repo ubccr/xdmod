@@ -23,7 +23,8 @@
             },
             {
                 "name": "description",
-                "type": "varchar(1024)"
+                "type": "varchar(1024)",
+                "nullable": true
             }
         ],
         "indexes": [

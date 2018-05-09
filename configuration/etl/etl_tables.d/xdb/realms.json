@@ -22,7 +22,8 @@
             },
             {
                 "name": "display",
-                "type": "varchar(255)"
+                "type": "varchar(255)",
+                "nullable": true
             }
         ],
         "indexes": [

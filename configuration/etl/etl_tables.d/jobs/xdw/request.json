@@ -37,27 +37,32 @@
             {
                 "name": "proposal_title",
                 "type": "varchar(1000)",
-                "comment": "The title of the proposal for the allocation request."
+                "comment": "The title of the proposal for the allocation request.",
+                "nullable": true
             },
             {
                 "name": "expedite",
                 "type": "tinyint(1)",
-                "comment": "The date this request expires."
+                "comment": "The date this request expires.",
+                "nullable": true
             },
             {
                 "name": "project_title",
                 "type": "varchar(300)",
-                "comment": "The project title related to this request."
+                "comment": "The project title related to this request.",
+                "nullable": true
             },
             {
                 "name": "primary_reviewer",
                 "type": "varchar(100)",
-                "comment": "The name of the primary reviewer."
+                "comment": "The name of the primary reviewer.",
+                "nullable": true
             },
             {
                 "name": "proposal_number",
                 "type": "varchar(20)",
-                "comment": "The number of the proposal  of the project."
+                "comment": "The number of the proposal  of the project.",
+                "nullable": true
             },
             {
                 "name": "grant_number",
@@ -68,7 +73,8 @@
             {
                 "name": "comments",
                 "type": "varchar(2000)",
-                "comment": "Any comments."
+                "comment": "Any comments.",
+                "nullable": true
             },
             {
                 "name": "start_date",
@@ -85,7 +91,8 @@
             {
                 "name": "boardtype_id",
                 "type": "int(11)",
-                "comment": "The board type."
+                "comment": "The board type.",
+                "nullable": true
             }
         ],
         "indexes": [
