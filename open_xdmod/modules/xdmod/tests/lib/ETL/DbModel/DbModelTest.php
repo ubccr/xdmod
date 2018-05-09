@@ -171,13 +171,13 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         // Test with a system quote character
         $obj = new ForeignKeyConstraint($config, '`', $this->logger);
         $generated = $obj->getSql();
-        $expected = "CONSTRAINT `constraint_col1_col2` FOREIGN KEY (`col1`, `col2`) REFERENCES `other_table` (`col3`, `col4`)";
+        $expected = "CONSTRAINT `fk_col1_col2` FOREIGN KEY (`col1`, `col2`) REFERENCES `other_table` (`col3`, `col4`)";
         $this->assertEquals($expected, $generated);
 
         // Test with no system quote character
         $obj = new ForeignKeyConstraint($config, null, $this->logger);
         $generated = $obj->getSql();
-        $expected = "CONSTRAINT constraint_col1_col2 FOREIGN KEY (col1, col2) REFERENCES other_table (col3, col4)";
+        $expected = "CONSTRAINT fk_col1_col2 FOREIGN KEY (col1, col2) REFERENCES other_table (col3, col4)";
         $this->assertEquals($expected, $generated);
 
         $config = (object) array(
