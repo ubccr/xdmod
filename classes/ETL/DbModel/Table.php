@@ -243,7 +243,7 @@ ccsa.character_set_name as charset,
 t.table_collation as collation,
 t.table_comment as comment
 FROM information_schema.tables t
-JOIN information_schema.collation_character_set_applicability ccsa ON t.collation_name = ccsa.collation_name
+JOIN information_schema.collation_character_set_applicability ccsa ON t.table_collation = ccsa.collation_name
 WHERE table_schema = :schema
 AND table_name = :tablename";
 
