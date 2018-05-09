@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-acl-etl -p acls-xdmod-management "$@"
+./acl-etl -p acls-xdmod-management "$@"
