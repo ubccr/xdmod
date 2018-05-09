@@ -12,7 +12,7 @@ namespace DataWarehouse\Query\Cloud\GroupBys;
 
 class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 {
-    public  function __construct()
+    public function __construct()
     {
         parent::__construct('none', array());
     }
@@ -46,12 +46,8 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 
     // JMS Oct 15
     // Use the GroupBy subclass to add a Where clause and needed Join
-    public function addWhereJoin(\DataWarehouse\Query\Query &$query,
-        \DataWarehouse\Query\Model\Table $data_table,
-        $multi_group = false,
-        $operation,
-        $whereConstraint
-    ) {
+    // eslint-disable-next-line
+    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false, $operation, $whereConstraint) {
         // NO-OP
     }
 
@@ -72,5 +68,4 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 
         return $parameters;
     }
-
 }

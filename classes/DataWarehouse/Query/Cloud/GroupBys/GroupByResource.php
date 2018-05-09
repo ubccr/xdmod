@@ -73,13 +73,9 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
 
     }
 
-    public function addWhereJoin(
-        \DataWarehouse\Query\Query &$query,
-        \DataWarehouse\Query\Model\Table $data_table,
-        $multi_group = false,
-        $operation,
-        $whereConstraint
-    ) {
+    // eslint-disable-next-line
+    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false, $operation, $whereConstraint)
+    {
         // construct the join between the main data_table and this group by table
         $query->addTable($this->resourcefact_table);
 

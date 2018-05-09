@@ -77,4 +77,3 @@ class GroupByDay extends \DataWarehouse\Query\Cloud\GroupBy
         return $parameters;
     }
 }
-?>

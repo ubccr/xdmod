@@ -35,5 +35,3 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
         );
     }
 }
-
-?>

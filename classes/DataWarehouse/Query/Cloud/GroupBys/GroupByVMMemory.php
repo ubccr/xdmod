@@ -71,6 +71,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
         $this->addOrder($query, $multi_group);
     }
 
+    // eslint-disable-next-line
     public function addWhereJoin(Query &$query, Table $data_table, $multi_group = false, $operation, $whereConstraint)
     {
         // construct the join between the main data_table and this group by table
@@ -95,7 +96,10 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
         );
     }
 
-    public function addOrder(Query &$query, $multi_group = false, $dir = 'asc',
+    public function addOrder(
+        Query &$query,
+        $multi_group = false,
+        $dir = 'asc',
         $prepend = false
     ) {
         $orderField = new OrderBy(new TableField($this->bucket_table, $this->_order_id_field_name), $dir, $this->getName());
