@@ -19,21 +19,27 @@ class JobListAggregator extends pdoAggregator implements iAction
     /* ------------------------------------------------------------------------------------------
      * Delete the old records from each destination table and its associated _job_list table
      */
-    protected function deleteDestinationRecords($aggregationUnit, $periodId, array $restrictions)
+    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodId, array $sqlRestrictions = array())
     {
+        $totalRowsDeleted = 0;
+
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
 
             $joblisttable = $etlTable->getSchema() . '.`' . $etlTable->getName(false) . '_joblist`';
 
-            $deleteSql = "DELETE $qualifiedDestTableName, $joblisttable FROM $qualifiedDestTableName LEFT JOIN $joblisttable ON $qualifiedDestTableName.id = $joblisttable.agg_id WHERE {$aggregationUnit}_id = $periodId";
+            $deleteSql = "DELETE $qualifiedDestTableName, $joblisttable FROM $qualifiedDestTableName LEFT JOIN $joblisttable ON $qualifiedDestTableName.id = $joblisttable.agg_id WHERE {$aggregationUnit}_id = $aggregationPeriodId";
 
-            if ( count($restrictions) > 0 ) {
-                $deleteSql .= " AND " . implode(" AND ", $restrictions);
+            if ( count($sqlRestrictions) > 0 ) {
+                $deleteSql .= " AND " . implode(" AND ", $sqlRestrictions);
             }
 
-            $this->logger->debug("Delete aggregation unit SQL " . $this->destinationEndpoint . ":\n$deleteSql");
-            $this->destinationHandle->execute($deleteSql);
+            $this->logger->debug(
+                sprintf("Delete aggregation unit SQL %s:\n%s", $this->destinationEndpoint, $deleteSql)
+            );
+            $totalRowsDeleted += $this->destinationHandle->execute($deleteSql);
         }
+
+        return $totalRowsDeleted;
     }
 }  // class JobListAggregator
