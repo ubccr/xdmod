@@ -16,6 +16,7 @@ use ETL\DbModel\AggregationTable;
 use ETL\DbModel\Query;
 use ETL\DbModel\Column;
 use ETL\DbModel\Index;
+use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Trigger;
 use ETL\Configuration\EtlConfiguration;
 
@@ -45,14 +46,14 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     public function testParseJsonFile()
     {
         // Instantiate the reference table
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_8.0.0.json';
         $table = new Table($config, '`', $this->logger);
         $table->verify();
 
         // Verify SQL generated from JSON
         $generated = $table->getSql();
         $generated = array_shift($generated);
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def.sql'));
+        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def_8.0.0.sql'));
         $this->assertEquals($expected, $generated);
 
         // Run the generated JSON through and verify the generated SQL again.
@@ -162,6 +163,24 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $generated);
 
         $config = (object) array(
+            'columns' => array('col1', 'col2'),
+            'referenced_table' => 'other_table',
+            'referenced_columns' => array('col3', 'col4'),
+        );
+
+        // Test with a system quote character
+        $obj = new ForeignKeyConstraint($config, '`', $this->logger);
+        $generated = $obj->getSql();
+        $expected = "CONSTRAINT `fk_col1_col2` FOREIGN KEY (`col1`, `col2`) REFERENCES `other_table` (`col3`, `col4`)";
+        $this->assertEquals($expected, $generated);
+
+        // Test with no system quote character
+        $obj = new ForeignKeyConstraint($config, null, $this->logger);
+        $generated = $obj->getSql();
+        $expected = "CONSTRAINT fk_col1_col2 FOREIGN KEY (col1, col2) REFERENCES other_table (col3, col4)";
+        $this->assertEquals($expected, $generated);
+
+        $config = (object) array(
             'name' => 'before_ins',
             'time' => 'before',
             'event' => 'insert',
@@ -187,20 +206,20 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     public function testAlterTable()
     {
         // Instantiate the reference table
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_8.0.0.json';
         $currentTable = new Table($config, '`', $this->logger);
         $currentTable->verify();
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_2.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_2_8.0.0.json';
         $destTable = new Table($config, '`', $this->logger);
         $destTable->verify();
 
         $generated = $currentTable->getAlterSql($destTable);
         $generated = array_shift($generated);
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table.sql'));
+        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table_8.0.0.sql'));
         // Assert that there is no alter sql statement.
         $this->assertEquals($expected, $generated);
 
-        // Alter the table by manually adding a column, index, and trigger.
+        // Alter the table by manually adding a column, index, constraint and trigger.
 
         $config = (object) array(
             'name' => 'new_column',
@@ -214,6 +233,13 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
             'columns' => array('new_column')
         );
         $destTable->addIndex($config);
+
+        $config = (object) array(
+            'columns' => array('new_column'),
+            'referenced_table' => 'other_table',
+            'referenced_columns' => array('other_column'),
+        );
+        $destTable->addForeignKeyConstraint($config);
 
         $config = (object) array(
             'name' => 'before_ins',
@@ -230,7 +256,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $alterTable = array_shift($generated);
         $trigger = array_shift($generated);
         $generated = $alterTable . PHP_EOL . $trigger;
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table_manually.sql'));
+        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table_manually_8.0.0.sql'));
         $this->assertEquals($expected, $generated);
     }
 
@@ -241,7 +267,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     public function testDeleteTableElements()
     {
         // Instantiate the reference table
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_8.0.0.json';
         $table = new Table($config, '`', $this->logger);
         $table->verify();
 
@@ -383,7 +409,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     public function testGenerateTableStdClass()
     {
         // Instantiate the reference table
-        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def.json';
+        $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def_8.0.0.json';
         $table = new Table($config, '`', $this->logger);
         $table->verify();
 
@@ -393,7 +419,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $generated = $newTable->getSql();
         $generated = array_shift($generated);
 
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def.sql'));
+        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def_8.0.0.sql'));
         $this->assertEquals($expected, $generated);
     }
 } // class ConfigurationTest
