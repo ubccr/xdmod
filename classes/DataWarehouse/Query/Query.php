@@ -6,6 +6,7 @@ use Exception;
 use CCR\DB;
 use CCR\DB\PDODB;
 use FilterListHelper;
+use Models\Services\Parameters;
 use Xdmod\Config;
 
 /*
@@ -1064,10 +1065,15 @@ class Query
      *
      * The role parameter descriptions are not updated by this function.
      *
+     * @param array   $rolearray an array of Role objects that will be used to
+     *                           determine which parameters are added to this
+     *                           query.
+     * @param \XDUser $user      the user that is running this query.
+     *
      * @return array The set of role parameters applied to this query, if any.
      *               Each entry contains the group by object and values.
      */
-    public function setMultipleRoleParameters($rolearray) {
+    public function setMultipleRoleParameters($rolearray, $user) {
 
         $allwheres = array();
         $role_parameters = array();
@@ -1083,7 +1089,7 @@ class Query
 
         foreach($rolearray as $role) {
 
-            $roleparams = $role->getParameters();
+            $roleparams = Parameters::getParameters($user, $role->getIdentifier());
 
             if(count($roleparams) == 0 ) {
                 // Empty where condition translates to a "WHERE 1". There is no need to add the other

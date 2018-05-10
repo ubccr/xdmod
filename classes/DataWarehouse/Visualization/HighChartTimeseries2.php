@@ -42,7 +42,8 @@ class HighChartTimeseries2 extends HighChart2
         $share_y_axis = false,
         $hide_tooltip = false,
         $min_aggregation_unit = null,
-        $showWarnings = true
+        $showWarnings = true,
+        $user
     ) {
 
         parent::__construct(
@@ -57,7 +58,8 @@ class HighChartTimeseries2 extends HighChart2
             $share_y_axis,
             $hide_tooltip,
             $min_aggregation_unit,
-            $showWarnings
+            $showWarnings,
+            $user
         );
 
         $this->_queryType = 'timeseries';
@@ -247,7 +249,7 @@ class HighChartTimeseries2 extends HighChart2
                 }
                 $query->setRoleParameters($groupedRoleParameters);
 
-                $data_description->roleRestrictionsParameters = $query->setMultipleRoleParameters($data_description->authorizedRoles);
+                $data_description->roleRestrictionsParameters = $query->setMultipleRoleParameters($data_description->authorizedRoles, $this->user);
                 $data_description->restrictedByRoles = $query->isLimitedByRoleRestrictions();
 
                 $globalFilterDescriptions = array_merge(

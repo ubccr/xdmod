@@ -3,6 +3,7 @@
 namespace DataWarehouse\Access;
 
 use Exception;
+use Models\Services\Parameters;
 use Models\Services\Acls;
 use PDOException;
 use stdClass;
@@ -169,7 +170,8 @@ class MetricExplorer extends Common
                 $share_y_axis,
                 $hide_tooltip,
                 $min_aggregation_unit,
-                $showWarnings
+                $showWarnings,
+                $user
             );
 
             if ($show_title) {
@@ -282,7 +284,7 @@ class MetricExplorer extends Common
 
                 $query->setFilters($data_description->filters);
 
-                $roleRestrictionsParameters = $query->setMultipleRoleParameters($data_description->authorizedRoles);
+                $roleRestrictionsParameters = $query->setMultipleRoleParameters($data_description->authorizedRoles, $user);
                 $restrictedByRoles = $query->isLimitedByRoleRestrictions();
 
                 $query->addOrderByAndSetSortInfo($data_description);
@@ -365,10 +367,12 @@ class MetricExplorer extends Common
             foreach ($v as $x) {
                 $y = (object)$x;
 
+                // Ensure that each filter->data entry is an object
                 for ($i = 0, $b = count($y->filters['data']); $i < $b; $i++) {
                     $y->filters['data'][$i] = (object)$y->filters['data'][$i];
                 }
 
+                // Ensure that $y->filters is an object
                 $y->filters = (object)$y->filters;
 
                 // Set values of new attribs for backward compatibility.
@@ -619,7 +623,7 @@ class MetricExplorer extends Common
                 $activeRoleComponents[0],
                 $activeRoleComponents[1]
             );
-            $activeRoleParameters = $activeRole->getParameters();
+            $activeRoleParameters = Parameters::getParameters($user, $activeRole->getIdentifier());
         }
 
         // For each set of filter parameters the role has, create an
@@ -757,7 +761,7 @@ class MetricExplorer extends Common
                 null,
                 $dimension_id
             );
-            $query->setMultipleRoleParameters($realmAuthorizedRoles);
+            $query->setMultipleRoleParameters($realmAuthorizedRoles, $user);
 
             $dimensionValuesQueries[] = $query->getDimensionValuesQuery();
         }
