@@ -52,7 +52,7 @@ class ComplexDataset
         $aggregationUnit,
         $data_series,
         $global_filters,
-        $query_type, // new and semi improved...
+        $query_type,
         $user
     ) {
         // JMS: please improve this when possible.
