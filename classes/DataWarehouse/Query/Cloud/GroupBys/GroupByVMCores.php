@@ -87,8 +87,7 @@ class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
         $this->addOrder($query, $multi_group, 'asc', true);
     }
 
-    // phpcs:ignore
-    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false, $operation, $whereConstraint)
+    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group, $operation, $whereConstraint)
     {
         $query->addTable($this->processor_buckets_table);
 

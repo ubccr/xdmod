@@ -46,8 +46,7 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 
     // JMS Oct 15
     // Use the GroupBy subclass to add a Where clause and needed Join
-    // phpcs:ignore
-    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false, $operation, $whereConstraint) {
+    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group, $operation, $whereConstraint) {
         // NO-OP
     }
 

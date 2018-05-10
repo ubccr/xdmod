@@ -72,7 +72,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
     }
 
     // phpcs:ignore
-    public function addWhereJoin(Query &$query, Table $data_table, $multi_group = false, $operation, $whereConstraint)
+    public function addWhereJoin(Query &$query, Table $data_table, $multi_group, $operation, $whereConstraint)
     {
         // construct the join between the main data_table and this group by table
         $query->addTable($this->bucket_table);
