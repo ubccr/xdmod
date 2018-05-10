@@ -171,8 +171,7 @@ class MetricExplorer extends Common
                 $share_y_axis,
                 $hide_tooltip,
                 $min_aggregation_unit,
-                $showWarnings,
-                $user
+                $showWarnings
             );
 
             if ($show_title) {
