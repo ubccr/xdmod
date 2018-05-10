@@ -197,31 +197,41 @@ FROM Users u
   --     Users.person_id value
   JOIN
   (
-    SELECT DISTINCT organization_id
+    SELECT src.organization_id
     FROM (
-           SELECT DISTINCT uagbp.value organization_id, 1
-           FROM moddb.user_acl_group_by_parameters uagbp
-             JOIN modw.organization o ON uagbp.value = o.id
-             JOIN modw.resourcefact rf ON o.id = rf.organization_id
-             JOIN moddb.group_bys gb ON uagbp.group_by_id = gb.group_by_id AND gb.name = 'provider'
-             JOIN moddb.acls a ON uagbp.acl_id = a.acl_id AND a.name = 'cd'
-           WHERE uagbp.user_id = :user_id
-           UNION
-           SELECT DISTINCT u.organization_id, 2
-           FROM moddb.Users u
-             JOIN modw.organization o ON o.id = u.organization_id
-             JOIN modw.resourcefact rf ON o.id = rf.organization_id
-           WHERE u.id = :user_id
-           UNION
-           SELECT DISTINCT o.id organization_id, 3
-           FROM moddb.Users u
-             JOIN modw.person p ON p.id = u.person_id
-             JOIN modw.organization o ON o.id = p.organization_id
-             JOIN modw.resourcefact rf ON o.id = rf.organization_id
-           WHERE u.id = :user_id
-         ) user_org
-    ORDER BY 2
-    LIMIT 1
+      SELECT user_org.*
+      FROM (
+        SELECT DISTINCT
+          uagbp.value organization_id,
+          1
+        FROM moddb.user_acl_group_by_parameters uagbp
+        JOIN modw.organization o ON uagbp.value = o.id
+        JOIN modw.resourcefact rf ON o.id = rf.organization_id
+        JOIN moddb.group_bys gb
+          ON uagbp.group_by_id = gb.group_by_id AND gb.name = 'provider'
+        JOIN moddb.acls a ON uagbp.acl_id = a.acl_id AND a.name = 'cd'
+        WHERE uagbp.user_id = :user_id
+        UNION
+        SELECT DISTINCT
+          u.organization_id,
+          2
+        FROM moddb.Users u
+        JOIN modw.organization o ON o.id = u.organization_id
+        JOIN modw.resourcefact rf ON o.id = rf.organization_id
+        WHERE u.id = :user_id
+        UNION
+        SELECT DISTINCT
+          o.id organization_id,
+          3
+        FROM moddb.Users u
+        JOIN modw.person p ON p.id = u.person_id
+        JOIN modw.organization o ON o.id = p.organization_id
+        JOIN modw.resourcefact rf ON o.id = rf.organization_id
+        WHERE u.id = :user_id
+      ) user_org
+      ORDER BY 2
+      LIMIT 1
+    ) src
   ) co ON uo.organization_id = co.organization_id
   -- This left join retrieves all users that have a 'cd' record and the associated center id (value)
   -- The reason we need this information is so that we can exclude all users who are center 
@@ -392,5 +402,20 @@ SQL;
 
         // Remove the center relation from the user.
         Centers::removeCenterRelation($user->getUserID(), $centerId, ROLE_ID_CENTER_STAFF);
+    }
+
+    public static function isPrincipalInvestigator(XDUser $user)
+    {
+        $query = <<<SQL
+SELECT pi.person_id FROM modw.principalinvestigator pi WHERE pi.person_id = :person_id;
+SQL;
+        $params = array(
+            ':person_id' => $user->getPersonID()
+        );
+
+        $db = DB::factory('database');
+        $rows = $db->query($query, $params);
+
+        return count($rows) > 0;
     }
 }
