@@ -43,8 +43,7 @@ class HighChartTimeseries2 extends HighChart2
         $share_y_axis = false,
         $hide_tooltip = false,
         $min_aggregation_unit = null,
-        $showWarnings = true,
-        $user
+        $showWarnings = true
     ) {
 
         parent::__construct(

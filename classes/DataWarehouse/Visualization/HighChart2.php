@@ -85,8 +85,7 @@ class HighChart2
         $share_y_axis = false,
         $hide_tooltip = false,
         $min_aggregation_unit = null,
-        $showWarnings = true,
-        $user
+        $showWarnings = true
     ) {
 
         $this->setDuration($start_date, $end_date, $aggregation_unit, $min_aggregation_unit);
