@@ -73,8 +73,7 @@ class GroupByConfiguration extends \DataWarehouse\Query\Cloud\GroupBy
         $this->addOrder($query, $multi_group);
     }
 
-    // phpcs:disable
-    public function addWhereJoin(Query &$query, Table $data_table, $multi_group = false, $operation, $whereConstraint)
+    public function addWhereJoin(Query &$query, Table $data_table, $multi_group = false, $operation, $whereConstraint) // phpcs:ignore
     {
         // construct the join between the main data_table and this group by table
         $query->addTable($this->configuration_table);

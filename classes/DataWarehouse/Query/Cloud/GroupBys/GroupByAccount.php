@@ -72,7 +72,7 @@ class GroupByAccount extends \DataWarehouse\Query\Cloud\GroupBy
         $this->addOrder($query, $multi_group);
     }
 
-    // phpcs:disable
+    // phpcs:ignore
     public function addWhereJoin(Query &$query, Table $data_table, $multi_group = false, $operation, $whereConstraint)
     {
         // construct the join between the main data_table and this group by table
