@@ -273,7 +273,9 @@
             {
                 "name": "last_modified",
                 "type": "timestamp",
-                "nullable": true
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             },
             {
                 "name": "is_deleted",
