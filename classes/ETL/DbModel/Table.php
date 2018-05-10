@@ -739,11 +739,11 @@ ORDER BY trigger_name ASC";
         }
 
         if ( $this->charset != $destination->charset ) {
-            $alterList[] = "CHARSET = " . $destination->charset;
+            $alterList[] = "CHARSET = " . ( null !== $destination->charset ? $destination->charset : 'DEFAULT' );
         }
 
         if ( $this->collation != $destination->collation ) {
-            $alterList[] = "COLLATE = " . $destination->collation;
+            $alterList[] = "COLLATE = " . ( null !== $destination->collation ? $destination->collation : 'DEFAULT' );
         }
 
         if ( $this->comment != $destination->comment ) {
