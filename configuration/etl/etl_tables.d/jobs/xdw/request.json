@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "request",
-        "engine": "MyISAM",
         "comment": "Requests by PIs for allocations on TG.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -37,32 +37,32 @@
             {
                 "name": "proposal_title",
                 "type": "varchar(1000)",
-                "nullable": true,
-                "comment": "The title of the proposal for the allocation request."
+                "comment": "The title of the proposal for the allocation request.",
+                "nullable": true
             },
             {
                 "name": "expedite",
                 "type": "tinyint(1)",
-                "nullable": true,
-                "comment": "The date this request expires."
+                "comment": "The date this request expires.",
+                "nullable": true
             },
             {
                 "name": "project_title",
                 "type": "varchar(300)",
-                "nullable": true,
-                "comment": "The project title related to this request."
+                "comment": "The project title related to this request.",
+                "nullable": true
             },
             {
                 "name": "primary_reviewer",
                 "type": "varchar(100)",
-                "nullable": true,
-                "comment": "The name of the primary reviewer."
+                "comment": "The name of the primary reviewer.",
+                "nullable": true
             },
             {
                 "name": "proposal_number",
                 "type": "varchar(20)",
-                "nullable": true,
-                "comment": "The number of the proposal  of the project."
+                "comment": "The number of the proposal  of the project.",
+                "nullable": true
             },
             {
                 "name": "grant_number",
@@ -73,8 +73,8 @@
             {
                 "name": "comments",
                 "type": "varchar(2000)",
-                "nullable": true,
-                "comment": "Any comments."
+                "comment": "Any comments.",
+                "nullable": true
             },
             {
                 "name": "start_date",
@@ -91,8 +91,8 @@
             {
                 "name": "boardtype_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The board type."
+                "comment": "The board type.",
+                "nullable": true
             }
         ],
         "indexes": [

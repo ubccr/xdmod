@@ -1,0 +1,120 @@
+{
+    "table_definition": {
+        "name": "days",
+        "comment": "autogen - one rec for each day of TG.",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The id of the day record."
+            },
+            {
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "The year."
+            },
+            {
+                "name": "day",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "The day of year starting at 1."
+            },
+            {
+                "name": "day_start",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "The datetime of the start of this day down to the second."
+            },
+            {
+                "name": "day_end",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "the end datetime of this day down to the second."
+            },
+            {
+                "name": "hours",
+                "type": "tinyint(3) unsigned",
+                "nullable": false,
+                "comment": "The number of hours in this day. Could be less than 24 in case the last job record fell in the middle of this day."
+            },
+            {
+                "name": "seconds",
+                "type": "mediumint(8) unsigned",
+                "nullable": false,
+                "comment": "number of seconds n the day"
+            },
+            {
+                "name": "day_start_ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The start in epochs."
+            },
+            {
+                "name": "day_end_ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The end in epochs."
+            },
+            {
+                "name": "day_middle_ts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "days_index",
+                "columns": [
+                    "id",
+                    "seconds",
+                    "day_start_ts",
+                    "day_end_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "days_index2",
+                "columns": [
+                    "id",
+                    "day_start_ts",
+                    "day_middle_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "days_pk2",
+                "columns": [
+                    "day_start",
+                    "day_end",
+                    "day",
+                    "year"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "days_yd",
+                "columns": [
+                    "year",
+                    "day"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

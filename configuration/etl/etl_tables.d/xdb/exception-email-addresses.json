@@ -1,0 +1,15 @@
+{
+    "table_definition": {
+        "name": "ExceptionEmailAddresses",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "email_address",
+                "type": "varchar(200)",
+                "nullable": true
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    }
+}

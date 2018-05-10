@@ -12,42 +12,38 @@
             {
                 "name": "prefix",
                 "type": "varchar(191)",
-                "nullable": true,
-                "default": null,
-                "comment": "generally fqdn with . replaced by - 191 limit due to utf8mb4"
+                "comment": "generally fqdn with . replaced by - 191 limit due to utf8mb4",
+                "nullable": true
             },
             {
                 "name": "timezone",
                 "type": "varchar(191)",
-                "nullable": true,
-                "default": null,
-                "comment": "Timezone of the blade - 191 limit due to utf8mb4"
+                "comment": "Timezone of the blade - 191 limit due to utf8mb4",
+                "nullable": true
             },
             {
                 "name": "extra",
                 "type": "text",
-                "nullable": true,
-                "default": null,
-                "comment": "any extra information to be stored about the blade, ie. contact information"
-
+                "comment": "any extra information to be stored about the blade, ie. contact information",
+                "nullable": true
             }
         ],
         "indexes": [
             {
+                "name": "prefix",
                 "columns": [
                     "prefix"
                 ],
                 "type": "BTREE",
-                "is_unique": true,
-                "name": "prefix"
+                "is_unique": true
             },
             {
+                "name": "PRIMARY",
                 "columns": [
                     "federation_blade_id"
                 ],
                 "type": "BTREE",
-                "is_unique": true,
-                "name": "PRIMARY"
+                "is_unique": true
             }
         ],
         "triggers": []

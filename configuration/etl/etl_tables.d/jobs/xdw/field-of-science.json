@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "fieldofscience",
-        "engine": "MyISAM",
         "comment": "The various fields of science.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -13,32 +13,32 @@
             {
                 "name": "parent_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The parent of this field of science, if NULL this is an NSF Directorate."
+                "comment": "The parent of this field of science, if NULL this is an NSF Directorate.",
+                "nullable": true
             },
             {
                 "name": "description",
                 "type": "varchar(200)",
-                "nullable": true,
-                "comment": "The description of this field of science."
+                "comment": "The description of this field of science.",
+                "nullable": true
             },
             {
                 "name": "fos_nsf_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The nsf id for this field of science."
+                "comment": "The nsf id for this field of science.",
+                "nullable": true
             },
             {
                 "name": "fos_nsf_abbrev",
                 "type": "varchar(100)",
-                "nullable": true,
-                "comment": "The nsf abbreviation."
+                "comment": "The nsf abbreviation.",
+                "nullable": true
             },
             {
                 "name": "directorate_fos_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The id of the NSF directorate of this field of science."
+                "comment": "The id of the NSF directorate of this field of science.",
+                "nullable": true
             }
         ],
         "indexes": [

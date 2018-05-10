@@ -1,0 +1,9 @@
+[
+    ["role_id", "abbrev", "description"],
+    [0, "mgr", "Manager"],
+    [1, "cd", "Center Director"],
+    [3, "usr", "User"],
+    [4, "pi", "Principal Investigator"],
+    [5, "cs", "Center Staff"],
+    [7, "dev", "Developer"]
+]

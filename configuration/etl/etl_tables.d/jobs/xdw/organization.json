@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "organization",
-        "engine": "MyISAM",
         "comment": "The various organization.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -14,75 +14,75 @@
             {
                 "name": "organizationtype_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The type of the organization."
+                "comment": "The type of the organization.",
+                "nullable": true
             },
             {
                 "name": "abbrev",
                 "type": "varchar(100)",
-                "nullable": true,
-                "comment": "Abbreviated name."
+                "comment": "Abbreviated name.",
+                "nullable": true
             },
             {
                 "name": "name",
                 "type": "varchar(300)",
-                "nullable": true,
-                "comment": "Long name for this organization."
+                "comment": "Long name for this organization.",
+                "nullable": true
             },
             {
                 "name": "url",
                 "type": "varchar(500)",
-                "nullable": true,
-                "comment": "The internet URL."
+                "comment": "The internet URL.",
+                "nullable": true
             },
             {
                 "name": "phone",
                 "type": "varchar(30)",
-                "nullable": true,
-                "comment": "Phone number."
+                "comment": "Phone number.",
+                "nullable": true
             },
             {
                 "name": "nsf_org_code",
                 "type": "varchar(45)",
-                "nullable": true,
-                "comment": "NSF code for this organization."
+                "comment": "NSF code for this organization.",
+                "nullable": true
             },
             {
                 "name": "is_reconciled",
                 "type": "tinyint(1)",
-                "nullable": true,
                 "default": 0,
-                "comment": "Whether this record is reconciled."
+                "comment": "Whether this record is reconciled.",
+                "nullable": true
             },
             {
                 "name": "amie_name",
                 "type": "varchar(6)",
-                "nullable": true,
-                "comment": "The amie name."
+                "comment": "The amie name.",
+                "nullable": true
             },
             {
                 "name": "country_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The country this organization is in."
+                "comment": "The country this organization is in.",
+                "nullable": true
             },
             {
                 "name": "state_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The state this organization is in."
+                "comment": "The state this organization is in.",
+                "nullable": true
             },
             {
                 "name": "latitude",
                 "type": "decimal(13,10)",
-                "nullable": true,
-                "comment": "The latitude of the organization."
+                "comment": "The latitude of the organization.",
+                "nullable": true
             },
             {
                 "name": "longitude",
                 "type": "decimal(13,10)",
-                "nullable": true,
-                "comment": "The longitude of the organization."
+                "comment": "The longitude of the organization.",
+                "nullable": true
             },
             {
                 "name": "short_name",

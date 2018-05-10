@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "job_records",
-        "engine": "MyISAM",
         "comment": "Request for resources by a user",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "job_record_id",
@@ -126,14 +126,14 @@
             {
                 "name": "queue",
                 "type": "varchar(32)",
-                "nullable": true,
-                "comment": "Resource queue where the job ran"
+                "comment": "Resource queue where the job ran",
+                "nullable": true
             },
             {
                 "name": "submit_time_ts",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "Job submission time in seconds since epoch (UTC)"
+                "comment": "Job submission time in seconds since epoch (UTC)",
+                "nullable": true
             },
             {
                 "name": "start_time_ts",
@@ -144,8 +144,8 @@
             {
                 "name": "end_time_ts",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "Job completion time in seconds since epoch (UTC), may be unknown"
+                "comment": "Job completion time in seconds since epoch (UTC), may be unknown",
+                "nullable": true
             },
             {
                 "name": "start_day_id",
@@ -163,45 +163,45 @@
                 "name": "local_charge_su",
                 "type": "decimal(18,3)",
                 "nullable": false,
-                "default": 0.000,
+                "default": 0,
                 "comment": "Local resource SUs charged"
             },
             {
                 "name": "adjusted_charge_su",
                 "type": "decimal(18,3)",
                 "nullable": false,
-                "default": 0.000,
+                "default": 0,
                 "comment": "Local resource SUs charged after SP adjustments"
             },
             {
                 "name": "local_charge_xdsu",
                 "type": "decimal(18,3)",
-                "nullable": true,
-                "comment": "XDSUs charged. Uses current resource conv factor"
+                "comment": "XDSUs charged. Uses current resource conv factor",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_xdsu",
                 "type": "decimal(18,3)",
-                "nullable": true,
-                "comment": "XDSUs charged after SP adjustments"
+                "comment": "XDSUs charged after SP adjustments",
+                "nullable": true
             },
             {
                 "name": "local_charge_nu",
                 "type": "decimal(18,3)",
-                "nullable": true,
-                "comment": "NUs charged. XDSU * 21.576"
+                "comment": "NUs charged. XDSU * 21.576",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_nu",
                 "type": "decimal(18,3)",
-                "nullable": true,
-                "comment": "NUs charged after SP adjustments. XDSU * 21.576"
+                "comment": "NUs charged after SP adjustments. XDSU * 21.576",
+                "nullable": true
             },
             {
                 "name": "conversion_factor",
                 "type": "double",
-                "nullable": true,
-                "comment": "Factor used to normalize local SU to TG Roaming (XDSU)"
+                "comment": "Factor used to normalize local SU to TG Roaming (XDSU)",
+                "nullable": true
             },
             {
                 "name": "completed",
@@ -218,7 +218,10 @@
             },
             {
                 "name": "last_modified",
-                "type": "timestamp"
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             },
             {
                 "name": "is_deleted",

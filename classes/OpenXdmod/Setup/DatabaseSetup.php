@@ -141,7 +141,10 @@ EOT
          *  ETLv2 database bootstrap start
          */
         $scriptOptions = array(
-            'process-sections' => array('jobs-xdw.bootstrap')
+            'process-sections' => array(
+                'xdb.bootstrap',
+                'jobs-xdw.bootstrap'
+            )
         );
 
         $etlConfig = new \ETL\Configuration\EtlConfiguration(CONFIG_DIR . '/etl/etl.json', null, $logger, array());

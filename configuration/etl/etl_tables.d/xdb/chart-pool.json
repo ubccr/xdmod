@@ -1,0 +1,65 @@
+{
+    "table_definition": {
+        "name": "ChartPool",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "chart_id",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "insertion_rank",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "chart_title",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "chart_drill_details",
+                "type": "text",
+                "nullable": false
+            },
+            {
+                "name": "chart_date_description",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "type",
+                "type": "enum('image','datasheet')",
+                "nullable": true
+            },
+            {
+                "name": "active_role",
+                "type": "varchar(30)",
+                "nullable": true
+            },
+            {
+                "name": "image_data",
+                "type": "longblob",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "insertion_rank"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

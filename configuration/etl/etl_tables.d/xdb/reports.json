@@ -1,0 +1,87 @@
+{
+    "table_definition": {
+        "name": "Reports",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "report_id",
+                "type": "varchar(100)",
+                "nullable": true
+            },
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "name",
+                "type": "varchar(1000)",
+                "default": "TAS Report",
+                "nullable": true
+            },
+            {
+                "name": "derived_from",
+                "type": "varchar(1000)",
+                "nullable": true
+            },
+            {
+                "name": "title",
+                "type": "varchar(1000)",
+                "default": "TAS Report",
+                "nullable": true
+            },
+            {
+                "name": "header",
+                "type": "varchar(1000)",
+                "nullable": true
+            },
+            {
+                "name": "footer",
+                "type": "varchar(1000)",
+                "nullable": true
+            },
+            {
+                "name": "format",
+                "type": "enum('Pdf','Pptx','Doc','Xls','Html')",
+                "nullable": false,
+                "default": "Pdf"
+            },
+            {
+                "name": "font",
+                "type": "enum('Times','Arial')",
+                "nullable": false,
+                "default": "Arial"
+            },
+            {
+                "name": "schedule",
+                "type": "enum('Once','Daily','Weekly','Monthly','Quarterly','Semi-annually','Annually')",
+                "nullable": false,
+                "default": "Once"
+            },
+            {
+                "name": "delivery",
+                "type": "enum('Download','E-mail')",
+                "nullable": false,
+                "default": "E-mail"
+            },
+            {
+                "name": "selected",
+                "type": "tinyint(1)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "charts_per_page",
+                "type": "int(1)",
+                "nullable": true
+            },
+            {
+                "name": "active_role",
+                "type": "varchar(30)",
+                "nullable": true
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    }
+}

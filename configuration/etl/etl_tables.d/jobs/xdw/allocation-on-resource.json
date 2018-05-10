@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "allocationonresource",
-        "engine": "MyISAM",
         "comment": "state of alloc wrt resources.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "allocation_id",

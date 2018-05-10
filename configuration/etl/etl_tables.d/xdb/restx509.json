@@ -1,0 +1,47 @@
+{
+    "table_definition": {
+        "name": "RESTx509",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "distinguished_name",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "api_key",
+                "type": "varchar(100)",
+                "nullable": true
+            },
+            {
+                "name": "description",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "time_cert_signed",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

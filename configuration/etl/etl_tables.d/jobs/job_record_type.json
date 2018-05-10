@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "job_record_type",
-        "engine": "MyISAM",
         "comment": "hpc, cloud, reservation, etc.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "job_record_type_id",

@@ -1,0 +1,34 @@
+{
+    "table_definition": {
+        "name": "Colors",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "color",
+                "type": "char(8)",
+                "nullable": false
+            },
+            {
+                "name": "description",
+                "type": "varchar(45)",
+                "nullable": true
+            },
+            {
+                "name": "order",
+                "type": "int(11)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "color"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

@@ -1,0 +1,77 @@
+{
+    "table_definition": {
+        "name": "AccountRequests",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "first_name",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "last_name",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "organization",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "title",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "email_address",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "field_of_science",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "additional_information",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "time_submitted",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
+            },
+            {
+                "name": "status",
+                "type": "varchar(100)",
+                "nullable": true
+            },
+            {
+                "name": "comments",
+                "type": "text",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

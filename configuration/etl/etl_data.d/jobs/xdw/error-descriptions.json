@@ -1,58 +1,17 @@
 [
-{
-    "id": 0,
-    "description": "Metric OK"
-},
-{
-    "id": 1,
-    "description": "Metric Missing: Collection Failed"
-},
-{
-    "id": 2,
-    "description": "Metric Missing: Not Available On This Host"
-},
-{
-    "id": 3,
-    "description": "Metric Disappeared During Job"
-},
-{
-    "id": 4,
-    "description": "Metric Missing: Unknown Reason"
-},
-{
-    "id": 5,
-    "description": "Metric Summarization Error"
-},
-{
-    "id": 6,
-    "description": "Metric Out Of Bounds"
-},
-{
-    "id": 7,
-    "description": "Metric Mapping Not Found"
-},
-{
-    "id": 8,
-    "description": "Mapping Function Error"
-},
-{
-    "id": 9,
-    "description": "Metric Ambiguous"
-},
-{
-    "id": 10,
-    "description": "Derived Field Query Failed"
-},
-{
-    "id": 11,
-    "description": "Metric Value Doesn't Fit Schema Type"
-},
-{
-    "id": 12,
-    "description": "Metric Counter Rolled Over"
-},
-{
-    "id": 13,
-    "description": "Metric Dropped Data Due to Jitter"
-}
+    ["id", "description"],
+    [0, "Metric OK"],
+    [1, "Metric Missing: Collection Failed"],
+    [2, "Metric Missing: Not Available On This Host"],
+    [3, "Metric Disappeared During Job"],
+    [4, "Metric Missing: Unknown Reason"],
+    [5, "Metric Summarization Error"],
+    [6, "Metric Out Of Bounds"],
+    [7, "Metric Mapping Not Found"],
+    [8, "Mapping Function Error"],
+    [9, "Metric Ambiguous"],
+    [10, "Derived Field Query Failed"],
+    [11, "Metric Value Doesn't Fit Schema Type"],
+    [12, "Metric Counter Rolled Over"],
+    [13, "Metric Dropped Data Due to Jitter"]
 ]

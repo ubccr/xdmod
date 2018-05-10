@@ -1,0 +1,112 @@
+{
+    "table_definition": {
+        "name": "years",
+        "comment": "autogen - one rec for each year of TG operation.",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The id of the year record."
+            },
+            {
+                "name": "year",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The year of the record."
+            },
+            {
+                "name": "year_start",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "The start datetime of the year"
+            },
+            {
+                "name": "year_end",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "The end datetime of the year"
+            },
+            {
+                "name": "hours",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "The number of hours in the year."
+            },
+            {
+                "name": "seconds",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The number of seconds in the year"
+            },
+            {
+                "name": "year_start_ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The start timestamp of the year in epochs."
+            },
+            {
+                "name": "year_end_ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The end timestamp of the year in epochs. If the last job fell during this year the end of the year will be abrupt. Hence a partial year."
+            },
+            {
+                "name": "year_middle_ts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "year_index",
+                "columns": [
+                    "id",
+                    "seconds",
+                    "year_start_ts",
+                    "year_end_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "year_index2",
+                "columns": [
+                    "id",
+                    "year_start_ts",
+                    "year_middle_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "year_pk2",
+                "columns": [
+                    "year",
+                    "year_start",
+                    "year_end"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "year_yq",
+                "columns": [
+                    "year"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

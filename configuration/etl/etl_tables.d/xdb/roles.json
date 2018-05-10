@@ -1,0 +1,35 @@
+{
+    "table_definition": {
+        "name": "Roles",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "role_id",
+                "type": "int(4)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "abbrev",
+                "type": "varchar(20)",
+                "nullable": false
+            },
+            {
+                "name": "description",
+                "type": "varchar(30)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "role_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

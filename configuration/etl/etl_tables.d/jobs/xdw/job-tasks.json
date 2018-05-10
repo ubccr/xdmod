@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "job_tasks",
-        "engine": "MyISAM",
         "comment": "Consumption of resources",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "job_record_id",
@@ -45,8 +45,8 @@
             {
                 "name": "local_job_id_raw",
                 "type": "int(11) unsigned",
-                "nullable": true,
-                "comment": "Resource where the task executed"
+                "comment": "Resource where the task executed",
+                "nullable": true
             },
             {
                 "name": "resource_id",
@@ -87,8 +87,8 @@
             {
                 "name": "name",
                 "type": "varchar(256)",
-                "nullable": true,
-                "comment": "User-specified job name"
+                "comment": "User-specified job name",
+                "nullable": true
             },
             {
                 "name": "submit_time_ts",
@@ -111,8 +111,8 @@
             {
                 "name": "eligible_time_ts",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The eligible time in Unix time."
+                "comment": "The eligible time in Unix time.",
+                "nullable": true
             },
             {
                 "name": "start_day_id",
@@ -175,101 +175,93 @@
                 "name": "local_charge_su",
                 "type": "decimal(18,3)",
                 "nullable": false,
-                "default": 0.000,
+                "default": 0,
                 "comment": "Local resource SUs charged"
             },
             {
                 "name": "adjusted_charge_su",
                 "type": "decimal(18,3)",
                 "nullable": false,
-                "default": 0.000,
+                "default": 0,
                 "comment": "Local resource SUs charged after SP adjustments"
             },
             {
                 "name": "local_charge_xdsu",
                 "type": "decimal(18,3)",
-                "nullable": true,
-                "comment": "XDSUs charged. Uses current resource conv factor"
+                "comment": "XDSUs charged. Uses current resource conv factor",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_xdsu",
                 "type": "decimal(18,3)",
-                "nullable": true,
-                "comment": "XDSUs charged after SP adjustments"
+                "comment": "XDSUs charged after SP adjustments",
+                "nullable": true
             },
             {
                 "name": "local_charge_nu",
                 "type": "decimal(18,3)",
-                "nullable": true,
-                "comment": "NUs charged. XDSU * 21.576"
+                "comment": "NUs charged. XDSU * 21.576",
+                "nullable": true
             },
             {
                 "name": "adjusted_charge_nu",
                 "type": "decimal(18,3)",
-                "nullable": true,
-                "comment": "NUs charged after SP adjustments. XDSU & 21.576"
+                "comment": "NUs charged after SP adjustments. XDSU & 21.576",
+                "nullable": true
             },
             {
                 "name": "group_name",
                 "type": "varchar(255)",
-                "nullable": true,
-                "default": null,
-                "comment": "The name of the group that ran the job."
+                "comment": "The name of the group that ran the job.",
+                "nullable": true
             },
             {
                 "name": "gid_number",
                 "type": "int(10) unsigned",
-                "nullable": true,
-                "default": null,
-                "comment": "The GID of the group that ran the job."
+                "comment": "The GID of the group that ran the job.",
+                "nullable": true
             },
             {
                 "name": "uid_number",
                 "type": "int(10) unsigned",
-                "nullable": true,
-                "default": null,
-                "comment": "The UID of the user that ran the job."
+                "comment": "The UID of the user that ran the job.",
+                "nullable": true
             },
             {
                 "name": "exit_code",
                 "type": "varchar(32)",
-                "nullable": true,
-                "default": null,
-                "comment": "The code that the job exited with."
+                "comment": "The code that the job exited with.",
+                "nullable": true
             },
             {
                 "name": "exit_state",
                 "type": "varchar(32)",
-                "nullable": true,
-                "default": null,
-                "comment": "The state of the job when it completed."
+                "comment": "The state of the job when it completed.",
+                "nullable": true
             },
             {
                 "name": "cpu_req",
                 "type": "int(10) unsigned",
-                "nullable": true,
-                "default": null,
-                "comment": "The number of CPUs required by the job."
+                "comment": "The number of CPUs required by the job.",
+                "nullable": true
             },
             {
                 "name": "mem_req",
                 "type": "varchar(32)",
-                "nullable": true,
-                "default": null,
-                "comment": "The amount of memory required by the job."
+                "comment": "The amount of memory required by the job.",
+                "nullable": true
             },
             {
                 "name": "timelimit",
                 "type": "int(10) unsigned",
-                "nullable": true,
-                "default": null,
-                "comment": "The time limit of the job in seconds."
+                "comment": "The time limit of the job in seconds.",
+                "nullable": true
             },
             {
                 "name": "conversion_factor",
                 "type": "double",
-                "nullable": true,
-                "comment": "Factor used to normalize local SU to TG Roaming (XDSU)"
+                "comment": "Factor used to normalize local SU to TG Roaming (XDSU)",
+                "nullable": true
             },
             {
                 "name": "completed",
@@ -280,7 +272,10 @@
             },
             {
                 "name": "last_modified",
-                "type": "timestamp"
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             },
             {
                 "name": "is_deleted",

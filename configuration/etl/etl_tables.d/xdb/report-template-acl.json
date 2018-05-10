@@ -1,0 +1,20 @@
+{
+    "table_definition": {
+        "name": "ReportTemplateACL",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "template_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "role_id",
+                "type": "int(11)",
+                "nullable": true
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    }
+}

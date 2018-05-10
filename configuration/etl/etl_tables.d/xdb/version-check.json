@@ -1,0 +1,63 @@
+{
+    "table_definition": {
+        "name": "VersionCheck",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "entry_date",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "ip_address",
+                "type": "varchar(15)",
+                "nullable": false
+            },
+            {
+                "name": "name",
+                "type": "varchar(255)",
+                "comment": "Log of xdmod version checks",
+                "nullable": true
+            },
+            {
+                "name": "email",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "organization",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "current_version",
+                "type": "varchar(16)",
+                "nullable": true
+            },
+            {
+                "name": "all_params",
+                "type": "text",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "entry_date",
+                "columns": [
+                    "entry_date"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "ip",
+                "columns": [
+                    "ip_address"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": []
+    }
+}
