@@ -64,6 +64,3 @@ gems:
   - jekyll-redirect-from
 whitelist:
   - jekyll-redirect-from
-
-# Google Analytics tracking
-google_analytics_id: UA-22706444-3
