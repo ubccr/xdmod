@@ -28,6 +28,10 @@ class Column extends NamedEntity implements iEntity
     private $localProperties = array(
         // Column type (free-form string)
         'type'     => null,
+        // The column character set
+        'charset'  => null,
+        // The column collation
+        'collation' => null,
         // TRUE if the column is nullable
         'nullable' => null,
         // Column default
@@ -87,6 +91,8 @@ class Column extends NamedEntity implements iEntity
                 break;
 
             case 'type':
+            case 'charset':
+            case 'collation':
                 if ( ! is_string($value) ) {
                     $this->logAndThrowException(
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
@@ -273,6 +279,17 @@ class Column extends NamedEntity implements iEntity
             return -12;
         }
 
+        // Character set and collation have defaults that are set by the table, database or server.
+        // See https://dev.mysql.com/doc/refman/5.5/en/charset-syntax.html
+
+        if ( ( null !== $this->charset && null !== $cmp->charset ) && $this->charset != $cmp->charset ) {
+            return -13;
+        }
+
+        if ( ( null !== $this->collation && null !== $cmp->collation ) && $this->collation != $cmp->collation ) {
+            return -14;
+        }
+
         return 0;
 
     }  // compare()
@@ -293,6 +310,15 @@ class Column extends NamedEntity implements iEntity
         $parts = array();
         $parts[] = $this->getName(true);
         $parts[] = $this->type;
+
+        if ( null !== $this->charset ) {
+            $parts[] = 'CHARSET ' . $this->charset;
+        }
+
+        if ( null !== $this->collation ) {
+            $parts[] = 'COLLATE ' . $this->collation;
+        }
+
         if ( null !== $this->nullable ) {
             $parts[] = ( false === $this->nullable ? "NOT NULL" : "NULL" );
         }
