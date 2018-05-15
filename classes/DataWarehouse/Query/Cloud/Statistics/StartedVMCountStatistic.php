@@ -16,7 +16,7 @@ class StartedVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return  "The total number of " . ORGANIZATION_NAME . " VM instances started on a cloud resource.<br/>";
+        return  "The total number of VM instances that were started or resumed running on a cloud resource.<br/>";
     }
 
     public function isVisible()

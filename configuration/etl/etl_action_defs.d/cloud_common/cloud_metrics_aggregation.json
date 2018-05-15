@@ -39,8 +39,8 @@
                 "disk_reserved": "COALESCE(SUM((cet.disk_gb * POW(1024, 3)) * ${wallduration_case_statement}), 0)",
                 "memory_mb": "SUM(cet.memory_mb)",
                 "disk_gb": "SUM(cet.disk_gb)",
-                "num_vms_started": "SUM(IF(cet.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND cet.start_event = 'START', 1, 0))",
-                "num_vms_ended": "SUM(IF(cet.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND cet.end_event = 'TERMINATE', 1, 0))",
+                "num_vms_started": "SUM(IF(cet.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND cet.start_event IN ('START', 'RESUME'), 1, 0))",
+                "num_vms_ended": "SUM(IF(cet.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID} AND cet.end_event IN ('STOP', 'TERMINATE'), 1, 0))",
                 "num_vms_running": "SUM(1)",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)"
             },
