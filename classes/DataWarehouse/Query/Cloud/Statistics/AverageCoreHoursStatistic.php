@@ -24,6 +24,6 @@ class AverageCoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function getInfo()
     {
         return 'The average core hours consumed by running virtual machines.<br/><i>Only approximate in aggregate view.</i><br/>
-            <b>Core Time</b>: The product of the number of cores consumed by a VM and its wall time, in hours.';
+            <b>Core Time</b>: The product of the number of cores allocated to a VM and its wall time, in hours.';
     }
 }

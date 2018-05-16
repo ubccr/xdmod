@@ -23,6 +23,6 @@ class WeightedCoreWallStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function getInfo()
     {
         return 'The number of cores reserved by running virtual machines weighted by core time.<br/>
-                <b>Core Time</b>: The product of the number of cores reserved by a VM and its wall time.';
+                <b>Core Time</b>: The product of the number of cores allocated to a VM and its wall time.';
     }
 }
