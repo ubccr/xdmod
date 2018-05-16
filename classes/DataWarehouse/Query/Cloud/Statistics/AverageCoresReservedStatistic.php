@@ -15,7 +15,7 @@ class AverageCoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.num_cores) / SUM(jf.' . $vm_count_formula . '),0)',
             'avg_num_cores',
-            'Cores Reserved: Average Per VM',
+            'Cores Allocated: Average Per VM',
             'Cores',
             0
         );
@@ -23,6 +23,6 @@ class AverageCoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The average number of cores reserved by running virtual machines.<br/>.';
+        return 'The average number of cores allocated to running virtual machines.<br/>.';
     }
 }

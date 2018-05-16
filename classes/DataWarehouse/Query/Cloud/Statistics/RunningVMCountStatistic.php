@@ -22,7 +22,7 @@ class RunningVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return  "The total number of running virtual machines.<br/>";
+        return  "The total number of running virtual machines on a cloud resource.<br/>";
     }
 
     public function isVisible()

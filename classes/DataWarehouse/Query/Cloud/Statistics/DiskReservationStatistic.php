@@ -22,6 +22,6 @@ class DiskReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The quotient of disk space reserved by running virtual machines over wall duration.<br/>';
+        return 'The amount of disk space consumed by running virtual machines over wall duration.<br/>';
     }
 }
