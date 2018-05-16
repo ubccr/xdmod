@@ -31,7 +31,7 @@
             },
             {
                 "name": "local_jobid",
-                "type": "varchar(128)",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Job or vm instance identifier from resource manager"
             },
