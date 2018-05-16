@@ -738,12 +738,12 @@ ORDER BY trigger_name ASC";
             $alterList[] = "ENGINE = " . $destination->engine;
         }
 
-        if ( $this->charset != $destination->charset ) {
-            $alterList[] = "CHARSET = " . ( null !== $destination->charset ? $destination->charset : 'DEFAULT' );
+        if ( null !== $destination->charset && $this->charset != $destination->charset ) {
+            $alterList[] = "CHARSET = " . $destination->charset;
         }
 
-        if ( $this->collation != $destination->collation ) {
-            $alterList[] = "COLLATE = " . ( null !== $destination->collation ? $destination->collation : 'DEFAULT' );
+        if ( null !== $destination->collation && $this->collation != $destination->collation ) {
+            $alterList[] = "COLLATE = " . $destination->collation;
         }
 
         if ( $this->comment != $destination->comment ) {
