@@ -31,7 +31,7 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
     public function __construct()
     {
         parent::__construct(
-            'account',
+            'project',
             array(),
             "SELECT distinct
                 gt.id,
