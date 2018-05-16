@@ -22,6 +22,6 @@ class CoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total core reservation time of virtual machines, in hours.<br/>';
+        return 'The total core reservation time of running virtual machines, in hours.<br/>';
     }
 }

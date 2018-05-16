@@ -11,7 +11,7 @@
                 },
                 {
                     "realm": "Cloud",
-                    "group_by": "account"
+                    "group_by": "project"
                 },
                 {
                     "realm": "Cloud",

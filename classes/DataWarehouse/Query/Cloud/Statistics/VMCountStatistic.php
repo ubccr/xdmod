@@ -22,6 +22,6 @@ class VMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total number of VM instances that were shelved or terminated.<br/>';
+        return 'The total number of running virtual machines that were shelved or terminated.<br/>';
     }
 }

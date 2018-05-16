@@ -22,6 +22,6 @@ class CoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total number of cores reserved by virtual machines.<br/>';
+        return 'The total number of cores reserved by running virtual machines.<br/>';
     }
 }

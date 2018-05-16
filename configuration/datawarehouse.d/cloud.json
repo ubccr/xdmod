@@ -13,8 +13,8 @@
                     "class": "GroupByPerson"
                 },
                 {
-                    "name": "account",
-                    "class": "GroupByAccount"
+                    "name": "project",
+                    "class": "GroupByProject"
                 },
                 {
                     "name": "configuration",

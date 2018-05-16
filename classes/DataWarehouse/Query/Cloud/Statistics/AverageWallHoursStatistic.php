@@ -24,7 +24,7 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return "The average time in hours in which an instantiated virtual machine was running.<br/> <i>Only approximate in aggregate view</i>.<br />
+        return "The average time a virtual machine was running, in hours.<br/> <i>Only approximate in aggregate view</i>.<br />
             <i>Wall Time:</i> Wall time is defined as the linear duration between the start and end times of discrete virtual machine runs.";
     }
 }

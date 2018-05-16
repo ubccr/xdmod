@@ -22,6 +22,6 @@ class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The quotient of memory reserved by virtual machines over wall duration.<br/>';
+        return 'The quotient of memory reserved by running virtual machines over wall duration.<br/>';
     }
 }

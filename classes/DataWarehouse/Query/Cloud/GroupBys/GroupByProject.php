@@ -16,16 +16,16 @@ use DataWarehouse\Query\Model\WhereCondition;
 * Group By Account
 */
 
-class GroupByAccount extends \DataWarehouse\Query\Cloud\GroupBy
+class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
 {
     public static function getLabel()
     {
-        return 'Account';
+        return 'Project';
     }
 
     public function getInfo()
     {
-        return "The account of the principal investigator associated with a VM instance.";
+        return "The project associated with a running virtual machine.";
     }
 
     public function __construct()
@@ -46,7 +46,7 @@ class GroupByAccount extends \DataWarehouse\Query\Cloud\GroupBy
         $this->_long_name_field_name = 'long_name';
         $this->_short_name_field_name = 'short_name';
         $this->_order_id_field_name = 'order_id';
-        $this->modw_schema = new Schema('modw');
+        $this->modw_schema = new Schema('modw_cloud');
         $this->account_table = new Table($this->modw_schema, 'account', 'acc');
     }
 
