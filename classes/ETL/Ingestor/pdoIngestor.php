@@ -85,16 +85,7 @@ class pdoIngestor extends aIngestor
      * ------------------------------------------------------------------------------------------
      */
 
-    const MAX_RECORDS_PER_INFILE = 250000;
-
-    /** -----------------------------------------------------------------------------------------
-     * The number of records per load file to use when calculating the database write timeout
-     *
-     * @var int
-     * ------------------------------------------------------------------------------------------
-     */
-
-    const NET_WRITE_TIMEOUT_RECORD_CHUNK = 250000;
+    private $dbInsertChunkSize = 250000;
 
     /** -----------------------------------------------------------------------------------------
      * The number of seconds to allot for the timeout per file per record chunk
@@ -103,7 +94,7 @@ class pdoIngestor extends aIngestor
      * ------------------------------------------------------------------------------------------
      */
 
-    const NET_WRITE_TIMEOUT_SECONDS_PER_FILE_CHUNK = 60;
+    private $netWriteTimeoutSecondsPerFileChunk = 60;
 
     /** -----------------------------------------------------------------------------------------
      * Query used for extracting data from the source endpoint.
@@ -291,6 +282,14 @@ class pdoIngestor extends aIngestor
         }
 
         $this->parseDestinationFieldMap($this->sourceRecordFields);
+
+        if ( isset($this->options->db_insert_chunk_size) ) {
+            $this->dbInsertChunkSize = $this->options->db_insert_chunk_size;
+        }
+
+        if ( isset($this->options->net_write_timeout_per_db_chunk) ) {
+            $this->netWriteTimeoutSecondsPerFileChunk = $this->options->net_write_timeout_per_db_chunk;
+        }
 
         $this->initialized = true;
 
@@ -691,9 +690,7 @@ class pdoIngestor extends aIngestor
             // Base the new timeout on the number of tables we are loading data into and the
             // number of records that we are loading.
 
-            $newTimeout = $numDestinationTables
-                * (self::MAX_RECORDS_PER_INFILE / self::NET_WRITE_TIMEOUT_RECORD_CHUNK)
-                * self::NET_WRITE_TIMEOUT_SECONDS_PER_FILE_CHUNK;
+            $newTimeout = $numDestinationTables * $this->netWriteTimeoutSecondsPerFileChunk;
 
             if ( $newTimeout > $currentTimeout ) {
                 $sql = sprintf('SET SESSION net_write_timeout = %d', $newTimeout);
@@ -817,7 +814,7 @@ class pdoIngestor extends aIngestor
 
                 // If we've reached the maximum number of records per chunk, load the data.
 
-                if ( $numRecordsInFile == self::MAX_RECORDS_PER_INFILE ) {
+                if ( $numRecordsInFile == $this->dbInsertChunkSize ) {
                     $numFilesLoaded = 0;
                     $loadFileStart = microtime(true);
 
@@ -856,7 +853,7 @@ class pdoIngestor extends aIngestor
                     $loadFileStart = microtime(true);
                     $numRecordsInFile = 0;
 
-                }  // if ( $numRecordsInFile == self::MAX_RECORDS_PER_INFILE )
+                }  // if ( $numRecordsInFile == $this->dbInsertChunkSize )
 
             } // foreach ( $record )
 
