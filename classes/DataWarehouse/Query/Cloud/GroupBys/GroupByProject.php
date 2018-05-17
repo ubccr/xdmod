@@ -11,9 +11,9 @@ use DataWarehouse\Query\Model\WhereCondition;
 
 /*
 * @author Rudra Chakraborty
-* @date 03/06/2018
+* @date 05/17/2018
 *
-* Group By Account
+* Group By Project
 */
 
 class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
@@ -34,18 +34,18 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
             'project',
             array(),
             "SELECT distinct
-                gt.id,
-                gt.short_name as short_name,
-                gt.long_name as long_name
+                gt.account_id,
+                gt.provider_account as short_name,
+                gt.display as long_name
             FROM account gt
             WHERE 1
-            ORDER BY gt.order_id
+            ORDER BY gt.account_id
         "
         );
-        $this->_id_field_name = 'id';
-        $this->_long_name_field_name = 'long_name';
-        $this->_short_name_field_name = 'short_name';
-        $this->_order_id_field_name = 'order_id';
+        $this->_id_field_name = 'account_id';
+        $this->_long_name_field_name = 'display';
+        $this->_short_name_field_name = 'provider_account';
+        $this->_order_id_field_name = 'account_id';
         $this->modw_schema = new Schema('modw_cloud');
         $this->account_table = new Table($this->modw_schema, 'account', 'acc');
     }
@@ -70,6 +70,9 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
         $query->addWhereCondition(new WhereCondition($accounttable_id_field, '=', $datatable_account_id_field));
 
         $this->addOrder($query, $multi_group);
+
+        //$bleh = $query->getQueryString(12000);
+        //var_dump($bleh);
     }
 
     public function addWhereJoin(Query &$query, Table $data_table, $multi_group, $operation, $whereConstraint)
@@ -125,7 +128,7 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
     {
         return parent::pullQueryParameterDescriptions2(
             $request,
-            "select long_name as field_label from modw.account  where id in (_filter_) order by order_id"
+            "select long_name as field_label from modw_cloud.account where id in (_filter_) order by account_id"
         );
     }
 }
