@@ -329,7 +329,7 @@ SQL;
      * @param array  $acls the array of acls being checked for a relation to
      *                     user
      *
-     * @returns boolean true if the user has all of the provided acls
+     * @return boolean true if the user has all of the provided acls
      *
      * @throws Exception if the provided user's userId is null
      **/
@@ -372,9 +372,8 @@ SQL;
      *                      retrieved
      * @param array $realms the realms to which the disabled menus are to be
      *                      retrieved.
-
      *
-     * @returns array
+     * @return array
      *
      * @throws Exception if the provided user's userId is null
      * @throws Exception if the provided array of realms is empty
