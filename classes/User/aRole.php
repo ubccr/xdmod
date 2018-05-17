@@ -425,6 +425,8 @@ abstract class aRole implements \User\iRole
                         if (
                             isset($this->_querys[$query_groupname][$realm_name][$group_by_name])) {
                             if (isset($statistic_name)) {
+                                // These first two branches of the logic are never hit in the current
+                                // base. Everything falls through to the else.
                                 if (isset($this->_querys[$query_groupname][$realm_name][$group_by_name][$statistic_name . '-timeseries'])) {
                                     return $this->_querys[$query_groupname][$realm_name][$group_by_name][$statistic_name . '-timeseries'];
                                 } elseif (isset($this->_querys[$query_groupname][$realm_name][$group_by_name][$statistic_name . '-aggregate'])) {
