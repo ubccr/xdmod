@@ -9,6 +9,9 @@ use Models\Acl;
 use Models\GroupBy;
 use Models\Realm;
 use Models\Statistic;
+use User\Elements\QueryDescripter;
+use User\Roles;
+use Xdmod\Config;
 use XDUser;
 
 /**
@@ -616,10 +619,7 @@ FROM statistics s
   JOIN realms r
     ON gb.realm_id = r.realm_id
 WHERE
-      agb.visible = TRUE
-  AND agb.enabled = TRUE
-  AND s.visible = TRUE
-  AND r.name = :realm_name
+  r.name = :realm_name
   AND gb.name = :group_by_name
   AND ua.user_id = :user_id;
 SQL;
@@ -632,7 +632,7 @@ SQL;
 
         if ($rows !== false && count($rows) > 0) {
             return array_reduce($rows, function ($carry, $item) {
-                $carry [] = new Statistic($item);
+                $carry [] = $item['name'];
                 return $carry;
             }, array());
         }
@@ -904,5 +904,324 @@ SQL;
             }, array());
         }
         return array();
+    }
+
+    /**
+     * Function meant to replace User\aRole::getQueryDescripters. Retrieves the set of group_bys
+     * that a user is authorized to see based on their assigned acls. The base data is stored in the
+     * `acl_group_bys` table with additional information merged in from roles.json ( anything that
+     * isn't 'realm' or 'group_by' ).
+     *
+     * @param XDUser $user
+     * @param string $realmName
+     * @param string $groupByName
+     * @param string $statisticName
+     * @return array
+     * @throws Exception if there is a problem executing sql
+     */
+    public static function getQueryDescripters(XDUser $user, $realmName = null, $groupByName = null, $statisticName = null)
+    {
+        $query = <<<SQL
+            SELECT DISTINCT
+              r.display AS realm,
+              gb.name AS group_by
+            FROM acl_group_bys agb
+              JOIN user_acls ua ON agb.acl_id = ua.acl_id
+              JOIN realms r ON agb.realm_id = r.realm_id
+              JOIN group_bys gb ON gb.group_by_id = agb.group_by_id AND
+                                   gb.realm_id = agb.realm_id
+              JOIN statistics s ON s.statistic_id = agb.statistic_id AND 
+                                   s.realm_id = agb.realm_id 
+            WHERE ua.user_id = :user_id 
+
+SQL;
+        $params = array(
+            ':user_id' => $user->getUserID(),
+
+        );
+
+        if (isset($realmName)) {
+            $query .= " AND r.name = :realm_name\n";
+            $params[':realm_name'] = $realmName;
+
+        }
+
+        if (isset($groupByName)) {
+            $query .= " AND gb.name = :group_by_name\n";
+            $params[':group_by_name'] = $groupByName;
+        }
+
+        if (isset($statisticName)) {
+            $query .= " AND s.name = :statistic_name\n";
+            $params[':statistic_name'] = $statisticName;
+        }
+
+        $results = array();
+        $sorted = array();
+
+        $db = DB::factory('database');
+        $rows = $db->query($query, $params);
+
+        // if we have data there is additional information that we require from roles.json. Specifically,
+        // 'enabled' / 'hidden' from each acls query_descripter.
+        if (count($rows) > 0) {
+            $acls = $user->getAcls(true);
+            foreach ($acls as $acl) {
+                $queryDescripters = Roles::getConfig($acl, 'query_descripters');
+                // This is where we merge any additional properties found in $queryDescripter
+                // entries into the equivalent $row entries.
+                $rows = self::mergeOnKey(
+                    $rows,
+                    $queryDescripters,
+                    /**
+                     * Method to determine when a $sourceEntry is the same as a
+                     * $destinationEntry. This is determined by requiring that they share at
+                     * least two properties and for each of those properties, both
+                     * $destinationEntry and $sourceEntry have the same value.
+                     *
+                     * @param array $destinationEntry the entry being merged into
+                     * @param array $sourceEntry the entry being merged from
+                     *
+                     * @return bool true if the entries are the 'same' else false
+                     */
+                    function (array $destinationEntry, array $sourceEntry) {
+                        $shared = array_intersect($destinationEntry, $sourceEntry);
+                        if (count($shared) < 2) {
+                            return false;
+                        }
+
+                        foreach ($shared as $key => $value) {
+                            if ($destinationEntry[$key] !== $sourceEntry[$key]) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                );
+            }
+
+            // Now that we've brought in the data missing from the db, go through each row and
+            // construct the query descripter objects. This is the same set of operations as in
+            // aRole::__construct.
+            foreach ($rows as $row) {
+                $descripter = new QueryDescripter(
+                    'tg_usage',
+                    $row['realm'],
+                    $row['group_by']
+                );
+
+                if (isset($row['show'])) {
+                    $descripter->setShowMenu($row['show']);
+                }
+
+                if (isset($row['disable'])) {
+                    $descripter->setDisableMenu($row['disable']);
+                }
+
+                if (isset($statisticName)) {
+                    $descripter->setDefaultStatisticName($statisticName);
+                }
+
+                // NOTE: this is done so that the GroupByNone query descripter does not have it's
+                // groupByInstance populated. Again, just matching aRole::getQueryDescripters.
+                $order = $row['group_by'] === 'none'
+                    ? $descripter->getOrderId()
+                    : $descripter->getMenuLabel();
+
+                // We need to save the group_by / realm info for later
+                $results[] = array($descripter, $row['group_by'], $row['realm'], $order);
+            }
+
+            // Now we sort the created query descripters
+            usort(
+                $results,
+                function ($a, $b) {
+                    list($aQueryDescripter, $aGroupBy, $aRealm, $aOrder) = $a;
+                    list($bQueryDescripter, $bGroupBy, $bRealm, $bOrder) = $b;
+
+                    return strcmp(
+                        $aOrder,
+                        $bOrder
+                    );
+                }
+            );
+
+            // Now we setup the final structure of the results based on what parameters we were given.
+            foreach ($results as $queryDescripterInfo) {
+                list($queryDescripter, $groupBy, $realm) = $queryDescripterInfo;
+                if (isset($realmName) && isset($groupByName) && isset($statisticName)) {
+                    $sorted = $queryDescripter;
+                } elseif (isset($realmName) && isset($groupByName)) {
+                    $sorted = $queryDescripter;
+                } elseif (isset($realmName)) {
+                    $sorted[$groupBy]['all'] = $queryDescripter;
+                } else {
+                    $sorted[$realm][$groupBy]['all'] = $queryDescripter;
+                }
+            }
+        }
+        return $sorted;
+    }
+
+    /**
+     * This function is meant as a replacement for aRole::hasDataAccess. It executes a db query that
+     * will tell us whether or not the realm / group_by combination has a record in acl_group_bys
+     * (present) and whether or not it is present but disabled ( disabled ). Given these values, the
+     * return value is determined as follows:
+     *   - if (!present && disabled) => false
+     *   - else                      => !(present && disabled)
+     *
+     * NOTE: We take in a $statisticName parameter but it is not used. This is due to
+     * aRole::hasDataAccess doing the same thing ( don't let the code fool you, the
+     * $defaultStatisticName is, as of writing, always 'all'. This means that regardless of what
+     * $statistic the user provides, the default query descripter for the specified realm / group_by
+     * is retrieved. It's defaultStatisticName is set to the statistic the user passed in and then
+     * returned. ).
+     *
+     * One might ask themselves, "Where does the statistic filtering occur then?". Well,
+     * it occurs in the following locations ( again, as of writing ):
+     * Statistic filtering ( datawarehouse.json::<realm>::statistics::<statistic>::visible: false )
+     * occurs in:
+     *   - html/controllers/metric_explorer/get_dw_descripter.php
+     *   - html/controllers/user_interface/get_menus.php
+     *   - classes/DataWarehouse/Access/Usage.php::getCharts ( if it's not a single metric query )
+     *
+     * @param XDUser $user the user for whom the authorization is performed
+     * @param string $realmName the realm to be used in determining access.
+     * @param string $groupByName the group_by to be used in determining access.
+     * @param string $statisticName the statistic to be used in determining access. ( Eventually )
+     * @param string $aclName the acl to be used in determining access.
+     * @return bool
+     * @throws Exception if there is a problem executing a sql statement.
+     */
+    public static function hasDataAccess(
+        XDUser $user,
+        $realmName,
+        $groupByName,
+        $statisticName = null,
+        $aclName = null
+    )
+    {
+        // Query to tell whether or not this user has a 'query descriptor'
+        $presentQuery = <<<SQL
+SELECT DISTINCT agb.realm_id
+    FROM acl_group_bys agb
+      JOIN user_acls ua ON agb.acl_id = ua.acl_id
+      JOIN group_bys gb ON agb.group_by_id = gb.group_by_id
+      JOIN statistics s ON agb.statistic_id = s.statistic_id
+      JOIN acls a ON ua.acl_id = a.acl_id
+      JOIN realms r ON gb.realm_id = r.realm_id AND
+                       agb.realm_id = r.realm_id AND
+                       s.realm_id = r.realm_id
+
+    WHERE
+      r.name = :realm_name AND
+      gb.name = :group_by_name 
+SQL;
+        // Query to tell whether or not they have a 'query descriptor' and it's disabled but still
+        // visible.
+        $disabledQuery = <<<SQL
+SELECT DISTINCT agb.realm_id
+    FROM acl_group_bys agb
+      JOIN user_acls ua ON agb.acl_id = ua.acl_id
+      JOIN group_bys gb ON agb.group_by_id = gb.group_by_id
+      JOIN statistics s ON agb.statistic_id = s.statistic_id
+      JOIN acls a ON ua.acl_id = a.acl_id
+      JOIN realms r ON gb.realm_id = r.realm_id AND
+                       agb.realm_id = r.realm_id AND
+                       s.realm_id = r.realm_id
+
+    WHERE agb.enabled = false AND
+          r.name = :realm_name AND
+          gb.name = :group_by_name 
+
+SQL;
+
+        // NOTE: we explicitly strtolower the $realmName because it is often passed in ucfirst which
+        // will not match realms.name values.
+        $params = array(
+            ':realm_name' => strtolower($realmName),
+            ':group_by_name' => $groupByName,
+            ':user_id' => $user->getUserID()
+        );
+
+        // NOTE: The current aRole::checkDataAccess does not support filtering based on
+        // statistic. This means that a user has 'access' to a query descripter so long as the
+        // appropriate roles.json::roles::<role>::query_descripter::<query_descripter> does not
+        // contain the `"enabled": false` property.
+
+
+        // if the user specified an acl then make sure to modify both sub queries.
+        if (isset($aclName)) {
+            $presentQuery .= "\nAND a.name = :acl_name\n";
+            $disabledQuery .= "\nAND a.name = :acl_name\n";
+            $params[':acl_name'] = $aclName;
+        }
+
+        // the parent query that brings both of the sub-queries together.
+        $query = <<<SQL
+SELECT
+  (
+    $presentQuery
+  ) as present,
+  (
+    $disabledQuery
+  ) as disabled;
+
+SQL;
+
+        $db = DB::factory('database');
+        $rows = $db->query($query, $params);
+
+        // we're always going to have 1 row, even when neither of the sub-queries returns a record
+        // due to the way we structured everything.
+        $row = $rows[0];
+
+        // Check if we have 'null' values in either column.
+        $present = isset($row['present']);
+        $disabledButVisible = isset($row['disabled']);
+
+        // Present | Disabled | Return
+        //    T    |     T    |    F
+        //    T    |     F    |    T
+        //    F    |     F    |    T
+        //    F    |     T    |    F
+        if (!$present && $disabledButVisible) {
+            return false;
+        } else {
+            return !($present && $disabledButVisible);
+        }
+    }
+
+    /**
+     * A helper function that attempts to merge elements of $source into $destination based on the
+     * results of $isMatch. When a match is identified then any of the properties in the $source
+     * entry that are not in the matching $destination entry are merged into destination.
+     *
+     * @param array $destination the array that is being merged into.
+     * @param array $source the array is being merged
+     * @param callable $isMatch a function that determines when two entries, one from
+     *                              $destination and one from $source, match.
+     *
+     * @return array of destination records w/ any data specified in a matching source record merged
+     *               in.
+     */
+    private static function mergeOnKey(array $destination, array $source, callable $isMatch)
+    {
+        $results = array();
+
+        foreach ($destination as $dest) {
+            foreach ($source as $src) {
+                if ($isMatch($dest, $src)) {
+                    $difference = array_diff($src, $dest);
+                    foreach ($difference as $diffKey => $diffValue) {
+                        $dest[$diffKey] = $src[$diffKey];
+                    }
+                }
+            }
+            $results[] = $dest;
+        }
+
+        return $results;
     }
 }
