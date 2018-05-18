@@ -449,7 +449,7 @@ ETLProfile.prototype.aggregate = function () {
     var self = this;
 	try { 
         if (this.output.dbEngine === 'mysqldb') {
-            etlv2.generateAggregates(this, config.xdmodConfigDir);
+            etlv2.generateAggregates(this, config.xdmodBuildConfigDir);
         } else {
             //other db engines not yet supported. , this class can be specialized 
 			//or modularized at that time. 
@@ -468,9 +468,8 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
     realms["+realms"][realmName] = { "schema": "N/A", "table": "N/A", "datasource": realmName, group_bys: [], statistics: [] };
     var realmConfig = realms["+realms"][realmName];
 
-    var aggFolder = config.xdmodRoot + '/classes/DataWarehouse/Query/' + realmName + '/GroupBys';
-    var statFolder = config.xdmodRoot + '/classes/DataWarehouse/Query/' + realmName + '/Statistics';
-    
+    var aggFolder = config.xdmodBuildRoot + '/classes/DataWarehouse/Query/' + realmName + '/GroupBys';
+    var statFolder = config.xdmodBuildRoot + '/classes/DataWarehouse/Query/' + realmName + '/Statistics';
     this.addStatistic = function(name, className, classSrc) {
         realmConfig.statistics.push({
             name: name,
@@ -561,7 +560,7 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
         realmConfig.statistics.sort(self.namecomparison("name"));
         realmConfig.statistics = arrayUnique(realmConfig.statistics, self.namecomparison("name"));
 
-        self.mkdirandwrite(config.xdmodConfigDir + "/datawarehouse.d", realmName.toLowerCase(), realms);
+        self.mkdirandwrite(config.xdmodBuildConfigDir + '/datawarehouse.d', realmName.toLowerCase(), realms);
 
         // Sort role configuration data and output
 
@@ -578,7 +577,7 @@ var xdmodIntegrator = function(realmName, realmConfigRoot) {
             }
         }
 
-        self.mkdirandwrite(config.xdmodConfigDir + "/roles.d", realmName.toLowerCase(), roleout);
+        self.mkdirandwrite(config.xdmodBuildConfigDir + '/roles.d', realmName.toLowerCase(), roleout);
     };
 
 };
@@ -616,15 +615,19 @@ var generateGroupBy = function(aggTemplate, itemAlias, className, column)
     return aggCode;
 }
 
+var writeRealmMetadata = function (realm, profileVersion) {
+    fs.writeFileSync(
+        config.xdmodBuildConfigDir + '/' + realm.toLocaleLowerCase() + 'config.json',
+        JSON.stringify({
+            etlversion: profileVersion
+        }, null, 4)
+    );
+};
+
 ETLProfile.prototype.integrateWithXDMoD = function () {
     var self = this;
 	var escape = require('mysql').escape;
 	try { 
-        // TODO - should not have SUPREMM in the name
-        var supremmconfigfile = config.xdmodConfigDir + '/supremmconfig.json';
-        var supremmconfig = { etlversion: this.version };
-        fs.writeFileSync(supremmconfigfile, JSON.stringify(supremmconfig, null, 4));
-
         var roles = [];
 		
         var tables = this.getAggregationTables();
@@ -633,6 +636,8 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
 
 			var table = tables[t];
 			var realmName = table.meta.realmName;
+
+    writeRealmMetadata(realmName, this.version);
 
 			var statTemplate = fs.readFileSync(this.root + '/output_db/Query/' + realmName + '/Statistics/template.stat.php', 'utf8');
 			var aggTemplate = fs.readFileSync(this.root + '/output_db/Query/' + realmName + '/GroupBys/template.groupby.php', 'utf8');
@@ -759,7 +764,7 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
             var sorting = require("./sorting.js");
             rawstats[tableName].sort(sorting.dynamicSortMultiple("dtype", "group", "units", "name"));
         }
-		var rawStatisticsConfigFile = config.xdmodConfigDir + '/rawstatisticsconfig.json';
+    var rawStatisticsConfigFile = config.xdmodBuildConfigDir + '/rawstatisticsconfig.json';
         fs.writeFileSync(rawStatisticsConfigFile, JSON.stringify(rawstats, null, 4));
 
     } catch (exception) {
