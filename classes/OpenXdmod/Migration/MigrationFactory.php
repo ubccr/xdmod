@@ -52,14 +52,17 @@ class MigrationFactory
             );
         }
 
-        if ($updateDatabases && class_exists($databasesMigrationName)) {
-            $msg = "Using databases migration '$databasesMigrationName'";
-            $logger->debug($msg);
+        if ($updateDatabases) {
+            if (class_exists($databasesMigrationName)) {
+                $msg = "Using databases migration '$databasesMigrationName'";
+                $logger->debug($msg);
 
-            $migrations[] = new $databasesMigrationName(
-                $fromVersion,
-                $toVersion
-            );
+                $migrations[] = new $databasesMigrationName(
+                    $fromVersion,
+                    $toVersion
+                );
+            }
+            $migrations[] = new \OpenXdmod\Migration\Etlv2Migration($fromVersion, $toVersion);
         }
 
         $migration = new CompositeMigration(
