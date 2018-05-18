@@ -1100,8 +1100,7 @@ SQL;
         $groupByName,
         $statisticName = null,
         $aclName = null
-    )
-    {
+    ) {
         // Query to tell whether or not this user has a 'query descriptor'
         $presentQuery = <<<SQL
 SELECT DISTINCT agb.realm_id
