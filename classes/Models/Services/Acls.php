@@ -924,7 +924,9 @@ SQL;
         $query = <<<SQL
             SELECT DISTINCT
               r.display AS realm,
-              gb.name AS group_by
+              gb.name AS group_by,
+              !agb.enabled as `disable`,
+              agb.visible as `show`
             FROM acl_group_bys agb
               JOIN user_acls ua ON agb.acl_id = ua.acl_id
               JOIN realms r ON agb.realm_id = r.realm_id
@@ -965,44 +967,6 @@ SQL;
         // if we have data there is additional information that we require from roles.json. Specifically,
         // 'enabled' / 'hidden' from each acls query_descripter.
         if (count($rows) > 0) {
-            $acls = $user->getAcls(true);
-            foreach ($acls as $acl) {
-                $queryDescripters = Roles::getConfig($acl, 'query_descripters');
-                // This is where we merge any additional properties found in $queryDescripter
-                // entries into the equivalent $row entries.
-                $rows = self::mergeOnKey(
-                    $rows,
-                    $queryDescripters,
-                    /**
-                     * Method to determine when a $sourceEntry is the same as a
-                     * $destinationEntry. This is determined by requiring that they share at
-                     * least two properties and for each of those properties, both
-                     * $destinationEntry and $sourceEntry have the same value.
-                     *
-                     * @param array $destinationEntry the entry being merged into
-                     * @param array $sourceEntry the entry being merged from
-                     *
-                     * @return bool true if the entries are the 'same' else false
-                     */
-                    function (array $destinationEntry, array $sourceEntry) {
-                        $shared = array_intersect($destinationEntry, $sourceEntry);
-                        if (count($shared) < 2) {
-                            return false;
-                        }
-
-                        foreach ($shared as $key => $value) {
-                            if ($destinationEntry[$key] !== $sourceEntry[$key]) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                );
-            }
-
-            // Now that we've brought in the data missing from the db, go through each row and
-            // construct the query descripter objects. This is the same set of operations as in
-            // aRole::__construct.
             foreach ($rows as $row) {
                 $descripter = new QueryDescripter(
                     'tg_usage',
@@ -1010,11 +974,11 @@ SQL;
                     $row['group_by']
                 );
 
-                if (isset($row['show'])) {
+                if (isset($row['`show`'])) {
                     $descripter->setShowMenu($row['show']);
                 }
 
-                if (isset($row['disable'])) {
+                if (isset($row['`disable`'])) {
                     $descripter->setDisableMenu($row['disable']);
                 }
 
@@ -1190,37 +1154,5 @@ SQL;
         } else {
             return !($present && $disabledButVisible);
         }
-    }
-
-    /**
-     * A helper function that attempts to merge elements of $source into $destination based on the
-     * results of $isMatch. When a match is identified then any of the properties in the $source
-     * entry that are not in the matching $destination entry are merged into destination.
-     *
-     * @param array $destination the array that is being merged into.
-     * @param array $source the array is being merged
-     * @param callable $isMatch a function that determines when two entries, one from
-     *                              $destination and one from $source, match.
-     *
-     * @return array of destination records w/ any data specified in a matching source record merged
-     *               in.
-     */
-    private static function mergeOnKey(array $destination, array $source, callable $isMatch)
-    {
-        $results = array();
-
-        foreach ($destination as $dest) {
-            foreach ($source as $src) {
-                if ($isMatch($dest, $src)) {
-                    $difference = array_diff($src, $dest);
-                    foreach ($difference as $diffKey => $diffValue) {
-                        $dest[$diffKey] = $src[$diffKey];
-                    }
-                }
-            }
-            $results[] = $dest;
-        }
-
-        return $results;
     }
 }
