@@ -55,6 +55,9 @@ TXT;
         $realm = !empty($options['realm']) ? $options['realm'] : null;
         $groupBy = !empty($options['group_by']) ? $options['group_by'] : null;
         $statistic = !empty($options['statistic']) ? $options['statistic'] : null;
+
+        $expected = (bool)$options['enabled'];
+
         $queryGroup = 'tg_usage';
 
         $user = XDUser::getUserByUserName($userName);
@@ -63,13 +66,6 @@ TXT;
 
         foreach ($allRoles as $role) {
             $roleName = $role->getIdentifier();
-
-            $expected = $role->hasDataAccess(
-                $queryGroup,
-                ucfirst($realm),
-                $groupBy,
-                $statistic
-            );
 
             $actual = Acls::hasDataAccess(
                 $user,
@@ -165,6 +161,10 @@ TXT;
         $realm = $options['realm'];
         $groupBy = $options['group_by'];
         $statistic = $options['statistic'];
+        $fileId = $options['file_id'];
+
+        $expectedFile = $this->getTestFiles()->getFile('acls', "get_query_descripters-$fileId");
+        $expected = unserialize(file_get_contents($expectedFile));
 
         $user = XDUser::getUserByUserName($username);
 
@@ -172,12 +172,6 @@ TXT;
         $roles = $user->getAllRoles();
         foreach($roles as $role) {
             if (isset($realm) && isset($groupBy) && isset($statistic)) {
-                $expected = $role->getQueryDescripters(
-                    $queryGroupName,
-                    ucfirst($realm),
-                    $groupBy,
-                    $statistic
-                );
                 $actual = Acls::getQueryDescripters(
                     $user,
                     $realm,
@@ -185,29 +179,17 @@ TXT;
                     $statistic
                 );
             } elseif(isset($realm) && isset($groupBy)) {
-                $expected = $role->getQueryDescripters(
-                    $queryGroupName,
-                    ucfirst($realm),
-                    $groupBy
-                );
                 $actual = Acls::getQueryDescripters(
                     $user,
                     $realm,
                     $groupBy
                 );
             } elseif(isset($realm)) {
-                $expected = $role->getQueryDescripters(
-                    $queryGroupName,
-                    ucfirst($realm)
-                );
                 $actual = Acls::getQueryDescripters(
                     $user,
                     $realm
                 );
             } else {
-                $expected = $role->getQueryDescripters(
-                    $queryGroupName
-                );
                 $actual = Acls::getQueryDescripters(
                     $user
                 );
