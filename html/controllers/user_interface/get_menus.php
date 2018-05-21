@@ -137,7 +137,7 @@ try {
                             'node_type' => 'group_by',
                             'iconCls' => 'menu',
                             'description' => $query_descripter->getGroupByLabel(),
-                            'leaf' => false,
+                            'leaf' => false
                         );
 
                         $hasItems = true;
