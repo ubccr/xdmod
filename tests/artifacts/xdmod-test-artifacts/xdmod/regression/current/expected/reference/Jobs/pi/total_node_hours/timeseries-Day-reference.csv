@@ -1,0 +1,20 @@
+title
+"Node Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Moorhen] Node Hours: Total","[Flycatcher, Taiga] Node Hours: Total","[Bufflehead] Node Hours: Total","[Fieldfare] Node Hours: Total","[Shearwater, Macaronesian] Node Hours: Total","[Scaup, Lesser] Node Hours: Total","[Lark, Calandra] Node Hours: Total","[Bluetail, Red-flanked] Node Hours: Total","[Shearwater, Balearic] Node Hours: Total","[White, Great] Node Hours: Total","[Bunting, Ortolan] Node Hours: Total","[Egret, Snowy] Node Hours: Total","[Smew] Node Hours: Total","[Fulmar] Node Hours: Total","[Tern, Caspian] Node Hours: Total","[Chaffinch] Node Hours: Total","[Jackdaw] Node Hours: Total","[Thrush, Hermit] Node Hours: Total","[Warbler, Hooded] Node Hours: Total","[Nuthatch] Node Hours: Total","[Chiffchaff, Iberian] Node Hours: Total","[Accentor, Alpine] Node Hours: Total","[Kestrel, Lesser] Node Hours: Total","[Warbler, Cetti's] Node Hours: Total","[Petrel, Fea's] Node Hours: Total","[Gull, Yellow-legged] Node Hours: Total","[Dunlin] Node Hours: Total","[Bittern] Node Hours: Total","[Warbler, Blackpoll] Node Hours: Total","[Goose, Red-breasted] Node Hours: Total","[Harrier, Hen] Node Hours: Total","[Warbler, Savi's] Node Hours: Total","[Dowitcher, Short-billed] Node Hours: Total","[Shearwater, Great] Node Hours: Total","[Martin, Sand] Node Hours: Total","[Spotted, Great] Node Hours: Total","[Swift, Little] Node Hours: Total","[Dotterel] Node Hours: Total","[Gull, Glaucous-winged] Node Hours: Total","[Blackbird] Node Hours: Total","[Yellowthroat, Common] Node Hours: Total"
+2016-12-22,0,0,0,0,0,0,16.9417,0,0,0,0,0,0,0,0,16.7464,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,24.0000,0,0,0,0,0,0,0,8.6036,24.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,24.0000,0,0,0,0,0,0,0,24.0000,24.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,0,0,32.5078,0,0,0,0,0,0,0,24.0000,24.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,96.0000,13.5208,0,0,0,0,0,0,24.0000,24.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,0,3.2167,0,311.6178,0,0,115.3094,120.0000,331.1156,123.9850,0,0,0,69.8267,52.2964,54.3978,0,0,0,0,0,0,0,0,19.9056,0,0,0,0,0,0,0,0,4.7214,0,0,0,0,0,0,0
+2016-12-28,953.0369,24.0000,1962.8444,1827.6600,0,1841.7169,461.3931,144.4211,502.6856,220.6683,0,0,0,176.3833,144.0000,216.0000,0,0,43.9492,0,0,0,28.0381,0,24.0000,0,0,0,15.1192,0,0,0,0,24.0000,0,0,0,4.7006,0,0,0
+2016-12-29,12583.2597,301.8189,3901.6422,4150.0822,0,2472.0000,933.4136,477.7553,848.2247,420.2000,152.8733,0,485.1050,479.3708,208.6497,216.0000,47.7900,0,168.7433,102.7444,3.6200,0,216.0000,26.9772,24.0000,129.7778,0,0,72.0000,0,10.0983,37.9494,0,24.0000,10.4008,0,0,24.0000,0,0,0
+2016-12-30,21766.1511,6638.2006,5473.3125,3949.6347,3055.8617,2475.2589,1433.8564,378.4569,521.4136,451.4903,510.5000,0,914.9350,498.0953,664.9178,216.0000,629.4331,617.0356,321.9956,575.7072,67.3875,0,160.0869,296.1253,175.8633,50.3500,51.2486,108.1047,45.2903,27.2458,82.1119,48.0006,27.2308,19.2856,13.6064,13.9453,7.5778,19.3061,2.3450,1.1269,0.0650
+2016-12-31,20518.0064,8599.9281,2761.8142,1871.4597,5534.6542,696.7117,1625.9722,1112.6033,164.2022,491.3692,569.9600,3.1458,132.5433,179.7156,202.4067,216.4508,430.1536,475.1289,241.5139,205.3683,714.0100,299.0033,24.0000,13.7992,7.7117,0,10.4561,25.9131,0,76.1869,8.6314,14.7489,27.2439,0,45.3169,45.9239,42.7433,0,0,0,0
+2017-01-01,11183.6664,932.0322,1254.4625,233.1847,0,7.1189,649.3575,526.7989,0,265.3353,389.4844,1590.0014,0,123.3775,23.2497,202.3092,32.6561,0,120.3844,0,17.6292,159.9050,5.0458,0,0,0.4333,88.8292,1.7419,0,17.1758,0,0,27.1514,0,0.9528,0,4.2811,0,0,0,0
+---------

@@ -1,0 +1,50 @@
+title
+"Number of PIs: Active: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Number of PIs: Active"
+"Accentor, Alpine",1
+Bittern,1
+Blackbird,1
+"Bluetail, Red-flanked",1
+Bufflehead,1
+"Bunting, Ortolan",1
+Chaffinch,1
+"Chiffchaff, Iberian",1
+Dotterel,1
+"Dowitcher, Short-billed",1
+Dunlin,1
+"Egret, Snowy",1
+Fieldfare,1
+"Flycatcher, Taiga",1
+Fulmar,1
+"Goose, Red-breasted",1
+"Gull, Glaucous-winged",1
+"Gull, Yellow-legged",1
+"Harrier, Hen",1
+Jackdaw,1
+"Kestrel, Lesser",1
+"Lark, Calandra",1
+"Martin, Sand",1
+Moorhen,1
+Nuthatch,1
+"Petrel, Fea's",1
+"Scaup, Lesser",1
+"Shearwater, Balearic",1
+"Shearwater, Great",1
+"Shearwater, Macaronesian",1
+Smew,1
+"Spotted, Great",1
+"Swift, Little",1
+"Tern, Caspian",1
+"Thrush, Hermit",1
+"Warbler, Blackpoll",1
+"Warbler, Cetti's",1
+"Warbler, Hooded",1
+"Warbler, Savi's",1
+"White, Great",1
+"Yellowthroat, Common",1
+---------

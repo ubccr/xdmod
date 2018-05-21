@@ -1,0 +1,12 @@
+title
+"Screwdriver Utilization (%): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[ovenb] Screwdriver Utilization (%)","[swath] Screwdriver Utilization (%)","[ybsbu] Screwdriver Utilization (%)","[sante] Screwdriver Utilization (%)","[litst] Screwdriver Utilization (%)","[savsp] Screwdriver Utilization (%)"
+"2016 Q4",0.070760920,0.025634423,0.013760907,0.001980044,0.000279432,0.000006891
+"2017 Q1",0.004300772,0,0,0,0,0.000000296
+---------

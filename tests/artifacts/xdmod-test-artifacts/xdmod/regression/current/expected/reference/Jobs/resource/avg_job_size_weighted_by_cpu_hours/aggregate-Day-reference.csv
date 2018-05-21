@@ -1,0 +1,14 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Job Size: Weighted By CPU Hours (Core Count)"
+frearson,113.7868
+robertson,60.2813
+phillips,48.3198
+pozidriv,15.7368
+mortorq,10.9181
+---------

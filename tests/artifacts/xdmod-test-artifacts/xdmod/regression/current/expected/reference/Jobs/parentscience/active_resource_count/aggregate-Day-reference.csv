@@ -1,0 +1,10 @@
+title
+"Number of Resources: Active: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Department,"Number of Resources: Active"
+Unknown,5
+---------

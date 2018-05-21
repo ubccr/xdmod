@@ -1,0 +1,11 @@
+title
+"Screwdriver Utilization (%): by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[8] Screwdriver Utilization (%)","[1] Screwdriver Utilization (%)","[12] Screwdriver Utilization (%)","[6] Screwdriver Utilization (%)","[7] Screwdriver Utilization (%)","[28] Screwdriver Utilization (%)","[2] Screwdriver Utilization (%)","[5] Screwdriver Utilization (%)","[4] Screwdriver Utilization (%)","[20] Screwdriver Utilization (%)","[3] Screwdriver Utilization (%)","[14] Screwdriver Utilization (%)","[16] Screwdriver Utilization (%)","[9] Screwdriver Utilization (%)","[24] Screwdriver Utilization (%)"
+"2016 Q4",0.940896739,0.836082015,0.716648928,0.329790459,0.251418428,0.143691274,0.113464347,0.089656552,0.050751124,0.016315922,0.007938519,0.012783665,0.000416667,0.000318614,0.000069746
+"2017 Q1",0.049869496,0.126797807,0,0.016296682,0,0,0.025230324,0.015029900,0.005079707,0.000040123,0.007022917,0,0.000129630,0,0
+---------

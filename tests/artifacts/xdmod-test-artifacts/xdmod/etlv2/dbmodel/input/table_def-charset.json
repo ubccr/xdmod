@@ -1,0 +1,86 @@
+{
+    "#": "Sample table definition for DbModel testing",
+
+    "table_definition": {
+        "name": "test_db_model",
+        "engine": "MyISAM",
+        "charset": "latin1",
+        "collation": "latin1_swedish_ci",
+        "comment": "Events on an instance",
+        "columns": [
+            {
+                "name": "event_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "extra": "auto_increment",
+                "comment": "Generated during intermediate ingest"
+            },
+            {
+                "name": "col1",
+                "type": "varchar(64)",
+                "charset": "latin1",
+                "collation": "latin1_swedish_ci",
+                "nullable": false,
+                "default": "mydefault"
+            },
+            {
+                "name": "col2",
+                "type": "varchar(64)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false,
+                "default": "mydefault"
+            },
+            {
+                "name": "event_time",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP"
+            },
+            {
+                "name": "instance_id",
+                "type": "int(11) unsigned",
+                "nullable": true,
+                "default": 10
+            },
+            {
+                "name": "inferred",
+                "type": "int(1) unsigned",
+                "nullable": true,
+                "default": 0,
+                "comment": "Not explicitly provided by source but inferred from other data"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "fk_col",
+                "columns": [
+                    "col1"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "fk_instance",
+                "columns": [
+                    "instance_id", "inferred"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "con_col1",
+                "columns": [
+                    "col1"
+                ],
+                "referenced_table": "db_test_model2",
+                "referenced_columns": [
+                    "col3"
+                ]
+            }
+        ],
+        "triggers": []
+    }
+}

@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown] Wall Hours: Per Job"
+"2016 Q4",1.97829913
+"2017 Q1",1.01283296
+---------

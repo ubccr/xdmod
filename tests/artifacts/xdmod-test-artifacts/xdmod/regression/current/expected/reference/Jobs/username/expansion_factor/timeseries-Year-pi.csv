@@ -1,0 +1,12 @@
+title
+"User Expansion Factor: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[swath] User Expansion Factor","[savsp] User Expansion Factor","[litst] User Expansion Factor","[ovenb] User Expansion Factor","[sante] User Expansion Factor","[ybsbu] User Expansion Factor"
+2016,297.8504,1.5892,1.2706,1.0534,1.1633,1.0557
+2017,0,1.2609,0,4.1649,0,0
+---------

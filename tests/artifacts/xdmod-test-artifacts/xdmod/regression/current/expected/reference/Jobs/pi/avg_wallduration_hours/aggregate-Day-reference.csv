@@ -1,0 +1,50 @@
+title
+"Wall Hours: Per Job: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Wall Hours: Per Job","Std Dev: Wall Hours: Per Job"
+"Shearwater, Great",72.00694444,
+"Bluetail, Red-flanked",52.33125262,
+Bufflehead,49.85089556,
+Dotterel,48.00666667,
+"Warbler, Blackpoll",44.13648148,
+"Kestrel, Lesser",39.37916667,
+Fieldfare,37.79727273,
+Smew,36.49007937,
+"Scaup, Lesser",26.34404444,
+"Accentor, Alpine",25.49490741,
+Moorhen,25.48654262,
+"Warbler, Savi's",25.17486111,
+"Warbler, Hooded",24.23206456,
+Fulmar,21.20474151,
+"White, Great",18.55493056,
+Jackdaw,17.27322391,
+"Petrel, Fea's",16.76537037,
+Nuthatch,15.78250000,
+"Thrush, Hermit",15.43750000,2.949516142225878
+Chaffinch,12.69807348,1.9501880028878633
+"Bunting, Ortolan",12.67826389,
+"Shearwater, Macaronesian",8.59051583,
+"Chiffchaff, Iberian",7.94699670,0.252707620848999
+"Shearwater, Balearic",7.84637557,0.6422820715080719
+"Martin, Sand",7.02769444,1.7557857088278381
+"Spotted, Great",5.98691667,0.9781127830854605
+"Harrier, Hen",5.04208333,1.412736659063767
+"Swift, Little",4.58416667,1.0571325984155044
+"Gull, Yellow-legged",4.51402778,1.3866381241776238
+"Egret, Snowy",2.10733760,0.04730850999433886
+"Tern, Caspian",1.61309706,0.16764615169441738
+"Dowitcher, Short-billed",0.97173942,0.00025764463006399947
+Bittern,0.88155664,0.09909785167735996
+"Goose, Red-breasted",0.81574879,0.33900408606509713
+"Lark, Calandra",0.55186616,0.029985935034615736
+"Flycatcher, Taiga",0.29997993,0.003221245083552797
+"Gull, Glaucous-winged",0.26055556,0
+Dunlin,0.18926081,0.027954377835160745
+Blackbird,0.08049603,0.022331879009996006
+"Yellowthroat, Common",0.06500000,0
+"Warbler, Cetti's",0.02840866,0.006969739306507408
+---------

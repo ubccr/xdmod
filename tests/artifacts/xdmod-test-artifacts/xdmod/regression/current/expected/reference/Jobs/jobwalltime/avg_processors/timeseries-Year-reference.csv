@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[0 - 1s] Job Size: Per Job (Core Count)","[1 - 30s] Job Size: Per Job (Core Count)","[30s - 30min] Job Size: Per Job (Core Count)","[30 - 60min] Job Size: Per Job (Core Count)","[1 - 5hr] Job Size: Per Job (Core Count)","[5 - 10hr] Job Size: Per Job (Core Count)","[10 - 18hr] Job Size: Per Job (Core Count)","[18+hr] Job Size: Per Job (Core Count)"
+2016,0,7.8028,8.5822,11.4601,8.1025,1.7354,11.4304,4.2750
+2017,10.1859,8.7941,10.7174,11.1463,10.3114,7.3472,9.7327,2.9580
+---------

@@ -1,0 +1,20 @@
+title
+"Job Size: Per Job (Core Count): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[crumpet] Job Size: Per Job (Core Count)","[roti] Job Size: Per Job (Core Count)","[bannock] Job Size: Per Job (Core Count)","[panettone] Job Size: Per Job (Core Count)","[potbrood] Job Size: Per Job (Core Count)","[brown] Job Size: Per Job (Core Count)","[pikelet] Job Size: Per Job (Core Count)","[chapti] Job Size: Per Job (Core Count)","[nann] Job Size: Per Job (Core Count)","[cornbread] Job Size: Per Job (Core Count)","[black] Job Size: Per Job (Core Count)","[croutons] Job Size: Per Job (Core Count)","[focaccia] Job Size: Per Job (Core Count)","[white] Job Size: Per Job (Core Count)","[pumpernickel] Job Size: Per Job (Core Count)","[brioche] Job Size: Per Job (Core Count)","[pita] Job Size: Per Job (Core Count)","[barm] Job Size: Per Job (Core Count)"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,12.0000,12.0000,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,1.0000,0,12.0000,12.0000,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,1.0000,0,12.0000,12.0000,0,0,0,0,0
+2016-12-25,0,0,0,0,0,0,0,0,0,1.0000,0,18.0000,12.0000,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,16.0000,0,0,1.0000,0,18.0000,12.0000,0,0,0,0,0
+2016-12-27,64.0000,28.5556,0,0,0,0,16.0000,0,0,13.0000,16.0000,17.3333,12.0000,47.6923,0,1.0000,0,0
+2016-12-28,64.0000,29.1818,0,20.0000,0,0,16.0000,0,0,13.0000,122.2857,16.5714,12.0000,6.7099,0,1.0000,0,0
+2016-12-29,64.0000,29.7857,0,20.0000,0,112.0000,16.0000,12.0000,0,14.7273,17.1552,10.5000,12.0000,4.3798,5.0000,3.3333,4.0000,2.0000
+2016-12-30,51.2000,30.2778,29.6000,20.0000,14.0857,25.6667,16.0000,12.0000,0,9.5455,9.0360,8.4553,12.0000,3.9329,5.0000,3.6471,1.6000,2.0000
+2016-12-31,47.1111,32.0000,16.0000,0,21.3704,14.8750,10.3542,12.0000,12.0000,8.3000,9.8497,8.0759,12.0000,3.3146,5.0000,3.6842,2.0000,2.0000
+2017-01-01,19.2727,0,17.8182,0,22.9565,1.0000,10.5532,0,12.0000,8.5000,9.7316,8.1029,4.0769,8.1254,5.0000,3.7500,4.0000,2.0000
+---------

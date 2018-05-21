@@ -1,0 +1,17 @@
+title
+"Number of Users: Active: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Number of Users: Active"
+"0 - 1s",31
+"1 - 30s",45
+"30s - 30min",34
+"30 - 60min",14
+"1 - 5hr",24
+"5 - 10hr",22
+"10 - 18hr",10
+18+hr,17
+---------

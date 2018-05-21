@@ -1,0 +1,14 @@
+title
+"User Expansion Factor: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"User Expansion Factor"
+phillips,15.0013
+pozidriv,3.6177
+mortorq,3.3383
+robertson,3.1894
+frearson,1.0002
+---------

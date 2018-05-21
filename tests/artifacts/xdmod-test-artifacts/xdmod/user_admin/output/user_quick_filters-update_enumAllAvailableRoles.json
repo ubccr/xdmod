@@ -1,0 +1,187 @@
+[
+  [
+    {
+      "username": "test.cd.one-center",
+      "dimensionNames": {},
+      "filters": {}
+    }
+  ],
+  [
+    {
+      "username": "test.cs.one-center",
+      "dimensionNames": {},
+      "filters": {}
+    }
+  ],
+  [
+    {
+      "username": "test.pi",
+      "dimensionNames": {
+        "pi": "PI"
+      },
+      "filters": {
+        "pi": [
+          {
+            "valueName": "Flycatcher, T",
+            "valueId": "97",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": true
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "username": "test.normal-user",
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Honey-buzzard",
+            "valueId": "24",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": true
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "username": "test.usr_dev",
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Honey-buzzard",
+            "valueId": "24",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": true
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "username": "test.usr_mgr",
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Honey-buzzard",
+            "valueId": "24",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": true
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "username": "test.usr_mgr_dev",
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Honey-buzzard",
+            "valueId": "24",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": true
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Bunting, R",
+            "valueId": "42",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": false
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Dove, T",
+            "valueId": "57",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": false
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "dimensionNames": {
+        "pi": "PI",
+        "person": "User"
+      },
+      "filters": {
+        "pi": [
+          {
+            "valueName": "Tern, C",
+            "valueId": "74",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": true
+          }
+        ],
+        "person": [
+          {
+            "valueName": "Tern, C",
+            "valueId": "74",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": false
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Whimbrel",
+            "valueId": "60",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": true
+          }
+        ]
+      }
+    }
+  ]
+]

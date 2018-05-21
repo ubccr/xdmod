@@ -1,0 +1,12 @@
+title
+"Node Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[whimb] Node Hours: Per Job"
+2016,28.08361111
+2017,22.44571429
+---------

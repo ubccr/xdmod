@@ -1,0 +1,20 @@
+title
+"Number of Jobs Running: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[mortorq] Number of Jobs Running","[robertson] Number of Jobs Running","[frearson] Number of Jobs Running","[pozidriv] Number of Jobs Running","[phillips] Number of Jobs Running"
+2016-12-22,0,0,0,1,1
+2016-12-23,0,0,0,2,1
+2016-12-24,0,0,0,2,1
+2016-12-25,0,0,0,5,1
+2016-12-26,5,0,0,5,1
+2016-12-27,5,22,1,12,2
+2016-12-28,17,404,10,17,2
+2016-12-29,121,1434,95,88,2
+2016-12-30,12467,6105,4019,5209,1055
+2016-12-31,8755,4858,8708,4773,2509
+2017-01-01,5315,6348,2927,1488,488
+---------

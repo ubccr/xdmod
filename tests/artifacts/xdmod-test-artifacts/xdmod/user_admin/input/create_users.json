@@ -1,0 +1,107 @@
+[
+  [
+    {
+      "username": "test.cd.one-center",
+      "acls": {
+        "cd": [
+          1
+        ]
+      },
+      "person": 181
+    }
+  ],
+  [
+    {
+      "username": "test.cs.one-center",
+      "acls": {
+        "cs": [
+          1
+        ]
+      },
+      "person": 31
+    }
+  ],
+  [
+    {
+      "username": "test.pi",
+      "acls": {
+        "pi": []
+      },
+      "person": 97
+    }
+  ],
+  [
+    {
+      "username": "test.normal-user",
+      "acls": {
+        "usr": []
+      },
+      "person": 24
+    }
+  ],
+  [
+    {
+      "username": "test.dev",
+      "acls": {
+        "dev": []
+      },
+      "person": 498,
+      "output": "test.only_feature_acls",
+      "expected_success": false
+    }
+  ],
+  [
+    {
+      "username": "test.mgr",
+      "acls": {
+        "mgr": []
+      },
+      "person": 603,
+      "output": "test.only_feature_acls",
+      "expected_success": false
+    }
+  ],
+  [
+    {
+      "username": "test.mgr_dev",
+      "acls": {
+        "mgr": [],
+        "dev": []
+      },
+      "person": 110,
+      "output": "test.only_feature_acls",
+      "expected_success": false
+    }
+  ],
+  [
+    {
+      "username": "test.usr_dev",
+      "acls": {
+        "usr": [],
+        "dev": []
+      },
+      "person": 24
+    }
+  ],
+  [
+    {
+      "username": "test.usr_mgr",
+      "acls": {
+        "usr": [],
+        "mgr": []
+      },
+      "person": 24
+    }
+  ],
+  [
+    {
+      "username": "test.usr_mgr_dev",
+      "acls": {
+        "usr": [],
+        "mgr": [],
+        "dev": []
+      },
+      "person": 24
+    }
+  ]
+]

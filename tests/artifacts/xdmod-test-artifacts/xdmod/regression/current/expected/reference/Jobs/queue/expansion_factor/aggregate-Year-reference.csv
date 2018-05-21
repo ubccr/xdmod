@@ -1,0 +1,27 @@
+title
+"User Expansion Factor: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"User Expansion Factor"
+nann,9.2707
+black,3.4106
+white,3.2035
+cornbread,1.3332
+croutons,1.0975
+brioche,1.0881
+roti,1.0868
+chapti,1.0280
+pikelet,1.0132
+focaccia,1.0048
+potbrood,1.0018
+panettone,1.0003
+bannock,1.0002
+barm,1.0001
+brown,1.0000
+crumpet,1.0000
+pita,1.0000
+pumpernickel,1.0000
+---------

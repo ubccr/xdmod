@@ -1,0 +1,20 @@
+title
+"Job Size: Max (Core Count): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[white] Job Size: Max (Core Count)","[black] Job Size: Max (Core Count)","[brown] Job Size: Max (Core Count)","[bannock] Job Size: Max (Core Count)","[cornbread] Job Size: Max (Core Count)","[crumpet] Job Size: Max (Core Count)","[potbrood] Job Size: Max (Core Count)","[roti] Job Size: Max (Core Count)","[croutons] Job Size: Max (Core Count)","[panettone] Job Size: Max (Core Count)","[pikelet] Job Size: Max (Core Count)","[chapti] Job Size: Max (Core Count)","[focaccia] Job Size: Max (Core Count)","[nann] Job Size: Max (Core Count)","[pumpernickel] Job Size: Max (Core Count)","[brioche] Job Size: Max (Core Count)","[pita] Job Size: Max (Core Count)","[barm] Job Size: Max (Core Count)"
+2016-12-22,0,0,0,0,0,0,0,0,12,0,0,0,12,0,0,0,0,0
+2016-12-23,0,0,0,0,1,0,0,0,12,0,0,0,12,0,0,0,0,0
+2016-12-24,0,0,0,0,1,0,0,0,12,0,0,0,12,0,0,0,0,0
+2016-12-25,0,0,0,0,1,0,0,0,24,0,0,0,12,0,0,0,0,0
+2016-12-26,0,0,0,0,1,0,0,0,24,0,16,0,12,0,0,0,0,0
+2016-12-27,144,16,0,0,16,64,0,32,24,0,16,0,12,0,0,1,0,0
+2016-12-28,144,192,0,0,16,64,0,32,24,20,16,0,12,0,0,1,0,0
+2016-12-29,160,192,112,0,64,64,0,32,24,20,16,12,12,0,5,4,4,2
+2016-12-30,336,192,112,80,64,64,48,32,24,20,16,12,12,0,5,4,4,2
+2016-12-31,336,192,112,20,64,64,48,32,24,0,16,12,12,12,5,4,4,2
+2017-01-01,192,16,1,20,16,64,24,0,24,0,16,0,12,12,5,4,4,2
+---------

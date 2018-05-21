@@ -1,0 +1,17 @@
+title
+"Node Hours: Total: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Node Hours: Total"
+"0 - 1s",0.0000
+"1 - 30s",71.6172
+"30s - 30min",4855.8350
+"30 - 60min",5654.4003
+"1 - 5hr",9897.0397
+"5 - 10hr",10946.2956
+"10 - 18hr",6142.9911
+18+hr,118735.5686
+---------

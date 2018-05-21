@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] Number of Jobs Ended","[2] Number of Jobs Ended","[3 - 4] Number of Jobs Ended","[5 - 8] Number of Jobs Ended","[9 - 16] Number of Jobs Ended","[17 - 32] Number of Jobs Ended","[33 - 64] Number of Jobs Ended","[65 - 128] Number of Jobs Ended","[129 - 256] Number of Jobs Ended","[257 - 512] Number of Jobs Ended"
+2016-12,5787,97,720,32046,15794,167,53,69,12,2
+2017-01,1168,1,12,10344,4864,93,48,34,2,0
+---------

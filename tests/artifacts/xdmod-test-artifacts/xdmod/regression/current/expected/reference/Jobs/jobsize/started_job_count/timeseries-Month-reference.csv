@@ -1,0 +1,11 @@
+title
+"Number of Jobs Started: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] Number of Jobs Started","[2] Number of Jobs Started","[3 - 4] Number of Jobs Started","[5 - 8] Number of Jobs Started","[9 - 16] Number of Jobs Started","[17 - 32] Number of Jobs Started","[33 - 64] Number of Jobs Started","[65 - 128] Number of Jobs Started","[129 - 256] Number of Jobs Started","[257 - 512] Number of Jobs Started"
+2016-12,6631,98,732,32324,16094,178,58,80,12,2
+2017-01,324,0,0,10066,4564,82,43,23,2,0
+---------

@@ -1,0 +1,80 @@
+[
+  [
+    {
+      "username": "test.cd.one-center",
+      "output": "get_menus-test.cd.one-center-1"
+    }
+  ],
+  [
+    {
+      "username": "test.cs.one-center",
+      "output": "get_menus-test.cs.one-center-1"
+    }
+  ],
+  [
+    {
+      "username": "test.pi",
+      "output": "get_menus-test.pi-1"
+    }
+  ],
+  [
+    {
+      "username": "test.normal-user",
+      "output": "get_menus-test.normal-user-1"
+    }
+  ],
+  [
+    {
+      "username": "test.usr_dev",
+      "output": "get_menus-test.usr_dev-1"
+    }
+  ],
+  [
+    {
+      "username": "test.usr_mgr",
+      "output": "get_menus-test.usr_mgr-1"
+    }
+  ],
+  [
+    {
+      "username": "test.usr_mgr_dev",
+      "output": "get_menus-test.usr_mgr_dev-1"
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "output": "get_menus-centerdirector-1"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "output": "get_menus-centerstaff-1"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "output": "get_menus-principal-1"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "output": "get_menus-normaluser-1"
+    }
+  ],
+  [
+    {
+      "username": "admin",
+      "output": "get_menus-admin-1"
+    }
+  ],
+  [
+    {
+      "username": "Public User",
+      "output": "get_menus-Public User-1"
+    }
+  ]
+]

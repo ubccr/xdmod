@@ -1,0 +1,27 @@
+title
+"Number of PIs: Active: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Number of PIs: Active"
+white,32
+potbrood,7
+black,6
+bannock,2
+brown,2
+crumpet,2
+panettone,2
+pumpernickel,2
+roti,2
+barm,1
+brioche,1
+chapti,1
+cornbread,1
+croutons,1
+focaccia,1
+nann,1
+pikelet,1
+pita,1
+---------

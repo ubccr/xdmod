@@ -1,0 +1,13 @@
+title
+"User Expansion Factor: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[whimb] User Expansion Factor"
+2016-12-30,2.7189
+2016-12-31,1.1623
+2017-01-01,1.1798
+---------

@@ -1,0 +1,12 @@
+title
+"Job Size: Normalized (% of Total Cores): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[ovenb] Job Size: Normalized (% of Total Cores)","[litst] Job Size: Normalized (% of Total Cores)","[ybsbu] Job Size: Normalized (% of Total Cores)","[swath] Job Size: Normalized (% of Total Cores)","[sante] Job Size: Normalized (% of Total Cores)","[savsp] Job Size: Normalized (% of Total Cores)"
+2016,0.400000000,0.177272727,0.116666667,0.051051893,0.025000000,0.025000000
+2017,0.400000000,0,0,0,0,0.025000000
+---------

@@ -1,0 +1,46 @@
+{
+  "success": true,
+  "status": "success",
+  "acls": [
+    {
+      "acl": "Center Director",
+      "acl_id": "cd",
+      "include": false,
+      "primary": false,
+      "displays_center": false,
+      "requires_center": true
+    },
+    {
+      "acl": "Center Staff",
+      "acl_id": "cs",
+      "include": false,
+      "primary": false,
+      "displays_center": false,
+      "requires_center": true
+    },
+    {
+      "acl": "Manager",
+      "acl_id": "mgr",
+      "include": false,
+      "primary": false,
+      "displays_center": false,
+      "requires_center": false
+    },
+    {
+      "acl": "Principal Investigator",
+      "acl_id": "pi",
+      "include": false,
+      "primary": false,
+      "displays_center": false,
+      "requires_center": false
+    },
+    {
+      "acl": "User",
+      "acl_id": "usr",
+      "include": false,
+      "primary": false,
+      "displays_center": false,
+      "requires_center": false
+    }
+  ]
+}

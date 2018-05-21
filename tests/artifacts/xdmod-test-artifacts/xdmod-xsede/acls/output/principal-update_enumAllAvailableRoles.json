@@ -1,0 +1,41 @@
+{
+  "_id": "463",
+  "_account_is_active": true,
+  "_username": "principal",
+  "_password": "e7d715a9b79d263ae527955341bbe9b1",
+  "_email": "principal@example.com",
+  "_firstName": "Matthew D.",
+  "_middleName": "",
+  "_lastName": "Jones",
+  "_roles": [
+    "pi",
+    "usr"
+  ],
+  "_active_role": {},
+  "_field_of_science": "0",
+  "_organizationID": "0",
+  "_personID": "14993",
+  "_user_type": 1,
+  "_update_token": false,
+  "_cachedActiveRole": null,
+  "_acls": {
+    "usr": {
+      "aclId": "4",
+      "moduleId": "1",
+      "aclTypeId": "2",
+      "name": "usr",
+      "display": "User",
+      "enabled": "1",
+      "userId": "463"
+    },
+    "pi": {
+      "aclId": "5",
+      "moduleId": "1",
+      "aclTypeId": "2",
+      "name": "pi",
+      "display": "Principal Investigator",
+      "enabled": "1",
+      "userId": "463"
+    }
+  }
+}

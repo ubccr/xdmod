@@ -1,0 +1,11 @@
+title
+"Number of Jobs Started: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[black] Number of Jobs Started","[white] Number of Jobs Started","[croutons] Number of Jobs Started","[nann] Number of Jobs Started","[brown] Number of Jobs Started","[potbrood] Number of Jobs Started","[pikelet] Number of Jobs Started","[cornbread] Number of Jobs Started","[crumpet] Number of Jobs Started","[brioche] Number of Jobs Started","[bannock] Number of Jobs Started","[roti] Number of Jobs Started","[panettone] Number of Jobs Started","[focaccia] Number of Jobs Started","[chapti] Number of Jobs Started","[pita] Number of Jobs Started","[pumpernickel] Number of Jobs Started","[barm] Number of Jobs Started"
+"2016 Q4",46182,8978,717,16,64,62,53,44,13,20,8,18,15,1,8,6,3,1
+"2017 Q1",9191,5310,294,213,28,23,0,1,21,0,10,0,0,12,0,0,1,0
+---------

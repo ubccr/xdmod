@@ -1,0 +1,43 @@
+{
+    "#": "Paths for the various configuraiton and data subdirectories. This is added to the global",
+    "#": "defaults and actions.",
+
+    "paths": {
+        "action_definition_dir": "etl_action_defs_8.0.0.d",
+        "table_definition_dir": "etl_tables_8.0.0.d",
+        "specs_dir": "etl_specs.d",
+        "schema_dir": "etl_schemas.d",
+        "macro_dir": "etl_macros.d",
+        "sql_dir": "etl_sql.d",
+        "data_dir": "etl_data.d",
+        "local_config_dir": "etl_8.0.0.d"
+    },
+
+    "defaults": {
+
+        "#": "Global options are lowest priority and applied to all actions",
+
+        "global" : {
+            "#": "The utility endpoint is used by the etl_overseer script to query resource codes.",
+            "endpoints": {
+                "utility": {
+                    "type": "mysql",
+                    "name": "Utility DB",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            },
+            "variables": {
+                "#": "Expected to remain unchanged",
+                "GLOBAL_GLOBAL": "/tmp/global_global",
+                "#": "Value expected to be overridden by a command line variable in action 2",
+                "COMMAND_LINE_OVERRIDE_VALUE_2": "/tmp/global_global",
+                "#": "Expected to be overridden by a global variable in the local config file",
+                "GLOBAL_GLOBAL_OVERRIDE_LOCAL_GLOBAL": "/tmp/global_global",
+                "#": "Expected to be overridden by a variable defined in an action 1 config",
+                "GLOBAL_GLOBAL_OVERRIDE_ACTION_CONFIG_1": "/tmp/global_global"
+            }
+        }
+    }
+}

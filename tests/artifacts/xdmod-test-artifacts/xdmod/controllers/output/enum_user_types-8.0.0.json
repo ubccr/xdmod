@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "status": "success",
+  "user_types": [
+    {
+      "id": "4",
+      "type": "Demo"
+    },
+    {
+      "id": "1",
+      "type": "External"
+    },
+    {
+      "id": "2",
+      "type": "Internal"
+    },
+    {
+      "id": "5",
+      "type": "Single Sign On"
+    },
+    {
+      "id": "3",
+      "type": "Testing"
+    }
+  ]
+}

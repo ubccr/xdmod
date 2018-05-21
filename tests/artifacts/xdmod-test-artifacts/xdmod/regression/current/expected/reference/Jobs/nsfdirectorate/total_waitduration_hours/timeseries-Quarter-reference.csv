@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown] Wait Hours: Total"
+"2016 Q4",280511.7678
+"2017 Q1",25833.5931
+---------

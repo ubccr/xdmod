@@ -1,0 +1,47 @@
+{
+    "#": "load data infile tests",
+
+    "defaults": {
+
+        "#": "Options specific to general actions",
+        "ingestor-tests": {
+            "#": "Maintenance-specific defaults",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Test Schema",
+                    "config": "datawarehouse",
+                    "schema": "test",
+                    "create_schema_if_not_exists": true
+                },
+                "source": {
+                    "type": "mysql",
+                    "name": "Test Schema",
+                    "config": "datawarehouse",
+                    "schema": "test",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+
+    "ingestor-tests": [
+        {
+            "name": "test-load-data-infile-warnings",
+            "description": "Test load data infile warnings",
+            "class": "DatabaseIngestor",
+            "definition_file": "load_data_infile.json",
+            "#": "Force LOAD DATA INFILE",
+            "optimize_query": false
+        },
+        {
+            "name": "test-sql-warnings",
+            "description": "Test SQL statement warnings",
+            "class": "DatabaseIngestor",
+            "definition_file": "sql_warnings.json"
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "results": {
+    "first_name": "Reed",
+    "last_name": "Bunting",
+    "email_address": "centerdirector@example.com",
+    "is_sso_user": false,
+    "first_time_login": false,
+    "autoload_suppression": false,
+    "field_of_science": "0",
+    "active_role": "Center Director - screw",
+    "most_privileged_role": "Center Director - screw"
+  }
+}

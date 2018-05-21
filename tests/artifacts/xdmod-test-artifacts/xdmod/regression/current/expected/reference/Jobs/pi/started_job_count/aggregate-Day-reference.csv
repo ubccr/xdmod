@@ -1,0 +1,50 @@
+title
+"Number of Jobs Started: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Number of Jobs Started"
+"Flycatcher, Taiga",55001
+"Lark, Calandra",6944
+"Warbler, Cetti's",2633
+Moorhen,2629
+"Shearwater, Macaronesian",1000
+"Tern, Caspian",763
+"Egret, Snowy",756
+Bufflehead,308
+Dunlin,239
+Bittern,154
+"Shearwater, Balearic",146
+"Chiffchaff, Iberian",101
+"Dowitcher, Short-billed",84
+Fulmar,72
+"Goose, Red-breasted",69
+Jackdaw,66
+"Bluetail, Red-flanked",53
+Fieldfare,44
+"Warbler, Hooded",37
+Chaffinch,31
+"Scaup, Lesser",25
+"Harrier, Hen",20
+"White, Great",20
+"Bunting, Ortolan",16
+"Petrel, Fea's",15
+Blackbird,14
+"Kestrel, Lesser",11
+"Martin, Sand",10
+"Spotted, Great",10
+"Accentor, Alpine",9
+Nuthatch,8
+Smew,7
+"Swift, Little",4
+"Thrush, Hermit",3
+"Warbler, Blackpoll",3
+"Gull, Yellow-legged",2
+"Warbler, Savi's",2
+Dotterel,1
+"Gull, Glaucous-winged",1
+"Shearwater, Great",1
+"Yellowthroat, Common",1
+---------

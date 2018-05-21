@@ -1,0 +1,10 @@
+title
+"Number of Jobs Ended: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Number of Jobs Ended"
+"High-performance computing",71313
+---------

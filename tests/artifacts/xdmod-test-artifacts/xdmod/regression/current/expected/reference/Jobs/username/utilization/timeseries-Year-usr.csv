@@ -1,0 +1,12 @@
+title
+"Screwdriver Utilization (%): by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[whimb] Screwdriver Utilization (%)"
+2016,0.008632258
+2017,0.005380822
+---------

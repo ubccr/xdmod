@@ -1,0 +1,27 @@
+title
+"Job Size: Max (Core Count): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Job Size: Max (Core Count)"
+white,336
+black,192
+brown,112
+bannock,80
+cornbread,64
+crumpet,64
+potbrood,48
+roti,32
+croutons,24
+panettone,20
+pikelet,16
+chapti,12
+focaccia,12
+nann,12
+pumpernickel,5
+brioche,4
+pita,4
+barm,2
+---------

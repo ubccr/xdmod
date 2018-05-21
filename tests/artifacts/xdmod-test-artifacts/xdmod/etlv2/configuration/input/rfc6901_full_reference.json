@@ -1,0 +1,5 @@
+{
+    "reference": {
+        "$ref": "file:///tmp/reference_target.json#/includeme"
+    }
+}

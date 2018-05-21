@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Flycatcher, Taiga] Number of Jobs Ended","[Lark, Calandra] Number of Jobs Ended","[Warbler, Cetti's] Number of Jobs Ended","[Moorhen] Number of Jobs Ended","[Shearwater, Macaronesian] Number of Jobs Ended","[Tern, Caspian] Number of Jobs Ended","[Egret, Snowy] Number of Jobs Ended","[Bufflehead] Number of Jobs Ended","[Dunlin] Number of Jobs Ended","[Bittern] Number of Jobs Ended","[Shearwater, Balearic] Number of Jobs Ended","[Chiffchaff, Iberian] Number of Jobs Ended","[Dowitcher, Short-billed] Number of Jobs Ended","[Fulmar] Number of Jobs Ended","[Goose, Red-breasted] Number of Jobs Ended","[Jackdaw] Number of Jobs Ended","[Bluetail, Red-flanked] Number of Jobs Ended","[Fieldfare] Number of Jobs Ended","[Warbler, Hooded] Number of Jobs Ended","[Chaffinch] Number of Jobs Ended","[Scaup, Lesser] Number of Jobs Ended","[Harrier, Hen] Number of Jobs Ended","[White, Great] Number of Jobs Ended","[Bunting, Ortolan] Number of Jobs Ended","[Petrel, Fea's] Number of Jobs Ended","[Blackbird] Number of Jobs Ended","[Kestrel, Lesser] Number of Jobs Ended","[Martin, Sand] Number of Jobs Ended","[Spotted, Great] Number of Jobs Ended","[Accentor, Alpine] Number of Jobs Ended","[Nuthatch] Number of Jobs Ended","[Smew] Number of Jobs Ended","[Swift, Little] Number of Jobs Ended","[Thrush, Hermit] Number of Jobs Ended","[Warbler, Blackpoll] Number of Jobs Ended","[Gull, Yellow-legged] Number of Jobs Ended","[Warbler, Savi's] Number of Jobs Ended","[Dotterel] Number of Jobs Ended","[Gull, Glaucous-winged] Number of Jobs Ended","[Shearwater, Great] Number of Jobs Ended","[Yellowthroat, Common] Number of Jobs Ended"
+2016,41070,6542,2633,1657,1000,761,4,214,100,92,146,100,56,65,44,61,6,24,23,4,17,20,11,9,15,14,10,8,10,0,8,7,3,3,3,1,2,1,1,1,1
+2017,13931,402,0,972,0,2,752,94,139,62,0,1,28,7,25,5,47,20,14,27,8,0,9,7,0,0,1,2,0,9,0,0,1,0,0,1,0,0,0,0,0
+---------

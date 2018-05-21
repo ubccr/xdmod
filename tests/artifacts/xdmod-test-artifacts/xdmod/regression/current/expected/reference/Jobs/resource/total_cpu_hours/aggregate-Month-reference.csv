@@ -1,0 +1,14 @@
+title
+"CPU Hours: Total: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"CPU Hours: Total"
+robertson,461887.9808
+frearson,217650.7417
+mortorq,77264.8497
+pozidriv,71984.2764
+phillips,11767.9883
+---------

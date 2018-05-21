@@ -1,0 +1,12 @@
+title
+"Number of PIs: Active: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[litst] Number of PIs: Active","[ovenb] Number of PIs: Active","[sante] Number of PIs: Active","[savsp] Number of PIs: Active","[swath] Number of PIs: Active","[ybsbu] Number of PIs: Active"
+"2016 Q4",1,1,1,1,1,1
+"2017 Q1",0,1,0,1,0,0
+---------

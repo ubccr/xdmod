@@ -1,0 +1,11 @@
+title
+"Screwdriver Utilization (%): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[white] Screwdriver Utilization (%)","[black] Screwdriver Utilization (%)","[pikelet] Screwdriver Utilization (%)","[roti] Screwdriver Utilization (%)","[croutons] Screwdriver Utilization (%)","[brown] Screwdriver Utilization (%)","[cornbread] Screwdriver Utilization (%)","[crumpet] Screwdriver Utilization (%)","[brioche] Screwdriver Utilization (%)","[nann] Screwdriver Utilization (%)","[focaccia] Screwdriver Utilization (%)","[bannock] Screwdriver Utilization (%)","[panettone] Screwdriver Utilization (%)","[chapti] Screwdriver Utilization (%)","[potbrood] Screwdriver Utilization (%)","[pita] Screwdriver Utilization (%)","[pumpernickel] Screwdriver Utilization (%)","[barm] Screwdriver Utilization (%)"
+2016,1.119159046,0.188802472,0.085175546,0.063733095,0.054611351,0.040401852,0.030837696,0.019764945,0.008969049,0.000107440,0.007948989,0.001390995,0.002796767,0.001633301,0.000698472,0.000548181,0.000412631,0.000293830
+2017,0.130551556,0.006664835,0.013979573,0,0.009106475,0.000077487,0.001060537,0.004185109,0.001641763,0.008949325,0.000819110,0.001506491,0,0,0.000313727,0.000131171,0.000061089,0.000100623
+---------

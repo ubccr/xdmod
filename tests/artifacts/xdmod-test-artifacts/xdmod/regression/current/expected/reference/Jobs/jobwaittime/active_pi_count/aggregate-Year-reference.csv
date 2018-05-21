@@ -1,0 +1,17 @@
+title
+"Number of PIs: Active: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Number of PIs: Active"
+"0 - 1s",21
+"1 - 30s",30
+"30s - 30min",27
+"30 - 60min",13
+"1 - 5hr",22
+"5 - 10hr",19
+"10 - 18hr",7
+18+hr,13
+---------
