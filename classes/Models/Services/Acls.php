@@ -922,11 +922,10 @@ SQL;
     public static function getQueryDescripters(XDUser $user, $realmName = null, $groupByName = null, $statisticName = null)
     {
         $query = <<<SQL
-            SELECT DISTINCT
+            SELECT
               r.display AS realm,
               gb.name AS group_by,
-              !agb.enabled as `disable`,
-              agb.visible as `show`
+              !agb.enabled as not_enabled
             FROM acl_group_bys agb
               JOIN user_acls ua ON agb.acl_id = ua.acl_id
               JOIN realms r ON agb.realm_id = r.realm_id
@@ -958,6 +957,9 @@ SQL;
             $params[':statistic_name'] = $statisticName;
         }
 
+        // Need to add the group by so that we only get one row per realm / group_by
+        $query .= "GROUP BY r.display, gb.name";
+
         $results = array();
         $sorted = array();
 
@@ -974,12 +976,8 @@ SQL;
                     $row['group_by']
                 );
 
-                if (isset($row['`show`'])) {
-                    $descripter->setShowMenu($row['show']);
-                }
-
-                if (isset($row['`disable`'])) {
-                    $descripter->setDisableMenu($row['disable']);
+                if (isset($row['not_enabled'])) {
+                    $descripter->setDisableMenu((bool)$row['not_enabled']);
                 }
 
                 if (isset($statisticName)) {
