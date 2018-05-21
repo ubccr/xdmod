@@ -631,44 +631,6 @@ abstract class aRole implements \User\iRole
     }
 
     /**
-     * Returns an array of all the disabled menus for this role.
-     *
-     * @param array $realms
-     *
-     * @return array
-     */
-    public function getDisabledMenus($realms)
-    {
-        $returnData = array();
-
-        foreach ($realms as $realm_name) {
-            $query_descripter_groups = $this->getQueryDescripters(
-                'tg_usage',
-                $realm_name
-            );
-
-            foreach ($query_descripter_groups as $query_descripter_group) {
-                foreach ($query_descripter_group as $query_descripter) {
-                    if ($query_descripter->getShowMenu() !== true) {
-                        continue;
-                    }
-
-                    if ($query_descripter->getDisableMenu() ) {
-                        $returnData[] = array(
-                            'id'       => 'group_by_' . $realm_name . '_'
-                                        . $query_descripter->getGroupByName(),
-                            'group_by' => $query_descripter->getGroupByName(),
-                            'realm'    => $realm_name
-                        );
-                    }
-                }
-            }
-        }
-
-        return $returnData;
-    }
-
-    /**
      * Returns the summary charts config data for this role.
      *
      * @return array
