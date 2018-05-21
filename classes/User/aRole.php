@@ -509,47 +509,6 @@ abstract class aRole implements \User\iRole
     }
 
     /**
-     * Check if this role has access to the requested data.
-     *
-     * @param  string  $query_groupname The query group name.
-     * @param  string  $realm_name      (Optional) The realm name.
-     * @param  string  $group_by_name   (Optional) The group by name.
-     * @param  string  $statistic_name  (Optional) The statistic name.
-     * @return boolean                  True if the role is authorized.
-     *                                  Otherwise, false.
-     */
-    public function hasDataAccess(
-        $query_groupname,
-        $realm_name = null,
-        $group_by_name = null,
-        $statistic_name = null
-    ) {
-        $queryDescriptors = $this->getQueryDescripters(
-            $query_groupname,
-            $realm_name,
-            $group_by_name,
-            $statistic_name
-        );
-
-        if (!is_array($queryDescriptors)) {
-            $queryDescriptors = array($queryDescriptors);
-        }
-
-        $availableQueryDescriptors = array();
-        foreach ($queryDescriptors as $queryDescriptor) {
-            if (
-                $queryDescriptor->getDisableMenu()
-            ) {
-                continue;
-            }
-
-            $availableQueryDescriptors[] = $queryDescriptor;
-        }
-
-        return !empty($availableQueryDescriptors);
-    }
-
-    /**
      * Returns all the query realms for the specified query groupname.
      *
      * @param string $query_groupname
