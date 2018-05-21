@@ -26,8 +26,6 @@ interface iRole
     //  @returns array
     public function getPermittedModules();
 	
-	public function getQueryDescripters($query_groupname, $realm_name = NULL, $group_by_name = NULL, $statistic_name = NULL, $flatten = false);
-	
 	public function getAllQueryRealms($query_groupname);
 	
 	public function getSummaryCharts();
