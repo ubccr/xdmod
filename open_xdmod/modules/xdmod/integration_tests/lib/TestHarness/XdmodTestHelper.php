@@ -252,9 +252,11 @@ class XdmodTestHelper
         }
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_POST, true);
+        $postData = '';
         if (isset($data)) {
-            curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($data));
+            $postData = http_build_query($data);
         }
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postData);
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
 
         return $this->docurl();
@@ -272,9 +274,11 @@ class XdmodTestHelper
         }
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_POST, true);
+        $patchData = '';
         if (isset($data)) {
-            curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($data));
+            $patchData = http_build_query($data);
         }
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $patchData);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->getheaders());
         $response = $this->docurl();
