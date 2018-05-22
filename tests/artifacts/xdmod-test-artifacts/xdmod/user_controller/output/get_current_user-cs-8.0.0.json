@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "results": {
+    "first_name": "Turtle",
+    "last_name": "Dove",
+    "email_address": "centerstaff@example.com",
+    "is_sso_user": false,
+    "first_time_login": false,
+    "autoload_suppression": false,
+    "field_of_science": "0",
+    "active_role": "Center Staff - screw",
+    "most_privileged_role": "Center Staff - screw"
+  }
+}

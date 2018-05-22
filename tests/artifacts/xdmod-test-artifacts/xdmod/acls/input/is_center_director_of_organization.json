@@ -1,0 +1,7 @@
+[
+    [ "centerdirector", 1, true ],
+    [ "centerstaff", 1, false ],
+    [ "principal", 1, false ],
+    [ "normaluser", 1, false ],
+    [ "Public User", 1, false ]
+]

@@ -1,0 +1,55 @@
+{
+    "success": true,
+    "stats": [
+        {
+            "last_name": "User",
+            "first_name": "Admin",
+            "email_address": "admin@localhost",
+            "username": "admin",
+            "role_list": "Manager,User",
+            "user_type": "2",
+            "timeframe": "2018",
+            "visit_frequency": 4585
+        },
+        {
+            "last_name": "Bunting",
+            "first_name": "Reed",
+            "email_address": "centerdirector@example.com",
+            "username": "centerdirector",
+            "role_list": "Center Director,User",
+            "user_type": "1",
+            "timeframe": "2018",
+            "visit_frequency": 16
+        },
+        {
+            "last_name": "Tern",
+            "first_name": "Caspian",
+            "email_address": "principal@example.com",
+            "username": "principal",
+            "role_list": "Principal Investigator,User",
+            "user_type": "1",
+            "timeframe": "2018",
+            "visit_frequency": 12
+        },
+        {
+            "last_name": "Whimbrel",
+            "first_name": "",
+            "email_address": "normaluser@example.com",
+            "username": "normaluser",
+            "role_list": "User",
+            "user_type": "1",
+            "timeframe": "2018",
+            "visit_frequency": 12
+        },
+        {
+            "last_name": "Dove",
+            "first_name": "Turtle",
+            "email_address": "centerstaff@example.com",
+            "username": "centerstaff",
+            "role_list": "Center Staff,User",
+            "user_type": "1",
+            "timeframe": "2018",
+            "visit_frequency": 10
+        }
+    ]
+}

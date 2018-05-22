@@ -1,0 +1,12 @@
+title
+"Number of Resources: Active: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[litst] Number of Resources: Active","[swath] Number of Resources: Active","[ybsbu] Number of Resources: Active","[ovenb] Number of Resources: Active","[sante] Number of Resources: Active","[savsp] Number of Resources: Active"
+2016-12,2,2,2,1,1,1
+2017-01,0,0,0,1,0,1
+---------

@@ -1,0 +1,20 @@
+{
+    "key_one": {
+        "name": "resource_allocations",
+        "engine": "MyISAM",
+        "columns": [{
+            "name": "resource",
+            "type": "varchar(40)",
+            "nullable": true
+        }]
+    },
+    "key_two": [{
+        "object1": "value"
+    },{
+        "object2": "value",
+        "# nested comment": "erase me"
+    }],
+    "# array comment": [{
+        "key": "value"
+    }]
+}

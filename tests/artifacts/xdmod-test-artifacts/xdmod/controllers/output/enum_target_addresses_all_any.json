@@ -1,0 +1,12 @@
+{
+    "success": true,
+    "count": 6,
+    "response": [
+        "admin@localhost",
+        "centerdirector@example.com",
+        "centerstaff@example.com",
+        "normaluser@example.com",
+        "principal@example.com",
+        "public@ccr.xdmod.org"
+    ]
+}

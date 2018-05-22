@@ -1,0 +1,12 @@
+title
+"Number of Resources: Active: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[whimb] Number of Resources: Active"
+2016,1
+2017,1
+---------

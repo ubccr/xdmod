@@ -1,0 +1,75 @@
+title
+"CPU Hours: Total: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"CPU Hours: Total"
+Honey-buzzard,157078.4431
+"Pipit, Meadow",146476.2400
+"Scaup, Lesser",118663.3556
+Moorhen,67004.1206
+"Bunting, Reed",35441.0778
+"Warbler, Garden",34825.7219
+"Crane, Sandhill",22888.9811
+Crane,19473.8133
+"Plover, Caspian",19117.7667
+Smew,18391.0000
+"Warbler, Sardinian",16661.9989
+Lapwing,15354.0758
+"Goose, Egyptian",14141.1200
+"Warbler, Dusky",13105.9733
+"Dove, Turtle",12550.4967
+"Sandpiper, Spotted",12178.1900
+"Scoter, Velvet",10557.5822
+"Grey, Lesser",8590.5158
+Siskin,8404.1933
+"Treecreeper, Short-toed",8206.8872
+Chaffinch,7680.4622
+Ovenbird,6621.1911
+"Sparrow, White-throated",5262.3156
+"Thrush, Mistle",5198.0500
+Whimbrel,4918.4700
+Shag,4577.8556
+"Thrush, Swainson's",4528.0644
+Peregrine,4472.6000
+"Duck, Ferruginous",4200.4667
+"Warbler, Hooded",3862.9211
+"Sapsucker, Yellow-bellied",3582.6789
+"Shearwater, Cory's",3504.2444
+"Oriole, Baltimore",3199.8106
+"Bunting, Yellow-breasted",2430.7267
+"Thrush, Grey-cheeked",2039.1683
+"Bunting, Yellow-browed",2013.9756
+"Plover, White-tailed",1588.9133
+Dunlin,1518.1478
+"Warbler, Golden-winged",1446.9428
+"Warbler, Yellow-browed",1444.4889
+"Grosbeak, Evening",1129.0533
+"Warbler, Booted",1021.5447
+"Ibis, Glossy",960.1333
+"Auk, Little",622.6494
+"Swift, Alpine",610.7733
+Roller,590.3347
+"Shrike, Long-tailed",521.3100
+"Grebe, Pied-billed",500.2031
+Fieldfare,344.9756
+"Tern, Sandwich",174.8775
+"Redpoll, Lesser",151.1833
+"Grey, Southern",135.7597
+"Harrier, Hen",100.8417
+Jackdaw,87.3878
+"Warbler, Moltoni's",72.0069
+"Bunting, Black-headed",59.8692
+"Grey, Great",54.6383
+"Stint, Little",49.3589
+"Martin, Purple",34.9861
+"Gull, Ring-billed",31.9097
+"Gallinule, Allen's",28.1400
+Coot,23.3244
+"Egret, Cattle",23.3156
+"Martin, Crag",22.5389
+"Partridge, Red-legged",1.0400
+"Sparrow, Savannah",0.6342
+---------

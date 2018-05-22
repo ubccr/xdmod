@@ -1,0 +1,20 @@
+title
+"Number of Jobs Ended: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[1] Number of Jobs Ended","[2] Number of Jobs Ended","[8] Number of Jobs Ended","[4] Number of Jobs Ended","[6] Number of Jobs Ended","[12] Number of Jobs Ended","[3] Number of Jobs Ended","[7] Number of Jobs Ended","[5] Number of Jobs Ended","[16] Number of Jobs Ended","[14] Number of Jobs Ended","[20] Number of Jobs Ended","[9] Number of Jobs Ended","[24] Number of Jobs Ended","[28] Number of Jobs Ended"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-30,26459,55,34,37,7,1,0,4,2,2,2,1,1,1,0
+2016-12-31,28060,15,27,12,5,10,4,5,1,1,0,0,0,0,1
+2017-01-01,16379,77,44,48,8,0,5,0,2,2,0,1,0,0,0
+---------

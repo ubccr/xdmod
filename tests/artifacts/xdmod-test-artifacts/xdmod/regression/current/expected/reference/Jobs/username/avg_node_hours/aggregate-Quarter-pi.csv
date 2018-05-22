@@ -1,0 +1,12 @@
+title
+"Node Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[sante] Node Hours: Per Job","[ovenb] Node Hours: Per Job","[ybsbu] Node Hours: Per Job","[swath] Node Hours: Per Job","[litst] Node Hours: Per Job","[savsp] Node Hours: Per Job"
+"2016 Q4",87.43875000,78.12005556,38.73828704,0.77236014,0.33320707,0.02434444
+"2017 Q1",0,23.22416667,0,0,0,0.02555556
+---------

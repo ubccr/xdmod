@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[High-performance computing] CPU Hours: Per Job"
+2016,13.71267944
+2017,4.21223217
+---------

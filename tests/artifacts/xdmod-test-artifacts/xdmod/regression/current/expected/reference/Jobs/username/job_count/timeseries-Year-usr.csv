@@ -1,0 +1,12 @@
+title
+"Number of Jobs Ended: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[whimb] Number of Jobs Ended"
+2016,7
+2017,7
+---------

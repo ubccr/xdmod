@@ -1,0 +1,17 @@
+title
+"Number of Jobs Ended: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Number of Jobs Ended"
+"0 - 1s",12295
+"1 - 30s",18172
+"30s - 30min",17904
+"30 - 60min",2660
+"1 - 5hr",13138
+"5 - 10hr",3957
+"10 - 18hr",591
+18+hr,2596
+---------

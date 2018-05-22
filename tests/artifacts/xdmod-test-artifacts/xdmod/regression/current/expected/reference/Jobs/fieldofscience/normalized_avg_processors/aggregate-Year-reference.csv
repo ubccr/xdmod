@@ -1,0 +1,11 @@
+title
+"Job Size: Normalized (% of Total Cores): by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Unknown] Job Size: Normalized (% of Total Cores)"
+2016,0.042694764
+2017,0.045663105
+---------

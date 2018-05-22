@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[roti] Job Size: Per Job (Core Count)","[crumpet] Job Size: Per Job (Core Count)","[bannock] Job Size: Per Job (Core Count)","[panettone] Job Size: Per Job (Core Count)","[potbrood] Job Size: Per Job (Core Count)","[chapti] Job Size: Per Job (Core Count)","[nann] Job Size: Per Job (Core Count)","[pikelet] Job Size: Per Job (Core Count)","[brown] Job Size: Per Job (Core Count)","[black] Job Size: Per Job (Core Count)","[croutons] Job Size: Per Job (Core Count)","[cornbread] Job Size: Per Job (Core Count)","[white] Job Size: Per Job (Core Count)","[pumpernickel] Job Size: Per Job (Core Count)","[focaccia] Job Size: Per Job (Core Count)","[brioche] Job Size: Per Job (Core Count)","[pita] Job Size: Per Job (Core Count)","[barm] Job Size: Per Job (Core Count)"
+2016,30.2778,47.3846,24.5000,20.0000,17.2581,12.0000,12.0000,10.8868,14.8750,9.4220,8.2343,6.9773,3.7834,5.0000,12.0000,3.7000,2.0000,2.0000
+2017,0,19.2727,17.8182,0,22.9565,0,12.0000,10.5532,1.0000,9.7316,8.1029,8.5000,8.1254,5.0000,4.0769,3.7500,4.0000,2.0000
+---------

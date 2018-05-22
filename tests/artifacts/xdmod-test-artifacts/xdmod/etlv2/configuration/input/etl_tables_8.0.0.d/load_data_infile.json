@@ -1,0 +1,30 @@
+{
+    "table_definition": {
+        "name": "load_data_infile_test",
+        "engine": "MyISAM",
+        "comment": "LOAD DATA INFILE test",
+        "columns": [
+            {
+                "name": "my_int",
+                "type": "int",
+                "nullable": false
+            },
+            {
+                "name": "my_enum",
+                "type": "enum('a', 'b', 'c')",
+                "default": "c",
+                "nullable": false
+            },
+            {
+                "name": "my_varchar8",
+                "type": "varchar(8)",
+                "nullable": false
+            },
+            {
+                "name": "my_double",
+                "type": "double",
+                "nullable": true
+            }
+        ]
+    }
+}

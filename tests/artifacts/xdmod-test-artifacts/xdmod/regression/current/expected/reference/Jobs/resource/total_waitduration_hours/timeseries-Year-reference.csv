@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[robertson] Wait Hours: Total","[pozidriv] Wait Hours: Total","[phillips] Wait Hours: Total","[mortorq] Wait Hours: Total","[frearson] Wait Hours: Total"
+2016,230912.4875,14722.1569,18704.2506,16170.9611,1.9117
+2017,17005.0700,6242.1203,125.6786,2460.2686,0.4556
+---------

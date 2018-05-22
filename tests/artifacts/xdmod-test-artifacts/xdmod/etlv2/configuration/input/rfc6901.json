@@ -1,0 +1,10 @@
+{
+    "foo": ["one", "two"],
+    "bar": 99,
+    "key1": {
+        "key2": {
+            "key3": [ "three", "four", 5 ]
+        }
+    },
+    "a/b": "specialchar"
+}

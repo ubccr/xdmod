@@ -18,8 +18,6 @@ if [ ! -x "$phpunit" ]; then
     exit 127
 fi
 
-./artifacts/update-artifacts.sh
-
 # Run the tests in UserAdminTest.createUsers
 $phpunit . --group UserAdminTest.createUsers $UATCU
 

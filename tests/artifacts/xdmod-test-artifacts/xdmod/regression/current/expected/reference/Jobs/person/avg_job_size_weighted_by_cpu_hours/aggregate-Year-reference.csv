@@ -1,0 +1,75 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Job Size: Weighted By CPU Hours (Core Count)"
+"Warbler, Dusky",326.9898
+"Scaup, Lesser",186.5633
+"Warbler, Yellow-browed",160.0000
+"Scoter, Velvet",142.8578
+"Goose, Egyptian",112.0000
+"Gallinule, Allen's",108.0000
+Crane,96.0000
+"Pipit, Meadow",96.0000
+Smew,72.0000
+Chaffinch,64.0000
+Whimbrel,62.4269
+Siskin,62.4000
+"Swift, Alpine",60.5835
+"Duck, Ferruginous",60.0000
+Peregrine,60.0000
+Dunlin,57.7053
+"Grosbeak, Evening",56.0000
+Roller,55.6816
+"Warbler, Sardinian",53.2119
+"Thrush, Swainson's",45.0823
+"Bunting, Yellow-browed",39.9999
+"Warbler, Golden-winged",29.2166
+"Bunting, Reed",25.1805
+"Crane, Sandhill",25.0565
+Shag,24.1804
+"Sparrow, White-throated",23.2563
+"Ibis, Glossy",20.0000
+"Martin, Crag",20.0000
+"Shrike, Long-tailed",18.6116
+Ovenbird,16.0000
+"Partridge, Red-legged",16.0000
+"Warbler, Garden",13.8060
+"Stint, Little",13.7425
+"Plover, Caspian",12.0000
+"Plover, White-tailed",12.0000
+"Sandpiper, Spotted",12.0000
+"Thrush, Mistle",12.0000
+"Oriole, Baltimore",11.8318
+"Bunting, Yellow-breasted",11.7604
+Honey-buzzard,10.5343
+"Warbler, Booted",10.0459
+"Auk, Little",9.9744
+"Dove, Turtle",9.1143
+"Warbler, Hooded",8.6041
+"Treecreeper, Short-toed",8.0019
+Fieldfare,8.0000
+"Shearwater, Cory's",8.0000
+"Thrush, Grey-cheeked",4.5532
+"Redpoll, Lesser",4.0000
+"Sapsucker, Yellow-bellied",4.0000
+"Bunting, Black-headed",1.0000
+Coot,1.0000
+"Egret, Cattle",1.0000
+"Grebe, Pied-billed",1.0000
+"Grey, Great",1.0000
+"Grey, Lesser",1.0000
+"Grey, Southern",1.0000
+"Gull, Ring-billed",1.0000
+"Harrier, Hen",1.0000
+Jackdaw,1.0000
+Lapwing,1.0000
+"Martin, Purple",1.0000
+Moorhen,1.0000
+"Sparrow, Savannah",1.0000
+"Tern, Sandwich",1.0000
+"Warbler, Moltoni's",1.0000
+---------

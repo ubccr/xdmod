@@ -1,0 +1,11 @@
+title
+"Screwdriver Utilization (%): by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] Screwdriver Utilization (%)","[2] Screwdriver Utilization (%)","[3 - 4] Screwdriver Utilization (%)","[5 - 8] Screwdriver Utilization (%)","[9 - 16] Screwdriver Utilization (%)","[17 - 32] Screwdriver Utilization (%)","[33 - 64] Screwdriver Utilization (%)","[65 - 128] Screwdriver Utilization (%)","[129 - 256] Screwdriver Utilization (%)","[257 - 512] Screwdriver Utilization (%)"
+"2016 Q4",0.226834287,0.008397079,0.017172919,0.242131881,0.374530498,0.168435666,0.098353492,0.803780839,0.693173284,0.143761021
+"2017 Q1",0.036105783,0.000408083,0.003538188,0.034249965,0.068656798,0.011584924,0.021098990,0.098388503,0.000104321,0
+---------

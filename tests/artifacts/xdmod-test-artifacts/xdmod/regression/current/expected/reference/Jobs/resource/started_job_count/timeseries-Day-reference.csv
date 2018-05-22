@@ -1,0 +1,20 @@
+title
+"Number of Jobs Started: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[mortorq] Number of Jobs Started","[frearson] Number of Jobs Started","[robertson] Number of Jobs Started","[pozidriv] Number of Jobs Started","[phillips] Number of Jobs Started"
+2016-12-22,0,0,0,1,1
+2016-12-23,0,0,0,1,0
+2016-12-24,0,0,0,0,0
+2016-12-25,0,0,0,3,0
+2016-12-26,5,0,0,0,0
+2016-12-27,0,1,22,7,1
+2016-12-28,12,9,382,5,0
+2016-12-29,104,85,1030,71,0
+2016-12-30,12346,3924,4671,5121,1053
+2016-12-31,8606,8613,2956,4673,2506
+2017-01-01,5167,2715,5334,1403,485
+---------

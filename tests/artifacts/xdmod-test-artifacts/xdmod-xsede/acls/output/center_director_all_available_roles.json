@@ -1,0 +1,14 @@
+[
+  {
+    "description": "Center Director - TACC",
+    "param_value": "cd:476",
+    "is_primary": "1",
+    "is_active": "1"
+  },
+  {
+    "description": "User",
+    "param_value": "usr",
+    "is_primary": "0",
+    "is_active": "0"
+  }
+]

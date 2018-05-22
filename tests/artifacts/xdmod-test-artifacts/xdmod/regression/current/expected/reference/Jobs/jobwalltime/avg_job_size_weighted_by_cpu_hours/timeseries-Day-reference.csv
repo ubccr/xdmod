@@ -1,0 +1,20 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[0 - 1s] Job Size: Weighted By CPU Hours (Core Count)","[1 - 30s] Job Size: Weighted By CPU Hours (Core Count)","[30s - 30min] Job Size: Weighted By CPU Hours (Core Count)","[30 - 60min] Job Size: Weighted By CPU Hours (Core Count)","[1 - 5hr] Job Size: Weighted By CPU Hours (Core Count)","[5 - 10hr] Job Size: Weighted By CPU Hours (Core Count)","[10 - 18hr] Job Size: Weighted By CPU Hours (Core Count)","[18+hr] Job Size: Weighted By CPU Hours (Core Count)"
+2016-12-22,0,0,0,0,0,0,0,12.0000
+2016-12-23,0,0,0,0,0,0,0,11.8381
+2016-12-24,0,0,0,0,0,0,0,11.5600
+2016-12-25,0,0,0,0,0,0,0,14.0099
+2016-12-26,0,0,0,0,0,0,0,18.3933
+2016-12-27,0,0,0,0,0,0,0,67.8600
+2016-12-28,0,0,0,0,0,0,0,107.6133
+2016-12-29,0,8.0000,11.0602,11.2686,9.6295,129.5264,57.8719,88.4859
+2016-12-30,0,8.0214,12.6177,11.7066,9.6705,27.1506,69.4558,93.7569
+2016-12-31,0,8.0659,11.9325,11.8839,10.2742,6.5618,80.0038,70.4326
+2017-01-01,0.0000,8.9479,18.4458,14.5119,12.3688,42.2723,63.5453,16.5054
+---------

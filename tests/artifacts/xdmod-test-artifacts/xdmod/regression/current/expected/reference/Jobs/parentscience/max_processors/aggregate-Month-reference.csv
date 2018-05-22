@@ -1,0 +1,10 @@
+title
+"Job Size: Max (Core Count): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Department,"Job Size: Max (Core Count)"
+Unknown,336
+---------

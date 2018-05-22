@@ -1,0 +1,75 @@
+title
+"Screwdriver Utilization (%): by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Screwdriver Utilization (%)"
+"Pipit, Meadow",13.870856061
+"Scaup, Lesser",11.237060185
+Moorhen,6.345087174
+"Warbler, Garden",3.297890336
+Honey-buzzard,2.974970512
+Crane,1.844111111
+Smew,1.741571970
+Lapwing,1.453984454
+"Goose, Egyptian",1.339121212
+"Warbler, Dusky",1.241095960
+"Dove, Turtle",1.188494003
+"Sandpiper, Spotted",1.153237689
+"Bunting, Reed",1.118720889
+"Plover, Caspian",0.905197285
+"Grey, Lesser",0.813495818
+Siskin,0.795851641
+"Warbler, Sardinian",0.788920402
+"Treecreeper, Short-toed",0.777167351
+Chaffinch,0.727316498
+"Crane, Sandhill",0.722505717
+Ovenbird,0.627006734
+"Scoter, Velvet",0.499885522
+"Sparrow, White-throated",0.498325337
+"Thrush, Mistle",0.492239583
+Whimbrel,0.465764205
+Peregrine,0.423541667
+"Duck, Ferruginous",0.397771465
+"Warbler, Hooded",0.365806923
+"Sapsucker, Yellow-bellied",0.339268834
+"Shearwater, Cory's",0.331841330
+"Oriole, Baltimore",0.303012363
+Shag,0.216754524
+"Thrush, Swainson's",0.214396991
+"Plover, White-tailed",0.150465278
+Dunlin,0.143763994
+"Warbler, Golden-winged",0.137021096
+"Warbler, Yellow-browed",0.136788721
+"Bunting, Yellow-breasted",0.115091225
+"Grosbeak, Evening",0.106917929
+"Warbler, Booted",0.096737190
+"Thrush, Grey-cheeked",0.096551531
+"Bunting, Yellow-browed",0.095358691
+"Ibis, Glossy",0.090921717
+"Auk, Little",0.058963016
+"Swift, Alpine",0.057838384
+Roller,0.055902909
+"Grebe, Pied-billed",0.047367714
+Fieldfare,0.032668140
+"Shrike, Long-tailed",0.024683239
+"Tern, Sandwich",0.016560369
+"Redpoll, Lesser",0.014316604
+"Grey, Southern",0.012856034
+"Harrier, Hen",0.009549400
+Jackdaw,0.008275358
+"Warbler, Moltoni's",0.006818839
+"Bunting, Black-headed",0.005669429
+"Grey, Great",0.005174085
+"Martin, Purple",0.003313079
+"Gull, Ring-billed",0.003021754
+"Gallinule, Allen's",0.002664773
+"Stint, Little",0.002337069
+Coot,0.002208754
+"Egret, Cattle",0.002207912
+"Martin, Crag",0.002134364
+"Partridge, Red-legged",0.000098485
+"Sparrow, Savannah",0.000060054
+---------

@@ -1,0 +1,7 @@
+last_name,first_name,email_address,username,role_list,user_type,timeframe,visit_frequency
+
+User,Admin,admin@localhost,admin,"Manager,User",Internal,"2018-02",4283
+Bunting,Reed,centerdirector@example.com,centerdirector,"Center Director,User",External,"2018-02",16
+Tern,Caspian,principal@example.com,principal,"Principal Investigator,User",External,"2018-02",12
+Whimbrel,,normaluser@example.com,normaluser,"User",External,"2018-02",12
+Dove,Turtle,centerstaff@example.com,centerstaff,"Center Staff,User",External,"2018-02",10

@@ -1,0 +1,113 @@
+{
+    "type": "object",
+    "description": "Person",
+    "title": "Organizational Person",
+    "properties": {
+        "first_name": {
+            "type": "string"
+        },
+        "middle_name": {
+            "type": "string"
+        },
+        "last_name": {
+            "type": "string"
+        },
+        "organizations": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/organization"
+            },
+            "uniqueItems": true,
+            "minItems": 1
+        },
+        "identifiers": {
+            "description": "List of non-organizational identifiers for this user. For example, an ORCHID id.",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/identifier"
+            },
+            "uniqueItems": true
+        },
+        "last_modified": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date data was last updated in in RFC-3339 format (YYYY-MM-DDTHH:mm:ssZ)."
+        }
+    },
+    "definitions": {
+        "organization": {
+            "title": "Organization Definition",
+            "description": "Organization definition.",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the organization."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Person's unique organizational identifier."
+                },
+                "appointment_type": {
+                    "type": "string",
+                    "description": "Person's appointment within the organization."
+                },
+                "division": {
+                    "type": "string",
+                    "description": "Person's divisional affiliation within the organization."
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Person's title in the organization."
+                },
+                "primary": {
+                    "type": "boolean",
+                    "description": "Set primary to true if this is the person's primary organization."
+                },
+                "groups": {
+                    "description": "Arbitrary groups that the user belongs to at this organization.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "uniqueItems": true
+                },
+                "last_modified": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date data was last updated in in RFC-3339 format (YYYY-MM-DDTHH:mm:ssZ)."
+                }
+            },
+            "required": [
+                "name",
+                "id",
+                "appointment_type",
+                "division"
+            ]
+        },
+        "identifier": {
+            "title": "Person Identifier",
+            "description": "General identifier for a Person.",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "Identifier type (e.g., orchid, nsf, etc.)."
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Person identifier value"
+                }
+            },
+            "required": [
+                "type",
+                "id"
+            ]
+        }
+    },
+    "required": [
+        "first_name",
+        "last_name",
+        "organizations"
+    ]
+}

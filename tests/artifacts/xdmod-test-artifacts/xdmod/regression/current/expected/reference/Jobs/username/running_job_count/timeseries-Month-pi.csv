@@ -1,0 +1,12 @@
+title
+"Number of Jobs Running: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[swath] Number of Jobs Running","[savsp] Number of Jobs Running","[litst] Number of Jobs Running","[ovenb] Number of Jobs Running","[ybsbu] Number of Jobs Running","[sante] Number of Jobs Running"
+2016-12,713,25,11,5,6,2
+2017-01,0,1,0,1,0,0
+---------

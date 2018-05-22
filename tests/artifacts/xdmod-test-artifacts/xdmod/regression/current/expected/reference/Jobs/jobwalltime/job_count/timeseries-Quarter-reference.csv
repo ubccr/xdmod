@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Number of Jobs Ended","[1 - 30s] Number of Jobs Ended","[30s - 30min] Number of Jobs Ended","[30 - 60min] Number of Jobs Ended","[1 - 5hr] Number of Jobs Ended","[5 - 10hr] Number of Jobs Ended","[10 - 18hr] Number of Jobs Ended","[18+hr] Number of Jobs Ended"
+"2016 Q4",0,7693,31195,8476,4262,1232,192,1697
+"2017 Q1",1861,9113,2633,670,1188,72,101,928
+---------

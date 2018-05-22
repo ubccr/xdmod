@@ -1,0 +1,130 @@
+[
+  [
+    {
+      "user": "cs",
+      "operation": "upgrade_member",
+      "target": "null",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "operation": "upgrade_member",
+      "target": 4294967296,
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "operation": "upgrade_member",
+      "target": "babaganoush",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "operation": "upgrade_member",
+      "target": "usr",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "operation": "downgrade_member",
+      "target": "null",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "operation": "downgrade_member",
+      "target": 4294967296,
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "operation": "downgrade_member",
+      "target": "babaganoush",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "operation": "downgrade_member",
+      "target": "usr",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "operation": "upgrade_member",
+      "target": "null",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "operation": "upgrade_member",
+      "target": 4294967296,
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "operation": "upgrade_member",
+      "target": "babaganoush",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "operation": "upgrade_member",
+      "target": "usr",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "operation": "downgrade_member",
+      "target": "null",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "operation": "downgrade_member",
+      "target": 4294967296,
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "operation": "downgrade_member",
+      "target": "babaganoush",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "operation": "downgrade_member",
+      "target": "usr",
+      "expected": "unauthorized_not_a_center_director"
+    }
+  ]
+]

@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Unknown] Node Hours: Per Job"
+2016-12,2.46307856
+2017-01,1.07790443
+---------

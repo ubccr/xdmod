@@ -55,9 +55,6 @@ if [ 0 -ne ${#INCLUDE_GROUPS[@]} ]; then
     INCLUDE_GROUP_OPTION="--group "$(implode_array , ${INCLUDE_ONLY_GROUPS[@]})
 fi
 
-# Update the test artifacts directory with the latest version
-./artifacts/update-artifacts.sh
-
 # This test suite runs everything in lib/Roles
 $phpunit ${PHPUNITARGS} --testsuite=roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
 

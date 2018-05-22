@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Node Hours: Total"
+whimb,409.8725
+---------

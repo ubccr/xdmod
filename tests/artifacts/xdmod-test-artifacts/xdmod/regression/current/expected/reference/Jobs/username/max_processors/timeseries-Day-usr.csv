@@ -1,0 +1,13 @@
+title
+"Job Size: Max (Core Count): by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[whimb] Job Size: Max (Core Count)"
+2016-12-30,72
+2016-12-31,72
+2017-01-01,72
+---------

@@ -1,0 +1,17 @@
+title
+"Wait Hours: Total: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Wait Hours: Total"
+"0 - 1s",0.0000
+"1 - 30s",12.2175
+"30s - 30min",2580.4025
+"30 - 60min",1890.6331
+"1 - 5hr",27352.8039
+"5 - 10hr",31520.6536
+"10 - 18hr",7127.5175
+18+hr,235861.1328
+---------

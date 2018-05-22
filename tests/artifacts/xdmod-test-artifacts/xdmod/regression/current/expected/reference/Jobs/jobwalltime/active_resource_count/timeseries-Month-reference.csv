@@ -1,0 +1,11 @@
+title
+"Number of Resources: Active: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] Number of Resources: Active","[1 - 30s] Number of Resources: Active","[30s - 30min] Number of Resources: Active","[30 - 60min] Number of Resources: Active","[1 - 5hr] Number of Resources: Active","[5 - 10hr] Number of Resources: Active","[10 - 18hr] Number of Resources: Active","[18+hr] Number of Resources: Active"
+2016-12,0,5,5,4,5,3,4,5
+2017-01,5,5,5,5,5,3,4,5
+---------

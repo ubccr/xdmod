@@ -1,0 +1,20 @@
+title
+"Number of Users: Active: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[robertson] Number of Users: Active","[pozidriv] Number of Users: Active","[frearson] Number of Users: Active","[mortorq] Number of Users: Active","[phillips] Number of Users: Active"
+2016-12-22,0,1,0,0,1
+2016-12-23,0,2,0,0,1
+2016-12-24,0,2,0,0,1
+2016-12-25,0,3,0,0,1
+2016-12-26,0,3,0,1,1
+2016-12-27,8,5,1,1,2
+2016-12-28,15,7,2,2,2
+2016-12-29,29,12,6,4,2
+2016-12-30,44,18,9,6,4
+2016-12-31,34,16,7,5,4
+2017-01-01,21,10,5,4,4
+---------

@@ -1,0 +1,10 @@
+title
+"Job Size: Min (Core Count): by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","Job Size: Min (Core Count)"
+Unknown,1
+---------

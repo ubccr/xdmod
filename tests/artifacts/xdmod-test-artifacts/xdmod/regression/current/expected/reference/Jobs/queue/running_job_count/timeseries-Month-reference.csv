@@ -1,0 +1,11 @@
+title
+"Number of Jobs Running: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[black] Number of Jobs Running","[white] Number of Jobs Running","[croutons] Number of Jobs Running","[nann] Number of Jobs Running","[pikelet] Number of Jobs Running","[brown] Number of Jobs Running","[potbrood] Number of Jobs Running","[cornbread] Number of Jobs Running","[crumpet] Number of Jobs Running","[brioche] Number of Jobs Running","[bannock] Number of Jobs Running","[roti] Number of Jobs Running","[panettone] Number of Jobs Running","[focaccia] Number of Jobs Running","[chapti] Number of Jobs Running","[pita] Number of Jobs Running","[pumpernickel] Number of Jobs Running","[barm] Number of Jobs Running"
+2016-12,46182,8978,717,16,53,64,62,44,13,20,8,18,15,1,8,6,3,1
+2017-01,9545,6324,311,225,47,28,23,2,22,12,11,0,0,13,0,1,1,1
+---------

@@ -1,0 +1,27 @@
+title
+"Screwdriver Utilization (%): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Screwdriver Utilization (%)"
+white,41.569411721
+black,6.503124500
+pikelet,3.297890336
+roti,2.120573890
+croutons,2.119238005
+brown,1.346850957
+cornbread,1.061244792
+crumpet,0.796503157
+brioche,0.352901384
+nann,0.300529672
+focaccia,0.291664089
+bannock,0.096270307
+panettone,0.093056082
+chapti,0.054344381
+potbrood,0.033650121
+pita,0.022591961
+pumpernickel,0.015756392
+barm,0.013115372
+---------

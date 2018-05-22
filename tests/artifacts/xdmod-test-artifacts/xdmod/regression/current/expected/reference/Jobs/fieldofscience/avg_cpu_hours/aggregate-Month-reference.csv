@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Unknown] CPU Hours: Per Job"
+2016-12,13.71267944
+2017-01,4.21223217
+---------

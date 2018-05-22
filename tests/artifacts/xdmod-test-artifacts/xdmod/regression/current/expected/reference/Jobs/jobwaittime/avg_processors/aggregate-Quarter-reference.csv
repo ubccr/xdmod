@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Job Size: Per Job (Core Count)","[1 - 30s] Job Size: Per Job (Core Count)","[30s - 30min] Job Size: Per Job (Core Count)","[30 - 60min] Job Size: Per Job (Core Count)","[1 - 5hr] Job Size: Per Job (Core Count)","[5 - 10hr] Job Size: Per Job (Core Count)","[10 - 18hr] Job Size: Per Job (Core Count)","[18+hr] Job Size: Per Job (Core Count)"
+"2016 Q4",10.5960,9.9692,6.3631,5.1467,8.2329,8.3970,15.2294,8.3990
+"2017 Q1",10.3887,9.1105,7.1757,11.2128,11.9969,11.0870,11.9532,12.1824
+---------

@@ -1,0 +1,11 @@
+title
+"Screwdriver Utilization (%): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[robertson] Screwdriver Utilization (%)","[frearson] Screwdriver Utilization (%)","[mortorq] Screwdriver Utilization (%)","[pozidriv] Screwdriver Utilization (%)","[phillips] Screwdriver Utilization (%)"
+2016-12,13.978877016,7.083402750,2.275183458,2.226424470,0.335843451
+2017-01,1.541552447,0.230130236,0.321081653,0.192402022,0.059586264
+---------

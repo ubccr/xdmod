@@ -1,0 +1,43 @@
+{
+    "#": "maintenance tools",
+
+    "defaults": {
+
+        "#": "Options specific to general actions",
+        "maintenance": {
+            "#": "Maintenance-specific defaults",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Custom Queries DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_custom"
+                }
+            }
+        }
+    },
+
+    "maintenance": [{
+        "name": "TableManagement",
+        "class": "ManageTables",
+        "#": "Manage multiple tables not created by an ingestor or aggregator",
+        "definition_file_list": [
+            "jobfactstatus.json"
+        ],
+        "enabled": true
+    },{
+        "name": "CustomTabSetup",
+        "#": "Perform setup for the Custom Queries tab",
+        "class": "ExecuteSql",
+        "sql_file_list": [
+            {
+                "sql_file": "custom_tab_setup.sql",
+                "delimiter": "//"
+            }
+        ],
+        "enabled": true
+    }]
+}

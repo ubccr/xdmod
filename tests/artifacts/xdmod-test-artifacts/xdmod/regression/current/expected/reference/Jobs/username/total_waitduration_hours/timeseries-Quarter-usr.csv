@@ -1,0 +1,12 @@
+title
+"Wait Hours: Total: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[whimb] Wait Hours: Total"
+"2016 Q4",24.8661
+"2017 Q1",7.2994
+---------

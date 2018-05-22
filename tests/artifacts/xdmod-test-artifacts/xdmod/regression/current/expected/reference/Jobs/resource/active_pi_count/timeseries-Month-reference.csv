@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[robertson] Number of PIs: Active","[frearson] Number of PIs: Active","[pozidriv] Number of PIs: Active","[mortorq] Number of PIs: Active","[phillips] Number of PIs: Active"
+2016-12,33,7,7,6,3
+2017-01,19,3,5,4,3
+---------

@@ -1,0 +1,20 @@
+title
+"Wait Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Tern, Caspian] Wait Hours: Total","[Flycatcher, Taiga] Wait Hours: Total","[Fulmar] Wait Hours: Total","[Shearwater, Balearic] Wait Hours: Total","[Egret, Snowy] Wait Hours: Total","[Shearwater, Macaronesian] Wait Hours: Total","[Dunlin] Wait Hours: Total","[Chiffchaff, Iberian] Wait Hours: Total","[Fieldfare] Wait Hours: Total","[Warbler, Cetti's] Wait Hours: Total","[Moorhen] Wait Hours: Total","[Lark, Calandra] Wait Hours: Total","[Jackdaw] Wait Hours: Total","[White, Great] Wait Hours: Total","[Petrel, Fea's] Wait Hours: Total","[Warbler, Savi's] Wait Hours: Total","[Gull, Yellow-legged] Wait Hours: Total","[Kestrel, Lesser] Wait Hours: Total","[Bluetail, Red-flanked] Wait Hours: Total","[Bunting, Ortolan] Wait Hours: Total","[Goose, Red-breasted] Wait Hours: Total","[Thrush, Hermit] Wait Hours: Total","[Accentor, Alpine] Wait Hours: Total","[Bufflehead] Wait Hours: Total","[Smew] Wait Hours: Total","[Bittern] Wait Hours: Total","[Warbler, Blackpoll] Wait Hours: Total","[Warbler, Hooded] Wait Hours: Total","[Harrier, Hen] Wait Hours: Total","[Chaffinch] Wait Hours: Total","[Martin, Sand] Wait Hours: Total","[Swift, Little] Wait Hours: Total","[Spotted, Great] Wait Hours: Total","[Gull, Glaucous-winged] Wait Hours: Total","[Blackbird] Wait Hours: Total","[Dowitcher, Short-billed] Wait Hours: Total","[Nuthatch] Wait Hours: Total","[Scaup, Lesser] Wait Hours: Total","[Dotterel] Wait Hours: Total","[Shearwater, Great] Wait Hours: Total","[Yellowthroat, Common] Wait Hours: Total"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,9.3322,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0003,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,9.5964,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0.0000,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0.0000,0,0,0,0,0,0,0,0,0,0,110.8856,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0.0000,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0.0033,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,0.0028,0.0000,1367.4053,172.7719,0,0,0,0,311.1344,0,0,0.0289,0,76.0861,50.8225,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0,0,0.0000,0
+2016-12-28,0.0000,0.0000,1403.6350,723.1878,0,0,0,0,1296.2100,0,5.6581,42.4475,0,36.8761,0.0000,0,0,47.7519,18.4800,0,0,0,0,10.5775,0,0,11.1744,2.3317,0,0.0000,0,0,0,0,0,0,0,0.0017,0.0003,0.0000,0
+2016-12-29,2704.7964,1973.6497,627.0644,288.5578,0,0,0,0.0044,334.2367,0.7922,32.6300,45.4447,9.5847,11.7164,0.0000,0.0017,25.7286,0.0000,17.8439,10.4372,0,0,0,3.9286,13.9250,0,0.0000,1.4369,0.0894,0.0000,0.0000,0,0,0,0,0,0.0025,0.0000,0.0000,0.0000,0
+2016-12-30,160667.2464,26578.5867,331.7789,2269.2967,0,1857.6733,1170.3947,54.0756,0.0111,1436.2097,221.0947,98.0058,311.8600,44.7175,72.0400,105.4806,0.0000,0.7789,0.0000,7.3803,11.9272,20.0331,0,2.2686,0.0000,12.1381,0.0000,2.5139,6.3886,0.0000,0.0000,0.1611,0.0575,0.0978,0.0147,0.0028,0.0022,0.0008,0.0000,0.0000,0.0000
+2016-12-31,95.5417,64555.5128,1406.9842,1674.6364,0.3231,2069.8514,33.5839,2650.5994,0.0031,516.8028,277.8381,100.6983,0.0000,7.6042,0.0000,0.0000,0,0.0000,0.2067,0.3128,8.7356,0.0000,19.3700,0.5711,0.0000,0.5147,0,1.3047,0.0000,0.0011,0.1747,0.0000,0.0833,0,0,0.0031,0.0000,0.0006,0,0,0
+2017-01-01,0.0067,19831.9839,0.0000,0,4055.6844,0,1826.4933,0.0000,18.3528,0,7.3758,36.3167,0.0000,7.2994,0,0,36.3150,0.0000,0.0000,12.0239,0.0047,0,0.0000,0.3344,0,0.0064,0,0.1547,0,1.2347,0.0000,0.0003,0,0,0,0.0047,0,0.0011,0,0,0
+---------

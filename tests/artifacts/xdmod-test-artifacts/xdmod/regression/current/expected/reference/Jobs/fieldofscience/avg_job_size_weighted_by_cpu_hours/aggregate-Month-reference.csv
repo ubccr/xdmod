@@ -1,0 +1,10 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","Job Size: Weighted By CPU Hours (Core Count)"
+Unknown,65.6161
+---------

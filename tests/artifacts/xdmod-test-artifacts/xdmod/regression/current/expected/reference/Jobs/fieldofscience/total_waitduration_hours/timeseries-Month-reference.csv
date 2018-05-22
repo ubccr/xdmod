@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Unknown] Wait Hours: Total"
+2016-12,280511.7678
+2017-01,25833.5931
+---------

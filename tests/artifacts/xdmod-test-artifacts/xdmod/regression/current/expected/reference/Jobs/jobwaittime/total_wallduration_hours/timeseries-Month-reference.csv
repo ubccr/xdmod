@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] Wall Hours: Total","[1 - 30s] Wall Hours: Total","[30s - 30min] Wall Hours: Total","[30 - 60min] Wall Hours: Total","[1 - 5hr] Wall Hours: Total","[5 - 10hr] Wall Hours: Total","[10 - 18hr] Wall Hours: Total","[18+hr] Wall Hours: Total"
+2016-12,5572.9792,14590.7667,66381.8978,894.2872,10272.9028,5674.4456,420.1092,7390.8272
+2017-01,490.3850,2235.0842,11334.8122,36.7753,1456.1897,666.7675,175.3747,383.2022
+---------

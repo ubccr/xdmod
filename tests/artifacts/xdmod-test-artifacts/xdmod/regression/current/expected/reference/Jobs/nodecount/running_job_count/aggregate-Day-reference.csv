@@ -1,0 +1,20 @@
+title
+"Number of Jobs Running: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[1] Number of Jobs Running","[8] Number of Jobs Running","[2] Number of Jobs Running","[4] Number of Jobs Running","[12] Number of Jobs Running","[6] Number of Jobs Running","[7] Number of Jobs Running","[5] Number of Jobs Running","[3] Number of Jobs Running","[16] Number of Jobs Running","[14] Number of Jobs Running","[20] Number of Jobs Running","[28] Number of Jobs Running","[9] Number of Jobs Running","[24] Number of Jobs Running"
+2016-12-22,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,34,4,2,0,1,1,0,0,0,0,0,0,0,0,0
+2016-12-28,412,16,7,3,9,2,1,0,0,0,0,0,0,0,0
+2016-12-29,1669,26,11,7,9,9,5,2,0,0,1,1,0,0,0
+2016-12-30,28658,57,56,41,11,10,9,5,0,2,2,1,1,1,1
+2016-12-31,29495,38,25,14,10,6,5,3,5,1,0,0,1,0,0
+2017-01-01,16379,44,77,48,0,8,0,2,5,2,0,1,0,0,0
+---------

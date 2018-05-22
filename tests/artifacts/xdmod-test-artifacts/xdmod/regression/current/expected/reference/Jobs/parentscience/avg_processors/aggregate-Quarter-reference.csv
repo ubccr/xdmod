@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown] Job Size: Per Job (Core Count)"
+"2016 Q4",8.5390
+"2017 Q1",9.1326
+---------
