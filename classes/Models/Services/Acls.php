@@ -922,7 +922,7 @@ SQL;
     public static function getQueryDescripters(XDUser $user, $realmName = null, $groupByName = null, $statisticName = null)
     {
         $query = <<<SQL
-            SELECT
+            SELECT DISTINCT
               r.display AS realm,
               gb.name AS group_by,
               !agb.enabled as not_enabled
@@ -956,9 +956,6 @@ SQL;
             $query .= " AND s.name = :statistic_name\n";
             $params[':statistic_name'] = $statisticName;
         }
-
-        // Need to add the group by so that we only get one row per realm / group_by
-        $query .= "GROUP BY r.display, gb.name";
 
         $results = array();
         $sorted = array();
