@@ -60,6 +60,9 @@ class EtlOverseerOptions extends Loggable
     // Optional prefix for lock files
     private $lockFilePrefix = null;
 
+    // Default module name if not specified in a configuration file
+    private $defaultModuleName = null;
+
     // A mapping of resource codes to resource ids.
     private $resourceCodeToIdMap = array();
 
@@ -172,6 +175,9 @@ class EtlOverseerOptions extends Loggable
                     break;
                 case 'lock-file-prefix':
                     $this->setLockFilePrefix($value);
+                    break;
+                case 'default-module-name':
+                    $this->setDefaultModuleName($value);
                     break;
                 default:
                     break;
@@ -562,7 +568,7 @@ class EtlOverseerOptions extends Loggable
     /* ------------------------------------------------------------------------------------------
      * Set the directory where lock files are stored.
      *
-     * @param $dir The lock directory.
+     * @param $prefix The optional prefix for lock files.
      *
      * @return This object to support method chaining.
      * ------------------------------------------------------------------------------------------
@@ -573,6 +579,31 @@ class EtlOverseerOptions extends Loggable
         $this->lockFilePrefix = $prefix;
         return $this;
     }  // setLockFilePrefix()
+
+    /* ------------------------------------------------------------------------------------------
+     * @return The optional default module name.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getDefaultModuleName()
+    {
+        return $this->defaultModuleName;
+    }  // getDefaultModuleName()
+
+    /* ------------------------------------------------------------------------------------------
+     * Set the default module name.
+     *
+     * @param $name The default module name to use if not otherwise specified
+     *
+     * @return This object to support method chaining.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function setDefaultModuleName($name)
+    {
+        $this->defaultModuleName = $name;
+        return $this;
+    }  // setDefaultModuleName()
 
     /* ------------------------------------------------------------------------------------------
      * @return The value of the force flag
