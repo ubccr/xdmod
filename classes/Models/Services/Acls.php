@@ -966,8 +966,6 @@ SQL;
         $db = DB::factory('database');
         $rows = $db->query($query, $params);
 
-        // if we have data there is additional information that we require from roles.json. Specifically,
-        // 'enabled' / 'hidden' from each acls query_descripter.
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $descripter = new QueryDescripter(
@@ -988,7 +986,7 @@ SQL;
                     ? $descripter->getOrderId()
                     : $descripter->getMenuLabel();
 
-                // We need to save the group_by / realm info for later
+                // We need to save the group_by / realm / order for later
                 $results[] = array($descripter, $row['group_by'], $row['realm'], $order);
             }
 
