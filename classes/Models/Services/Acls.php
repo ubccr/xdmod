@@ -976,9 +976,7 @@ SQL;
                     $row['group_by']
                 );
 
-                if (isset($row['not_enabled'])) {
-                    $descripter->setDisableMenu((bool)$row['not_enabled']);
-                }
+                $descripter->setDisableMenu((bool)$row['not_enabled']);
 
                 if (isset($statisticName)) {
                     $descripter->setDefaultStatisticName($statisticName);
