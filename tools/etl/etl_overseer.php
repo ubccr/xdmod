@@ -46,6 +46,8 @@ $scriptOptions = array(
     'groups'            => array(),
     // Chunk size (in days) for breaking up the process
     'chunk-size-days'   => null,
+    // Default module name if not specified in a configuration file
+    'default-module-name' => null,
     // ETL last modified start date, used by some actions. Defaults to the start of the ETL process.
     'last-modified-start-date' => date('Y-m-d H:i:s'),
     // ETL last modified end date, used by some actions.
@@ -98,11 +100,17 @@ try {
         // Allow options to be separated with underscores or dashes
         $dashKey = str_replace('_', '-', $configKey);
 
-        if ( array_key_exists($configKey, $scriptOptions) ) {
-            $scriptOptions[$configKey] = $configValue;
-        } elseif ( array_key_exists($dashKey, $scriptOptions) ) {
-            $scriptOptions[$dashKey] = $configValue;
+        switch ( $dashKey )
+        {
+            case 'lock-dir':
+            case 'lock-file-prefix':
+            case 'default-module-name':
+                $scriptOptions[$dashKey] = $configValue;
+                break;
+            default:
+                break;
         }
+
     }  // foreach ( $etlConfigOptions as $configkey => $configValue )
 
 } catch ( Exception $e ) {
