@@ -2,6 +2,8 @@
 
 namespace ComponentTests;
 
+use TestHarness\TestFiles;
+
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
     private static $TEST_ARTIFACT_OUTPUT_PATH;
@@ -66,6 +68,18 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     private static function setupPaths()
     {
         self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../artifacts/xdmod-test-artifacts";
+    }
+
+    /**
+     * @return TestFiles
+     * @throws \Exception
+     */
+    public function getTestFiles()
+    {
+        if (!isset($this->testFiles)) {
+            $this->testFiles = new TestFiles(__DIR__ . '/../');
+        }
+        return $this->testFiles;
     }
 
     /**

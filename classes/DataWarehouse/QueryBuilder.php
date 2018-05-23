@@ -2,6 +2,8 @@
 
 namespace DataWarehouse;
 
+use Models\Services\Acls;
+
 /**
  * Singleton class for helping guide the creation of a Query object.
  *
@@ -275,8 +277,8 @@ class QueryBuilder
                 || $request['single_stat'] == true;
         }
 
-        $query_descripter = $activeRole->getQueryDescripters(
-            $query_group,
+        $query_descripter = Acls::getQueryDescripters(
+            $user,
             $realm,
             $group_by,
             $statistic
@@ -365,8 +367,8 @@ class QueryBuilder
 
         $user->setCachedActiveRole($activeRole);
 
-        $query_descripter = $activeRole->getQueryDescripters(
-            $query_group,
+        $query_descripter = Acls::getQueryDescripters(
+            $user,
             $realm,
             $group_by,
             $statistic

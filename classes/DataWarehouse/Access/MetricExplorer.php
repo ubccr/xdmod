@@ -3,6 +3,7 @@
 namespace DataWarehouse\Access;
 
 use Exception;
+use Models\Services\Acls;
 use PDOException;
 use stdClass;
 
@@ -576,13 +577,13 @@ class MetricExplorer extends Common
 
         $authorizedRoles = array();
         foreach ($userRoles as $userRole) {
-            $accessPermitted = $userRole->hasDataAccess(
-                $query_groupname,
+            $accessPermitted = Acls::hasDataAccess(
+                $user,
                 $realm_name,
                 $group_by_name,
-                $statistic_name
+                $statistic_name,
+                $userRole->getIdentifier()
             );
-
             if ($accessPermitted) {
                 $authorizedRoles[] = $userRole;
             }
