@@ -6,6 +6,7 @@ use Exception;
 
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
+use Models\Services\Acls;
 use XDChartPool;
 use XDUser;
 
@@ -148,11 +149,7 @@ class Usage extends Common
             // If the request was for aggregate charts and any statistic can't
             // be provided in that form, quietly change its chart to timeseries.
             $meRequests = array();
-            $userStatistics = $user->getMostPrivilegedRole()->getQueryDescripters(
-                'tg_usage',
-                $usageRealm,
-                $usageGroupBy
-            )->getPermittedStatistics();
+            $userStatistics = Acls::getPermittedStatistics($user, $usageRealm, $usageGroupBy);
             if ($isSingleMetricQuery) {
                 if (!$usageIsTimeseries) {
                     $userStatisticObject = $usageRealmAggregateClass::getStatistic($this->request['statistic']);
@@ -693,17 +690,18 @@ class Usage extends Common
 
                 // Check if the user's chart pool contains this chart.
                 $usageChartInPool = $chartPool->chartExistsInQueue($usageChartArgsStr);
-
+                $queryDescripter = Acls::getQueryDescripters(
+                    $user,
+                    $usageRealm,
+                    $usageGroupBy,
+                    $meRequestMetric->getAlias()->getName()
+                );
+                $drillTargets = $queryDescripter->getDrillTargets($meRequestMetric->getAlias());
                 $drillDowns = array_map(
                     function ($drillTarget) {
                         return explode('-', $drillTarget, 2);
                     },
-                    $user->getMostPrivilegedRole()->getQueryDescripters(
-                        'tg_usage',
-                        $usageRealm,
-                        $usageGroupBy,
-                        $meRequestMetric->getAlias()->getName()
-                    )->getDrillTargets($meRequestMetric->getAlias())
+                    $drillTargets
                 );
 
                 // For each data series...
@@ -781,10 +779,62 @@ class Usage extends Common
                         $meDataSeries['dashStyle'] = 'ShortDot';
                     }
 
+                    // If this is not a trend line series and not a thumbnail,
+                    // fill in the drilldown function.
                     if (!$isTrendLineSeries && !$thumbnailRequested) {
-                        $meDataSeries['drilldown']['drilldowns'] = $drillDowns;
-                        $meDataSeries['drilldown']['realm'] = $usageRealm;
-                        $meDataSeries['drilldown']['groupUnit'] = array($usageGroupBy, $usageGroupByObject->getUnit());
+                        $queryDescripter = Acls::getQueryDescripters(
+                            $user,
+                            $usageRealm,
+                            $usageGroupBy,
+                            $meRequestMetric->getAlias()->getName()
+                        );
+                        $drillTargets = $queryDescripter->getDrillTargets($meRequestMetric->getAlias());
+                        $drillDowns = json_encode(
+                            array_map(
+                                function ($drillTarget) {
+                                    return explode('-', $drillTarget, 2);
+                                },
+                                $drillTargets
+                            )
+                        );
+                        $usageGroupByUnit = $usageGroupByObject->getUnit();
+                        $groupByNameAndUnit = json_encode(array($usageGroupBy, $usageGroupByUnit));
+
+                        if ($meRequestIsTimeseries) {
+                            $drilldownDetails = $meDataSeries['drilldown'];
+                            $drilldownId = $drilldownDetails['id'];
+                            $drilldownLabel = json_encode($drilldownDetails['label']);
+                            $drilldownFunction = "function(event) {
+                                this.ts = this.x;
+                                XDMoD.Module.Usage.drillChart(
+                                    this,
+                                    $drillDowns,
+                                    $groupByNameAndUnit,
+                                    '$drilldownId',
+                                    $drilldownLabel,
+                                    'none',
+                                    'tg_usage',
+                                    '$usageRealm'
+                                );
+                            }";
+                        } else {
+                            $drilldownFunction = "function(event) {
+                                var id = this.drilldown.id;
+                                var label = this.drilldown.label;
+                                XDMoD.Module.Usage.drillChart(
+                                    this,
+                                    $drillDowns,
+                                    $groupByNameAndUnit,
+                                    id,
+                                    label,
+                                    'none',
+                                    'tg_usage',
+                                    '$usageRealm'
+                                );
+                            }";
+                        }
+
+                        $meDataSeries['point']['events']['click'] = $drilldownFunction;
                     }
 
                     // Set properties that are different.
@@ -795,6 +845,10 @@ class Usage extends Common
                     unset($meDataSeries['datasetId']);
                     unset($meDataSeries['visible']);
                     unset($meDataSeries['events']);
+
+                    if ($meRequestIsTimeseries) {
+                        unset($meDataSeries['drilldown']);
+                    }
 
                     // Note: keep dataLabels color param set, else we lose some of the pie datalabels
                     // in the Usage chart only.
