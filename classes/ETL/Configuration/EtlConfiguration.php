@@ -53,7 +53,8 @@ class EtlConfiguration extends Configuration
          'endpoints',
          'paths',
          'global',
-         'variables'
+         'variables',
+         'module'
      );
 
     /**
@@ -222,9 +223,9 @@ class EtlConfiguration extends Configuration
         // are applied by checking for a section name in the defaults configuration and, if present,
         // applying those default values to the section if they are not already present.
 
+        $this->disambiguateActionNames();
         $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
-        $defaultSectionNames = array_merge(array('global', 'endpoints'), $etlSectionNames);
 
         // Apply global and section-specific (local) defaults. Section-specific defaults take
         // precedence over globals.
@@ -329,6 +330,71 @@ class EtlConfiguration extends Configuration
         $this->transformedConfig = $config;
 
     }  // interpretData()
+
+    /**
+     * Disambiguate ETL action names by pre-pending the (optional) module name and pipeline name to
+     * the action: <module> + '.' + <pipeline> + '.' + <action>
+     *
+     * Also enforce that pipeline and action names cannot contain dots.
+     */
+
+    protected function disambiguateActionNames()
+    {
+        $config = $this->transformedConfig;
+        $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
+        $moduleName = ( isset($config->module) ? $config->module : 'xdmod' );
+        $modulePrefix = ( null !== $moduleName ? sprintf("%s.", $moduleName) : "" );
+
+        foreach ( $etlSectionNames as $sectionName ) {
+
+            $normalizedSectionName = sprintf("%s%s", $modulePrefix, $sectionName);
+
+            // The section name cannot contain a dot.
+
+            if ( false !== strpos($sectionName, '.') ) {
+                throw new Exception(
+                    sprintf("Pipeline names cannot contain dots: '%s'", $sectionName)
+                );
+            }
+
+            // Normalize the section name, if needed.
+
+            if ( $normalizedSectionName != $sectionName ) {
+                $config->$normalizedSectionName = $config->$sectionName;
+                unset($config->$sectionName);
+
+            }
+
+            // Update any default sections referencing the non-normalized pipeline name.
+
+            if ( isset($config->defaults->$sectionName) ) {
+                $config->defaults->$normalizedSectionName = $config->defaults->$sectionName;
+                unset($config->defaults->$sectionName);
+            }
+
+            foreach ( $config->$normalizedSectionName as $actionConfig ) {
+
+                // If the action name already contains the section prefix do not re-add it
+
+                $actionName = $actionConfig->name;
+                $normalizedActionName = sprintf('%s.%s', $normalizedSectionName, $actionName);
+
+                // If the action name contains a dot, split it on the dot and confirm that the prefix is
+                // the pipeline name and there are no dots in the action name.
+
+                if ( false !== strpos($actionName, '.') ) {
+                    throw new Exception(
+                        sprintf("Action names cannot contain dots: '%s'", $actionName)
+                    );
+                }
+
+                if ( $normalizedActionName != $actionName ) {
+                    $actionConfig->name = $normalizedActionName;
+                }
+            }
+        }
+
+    }  // disambiguateActionNames()
 
     /** -----------------------------------------------------------------------------------------
      * Handle creation of an EtlConfiguration object for the given class.
