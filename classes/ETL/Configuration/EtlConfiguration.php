@@ -39,6 +39,7 @@ use ETL\Ingestor\IngestorOptions;
 use ETL\Aggregator\AggregatorOptions;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
+use ETL\EtlOverseerOptions;
 
 class EtlConfiguration extends Configuration
 {
@@ -340,9 +341,22 @@ class EtlConfiguration extends Configuration
 
     protected function disambiguateActionNames()
     {
+        if (
+            ! isset($this->options['etl_overseer_options']) ||
+            ! $this->options['etl_overseer_options'] instanceof EtlOverseerOptions
+        ) {
+            $this->logAndThrowException(
+                "Option 'etl_overseer_options' not set or is not an EtlOverseerOptions class"
+            );
+        }
+
         $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
-        $moduleName = ( isset($config->module) ? $config->module : 'xdmod' );
+        $moduleName = (
+            isset($config->module)
+            ? $config->module
+            : $this->options['etl_overseer_options']->getDefaultModuleName()
+        );
         $modulePrefix = ( null !== $moduleName ? sprintf("%s.", $moduleName) : "" );
 
         foreach ( $etlSectionNames as $sectionName ) {
@@ -412,6 +426,9 @@ class EtlConfiguration extends Configuration
             'variable_store'     => $this->variableStore,
             'parent_defaults'    => $this->transformedConfig->defaults
         );
+        if ( isset($this->options['etl_overseer_options']) ) {
+            $options['etl_overseer_options'] = $this->options['etl_overseer_options'];
+        }
 
         $localConfigObj = new EtlConfiguration($localConfigFile, $this->baseDir, $this->logger, $options);
         $localConfigObj->initialize();

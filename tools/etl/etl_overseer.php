@@ -419,6 +419,14 @@ if ( ! $showList)  {
     ));
 }
 
+try {
+    $overseerOptions = new EtlOverseerOptions($scriptOptions, $logger);
+} catch ( Exception $e ) {
+    log_error_and_exit(
+        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
+    );
+}
+
 // ------------------------------------------------------------------------------------------
 // Parse the ETL configuration. We will need it for listing available ingestors, aggregators, etc.
 
@@ -429,7 +437,8 @@ try {
         $logger,
         array(
             'option_overrides'   => $scriptOptions['option-overrides'],
-            'config_variables' => $scriptOptions['variable-overrides']
+            'config_variables' => $scriptOptions['variable-overrides'],
+            'etl_overseer_options' => $overseerOptions
         )
     );
     $etlConfig->setLogger($logger);
@@ -576,15 +585,7 @@ if ( $showList ) {
 
 // Set the SQL query used to look up resource ids and generate the mapping for resource codes to ids.
 
-$scriptOptions['resource-code-map-sql'] = sprintf("SELECT id, code from %s.resourcefact", $utilitySchema);
-
-try {
-    $overseerOptions = new EtlOverseerOptions($scriptOptions, $logger);
-} catch ( Exception $e ) {
-    log_error_and_exit(
-        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
-    );
-}
+$overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.resourcefact", $utilitySchema));
 
 // If nothing was requested, exit.
 

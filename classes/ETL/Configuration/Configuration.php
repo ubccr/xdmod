@@ -184,6 +184,7 @@ class Configuration extends Loggable implements \Iterator
      *   config_variables: An associative array of variables=value pairs that can be substituted in
      *     the configuration file.  These variables take precedence over any that were passed in
      *     via the variable_store option.
+     *   etl_overseer_options: An EtlOverseerOptions object
      *
      *   DEPRECATED:
      *   variables: An associative array of variables and their value. These may be used by
