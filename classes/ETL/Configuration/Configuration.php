@@ -307,7 +307,12 @@ class Configuration extends Loggable implements \Iterator
                     continue;
                 }
 
-                $localConfigObj = $this->processLocalConfig($this->localConfigDir . "/" . $file);
+                $fullPath = $this->localConfigDir . "/" . $file;
+                try {
+                    $localConfigObj = $this->processLocalConfig($fullPath);
+                } catch ( Exception $e ) {
+                    throw new Exception(sprintf("Processing %s: %s", $fullPath, $e->getMessage()));
+                }
                 $this->merge($localConfigObj);
                 $localConfigObj->cleanup();
 
