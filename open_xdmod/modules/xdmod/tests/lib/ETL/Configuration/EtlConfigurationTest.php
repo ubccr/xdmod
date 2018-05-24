@@ -10,12 +10,28 @@
 namespace UnitTesting\ETL\Configuration;
 
 use ETL\Configuration\EtlConfiguration;
+use ETL\EtlOverseerOptions;
 
 class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
     const TMPDIR = '/tmp/xdmod-etl-configuration-test';
+    private static $defaultModuleName = null;
+
+    public static function setUpBeforeClass()
+    {
+        // Query the configuration file for the default module name
+
+        try {
+            $etlConfigOptions = \xd_utilities\getConfigurationSection("etl");
+            if (isset($etlConfigOptions['default_module_name'])) {
+                self::$defaultModuleName = $etlConfigOptions['default_module_name'];
+            }
+        } catch ( Exception $e ) {
+            // Simply ignore the exception if there is no [etl] section in the config file
+        }
+    }
 
     /**
      * Test parsing of an XDMoD JSON ETL configuration file including local files.
@@ -31,10 +47,16 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/maintenance.json', self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/jobs_cloud.json', self::TMPDIR . '/etl_8.0.0.d/jobs_cloud.json');
 
-        $configObj = new EtlConfiguration(self::TMPDIR . '/xdmod_etl_config_8.0.0.json', self::TMPDIR);
+        $configObj = new EtlConfiguration(
+            self::TMPDIR . '/xdmod_etl_config_8.0.0.json',
+            self::TMPDIR,
+            null,
+            array('default_module_name' => self::$defaultModuleName)
+        );
         $configObj->initialize();
         $generated = json_decode($configObj->toJson());
-        $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_8.0.0.json'));
+        $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_8.0.0.json';
+        $expected = json_decode(file_get_contents($file));
 
         // Cleanup
 
@@ -44,7 +66,7 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         rmdir(self::TMPDIR . '/etl_8.0.0.d');
         rmdir(self::TMPDIR);
 
-        $this->assertEquals($expected, $generated);
+        $this->assertEquals($expected, $generated, $file);
     }
 
     /**
@@ -74,7 +96,8 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
                 'CLI_SUBSTITUTE' => 'VariableInConfig',
                 // Define a completely new variable
                 'CLI_NEW'        => 'NewCommandLineVariable'
-            )
+            ),
+            'default_module_name' => self::$defaultModuleName
         );
         $configObj = new EtlConfiguration(
             self::TMPDIR . '/xdmod_etl_config_with_variables_8.0.0.json',
@@ -84,7 +107,8 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         );
         $configObj->initialize();
         $generated = json_decode($configObj->toJson());
-        $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_with_variables.json'));
+        $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_with_variables.json';
+        $expected = json_decode(file_get_contents($file));
 
         // Cleanup
 
@@ -93,6 +117,6 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         rmdir(self::TMPDIR . '/etl_8.0.0.d');
         rmdir(self::TMPDIR);
 
-        $this->assertEquals($expected, $generated);
+        $this->assertEquals($expected, $generated, $file);
     }
 }  // class EtlConfigurationTest

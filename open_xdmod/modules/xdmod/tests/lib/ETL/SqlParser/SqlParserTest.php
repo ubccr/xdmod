@@ -9,6 +9,7 @@
 namespace UnitTesting\ETL\SqlParser;
 
 use ETL\Configuration\EtlConfiguration;
+use ETL\EtlOverseerOptions;
 
 class SqlParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,6 +17,21 @@ class SqlParserTest extends \PHPUnit_Framework_TestCase
     const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
     const TMPDIR = '/tmp/xdmod-etl-sqlparser-test';
+    private static $defaultModuleName = null;
+
+    public static function setUpBeforeClass()
+    {
+        // Query the configuration file for the default module name
+
+        try {
+            $etlConfigOptions = \xd_utilities\getConfigurationSection("etl");
+            if (isset($etlConfigOptions['default_module_name'])) {
+                self::$defaultModuleName = $etlConfigOptions['default_module_name'];
+            }
+        } catch ( Exception $e ) {
+            // Simply ignore the exception if there is no [etl] section in the config file
+        }
+    }
 
     /**
      * Test that the Greenlion SQL parser is working properly. See
@@ -40,10 +56,15 @@ class SqlParserTest extends \PHPUnit_Framework_TestCase
         // Rather than call the SQL parser directly, use the same methods that an ETL action would use.
         // This requires that we instantiate a class that extends aRdbmsDestinationAction.
 
-        $etlConfig = new EtlConfiguration(self::TMPDIR . '/xdmod_etl_config_8.0.0.json', self::TMPDIR);
+        $etlConfig = new EtlConfiguration(
+            self::TMPDIR . '/xdmod_etl_config_8.0.0.json',
+            self::TMPDIR,
+            null,
+            array('default_module_name' => self::$defaultModuleName)
+        );
         $etlConfig->initialize();
         // The "TableManagement" action is defined in etl.d/maintenance.json
-        $options = $etlConfig->getActionOptions('TableManagement');
+        $options = $etlConfig->getActionOptions('xdmod.maintenance.TableManagement');
         $action = forward_static_call(array($options->factory, "factory"), $options, $etlConfig);
 
         $sql = <<<SQL
