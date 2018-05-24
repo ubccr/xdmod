@@ -93,6 +93,14 @@ merge any changes after running the upgrade script.
 
     # /opt/xdmod-new/bin/xdmod-upgrade
 
+7.5.0 to 7.5.1 Upgrade Notes
+----------------------------
+
+- This upgrade does not in include any database schema changes.
+- This upgrade does not include any config file format changes, but the
+  upgrade script will recreate `portal_settings.ini` with the new
+  version number.
+
 7.0.1 to 7.5.0 Upgrade Notes
 ----------------------------
 
