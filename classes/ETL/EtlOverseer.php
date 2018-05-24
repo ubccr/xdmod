@@ -326,8 +326,26 @@ class EtlOverseer extends Loggable implements iEtlOverseer
             $this->queryResourceCodeToIdMap($etlConfig);
         }
 
+        // Pre-pend the default module name to any section names that are not already qualified.
+        // This is done for backwards compatibility and cannot be done automatically for individual
+        // actions.
+
+        $defaultModuleName = $this->etlOverseerOptions->getDefaultModuleName();
+        $this->etlOverseerOptions->setSectionNames(array_map(
+            function ($name) use ($defaultModuleName) {
+                $parts = explode('.', $name);
+                if ( count($parts) < 2 ) {
+                    return sprintf("%s.%s", $defaultModuleName, $name);
+                } else {
+                    return $name;
+                }
+            },
+            $this->etlOverseerOptions->getSectionNames()
+        ));
+
         // Verify requested section names before proceeding
         $sectionNames = $this->etlOverseerOptions->getSectionNames();
+
         if ( count($sectionNames) > 0 ) {
             $missing = array();
 
