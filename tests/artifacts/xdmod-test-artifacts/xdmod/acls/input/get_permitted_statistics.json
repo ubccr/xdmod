@@ -1,0 +1,388 @@
+[
+  [{
+
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "none"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "fieldofscience"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "jobsize"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "jobwalltime"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "nodecount"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "nsfdirectorate"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "parentscience"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "pi"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "queue"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "resource"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "resource_type"
+  }],
+  [{
+    "username": "Public User",
+    "realm": "jobs",
+    "group_by": "person"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "none"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "none"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "none"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "none"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "none"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "jobsize"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "jobsize"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "jobsize"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "jobsize"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "jobsize"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "jobwalltime"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "jobwalltime"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "jobwalltime"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "jobwalltime"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "jobwalltime"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "nodecount"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "nodecount"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "nodecount"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "nodecount"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "nodecount"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "nsfdirectorate"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "nsfdirectorate"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "nsfdirectorate"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "nsfdirectorate"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "nsfdirectorate"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "parentscience"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "parentscience"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "parentscience"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "parentscience"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "parentscience"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "fieldofscience"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "fieldofscience"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "fieldofscience"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "fieldofscience"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "fieldofscience"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "pi"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "pi"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "pi"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "pi"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "pi"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "queue"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "queue"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "queue"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "queue"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "queue"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "resource"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "resource"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "resource"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "resource"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "resource"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "resource_type"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "resource_type"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "resource_type"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "resource_type"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "resource_type"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "person"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "person"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "person"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "person"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "person"
+  }],
+  [{
+    "username": "admin",
+    "realm": "jobs",
+    "group_by": "username"
+  }],
+  [{
+    "username": "principal",
+    "realm": "jobs",
+    "group_by": "username"
+  }],
+  [{
+    "username": "normaluser",
+    "realm": "jobs",
+    "group_by": "username"
+  }],
+  [{
+    "username": "centerdirector",
+    "realm": "jobs",
+    "group_by": "username"
+  }],
+  [{
+    "username": "centerstaff",
+    "realm": "jobs",
+    "group_by": "username"
+  }]
+]
