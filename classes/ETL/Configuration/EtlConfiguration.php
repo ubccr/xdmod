@@ -93,6 +93,12 @@ class EtlConfiguration extends Configuration
     private $optionOverrides = null;
 
     /**
+     * The default name to use for a module if not provided in the configuration file.
+     * @var string
+     */
+    private $defaultModuleName = null;
+
+    /**
      * A class containing path information for various configuration files and directories.
      * @var stdclass
      */
@@ -113,6 +119,8 @@ class EtlConfiguration extends Configuration
      *      actions, if present.
      *   parent_defaults: The defaults class from the parent configuration file, if we are
      *      processing a configuration file in a subdirectory.
+     *   default_module_name: The default name to use for a module if not provided in the
+     *      configuration itself.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -140,9 +148,15 @@ class EtlConfiguration extends Configuration
                 case 'parent_defaults':
                     if ( ! is_object($value) ) {
                         $this->logAndThrowException(sprintf("%s must be an object, %s provided", $option, gettype($value)));
-                    } elseif ( 0 !== count($value) ) {
-                        $this->parentDefaults = $value;
                     }
+                    $this->parentDefaults = $value;
+                    break;
+
+                case 'default_module_name':
+                    if ( ! is_string($value) ) {
+                        $this->logAndThrowException(sprintf("%s must be a sting, %s provided", $option, gettype($value)));
+                    }
+                    $this->defaultModuleName = $value;
                     break;
 
                 default:
@@ -279,7 +293,7 @@ class EtlConfiguration extends Configuration
                 continue;
             }
 
-            $this->addSection($sectionName);
+            $this->addSection($sectionName, $config->$sectionName);
             $priorityVariables = $this->variableStore->toArray();
 
             foreach ( $config->$sectionName as &$actionConfig ) {
@@ -341,22 +355,9 @@ class EtlConfiguration extends Configuration
 
     protected function disambiguateActionNames()
     {
-        if (
-            ! isset($this->options['etl_overseer_options']) ||
-            ! $this->options['etl_overseer_options'] instanceof EtlOverseerOptions
-        ) {
-            $this->logAndThrowException(
-                "Option 'etl_overseer_options' not set or is not an EtlOverseerOptions class"
-            );
-        }
-
         $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
-        $moduleName = (
-            isset($config->module)
-            ? $config->module
-            : $this->options['etl_overseer_options']->getDefaultModuleName()
-        );
+        $moduleName = ( isset($config->module) ? $config->module : $this->defaultModuleName );
         $modulePrefix = ( null !== $moduleName ? sprintf("%s.", $moduleName) : "" );
 
         foreach ( $etlSectionNames as $sectionName ) {
@@ -424,11 +425,9 @@ class EtlConfiguration extends Configuration
             'is_local_config'    => true,
             'option_overrides'   => $this->optionOverrides,
             'variable_store'     => $this->variableStore,
-            'parent_defaults'    => $this->transformedConfig->defaults
+            'parent_defaults'    => $this->transformedConfig->defaults,
+            'default_module_name' => $this->defaultModuleName
         );
-        if ( isset($this->options['etl_overseer_options']) ) {
-            $options['etl_overseer_options'] = $this->options['etl_overseer_options'];
-        }
 
         $localConfigObj = new EtlConfiguration($localConfigFile, $this->baseDir, $this->logger, $options);
         $localConfigObj->initialize();

@@ -438,7 +438,7 @@ try {
         array(
             'option_overrides'   => $scriptOptions['option-overrides'],
             'config_variables' => $scriptOptions['variable-overrides'],
-            'etl_overseer_options' => $overseerOptions
+            'default_module_name' => $scriptOptions['default-module-name']
         )
     );
     $etlConfig->setLogger($logger);
