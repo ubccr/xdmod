@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-acl-etl -p acls-import "$@"
+./acl-etl -p acls-import "$@"
