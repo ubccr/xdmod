@@ -7,6 +7,7 @@ ini_set('memory_limit', '2048M');
 use CCR\Json;
 use DataWarehouse\Access\MetricExplorer;
 use Models\Services\Acls;
+use User\Elements\QueryDescripter;
 use XDUser;
 
 class AclsTest extends BaseTest
@@ -39,6 +40,20 @@ GroupBy:   %s
 Statistic: %s
 
 TXT;
+
+    /**
+     * The list of QueryDescripter property names that will be tested.
+     *
+     * @var String[]
+     */
+    private static $PROPERTY_NAMES = array(
+        '_realm_name',
+        '_group_by_name',
+        '_default_statisticname',
+        '_order_id',
+        '_show_menu',
+        '_disable_menu'
+    );
 
     /**
      * Tests that the Acls::hasDataAccess function operates the same as aRole::hasDataAccess. Also
@@ -161,37 +176,46 @@ TXT;
         $realm = $options['realm'];
         $groupBy = $options['group_by'];
         $statistic = $options['statistic'];
+
         $fileId = $options['file_id'];
 
-        $expectedFile = $this->getTestFiles()->getFile('acls', "get_query_descripters-$fileId");
-        $expected = unserialize(file_get_contents($expectedFile));
+        $expected = JSON::loadFile(
+            $this->getTestFiles()->getFile('acls', "get_query_descripters-$fileId")
+        );
 
         $user = XDUser::getUserByUserName($username);
 
-        $queryGroupName = 'tg_usage';
         $roles = $user->getAllRoles();
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
             if (isset($realm) && isset($groupBy) && isset($statistic)) {
-                $actual = Acls::getQueryDescripters(
-                    $user,
-                    $realm,
-                    $groupBy,
-                    $statistic
+                $actual = $this->extractDataFrom(
+                    Acls::getQueryDescripters(
+                        $user,
+                        $realm,
+                        $groupBy,
+                        $statistic
+                    )
                 );
-            } elseif(isset($realm) && isset($groupBy)) {
-                $actual = Acls::getQueryDescripters(
-                    $user,
-                    $realm,
-                    $groupBy
+            } elseif (isset($realm) && isset($groupBy)) {
+                $actual = $this->extractDataFrom(
+                    Acls::getQueryDescripters(
+                        $user,
+                        $realm,
+                        $groupBy
+                    )
                 );
-            } elseif(isset($realm)) {
-                $actual = Acls::getQueryDescripters(
-                    $user,
-                    $realm
+            } elseif (isset($realm)) {
+                $actual = $this->extractDataFrom(
+                    Acls::getQueryDescripters(
+                        $user,
+                        $realm
+                    )
                 );
             } else {
-                $actual = Acls::getQueryDescripters(
-                    $user
+                $actual = $this->extractDataFrom(
+                    Acls::getQueryDescripters(
+                        $user
+                    )
                 );
             }
 
@@ -202,7 +226,7 @@ TXT;
                     self::DEBUG_MSG,
                     self::GET_QUERY_DESCRIPTERS,
                     $user->getUsername(),
-                    $queryGroupName,
+                    'tg_usage',
                     $realm,
                     $groupBy,
                     $statistic,
@@ -214,6 +238,54 @@ TXT;
                 )
             );
         }
+    }
+
+    /**
+     * Extracts the data that is pertinent for testing the output of `getQueryDescripters`
+     *
+     * @param mixed $queryDescripters
+     * @return array
+     * @throws \ReflectionException
+     */
+    private function extractDataFrom($queryDescripters)
+    {
+        $results = array();
+
+        if (is_array($queryDescripters)) {
+            foreach ($queryDescripters as $queryDescripter) {
+                if (is_array($queryDescripter)) {
+                    $results[] = $this->extractDataFrom($queryDescripter);
+                } else {
+                    $results[] = $this->extractFromQueryDescripter($queryDescripter);
+                }
+            }
+        } else {
+            $results = $this->extractFromQueryDescripter($queryDescripters);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Extracts the pertinent testing information from a single QueryDescripter object.
+     *
+     * @param QueryDescripter $queryDescripter
+     * @return array
+     * @throws \ReflectionException
+     */
+    private function extractFromQueryDescripter(QueryDescripter $queryDescripter)
+    {
+        $results = array();
+        $ref = new \ReflectionClass($queryDescripter);
+        $properties = $ref->getProperties();
+        foreach ($properties as $property) {
+            $name = $property->getName();
+            if (in_array($name, self::$PROPERTY_NAMES)) {
+                $property->setAccessible(true);
+                $results[$name] = $property->getValue($queryDescripter);
+            }
+        }
+        return $results;
     }
 
     /**
