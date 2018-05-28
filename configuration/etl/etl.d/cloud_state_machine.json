@@ -1,0 +1,33 @@
+{
+    "defaults": {
+        "global": {
+            "truncate_destination": false,
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+    "cloud-state-pipeline": [
+        {
+            "name": "cloud-state-action",
+            "namespace": "ETL\\Ingestor",
+            "class": "StateReconstuctorTransformIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "cloud_common/cloud_state.json",
+            "truncate_destination": true,
+            "description": "P"
+        }
+    ]
+}
