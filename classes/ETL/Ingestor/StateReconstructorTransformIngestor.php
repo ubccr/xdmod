@@ -1,6 +1,7 @@
 <?php
 /* ==========================================================================================
  */
+
 namespace ETL\Ingestor;
 
 use ETL\aOptions;
@@ -11,7 +12,7 @@ use ETL\EtlOverseerOptions;
 
 use Log;
 
-class StateReconstuctorTransformIngestor extends pdoIngestor implements iAction
+class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
 {
     private $stop_event_ids;
 
@@ -61,14 +62,6 @@ class StateReconstuctorTransformIngestor extends pdoIngestor implements iAction
             return array();
         }
 
-        if ($srcRecord['instance_id'] === -1) {
-            // End of src data
-            if ($this->instance_state !== null) {
-                return array($this->instance_state);
-            }
-            return array();
-        }
-
         if ($this->instance_state === null) {
             $this->initInstance($srcRecord);
             return array();
@@ -91,5 +84,30 @@ class StateReconstuctorTransformIngestor extends pdoIngestor implements iAction
         }
 
         return $transformedRecord;
+    }
+
+    protected function getSourceQueryString(){
+        if ( null === $this->etlSourceQuery ) {
+            $this->logAndThrowException(
+                "ETL source query object not instantiated.  Perhaps it is not specified in "
+                . "the definition file and not implemented in the Ingestor."
+            );
+        }
+
+        $sql = $this->variableStore->substitute(
+            $this->etlSourceQuery->getSql(),
+            "Undefined macros found in source query"
+        );
+
+        // We add a dummy row here to address gimmick wherein ETL discards the last row of data.
+        $unionValues = [];
+        $colCount = count($this->etlSourceQuery->records);
+
+        while($colCount--){
+            $unionValues[] = 0;
+        }
+
+        $sql = "SELECT * FROM ( $sql ) a\nUNION\nSELECT " . implode(',', $unionValues) . "\nORDER BY instance_id ASC, event_time_utc ASC";
+        return $sql;
     }
 }

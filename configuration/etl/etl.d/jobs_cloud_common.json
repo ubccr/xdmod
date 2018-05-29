@@ -102,32 +102,6 @@
                     "schema": "modw"
                 }
             }
-        },
-        {
-            "name": "memorybuckets",
-            "definition_file": "cloud_common/memory_buckets.json",
-            "description": "processorbuckets + data",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "processorbuckets data",
-                    "path": "cloud_common/memory_buckets.json"
-                }
-            }
-        },
-        {
-            "#": "Asset data must be aggregated post ingestion",
-            "name": "CloudEventAggregator",
-            "namespace": "ETL\\Aggregator",
-            "options_class": "AggregatorOptions",
-            "class": "SimpleAggregator",
-            "description": "Aggregate Eucalyptus cloud records.",
-            "definition_file": "cloud_common/cloud_metrics_aggregation.json",
-            "truncate_destination": true,
-            "table_prefix": "cloudfact_by_",
-            "aggregation_units": [
-                "day", "month", "quarter", "year"
-            ]
         }
     ]
 }

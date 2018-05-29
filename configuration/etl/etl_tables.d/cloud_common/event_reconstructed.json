@@ -10,11 +10,6 @@
                 "nullable": false
             },
             {
-                "name": "resource_id",
-                "type": "int(11) unsigned",
-                "nullable": false
-            },
-            {
                 "name": "start_time",
                 "type": "datetime",
                 "nullable": false
@@ -33,51 +28,6 @@
                 "name": "end_event_id",
                 "type": "int(11)",
                 "nullable": false
-            },
-            {
-                "name": "instance",
-                "type": "varchar(64)",
-                "nullable": false
-            },
-            {
-                "name": "instance_type",
-                "type": "varchar(64)",
-                "nullable": false
-            },
-            {
-                "name": "instance_type_id",
-                "type": "int(11)",
-                "nullable": false
-            },
-            {
-                "name": "num_cores",
-                "type": "int(11)",
-                "nullable": false
-            },
-            {
-                "name": "memory_mb",
-                "type": "int(11)",
-                "nullable": false
-            },
-            {
-                "name": "disk_gb",
-                "type": "int(11)",
-                "nullable": false
-            },
-            {
-                "name": "start_time_ts",
-                "type": "bigint(18)",
-                "nullable": true
-            },
-            {
-                "name": "end_time_ts",
-                "type": "bigint(18)",
-                "nullable": true
-            },
-            {
-                "name": "wallduration",
-                "type": "bigint(18)",
-                "nullable": true
             }
         ]
     }
