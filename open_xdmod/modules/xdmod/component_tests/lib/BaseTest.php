@@ -114,4 +114,28 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
+
+    /**
+     * Recursively filter out any elements matching a key in $keyList. Note that only keys with
+     * scalar values are filtered, keys with array values are traversed.
+     *
+     * @param  array $keyList The list of keys to remove
+     * @param  array $input The input array being filtered.
+     * @return array The filtered array with specified keys removed
+     */
+
+    protected function arrayFilterKeysRecursive(array $keyList, array $input)
+    {
+        $tmpArray = array();
+        foreach ($input as $key => &$value)
+        {
+            if (is_array($value)) {
+                $value = $this->arrayFilterKeysRecursive($keyList, $value);
+            } elseif ( ! in_array($key, $keyList) ) {
+                continue;
+            }
+            $tmpArray[$key] = $value;
+        }
+        return $tmpArray;
+    }
 }
