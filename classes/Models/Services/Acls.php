@@ -423,7 +423,44 @@ SELECT DISTINCT
   CASE WHEN agb.enabled = TRUE THEN NULL ELSE gb.name END                                   AS group_by,
   CASE WHEN agb.enabled = TRUE THEN NULL ELSE r.display END                                 AS realm
 FROM acl_group_bys agb
-  JOIN user_acls ua ON agb.acl_id = ua.acl_id
+  JOIN user_acls ua ON agb.acl_id = ua.acl_id AND ua.acl_id IN (
+          SELECT af.*
+          FROM (
+            SELECT a.acl_id
+            FROM (
+              SELECT
+                ah.acl_hierarchy_id,
+                ah.acl_id,
+                ah.hierarchy_id,
+                ah.level
+              FROM acl_hierarchies ah
+                JOIN user_acls ua ON ah.acl_id = ua.acl_id
+              WHERE ua.user_id = :user_id
+            ) ah1
+            LEFT JOIN (
+                     SELECT
+                       ah.acl_hierarchy_id,
+                       ah.hierarchy_id,
+                       ah.level
+                     FROM acl_hierarchies ah
+                       JOIN user_acls ua ON ah.acl_id = ua.acl_id
+                     WHERE ua.user_id = :user_id
+                   ) ah2
+              ON ah2.hierarchy_id = ah1.hierarchy_id AND ah2.level > ah1.level
+            JOIN acls a ON a.acl_id = ah1.acl_id
+            WHERE ah2.acl_hierarchy_id IS NULL
+          ) af
+          UNION
+          SELECT a.acl_id
+          FROM acls a
+            JOIN acl_types at ON at.acl_type_id = a.acl_type_id
+            JOIN user_acls ua ON a.acl_id = ua.acl_id
+            LEFT JOIN acl_hierarchies ah ON ah.acl_id = a.acl_id
+          WHERE
+            ah.acl_hierarchy_id IS NULL AND
+            ua.user_id = :user_id AND
+            at.name = 'data'
+  )
   JOIN acls a ON a.acl_id = ua.acl_id
   JOIN group_bys gb ON gb.group_by_id = agb.group_by_id
   JOIN realms r ON agb.realm_id = r.realm_id
@@ -921,24 +958,75 @@ SQL;
      */
     public static function getQueryDescripters(XDUser $user, $realmName = null, $groupByName = null, $statisticName = null)
     {
+        $selectClauses = array(
+            'r.display as realm',
+            'gb.name as group_by',
+            '!agb.enabled as not_enabled'
+        );
+
+        if (isset($statisticName)) {
+            $selectClauses[] = 'agb.visible';
+        }
+
+        // Note: this type of dynamic sql is safe as we're not including any user defined input
+        // in the sql itself.
+        $selectClause = implode(
+            ",\n",
+            $selectClauses
+        );
+
         $query = <<<SQL
-            SELECT DISTINCT
-              r.display AS realm,
-              gb.name AS group_by,
-              !agb.enabled as not_enabled
-            FROM acl_group_bys agb
-              JOIN user_acls ua ON agb.acl_id = ua.acl_id
-              JOIN realms r ON agb.realm_id = r.realm_id
-              JOIN group_bys gb ON gb.group_by_id = agb.group_by_id AND
-                                   gb.realm_id = agb.realm_id
-              JOIN statistics s ON s.statistic_id = agb.statistic_id AND 
-                                   s.realm_id = agb.realm_id 
-            WHERE ua.user_id = :user_id 
-
+        SELECT DISTINCT
+  $selectClause
+FROM group_bys gb
+  JOIN realms r ON gb.realm_id = r.realm_id
+  JOIN acl_group_bys agb
+    ON agb.group_by_id = gb.group_by_id AND
+       agb.realm_id = gb.realm_id
+  JOIN statistics s ON s.statistic_id = agb.statistic_id AND s.realm_id = r.realm_id
+  JOIN user_acls ua ON agb.acl_id = ua.acl_id AND ua.acl_id IN (
+    SELECT af.*
+    FROM (
+           SELECT a.acl_id
+           FROM (
+                  SELECT
+                    ah3.acl_hierarchy_id,
+                    ah3.acl_id,
+                    ah3.hierarchy_id,
+                    ah3.level
+                  FROM acl_hierarchies ah3
+                    JOIN user_acls ua1 ON ah3.acl_id = ua1.acl_id
+                  WHERE ua1.user_id = :user_id
+                ) ah1
+             LEFT JOIN (
+                         SELECT
+                           ah4.acl_hierarchy_id,
+                           ah4.hierarchy_id,
+                           ah4.level
+                         FROM acl_hierarchies ah4
+                           JOIN user_acls ua2 ON ah4.acl_id = ua2.acl_id
+                         WHERE ua2.user_id = :user_id
+                       ) ah2
+               ON ah2.hierarchy_id = ah1.hierarchy_id AND ah2.level > ah1.level
+             JOIN acls a ON a.acl_id = ah1.acl_id
+           WHERE ah2.acl_hierarchy_id IS NULL
+         ) af
+    UNION
+    SELECT a.acl_id
+    FROM acls a
+      JOIN acl_types at ON at.acl_type_id = a.acl_type_id
+      JOIN user_acls ua3 ON a.acl_id = ua3.acl_id
+      LEFT JOIN acl_hierarchies ah ON ah.acl_id = a.acl_id
+    WHERE
+      ah.acl_hierarchy_id IS NULL AND
+      ua3.user_id = :user_id AND
+      at.name = 'data'
+  )
+WHERE ua.user_id = :user_id
 SQL;
-        $params = array(
-            ':user_id' => $user->getUserID(),
 
+        $params = array(
+            ':user_id' => $user->getUserID()
         );
 
         if (isset($realmName)) {
@@ -975,6 +1063,7 @@ SQL;
 
                 if (isset($statisticName)) {
                     $descripter->setDefaultStatisticName($statisticName);
+                    $descripter->setShowMenu((bool)$row['visible']);
                 }
 
                 // NOTE: this is done so that the GroupByNone query descripter does not have it's
