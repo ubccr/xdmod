@@ -14,7 +14,7 @@ class DiskReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.disk_reserved) / SUM(jf.wallduration),0)',
             'disk_reserved',
-            'Disk Space Utilized Per Period',
+            'Average Disk Consumption Weighted By Wall Hours',
             'Bytes',
             0
         );
@@ -22,6 +22,7 @@ class DiskReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The amount of disk space consumed by running virtual machines over wall duration.<br/>';
+        return 'The amount of disk space consumed by running virtual machines over wall time.<br/>
+            <i>Wall Time:</i> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }

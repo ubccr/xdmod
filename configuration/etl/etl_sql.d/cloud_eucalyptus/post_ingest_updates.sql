@@ -36,3 +36,12 @@ JOIN ${DESTINATION_SCHEMA}.eucalyptus_raw_volume v
   ON v.provider_account_number = a.provider_account AND v.resource_id = a.resource_id
 SET a.display = v.provider_account_name
 //
+
+-- We run the following to get proper display names for accounts where display name is missing.
+
+UPDATE `modw_cloud`.`account` SET display = 'ucsb' WHERE provider_account = '000058968312' AND resource_id = 16
+//
+UPDATE `modw_cloud`.`account` SET display = 'lakeeffect-14' WHERE provider_account = '000918115708' AND resource_id = 16
+//
+UPDATE `modw_cloud`.`account` SET display = 'lakeeffect-12' WHERE provider_account = '000810903166' AND resource_id = 16
+//
