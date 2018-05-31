@@ -15,6 +15,7 @@
     "XDMoD": false,
     "Dashboard": false,
     "DashboardStore": false,
-    "grecaptcha": false
+    "grecaptcha": false,
+    "StringUtilities": false
   }
 }

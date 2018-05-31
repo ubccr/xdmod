@@ -8,7 +8,7 @@
 
 function DateUtilities(config) {
     // Use current year if no config.year has been supplied
-    var active_year = (config && config.year) ? config.year : new Date().getFullYear();
+    this.active_year = (config && config.year) ? config.year : new Date().getFullYear();
 
     // ----------------------------------
 
@@ -79,7 +79,7 @@ function DateUtilities(config) {
     // ----------------------------------
 
     this.isLeapYear = function () {
-        return (new Date(this.active_year, 1, 29).getDate() == 29);
+        return (new Date(this.active_year, 1, 29).getDate() === 29);
     };// isLeapYear
 
     // ----------------------------------
@@ -89,7 +89,7 @@ function DateUtilities(config) {
 
         var result = month_index.toString().match(regex);
 
-        if (result == null) {
+        if (result === null) {
             return false;
         }
 
@@ -157,10 +157,6 @@ function DateUtilities(config) {
     // ----------------------------------
 
     this.getEndpoints = function (formal_timeframe, present_formally) {
-        if (!present_formally) {
-            present_formally = false;
-        }
-
         var end_date = new Date();
         var start_date = new Date();
 
@@ -221,7 +217,7 @@ function DateUtilities(config) {
 
             default:
 
-            // Check if the argument passed in was a 4-digit year
+                // Check if the argument passed in was a 4-digit year
 
                 if (formal_timeframe.match(/^\d{4}$/) != null && formal_timeframe >= 1900) {
                     start_date.setFullYear(parseInt(formal_timeframe, 10));
@@ -231,17 +227,11 @@ function DateUtilities(config) {
                     end_date.setFullYear(parseInt(formal_timeframe, 10));
                     end_date.setMonth(11);
                     end_date.setDate(31);
-                }
-
-                // 30/60/90/etc. day
-
-                else if (formal_timeframe.match(/^\d{1,} day$/i) != null) {
+                } else if (formal_timeframe.match(/^\d{1,} day$/i) != null) {
+                    // 30/60/90/etc. day
                     start_date.setDate(start_date.getDate() - parseInt(formal_timeframe.split(' ')[0], 10));
-                }
-
-                // 1/2/5/etc. year
-
-                else if (formal_timeframe.match(/^\d{1,} year$/i) != null) {
+                } else if (formal_timeframe.match(/^\d{1,} year$/i) != null) {
+                    // 1/2/5/etc. year
                     start_date.setFullYear(start_date.getFullYear() - parseInt(formal_timeframe.split(' ')[0], 10));
                 } else {
                     alert('Invalid timeframe specified: \'' + formal_timeframe + '\'');
@@ -251,8 +241,8 @@ function DateUtilities(config) {
         }// switch
 
         return {
-            start_date: (present_formally == true) ? this.getFormalString(start_date) : this.getISOFormat(start_date),
-            end_date: (present_formally == true) ? this.getFormalString(end_date) : this.getISOFormat(end_date)
+            start_date: present_formally ? this.getFormalString(start_date) : this.getISOFormat(start_date),
+            end_date: present_formally ? this.getFormalString(end_date) : this.getISOFormat(end_date)
         };
     };// getEndpoints
 
