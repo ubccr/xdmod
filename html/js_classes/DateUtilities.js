@@ -51,8 +51,8 @@ function DateUtilities (config) {
    
       var n = new Date();
       
-      n.setMonth(Math.floor(n.getMonth() / 3) * 3);
       n.setDate(1);
+      n.setMonth(Math.floor(n.getMonth() / 3) * 3);
       
       return n;
       
