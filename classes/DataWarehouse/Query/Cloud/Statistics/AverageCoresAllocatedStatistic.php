@@ -7,17 +7,16 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 *
 * Sum of cores reserved on active virtual machines
 */
-class AverageCoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class AverageCoresAllocatedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
-        $vm_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'num_vms_ended' : 'num_vms_running';
         parent::__construct(
-            'COALESCE(SUM(jf.num_cores) / SUM(jf.' . $vm_count_formula . '),0)',
+            'COALESCE(SUM(jf.num_cores) / SUM(jf.num_vms_running),0)',
             'avg_num_cores',
-            'Cores Allocated: Average Per VM',
+            'Average Cores Allocated Per VM',
             'Cores',
-            0
+            2
         );
     }
 

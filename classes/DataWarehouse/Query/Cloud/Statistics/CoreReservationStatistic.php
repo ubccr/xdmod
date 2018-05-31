@@ -3,27 +3,26 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 
 /*
 * @author Rudra Chakraborty
-* @date 05-01-2018
+* @date 05-31-2018
 *
-* Average Core Time in Hours.
+* Cores Reserved, Weighted by Wall Hours
 */
-class AverageCoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class CoreReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
-        $vm_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'num_vms_ended' : 'num_vms_running';
         parent::__construct(
-            'COALESCE((SUM(jf.core_time) / 3600.0) / SUM(jf.' . $vm_count_formula . '),0)',
+            'COALESCE(SUM(jf.core_time) / SUM(jf.wallduration),0)',
             'avg_core_time',
-            'Average Core Hours Per VM',
+            'Average Cores Reserved Weighted By Wall Hours' ,
             'Hours',
-            0
+            2
         );
     }
 
     public function getInfo()
     {
-        return 'The average core hours consumed by running virtual machines.<br/><i>Only approximate in aggregate view.</i><br/>
+        return 'An average of core hours over wall time.<br/>
             <b>Core Hours</b>: The product of the number of cores allocated to a VM and its wall time, in hours.<br/>
             <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
     }

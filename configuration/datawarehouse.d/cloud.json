@@ -68,31 +68,31 @@
                     "class": "AverageWallHoursStatistic"
                 },
                 {
-                    "name": "avg_core_time",
-                    "class": "AverageCoreHoursStatistic"
-                },
-                {
                     "name": "core_time",
                     "class": "CoreHoursStatistic"
                 },
                 {
+                    "name": "wall_time",
+                    "class": "WallHoursStatistic"
+                },
+                {
                     "name": "avg_num_cores",
-                    "class": "AverageCoresReservedStatistic"
+                    "class": "AverageCoresAllocatedStatistic"
                 },
                 {
                     "name": "num_cores",
-                    "class": "CoresReservedStatistic"
+                    "class": "CoresAllocatedStatistic"
                 },
                 {
-                    "name": "weighted_num_cores",
-                    "class": "WeightedCoreWallStatistic"
+                    "name": "avg_cores_reserved",
+                    "class": "CoreReservationStatistic"
                 },
                 {
-                    "name": "memory_reserved",
+                    "name": "avg_memory_reserved",
                     "class": "MemoryReservationStatistic"
                 },
                 {
-                    "name": "disk_reserved",
+                    "name": "avg_disk_reserved",
                     "class": "DiskReservationStatistic"
                 }
             ]

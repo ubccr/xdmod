@@ -13,16 +13,16 @@ class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
     {
         parent::__construct(
             'COALESCE(SUM(jf.memory_reserved) / SUM(jf.wallduration),0)',
-            'memory_reserved',
-            'Average Memory Consumption Weighted By Wall Hours',
+            'avg_memory_reserved',
+            'Average Memory Reserved Weighted By Wall Hours',
             'Bytes',
-            0
+            2
         );
     }
 
     public function getInfo()
     {
-        return 'The amount of memory consumed by running virtual machines over wall time.<br/>
+        return 'The amount of memory reserved by running virtual machines over wall time.<br/>
         <i>Wall Time:</i> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }

@@ -18,7 +18,7 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
             'avg_wallduration_hours',
             'Average Wall Hours per VM',
             'Hours',
-            0
+            2
         );
     }
 

@@ -3,16 +3,16 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 
 /*
 * @author Rudra Chakraborty
-* @date 02-20-2018
+* @date 05-31-2018
 *
-* Summation of Average Wallduration per VM
+* Total of Running VMs
 */
 class RunningVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'coalesce(sum(jf.num_vms_running),0)',
+            'COALESCE(SUM(jf.num_vms_running) ,0)',
             'num_vms_running',
             'Number of VMs Running',
             'Number of VMs',
@@ -28,5 +28,10 @@ class RunningVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function isVisible()
     {
         return true;
+    }
+
+    public function usesTimePeriodTablesForAggregate()
+    {
+        return false;
     }
 }
