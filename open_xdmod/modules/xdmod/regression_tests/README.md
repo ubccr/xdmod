@@ -24,7 +24,7 @@ The rest are generally used for federation testing but might be useful for other
 
 REG_TEST_RESOURCE used to set a resource to test against
 
-REG_TEST_REGEX comma separated list of regular expresses to replace in result ex. /(?:Blade One|OpenXDMoD - Federation)/,/\s((?:daywalk|sunscrn))/,/\s((?:daywalk-bladeo))/,/\s((?:sunscrn-bladeb))/,/(?:Blade One|OpenXDMoD - Federation)\s/
+REG_TEST_REGEX comma separated list of regular expresses to replace in result ex. /(?:Instance One|OpenXDMoD - Federation)/,/\s((?:daywalk|sunscrn))/,/\s((?:daywalk-instanceo))/,/\s((?:sunscrn-instanceb))/,/(?:Instance One|OpenXDMoD - Federation)\s/
 
 REG_TEST_REPLACE comma separated list of replacements for the regular expressions
 

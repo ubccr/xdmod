@@ -211,7 +211,7 @@
                 "comment": "Boolean flag 1 = job complete"
             },
             {
-                "name": "federation_blade_id",
+                "name": "federation_instance_id",
                 "type": "int(11) unsigned",
                 "nullable": false,
                 "default": 0
@@ -237,7 +237,7 @@
                 "columns": [
                     "job_record_id",
                     "job_record_origin_id",
-                    "federation_blade_id"
+                    "federation_instance_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true
@@ -327,7 +327,7 @@
                 "name": "uniq",
                 "columns": [
                     "job_record_origin_id",
-                    "federation_blade_id"
+                    "federation_instance_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true

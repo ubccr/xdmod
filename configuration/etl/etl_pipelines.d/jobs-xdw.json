@@ -1,6 +1,6 @@
 {
     "#": "This is used by multiple pipelines, specifically xdmod datawarehouse",
-    "#": "and federation blades to initialize tables and their default data",
+    "#": "and federation instances to initialize tables and their default data",
     "bootstrap": [
         {
             "name": "table-create",
@@ -15,7 +15,7 @@
                 "jobs/xdw/allocation.json",
                 "jobs/xdw/days.json",
                 "jobs/xdw/error-descriptions.json",
-                "jobs/xdw/federation-blades.json",
+                "jobs/xdw/federation-instances.json",
                 "jobs/xdw/field-of-science-hierarchy.json",
                 "jobs/xdw/field-of-science.json",
                 "jobs/xdw/hosts.json",

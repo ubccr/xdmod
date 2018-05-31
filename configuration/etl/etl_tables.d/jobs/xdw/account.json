@@ -56,7 +56,7 @@
                 "nullable": true
             },
             {
-                "name": "federation_blade_id",
+                "name": "federation_instance_id",
                 "type": "int(11) unsigned",
                 "nullable": false,
                 "default": 0
@@ -108,7 +108,7 @@
                 "name": "uniq",
                 "columns": [
                     "account_origin_id",
-                    "federation_blade_id"
+                    "federation_instance_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true
