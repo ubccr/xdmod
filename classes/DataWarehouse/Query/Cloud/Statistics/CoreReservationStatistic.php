@@ -13,9 +13,9 @@ class CoreReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
     {
         parent::__construct(
             'COALESCE(SUM(jf.core_time) / SUM(jf.wallduration),0)',
-            'avg_core_time',
+            'avg_cores_reserved',
             'Average Cores Reserved Weighted By Wall Hours' ,
-            'Hours',
+            'Cores',
             2
         );
     }
