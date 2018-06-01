@@ -111,6 +111,6 @@
                 "cloud_common/processor_buckets.json",
                 "cloud_common/memory_buckets.json"
             ]
-        },
+        }
     ]
 }
