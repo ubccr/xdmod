@@ -326,14 +326,6 @@ abstract class aRole implements \User\iRole
     }
 
     /**
-     * @deprecated Does not appear to be used anywhere.
-     */
-    public function getMyUsageMenus()
-    {
-        return $this->_myUsageMenus;
-    }
-
-    /**
      * Add a query descripter.
      *
      * @param \User\Elements\QueryDescripter $query_descripter
