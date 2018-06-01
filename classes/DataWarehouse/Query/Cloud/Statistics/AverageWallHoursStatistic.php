@@ -21,7 +21,7 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
             if ($date_table) {
                 $date_id_field = new TableField($date_table, 'id');
 
-                $sql = 'COALESCE(SUM(CASE ' . $date_id_field . ' WHEN ' . $query_instance->getMinDateId() . ' THEN jf.num_vms_running ELSE jf.num_vms_started END), 0)';
+                $sql = 'COALESCE(SUM(jf.wallduration/3600.0) / SUM(CASE ' . $date_id_field . ' WHEN ' . $query_instance->getMinDateId() . ' THEN jf.num_vms_running ELSE jf.num_vms_started END), 0)';
             }
         }
 
