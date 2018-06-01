@@ -425,32 +425,4 @@ abstract class aRole implements \User\iRole
     {
         return $this->_identifier;
     }
-
-    /**
-     * The factory method will determine which Role definition to load,
-     * based on the value of $role. The role object returned can then
-     * take user data into account when determining proper parameters
-     * (by means of consulting moddb.UserRoleParameters).
-     */
-    public function getRoleCategories($exclude_xsede_category = false)
-    {
-        if ($exclude_xsede_category == true) {
-            unset($this->_roleCategories['tg']);
-        }
-
-        return $this->_roleCategories;
-    }
-
-    /**
-     * Returns the summary charts config data for this role.
-     *
-     * @return array
-     */
-    public function getSummaryCharts()
-    {
-        return array_map(
-            function ($chart) { return json_encode($chart); },
-            self::getConfig($this->_identifier, 'summary_charts')
-        );
-    }
 }

@@ -19,8 +19,6 @@ interface iRole
     public function getParameters();
 
 	public function getAllQueryRealms($query_groupname);
-	
-	public function getSummaryCharts();
 } //iRole
 
 ?>
