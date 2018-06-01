@@ -183,14 +183,6 @@ abstract class aRole implements \User\iRole
 
         $this->_roleCategories = array('tg' => ORGANIZATION_NAME);
 
-        $modules = self::getConfig($this->_identifier, 'permitted_modules');
-
-        foreach ($modules as $moduleConfig) {
-            $this->addPermittedModule(
-                new \User\Elements\Module($moduleConfig)
-            );
-        }
-
         $descripters = self::getConfig(
             $this->_identifier,
             'query_descripters'
@@ -331,26 +323,6 @@ abstract class aRole implements \User\iRole
     protected function addParameter($param_name, $param_value)
     {
         $this->_params[$param_name] = $param_value;
-    }
-
-    /**
-     * Permitted modules accessor.
-     *
-     * @return array
-     */
-    public function getPermittedModules()
-    {
-        return $this->_permittedModules;
-    }
-
-    /**
-     * Add a module to the array of permitted modules.
-     *
-     * @param \User\Elements\Module $module
-     */
-    protected function addPermittedModule(\User\Elements\Module $module)
-    {
-        $this->_permittedModules[] = $module;
     }
 
     /**
