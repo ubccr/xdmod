@@ -63,7 +63,9 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
         }
 
         if ($this->instance_state === null) {
-            $this->initInstance($srcRecord);
+            if (in_array($srcRecord['event_type_id'], $this->start_event_ids)) {
+                $this->initInstance($srcRecord);
+            }
             return array();
         }
 

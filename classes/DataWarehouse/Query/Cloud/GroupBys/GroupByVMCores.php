@@ -32,7 +32,7 @@ class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
         $this->_short_name_field_name = 'description';
         $this->_order_id_field_name = 'id';
         $this->setOrderByStat(null);
-        $this->modw_schema = new \DataWarehouse\Query\Model\Schema('modw');
+        $this->modw_schema = new \DataWarehouse\Query\Model\Schema('modw_cloud');
         $this->processor_buckets_table = new \DataWarehouse\Query\Model\Table($this->modw_schema, 'processor_buckets', 'pb');
     }
 

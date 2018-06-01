@@ -1,6 +1,8 @@
 <?php
 namespace DataWarehouse\Query\Cloud\Statistics;
 
+use DataWarehouse\Query\Model\TableField;
+
 /*
 * @author Rudra Chakraborty
 * @date 05-31-2018
@@ -39,10 +41,5 @@ class RunningVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function isVisible()
     {
         return true;
-    }
-
-    public function usesTimePeriodTablesForAggregate()
-    {
-        return false;
     }
 }

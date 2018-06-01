@@ -102,6 +102,15 @@
                     "schema": "modw"
                 }
             }
-        }
+        },
+        {
+            "name": "CloudBucketGenerator",
+            "description": "Processor and Memory Buckets for cloud data",
+            "class": "StructuredFileIngestor",
+            "definition_file_list": [
+                "cloud_common/processor_buckets.json",
+                "cloud_common/memory_buckets.json"
+            ]
+        },
     ]
 }

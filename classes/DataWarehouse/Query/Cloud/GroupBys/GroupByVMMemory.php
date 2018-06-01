@@ -45,7 +45,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
         $this->_long_name_field_name = 'description';
         $this->_short_name_field_name = 'min_memory';
         $this->_order_id_field_name = 'id';
-        $this->modw_schema = new Schema('modw');
+        $this->modw_schema = new Schema('modw_cloud');
         $this->bucket_table = new Table($this->modw_schema, 'memory_buckets', 'mb');
     }
 
