@@ -1,0 +1,38 @@
+{
+    "table_definition": {
+        "name": "warning_test",
+        "engine": "MyISAM",
+        "comment": "Test SQL warnings",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "account_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "provider_account_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": true,
+                "default": null
+            }
+        ],
+
+        "indexes": [
+            {
+                "name": "mykey",
+                "columns": [ "account_id" ]
+            }
+        ]
+    }
+}

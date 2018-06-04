@@ -1,0 +1,16 @@
+title
+"Job Size: Min (Core Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Job Size: Min (Core Count)"
+ovenb,16
+litst,12
+ybsbu,8
+swath,4
+sante,1
+savsp,1
+---------

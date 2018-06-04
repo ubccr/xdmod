@@ -1,0 +1,12 @@
+title
+"Wall Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[whimb] Wall Hours: Per Job"
+2016-12,5.76259259
+2017-01,4.94488095
+---------

@@ -1,0 +1,12 @@
+title
+"Number of Jobs Started: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[swath] Number of Jobs Started","[savsp] Number of Jobs Started","[litst] Number of Jobs Started","[ybsbu] Number of Jobs Started","[ovenb] Number of Jobs Started","[sante] Number of Jobs Started"
+"2016 Q4",713,25,11,6,5,2
+"2017 Q1",0,1,0,0,0,0
+---------

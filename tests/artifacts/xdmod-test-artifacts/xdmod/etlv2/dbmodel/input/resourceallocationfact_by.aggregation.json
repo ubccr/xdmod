@@ -1,0 +1,159 @@
+{
+    "table_definition": {
+        "name": "resourceallocationfact_by_",
+        "table_prefix": "resourceallocationfact_by_",
+        "engine": "MyISAM",
+        "comment": "Resource Allocation facts aggregated by ${AGGREGATION_UNIT}.",
+        "columns": [
+            {
+                "name": "${AGGREGATION_UNIT}_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+            },
+            {
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+            },
+            {
+                "name": "${AGGREGATION_UNIT}",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The id of the resource that the allocation was made on."
+            },
+            {
+                "name": "organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the resource that the jobs ran on."
+            },
+            {
+                "name": "alloc_date",
+                "type": "date",
+                "nullable": false,
+                "comment": "The date associated with a resource allocation."
+            },
+            {
+                "name": "xd_su_conversion_factor",
+                "type": "double",
+                "nullable": false,
+                "comment": "The multiplier used to convert native SUs into XD SUs for a resource."
+            },
+            {
+                "name": "available",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The amount of native SUs available on a resource on an allocation date."
+            },
+            {
+                "name": "requested",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The amount of native SUs requested on a resource on an allocation date."
+            },
+            {
+                "name": "recommended",
+                "type": "char(50)",
+                "nullable": true,
+                "comment": "The amount of native SUs awarded on a resource on an allocation date."
+            },
+            {
+                "name": "awarded",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The amount of native SUs recommended for allocation on a resource on an allocation date."
+            }
+        ],
+
+        "indexes": [
+            {
+                "name": "index_period_value",
+                "columns": [ "${AGGREGATION_UNIT}" ]
+            },
+            {
+                "name": "index_period_id",
+                "columns": [ "${AGGREGATION_UNIT}_id" ]
+            },
+            {
+                "name": "index_year",
+                "columns": [ "year" ]
+            },
+            {
+                "name": "index_organization_id",
+                "columns": [ "organization_id" ]
+            },
+            {
+                "name": "index_resource_id",
+                "columns": [ "resource_id" ]
+            }
+        ]
+    },
+
+    "aggregation_period_query": {
+        "overseer_restrictions": {
+            "include_only_resource_codes": "id IN ${VALUE}",
+            "exclude_resource_codes": "id NOT IN ${VALUE}"
+        },
+
+        "conversions": {
+            "start_day_id": "YEAR(FROM_UNIXTIME(start_time_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(start_time_ts))",
+            "end_day_id": "YEAR(FROM_UNIXTIME(end_time_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(end_time_ts))"
+        }
+    },
+
+    "source_query": {
+        "query_hint": "SQL_NO_CACHE",
+        "records": {
+            "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
+            "year": "${:YEAR_VALUE}",
+            "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
+            "resource_id": "ra.id",
+            "organization_id": "organization_id",
+            "alloc_date": "ra.end_alloc_date",
+            "xd_su_conversion_factor": "aladj.conversion_factor",
+            "available": "sum(ra.available)",
+            "requested": "sum(ra.requested)",
+            "recommended": "coalesce(sum(ra.recommended), NULL)",
+            "awarded": "sum(ra.awarded)"
+        },
+
+        "groupby": [
+            "${AGGREGATION_UNIT}_id",
+            "year",
+            "${AGGREGATION_UNIT}",
+            "organization_id",
+            "resource_id",
+            "alloc_date"
+        ],
+
+        "joins": [
+            {
+                "name": "resource_allocations",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ra"
+            },{
+                "name": "resourcefact",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "rf",
+                "on": "rf.id = ra.id"
+            },{
+                "name": "allocationadjustment",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "aladj",
+                "on": "aladj.site_resource_id = ra.id AND aladj.allocation_resource_id = 1546 AND ra.end_alloc_date BETWEEN aladj.start_date AND IFNULL(aladj.end_date, DATE('9999-01-01'))"
+            }
+        ],
+
+        "where": [
+            "( ra.end_time_ts BETWEEN ${:PERIOD_START_TS} AND ${:PERIOD_END_TS} OR ${:PERIOD_END_TS} BETWEEN ra.start_time_ts AND ra.end_time_ts )"
+        ]
+    }
+}

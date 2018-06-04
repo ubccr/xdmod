@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "account",
-        "engine": "MyISAM",
         "comment": "This table has records for all the accounts/projects.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -20,8 +20,8 @@
             {
                 "name": "parent_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The id of the parent account record, if any."
+                "comment": "The id of the parent account record, if any.",
+                "nullable": true
             },
             {
                 "name": "charge_number",
@@ -32,8 +32,8 @@
             {
                 "name": "creator_organization_id",
                 "type": "int(11)",
-                "nullable": true,
-                "comment": "The id of the organization who created this account."
+                "comment": "The id of the organization who created this account.",
+                "nullable": true
             },
             {
                 "name": "granttype_id",
@@ -56,7 +56,7 @@
                 "nullable": true
             },
             {
-                "name": "federation_blade_id",
+                "name": "federation_instance_id",
                 "type": "int(11) unsigned",
                 "nullable": false,
                 "default": 0
@@ -108,7 +108,7 @@
                 "name": "uniq",
                 "columns": [
                     "account_origin_id",
-                    "federation_blade_id"
+                    "federation_instance_id"
                 ],
                 "type": "BTREE",
                 "is_unique": true

@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Unknown] Job Size: Min (Core Count)"
+2016-12,1
+2017-01,1
+---------

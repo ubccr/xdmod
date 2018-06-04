@@ -1,0 +1,14 @@
+[
+  [
+    {
+      "username": "centerdirector",
+      "acl": "cd",
+      "organizations": {
+        "561": {
+          "active": true,
+          "primary": true
+        }
+      }
+    }
+  ]
+]

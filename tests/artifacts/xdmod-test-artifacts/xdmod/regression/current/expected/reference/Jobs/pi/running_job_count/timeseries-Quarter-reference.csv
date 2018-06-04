@@ -1,0 +1,11 @@
+title
+"Number of Jobs Running: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Flycatcher, Taiga] Number of Jobs Running","[Lark, Calandra] Number of Jobs Running","[Moorhen] Number of Jobs Running","[Warbler, Cetti's] Number of Jobs Running","[Shearwater, Macaronesian] Number of Jobs Running","[Egret, Snowy] Number of Jobs Running","[Tern, Caspian] Number of Jobs Running","[Bufflehead] Number of Jobs Running","[Dunlin] Number of Jobs Running","[Bittern] Number of Jobs Running","[Shearwater, Balearic] Number of Jobs Running","[Chiffchaff, Iberian] Number of Jobs Running","[Bluetail, Red-flanked] Number of Jobs Running","[Dowitcher, Short-billed] Number of Jobs Running","[Fulmar] Number of Jobs Running","[Goose, Red-breasted] Number of Jobs Running","[Jackdaw] Number of Jobs Running","[Fieldfare] Number of Jobs Running","[Warbler, Hooded] Number of Jobs Running","[Chaffinch] Number of Jobs Running","[Scaup, Lesser] Number of Jobs Running","[White, Great] Number of Jobs Running","[Harrier, Hen] Number of Jobs Running","[Bunting, Ortolan] Number of Jobs Running","[Accentor, Alpine] Number of Jobs Running","[Petrel, Fea's] Number of Jobs Running","[Blackbird] Number of Jobs Running","[Kestrel, Lesser] Number of Jobs Running","[Martin, Sand] Number of Jobs Running","[Spotted, Great] Number of Jobs Running","[Nuthatch] Number of Jobs Running","[Smew] Number of Jobs Running","[Swift, Little] Number of Jobs Running","[Thrush, Hermit] Number of Jobs Running","[Warbler, Blackpoll] Number of Jobs Running","[Gull, Yellow-legged] Number of Jobs Running","[Warbler, Savi's] Number of Jobs Running","[Dotterel] Number of Jobs Running","[Gull, Glaucous-winged] Number of Jobs Running","[Shearwater, Great] Number of Jobs Running","[Yellowthroat, Common] Number of Jobs Running"
+"2016 Q4",41560,6563,2425,2633,1000,16,762,289,100,92,146,101,53,56,72,46,66,32,29,6,17,15,20,12,9,15,14,11,8,10,8,7,3,3,3,1,2,1,1,1,1
+"2017 Q1",13931,402,972,0,0,752,2,94,139,62,0,1,47,28,7,25,5,20,14,27,8,9,0,7,9,0,0,1,2,0,0,0,1,0,0,1,0,0,0,0,0
+---------

@@ -1,0 +1,120 @@
+{
+    "table_definition": {
+        "name": "quarters",
+        "comment": "autogen - one rec for each quarter of TG operation.",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The id of the quarter record."
+            },
+            {
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "The year of the record."
+            },
+            {
+                "name": "quarter",
+                "type": "tinyint(3) unsigned",
+                "nullable": false,
+                "comment": "The quarter of the year [1-4]"
+            },
+            {
+                "name": "quarter_start",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "The start datetime of the quarter."
+            },
+            {
+                "name": "quarter_end",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "The end datetime of the quarter. "
+            },
+            {
+                "name": "hours",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "The number of hours in the quarter."
+            },
+            {
+                "name": "seconds",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The number of seconds in the quarter."
+            },
+            {
+                "name": "quarter_start_ts",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The start timestamp of the quarter in epochs."
+            },
+            {
+                "name": "quarter_end_ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "The end timestamp of the quarter in epochs. If the last job fell during this quarter, the end of the quarter will be abrupt. Hence a partial quarter. "
+            },
+            {
+                "name": "quarter_middle_ts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "quarters_pk2",
+                "columns": [
+                    "year",
+                    "quarter",
+                    "quarter_start",
+                    "quarter_end"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "quarter_index",
+                "columns": [
+                    "id",
+                    "seconds",
+                    "quarter_start_ts",
+                    "quarter_end_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "quarter_index2",
+                "columns": [
+                    "id",
+                    "quarter_start_ts",
+                    "quarter_middle_ts"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "quarter_yq",
+                "columns": [
+                    "year",
+                    "quarter"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

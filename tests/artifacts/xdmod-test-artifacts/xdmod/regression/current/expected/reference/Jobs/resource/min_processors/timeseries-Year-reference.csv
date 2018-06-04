@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[frearson] Job Size: Min (Core Count)","[mortorq] Job Size: Min (Core Count)","[phillips] Job Size: Min (Core Count)","[pozidriv] Job Size: Min (Core Count)","[robertson] Job Size: Min (Core Count)"
+2016,1,1,8,1,1
+2017,1,4,1,1,1
+---------

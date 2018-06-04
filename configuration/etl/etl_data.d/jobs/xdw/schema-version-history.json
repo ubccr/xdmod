@@ -1,0 +1,4 @@
+[
+    ["database_name", "schema_version", "action_datetime", "action_type", "script_name"],
+    ["moddb", "8.0.0", "NOW()", "created", "N/A"]
+]

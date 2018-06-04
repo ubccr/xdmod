@@ -1,0 +1,11 @@
+title
+"Screwdriver Utilization (%): by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Screwdriver Utilization (%)","[1 - 30s] Screwdriver Utilization (%)","[30s - 30min] Screwdriver Utilization (%)","[30 - 60min] Screwdriver Utilization (%)","[1 - 5hr] Screwdriver Utilization (%)","[5 - 10hr] Screwdriver Utilization (%)","[10 - 18hr] Screwdriver Utilization (%)","[18+hr] Screwdriver Utilization (%)"
+"2016 Q4",0,0.000826584,0.109836532,0.166318917,0.137485294,0.064381965,0.096621356,1.248286857
+"2017 Q1",0.000000000,0.000494443,0.008822916,0.010299961,0.053136228,0.012902402,0.025497230,0.060634629
+---------

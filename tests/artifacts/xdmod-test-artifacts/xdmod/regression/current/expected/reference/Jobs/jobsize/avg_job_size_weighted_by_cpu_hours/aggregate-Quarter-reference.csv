@@ -1,0 +1,19 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Size","Job Size: Weighted By CPU Hours (Core Count)"
+1,1.0000
+2,2.0000
+"3 - 4",4.0000
+"5 - 8",7.9949
+"9 - 16",12.8641
+"17 - 32",29.6605
+"33 - 64",57.1742
+"65 - 128",94.6628
+"129 - 256",187.5579
+"257 - 512",335.9767
+---------

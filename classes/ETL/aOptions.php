@@ -69,7 +69,15 @@ abstract class aOptions extends \stdClass implements \Iterator
         "truncate_destination" => false,
 
         // Should an exception thrown by this action stop the ETL process?
-        "stop_on_exception" => true
+        "stop_on_exception" => true,
+
+        // Maximum number of records to operate on (e.g., ingest) in a single chunk.
+        "db_insert_chunk_size" => 250000,
+
+        // The number of seconds to allot for the timeout per record chunk per destination. If
+        // multiple table destinations are being populated this will be multiplied by the number
+        // of destinations.
+        "net_write_timeout_per_db_chunk" => 60
         );
 
     /* ------------------------------------------------------------------------------------------
@@ -146,6 +154,14 @@ abstract class aOptions extends \stdClass implements \Iterator
                 $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                 if ( null === $value ) {
                     $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
+                    throw new Exception($msg);
+                }
+                break;
+
+            case 'db_insert_chunk_size':
+            case 'net_write_timeout_per_db_chunk':
+                if ( ! is_int($value) ) {
+                    $msg = get_class($this) . ": '$property' must be an integer (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
                 break;

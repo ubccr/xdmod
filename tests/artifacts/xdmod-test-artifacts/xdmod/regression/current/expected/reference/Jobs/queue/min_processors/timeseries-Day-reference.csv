@@ -1,0 +1,20 @@
+title
+"Job Size: Min (Core Count): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[panettone] Job Size: Min (Core Count)","[chapti] Job Size: Min (Core Count)","[nann] Job Size: Min (Core Count)","[bannock] Job Size: Min (Core Count)","[croutons] Job Size: Min (Core Count)","[crumpet] Job Size: Min (Core Count)","[pumpernickel] Job Size: Min (Core Count)","[barm] Job Size: Min (Core Count)","[black] Job Size: Min (Core Count)","[brioche] Job Size: Min (Core Count)","[brown] Job Size: Min (Core Count)","[cornbread] Job Size: Min (Core Count)","[focaccia] Job Size: Min (Core Count)","[pikelet] Job Size: Min (Core Count)","[pita] Job Size: Min (Core Count)","[potbrood] Job Size: Min (Core Count)","[roti] Job Size: Min (Core Count)","[white] Job Size: Min (Core Count)"
+2016-12-22,0,0,0,0,12,0,0,0,0,0,0,0,12,0,0,0,0,0
+2016-12-23,0,0,0,0,12,0,0,0,0,0,0,1,12,0,0,0,0,0
+2016-12-24,0,0,0,0,12,0,0,0,0,0,0,1,12,0,0,0,0,0
+2016-12-25,0,0,0,0,12,0,0,0,0,0,0,1,12,0,0,0,0,0
+2016-12-26,0,0,0,0,12,0,0,0,0,0,0,1,12,16,0,0,0,0
+2016-12-27,0,0,0,0,8,64,0,0,16,1,0,1,12,16,0,0,1,8
+2016-12-28,20,0,0,0,8,64,0,0,12,1,0,1,12,16,0,0,1,1
+2016-12-29,20,12,0,0,8,64,5,2,8,1,112,1,12,16,4,0,1,1
+2016-12-30,20,12,0,8,8,32,5,2,1,1,1,1,12,16,1,1,1,1
+2016-12-31,0,12,12,8,8,8,5,2,8,1,1,1,12,1,1,1,32,1
+2017-01-01,0,0,12,8,8,8,5,2,8,1,1,1,1,8,4,12,0,1
+---------

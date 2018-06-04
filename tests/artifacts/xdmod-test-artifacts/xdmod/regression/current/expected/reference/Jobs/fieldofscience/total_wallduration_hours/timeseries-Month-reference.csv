@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Unknown] Wall Hours: Total"
+2016-12,111198.2156
+2017-01,16778.5908
+---------

@@ -1,0 +1,5 @@
+{
+  "success": true,
+  "message": "User <b>$username</b> created successfully",
+  "user_type": "$userType"
+}

@@ -1,0 +1,12 @@
+title
+"Node Hours: Total: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[swath] Node Hours: Total","[ovenb] Node Hours: Total","[ybsbu] Node Hours: Total","[sante] Node Hours: Total","[litst] Node Hours: Total","[savsp] Node Hours: Total"
+2016,550.6928,390.6003,232.4297,174.8775,3.6653,0.6086
+2017,0,23.2242,0,0,0,0.0256
+---------

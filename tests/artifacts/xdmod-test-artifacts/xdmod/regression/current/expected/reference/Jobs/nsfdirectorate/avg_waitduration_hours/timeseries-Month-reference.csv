@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Unknown] Wait Hours: Per Job"
+2016-12,4.99051340
+2017-01,1.71038090
+---------

@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown] Job Size: Weighted By CPU Hours (Core Count)"
+"2016 Q4",69.5398
+"2017 Q1",22.2755
+---------

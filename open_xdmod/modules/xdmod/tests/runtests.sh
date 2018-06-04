@@ -14,7 +14,5 @@ if [ ! -x "$phpunit" ]; then
     exit 127
 fi
 
-./artifacts/update-artifacts.sh
-
 $phpunit ${PHPUNITARGS} .
 exit $?

@@ -1,0 +1,20 @@
+title
+"Job Size: Per Job (Core Count): by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Thrush, Hermit] Job Size: Per Job (Core Count)","[Gull, Yellow-legged] Job Size: Per Job (Core Count)","[Scaup, Lesser] Job Size: Per Job (Core Count)","[Nuthatch] Job Size: Per Job (Core Count)","[Gull, Glaucous-winged] Job Size: Per Job (Core Count)","[Bunting, Ortolan] Job Size: Per Job (Core Count)","[Fieldfare] Job Size: Per Job (Core Count)","[Smew] Job Size: Per Job (Core Count)","[White, Great] Job Size: Per Job (Core Count)","[Dunlin] Job Size: Per Job (Core Count)","[Warbler, Savi's] Job Size: Per Job (Core Count)","[Goose, Red-breasted] Job Size: Per Job (Core Count)","[Swift, Little] Job Size: Per Job (Core Count)","[Accentor, Alpine] Job Size: Per Job (Core Count)","[Shearwater, Balearic] Job Size: Per Job (Core Count)","[Blackbird] Job Size: Per Job (Core Count)","[Dotterel] Job Size: Per Job (Core Count)","[Chaffinch] Job Size: Per Job (Core Count)","[Yellowthroat, Common] Job Size: Per Job (Core Count)","[Bluetail, Red-flanked] Job Size: Per Job (Core Count)","[Egret, Snowy] Job Size: Per Job (Core Count)","[Kestrel, Lesser] Job Size: Per Job (Core Count)","[Warbler, Blackpoll] Job Size: Per Job (Core Count)","[Jackdaw] Job Size: Per Job (Core Count)","[Martin, Sand] Job Size: Per Job (Core Count)","[Flycatcher, Taiga] Job Size: Per Job (Core Count)","[Warbler, Hooded] Job Size: Per Job (Core Count)","[Lark, Calandra] Job Size: Per Job (Core Count)","[Tern, Caspian] Job Size: Per Job (Core Count)","[Fulmar] Job Size: Per Job (Core Count)","[Petrel, Fea's] Job Size: Per Job (Core Count)","[Chiffchaff, Iberian] Job Size: Per Job (Core Count)","[Warbler, Cetti's] Job Size: Per Job (Core Count)","[Bittern] Job Size: Per Job (Core Count)","[Bufflehead] Job Size: Per Job (Core Count)","[Dowitcher, Short-billed] Job Size: Per Job (Core Count)","[Harrier, Hen] Job Size: Per Job (Core Count)","[Moorhen] Job Size: Per Job (Core Count)","[Shearwater, Great] Job Size: Per Job (Core Count)","[Shearwater, Macaronesian] Job Size: Per Job (Core Count)","[Spotted, Great] Job Size: Per Job (Core Count)"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12.0000,0,0,0,0,0,0,0,0,0,12.0000,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12.0000,0,0,0,0,0,0,0,0,0,12.0000,1.0000,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12.0000,0,0,0,0,0,0,0,0,0,12.0000,1.0000,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12.0000,0,0,0,0,0,0,0,0,0,18.0000,1.0000,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12.0000,0,16.0000,0,0,0,0,0,0,0,18.0000,1.0000,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,0,0,0,0,0,0,96.0000,0,72.0000,0,0,0,0,0,69.3333,0,0,38.0000,0,16.0000,0,0,0,0,0,1.0000,0,25.7143,13.5000,8.0000,12.0000,0,0,0,0,0,0,0,1.0000,0,0
+2016-12-28,0,0,183.1111,0,0,0,96.0000,0,60.0000,0,0,0,0,0,34.6667,0,20.0000,38.0000,0,16.0000,0,12.0000,12.0000,0,0,1.0000,8.0000,26.6000,13.5000,8.0000,12.0000,0,0,0,1.0000,0,0,1.0000,1.0000,0,0
+2016-12-29,0,160.0000,183.1111,112.0000,0,96.0000,91.8696,72.0000,60.0000,0,40.0000,0,0,0,27.0400,0,20.0000,38.0000,0,16.0000,0,12.0000,12.0000,11.2727,5.0000,9.3672,8.0000,17.9259,9.4167,2.3548,12.0000,2.0000,56.0000,0,1.0000,0,1.0000,1.0000,1.0000,0,0
+2016-12-30,224.0000,160.0000,141.5385,112.0000,108.0000,96.0000,77.9286,72.0000,61.7143,44.0444,28.0000,24.6500,23.3333,0,20.1250,20.0000,20.0000,38.0000,16.0000,16.0000,0,12.0000,12.0000,11.2000,5.0000,9.0887,9.0000,8.2788,4.2351,2.7941,1.7333,9.5000,1.0647,1.0000,1.0000,1.0000,1.0000,1.0000,1.0000,1.0000,1.0000
+2016-12-31,336.0000,0,146.4615,112.0000,0,96.0000,78.0833,72.0000,53.0000,92.4000,40.0000,24.4615,32.5000,23.1111,16.4337,0,0,30.0000,0,10.3542,12.0000,12.0000,0,10.8889,11.4286,9.8789,10.0000,8.2365,8.3000,8.0000,1.0000,2.0000,1.0000,1.0000,1.0000,1.0000,1.0000,1.0000,0,1.0000,1.0000
+2017-01-01,0,160.0000,32.0000,0,0,96.0000,53.0000,0,49.3333,37.8993,0,24.0000,5.0000,23.1111,0,0,0,8.1852,0,10.5532,12.0000,12.0000,0,10.4000,12.0000,9.1352,8.0000,10.4080,8.5000,8.0000,0,2.0000,0,1.0000,1.0000,1.0000,0,1.0000,0,0,0
+---------

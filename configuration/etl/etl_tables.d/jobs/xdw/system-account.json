@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "systemaccount",
-        "engine": "MyISAM",
         "comment": "User's accounts on various resources.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",

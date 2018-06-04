@@ -103,7 +103,7 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
             'operation' => $operation
         );
 
-        $response = $this->helper->post("/controllers/report_builder.php", $params, null);
+        $response = $this->helper->post("/controllers/report_builder.php", null, $params);
 
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);
@@ -159,7 +159,7 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
             'operation' => $operation
         );
 
-        $response = $this->helper->post("/controllers/report_builder.php", $params, null);
+        $response = $this->helper->post("/controllers/report_builder.php", null, $params);
 
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);

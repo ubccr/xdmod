@@ -1,0 +1,20 @@
+title
+"Number of Jobs Ended: by System Username"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[honbu] Number of Jobs Ended","[reebu] Number of Jobs Ended","[grgsh] Number of Jobs Ended","[moorh] Number of Jobs Ended","[legsh] Number of Jobs Ended","[turdo] Number of Jobs Ended","[caspl] Number of Jobs Ended","[swath] Number of Jobs Ended","[lapwi] Number of Jobs Ended","[dunli] Number of Jobs Ended","[sogsh] Number of Jobs Ended","[sancr] Number of Jobs Ended","[grath] Number of Jobs Ended","[vertera] Number of Jobs Ended","[sposa] Number of Jobs Ended","[garwa] Number of Jobs Ended","[pibgr] Number of Jobs Ended","[sarwa] Number of Jobs Ended","[proubis] Number of Jobs Ended","[noror] Number of Jobs Ended","[savsp] Number of Jobs Ended","[categ] Number of Jobs Ended","[coot1] Number of Jobs Ended","[meapi] Number of Jobs Ended","[shttr] Number of Jobs Ended","[hoowa] Number of Jobs Ended","[henha] Number of Jobs Ended","[yebsa] Number of Jobs Ended","[alpsw] Number of Jobs Ended","[corsh] Number of Jobs Ended","[crane] Number of Jobs Ended","[lanhach] Number of Jobs Ended","[boowa] Number of Jobs Ended","[crama] Number of Jobs Ended","[whimb] Number of Jobs Ended","[litst] Number of Jobs Ended","[misth] Number of Jobs Ended","[shag1] Number of Jobs Ended","[blhbu] Number of Jobs Ended","[litau] Number of Jobs Ended","[aytinis] Number of Jobs Ended","[whtsp] Number of Jobs Ended","[egygo] Number of Jobs Ended","[smew1] Number of Jobs Ended","[ybsbu] Number of Jobs Ended","[ovenb] Number of Jobs Ended","[jackd] Number of Jobs Ended","[rolle] Number of Jobs Ended","[duswa] Number of Jobs Ended","[field] Number of Jobs Ended","[pereg] Number of Jobs Ended","[whtpl] Number of Jobs Ended","[evegr] Number of Jobs Ended","[lesre] Number of Jobs Ended","[sante] Number of Jobs Ended","[siski] Number of Jobs Ended","[velsc] Number of Jobs Ended","[yebbu] Number of Jobs Ended","[yebwa] Number of Jobs Ended","[allga] Number of Jobs Ended","[chaff] Number of Jobs Ended","[ferdu] Number of Jobs Ended","[gloib] Number of Jobs Ended","[mamwa] Number of Jobs Ended","[relpa] Number of Jobs Ended","[ribgu] Number of Jobs Ended"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-30,19043,3457,1698,788,1,333,0,712,34,90,68,61,3,20,36,5,50,28,12,0,8,8,8,3,10,5,19,1,4,2,5,4,11,14,0,7,10,5,4,1,0,0,4,6,3,0,2,1,2,1,2,3,2,1,2,1,2,1,1,1,0,0,1,1,1,0
+2016-12-31,22020,2365,933,869,999,341,4,1,180,10,24,83,97,24,20,1,0,8,12,4,17,8,8,12,5,16,1,6,4,0,4,3,4,0,7,4,0,5,6,7,9,0,4,1,3,4,2,2,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1
+2017-01-01,13920,84,0,972,0,308,752,0,94,139,62,0,1,25,4,47,0,9,12,26,1,8,8,9,7,0,0,11,8,14,7,9,0,0,7,0,1,1,0,2,0,9,0,0,0,1,0,1,0,2,1,0,0,1,0,0,0,0,1,0,1,1,0,0,0,0
+---------

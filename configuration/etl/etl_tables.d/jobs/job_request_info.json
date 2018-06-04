@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "job_request_info",
-        "engine": "InnoDB",
         "comment": "Requested job resources, etc.",
+        "engine": "InnoDB",
         "columns": [
             {
                 "name": "job_record_id",
@@ -12,20 +12,17 @@
             {
                 "name": "requested_nodes",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null
+                "nullable": true
             },
             {
                 "name": "requested_cores",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null
+                "nullable": true
             },
             {
                 "name": "requested_seconds",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null
+                "nullable": true
             }
         ],
         "indexes": [

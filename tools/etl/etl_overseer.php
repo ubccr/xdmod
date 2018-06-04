@@ -435,26 +435,6 @@ try {
 Utilities::setEtlConfig($etlConfig);
 
 // ------------------------------------------------------------------------------------------
-// Verify requested actions and sections
-
-if ( count($scriptOptions['process-sections']) > 0 ) {
-
-    $missing = array();
-
-    foreach ( $scriptOptions['process-sections'] as $sectionName ) {
-        if ( ! $etlConfig->sectionExists($sectionName) ) {
-            $missing[] = $sectionName;
-        }
-    }
-
-    if ( count($missing) > 0 ) {
-        log_error_and_exit(
-            sprintf("Unknown sections: %s", implode(", ", $missing))
-        );
-    }
-}  // if ( count($scriptOptions['process-sections'] > 0) )
-
-// ------------------------------------------------------------------------------------------
 // List any requested resources. After listing, exit.
 
 if ( false === ($utilityEndpoint = $etlConfig->getGlobalEndpoint('utility')) ) {

@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Node Hours: Total","[1 - 30s] Node Hours: Total","[30s - 30min] Node Hours: Total","[30 - 60min] Node Hours: Total","[1 - 5hr] Node Hours: Total","[5 - 10hr] Node Hours: Total","[10 - 18hr] Node Hours: Total","[18+hr] Node Hours: Total"
+"2016 Q4",8812.6442,19793.9092,67976.5294,1251.7872,13443.1378,6258.7008,769.3969,20141.0772
+"2017 Q1",634.5258,2247.3900,11616.2008,42.2633,1768.0661,859.2722,197.2356,491.6108
+---------

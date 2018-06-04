@@ -1,0 +1,140 @@
+{
+    "table_definition": {
+        "name": "Users",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "username",
+                "type": "varchar(200)",
+                "nullable": true
+            },
+            {
+                "name": "password",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "email_address",
+                "type": "varchar(200)",
+                "nullable": true
+            },
+            {
+                "name": "first_name",
+                "type": "varchar(50)",
+                "nullable": true
+            },
+            {
+                "name": "middle_name",
+                "type": "varchar(50)",
+                "default": "",
+                "nullable": true
+            },
+            {
+                "name": "last_name",
+                "type": "varchar(50)",
+                "nullable": true
+            },
+            {
+                "name": "time_created",
+                "type": "datetime",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "time_last_updated",
+                "type": "timestamp",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "password_last_updated",
+                "type": "timestamp",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "account_is_active",
+                "type": "tinyint(1) unsigned",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "comment": "references TGcDB.people.person_id",
+                "nullable": true
+            },
+            {
+                "name": "organization_id",
+                "type": "int(11)",
+                "comment": "references TGcDB.organizations.organization_id",
+                "nullable": true
+            },
+            {
+                "name": "field_of_science",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "token",
+                "type": "varchar(32)",
+                "nullable": true
+            },
+            {
+                "name": "token_expiration",
+                "type": "timestamp",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "user_type",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "person_id_idx",
+                "columns": [
+                    "person_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": [
+            {
+                "time": "BEFORE",
+                "event": "INSERT",
+                "table": "Users",
+                "body": "\n\n\tSET NEW.time_created = NOW();\n\n\tSET NEW.time_last_updated = NOW();\n\n",
+                "definer": "xdmod@localhost",
+                "schema": "moddb",
+                "name": "users_insert_timestamp"
+            },
+            {
+                "time": "BEFORE",
+                "event": "UPDATE",
+                "table": "Users",
+                "body": "\n\n\tIF NEW.password <> OLD.password THEN\n\n\t\tSET NEW.password_last_updated = NOW(); \n\n\tEND IF; \n\n\tSET NEW.time_last_updated = NOW();\n\n",
+                "definer": "xdmod@localhost",
+                "schema": "moddb",
+                "name": "users_update_timestamp"
+            }
+        ]
+    }
+}

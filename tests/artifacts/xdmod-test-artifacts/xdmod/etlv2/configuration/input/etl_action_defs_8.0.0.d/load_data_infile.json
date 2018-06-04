@@ -1,0 +1,25 @@
+{
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/load_data_infile.json#/table_definition"
+        }
+    ],
+
+    "#": "Select constant values to test LOAD DATA INFILE",
+
+    "source_query": {
+        "records": {
+            "my_int": 1,
+            "my_enum": "'X'",
+            "my_varchar8": "'This is longer than 8 characters'",
+            "my_double": "'Not a double'"
+        },
+
+        "joins": [
+            {
+                "name": "dual"
+            }
+        ]
+
+    }
+}

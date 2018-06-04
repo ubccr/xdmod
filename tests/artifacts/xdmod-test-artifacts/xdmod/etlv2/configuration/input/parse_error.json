@@ -1,0 +1,11 @@
+{
+    "key_one": {
+        "name": "resource_allocations",
+        "missing_coma": "MyISAM"
+        "columns": [{
+            "name": "resource",
+            "type": "varchar(40)",
+            "nullable": true
+        }]
+    }
+}

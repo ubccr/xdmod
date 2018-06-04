@@ -1,0 +1,75 @@
+title
+"Wait Hours: Total: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Wait Hours: Total"
+"Thrush, Swainson's",163339.9808
+Honey-buzzard,112848.1472
+"Treecreeper, Short-toed",5136.3181
+"Crane, Sandhill",5049.6606
+"Plover, Caspian",4056.0075
+"Grey, Lesser",3927.5247
+Dunlin,3030.4719
+"Thrush, Grey-cheeked",2704.6794
+"Pipit, Meadow",1959.9103
+"Grey, Great",1951.8286
+Moorhen,544.5967
+"Bunting, Reed",369.2550
+"Sandpiper, Spotted",321.4444
+"Warbler, Booted",122.8625
+Siskin,112.9622
+"Bunting, Yellow-browed",105.4822
+Ovenbird,94.3467
+"Sapsucker, Yellow-bellied",91.5858
+"Scoter, Velvet",78.7900
+"Warbler, Yellow-browed",62.0436
+"Thrush, Mistle",48.5308
+Peregrine,39.1408
+"Warbler, Garden",36.5339
+Whimbrel,32.1656
+"Warbler, Sardinian",30.8219
+Crane,30.1542
+"Tern, Sandwich",28.5511
+"Dove, Turtle",28.0833
+"Warbler, Golden-winged",20.6675
+"Warbler, Dusky",20.0331
+"Sparrow, White-throated",19.3700
+Lapwing,17.6803
+Shag,14.9994
+Smew,13.9250
+"Bunting, Yellow-breasted",12.9547
+"Grey, Southern",12.6592
+"Plover, White-tailed",11.1744
+"Warbler, Hooded",6.4889
+"Harrier, Hen",6.4781
+"Grosbeak, Evening",1.9761
+"Shearwater, Cory's",1.2531
+"Oriole, Baltimore",1.2361
+"Stint, Little",0.9917
+"Grebe, Pied-billed",0.5497
+"Sparrow, Savannah",0.3653
+"Auk, Little",0.1747
+Roller,0.1614
+"Bunting, Black-headed",0.1408
+"Gallinule, Allen's",0.0978
+"Duck, Ferruginous",0.0311
+"Shrike, Long-tailed",0.0286
+"Martin, Crag",0.0147
+"Gull, Ring-billed",0.0075
+"Goose, Egyptian",0.0047
+"Martin, Purple",0.0039
+Coot,0.0036
+"Egret, Cattle",0.0031
+"Swift, Alpine",0.0025
+Fieldfare,0.0017
+"Scaup, Lesser",0.0017
+"Ibis, Glossy",0.0003
+"Redpoll, Lesser",0.0003
+Chaffinch,0.0000
+Jackdaw,0.0000
+"Partridge, Red-legged",0.0000
+"Warbler, Moltoni's",0.0000
+---------

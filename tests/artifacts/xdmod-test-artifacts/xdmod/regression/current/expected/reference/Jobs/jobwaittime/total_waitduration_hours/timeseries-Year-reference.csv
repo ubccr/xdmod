@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[0 - 1s] Wait Hours: Total","[1 - 30s] Wait Hours: Total","[30s - 30min] Wait Hours: Total","[30 - 60min] Wait Hours: Total","[1 - 5hr] Wait Hours: Total","[5 - 10hr] Wait Hours: Total","[10 - 18hr] Wait Hours: Total","[18+hr] Wait Hours: Total"
+2016,0.0000,10.0508,1551.3189,1795.6292,23716.2794,24737.8175,2342.6519,226358.0200
+2017,0.0000,2.1667,1029.0836,95.0039,3636.5244,6782.8361,4784.8656,9503.1128
+---------

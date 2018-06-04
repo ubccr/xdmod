@@ -1,0 +1,10 @@
+title
+"Job Size: Min (Core Count): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Department,"Job Size: Min (Core Count)"
+Unknown,1
+---------

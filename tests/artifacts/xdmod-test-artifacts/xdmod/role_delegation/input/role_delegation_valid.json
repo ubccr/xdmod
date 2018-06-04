@@ -1,0 +1,51 @@
+[
+  [
+    {
+      "user": "cd",
+      "operation": "downgrade_member",
+      "target": "cs",
+      "expected": "cd_downgrade_member_valid"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "upgrade_member",
+      "target": "pi",
+      "expected": "cd_upgrade_member_valid"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "upgrade_member",
+      "target": "usr",
+      "expected": "cd_upgrade_member_valid"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "upgrade_member",
+      "target": "cs",
+      "expected": "cd_upgrade_member_valid"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "downgrade_member",
+      "target": "pi",
+      "expected": "cd_downgrade_member_valid"
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "operation": "downgrade_member",
+      "target": "usr",
+      "expected": "cd_downgrade_member_valid"
+    }
+  ]
+
+]

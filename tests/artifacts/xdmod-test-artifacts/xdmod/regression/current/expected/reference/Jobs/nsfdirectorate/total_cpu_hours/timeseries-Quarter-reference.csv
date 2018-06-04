@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown] CPU Hours: Total"
+"2016 Q4",770775.9989
+"2017 Q1",69779.8381
+---------

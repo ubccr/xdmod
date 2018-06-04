@@ -1,0 +1,41 @@
+{
+  "_id": "462",
+  "_account_is_active": true,
+  "_username": "centerstaff",
+  "_password": "4b69ab4e230f39ad185f33028dea90b7",
+  "_email": "centerstaff@example.com",
+  "_firstName": "Steven",
+  "_middleName": "",
+  "_lastName": "Gallo",
+  "_roles": [
+    "cs",
+    "usr"
+  ],
+  "_active_role": {},
+  "_field_of_science": "0",
+  "_organizationID": "0",
+  "_personID": "12509",
+  "_user_type": 1,
+  "_update_token": false,
+  "_cachedActiveRole": null,
+  "_acls": {
+    "usr": {
+      "aclId": "4",
+      "moduleId": "1",
+      "aclTypeId": "2",
+      "name": "usr",
+      "display": "User",
+      "enabled": "1",
+      "userId": "462"
+    },
+    "cs": {
+      "aclId": "6",
+      "moduleId": "1",
+      "aclTypeId": "2",
+      "name": "cs",
+      "display": "Center Staff",
+      "enabled": "1",
+      "userId": "462"
+    }
+  }
+}

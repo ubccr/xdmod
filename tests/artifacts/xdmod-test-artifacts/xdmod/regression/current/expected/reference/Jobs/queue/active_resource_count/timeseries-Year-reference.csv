@@ -1,0 +1,11 @@
+title
+"Number of Resources: Active: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[black] Number of Resources: Active","[bannock] Number of Resources: Active","[barm] Number of Resources: Active","[brioche] Number of Resources: Active","[brown] Number of Resources: Active","[chapti] Number of Resources: Active","[cornbread] Number of Resources: Active","[croutons] Number of Resources: Active","[crumpet] Number of Resources: Active","[focaccia] Number of Resources: Active","[nann] Number of Resources: Active","[panettone] Number of Resources: Active","[pikelet] Number of Resources: Active","[pita] Number of Resources: Active","[potbrood] Number of Resources: Active","[pumpernickel] Number of Resources: Active","[roti] Number of Resources: Active","[white] Number of Resources: Active"
+2016,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+2017,4,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1
+---------

@@ -1,0 +1,56 @@
+{
+  "user_types": [
+    {
+      "id": "1",
+      "type": "External",
+      "color": "#000000"
+    },
+    {
+      "id": "2",
+      "type": "Internal",
+      "color": "#0000ff"
+    },
+    {
+      "id": "3",
+      "type": "Testing",
+      "color": "#008800"
+    },
+    {
+      "id": "4",
+      "type": "Demo",
+      "color": "#808000"
+    },
+    {
+      "id": "5",
+      "type": "Single Sign On",
+      "color": "#b914f6"
+    }
+  ],
+  "user_roles": [
+    {
+      "description": "Center Director",
+      "role_id": "3"
+    },
+    {
+      "description": "Center Staff",
+      "role_id": "5"
+    },
+    {
+      "description": "Developer",
+      "role_id": "7"
+    },
+    {
+      "description": "Manager",
+      "role_id": "6"
+    },
+    {
+      "description": "Principal Investigator",
+      "role_id": "4"
+    },
+    {
+      "description": "User",
+      "role_id": "2"
+    }
+  ],
+  "success": true
+}

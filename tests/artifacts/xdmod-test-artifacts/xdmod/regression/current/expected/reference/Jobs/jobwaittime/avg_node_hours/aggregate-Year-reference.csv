@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[0 - 1s] Node Hours: Per Job","[1 - 30s] Node Hours: Per Job","[30s - 30min] Node Hours: Per Job","[30 - 60min] Node Hours: Per Job","[1 - 5hr] Node Hours: Per Job","[5 - 10hr] Node Hours: Per Job","[10 - 18hr] Node Hours: Per Job","[18+hr] Node Hours: Per Job"
+2016,0.88196999,1.48502582,5.25889908,0.49634703,1.12768541,2.06694215,3.52934378,8.86101066
+2017,0.26296139,0.44423602,1.99694015,0.29973995,1.38454668,0.88951576,0.46190997,1.05495887
+---------

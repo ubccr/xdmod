@@ -1,0 +1,11 @@
+title
+"Number of Jobs Running: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] Number of Jobs Running","[2] Number of Jobs Running","[3 - 4] Number of Jobs Running","[5 - 8] Number of Jobs Running","[9 - 16] Number of Jobs Running","[17 - 32] Number of Jobs Running","[33 - 64] Number of Jobs Running","[65 - 128] Number of Jobs Running","[129 - 256] Number of Jobs Running","[257 - 512] Number of Jobs Running"
+2016-12,6631,98,732,32324,16094,178,58,80,12,2
+2017-01,1168,1,12,10344,4864,93,48,34,2,0
+---------

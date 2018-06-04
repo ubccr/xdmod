@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[nann] User Expansion Factor","[black] User Expansion Factor","[white] User Expansion Factor","[cornbread] User Expansion Factor","[croutons] User Expansion Factor","[brioche] User Expansion Factor","[roti] User Expansion Factor","[chapti] User Expansion Factor","[pikelet] User Expansion Factor","[focaccia] User Expansion Factor","[potbrood] User Expansion Factor","[panettone] User Expansion Factor","[bannock] User Expansion Factor","[barm] User Expansion Factor","[brown] User Expansion Factor","[crumpet] User Expansion Factor","[pita] User Expansion Factor","[pumpernickel] User Expansion Factor"
+2016-12,1.0162,3.3125,3.2854,1.2619,1.0998,1.1001,1.0868,1.0280,1.0149,1.0000,1.0021,1.0003,1.0003,1.0001,1.0000,1.0000,1.0000,1.0000
+2017-01,9.3701,6.0667,2.6272,4.1617,1.0880,1.0173,0,0,1.0058,1.0472,1.0009,0,1.0000,1.0001,1.0002,1.0000,1.0000,1.0001
+---------

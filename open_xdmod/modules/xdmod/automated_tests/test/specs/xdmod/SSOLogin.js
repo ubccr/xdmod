@@ -7,8 +7,8 @@ describe('Single Sign On Login', () => {
         browser.waitAndClick('#SSOLoginLink');
     });
     it('Should goto the Single Sign On login page and login', () => {
-        browser.waitForExist('form[action="/sso"]');
-        browser.submitForm('form[action="/sso"]');
+        browser.waitForExist('form[action="/signin"]');
+        browser.submitForm('form[action="/signin"]');
     });
     it('Display Logged in Users Name', () => {
         browser.frame();

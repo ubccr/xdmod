@@ -1,0 +1,20 @@
+title
+"Number of Jobs Submitted: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[0 - 1s] Number of Jobs Submitted","[1 - 30s] Number of Jobs Submitted","[30s - 30min] Number of Jobs Submitted","[30 - 60min] Number of Jobs Submitted","[1 - 5hr] Number of Jobs Submitted","[5 - 10hr] Number of Jobs Submitted","[10 - 18hr] Number of Jobs Submitted","[18+hr] Number of Jobs Submitted"
+2016-12-22,0,1,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,1,0,0
+2016-12-24,0,0,0,0,0,0,0,0
+2016-12-25,0,0,1,0,0,0,0,0
+2016-12-26,0,5,0,0,0,0,0,0
+2016-12-27,9,8,1,0,0,0,0,0
+2016-12-28,3,52,297,1,21,5,0,0
+2016-12-29,102,234,823,4,41,1,1,0
+2016-12-30,5507,8119,4436,1199,6007,367,25,0
+2016-12-31,4371,4909,7360,1318,4686,1294,173,0
+2017-01-01,2303,4843,4816,82,714,168,83,25
+---------

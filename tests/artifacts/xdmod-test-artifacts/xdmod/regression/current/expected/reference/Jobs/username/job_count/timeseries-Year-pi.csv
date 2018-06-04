@@ -1,0 +1,12 @@
+title
+"Number of Jobs Ended: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[swath] Number of Jobs Ended","[savsp] Number of Jobs Ended","[litst] Number of Jobs Ended","[ybsbu] Number of Jobs Ended","[ovenb] Number of Jobs Ended","[sante] Number of Jobs Ended"
+2016,713,25,11,6,4,2
+2017,0,1,0,0,1,0
+---------

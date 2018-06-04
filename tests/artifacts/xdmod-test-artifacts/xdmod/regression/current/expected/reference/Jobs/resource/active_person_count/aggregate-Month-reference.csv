@@ -1,0 +1,14 @@
+title
+"Number of Users: Active: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Number of Users: Active"
+robertson,46
+pozidriv,18
+frearson,9
+mortorq,7
+phillips,4
+---------

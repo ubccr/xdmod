@@ -1,0 +1,17 @@
+title
+"User Expansion Factor: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","User Expansion Factor"
+"0 - 1s",0.0000
+"1 - 30s",316.3051
+"30s - 30min",35.7816
+"30 - 60min",8.9675
+"1 - 5hr",6.8435
+"5 - 10hr",1.6699
+"10 - 18hr",1.1780
+18+hr,1.2185
+---------

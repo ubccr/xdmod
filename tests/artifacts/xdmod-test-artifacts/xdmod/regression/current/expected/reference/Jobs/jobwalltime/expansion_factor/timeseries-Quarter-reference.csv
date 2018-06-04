@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] User Expansion Factor","[1 - 30s] User Expansion Factor","[30s - 30min] User Expansion Factor","[30 - 60min] User Expansion Factor","[1 - 5hr] User Expansion Factor","[5 - 10hr] User Expansion Factor","[10 - 18hr] User Expansion Factor","[18+hr] User Expansion Factor"
+"2016 Q4",0,278.2336,36.3038,9.1029,7.6090,1.6886,1.2129,1.2318
+"2017 Q1",0.0000,388.4193,29.1017,7.3779,4.2598,1.3120,1.0785,1.1068
+---------

@@ -1,0 +1,50 @@
+title
+"Number of Jobs Submitted: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Number of Jobs Submitted"
+"Flycatcher, Taiga",49664
+"Lark, Calandra",6927
+"Warbler, Cetti's",2633
+Moorhen,2586
+"Shearwater, Macaronesian",719
+"Egret, Snowy",693
+Bufflehead,308
+Bittern,154
+Dunlin,123
+"Dowitcher, Short-billed",84
+"Goose, Red-breasted",69
+Fulmar,55
+"Bluetail, Red-flanked",49
+"Tern, Caspian",47
+"Warbler, Hooded",37
+Chaffinch,31
+Jackdaw,31
+"Scaup, Lesser",25
+Fieldfare,22
+"Harrier, Hen",20
+"Bunting, Ortolan",16
+Blackbird,14
+"Petrel, Fea's",14
+"White, Great",14
+"Shearwater, Balearic",13
+"Kestrel, Lesser",11
+"Martin, Sand",10
+"Spotted, Great",10
+"Accentor, Alpine",9
+Nuthatch,8
+Smew,7
+"Swift, Little",4
+"Warbler, Blackpoll",3
+"Chiffchaff, Iberian",1
+Dotterel,1
+"Gull, Glaucous-winged",1
+"Shearwater, Great",1
+"Warbler, Savi's",1
+"Yellowthroat, Common",1
+"Gull, Yellow-legged",0
+"Thrush, Hermit",0
+---------

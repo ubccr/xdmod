@@ -1,0 +1,66 @@
+{
+  "success": true,
+  "count": 5,
+  "response": [
+    {
+      "formal_name": "Reed Bunting",
+      "id": "3",
+      "username": "centerdirector",
+      "first_name": "Reed",
+      "last_name": "Bunting",
+      "email_address": "centerdirector@example.com",
+      "user_type": "1",
+      "role_type": "User, Center Director",
+      "account_is_active": "1",
+      "last_logged_in": "0"
+    },
+    {
+      "formal_name": "Turtle Dove",
+      "id": "4",
+      "username": "centerstaff",
+      "first_name": "Turtle",
+      "last_name": "Dove",
+      "email_address": "centerstaff@example.com",
+      "user_type": "1",
+      "role_type": "User, Center Staff",
+      "account_is_active": "1",
+      "last_logged_in": "0"
+    },
+    {
+      "formal_name": "Caspian Tern",
+      "id": "5",
+      "username": "principal",
+      "first_name": "Caspian",
+      "last_name": "Tern",
+      "email_address": "principal@example.com",
+      "user_type": "1",
+      "role_type": "User, Principal Investigator",
+      "account_is_active": "1",
+      "last_logged_in": "0"
+    },
+    {
+      "formal_name": "Admin User",
+      "id": "2",
+      "username": "admin",
+      "first_name": "Admin",
+      "last_name": "User",
+      "email_address": "admin@localhost",
+      "user_type": "2",
+      "role_type": "User, Manager",
+      "account_is_active": "1",
+      "last_logged_in": "1509029443.7082"
+    },
+    {
+      "formal_name": " Whimbrel",
+      "id": "6",
+      "username": "normaluser",
+      "first_name": "",
+      "last_name": "Whimbrel",
+      "email_address": "normaluser@example.com",
+      "user_type": "1",
+      "role_type": "User",
+      "account_is_active": "1",
+      "last_logged_in": "0"
+    }
+  ]
+}

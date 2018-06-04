@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "unit",
-        "engine": "MyISAM",
         "comment": "Units of countable: GBs, SUs, databases, etc.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "unit_id",

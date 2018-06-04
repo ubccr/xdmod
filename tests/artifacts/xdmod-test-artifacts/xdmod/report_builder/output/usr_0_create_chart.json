@@ -1,0 +1,13 @@
+{
+  "content_type": "application/json",
+  "http_code": 200,
+  "response": {
+    "success": false,
+    "message": "A chart identifier must be specified",
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [],
+    "data": []
+  }
+}

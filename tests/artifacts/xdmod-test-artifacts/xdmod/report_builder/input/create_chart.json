@@ -1,0 +1,328 @@
+[
+  [
+    {
+      "user": "pub",
+      "chart": {
+        "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&public_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=avg_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "pub_valid_create_chart"
+
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "pub",
+      "chart": {
+        "chart_id": "",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "pub__create_chart"
+
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "pub",
+      "chart": {
+        "chart_id": "0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "pub_0_create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "pub",
+      "chart": {
+        "chart_id": "0.0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "pub_0.0_create_chart"
+      },
+      "success": false
+    }
+  ],
+
+  [
+    {
+      "user": "cd",
+      "chart": {
+        "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&cdlic_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=avg_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "cd_valid_create_chart"
+      },
+      "success": true
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "chart": {
+        "chart_id": "",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "cd__create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "chart": {
+        "chart_id": "0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "cd_0_create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "cd",
+      "chart": {
+        "chart_id": "0.0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "cd_0.0_create_chart"
+      },
+      "success": true
+    }
+  ],
+
+  [
+    {
+      "user": "cs",
+      "chart": {
+        "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&cslic_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=avg_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "cs_valid_create_chart"
+      },
+      "success": true
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "chart": {
+        "chart_id": "",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "cs__create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "chart": {
+        "chart_id": "0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "cs_0_create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "cs",
+      "chart": {
+        "chart_id": "0.0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "cs_0.0_create_chart"
+      },
+      "success": true
+    }
+  ],
+
+  [
+    {
+      "user": "pi",
+      "chart": {
+        "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&pilic_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=avg_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "pi_valid_create_chart"
+      },
+      "success": true
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "chart": {
+        "chart_id": "",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "pi__create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "chart": {
+        "chart_id": "0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "pi_0_create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "pi",
+      "chart": {
+        "chart_id": "0.0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "pi_0.0_create_chart"
+      },
+      "success": true
+    }
+  ],
+
+  [
+    {
+      "user": "usr",
+      "chart": {
+        "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&usrlic_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=avg_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "usr_valid_create_chart"
+      },
+      "success": true
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "chart": {
+        "chart_id": "",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "usr__create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "chart": {
+        "chart_id": "0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "usr_0_create_chart"
+      },
+      "success": false
+    }
+  ],
+  [
+    {
+      "user": "usr",
+      "chart": {
+        "chart_id": "0.0",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
+      },
+      "expected": {
+        "file": "usr_0.0_create_chart"
+      },
+      "success": true
+    }
+  ]
+]

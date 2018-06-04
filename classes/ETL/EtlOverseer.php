@@ -326,6 +326,24 @@ class EtlOverseer extends Loggable implements iEtlOverseer
             $this->queryResourceCodeToIdMap($etlConfig);
         }
 
+        // Verify requested section names before proceeding
+        $sectionNames = $this->etlOverseerOptions->getSectionNames();
+        if ( count($sectionNames) > 0 ) {
+            $missing = array();
+
+            foreach ( $sectionNames as $sectionName ) {
+                if ( ! $etlConfig->sectionExists($sectionName) ) {
+                    $missing[] = $sectionName;
+                }
+            }
+
+            if ( count($missing) > 0 ) {
+                $this->logAndThrowException(
+                    sprintf("Unknown sections: %s", implode(", ", $missing))
+                );
+            }
+        }
+
         // Verify connections to the data endpoints prior to verifying the actions. Action
         // initialization may need to connect to a data endpoint to obtain the handle so these need
         // to be done first.
@@ -342,7 +360,6 @@ class EtlOverseer extends Loggable implements iEtlOverseer
         }
 
         // Verify sections that were specified as part of a pipeline
-        $sectionNames = $this->etlOverseerOptions->getSectionNames();
         if ( count($sectionNames) > 0 ) {
             $this->sectionActions = $this->verifySections($etlConfig, $sectionNames);
         }

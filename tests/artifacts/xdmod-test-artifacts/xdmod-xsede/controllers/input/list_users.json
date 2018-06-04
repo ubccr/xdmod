@@ -1,0 +1,32 @@
+[
+  [
+    {
+      "user_group": 1,
+      "output": "list_users_group_1"
+    }
+  ],
+  [
+    {
+      "user_group": 2,
+      "output": "list_users_group_2"
+    }
+  ],
+  [
+    {
+      "user_group": 3,
+      "output": "list_users_group_3"
+    }
+  ],
+  [
+    {
+      "user_group": 4,
+      "output": "list_users_group_4"
+    }
+  ],
+  [
+    {
+      "user_group": 700,
+      "output": "list_users_group_700"
+    }
+  ]
+]

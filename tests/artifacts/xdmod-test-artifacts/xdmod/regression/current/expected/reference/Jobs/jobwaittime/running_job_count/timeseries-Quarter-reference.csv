@@ -1,0 +1,11 @@
+title
+"Number of Jobs Running: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Number of Jobs Running","[1 - 30s] Number of Jobs Running","[30s - 30min] Number of Jobs Running","[30 - 60min] Number of Jobs Running","[1 - 5hr] Number of Jobs Running","[5 - 10hr] Number of Jobs Running","[10 - 18hr] Number of Jobs Running","[18+hr] Number of Jobs Running"
+"2016 Q4",9992,13329,12926,2522,11921,3028,218,2273
+"2017 Q1",2413,5059,5817,141,1277,966,427,466
+---------

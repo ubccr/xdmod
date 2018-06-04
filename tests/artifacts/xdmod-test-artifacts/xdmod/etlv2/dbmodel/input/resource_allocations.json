@@ -1,0 +1,147 @@
+{
+    "table_definition": {
+        "name": "resource_allocations",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "resource",
+                "type": "varchar(40)",
+                "nullable": true
+            },
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "available",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "requested",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "awarded",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "recommended",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "start_alloc_date",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "end_alloc_date",
+                "type": "datetime",
+                "nullable": false
+            },
+            {
+                "name": "start_time_ts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "end_time_ts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    },
+
+    "source_query": {
+        "records": {
+            "resource": "res.display_resource_name",
+            "id": "xdcdb_res.resource_id",
+            "available": "min(orn.number_value)",
+            "requested": "coalesce(sum(ar_req.resource_amount), 0)",
+            "recommended": "coalesce(sum(ar_rec.resource_amount), NULL)",
+            "awarded": "coalesce(sum(ar_awd.resource_amount), 0)",
+            "start_alloc_date": "date_trunc('quarter', o.submission_end_date)::timestamp + interval '3 months'",
+            "end_alloc_date": "date_trunc('quarter', o.submission_end_date)::timestamp + interval '6 months' - interval '1 second'",
+            "start_time_ts": "extract(epoch from (date_trunc('quarter', o.submission_end_date)::timestamp + interval '3 months') at time zone '${TIMEZONE}')",
+            "end_time_ts": "extract(epoch from (date_trunc('quarter', o.submission_end_date)::timestamp + interval '6 months' - interval '1 second') at time zone '${TIMEZONE}')"
+        },
+
+        "joins": [{
+            "name": "actions",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "ac"
+        },{
+            "name": "requests",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "r",
+            "on": "r.request_id = ac.request_id"
+        },{
+            "name": "opportunities",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "o",
+            "on": "o.opportunity_id = r.opportunity_id"
+        },{
+            "name": "allocation_types",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "at",
+            "on": "at.allocation_type_id = o.allocation_type_id"
+        },{
+            "name": "opportunity_resource_numbers",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "orn",
+            "on": "orn.opportunity_id = o.opportunity_id"
+        },{
+            "name": "resources",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "res",
+            "on": "res.resource_id = orn.resource_id"
+        },{
+            "name": "action_resources",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "ar_req",
+            "type": "left outer",
+            "on": "ar_req.action_id = ac.action_id and ar_req.resource_id = orn.resource_id and ar_req.resource_amount_type_id = 1"
+        },{
+            "name": "action_resources",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "ar_rec",
+            "type": "left outer",
+            "on": "ar_rec.action_id = ac.action_id and ar_rec.resource_id = orn.resource_id and ar_rec.resource_amount_type_id = 3"
+        },{
+            "name": "action_resources",
+            "schema": "${SOURCE_SCHEMA}",
+            "alias": "ar_awd",
+            "type": "left outer",
+            "on": "ar_awd.action_id = ac.action_id and ar_awd.resource_id = orn.resource_id and ar_awd.resource_amount_type_id = 2"
+        },{
+            "name": "resources",
+            "schema": "acct",
+            "alias": "xdcdb_res",
+            "type": "left outer",
+            "on": "xdcdb_res.rdr_resource_id = res.resource_repository_key"
+        }],
+
+        "where": [
+            "o.allocations_process_id = 1",
+            "at.allocation_type_id in (500006, 500016, 500018)",
+            "ac.action_status_type_id != 500002",
+            "ac.action_type_id in (2,3)",
+            "res.resource_type_id = 500003",
+            "ac.is_deleted = false",
+            "orn.resource_number_type_id = 1"
+        ],
+
+        "groupby": [
+            "res.display_resource_name",
+            "xdcdb_res.resource_id",
+            "o.opportunity_id"
+        ]
+
+    }
+}

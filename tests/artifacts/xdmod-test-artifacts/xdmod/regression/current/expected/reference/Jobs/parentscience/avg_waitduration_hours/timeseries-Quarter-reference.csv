@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown] Wait Hours: Per Job"
+"2016 Q4",4.99051340
+"2017 Q1",1.71038090
+---------

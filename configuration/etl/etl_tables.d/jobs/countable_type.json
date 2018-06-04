@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "countable_type",
-        "engine": "MyISAM",
         "comment": "Types of things that are countable. Accelerators, databases, storage, etc.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "countable_type_id",
@@ -12,9 +12,8 @@
             {
                 "name": "unit_id",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null,
-                "comment": "Optional unit for this countable"
+                "comment": "Optional unit for this countable",
+                "nullable": true
             },
             {
                 "name": "countable_type",

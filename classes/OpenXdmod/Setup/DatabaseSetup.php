@@ -8,6 +8,7 @@ namespace OpenXdmod\Setup;
 use TimePeriodGenerator;
 use CCR\DB\MySQLHelper;
 use CCR\DB;
+use CCR\Log;
 
 /**
  * Database setup.
@@ -20,6 +21,13 @@ class DatabaseSetup extends DatabaseSetupItem
      */
     public function handle()
     {
+        $conf = array(
+            'console' => true,
+            'consoleLogLevel' => Log::WARNING
+        );
+
+        $logger = Log::factory('xdmod-setup', $conf);
+
         $settings = $this->loadIniConfig('portal_settings');
 
         $this->console->displaySectionHeader('Database Setup');
@@ -132,58 +140,20 @@ EOT
         /**
          *  ETLv2 database bootstrap start
          */
-
-        $command = 'php ' . DATA_DIR . '/tools/etl/etl_overseer.php -p jobs-xdw.bootstrap';
-        $pipes = array();
-        $process = proc_open(
-            $command,
-            array(
-                0 => array('file', '/dev/null', 'r'),
-                1 => array('pipe', 'w'),
-                2 => array('pipe', 'w'),
-            ),
-            $pipes
+        $scriptOptions = array(
+            'process-sections' => array(
+                'xdb.bootstrap',
+                'jobs-xdw.bootstrap'
+            )
         );
-        if (!is_resource($process)) {
-            $this->console->displayBlankLine();
-            $this->console->displayMessage('Failed to create initialize databases:');
-            $this->console->displayBlankLine();
-            $this->console->displayMessage('Unable execute command:');
-            $this->console->displayMessage("\t" . $command);
-            $this->console->displayBlankLine();
-            $this->console->displayMessage('Details:');
-            $this->console->displayMessage(print_r(error_get_last(), true));
-            $this->console->displayBlankLine();
 
-            $this->console->prompt('Press ENTER to continue.');
+        $etlConfig = new \ETL\Configuration\EtlConfiguration(CONFIG_DIR . '/etl/etl.json', null, $logger, array());
+        $etlConfig->initialize();
+        \ETL\Utilities::setEtlConfig($etlConfig);
+        $overseerOptions = new \ETL\EtlOverseerOptions($scriptOptions, $logger);
+        $overseer = new \ETL\EtlOverseer($overseerOptions, $logger);
+        $overseer->execute($etlConfig);
 
-            return;
-        }
-        $out = stream_get_contents($pipes[1]);
-        $err = stream_get_contents($pipes[2]);
-
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-
-        $return_value = proc_close($process);
-
-        if ($return_value != 0) {
-            $this->console->displayBlankLine();
-            $this->console->displayMessage('Failed to create initialize databases:');
-            $this->console->displayBlankLine();
-            $this->console->displayMessage('Unable execute command:');
-            $this->console->displayBlankLine();
-            $this->console->displayMessage($command);
-            $this->console->displayBlankLine();
-            $this->console->displayMessage('returned:' . $return_value);
-            $this->console->displayMessage('stdout:');
-            $this->console->displayMessage($out);
-            $this->console->displayMessage('stderr:');
-            $this->console->displayMessage($err);
-            $this->console->displayBlankLine();
-            $this->console->prompt('Press ENTER to continue.');
-            throw new \Exception("$command returned $return_value, stdout:  stderr: $err");
-        }
 
         $aggregationUnits = array(
             'day',

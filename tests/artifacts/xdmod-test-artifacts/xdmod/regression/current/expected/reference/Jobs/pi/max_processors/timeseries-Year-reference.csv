@@ -1,0 +1,11 @@
+title
+"Job Size: Max (Core Count): by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Thrush, Hermit] Job Size: Max (Core Count)","[Dunlin] Job Size: Max (Core Count)","[Scaup, Lesser] Job Size: Max (Core Count)","[Gull, Yellow-legged] Job Size: Max (Core Count)","[Shearwater, Balearic] Job Size: Max (Core Count)","[Nuthatch] Job Size: Max (Core Count)","[Gull, Glaucous-winged] Job Size: Max (Core Count)","[Bunting, Ortolan] Job Size: Max (Core Count)","[Fieldfare] Job Size: Max (Core Count)","[Lark, Calandra] Job Size: Max (Core Count)","[Smew] Job Size: Max (Core Count)","[White, Great] Job Size: Max (Core Count)","[Chaffinch] Job Size: Max (Core Count)","[Tern, Caspian] Job Size: Max (Core Count)","[Swift, Little] Job Size: Max (Core Count)","[Warbler, Cetti's] Job Size: Max (Core Count)","[Goose, Red-breasted] Job Size: Max (Core Count)","[Warbler, Savi's] Job Size: Max (Core Count)","[Fulmar] Job Size: Max (Core Count)","[Accentor, Alpine] Job Size: Max (Core Count)","[Blackbird] Job Size: Max (Core Count)","[Dotterel] Job Size: Max (Core Count)","[Bluetail, Red-flanked] Job Size: Max (Core Count)","[Yellowthroat, Common] Job Size: Max (Core Count)","[Chiffchaff, Iberian] Job Size: Max (Core Count)","[Egret, Snowy] Job Size: Max (Core Count)","[Flycatcher, Taiga] Job Size: Max (Core Count)","[Jackdaw] Job Size: Max (Core Count)","[Kestrel, Lesser] Job Size: Max (Core Count)","[Martin, Sand] Job Size: Max (Core Count)","[Petrel, Fea's] Job Size: Max (Core Count)","[Warbler, Blackpoll] Job Size: Max (Core Count)","[Warbler, Hooded] Job Size: Max (Core Count)","[Bittern] Job Size: Max (Core Count)","[Bufflehead] Job Size: Max (Core Count)","[Dowitcher, Short-billed] Job Size: Max (Core Count)","[Harrier, Hen] Job Size: Max (Core Count)","[Moorhen] Job Size: Max (Core Count)","[Shearwater, Great] Job Size: Max (Core Count)","[Shearwater, Macaronesian] Job Size: Max (Core Count)","[Spotted, Great] Job Size: Max (Core Count)"
+2016,336,192,192,160,144,112,108,96,96,96,72,72,64,64,60,56,48,40,32,24,20,20,16,16,12,12,12,12,12,12,12,12,12,1,1,1,1,1,1,1,1
+2017,0,192,32,160,0,0,0,96,96,48,0,72,64,16,5,0,48,0,8,24,0,0,16,0,2,12,12,12,12,12,0,0,8,1,1,1,0,1,0,0,0
+---------

@@ -1,0 +1,59 @@
+{
+    "table_definition": {
+        "name": "SessionManager",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "session_token",
+                "type": "varchar(40)",
+                "nullable": false
+            },
+            {
+                "name": "session_id",
+                "type": "text",
+                "nullable": false
+            },
+            {
+                "name": "user_id",
+                "type": "int(11) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "ip_address",
+                "type": "varchar(40)",
+                "nullable": false
+            },
+            {
+                "name": "user_agent",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "init_time",
+                "type": "varchar(100)",
+                "nullable": false
+            },
+            {
+                "name": "last_active",
+                "type": "varchar(100)",
+                "nullable": false
+            },
+            {
+                "name": "used_logout",
+                "type": "tinyint(1) unsigned",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "session_token"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

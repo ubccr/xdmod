@@ -1,0 +1,51 @@
+{
+    "table_definition": {
+        "name": "federation_instances",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "federation_instance_id",
+                "type": "int(11) unsigned",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "prefix",
+                "type": "varchar(191)",
+                "comment": "generally fqdn with . replaced by - 191 limit due to utf8mb4",
+                "nullable": true
+            },
+            {
+                "name": "timezone",
+                "type": "varchar(191)",
+                "comment": "Timezone of the instance - 191 limit due to utf8mb4",
+                "nullable": true
+            },
+            {
+                "name": "extra",
+                "type": "text",
+                "comment": "any extra information to be stored about the instance, ie. contact information",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "prefix",
+                "columns": [
+                    "prefix"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "federation_instance_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

@@ -1,0 +1,72 @@
+{
+    "table_definition": {
+        "name": "ReportCharts",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "report_id",
+                "type": "varchar(100)",
+                "nullable": true
+            },
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "chart_type",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "type",
+                "type": "enum('image','datasheet')",
+                "nullable": true
+            },
+            {
+                "name": "selected",
+                "type": "tinyint(1)",
+                "default": 0,
+                "nullable": true
+            },
+            {
+                "name": "chart_id",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "ordering",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "chart_date_description",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "chart_title",
+                "type": "varchar(100)",
+                "nullable": true
+            },
+            {
+                "name": "chart_drill_details",
+                "type": "text",
+                "nullable": false
+            },
+            {
+                "name": "timeframe_type",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "image_data",
+                "type": "longblob",
+                "nullable": true
+            }
+        ],
+        "indexes": [],
+        "triggers": []
+    }
+}

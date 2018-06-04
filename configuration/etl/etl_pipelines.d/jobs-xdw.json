@@ -1,6 +1,6 @@
 {
     "#": "This is used by multiple pipelines, specifically xdmod datawarehouse",
-    "#": "and federation blades to initialize tables and their default data",
+    "#": "and federation instances to initialize tables and their default data",
     "bootstrap": [
         {
             "name": "table-create",
@@ -13,8 +13,9 @@
                 "jobs/xdw/allocation-breakdown.json",
                 "jobs/xdw/allocation-on-resource.json",
                 "jobs/xdw/allocation.json",
+                "jobs/xdw/days.json",
                 "jobs/xdw/error-descriptions.json",
-                "jobs/xdw/federation-blades.json",
+                "jobs/xdw/federation-instances.json",
                 "jobs/xdw/field-of-science-hierarchy.json",
                 "jobs/xdw/field-of-science.json",
                 "jobs/xdw/hosts.json",
@@ -24,6 +25,7 @@
                 "jobs/xdw/job-wait-times.json",
                 "jobs/xdw/jobhosts.json",
                 "jobs/xdw/min-max-date.json",
+                "jobs/xdw/months.json",
                 "jobs/xdw/node-count.json",
                 "jobs/xdw/organization.json",
                 "jobs/xdw/people-under-pi.json",
@@ -31,15 +33,18 @@
                 "jobs/xdw/piperson.json",
                 "jobs/xdw/principal-investigator.json",
                 "jobs/xdw/processor-buckets.json",
+                "jobs/xdw/quarters.json",
                 "jobs/xdw/queue.json",
                 "jobs/xdw/request.json",
                 "jobs/xdw/resource-allocated.json",
                 "jobs/xdw/resource-fact.json",
                 "jobs/xdw/resource-specs.json",
                 "jobs/xdw/resource-type.json",
+                "jobs/xdw/schema-version-history.json",
                 "jobs/xdw/service-provider.json",
                 "jobs/xdw/staging-jobhosts.json",
-                "jobs/xdw/system-account.json"
+                "jobs/xdw/system-account.json",
+                "jobs/xdw/years.json"
             ]
         },
         {
@@ -123,6 +128,18 @@
                     "type": "jsonfile",
                     "name": "unknown pi-person data data",
                     "path": "jobs/xdw/pi-person.json"
+                }
+            }
+        },
+        {
+            "name": "schema-version",
+            "definition_file": "jobs/xdw/schema-version-history.json",
+            "description": "resource-type + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "schema version history",
+                    "path": "jobs/xdw/schema-version-history.json"
                 }
             }
         }

@@ -1,0 +1,74 @@
+[
+  [
+    {
+      "username": "admin",
+      "output": "get_dw_descripters-admin-merged-1"
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "output": "get_dw_descripters-centerdirector-1"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "output": "get_dw_descripters-centerstaff-1"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "output": "get_dw_descripters-principal-1"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "output": "get_dw_descripters-normaluser-1"
+    }
+  ],
+  [
+    {
+      "username": "test.cd.one-center",
+      "output": "get_dw_descripters-test.cd.one-center-1"
+    }
+  ],
+  [
+    {
+      "username": "test.cs.one-center",
+      "output": "get_dw_descripters-test.cs.one-center-1"
+    }
+  ],
+  [
+    {
+      "username": "test.pi",
+      "output": "get_dw_descripters-test.pi-1"
+    }
+  ],
+  [
+    {
+      "username": "test.normal-user",
+      "output": "get_dw_descripters-test.normal-user-1"
+    }
+  ],
+  [
+    {
+      "username": "test.usr_dev",
+      "output": "get_dw_descripters-test.usr_dev-1"
+    }
+  ],
+  [
+    {
+      "username": "test.usr_mgr",
+      "output": "get_dw_descripters-test.usr_mgr-1"
+    }
+  ],
+  [
+    {
+      "username": "test.usr_mgr_dev",
+      "output": "get_dw_descripters-test.usr_mgr_dev-1"
+    }
+  ]
+]

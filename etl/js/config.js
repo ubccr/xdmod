@@ -100,9 +100,10 @@ module.exports = {
 			password: loggerConfigSection.pass
 		}
 	},
-	xdmodRoot: xdmodRoot,
-	xdmodConfigDir: xdmodConfigDir,
-	xdmodConfig: xdmodConfig,
+    xdmodBuildRoot: process.env.XDMOD_BUILD_ROOT ? process.env.XDMOD_BUILD_ROOT : xdmodRoot,
+    xdmodBuildConfigDir: process.env.XDMOD_BUILD_ROOT ? process.env.XDMOD_BUILD_ROOT + '/configuration' : xdmodConfigDir,
+    xdmodConfigDir: xdmodConfigDir,
+    xdmodConfig: xdmodConfig,
 
     getXdmodConfigFile: function(filename) {
         var confFile = xdmodConfigDir + '/' + filename + '.json';

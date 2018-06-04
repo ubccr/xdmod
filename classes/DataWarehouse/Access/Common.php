@@ -340,7 +340,7 @@ class Common
 
             $result = array(
                 "headers" => \DataWarehouse\ExportBuilder::getHeader( $format ),
-                "results" => \xd_charting\encodeJSON( $returnData )
+                "results" => json_encode($returnData)
             );
 
             return $result;

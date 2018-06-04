@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] Job Size: Min (Core Count)","[1 - 30s] Job Size: Min (Core Count)","[30s - 30min] Job Size: Min (Core Count)","[30 - 60min] Job Size: Min (Core Count)","[1 - 5hr] Job Size: Min (Core Count)","[5 - 10hr] Job Size: Min (Core Count)","[10 - 18hr] Job Size: Min (Core Count)","[18+hr] Job Size: Min (Core Count)"
+2016-12,1,1,1,1,1,1,4,1
+2017-01,1,1,1,1,1,1,8,1
+---------

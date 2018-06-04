@@ -1,0 +1,15 @@
+{
+    "success": true,
+    "stats": [
+        {
+            "last_name": "User",
+            "first_name": "Admin",
+            "email_address": "admin@localhost",
+            "username": "admin",
+            "role_list": "Manager,User",
+            "user_type": "2",
+            "timeframe": "2018-02",
+            "visit_frequency": 4583
+        }
+    ]
+}

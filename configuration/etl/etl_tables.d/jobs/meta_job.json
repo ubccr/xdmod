@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "meta_job",
-        "engine": "MyISAM",
         "comment": "Grouping of individual job records",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "meta_job_id",

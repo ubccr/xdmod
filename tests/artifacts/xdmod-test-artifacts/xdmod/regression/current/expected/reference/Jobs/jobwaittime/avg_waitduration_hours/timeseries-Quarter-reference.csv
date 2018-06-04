@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Wait Hours: Per Job","[1 - 30s] Wait Hours: Per Job","[30s - 30min] Wait Hours: Per Job","[30 - 60min] Wait Hours: Per Job","[1 - 5hr] Wait Hours: Per Job","[5 - 10hr] Wait Hours: Per Job","[10 - 18hr] Wait Hours: Per Job","[18+hr] Wait Hours: Per Job"
+"2016 Q4",0.00000000,0.00075406,0.12001539,0.71198619,1.98945386,8.16968874,10.74610984,99.58557853
+"2017 Q1",0.00000000,0.00044738,0.20672632,0.68843398,2.98810554,7.30122294,12.82805779,29.42140179
+---------

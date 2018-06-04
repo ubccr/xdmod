@@ -1,0 +1,35 @@
+{
+    "table_definition": {
+        "name": "UserTypes",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "type",
+                "type": "varchar(50)",
+                "nullable": true
+            },
+            {
+                "name": "color",
+                "type": "char(7)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

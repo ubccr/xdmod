@@ -1,0 +1,183 @@
+{
+  "totalCount": 1,
+  "data": [
+    {
+      "realms": {
+        "Jobs": {
+          "metrics": {
+            "avg_cpu_hours": {
+              "text": "CPU Hours: Per Job",
+              "info": "The average CPU hours (number of CPU cores x wall time hours) per Screwdriver job.<br\/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.",
+              "std_err": true
+            },
+            "total_cpu_hours": {
+              "text": "CPU Hours: Total",
+              "info": "The total CPU hours (number of CPU cores x wall time hours) used by Screwdriver jobs.<br\/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.",
+              "std_err": false
+            },
+            "max_processors": {
+              "text": "Job Size: Max (Core Count)",
+              "info": "The maximum size Screwdriver job in number of cores.<br\/>\n            <i>Job Size: <\/i>The total number of processor cores used by a (parallel) job.",
+              "std_err": false
+            },
+            "min_processors": {
+              "text": "Job Size: Min (Core Count)",
+              "info": "The minimum size Screwdriver job in number of cores.<br\/>\n            <i>Job Size: <\/i>The total number of processor cores used by a (parallel) job.",
+              "std_err": false
+            },
+            "normalized_avg_processors": {
+              "text": "Job Size: Normalized (% of Total Cores)",
+              "info": "The percentage average size Screwdriver job over total machine cores.<br>\n            <i>Normalized Job Size: <\/i>The percentage total number of processor cores used by a (parallel) job over the total number of cores on the machine.",
+              "std_err": false
+            },
+            "avg_processors": {
+              "text": "Job Size: Per Job (Core Count)",
+              "info": "The average job size per  Screwdriver job.<br>\n        <i>Job Size: <\/i>The number of processor cores used by a (parallel) job.",
+              "std_err": true
+            },
+            "avg_job_size_weighted_by_cpu_hours": {
+              "text": "Job Size: Weighted By CPU Hours (Core Count)",
+              "info": "The average Screwdriver job size weighted by CPU Hours. Defined as <br><i>Average Job Size Weighted By CPU Hours: <\/i> sum(i = 0 to n){job i core count*job i cpu hours}\/sum(i =  0 to n){job i cpu hours}",
+              "std_err": false
+            },
+            "avg_node_hours": {
+              "text": "Node Hours: Per Job",
+              "info": "The average node hours (number of nodes x wall time hours) per Screwdriver job.",
+              "std_err": true
+            },
+            "total_node_hours": {
+              "text": "Node Hours: Total",
+              "info": "The total node hours (number of nodes x wall time hours) used by Screwdriver jobs.",
+              "std_err": false
+            },
+            "job_count": {
+              "text": "Number of Jobs Ended",
+              "info": "The total number of Screwdriver jobs that ended within the selected duration.<br\/>\n            <i>Job: <\/i>A scheduled process for a computer resource in a batch processing environment.",
+              "std_err": false
+            },
+            "running_job_count": {
+              "text": "Number of Jobs Running",
+              "info": "The total number of running Screwdriver jobs.<br\/>\n        <i>Job: <\/i>A scheduled process for a computer resource in a batch processing environment.",
+              "std_err": false
+            },
+            "started_job_count": {
+              "text": "Number of Jobs Started",
+              "info": "The total number of Screwdriver jobs that started executing within the selected duration.<br\/>\n\t\t<i>Job: <\/i>A scheduled process for a computer resource in a batch processing environment.",
+              "std_err": false
+            },
+            "submitted_job_count": {
+              "text": "Number of Jobs Submitted",
+              "info": "Number of Jobs Submitted",
+              "std_err": false
+            },
+            "active_pi_count": {
+              "text": "Number of PIs: Active",
+              "info": "The total number of PIs that used Screwdriver resources.",
+              "std_err": false
+            },
+            "active_resource_count": {
+              "text": "Number of Resources: Active",
+              "info": "The total number of active Screwdriver resources.",
+              "std_err": false
+            },
+            "active_person_count": {
+              "text": "Number of Users: Active",
+              "info": "The total number of users that used Screwdriver resources.",
+              "std_err": false
+            },
+            "utilization": {
+              "text": "Screwdriver Utilization (%)",
+              "info": "The percentage of the Screwdriver obligation of a resource that has been utilized by Screwdriver jobs.<br\/><i>Screwdriver Utilization:<\/i> The ratio of the total CPU hours consumed by Screwdriver jobs over a given time period divided by the total CPU hours that the system is contractually required to provide to Screwdriver during that period. It does not include non-Screwdriver jobs.<br\/>It is worth noting that this value is a rough estimate in certain cases where the resource providers don't provide accurate records of their system specifications, over time.",
+              "std_err": false
+            },
+            "expansion_factor": {
+              "text": "User Expansion Factor",
+              "info": "Gauging Screwdriver job-turnaround time, it measures the ratio of wait time and the total time from submission to end of execution.<br\/>\n\t\t<i>User Expansion Factor = ((wait duration + wall duration) \/ wall duration). <\/i>",
+              "std_err": false
+            },
+            "avg_waitduration_hours": {
+              "text": "Wait Hours: Per Job",
+              "info": "The average time, in hours, a Screwdriver job waits before execution on the designated resource.<br\/>\n\t\t<i>Wait Time: <\/i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
+              "std_err": true
+            },
+            "total_waitduration_hours": {
+              "text": "Wait Hours: Total",
+              "info": "The total time, in hours, Screwdriver jobs waited before execution on their designated resource.<br\/>\n\t\t<i>Wait Time: <\/i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
+              "std_err": false
+            },
+            "avg_wallduration_hours": {
+              "text": "Wall Hours: Per Job",
+              "info": "The average time, in hours, a job takes to execute.<br\/>\n            In timeseries view mode, the statistic shows the average wall time per job per\n            time period. In aggregate view mode, this statistic is approximate. The\n            approximation is accurate when the average job walltime is small compared to\n            the aggregation period.<br \/>\n            <i>Wall Time:<\/i> Wall time is defined as the linear time between start and end time of execution for a particular job.",
+              "std_err": true
+            },
+            "total_wallduration_hours": {
+              "text": "Wall Hours: Total",
+              "info": "The total time, in hours, Screwdriver jobs took to execute.<br\/>\n\t\t<i>Wall Time:<\/i> Wall time is defined as the linear time between start and end time of execution for a particular job.",
+              "std_err": false
+            }
+          },
+          "dimensions": {
+            "none": {
+              "text": "None",
+              "info": "Summarizes jobs reported to the Screwdriver central database (excludes non-Screwdriver usage of the resource)."
+            },
+            "nsfdirectorate": {
+              "text": "Decanal Unit",
+              "info": "Decanal Unit"
+            },
+            "parentscience": {
+              "text": "Department",
+              "info": "Department"
+            },
+            "jobsize": {
+              "text": "Job Size",
+              "info": "A categorization of jobs into discrete groups based on the number of cores used by each job."
+            },
+            "jobwalltime": {
+              "text": "Job Wall Time",
+              "info": "A categorization of jobs into discrete groups based on the total linear time each job took to execute."
+            },
+            "jobwaittime": {
+              "text": "Job Wait Time",
+              "info": "A categorization of jobs into discrete groups based on the total linear time each job waited."
+            },
+            "nodecount": {
+              "text": "Node Count",
+              "info": "A categorization of jobs into discrete groups based on node count."
+            },
+            "pi": {
+              "text": "PI",
+              "info": "The principal investigator of a project has a valid allocation, which can be used by him\/her or the members of the project to run jobs on."
+            },
+            "fieldofscience": {
+              "text": "PI Group",
+              "info": "PI Group"
+            },
+            "queue": {
+              "text": "Queue",
+              "info": "Queue pertains to the low level job queues on each resource."
+            },
+            "resource": {
+              "text": "Resource",
+              "info": "A resource is a remote computer that can run jobs."
+            },
+            "resource_type": {
+              "text": "Resource Type",
+              "info": "A categorization of resources into by their general capabilities."
+            },
+            "person": {
+              "text": "User",
+              "info": "A person who is on a PIs allocation, hence able run jobs on resources."
+            },
+            "username": {
+              "text": "System Username",
+              "info": "The specific system username of the users who ran jobs."
+            }
+          },
+          "text": "Jobs",
+          "category": "Jobs"
+        }
+      }
+    }
+  ]
+}

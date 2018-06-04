@@ -3,6 +3,7 @@ httpd -k stop
 cd /root
 git clone https://github.com/mcguinness/saml-idp/
 cd saml-idp
+git checkout 8ff807a91f4badc3c0a10551e1d789df140a66cc
 rm -f package-lock.json
 openssl req -x509 -new -newkey rsa:2048 -nodes -subj '/C=US/ST=New York/L=Buffalo/O=UB/CN=CCR Test Identity Provider' -keyout idp-private-key.pem -out idp-public-cert.pem -days 7300
 echo "installing saml idp server"

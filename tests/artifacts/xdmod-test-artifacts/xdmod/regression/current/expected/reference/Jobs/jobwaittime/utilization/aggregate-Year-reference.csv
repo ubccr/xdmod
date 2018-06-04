@@ -1,0 +1,17 @@
+title
+"Screwdriver Utilization (%): by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Screwdriver Utilization (%)"
+"0 - 1s",2.167442335
+"1 - 30s",3.713946375
+"30s - 30min",2.487589126
+"30 - 60min",0.165070082
+"1 - 5hr",2.711861887
+"5 - 10hr",0.810200902
+"10 - 18hr",0.288498580
+18+hr,7.283558546
+---------

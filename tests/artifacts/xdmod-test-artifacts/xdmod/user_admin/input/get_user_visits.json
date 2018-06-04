@@ -1,0 +1,1025 @@
+[
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "1"
+      },
+      "output": "get_user_visits_year_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "1"
+      },
+      "output": "get_user_visits_month_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "1"
+      },
+      "success": false,
+      "output": "get_user_visits_quarter_1",
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "2"
+      },
+      "output": "get_user_visits_year_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "2"
+      },
+      "output": "get_user_visits_month_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "2"
+      },
+      "output": "get_user_visits_quarter_2",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "2,1"
+      },
+      "output": "get_user_visits_year_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "2,1"
+      },
+      "output": "get_user_visits_month_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "2,1"
+      },
+      "output": "get_user_visits_quarter_2_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "3"
+      },
+      "output": "get_user_visits_year_3",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "3"
+      },
+      "output": "get_user_visits_month_3",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "3"
+      },
+      "output": "get_user_visits_quarter_3",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "3,1"
+      },
+      "output": "get_user_visits_year_3_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "3,1"
+      },
+      "output": "get_user_visits_month_3_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "3,1"
+      },
+      "output": "get_user_visits_quarter_3_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "3,2"
+      },
+      "output": "get_user_visits_year_3_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "3,2"
+      },
+      "output": "get_user_visits_month_3_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "3,2"
+      },
+      "output": "get_user_visits_quarter_3_2",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "3,2,1"
+      },
+      "output": "get_user_visits_year_3_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "3,2,1"
+      },
+      "output": "get_user_visits_month_3_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "3,2,1"
+      },
+      "output": "get_user_visits_quarter_3_2_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "5"
+      },
+      "output": "get_user_visits_year_5",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "5"
+      },
+      "output": "get_user_visits_month_5",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "5"
+      },
+      "output": "get_user_visits_quarter_5",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "5,1"
+      },
+      "output": "get_user_visits_year_5_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "5,1"
+      },
+      "output": "get_user_visits_month_5_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "5,1"
+      },
+      "output": "get_user_visits_quarter_5_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "5,2"
+      },
+      "output": "get_user_visits_year_5_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "5,2"
+      },
+      "output": "get_user_visits_month_5_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "5,2"
+      },
+      "output": "get_user_visits_quarter_5_2",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "5,2,1"
+      },
+      "output": "get_user_visits_year_5_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "5,2,1"
+      },
+      "output": "get_user_visits_month_5_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "5,2,1"
+      },
+      "output": "get_user_visits_quarter_5_2_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "5,3"
+      },
+      "output": "get_user_visits_year_5_3",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "5,3"
+      },
+      "output": "get_user_visits_month_5_3",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "5,3"
+      },
+      "output": "get_user_visits_quarter_5_3",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "5,3,1"
+      },
+      "output": "get_user_visits_year_5_3_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "5,3,1"
+      },
+      "output": "get_user_visits_month_5_3_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "5,3,1"
+      },
+      "output": "get_user_visits_quarter_5_3_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "5,3,2"
+      },
+      "output": "get_user_visits_year_5_3_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "5,3,2"
+      },
+      "output": "get_user_visits_month_5_3_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "5,3,2"
+      },
+      "output": "get_user_visits_quarter_5_3_2",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "5,3,2,1"
+      },
+      "output": "get_user_visits_year_5_3_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "5,3,2,1"
+      },
+      "output": "get_user_visits_month_5_3_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "5,3,2,1"
+      },
+      "output": "get_user_visits_quarter_5_3_2_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700"
+      },
+      "output": "get_user_visits_year_700",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700"
+      },
+      "output": "get_user_visits_month_700",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700"
+      },
+      "output": "get_user_visits_quarter_700",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,1"
+      },
+      "output": "get_user_visits_year_700_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,1"
+      },
+      "output": "get_user_visits_month_700_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,1"
+      },
+      "output": "get_user_visits_quarter_700_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,2"
+      },
+      "output": "get_user_visits_year_700_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,2"
+      },
+      "output": "get_user_visits_month_700_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,2"
+      },
+      "output": "get_user_visits_quarter_700_2",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,2,1"
+      },
+      "output": "get_user_visits_year_700_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,2,1"
+      },
+      "output": "get_user_visits_month_700_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,2,1"
+      },
+      "output": "get_user_visits_quarter_700_2_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,3"
+      },
+      "output": "get_user_visits_year_700_3",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,3"
+      },
+      "output": "get_user_visits_month_700_3",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,3"
+      },
+      "output": "get_user_visits_quarter_700_3",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,3,1"
+      },
+      "output": "get_user_visits_year_700_3_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,3,1"
+      },
+      "output": "get_user_visits_month_700_3_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,3,1"
+      },
+      "output": "get_user_visits_quarter_700_3_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,3,2"
+      },
+      "output": "get_user_visits_year_700_3_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,3,2"
+      },
+      "output": "get_user_visits_month_700_3_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,3,2"
+      },
+      "output": "get_user_visits_quarter_700_3_2",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,3,2,1"
+      },
+      "output": "get_user_visits_year_700_3_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,3,2,1"
+      },
+      "output": "get_user_visits_month_700_3_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,3,2,1"
+      },
+      "output": "get_user_visits_quarter_700_3_2_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,5"
+      },
+      "output": "get_user_visits_year_700_5",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,5"
+      },
+      "output": "get_user_visits_month_700_5",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,5"
+      },
+      "output": "get_user_visits_quarter_700_5",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,5,1"
+      },
+      "output": "get_user_visits_year_700_5_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,5,1"
+      },
+      "output": "get_user_visits_month_700_5_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,5,1"
+      },
+      "output": "get_user_visits_quarter_700_5_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,5,2"
+      },
+      "output": "get_user_visits_year_700_5_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,5,2"
+      },
+      "output": "get_user_visits_month_700_5_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,5,2"
+      },
+      "output": "get_user_visits_quarter_700_5_2",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,5,2,1"
+      },
+      "output": "get_user_visits_year_700_5_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,5,2,1"
+      },
+      "output": "get_user_visits_month_700_5_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,5,2,1"
+      },
+      "output": "get_user_visits_quarter_700_5_2_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,5,3"
+      },
+      "output": "get_user_visits_year_700_5_3",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,5,3"
+      },
+      "output": "get_user_visits_month_700_5_3",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,5,3"
+      },
+      "output": "get_user_visits_quarter_700_5_3",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,5,3,1"
+      },
+      "output": "get_user_visits_year_700_5_3_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,5,3,1"
+      },
+      "output": "get_user_visits_month_700_5_3_1",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,5,3,1"
+      },
+      "output": "get_user_visits_quarter_700_5_3_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,5,3,2"
+      },
+      "output": "get_user_visits_year_700_5_3_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,5,3,2"
+      },
+      "output": "get_user_visits_month_700_5_3_2-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,5,3,2"
+      },
+      "output": "get_user_visits_quarter_700_5_3_2",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "year",
+        "user_types": "700,5,3,2,1"
+      },
+      "output": "get_user_visits_year_700_5_3_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "month",
+        "user_types": "700,5,3,2,1"
+      },
+      "output": "get_user_visits_month_700_5_3_2_1-add_user",
+      "success": true,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ],
+  [
+    {
+      "data": {
+        "timeframe": "quarter",
+        "user_types": "700,5,3,2,1"
+      },
+      "output": "get_user_visits_quarter_700_5_3_2_1",
+      "success": false,
+      "content_type": "text\/html; charset=UTF-8"
+    }
+  ]
+]

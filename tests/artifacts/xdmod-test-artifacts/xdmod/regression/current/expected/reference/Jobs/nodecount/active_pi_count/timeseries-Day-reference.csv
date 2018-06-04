@@ -1,0 +1,20 @@
+title
+"Number of PIs: Active: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[1] Number of PIs: Active","[4] Number of PIs: Active","[2] Number of PIs: Active","[8] Number of PIs: Active","[6] Number of PIs: Active","[12] Number of PIs: Active","[5] Number of PIs: Active","[7] Number of PIs: Active","[3] Number of PIs: Active","[9] Number of PIs: Active","[14] Number of PIs: Active","[16] Number of PIs: Active","[20] Number of PIs: Active","[24] Number of PIs: Active","[28] Number of PIs: Active"
+2016-12-22,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,8,0,1,2,1,1,0,0,0,0,0,0,0,0,0
+2016-12-28,15,1,1,2,1,2,0,1,0,0,0,0,0,0,0
+2016-12-29,20,2,2,3,2,2,1,2,0,0,1,0,1,0,0
+2016-12-30,31,7,6,5,2,3,2,2,0,1,1,1,1,1,1
+2016-12-31,26,5,3,5,2,2,2,2,1,0,0,1,0,0,1
+2017-01-01,20,4,4,4,2,0,1,0,1,0,0,1,1,0,0
+---------

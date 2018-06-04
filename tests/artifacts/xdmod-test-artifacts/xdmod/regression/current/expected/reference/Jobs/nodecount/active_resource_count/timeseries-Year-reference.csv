@@ -1,0 +1,11 @@
+title
+"Number of Resources: Active: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[1] Number of Resources: Active","[4] Number of Resources: Active","[2] Number of Resources: Active","[8] Number of Resources: Active","[12] Number of Resources: Active","[3] Number of Resources: Active","[5] Number of Resources: Active","[6] Number of Resources: Active","[7] Number of Resources: Active","[9] Number of Resources: Active","[14] Number of Resources: Active","[16] Number of Resources: Active","[20] Number of Resources: Active","[24] Number of Resources: Active","[28] Number of Resources: Active"
+2016,5,3,2,2,2,1,1,1,1,1,1,1,1,1,1
+2017,5,2,1,2,0,1,1,1,0,0,0,1,1,0,0
+---------

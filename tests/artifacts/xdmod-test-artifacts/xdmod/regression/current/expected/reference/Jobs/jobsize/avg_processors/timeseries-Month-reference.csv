@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] Job Size: Per Job (Core Count)","[2] Job Size: Per Job (Core Count)","[3 - 4] Job Size: Per Job (Core Count)","[5 - 8] Job Size: Per Job (Core Count)","[9 - 16] Job Size: Per Job (Core Count)","[17 - 32] Job Size: Per Job (Core Count)","[33 - 64] Job Size: Per Job (Core Count)","[65 - 128] Job Size: Per Job (Core Count)","[129 - 256] Job Size: Per Job (Core Count)","[257 - 512] Job Size: Per Job (Core Count)"
+2016-12,1.0000,2.0000,4.0000,7.9997,12.0355,24.8315,53.3793,94.5500,185.3333,312.0000
+2017-01,1.0000,2.0000,4.0000,7.9997,12.0979,25.8495,51.5833,95.5294,176.0000,0
+---------

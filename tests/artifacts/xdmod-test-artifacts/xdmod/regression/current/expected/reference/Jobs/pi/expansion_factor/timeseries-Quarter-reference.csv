@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Tern, Caspian] User Expansion Factor","[Dunlin] User Expansion Factor","[Gull, Yellow-legged] User Expansion Factor","[Flycatcher, Taiga] User Expansion Factor","[Warbler, Cetti's] User Expansion Factor","[Chiffchaff, Iberian] User Expansion Factor","[Fulmar] User Expansion Factor","[Shearwater, Balearic] User Expansion Factor","[Egret, Snowy] User Expansion Factor","[Fieldfare] User Expansion Factor","[Warbler, Savi's] User Expansion Factor","[White, Great] User Expansion Factor","[Petrel, Fea's] User Expansion Factor","[Shearwater, Macaronesian] User Expansion Factor","[Goose, Red-breasted] User Expansion Factor","[Gull, Glaucous-winged] User Expansion Factor","[Thrush, Hermit] User Expansion Factor","[Jackdaw] User Expansion Factor","[Bunting, Ortolan] User Expansion Factor","[Kestrel, Lesser] User Expansion Factor","[Lark, Calandra] User Expansion Factor","[Bittern] User Expansion Factor","[Accentor, Alpine] User Expansion Factor","[Warbler, Blackpoll] User Expansion Factor","[Harrier, Hen] User Expansion Factor","[Smew] User Expansion Factor","[Swift, Little] User Expansion Factor","[Bluetail, Red-flanked] User Expansion Factor","[Blackbird] User Expansion Factor","[Warbler, Hooded] User Expansion Factor","[Moorhen] User Expansion Factor","[Martin, Sand] User Expansion Factor","[Spotted, Great] User Expansion Factor","[Bufflehead] User Expansion Factor","[Chaffinch] User Expansion Factor","[Dowitcher, Short-billed] User Expansion Factor","[Dotterel] User Expansion Factor","[Nuthatch] User Expansion Factor","[Scaup, Lesser] User Expansion Factor","[Shearwater, Great] User Expansion Factor","[Yellowthroat, Common] User Expansion Factor"
+"2016 Q4",121.8812,73.4926,3.8567,6.8195,6.8756,4.4454,3.8878,3.8702,1.0162,2.2773,2.0475,1.5839,1.4886,1.4572,1.4765,1.3753,1.3348,1.2872,1.1175,1.1131,1.1171,1.0944,1.0760,1.0844,1.0642,1.0545,1.0160,1.0149,1.0131,1.0095,1.0080,1.0025,1.0024,1.0011,1.0000,1.0001,1.0000,1.0000,1.0000,1.0000,1.0000
+"2017 Q1",4.1617,66.3373,1677.0769,21.4660,0,1.0001,9.8468,0,3.5509,1.9022,0,1.1298,0,0,1.0524,0,0,1.1040,1.2473,1.0205,1.0606,1.0037,1.1002,0,0,0,1.0001,1.0058,0,1.0029,1.0088,1.0000,0,1.0013,1.0061,1.0002,0,0,1.0006,0,0
+---------

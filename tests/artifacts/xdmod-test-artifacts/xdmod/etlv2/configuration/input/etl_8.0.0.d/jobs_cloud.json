@@ -1,0 +1,92 @@
+{
+    "defaults": {
+
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        },
+
+        "cloud-jobs": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions"
+        }
+    },
+
+    "#": "Current Cloud job ingestion",
+
+    "cloud-jobs": [
+        {
+            "name": "CloudTableManagement",
+            "class": "ManageTables",
+            "description": "Manage job tables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "cloud/account.json",
+                "cloud/asset.json",
+                "cloud/asset_event.json",
+                "cloud/cloud_resource_metadata.json",
+                "cloud/event.json",
+                "cloud/host.json",
+                "cloud/image.json",
+                "cloud/instance_data.json",
+                "cloud/instance.json",
+                "cloud/job_record_event.json"
+            ],
+            "enabled": true
+        },
+        {
+            "name": "CloudEventTypeIngestor",
+            "description": "Cloud event types",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/event_type.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "CloudAssetTypeIngestor",
+            "description": "Cloud asset types",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/asset_type.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "CloudInstanceTypeIngestor",
+            "description": "Cloud instance types",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/instance_type.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "CloudRegionIngestor",
+            "description": "Cloud regions",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/region.json",
+            "enabled": true,
+            "truncate_destination": true
+        },
+        {
+            "name": "CloudAvailabilityZoneIngestor",
+            "description": "Cloud availability zones",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud/avail_zone.json",
+            "enabled": true,
+            "truncate_destination": true
+        }
+    ]
+}

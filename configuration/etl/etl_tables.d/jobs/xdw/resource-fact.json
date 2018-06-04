@@ -1,8 +1,8 @@
 {
     "table_definition": {
         "name": "resourcefact",
-        "engine": "MyISAM",
         "comment": "Information about resources.",
+        "engine": "MyISAM",
         "columns": [
             {
                 "name": "id",
@@ -14,9 +14,9 @@
             {
                 "name": "resourcetype_id",
                 "type": "int(11)",
-                "nullable": true,
                 "default": 0,
-                "comment": "The resource type id."
+                "comment": "The resource type id.",
+                "nullable": true
             },
             {
                 "name": "organization_id",
@@ -28,8 +28,8 @@
             {
                 "name": "name",
                 "type": "varchar(200)",
-                "nullable": true,
-                "comment": "The name of the resource."
+                "comment": "The name of the resource.",
+                "nullable": true
             },
             {
                 "name": "code",
@@ -40,14 +40,14 @@
             {
                 "name": "description",
                 "type": "varchar(1000)",
-                "nullable": true,
-                "comment": "The description of the resource."
+                "comment": "The description of the resource.",
+                "nullable": true
             },
             {
                 "name": "start_date",
                 "type": "datetime",
-                "nullable": true,
-                "comment": "The date the resource was put into commission."
+                "comment": "The date the resource was put into commission.",
+                "nullable": true
             },
             {
                 "name": "start_date_ts",
@@ -58,8 +58,8 @@
             {
                 "name": "end_date",
                 "type": "datetime",
-                "nullable": true,
-                "comment": "The end date of the resource."
+                "comment": "The end date of the resource.",
+                "nullable": true
             },
             {
                 "name": "end_date_ts",

@@ -1,0 +1,99 @@
+{
+    "paths": {
+        "#": "Override global paths",
+        "sql_dir": "etl_sql_override.d",
+        "macro_dir": "etl_macros_override.d",
+        "#": "Add a new path",
+        "new_path": "my_new_path"
+    },
+
+    "defaults": {
+
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud DB",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud",
+                    "create_schema_if_not_exists": true
+                }
+            },
+            "variables": {
+                "#": "Locally defined global variable to remain unchanged",
+                "LOCAL_GLOBAL": "/tmp/local_global",
+                "#": "Global variable defined locally to be overridden by action config",
+                "LOCAL_GLOBAL_OVERRIDE_ACTION_CONFIG_1": "/tmp/local_global",
+                "#": "Global variable overridden locally",
+                "GLOBAL_GLOBAL_OVERRIDE_LOCAL_GLOBAL": "/tmp/local_global"
+            }
+        },
+
+        "jobs-cloud-common": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true,
+            "variables": {
+                "#": "Pipeline-specific local variable to remain unchanged",
+                "LOCAL_PIPELINE": "/tmp/local_pipeline",
+                "#": "Pipeline-specfic local variable to be overriden by action config",
+                "LOCAL_PIPELINE_OVERRIDE_ACTION_CONFIG_1": "/tmp/local_pipeline"
+            }
+
+        }
+    },
+
+    "#": "Current Cloud job ingestion",
+
+    "jobs-cloud-common": [
+        {
+            "#": "Initialize tables that will be populated by infrastructure-specific actions",
+
+            "name": "CloudTableManagement",
+            "class": "ManageTables",
+            "description": "Manage job tables not managed by other actions",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "cloud_common/cloud_resource_metadata.json"
+            ],
+            "variables": {
+                "#": "Defined in action config",
+                "ACTION_CONFIG": "/tmp/action_config",
+                "#": "Locally defined global overridden by action config",
+                "LOCAL_GLOBAL_OVERRIDE_ACTION_CONFIG_1": "/tmp/action_config",
+                "#": "Globally defined global overridden by action config",
+                "GLOBAL_GLOBAL_OVERRIDE_ACTION_CONFIG_1": "/tmp/action_config",
+                "#": "Locally defined pipeline-specific overridden by action config",
+                "LOCAL_PIPELINE_OVERRIDE_ACTION_CONFIG_1": "/tmp/action_config"
+            }
+        },
+        {
+            "name": "CloudAssetTypeInitializer",
+            "description": "Initialize cloud asset types including unknown",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/asset_type.json",
+            "variables": {
+                "#": "Override global variable with value command line value",
+                "COMMAND_LINE_OVERRIDE_VALUE_2": "${CLI_OVERRIDE}",
+                "#": "Define local action variable value with command line value",
+                "COMMAND_LINE_NEW_VALUE": "${CLI_NEW}"
+            },
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Cloud asset types",
+                    "path": "cloud_common/asset_type.json"
+                }
+            }
+        }
+    ]
+}

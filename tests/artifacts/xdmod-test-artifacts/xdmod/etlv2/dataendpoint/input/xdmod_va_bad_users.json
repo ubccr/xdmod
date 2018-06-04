@@ -1,0 +1,50 @@
+[
+    {
+        "organizations": [
+            {
+                "division": "IN-OPTH", 
+                "appointment_type": "Faculty", 
+                "name": "Indiana University", 
+                "id": "helegreen"
+            }
+        ], 
+        "last_name": "Green", 
+        "groups": [
+            "BUS-KDFACULTY", 
+            "AssociateProfessors-Tenured", 
+            "CHEM-HiringCommitteeOne"
+        ]
+    },
+    {
+        "organizations": [
+            {
+                "division": "IN-HEMO", 
+                "appointment_type": "Faculty", 
+                "name": "Indiana University", 
+                "id": "dorogreen"
+            }
+        ], 
+        "first_name": "Dorothy", 
+        "groups": [
+            "MDEP-Gastroenterology", 
+            "Chemlearn-C484"
+        ]
+    }, 
+    {
+        "organizations": [
+            {
+                "division": "IN-UROL", 
+                "appointment_type": "Faculty", 
+                "name": "Indiana University", 
+                "id": "majohnson"
+            }
+        ], 
+        "first_name": "Mario", 
+        "last_name": "Johnson", 
+        "groups": [
+            "PSYC-CHFAC", 
+            "IUCC-Newsletter", 
+            "ET_STU03"
+        ]
+    } 
+]
