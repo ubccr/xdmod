@@ -1,12 +1,48 @@
-[
-    ["id", "min_memory", "max_memory", "description"],
-    [1, 1, 1024, "1GB"],
-    [2, 2048, 4096, "2 - 4 GB"],
-    [3, 4097, 8192, "4 - 8 GB"],
-    [4, 8193, 16384, "8 - 16 GB"],
-    [5, 16385, 32768, "16 - 32 GB"],
-    [6, 32769, 32768, "32 - 64 GB"],
-    [7, 65536, 131072, "64 - 128 GB"],
-    [8, 131073, 262144, "128 - 256 GB"],
-    [9, 262145, 1048576, "> 256 GB"]
-]
+{
+    "table_definition": {
+        "name": "memory_buckets",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(4)",
+                "nullable": false
+            },
+            {
+                "name": "min_memory",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "max_memory",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "description",
+                "type": "varchar(50)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "proc",
+                "columns": [
+                    "min_memory",
+                    "max_memory"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": []
+    }
+}
