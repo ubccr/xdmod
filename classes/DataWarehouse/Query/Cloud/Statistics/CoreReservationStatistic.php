@@ -5,7 +5,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 * @author Rudra Chakraborty
 * @date 05-31-2018
 *
-* Cores Reserved, Weighted by Wall Hours
+* Average Cores Reserved Weighted By Wall Hours
 */
 class CoreReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {

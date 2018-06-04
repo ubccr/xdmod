@@ -5,7 +5,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 * @author Rudra Chakraborty
 * @date 05-03-2018
 *
-* Sum of cores reserved on active virtual machines
+* Average Cores Per VM
 */
 class AverageCoresAllocatedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
@@ -14,7 +14,7 @@ class AverageCoresAllocatedStatistic extends \DataWarehouse\Query\Cloud\Statisti
         parent::__construct(
             'COALESCE(SUM(jf.num_cores) / SUM(jf.num_vms_running),0)',
             'avg_num_cores',
-            'Average Cores Allocated Per VM',
+            'Average Cores Per VM',
             'Cores',
             2
         );
@@ -22,6 +22,6 @@ class AverageCoresAllocatedStatistic extends \DataWarehouse\Query\Cloud\Statisti
 
     public function getInfo()
     {
-        return 'The average number of cores allocated to running virtual machines.<br/>.';
+        return 'The average number of cores assigned to running virtual machines.<br/>.';
     }
 }
