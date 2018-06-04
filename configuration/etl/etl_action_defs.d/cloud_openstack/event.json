@@ -18,7 +18,8 @@
             "event_type_id": "staging.event_type_id",
             "record_type_id": "staging.record_type_id",
             "host_id": "staging.host_id",
-            "image_id": "staging.image_id"
+            "image_id": "staging.image_id",
+            "submission_venue_id": 3
         },
 
         "joins": [
@@ -45,7 +46,8 @@
             "event_time_utc": "event_time_utc",
             "event_type_id": "event_type_id",
             "record_type_id": "record_type_id",
-            "host_id": "host_id"
+            "host_id": "host_id",
+            "submission_venue_id": "submission_venue_id"
         }
     }
 }
