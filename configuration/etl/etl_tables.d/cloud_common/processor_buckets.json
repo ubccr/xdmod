@@ -1,10 +1,48 @@
-[
-    ["id", "min_processors", "max_processors", "description"],
-    [1,       1,           1, "1"],
-    [2,       2,           2, "2"],
-    [3,       4,           4, "4"],
-    [4,       8,           8, "8"],
-    [5,       12,          12, "12"],
-    [6,       16,         16, "16"],
-    [6,       17,         96, "> 16"],
-]
+{
+    "table_definition": {
+        "name": "processor_buckets",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(4)",
+                "nullable": false
+            },
+            {
+                "name": "min_processors",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "max_processors",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "description",
+                "type": "varchar(50)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "proc",
+                "columns": [
+                    "min_processors",
+                    "max_processors"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": []
+    }
+}
