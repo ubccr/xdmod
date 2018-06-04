@@ -75,11 +75,10 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
             $transformedRecord[] = $this->instance_state;
             $this->initInstance($srcRecord);
         }
-        else if  (in_array($srcRecord['event_type_id'], $this->start_event_ids)) {
+        elseif  (in_array($srcRecord['event_type_id'], $this->start_event_ids)) {
             $this->updateInstance($srcRecord);
         }
-        else if (in_array($srcRecord['event_type_id'], $this->stop_event_ids)) {
-
+        elseif (in_array($srcRecord['event_type_id'], $this->stop_event_ids)) {
             $this->updateInstance($srcRecord);
             $transformedRecord[] = $this->instance_state;
             $this->resetInstance();
