@@ -5,6 +5,7 @@ namespace ComponentTests;
 use CCR\DB;
 use CCR\Json;
 use Models\Acl;
+use Models\Services\Users;
 use ReflectionClass;
 use User\Roles\CenterDirectorRole;
 use \XDUser;
@@ -912,14 +913,13 @@ class XDUserTest extends BaseTest
      */
     public function testUpgradeStaffMemberSaveUser()
     {
-        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $cd = new CenterDirectorRole();
-        $cd->configure($user);
+        $user = XDUser::getUserByUserName(self::PRINCIPAL_INVESTIGATOR_USER_NAME);
 
-        $cd->upgradeStaffMember($user);
+        Users::promoteUserToCenterStaff($user, self::DEFAULT_CENTER);
+
         $newRoles = $user->getRoles();
 
-        $this->assertTrue(in_array(self::CENTER_DIRECTOR_ACL_NAME, $newRoles));
+        $this->assertTrue(in_array(self::CENTER_STAFF_ACL_NAME, $newRoles));
     }
 
     /**
@@ -929,13 +929,13 @@ class XDUserTest extends BaseTest
     public function testDowngradeStaffMemberSaveUser()
     {
 
-        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-        $cd = new CenterDirectorRole();
-        $cd->configure($user);
-        $cd->downgradeStaffMember($user);
+        $user = XDUser::getUserByUserName(self::PRINCIPAL_INVESTIGATOR_USER_NAME);
+
+        Users::demoteUserFromCenterStaff($user, self::DEFAULT_CENTER);
+
         $newRoles = $user->getRoles();
 
-        $this->assertTrue(!in_array(self::CENTER_DIRECTOR_ACL_NAME, $newRoles));
+        $this->assertTrue(!in_array(self::CENTER_STAFF_ACL_NAME, $newRoles));
     }
 
     /**
