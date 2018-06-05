@@ -25,7 +25,7 @@ class Timeseries extends \DataWarehouse\Query\Query
         $start_date,
         $end_date,
         $group_by,
-        $stat = 'rate_of_usage',
+        $stat = 'total_cpu_hours',
         array $parameters = array(),
         $query_groupname = 'query_groupname',
         array $parameter_description = array(),
