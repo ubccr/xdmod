@@ -349,8 +349,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             $found = array_filter(
                 $actualUsers,
                 function ($value) use ($expectedUser) {
-                    return $expectedUser['person_id'] === $value['person_id'] &&
-                        $expectedUser['person_name']=== $value['person_name'];
+                    return $expectedUser['person_name']=== $value['person_name'];
                 }
             );
             if (empty($found)) {
