@@ -43,7 +43,13 @@ class UsageExplorerHelper
             }
             $endbrace = self::findbrace($outstr, $fnoff);
 
-            $outstr = substr($outstr, 0, $fnoff) . '"FUNCTION DELETED"' .  substr($outstr, $endbrace + 1);
+            $startQuote = substr($outstr, $fnoff - 1, 1);
+            $endQuote = substr($outstr, $endbrace + 1, 1);
+            $isQuoted = $startQuote === '"' && $endQuote === '"';
+
+            $replacementMessage = $isQuoted ? 'FUNCTION DELETED' : '"FUNCTION DELETED"';
+
+            $outstr = substr($outstr, 0, $fnoff) . $replacementMessage .  substr($outstr, $endbrace + 1);
         }
 
         return $outstr;

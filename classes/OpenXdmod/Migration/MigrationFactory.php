@@ -65,6 +65,8 @@ class MigrationFactory
             $migrations[] = new \OpenXdmod\Migration\Etlv2Migration($fromVersion, $toVersion);
         }
 
+        $migrations[] = new AclConfigMigration($fromVersion, $toVersion);
+
         $migration = new CompositeMigration(
             $fromVersion,
             $toVersion,

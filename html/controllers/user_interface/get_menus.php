@@ -1,5 +1,8 @@
 <?php
 
+use Models\Services\Acls;
+use Models\Services\Realms;
+
 require_once __DIR__ . '/../common_params.php';
 
 $returnData = array();
@@ -16,9 +19,7 @@ try {
             $query_group_name = $_REQUEST['query_group'];
         }
 
-        $realms = array_keys(
-            $activeRole->getAllQueryRealms($query_group_name)
-        );
+        $realms = Realms::getRealmsForUser($user);
 
         foreach ($realms as $realm) {
             $returnData[] = array(
@@ -42,14 +43,13 @@ try {
             $query_group_name = $_REQUEST['query_group'];
         }
 
-        // Get the categories and remove any realms the user doesn't have
-        // access to.
+        // Get the categories ( realms ) that XDMoD knows about.
         $categories = DataWarehouse::getCategories();
 
-        $realms = array_keys(
-            $activeRole->getAllQueryRealms($query_group_name)
-        );
+        // Retrieve the realms that the user has access to
+        $realms = Realms::getRealmsForUser($user);
 
+        // Filter the categories by those that the user has access to.
         $categories = array_map(function ($category) use ($realms) {
             return array_filter($category, function ($realm) use ($realms) {
                 return in_array($realm, $realms);
@@ -89,14 +89,18 @@ try {
             $hasItems = false;
             $categoryReturnData = array();
             foreach ($category as $realm_name) {
-                $query_descripter_groups = $activeRole->getQueryDescripters(
-                    $query_group_name,
+
+                // retrieve the query descripters this user is authorized to view for this realm.
+                $query_descripter_groups = Acls::getQueryDescripters(
+                    $user,
                     $realm_name
                 );
 
-                foreach ($query_descripter_groups as $query_descripter_group) {
-                    foreach ($query_descripter_group as $query_descripter) {
-                        if ($query_descripter->getShowMenu() !== true) { continue; }
+                foreach($query_descripter_groups as $realm => $query_descripter_group) {
+                    foreach($query_descripter_group as $query_descripter) {
+                        if ($query_descripter->getShowMenu() !== true) {
+                            continue;
+                        }
 
                         $nodeId = (
                             'group_by_'
@@ -104,31 +108,36 @@ try {
                             . '_'
                             . $query_descripter->getGroupByName()
                         );
+
+                        // Make sure that the nodeText, derived from the query descripters menu
+                        // label, has each  instance of $realm_name replaced with $categoryName.
                         $nodeText = preg_replace(
                             '/' . preg_quote($realm_name, '/') . '/',
                             $categoryName,
                             $query_descripter->getMenuLabel()
                         );
 
+                        // If this $nodeId has been seen before but for a different realm. Update
+                        // the list of realms associated with this $nodeId
                         $nodeRealms = (
-                            isset($categoryReturnData[$nodeId])
+                        isset($categoryReturnData[$nodeId])
                             ? $categoryReturnData[$nodeId]['realm'] . ",${realm_name}"
                             : $realm_name
                         );
 
                         $categoryReturnData[$nodeId] = array(
-                            'text'                 => $nodeText,
-                            'id'                   => $nodeId,
-                            'group_by'             => $query_descripter->getGroupByName(),
-                            'query_group'          => $query_group_name,
-                            'category'             => $categoryName,
-                            'realm'                => $nodeRealms,
+                            'text' => $nodeText,
+                            'id' => $nodeId,
+                            'group_by' => $query_descripter->getGroupByName(),
+                            'query_group' => $query_group_name,
+                            'category' => $categoryName,
+                            'realm' => $nodeRealms,
                             'defaultChartSettings' => $query_descripter->getChartSettings(true),
-                            'chartSettings'        => $query_descripter->getChartSettings(true),
-                            'node_type'            => 'group_by',
-                            'iconCls'              => 'menu',
-                            'description'          => $query_descripter->getGroupByLabel(),
-                            'leaf'                 => false,
+                            'chartSettings' => $query_descripter->getChartSettings(true),
+                            'node_type' => 'group_by',
+                            'iconCls' => 'menu',
+                            'description' => $query_descripter->getGroupByLabel(),
+                            'leaf' => false
                         );
 
                         $hasItems = true;
@@ -176,7 +185,7 @@ try {
                 $group_by_name = $_REQUEST['group_by'];
 
                 foreach ($categories[$categoryName] as $realm_name) {
-                    $query_descripter = $activeRole->getQueryDescripters($query_group_name, $realm_name, $group_by_name);
+                    $query_descripter = Acls::getQueryDescripters($user, $realm_name, $group_by_name);
                     if (empty($query_descripter)) {
                         continue;
                     }

@@ -38,7 +38,13 @@ class XDUserTest extends BaseTest
         if ($expected['_password'] !== null) {
             // The test user accounts intentionally have the password identical
             // to the username.
-            $this->assertTrue(password_verify($userName, $actual['_password']));
+
+            $verified = password_verify($userName, $actual['_password']);
+            // If we were not able to verify the password via the new method, fall back to md5.
+            if (!$verified) {
+                $verified = md5($userName) === $actual['_password'];
+            }
+            $this->assertTrue($verified, "Unable to verify the password for: $userName");
         }
 
         // Compare only keys that we care about, remove all others.
