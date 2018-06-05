@@ -2,6 +2,7 @@
   [
     {
       "username": "test.cd.one-center",
+      "long_name": "Auk, Great",
       "dimensionNames": {},
       "filters": {}
     }
@@ -9,6 +10,7 @@
   [
     {
       "username": "test.cs.one-center",
+      "long_name": "Auk, Little",
       "dimensionNames": {},
       "filters": {}
     }
@@ -16,6 +18,7 @@
   [
     {
       "username": "test.pi",
+      "long_name": "Flycatcher, Taiga",
       "dimensionNames": {
         "pi": "PI"
       },
@@ -23,7 +26,6 @@
         "pi": [
           {
             "valueName": "Flycatcher, T",
-            "valueId": "97",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": true
           }
@@ -34,6 +36,7 @@
   [
     {
       "username": "test.normal-user",
+      "long_name": "Honey-buzzard",
       "dimensionNames": {
         "person": "User"
       },
@@ -41,7 +44,6 @@
         "person": [
           {
             "valueName": "Honey-buzzard",
-            "valueId": "24",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": true
           }
@@ -52,6 +54,7 @@
   [
     {
       "username": "test.usr_dev",
+      "long_name": "Honey-buzzard",
       "dimensionNames": {
         "person": "User"
       },
@@ -59,7 +62,6 @@
         "person": [
           {
             "valueName": "Honey-buzzard",
-            "valueId": "24",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": true
           }
@@ -70,6 +72,7 @@
   [
     {
       "username": "test.usr_mgr",
+      "long_name": "Honey-buzzard",
       "dimensionNames": {
         "person": "User"
       },
@@ -77,7 +80,6 @@
         "person": [
           {
             "valueName": "Honey-buzzard",
-            "valueId": "24",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": true
           }
@@ -88,6 +90,7 @@
   [
     {
       "username": "test.usr_mgr_dev",
+      "long_name": "Honey-buzzard",
       "dimensionNames": {
         "person": "User"
       },
@@ -95,7 +98,6 @@
         "person": [
           {
             "valueName": "Honey-buzzard",
-            "valueId": "24",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": true
           }
@@ -106,6 +108,7 @@
   [
     {
       "username": "centerdirector",
+      "long_name": "Bunting, Reed",
       "dimensionNames": {
         "person": "User"
       },
@@ -113,7 +116,6 @@
         "person": [
           {
             "valueName": "Bunting, R",
-            "valueId": "42",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": false
           }
@@ -124,6 +126,7 @@
   [
     {
       "username": "centerstaff",
+      "long_name": "Dove, Turtle",
       "dimensionNames": {
         "person": "User"
       },
@@ -131,7 +134,6 @@
         "person": [
           {
             "valueName": "Dove, T",
-            "valueId": "57",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": false
           }
@@ -142,6 +144,7 @@
   [
     {
       "username": "principal",
+      "long_name": "Tern, Caspian",
       "dimensionNames": {
         "pi": "PI",
         "person": "User"
@@ -150,7 +153,6 @@
         "pi": [
           {
             "valueName": "Tern, C",
-            "valueId": "74",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": true
           }
@@ -158,7 +160,6 @@
         "person": [
           {
             "valueName": "Tern, C",
-            "valueId": "74",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": false
           }
@@ -169,6 +170,7 @@
   [
     {
       "username": "normaluser",
+      "long_name": "Whimbrel",
       "dimensionNames": {
         "person": "User"
       },
@@ -176,7 +178,6 @@
         "person": [
           {
             "valueName": "Whimbrel",
-            "valueId": "60",
             "isUserSpecificFilter": true,
             "isMostPrivilegedRoleFilter": true
           }

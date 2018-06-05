@@ -7,7 +7,7 @@
           1
         ]
       },
-      "person": 181
+      "long_name": "Auk, Great"
     }
   ],
   [
@@ -18,7 +18,7 @@
           1
         ]
       },
-      "person": 31
+      "long_name": "Auk, Little"
     }
   ],
   [
@@ -27,7 +27,7 @@
       "acls": {
         "pi": []
       },
-      "person": 97
+      "long_name": "Flycatcher, Taiga"
     }
   ],
   [
@@ -36,7 +36,7 @@
       "acls": {
         "usr": []
       },
-      "person": 24
+      "long_name": "Honey-buzzard"
     }
   ],
   [
@@ -45,7 +45,7 @@
       "acls": {
         "dev": []
       },
-      "person": 498,
+      "long_name": "Albatross, Black-browed",
       "output": "test.only_feature_acls",
       "expected_success": false
     }
@@ -56,7 +56,7 @@
       "acls": {
         "mgr": []
       },
-      "person": 603,
+      "long_name": "Albatross, Yellow-nosed",
       "output": "test.only_feature_acls",
       "expected_success": false
     }
@@ -68,7 +68,7 @@
         "mgr": [],
         "dev": []
       },
-      "person": 110,
+      "long_name": "Amherst's, Lady",
       "output": "test.only_feature_acls",
       "expected_success": false
     }
@@ -80,7 +80,7 @@
         "usr": [],
         "dev": []
       },
-      "person": 24
+      "long_name": "Honey-buzzard"
     }
   ],
   [
@@ -90,7 +90,7 @@
         "usr": [],
         "mgr": []
       },
-      "person": 24
+      "long_name": "Honey-buzzard"
     }
   ],
   [
@@ -101,7 +101,7 @@
         "mgr": [],
         "dev": []
       },
-      "person": 24
+      "long_name": "Honey-buzzard"
     }
   ]
 ]

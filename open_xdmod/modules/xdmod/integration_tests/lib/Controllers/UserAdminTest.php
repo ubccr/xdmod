@@ -240,6 +240,22 @@ class UserAdminTest extends BaseUserAdminTest
         $expectedDimensionNames = $user['dimensionNames'];
         $expectedFilters = $user['filters'];
 
+        // Add person ID to person/PI filters where appropriate.
+        if (isset($user['long_name'])) {
+            $personId = $this->peopleHelper->getPersonIdByLongName($user['long_name']);
+            foreach ($expectedFilters as $type => $filters) {
+                if (in_array($type, array('person', 'pi'))) {
+                    $expectedFilters[$type] = array_map(
+                        function ($filter) use ($personId) {
+                            $filter['valueId'] = $personId;
+                            return $filter;
+                        },
+                        $filters
+                    );
+                }
+            }
+        }
+
         $this->helper->authenticateDirect($username, $username);
 
         $response = $this->helper->get('rest/v0.1/warehouse/quick_filters');

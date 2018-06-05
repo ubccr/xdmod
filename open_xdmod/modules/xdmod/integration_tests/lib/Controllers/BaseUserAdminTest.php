@@ -6,6 +6,7 @@ use CCR\Json;
 use Exception;
 use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
+use TestHarness\PeopleHelper;
 
 abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,10 +51,16 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
      */
     protected $testFiles;
 
+    /**
+     * @var PeopleHelper
+     */
+    protected $peopleHelper;
+
     protected function setUp()
     {
         $this->helper = new XdmodTestHelper();
         $this->testFiles = new TestFiles(__DIR__ . '/../../');
+        $this->peopleHelper = new PeopleHelper();
     }
 
     public function getTestFiles()
@@ -196,7 +203,10 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         );
 
         // retrieve optional arguments
-        $person = isset($options['person']) ? $options['person'] : -1;
+        $person = -1;
+        if (isset($options['long_name'])) {
+            $person = $this->peopleHelper->getPersonIdByLongName($options['long_name']);
+        }
         $institution = isset($options['institution']) ? $options['institution'] : -1;
         $firstName = isset($options['first_name']) ? $options['first_name'] : 'Test';
         $lastName = isset($options['last_name']) ? $options['last_name'] : 'User';
