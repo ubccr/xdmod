@@ -102,6 +102,32 @@
                     "schema": "modw"
                 }
             }
+        },
+        {
+            "name": "MemoryBucketGenerator",
+            "description": "Memory Buckets for cloud data",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/memory_buckets.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "memory buckets data",
+                    "path": "cloud_common/memory_buckets.json"
+                }
+            }
+        },
+        {
+            "name": "ProcessorBucketGenerator",
+            "description": "Processor Buckets for cloud data",
+            "class": "StructuredFileIngestor",
+            "definition_file": "cloud_common/processor_buckets.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "processor buckets data",
+                    "path": "cloud_common/processor_buckets.json"
+                }
+            }
         }
     ]
 }

@@ -1,0 +1,101 @@
+{
+    "+realms": {
+        "Cloud": {
+            "schema": "modw_cloud",
+            "table": "cloudfact",
+            "datasource": "Cloud",
+            "group_bys": [{
+                    "name": "none",
+                    "class": "GroupByNone"
+                },
+                {
+                    "name": "person",
+                    "class": "GroupByPerson"
+                },
+                {
+                    "name": "project",
+                    "class": "GroupByProject"
+                },
+                {
+                    "name": "configuration",
+                    "class": "GroupByConfiguration"
+                },
+                {
+                    "name": "resource",
+                    "class": "GroupByResource"
+                },
+                {
+                    "name": "day",
+                    "class": "GroupByDay"
+                },
+                {
+                    "name": "month",
+                    "class": "GroupByMonth"
+                },
+                {
+                    "name": "quarter",
+                    "class": "GroupByQuarter"
+                },
+                {
+                    "name": "year",
+                    "class": "GroupByYear"
+                },
+                {
+                    "name": "memory_buckets",
+                    "class": "GroupByVMMemory"
+                },
+                {
+                    "name": "vm_size",
+                    "class": "GroupByVMCores"
+                }
+            ],
+            "statistics": [{
+                    "name": "num_vms_ended",
+                    "class": "VMCountStatistic"
+                },
+                {
+                    "name": "num_vms_running",
+                    "class": "RunningVMCountStatistic",
+                    "control": true
+                },
+                {
+                    "name": "num_vms_started",
+                    "class": "StartedVMCountStatistic",
+                    "control": true
+                },
+                {
+                    "name": "avg_wallduration_hours",
+                    "class": "AverageWallHoursStatistic"
+                },
+                {
+                    "name": "core_time",
+                    "class": "CoreHoursStatistic"
+                },
+                {
+                    "name": "wall_time",
+                    "class": "WallHoursStatistic"
+                },
+                {
+                    "name": "avg_num_cores",
+                    "class": "AverageCoresAllocatedStatistic"
+                },
+                {
+                    "name": "num_cores",
+                    "class": "CoresAllocatedStatistic"
+                },
+                {
+                    "name": "avg_cores_reserved",
+                    "class": "CoreReservationStatistic"
+                },
+                {
+                    "name": "avg_memory_reserved",
+                    "class": "MemoryReservationStatistic"
+                },
+                {
+                    "name": "avg_disk_reserved",
+                    "class": "DiskReservationStatistic"
+                }
+            ]
+        }
+    }
+}

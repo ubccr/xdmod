@@ -66,10 +66,17 @@
                             "block_devices",
                             "public_ip",
                             "private_ip"
-                        ]
+                        ],
+                        "filters": [ {
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "-c 'select(.event_type != \"VOL_STATE_REPORT\") | select((.event_type == \"STATE_REPORT\" and .node_controller) // .event_type != \"STATE_REPORT\")'"
+                        }]
                     }
                 }
-            }
+            },
+            "stop_on_exception" : false
         },
         {
             "#": "An event can specify an array of block devices associated with it.  Re-process",
@@ -108,7 +115,8 @@
                         }]
                     }
                 }
-            }
+            },
+            "stop_on_exception": false
         },
         {
             "name": "EucalyptusCloudAccountIngestor",

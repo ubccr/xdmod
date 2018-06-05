@@ -1,0 +1,48 @@
+{
+    "table_definition": {
+        "name": "memory_buckets",
+        "engine": "MyISAM",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(4)",
+                "nullable": false
+            },
+            {
+                "name": "min_memory",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "max_memory",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "description",
+                "type": "varchar(50)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "proc",
+                "columns": [
+                    "min_memory",
+                    "max_memory"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
+        "triggers": []
+    }
+}
