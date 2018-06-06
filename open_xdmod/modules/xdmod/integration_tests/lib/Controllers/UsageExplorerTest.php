@@ -447,7 +447,7 @@ EOF;
             'controller_module' => 'user_interface'
         );
 
-        $expectedNames = array('swath', 'savsp', 'ovenb', 'ybsbu', 'litst', 'sante');
+        $expectedNames = array('swath', 'savsp', 'litst', 'ybsbu', 'ovenb', 'sante');
 
         $tests[] = array('pi', $chartSettings, $expectedNames);
 

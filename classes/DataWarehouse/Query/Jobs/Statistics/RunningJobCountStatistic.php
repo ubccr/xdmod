@@ -7,11 +7,25 @@ namespace DataWarehouse\Query\Jobs\Statistics;
 *
 * class for calculating the statistics pertaining to a job query
 */
+
+use DataWarehouse\Query\Model\TableField;
+
 class RunningJobCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(sum(jf.running_job_count),0)', 'running_job_count', 'Number of Jobs Running', 'Number of Jobs', 0);
+        $stmt = 'COALESCE(SUM(jf.running_job_count), 0)';
+
+        if ($query_instance->getQueryType() == 'aggregate') {
+            $date_table = $query_instance->getDateTable();
+            if ($date_table) {
+                $date_id_field = new TableField($date_table, 'id');
+
+                $stmt = 'COALESCE(SUM(CASE ' . $date_id_field . ' WHEN ' . $query_instance->getMinDateId() . ' THEN jf.running_job_count ELSE jf.started_job_count END), 0)';
+            }
+        }
+
+        parent::__construct($stmt, 'running_job_count', 'Number of Jobs Running', 'Number of Jobs', 0);
     }
 
     public function getInfo()
@@ -22,13 +36,5 @@ class RunningJobCountStatistic extends \DataWarehouse\Query\Jobs\Statistic
     public function isVisible()
     {
         return true;
-    }
-
-    /**
-     * @see DataWarehouse\Query\Statistic
-     */
-    public function usesTimePeriodTablesForAggregate()
-    {
-        return false;
     }
 }
