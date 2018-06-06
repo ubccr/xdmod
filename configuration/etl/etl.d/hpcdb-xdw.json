@@ -18,7 +18,7 @@
                 }
             }
         },
-        "hpcdb-xdw.ingest": {
+        "hpcdb-xdw-ingest": {
             "class": "DatabaseIngestor",
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
@@ -27,7 +27,7 @@
     },
 
     "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
-    "hpcdb-xdw.ingest": [{
+    "hpcdb-xdw-ingest": [{
         "name": "account",
         "definition_file": "jobs/xdw/account.json",
         "description": "Account records"
