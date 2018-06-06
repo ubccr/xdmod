@@ -47,6 +47,10 @@
                 {
                     "name": "vm_size",
                     "class": "GroupByVMCores"
+                },
+                {
+                    "name": "submission_venue",
+                    "class": "GroupBySubmissionVenue"
                 }
             ],
             "statistics": [{
