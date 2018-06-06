@@ -759,6 +759,10 @@ class EtlConfiguration extends Configuration
         // If the options class name does not include a namespace designation, use the namespace from
         // the action configuration.
 
+        if ( ! isset($config->options_class) ) {
+            $this->logAndThrowException("Options class not defined for $actionName");
+        }
+
         $optionsClassName = $config->options_class;
 
         if ( false === strstr($optionsClassName, '\\') ) {
@@ -767,10 +771,6 @@ class EtlConfiguration extends Configuration
                     ( strpos($config->namespace, '\\') != strlen($config->namespace) - 1 ? "\\" : "" ) .
                     $optionsClassName;
             }
-        }
-
-        if ( ! class_exists($optionsClassName) ) {
-            $this->logAndThrowException("Options class '$optionsClassName' not found");
         }
 
         if ( ! class_exists($optionsClassName) ) {
