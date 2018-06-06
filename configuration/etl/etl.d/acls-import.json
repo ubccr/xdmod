@@ -24,7 +24,7 @@
     },
     "acls-import": [
         {
-            "name": "acls.import.xdmod.public_user",
+            "name": "xdmod-public-user",
             "description": "Imports the Public User if it does not already exist.",
             "sql_file_list": [
                 "acls/xdmod/create_public_user.sql"
@@ -32,7 +32,7 @@
             "enabled": true
         },
         {
-            "name": "acls.import.xdmod.user_acls",
+            "name": "xdmod-user-acls",
             "description": "Imports the records that relate which Users should have which Acls for xdmod",
             "sql_file_list": [
                 "acls/xdmod/user_acls.sql"
@@ -40,7 +40,7 @@
             "enabled": true
         },
         {
-            "name": "acls.import.xdmod.user_acl_group_by_parameters",
+            "name": "xdmod-user-acl-group-by-parameters",
             "description": "Imports the records which denote a value to use for a particular User / Acl / Group By combination for xdmod",
             "sql_file_list": [
                 {
@@ -50,7 +50,7 @@
             "enabled": true
         },
         {
-            "name": "acls.import.xdmod.user_acl_group_by_parameters_sync",
+            "name": "xdmod-user-acl-group-by-parameters-sync",
             "description": "Syncs current user_acl_group_by_parameters records w/ all 'provider' group_bys",
             "sql_file_list": [
                 {
@@ -60,7 +60,7 @@
             "enabled": true
         },
         {
-            "name": "acls.import.xdmod.scrub_acl_tabs",
+            "name": "xdmod-scrub-acl-tabs",
             "description": "Ensures that the acl_tabs table does not contain erroneous data",
             "sql_file_list": [
                 {
@@ -70,7 +70,7 @@
             "enabled": true
         },
         {
-            "name": "acls.import.xdmod.update_admin_users",
+            "name": "xdmod-update-admin-users",
             "description": "Ensure that any users that only have 'mgr' have 'usr' added.",
             "sql_file_list": [
                 {
@@ -80,7 +80,7 @@
             "enabled": true
         },
         {
-            "name": "acls.import.xdmod.clear_orphan_parameter_records",
+            "name": "xdmod-clear-orphan-parameter-records",
             "description": "Ensure that any orphan parameter records are removed.",
             "sql_file_list": [
                 {
