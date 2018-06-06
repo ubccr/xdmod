@@ -11,7 +11,7 @@ FROM (
         NOW()    AS time_last_updated,
         TRUE     AS account_is_active,
         -1       AS person_id,
-        0        AS organization_id,
+        -1        AS organization_id,
         0        AS field_of_science,
         ut.id    AS user_type
     FROM UserTypes ut

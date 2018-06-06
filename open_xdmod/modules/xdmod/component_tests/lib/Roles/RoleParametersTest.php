@@ -87,7 +87,7 @@ class RoleParametersTest extends BaseTest
             )
         );
 
-        // Check that the output for Parameters::getParamters matches the expected output
+        // Check that the output for Parameters::getParameters matches the expected output
         $this->assertEquals(
             $actualContents,
             $actual,

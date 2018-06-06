@@ -2966,4 +2966,9 @@ SQL;
         }
         return $results;
     }
+
+    public function getOrganizationID()
+    {
+        return $this->_organizationID;
+    }
 }//XDUser

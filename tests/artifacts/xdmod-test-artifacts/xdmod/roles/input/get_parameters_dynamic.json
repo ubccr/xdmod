@@ -1,0 +1,35 @@
+{
+  "classes": [
+    "CenterDirector",
+    "CenterStaff",
+    "Developer",
+    "Manager",
+    "PrincipalInvestigator",
+    "User",
+    "Public"
+  ],
+  "acl_persons": {
+    "cd": "42",
+    "cs": "57",
+    "pi": "74",
+    "usr": "60",
+    "mgr": "-1",
+    "dev": "-1"
+  },
+  "acls": [
+    "cd",
+    "cs",
+    "pi",
+    "usr",
+    "mgr",
+    "dev"
+  ],
+  "feature_acls": [
+    "dev",
+    "mgr"
+  ],
+  "center_acls": [
+    "cd",
+    "cs"
+  ]
+}

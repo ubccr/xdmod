@@ -37,7 +37,13 @@ class Parameters
         foreach ($dimensions as $dimension) {
             switch ($dimension) {
                 case 'provider':
-                    $parameters['provider'] = (string)$user->getOrganizationID();
+                    $organizationId = $user->getOrganizationID();
+                    if ($organizationId === null ||
+                        in_array((int)$organizationId, array(UNKNOWN_ORGANIZATION_ID, 0))
+                    ) {
+                        $organizationId = Organizations::getOrganizationForUser($user->getUserID());
+                    }
+                    $parameters['provider'] = (string)$organizationId;
                     break;
                 case 'person':
                     $parameters['person'] = (string)$user->getPersonID();
