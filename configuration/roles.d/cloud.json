@@ -28,6 +28,10 @@
                 {
                     "realm": "Cloud",
                     "group_by": "memory_buckets"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "submission_venue"
                 }
             ]
         }
