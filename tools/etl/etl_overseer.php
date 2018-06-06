@@ -508,14 +508,14 @@ if ( $showList ) {
             case 'list-actions':
                 $sectionNames = $etlConfig->getSectionNames();
                 sort($sectionNames);
-                $headings = array("Section","Action","Status","Description");
+                $headings = array("Action","Status","Description");
                 print implode(LIST_SEPARATOR, $headings) . "\n";
 
                 foreach ( $sectionNames as $sectionName ) {
                     $actions = $etlConfig->getConfiguredActionNames($sectionName);
                     foreach ( $actions as $actionName ) {
                         $options = $etlConfig->getActionOptions($actionName, $sectionName);
-                        $fields = array($sectionName, $actionName, ( $options->enabled ? "enabled" : "disabled"), $options->description);
+                        $fields = array($actionName, ( $options->enabled ? "enabled" : "disabled"), $options->description);
                         print implode(LIST_SEPARATOR, $fields) . "\n";
                     }
                 }
