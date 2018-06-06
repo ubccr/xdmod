@@ -794,10 +794,6 @@ class Usage extends Common
                     unset($meDataSeries['visible']);
                     unset($meDataSeries['events']);
 
-                    if ($meRequestIsTimeseries) {
-                        unset($meDataSeries['drilldown']);
-                    }
-
                     // Note: keep dataLabels color param set, else we lose some of the pie datalabels
                     // in the Usage chart only.
                     if ($meDataSeries['type'] === 'pie') {
