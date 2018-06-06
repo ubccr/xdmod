@@ -880,7 +880,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 $roleIdentifier = $role->getIdentifier(true);
                 $isMostPrivilegedRole = $roleIdentifier === $mostPrivilegedRoleIdentifier;
 
-                $parameters = Parameters::getParameters($user, $roleIdentifier);
+                $parameters = Parameters::getParameters($user, $role->getIdentifier());
                 foreach ($parameters as $dimensionId => $valueId) {
                     if (!$multipleProvidersSupported && $dimensionId === $serviceProviderDimensionId) {
                         continue;
