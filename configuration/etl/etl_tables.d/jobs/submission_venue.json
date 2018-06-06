@@ -25,6 +25,11 @@
                 "name": "description",
                 "type": "varchar(1024)",
                 "nullable": true
+            },
+            {
+                "name": "order_id",
+                "type": "int(5) UNSIGNED",
+                "nullable": true
             }
         ],
         "indexes": [

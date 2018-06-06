@@ -26,7 +26,7 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "The venue that a piece of cloud data was submitted from.";
+        return "The venue that a job or cloud instance was initiated from.";
     }
 
     public function __construct()
@@ -43,12 +43,12 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
                 submission_venue sv"
         );
 
-      $this->_id_field_name = 'submission_venue_id';
-      $this->_long_name_field_name = 'display';
-      $this->_short_name_field_name = 'submission_venue';
-      $this->_order_id_field_name = 'submission_venue_id';
-      $this->modw_schema = new Schema('modw');
-      $this->submission_venue_table = new Table($this->modw_schema, 'submission_venue', 'sv');
+        $this->_id_field_name = 'submission_venue_id';
+        $this->_long_name_field_name = 'display';
+        $this->_short_name_field_name = 'submission_venue';
+        $this->_order_id_field_name = 'order_id';
+        $this->modw_schema = new Schema('modw');
+        $this->submission_venue_table = new Table($this->modw_schema, 'submission_venue', 'sv');
     }
 
     public function applyTo(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group = false)
@@ -95,7 +95,7 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
         $query->addWhereCondition(new WhereCondition($submission_venue_id_field, $operation, $whereConstraint));
     }
 
-    public function addOrder(Query &$query, $multi_group = false, $dir = 'asc',$prepend = false)
+    public function addOrder(Query &$query, $multi_group = false, $dir = 'asc', $prepend = false)
     {
         $orderField = new OrderBy(new TableField($this->submission_venue_table, $this->_order_id_field_name), $dir, $this->getName());
         if ($prepend === true) {
@@ -118,4 +118,3 @@ class GroupBySubmissionVenue extends \DataWarehouse\Query\Cloud\GroupBy
         );
     }
 }
-?>
