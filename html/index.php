@@ -275,8 +275,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.mappedPID = '{$user->getPersonID(TRUE)}';\n";
 
             $obj_warehouse = new XDWarehouse();
-            $pName = rawurlencode($obj_warehouse->resolveName($user->getPersonID(true)));
-            print "CCR.xdmod.ui.mappedPName = '{$pName}';\n";
+            print 'CCR.xdmod.ui.mappedPName = ' . json_encode($obj_warehouse->resolveName($user->getPersonID(true))) . ";\n";
 
             print "CCR.xdmod.ui.isManager = $manager;\n";
             print "CCR.xdmod.ui.isDeveloper = $developer;\n";
