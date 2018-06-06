@@ -29,7 +29,7 @@
             {
                 "name": "order_id",
                 "type": "int(5) UNSIGNED",
-                "nullable": true
+                "nullable": false
             }
         ],
         "indexes": [
