@@ -3,6 +3,7 @@
 namespace DataWarehouse;
 
 use Models\Services\Acls;
+use Models\Services\Parameters;
 
 /**
  * Singleton class for helping guide the creation of a Query object.
@@ -230,7 +231,7 @@ class QueryBuilder
                     $role_data[1]
                 );
 
-                $role_parameters = $activeRole->getParameters();
+                $role_parameters = Parameters::getParameters($user, $activeRole->getIdentifier());
                 $request = array_merge($request, $role_parameters);
                 $query_group = 'tg' . $suffix;
             }
@@ -359,7 +360,7 @@ class QueryBuilder
                     $role_data[1]
                 );
 
-                $role_parameters = $activeRole->getParameters();
+                $role_parameters = Parameters::getParameters($user, $activeRole->getIdentifier());
                 $request = array_merge($request, $role_parameters);
                 $query_group = 'tg' . $suffix;
             }
