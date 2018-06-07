@@ -926,30 +926,6 @@ class EtlConfiguration extends Configuration
     }  // getEnabledActionNames()
 
     /** -----------------------------------------------------------------------------------------
-     * Search for an action name across all sections and return the sections where it was found.
-     *
-     * @param $actionName The name of the action to search for.
-     *
-     * @return An array containing the sections where the action name was found, or FALSE if none
-     *  was found.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    private function findActionSections($actionName)
-    {
-        $sectionNameMatches = array();
-
-        foreach ( $this->actionOptions as $sectionName => $sectionActionOptions ) {
-            if ( array_key_exists($actionName, $sectionActionOptions) ) {
-                $sectionNameMatches[] = $sectionName;
-            }
-        }
-
-        return ( 0 == count($sectionNameMatches) ? false : $sectionNameMatches );
-
-    }  // findActionSections()
-
-    /** -----------------------------------------------------------------------------------------
      * @param $actionName The name of the action to search for.
      * @param $sectionName Optional section name to look for the action
      *
@@ -961,12 +937,11 @@ class EtlConfiguration extends Configuration
     private function actionExists($actionName, $sectionName = null)
     {
         if ( null === $sectionName ) {
-            return ( false !== $this->findActionSections($actionName) );
-        } elseif ( ! $this->sectionExists($sectionName) ) {
-            return false;
-        } else {
-            return array_key_exists($actionName, $this->actionOptions[$sectionName]);
+            $parts = $this->parseActionName($actionName);
+            $sectionName = $parts['section'];
         }
+
+        return isset($this->actionOptions[$sectionName][$actionName]);
 
     }  // actionExists()
 
@@ -1053,17 +1028,16 @@ class EtlConfiguration extends Configuration
     }  // getSectionActionNames()
 
     /** -----------------------------------------------------------------------------------------
-     * Get an individual option object for the specified action in the specified section. If the
-     * section is not provided all sections will be searched for the action. If an action is found
-     * in multiple sections an exception will be thrown so a section name should be provided where
-     * possible.
+     * Get an the option object for the specified action in the specified section. If the section
+     * is not provided it will be parsed from the action name. Action names have the format
+     * module.section.action.
      *
      * @param $actionName The name of the action to examine.
      * @param $sectionName The name of the section to examine.
      *
      * @return An option object
      *
-     * @throw Exception If the section is procided and does not exist, or the name does not exist in
+     * @throw Exception If the section is provided and does not exist, or the name does not exist in
      *   the provided section.
      * @throw Exception If the same action name was found in multuple sections.
      * ------------------------------------------------------------------------------------------
@@ -1071,29 +1045,55 @@ class EtlConfiguration extends Configuration
 
     public function getActionOptions($actionName, $sectionName = null)
     {
-        if ( null !== $sectionName ) {
-            if ( ! $this->sectionExists($sectionName) ) {
-                $this->logAndThrowException("Invalid section name '$sectionName'");
-            } elseif ( ! $this->actionExists($actionName, $sectionName) ) {
-                $this->logAndThrowException("Action '$actionName' not found in section '$sectionName'");
-            }
-        } else {
-            $sectionList = $this->findActionSections($actionName);
-            if ( count($sectionList) > 1 ) {
-                $this->logAndThrowException(sprintf(
-                    "Ambiguous action '%s' found in multiple sections '%s'",
-                    $actionName,
-                    implode("', '", $sectionList)
-                ));
-            } elseif ( false === $sectionList ) {
-                $this->logAndThrowException("Action '$actionName' not found");
-            }
-            $sectionName = array_shift($sectionList);
+        if ( null === $sectionName ) {
+            $parts = $this->parseActionName($actionName);
+            $sectionName = $parts['section'];
         }
 
         return $this->actionOptions[$sectionName][$actionName];
 
     }  // getActionOptions()
+
+    /** ------------------------------------------------------------------------------------------
+     * Parse an action name into component parts (module, section, action). If the name does not
+     * include a module name, return NULL for the module. For example:
+     *   module:        module
+     *   short_section: section
+     *   section:       module.section
+     *   short_action:  action
+     *   action:        module.section.action
+     *
+     * @param string $actionName An action name with the format [module.]section.action
+     * @return array|bool An associative array containing the keys module, section, action,
+     *   short_section, and short_action with values set to the corresponding part of the
+     *   action name. Return FALSE if the action name was malformed.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    private function parseActionName($actionName)
+    {
+        $parts = explode('.', $actionName);
+        if ( 3 == count($parts) ) {
+            return array(
+                'module'        => $parts[0],
+                'short_section' => $parts[1],
+                'section'       => sprintf('%s.%s', $parts[0], $parts[1]),
+                'short_action'  => $parts[2],
+                'action'        => $actionName
+            );
+        } elseif ( 2 == count($parts) ) {
+            return array(
+                'module'        => null,
+                'short_section' => $parts[0],
+                'section'       => $parts[0],
+                'short_action'  => $parts[1],
+                'action'        => $actionName
+            );
+        }
+
+        return false;
+
+    } // parseActionName()
 
     /** -----------------------------------------------------------------------------------------
      * Get a globally defined endpoint, or FALSE if it is not defined.
