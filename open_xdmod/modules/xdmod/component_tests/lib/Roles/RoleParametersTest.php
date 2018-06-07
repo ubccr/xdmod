@@ -37,7 +37,7 @@ class RoleParametersTest extends BaseTest
     public function testGetParametersForExistingUsers(array $options)
     {
         $username = $options['username'];
-        $roleClass = $options['class'];
+        $roleName = $options['role_name'];
 
         // Ensure that we retrieve the correct user.
         if ($username !== 'pub') {
@@ -46,72 +46,26 @@ class RoleParametersTest extends BaseTest
             $user = XDUser::getPublicUser();
         }
 
-        // Setup the provided role class for execution of the getParameters function.
-        $role = aRole::factory($roleClass);
-        $role->configure($user);
-
-        // `$role->getParameters` is the expected output as it's the current way of doing things
-        $expected = $role->getParameters();
-
         // `Parameters::getParameters` is the actual output as it's the proposed way of doing things
-        $actual = Parameters::getParameters($user, $role->getIdentifier());
+        $actual = Parameters::getParameters($user, $roleName);
 
-        $expectedOptions = $options['expected'];
-
-        // if we only have a 'file' then both expected / actual should match the file and each other.
-        if (array_key_exists('file', $expectedOptions)) {
-            $expectedContents = JSON::loadFile($this->getTestFiles()->getFile('roles', $expectedOptions['file']));
-            $actualContents = $expectedContents;
-            $testEquality = true;
-        } else {
-            // The expected / actual may differ due to Parameters::getParameters not caring which
-            // role a user has that requires extra filtering. If the role calls for filtering by a
-            // particular property then it's going to return that property / value.
-            $expectedContents = JSON::loadFile($this->getTestFiles()->getFile('roles', $expectedOptions['expected']));
-            $actualContents = JSON::loadFile($this->getTestFiles()->getFile('roles', $expectedOptions['actual']));
-            $testEquality = false;
-        }
+        $expectedFile = $options['expected'];
+        $expectedContents = JSON::loadFile($this->getTestFiles()->getFile('roles', $expectedFile));
 
         // This is here for debugging purposes only
-        /*$this->debug($expected, $expectedContents, $actual, $actualContents, $username, $roleClass, $user, $testEquality);*/
+        /*$this->debug($expectedContents, $expectedContents, $actual, $actual, $username, $roleClass, $user, true);*/
 
-        // Check that the output for $role->getParameters matches the expected output.
+        // If the output of both functions are meant to be the same then directly compare them.
         $this->assertEquals(
             $expectedContents,
-            $expected,
-            sprintf(
-                "\n[%s] Failed asserting role->getParameters matches expected.\nExpected: %s\nActual: %s",
-                $roleClass,
-                json_encode($expectedContents),
-                json_encode($expected)
-            )
-        );
-
-        // Check that the output for Parameters::getParameters matches the expected output
-        $this->assertEquals(
-            $actualContents,
             $actual,
             sprintf(
-                "\n[%s] Failed asserting Parameters::getParameters matches expected.\nExpected: %s\nActual: %s",
-                $roleClass,
-                json_encode($actualContents),
+                "\n[%s] Failed asserting that role->getParameters === Parameters::getParameters.\nExpected: %s\nActual: %s",
+                $roleName,
+                json_encode($expectedContents),
                 json_encode($actual)
             )
         );
-
-        // If the output of both functions are meant to be the same then directly compare them.
-        if ($testEquality) {
-            $this->assertEquals(
-                $expected,
-                $actual,
-                sprintf(
-                    "\n[%s] Failed asserting that role->getParameters === Parameters::getParameters.\nExpected: %s\nActual: %s",
-                    $roleClass,
-                    json_encode($expected),
-                    json_encode($actual)
-                )
-            );
-        }
     }
 
     /**
