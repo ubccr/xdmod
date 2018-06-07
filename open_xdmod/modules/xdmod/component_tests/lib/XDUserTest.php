@@ -7,6 +7,7 @@ use CCR\Json;
 use Models\Acl;
 use Models\Services\Users;
 use ReflectionClass;
+use TestHarness\UserHelper;
 use User\Roles\CenterDirectorRole;
 use \XDUser;
 use Models\Services\Acls;
@@ -1704,17 +1705,13 @@ class XDUserTest extends BaseTest
      * @param string|null $primaryRole
      * @param string|null $email
      * @return XDUser
+     * @throws Exception if there was a problem instantiating the XDUser object.
      */
     private static function getUser($password, $firstName, $middleName, $lastName, array $acls = null, $primaryRole = null, $email = null, $username = null)
     {
         $newUserName = isset($username) ? $username : self::getUserName(self::DEFAULT_TEST_USER_NAME);
-        $emailAddress = isset($email) ? $email : "$newUserName" . self::DEFAULT_EMAIL_ADDRESS_SUFFIX;
 
-        if (!isset($acls) && !isset($primaryRole)) {
-            $user = new XDUser($newUserName, $password, $firstName, $middleName, $lastName);
-        } else {
-            $user = new XDUser($newUserName, $password, $emailAddress, $firstName, $middleName, $lastName, $acls, $primaryRole);
-        }
+        $user = UserHelper::getUser($newUserName, $password, $firstName, $middleName, $lastName, $acls, $primaryRole, $email);
 
         self::$users[$newUserName] = $user;
         return $user;

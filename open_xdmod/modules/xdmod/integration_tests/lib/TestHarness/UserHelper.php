@@ -6,7 +6,7 @@ use XDUser;
 
 class UserHelper
 {
-    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@example.com";
+    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
 
     /**
      * A helper function that takes care of some of the default values for instantiating an XDUser.
