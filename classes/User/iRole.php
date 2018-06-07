@@ -18,17 +18,7 @@ interface iRole
     //  @returns array
     public function getParameters();
 
-
-
-    // -----------------------------------
-    
-    // permittedModules: i.e. The tabs to be presented for a particular role
-    //  @returns array
-    public function getPermittedModules();
-	
 	public function getAllQueryRealms($query_groupname);
-	
-	public function getSummaryCharts();
 } //iRole
 
 ?>

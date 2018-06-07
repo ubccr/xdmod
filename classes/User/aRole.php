@@ -183,14 +183,6 @@ abstract class aRole implements \User\iRole
 
         $this->_roleCategories = array('tg' => ORGANIZATION_NAME);
 
-        $modules = self::getConfig($this->_identifier, 'permitted_modules');
-
-        foreach ($modules as $moduleConfig) {
-            $this->addPermittedModule(
-                new \User\Elements\Module($moduleConfig)
-            );
-        }
-
         $descripters = self::getConfig(
             $this->_identifier,
             'query_descripters'
@@ -334,34 +326,6 @@ abstract class aRole implements \User\iRole
     }
 
     /**
-     * Permitted modules accessor.
-     *
-     * @return array
-     */
-    public function getPermittedModules()
-    {
-        return $this->_permittedModules;
-    }
-
-    /**
-     * Add a module to the array of permitted modules.
-     *
-     * @param \User\Elements\Module $module
-     */
-    protected function addPermittedModule(\User\Elements\Module $module)
-    {
-        $this->_permittedModules[] = $module;
-    }
-
-    /**
-     * @deprecated Does not appear to be used anywhere.
-     */
-    public function getMyUsageMenus()
-    {
-        return $this->_myUsageMenus;
-    }
-
-    /**
      * Add a query descripter.
      *
      * @param \User\Elements\QueryDescripter $query_descripter
@@ -460,33 +424,5 @@ abstract class aRole implements \User\iRole
     public function getIdentifier($absolute_identifier = false)
     {
         return $this->_identifier;
-    }
-
-    /**
-     * The factory method will determine which Role definition to load,
-     * based on the value of $role. The role object returned can then
-     * take user data into account when determining proper parameters
-     * (by means of consulting moddb.UserRoleParameters).
-     */
-    public function getRoleCategories($exclude_xsede_category = false)
-    {
-        if ($exclude_xsede_category == true) {
-            unset($this->_roleCategories['tg']);
-        }
-
-        return $this->_roleCategories;
-    }
-
-    /**
-     * Returns the summary charts config data for this role.
-     *
-     * @return array
-     */
-    public function getSummaryCharts()
-    {
-        return array_map(
-            function ($chart) { return json_encode($chart); },
-            self::getConfig($this->_identifier, 'summary_charts')
-        );
     }
 }
