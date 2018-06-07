@@ -62,6 +62,7 @@
             "configuration/linker.json",
             "configuration/organization.json",
             "configuration/portal_settings.ini",
+            "configuration/portal_settings.d",
             "configuration/processor_buckets.json",
             "configuration/resource_specs.json",
             "configuration/resource_types.json",
