@@ -144,7 +144,7 @@ class RoleParametersTest extends BaseTest
         $lastName = $options['last_name'];
         $acls = $options['acls'];
         $primaryAcl = $options['primary_role'];
-        $roleClasses = $options['role_classes'];
+        $expectedAcls = $options['expected'];
         $organizationId = isset($options['organization_id']) ? $options['organization_id'] : null;
         $personId = isset($options['person_id']) ? $options['person_id'] : null;
 
@@ -184,6 +184,7 @@ class RoleParametersTest extends BaseTest
                     );
                 }
             }
+
         } catch (\Exception $e) {
             echo sprintf(
                 "\n-=-=-=-=-=-=-=-=-=-=-=-=-\n[%s] %s\n%s",
@@ -206,15 +207,7 @@ class RoleParametersTest extends BaseTest
         // Here is the actual meat of the test. Note this code needs to be out of the user creation
         // try so that if an equality test fails, the exception will actually be propagated
         // correctly.
-        foreach ($roleClasses as $roleClass) {
-            // Setup the provided role class for execution of the getParameters function.
-            $role = aRole::factory($roleClass);
-            $role->configure($user);
-            $roleId = $role->getIdentifier();
-
-            // `$role->getParameters` is the expected output as it's the current way of doing things
-            $expected = $role->getParameters();
-
+        foreach ($expectedAcls as $roleId => $expected) {
             // `Parameters::getParameters` is the actual output as it's the proposed way of doing things
             $actual = Parameters::getParameters($user, $roleId);
 
@@ -250,7 +243,7 @@ class RoleParametersTest extends BaseTest
                 (!in_array($roleId, $centerAcls) && in_array($roleId, $acls))
             ) {
                 // again, just for debugging
-                /*$this->debug($expected, $expected, $actual, $actual, $username, $roleClass, $user, true);*/
+                /*$this->debug($expected, $expected, $actual, $actual, $username, $roleId, $user, true);*/
                 $this->assertEquals(
                     $expected,
                     $actual,
@@ -315,11 +308,11 @@ class RoleParametersTest extends BaseTest
             )
         );
 
-        // All current role classes
-        $classes = $inputOptions['classes'];
-
         // person mappings based on most privileged acl.
         $aclPersons = $inputOptions['acl_persons'];
+
+        // The persons who are also pi's.
+        $piPersons = $inputOptions['pi_persons'];
 
         // All current acls
         $baseAcls = $inputOptions['acls'];
@@ -330,7 +323,17 @@ class RoleParametersTest extends BaseTest
         // Acls that require a user to have an associated center.
         $aclsThatRequireCenter = $inputOptions['center_acls'];
 
-        $aclsThatRequirePerson = array_diff($baseAcls, $featureAcls);
+        $aclsThatRequirePi = array('pi');
+
+        // Acls that are not feature, center or pi acls.
+        $aclsThatRequirePerson = array_diff(
+            array_diff(
+                array_diff($baseAcls, $featureAcls),
+                $aclsThatRequireCenter
+            ),
+            $aclsThatRequirePi
+        );
+
 
         // generate all possible combos of our current set of acls.
         // NOTE: the array_filter just makes sure that we don't include empty arrays.
@@ -355,8 +358,6 @@ class RoleParametersTest extends BaseTest
                 $aclId = implode('_', $acls);
                 $username = "user-$aclId";
                 $mostPrivileged = mostPrivileged($baseAcls, $acls);
-                $needsOrganization = count(array_intersect($aclsThatRequireCenter, $acls)) > 0;
-                $needsPerson = count(array_intersect($aclsThatRequirePerson, $acls)) > 0;
 
                 $testCase = array(
                     'username' => $username,
@@ -365,16 +366,63 @@ class RoleParametersTest extends BaseTest
                     'last_name' => "User - $aclId",
                     'acls' => $acls,
                     'primary_role' => $mostPrivileged,
-                    'role_classes' => $classes
                 );
 
-                if ($needsOrganization) {
-                    $testCase['organization_id'] = 1;
+                // We need to generate the expected results for this test case and include the
+                // information that the user will require.
+                $expected = array();
+                foreach($acls as $acl) {
+                    if (in_array($acl, $aclsThatRequireCenter)) {
+                        if (!isset($expected[$acl])) {
+                            $expected[$acl] = array();
+                        }
+
+                        $expected[$acl] = array_merge(
+                            $expected[$acl],
+                            array('provider' => 1)
+                        );
+
+                        $testCase['organization_id'] = 1;
+                    }
+
+                    if (in_array($acl, $aclsThatRequirePerson)) {
+                        if (!isset($expected[$acl])) {
+                            $expected[$acl] = array();
+                        }
+
+                        $expected[$acl] = array_merge(
+                            $expected[$acl],
+                            array('person' => $aclPersons[$mostPrivileged])
+                        );
+
+                        $testCase['person_id'] = $aclPersons[$mostPrivileged];
+                    }
+
+                    if (in_array($acl, $aclsThatRequirePi)) {
+                        if (!isset($expected[$acl])) {
+                            $expected[$acl] = array();
+                        }
+
+                        $personId = $aclPersons[$mostPrivileged];
+                        $value = in_array($personId, $piPersons) ? $personId : -1;
+
+                        $expected[$acl] = array_merge(
+                            $expected[$acl],
+                            array('pi' => $value)
+                        );
+
+                        $testCase['person_id'] = $aclPersons[$mostPrivileged];
+                    }
+
+                    // Feature acls don't have any parameters and return an empty array.
+                    if (in_array($acl, $featureAcls)) {
+                        if (!isset($expected[$acl])) {
+                            $expected[$acl] = array();
+                        }
+                    }
                 }
 
-                if ($needsPerson) {
-                    $testCase['person_id'] = $aclPersons[$mostPrivileged];
-                }
+                $testCase['expected'] = $expected;
 
                 $testCases[] = array($testCase);
             }

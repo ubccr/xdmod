@@ -1,13 +1,4 @@
 {
-  "classes": [
-    "CenterDirector",
-    "CenterStaff",
-    "Developer",
-    "Manager",
-    "PrincipalInvestigator",
-    "User",
-    "Public"
-  ],
   "acl_persons": {
     "cd": "42",
     "cs": "57",
@@ -31,5 +22,8 @@
   "center_acls": [
     "cd",
     "cs"
+  ],
+  "pi_persons": [
+    "74"
   ]
 }
