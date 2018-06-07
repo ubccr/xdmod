@@ -108,7 +108,7 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
             $unionValues[] = 0;
         }
 
-        $sql = "SELECT * FROM ( $sql ) a\nUNION\nSELECT " . implode(',', $unionValues) . "\nORDER BY instance_id ASC, event_time_utc ASC";
+        $sql = "SELECT * FROM ( $sql \nORDER BY instance_id ASC, event_time_utc ASC) a\nUNION ALL\nSELECT " . implode(',', $unionValues);
         return $sql;
     }
 }
