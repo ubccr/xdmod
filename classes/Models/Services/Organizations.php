@@ -8,8 +8,17 @@ class Organizations
 {
 
     /**
-     * @param int $userId
-     * @throws \Exception
+     * Retrieve the organization that the user identified by the $userId parameter is associated
+     * with.
+     *
+     * @param int $userId the id of the user for whom an associated organization ( if any ) is to be
+     *                    retrieved.
+     *
+     * @return int the id of the organization $userId is associated with. If one is not found then
+     *             UNKNOWN_ORGANIZATION_ID is returned.
+     *
+     * @throws \Exception if there is a problem retrieving a db connection.
+     * @throws \Exception if there is a problem executing sql statements.
      */
     public static function getOrganizationForUser($userId)
     {
