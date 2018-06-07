@@ -5,7 +5,10 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[mortorq] Number of Jobs Running","[frearson] Number of Jobs Running","[robertson] Number of Jobs Running","[pozidriv] Number of Jobs Running","[phillips] Number of Jobs Running"
-2016,21073,12632,9061,9882,3561
-2017,5315,2927,6348,1488,488
+Resource,"Number of Jobs Running"
+mortorq,26240
+frearson,15347
+robertson,14395
+pozidriv,11285
+phillips,4046
 ---------
