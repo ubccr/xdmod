@@ -35,7 +35,7 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
             },
             {
                 xtype: 'tabpanel',
-                id: 'job_tabs',
+                itemId: 'job_tabs',
                 collapsible: false,
                 enableTabScroll: true,
                 region: 'center',
