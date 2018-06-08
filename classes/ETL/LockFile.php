@@ -84,6 +84,13 @@ class LockFile extends Loggable
         }
 
         if ( ! is_dir($this->lockDir) ) {
+
+            if ( file_exists($this->lockDir) ) {
+                $this->logAndThrowException(
+                    sprintf("Cannot create lock directory '%s': File already exists", $this->lockDir)
+                );
+            }
+
             $this->logger->info("Creating lock directory '" . $this->lockDir . "'");
             if ( false === @mkdir($this->lockDir) ) {
                 $error = error_get_last();
