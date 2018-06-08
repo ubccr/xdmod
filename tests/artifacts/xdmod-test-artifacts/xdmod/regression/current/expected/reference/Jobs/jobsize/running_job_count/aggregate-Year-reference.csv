@@ -5,7 +5,15 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[1] Number of Jobs Running","[2] Number of Jobs Running","[3 - 4] Number of Jobs Running","[5 - 8] Number of Jobs Running","[9 - 16] Number of Jobs Running","[17 - 32] Number of Jobs Running","[33 - 64] Number of Jobs Running","[65 - 128] Number of Jobs Running","[129 - 256] Number of Jobs Running","[257 - 512] Number of Jobs Running"
-2016,6631,98,732,32324,16094,178,58,80,12,2
-2017,1168,1,12,10344,4864,93,48,34,2,0
+"Job Size","Number of Jobs Running"
+1,6955
+2,98
+"3 - 4",732
+"5 - 8",42390
+"9 - 16",20658
+"17 - 32",260
+"33 - 64",101
+"65 - 128",103
+"129 - 256",14
+"257 - 512",2
 ---------
