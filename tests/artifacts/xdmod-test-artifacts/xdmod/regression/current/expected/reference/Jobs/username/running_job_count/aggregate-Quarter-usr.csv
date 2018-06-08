@@ -6,7 +6,6 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[whimb] Number of Jobs Running"
-"2016 Q4",9
-"2017 Q1",7
+"System Username","Number of Jobs Running"
+whimb,14
 ---------
