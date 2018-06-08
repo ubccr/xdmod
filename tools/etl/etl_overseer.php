@@ -46,6 +46,8 @@ $scriptOptions = array(
     'groups'            => array(),
     // Chunk size (in days) for breaking up the process
     'chunk-size-days'   => null,
+    // Default module name if not specified in a configuration file
+    'default-module-name' => null,
     // ETL last modified start date, used by some actions. Defaults to the start of the ETL process.
     'last-modified-start-date' => date('Y-m-d H:i:s'),
     // ETL last modified end date, used by some actions.
@@ -98,11 +100,17 @@ try {
         // Allow options to be separated with underscores or dashes
         $dashKey = str_replace('_', '-', $configKey);
 
-        if ( array_key_exists($configKey, $scriptOptions) ) {
-            $scriptOptions[$configKey] = $configValue;
-        } elseif ( array_key_exists($dashKey, $scriptOptions) ) {
-            $scriptOptions[$dashKey] = $configValue;
+        switch ( $dashKey )
+        {
+            case 'lock-dir':
+            case 'lock-file-prefix':
+            case 'default-module-name':
+                $scriptOptions[$dashKey] = $configValue;
+                break;
+            default:
+                break;
         }
+
     }  // foreach ( $etlConfigOptions as $configkey => $configValue )
 
 } catch ( Exception $e ) {
@@ -411,6 +419,14 @@ if ( ! $showList)  {
     ));
 }
 
+try {
+    $overseerOptions = new EtlOverseerOptions($scriptOptions, $logger);
+} catch ( Exception $e ) {
+    log_error_and_exit(
+        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
+    );
+}
+
 // ------------------------------------------------------------------------------------------
 // Parse the ETL configuration. We will need it for listing available ingestors, aggregators, etc.
 
@@ -421,7 +437,8 @@ try {
         $logger,
         array(
             'option_overrides'   => $scriptOptions['option-overrides'],
-            'config_variables' => $scriptOptions['variable-overrides']
+            'config_variables' => $scriptOptions['variable-overrides'],
+            'default_module_name' => $scriptOptions['default-module-name']
         )
     );
     $etlConfig->setLogger($logger);
@@ -491,14 +508,14 @@ if ( $showList ) {
             case 'list-actions':
                 $sectionNames = $etlConfig->getSectionNames();
                 sort($sectionNames);
-                $headings = array("Section","Action","Status","Description");
+                $headings = array("Action","Status","Description");
                 print implode(LIST_SEPARATOR, $headings) . "\n";
 
                 foreach ( $sectionNames as $sectionName ) {
                     $actions = $etlConfig->getConfiguredActionNames($sectionName);
                     foreach ( $actions as $actionName ) {
                         $options = $etlConfig->getActionOptions($actionName, $sectionName);
-                        $fields = array($sectionName, $actionName, ( $options->enabled ? "enabled" : "disabled"), $options->description);
+                        $fields = array($actionName, ( $options->enabled ? "enabled" : "disabled"), $options->description);
                         print implode(LIST_SEPARATOR, $fields) . "\n";
                     }
                 }
@@ -568,15 +585,7 @@ if ( $showList ) {
 
 // Set the SQL query used to look up resource ids and generate the mapping for resource codes to ids.
 
-$scriptOptions['resource-code-map-sql'] = sprintf("SELECT id, code from %s.resourcefact", $utilitySchema);
-
-try {
-    $overseerOptions = new EtlOverseerOptions($scriptOptions, $logger);
-} catch ( Exception $e ) {
-    log_error_and_exit(
-        sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
-    );
-}
+$overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.resourcefact", $utilitySchema));
 
 // If nothing was requested, exit.
 

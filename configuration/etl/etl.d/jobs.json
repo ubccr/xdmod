@@ -11,13 +11,13 @@
                 }
             }
         },
-        "jobs-xdw.bootstrap": {
+        "jobs-xdw-bootstrap": {
             "class": "StructuredFileIngestor",
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "enabled": true
         },
-        "jobs-xdw.aggregate": {
+        "jobs-xdw-aggregate": {
             "endpoints": {
                 "source": {
                     "type": "mysql",
@@ -37,10 +37,10 @@
         }
     },
 
-    "jobs-xdw.bootstrap": {
+    "jobs-xdw-bootstrap": {
         "$ref": "etl_pipelines.d/jobs-xdw.json#/bootstrap"
     },
-    "jobs-xdw.aggregate": {
+    "jobs-xdw-aggregate": {
         "$ref": "etl_pipelines.d/jobs-xdw.json#/aggregate"
     }
 }

@@ -271,12 +271,6 @@ class Configuration extends Loggable implements \Iterator
 
         $this->transform();
 
-        // Add sections for each of the transformed keys
-
-        foreach ( $this->transformedConfig as $key => $value ) {
-            $this->addSection($key, $value);
-        }
-
         // Perform local interpretation on the data and apply contextual meaning
 
         $this->interpretData();
@@ -307,7 +301,12 @@ class Configuration extends Loggable implements \Iterator
                     continue;
                 }
 
-                $localConfigObj = $this->processLocalConfig($this->localConfigDir . "/" . $file);
+                $fullPath = $this->localConfigDir . "/" . $file;
+                try {
+                    $localConfigObj = $this->processLocalConfig($fullPath);
+                } catch ( Exception $e ) {
+                    throw new Exception(sprintf("Processing %s: %s", $fullPath, $e->getMessage()));
+                }
                 $this->merge($localConfigObj);
                 $localConfigObj->cleanup();
 
@@ -391,9 +390,9 @@ class Configuration extends Loggable implements \Iterator
     }  // transform()
 
     /** -----------------------------------------------------------------------------------------
-     * Interpret the transformed data in the configuration file. By default no
-     * interpretation is performed by this class so child classes should override this
-     * method as needed.
+     * Interpret the transformed data in the configuration file. By default the only interpretation
+     * performed is adding transformed configuration sections and data to the section list. Child
+     * classes should override this method as needed.
      *
      * @return Configuration This object to support method chaining.
      * ------------------------------------------------------------------------------------------
@@ -401,6 +400,10 @@ class Configuration extends Loggable implements \Iterator
 
     protected function interpretData()
     {
+        // Add sections for each of the transformed keys
+        foreach ( $this->transformedConfig as $key => $value ) {
+            $this->addSection($key, $value);
+        }
         return $this;
     }  // interpretData()
 

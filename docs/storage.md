@@ -91,15 +91,15 @@ Ingest data:
 
 ```
 /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -a StorageFileSystemIngestor \
-    -a StorageUserIngestor \
-    -a StorageDirectoryIngestor \
-    -a StorageUserUsageIngestor
+    -a xdmod.storage.StorageFileSystemIngestor \
+    -a xdmod.storage.StorageUserIngestor \
+    -a xdmod.storage.StorageDirectoryIngestor \
+    -a xdmod.storage.StorageUserUsageIngestor
 ```
 
 Aggregate data:
 
 ```
 /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -a StorageUserUsageAggregator
+    -a xdmod.storage.StorageUserUsageAggregator
 ```
