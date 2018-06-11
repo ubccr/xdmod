@@ -85,7 +85,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     return;
                 }
                 elseif(substr($expectedFile, -13) !== 'reference.csv'){
-                    throw new PHPUnit_Framework_ExpectationFailedException(
+                    throw new \PHPUnit_Framework_ExpectationFailedException(
                         count($failures)." assertions failed:\n\t".implode("\n\t", $failures)
                     );
                 }
@@ -311,7 +311,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 if($expectedHeader !== $providedHeader){
                     try {
                         $this->assertTrue(false, $testName . ' CSV Headers different');
-                    } catch(PHPUnit_Framework_ExpectationFailedException $e) {
+                    } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
                         $failures[] = $e->getMessage();
                     }
                 }
@@ -328,7 +328,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 $expectedColumnCount = count($expectedRow);
                 try {
                     $this->assertCount($expectedColumnCount, $providedRow, $testName . ' Column count != ');
-                } catch(PHPUnit_Framework_ExpectationFailedException $e) {
+                } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
                     $failures[] = $e->getMessage();
                 }
                 foreach($expectedHeader as $key => $value){
@@ -352,7 +352,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                         try {
                             $this->assertTrue($relativeError < $this->delta, $testName . " ( $errorFormula ) => " . $relativeError  . ' > ' . $this->delta );
                             self::$messages[] = $testName . " column: $columnName, row: $i ( $errorFormula ) => " . $relativeError  . ' < ' . $this->delta;
-                        } catch(PHPUnit_Framework_ExpectationFailedException $e) {
+                        } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
                             $failures[] = $e->getMessage();
                         }
 
@@ -360,7 +360,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     else {
                         try {
                             $this->assertEquals($expectedRowValue, $providedRowValue, $rowMessage);
-                        } catch(PHPUnit_Framework_ExpectationFailedException $e) {
+                        } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
                             $failures[] = $e->getMessage();
                         }
                     }
