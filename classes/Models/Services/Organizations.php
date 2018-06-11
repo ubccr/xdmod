@@ -88,4 +88,19 @@ SQL;
 
         return $rows[0]['name'];
     }
+
+    /**
+     * Retrieve a listing of all organizations.
+     *
+     * @return array containing all organizations that XDMoD currently knows about.
+     * @throws \Exception if there is a problem retrieving a db connection or executing the sql
+     * query.
+     */
+    public static function getOrganizations()
+    {
+        $db = DB::factory('database');
+        return $db->query(
+            "SELECT o.* FROM modw.organization o;"
+        );
+    }
 }

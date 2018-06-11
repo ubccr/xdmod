@@ -1,0 +1,6 @@
+{
+  "organization": {
+    "prefix": "organizations",
+    "controller": "NewRest\\Controllers\\OrganizationControllerProvider"
+  }
+}

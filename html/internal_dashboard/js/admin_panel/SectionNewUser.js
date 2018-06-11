@@ -36,13 +36,12 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
 
         var cmbInstitution = new CCR.xdmod.ui.InstitutionDropDown({
             controllerBase: base_controller,
-            disabled: true,
             fieldLabel: 'Institution',
             emptyText: 'No Institution Selected',
-            width: leftColumnFieldWidth
+            width: leftColumnFieldWidth,
+            allowBlank: false
         });
 
-        cmbInstitution.on('disable', function () { cmbInstitution.reset(); });
         cmbInstitution.on('change', function (combo) {
             combo.removeClass('admin_panel_invalid_text_entry');
         });
@@ -457,19 +456,13 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             win.show();
         };
 
-        /* eslint-disable no-use-before-define */
-        var roleGridClickHandler = function () {
-            var selRoles = newUserRoleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
-        };
-
         var newUserRoleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment_n',
             role_description_column_width: 140,
             layout: 'fit',
-            height: 200,
-            selectionChangeHandler: roleGridClickHandler
+            height: 200
         });
+
         /* eslint-enable no-use-before-define */
 
         this.setCallback = function (callback) {
@@ -500,7 +493,6 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             cmbUserType.reset();
 
             cmbInstitution.reset();
-            cmbInstitution.setDisabled(true);
 
             newUserRoleGrid.reset();
         };
@@ -695,6 +687,14 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             listeners: {
                 activate: function () {
                     newUserRoleGrid.reset();
+                    cmbInstitution.getStore().load(
+                      {
+                          params: {
+                              start: 0,
+                              limit: 1000
+                          }
+                      }
+                    );
                 }
             }
         });

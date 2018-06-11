@@ -359,7 +359,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 emptyText: 'No Institution Selected',
                 width: 165,
                 listWidth: 310,
-                listeners: { change: comboChangeHandler }
+                listeners: { change: comboChangeHandler },
+                allowBlank: false
             });
 
             cmbInstitution.on('disable', function() {
@@ -412,10 +413,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 }
 
                 self.initFlag = 1;
-
-                //cmbUserMapping.setValue('');
-
-                cmbInstitution.setDisabled(true);
 
                 roleGrid.reset();
 
@@ -687,7 +684,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         /* eslint-disable no-use-before-define */
         var roleGridClickHandler = function () {
             var selRoles = roleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
             if (roleGrid.isInDirtyState()) {
                 saveIndicator.show();
             } else {
@@ -801,13 +797,10 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 }
 
 
-                if (
-                    (acls.indexOf('cc') >= 0) &&
-                    (cmbInstitution.getValue().length === 0)
-                ) {
+                if (cmbInstitution.getValue().length === 0) {
                     cmbInstitution.addClass('admin_panel_invalid_text_entry');
                     CCR.xdmod.ui.userManagementMessage(
-                        'An institution must be specified for a user having a role of Campus Champion.',
+                        'An institution must be specified for each user.',
                         false
                     );
                     return;
@@ -843,9 +836,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     assigned_user: (cmbUserMapping.getValue().length === 0) ?
                                  '-1' :
                                  cmbUserMapping.getValue(),
-                    institution: (cmbInstitution.getValue().length === 0) ?
-                                 '-1' :
-                                 cmbInstitution.getValue(),
+                    institution: cmbInstitution.getValue(),
                     user_type: userType
                 };
 
@@ -1175,9 +1166,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         if (json.user_information.institution != '-1') {
                             cmbInstitution.setDisabled(false);
                             cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
-                        }
-                        else {
-                            cmbInstitution.setDisabled(true);
                         }
 
                         // -----------------------------

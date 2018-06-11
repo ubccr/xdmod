@@ -78,6 +78,35 @@ CCR.xdmod.ui.InstitutionDropDown = Ext.extend(Ext.form.ComboBox,  {
 
       });
 
+      // When the store loads for the first time then populate it with the default
+      // organization value.
+      this.userStore.on('load', function () {
+          Ext.Ajax.request({
+              url: XDMoD.REST.baseURL + 'organizations/default?token=' + XDMoD.REST.token,
+              method: 'GET',
+              callback: function (options, success, response) {
+                  var json;
+                  if (success) {
+                      json = CCR.safelyDecodeJSONResponse(response);
+                      // eslint-disable-next-line no-param-reassign
+                      success = CCR.checkDecodedJSONResponseSuccess(json);
+                  }
+
+                  if (!success) {
+                      CCR.xdmod.ui.presentFailureResponse(response, {
+                          title: 'User Management',
+                          wrapperMessage: 'Could not retrieve exception email addresses.'
+                      });
+                      // eslint-disable-next-line no-useless-return
+                      return;
+                  }
+                  if (json.organization !== -1) {
+                      self.setValue(json.organization);
+                  }
+              } // callback
+          }); // Ext.Ajax.request
+      }, this, { single: true });
+
       Ext.apply(this, {
 
          store: this.userStore
