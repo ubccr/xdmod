@@ -144,14 +144,15 @@ EOT
             'process-sections' => array(
                 'xdb-bootstrap',
                 'jobs-xdw-bootstrap'
-            )
+            ),
+            'default-module-name' => 'xdmod'
         );
 
         $etlConfig = new \ETL\Configuration\EtlConfiguration(
             CONFIG_DIR . '/etl/etl.json',
             null,
             $logger,
-            array('default_module_name' => 'xdmod')
+            array('default_module_name' => $scriptOptions['default-module-name'])
         );
         $etlConfig->initialize();
         \ETL\Utilities::setEtlConfig($etlConfig);

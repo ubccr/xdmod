@@ -31,8 +31,8 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         $this->runEtl(
             array(
                 'process-sections' => array(
-                    'jobs-xdw.bootstrap',
-                    'hpcdb-xdw.ingest'
+                    'jobs-xdw-bootstrap',
+                    'hpcdb-xdw-ingest'
                 )
             )
         );
@@ -52,7 +52,7 @@ EOT
         if (true === $runaggregation) {
             $this->runEtl(
                 array(
-                    'process-sections' => array('jobs-xdw.aggregate'),
+                    'process-sections' => array('jobs-xdw-aggregate'),
                     'last-modified-start-date' => date('Y-m-d', strtotime('2000-01-01')),
                 )
             );
@@ -114,6 +114,7 @@ EOT
             throw new \Exception('ETL Pipeline / actions not given.');
         }
         $scriptOptions['chunk-size-days'] = 365;
+        $scriptOptions['default-module-name'] = 'xdmod';
         if(empty($scriptOptions['start-date'])){
             $scriptOptions['start-date'] = date('Y-m-d', strtotime('2000-01-01'));
         }
@@ -124,7 +125,7 @@ EOT
             $scriptOptions['last-modified-start-date'] = date('Y-m-d');
         }
 
-        $etlConfig = new \ETL\Configuration\EtlConfiguration(CONFIG_DIR . '/etl/etl.json', null, $this->logger, array());
+        $etlConfig = new \ETL\Configuration\EtlConfiguration(CONFIG_DIR . '/etl/etl.json', null, $this->logger, array('default_module_name' => $scriptOptions['default-module-name']));
         $etlConfig->initialize();
         \ETL\Utilities::setEtlConfig($etlConfig);
         $overseerOptions = new \ETL\EtlOverseerOptions($scriptOptions, $this->logger);

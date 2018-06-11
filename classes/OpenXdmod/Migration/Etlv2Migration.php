@@ -23,7 +23,12 @@ class Etlv2Migration extends Migration
      */
     public function execute()
     {
-        $etlConfig = new EtlConfiguration(CONFIG_DIR . '/etl/etl.json', null, $this->logger, array());
+        $etlConfig = new EtlConfiguration(
+            CONFIG_DIR . '/etl/etl.json',
+            null,
+            $this->logger,
+            array('default_module_name' => 'xdmod')
+        );
         $etlConfig->initialize();
         Utilities::setEtlConfig($etlConfig);
 
