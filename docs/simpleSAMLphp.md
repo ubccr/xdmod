@@ -214,7 +214,7 @@ $ node app.js \
 
 [ssp]: https://simplesamlphp.org/
 [ssp-config]: https://simplesamlphp.org/docs/stable/simplesamlphp-sp
-[ssp-globusconfig]: https://github.com/ubccr/simplesamlphp-module-authglobus/blob/master/README.md#running-globus-auth
+[ssp-globusconfig]: https://github.com/ubccr/simplesamlphp-module-authglobus
 [ssp-idp-remote]: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-remote
 [ssp-apache]: https://simplesamlphp.org/docs/stable/simplesamlphp-install#section_6
 [saml-idp]: https://github.com/mcguinness/saml-idp/
