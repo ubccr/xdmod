@@ -37,9 +37,6 @@ class CenterStaffRole extends CenterDirectorRole
     public function configure(\XDUser $user, $simulatedActiveRole = NULL)
     {
         parent::configure($user, $simulatedActiveRole);
-
-        //  $this->addParameter('person',  $user->getPersonID()); //Don't need this. AG 4/11
-
     }//configure
 
     // -----------------------------------------------------------
