@@ -14,7 +14,7 @@ module.exports = {
     codes: {
         metricOK: { value: 0, text: 'Metric OK' },
         missingCollectionFailed: { value: 1, text: 'Metric Missing: Collection Failed' },
-        metricMissingNotAvailOnThisHost: { value: 2, text: 'Metric Missing: Not Available On This Host' },
+        metricMissingNotAvailOnThisHost: { value: 2, text: 'Metric Missing: Not Available On The Compute Nodes' },
         metricDisappearedDuringJob: { value: 4, text: 'Metric Disappeared During Job' },
         metricMissingUnknownReason: { value: 8, text: 'Metric Missing: Unknown Reason' },
         metricSummarizationError: { value: 16, text: 'Metric Summarization Error' },
@@ -23,9 +23,11 @@ module.exports = {
         metricMappingFunctionError: { value: 128, text: 'Mapping Function Error' },
         metricAmbiguous: { value: 256, text: 'Metric Ambiguous' },
         metricDeriveQueryError: { value: 512, text: 'Derived Field Query Failed' },
-        metricTypeError: { value: 1024, text: "Metric Value Doesn't Fit Schema Type" },
+        metricTypeError: { value: 1024, text: 'Metric Value Does Not Fit Schema Type' },
         metricCounterRollover: { value: 2048, text: 'Metric Counter Rolled Over' },
-        metricJitterError: { value: 4096, text: 'Metric Dropped Data Due to Jitter' }
+        metricJitterError: { value: 4096, text: 'Metric Dropped Data Due to Jitter' },
+        metricInsufficientData: { value: 8192, text: 'Metric Missing: Insufficient Data Points' },
+        metricDisabledByUser: { value: 16384, text: 'Metric Missing: Disabled by User' }
     }
 };
 
