@@ -699,22 +699,63 @@ ORDER BY trigger_name ASC";
             );
         }
 
+        // Track modifications to be made
         $alterList = array();
+        $changeList = array();
         $triggerList = array();
-
-        // Update names/docs to be clearer. We are migrating $this to $dest.
 
         // --------------------------------------------------------------------------------
         // Process columns
 
+        // Note that MySQL can have a race condition where we want to add a new column using an
+        // AFTER clause that will come after a column that is also being renamed (and possibly
+        // re-ordered) in the same ALTER TABLE statement. In this case MySQL throw a 1054 "unknown
+        // column" error. We could have the same issue if we rename and move a column to be after a
+        // column that has not yet been added.  To address this, we handle the CHANGE COLUMN clauses
+        // in their own ALTER TABLE statements.  For example, given:
+        //
+        // CREATE TABLE IF NOT EXISTS `test`.`modify_table_test` (
+        //  `id` int(11) NOT NULL,
+        //  `available` int(11) NULL,
+        //  `requested` int(11) NULL,
+        //  `awarded` int(11) NULL
+        // )
+        //
+        // This statement will produce a 1054 "unknown column" error
+        //
+        // ALTER TABLE `test`.`modify_table_test`
+        // ADD COLUMN `new_column` int(11) NULL AFTER `resource_id`,
+        // CHANGE COLUMN `id` `resource_id` int(11) NOT NULL AFTER `awarded`;
+        //
+        // But these statements will succeed
+        //
+        // ALTER TABLE `test`.`modify_table_test` ADD COLUMN `new_column` int(11) NULL AFTER `id`;
+        // ALTER TABLE `test`.`modify_table_test` CHANGE COLUMN `id` `resource_id` int(11) NOT NULL AFTER `awarded`;
+
         $currentColNames = $this->getColumnNames();
         $destColNames = $destination->getColumnNames();
 
-        // Columns to be dropped, added, changed, or renamed
+        // Columns to be dropped, added, or renamed
         $dropColNames = array_diff($currentColNames, $destColNames);
         $addColNames = array_diff($destColNames, $currentColNames);
-        $changeColNames = array_intersect($currentColNames, $destColNames);
         $renameColNames = array();
+
+        // Find the column names that are the same between the current and destination tables,
+        // ordering the array based on the columns in the current table (1st argument).
+        $changeColNamesCurrentOrder = array_intersect($currentColNames, $destColNames);
+
+        // Find the column names that are the same between the current and destination tables,
+        // ordering the array based on the columns in the destination table (1st argument).
+        $changeColNamesDestinationOrder = array_intersect($destColNames, $changeColNamesCurrentOrder);
+
+        // Determine which columns have been re-ordered by comparing the order between the current
+        // and destination tables.  Buy using array_values() we reset the array element indexes so
+        // array_diff will show us columns that changed order between the current and destination
+        // tables.
+        $reorderedColNames = array_diff_assoc(
+            array_values($changeColNamesDestinationOrder),
+            array_values($changeColNamesCurrentOrder)
+        );
 
         // When renaming a column, be smart about it or a simple rename will mean that the new column is
         // added and the old column is dropped causing potential data loss.  Check for any processing
@@ -732,59 +773,103 @@ ORDER BY trigger_name ASC";
                 unset($addColNames[$index]);
                 unset($dropColNames[$hintIndex]);
             }
-        }  // foreach ( $addColNames as $addName )
+        }
 
         if ( $this->engine != $destination->engine ) {
-            $alterList[] = "ENGINE = " . $destination->engine;
+            $alterList[] = sprintf("ENGINE = %s", $destination->engine);
         }
 
         if ( null !== $destination->charset && $this->charset != $destination->charset ) {
-            $alterList[] = "CHARSET = " . $destination->charset;
+            $alterList[] = sprintf("CHARSET = %s", $destination->charset);
         }
 
         if ( null !== $destination->collation && $this->collation != $destination->collation ) {
-            $alterList[] = "COLLATE = " . $destination->collation;
+            $alterList[] = sprintf("COLLATE = %s", $destination->collation);
         }
 
         if ( $this->comment != $destination->comment ) {
-            $alterList[] = "COMMENT = '" . addslashes($destination->comment) . "'";
+            $alterList[] = sprintf("COMMENT = '%s'", addslashes($destination->comment));
         }
 
-        foreach ( $addColNames as $name ) {
-            $alterList[] = "ADD COLUMN " . $destination->getColumn($name)->getSql($includeSchema);
+        foreach ( $addColNames as $index => $name ) {
+
+            // When adding columns, maintain the same order as in the definition array. Note that
+            // array_diff() maintains the array index so we are able to look up the previous column.
+            
+            $position = "FIRST";
+            if ( $index > 0 ) {
+                $afterColName = $destColNames[$index-1];
+                // If this column will be added after a column that is being renamed, use the
+                // original name rather than the new name.
+                if ( in_array($afterColName, $renameColNames) ) {
+                    $afterColName = array_search($afterColName, $renameColNames);
+                }
+                $position = "AFTER " . $destination->quote($afterColName);
+            }
+            
+            $alterList[] = sprintf(
+                "ADD COLUMN %s %s",
+                $destination->getColumn($name)->getSql($includeSchema),
+                $position
+            );
         }
 
         foreach ( $dropColNames as $name ) {
-            $alterList[] = "DROP COLUMN " . $this->quote($name);
+            $alterList[] = sprintf("DROP COLUMN %s", $this->quote($name));
             $this->logger->warning(sprintf("Dropping column %s!", $this->quote($name)));
         }
 
-        foreach ( $changeColNames as $name ) {
+        // We must use the columns in order based on the destination table or MySQL will complain
+        // about unknown columns when changing the order.
+
+        foreach ( $changeColNamesDestinationOrder as $name ) {
+
+            // We use the destination column object to properly apply system quote characters
             $destColumn = $destination->getColumn($name);
-            // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == ($compareCode = $destColumn->compare($this->getColumn($name))) ) {
+            $compareCode = $destColumn->compare($this->getColumn($name));
+
+            if ( 0 == $compareCode  && ! in_array($name, $reorderedColNames) ) {
                 continue;
-            } else {
+            } else if ( 0 != $compareCode ) {
                 $this->logger->debug(
                     sprintf("Column comparison for '%s' returned %d", $name, $compareCode)
                 );
             }
 
-            $alterList[] = "CHANGE COLUMN " . $destColumn->getName(true) . " " . $destColumn->getSql($includeSchema);
+            $position = "";
+
+            if ( in_array($name, $reorderedColNames) ) {
+                $index = array_search($name, $destColNames);
+                $position = "FIRST";
+                if ( $index > 0 ) {
+                    $position = "AFTER " . $destination->quote($destColNames[$index-1]);
+                }
+            }
+            
+            $changeList[] = sprintf(
+                "CHANGE COLUMN %s %s %s",
+                $destination->quote($name),
+                $destColumn->getSql($includeSchema),
+                $position
+            );
         }
 
         foreach ( $renameColNames as $fromColumnName => $toColumnName ) {
             $destColumn = $destination->getColumn($toColumnName);
             $currentColumn = $this->getColumn($fromColumnName);
-            // Not all properties are required so a simple object comparison isn't possible
-            if ( 0 == ($compareCode = $destColumn->compare($currentColumn)) ) {
-                continue;
-            } else {
-                $this->logger->debug(
-                    sprintf("Column comparison for '%s' returned %d", $fromColumnName, $compareCode)
-                );
+            $index = array_search($toColumnName, $destColNames);
+            
+            $position = "FIRST";
+            if ( $index > 0 ) {
+                $position = "AFTER " . $destination->quote($destColNames[$index-1]);
             }
-            $alterList[] = "CHANGE COLUMN " . $currentColumn->getName(true) . " " . $destColumn->getSql($includeSchema);
+
+            $changeList[] = sprintf(
+                "CHANGE COLUMN %s %s %s",
+                $destination->quote($fromColumnName),
+                $destColumn->getSql($includeSchema),
+                $position
+            );
         }
 
         // --------------------------------------------------------------------------------
@@ -887,7 +972,7 @@ ORDER BY trigger_name ASC";
         // --------------------------------------------------------------------------------
         // Put it all together
 
-        if ( 0 == count($alterList) && 0 == count($triggerList) ) {
+        if ( 0 == count($alterList) && 0 == count($changeList) && 0 == count($triggerList) ) {
             return false;
         }
 
@@ -895,8 +980,11 @@ ORDER BY trigger_name ASC";
 
         $sqlList = array();
         if ( 0 != count($alterList) ) {
-            $sqlList[] = "ALTER TABLE $tableName\n" .
-                implode(",\n", $alterList) . ";";
+            $sqlList[] = sprintf("ALTER TABLE %s\n%s;", $tableName, implode(",\n", $alterList));
+        }
+
+        if ( 0 != count($changeList) ) {
+            $sqlList[] = sprintf("ALTER TABLE %s\n%s;", $tableName, implode(",\n", $changeList));
         }
 
         if ( 0 != count($triggerList) ) {
