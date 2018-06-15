@@ -830,7 +830,7 @@ ORDER BY trigger_name ASC";
 
             if ( 0 == $compareCode  && ! in_array($name, $reorderedColNames) ) {
                 continue;
-            } else if ( 0 != $compareCode ) {
+            } elseif ( 0 != $compareCode ) {
                 $this->logger->debug(
                     sprintf("Column comparison for '%s' returned %d", $name, $compareCode)
                 );
