@@ -59,7 +59,7 @@ abstract class aAction extends aEtlObject
     /**
      * @var string Path to the JSON configuration file containing the action definition.
      */
-    
+
     protected $definitionFile = null;
 
     /**
@@ -103,15 +103,15 @@ abstract class aAction extends aEtlObject
     /**
      * @var iDataEndpoint The utility data endpoint, must implement iDataEndpoint.
      */
-    
+
     protected $utilityEndpoint = null;
 
     /**
      * @var iDataEndpoint The utility data endpoint, must implement iDataEndpoint.
      */
-    
+
     protected $sourceEndpoint = null;
-    
+
     /**
      * @var mixed An object or resource representing the connection to the underlying utility
      *   endopint. For example, a database handle or PDO object.
@@ -124,7 +124,7 @@ abstract class aAction extends aEtlObject
      */
 
     protected $destinationEndpoint = null;
-    
+
     /**
      * @var mixed An object or resource representing the connection to the underlying utility
      *   endopint. For example, a database handle or PDO object.
@@ -186,6 +186,25 @@ abstract class aAction extends aEtlObject
         }  // if ( null !== $this->options->definition_file )
 
     }  // __construct()
+
+    /** -----------------------------------------------------------------------------------------
+     * Helper function to instantiate an action based on the provided EtlConfiguration object.
+     *
+     * @param EtlConfiguration $etlConfig Object containing the parsed ETL configuration.
+     * @param string $actionName The name of the action to instantiate.
+     * @param Log $logger A PEAR Log object or null to use the null logger
+     *
+     * @return iAction An object implementing the iAction interface
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public static function factory(EtlConfiguration $etlConfig, $actionName, Log $logger = null)
+    {
+        $etlConfig->initialize();
+        $options = $etlConfig->getActionOptions($actionName);
+        // We are using the action's own factory method
+        return forward_static_call(array($options->factory, 'factory'), $options, $etlConfig, $logger);
+    }  // factory()
 
     /** -----------------------------------------------------------------------------------------
      * @see iAction::initialize()
@@ -267,6 +286,16 @@ abstract class aAction extends aEtlObject
     {
         return $this->supportDateRangeChunking;
     }  // supportsDateRangeChunking()
+
+    /** -----------------------------------------------------------------------------------------
+     * @see iAction::isEnabled()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function isEnabled()
+    {
+        return $this->options->enabled;
+    } // isEnabled()
 
     /** -----------------------------------------------------------------------------------------
      * @return The ETL overseer options

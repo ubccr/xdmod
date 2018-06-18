@@ -113,6 +113,12 @@ interface iAction
     public function isInitialized();
 
     /**
+     * @return TRUE if this action is enabled, FALSE otherwise.
+     */
+
+    public function isEnabled();
+
+    /**
      * Generate a string representation of the action. This typically includes the name, plus other
      * pertinant information as appropriate such as the implementing class.
      *
