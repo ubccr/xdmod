@@ -18,7 +18,7 @@ use Log;
 
 interface iAction
 {
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Set up the action. This typically entails verifying that the data endpoints are of the
      * correct type and setting up configuration and option information.
      *
@@ -26,21 +26,20 @@ interface iAction
      *   ETL configuration file.
      * @param EtlConfiguration $etlConfig The complete ETL configuration as parsed from the
      *   configuration file.
-     * ------------------------------------------------------------------------------------------
+     * @param Log $logger A PEAR Log object or null to use the null logger.
      */
 
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, Log $logger = null);
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Execute the action.
      *
      * @param EtlOverseerOptions $etlOptions Options set for this ETL run.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function execute(EtlOverseerOptions $etlOptions);
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * Perform initialization and verification on this action before executing it,
      * allowing us to detect configuration errors. We pass the EtlOverseerOptions here
      * because verification may occur pre-execution. Since multiple classes may implement
@@ -53,81 +52,71 @@ interface iAction
      * @param EtlOverseerOptions $etlOverseerOptions Options set for this ETL run. This may be null
      *   if it was set elsewhere in the chain.
      *
-     * @return TRUE if verification was successful
-     * ------------------------------------------------------------------------------------------
+     * @return boolean TRUE if verification was successful
      */
 
     public function initialize(EtlOverseerOptions $etlOverseerOptions = null);
 
-    /* ------------------------------------------------------------------------------------------
-     * @return The name of the action.
-     * ------------------------------------------------------------------------------------------
+    /**
+     * @return string The name of the action.
      */
 
     public function getName();
 
-    /* ------------------------------------------------------------------------------------------
-     * @return The class name that implements the action.
-     * ------------------------------------------------------------------------------------------
+    /**
+     * @return string The class name that implements the action.
      */
 
     public function getClass();
 
-    /* ------------------------------------------------------------------------------------------
-     * @return The action options (aOptions)
-     * ------------------------------------------------------------------------------------------
+    /**
+     * @return aOptions The action options object
      */
 
     public function getOptions();
 
-    /* ------------------------------------------------------------------------------------------
-     * @return The current start date that this action is operating on.
-     * ------------------------------------------------------------------------------------------
+    /**
+     * @return string The current start date that this action is operating on.
      */
 
     public function getCurrentStartDate();
 
-    /* ------------------------------------------------------------------------------------------
-     * @return The current start date that this action is operating on.
-     * ------------------------------------------------------------------------------------------
+    /**
+     * @return string The current end date that this action is operating on.
      */
 
     public function getCurrentEndDate();
 
-    /* ------------------------------------------------------------------------------------------
-     * @return TRUE if this action supports chunking of the overall ETL start and end date
+    /**
+     * @return boolean TRUE if this action supports chunking of the overall ETL start and end date
      *   into smaller pieces to make it more manageable.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function supportsDateRangeChunking();
 
-    /* ----------------------------------------------------------------------------------------------------
+    /**
      * The ETL overseer provides the ability to specify parameters that are interpreted as
      * restrictions on actions such as the ETL start/end dates and resources to include or
      * exclude from the ETL process.  However, in some cases these options may be
      * overriden by the configuration of an individual action such as resources to include
      * or exclude for that action.
      *
-     * @return An associative array of optional overrides to overseer restrictions.
-     * ----------------------------------------------------------------------------------------------------
+     * @return array An associative array of optional overrides to overseer restrictions.
      */
 
     public function getOverseerRestrictionOverrides();
 
-    /* ------------------------------------------------------------------------------------------
+    /**
      * @return TRUE if initialization has been performed on this action.
-     * ------------------------------------------------------------------------------------------
      */
 
     public function isInitialized();
 
-    /* ------------------------------------------------------------------------------------------
-     * Generate a string representation of the action. Typically the name, plus other pertinant
-     * information as appropriate such as the implementing class.
+    /**
+     * Generate a string representation of the action. This typically includes the name, plus other
+     * pertinant information as appropriate such as the implementing class.
      *
-     * @return A string representation of the endpoint
-     * ------------------------------------------------------------------------------------------
+     * @return string A human-readable representation of the endpoint
      */
 
     public function __toString();
