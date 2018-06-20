@@ -17,7 +17,7 @@
             },
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Resource where the job was initiated"
             },
@@ -53,13 +53,13 @@
             },
             {
                 "name": "allocation_resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Resource associated with the allocation. May be a grid resource."
             },
             {
                 "name": "person_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Person requesting resources"
             },
@@ -77,19 +77,19 @@
             },
             {
                 "name": "account_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Account the job will be charged to"
             },
             {
                 "name": "allocation_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Allocation (resource, account) that will be charged for this job"
             },
             {
                 "name": "request_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Request record for this allocation (used for primary field of science)"
             },
@@ -101,7 +101,7 @@
             },
             {
                 "name": "principalinvestigator_person_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "The PI that owns the allocation. XDMoD adds this on ingest, otherwise it is linked to a request in XDCDB. References principalinvestigator.person_id"
             },
@@ -113,13 +113,13 @@
             },
             {
                 "name": "job_record_type_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Type of job: hpc, cloud, hpc-reservation, ..."
             },
             {
                 "name": "submission_venue_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Method used to submit this job: cli, gateway, ..."
             },
@@ -149,13 +149,13 @@
             },
             {
                 "name": "start_day_id",
-                "type": "int(11) unsigned",
+                "type": "int(10) unsigned",
                 "nullable": false,
                 "comment": "Day id of the job start time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
             },
             {
                 "name": "end_day_id",
-                "type": "int(11) unsigned",
+                "type": "int(10) unsigned",
                 "nullable": false,
                 "comment": "Day id of the job end time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
             },
@@ -212,7 +212,7 @@
             },
             {
                 "name": "federation_instance_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 0
             },

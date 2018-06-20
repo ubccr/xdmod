@@ -44,13 +44,13 @@
             },
             {
                 "name": "local_job_id_raw",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "comment": "Resource where the task executed",
                 "nullable": true
             },
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Resource where the task executed"
             },
@@ -62,7 +62,7 @@
             },
             {
                 "name": "person_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Person executing this task"
             },
@@ -80,7 +80,7 @@
             },
             {
                 "name": "job_task_type_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Task type or event"
             },
@@ -116,19 +116,19 @@
             },
             {
                 "name": "start_day_id",
-                "type": "int(11) unsigned",
+                "type": "int(10) unsigned",
                 "nullable": false,
                 "comment": "Day id of the job start time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
             },
             {
                 "name": "end_day_id",
-                "type": "int(11) unsigned",
+                "type": "int(10) unsigned",
                 "nullable": false,
                 "comment": "Day id of the job end time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
             },
             {
                 "name": "eligible_day_id",
-                "type": "int(11) unsigned",
+                "type": "int(10) unsigned",
                 "nullable": false,
                 "comment": "Day id of the job eligible time in format YYYY00DDD, e.g. 201600143. This is the day in the timezone of the LOCAL database and NOT UTC!"
             },
