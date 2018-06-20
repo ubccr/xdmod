@@ -102,7 +102,16 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
             }
             $outputDir = realpath($outputDir);
 
-            $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . (empty($expectedFile) ? 'reference' : $userRole ) . '.csv';
+            $referenceFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-reference.csv';
+            if (file_exists($referenceFile)) {
+                $reference = file_get_contents($referenceFile);
+                if ($reference === $csvdata) {
+                    return;
+                }
+            }
+
+            $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . ($userRole == 'public' ? 'reference' : $userRole ) . '.csv';
+
             file_put_contents(
                 $outputFile,
                 $csvdata
