@@ -15,9 +15,10 @@ use Log;
 class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
 {
     private $stop_event_ids;
+
     private $start_event_ids;
+
     private $instance_state;
-    private $end_time;
 
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
@@ -26,23 +27,20 @@ class StateReconstructorTransformIngestor extends pdoIngestor implements iAction
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        $this->stop_event_ids = array(4, 6, 17, 19);
+        $this->stop_event_ids = array(4, 6);
         $this->start_event_ids = array(2, 8, 9, 10, 11, 16);
         $this->all_event_ids = array_merge($this->start_event_ids, $this->stop_event_ids);
-        $this->end_time = $etlConfig->getVariableStore()->end_time;
 
         $this->resetInstance();
     }
 
     private function initInstance($srcRecord) {
-        $default_end_time = isset($this->end_time) ? strtotime($this->end_time) : $srcRecord['event_time_utc'];
-
         $this->instance_state = array(
             'instance_id' => $srcRecord['instance_id'],
             'start_time' => $srcRecord['event_time_utc'],
             'start_event_id' => $srcRecord['event_type_id'],
-            'end_time' => date('Y-m-d H:i:s', $default_end_time),
-            'end_event_id' => 4
+            'end_time' => $srcRecord['event_time_utc'],
+            'end_event_id' => $srcRecord['event_type_id']
         );
     }
 
