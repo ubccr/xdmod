@@ -1111,8 +1111,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                 if (success) {
                                     var views = data.results;
 
-                                    var jobTabs = jobTab.find('id', jobTab.ids.jobTabs);
-                                    jobTabs = isType(jobTabs, CCR.Types.Array) && jobTabs.length > 0 ? jobTabs[0] : null;
+                                    var jobTabs = jobTab.getComponent('job_tabs');
 
                                     var tab;
                                     for (var i = 0; i < views.length; i++) {
@@ -1210,7 +1209,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                         }
 
                         // RETRIEVE: the tab panel that holds the informational tabs.
-                        var infoTabs = self._fromArray(jobTab.find('id', jobTab.ids.jobTabs), 0);
+                        var infoTabs = jobTab.getComponent('job_tabs');
 
                         if (exists(infoTabs)) {
                             var isChild = self.children_ids.indexOf(dType) >= 0;
@@ -1825,9 +1824,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 tabs.setActiveTab(jobTab);
             }
 
-            found = jobTab.find('id', jobTab.ids.jobTabs);
-            var jobTabs = isType(found, CCR.Types.Array) && found.length > 0 ? found[0] : null;
-
+            var jobTabs = jobTab.getComponent('job_tabs');
             if (exists(jobTabs)) {
                 var hasTabs = jobTabs.items.length > 0;
                 if (hasTabs) {

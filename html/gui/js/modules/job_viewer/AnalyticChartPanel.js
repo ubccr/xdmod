@@ -22,7 +22,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
             },
             chart: {
                 type: 'bar',
-                height: 150,
+                height: 65,
                 options: {
                 },
                 reflow: false
@@ -32,9 +32,10 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 min: 0,
                 gridLineColor: '#c0c0c0',
                 labels: {
-                    y: 13 // tighten vertical distance between axis and its labels
+                    enabled: false
                 },
                 title: {
+                    text: '',
                     margin: 1, // tighten vertical distance between axis title and labels
                     style: {
                         fontWeight: 'bold',
@@ -49,6 +50,12 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
                 }
             },
             tooltip: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
                 enabled: false
             },
             plotOptions: {
