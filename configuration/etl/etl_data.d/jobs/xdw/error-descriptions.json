@@ -2,7 +2,7 @@
     ["id", "description"],
     [0, "Metric OK"],
     [1, "Metric Missing: Collection Failed"],
-    [2, "Metric Missing: Not Available On This Host"],
+    [2, "Metric Missing: Not Available On The Compute Nodes"],
     [3, "Metric Disappeared During Job"],
     [4, "Metric Missing: Unknown Reason"],
     [5, "Metric Summarization Error"],
@@ -11,7 +11,9 @@
     [8, "Mapping Function Error"],
     [9, "Metric Ambiguous"],
     [10, "Derived Field Query Failed"],
-    [11, "Metric Value Doesn't Fit Schema Type"],
+    [11, "Metric Value Does Not Fit Schema Type"],
     [12, "Metric Counter Rolled Over"],
-    [13, "Metric Dropped Data Due to Jitter"]
+    [13, "Metric Dropped Data Due to Jitter"],
+    [14, "Metric Missing: Insufficient Data Points"],
+    [15, "Metric Missing: Disabled by User"]
 ]
