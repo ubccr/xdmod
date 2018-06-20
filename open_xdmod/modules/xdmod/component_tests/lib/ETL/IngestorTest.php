@@ -19,7 +19,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      */
 
     public function testLoadDataInfileWarnings() {
-        $result = $this->executeOverseerAction('test-load-data-infile-warnings');
+        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-load-data-infile-warnings');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
@@ -49,7 +49,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      */
 
     public function testSqlWarnings() {
-        $result = $this->executeOverseerAction('test-sql-warnings');
+        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-sql-warnings');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
@@ -79,7 +79,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      */
 
     public function testHideSqlWarnings() {
-        $result = $this->executeOverseerAction('test-sql-warnings', '-o "hide_sql_warnings=true"');
+        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warnings=true"');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
@@ -104,7 +104,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      */
 
     public function testHideSqlWarningCodes() {
-        $result = $this->executeOverseerAction('test-sql-warnings', '-o "hide_sql_warning_codes=1366"');
+        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=1366"');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 

@@ -66,8 +66,7 @@ class EtlOverseer extends Loggable implements iEtlOverseer
         $usedEndpointKeys = array();
 
         foreach ( $this->etlOverseerOptions->getActionNames() as $actionName ) {
-            list($sectionName, $actionName) = $this->parseSectionFromActionName($actionName);
-            $options = $etlConfig->getActionOptions($actionName, $sectionName);
+            $options = $etlConfig->getActionOptions($actionName);
             if ( ! $options->enabled ) {
                 continue;
             }
@@ -187,17 +186,8 @@ class EtlOverseer extends Loggable implements iEtlOverseer
 
             try {
 
-                // Keep the fully qualified action name (section:action) so it can be used
-                // internally by the overseer in the case where multiple actions with the same name
-                // are invoked in different sections. This only applies to individually specified
-                // actions.
-
-                list($parsedSectionName, $unqualifiedActionName) = $this->parseSectionFromActionName($actionName);
-
                 // When processing single actions we won't have the section name passed (but it may
                 // have been parsed above). We will have it when processing sections.
-
-                $sectionName = ( null !== $sectionName ? $sectionName : $parsedSectionName );
 
                 if ( array_key_exists($actionName, $actionObjectList) &&
                      is_object($actionObjectList[$actionName]) &&
@@ -207,7 +197,7 @@ class EtlOverseer extends Loggable implements iEtlOverseer
                     continue;
                 }
 
-                $options = $etlConfig->getActionOptions($unqualifiedActionName, $sectionName);
+                $options = $etlConfig->getActionOptions($actionName, $sectionName);
 
                 if ( ! $verifyDisabled && ! $options->enabled ) {
                     continue;
@@ -326,8 +316,26 @@ class EtlOverseer extends Loggable implements iEtlOverseer
             $this->queryResourceCodeToIdMap($etlConfig);
         }
 
+        // Pre-pend the default module name to any section names that are not already qualified.
+        // This is done for backwards compatibility and cannot be done automatically for individual
+        // actions.
+
+        $defaultModuleName = $this->etlOverseerOptions->getDefaultModuleName();
+        $this->etlOverseerOptions->setSectionNames(array_map(
+            function ($name) use ($defaultModuleName) {
+                $parts = explode('.', $name);
+                if ( count($parts) < 2 ) {
+                    return sprintf("%s.%s", $defaultModuleName, $name);
+                } else {
+                    return $name;
+                }
+            },
+            $this->etlOverseerOptions->getSectionNames()
+        ));
+
         // Verify requested section names before proceeding
         $sectionNames = $this->etlOverseerOptions->getSectionNames();
+
         if ( count($sectionNames) > 0 ) {
             $missing = array();
 
@@ -463,29 +471,4 @@ class EtlOverseer extends Loggable implements iEtlOverseer
                                 'action'     => $actionObj
                                 ));
     }  // _execute()
-
-    /* ------------------------------------------------------------------------------------------
-     * Parse the optional section name from the action name allowing individual actions specific to
-     * a section to be referenced from the command line. For example, osg:OsgJobsIngestor referrs to
-     * the "OsgJobsIngestor" action in the "osg" section.
-     *
-     * @param $actionName An action name, optionally prefixed by a section name and a colon (:)
-     *
-     * @return An array containing the section name (null if not specified) and action name.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    private function parseSectionFromActionName($actionName) {
-        $sectionName = null;
-        if ( $position = strpos($actionName, ":") ) {
-            $parts = explode(":", $actionName);
-            if ( count($parts) > 2 ) {
-                $msg = "Action name '$actionName' cannot contain more than one ':'";
-                throw new Exception($msg);
-            }
-            list($sectionName, $actionName) = $parts;
-        }
-
-        return array($sectionName, $actionName);
-    }  // parseSectionFromActionName()
 }  // class EtlOverseer

@@ -18,7 +18,7 @@
                 }
             }
         },
-        "xdb.bootstrap": {
+        "xdb-bootstrap": {
             "namespace": "ETL\\Ingestor",
             "class": "StructuredFileIngestor",
             "options_class": "IngestorOptions"
@@ -26,7 +26,7 @@
     },
 
     "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
-    "xdb.bootstrap": [
+    "xdb-bootstrap": [
         {
             "name": "xdb-table-create",
             "description": "Setup tables",
