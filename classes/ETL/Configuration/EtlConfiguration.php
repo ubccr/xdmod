@@ -378,13 +378,12 @@ class EtlConfiguration extends Configuration
                 $config->$normalizedSectionName = $config->$sectionName;
                 unset($config->$sectionName);
 
-            }
+                // Update any default sections referencing the non-normalized pipeline name.
 
-            // Update any default sections referencing the non-normalized pipeline name.
-
-            if ( isset($config->defaults->$sectionName) ) {
-                $config->defaults->$normalizedSectionName = $config->defaults->$sectionName;
-                unset($config->defaults->$sectionName);
+                if ( isset($config->defaults->$sectionName) ) {
+                    $config->defaults->$normalizedSectionName = $config->defaults->$sectionName;
+                    unset($config->defaults->$sectionName);
+                }
             }
 
             foreach ( $config->$normalizedSectionName as $actionConfig ) {
@@ -1039,7 +1038,6 @@ class EtlConfiguration extends Configuration
      *
      * @throw Exception If the section is provided and does not exist, or the name does not exist in
      *   the provided section.
-     * @throw Exception If the same action name was found in multuple sections.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -1048,6 +1046,14 @@ class EtlConfiguration extends Configuration
         if ( null === $sectionName ) {
             $parts = $this->parseActionName($actionName);
             $sectionName = $parts['section'];
+        }
+
+        if ( null === $sectionName ) {
+            $this->logAndThrowException(sprintf("Could not determine section from action name '%s'", $actionName));
+        }
+
+        if ( ! isset($this->actionOptions[$sectionName][$actionName]) ) {
+            $this->logAndThrowException(sprintf("Action '%s' not found in section '%s'", $actionName, $sectionName));
         }
 
         return $this->actionOptions[$sectionName][$actionName];
