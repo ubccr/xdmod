@@ -76,8 +76,7 @@ try {
         'subject'      => $subject,
         'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
         'fromAddress'  => $_POST['email'],
-        'fromName'     => $_POST['name'],
-        'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
+        'fromName'     => $_POST['name']
         )
     );
 }

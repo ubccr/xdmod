@@ -13,6 +13,7 @@ class MailWrapper
         $mail->isSendMail();
         $address = \xd_utilities\getConfiguration('mailer', 'sender_email');
         $mail->Sender = $address;
+        $mail->addCustomHeader('Sender', $address);
         $mail->Body = $properties['body'];
 
         if(!empty($properties['subject'])) {
