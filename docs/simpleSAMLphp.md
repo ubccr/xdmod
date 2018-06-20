@@ -31,6 +31,8 @@ Required configuration files to be added to support Single Sign On:
 
 More information on how to set these up can be found in the [SimpleSAMLphp Service Provider QuickStart][ssp-config].
 
+Information on how to set up SimpleSAMLphp to use Globus Auth can be found in the [simplesamlphp-module-authglobus documentation][ssp-globusconfig]
+
 You will need to modify the `config.php` file and make sure you modify the `metadata.sources` and the `certdir` keys to have the **full path** to directories containing the configurations:
 
 **note** make sure the file has opening `<?php`
@@ -212,6 +214,7 @@ $ node app.js \
 
 [ssp]: https://simplesamlphp.org/
 [ssp-config]: https://simplesamlphp.org/docs/stable/simplesamlphp-sp
+[ssp-globusconfig]: https://github.com/ubccr/simplesamlphp-module-authglobus
 [ssp-idp-remote]: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-remote
 [ssp-apache]: https://simplesamlphp.org/docs/stable/simplesamlphp-install#section_6
 [saml-idp]: https://github.com/mcguinness/saml-idp/
