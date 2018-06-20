@@ -241,11 +241,10 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $destTable = new Table($config, '`', $this->logger);
         $destTable->verify();
 
-        $generated = $currentTable->getAlterSql($destTable);
-        $generated = array_shift($generated);
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table-charset.sql'));
-        // Assert that there is no alter sql statement.
-        $this->assertEquals($expected, $generated);
+        $generated = implode(PHP_EOL, $currentTable->getAlterSql($destTable));
+        $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table-charset.sql';
+        $expected = trim(file_get_contents($file));
+        $this->assertEquals($expected, $generated, sprintf("%s(): %s", __FUNCTION__, $file));
 
         // Alter the table by manually adding columns, index, and trigger.
 
@@ -287,14 +286,11 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         );
         $destTable->addTrigger($config);
 
-        // The getSql() and getSql() methods return an array containing distinct SQL
-        // statements.
-        $generated = $currentTable->getAlterSql($destTable);
-        $alterTable = array_shift($generated);
-        $trigger = array_shift($generated);
-        $generated = $alterTable . PHP_EOL . $trigger;
-        $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table_manually-charset.sql'));
-        $this->assertEquals($expected, $generated);
+        // The getSql() and alterSql() methods return an array containing distinct SQL statements.
+        $generated = implode(PHP_EOL, $currentTable->getAlterSql($destTable));
+        $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table_manually-charset.sql';
+        $expected = trim(file_get_contents($file));
+        $this->assertEquals($expected, $generated, sprintf("%s(): %s", __FUNCTION__, $file));
     }
 
     /**
