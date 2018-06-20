@@ -19,7 +19,7 @@ require_once(__DIR__ . '/../../configuration/linker.php');
  */
 
 // CREATE: our new Silex Application
-$app = \NewRest\XdmodApplicationFactory::getInstance();
+$app = \Rest\XdmodApplicationFactory::getInstance();
 
 // START: our engines!
 $app->run();

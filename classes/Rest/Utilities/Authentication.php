@@ -1,6 +1,6 @@
 <?php
 
-namespace NewRest\Utilities;
+namespace Rest\Utilities;
 
 use Exception;
 use Log;

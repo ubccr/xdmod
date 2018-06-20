@@ -1,13 +1,13 @@
 <?php
 
-namespace NewRest;
+namespace Rest;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-use NewRest\XdmodApplicationFactory;
-use NewRest\Controllers\BaseControllerProvider;
+use Rest\XdmodApplicationFactory;
+use Rest\Controllers\BaseControllerProvider;
 
 /**
  * Provides an interface for interacting with the REST API from outside of it.

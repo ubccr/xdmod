@@ -1,6 +1,6 @@
 <?php
 
-namespace NewRest\Controllers;
+namespace Rest\Controllers;
 
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
@@ -208,7 +208,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $root = $this->prefix;
 
         $current = get_class($this);
-        $conversions = '\NewRest\Utilities\Conversions';
+        $conversions = '\Rest\Utilities\Conversions';
         // Search history routes
 
         $controller

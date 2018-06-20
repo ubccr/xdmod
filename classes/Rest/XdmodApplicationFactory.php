@@ -1,9 +1,9 @@
 <?php
 
-namespace NewRest;
+namespace Rest;
 
 use CCR\DB\PDODB;
-use NewRest\Utilities\Authentication;
+use Rest\Utilities\Authentication;
 use Silex\Application;
 use Silex\Provider\UrlGeneratorServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
@@ -113,7 +113,7 @@ class XdmodApplicationFactory {
         });
 
         // SETUP: the authentication Middleware to be run before the route is.
-        $app->before("\NewRest\Controllers\BaseControllerProvider::authenticate", Application::EARLY_EVENT);
+        $app->before("\Rest\Controllers\BaseControllerProvider::authenticate", Application::EARLY_EVENT);
 
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.

@@ -1,12 +1,12 @@
 <?php
 
-namespace NewRest\Controllers;
+namespace Rest\Controllers;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use NewRest\Utilities\Authentication;
-use NewRest\XdmodApplicationFactory;
+use Rest\Utilities\Authentication;
+use Rest\XdmodApplicationFactory;
 use CCR\DB;
 
 /** ==========================================================================================

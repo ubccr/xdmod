@@ -1,9 +1,9 @@
 <?php
 
-namespace NewRest\Controllers;
+namespace Rest\Controllers;
 
-use NewRest\Utilities\Authentication;
-use NewRest\Utilities\Authorization;
+use Rest\Utilities\Authentication;
+use Rest\Utilities\Authorization;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;

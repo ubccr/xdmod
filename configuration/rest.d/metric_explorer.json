@@ -1,6 +1,6 @@
 {
   "metric_explorer": {
     "prefix": "metrics/explorer",
-    "controller": "NewRest\\Controllers\\MetricExplorerControllerProvider"
+    "controller": "Rest\\Controllers\\MetricExplorerControllerProvider"
   }
 }

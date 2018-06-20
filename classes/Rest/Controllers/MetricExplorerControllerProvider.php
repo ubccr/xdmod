@@ -1,6 +1,6 @@
 <?php
 
-namespace NewRest\Controllers;
+namespace Rest\Controllers;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Silex\Application;
@@ -59,7 +59,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
     public function setupRoutes(Application $app, ControllerCollection $controller)
     {
         $root = $this->prefix;
-        $base = '\NewRest\Controllers\MetricExplorerControllerProvider';
+        $base = '\Rest\Controllers\MetricExplorerControllerProvider';
 
         $idConverter = function ($id) {
             return (int)$id;

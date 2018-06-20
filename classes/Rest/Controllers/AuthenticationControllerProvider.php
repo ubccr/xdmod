@@ -1,11 +1,11 @@
 <?php
 
-namespace NewRest\Controllers;
+namespace Rest\Controllers;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-use NewRest\Utilities\Authentication;
+use Rest\Utilities\Authentication;
 
 /**
  * Class AuthenticationControllerProvider
@@ -24,8 +24,8 @@ class AuthenticationControllerProvider extends BaseControllerProvider
     public function setupRoutes(Application $app, \Silex\ControllerCollection $controller)
     {
         $root = $this->prefix;
-        $controller->post("$root/login", '\NewRest\Controllers\AuthenticationControllerProvider::login');
-        $controller->post("$root/logout", '\NewRest\Controllers\AuthenticationControllerProvider::logout');
+        $controller->post("$root/login", '\Rest\Controllers\AuthenticationControllerProvider::login');
+        $controller->post("$root/logout", '\Rest\Controllers\AuthenticationControllerProvider::logout');
     }
 
     /**
