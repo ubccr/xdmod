@@ -1,0 +1,27 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/resource-allocated.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "r.resource_id",
+            "start_date_ts": "IF(ISNULL(rs.start_date), 0, UNIX_TIMESTAMP(rs.start_date))",
+            "end_date_ts": "IF(ISNULL(rs.end_date), NULL, UNIX_TIMESTAMP(CONCAT(rs.end_date, ' 23:59:59')))",
+            "percent": "COALESCE(rs.percent_allocated, 100)"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource",
+                "alias": "r"
+            },
+            {
+                "type": "LEFT OUTER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_spec",
+                "alias": "rs",
+                "on": "r.resource_name = rs.resource"
+            }
+        ]
+    }
+}

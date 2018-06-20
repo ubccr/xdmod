@@ -1,0 +1,117 @@
+{
+    "table_definition": {
+        "name": "hpcdb_resources",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_type_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "organization_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "resource_name",
+                "type": "varchar(200)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "resource_code",
+                "type": "varchar(64)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false
+            },
+            {
+                "name": "resource_description",
+                "type": "varchar(1000)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "resource_shared_jobs",
+                "type": "int(1)",
+                "nullable": false,
+                "default": "0"
+            },
+            {
+                "name": "resource_timezone",
+                "type": "varchar(30)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false,
+                "default": "UTC"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "resources_pk",
+                "columns": [
+                    "resource_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "ak_identifier_2_resource",
+                "columns": [
+                    "resource_name"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "org_resources_fk",
+                "columns": [
+                    "organization_id"
+                ]
+            },
+            {
+                "name": "IDX_3A9CF2E298EC6B7B",
+                "columns": [
+                    "resource_type_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_resource_org_resou_organiza",
+                "columns": [
+                    "organization_id"
+                ],
+                "referenced_table": "hpcdb_organizations",
+                "referenced_columns": [
+                    "organization_id"
+                ]
+            },
+            {
+                "name": "fk_resource_res_type",
+                "columns": [
+                    "resource_type_id"
+                ],
+                "referenced_table": "hpcdb_resource_types",
+                "referenced_columns": [
+                    "type_id"
+                ]
+            }
+        ]
+    }
+}

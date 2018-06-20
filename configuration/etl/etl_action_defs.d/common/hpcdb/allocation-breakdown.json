@@ -1,0 +1,34 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/allocation-breakdown.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "allocation_breakdown_id": "upr.user_pi_resource_id",
+            "person_id": "uup.union_user_pi_id",
+            "allocation_id": "pr.pi_resource_id",
+            "percentage": "100"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_user_pi_resource",
+                "alias": "upr"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_pi_resource",
+                "alias": "pr",
+                "on": "upr.pi_name = pr.pi_name AND upr.resource_name = pr.resource_name"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_union_user_pi",
+                "alias": "uup",
+                "on": "upr.user_name = uup.union_user_pi_name"
+            }
+        ]
+    }
+}

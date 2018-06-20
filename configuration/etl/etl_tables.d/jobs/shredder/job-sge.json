@@ -1,0 +1,397 @@
+{
+    "table_definition": {
+        "name": "shredded_job_sge",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "shredded_job_sge_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "clustername",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "qname",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "hostname",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "groupname",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "owner",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "job_name",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "job_number",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "account",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "priority",
+                "type": "tinyint(4)",
+                "nullable": true
+            },
+            {
+                "name": "submission_time",
+                "type": "int(11) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "start_time",
+                "type": "int(11) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "end_time",
+                "type": "int(11) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "failed",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "exit_status",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_wallclock",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_utime",
+                "type": "decimal(32,6)",
+                "nullable": true
+            },
+            {
+                "name": "ru_stime",
+                "type": "decimal(32,6)",
+                "nullable": true
+            },
+            {
+                "name": "ru_maxrss",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_ixrss",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_ismrss",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_idrss",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_isrss",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_minflt",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_majflt",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_nswap",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_inblock",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_oublock",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_msgsnd",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_msgrcv",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_nsignals",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_nvcsw",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ru_nivcsw",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "project",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "department",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "granted_pe",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "slots",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "task_number",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "cpu",
+                "type": "decimal(32,6)",
+                "nullable": true
+            },
+            {
+                "name": "mem",
+                "type": "decimal(32,6)",
+                "nullable": true
+            },
+            {
+                "name": "io",
+                "type": "decimal(32,6)",
+                "nullable": true
+            },
+            {
+                "name": "category",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "iow",
+                "type": "decimal(32,6)",
+                "nullable": true
+            },
+            {
+                "name": "pe_taskid",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "maxvmem",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "arid",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "ar_submission_time",
+                "type": "int(11) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_arch",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_qname",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_hostname",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_notify",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_calendar",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_min_cpu_interval",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_tmpdir",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_seq_no",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_s_rt",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_h_rt",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_s_cpu",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_h_cpu",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_s_data",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_h_data",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_s_stack",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_h_stack",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_s_core",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_h_core",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_s_rss",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_h_rss",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_slots",
+                "type": "varchar(255)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_s_vmem",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_h_vmem",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_s_fsize",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_h_fsize",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_num_proc",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "resource_list_mem_free",
+                "type": "bigint(20)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "shredded_job_sge_id"
+                ]
+            },
+            {
+                "name": "job",
+                "columns": [
+                    "hostname",
+                    "job_number",
+                    "task_number",
+                    "failed"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

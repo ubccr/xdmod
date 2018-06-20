@@ -1,0 +1,17 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/resource.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_name": "DISTINCT j.resource_name"
+        },
+        "joins": [
+            {
+                "name": "shredded_job",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "j"
+            }
+        ]
+    }
+}

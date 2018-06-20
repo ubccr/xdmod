@@ -1,0 +1,107 @@
+{
+    "table_definition": {
+        "name": "hpcdb_people",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "organization_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "prefix",
+                "type": "varchar(10)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "first_name",
+                "type": "varchar(100)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "middle_name",
+                "type": "varchar(60)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "last_name",
+                "type": "varchar(100)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false
+            },
+            {
+                "name": "department",
+                "type": "varchar(300)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "title",
+                "type": "varchar(300)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "ts",
+                "type": "int(10) unsigned",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "people_pk",
+                "columns": [
+                    "person_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "people_last_name",
+                "columns": [
+                    "last_name"
+                ]
+            },
+            {
+                "name": "people_orgs_fk",
+                "columns": [
+                    "organization_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_people_people_or_organiza",
+                "columns": [
+                    "organization_id"
+                ],
+                "referenced_table": "hpcdb_organizations",
+                "referenced_columns": [
+                    "organization_id"
+                ]
+            }
+        ]
+    }
+}

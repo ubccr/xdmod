@@ -19,6 +19,7 @@ Requires:      java-1.8.0-openjdk java-1.8.0-openjdk-devel
 Requires:      cronie
 Requires:      logrotate
 Requires:      ghostscript
+Requires:      jq
 
 %description
 XDMoD is a data warehouse and web portal for mining statistical data

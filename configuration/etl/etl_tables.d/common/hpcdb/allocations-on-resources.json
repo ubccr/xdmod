@@ -1,0 +1,63 @@
+{
+    "table_definition": {
+        "name": "hpcdb_allocations_on_resources",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "allocation_id",
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "IDX_83494B7789329D25",
+                "columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "IDX_83494B779C83F4B2",
+                "columns": [
+                    "allocation_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "ar_alloc_fk",
+                "columns": [
+                    "allocation_id"
+                ],
+                "referenced_table": "hpcdb_allocations",
+                "referenced_columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "ar_res_fk",
+                "columns": [
+                    "resource_id"
+                ],
+                "referenced_table": "hpcdb_resources",
+                "referenced_columns": [
+                    "resource_id"
+                ]
+            }
+        ]
+    }
+}

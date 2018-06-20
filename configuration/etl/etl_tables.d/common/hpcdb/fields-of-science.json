@@ -1,0 +1,43 @@
+{
+    "table_definition": {
+        "name": "hpcdb_fields_of_science",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "field_of_science_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "parent_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "abbrev",
+                "type": "varchar(100)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "description",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "field_of_science_id"
+                ]
+            }
+        ]
+    }
+}

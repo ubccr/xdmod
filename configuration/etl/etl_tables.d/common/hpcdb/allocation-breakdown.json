@@ -1,0 +1,88 @@
+{
+    "table_definition": {
+        "name": "hpcdb_allocation_breakdown",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "allocation_breakdown_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "percentage",
+                "type": "decimal(10,0)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "allocation_breakdown_id"
+                ]
+            },
+            {
+                "name": "uk_allocation_breakdown",
+                "columns": [
+                    "allocation_id",
+                    "person_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "allocation_breakdown_pk",
+                "columns": [
+                    "allocation_breakdown_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "alloc_alloc_breakdown_fk",
+                "columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "user_accts_alloc_breakdown_fk",
+                "columns": [
+                    "person_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_allocati_alloc_all_allocati",
+                "columns": [
+                    "allocation_id"
+                ],
+                "referenced_table": "hpcdb_allocations",
+                "referenced_columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "fk_allocati_user_hpcdb_people",
+                "columns": [
+                    "person_id"
+                ],
+                "referenced_table": "hpcdb_people",
+                "referenced_columns": [
+                    "person_id"
+                ]
+            }
+        ]
+    }
+}

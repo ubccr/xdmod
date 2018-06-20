@@ -1,0 +1,62 @@
+{
+    "table_definition": {
+        "name": "hpcdb_email_addresses",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "email_address_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "email_address",
+                "type": "varchar(200)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "email_address_id"
+                ]
+            },
+            {
+                "name": "email_addresses_uk",
+                "columns": [
+                    "person_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "email_addresses_pk",
+                "columns": [
+                    "email_address_id"
+                ],
+                "is_unique": true
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_email_ad_people_em_people",
+                "columns": [
+                    "person_id"
+                ],
+                "referenced_table": "hpcdb_people",
+                "referenced_columns": [
+                    "person_id"
+                ]
+            }
+        ]
+    }
+}

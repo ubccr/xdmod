@@ -1,0 +1,31 @@
+{
+    "table_definition": {
+        "name": "hpcdb_accounts",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "account_name",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "account_id"
+                ]
+            }
+        ]
+    }
+}

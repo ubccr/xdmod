@@ -1,0 +1,25 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/allocations-on-resources.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "allocation_id": "pr.pi_resource_id",
+            "resource_id": "r.resource_id"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_pi_resource",
+                "alias": "pr"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource",
+                "alias": "r",
+                "on": "pr.resource_name = r.resource_name"
+            }
+        ]
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/resource-config.json"
+    },
+    "destination_record_map": {
+        "staging_resource_config": {
+            "resource": "resource",
+            "name": "name",
+            "description": "description",
+            "shared_jobs": "shared_jobs",
+            "timezone": "timezone",
+            "type_id": "resource_type_id"
+        }
+    }
+}

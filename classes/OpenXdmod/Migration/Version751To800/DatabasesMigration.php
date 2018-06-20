@@ -3,9 +3,9 @@
 namespace OpenXdmod\Migration\Version751To800;
 
 use CCR\DB;
+use OpenXdmod\DataWarehouseInitializer;
 use FilterListBuilder;
 use TimePeriodGenerator;
-use OpenXdmod\Ingestor\Staging\ResourceTypes;
 use OpenXdmod\Setup\Console;
 
 /**
@@ -20,12 +20,11 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
     {
         parent::execute();
 
-        $this->updateResourceTypes();
         $this->updateTimePeriods();
 
         $this->logger->notice(
             "Data is going to be migrated away from modw.jobfact into\n" .
-            "modw.job_records and modw.jobtasks, this might take a while.\n" .
+            "modw.job_records and modw.job_tasks, this might take a while.\n" .
             "approx 30k records / minute \n"
         );
 
@@ -33,17 +32,21 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
             array(
                 'process-sections' => array(
                     'jobs-xdw-bootstrap',
-                    'hpcdb-xdw-ingest'
                 )
             )
         );
+        $dwi = new DataWarehouseInitializer(
+            DB::factory('hpcdb'),
+            DB::factory('datawarehouse')
+        );
+        $dwi->ingestAllHpcdb();
         $this->validateJobTasks();
 
         $console = Console::factory();
         $console->displayMessage(<<<"EOT"
 There have been updates to aggregation statistics to make the data more accurate.
-It is recomennded that you reaggregate all jobs.  Depending on the amount of data
-this could take multiple hours.
+It is recommended that you reaggregate all jobs.  Depending on the amount of
+data this could take multiple hours.
 EOT
         );
         $runaggregation = $console->promptBool(
@@ -149,17 +152,5 @@ EOT
             $tpg = TimePeriodGenerator::getGeneratorForUnit($aggUnit);
             $tpg->generateMainTable(DB::factory('datawarehouse'));
         }
-    }
-
-    /**
-     * Update resource types in the mod_hpcdb database.
-     */
-    private function updateResourceTypes()
-    {
-        $shredderDb = DB::factory('shredder');
-        $hpcdbDb    = DB::factory('hpcdb');
-        $ingestor = new ResourceTypes($hpcdbDb, $shredderDb);
-        $ingestor->setLogger($this->logger);
-        $ingestor->ingest();
     }
 }

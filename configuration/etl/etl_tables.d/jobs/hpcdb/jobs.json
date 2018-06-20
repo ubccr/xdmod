@@ -1,0 +1,294 @@
+{
+    "table_definition": {
+        "name": "hpcdb_jobs",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "job_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "allocation_breakdown_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "local_jobid",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "local_job_array_index",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "local_job_id_raw",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "start_time",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "end_time",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "submit_time",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "eligible_time",
+                "type": "int(10) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "wallduration",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "exit_code",
+                "type": "varchar(32)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "exit_state",
+                "type": "varchar(32)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "jobname",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "nodecount",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "processors",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "cpu_req",
+                "type": "int(10) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "mem_req",
+                "type": "varchar(32)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "timelimit",
+                "type": "int(10) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "node_list",
+                "type": "mediumtext",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "queue",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "username",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false
+            },
+            {
+                "name": "uid_number",
+                "type": "int(10) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "groupname",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "gid_number",
+                "type": "int(10) unsigned",
+                "nullable": true
+            },
+            {
+                "name": "ts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "job_id"
+                ]
+            },
+            {
+                "name": "uk_jobs",
+                "columns": [
+                    "resource_id",
+                    "local_jobid",
+                    "local_job_array_index",
+                    "submit_time"
+                ]
+            },
+            {
+                "name": "jobs_account_idx",
+                "columns": [
+                    "account_id"
+                ]
+            },
+            {
+                "name": "jobs_allocation_idx",
+                "columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "jobs_hpcdb_res_time_idx",
+                "columns": [
+                    "account_id",
+                    "resource_id",
+                    "submit_time",
+                    "end_time"
+                ]
+            },
+            {
+                "name": "jobs_person_idx",
+                "columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "IDX_2EBE1C0289329D25",
+                "columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "IDX_2EBE1C021E990699",
+                "columns": [
+                    "allocation_breakdown_id"
+                ]
+            },
+            {
+                "name": "jobs_username_person_resource_idx",
+                "columns": [
+                    "username",
+                    "person_id",
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "jobs_end_time_idx",
+                "columns": [
+                    "end_time"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_jobs_fk1",
+                "columns": [
+                    "account_id"
+                ],
+                "referenced_table": "hpcdb_accounts",
+                "referenced_columns": [
+                    "account_id"
+                ]
+            },
+            {
+                "name": "fk_jobs_fk2",
+                "columns": [
+                    "allocation_id"
+                ],
+                "referenced_table": "hpcdb_allocations",
+                "referenced_columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "fk_jobs_fk3",
+                "columns": [
+                    "allocation_breakdown_id"
+                ],
+                "referenced_table": "hpcdb_allocation_breakdown",
+                "referenced_columns": [
+                    "allocation_breakdown_id"
+                ]
+            },
+            {
+                "name": "fk_jobs_fk5",
+                "columns": [
+                    "resource_id"
+                ],
+                "referenced_table": "hpcdb_resources",
+                "referenced_columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "fk_jobs_fk6",
+                "columns": [
+                    "person_id"
+                ],
+                "referenced_table": "hpcdb_people",
+                "referenced_columns": [
+                    "person_id"
+                ]
+            }
+        ]
+    }
+}

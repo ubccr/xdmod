@@ -1,0 +1,26 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/requests.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "request_id": "p.pi_id",
+            "primary_fos_id": "COALESCE(pi.primary_fos_id, 1)",
+            "account_id": "p.pi_id"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_pi",
+                "alias": "p"
+            },
+            {
+                "type": "LEFT OUTER",
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "hpcdb_requests",
+                "alias": "pi",
+                "on": "p.pi_id = pi.request_id"
+            }
+        ]
+    }
+}

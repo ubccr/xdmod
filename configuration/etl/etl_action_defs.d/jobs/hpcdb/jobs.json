@@ -1,0 +1,83 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/jobs/hpcdb/jobs.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "job_id": "j.id",
+            "person_id": "uup.union_user_pi_id",
+            "resource_id": "r.resource_id",
+            "allocation_breakdown_id": "upr.user_pi_resource_id",
+            "allocation_id": "pr.pi_resource_id",
+            "account_id": "p.pi_id",
+            "local_jobid": "j.job_id",
+            "local_job_array_index": "IFNULL(j.job_array_index, -1)",
+            "local_job_id_raw": "j.job_id_raw",
+            "jobname": "j.job_name",
+            "queue": "j.queue_name",
+            "username": "j.user_name",
+            "uid_number": "j.uid_number",
+            "groupname": "j.group_name",
+            "gid_number": "j.gid_number",
+            "start_time": "j.start_time",
+            "end_time": "j.end_time",
+            "submit_time": "j.submission_time",
+            "eligible_time": "j.eligible_time",
+            "wallduration": "j.wall_time",
+            "exit_code": "j.exit_code",
+            "exit_state": "j.exit_state",
+            "nodecount": "j.node_count",
+            "processors": "j.cpu_count",
+            "cpu_req": "j.cpu_req",
+            "mem_req": "j.mem_req",
+            "timelimit": "j.timelimit",
+            "node_list": "j.node_list",
+            "ts": "UNIX_TIMESTAMP()"
+        },
+        "joins": [
+            {
+                "name": "staging_job",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "j"
+            },
+            {
+                "name": "staging_union_user_pi",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "uup",
+                "type": "LEFT",
+                "on": "j.user_name = uup.union_user_pi_name"
+            },
+            {
+                "name": "staging_pi",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "p",
+                "type": "LEFT",
+                "on": "j.pi_name = p.pi_name"
+            },
+            {
+                "name": "staging_resource",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "r",
+                "type": "LEFT",
+                "on": "j.resource_name = r.resource_name"
+            },
+            {
+                "name": "staging_pi_resource",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "pr",
+                "type": "LEFT",
+                "on": "j.pi_name = pr.pi_name AND j.resource_name = pr.resource_name"
+            },
+            {
+                "name": "staging_user_pi_resource",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "upr",
+                "type": "LEFT",
+                "on": "j.user_name = upr.user_name AND j.pi_name = upr.pi_name AND j.resource_name = upr.resource_name"
+            }
+        ],
+        "where": [
+            "j.id > COALESCE((SELECT MAX(job_id) FROM ${DESTINATION_SCHEMA}.hpcdb_jobs), 0)"
+        ]
+    }
+}

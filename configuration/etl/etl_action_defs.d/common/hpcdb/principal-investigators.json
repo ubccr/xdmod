@@ -1,0 +1,25 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/principal-investigators.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "person_id": "uup.union_user_pi_id",
+            "request_id": "p.pi_id"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_pi",
+                "alias": "p"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_union_user_pi",
+                "alias": "uup",
+                "on": "p.pi_name = uup.union_user_pi_name"
+            }
+        ]
+    }
+}

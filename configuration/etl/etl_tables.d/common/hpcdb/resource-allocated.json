@@ -1,0 +1,51 @@
+{
+    "table_definition": {
+        "name": "hpcdb_resource_allocated",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "start_date_ts",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "end_date_ts",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "percent",
+                "type": "int(11)",
+                "nullable": false,
+                "default": "100"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "idx_resource",
+                "columns": [
+                    "resource_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_resource_allocated_resource",
+                "columns": [
+                    "resource_id"
+                ],
+                "referenced_table": "hpcdb_resources",
+                "referenced_columns": [
+                    "resource_id"
+                ]
+            }
+        ]
+    }
+}

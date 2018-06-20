@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Resource configuration",
+    "type": "object",
+    "properties": {
+        "resource": {
+            "type": "string",
+            "description": "Resource name or abbreviation",
+            "maxLength": 64
+        },
+        "name": {
+            "type": "string",
+            "description": "Formal name of the resource",
+            "maxLength": 200
+        },
+        "description": {
+            "type": "string",
+            "description": "Description of the resource",
+            "maxLength": 1000
+        },
+        "resource_type_id": {
+            "type": "integer",
+            "description": "Resource type ID",
+            "minimum": 0
+        },
+        "pi_column": {
+            "type": "string",
+            "description": "Column from the resource manager specific table to use as the PI data source"
+        },
+        "shared_jobs": {
+            "type": "boolean",
+            "description": "True if jobs may share nodes on this resource"
+        },
+        "timezone": {
+            "type": "string",
+            "description": "Timezone where this resource is located",
+            "maxLength": 30
+        }
+    },
+    "required": [
+        "resource",
+        "name"
+    ]
+}

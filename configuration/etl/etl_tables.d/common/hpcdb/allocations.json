@@ -1,0 +1,82 @@
+{
+    "table_definition": {
+        "name": "hpcdb_allocations",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "allocations_pk",
+                "columns": [
+                    "allocation_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "allocations_resources_fk",
+                "columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "allocations_ac_rs_idx",
+                "columns": [
+                    "account_id",
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "accounts_allocations_fk",
+                "columns": [
+                    "account_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_allocati_accounts__accounts",
+                "columns": [
+                    "account_id"
+                ],
+                "referenced_table": "hpcdb_accounts",
+                "referenced_columns": [
+                    "account_id"
+                ]
+            },
+            {
+                "name": "fk_allocati_allocatio_resource",
+                "columns": [
+                    "resource_id"
+                ],
+                "referenced_table": "hpcdb_resources",
+                "referenced_columns": [
+                    "resource_id"
+                ]
+            }
+        ]
+    }
+}

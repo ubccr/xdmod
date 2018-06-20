@@ -1,0 +1,187 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "global": {
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "hpcdb",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        }
+    },
+    "hpcdb-bootstrap": [
+        {
+            "name": "create-tables",
+            "description": "Create HPCDB tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "#": "Table creation order is important due to foreign key constraints",
+            "definition_file_list": [
+                "common/hpcdb/schema-version-history.json",
+                "common/hpcdb/accounts.json",
+                "common/hpcdb/organizations.json",
+                "common/hpcdb/resource-types.json",
+                "common/hpcdb/resources.json",
+                "common/hpcdb/allocations.json",
+                "common/hpcdb/people.json",
+                "common/hpcdb/allocation-breakdown.json",
+                "common/hpcdb/allocations-on-resources.json",
+                "common/hpcdb/email-addresses.json",
+                "common/hpcdb/fields-of-science.json",
+                "common/hpcdb/people-on-accounts-history.json",
+                "common/hpcdb/requests.json",
+                "common/hpcdb/principal-investigators.json",
+                "common/hpcdb/resource-allocated.json",
+                "common/hpcdb/resource-specs.json",
+                "common/hpcdb/system-accounts.json",
+                "jobs/hpcdb/jobs.json"
+            ]
+        },
+        {
+            "name": "create-views",
+            "description": "Create HPCDB views",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "hpcdb/fields-of-science-hierarchy.sql"
+            ]
+        },
+        {
+            "name": "fields-of-science",
+            "description": "Load default fields of science",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "definition_file": "common/hpcdb/fields-of-science.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Default fields of science",
+                    "path": "common/hpcdb/fields-of-science.json"
+                }
+            }
+        },
+        {
+            "name": "schema-version-history",
+            "description": "Load schema version history",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "definition_file": "common/hpcdb/schema-version-history.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Schema version history",
+                    "path": "common/hpcdb/schema-version-history.json"
+                }
+            }
+        }
+    ],
+    "hpcdb-ingest-common": [
+        {
+            "name": "resource-types",
+            "description": "Ingest resource types",
+            "definition_file": "common/hpcdb/resource-types.json"
+        },
+        {
+            "name": "organizations",
+            "description": "Ingest organizations",
+            "definition_file": "common/hpcdb/organizations.json"
+        },
+        {
+            "name": "resources",
+            "description": "Ingest resources",
+            "definition_file": "common/hpcdb/resources.json"
+        },
+        {
+            "name": "resource-specs",
+            "description": "Ingest resource specifications",
+            "definition_file": "common/hpcdb/resource-specs.json"
+        },
+        {
+            "name": "resource-allocated",
+            "description": "Ingest resource allocated data",
+            "definition_file": "common/hpcdb/resource-allocated.json"
+        },
+        {
+            "name": "accounts",
+            "description": "Ingest accounts",
+            "definition_file": "common/hpcdb/accounts.json"
+        },
+        {
+            "name": "allocations",
+            "description": "Ingest allocations",
+            "definition_file": "common/hpcdb/allocations.json"
+        },
+        {
+            "name": "people",
+            "description": "Ingest people",
+            "definition_file": "common/hpcdb/people.json"
+        },
+        {
+            "name": "requests",
+            "description": "Ingest requests",
+            "definition_file": "common/hpcdb/requests.json"
+        },
+        {
+            "name": "allocation-breakdown",
+            "description": "Ingest allocation breakdowns",
+            "definition_file": "common/hpcdb/allocation-breakdown.json"
+        },
+        {
+            "name": "allocations-on-resources",
+            "description": "Ingest allocations on resources data",
+            "definition_file": "common/hpcdb/allocations-on-resources.json"
+        },
+        {
+            "name": "email-addresses",
+            "description": "Ingest email addresses",
+            "definition_file": "common/hpcdb/email-addresses.json"
+        },
+        {
+            "name": "principal-investigators",
+            "description": "Ingest principal investigators",
+            "definition_file": "common/hpcdb/principal-investigators.json"
+        },
+        {
+            "name": "system-accounts",
+            "description": "Ingest system accounts",
+            "definition_file": "common/hpcdb/system-accounts.json"
+        }
+    ],
+    "hpcdb-ingest-jobs": [
+        {
+            "name": "jobs",
+            "description": "Ingest job data",
+            "definition_file": "jobs/hpcdb/jobs.json"
+        }
+    ],
+    "hpcdb-prep-xdw-job-ingest-by-date-range": [
+        {
+            "name": "jobs",
+            "description": "Prepare for xdw (modw) ingestion using a date range",
+            "truncate_destination": true,
+            "definition_file": "jobs/hpcdb/jobs-to-ingest-by-date-range.json"
+        }
+    ],
+    "hpcdb-prep-xdw-job-ingest-by-new-jobs": [
+        {
+            "name": "jobs",
+            "description": "Prepare for xdw (modw) ingestion using new jobs",
+            "truncate_destination": true,
+            "definition_file": "jobs/hpcdb/jobs-to-ingest-by-new-jobs.json"
+        }
+    ]
+}

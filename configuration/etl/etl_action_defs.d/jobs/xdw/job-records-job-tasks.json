@@ -13,13 +13,6 @@
         }
     ],
     "source_query": {
-        "#": "Note that start_date, end_date refer to the start/end of the ingestion window, not job start/end dates",
-        "overseer_restrictions": {
-            "start_date": "j.end_time >= UNIX_TIMESTAMP(${VALUE})",
-            "end_date": "j.end_time <= UNIX_TIMESTAMP(${VALUE})",
-            "include_only_resource_codes": "j.resource_id IN ${VALUE}",
-            "exclude_resource_codes": "j.resource_id NOT IN ${VALUE}"
-        },
         "records": {
             "job_id": "j.job_id",
             "job_record_id": "(SELECT MIN(innerj.job_id) FROM ${SOURCE_SCHEMA}.hpcdb_jobs innerj WHERE innerj.local_jobid = j.local_jobid AND innerj.resource_id = j.resource_id AND innerj.submit_time = j.submit_time)",
@@ -84,9 +77,16 @@
         },
         "joins": [
             {
+                "name": "hpcdb_jobs_to_ingest",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jti"
+            },
+            {
                 "name": "hpcdb_jobs",
                 "schema": "${SOURCE_SCHEMA}",
-                "alias": "j"
+                "alias": "j",
+                "type": "INNER",
+                "on": "jti.job_id = j.job_id"
             },
             {
                 "name": "hpcdb_allocations",

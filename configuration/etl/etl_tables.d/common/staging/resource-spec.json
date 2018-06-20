@@ -1,0 +1,75 @@
+{
+    "table_definition": {
+        "name": "staging_resource_spec",
+        "engine": "InnoDB",
+        "comment": "Staging table for resource specifications",
+        "columns": [
+            {
+                "name": "resource_spec_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Resource name/code"
+            },
+            {
+                "name": "start_date",
+                "type": "date",
+                "nullable": true,
+                "default": null,
+                "comment": "Resource specifications start date"
+            },
+            {
+                "name": "end_date",
+                "type": "date",
+                "nullable": true,
+                "default": null,
+                "comment": "Resource specifications end date"
+            },
+            {
+                "name": "nodes",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "Number of nodes in resource"
+            },
+            {
+                "name": "processors",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "Number of processors/cores in resource"
+            },
+            {
+                "name": "ppn",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "default": null,
+                "comment": "Number of processors per node in resource"
+            },
+            {
+                "name": "percent_allocated",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "comment": "Percentage of resource to include in utilization metric calculation"
+            },
+            {
+                "name": "comments",
+                "type": "varchar(500)",
+                "nullable": true,
+                "default": null,
+                "comment": "Comments explaining specifications"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_spec_id"
+                ]
+            }
+        ]
+    }
+}
