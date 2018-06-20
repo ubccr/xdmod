@@ -65,7 +65,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
     {
         // Execute a ManageTables action to create a new table. We are expecting the table does not
         // exist.
-        $this->executeEtlAction('create-table', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('modify-table.create-table', self::$etlConfig, self::$etlOverseerOptions);
 
         // We can use the global endpoint to discover a table in any schema as log as its name is
         // fully qualified. The action does not currently expose its endpoints.
@@ -92,7 +92,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
     {
         // Execute a ManageTables action to modify the table and then discover the table to comapre
         // the result to the expected value.
-        $this->executeEtlAction('modify-table', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('modify-table.modify-table', self::$etlConfig, self::$etlOverseerOptions);
 
         // We can use the global endpoint to discover a table in any schema as log as its name is
         // fully qualified. The action does not currently expose its endpoints.
@@ -115,7 +115,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
     {
         // Execute a ManageTables action to reorder columns and then discover the table to comapre
         // the result to the expected value.
-        $this->executeEtlAction('reorder-table-columns', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('modify-table.reorder-table-columns', self::$etlConfig, self::$etlOverseerOptions);
 
         // We can use the global endpoint to discover a table in any schema as log as its name is
         // fully qualified. The action does not currently expose its endpoints.
@@ -135,7 +135,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
     {
         // Execute a ManageTables action to reorder columns and then discover the table to comapre
         // the result to the expected value.
-        $this->executeEtlAction('rename-and-reorder-table-column', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('modify-table.rename-and-reorder-table-column', self::$etlConfig, self::$etlOverseerOptions);
 
         // We can use the global endpoint to discover a table in any schema as log as its name is
         // fully qualified. The action does not currently expose its endpoints.
