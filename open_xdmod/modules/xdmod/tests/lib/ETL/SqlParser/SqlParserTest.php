@@ -10,6 +10,7 @@ namespace UnitTesting\ETL\SqlParser;
 
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
+use ETL\aAction;
 
 class SqlParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -62,11 +63,8 @@ class SqlParserTest extends \PHPUnit_Framework_TestCase
             null,
             array('default_module_name' => self::$defaultModuleName)
         );
-        $etlConfig->initialize();
         // The "TableManagement" action is defined in etl.d/maintenance.json
-        $options = $etlConfig->getActionOptions('xdmod.maintenance.TableManagement');
-        $action = forward_static_call(array($options->factory, "factory"), $options, $etlConfig);
-
+        $action = aAction::factory($etlConfig, 'xdmod.maintenance.TableManagement');
         $sql = <<<SQL
 SELECT
 DISTINCT o.organization_id,

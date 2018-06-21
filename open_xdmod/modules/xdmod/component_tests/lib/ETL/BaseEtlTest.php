@@ -9,6 +9,7 @@ namespace ComponentTests\ETL;
 use CCR\Log;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
+use ETL\aAction;
 
 /**
  * Base class for ETL tests providing common functionality.
@@ -71,8 +72,7 @@ abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
         EtlConfiguration $etlConfig,
         EtlOverseerOptions $overseerOptions
     ) {
-        $options = $etlConfig->getActionOptions($actionName);
-        $action = forward_static_call(array($options->factory, "factory"), $options, $etlConfig);
+        $action = aAction::factory($etlConfig, $actionName);
         $action->execute($overseerOptions);
     }
 }
