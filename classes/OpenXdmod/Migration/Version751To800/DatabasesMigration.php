@@ -1,5 +1,6 @@
 <?php
-namespace OpenXdmod\Migration\Version750To800;
+
+namespace OpenXdmod\Migration\Version751To800;
 
 use CCR\DB;
 use FilterListBuilder;
@@ -8,7 +9,7 @@ use OpenXdmod\Ingestor\Staging\ResourceTypes;
 use OpenXdmod\Setup\Console;
 
 /**
- * Migrate databases from version 7.5.0 to 8.0.0.
+ * Migrate databases from version 7.5.1 to 8.0.0.
  */
 class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
 {
