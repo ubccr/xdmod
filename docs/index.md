@@ -50,9 +50,9 @@ Want to be notified about XDMoD releases and news? Subscribe to our
 
 Referencing XDMoD
 -----------------
- 
+
 When referencing XDMoD, please cite the following publication:
- 
+
 Jeffrey T. Palmer, Steven M. Gallo, Thomas R. Furlani, Matthew D. Jones,
 Robert L. DeLeon, Joseph P. White, Nikolay Simakov, Abani K. Patra,
 Jeanette Sperhac, Thomas Yearke, Ryan Rathsam, Martins Innus, Cynthia D. Cornelius,
