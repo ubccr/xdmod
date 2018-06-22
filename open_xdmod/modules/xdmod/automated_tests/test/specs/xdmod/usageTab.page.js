@@ -47,6 +47,7 @@ class Usage {
     selectTab() {
         xdmod.selectTab('tg_usage');
         browser.waitForVisible(this.chart);
+        browser.waitForAllInvisible(this.mask);
     }
 
     /**
@@ -58,7 +59,7 @@ class Usage {
         browser.click(this.durationButton);
         browser.waitForVisible(this.durationMenu);
         browser.click(this.durationMenuItem(name));
-        browser.waitForAllInvisible(this.mask, 5000);
+        browser.waitForAllInvisible(this.mask);
 
         // The chart automatically refreshes after a new duration is
         // selected, but the menu remains open.  Clicking the refresh
@@ -89,7 +90,7 @@ class Usage {
      */
     refresh() {
         browser.click(this.refreshButton);
-        browser.waitForAllInvisible(this.mask, 5000);
+        browser.waitForAllInvisible(this.mask);
     }
 
     /**
@@ -170,7 +171,7 @@ class Usage {
      */
     selectTreeNode(name) {
         browser.waitForLoadedThenClick(this.topTreeNodeByName(name));
-        browser.waitForAllInvisible(this.mask, 5000);
+        browser.waitForAllInvisible(this.mask);
     }
 
     /**
@@ -184,7 +185,7 @@ class Usage {
             this.expandTreeNode(topName);
         }
         browser.waitUntilAnimEndAndClick(this.treeNodeByPath(topName, childName));
-        browser.waitForAllInvisible(this.mask, 5000);
+        browser.waitForAllInvisible(this.mask);
     }
 }
 module.exports = new Usage();

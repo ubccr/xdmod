@@ -4,6 +4,7 @@ class MetricExplorer {
         this.originalTitle = '(untitled query 2)';
         this.newTitle = '<em>"& (untitled query) 2 &"</em>';
         this.possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        this.filterPI = 'Alpine';
         this.selectors = {
             tab: '#main_tab_panel__metric_explorer',
             startDate: '#metric_explorer input[id^=start_field_ext]',
@@ -138,6 +139,13 @@ class MetricExplorer {
             },
             buttonMenu: {
                 firstLevel: '.x-menu-floating:not(.x-hide-offsets)'
+            },
+            filters: {
+                toolbar: {
+                    byName: function (name) {
+                        return '//div[@id="grid_filters_metric_explorer"]//div[contains(@class, "x-grid3-col-value_name") and contains(text(), "' + name + '")]/ancestor::node()[2]/td[contains(@class, "x-grid3-td-checked")]/div/div[contains(@class, "x-grid3-check-col-on")]';
+                    }
+                }
             }
         };
     }
@@ -203,18 +211,18 @@ class MetricExplorer {
     }
     editFiltersFromToolbar() {
         let subtitleSelector = this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]';
-        let subtitle = browser.getText(subtitleSelector);
         for (let i = 0; i < 100; i++) {
             if (browser.isVisible('//div[@id="grid_filters_metric_explorer"]')) {
                 break;
             }
             browser.click(this.selectors.toolbar.buttonByName('Filters'));
         }
-        browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//div[contains(@class, "x-grid3-check-col-on")]');
+        browser.waitAndClick(this.selectors.filters.toolbar.byName(this.filterPI));
+        browser.waitUntilNotExist(this.selectors.filters.toolbar.byName(this.filterPI));
         this.waitForChartToChange(function () {
             browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
         });
-        expect(browser.getText(subtitleSelector)).to.not.equal(subtitle);
+        browser.waitUntilNotExist(subtitleSelector + `//*[contains(text(), "${this.filterPI}")]`);
     }
     cancelFiltersFromToolbar() {
         this.clickLogoAndWaitForMask();
@@ -238,7 +246,6 @@ class MetricExplorer {
     }
     addFiltersFromDataSeriesDefinition() {
         this.clickLogoAndWaitForMask();
-        let legend = browser.getText(this.selectors.chart.legend());
         this.openDataSeriesDefinitionFromDataPoint();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "add_filter") and text() = "Add Filter"]');
         browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="PI"]');
@@ -253,11 +260,10 @@ class MetricExplorer {
             browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
             browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
         });
-        expect(browser.getText(this.selectors.chart.legend())).to.not.equal(legend);
+        browser.waitForExist(this.selectors.chart.legend() + `//*[contains(text(), "${this.filterPI}")]`);
     }
     editFiltersFromDataSeriesDefinition() {
         this.clickLogoAndWaitForMask();
-        let legend = browser.getText(this.selectors.chart.legend());
         this.openDataSeriesDefinitionFromDataPoint();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "filter") and contains(text(), "Filters")]');
         browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//td[contains(@class, "x-grid3-check-col-td")]');
@@ -265,7 +271,7 @@ class MetricExplorer {
         browser.waitForChart();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//div[contains(@class, "x-panel-header")]');
         browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
-        expect(browser.getText(this.selectors.chart.legend())).to.not.equal(legend);
+        browser.waitUntilNotExist(this.selectors.chart.legend() + `//*[contains(text(), "${this.filterPI}")]`);
     }
     cancelFiltersFromDataSeriesDefinition() {
         this.clickLogoAndWaitForMask();

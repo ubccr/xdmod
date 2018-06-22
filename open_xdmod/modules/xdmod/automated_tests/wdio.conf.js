@@ -20,8 +20,7 @@ var HeadlessChrome = {
 };
 var Chrome = {
     browserName: 'chrome',
-    platform: 'Windows 10',
-    version: '61.0',
+    version: '67.0',
     screenResolution: '2560x1600',
     chromeOptions: {
         args: [
@@ -88,11 +87,6 @@ exports.config = {
 
     // Patterns to exclude.
     exclude: excludes,
-    suites: {
-        SSOLogin: [
-            './test/specs/xdmod/SSOLogin.js'
-        ]
-    },
     //
     // ============
     // Capabilities

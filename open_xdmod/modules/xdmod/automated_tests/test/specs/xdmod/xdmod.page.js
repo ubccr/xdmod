@@ -49,11 +49,11 @@ class XDMoD {
                 browser.click(tab);
                 break;
             } catch (e) {
-                browser.waitForAllInvisible(this.selectors.mask, 5000);
+                browser.waitForAllInvisible(this.selectors.mask);
             }
         }
         browser.waitForVisible(panel);
-        browser.waitForAllInvisible(this.selectors.mask, 5000);
+        browser.waitForAllInvisible(this.selectors.mask);
     }
 }
 module.exports = new XDMoD();

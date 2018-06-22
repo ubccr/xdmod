@@ -7,13 +7,14 @@ build:
     cache_dir_list:
         - /root/.composer
         - /root/.npm
+    pre_ci:
+        - docker build -t pseudo_repo/xdmod-open-751:latest .
     pre_ci_boot:
-        image_name: tas-tools-ext-01.ccr.xdmod.org/xdmod-centos7
-        image_tag: open7.5-v4
-        pull: true
-        options: "--user root -e HOME=/root"
+        image_name: pseudo_repo/xdmod-open-751
+        image_tag: latest
+        pull: false
+        options: "--user root -e HOME=/root --shm-size 2g"
     ci:
-        - yum install php-mbstring -y
         - composer install --no-progress
         - ~/bin/buildrpm xdmod
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/bootstrap.sh
@@ -28,6 +29,5 @@ build:
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/samlSetup.sh
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
-
     on_failure:
         - cat /var/log/xdmod/*
