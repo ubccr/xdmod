@@ -2,6 +2,13 @@ Open XDMoD Change Log
 =====================
 ## 2018-??-?? v8.0.0
 
+## 2018-05-23 v7.5.1
+
+- Bug Fixes
+    - Properly implement data access for non-feature ACLs (e.g., ACLs that provide access to data
+      but not a feature such as a tab) that are not part of the hierarchy.  For example, the Value
+      Analytics ACL.
+
 ## 2018-03-01 v7.5.0
 
 - Features

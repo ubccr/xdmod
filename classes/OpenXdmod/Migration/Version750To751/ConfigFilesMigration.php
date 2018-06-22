@@ -1,10 +1,14 @@
 <?php
-namespace OpenXdmod\Migration\Version700To701;
+/**
+ * @author Steven M. Gallo <smgallo@buffalo.edu>
+ */
+
+namespace OpenXdmod\Migration\Version750To751;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 
 /**
- * Update config files from version 7.5.0 to 8.0.0.
+ * Update config files from version 7.5.0 to 7.5.1.
  */
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
