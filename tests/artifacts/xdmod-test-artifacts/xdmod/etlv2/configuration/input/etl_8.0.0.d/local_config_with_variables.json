@@ -63,7 +63,7 @@
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
-                "cloud_common/cloud_resource_metadata.json"
+                "${CLOUD_COMMON_DIR}/cloud_resource_metadata.json"
             ],
             "variables": {
                 "#": "Defined in action config",
@@ -80,7 +80,7 @@
             "name": "CloudAssetTypeInitializer",
             "description": "Initialize cloud asset types including unknown",
             "class": "StructuredFileIngestor",
-            "definition_file": "cloud_common/asset_type.json",
+            "definition_file": "${CLOUD_COMMON_DIR}/asset_type.json",
             "variables": {
                 "#": "Override global variable with value command line value",
                 "COMMAND_LINE_OVERRIDE_VALUE_2": "${CLI_OVERRIDE}",
