@@ -35,7 +35,7 @@
             "namespace": "ETL\\Ingestor",
             "class": "StructuredFileIngestor",
             "options_class": "IngestorOptions",
-            "definition_file": "migrations/7.5.1-8.0.0/shredder/schema-version-history.json",
+            "definition_file": "common/shredder/schema-version-history.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
@@ -75,7 +75,7 @@
             "namespace": "ETL\\Ingestor",
             "class": "StructuredFileIngestor",
             "options_class": "IngestorOptions",
-            "definition_file": "migrations/7.5.1-8.0.0/hpcdb/schema-version-history.json",
+            "definition_file": "common/hpcdb/schema-version-history.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
