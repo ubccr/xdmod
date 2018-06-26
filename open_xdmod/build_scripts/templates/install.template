@@ -537,10 +537,6 @@ function substitutePaths($dirs)
         => $version,
     ));
 
-    substituteInDir($destDir . $dirs['conf'], array(
-        '/__XDMOD_ETC_PATH__/' => $dirs['conf'],
-    ));
-
     substituteInFile($destDir . $dirs['conf'] . '/portal_settings.ini', array(
         '#/usr/share/xdmod#' => $dirs['data'],
     ));

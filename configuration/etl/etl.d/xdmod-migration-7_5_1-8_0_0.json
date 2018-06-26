@@ -103,7 +103,7 @@
                 "source": {
                     "type": "jsonfile",
                     "name": "Resource types",
-                    "path": "__XDMOD_ETC_PATH__/resource_types.json",
+                    "path": "${base_dir}/../resource_types.json",
                     "record_schema_path": "common/resource-types.schema.json"
                 },
                 "destination": {

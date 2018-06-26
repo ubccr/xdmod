@@ -57,7 +57,7 @@
                 "source": {
                     "type": "jsonfile",
                     "name": "Organization configuration",
-                    "path": "__XDMOD_ETC_PATH__/organization.json",
+                    "path": "${base_dir}/../organization.json",
                     "record_schema_path": "common/organization.schema.json",
                     "filters": [
                         {
@@ -79,7 +79,7 @@
                 "source": {
                     "type": "jsonfile",
                     "name": "Resources configuration",
-                    "path": "__XDMOD_ETC_PATH__/resources.json",
+                    "path": "${base_dir}/../resources.json",
                     "record_schema_path": "common/resources.schema.json",
                     "field_names": [
                         "resource",
@@ -101,7 +101,7 @@
                 "source": {
                     "type": "jsonfile",
                     "name": "Resource specifications",
-                    "path": "__XDMOD_ETC_PATH__/resource_specs.json",
+                    "path": "${base_dir}/../resource_specs.json",
                     "record_schema_path": "common/resource-specs.schema.json",
                     "field_names": [
                         "resource",
@@ -124,7 +124,7 @@
                 "source": {
                     "type": "jsonfile",
                     "name": "Resource types",
-                    "path": "__XDMOD_ETC_PATH__/resource_types.json",
+                    "path": "${base_dir}/../resource_types.json",
                     "record_schema_path": "common/resource-types.schema.json"
                 }
             }
