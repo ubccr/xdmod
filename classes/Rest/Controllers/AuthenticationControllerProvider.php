@@ -9,7 +9,7 @@ use Rest\Utilities\Authentication;
 
 /**
  * Class AuthenticationControllerProvider
- * alskfjsalkj
+ *
  * This class is responsible for maintaining the authentication routes for the
  * REST stack.
  *
