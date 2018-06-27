@@ -35,19 +35,19 @@
                 ]
             },
             {
-                "name": "IDX_C3714113217BBB47",
+                "name": "person_idx",
                 "columns": [
                     "person_id"
                 ]
             },
             {
-                "name": "IDX_C371411389329D25",
+                "name": "resource_idx",
                 "columns": [
                     "resource_id"
                 ]
             },
             {
-                "name": "IDX_C37141139B6B5FBA",
+                "name": "account_idx",
                 "columns": [
                     "account_id"
                 ]

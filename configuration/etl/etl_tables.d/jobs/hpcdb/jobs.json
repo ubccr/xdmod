@@ -212,13 +212,13 @@
                 ]
             },
             {
-                "name": "IDX_2EBE1C0289329D25",
+                "name": "resource_idx",
                 "columns": [
                     "resource_id"
                 ]
             },
             {
-                "name": "IDX_2EBE1C021E990699",
+                "name": "allocation_breakdown_idx",
                 "columns": [
                     "allocation_breakdown_id"
                 ]

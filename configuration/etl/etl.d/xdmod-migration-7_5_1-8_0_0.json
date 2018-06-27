@@ -57,8 +57,12 @@
             "class": "ManageTables",
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
+                "common/hpcdb/allocations-on-resources.json",
+                "common/hpcdb/people-on-accounts-history.json",
                 "common/hpcdb/resource-allocated.json",
-                "common/hpcdb/resource-specs.json"
+                "common/hpcdb/resource-specs.json",
+                "common/hpcdb/resources.json",
+                "jobs/hpcdb/jobs.json"
             ],
             "endpoints": {
                 "destination": {

@@ -25,13 +25,13 @@
                 ]
             },
             {
-                "name": "IDX_83494B7789329D25",
+                "name": "resource_idx",
                 "columns": [
                     "resource_id"
                 ]
             },
             {
-                "name": "IDX_83494B779C83F4B2",
+                "name": "allocation_idx",
                 "columns": [
                     "allocation_id"
                 ]

@@ -85,7 +85,7 @@
                 ]
             },
             {
-                "name": "IDX_3A9CF2E298EC6B7B",
+                "name": "resource_type_idx",
                 "columns": [
                     "resource_type_id"
                 ]
