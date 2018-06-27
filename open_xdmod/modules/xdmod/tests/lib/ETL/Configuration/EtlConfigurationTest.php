@@ -95,7 +95,8 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
                 // Define a variable by substituting this for the value
                 'CLI_SUBSTITUTE' => 'VariableInConfig',
                 // Define a completely new variable
-                'CLI_NEW'        => 'NewCommandLineVariable'
+                'CLI_NEW'        => 'NewCommandLineVariable',
+                'CLOUD_COMMON_DIR' => 'cloud_common'
             ),
             'default_module_name' => self::$defaultModuleName
         );

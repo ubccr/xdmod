@@ -271,6 +271,14 @@ class Configuration extends Loggable implements \Iterator
 
         $this->transform();
 
+        // At this point, the only items in the variable store will be those passed in via the
+        // 'config_variables' option which are typically variables supplied on the command line and
+        // have the highest priority. Substitute them in the transformed configuration prior to
+        // calling interpretData() or a child class that extends this method may not get the
+        // substituted value.
+
+        $this->transformedConfig = $this->substituteVariables($this->transformedConfig);
+
         // Perform local interpretation on the data and apply contextual meaning
 
         $this->interpretData();
@@ -501,7 +509,7 @@ class Configuration extends Loggable implements \Iterator
 
     protected function postMergeTasks()
     {
-        $this->transformedConfig = $this->substituteVariables($this->transformedConfig);
+
         return $this;
     }  // postMergeTasks()
 

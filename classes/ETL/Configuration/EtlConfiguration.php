@@ -212,7 +212,11 @@ class EtlConfiguration extends Configuration
         // 'config_variables' option.
 
         foreach ( $this->parsedConfig->defaults->global->paths as $variable => $value ) {
-            $this->variableStore->$variable = $value;
+            // Note that key transformers have not been run at this point so strip comments out of
+            // the paths block.
+            if ( 0 !== strpos('#', $variable) ) {
+                $this->variableStore->$variable = $value;
+            }
         }
 
         return parent::preTransformTasks();
