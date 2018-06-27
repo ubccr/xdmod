@@ -4,7 +4,6 @@ class MetricExplorer {
         this.originalTitle = '(untitled query 2)';
         this.newTitle = '<em>"& (untitled query) 2 &"</em>';
         this.possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        this.filterPI = 'Alpine';
         this.selectors = {
             tab: '#main_tab_panel__metric_explorer',
             startDate: '#metric_explorer input[id^=start_field_ext]',
@@ -193,10 +192,10 @@ class MetricExplorer {
         browser.click(this.selectors.toolbar.buttonByName('Save'));
         browser.waitAndClick('//span[@class="x-menu-item-text" and contains(text(),"Save Changes")]');
     }
-    addFiltersFromToolbar() {
+    addFiltersFromToolbar(filter) {
         let filterByDialogBox = '//div[contains(@class,"x-panel-header")]/span[@class="x-panel-header-text" and contains(text(),"Filter by")]/ancestor::node()[4]';
         this.clickSelectorAndWaitForMask(this.selectors.toolbar.buttonByName('Add Filter'));
-        browser.waitAndClick('//div[@id="metric-explorer-chartoptions-add-filter-menu"]//span[@class="x-menu-item-text" and text() = "PI"]');
+        browser.waitAndClick(`//div[@id="metric-explorer-chartoptions-add-filter-menu"]//span[@class="x-menu-item-text" and text() = "${filter}"]`);
         browser.waitForVisible(filterByDialogBox + '//div[@class="x-grid3-check-col x-grid3-cc-checked"]', 3000);
         let checkboxes = browser.elements(filterByDialogBox + '//div[@class="x-grid3-check-col x-grid3-cc-checked"]');
         if (checkboxes.value.length !== 0) {
@@ -209,7 +208,7 @@ class MetricExplorer {
         });
         expect(browser.element(this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]')).to.exist;
     }
-    editFiltersFromToolbar() {
+    editFiltersFromToolbar(name) {
         let subtitleSelector = this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]';
         for (let i = 0; i < 100; i++) {
             if (browser.isVisible('//div[@id="grid_filters_metric_explorer"]')) {
@@ -217,12 +216,12 @@ class MetricExplorer {
             }
             browser.click(this.selectors.toolbar.buttonByName('Filters'));
         }
-        browser.waitAndClick(this.selectors.filters.toolbar.byName(this.filterPI));
-        browser.waitUntilNotExist(this.selectors.filters.toolbar.byName(this.filterPI));
+        browser.waitAndClick(this.selectors.filters.toolbar.byName(name));
+        browser.waitUntilNotExist(this.selectors.filters.toolbar.byName(name));
         this.waitForChartToChange(function () {
             browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
         });
-        browser.waitUntilNotExist(subtitleSelector + `//*[contains(text(), "${this.filterPI}")]`);
+        browser.waitUntilNotExist(subtitleSelector + `//*[contains(text(), "${name}")]`);
     }
     cancelFiltersFromToolbar() {
         this.clickLogoAndWaitForMask();
@@ -244,11 +243,11 @@ class MetricExplorer {
         this.clickFirstDataPoint();
         browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="Edit Dataset"]');
     }
-    addFiltersFromDataSeriesDefinition() {
+    addFiltersFromDataSeriesDefinition(filter, name) {
         this.clickLogoAndWaitForMask();
         this.openDataSeriesDefinitionFromDataPoint();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "add_filter") and text() = "Add Filter"]');
-        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="PI"]');
+        browser.waitAndClick(`//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="${filter}"]`);
         browser.waitForVisible('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]', 3000);
         let checkboxes = browser.elements('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]');
         if (checkboxes.value.length !== 0) {
@@ -260,9 +259,9 @@ class MetricExplorer {
             browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
             browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
         });
-        browser.waitForExist(this.selectors.chart.legend() + `//*[contains(text(), "${this.filterPI}")]`);
+        browser.waitForExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
     }
-    editFiltersFromDataSeriesDefinition() {
+    editFiltersFromDataSeriesDefinition(name) {
         this.clickLogoAndWaitForMask();
         this.openDataSeriesDefinitionFromDataPoint();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "filter") and contains(text(), "Filters")]');
@@ -271,7 +270,7 @@ class MetricExplorer {
         browser.waitForChart();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//div[contains(@class, "x-panel-header")]');
         browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
-        browser.waitUntilNotExist(this.selectors.chart.legend() + `//*[contains(text(), "${this.filterPI}")]`);
+        browser.waitUntilNotExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
     }
     cancelFiltersFromDataSeriesDefinition() {
         this.clickLogoAndWaitForMask();

@@ -84,21 +84,21 @@ describe('Metric Explorer', function metricExplorer() {
     describe('Basic Scenarios', function basicScenarios() {
         it('Add Filters in Toolbar', function () {
             me.loadExistingChartByName(chartName);
-            me.addFiltersFromToolbar();
+            me.addFiltersFromToolbar('PI');
             me.cancelFiltersFromToolbar();
         });
         it('Edit Filters in Toolbar', function () {
-            me.editFiltersFromToolbar();
+            me.editFiltersFromToolbar('Alpine');
             me.clear();
         });
         it('Add/Edit Filters in Data Series Definition', function () {
             me.clickLogoAndWaitForMask();
             me.loadExistingChartByName(chartName);
-            me.addFiltersFromDataSeriesDefinition();
+            me.addFiltersFromDataSeriesDefinition('PI', 'Alpine');
             me.cancelFiltersFromDataSeriesDefinition();
         });
         it('Edit Filters in Data Series Definition', function () {
-            me.editFiltersFromDataSeriesDefinition();
+            me.editFiltersFromDataSeriesDefinition('Alpine');
             me.clear();
         });
         it('Has Instructions', function meConfirmInstructions() {
