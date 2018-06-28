@@ -141,11 +141,14 @@ EOT
          *  ETLv2 database bootstrap start
          */
         $scriptOptions = array(
+            'default-module-name' => 'xdmod',
             'process-sections' => array(
                 'xdb-bootstrap',
-                'jobs-xdw-bootstrap'
+                'jobs-xdw-bootstrap',
+                'shredder-bootstrap',
+                'staging-bootstrap',
+                'hpcdb-bootstrap',
             ),
-            'default-module-name' => 'xdmod'
         );
 
         $etlConfig = new \ETL\Configuration\EtlConfiguration(

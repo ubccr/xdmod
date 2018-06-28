@@ -1,0 +1,25 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/accounts.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "account_id": "pi.pi_id",
+            "account_name": "COALESCE(a.account_name, pi.pi_name)"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_pi",
+                "alias": "pi"
+            },
+            {
+                "type": "LEFT OUTER",
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "hpcdb_accounts",
+                "alias": "a",
+                "on": "pi.pi_id = a.account_id"
+            }
+        ]
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/resource-spec.json"
+    },
+    "destination_record_map": {
+        "staging_resource_spec": {
+            "resource": "resource",
+            "nodes": "nodes",
+            "processors": "processors",
+            "ppn": "ppn",
+            "start_date": "start_date",
+            "end_date": "end_date",
+            "comments": "comments"
+        }
+    }
+}

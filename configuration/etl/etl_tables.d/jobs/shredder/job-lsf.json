@@ -1,0 +1,110 @@
+{
+    "table_definition": {
+        "name": "shredded_job_lsf",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "shredded_job_lsf_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "job_id",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "idx",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "job_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "default": ""
+            },
+            {
+                "name": "resource_name",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "queue",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "user_name",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "project_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "default": ""
+            },
+            {
+                "name": "submit_time",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "start_time",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "event_time",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "num_processors",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "num_ex_hosts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "exit_status",
+                "type": "int(10)",
+                "nullable": false
+            },
+            {
+                "name": "exit_info",
+                "type": "int(10)",
+                "nullable": false
+            },
+            {
+                "name": "node_list",
+                "type": "mediumtext",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "shredded_job_lsf_id"
+                ]
+            },
+            {
+                "name": "job",
+                "columns": [
+                    "resource_name",
+                    "job_id",
+                    "idx",
+                    "submit_time",
+                    "event_time"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

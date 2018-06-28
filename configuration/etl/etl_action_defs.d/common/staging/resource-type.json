@@ -1,0 +1,12 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/resource-type.json"
+    },
+    "destination_record_map": {
+        "staging_resource_type": {
+            "resource_type_id": "id",
+            "resource_type_description": "description",
+            "resource_type_abbrev": "abbrev"
+        }
+    }
+}

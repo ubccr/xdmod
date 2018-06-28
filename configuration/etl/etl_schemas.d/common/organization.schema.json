@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Organization configuration",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Organization name",
+            "maxLength": 300
+        },
+        "abbrev": {
+            "type": "string",
+            "description": "Organization abbreviation",
+            "maxLength": 100
+        }
+    },
+    "required": [
+        "name",
+        "abbrev"
+    ]
+}

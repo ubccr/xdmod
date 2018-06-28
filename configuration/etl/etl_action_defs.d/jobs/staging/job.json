@@ -1,0 +1,49 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/jobs/staging/job.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "shredded_job_id",
+            "job_id": "job_id",
+            "job_array_index": "job_array_index",
+            "job_id_raw": "job_id_raw",
+            "job_name": "job_name",
+            "resource_name": "resource_name",
+            "queue_name": "queue_name",
+            "user_name": "user_name",
+            "uid_number": "uid_number",
+            "group_name": "group_name",
+            "gid_number": "gid_number",
+            "pi_name": "pi_name",
+            "account_name": "account_name",
+            "project_name": "project_name",
+            "start_time": "start_time",
+            "end_time": "end_time",
+            "submission_time": "submission_time",
+            "eligible_time": "eligible_time",
+            "wall_time": "wall_time",
+            "wait_time": "wait_time",
+            "exit_code": "exit_code",
+            "exit_state": "exit_state",
+            "node_count": "node_count",
+            "cpu_count": "cpu_count",
+            "cpu_req": "cpu_req",
+            "mem_req": "mem_req",
+            "timelimit": "timelimit",
+            "node_list": "node_list"
+        },
+        "joins": [
+            {
+                "name": "shredded_job",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "j"
+            }
+        ],
+        "where": [
+            "start_time > 0",
+            "end_time > 0",
+            "shredded_job_id > COALESCE((SELECT MAX(id) FROM ${DESTINATION_SCHEMA}.staging_job), 0)"
+        ]
+    }
+}

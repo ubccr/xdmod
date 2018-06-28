@@ -1,0 +1,54 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Resource specifications",
+    "description": "Each object represents a resource specification for a given date range",
+    "type": "object",
+    "properties": {
+        "resource": {
+            "type": "string",
+            "description": "Resource name/code",
+            "maxLength": 64
+        },
+        "nodes": {
+            "type": "integer",
+            "description": "Number of nodes in resource",
+            "minimum": 0
+        },
+        "processors": {
+            "type": "integer",
+            "description": "Number of processors/cores in resource",
+            "minimum": 0
+        },
+        "ppn": {
+            "type": "number",
+            "description": "Number of processors per node in resource",
+            "minimum": 0
+        },
+        "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Resource specifications start date (YYYY-MM-DD)"
+        },
+        "end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Resource specifications end date (YYYY-MM-DD)"
+        },
+        "percent_allocated": {
+            "type": "number",
+            "description": "Percentage of resource to include in utilization metric calculation",
+            "minimum": 0,
+            "maximum": 100
+        },
+        "comments": {
+            "type": "string",
+            "description": "Comments explaining specifications",
+            "maxLength": 500
+        }
+    },
+    "required": [
+        "resource",
+        "nodes",
+        "processors"
+    ]
+}

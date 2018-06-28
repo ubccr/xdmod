@@ -1,0 +1,45 @@
+{
+    "table_definition": {
+        "name": "hpcdb_organizations",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "organization_abbrev",
+                "type": "varchar(100)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            },
+            {
+                "name": "organization_name",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "organization_id"
+                ]
+            },
+            {
+                "name": "org_name_uk",
+                "columns": [
+                    "organization_name"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

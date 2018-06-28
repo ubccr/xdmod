@@ -1,0 +1,73 @@
+{
+    "table_definition": {
+        "name": "staging_resource_config",
+        "engine": "InnoDB",
+        "comment": "Staging table for resource configurations",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Resource name or abbreviation"
+            },
+            {
+                "name": "name",
+                "type": "varchar(200)",
+                "nullable": false,
+                "comment": "Formal name of the resource"
+            },
+            {
+                "name": "description",
+                "type": "varchar(1000)",
+                "nullable": true,
+                "comment": "Description of the resource"
+            },
+            {
+                "name": "shared_jobs",
+                "type": "tinyint(1)",
+                "nullable": true,
+                "comment": "True if jobs may share nodes on this resource"
+            },
+            {
+                "name": "timezone",
+                "type": "varchar(30)",
+                "nullable": true,
+                "comment": "Timezone where this resource is located"
+            },
+            {
+                "name": "type_id",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "Resource type ID"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource"
+                ]
+            },
+            {
+                "name": "uk_resource_id",
+                "columns": [
+                    "resource_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "uk_name",
+                "columns": [
+                    "name"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

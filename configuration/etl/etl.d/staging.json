@@ -1,0 +1,180 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "global": {
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        "staging-ingest-common": {
+            "class": "StructuredFileIngestor",
+            "truncate_destination": true,
+            "stop_on_exception": true
+        }
+    },
+    "staging-bootstrap": [
+        {
+            "name": "create-tables",
+            "description": "Create staging tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "common/staging/organization.json",
+                "common/staging/pi-resource.json",
+                "common/staging/pi.json",
+                "common/staging/resource-config.json",
+                "common/staging/resource-spec.json",
+                "common/staging/resource-type.json",
+                "common/staging/resource.json",
+                "common/staging/union-user-pi-resource.json",
+                "common/staging/union-user-pi.json",
+                "common/staging/user-pi-resource.json",
+                "jobs/staging/job.json"
+            ]
+        }
+    ],
+    "staging-ingest-common": [
+        {
+            "name": "organization",
+            "description": "Ingest organization configuration file",
+            "definition_file": "common/staging/organization.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Organization configuration",
+                    "path": "${base_dir}/../organization.json",
+                    "record_schema_path": "common/organization.schema.json",
+                    "filters": [
+                        {
+                            "#": "Add an ID value to the organization record",
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'{id:1,name,abbrev}'"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "resources",
+            "description": "Ingest resource configuration file",
+            "definition_file": "common/staging/resource-config.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resources configuration",
+                    "path": "${base_dir}/../resources.json",
+                    "record_schema_path": "common/resources.schema.json",
+                    "field_names": [
+                        "resource",
+                        "name",
+                        "description",
+                        "resource_type_id",
+                        "pi_column",
+                        "shared_jobs",
+                        "timezone"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "resource-specs",
+            "description": "Ingest resource specifications file",
+            "definition_file": "common/staging/resource-spec.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resource specifications",
+                    "path": "${base_dir}/../resource_specs.json",
+                    "record_schema_path": "common/resource-specs.schema.json",
+                    "field_names": [
+                        "resource",
+                        "nodes",
+                        "processors",
+                        "ppn",
+                        "start_date",
+                        "end_date",
+                        "percent_allocated",
+                        "comments"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "resource-types",
+            "description": "Ingest resource types file",
+            "definition_file": "common/staging/resource-type.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resource types",
+                    "path": "${base_dir}/../resource_types.json",
+                    "record_schema_path": "common/resource-types.schema.json"
+                }
+            }
+        }
+    ],
+    "staging-ingest-jobs": [
+        {
+            "name": "pi-resource",
+            "description": "Ingest job PI/Resource permutations",
+            "definition_file": "jobs/staging/pi-resource.json"
+        },
+        {
+            "name": "pi",
+            "description": "Ingest job PIs",
+            "definition_file": "jobs/staging/pi.json"
+        },
+        {
+            "name": "resource",
+            "description": "Ingest job resources",
+            "definition_file": "jobs/staging/resource.json"
+        },
+        {
+            "name": "union-user-pi--pi",
+            "description": "Ingest job PIs (combined with users)",
+            "definition_file": "jobs/staging/union-user-pi--pi.json"
+        },
+        {
+            "name": "union-user-pi--user",
+            "description": "Ingest job users (combined with PIs)",
+            "definition_file": "jobs/staging/union-user-pi--user.json"
+        },
+        {
+            "name": "union-user-pi-resource--pi",
+            "description": "Ingest PI/Resource permutations (combined with User/Resource permutations)",
+            "definition_file": "jobs/staging/union-user-pi-resource--pi.json"
+        },
+        {
+            "name": "union-user-pi-resource--user",
+            "description": "Ingest User/Resource permutations (combined with PI/Resource permutations)",
+            "definition_file": "jobs/staging/union-user-pi-resource--user.json"
+        },
+        {
+            "name": "user-pi-resource",
+            "description": "Ingest User/PI/Resource permutations",
+            "definition_file": "jobs/staging/user-pi-resource.json"
+        },
+        {
+            "name": "job",
+            "description": "Ingest job data",
+            "definition_file": "jobs/staging/job.json"
+        }
+    ]
+}

@@ -1,0 +1,92 @@
+{
+    "table_definition": {
+        "name": "hpcdb_system_accounts",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "system_account_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "username",
+                "type": "varchar(30)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false
+            },
+            {
+                "name": "ts",
+                "type": "int(10) unsigned",
+                "nullable": false
+            },
+            {
+                "name": "uid",
+                "type": "int(11)",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "system_account_id"
+                ]
+            },
+            {
+                "name": "system_accounts_pk",
+                "columns": [
+                    "system_account_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "resources_usernames_fk",
+                "columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "people_user_accounts_fk",
+                "columns": [
+                    "person_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_system_a_people_us_people",
+                "columns": [
+                    "person_id"
+                ],
+                "referenced_table": "hpcdb_people",
+                "referenced_columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "fk_system_a_resources_resource",
+                "columns": [
+                    "resource_id"
+                ],
+                "referenced_table": "hpcdb_resources",
+                "referenced_columns": [
+                    "resource_id"
+                ]
+            }
+        ]
+    }
+}

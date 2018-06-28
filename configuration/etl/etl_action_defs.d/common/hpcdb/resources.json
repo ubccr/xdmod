@@ -1,0 +1,31 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/resources.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "r.resource_id",
+            "resource_type_id": "COALESCE(rc.type_id, 0)",
+            "organization_id": "1",
+            "resource_name": "r.resource_name",
+            "resource_code": "r.resource_name",
+            "resource_description": "rc.description",
+            "resource_shared_jobs": "COALESCE(rc.shared_jobs, TRUE)",
+            "resource_timezone": "COALESCE(rc.timezone, 'UTC')"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource",
+                "alias": "r"
+            },
+            {
+                "type": "LEFT OUTER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_config",
+                "alias": "rc",
+                "on": "r.resource_name = rc.resource"
+            }
+        ]
+    }
+}

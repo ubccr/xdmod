@@ -1,0 +1,25 @@
+{
+    "table_definition": {
+        "name": "hpcdb_jobs_to_ingest",
+        "comment": "Used to determine which jobs will be ingested",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "job_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "job_id"
+                ]
+            }
+        ]
+    }
+}

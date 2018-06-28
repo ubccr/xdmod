@@ -1,0 +1,26 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/people.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "person_id": "uup.union_user_pi_id",
+            "organization_id": "1",
+            "last_name": "COALESCE(p.last_name, uup.union_user_pi_name)"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_union_user_pi",
+                "alias": "uup"
+            },
+            {
+                "type": "LEFT OUTER",
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "hpcdb_people",
+                "alias": "p",
+                "on": "uup.union_user_pi_id = p.person_id"
+            }
+        ]
+    }
+}

@@ -1,0 +1,89 @@
+{
+    "table_definition": {
+        "name": "hpcdb_people_on_accounts_history",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ]
+            },
+            {
+                "name": "person_idx",
+                "columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "resource_idx",
+                "columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "account_idx",
+                "columns": [
+                    "account_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "poah_fk1",
+                "columns": [
+                    "account_id"
+                ],
+                "referenced_table": "hpcdb_accounts",
+                "referenced_columns": [
+                    "account_id"
+                ]
+            },
+            {
+                "name": "poah_fk2",
+                "columns": [
+                    "resource_id"
+                ],
+                "referenced_table": "hpcdb_resources",
+                "referenced_columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "poah_fk3",
+                "columns": [
+                    "person_id"
+                ],
+                "referenced_table": "hpcdb_people",
+                "referenced_columns": [
+                    "person_id"
+                ]
+            }
+        ]
+    }
+}

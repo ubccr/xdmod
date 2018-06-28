@@ -1,0 +1,37 @@
+{
+    "table_definition": {
+        "name": "staging_union_user_pi",
+        "engine": "InnoDB",
+        "comment": "Staging table for the union of all User and PI usernames",
+        "#": "This corresponds to a person in the HPCDB.",
+        "columns": [
+            {
+                "name": "union_user_pi_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "union_user_pi_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "User or PI username"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "union_user_pi_name"
+                ]
+            },
+            {
+                "name": "uk_union_user_pi_id",
+                "columns": [
+                    "union_user_pi_id"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

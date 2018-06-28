@@ -1,0 +1,65 @@
+{
+    "table_definition": {
+        "name": "hpcdb_requests",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "request_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "primary_fos_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "request_id"
+                ]
+            },
+            {
+                "name": "requests_pk",
+                "columns": [
+                    "request_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "requests_div_of_science_fk",
+                "columns": [
+                    "primary_fos_id"
+                ]
+            },
+            {
+                "name": "accounts_requests_fk",
+                "columns": [
+                    "account_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_requests_accounts__accounts",
+                "columns": [
+                    "account_id"
+                ],
+                "referenced_table": "hpcdb_accounts",
+                "referenced_columns": [
+                    "account_id"
+                ]
+            }
+        ]
+    }
+}

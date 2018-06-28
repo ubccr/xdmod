@@ -1,0 +1,36 @@
+{
+    "table_definition": {
+        "name": "staging_resource",
+        "engine": "InnoDB",
+        "comment": "Staging table for resources",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "Resource username"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_name"
+                ]
+            },
+            {
+                "name": "uk_resource_id",
+                "columns": [
+                    "resource_id"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

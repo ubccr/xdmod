@@ -1,0 +1,42 @@
+{
+    "table_definition": {
+        "name": "staging_resource_type",
+        "engine": "InnoDB",
+        "comment": "Staging table for resource types",
+        "columns": [
+            {
+                "name": "resource_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_type_description",
+                "type": "varchar(50)",
+                "nullable": false,
+                "comment": "Resource type description"
+            },
+            {
+                "name": "resource_type_abbrev",
+                "type": "varchar(10)",
+                "nullable": false,
+                "comment": "Resource type abbreviation"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_type_abbrev"
+                ]
+            },
+            {
+                "name": "uk_resource_type_id",
+                "columns": [
+                    "resource_type_id"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

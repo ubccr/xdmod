@@ -4,12 +4,11 @@ namespace OpenXdmod;
 
 use Exception;
 use CCR\DB\iDatabase;
-use CCR\DB\MySQLDB;
-use CCR\DB\MySQLHelper;
-use ProcessorBucketGenerator;
-use JobTimeGenerator;
-use TimePeriodGenerator;
-use JobTimeseriesAggregator;
+use ETL\Configuration\EtlConfiguration;
+use ETL\EtlOverseer;
+use ETL\EtlOverseerOptions;
+use ETL\Utilities;
+use FilterListBuilder;
 
 class DataWarehouseInitializer
 {
@@ -18,13 +17,6 @@ class DataWarehouseInitializer
      * @var \Log
      */
     protected $logger;
-
-    /**
-     * Shredder database.
-     *
-     * @var iDatabase
-     */
-    protected $shredderDb;
 
     /**
      * HPcDB database.
@@ -39,62 +31,6 @@ class DataWarehouseInitializer
      * @var iDatabase
      */
     protected $warehouseDb;
-
-    /**
-     * Aggregate database.
-     *
-     * @var iDatabase
-     */
-    protected $aggregateDb;
-
-    /**
-     * Ingestors that use the "shredded_job" table as their data source.
-     *
-     * @var array
-     */
-    protected $shreddedJobIngestors = array(
-        'Resources',
-        'PI',
-        'PIResource',
-        'UserPIResource',
-        'UnionUserPI',
-        'UnionUserPIResource',
-        'Jobs',
-    );
-
-    /**
-     * Ingestors that use staging data as their data source.
-     *
-     * @var array
-     */
-    protected $stagingIngestors = array(
-
-        // Constant data.
-        'ResourceTypes',
-
-        // Entity data.
-        'Organizations',
-        'Resources',
-        'ResourceSpecs',
-        'ResourceAllocated',
-        'Accounts',
-        'Allocations',
-        'People',
-        'Requests',
-
-        // Allocation data.
-        'AllocationBreakdown',
-        'AllocationsOnResources',
-
-        // Person data.
-        'EmailAddresses',
-        'PeopleOnAccountsHistory',
-        'PrincipalInvestigators',
-        'SystemAccounts',
-
-        // Job data.
-        'Jobs',
-    );
 
     /**
      * Aggregation units.
@@ -139,33 +75,16 @@ class DataWarehouseInitializer
     protected $append;
 
     /**
-     * @param iDatabase $shredderDb The shredder database.
      * @param iDatabase $hpcdbDb The HPcDB database.
      * @param iDatabase $warehouseDb The MoD warehouse database.
      */
     public function __construct(
-        iDatabase $shredderDb,
         iDatabase $hpcdbDb,
         iDatabase $warehouseDb
     ) {
-        $this->shredderDb  = $shredderDb;
         $this->hpcdbDb     = $hpcdbDb;
         $this->warehouseDb = $warehouseDb;
         $this->logger      = \Log::singleton('null');
-
-        $this->aggregateDb = new MySQLDB(
-            $warehouseDb->_db_host,
-            $warehouseDb->_db_port,
-            'modw_aggregates',
-            $warehouseDb->_db_username,
-            $warehouseDb->_db_password
-        );
-
-        $helper = MySQLHelper::factory($this->aggregateDb);
-
-        // Append if aggregate tables already exist.
-
-        $this->append = $helper->tableExists('jobfact_by_year');
     }
 
     /**
@@ -217,26 +136,9 @@ class DataWarehouseInitializer
      */
     public function ingestAllShredded($startDate = null, $endDate = null)
     {
-        $this->logger->debug('Ingesting shredded job data');
-        if ($startDate !== null) {
-            $this->logger->debug('Start date: ' . $startDate);
-        }
-        if ($endDate !== null) {
-            $this->logger->debug('End date: ' . $endDate);
-        }
-
-        $ingestors = $this->addPrefix(
-            $this->shreddedJobIngestors,
-            "OpenXdmod\\Ingestor\\Shredded\\"
-        );
-
-        $this->ingest(
-            $ingestors,
-            $this->shredderDb,
-            $this->shredderDb,
-            $startDate,
-            $endDate
-        );
+        $this->logger->debug('Ingesting shredded data to staging tables');
+        $this->runEtlPipeline('staging-ingest-common');
+        $this->runEtlPipeline('staging-ingest-jobs');
     }
 
     /**
@@ -247,26 +149,9 @@ class DataWarehouseInitializer
      */
     public function ingestAllStaging($startDate = null, $endDate = null)
     {
-        $this->logger->debug('Ingesting staging data');
-        if ($startDate !== null) {
-            $this->logger->debug('Start date: ' . $startDate);
-        }
-        if ($endDate !== null) {
-            $this->logger->debug('End date: ' . $endDate);
-        }
-
-        $ingestors = $this->addPrefix(
-            $this->stagingIngestors,
-            "OpenXdmod\\Ingestor\\Staging\\"
-        );
-
-        $this->ingest(
-            $ingestors,
-            $this->shredderDb,
-            $this->hpcdbDb,
-            $startDate,
-            $endDate
-        );
+        $this->logger->debug('Ingesting staging data to HPCDB');
+        $this->runEtlPipeline('hpcdb-ingest-common');
+        $this->runEtlPipeline('hpcdb-ingest-jobs');
     }
 
     /**
@@ -277,78 +162,40 @@ class DataWarehouseInitializer
      */
     public function ingestAllHpcdb($startDate = null, $endDate = null)
     {
-        $this->logger->debug('Ingesting HPcDB data');
-        if ($startDate !== null) {
-            $this->logger->debug('Start date: ' . $startDate);
-        }
-        if ($endDate !== null) {
-            $this->logger->debug('End date: ' . $endDate);
-        }
+        $this->logger->debug('Ingesting HPCDB data to modw');
 
-        // Store aggregation start and end dates before ingesting from
-        // mod_hpcdb since those dates depend on what data has not been
-        // inserted into modw.
-        list(
-            $this->aggregationStartDate,
-            $this->aggregationEndDate,
-        ) = $this->getDefaultAggregationDateParams();
-
-        $ingestors = $this->addPrefix(
-            $this->hpcdbIngestors,
-            "OpenXdmod\\Ingestor\\Hpcdb\\"
-        );
-
-        $this->ingest(
-            $ingestors,
-            $this->hpcdbDb,
-            $this->warehouseDb,
-            $startDate,
-            $endDate
-        );
-    }
-
-    /**
-     * Run a set of ingestors using the specified databases.
-     *
-     * @param Ingestor[] ingestors A set of ingestors.
-     * @param iDatabase $srcDb The source database.
-     * @param iDatabase $destDb The destination database.
-     * @param string $startDate
-     * @param string $endDate
-     */
-    protected function ingest(
-        array $ingestors = array(),
-        iDatabase $srcDb,
-        iDatabase $destDb,
-        $startDate = null,
-        $endDate = null
-    ) {
-        if (strcmp($startDate, $endDate) > 0) {
-            $msg = "Invalid date range: '$startDate' to '$endDate'";
-            throw new Exception($msg);
-        }
-
-        $this->logger->debug("Using date range: '$startDate' to '$endDate'");
-
-        foreach ($ingestors as $ingestorName) {
-            $this->logger->debug("Creating ingestor '$ingestorName'");
-
-            $ingestor = new $ingestorName(
-                $destDb,
-                $srcDb,
-                $startDate,
-                $endDate
+        if ($startDate !== null || $endDate !== null) {
+            $params = array();
+            if ($startDate !== null) {
+                $params['start-date'] = $startDate . ' 00:00:00';
+            }
+            if ($endDate !== null) {
+                $params['end-date'] = $endDate . ' 23:59:59';
+            }
+            $this->runEtlPipeline(
+                'hpcdb-prep-xdw-job-ingest-by-date-range',
+                $params
             );
-            $ingestor->setLogger($this->logger);
-            $ingestor->ingest();
+        } else {
+            $this->runEtlPipeline('hpcdb-prep-xdw-job-ingest-by-new-jobs');
         }
+
+        // Use current time from the database in case clocks are not
+        // synchronized.
+        $lastModifiedStartDate
+            = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
+
+        $this->runEtlPipeline(
+            'hpcdb-xdw-ingest',
+            array('last-modified-start-date' => $lastModifiedStartDate)
+        );
     }
 
     /**
      * Initialize aggregate database.
      *
      * This function should be called before all other aggregation
-     * funcions.
+     * functions.
      *
      * @param string $startDate
      * @param string $endDate
@@ -363,16 +210,32 @@ class DataWarehouseInitializer
     }
 
     /**
+     * Create aggregate job data.
+     *
+     * @param string $lastModifiedStartDate Last modified start date used to
+     *     determine which jobs will be aggregated.
+     */
+    public function aggregateAllJobs($lastModifiedStartDate)
+    {
+        $this->runEtlPipeline(
+            'jobs-xdw-aggregate',
+            array('last-modified-start-date' => $lastModifiedStartDate)
+        );
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('Jobs');
+    }
+
+    /**
      * Aggregate a fact table.
+     *
+     * This is staying around until supremm can be updated to etlv2
      *
      * @param string $aggregator Aggregator class name.
      * @param string $startDate Aggregation start date.
      * @param string $endDate Aggregation end date.
      * @param bool $append True if aggregation data should be appended.
      */
-     /**
-      * This is staying around until supremm can be updated to etlv2
-      */
     public function aggregate(
         $aggregator,
         $startDate,
@@ -413,20 +276,50 @@ class DataWarehouseInitializer
     }
 
     /**
-     * Prefix a set of strings.
+     * Run an ETL pipeline.
      *
-     * @param string[] $names A set of names that need prefixing.
-     * @param string $predix The prefix to add to the names.
-     *
-     * @return string[]
+     * @param string $name Pipeline or "section" to run.
+     * @param array $params Parameters to be passed to used to construct
+     *   EtlOverseerOptions.
      */
-    private function addPrefix(array $names = array(), $prefix)
+    private function runEtlPipeline($name, $params = array())
     {
-        return array_map(
-            function ($name) use ($prefix) {
-                return $prefix . $name;
-            },
-            $names
+        $this->logger->debug(
+            sprintf(
+                'Running ETL pipeline "%s" with parameters %s',
+                $name,
+                json_encode($params)
+            )
         );
+
+        $etlConfig = new EtlConfiguration(
+            CONFIG_DIR . '/etl/etl.json',
+            null,
+            $this->logger,
+            array('default_module_name' => 'xdmod')
+        );
+        $etlConfig->initialize();
+        Utilities::setEtlConfig($etlConfig);
+
+        $scriptOptions = array_merge(
+            array(
+                'default-module-name' => 'xdmod',
+                'process-sections' => array($name),
+            ),
+            $params
+        );
+        $this->logger->debug(
+            sprintf(
+                'Running ETL pipeline with script options %s',
+                json_encode($scriptOptions)
+            )
+        );
+
+        $overseerOptions = new EtlOverseerOptions(
+            $scriptOptions,
+            $this->logger
+        );
+        $overseer = new EtlOverseer($overseerOptions, $this->logger);
+        $overseer->execute($etlConfig);
     }
 }

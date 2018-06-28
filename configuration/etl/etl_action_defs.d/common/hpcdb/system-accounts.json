@@ -1,0 +1,34 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/system-accounts.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_id": "r.resource_id",
+            "person_id": "uup.union_user_pi_id",
+            "username": "uup.union_user_pi_name",
+            "ts": "UNIX_TIMESTAMP()"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_union_user_pi_resource",
+                "alias": "uupr"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_union_user_pi",
+                "alias": "uup",
+                "on": "uupr.union_user_pi_name = uup.union_user_pi_name"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource",
+                "alias": "r",
+                "on": "uupr.resource_name = r.resource_name"
+            }
+        ]
+    }
+}

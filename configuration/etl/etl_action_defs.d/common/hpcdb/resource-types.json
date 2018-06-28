@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/resource-types.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "type_id": "rt.resource_type_id",
+            "type_abbr": "rt.resource_type_abbrev",
+            "type_desc": "rt.resource_type_description"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_type",
+                "alias": "rt"
+            }
+        ]
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "table_definition": {
+        "name": "staging_pi",
+        "engine": "InnoDB",
+        "comment": "Staging table for PI usernames",
+        "columns": [
+            {
+                "name": "pi_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "pi_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "PI username"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "pi_name"
+                ]
+            },
+            {
+                "name": "uk_pi_id",
+                "columns": [
+                    "pi_id"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}

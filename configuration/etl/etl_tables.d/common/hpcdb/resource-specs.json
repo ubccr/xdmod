@@ -1,0 +1,82 @@
+{
+    "table_definition": {
+        "name": "hpcdb_resource_specs",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "resource_spec_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "start_date_ts",
+                "type": "int(11)",
+                "nullable": false,
+                "default": "0"
+            },
+            {
+                "name": "end_date_ts",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "node_count",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "cpu_count",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "cpu_count_per_node",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "comments",
+                "type": "varchar(500)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": true
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_spec_id"
+                ]
+            },
+            {
+                "name": "resource_spec_start_date",
+                "columns": [
+                    "resource_id",
+                    "start_date_ts"
+                ],
+                "is_unique": true
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_resource_specs_resource",
+                "columns": [
+                    "resource_id"
+                ],
+                "referenced_table": "hpcdb_resources",
+                "referenced_columns": [
+                    "resource_id"
+                ]
+            }
+        ]
+    }
+}

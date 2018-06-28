@@ -26,6 +26,7 @@ Open XDMoD requires the following software:
 - [logrotate][]
 - [MTA][] with `sendmail` compatibility (e.g. [postfix][], [exim][] or
   [sendmail][])
+- [jq][]
 
 [apache]:          https://httpd.apache.org/
 [mod_rewrite]:     https://httpd.apache.org/docs/current/mod/mod_rewrite.html
@@ -53,6 +54,7 @@ Open XDMoD requires the following software:
 [postfix]:         http://www.postfix.org/
 [exim]:            https://www.exim.org/
 [sendmail]:        https://www.proofpoint.com/us/open-source-email-solution
+[jq]:              https://stedolan.github.io/jq/
 
 Linux Distribution Packages
 ---------------------------
@@ -76,7 +78,7 @@ added with this command for CentOS 7:
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
                   java-1.7.0-openjdk java-1.7.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
-                  ghostscript php-mbstring
+                  ghostscript php-mbstring jq
 
 **NOTE**: Neither the CentOS repositories nor EPEL include PhantomJS,
 so that must be installed manually.  Packages are available for

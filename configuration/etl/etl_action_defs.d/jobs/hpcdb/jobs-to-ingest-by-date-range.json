@@ -1,0 +1,21 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/jobs/hpcdb/jobs-to-ingest.json#/table_definition"
+    },
+    "source_query": {
+        "overseer_restrictions": {
+            "start_date": "j.end_time_ts >= UNIX_TIMESTAMP(${VALUE})",
+            "end_date": "j.end_time_ts <= UNIX_TIMESTAMP(${VALUE})"
+        },
+        "records": {
+            "job_id": "j.job_id"
+        },
+        "joins": [
+            {
+                "name": "hpcdb_jobs",
+                "schema": "${DESTINATION_SCHEMA}",
+                "alias": "j"
+            }
+        ]
+    }
+}

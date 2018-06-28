@@ -1,0 +1,27 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Resource types",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Resource type ID",
+            "minimum": 0
+        },
+        "abbrev": {
+            "type": "string",
+            "description": "Resource type abbreviation",
+            "maxLength": 10
+        },
+        "description": {
+            "type": "string",
+            "description": "Resource type description",
+            "maxLength": 50
+        }
+    },
+    "required": [
+        "id",
+        "abbrev",
+        "description"
+    ]
+}

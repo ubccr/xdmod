@@ -1,0 +1,12 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/organization.json"
+    },
+    "destination_record_map": {
+        "staging_organization": {
+            "organization_id": "id",
+            "organization_name": "name",
+            "organization_abbrev": "abbrev"
+        }
+    }
+}

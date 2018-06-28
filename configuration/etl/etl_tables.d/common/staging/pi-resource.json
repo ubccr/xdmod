@@ -1,0 +1,50 @@
+{
+    "table_definition": {
+        "name": "staging_pi_resource",
+        "engine": "InnoDB",
+        "comment": "Staging table for all PI and resource combinations",
+        "#": "This corresponds to an allocation in the HPCDB",
+        "columns": [
+            {
+                "name": "pi_resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "pi_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "PI username"
+            },
+            {
+                "name": "resource_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "Resource name"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "pi_name",
+                    "resource_name"
+                ]
+            },
+            {
+                "name": "uk_pi_resource_id",
+                "columns": [
+                    "pi_resource_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "idx_resource_name",
+                "columns": [
+                    "resource_name"
+                ]
+            }
+        ]
+    }
+}

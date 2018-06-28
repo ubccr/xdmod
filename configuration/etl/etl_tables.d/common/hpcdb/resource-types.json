@@ -1,0 +1,44 @@
+{
+    "table_definition": {
+        "name": "hpcdb_resource_types",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "type_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "type_abbr",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false
+            },
+            {
+                "name": "type_desc",
+                "type": "varchar(255)",
+                "charset": "utf8",
+                "collation": "utf8_unicode_ci",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "type_id"
+                ]
+            },
+            {
+                "name": "rt_uk",
+                "columns": [
+                    "type_abbr"
+                ],
+                "is_unique": true
+            }
+        ]
+    }
+}
