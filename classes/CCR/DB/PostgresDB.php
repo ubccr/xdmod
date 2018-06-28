@@ -29,6 +29,6 @@ class PostgresDB extends PDODB implements iDatabase
             throw new Exception($msg);
         }
 
-        parent::__construct("pgsql", $db_host, $db_port, $db_name, $db_username, $db_password);
+        parent::__construct("pgsql", $db_host, $db_port, $db_name, $db_username, $db_password, "options='--application_name=XDMoD'");
     }
 }  // class PostgresDB
