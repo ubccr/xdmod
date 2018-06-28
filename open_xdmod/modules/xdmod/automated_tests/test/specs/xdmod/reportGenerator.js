@@ -335,14 +335,16 @@ describe('Report Generator', function () {
             expect(reportGeneratorPage.isDeleteSelectedReportsEnabled(), '"Delete" button is disabled').to.be.false;
         });
     });
-
     describe('Make usage tab charts available in the Report Generator', function () {
         usageTabCharts.forEach((testChart, index) => {
-            it(`Make "${testChart.title}" chart available`, function () {
+            it('Select Usage Tab', function () {
                 usagePage.selectTab();
+            });
+            it(`Select "${testChart.title}" chart`, function () {
                 const topNodeName = testChart.realm + ' ' + (testChart.drillDetails === '' ? 'Summary' : testChart.drillDetails);
                 usagePage.selectChildTreeNode(topNodeName, testChart.title);
-
+            });
+            it('Set chart timeframe', function () {
                 if (testChart.timeframeType === 'User Defined') {
                     usagePage.setStartDate(testChart.startDate);
                     usagePage.setEndDate(testChart.endDate);
@@ -350,7 +352,8 @@ describe('Report Generator', function () {
                 } else {
                     usagePage.selectDuration(testChart.timeframeType);
                 }
-
+            });
+            it(`Make "${testChart.title}" chart available in the Report Generator`, function () {
                 usagePage.makeCurrentChartAvailableForReport();
             });
             it('Check available charts', function () {
@@ -956,6 +959,5 @@ describe('Report Generator', function () {
             expect(reportGeneratorPage.getAvailableCharts().length, 'No charts in the list of available charts').to.be.equal(0);
         });
     });
-
     loginPage.logout();
 });

@@ -1,0 +1,145 @@
+{
+  "centerstaff": {
+    "report_templates_available": false
+  },
+  "centerdirector": {
+    "report_templates": {
+      "name": "Quarterly Report - Center Director",
+      "created_name": "Quarterly Report - Center Director",
+      "created_reports_count": 16,
+      "reports_created": 1,
+      "delivery_format": "PDF",
+      "charts": [
+        {
+          "realm": "Jobs",
+          "startDate": "previousQuarterStartDate",
+          "endDate": "previousQuarterEndDate",
+          "title": "PREVIOUS QUARTER: Total CPU Hours and Jobs",
+          "drillDetails": "",
+          "timeframeType": "Previous quarter"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "yearToDateStartDate",
+          "endDate": "yearToDateEndDate",
+          "title": "YEAR TO DATE: Total CPU Hours and Jobs",
+          "drillDetails": "",
+          "timeframeType": "Year to date"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "previousQuarterStartDate",
+          "endDate": "previousQuarterEndDate",
+          "title": "PREVIOUS QUARTER: Percent Utilization",
+          "drillDetails": "",
+          "timeframeType": "Previous quarter"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "yearToDateStartDate",
+          "endDate": "yearToDateEndDate",
+          "title": "YEAR TO DATE: Percent Utilization",
+          "drillDetails": "",
+          "timeframeType": "Year to date"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "previousQuarterStartDate",
+          "endDate": "previousQuarterEndDate",
+          "title": "PREVIOUS QUARTER: CPU Hours and Number of Jobs - Top 20 Users",
+          "drillDetails": "",
+          "timeframeType": "Previous quarter"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "yearToDateStartDate",
+          "endDate": "yearToDateEndDate",
+          "title": "YEAR TO DATE: CPU Hours and Number of Jobs - Top 20 Users",
+          "drillDetails": "",
+          "timeframeType": "Year to date"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "previousQuarterStartDate",
+          "endDate": "previousQuarterEndDate",
+          "title": "PREVIOUS QUARTER: CPU Hours and Number of Jobs",
+          "drillDetails": "by Resource",
+          "timeframeType": "Previous quarter"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "yearToDateStartDate",
+          "endDate": "yearToDateEndDate",
+          "title": "YEAR TO DATE: CPU Hours and Number of Jobs",
+          "drillDetails": "by Resource",
+          "timeframeType": "Year to date"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "previousQuarterStartDate",
+          "endDate": "previousQuarterEndDate",
+          "title": "PREVIOUS QUARTER: CPU Hours, Number of Jobs, and Wait Time per Job",
+          "drillDetails": "by Job Size",
+          "timeframeType": "Previous quarter"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "yearToDateStartDate",
+          "endDate": "yearToDateEndDate",
+          "title": "YEAR TO DATE: CPU Hours, Number of Jobs, and Wait Time per Job",
+          "drillDetails": "by Job Size",
+          "timeframeType": "Year to date"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "previousQuarterStartDate",
+          "endDate": "previousQuarterEndDate",
+          "title": "PREVIOUS QUARTER: CPU Hours and User Expansion Factor",
+          "drillDetails": "by Job Size",
+          "timeframeType": "Previous quarter"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "yearToDateStartDate",
+          "endDate": "yearToDateEndDate",
+          "title": "YEAR TO DATE: CPU Hours and User Expansion Factor",
+          "drillDetails": "by Job Size",
+          "timeframeType": "Year to date"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "previousQuarterStartDate",
+          "endDate": "previousQuarterEndDate",
+          "title": "PREVIOUS QUARTER: Wait Hours per Job",
+          "drillDetails": "by Queue",
+          "timeframeType": "Previous quarter"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "yearToDateStartDate",
+          "endDate": "yearToDateEndDate",
+          "title": "YEAR TO DATE: Wait Hours per Job",
+          "drillDetails": "by Queue",
+          "timeframeType": "Year to date"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "previousQuarterStartDate",
+          "endDate": "previousQuarterEndDate",
+          "title": "PREVIOUS QUARTER: CPU Hours and Number of Jobs",
+          "drillDetails": "by Queue",
+          "timeframeType": "Previous quarter"
+        },
+        {
+          "realm": "Jobs",
+          "startDate": "yearToDateStartDate",
+          "endDate": "yearToDateEndDate",
+          "title": "YEAR TO DATE: CPU Hours and Number of Jobs",
+          "drillDetails": "by Queue",
+          "timeframeType": "Year to date"
+        }
+      ]
+    },
+    "center": ""
+  }
+}

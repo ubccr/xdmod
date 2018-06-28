@@ -19,8 +19,6 @@ pushd `dirname $0`
 npm set progress=false
 npm install --quiet
 
-./artifacts/update-artifacts.sh
-
 if [ "$4" = "--sso" ];
 then
     npm run test-sso

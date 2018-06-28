@@ -138,6 +138,13 @@ class MetricExplorer {
             },
             buttonMenu: {
                 firstLevel: '.x-menu-floating:not(.x-hide-offsets)'
+            },
+            filters: {
+                toolbar: {
+                    byName: function (name) {
+                        return '//div[@id="grid_filters_metric_explorer"]//div[contains(@class, "x-grid3-col-value_name") and contains(text(), "' + name + '")]/ancestor::node()[2]/td[contains(@class, "x-grid3-td-checked")]/div/div[contains(@class, "x-grid3-check-col-on")]';
+                    }
+                }
             }
         };
     }
@@ -185,10 +192,10 @@ class MetricExplorer {
         browser.click(this.selectors.toolbar.buttonByName('Save'));
         browser.waitAndClick('//span[@class="x-menu-item-text" and contains(text(),"Save Changes")]');
     }
-    addFiltersFromToolbar() {
+    addFiltersFromToolbar(filter) {
         let filterByDialogBox = '//div[contains(@class,"x-panel-header")]/span[@class="x-panel-header-text" and contains(text(),"Filter by")]/ancestor::node()[4]';
         this.clickSelectorAndWaitForMask(this.selectors.toolbar.buttonByName('Add Filter'));
-        browser.waitAndClick('//div[@id="metric-explorer-chartoptions-add-filter-menu"]//span[@class="x-menu-item-text" and text() = "PI"]');
+        browser.waitAndClick(`//div[@id="metric-explorer-chartoptions-add-filter-menu"]//span[@class="x-menu-item-text" and text() = "${filter}"]`);
         browser.waitForVisible(filterByDialogBox + '//div[@class="x-grid3-check-col x-grid3-cc-checked"]', 3000);
         let checkboxes = browser.elements(filterByDialogBox + '//div[@class="x-grid3-check-col x-grid3-cc-checked"]');
         if (checkboxes.value.length !== 0) {
@@ -201,20 +208,20 @@ class MetricExplorer {
         });
         expect(browser.element(this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]')).to.exist;
     }
-    editFiltersFromToolbar() {
+    editFiltersFromToolbar(name) {
         let subtitleSelector = this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]';
-        let subtitle = browser.getText(subtitleSelector);
         for (let i = 0; i < 100; i++) {
             if (browser.isVisible('//div[@id="grid_filters_metric_explorer"]')) {
                 break;
             }
             browser.click(this.selectors.toolbar.buttonByName('Filters'));
         }
-        browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//div[contains(@class, "x-grid3-check-col-on")]');
+        browser.waitAndClick(this.selectors.filters.toolbar.byName(name));
+        browser.waitUntilNotExist(this.selectors.filters.toolbar.byName(name));
         this.waitForChartToChange(function () {
             browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
         });
-        expect(browser.getText(subtitleSelector)).to.not.equal(subtitle);
+        browser.waitUntilNotExist(subtitleSelector + `//*[contains(text(), "${name}")]`);
     }
     cancelFiltersFromToolbar() {
         this.clickLogoAndWaitForMask();
@@ -236,12 +243,11 @@ class MetricExplorer {
         this.clickFirstDataPoint();
         browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="Edit Dataset"]');
     }
-    addFiltersFromDataSeriesDefinition() {
+    addFiltersFromDataSeriesDefinition(filter, name) {
         this.clickLogoAndWaitForMask();
-        let legend = browser.getText(this.selectors.chart.legend());
         this.openDataSeriesDefinitionFromDataPoint();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "add_filter") and text() = "Add Filter"]');
-        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="PI"]');
+        browser.waitAndClick(`//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//li/a//span[text()="${filter}"]`);
         browser.waitForVisible('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]', 3000);
         let checkboxes = browser.elements('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//div[@class="x-grid3-check-col x-grid3-cc-checked"]');
         if (checkboxes.value.length !== 0) {
@@ -253,11 +259,10 @@ class MetricExplorer {
             browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
             browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
         });
-        expect(browser.getText(this.selectors.chart.legend())).to.not.equal(legend);
+        browser.waitForExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
     }
-    editFiltersFromDataSeriesDefinition() {
+    editFiltersFromDataSeriesDefinition(name) {
         this.clickLogoAndWaitForMask();
-        let legend = browser.getText(this.selectors.chart.legend());
         this.openDataSeriesDefinitionFromDataPoint();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//button[contains(@class, "filter") and contains(text(), "Filters")]');
         browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//td[contains(@class, "x-grid3-check-col-td")]');
@@ -265,7 +270,7 @@ class MetricExplorer {
         browser.waitForChart();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//div[contains(@class, "x-panel-header")]');
         browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
-        expect(browser.getText(this.selectors.chart.legend())).to.not.equal(legend);
+        browser.waitUntilNotExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
     }
     cancelFiltersFromDataSeriesDefinition() {
         this.clickLogoAndWaitForMask();
