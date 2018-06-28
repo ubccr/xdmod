@@ -55,7 +55,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
             $user = \XDUser::getUserByID($user_id);
             $storage = new \UserStorage(
                 $user,
-                \NewRest\Controllers\WarehouseControllerProvider::_HISTORY_STORE . '-SUPREMM'
+                \Rest\Controllers\WarehouseControllerProvider::_HISTORY_STORE . '-SUPREMM'
             );
 
             $modifiedSearches = $this->modifySearchTerms($storage->get());

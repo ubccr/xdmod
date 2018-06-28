@@ -1,6 +1,6 @@
 <?php
 
-namespace NewRest\Controllers;
+namespace Rest\Controllers;
 
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
@@ -208,7 +208,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $root = $this->prefix;
 
         $current = get_class($this);
-        $conversions = '\NewRest\Utilities\Conversions';
+        $conversions = '\Rest\Utilities\Conversions';
         // Search history routes
 
         $controller
@@ -354,21 +354,21 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $title = $this->getStringParam($request, 'title');
 
         if ($nodeId !== null && $tsId !== null && $infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
-            $result = $this->_processJobNodeTimeSeriesRequest($app, $user, $realm, $jobId, $tsId, $nodeId, $infoId, $action);
-        } else if ($tsId !== null && $infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
-            $result = $this->_processJobTimeSeriesRequest($app, $user, $realm, $jobId, $tsId, $infoId, $action);
-        } else if ($infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
-            $result = $this->_processJobRequest($app, $user, $realm, $jobId, $infoId, $action);
-        } else if ($jobId !== null && $recordId !== null && $realm !== null) {
-            $result = $this->_processJobByJobId($app, $user, $realm, $jobId, $action);
-        } else if ($recordId !== null && $realm !== null) {
-            $result = $this->_processHistoryRecordRequest($request, $app, $user, $recordId, $action);
-        } else if ($realm !== null && $title !== null) {
+            $result = $this->processJobNodeTimeSeriesRequest($app, $user, $realm, $jobId, $tsId, $nodeId, $infoId, $action);
+        } elseif ($tsId !== null && $infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
+            $result = $this->processJobTimeSeriesRequest($app, $user, $realm, $jobId, $tsId, $infoId, $action);
+        } elseif ($infoId !== null && $jobId !== null && $recordId !== null && $realm !== null) {
+            $result = $this->processJobRequest($app, $user, $realm, $jobId, $infoId, $action);
+        } elseif ($jobId !== null && $recordId !== null && $realm !== null) {
+            $result = $this->processJobByJobId($app, $user, $realm, $jobId, $action);
+        } elseif ($recordId !== null && $realm !== null) {
+            $result = $this->processHistoryRecordRequest($request, $app, $user, $recordId, $action);
+        } elseif ($realm !== null && $title !== null) {
             $result = $this->getHistoryByTitle($request, $app, $realm, $title);
-        } else if ($realm !== null) {
-            $result = $this->_processHistoryRequest($app, $user, $realm, $action);
+        } elseif ($realm !== null) {
+            $result = $this->processHistoryRequest($app, $user, $realm, $action);
         } else {
-            $result = $this->_processHistoryDefaultRealmRequest($app, $action);
+            $result = $this->processHistoryDefaultRealmRequest($app, $action);
         }
 
         return $result;
@@ -403,12 +403,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $realm = $this->getStringParam($request, 'realm', true);
 
-        $searchHistory = $this->_getUserStore($user, $realm);
+        $searchHistory = $this->getUserStore($user, $realm);
 
         $record = $searchHistory->getById($id);
         if (isset($record)) {
             foreach ($record['results'] as &$result) {
-                if (isset($result)) $result['dtype'] = 'jobid';
+                if (isset($result)) {
+                    $result['dtype'] = 'jobid';
+                }
             }
         }
 
@@ -428,19 +430,22 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $user = $this->getUserFromRequest($request);
 
-        $userHistory = $this->_getUserStore($user, $realm);
+        $userHistory = $this->getUserStore($user, $realm);
         $searches = $userHistory->get();
         foreach ($searches as $search) {
             $text = isset($search['text']) ? $search['text'] : null;
             if ($text == $title) {
-                if (!isset($search['dtype'])) $search['dtype'] = 'recordid';
+                if (!isset($search['dtype'])) {
+                    $search['dtype'] = 'recordid';
+                }
                 return $app->json(
                     array(
                         'action' => $action,
                         'success' => true,
                         'data' => $search
                     ),
-                    200);
+                    200
+                );
                 break;
             }
         }
@@ -468,7 +473,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $realm = $this->getStringParam($request, 'realm', true);
 
-        $history = $this->_getUserStore($user, $realm);
+        $history = $this->getUserStore($user, $realm);
 
         $data = $request->get('data');
 
@@ -526,14 +531,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $required = array('data');
 
 
-        $params = $this->_parseRestArguments($request, $required);
+        $params = $this->parseRestArguments($request, $required);
         if (!isset($params) || !isset($params['data'])) {
             throw new MissingMandatoryParametersException('Malformed request. Expected \'data\' to be present.', 400);
         }
 
         $realm = $this->getStringParam($request, 'realm', true);
 
-        $history = $this->_getUserStore($user, $realm);
+        $history = $this->getUserStore($user, $realm);
 
         $data = json_decode($params['data'], true);
 
@@ -574,7 +579,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $realm = $this->getStringParam($request, 'realm', true);
 
-        $history = $this->_getUserStore($user, $realm);
+        $history = $this->getUserStore($user, $realm);
         $deleted = $history->delById($id);
 
         return $app->json(
@@ -604,7 +609,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $realm = $this->getStringParam($request, 'realm', true);
 
-        $history = $this->_getUserStore($user, $realm);
+        $history = $this->getUserStore($user, $realm);
         $history->del();
 
         return $app->json(
@@ -633,7 +638,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $params = json_decode($params, true);
 
-        if($params === NULL) {
+        if($params === null) {
             throw new BadRequestException('params parameter must be valid JSON');
         }
 
@@ -643,7 +648,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $startDate = $this->getStringParam($request, 'start_date', true);
             $endDate = $this->getStringParam($request, 'end_date', true);
 
-            return $this->_processJobSearch($request, $app, $user, $realm, $startDate, $endDate, 'searchJobs');
+            return $this->processJobSearch($request, $app, $user, $realm, $startDate, $endDate, 'searchJobs');
         }
     }
 
@@ -664,7 +669,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $realm = $this->getStringParam($request, 'realm');
         $jobId = $this->getIntParam($request, 'jobid');
 
-        $results = $this->_processJobSearchByAction($request, $app, $user, $action, $realm, $jobId, $name);
+        $results = $this->processJobSearchByAction($request, $app, $user, $action, $realm, $jobId, $name);
 
         return $results;
 
@@ -746,7 +751,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $dimensionsToReturn = array();
         $realms = $user->getActiveRole()->getAllQueryRealms($queryGroup);
         foreach ($realms as $query_realm_key => $query_realm_object) {
-            if ($realm == NULL || $realm == $query_realm_key) {
+            if ($realm == null || $realm == $query_realm_key) {
                 foreach ($query_realm_object as $k => $v) {
                     if ($k != "none") {
                         $dimensionsToReturn[] = array(
@@ -838,10 +843,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         // Check whether multiple service providers are supported or not.
         try {
-          $multipleProvidersSupported = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
+            $multipleProvidersSupported = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
         }
         catch(\Exception $e){
-          $multipleProvidersSupported = FALSE;
+            $multipleProvidersSupported = false;
         }
 
         // Generate generic quick filters for all users.
@@ -1011,7 +1016,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $factsToReturn = array();
         $realms = $user->getActiveRole()->getAllQueryRealms($queryGroup);
         foreach ($realms as $query_realm_key => $query_realm_object) {
-            if ($realm == NULL || $realm == $query_realm_key) {
+            if ($realm == null || $realm == $query_realm_key) {
                 $query_class_name = \DataWarehouse\QueryBuilder::getQueryRealmClassname($query_realm_key);
 
                 $query_class_name::registerGroupBys();
@@ -1019,7 +1024,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
                 $group_bys = array_keys($query_realm_object);
                 foreach ($group_bys as $group_by) {
-                    if ($dimension == NULL || $dimension == $group_by) {
+                    if ($dimension == null || $dimension == $group_by) {
                         $group_by_instance = $query_class_name::getGroupBy($group_by);
 
                         $factsToReturn = array_merge($factsToReturn, $group_by_instance->getPermittedStatistics());
@@ -1224,7 +1229,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $this->getDatasets($request, $app);
     }
 
-    public function _processJobSearch(Request $request, Application $app, XDUser $user, $realm, $startDate, $endDate, $action)
+    public function processJobSearch(Request $request, Application $app, XDUser $user, $realm, $startDate, $endDate, $action)
     {
 
         $activeRole = $user->getActiveRole();
@@ -1235,7 +1240,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $allowableDimensions = array_keys($queryRealms[$realm]);
 
-        $params = $this->_parseRestArguments($request, $allowableDimensions, false, 'params');
+        $params = $this->parseRestArguments($request, $allowableDimensions, false, 'params');
 
         if (count($params) < 1) {
             $results = $app->json(
@@ -1317,7 +1322,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws AccessDeniedException
      */
-    public function _processJobSearchByAction(Request $request, Application $app, XDUser $user, $action, $realm, $jobId, $actionName)
+    public function processJobSearchByAction(Request $request, Application $app, XDUser $user, $action, $realm, $jobId, $actionName)
     {
         switch ($action) {
             case 'accounting':
@@ -1325,7 +1330,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             case 'analysis':
             case 'metrics':
             case 'analytics':
-                $results = $this->_getJobData($app, $user, $realm, $jobId, $action, $actionName);
+                $results = $this->getJobData($app, $user, $realm, $jobId, $action, $actionName);
                 break;
             case 'peers':
                 $start = $this->getIntParam($request, 'start', true);
@@ -1333,10 +1338,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 $results = $this->getJobPeers($app, $user, $realm, $jobId, $start, $limit);
                 break;
             case 'executable':
-                $results = $this->_getJobExecutable($app, $user, $realm, $jobId, $action, $actionName);
+                $results = $this->getJobExecutable($app, $user, $realm, $jobId, $action, $actionName);
                 break;
             case 'detailedmetrics':
-                $results = $this->_getJobSummary($app, $user, $realm, $jobId, $action, $actionName);
+                $results = $this->getJobSummary($app, $user, $realm, $jobId, $action, $actionName);
                 break;
             case 'timeseries':
                 $tsId = $this->getStringParam($request, 'tsid', true);
@@ -1373,7 +1378,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     protected function getJobPeers(Application $app, XDUser $user, $realm, $jobId, $start, $limit)
     {
-        $jobdata = $this->_getJobDataSet($user, $realm, $jobId, 'internal');
+        $jobdata = $this->getJobDataSet($user, $realm, $jobId, 'internal');
         if (!$jobdata->hasResults()) {
             throw new NotFoundException();
         }
@@ -1412,7 +1417,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             )
         );
 
-        $dataset = $this->_getJobDataSet($user, $realm, $jobId, 'peers');
+        $dataset = $this->getJobDataSet($user, $realm, $jobId, 'peers');
         foreach ($dataset->getResults() as $index => $jobpeer) {
             if ( ($index >= $start) && ($index < ($start + $limit))) {
                 $result['series'][1]['data'][] = array(
@@ -1447,9 +1452,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \DataWarehouse\Query\Exceptions\AccessDeniedException
      */
-    private function _getJobData(Application $app, XDUser $user, $realm, $jobId, $action, $actionName)
+    private function getJobData(Application $app, XDUser $user, $realm, $jobId, $action, $actionName)
     {
-        $dataSet = $this->_getJobDataSet($user, $realm, $jobId, $action);
+        $dataSet = $this->getJobDataSet($user, $realm, $jobId, $action);
 
         return $app->json(
             array(
@@ -1468,7 +1473,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return \DataWarehouse\Data\RawDataset
      * @throws \DataWarehouse\Query\Exceptions\AccessDeniedException
      */
-    private function _getJobDataSet(XDUser $user, $realm, $jobId, $action)
+    private function getJobDataSet(XDUser $user, $realm, $jobId, $action)
     {
         $params = array(
             new \DataWarehouse\Query\Model\Parameter('_id', '=', $jobId)
@@ -1504,7 +1509,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Exception
      */
-    private function _getJobExecutable(Application $app, \XDUser $user, $realm, $jobId, $action, $actionName)
+    private function getJobExecutable(Application $app, \XDUser $user, $realm, $jobId, $action, $actionName)
     {
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $query = new $QueryClass();
@@ -1526,7 +1531,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     private function arraytostore(array $values)
     {
-            return array(array("key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values, False) ));
+            return array(array("key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values, false) ));
     }
 
     private function atosrecurse(array $values)
@@ -1558,7 +1563,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @throws BadRequestException
      * @throws \Exception
      */
-    private function _processJobNodeTimeSeriesRequest(
+    private function processJobNodeTimeSeriesRequest(
         Application $app,
         XDUser $user,
         $realm,
@@ -1566,8 +1571,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $tsId,
         $nodeId,
         $infoId,
-        $action)
-    {
+        $action
+    ) {
+    
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
             throw new BadRequestException("Node $infoId is a leaf", 400);
         }
@@ -1598,15 +1604,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws BadRequestException
      */
-    private function _processJobTimeSeriesRequest(
+    private function processJobTimeSeriesRequest(
         Application $app,
         XDUser $user,
         $realm,
         $jobId,
         $tsId,
         $infoId,
-        $action)
-    {
+        $action
+    ) {
+    
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
             throw new BadRequestException("Node $infoId is a leaf", 400);
         }
@@ -1635,14 +1642,15 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws BadRequestException
      */
-    private function _processJobRequest(
+    private function processJobRequest(
         Application $app,
         XDUser $user,
         $realm,
         $jobId,
         $infoId,
-        $action)
-    {
+        $action
+    ) {
+    
 
         switch ($infoId) {
             case "" . \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
@@ -1671,13 +1679,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    private function _processJobByJobId(
+    private function processJobByJobId(
         Application $app,
         XDUser $user,
         $realm,
         $jobId,
-        $action)
-    {
+        $action
+    ) {
+    
         $JobMetaDataClass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $info = new $JobMetaDataClass();
         $jobMetaData = $info->getJobMetadata($user, $jobId);
@@ -1701,7 +1710,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    private function _processHistoryRecordRequest(Request $request, Application $app, XDUser $user, $recordId, $action)
+    private function processHistoryRecordRequest(Request $request, Application $app, XDUser $user, $recordId, $action)
     {
         $url = $request->getBasePath() . $request->getPathInfo() . "/$recordId?".$request->getQueryString();
         return $app->redirect($url);
@@ -1714,9 +1723,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    private function _processHistoryRequest(Application $app, XDUser $user, $realm, $action)
+    private function processHistoryRequest(Application $app, XDUser $user, $realm, $action)
     {
-        $history = $this->_getUserStore($user, $realm);
+        $history = $this->getUserStore($user, $realm);
         $output = $history->get();
         $results = array();
         foreach ($output as $item) {
@@ -1743,7 +1752,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    private function _processHistoryDefaultRealmRequest(Application $app, $action)
+    private function processHistoryDefaultRealmRequest(Application $app, $action)
     {
         return $app->json(
             array(
@@ -1772,7 +1781,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $out;
     }
 
-    private function _getJobSummary(Application $app, \XDUser $user, $realm, $jobId, $action, $actionName)
+    private function getJobSummary(Application $app, \XDUser $user, $realm, $jobId, $action, $actionName)
     {
         $queryclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $query = new $queryclass();
@@ -2090,11 +2099,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
     }
 
-    private function _getUserStore(\XDUser $user, $realm)
+    private function getUserStore(\XDUser $user, $realm)
     {
         $container = implode('-', array_filter(array(self::_HISTORY_STORE, strtoupper($realm))));
         return new \UserStorage($user, $container);
     }
-
-
 }

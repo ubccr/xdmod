@@ -1,18 +1,19 @@
 <?php
 
-namespace NewRest;
+namespace Rest;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-use NewRest\XdmodApplicationFactory;
-use NewRest\Controllers\BaseControllerProvider;
+use Rest\XdmodApplicationFactory;
+use Rest\Controllers\BaseControllerProvider;
 
 /**
  * Provides an interface for interacting with the REST API from outside of it.
  */
-class RestFacade {
+class RestFacade
+{
 
     /**
      * Launch a sub-request with the given options.
@@ -96,7 +97,9 @@ class RestFacade {
         try {
             $existing_request = $app['request'];
             $request_level = HttpKernelInterface::SUB_REQUEST;
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+
+        }
 
         // Launch the request.
         $response = $app->handle($request, $request_level, $catch);
@@ -133,5 +136,3 @@ class RestFacade {
         return $decodedContent;
     }
 }
-
-?>

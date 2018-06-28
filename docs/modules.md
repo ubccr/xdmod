@@ -13,7 +13,7 @@ To get started providing REST end points within XDMoD a module should make sure 
 
  - [module_home]
      - classes/
-          - NewRest/
+          - Rest/
               - Controllers/
                   - [some_controller_provider].php
      - configuration/
@@ -22,7 +22,7 @@ To get started providing REST end points within XDMoD a module should make sure 
 
 Once the directory structure is in place go ahead and create the controller provider php file, we'll start there first.
 #### [some_controller_provider].php
-This file should contain a class that extends `\NewRest\Controllers\BaseControllerProvider` ( which in turn implements Silex's `ControllerProviderInterface`), this abstract class provides a number of helpful methods for interacting with XDMoD such as determining if a user is authenticated and / or authorized, retrieving the XDUser object for a logged in user and retrieving typed parameters from a request. This class also provides some default implementations for ControllerProviderInterface's less frequently used methods. Easing the amount of boilerplate that module writers are responsible for. These functions can be over written if you wish to utilize them, but it is not required, in fact the  only method that is required is the `setupRoutes` function.
+This file should contain a class that extends `\Rest\Controllers\BaseControllerProvider` ( which in turn implements Silex's `ControllerProviderInterface`), this abstract class provides a number of helpful methods for interacting with XDMoD such as determining if a user is authenticated and / or authorized, retrieving the XDUser object for a logged in user and retrieving typed parameters from a request. This class also provides some default implementations for ControllerProviderInterface's less frequently used methods. Easing the amount of boilerplate that module writers are responsible for. These functions can be over written if you wish to utilize them, but it is not required, in fact the  only method that is required is the `setupRoutes` function.
 
 A basic implementation that sets up one route might look something like:
 ```php
@@ -32,7 +32,7 @@ public function setupRoutes(\Silex\Application $application, \Silex\ControllerCo
     // pulled from the rest.d/<module_name>.json file's prefix property. We'll discuss the configuration file
     // more in the following section.
     $prefix = $this->prefix;
-    $controller->get("$prefix/", '\NewRest\Controllers\SomeControllerProvider::getIndex');
+    $controller->get("$prefix/", '\Rest\Controllers\SomeControllerProvider::getIndex');
 }
 ```
 We now need to create a method `getIndex`  to handle requests for this route.

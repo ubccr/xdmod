@@ -1,6 +1,6 @@
 <?php
 
-namespace NewRest\Utilities;
+namespace Rest\Utilities;
 
 class Conversions
 {
@@ -25,13 +25,13 @@ class Conversions
         $result = "";
         if ($isObject && !$hasToString) {
             $result = (string)$value;
-        } else if ($isArray && $isAssociativeArray) {
+        } elseif ($isArray && $isAssociativeArray) {
             $result .= "( ";
             foreach ($value as $key => $value) {
                 $result .= "$key: $value, ";
             }
             $result .= " )";
-        } else if ($isArray && !$isAssociativeArray) {
+        } elseif ($isArray && !$isAssociativeArray) {
             $result .= "( ";
             $result .= implode(", ", $value);
             $result .= " )";
@@ -44,8 +44,9 @@ class Conversions
 
     private static function isAssoc($values)
     {
-        if (!is_array($values)) return false;
+        if (!is_array($values)) {
+            return false;
+        }
         return (bool)count(array_filter(array_keys($values), 'is_string'));
     }
-
 }

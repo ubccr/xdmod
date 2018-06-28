@@ -1,8 +1,8 @@
 <?php
 
-namespace NewRest\Utilities;
+namespace Rest\Utilities;
 
-use NewRest\Controllers\BaseControllerProvider;
+use Rest\Controllers\BaseControllerProvider;
 
 class BaseControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,7 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
         $attributes = $this->getAttributes($user);
         $request = $this->getRequest($attributes);
 
-        $baseController = $this->getMockForAbstractClass('NewRest\Controllers\BaseControllerProvider');
+        $baseController = $this->getMockForAbstractClass('Rest\Controllers\BaseControllerProvider');
         $exception = null;
 
         try {

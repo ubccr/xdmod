@@ -1,6 +1,6 @@
 <?php
 
-namespace NewRest\Controllers;
+namespace Rest\Controllers;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,8 +56,8 @@ class UserControllerProvider extends BaseControllerProvider
     {
         $root = $this->prefix;
 
-        $controller->get("$root/current", '\NewRest\Controllers\UserControllerProvider::getCurrentUser');
-        $controller->patch("$root/current", '\NewRest\Controllers\UserControllerProvider::updateCurrentUser');
+        $controller->get("$root/current", '\Rest\Controllers\UserControllerProvider::getCurrentUser');
+        $controller->patch("$root/current", '\Rest\Controllers\UserControllerProvider::updateCurrentUser');
     }
 
     /**

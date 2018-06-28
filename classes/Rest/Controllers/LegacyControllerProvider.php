@@ -1,6 +1,6 @@
 <?php
 
-namespace NewRest\Controllers;
+namespace Rest\Controllers;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -74,11 +74,11 @@ class LegacyControllerProvider extends BaseControllerProvider
     public function setupRoutes(Application $app, \Silex\ControllerCollection $controller)
     {
         foreach (self::$legacyRouteMapping as $legacyRoute => $legacyRouteOptions) {
-            $controller->match($legacyRoute, '\NewRest\Controllers\LegacyControllerProvider::redirectLegacyRoute')
+            $controller->match($legacyRoute, '\Rest\Controllers\LegacyControllerProvider::redirectLegacyRoute')
                 ->value('legacyRoute', $legacyRoute)
                 ->value('options', $legacyRouteOptions);
 
-            $controller->match("$legacyRoute/{urlArguments}", '\NewRest\Controllers\LegacyControllerProvider::redirectLegacyRoute')
+            $controller->match("$legacyRoute/{urlArguments}", '\Rest\Controllers\LegacyControllerProvider::redirectLegacyRoute')
                 ->assert('urlArguments', '.*')
                 ->value('legacyRoute', $legacyRoute)
                 ->value('options', $legacyRouteOptions);

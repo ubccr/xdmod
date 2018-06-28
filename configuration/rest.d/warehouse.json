@@ -1,6 +1,6 @@
 {
   "warehouse": {
     "prefix": "warehouse",
-    "controller": "NewRest\\Controllers\\WarehouseControllerProvider"
+    "controller": "Rest\\Controllers\\WarehouseControllerProvider"
   }
 }
