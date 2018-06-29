@@ -8,10 +8,6 @@
         }
     ],
     "source_query": {
-        "overseer_restrictions": {
-            "start_date": "jf.end_time >= UNIX_TIMESTAMP(${VALUE})",
-            "end_date": "jf.end_time <= UNIX_TIMESTAMP(${VALUE})"
-        },
         "records": {
             "job_id": "job_id",
             "hostnames": "node_list",
@@ -21,9 +17,16 @@
         },
         "joins": [
             {
+                "name": "hpcdb_jobs_to_ingest",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jti"
+            },
+            {
                 "name": "hpcdb_jobs",
                 "schema": "${SOURCE_SCHEMA}",
-                "alias": "jf"
+                "alias": "jf",
+                "type": "INNER",
+                "on": "jti.job_id = jf.job_id"
             }
         ],
         "where": [
