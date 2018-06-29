@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW `hpcdb_fields_of_science_hierarchy` AS SELECT
+CREATE OR REPLACE VIEW ${DESTINATION_SCHEMA}.`hpcdb_fields_of_science_hierarchy` AS SELECT
     `fos`.`field_of_science_id` AS `field_of_science_id`,
     `fos`.`description` AS `description`,
     IF(
@@ -26,8 +26,8 @@ CREATE OR REPLACE VIEW `hpcdb_fields_of_science_hierarchy` AS SELECT
         `p`.`abbrev`,
         `fos`.`abbrev`
     ) AS `directorate_abbrev`
-FROM `hpcdb_fields_of_science` `fos`
-LEFT JOIN `hpcdb_fields_of_science` `p`
+FROM ${DESTINATION_SCHEMA}.`hpcdb_fields_of_science` `fos`
+LEFT JOIN ${DESTINATION_SCHEMA}.`hpcdb_fields_of_science` `p`
     ON `fos`.`parent_id` = `p`.`field_of_science_id`
-LEFT JOIN `hpcdb_fields_of_science` `gp`
+LEFT JOIN ${DESTINATION_SCHEMA}.`hpcdb_fields_of_science` `gp`
     ON `p`.`parent_id` = `gp`.`field_of_science_id`//

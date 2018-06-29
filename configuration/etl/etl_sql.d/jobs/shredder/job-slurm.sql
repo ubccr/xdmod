@@ -1,6 +1,6 @@
 -- This table contains an index with a column that specifies a length.  This
 -- feature is not currently supported by ETL table management.
-CREATE TABLE `shredded_job_slurm` (
+CREATE TABLE ${DESTINATION_SCHEMA}.`shredded_job_slurm` (
   `shredded_job_slurm_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `job_id` int(10) unsigned NOT NULL,
   `job_array_index` int(10) NOT NULL DEFAULT '-1',

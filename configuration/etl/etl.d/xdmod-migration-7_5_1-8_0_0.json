@@ -24,7 +24,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -45,7 +45,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -68,7 +68,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "HPCDB Database",
-                    "config": "hpcdb",
+                    "config": "database",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -89,7 +89,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "HPCDB Database",
-                    "config": "hpcdb",
+                    "config": "database",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -113,7 +113,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 }
             }
@@ -129,13 +129,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "shredder",
+                    "config": "database",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
                     "name": "HPCDB Database",
-                    "config": "hpcdb",
+                    "config": "database",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -151,7 +151,7 @@
                 "source": {
                     "type": "mysql",
                     "name": "HPCDB Database",
-                    "config": "hpcdb",
+                    "config": "database",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
