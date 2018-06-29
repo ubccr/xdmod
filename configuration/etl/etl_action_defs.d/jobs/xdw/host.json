@@ -9,9 +9,9 @@
     ],
     "source_query": {
         "records": {
-            "job_id": "job_id",
-            "hostnames": "node_list",
-            "resource_id": "resource_id",
+            "job_id": "jf.job_id",
+            "hostnames": "jf.node_list",
+            "resource_id": "jf.resource_id",
             "order_id": 1,
             "host_id": -1
         },
@@ -33,7 +33,7 @@
             "jf.node_list IS NOT NULL"
         ],
         "orderby": [
-            "job_id"
+            "jf.job_id"
         ]
     },
     "destination_record_map": {
