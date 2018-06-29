@@ -4,8 +4,8 @@
     },
     "source_query": {
         "overseer_restrictions": {
-            "start_date": "j.end_time_ts >= UNIX_TIMESTAMP(${VALUE})",
-            "end_date": "j.end_time_ts <= UNIX_TIMESTAMP(${VALUE})"
+            "start_date": "j.end_time >= UNIX_TIMESTAMP(${VALUE})",
+            "end_date": "j.end_time <= UNIX_TIMESTAMP(${VALUE})"
         },
         "records": {
             "job_id": "j.job_id"
