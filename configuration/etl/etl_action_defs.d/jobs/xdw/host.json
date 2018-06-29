@@ -8,29 +8,32 @@
         }
     ],
     "source_query": {
-        "overseer_restrictions": {
-            "start_date": "jf.end_time >= UNIX_TIMESTAMP(${VALUE})",
-            "end_date": "jf.end_time <= UNIX_TIMESTAMP(${VALUE})"
-        },
         "records": {
-            "job_id": "job_id",
-            "hostnames": "node_list",
-            "resource_id": "resource_id",
+            "job_id": "jf.job_id",
+            "hostnames": "jf.node_list",
+            "resource_id": "jf.resource_id",
             "order_id": 1,
             "host_id": -1
         },
         "joins": [
             {
+                "name": "hpcdb_jobs_to_ingest",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "jti"
+            },
+            {
                 "name": "hpcdb_jobs",
                 "schema": "${SOURCE_SCHEMA}",
-                "alias": "jf"
+                "alias": "jf",
+                "type": "INNER",
+                "on": "jti.job_id = jf.job_id"
             }
         ],
         "where": [
             "jf.node_list IS NOT NULL"
         ],
         "orderby": [
-            "job_id"
+            "jf.job_id"
         ]
     },
     "destination_record_map": {
