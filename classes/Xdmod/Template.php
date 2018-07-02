@@ -85,7 +85,11 @@ class Template
      */
     public function resetContents()
     {
-        $this->contents = file_get_contents($this->filePath);
+        if (!is_file($this->filePath)) {
+            throw new Exception("Template '{$this->filePath}' is not a file");
+        }
+
+        $this->contents = @file_get_contents($this->filePath);
 
         if ($this->contents === false) {
             $msg = "Failed to load template '{$this->name}' contents";
