@@ -367,12 +367,10 @@ class MetricExplorer extends Common
             foreach ($v as $x) {
                 $y = (object)$x;
 
-                // Ensure that each filter->data entry is an object
                 for ($i = 0, $b = count($y->filters['data']); $i < $b; $i++) {
                     $y->filters['data'][$i] = (object)$y->filters['data'][$i];
                 }
 
-                // Ensure that $y->filters is an object
                 $y->filters = (object)$y->filters;
 
                 // Set values of new attribs for backward compatibility.
