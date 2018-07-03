@@ -130,41 +130,6 @@ class EtlOverseer extends Loggable implements iEtlOverseer
     }  // verifyDataEndpoints()
 
     /* ------------------------------------------------------------------------------------------
-     * Verify that a single action is properly configured.
-     *
-     * @param $etlConfig An EtlConfiguration object containing the parsed ETL configuration
-     * @param $options An action options object
-     *
-     * @return The instantiated and verified action object
-     *
-     * @throws Exception if there was an error validating any action.
-     * ------------------------------------------------------------------------------------------
-     */
-
-    private function verifyAction(EtlConfiguration $etlConfig, $options)
-    {
-        if ( ! $options instanceof aOptions ) {
-            $msg = get_class($this) . ": Options is not an instance of aOptions";
-            throw new Exception($msg);
-        }
-
-        $action = forward_static_call(array($options->factory, "factory"), $options, $etlConfig, $this->logger);
-        $this->logger->info("Verifying action: " . $action);
-
-        // If this action specifies resource codes we will need to load the mapping between codes
-        // and ids. This is done on demand so it will not break bootstrapping processes.
-
-        if ( isset($options->include_only_resource_codes) || isset($options->exclude_resource_codes) ) {
-            $this->queryResourceCodeToIdMap($etlConfig);
-        }
-
-        $action->initialize($this->etlOverseerOptions);
-
-        return $action;
-
-    }  // verifyAction()
-
-    /* ------------------------------------------------------------------------------------------
      * @see iEtlOverseer::verifyActions()
      * ------------------------------------------------------------------------------------------
      */
@@ -197,21 +162,31 @@ class EtlOverseer extends Loggable implements iEtlOverseer
                     continue;
                 }
 
-                $options = $etlConfig->getActionOptions($actionName, $sectionName);
+                $action = aAction::factory($etlConfig, $actionName, $this->logger);
 
-                if ( ! $verifyDisabled && ! $options->enabled ) {
+                if ( ! $verifyDisabled && ! $action->isEnabled() ) {
                     continue;
                 }
 
-                $actionObjectList[$actionName] = $this->verifyAction($etlConfig, $options);
+                $this->logger->info("Verifying action: " . $action);
+
+                // If this action specifies resource codes we will need to load the mapping between codes
+                // and ids. This is done on demand so it will not break bootstrapping processes.
+
+                if ( isset($options->include_only_resource_codes) || isset($options->exclude_resource_codes) ) {
+                    $this->queryResourceCodeToIdMap($etlConfig);
+                }
+
+                $action->initialize($this->etlOverseerOptions);
+                $actionObjectList[$actionName] = $action;
+
             } catch ( Exception $e ) {
-                $messages[] = "$actionName (" . $e->getMessage() . ")";
+                $messages[] = sprintf("%s (%s)", $actionName, $e->getMessage());
             }
-        }  // foreach ( $actionNameList as $actionName )
+        }
 
         if ( 0 != count($messages) ) {
-            $msg = "Error verifying actions: " . implode(", ", $messages);
-            throw new Exception($msg);
+            throw new Exception(sprintf("Error verifying actions: %s", implode(", ", $messages)));
         }
 
         return $actionObjectList;

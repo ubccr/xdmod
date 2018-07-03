@@ -167,6 +167,12 @@ class Configuration extends Loggable implements \Iterator
 
     protected $variableStore = null;
 
+    /**
+     * @var boolean TRUE if the configuration has already been initialized.
+     */
+
+    protected $initialized = false;
+
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
@@ -250,12 +256,19 @@ class Configuration extends Loggable implements \Iterator
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
-     * Initialize the configuration objecton
+     * Initialize the configuration objecton.
+     *
+     * @param boolean $force TRUE to force re-initialization of the configuration even if it has
+     *   previously been initialized.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function initialize()
+    public function initialize($force = false)
     {
+        if ( $this->initialized && ! $force ) {
+            return;
+        }
+
         $this->logger->info("Loading" . ( $this->isLocalConfig ? " local" : "" ) . " configuration file " . $this->filename);
 
         // Parse the configuration file
@@ -325,6 +338,8 @@ class Configuration extends Loggable implements \Iterator
         }  // if ( null !== $confSubdirectory )
 
         $this->postMergeTasks();
+
+        $this->initialized = true;
 
     }  // initialize()
 

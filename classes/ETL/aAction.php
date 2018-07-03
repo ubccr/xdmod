@@ -22,63 +22,117 @@ use ETL\Configuration\EtlConfiguration;
 
 abstract class aAction extends aEtlObject
 {
-    // aOptions object with configuration information for this action
+    /**
+     * @var aOptions object with configuration information for this action
+     */
+
     protected $options = null;
 
-    // EtlConfiguration object. This is the parsed configuration.
+    /**
+     * @var EtlConfiguration Object containing a representation of the parsed configuration file.
+     */
+
     protected $etlConfig = null;
 
-    // EtlOverseerOptions object. Contains the options for this ingestion run and is
-    // private so we can enforce updating the variable map when it is set.
+    /**
+     * @var EtlOverseerOptions Object containing the options for this ingestion run. This is private
+     *   so that we can enforce updating of the variable map.
+     */
+
     private $etlOverseerOptions = null;
 
-    // Individual actions may override ETL overseer restrictions. Store the overrides as an
-    // associative array where the key is the restriction name and the value is the overriden
-    // restriction.
+    /**
+     * @var array An associative array where the key is the restriction name and the value is the overriden
+     *   restriction. Individual actions may override ETL overseer restrictions.
+     */
+
     protected $overseerRestrictionOverrides = array();
 
-    // A list of key/value pairs mapping a variable name to a value. This is used to substitute
-    // variables in queries or other strings. Note that keys do not include ${}, only the name of the
-    // variable.
+    /**
+     * @var VariableStore An object storing a list of key/value pairs mapping a variable name to a
+     *   value. This is used to substitute variables in queries or other strings. Note that keys do
+     *   not include ${}, only the name of the variable.
+     */
+
     protected $variableStore = null;
 
-    // Path to the JSON configuration file containing ETL table and source query configurations, among
-    // other things.
+    /**
+     * @var string Path to the JSON configuration file containing the action definition.
+     */
+
     protected $definitionFile = null;
 
-    // The stdClass representing a parsed definition file
+    /**
+     * @var stdClass A class representing the parsed definition file.
+     */
+
     protected $parsedDefinitionFile = null;
 
-    // Does this action support chunking of date ranges? Ingestors may support this to
-    // mitigate timeouts on long-running queries but other actions may not. Defaults to
-    // FALSE.
+    /**
+     * @var boolean True if this action supports chunking of date ranges. Ingestors may support this
+     *   to mitigate timeouts on long-running queries but other actions may not. Defaults to FALSE.
+     */
+
     protected $supportDateRangeChunking = false;
 
-    // The current start date that this action is working with. Note that not all actions
-    // utilize a start/end date.
+    /**
+     * @var string The current start date that this action is working with. Note that not all
+     *   actions utilize a start/end date.
+     */
+
     protected $currentStartDate = null;
 
-    // The current end date that this action is working with. Note that not all actions
-    // utilize a start/end date.
+    /**
+     * @var string The current end date that this action is working with. Note that not all actions
+     *   utilize a start/end date.
+     */
+
     protected $currentEndDate = null;
 
-    // --------------------------------------------------------------------------------
-    // NOTE: If we want to support additional endpoint names, these should be implemented as an array
-    // of endpoints. -smg
+    /*
+     * NOTE: If we want to support additional endpoint names, these should be implemented as an array of endpoints. -smg
+     */
 
-    // Handle to the utility database, must implement iDataEndpoint and be a DataEndpoint\Mysql object
+    /**
+     * @var mixed An object or resource representing the connection to the underlying utility
+     *   endopint. For example, a database handle or PDO object.
+     */
+
     protected $utilityHandle = null;
+
+    /**
+     * @var iDataEndpoint The utility data endpoint, must implement iDataEndpoint.
+     */
+
     protected $utilityEndpoint = null;
 
-    // Handle to the source, must implement iDataEndpoint
-    protected $sourceHandle = null;
+    /**
+     * @var iDataEndpoint The utility data endpoint, must implement iDataEndpoint.
+     */
+
     protected $sourceEndpoint = null;
 
-    // Handle to the destination, must implement iDataEndpoint. This is typically a database.
-    protected $destinationHandle = null;
+    /**
+     * @var mixed An object or resource representing the connection to the underlying utility
+     *   endopint. For example, a database handle or PDO object.
+     */
+
+    protected $sourceHandle = null;
+
+    /**
+     * @var iDataEndpoint The utility data endpoint, must implement iDataEndpoint.
+     */
+
     protected $destinationEndpoint = null;
 
-    /* ------------------------------------------------------------------------------------------
+    /**
+     * @var mixed An object or resource representing the connection to the underlying utility
+     *   endopint. For example, a database handle or PDO object.
+     */
+
+    protected $destinationHandle = null;
+
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::__construct()
      * ------------------------------------------------------------------------------------------
      */
@@ -133,7 +187,26 @@ abstract class aAction extends aEtlObject
 
     }  // __construct()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
+     * Helper function to instantiate an action based on the provided EtlConfiguration object.
+     *
+     * @param EtlConfiguration $etlConfig Object containing the parsed ETL configuration.
+     * @param string $actionName The name of the action to instantiate.
+     * @param Log $logger A PEAR Log object or null to use the null logger
+     *
+     * @return iAction An object implementing the iAction interface
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public static function factory(EtlConfiguration $etlConfig, $actionName, Log $logger = null)
+    {
+        $etlConfig->initialize();
+        $options = $etlConfig->getActionOptions($actionName);
+        // We are using the action's own factory method
+        return forward_static_call(array($options->factory, 'factory'), $options, $etlConfig, $logger);
+    }  // factory()
+
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::initialize()
      * ------------------------------------------------------------------------------------------
      */
@@ -164,7 +237,7 @@ abstract class aAction extends aEtlObject
 
     }  // initialize()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::getClass()
      * ------------------------------------------------------------------------------------------
      */
@@ -174,7 +247,7 @@ abstract class aAction extends aEtlObject
         return get_class($this);
     }  // getClass()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::getOptions()
      * ------------------------------------------------------------------------------------------
      */
@@ -184,7 +257,7 @@ abstract class aAction extends aEtlObject
         return $this->options;
     }  // getOptions()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::getCurrentStartDate()
      * ------------------------------------------------------------------------------------------
      */
@@ -194,7 +267,7 @@ abstract class aAction extends aEtlObject
         return $this->currentStartDate;
     }  // getCurrentStartDate()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::getCurrentEndDate()
      * ------------------------------------------------------------------------------------------
      */
@@ -204,7 +277,7 @@ abstract class aAction extends aEtlObject
         return $this->currentEndDate;
     }  // getCurrentEndDate()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::supportsDateRangeChunking()
      * ------------------------------------------------------------------------------------------
      */
@@ -214,7 +287,17 @@ abstract class aAction extends aEtlObject
         return $this->supportDateRangeChunking;
     }  // supportsDateRangeChunking()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
+     * @see iAction::isEnabled()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function isEnabled()
+    {
+        return $this->options->enabled;
+    } // isEnabled()
+
+    /** -----------------------------------------------------------------------------------------
      * @return The ETL overseer options
      * ------------------------------------------------------------------------------------------
      */
@@ -224,7 +307,7 @@ abstract class aAction extends aEtlObject
         return $this->etlOverseerOptions;
     }  // getEtlOverseerOptions()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Set the current EtlOverseerOptions object
      *
      * @return This object for method chaining
@@ -238,7 +321,7 @@ abstract class aAction extends aEtlObject
         return $this;
     }  // setEtlOverseerOptions()
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iAction::getOverseerRestrictionOverrides()
      * ------------------------------------------------------------------------------------------
      */
@@ -248,12 +331,12 @@ abstract class aAction extends aEtlObject
         return $this->overseerRestrictionOverrides;
     }  // getOverseerRestrictionOverrides()
 
-    /* ----------------------------------------------------------------------------------------------------
+    /** ---------------------------------------------------------------------------------------------------
      * The ETL overseer provides the ability to specify parameters that are interpreted as
-     * restrictions on actions such as the ETL start/end dates and resources to include or
-     * exclude from the ETL process.  However, in some cases these options may be
-     * overriden by the configuration of an individual action such as resources to include
-     * or exclude for that action. Keep track of the restrictions here.
+     * restrictions on actions such as the ETL start/end dates and resources to include or exclude
+     * from the ETL process.  However, in some cases these options may be overriden by the
+     * configuration of an individual action such as resources to include or exclude for that
+     * action. Keep track of the restrictions here.
      * ----------------------------------------------------------------------------------------------------
      */
 
@@ -272,8 +355,10 @@ abstract class aAction extends aEtlObject
 
     }  // setOverseerRestrictionOverrides()
 
-    /* ------------------------------------------------------------------------------------------
-     * Initialized the variable map based on ETL settings in the overseer options
+    /** -----------------------------------------------------------------------------------------
+     * Initialize the variable map based on ETL settings in the overseer options.
+     *
+     * @return This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -349,15 +434,14 @@ abstract class aAction extends aEtlObject
                 );
             }
         } catch (\Exception $e) {
-            $msg = "'general' section not defined in XDMoD configuration";
-            $this->logAndThrowException($msg);
+            $this->logAndThrowException("'general' section not defined in XDMoD configuration");
         }
 
         return $this;
     }  // initializeVariableMap()
 
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Initialize the utility endpoint based on the options provided for this action
      *
      * @return This object to support method chaining
@@ -377,7 +461,7 @@ abstract class aAction extends aEtlObject
         return $this;
     }
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Initialize the utility endpoint based on the options provided for this action
      *
      * @return This object to support method chaining
@@ -397,7 +481,7 @@ abstract class aAction extends aEtlObject
         return $this;
     }
 
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * Initialize the utility endpoint based on the options provided for this action
      *
      * @return This object to support method chaining
