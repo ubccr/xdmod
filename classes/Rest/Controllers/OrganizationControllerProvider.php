@@ -44,7 +44,7 @@ class OrganizationControllerProvider extends BaseControllerProvider
 
         // If we have multiple service providers then we can't know which should be the 'default'
         // so we return the 'Unknown' organization.
-        if ($multipleServiceProviders === true) {
+        if ($multipleServiceProviders === 'on') {
             $organizationId = UNKNOWN_ORGANIZATION_ID;
         } else {
             // Else we should have just one organization / service provider.
