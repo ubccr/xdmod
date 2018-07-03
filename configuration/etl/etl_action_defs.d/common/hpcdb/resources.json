@@ -10,7 +10,7 @@
             "resource_name": "rc.name",
             "resource_code": "rc.resource",
             "resource_description": "rc.description",
-            "resource_shared_jobs": "COALESCE(rc.shared_jobs, TRUE)",
+            "resource_shared_jobs": "COALESCE(rc.shared_jobs, FALSE)",
             "resource_timezone": "COALESCE(rc.timezone, 'UTC')"
         },
         "joins": [
