@@ -88,6 +88,16 @@
                 }
             ],
             "enabled": true
+        },
+        {
+            "name": "xdmod-update-user-organizations",
+            "description": "Ensure that current Users have the most up to date organization",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/update_user_organizations.sql"
+                }
+            ]
         }
+
     ]
 }
