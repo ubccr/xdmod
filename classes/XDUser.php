@@ -2967,6 +2967,12 @@ SQL;
         return $results;
     }
 
+    /**
+     * Retrieve the `organization_id` for this user. This corresponds with the value found in the
+     * `moddb.Users.organization_id` column.
+     *
+     * @return mixed
+     */
     public function getOrganizationID()
     {
         return $this->_organizationID;
