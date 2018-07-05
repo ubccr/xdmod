@@ -108,7 +108,8 @@
             },{
                 "name": "submission_venue_id",
                 "type": "int(5)",
-                "nullable": true
+                "nullable": true,
+                "comment": "DIMENSION: The venue that a job or cloud instance was initiated from"
             }
         ],
 
