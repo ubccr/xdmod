@@ -93,6 +93,11 @@
                 "name": "wallduration",
                 "type": "bigint(18)",
                 "nullable": true
+            },
+            {
+                "name": "submission_venue_id",
+                "type": "int(5)",
+                "nullable": true
             }
         ]
     }
