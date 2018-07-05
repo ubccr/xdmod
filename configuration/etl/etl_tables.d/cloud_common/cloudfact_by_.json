@@ -105,6 +105,11 @@
                 "type": "decimal(18,0)",
                 "nullable": true,
                 "comment": "FACT: (seconds) The wallduration of the VMs that were running during this period."
+            },{
+                "name": "submission_venue_id",
+                "type": "int(5)",
+                "nullable": true,
+                "comment": "DIMENSION: The venue that a job or cloud instance was initiated from"
             }
         ],
 
