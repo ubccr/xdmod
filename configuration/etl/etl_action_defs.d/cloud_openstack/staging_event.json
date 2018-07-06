@@ -81,7 +81,7 @@
         ],
 
         "where": [
-            "NOT (state IN ('stopped', 'deleted') AND event_type = 'compute.instance.exists')"
+            "NOT (state != 'active' AND event_type = 'compute.instance.exists')"
         ],
 
         "groupby": [
