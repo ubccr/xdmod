@@ -160,7 +160,8 @@ EML;
         $currentOrganization = Organizations::getOrganizationForUser($user->getUserID());
 
         if ($userOrganization !== $currentOrganization) {
-            $user->setOrganizationId($currentOrganization);
+            $userOrganizationName = Organizations::getNameById($userOrganization);
+            $currentOrganizationName = Organizations::getNameById($currentOrganization);
 
             if ($user->hasAcls(self::$CENTER_ROLES)) {
                 $originalAcls = $user->getAcls(true);
@@ -174,8 +175,8 @@ EML;
                         $user->getFormalName(),
                         $user->getUsername(),
                         $user->getEmailAddress(),
-                        Organizations::getNameById($userOrganization),
-                        Organizations::getNameById($currentOrganization),
+                        $userOrganizationName,
+                        $currentOrganizationName,
                         json_encode($originalAcls),
                         json_encode($otherAcls)
                     )
@@ -187,12 +188,13 @@ EML;
                         $user->getFormalName(),
                         $user->getUsername(),
                         $user->getEmailAddress(),
-                        Organizations::getNameById($userOrganization),
-                        Organizations::getNameById($currentOrganization)
+                        $userOrganizationName,
+                        $currentOrganizationName
                     )
                 );
             }
 
+            $user->setOrganizationId($currentOrganization);
             $user->saveUser();
 
             MailWrapper::sendMail(
