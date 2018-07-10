@@ -454,7 +454,7 @@ abstract class aAction extends aEtlObject
             if ( $endpoint instanceof iRdbmsEndpoint ) {
                 $this->variableStore->UTILITY_SCHEMA = $endpoint->getSchema();
             }
-            $this->logger->debug("Utility endpoint: " . $endpoint);
+            $this->logger->info("Utility endpoint: " . $endpoint);
             $this->utilityEndpoint = $endpoint;
             $this->utilityHandle = $endpoint->getHandle();
         }
@@ -474,7 +474,7 @@ abstract class aAction extends aEtlObject
             if ( $endpoint instanceof iRdbmsEndpoint ) {
                 $this->variableStore->SOURCE_SCHEMA = $endpoint->getSchema();
             }
-            $this->logger->debug("Source endpoint: " . $endpoint);
+            $this->logger->info("Source endpoint: " . $endpoint);
             $this->sourceEndpoint = $endpoint;
             $this->sourceHandle = $endpoint->getHandle();
         }
@@ -494,7 +494,7 @@ abstract class aAction extends aEtlObject
             if ( $endpoint instanceof iRdbmsEndpoint ) {
                 $this->variableStore->DESTINATION_SCHEMA = $endpoint->getSchema();
             }
-            $this->logger->debug("Destination endpoint: " . $endpoint);
+            $this->logger->info("Destination endpoint: " . $endpoint);
             $this->destinationEndpoint = $endpoint;
             $this->destinationHandle = $endpoint->getHandle();
         }

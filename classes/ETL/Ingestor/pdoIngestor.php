@@ -336,7 +336,7 @@ class pdoIngestor extends aIngestor
         // If the source query is un-buffered we need to perform the count beforehand because all
         // results may not be available immediately after the query.
 
-        $this->logger->info(get_class($this) . ': Querying...');
+        $this->logger->info(sprintf("%s: Querying %s", get_class($this), $this->sourceEndpoint));
 
         // Execute the source query. If we are unable to connect, continue to attempt up the
         // MAX_QUERY_ATTEMPTS
@@ -445,10 +445,10 @@ class pdoIngestor extends aIngestor
         $optimize = $this->allowSingleDatabaseOptimization();
 
         if ( $optimize ) {
-            $this->logger->info("Allowing same-server SQL optimizations");
+            $this->logger->debug("Allowing same-server SQL optimizations");
             $totalRecordsProcessed = $this->singleDatabaseIngest();
         } else {
-            $this->logger->info("Using multi-database ingest");
+            $this->logger->debug("Using multi-database ingest");
             $totalRecordsProcessed = $this->multiDatabaseIngest();
         }
 
@@ -517,7 +517,8 @@ class pdoIngestor extends aIngestor
                 . "\nON DUPLICATE KEY UPDATE $updateColumns";
         }
 
-        $this->logger->debug("Single DB ingest SQL " . $this->destinationEndpoint . ":\n$sql");
+        $this->logger->info("Single-database ingest into " . $this->destinationEndpoint);
+        $this->logger->debug($sql);
 
         if ( $this->getEtlOverseerOptions()->isDryrun() ) {
             return 0;
@@ -631,6 +632,8 @@ class pdoIngestor extends aIngestor
             $loadStatementList[$etlTableKey] = $loadStatement;
 
         }  // foreach ( $this->destinationFieldMappings as $etlTableKey => $destFieldToSourceFieldMap )
+
+        $this->logger->info("Multi-database ingest into " . $this->destinationEndpoint);
 
         if ( $this->getEtlOverseerOptions()->isDryrun() ) {
             $this->logger->debug("Source query " . $this->sourceEndpoint . ":\n" . $this->sourceQueryString);
