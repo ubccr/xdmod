@@ -791,49 +791,36 @@ class EtlConfiguration extends Configuration
         // Set up the options with whatever was included in the config. The factory and implementation
         // classes will check for required parameters.
 
-        // Actions are enabled by default and do not require the "enabled" key, but it may still be
-        // specified in the config.
+        // Register the endpoints. Endpoints are global and only one endpoint will be created
+        // for each unique key. We need to register the endpoints first because the actions will
+        // need the keys when they are executed.
 
-        if ( ! isset($config->enabled) || $config->enabled ) {
+        foreach ($config->endpoints as $endpointName => $endpointConfig) {
+            try {
+                $this->addDataEndpoint($endpointConfig);
+            } catch (Exception $e) {
+                $this->logAndThrowException(
+                    "Error registering $endpointName endpoint for $sectionName '{$config->name}': "
+                    . $e->getMessage()
+                );
+            }
+        }  // foreach ($config->endpoints as $endpointName => $endpointConfig)
 
-            // Register the endpoints. Endpoints are global and only one endpoint will be created
-            // for each unique key. We need to register the endpoints first because the actions will
-            // need the keys when they are executed.
+        foreach ( $config as $key => $value ) {
 
-            foreach ($config->endpoints as $endpointName => $endpointConfig) {
-                try {
-                    $this->addDataEndpoint($endpointConfig);
-                } catch (Exception $e) {
-                    $this->logAndThrowException(
-                        "Error registering $endpointName endpoint for $sectionName '{$config->name}': "
-                        . $e->getMessage()
-                    );
-                }
-            }  // foreach ($config->endpoints as $endpointName => $endpointConfig)
+            // The source, destination, and utility entries are data endpoints and need the key to
+            // reference the endpoints.
 
-            foreach ( $config as $key => $value ) {
-
-                // The source, destination, and utility entries are data endpoints and need the key to
-                // reference the endpoints.
-
-                if ( 'endpoints' == $key ) {
-                    foreach ($config->endpoints as $endpointName => $endpointConfig) {
-                        if ( isset($endpointConfig->key) ) {
-                            $options->$endpointName = $endpointConfig->key;
-                        }
+            if ( 'endpoints' == $key ) {
+                foreach ($config->endpoints as $endpointName => $endpointConfig) {
+                    if ( isset($endpointConfig->key) ) {
+                        $options->$endpointName = $endpointConfig->key;
                     }
-                } else {
-                    $options->$key = $value;
                 }
+            } else {
+                $options->$key = $value;
             }
-        } else {
-            // For actions that are not enabled, set minimal information needed for listing actions
-            $options->enabled = false;
-            $options->name = $config->name;
-            if ( isset($config->description) ) {
-                $options->description = $config->description;
-            }
-        }  // else ( $config->enabled )
+        }
 
         $this->addAction($sectionName, $options);
 
