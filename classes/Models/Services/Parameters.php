@@ -37,19 +37,13 @@ class Parameters
         foreach ($dimensions as $dimension) {
             switch ($dimension) {
                 case 'provider':
-                    $organizationId = $user->getOrganizationID();
-                    if ($organizationId === null ||
-                        in_array((int)$organizationId, array(UNKNOWN_ORGANIZATION_ID, 0))
-                    ) {
-                        $organizationId = Organizations::getOrganizationForUser($user->getUserID());
-                    }
-                    $parameters['provider'] = (string)$organizationId;
+                    $parameters['provider'] = (string)$user->getOrganizationID();
                     break;
                 case 'person':
                     $parameters['person'] = (string)$user->getPersonID();
                     break;
                 case 'pi':
-                    $parameters['pi'] = Users::isPrincipalInvestigator($user) ? (string)$user->getPersonID() : -1;
+                    $parameters['pi'] = (string)$user->getPersonID();
                     break;
                 default:
                     throw new \Exception("Unable to determine parameters for acl [$aclName] dimension[$dimension]");
