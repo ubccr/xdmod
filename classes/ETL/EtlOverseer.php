@@ -165,6 +165,7 @@ class EtlOverseer extends Loggable implements iEtlOverseer
                 $action = aAction::factory($etlConfig, $actionName, $this->logger);
 
                 if ( ! $verifyDisabled && ! $action->isEnabled() ) {
+                    $this->logger->info("Action disabled, skipping verification: " . $action);
                     continue;
                 }
 
@@ -173,7 +174,7 @@ class EtlOverseer extends Loggable implements iEtlOverseer
                 // If this action specifies resource codes we will need to load the mapping between codes
                 // and ids. This is done on demand so it will not break bootstrapping processes.
 
-                if ( isset($options->include_only_resource_codes) || isset($options->exclude_resource_codes) ) {
+                if ( isset($action->getOptions()->include_only_resource_codes) || isset($action->getOptions()->exclude_resource_codes) ) {
                     $this->queryResourceCodeToIdMap($etlConfig);
                 }
 
