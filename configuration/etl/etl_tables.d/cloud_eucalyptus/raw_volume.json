@@ -15,7 +15,7 @@
         "columns": [
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false
             },
             {
@@ -75,7 +75,7 @@
             },
             {
                 "name": "disk_gb",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 0,
                 "comment": "Device size in GB."

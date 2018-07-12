@@ -6,7 +6,7 @@
         "columns": [
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false
             },
             {
@@ -18,7 +18,7 @@
             },
             {
                 "name": "instance_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
                 "comment": "Optional instance the event is associated with. Unknown = 1"
@@ -46,21 +46,21 @@
             },
             {
                 "name": "account_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
                 "comment": "Optional account the event is associated with. Unknown = 1"
             },
             {
                 "name": "host_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
                 "comment": "Host where the event occured. Unknown = 1"
             },
             {
                 "name": "instance_type_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
                 "comment": "Instance type for the event. Unknown = 1"
@@ -74,14 +74,14 @@
             },
             {
                 "name": "root_volume_type_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
                 "comment": "Asset type of the root volume as defined by the instance type. Unknown = 1"
             },
             {
                 "name": "image_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
                 "comment": "Image associated with the event. Unknown = 1"

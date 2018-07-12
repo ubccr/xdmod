@@ -8,12 +8,12 @@
         "columns": [
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false
             },
             {
                 "name": "host_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "extra": "auto_increment",
                 "comment": "Auto-increment relative to resource_id. Unknown = 1"

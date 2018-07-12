@@ -326,7 +326,7 @@
                     "class": "GroupByYear"
                 },
                 {
-                    "name": "memory_buckets",
+                    "name": "vm_size_memory",
                     "class": "GroupByVMMemory"
                 },
                 {
@@ -366,23 +366,23 @@
                 },
                 {
                     "name": "avg_num_cores",
-                    "class": "AverageCoresAllocatedStatistic"
+                    "class": "AverageCoresReservedStatistic"
                 },
                 {
                     "name": "num_cores",
-                    "class": "CoresAllocatedStatistic"
+                    "class": "CoresReservedStatistic"
                 },
                 {
                     "name": "avg_cores_reserved",
-                    "class": "CoreReservationStatistic"
+                    "class": "WeightedCoresReserved"
                 },
                 {
                     "name": "avg_memory_reserved",
-                    "class": "MemoryReservationStatistic"
+                    "class": "AverageMemoryReserved"
                 },
                 {
                     "name": "avg_disk_reserved",
-                    "class": "DiskReservationStatistic"
+                    "class": "AverageStorageReservedStatistic"
                 }
             ]
         }

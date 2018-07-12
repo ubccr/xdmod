@@ -7,7 +7,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 *
 * Average Cores Reserved Weighted By Wall Hours
 */
-class CoreReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class WeightedCoresReserved extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {

@@ -7,7 +7,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 *
 * Sum of cores reserved on active virtual machines
 */
-class CoresAllocatedStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class CoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {

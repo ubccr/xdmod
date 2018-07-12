@@ -31,7 +31,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
     public function __construct()
     {
         parent::__construct(
-            'memory_buckets',
+            'vm_size_memory',
             array(),
             "SELECT distinct
                 gt.id,

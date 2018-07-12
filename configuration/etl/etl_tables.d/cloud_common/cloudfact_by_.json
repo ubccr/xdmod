@@ -22,7 +22,7 @@
                 "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
             },{
                 "name": "host_resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: The resource id of the host of a VM where event(s) occured."
             },{
@@ -32,7 +32,7 @@
                 "comment": "DIMENSION: The account id associated with the VM."
             },{
                 "name": "person_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: The person id associated with a VM instance."
             },{
@@ -47,7 +47,7 @@
                 "comment": "FACT: Pre-determined memory bucket sizes. References memorybucket.id"
             },{
                 "name": "instance_type_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: Type of instance on which an event occurred."
             },{

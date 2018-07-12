@@ -6,13 +6,13 @@
         "columns": [
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Resource to which this account belongs"
             },
             {
                 "name": "account_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "extra": "auto_increment",
                 "comment": "Unknown = 1"

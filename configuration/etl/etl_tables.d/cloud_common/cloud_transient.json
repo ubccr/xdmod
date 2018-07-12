@@ -11,7 +11,7 @@
             },
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false
             },
             {

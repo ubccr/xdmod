@@ -7,7 +7,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 *
 * The total core reservation time of virtual machines, in hours
 */
-class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class AverageMemoryReserved extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
@@ -23,6 +23,6 @@ class MemoryReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function getInfo()
     {
         return 'The amount of memory reserved by running virtual machines over wall time.<br/>
-        <i>Wall Time:</i> The linear duration between the start and end times of discrete virtual machine runs.';
+        <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }
