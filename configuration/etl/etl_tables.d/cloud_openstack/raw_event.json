@@ -124,7 +124,7 @@
             		"type": "varchar(64)",
             		"nullable": true,
             		"default": null
-      	    },
+            },
             {
                 "name": "state",
                 "type": "varchar(64)",
