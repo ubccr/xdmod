@@ -80,6 +80,10 @@
             }
         ],
 
+        "where": [
+            "NOT (state != 'active' AND event_type = 'compute.instance.exists')"
+        ],
+
         "groupby": [
             "raw.resource_id",
             "i.instance_id",
