@@ -1,0 +1,6 @@
+{
+  "person": {
+    "prefix": "persons",
+    "controller": "Rest\\Controllers\\PersonControllerProvider"
+  }
+}

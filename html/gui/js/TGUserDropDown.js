@@ -165,6 +165,42 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox,  {
 
       CCR.xdmod.ui.TGUserDropDown.superclass.initComponent.apply(this, arguments);
 
-   }//initComponent
+   }, //initComponent
+   listeners: {
+      select: function(component, record, index) {
+          var personId = component.getValue();
+          var organizationComponent = this.organizationComponent;
+          var organizationChangeCallback = this.organizationChangeCallback;
+          if (organizationComponent) {
+              Ext.Ajax.request({
+                  url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
+                  method: 'GET',
+                  scope: self,
+                  callback: function (options, success, response) {
+                      var json;
+                      if (success) {
+                          json = CCR.safelyDecodeJSONResponse(response);
+                          success = CCR.checkDecodedJSONResponseSuccess(json);
+                      }
+
+                      if (!success) {
+                          CCR.xdmod.ui.presentFailureResponse(response, {
+                              title: 'User Management',
+                              wrapperMessage: 'Setting user mapping failed.'
+                          });
+                          return;
+                      }
+
+                      if (organizationComponent.getValue() !== json.results.organization_id &&
+                          organizationChangeCallback !== undefined) {
+                          organizationChangeCallback(organizationComponent.getValue(), json.results.organization_id);
+                      }
+
+                      organizationComponent.setValue(json.results.organization_id);
+                  }
+              });
+          }
+      }
+   }
 
 });//CCR.xdmod.ui.TGUserDropDown

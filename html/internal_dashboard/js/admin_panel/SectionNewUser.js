@@ -22,18 +22,6 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
 
         var leftColumnFieldWidth = 205;
 
-        var cmbUserMapping = new CCR.xdmod.ui.TGUserDropDown({
-            dashboardMode: true,
-            user_management_mode: true,
-            controllerBase: '../controllers/sab_user.php',
-            fieldLabel: 'Map To',
-            emptyText: 'User not mapped',
-            hiddenName: 'nm_new_user_mapping',
-            width: 150
-        });
-
-        cmbUserMapping.on('disable', function () { cmbUserMapping.reset(); });
-
         var cmbInstitution = new CCR.xdmod.ui.InstitutionDropDown({
             controllerBase: base_controller,
             fieldLabel: 'Institution',
@@ -42,9 +30,24 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             allowBlank: false
         });
 
+        cmbInstitution.setDisabled(true);
+
         cmbInstitution.on('change', function (combo) {
             combo.removeClass('admin_panel_invalid_text_entry');
         });
+
+        var cmbUserMapping = new CCR.xdmod.ui.TGUserDropDown({
+            dashboardMode: true,
+            user_management_mode: true,
+            controllerBase: '../controllers/sab_user.php',
+            fieldLabel: 'Map To',
+            emptyText: 'User not mapped',
+            hiddenName: 'nm_new_user_mapping',
+            width: 150,
+            organizationComponent: cmbInstitution
+        });
+
+        cmbUserMapping.on('disable', function () { cmbUserMapping.reset(); });
 
         var storeUserType = new DashboardStore({
             url: base_controller,
@@ -698,6 +701,31 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 }
             }
         });
+
+        var setOrganizationForPerson = function(personId, component) {
+            Ext.Ajax.request({
+                url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
+                method: 'GET',
+                scope: me,
+                callback: function (options, success, response) {
+                    var json;
+                    if (success) {
+                        json = CCR.safelyDecodeJSONResponse(response);
+                        success = CCR.checkDecodedJSONResponseSuccess(json);
+                    }
+
+                    if (!success) {
+                        CCR.xdmod.ui.presentFailureResponse(response, {
+                            title: 'User Management',
+                            wrapperMessage: 'Setting user mapping failed.'
+                        });
+                        return;
+                    }
+
+                    component.setValue(json.results.organization_id);
+                }
+            });
+        };
 
         XDMoD.CreateUser.superclass.initComponent.call(this);
     },

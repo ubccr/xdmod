@@ -350,6 +350,15 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         );
                     }//callback
                 });//Ext.Ajax.request
+
+            cmbInstitution.getStore().load(
+                {
+                    params: {
+                        start: 0,
+                        limit: 1000
+                    }
+                }
+            );
             }, this, { single: true });
 
             // ------------------------------------------
@@ -363,9 +372,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 allowBlank: false
             });
 
-            cmbInstitution.on('disable', function() {
-                cmbInstitution.reset();
-            });
+            cmbInstitution.setDisabled(true);
 
             // ------------------------------------------
 
@@ -673,7 +680,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             emptyText: 'User not mapped',
             hiddenName: 'nm_existing_user_mapping',
             width: 165,
-            listeners: { change: comboChangeHandler }
+            organizationComponent: cmbInstitution,
+            organizationChangeCallback: comboChangeHandler,
+            listeners: {
+                change: comboChangeHandler
+            }
         });
 
         cmbUserMapping.on('disable', function() {
@@ -1127,6 +1138,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         // We then disable / enable controls based on the information retrieved.
                         userSettings.setDisabled(false);
 
+                        // We disabled cmbInstitution because it's always disabled now.
+                        cmbInstitution.setDisabled(true);
+
                         userEditor.setTitle('User Details: ' + Ext.util.Format.htmlEncode(json.user_information.formal_name));
 
                         existingUserEmailField.setValue(json.user_information.email_address);
@@ -1161,14 +1175,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             cmbUserType.setValue(cached_user_type);
                         }
 
-                        // -----------------------------
-
-                        if (json.user_information.institution != '-1') {
-                            cmbInstitution.setDisabled(false);
-                            cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
-                        }
-
-                        // -----------------------------
+                        cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
 
                         tg_user_list_phase = 'load_user';
 
@@ -1331,6 +1338,31 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 userEditor
             ]
         });//Ext.apply
+
+        var setOrganizationForPerson = function(personId, component) {
+            Ext.Ajax.request({
+                url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
+                method: 'GET',
+                scope: self,
+                callback: function (options, success, response) {
+                    var json;
+                    if (success) {
+                        json = CCR.safelyDecodeJSONResponse(response);
+                        success = CCR.checkDecodedJSONResponseSuccess(json);
+                    }
+
+                    if (!success) {
+                        CCR.xdmod.ui.presentFailureResponse(response, {
+                            title: 'User Management',
+                            wrapperMessage: 'Setting user mapping failed.'
+                        });
+                        return;
+                    }
+
+                    component.setValue(json.results.organization_id);
+                }
+            });
+        };
 
         XDMoD.ExistingUsers.superclass.initComponent.call(this);
 

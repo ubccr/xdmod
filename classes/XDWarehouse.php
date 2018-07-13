@@ -201,7 +201,7 @@ class XDWarehouse
 
         );
 
-        if (count($instQuery) == 0){ return NO_MAPPING; }
+        if (count($instQuery) == 0){ return UNKNOWN_ORGANIZATION_NAME; }
 
         return $instQuery[0]['name'];
     }
