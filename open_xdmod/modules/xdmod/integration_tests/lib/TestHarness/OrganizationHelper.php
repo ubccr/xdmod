@@ -48,6 +48,4 @@ class OrganizationHelper
 
         return count($rows) > 0 ? $rows[0]['id'] : UNKNOWN_ORGANIZATION_ID;
     }
-
-
 }
