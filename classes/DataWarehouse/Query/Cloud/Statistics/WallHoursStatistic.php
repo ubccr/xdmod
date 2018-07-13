@@ -22,6 +22,7 @@ class WallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total time in which a virtual machine was running, in hours.<br/>';
+        return 'The total wall time in which a virtual machine was running, in hours.<br/>
+        <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }

@@ -22,7 +22,7 @@ class AverageStorageReservedStatistic extends \DataWarehouse\Query\Cloud\Statist
 
     public function getInfo()
     {
-        return 'The amount of disk space reserved by running virtual machines over wall time.<br/>
+        return 'The average amount of disk space reserved by running virtual machines, weighted by wall hours.<br/>
             <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }

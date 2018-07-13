@@ -22,7 +22,7 @@ class AverageMemoryReserved extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The amount of memory reserved by running virtual machines over wall time.<br/>
+        return 'The average amount of memory reserved by running virtual machines, weighted by wall hours.<br/>
         <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }

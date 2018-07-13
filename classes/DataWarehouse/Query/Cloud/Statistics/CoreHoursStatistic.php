@@ -14,7 +14,7 @@ class CoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
         parent::__construct(
             'COALESCE(SUM(jf.core_time) / 3600.0 ,0)',
             'core_time',
-            'Core Hours: Total',
+            'CPU Hours: Total',
             'Hours',
             0
         );
@@ -22,6 +22,7 @@ class CoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total number of core hours consumed by running virtual machines.<br/>';
+        return 'The total number of CPU Hours consumed by running virtual machines.<br/>
+        <b>CPU Hours</b>: The product of the number of CPUs assigned to a VM and its wall time, in hours.';
     }
 }

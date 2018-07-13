@@ -22,8 +22,8 @@ class WeightedCoresReserved extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'An average of core hours over wall time.<br/>
-            <b>Core Hours</b>: The product of the number of cores allocated to a VM and its wall time, in hours.<br/>
+        return 'The average number of CPUs assigned to running virtual machines, weighted by wall hours.<br/>
+            <b>CPU Hours</b>: The product of the number of CPUs assigned to a VM and its wall time, in hours.<br/>
             <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }
