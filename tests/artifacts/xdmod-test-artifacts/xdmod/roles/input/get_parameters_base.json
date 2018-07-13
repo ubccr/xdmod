@@ -17,7 +17,7 @@
     {
       "username": "centerdirector",
       "role_name": "pi",
-      "expected": "get_parameters_invalid_pi"
+      "expected": "get_parameters_cd_pi"
     }
   ],
   [
@@ -59,7 +59,7 @@
     {
       "username": "centerstaff",
       "role_name": "pi",
-      "expected": "get_parameters_invalid_pi"
+      "expected": "get_parameters_cs_pi"
     }
   ],
   [
@@ -143,7 +143,7 @@
     {
       "username": "normaluser",
       "role_name": "pi",
-      "expected": "get_parameters_invalid_pi"
+      "expected": "get_parameters_user_pi"
     }
   ],
   [

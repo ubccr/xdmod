@@ -6,12 +6,43 @@ use CCR\Json;
 use ComponentTests\BaseTest;
 use Models\Services\Parameters;
 use Models\Services\Users;
+use TestHarness\OrganizationHelper;
+use TestHarness\PeopleHelper;
 use TestHarness\UserHelper;
 use User\aRole;
 use XDUser;
 
 class RoleParametersTest extends BaseTest
 {
+
+    /**
+     * @var PeopleHelper
+     */
+    private $peopleHelper;
+
+    /**
+     * @var OrganizationHelper
+     */
+    private $organizationHelper;
+
+
+    /**
+     * RoleParametersTest constructor.
+     *
+     * @param null $name
+     * @param array $data
+     * @param string $dataName
+     *
+     * @throws \Exception if there is a problem retrieving a db connection.
+     */
+    public function __construct($name = null, array $data = array(), $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+
+        $this->peopleHelper = new PeopleHelper();
+        $this->organizationHelper = new OrganizationHelper();
+    }
+
 
     /**
      * Test that the results of aRole::getParameters === Parameters::getParameters
@@ -50,10 +81,17 @@ class RoleParametersTest extends BaseTest
         $actual = Parameters::getParameters($user, $roleName);
 
         $expectedFile = $options['expected'];
-        $expectedContents = JSON::loadFile($this->getTestFiles()->getFile('roles', $expectedFile));
+        $expectedContents = $this->convertForComparison(
+            JSON::loadFile(
+                $this->getTestFiles()->getFile(
+                    'roles',
+                    $expectedFile
+                )
+            )
+        );
 
         // This is here for debugging purposes only
-        /*$this->debug($expectedContents, $expectedContents, $actual, $actual, $username, $roleClass, $user, true);*/
+        // $this->debug($expectedContents, $expectedContents, $actual, $actual, $username, 'N/A', $user, true);
 
         // If the output of both functions are meant to be the same then directly compare them.
         $this->assertEquals(
@@ -66,6 +104,35 @@ class RoleParametersTest extends BaseTest
                 json_encode($actual)
             )
         );
+    }
+
+    /**
+     * This function converts from human readable values to system unique id's.
+     *
+     * @param array $expected
+     * @return array
+     * @throws \Exception if there is a problem converting any of the provided values.
+     */
+    public function convertForComparison(array $expected)
+    {
+        $results = array();
+
+        foreach ($expected as $type => $value) {
+            switch ($type) {
+                case 'pi':
+                case 'person':
+                    $results[$type] = $this->peopleHelper->getPersonIdByLongName($value);
+                    break;
+                case 'provider':
+                    $results[$type] = $this->organizationHelper->getIdByLongName($value);
+                    break;
+                default:
+                    $results[$type] = $value;
+                    break;
+            }
+        }
+
+        return $results;
     }
 
     /**
@@ -193,7 +260,7 @@ class RoleParametersTest extends BaseTest
              *      because the existing code doesn't do this and frankly it doesn't make sense.
              */
             if (
-                (in_array($roleId, $centerAcls)  && $roleId === $primaryAcl) ||
+                (in_array($roleId, $centerAcls) && $roleId === $primaryAcl) ||
                 (!in_array($roleId, $centerAcls) && in_array($roleId, $acls))
             ) {
                 // again, just for debugging
@@ -279,6 +346,9 @@ class RoleParametersTest extends BaseTest
 
         $aclsThatRequirePi = array('pi');
 
+        $organizationLongName = $inputOptions['organization_long_name'];
+        $organizationId = $this->organizationHelper->getIdByLongName($organizationLongName);
+
         // Acls that are not feature, center or pi acls.
         $aclsThatRequirePerson = array_diff(
             array_diff(
@@ -325,7 +395,7 @@ class RoleParametersTest extends BaseTest
                 // We need to generate the expected results for this test case and include the
                 // information that the user will require.
                 $expected = array();
-                foreach($acls as $acl) {
+                foreach ($acls as $acl) {
                     if (in_array($acl, $aclsThatRequireCenter)) {
                         if (!isset($expected[$acl])) {
                             $expected[$acl] = array();
@@ -333,39 +403,38 @@ class RoleParametersTest extends BaseTest
 
                         $expected[$acl] = array_merge(
                             $expected[$acl],
-                            array('provider' => 1)
+                            array('provider' => $organizationId)
                         );
 
-                        $testCase['organization_id'] = 1;
+                        $testCase['organization_id'] = $organizationId;
                     }
 
                     if (in_array($acl, $aclsThatRequirePerson)) {
                         if (!isset($expected[$acl])) {
                             $expected[$acl] = array();
                         }
-
+                        $personId = $this->peopleHelper->getPersonIdByLongName($aclPersons[$mostPrivileged]);
                         $expected[$acl] = array_merge(
                             $expected[$acl],
-                            array('person' => $aclPersons[$mostPrivileged])
+                            array('person' => $personId)
                         );
 
-                        $testCase['person_id'] = $aclPersons[$mostPrivileged];
+                        $testCase['person_id'] = $personId;
                     }
 
                     if (in_array($acl, $aclsThatRequirePi)) {
                         if (!isset($expected[$acl])) {
                             $expected[$acl] = array();
                         }
-
-                        $personId = $aclPersons[$mostPrivileged];
-                        $value = in_array($personId, $piPersons) ? $personId : -1;
+                        $personLongName = $aclPersons[$mostPrivileged];
+                        $personId = $this->peopleHelper->getPersonIdByLongName($personLongName);
 
                         $expected[$acl] = array_merge(
                             $expected[$acl],
-                            array('pi' => $value)
+                            array('pi' => $personId)
                         );
 
-                        $testCase['person_id'] = $aclPersons[$mostPrivileged];
+                        $testCase['person_id'] = $personId;
                     }
 
                     // Feature acls don't have any parameters and return an empty array.
@@ -388,12 +457,12 @@ class RoleParametersTest extends BaseTest
     /**
      * A helper function that logs useful debug information.
      *
-     * @param array   $expected
-     * @param array   $expectedContents
-     * @param array   $actual
-     * @param array   $actualContents
-     * @param string  $username
-     * @param string  $roleClass
+     * @param array $expected
+     * @param array $expectedContents
+     * @param array $actual
+     * @param array $actualContents
+     * @param string $username
+     * @param string $roleClass
      * @param \XDUser $user
      * @param boolean $testEquality
      */

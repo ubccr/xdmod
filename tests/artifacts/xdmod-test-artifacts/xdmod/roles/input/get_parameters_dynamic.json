@@ -1,11 +1,11 @@
 {
   "acl_persons": {
-    "cd": "42",
-    "cs": "57",
-    "pi": "74",
-    "usr": "60",
-    "mgr": "-1",
-    "dev": "-1"
+    "cd": "Bunting, Reed",
+    "cs": "Dove, Turtle",
+    "pi": "Tern, Caspian",
+    "usr": "Whimbrel",
+    "mgr": "Unknown",
+    "dev": "Unknown"
   },
   "acls": [
     "cd",
@@ -24,6 +24,7 @@
     "cs"
   ],
   "pi_persons": [
-    "74"
-  ]
+    "Tern, Caspian"
+  ],
+  "organization_long_name": "screw - Screwdriver"
 }
