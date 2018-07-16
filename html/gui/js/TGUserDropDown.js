@@ -1,219 +1,147 @@
-CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox,  {
+CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
+    controllerBase: 'controllers/sab_user.php',
+    triggerAction: 'all',
 
-   controllerBase: 'controllers/sab_user.php',
-   triggerAction: 'all',
+    user_management_mode: false,
 
-   user_management_mode: false,
+    displayField: 'person_name',
+    valueField: 'person_id',
 
-   displayField: 'person_name',
-   valueField: 'person_id',
+    width: 275,
+    minListWidth: 310,
+    pageSize: 300,
+    hideTrigger: false,
+    forceSelection: true,
+    minChars: 1,
 
-   width: 275,
-   minListWidth: 310,
-   pageSize: 300,
-   hideTrigger:false,
-   forceSelection: true,
-   minChars: 1,
+    piOnly: false,
 
-   piOnly: false,
+    getValue: function () {
+        // Username-based searches use the following format for the person ID:
+        // id;username@host to ensure distinction.  This override parses out the
+        // person ID from whatever value is returned via the superclass.
 
-   getDisplayPIsOnly: function() {
+        var value = CCR.xdmod.ui.TGUserDropDown.superclass.getValue.call(this);
 
-      return this.piOnly;
+        var person_id = value.split(';')[0];
 
-   },
+        return person_id;
+    },
 
-   setSearchMode: function (search_mode) {
+    setValue: function (v, def) {
+        var text = v;
 
-      // Valid 'search_mode' values: 'formal_name' or 'username'
-      this.store.baseParams.search_mode = search_mode;
+        CCR.xdmod.ui.TGUserDropDown.superclass.setValue.call(this, text);
 
-      this.bindStore(this.store, false);
+        if (def) {
+            this.lastSelectionText = def;
+        }
 
-   },
+        return this;
+    },
 
-   getValue: function () {
+    initializeWithValue: function (v, l) {
+        this.setValue(v, l);
+        this.setRawValue(l);
+    },
 
-      // Username-based searches use the following format for the person ID:
-      // id;username@host to ensure distinction.  This override parses out the
-      // person ID from whatever value is returned via the superclass.
+    initComponent: function () {
+        var self = this;
 
-      var value = CCR.xdmod.ui.TGUserDropDown.superclass.getValue.call(this);
+        var bParams = {
+            operation: 'enum_tg_users',
+            pi_only: 'n',
+            search_mode: 'formal_name'
+        };
 
-      var person_id = value.split(';')[0];
+        if (self.user_management_mode === true) {
+            bParams.userManagement = 'y';
+        }
 
-      return person_id;
+        this.userStore = new Ext.data.JsonStore({
+            url: self.controllerBase,
 
-   },
+            autoDestroy: false,
 
-   setValue : function(v, def){
+            baseParams: bParams,
 
-      var text = v;
+            root: 'users',
+            fields: ['person_id', 'person_name'],
+            totalProperty: 'total_user_count',
+            successProperty: 'success',
+            messageProperty: 'message',
 
-      CCR.xdmod.ui.TGUserDropDown.superclass.setValue.call(this, text);
-
-      if (def) this.lastSelectionText = def;
-
-      return this;
-
-   },
-
-   initializeWithValue: function(v, l) {
-
-      this.setValue(v, l);
-      this.setRawValue(l);
-
-   },
-
-   displayPIsOnly: function(pi_only) {
-
-      this.piOnly = pi_only;
-
-      this.store.baseParams.pi_only = pi_only ? 'y' : 'n';
-      this.store.baseParams.limit = this.pageSize;
-      this.store.baseParams.start = 0;
-
-      // Forces the next 'click' on the combobox to populate with relevant values
-      // (and not re-use the previous data it was populated with)
-
-      this.bindStore(this.store, false);
-
-      if (this.getValue().length > 0) {
-
-         this.store.baseParams.query = this.getRawValue();
-
-         this.store.on('load',function(s)
-         {
-
-            if (s.getTotalCount() == 1) {
-
-               // The person specified in the drop down is also a member of this group
-
-               this.setRawValue(s.getAt(0).get('person_name'));
-               this.setValue(s.getAt(0).get('person_id'));
-
+            listeners: {
+                exception: function (dp, type, action, options, response, arg) {
+                    CCR.xdmod.ui.presentFailureResponse(response, {
+                        title: 'XDMoD'
+                    });
+                }
             }
-            else {
+        });
 
-               // The person specified in the drop down is NOT a member of this group,
-               // so reset the combobox and force the end-user to make a valid selection.
+        Ext.apply(this, {
+            store: this.userStore
+        });
 
-               // ... However, this conflicts with the intended functionality of the Search
-               // Usage tab, so it is commented out.
+        if (this.dashboardMode) {
+            this.store.baseParams.dashboard_mode = 1;
+        }
 
-               // this.reset();
+        CCR.xdmod.ui.TGUserDropDown.superclass.initComponent.apply(this, arguments);
+    }, // initComponent
 
-            }
+    listeners: {
+        select: function (component, record, index) {
+            var personId = component.getValue();
+            var cascadeOptions = this.cascadeOptions;
+            var comp;
+            var callback;
+            var valueProperty;
 
-         }, this, {single: true});
-
-         this.store.load();
-
-      }//if (this.getValue().length > 0)
-
-   },
-
-   initComponent: function(){
-
-      var self = this;
-
-      var bParams = {
-         operation: 'enum_tg_users',
-         pi_only: 'n',
-         search_mode: 'formal_name'
-      };
-
-      if (self.user_management_mode == true)
-         bParams.userManagement = 'y';
-
-      this.userStore = new Ext.data.JsonStore({
-
-         url: self.controllerBase,
-
-         autoDestroy: false,
-
-         baseParams: bParams,
-
-         root: 'users',
-         fields: ['person_id', 'person_name'],
-         totalProperty:'total_user_count',
-         successProperty: 'success',
-         messageProperty: 'message',
-
-         listeners:
-         {
-
-            'exception': function(dp, type, action, options, response, arg)
-            {
-               CCR.xdmod.ui.presentFailureResponse(response, {
-                  title: 'XDMoD'
-               });
+            if (cascadeOptions !== undefined) {
+                if (cascadeOptions.component !== undefined) {
+                    comp = cascadeOptions.component;
+                }
+                if (cascadeOptions.callback !== undefined) {
+                    callback = cascadeOptions.callback;
+                }
+                if (cascadeOptions.valueProperty !== undefined) {
+                    valueProperty = cascadeOptions.valueProperty;
+                }
             }
 
-         }
+            if (comp !== undefined) {
+                Ext.Ajax.request({
+                    url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
+                    method: 'GET',
+                    scope: self,
+                    callback: function (options, success, response) {
+                        var json;
 
-      });
+                        if (success) {
+                            json = CCR.safelyDecodeJSONResponse(response);
+                            // eslint-disable-next-line no-param-reassign
+                            success = CCR.checkDecodedJSONResponseSuccess(json);
+                        }
 
-      Ext.apply(this, {
+                        if (!success) {
+                            CCR.xdmod.ui.presentFailureResponse(response, {
+                                title: 'User Management',
+                                wrapperMessage: 'Setting user mapping failed.'
+                            });
+                            return;
+                        }
 
-         store: this.userStore
+                        var value = json.results[valueProperty];
 
-      });
-
-      if (this.dashboardMode)
-         this.store.baseParams.dashboard_mode = 1;
-
-      CCR.xdmod.ui.TGUserDropDown.superclass.initComponent.apply(this, arguments);
-
-   }, //initComponent
-   listeners: {
-      select: function(component, record, index) {
-          var personId = component.getValue();
-          var cascadeOptions = this.cascadeOptions;
-          var comp, callback, valueProperty;
-
-          if (cascadeOptions !== undefined) {
-              if (cascadeOptions.component !== undefined) {
-                  comp = cascadeOptions.component;
-              }
-              if (cascadeOptions.callback !== undefined) {
-                  callback = cascadeOptions.callback;
-              }
-              if (cascadeOptions.valueProperty !== undefined) {
-                  valueProperty = cascadeOptions.valueProperty;
-              }
-          }
-
-          if (comp !== undefined) {
-              Ext.Ajax.request({
-                  url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
-                  method: 'GET',
-                  scope: self,
-                  callback: function (options, success, response) {
-                      var json;
-                      if (success) {
-                          json = CCR.safelyDecodeJSONResponse(response);
-                          success = CCR.checkDecodedJSONResponseSuccess(json);
-                      }
-
-                      if (!success) {
-                          CCR.xdmod.ui.presentFailureResponse(response, {
-                              title: 'User Management',
-                              wrapperMessage: 'Setting user mapping failed.'
-                          });
-                          return;
-                      }
-
-                      var value = json.results[valueProperty];
-
-                      if (comp.getValue() !== value && callback !== undefined) {
-                          callback(comp.getValue(), value);
-                      }
-                      comp.setValue(value);
-                  }
-              });
-          }
-      }
-   }
-
-});//CCR.xdmod.ui.TGUserDropDown
+                        if (comp.getValue() !== value && callback !== undefined) {
+                            callback(comp.getValue(), value);
+                        }
+                        comp.setValue(value);
+                    }
+                });
+            }
+        }
+    }
+}); // CCR.xdmod.ui.TGUserDropDown

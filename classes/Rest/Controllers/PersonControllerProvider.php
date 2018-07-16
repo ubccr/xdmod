@@ -52,6 +52,4 @@ class PersonControllerProvider extends BaseControllerProvider
             )
         );
     }
-
 }
-
