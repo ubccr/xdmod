@@ -140,6 +140,7 @@
         "name": "job-records-job-tasks",
         "definition_file": "jobs/xdw/job-records-job-tasks.json",
         "description": "HPC job records from the hpcdb",
+        "analyze_table": false,
         "#": "job records will be duplicated for each job array",
         "#": "this hides those warnings. This will be cleaned up later.",
         "hide_sql_warning_codes": [
