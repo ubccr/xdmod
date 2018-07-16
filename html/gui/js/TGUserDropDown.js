@@ -169,9 +169,22 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox,  {
    listeners: {
       select: function(component, record, index) {
           var personId = component.getValue();
-          var organizationComponent = this.organizationComponent;
-          var organizationChangeCallback = this.organizationChangeCallback;
-          if (organizationComponent) {
+          var cascadeOptions = this.cascadeOptions;
+          var comp, callback, valueProperty;
+
+          if (cascadeOptions !== undefined) {
+              if (cascadeOptions.component !== undefined) {
+                  comp = cascadeOptions.component;
+              }
+              if (cascadeOptions.callback !== undefined) {
+                  callback = cascadeOptions.callback;
+              }
+              if (cascadeOptions.valueProperty !== undefined) {
+                  valueProperty = cascadeOptions.valueProperty;
+              }
+          }
+
+          if (comp !== undefined) {
               Ext.Ajax.request({
                   url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
                   method: 'GET',
@@ -191,12 +204,12 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox,  {
                           return;
                       }
 
-                      if (organizationComponent.getValue() !== json.results.organization_id &&
-                          organizationChangeCallback !== undefined) {
-                          organizationChangeCallback(organizationComponent.getValue(), json.results.organization_id);
-                      }
+                      var value = json.results[valueProperty];
 
-                      organizationComponent.setValue(json.results.organization_id);
+                      if (comp.getValue() !== value && callback !== undefined) {
+                          callback(comp.getValue(), value);
+                      }
+                      comp.setValue(value);
                   }
               });
           }

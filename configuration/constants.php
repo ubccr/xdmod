@@ -201,4 +201,8 @@ define('DEFAULT_MODULE_NAME', 'xdmod');
  * Unknown Organization Id
  */
 define('UNKNOWN_ORGANIZATION_ID', -1);
+
+/**
+ * Unknown Organization Name
+ */
 define('UNKNOWN_ORGANIZATION_NAME', 'Unknown');

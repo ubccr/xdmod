@@ -44,7 +44,10 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             emptyText: 'User not mapped',
             hiddenName: 'nm_new_user_mapping',
             width: 150,
-            organizationComponent: cmbInstitution
+            cascadeOptions: {
+                component: cmbInstitution,
+                valueProperty: 'id'
+            }
         });
 
         cmbUserMapping.on('disable', function () { cmbUserMapping.reset(); });
@@ -694,38 +697,13 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                       {
                           params: {
                               start: 0,
-                              limit: 1000
+                              limit: 5000
                           }
                       }
                     );
                 }
             }
         });
-
-        var setOrganizationForPerson = function(personId, component) {
-            Ext.Ajax.request({
-                url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
-                method: 'GET',
-                scope: me,
-                callback: function (options, success, response) {
-                    var json;
-                    if (success) {
-                        json = CCR.safelyDecodeJSONResponse(response);
-                        success = CCR.checkDecodedJSONResponseSuccess(json);
-                    }
-
-                    if (!success) {
-                        CCR.xdmod.ui.presentFailureResponse(response, {
-                            title: 'User Management',
-                            wrapperMessage: 'Setting user mapping failed.'
-                        });
-                        return;
-                    }
-
-                    component.setValue(json.results.organization_id);
-                }
-            });
-        };
 
         XDMoD.CreateUser.superclass.initComponent.call(this);
     },

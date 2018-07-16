@@ -103,4 +103,17 @@ SQL;
             "SELECT o.* FROM modw.organization o;"
         );
     }
+
+    public static function getOrganizationIdForPerson($personId)
+    {
+        $db = DB::factory('database');
+        $rows = $db->query(
+            "SELECT p.organization_id FROM modw.person p WHERE p.id = :person_id",
+            array(
+                ':person_id' => $personId
+            )
+        );
+
+        return count($rows) > 0 ? $rows[0]['organization_id'] : UNKNOWN_ORGANIZATION_ID;
+    }
 }

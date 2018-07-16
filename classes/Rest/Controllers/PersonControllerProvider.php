@@ -2,7 +2,7 @@
 
 namespace Rest\Controllers;
 
-use Models\Services\Persons;
+use Models\Services\Organizations;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +47,7 @@ class PersonControllerProvider extends BaseControllerProvider
             array(
                 'success' => true,
                 'results' => array(
-                    'organization_id' => Persons::getOrganizationIdForPerson($id)
+                    'id' => Organizations::getOrganizationIdForPerson($id)
                 )
             )
         );

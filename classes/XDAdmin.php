@@ -172,11 +172,8 @@ SQL;
      *
      * @return array
      */
-    public function enumerateInstitutions($start, $limit, $nameFilter = NULL)
+    public function enumerateInstitutions($start, $limit = null, $nameFilter = NULL)
     {
-        $start = (int)$start;
-        $limit = (int)$limit;
-
         $filter
             = !empty($nameFilter)
             ? "WHERE name LIKE " . $this->modw->quote("%$nameFilter%")
@@ -186,13 +183,9 @@ SQL;
             "SELECT COUNT(*) AS total_records FROM organization $filter"
         );
 
-        $institutionResults = $this->modw->query("
-            SELECT id, name
-            FROM organization
-            $filter
-            ORDER BY name ASC
-            LIMIT $limit OFFSET $start
-        ");
+        $query = "SELECT o.id, o.name FROM modw.organization o $filter ORDER BY o.name ASC";
+
+        $institutionResults = $this->modw->query($query);
 
         return array(
             $institutionCountQuery[0]['total_records'],

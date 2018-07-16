@@ -359,7 +359,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     }
                 }
             );
-            }, this, { single: true });
+        }, this, { single: true });
 
             // ------------------------------------------
 
@@ -680,8 +680,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             emptyText: 'User not mapped',
             hiddenName: 'nm_existing_user_mapping',
             width: 165,
-            organizationComponent: cmbInstitution,
-            organizationChangeCallback: comboChangeHandler,
+            cascadeOptions: {
+                component: cmbInstitution,
+                callback: comboChangeHandler,
+                valueProperty: 'id'
+            },
             listeners: {
                 change: comboChangeHandler
             }
@@ -1339,33 +1342,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             ]
         });//Ext.apply
 
-        var setOrganizationForPerson = function(personId, component) {
-            Ext.Ajax.request({
-                url: XDMoD.REST.prependPathBase('persons/' + personId + '/organization'),
-                method: 'GET',
-                scope: self,
-                callback: function (options, success, response) {
-                    var json;
-                    if (success) {
-                        json = CCR.safelyDecodeJSONResponse(response);
-                        success = CCR.checkDecodedJSONResponseSuccess(json);
-                    }
-
-                    if (!success) {
-                        CCR.xdmod.ui.presentFailureResponse(response, {
-                            title: 'User Management',
-                            wrapperMessage: 'Setting user mapping failed.'
-                        });
-                        return;
-                    }
-
-                    component.setValue(json.results.organization_id);
-                }
-            });
-        };
-
         XDMoD.ExistingUsers.superclass.initComponent.call(this);
-
     }//initComponent
 
 });//XDMoD.ExistingUsers

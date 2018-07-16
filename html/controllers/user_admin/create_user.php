@@ -4,6 +4,7 @@ use CCR\MailWrapper;
 use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Centers;
+use Models\Services\Organizations;
 
 // Operation: user_admin->create_user
 
@@ -70,7 +71,7 @@ try {
         $_POST['last_name'],
         array_keys($acls),
         ROLE_ID_USER,
-        NULL,
+        Organizations::getOrganizationIdForPerson($_POST['assignment']),
         $_POST['assignment']
     );
     $newuser->setUserType($_POST['user_type']);
@@ -92,12 +93,6 @@ try {
             $newuser->setOrganizations($centerConfig, $acl);
         }
     }
-    // =============================
-
-    if (isset($_POST['institution']) && $_POST['institution'] != -1) {
-        $newuser->setInstitution($_POST['institution']);
-    }
-
     // =============================
 
     $page_title = \xd_utilities\getConfiguration('general', 'title');
