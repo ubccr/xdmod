@@ -7,7 +7,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 *
 * The total core reservation time of virtual machines, in hours
 */
-class AverageMemoryReserved extends \DataWarehouse\Query\Cloud\Statistic
+class AverageMemoryReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {

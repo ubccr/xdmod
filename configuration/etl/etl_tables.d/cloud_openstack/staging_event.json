@@ -11,17 +11,17 @@
             },
             {
                 "name": "event_id",
-                "type": "bigint(20) unsigned",
+                "type": "bigint(20)",
                 "extra": "auto_increment",
                 "nullable": false,
-                "comment": "Auto-increment relative to resource_id. Unknown = 1"
+                "comment": "Auto-increment relative to resource_id. Unknown = -1"
             },
             {
                 "name": "instance_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": 1,
-                "comment": "Optional instance the event is associated with. Unknown = 1"
+                "default": -1,
+                "comment": "Optional instance the event is associated with. Unknown = -1"
             },
             {
                 "name": "event_time_utc",
@@ -48,22 +48,22 @@
                 "name": "account_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": 1,
-                "comment": "Optional account the event is associated with. Unknown = 1"
+                "default": -1,
+                "comment": "Optional account the event is associated with. Unknown = -1"
             },
             {
                 "name": "host_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": 1,
-                "comment": "Host where the event occured. Unknown = 1"
+                "default": -1,
+                "comment": "Host where the event occured. Unknown = -1"
             },
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": 1,
-                "comment": "Instance type for the event. Unknown = 1"
+                "default": -1,
+                "comment": "Instance type for the event. Unknown = -1"
             },
             {
                 "name": "event_data",
@@ -83,8 +83,8 @@
                 "name": "image_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": 1,
-                "comment": "Image associated with the event. Unknown = 1"
+                "default": -1,
+                "comment": "Image associated with the event. Unknown = -1"
             },
             {
                 "name": "volume_id",

@@ -146,64 +146,7 @@ class UsageExplorerTestBase extends \PHPUnit_Framework_TestCase
             self::$expectedEndpoint = $envExpected;
         }
     }
-    public function csvExportProvider()
-    {
-        self::$baseDir = __DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod/regression/current/';
-
-        $this->defaultSetup();
-
-        $statistics = array(
-            'active_person_count',
-            'active_pi_count',
-            'active_resource_count',
-            'avg_cpu_hours',
-            'avg_job_size_weighted_by_cpu_hours',
-            'avg_node_hours',
-            'avg_processors',
-            'avg_waitduration_hours',
-            'avg_wallduration_hours',
-            'expansion_factor',
-            'job_count',
-            'max_processors',
-            'min_processors',
-            'normalized_avg_processors',
-            'running_job_count',
-            'started_job_count',
-            'submitted_job_count',
-            'total_cpu_hours',
-            'total_node_hours',
-            'total_waitduration_hours',
-            'total_wallduration_hours',
-            'utilization'
-        );
-
-        $group_bys = array(
-            'fieldofscience',
-            'jobsize',
-            'jobwalltime',
-            'jobwaittime',
-            'nodecount',
-            'none',
-            'nsfdirectorate',
-            'parentscience',
-            'person',
-            'pi',
-            'queue',
-            'resource',
-            'resource_type',
-            'username'
-        );
-
-        $varSettings = array(
-            'realm' => array('Jobs'),
-            'dataset_type' => array('aggregate', 'timeseries'),
-            'statistic' => $statistics,
-            'group_by' => $group_bys,
-            'aggregation_unit' => array_keys($this->aggregationUnits)
-        );
-
-        return $this->generateTests($varSettings);
-    }
+    
     protected function getExpectedFile($baseDir, $testName, $role, $expectedEndpoint){
         $expectedFile = $baseDir . '/expected/' . $expectedEndpoint .
             '/' . $testName;

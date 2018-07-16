@@ -2,7 +2,7 @@
     "#": "We want to be able to represent an unknown value for dimensions that have a composite",
     "#": "key such as (resource, host). Since the key depends on dynamic resource information",
     "#": "we cannot initialize from a constant file. Prior to ingesting the dimension data, query",
-    "#": "the resources and ensure that each dimension has an 'unknown' entry with an id of 1",
+    "#": "the resources and ensure that each dimension has an 'unknown' entry with an id of -1",
     "#": "for each resource.  For example (resource_id, -1).",
 
     "#": "Note that when using an AUTO_INCREMENT on a PRIMARY column, we can use a signed int",

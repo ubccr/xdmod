@@ -5,9 +5,9 @@ namespace Controllers;
 class UsageExplorerTestCloud extends UsageExplorerTestBase
 {
     /**
-     * @dataProvider csvExportProviderCloud
+     * @dataProvider csvExportProvider
      */
-    public function testCsvExportCloud($testName, $input, $expectedFile, $userRole)
+    public function testCsvExport($testName, $input, $expectedFile, $userRole)
     {
         $aggUnit = $input['aggregation_unit'];
         $datasetType = $input['dataset_type'];
@@ -75,7 +75,7 @@ class UsageExplorerTestCloud extends UsageExplorerTestBase
         }
     }
     
-    public function csvExportProviderCloud()
+    public function csvExportProvider()
     {
         self::$baseDir = __DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod/regression/current/';
 

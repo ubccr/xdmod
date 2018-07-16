@@ -8,7 +8,7 @@
     "#": "Set up a staging table where we can generate unique event ids using the key",
     "#": "(resource, instance, event_time, event_type, record_type, account).",
     "#": "Events may not have an associated instance or host but since these are used",
-    "#": "in the primary key set unknowns to 1",
+    "#": "in the primary key set unknowns to -1",
 
     "#": "Note that there are some instances where we have multiple DERIVED events that differ",
     "#": "only in the value of the private_ip value (e.g, i-4b80d6cc on 2017-04-19 20:42:30 and",
