@@ -13,7 +13,7 @@ class AverageStorageReservedStatistic extends \DataWarehouse\Query\Cloud\Statist
     {
         parent::__construct(
             'COALESCE(SUM(jf.disk_reserved) / SUM(jf.wallduration),0)',
-            'avg_disk_reserved',
+            'cloud_avg_disk_reserved',
             'Average Storage Reserved Weighted By Wall Hours',
             'Bytes',
             2

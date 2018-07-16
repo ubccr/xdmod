@@ -13,7 +13,7 @@ class AverageMemoryReserved extends \DataWarehouse\Query\Cloud\Statistic
     {
         parent::__construct(
             'COALESCE(SUM(jf.memory_reserved) / SUM(jf.wallduration),0)',
-            'avg_memory_reserved',
+            'cloud_avg_memory_reserved',
             'Average Memory Reserved Weighted By Wall Hours',
             'Bytes',
             2

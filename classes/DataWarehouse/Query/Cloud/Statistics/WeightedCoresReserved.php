@@ -13,7 +13,7 @@ class WeightedCoresReserved extends \DataWarehouse\Query\Cloud\Statistic
     {
         parent::__construct(
             'COALESCE(SUM(jf.core_time) / SUM(jf.wallduration),0)',
-            'avg_cores_reserved',
+            'cloud_avg_cores_reserved',
             'Average Cores Reserved Weighted By Wall Hours',
             'Cores',
             2
@@ -22,8 +22,8 @@ class WeightedCoresReserved extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The average number of CPUs assigned to running virtual machines, weighted by wall hours.<br/>
-            <b>CPU Hours</b>: The product of the number of CPUs assigned to a VM and its wall time, in hours.<br/>
+        return 'The average number of cores assigned to running virtual machines, weighted by wall hours.<br/>
+            <b>Core Hours</b>: The product of the number of cores assigned to a VM and its wall time, in hours.<br/>
             <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }

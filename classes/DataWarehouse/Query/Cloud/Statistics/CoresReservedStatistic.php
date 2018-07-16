@@ -13,8 +13,8 @@ class CoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
     {
         parent::__construct(
             'COALESCE(SUM(jf.num_cores),0)',
-            'num_cores',
-            'CPUs: Total',
+            'cloud_num_cores',
+            'Cores: Total',
             'Cores',
             0
         );
@@ -22,6 +22,6 @@ class CoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total number of CPUs assigned to running virtual machines.<br/>';
+        return 'The total number of cores assigned to running virtual machines.<br/>';
     }
 }

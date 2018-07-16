@@ -26,7 +26,7 @@ class RunningVMCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
         parent::__construct(
             $sql,
-            'num_vms_running',
+            'cloud_num_vms_running',
             'Number of VMs Running',
             'Number of VMs',
             0

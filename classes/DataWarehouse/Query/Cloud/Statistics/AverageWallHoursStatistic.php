@@ -28,7 +28,7 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
         $vm_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'num_vms_started' : 'num_vms_running';
         parent::__construct(
             $sql,
-            'avg_wallduration_hours',
+            'cloud_avg_wallduration_hours',
             'Average Wall Hours per VM',
             'Hours',
             2
