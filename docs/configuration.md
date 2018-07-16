@@ -348,9 +348,10 @@ For example, to use accounts from PBS/TORQUE you must use
 `"pi_column": "account_name"`.
 
 The `"shared_jobs"` option indicates that the resource allows multiple
-jobs to share nodes.  This is only relevant for the SUPReMM module.  The
-default is that resources are assumed to not allow node sharing.  If the
-SUPReMM module is in use and a resource does allow node sharing then
+to share compute nodes. This information is used by the Job Performance
+Data (SUPReMM) module to determine which HPC jobs shared compute nodes.
+The default is that resources are assumed to not allow node sharing.  If
+the SUPReMM module is in use and a resource does allow node sharing then
 this should be set to `true`.
 
     [
