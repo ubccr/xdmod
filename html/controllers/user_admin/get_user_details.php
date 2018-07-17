@@ -34,7 +34,7 @@ use Models\Services\Acls;
 	$userDetails['assigned_user_id'] = $selected_user->getPersonID(TRUE);
 
 	//$userDetails['provider'] = $selected_user->getOrganization();
-	$userDetails['institution'] = $selected_user->getInstitution();
+	$userDetails['institution'] = $selected_user->getOrganizationID();
 	
 	$userDetails['user_type'] = $selected_user->getUserType();
 			
