@@ -52,6 +52,9 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected $verbose;
 
+    // The base url that will be used during the testst.
+    protected $baseUrl = 'rest/v1.0/charts/pools';
+
     private static $DEFAULT_EXPECTED = array(
         'content_type' => 'application/json',
         'http_code' => 200
@@ -172,8 +175,15 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         }
 
         $actual = $response[0];
+        $msg = <<<TXT
 
-        $this->assertEquals($actual, $expected);
+Expected:
+  %s
+Actual:
+  %s
+TXT;
+
+        $this->assertEquals($actual, $expected, sprintf($msg, print_r($expected, true), print_r($actual, true)));
 
         if ($user !== 'pub') {
             $this->helper->logout();
@@ -511,18 +521,34 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private function processChartAction(array $data, array $expected)
     {
+        $operation = $data['operation'];
+
         $expectedAction = $expected['action'];
         $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'application/json';
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
         $expectedResponse = $expected['response'];
 
+        $url = $this->baseUrl;
+        switch ($operation) {
+            case 'add_to_queue':
+                $url .= "/add";
+                break;
+            case 'remove_from_queue':
+                $url .= '/remove';
+                break;
+            default:
+                break;
+        }
 
-        $this->log("Processing Chart Action: $expectedAction");
+        $this->log(sprintf("Processing Chart Action: $expectedAction - %s", $url));
 
-        $response = $this->helper->post('/controllers/chart_pool.php', null, $data);
+        $response = $this->helper->post($url, null, $data);
 
-        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
-        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+        $this->log(sprintf("Params: %s", json_encode($data)));
+        $this->log(sprintf("Response: %s", print_r($response, true)));
+
+        /*$this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");*/
 
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
@@ -544,16 +570,21 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private function createReport(array $data)
     {
-        $this->log("Creating Report");
-        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+        $this->log("Creating Report:");
+        $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
-        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
-        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+        $this->log("\tResponse Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("\tResponse HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
 
         $json = $response[0];
+
+        if (!isset($json['action'])) {
+            $this->log(sprintf("\nParams:\n%s", json_encode($data)));
+            $this->log(sprintf("\nCreate Report Response:\n%s", print_r($response, true)));
+        }
 
         $this->assertArrayHasKey('action', $json);
         $this->assertArrayHasKey('phase', $json);
@@ -684,9 +715,9 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
     private function reportImageRenderer(array $params)
     {
         $response = $this->helper->get('/report_image_renderer.php', $params);
-
-        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
-        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+        $this->log("Rendering Report Image:");
+        $this->log("\tResponse Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("\tResponse HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
         $this->assertEquals('image/png', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);

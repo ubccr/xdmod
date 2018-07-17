@@ -8,7 +8,7 @@
     "totalCount": 0,
     "results": [],
     "data": [],
-    "message": "Session Expired",
-    "code": 2
+    "message": "An error was encountered while attempting to process the requested authorization procedure.",
+    "code": 0
   }
 }

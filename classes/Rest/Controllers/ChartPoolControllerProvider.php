@@ -1,4 +1,4 @@
-<?php namespace NewRest\Controllers;
+<?php namespace Rest\Controllers;
 
 use Silex\Application;
 use Silex\ControllerCollection;

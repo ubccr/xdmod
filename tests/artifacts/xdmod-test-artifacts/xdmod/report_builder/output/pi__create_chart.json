@@ -1,13 +1,14 @@
 {
   "content_type": "application/json",
-  "http_code": 200,
+  "http_code": 500,
   "response": {
     "success": false,
-    "message": "Invalid value specified for 'chart_id'.",
+    "message": "A chart identifier must be specified",
     "count": 0,
     "total": 0,
     "totalCount": 0,
     "results": [],
-    "data": []
+    "data": [],
+    "code": 0
   }
 }
