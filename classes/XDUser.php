@@ -2977,4 +2977,16 @@ SQL;
     {
         return $this->_organizationID;
     }
+
+    /**
+     * Set the `organization_id` for this user. This corresponds to the value found in the
+     * `moddb.Users.organization_id` column.
+     *
+     * @param int $organizationID the id of the organization that this user should be associated
+     *            with
+     */
+    public function setOrganizationID($organizationID)
+    {
+        $this->_organizationID = $organizationID;
+    }
 }//XDUser
