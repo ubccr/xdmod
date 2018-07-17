@@ -4,6 +4,8 @@ namespace Rest\Controllers;
 
 use CCR\Log;
 use CCR\MailWrapper;
+use Models\Services\Acls;
+use Models\Services\Organizations;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -150,12 +152,7 @@ EML;
      */
     private function syncUserOrganization(XDUser $user)
     {
-        // =========================================================================================
-        // NOTE: The function body is commented until the classes / functions in other PR's
-        //       have been merged.
-        // =========================================================================================
 
-        /*
         $userOrganization = $user->getOrganizationID();
         $currentOrganization = Organizations::getOrganizationForUser($user->getUserID());
 
@@ -167,11 +164,20 @@ EML;
                 $originalAcls = $user->getAcls(true);
                 $otherAcls = array_diff($originalAcls, self::$CENTER_ROLES);
 
-                $user->setAcls($otherAcls);
+                // Make sure that they at least have 'usr'
+                if (empty($otherAcls)) {
+                    $otherAcls = array('usr');
+                }
+
+                // Update the user w/ their new set of acls.
+                foreach($otherAcls as $aclName) {
+                    $acl = Acls::getAclByName($aclName);
+                    $user->addAcl($acl);
+                }
 
                 $this->emailLogger->notice(
                     sprintf(
-                        self::adminNotificationEmail . self::aclEmailAddition,
+                        self::ADMIN_NOTIFICATION_EMAIL . self::ACL_EMAIL_ADDITION,
                         $user->getFormalName(),
                         $user->getUsername(),
                         $user->getEmailAddress(),
@@ -184,7 +190,7 @@ EML;
             } else {
                 $this->emailLogger->notice(
                     sprintf(
-                        self::adminNotificationEmail,
+                        self::ADMIN_NOTIFICATION_EMAIL,
                         $user->getFormalName(),
                         $user->getUsername(),
                         $user->getEmailAddress(),
@@ -196,21 +202,23 @@ EML;
 
             $user->setOrganizationId($currentOrganization);
             $user->saveUser();
-
-            MailWrapper::sendMail(
-              array(
-                  'subject' => 'XDMoD User: Organization Update',
-                  'body' => sprintf(
-                      self::userNotificationEmail,
-                      \xd_utilities\getConfiguration('mailer', 'sender_email')
-                  ),
-                  'toAddress' => $user->getEmailAddress(),
-                  'fromAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
-                  'fromName' => '',
-                  'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
-              )
-            );
+            try {
+                MailWrapper::sendMail(
+                    array(
+                        'subject' => 'XDMoD User: Organization Update',
+                        'body' => sprintf(
+                            self::USER_NOTIFICATION_EMAIL,
+                            \xd_utilities\getConfiguration('mailer', 'sender_email')
+                        ),
+                        'toAddress' => $user->getEmailAddress(),
+                        'fromAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
+                        'fromName' => '',
+                        'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
+                    )
+                );
+            } catch (\Exception $e) {
+                // come up with something to do if we can't send an email to the user.
+            }
         }
-        */
     }
 }
