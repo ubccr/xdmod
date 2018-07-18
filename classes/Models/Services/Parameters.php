@@ -28,8 +28,7 @@ class Parameters
         $roles = $config['roles']['roles'];
 
         try {
-            $aclConfig = $dimensions = $roles[$aclName];
-            $dimensions = isset($aclConfig['dimensions']) ? $aclConfig['dimensions'] : array();
+            $dimensions = isset($roles[$aclName]['dimensions']) ? $roles[$aclName]['dimensions'] : array();
         } catch (\Exception $e) {
             throw new \Exception("Unable to retrieve dimension information about $aclName");
         }

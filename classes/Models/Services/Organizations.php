@@ -27,14 +27,14 @@ class Organizations
     FROM (
       SELECT user_org.*
       FROM (
-      SELECT DISTINCT
+      SELECT
           u.organization_id,
           2
         FROM moddb.Users u
         JOIN modw.organization o ON o.id = u.organization_id
         WHERE u.id = :user_id
         UNION
-        SELECT DISTINCT
+        SELECT
           o.id organization_id,
           1
         FROM moddb.Users u
@@ -77,6 +77,6 @@ SQL;
         $db = DB::factory('database');
 
         $rows = $db->query($query, $params);
-        return count($rows) > 0 ? $rows[0]['name'] : null;
+        return count($rows) > 0 ? $rows[0]['name'] : UNKNOWN_ORGANIZATION_NAME;
     }
 }
