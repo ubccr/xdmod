@@ -51,9 +51,29 @@ Thank You,
 XDMoD
 EML;
 
+    const EMAIL_EXCEPTION_MSG = <<<TXT
+
+There was an unexpected error while attempting to send an email.
+
+To:               %s
+Old Organization: %s
+New Organization: %s
+Original Acls:    %s
+New Acls:         %s
+
+Exception:
+  Code:           %s
+  Message:        %s
+  Stack Trace:
+    %s
+TXT;
+
+
     private static $CENTER_ROLES = array('cd', 'cs');
 
     private $emailLogger;
+
+    private $fileLogger;
 
     /**
      * AuthenticationControllerProvider constructor.
@@ -76,6 +96,16 @@ EML;
                 'emailTo' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
                 'emailFrom' => \xd_utilities\getConfiguration('mailer', 'sender_email'),
                 'emailSubject' => 'XDMoD SSO: Additional Actions Necessary'
+            )
+        );
+
+        $this->fileLogger = Log::factory(
+            'Authentication-exceptions-file',
+            array(
+                'file' => LOG_DIR . '/authentication-exceptions.log',
+                'db' => false,
+                'console' => false,
+                'mail' => false
             )
         );
     }
@@ -187,17 +217,6 @@ EML;
                         json_encode($otherAcls)
                     )
                 );
-            } else {
-                $this->emailLogger->notice(
-                    sprintf(
-                        self::ADMIN_NOTIFICATION_EMAIL,
-                        $user->getFormalName(),
-                        $user->getUsername(),
-                        $user->getEmailAddress(),
-                        $userOrganizationName,
-                        $currentOrganizationName
-                    )
-                );
             }
 
             $user->setOrganizationId($currentOrganization);
@@ -217,7 +236,19 @@ EML;
                     )
                 );
             } catch (\Exception $e) {
-                // come up with something to do if we can't send an email to the user.
+                $this->fileLogger->err(
+                    sprintf(
+                        self::EMAIL_EXCEPTION_MSG,
+                        $user->getEmailAddress(),
+                        $userOrganizationName,
+                        $currentOrganizationName,
+                        json_encode($originalAcls),
+                        json_encode($otherAcls),
+                        $e->getCode(),
+                        $e->getMessage(),
+                        $e->getTraceAsString()
+                    )
+                );
             }
         }
     }
