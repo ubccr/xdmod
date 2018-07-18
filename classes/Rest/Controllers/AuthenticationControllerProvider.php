@@ -190,8 +190,10 @@ TXT;
             $userOrganizationName = Organizations::getNameById($userOrganization);
             $currentOrganizationName = Organizations::getNameById($currentOrganization);
 
-            if ($user->hasAcls(self::$CENTER_ROLES)) {
-                $originalAcls = $user->getAcls(true);
+            $originalAcls = $user->getAcls(true);
+
+            if (count(array_intersect($originalAcls, self::$CENTER_ROLES)) > 0) {
+
                 $otherAcls = array_diff($originalAcls, self::$CENTER_ROLES);
 
                 // Make sure that they at least have 'usr'
