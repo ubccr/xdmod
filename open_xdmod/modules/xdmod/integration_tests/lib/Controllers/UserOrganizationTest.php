@@ -122,7 +122,7 @@ class UserOrganizationTest extends BaseUserAdminTest
     public function provideOrganizationUpdateOnLogin()
     {
         return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_organization', 'user_organization_update_on_login','input')
+            $this->getTestFiles()->getFile('user_organization', 'user_organization_update_on_login', 'input')
         );
     }
 
