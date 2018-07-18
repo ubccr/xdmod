@@ -183,12 +183,12 @@ TXT;
     private function syncUserOrganization(XDUser $user)
     {
 
-        $userOrganization = $user->getOrganizationID();
-        $currentOrganization = Organizations::getOrganizationForUser($user->getUserID());
+        $userProfileOrganization = $user->getOrganizationID();
+        $datawarehouseUserOrganization = Organizations::getOrganizationForUser($user->getUserID());
 
-        if ($userOrganization !== $currentOrganization) {
-            $userOrganizationName = Organizations::getNameById($userOrganization);
-            $currentOrganizationName = Organizations::getNameById($currentOrganization);
+        if ($userProfileOrganization !== $datawarehouseUserOrganization) {
+            $userOrganizationName = Organizations::getNameById($userProfileOrganization);
+            $currentOrganizationName = Organizations::getNameById($datawarehouseUserOrganization);
 
             $originalAcls = $user->getAcls(true);
 
@@ -221,7 +221,7 @@ TXT;
                 );
             }
 
-            $user->setOrganizationId($currentOrganization);
+            $user->setOrganizationId($datawarehouseUserOrganization);
             $user->saveUser();
             try {
                 MailWrapper::sendMail(
