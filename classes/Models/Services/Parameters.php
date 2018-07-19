@@ -27,6 +27,10 @@ class Parameters
         // retrieve the roles section of the roles.json/.d config files.
         $roles = $config['roles']['roles'];
 
+        if (!isset($roles[$aclName])) {
+            throw new \Exception("Unable to find configuration information for $aclName.");
+        }
+
         $dimensions = isset($roles[$aclName]['dimensions']) ? $roles[$aclName]['dimensions'] : array();
 
         foreach ($dimensions as $dimension) {
