@@ -139,7 +139,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->assertGreaterThanOrEqual(0, $numWarnings, 'Expected number of SQL warnings');
+        $this->assertEquals(0, $numWarnings, 'Expected number of SQL warnings');
         $this->assertEquals('', $result['stderr'], "Std Error");
     }
 
