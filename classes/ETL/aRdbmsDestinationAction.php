@@ -899,9 +899,7 @@ abstract class aRdbmsDestinationAction extends aAction
             $msg .= sprintf(" (filtering codes: %s)", implode(',', $this->options->hide_sql_warning_codes));
         }
 
-        $this->logger->warning($msg);
-
-        $numWarningsLogged = 0;
+        $warningsToLog = array();
 
         foreach ( $warnings as $row ) {
             if ( null !== $this->options->hide_sql_warning_codes ) {
@@ -921,11 +919,19 @@ abstract class aRdbmsDestinationAction extends aAction
                 }
             }
 
-            $this->logger->warning(implode(' ', (is_array($row) ? $row : array($row))));
-            $numWarningsLogged++;
+            $warningsToLog[] = implode(' ', (is_array($row) ? $row : array($row)));
         }
 
-        return $numWarningsLogged;
+        if ( count($warningsToLog) > 0 ) {
+            $this->logger->warning($msg);
+            foreach ( $warningsToLog as $warning ) {
+                $this->logger->warning($warning);
+            }
+        } else {
+            $this->logger->notice($msg);
+        }
+
+        return count($warningsToLog);
 
     }  // logSqlWarnings()
 
