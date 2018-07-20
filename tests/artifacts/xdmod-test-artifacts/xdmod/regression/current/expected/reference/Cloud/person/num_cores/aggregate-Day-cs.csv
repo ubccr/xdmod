@@ -1,0 +1,12 @@
+title
+"Cores: Total: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Cores: Total"
+"Accentor, Alpine",95
+"Scaup, Lesser",31
+Blackbird,9
+---------

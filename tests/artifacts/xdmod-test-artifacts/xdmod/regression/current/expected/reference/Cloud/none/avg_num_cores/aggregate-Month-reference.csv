@@ -1,0 +1,10 @@
+title
+"Average Cores Per VM"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Summary,"Average Cores Per VM"
+Screwdriver,1.2745
+---------

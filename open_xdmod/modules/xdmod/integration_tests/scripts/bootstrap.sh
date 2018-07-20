@@ -20,6 +20,9 @@ then
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
+    #Copying roles file so Cloud realm shows up
+    cp $BASEDIR/../../../../../configuration/datawarehouse.d/cloud.json /etc/xdmod/datawarehouse.d/
+    cp $BASEDIR/../../../../../configuration/roles.d/cloud.json /etc/xdmod/roles.d/
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do
         xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
@@ -28,6 +31,13 @@ then
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     xdmod-ingestor
     php /root/bin/createusers.php
+    #Set path to Open Stack test data in Open Stack ingestion file
+    sed -i "s%/path/to/data%/root/assets/referencedata/openstack%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
+    #Ingesting cloud data from references folder
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
     acl-import
 fi
 
@@ -40,4 +50,14 @@ then
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
+    #Copying roles file so Cloud realm shows up
+    cp $BASEDIR/../../../../../configuration/datawarehouse.d/cloud.json /etc/xdmod/datawarehouse.d/
+    cp $BASEDIR/../../../../../configuration/roles.d/cloud.json /etc/xdmod/roles.d/
+    #Set path to Open Stack test data in Open Stack ingestion file
+    sed -i "s%/path/to/data%/root/assets/referencedata/openstack%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
+    #Ingesting cloud data from references folder
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
 fi

@@ -110,7 +110,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 }
             }
 
-            $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . ($userRole == 'public' ? 'reference' : $userRole ) . '.csv';
+            $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . ($userRole == 'usr' ? 'reference' : $userRole ) . '.csv';
 
             file_put_contents(
                 $outputFile,
@@ -213,15 +213,15 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         return $expectedFilename;
     }
 
-    protected function generateTests($allSettings){
+    protected function generateTests($allSettings, $start_date='2016-12-22', $end_date='2017-01-01'){
         $reference = array(
             'public_user' => (self::$helper->getUserrole() === 'public') ? 'true' : 'false',
             /*
              * This date specifically only tests the date range of the reference data.
              * To use this on another dataset be sure to change your date range.
              */
-            'start_date' => '2016-12-22',
-            'end_date' => '2017-01-01',
+            'start_date' => $start_date,
+            'end_date' => $end_date,
             'timeframe_label' => '2016',
             'scale' => '1',
             'aggregation_unit' => 'Auto',

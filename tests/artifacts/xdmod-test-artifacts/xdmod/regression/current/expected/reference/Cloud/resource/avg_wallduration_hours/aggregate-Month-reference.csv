@@ -1,0 +1,10 @@
+title
+"Average Wall Hours per VM: by Resource"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Resource,"Average Wall Hours per VM"
+openstack,24.09155294
+---------

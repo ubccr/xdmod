@@ -1,0 +1,10 @@
+title
+"Core Hours: Total: by Month"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"Core Hours: Total"
+2018-04,1755.9078
+---------

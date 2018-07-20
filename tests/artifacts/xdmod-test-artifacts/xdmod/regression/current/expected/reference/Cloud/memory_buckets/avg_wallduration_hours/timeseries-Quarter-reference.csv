@@ -1,0 +1,10 @@
+title
+"Average Wall Hours per VM: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[8 - 16 GB] Average Wall Hours per VM","[2 - 4 GB] Average Wall Hours per VM","[< 2 GB] Average Wall Hours per VM","[4 - 8 GB] Average Wall Hours per VM"
+"2018 Q2",35.26490000,27.21955366,1.10616667,0.23580000
+---------

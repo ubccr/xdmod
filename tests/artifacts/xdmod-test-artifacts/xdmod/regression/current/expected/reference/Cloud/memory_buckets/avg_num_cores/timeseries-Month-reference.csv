@@ -1,0 +1,10 @@
+title
+"Average Cores Per VM: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[8 - 16 GB] Average Cores Per VM","[4 - 8 GB] Average Cores Per VM","[2 - 4 GB] Average Cores Per VM","[< 2 GB] Average Cores Per VM"
+2018-04,4.0000,2.0000,1.0976,1.0000
+---------

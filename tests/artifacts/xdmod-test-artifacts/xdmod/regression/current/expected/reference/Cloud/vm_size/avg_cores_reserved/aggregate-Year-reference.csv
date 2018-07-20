@@ -1,0 +1,11 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Size: Cores","Average Cores Reserved Weighted By Wall Hours"
+1,1.0000
+"2 - 3",2.0000
+---------

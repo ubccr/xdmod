@@ -1,0 +1,10 @@
+title
+"Average Cores Per VM: by Year"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"Average Cores Per VM"
+2018,1.2745
+---------

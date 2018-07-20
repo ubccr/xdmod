@@ -1,0 +1,10 @@
+title
+"Number of VMs Running: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[Accentor, Alpine] Number of VMs Running","[Blackbird] Number of VMs Running","[Scaup, Lesser] Number of VMs Running"
+2018,36,9,6
+---------

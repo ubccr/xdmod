@@ -1,0 +1,10 @@
+title
+"Average Cores Per VM: by Month"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[1.2745] "
+2018-04,
+---------

@@ -1,0 +1,10 @@
+title
+"Cores: Total: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[2 - 4 GB] Cores: Total","[8 - 16 GB] Cores: Total","[< 2 GB] Cores: Total","[4 - 8 GB] Cores: Total"
+"2018 Q2",45,12,6,2
+---------

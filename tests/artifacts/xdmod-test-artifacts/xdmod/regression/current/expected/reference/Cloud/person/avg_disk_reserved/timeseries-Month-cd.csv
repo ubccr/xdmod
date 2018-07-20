@@ -1,0 +1,10 @@
+title
+"Average Disk Reserved Weighted By Wall Hours (Bytes): by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Accentor, Alpine] Average Disk Reserved Weighted By Wall Hours (Bytes)","[Blackbird] Average Disk Reserved Weighted By Wall Hours (Bytes)","[Scaup, Lesser] Average Disk Reserved Weighted By Wall Hours (Bytes)"
+2018-04,21474836480.0000,21474836480.0000,21474836480.0000
+---------

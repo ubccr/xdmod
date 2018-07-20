@@ -1,0 +1,12 @@
+title
+"Wall Hours: Total: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Wall Hours: Total"
+"Accentor, Alpine",1003.4189
+"Scaup, Lesser",219.0086
+Blackbird,6.2417
+---------

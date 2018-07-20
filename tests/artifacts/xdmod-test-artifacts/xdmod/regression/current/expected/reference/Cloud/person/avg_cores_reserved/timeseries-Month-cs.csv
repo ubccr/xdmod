@@ -1,0 +1,10 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Scaup, Lesser] Average Cores Reserved Weighted By Wall Hours","[Accentor, Alpine] Average Cores Reserved Weighted By Wall Hours","[Blackbird] Average Cores Reserved Weighted By Wall Hours"
+2018-04,2.0145,1.3040,1.0000
+---------

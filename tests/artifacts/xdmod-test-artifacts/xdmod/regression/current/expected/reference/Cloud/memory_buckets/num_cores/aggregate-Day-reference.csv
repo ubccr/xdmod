@@ -1,0 +1,13 @@
+title
+"Cores: Total: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Size: Memory","Cores: Total"
+"2 - 4 GB",99
+"8 - 16 GB",28
+"< 2 GB",6
+"4 - 8 GB",2
+---------

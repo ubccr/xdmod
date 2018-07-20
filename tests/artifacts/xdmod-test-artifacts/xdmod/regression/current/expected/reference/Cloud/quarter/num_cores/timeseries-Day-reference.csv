@@ -1,0 +1,17 @@
+Array
+(
+    [success] => 
+    [count] => 0
+    [total] => 0
+    [totalCount] => 0
+    [results] => Array
+        (
+        )
+
+    [data] => Array
+        (
+        )
+
+    [message] => SQLSTATE[42S22]: Column not found: 1054 Unknown column 'jf.quarter_id' in 'field list'
+    [code] => 42S22
+)

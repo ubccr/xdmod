@@ -1,0 +1,10 @@
+title
+"Core Hours: Total: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[2 - 4 GB] Core Hours: Total","[8 - 16 GB] Core Hours: Total","[< 2 GB] Core Hours: Total","[4 - 8 GB] Core Hours: Total"
+2018,1325.6203,423.1789,6.6369,0.4717
+---------
