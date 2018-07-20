@@ -61,8 +61,8 @@ SQL;
      *
      * @param int $organizationId the id of the organization whose name is to be retrieved.
      *
-     * @return string|null Returns null if the organization could not be found, else the `name`
-     *                     value is returned.
+     * @return string Returns 'Unknown' if the organization could not be found, else the `name`
+     *                value is returned.
      *
      * @throws \Exception if there is a problem retrieving a db connection
      * @throws \Exception if there is a problem executing sql
