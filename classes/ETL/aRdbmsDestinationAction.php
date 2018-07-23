@@ -312,6 +312,11 @@ abstract class aRdbmsDestinationAction extends aAction
             return $destinationFieldMap;
         }
 
+        // Keep track of the source fields that are mapped so we can report on source fields that
+        // were not mapped in any table. Start with all source fields and subtract as we go.
+
+        $unmappedSourceFields = $sourceFields;
+
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
 
             $availableTableFields = $etlTable->getColumnNames();
@@ -323,7 +328,9 @@ abstract class aRdbmsDestinationAction extends aAction
             // Map common fields and log warnings for fields that are not mapped
 
             $commonFields = array_intersect($availableTableFields, $sourceFields);
-            $unmappedSourceFields = array_diff($sourceFields, $availableTableFields);
+
+            // Remove fields mapped to this table from the list of unmapped fields
+            $unmappedSourceFields = array_diff($unmappedSourceFields, $availableTableFields);
 
             // If there were no common fields between the source record and destination table,
             // don't bother creating a map for this table.
@@ -351,18 +358,17 @@ abstract class aRdbmsDestinationAction extends aAction
                     ''
                 )
             );
+        }
 
-            if ( 0 != count($unmappedSourceFields) ) {
-                $this->logger->warning(
-                    sprintf(
-                        "%s: The following %d source record fields were not mapped for table '%s': (%s)",
-                        $this,
-                        count($unmappedSourceFields),
-                        $etlTableKey,
-                        implode(', ', $unmappedSourceFields)
-                    )
-                );
-            }
+        if ( 0 != count($unmappedSourceFields) ) {
+            $this->logger->warning(
+                sprintf(
+                    "%s: The following %d source record fields were not mapped to any tables: (%s)",
+                    $this,
+                    count($unmappedSourceFields),
+                    implode(', ', $unmappedSourceFields)
+                )
+            );
         }
 
         $this->logger->debug(
