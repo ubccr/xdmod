@@ -28,10 +28,6 @@ class UsageExplorerCloudTest extends UsageExplorerTest {
             'project',
             'configuration',
             'resource',
-            'day',
-            'month',
-            'quarter',
-            'year',
             'memory_buckets',
             'vm_size',
             'submission_venue'

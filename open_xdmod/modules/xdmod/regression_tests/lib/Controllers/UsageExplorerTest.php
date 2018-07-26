@@ -110,7 +110,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                 }
             }
 
-            $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . ($userRole == 'usr' ? 'reference' : $userRole ) . '.csv';
+            $outputFile = $outputDir . '/' . $datasetType . '-' . $aggUnit . '-' . ($userRole == 'public' ? 'reference' : $userRole ) . '.csv';
 
             file_put_contents(
                 $outputFile,
