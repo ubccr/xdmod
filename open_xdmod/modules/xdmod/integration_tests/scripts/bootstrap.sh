@@ -31,6 +31,9 @@ then
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     xdmod-ingestor
     php /root/bin/createusers.php
+    #Adding open stack resource since there is no way to automatically add a cloud resource.
+    mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
+    UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Set path to Open Stack test data in Open Stack ingestion file
     sed -i "s%/path/to/data%/root/assets/referencedata/openstack%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
     #Ingesting cloud data from references folder
@@ -53,6 +56,9 @@ then
     #Copying roles file so Cloud realm shows up
     cp $BASEDIR/../../../../../configuration/datawarehouse.d/cloud.json /etc/xdmod/datawarehouse.d/
     cp $BASEDIR/../../../../../configuration/roles.d/cloud.json /etc/xdmod/roles.d/
+    #Adding open stack resource since there is no way to automatically add a cloud resource.
+    mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
+    UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Set path to Open Stack test data in Open Stack ingestion file
     sed -i "s%/path/to/data%/root/assets/referencedata/openstack%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
     #Ingesting cloud data from references folder
