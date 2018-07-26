@@ -42,7 +42,7 @@
                 "source": {
                     "type": "directoryscanner",
                     "name": "Open Stack event logs",
-                    "path": "/data/cloud-test-data",
+                    "path": "/path/to/data",
                     "file_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}_[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.json/",
                     "#": "Recursion depth is relative to the path",
                     "recursion_depth": 1,
