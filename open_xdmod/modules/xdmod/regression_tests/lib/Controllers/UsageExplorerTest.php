@@ -213,7 +213,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         return $expectedFilename;
     }
 
-    protected function generateTests($allSettings, $start_date='2016-12-22', $end_date='2017-01-01'){
+    protected function generateTests($allSettings, $start_date = '2016-12-22', $end_date = '2017-01-01'){
         $reference = array(
             'public_user' => (self::$helper->getUserrole() === 'public') ? 'true' : 'false',
             /*
