@@ -13,7 +13,7 @@
             },
             {
                 "name": "account_origin_id",
-                "type": "int(10) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 0
             },
