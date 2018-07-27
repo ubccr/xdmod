@@ -78,7 +78,7 @@
             {"configuration/hierarchies.d/xdmod.json": "hierarchies.d/xdmod.json"},
             {"configuration/modules.d/xdmod.json": "modules.d/xdmod.json"},
             {"configuration/datawarehouse.d/cloud.json": "datawarehouse.d/cloud.json"},
-            {"configuration/roles.d/cloud.json": "roles.d/cloud.json"}
+            {"configuration/roles.d/cloud.json": "roles.d/cloud.json"},
             "email_templates"
         ],
         "etc/httpd": {
