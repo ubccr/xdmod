@@ -2,7 +2,8 @@
 
 namespace Controllers;
 
-class UsageExplorerCloudTest extends UsageExplorerTest {
+class UsageExplorerCloudTest extends UsageExplorerTest
+{
 
     public function csvExportProvider(){
         parent::$baseDir = __DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod/regression/current/';
@@ -44,5 +45,3 @@ class UsageExplorerCloudTest extends UsageExplorerTest {
         return parent::generateTests($varSettings, '2018-04-18', '2018-04-30');
     }
 }
-
-?>
