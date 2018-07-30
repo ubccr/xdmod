@@ -90,6 +90,15 @@
             "enabled": true
         },
         {
+            "name": "xdmod-normalize-user-organizations",
+            "description": "Ensure that current Users have valid organizations",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/normalize_user_organizations.sql"
+                }
+            ]
+        },
+        {
             "name": "xdmod-update-user-organizations",
             "description": "Ensure that current Users have the most up to date organization",
             "sql_file_list": [
