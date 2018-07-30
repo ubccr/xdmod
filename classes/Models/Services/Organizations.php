@@ -15,7 +15,7 @@ class Organizations
      *                    retrieved.
      *
      * @return int the id of the organization $userId is associated with. If one is not found then
-     *             UNKNOWN_ORGANIZATION_ID is returned.
+     *             -1 is returned.
      *
      * @throws \Exception if there is a problem retrieving a db connection.
      * @throws \Exception if there is a problem executing sql statements.
@@ -36,21 +36,11 @@ class Organizations
         UNION
         SELECT DISTINCT
           o.id organization_id,
-          3
+          1
         FROM moddb.Users u
         JOIN modw.person p ON p.id = u.person_id
         JOIN modw.organization o ON o.id = p.organization_id
         WHERE u.id = :user_id
-        UNION
-        SELECT DISTINCT
-          uagbp.value organization_id,
-          1
-        FROM moddb.user_acl_group_by_parameters uagbp
-        JOIN modw.organization o ON uagbp.value = o.id
-        JOIN moddb.group_bys gb
-          ON uagbp.group_by_id = gb.group_by_id AND gb.name = 'provider'
-        JOIN moddb.acls a ON uagbp.acl_id = a.acl_id
-        WHERE uagbp.user_id = :user_id
       ) user_org
       ORDER BY 2
       LIMIT 1
@@ -63,6 +53,6 @@ SQL;
             array(':user_id' => $userId)
         );
 
-        return count($rows) > 0 ? $rows[0]['organization_id'] : UNKNOWN_ORGANIZATION_ID;
+        return count($rows) > 0 ? $rows[0]['organization_id'] : -1;
     }
 }

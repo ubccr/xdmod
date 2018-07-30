@@ -46,6 +46,6 @@ class OrganizationHelper
 
         $rows = $this->db->query($query, $params);
 
-        return count($rows) > 0 ? $rows[0]['id'] : UNKNOWN_ORGANIZATION_ID;
+        return count($rows) > 0 ? $rows[0]['id'] : -1;
     }
 }
