@@ -66,6 +66,7 @@ function main()
 
     $logLevel = -1;
 
+    print_r($args);
     foreach ($args as $key => $value) {
         if (is_array($value)) {
             fwrite(STDERR, "Multiple values not allowed for '$key'\n");
@@ -133,7 +134,7 @@ function main()
     $logger = Log::factory('xdmod-shredder', $conf);
 
     $cmd = implode(' ', array_map('escapeshellarg', $argv));
-    $logger->info("Command: $cmd");
+    $logger->notice("Command: $cmd");
 
     $logger->debug('Checking for required arguments');
 
@@ -309,4 +310,3 @@ Usage: xdmod-shredder [-v] -r resource -f format [-i file|-d dir]
 
 EOF;
 }
-
