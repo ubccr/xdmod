@@ -5,7 +5,7 @@
 # set of commands that are run would work on a real production system.
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-REF_DIR="/root/build/xdmod/tests/artifacts/xdmod-test-artifacts/xdmod/referencedata"
+REF_DIR=/root/build/xdmod/tests/artifacts/xdmod-test-artifacts/xdmod/referencedata/
 
 set -e
 set -o pipefail
@@ -22,6 +22,7 @@ then
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do
+        echo $resource
         xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
     done
     xdmod-ingestor
