@@ -22,7 +22,6 @@ then
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do
-        echo $resource
         xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
     done
     xdmod-ingestor

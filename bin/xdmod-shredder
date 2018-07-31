@@ -133,7 +133,7 @@ function main()
     $logger = Log::factory('xdmod-shredder', $conf);
 
     $cmd = implode(' ', array_map('escapeshellarg', $argv));
-    $logger->notice("Command: $cmd");
+    $logger->info("Command: $cmd");
 
     $logger->debug('Checking for required arguments');
 
