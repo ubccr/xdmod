@@ -1,0 +1,18 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/storage/hpcdb/mountpoints.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "mountpoint_id": "ssm.mountpoint_id",
+            "path": "ssm.path"
+        },
+        "joins": [
+            {
+                "name": "staging_storage_mountpoint",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ssm"
+            }
+        ]
+    }
+}

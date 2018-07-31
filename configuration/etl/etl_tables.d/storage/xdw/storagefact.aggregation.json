@@ -1,9 +1,9 @@
 {
     "table_definition": {
-        "name": "storage_user_usage_by_",
-        "table_prefix": "storage_user_usage_by_",
-        "engine": "InnoDB",
-        "comment": "User storage usage data",
+        "name": "storagefact_by_",
+        "table_prefix": "storagefact_by_",
+        "engine": "MyISAM",
+        "comment": "Aggregate storage usage data",
         "columns": [
             {
                 "name": "${AGGREGATION_UNIT}_id",
@@ -24,22 +24,46 @@
                 "comment": "The ${AGGREGATION_UNIT} of the year."
             },
             {
-                "name": "file_system_id",
+                "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "The ID of the file system."
+                "comment": "The ID of the resource."
             },
             {
-                "name": "user_id",
+                "name": "resourcetype_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "The ID of the user."
+                "comment": "The ID of the resource type."
             },
             {
-                "name": "directory_id",
+                "name": "mountpoint_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "The ID of the directory."
+                "comment": "The ID of the mountpoint."
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The ID of the person."
+            },
+            {
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The ID of the PI."
+            },
+            {
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The ID of the system account."
+            },
+            {
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The ID of the field of science."
             },
             {
                 "name": "record_count",
@@ -134,72 +158,53 @@
                 ]
             },
             {
-                "name": "idx_file_system_id",
+                "name": "idx_period",
                 "columns": [
-                    "file_system_id"
+                    "${AGGREGATION_UNIT}"
                 ]
             },
             {
-                "name": "idx_user_id",
+                "name": "idx_resource_id",
                 "columns": [
-                    "user_id"
+                    "resource_id"
                 ]
             },
             {
-                "name": "idx_directory_id",
+                "name": "idx_resourcetype_id",
                 "columns": [
-                    "directory_id"
+                    "resourcetype_id"
+                ]
+            },
+            {
+                "name": "idx_mountpoint_id",
+                "columns": [
+                    "mountpoint_id"
+                ]
+            },
+            {
+                "name": "idx_person_id",
+                "columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "idx_principalinvestigator_person_id",
+                "columns": [
+                    "principalinvestigator_person_id"
+                ]
+            },
+            {
+                "name": "idx_systemaccount_id",
+                "columns": [
+                    "systemaccount_id"
+                ]
+            },
+            {
+                "name": "idx_fos_id",
+                "columns": [
+                    "fos_id"
                 ]
             }
-        ]
-    },
-    "aggregation_period_query": {
-        "conversions": {
-            "start_day_id": "DATE_FORMAT(dt, '%Y00%j')",
-            "end_day_id": "DATE_FORMAT(dt, '%Y00%j')"
-        }
-    },
-    "source_query": {
-        "records": {
-            "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
-            "year": "${:YEAR_VALUE}",
-            "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
-            "file_system_id": "us.file_system_id",
-            "user_id": "us.user_id",
-            "directory_id": "us.directory_id",
-            "record_count": "SUM(1)",
-            "avg_file_count": "AVG(us.file_count)",
-            "sum_file_count": "SUM(CAST(us.file_count AS DECIMAL(30,0)))",
-            "sum_squared_file_count": "SUM(CAST(us.file_count AS DECIMAL(60,0)) * CAST(us.file_count AS DECIMAL(60,0)))",
-            "avg_logical_usage": "AVG(us.logical_usage)",
-            "sum_logical_usage": "SUM(CAST(us.logical_usage AS DECIMAL(30,0)))",
-            "sum_squared_logical_usage": "SUM(CAST(us.logical_usage AS DECIMAL(60,0)) * CAST(us.logical_usage AS DECIMAL(60,0)))",
-            "avg_physical_usage": "AVG(us.physical_usage)",
-            "sum_physical_usage": "SUM(CAST(us.physical_usage AS DECIMAL(30,0)))",
-            "sum_squared_physical_usage": "SUM(CAST(us.physical_usage AS DECIMAL(60,0)) * CAST(us.physical_usage AS DECIMAL(60,0)))",
-            "avg_soft_threshold": "AVG(us.soft_threshold)",
-            "sum_soft_threshold": "SUM(CAST(us.soft_threshold AS DECIMAL(30,0)))",
-            "avg_hard_threshold": "AVG(us.hard_threshold)",
-            "sum_hard_threshold": "SUM(CAST(us.hard_threshold AS DECIMAL(30,0)))"
-        },
-        "groupby": [
-            "${AGGREGATION_UNIT}_id",
-            "year",
-            "${AGGREGATION_UNIT}",
-            "file_system_id",
-            "user_id",
-            "directory_id"
-        ],
-        "joins": [
-            {
-                "schema": "${SOURCE_SCHEMA}",
-                "name": "user_usage",
-                "alias": "us"
-            }
-        ],
-        "where": [
-            "us.ts <= ${:PERIOD_END_TS}",
-            "us.ts >= ${:PERIOD_START_TS}"
         ]
     }
 }

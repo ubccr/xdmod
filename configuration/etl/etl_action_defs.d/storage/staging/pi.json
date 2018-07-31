@@ -1,0 +1,17 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/pi.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "pi_name": "DISTINCT su.pi_name"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_storage_usage",
+                "alias": "su"
+            }
+        ]
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "table_definition": {
+        "name": "staging_storage_mountpoint",
+        "engine": "InnoDB",
+        "comment": "Storage file system mountpoint",
+        "columns": [
+            {
+                "name": "mountpoint_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "path",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "Mountpoint directory path"
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "path"
+                ]
+            },
+            {
+                "name": "uk_mountpoint_id",
+                "is_unique": true,
+                "columns": [
+                    "mountpoint_id"
+                ]
+            }
+        ]
+    }
+}

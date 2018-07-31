@@ -1,0 +1,17 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/storage/staging/mountpoint.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "path": "DISTINCT su.mountpoint_name"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_storage_usage",
+                "alias": "su"
+            }
+        ]
+    }
+}

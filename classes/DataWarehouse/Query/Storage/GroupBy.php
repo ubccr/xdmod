@@ -1,12 +1,11 @@
 <?php
 /**
- * @package OpenXdmod\Storage
+ * @author Amin Ghadersohi
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
 namespace DataWarehouse\Query\Storage;
 
-use DataWarehouse\Query\Model\FormulaField;
 use DataWarehouse\Query\Model\OrderBy;
 use DataWarehouse\Query\Model\Schema;
 use DataWarehouse\Query\Model\Table;
@@ -15,73 +14,105 @@ use DataWarehouse\Query\Model\WhereCondition;
 use DataWarehouse\Query\Query;
 
 /**
- * Storage query GroupBy base class.
+ * Class for adding group bys to a storage query.
  */
 abstract class GroupBy extends \DataWarehouse\Query\GroupBy
 {
 
     /**
+     * Dimension database schema.
+     *
      * @var \DataWarehouse\Query\Model\Schema;
      */
     protected $schema;
 
     /**
+     * Dimension database table.
+     *
      * @var \DataWarehouse\Query\Model\Table
      */
     protected $table;
 
     /**
+     * Dimension text description.
+     *
      * @var string
      */
     protected $info;
 
+    /**
+     * Primary key field name.
+     *
+     * The column in the dimension table that is referenced by the foreign key
+     * column in the fact table.
+     *
+     * @var string
+     */
+    protected $pk_field_name;
+
+    /**
+     * Foreign key field name.
+     *
+     * The column in the fact table that references the primary key column in
+     * the dimension table.
+     *
+     * @var string
+     */
+    protected $fk_field_name;
+
     public function __construct(
         $name,
-        array $additionalPermittedParameters = array(),
-        $possibleValuesQuery = null
+        array $additional_permitted_parameters = array(),
+        $possible_values_query = null
     ) {
-        $permittedParamters = array_merge(
-            array_keys(Aggregate::getRegisteredStatistics()),
-            $additionalPermittedParameters
+        $permitted_parameters = array_unique(
+            array_merge(
+                array_keys(Aggregate::getRegisteredStatistics()),
+                $additional_permitted_parameters
+            )
         );
 
         parent::__construct(
             $name,
-            $permittedParamters,
-            $possibleValuesQuery
+            $permitted_parameters,
+            $possible_values_query
         );
 
-        $this->schema = new Schema('modw_storage');
+        $this->schema = new Schema('modw');
     }
 
+    /**
+     * Get info.
+     *
+     * @return string
+     */
     public function getInfo()
     {
         return $this->info;
     }
 
-    public function getDrillTargets($statisticName, $queryClassname)
+    public function getDrillTargets($statistic_name, $query_classname)
     {
-        $registerdGroupBys = Aggregate::getRegisteredGroupBys();
-        $drillTargetGroupBys = array();
+        $registered_group_bys = Aggregate::getRegisteredGroupBys();
+        $drill_target_group_bys = array();
 
-        foreach ($registerdGroupBys as $groupByName => $groupByClassname) {
-            if ($groupByName === 'none' || $groupByName === $this->getName()) {
+        foreach ($registered_group_bys as $group_by_name => $group_by_classname) {
+            if ($group_by_name == 'none' || $group_by_name == $this->getName()) {
                 continue;
             }
 
-            $groupByClassname = $queryClassname::getGroupByClassname($groupByName);
-            $groupByInstance = $queryClassname::getGroupBy($groupByName);
-            $permittedStats = $groupByInstance->getPermittedStatistics();
-            if ($groupByInstance->getAvailableOnDrilldown()
-                && array_search($statisticName, $permittedStats) !== false
-            ) {
-                $drillTargetGroupBys[] = $groupByName . '-' . $groupByInstance->getLabel();
+            $group_by_classname = $query_classname::getGroupByClassname($group_by_name);
+            $group_by_instance = $query_classname::getGroupBy($group_by_name);
+            $permitted_stats = $group_by_instance->getPermittedStatistics();
+
+            if ($group_by_instance->getAvailableOnDrilldown() !== false && array_search($statistic_name, $permitted_stats) !== false) {
+                $drill_target_group_bys[] = $group_by_name . '-' . $group_by_instance->getLabel();
             }
         }
 
-        sort($drillTargetGroupBys);
+        sort($drill_target_group_bys);
 
-        return $drillTargetGroupBys;
+        return $drill_target_group_bys;
     }
 
     /**
@@ -111,73 +142,86 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
 
     public function applyTo(
         Query &$query,
-        Table $dataTable,
-        $multiGroup = false
+        Table $data_table,
+        $multi_group = false
     ) {
         $query->addTable($this->table);
 
-        $tableIdField = new TableField($this->table, $this->_id_field_name);
-        $dataTableIdField = new TableField($dataTable, $this->_id_field_name);
+        $id_field = new TableField(
+            $this->table,
+            $this->_id_field_name,
+            $this->getIdColumnName($multi_group)
+        );
+        $query->addField($id_field);
+        $query->addGroup($id_field);
 
+        $pk_field = new TableField(
+            $this->table,
+            $this->pk_field_name,
+            $this->getIdColumnName($multi_group)
+        );
+        $query->addField($pk_field);
+
+        $name_field = new TableField(
+            $this->table,
+            $this->_long_name_field_name,
+            $this->getLongNameColumnName($multi_group)
+        );
+        $query->addField($name_field);
+
+        $shortname_field = new TableField(
+            $this->table,
+            $this->_short_name_field_name,
+            $this->getShortNameColumnName($multi_group)
+        );
+        $query->addField($shortname_field);
+
+        $order_id_field = new TableField(
+            $this->table,
+            $this->_order_id_field_name,
+            $this->getOrderIdColumnName($multi_group)
+        );
+        $query->addField($order_id_field);
+
+        $fact_table_fk_field = new TableField(
+            $data_table,
+            $this->fk_field_name
+        );
         $query->addWhereCondition(
             new WhereCondition(
-                $tableIdField,
+                $pk_field,
                 '=',
-                $dataTableIdField
+                $fact_table_fk_field
             )
         );
 
-        $idField = new TableField(
-            $this->table,
-            $this->_id_field_name,
-            $this->getIdColumnName($multiGroup)
-        );
-
-        $nameField = new TableField(
-            $this->table,
-            $this->_long_name_field_name,
-            $this->getLongNameColumnName($multiGroup)
-        );
-
-        $shortnameField = new TableField(
-            $this->table,
-            $this->_short_name_field_name,
-            $this->getShortNameColumnName($multiGroup)
-        );
-
-        $orderIdField = new TableField(
-            $this->table,
-            $this->_order_id_field_name,
-            $this->getOrderIdColumnName($multiGroup)
-        );
-
-        $query->addField($orderIdField);
-        $query->addField($idField);
-        $query->addField($nameField);
-        $query->addField($shortnameField);
-
-        $query->addGroup($idField);
-
-        $this->addOrder($query, $multiGroup);
+        $this->addOrder($query, $multi_group);
     }
 
     public function addWhereJoin(
         Query &$query,
-        Table $dataTable,
-        $multiGroup,
+        Table $data_table,
+        $multi_group,
         $operation,
         $whereConstraint
     ) {
         $query->addTable($this->table);
 
-        $tableIdField = new TableField($this->table, $this->_id_field_name);
-        $dataTableIdField = new TableField($dataTable, $this->_id_field_name);
+        $dimension_table_pk_field = new TableField(
+            $this->table,
+            $this->pk_field_name
+        );
+
+        $fact_table_fk_field = new TableField(
+            $data_table,
+            $this->fk_field_name
+        );
 
         $query->addWhereCondition(
             new WhereCondition(
-                $tableIdField,
+                $dimension_table_pk_field,
                 '=',
-                $dataTableIdField
+                $fact_table_fk_field
             )
         );
 
@@ -187,7 +231,7 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
 
         $query->addWhereCondition(
             new WhereCondition(
-                $tableIdField,
+                $dimension_table_pk_field,
                 $operation,
                 $whereConstraint
             )
@@ -199,7 +243,7 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
         return parent::pullQueryParameters2(
             $request,
             '_filter_',
-            $this->_id_field_name
+            $this->fk_field_name
         );
     }
 
@@ -211,7 +255,7 @@ abstract class GroupBy extends \DataWarehouse\Query\GroupBy
                 'SELECT %s AS field_label FROM %s WHERE %s IN (_filter_) ORDER BY %s',
                 $this->_long_name_field_name,
                 $this->table->getQualifiedName(),
-                $this->_id_field_name,
+                $this->pk_field_name,
                 $this->_long_name_field_name
             )
         );

@@ -1,0 +1,72 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Storage usage data",
+    "description": "A representation of storage resource usage",
+    "type": "object",
+    "properties": {
+        "resource": {
+            "type": "string",
+            "description": "Storage resource name",
+            "maxLength": 200
+        },
+        "mountpoint": {
+            "type": "string",
+            "description": "Storage file system mountpoint directory",
+            "maxLength": 255
+        },
+        "user": {
+            "type": "string",
+            "description": "Storage user's system username",
+            "maxLength": 30
+        },
+        "pi": {
+            "type": "string",
+            "description": "Storage principal investigator's system username",
+            "maxLength": 30
+        },
+        "dt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time usage data was recorded"
+        },
+        "file_count": {
+            "type": "integer",
+            "description": "Number of files",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+        },
+        "logical_usage": {
+            "type": "integer",
+            "description": "Logical file system usage measured in bytes",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+        },
+        "physical_usage": {
+            "type": "integer",
+            "description": "Physical file system usage measured in bytes",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+        },
+        "soft_threshold": {
+            "type": "integer",
+            "description": "Soft threshold quota measured in bytes",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+        },
+        "hard_threshold": {
+            "type": "integer",
+            "description": "Hard threshold quota measured in bytes",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+        }
+    },
+    "required": [
+        "resource",
+        "mountpoint",
+        "user",
+        "pi",
+        "dt",
+        "file_count",
+        "logical_usage"
+    ]
+}

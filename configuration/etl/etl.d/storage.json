@@ -1,106 +1,61 @@
 {
+    "module": "xdmod",
     "#": "Storage Ingestion and Aggregation",
     "defaults": {
-        "storage": {
-            "enabled": true,
-            "truncate_destination": false,
+        "xdw-ingest-storage": {
             "namespace": "ETL\\Ingestor",
-            "class": "StructuredFileIngestor",
+            "class": "DatabaseIngestor",
             "options_class": "IngestorOptions",
             "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "datawarehouse",
+                    "schema": "mod_hpcdb"
+                },
                 "destination": {
                     "type": "mysql",
                     "name": "Storage",
                     "config": "datawarehouse",
-                    "schema": "modw_storage",
-                    "create_schema_if_not_exists": true
+                    "schema": "modw"
                 }
             }
         }
     },
-    "storage": [
+    "xdw-bootstrap-storage": [
         {
-            "name": "StorageFileSystemIngestor",
-            "description": "Ingests file system data",
-            "definition_file": "storage/file_system.json",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "User storage usage input file",
-                    "path": "storage/user_usage.json",
-                    "filters": [
-                        {
-                            "type": "external",
-                            "name": "jq",
-                            "path": "jq",
-                            "arguments": "'map({ name: .file_system }) | unique'"
-                        }
-                    ]
-                }
-            }
+            "name": "create-tables",
+            "description": "Create HPCDB tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "storage/xdw/mountpoint.json",
+                "storage/xdw/storagefact.json"
+            ]
+        }
+    ],
+    "xdw-ingest-storage": [
+        {
+            "name": "mountpoint",
+            "description": "Ingest storage mountpoints",
+            "definition_file": "storage/xdw/mountpoint.json"
         },
         {
-            "name": "StorageUserIngestor",
-            "description": "Ingests user data",
-            "definition_file": "storage/user.json",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "User storage usage input file",
-                    "path": "storage/user_usage.json",
-                    "filters": [
-                        {
-                            "type": "external",
-                            "name": "jq",
-                            "path": "jq",
-                            "arguments": "'map({ username }) | unique'"
-                        }
-                    ]
-                }
-            }
-        },
+            "name": "storagefact",
+            "description": "Ingest storage usage",
+            "definition_file": "storage/xdw/storagefact.json"
+        }
+    ],
+    "xdw-aggregate-storage": [
         {
-            "name": "StorageDirectoryIngestor",
-            "description": "Ingests directory data",
-            "definition_file": "storage/directory.json",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "User storage usage input file",
-                    "path": "storage/user_usage.json",
-                    "filters": [
-                        {
-                            "type": "external",
-                            "name": "jq",
-                            "path": "jq",
-                            "arguments": "'map({ path: .directory }) | unique'"
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "StorageUserUsageIngestor",
-            "description": "Ingests user storage usage data",
-            "definition_file": "storage/user_usage.json",
-            "endpoints": {
-                "source": {
-                    "type": "jsonfile",
-                    "name": "User storage usage input file",
-                    "path": "storage/user_usage.json",
-                    "array_element_schema_path": "storage/user_usage.schema.json",
-                    "field_names": ["file_system", "username", "directory", "dt", "file_count", "logical_usage", "physical_usage", "soft_threshold", "hard_threshold"]
-                }
-            }
-        },
-        {
-            "name": "StorageUserUsageAggregator",
+            "name": "aggregate",
             "description": "Storage aggregator for user data",
             "namespace": "ETL\\Aggregator",
             "class": "SimpleAggregator",
             "options_class": "AggregatorOptions",
-            "definition_file": "storage/user_usage_by.aggregation.json",
-            "table_prefix": "storage_user_usage_by_",
+            "definition_file": "storage/xdw/storagefact.aggregation.json",
+            "table_prefix": "storagefact_by_",
             "aggregation_units": [
                 "day",
                 "month",
@@ -110,9 +65,9 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Storage",
+                    "name": "Data Warehouse",
                     "config": "datawarehouse",
-                    "schema": "modw_storage"
+                    "schema": "modw"
                 },
                 "destination": {
                     "type": "mysql",

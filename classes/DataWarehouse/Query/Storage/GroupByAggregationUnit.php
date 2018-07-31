@@ -1,17 +1,13 @@
 <?php
 /**
- * @package OpenXdmod\Storage
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
 namespace DataWarehouse\Query\Storage;
 
-use DataWarehouse\Query\Model\FormulaField;
 use DataWarehouse\Query\Model\OrderBy;
-use DataWarehouse\Query\Model\Schema;
 use DataWarehouse\Query\Model\Table;
 use DataWarehouse\Query\Model\TableField;
-use DataWarehouse\Query\Model\WhereCondition;
 use DataWarehouse\Query\Query;
 
 /**

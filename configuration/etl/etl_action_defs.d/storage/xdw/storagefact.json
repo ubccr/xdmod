@@ -1,0 +1,59 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/storage/xdw/storagefact.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "id": "su.storage_usage_id",
+            "resource_id": "su.resource_id",
+            "resourcetype_id": "res.resource_type_id",
+            "mountpoint_id": "su.mountpoint_id",
+            "person_id": "su.person_id",
+            "principalinvestigator_person_id": "pi.person_id",
+            "systemaccount_id": "sa.system_account_id",
+            "fos_id": "req.primary_fos_id",
+            "dt": "su.dt",
+            "ts": "su.ts",
+            "file_count": "file_count",
+            "logical_usage": "logical_usage",
+            "physical_usage": "physical_usage",
+            "soft_threshold": "soft_threshold",
+            "hard_threshold": "hard_threshold"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_storage_usage",
+                "alias": "su"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_requests",
+                "alias": "req",
+                "type": "INNER",
+                "on": "su.account_id = req.account_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_system_accounts",
+                "alias": "sa",
+                "type": "INNER",
+                "on": "su.person_id = sa.person_id AND su.resource_id = sa.resource_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_resources",
+                "alias": "res",
+                "type": "INNER",
+                "on": "su.resource_id = res.resource_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_principal_investigators",
+                "alias": "pi",
+                "type": "INNER",
+                "on": "req.request_id = pi.request_id"
+            }
+        ]
+    }
+}

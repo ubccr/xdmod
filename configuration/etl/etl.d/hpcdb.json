@@ -47,7 +47,9 @@
                 "common/hpcdb/resource-allocated.json",
                 "common/hpcdb/resource-specs.json",
                 "common/hpcdb/system-accounts.json",
-                "jobs/hpcdb/jobs.json"
+                "jobs/hpcdb/jobs.json",
+                "storage/hpcdb/mountpoints.json",
+                "storage/hpcdb/usage.json"
             ]
         },
         {
@@ -182,6 +184,18 @@
             "description": "Prepare for xdw (modw) ingestion using new jobs",
             "truncate_destination": true,
             "definition_file": "jobs/hpcdb/jobs-to-ingest-by-new-jobs.json"
+        }
+    ],
+    "hpcdb-ingest-storage": [
+        {
+            "name": "mountpoints",
+            "description": "Ingest storage mountpoints",
+            "definition_file": "storage/hpcdb/mountpoints.json"
+        },
+        {
+            "name": "usage",
+            "description": "Ingest storage usage data",
+            "definition_file": "storage/hpcdb/usage.json"
         }
     ]
 }

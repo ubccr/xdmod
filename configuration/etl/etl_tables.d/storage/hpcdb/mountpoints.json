@@ -1,0 +1,45 @@
+{
+    "table_definition": {
+        "name": "hpcdb_storage_mountpoints",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "comment": "Storage file system mountpoints",
+        "columns": [
+            {
+                "name": "mountpoint_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "path",
+                "type": "varchar(255)",
+                "nullable": false
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "mountpoint_id"
+                ]
+            },
+            {
+                "name": "uk_path",
+                "is_unique": true,
+                "columns": [
+                    "path"
+                ]
+            }
+        ]
+    }
+}

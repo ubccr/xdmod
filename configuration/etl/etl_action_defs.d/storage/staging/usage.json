@@ -1,0 +1,21 @@
+{
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/storage/staging/usage.json"
+        }
+    ],
+    "destination_record_map": {
+        "staging_storage_usage": {
+            "resource_name": "resource",
+            "mountpoint_name": "mountpoint",
+            "user_name": "user",
+            "pi_name": "pi",
+            "dt": "dt",
+            "file_count": "file_count",
+            "logical_usage": "logical_usage",
+            "physical_usage": "physical_usage",
+            "soft_threshold": "soft_threshold",
+            "hard_threshold": "hard_threshold"
+        }
+    }
+}

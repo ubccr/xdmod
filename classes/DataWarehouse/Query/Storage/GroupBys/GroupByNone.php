@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\Storage
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
@@ -16,14 +15,14 @@ use DataWarehouse\Query\Storage\GroupBy;
  */
 class GroupByNone extends GroupBy
 {
-    public function __construct()
-    {
-        parent::__construct('none', array());
-    }
-
     public static function getLabel()
     {
         return ORGANIZATION_NAME;
+    }
+
+    public function __construct()
+    {
+        parent::__construct('none', array());
     }
 
     public function getDefaultDatasetType()
@@ -65,7 +64,7 @@ class GroupByNone extends GroupBy
         Table $dataTable,
         $multiGroup = false,
         $operation = '=',
-        $whereConstraint = 'NULL'
+        $whereConstraint = 'null'
     ) {
         // NO-OP
     }

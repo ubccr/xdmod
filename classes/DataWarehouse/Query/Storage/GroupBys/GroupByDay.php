@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\Storage
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
@@ -28,7 +27,7 @@ class GroupByDay extends GroupByAggregationUnit
                     DATE(gt.day_start) AS long_name,
                     DATE(gt.day_start) AS short_name,
                     gt.day_start_ts AS start_ts
-                FROM modw.days gt
+                FROM days gt
                 WHERE 1
                 ORDER BY gt.id ASC
             '
@@ -52,11 +51,11 @@ class GroupByDay extends GroupByAggregationUnit
             $this->getIdColumnName($multiGroup)
         );
         $nameField = new FormulaField(
-            'date(' . $query->getDateTable()->getAlias() . '.day_start)',
+            'DATE(' . $query->getDateTable()->getAlias() . '.day_start)',
             $this->getLongNameColumnName($multiGroup)
         );
         $shortnameField = new FormulaField(
-            'date(' . $query->getDateTable()->getAlias() . '.day_start)',
+            'DATE(' . $query->getDateTable()->getAlias() . '.day_start)',
             $this->getShortNameColumnName($multiGroup)
         );
         $valueField = new TableField(
@@ -67,9 +66,7 @@ class GroupByDay extends GroupByAggregationUnit
         $query->addField($nameField);
         $query->addField($shortnameField);
         $query->addField($valueField);
-
         $query->addGroup($idField);
-
         $this->addOrder($query, $multiGroup);
     }
 }
