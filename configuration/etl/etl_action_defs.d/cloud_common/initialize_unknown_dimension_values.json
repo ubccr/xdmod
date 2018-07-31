@@ -64,7 +64,8 @@
         "avail_zone": {
             "resource_id": "resource_id",
             "avail_zone_id": "unknown_id",
-            "avail_zone": "unknown_key"
+            "avail_zone": "unknown_key",
+            "display": "unknown_display"
         },
         "account": {
             "resource_id": "resource_id",

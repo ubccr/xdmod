@@ -169,11 +169,25 @@ if ( $scriptOptions['verbose'] ) {
     print sprintf("Found %d saved charts", count($charts['data'])) . PHP_EOL;
 }
 
-$chartInfoList = array();
+// If requested, dump the chart config objects as JSON
+
+if (
+    isset($scriptOptions['list'])
+    && ! isset($scriptOptions['source'])
+    && 'chart-config-as-json' == $scriptOptions['list']
+   ) {
+    $parts = array();
+    foreach ( $charts['data'] as $chart ) {
+        $parts[] = sprintf("\"%s\": %s", $chart['name'], $chart['config']);
+    }
+    print sprintf("{%s}\n", implode(",\n", $parts));
+    exit();
+}
 
 // Loop over all of the charts and extract any information that we will need to perform operations.
 // Wile we are looping, display any requested information.
 
+$chartInfoList = array();
 foreach ( $charts['data'] as $chartIndex => $chart ) {
     if ( ! isset($chart['name']) ) {
         print sprintf("Chart name not set for index %s, skipping.", $chartIndex) . PHP_EOL;
@@ -244,6 +258,9 @@ foreach ( $charts['data'] as $chartIndex => $chart ) {
                         ) . PHP_EOL;
                     }
                 }
+                break;
+            case 'chart-config-as-json':
+                print sprintf("{\"%s\": %s}\n", $chart['name'], $chart['config']);
                 break;
             default:
                 usage_and_exit(sprintf("Unsupported option for --list: '%s'", $scriptOptions['list']));
@@ -508,7 +525,7 @@ function usage_and_exit($msg = null)
         -l <item>, --list <item>
         Display a list of the various items. If a source chart id was specified list only values
         for that chart.
-        Supported items are: chart-names, series, global-filters, local-filters
+        Supported items are: chart-names, chart-config-as-json, global-filters, local-filters, series
 
         -o <operation>, --operation <operation>
         Operation to perform. Supported operations are:

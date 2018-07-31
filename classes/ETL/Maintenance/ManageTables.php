@@ -14,6 +14,7 @@
 namespace ETL\Maintenance;
 
 use ETL\Configuration\EtlConfiguration;
+use ETL\Configuration\Configuration;
 use ETL\EtlOverseerOptions;
 use ETL\DbModel\Table;
 use ETL\aOptions;
@@ -98,8 +99,14 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
                 $defFile = \xd_utilities\qualify_path($defFile, $this->options->paths->table_definition_dir);
             }
             $this->logger->info(sprintf("Parse table definition: '%s'", $defFile));
-            $etlTable = new Table(
+            $tableConfig = new Configuration(
                 $defFile,
+                $this->options->paths->base_dir,
+                $this->logger
+            );
+            $tableConfig->initialize();
+            $etlTable = new Table(
+                $tableConfig->getTransformedConfig(),
                 $this->destinationEndpoint->getSystemQuoteChar(),
                 $this->logger
             );

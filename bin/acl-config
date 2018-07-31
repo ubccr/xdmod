@@ -1217,7 +1217,7 @@ SQL;
             ':module_name' => $module,
             ':acl_name' => $acl,
             ':level' => $level,
-            ':filter_override' => $filterOverride
+            ':filter_override' => ( $filterOverride ? 1 : 0 )
         );
         $log->debug($params);
 
@@ -1532,8 +1532,8 @@ SQL;
                 ':acl_name' => $acl,
                 ':group_by_name' => $groupBy,
                 ':statistic_name' => $statisticName,
-                ':visible' => $visible,
-                ':enabled' => $enabled
+                ':visible' => ( $visible ? 1 : 0 ),
+                ':enabled' => ( $enabled ? 1 : 0 )
             );
 
             $log->debug(json_encode($params));

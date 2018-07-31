@@ -309,4 +309,3 @@ Usage: xdmod-shredder [-v] -r resource -f format [-i file|-d dir]
 
 EOF;
 }
-

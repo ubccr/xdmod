@@ -125,6 +125,22 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertGreaterThanOrEqual(2, $numWarnings, 'Expected number of SQL warnings');
         $this->assertEquals('', $result['stderr'], "Std Error");
+
+        // Run the same action, but filter all expected warning codes.
+        $result = $this->executeOverseerAction('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=[1264,1366]"');
+
+        $this->assertEquals(0, $result['exit_status'], "Exit code");
+        $numWarnings = 0;
+
+        if ( ! empty($result['stdout']) ) {
+            foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
+                $this->assertRegExp('/\[warning\]/', $line);
+                $numWarnings++;
+            }
+        }
+
+        $this->assertEquals(0, $numWarnings, 'Expected number of SQL warnings');
+        $this->assertEquals('', $result['stderr'], "Std Error");
     }
 
     /**
