@@ -35,7 +35,7 @@ then
     mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
     UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Set path to Open Stack test data in Open Stack ingestion file
-    sed -i "s%/path/to/data%/root/assets/referencedata/openstack%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
+    sed -i "s%/path/to/data%$BASEDIR/../../tests/artifacts/xdmod-test-artifacts/xdmod/referencedata%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
     #Ingesting cloud data from references folder
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack
@@ -60,7 +60,7 @@ then
     mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
     UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Set path to Open Stack test data in Open Stack ingestion file
-    sed -i "s%/path/to/data%/root/assets/referencedata/openstack%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
+    sed -i "s%/path/to/data%$BASEDIR/../../tests/artifacts/xdmod-test-artifacts/xdmod/referencedata%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
     #Ingesting cloud data from references folder
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack
