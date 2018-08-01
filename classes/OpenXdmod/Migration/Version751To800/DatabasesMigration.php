@@ -7,6 +7,7 @@ use OpenXdmod\DataWarehouseInitializer;
 use FilterListBuilder;
 use TimePeriodGenerator;
 use OpenXdmod\Setup\Console;
+use CCR\DB\MySQLHelper;
 
 /**
  * Migrate databases from version 7.5.1 to 8.0.0.
@@ -64,7 +65,7 @@ EOT
             try {
                 $builder = new FilterListBuilder();
                 $builder->setLogger($this->logger);
-                $builder->buildAllLists();
+                $builder->buildRealmLists('Jobs');
             } catch (Exception $e) {
                 $this->logger->notice('Failed BuildAllLists: '  . $e->getMessage());
                 $this->logger->crit(array(
@@ -82,6 +83,28 @@ xdmod-ingestor --aggregate --last-modified-start-date '2000-01-01'
 EOT
             );
         }
+
+        $provideUsername = $console->displayMessage(<<<"EOT"
+Please provide the username and password for the administrative account that will be
+used to create the MySQL user and databases.
+EOT
+        );
+
+        $console->displayBlankLine();
+        $adminUsername = $console->prompt(
+          'Admin Username:'
+        );
+
+        $adminPassword = $console->prompt(
+          'Admin Password:'
+        );
+
+        $username = \xd_utilities\getConfiguration('database', 'user');
+        $password = \xd_utilities\getConfiguration('database', 'pass');
+        $port = \xd_utilities\getConfiguration('database', 'port');
+        $host = \xd_utilities\getConfiguration('database', 'host');
+        MySQLHelper::grantAllPrivileges('localhost', $port, $adminUsername, $adminPassword, $host, $username, $password);
+
     }
 
     private function validateJobTasks(){
