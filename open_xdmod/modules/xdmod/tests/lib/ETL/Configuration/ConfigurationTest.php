@@ -9,7 +9,6 @@
 
 namespace UnitTesting\ETL\Configuration;
 
-
 use Configuration\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
