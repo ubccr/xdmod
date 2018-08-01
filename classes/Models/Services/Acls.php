@@ -849,7 +849,8 @@ SQL;
 SELECT DISTINCT
   a.*,
   aclp.abbrev organization,
-  aclp.id     organization_id
+  aclp.id     organization_id,
+  aclh.level
 FROM acls a
   JOIN user_acls ua
     ON a.acl_id = ua.acl_id

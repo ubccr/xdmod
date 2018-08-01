@@ -5,7 +5,7 @@
 # set of commands that are run would work on a real production system.
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-REF_DIR=/root/assets/referencedata
+REF_DIR=$BASEDIR/../../tests/artifacts/xdmod-test-artifacts/xdmod/referencedata
 
 set -e
 set -o pipefail

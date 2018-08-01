@@ -67,7 +67,11 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
         $query->addGroup($accounttable_id_field);
 
         $datatable_account_id_field = new TableField($data_table, 'account_id');
+        $datatable_host_resource_id_field = new TableField($data_table, 'host_resource_id');
+        $accounttable_resource_id_field = new TableField($this->account_table, 'resource_id');
+
         $query->addWhereCondition(new WhereCondition($accounttable_id_field, '=', $datatable_account_id_field));
+        $query->addWhereCondition(new WhereCondition($accounttable_resource_id_field, '=', $datatable_host_resource_id_field));
 
         $this->addOrder($query, $multi_group);
     }

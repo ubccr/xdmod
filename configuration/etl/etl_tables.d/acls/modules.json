@@ -13,7 +13,7 @@
             {
                 "name": "current_version_id",
                 "type": "int(11)",
-                "nullable": false
+                "nullable": true
             },
             {
                 "name": "name",

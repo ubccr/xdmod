@@ -32,7 +32,8 @@
     	      "openstack_resource_id": "resource_id",
     	      "disk_gb": "disk_gb",
             "size": "size",
-            "volume_id": "volume_id"
+            "volume_id": "volume_id",
+            "state": "state"
         },
         "openstack_raw_instance_type": {
             "instance_type": "instance_type",
