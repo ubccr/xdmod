@@ -92,11 +92,11 @@ EOT
 
         $console->displayBlankLine();
         $adminUsername = $console->prompt(
-          'Admin Username:'
+            'Admin Username:'
         );
 
         $adminPassword = $console->prompt(
-          'Admin Password:'
+            'Admin Password:'
         );
 
         $username = \xd_utilities\getConfiguration('database', 'user');
