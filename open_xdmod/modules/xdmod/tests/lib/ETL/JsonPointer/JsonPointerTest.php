@@ -11,7 +11,7 @@ namespace UnitTesting\ETL\Configuration;
 
 use CCR\Log;
 use ETL\JsonPointer;
-use ETL\Loggable;
+use CCR\Loggable;
 
 class JsonPointerTest extends \PHPUnit_Framework_TestCase
 {

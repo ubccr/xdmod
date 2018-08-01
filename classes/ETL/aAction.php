@@ -12,12 +12,10 @@
 
 namespace ETL;
 
+use Configuration\Configuration;
 use Log;
-use ETL\EtlOverseerOptions;
-use ETL\VariableStore;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
-use ETL\Configuration\Configuration;
 use ETL\Configuration\EtlConfiguration;
 
 abstract class aAction extends aEtlObject

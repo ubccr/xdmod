@@ -48,7 +48,7 @@ namespace ETL\DbModel;
 
 use Log;
 use stdClass;
-use ETL\Loggable;
+use CCR\Loggable;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 

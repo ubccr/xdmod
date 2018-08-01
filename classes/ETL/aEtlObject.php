@@ -18,7 +18,7 @@ use Exception;
 use PDOException;
 use stdClass;
 
-abstract class aEtlObject extends Loggable
+abstract class aEtlObject extends \CCR\Loggable
 {
     // All ELT objects can be named
     protected $name = null;

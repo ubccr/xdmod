@@ -8,11 +8,11 @@
  * ==========================================================================================
  */
 
-namespace ETL\Configuration;
+namespace Configuration;
 
 use Log;
 use stdClass;
-use ETL\Loggable;
+use CCR\Loggable;
 
 class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
 {

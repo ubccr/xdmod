@@ -72,17 +72,18 @@
  * ==========================================================================================
  */
 
-namespace ETL\Configuration;
+namespace Configuration;
 
 // PEAR logger
 use Log;
 
 use Exception;
 use stdClass;
-use ETL\Loggable;
+use CCR\Loggable;
 use ETL\VariableStore;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint;
+use Traversable;
 
 class Configuration extends Loggable implements \Iterator
 {

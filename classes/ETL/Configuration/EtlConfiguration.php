@@ -31,6 +31,7 @@
 
 namespace ETL\Configuration;
 
+use Configuration\Configuration;
 use Exception;
 use stdClass;
 use Log;

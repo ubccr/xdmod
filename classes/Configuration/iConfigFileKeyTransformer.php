@@ -13,7 +13,7 @@
  * ==========================================================================================
  */
 
-namespace ETL\Configuration;
+namespace Configuration;
 
 use Log;
 use stdClass;

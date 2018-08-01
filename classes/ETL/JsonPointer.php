@@ -12,7 +12,7 @@ namespace ETL;
 
 use Log;
 use Exception;
-
+use \CCR\Loggable;
 class JsonPointer
 {
     /**
@@ -34,7 +34,7 @@ class JsonPointer
     /**
      * An object extending Loggable that can be used to log error messages.
      *
-     * @var Loggable
+     * @var \CCR\Loggable
      */
 
     private static $loggable = null;

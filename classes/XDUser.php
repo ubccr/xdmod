@@ -14,7 +14,7 @@ use DataWarehouse\Query\Exceptions\AccessDeniedException;
  *
  * @Class XDUser
  */
-class XDUser extends ETL\Loggable implements JsonSerializable
+class XDUser extends CCR\Loggable implements JsonSerializable
 {
 
     private $_pdo;                       // PDO Handle (set in __construct)
