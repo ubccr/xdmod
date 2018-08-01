@@ -26,9 +26,6 @@ expect {
     -re "\nDo you want to run aggregation now.*\\\]" {
         send yes\n
     }
-    "Upgrade Complete" {
-        lassign [wait] pid spawnid os_error_flag value
-    }
 }
 expect {
     timeout {
@@ -46,6 +43,9 @@ expect {
     -re "\nAdmin Password:" {
         send \n
         exp_continue
+    }
+    "Upgrade Complete" {
+        lassign [wait] pid spawnid os_error_flag value
     }
 }
 
