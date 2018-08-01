@@ -6,4 +6,4 @@
 UPDATE moddb.Users u
   JOIN modw.person p ON p.id = u.person_id
 SET u.organization_id = p.organization_id
-WHERE p.id IS NOT NULL;
+WHERE u.organization_id = -1;
