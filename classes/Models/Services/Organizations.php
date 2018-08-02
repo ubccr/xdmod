@@ -69,7 +69,15 @@ SQL;
      */
     public static function getNameById($organizationId)
     {
-        $query = "SELECT o.name FROM modw.organization o WHERE o.id = :organization_id";
+        $query = <<<SQL
+SELECT o.name
+FROM modw.organization o
+WHERE o.id = :organization_id
+UNION
+SELECT unk.name
+FROM modw.organization unk
+WHERE unk.id = -1
+SQL;
         $params = array(
             ':organization_id' => $organizationId
         );
@@ -77,6 +85,7 @@ SQL;
         $db = DB::factory('database');
 
         $rows = $db->query($query, $params);
-        return count($rows) > 0 ? $rows[0]['name'] : UNKNOWN_ORGANIZATION_NAME;
+
+        return $rows[0]['name'];
     }
 }
