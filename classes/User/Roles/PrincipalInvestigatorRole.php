@@ -26,17 +26,6 @@ class PrincipalInvestigatorRole extends \User\AuthenticatedRole
     public function configure(\XDUser $user, $simulatedActiveRole = NULL)
     {
         parent::configure($user, $simulatedActiveRole);
-
-        $dbh = DB::factory('datawarehouse');
-
-        $pi_check_query = $dbh->query("SELECT person_id from modw.principalinvestigator WHERE person_id=:person_id LIMIT 1", array(
-            ':person_id' => $user->getPersonID(),
-        ));
-
-        $pi_mapping = (count($pi_check_query) == 1) ? $user->getPersonID() : -1;
-
-        $this->addParameter('pi',  $pi_mapping);
-
     }//configure
 
 }//PrincipalInvestigatorRole

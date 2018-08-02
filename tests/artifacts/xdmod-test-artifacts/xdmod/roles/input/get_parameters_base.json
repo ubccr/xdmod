@@ -1,0 +1,212 @@
+[
+  [
+    {
+      "username": "centerdirector",
+      "role_name": "cd",
+      "expected": "get_parameters_default_provider"
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "role_name": "cs",
+      "expected": "get_parameters_default_provider"
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "role_name": "pi",
+      "expected": "get_parameters_cd_pi"
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "role_name": "usr",
+      "expected": "get_parameters_cd_person"
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "role_name": "mgr",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "centerdirector",
+      "role_name": "dev",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "role_name": "cd",
+      "expected": "get_parameters_default_provider"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "role_name": "cs",
+      "expected": "get_parameters_default_provider"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "role_name": "pi",
+      "expected": "get_parameters_cs_pi"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "role_name": "usr",
+      "expected": "get_parameters_cs_person"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "role_name": "mgr",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "centerstaff",
+      "role_name": "dev",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "role_name": "cd",
+      "expected": "get_parameters_default_provider"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "role_name": "cs",
+      "expected": "get_parameters_default_provider"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "role_name": "pi",
+      "expected": "get_parameters_valid_pi"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "role_name": "usr",
+      "expected": "get_parameters_pi_person"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "role_name": "mgr",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "principal",
+      "role_name": "dev",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "role_name": "cd",
+      "expected": "get_parameters_default_provider"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "role_name": "cs",
+      "expected": "get_parameters_default_provider"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "role_name": "pi",
+      "expected": "get_parameters_user_pi"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "role_name": "usr",
+      "expected": "get_parameters_user_person"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "role_name": "mgr",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "normaluser",
+      "role_name": "dev",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "role_name": "cd",
+      "expected": "get_parameters_neg_one_provider"
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "role_name": "cs",
+      "expected": "get_parameters_neg_one_provider"
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "role_name": "pi",
+      "expected": "get_parameters_invalid_pi"
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "role_name": "usr",
+      "expected": "get_parameters_pub_person"
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "role_name": "mgr",
+      "expected": "get_parameters_empty_array"
+    }
+  ],
+  [
+    {
+      "username": "pub",
+      "role_name": "dev",
+      "expected": "get_parameters_empty_array"
+    }
+  ]
+]

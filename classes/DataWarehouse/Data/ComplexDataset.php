@@ -52,7 +52,8 @@ class ComplexDataset
         $aggregationUnit,
         $data_series,
         $global_filters,
-        $query_type // new and semi improved...
+        $query_type,
+        $user
     ) {
         // JMS: please improve this when possible.
         if ( !in_array($query_type, array('aggregate','timeseries') ) ) {
@@ -134,7 +135,7 @@ class ComplexDataset
             );
             $query->setRoleParameters($groupedRoleParameters);
 
-            $data_description->roleRestrictionsParameters = $query->setMultipleRoleParameters($data_description->authorizedRoles);
+            $data_description->roleRestrictionsParameters = $query->setMultipleRoleParameters($data_description->authorizedRoles, $user);
             $data_description->restrictedByRoles = $query->isLimitedByRoleRestrictions();
 
             $globalFilterDescriptions = array_merge(

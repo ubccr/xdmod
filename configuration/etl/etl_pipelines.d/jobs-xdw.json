@@ -142,6 +142,18 @@
                     "path": "jobs/xdw/schema-version-history.json"
                 }
             }
+        },
+        {
+            "name": "organization",
+            "definition_file": "jobs/xdw/organization.json",
+            "description": "organization + data",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown organization",
+                    "path": "jobs/xdw/organizations.json"
+                }
+            }
         }
     ],
     "aggregate": [{

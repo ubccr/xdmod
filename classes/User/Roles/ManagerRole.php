@@ -20,11 +20,6 @@ class ManagerRole extends \User\AuthenticatedRole
     public function configure(\XDUser $user, $simulatedActiveRole = NULL)
     {
         parent::configure($user, $simulatedActiveRole);
-
-        // $p = new \DataWarehouse\Query\Model\Parameter('person_id', '=', $user->getPersonID());
-
-        $this->addParameter('person',  $user->getPersonID());
-
     }//configure
 
 }//ManagerRole

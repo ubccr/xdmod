@@ -3,6 +3,7 @@
 namespace DataWarehouse\Access;
 
 use Exception;
+use Models\Services\Parameters;
 use Models\Services\Acls;
 use PDOException;
 use stdClass;
@@ -164,6 +165,7 @@ class MetricExplorer extends Common
                 $scale,
                 $width,
                 $height,
+                $user,
                 $swap_xy,
                 $showContextMenu,
                 $share_y_axis,
@@ -282,7 +284,7 @@ class MetricExplorer extends Common
 
                 $query->setFilters($data_description->filters);
 
-                $roleRestrictionsParameters = $query->setMultipleRoleParameters($data_description->authorizedRoles);
+                $roleRestrictionsParameters = $query->setMultipleRoleParameters($data_description->authorizedRoles, $user);
                 $restrictedByRoles = $query->isLimitedByRoleRestrictions();
 
                 $query->addOrderByAndSetSortInfo($data_description);
@@ -619,7 +621,7 @@ class MetricExplorer extends Common
                 $activeRoleComponents[0],
                 $activeRoleComponents[1]
             );
-            $activeRoleParameters = $activeRole->getParameters();
+            $activeRoleParameters = Parameters::getParameters($user, $activeRole->getIdentifier());
         }
 
         // For each set of filter parameters the role has, create an
@@ -757,7 +759,7 @@ class MetricExplorer extends Common
                 null,
                 $dimension_id
             );
-            $query->setMultipleRoleParameters($realmAuthorizedRoles);
+            $query->setMultipleRoleParameters($realmAuthorizedRoles, $user);
 
             $dimensionValuesQueries[] = $query->getDimensionValuesQuery();
         }
