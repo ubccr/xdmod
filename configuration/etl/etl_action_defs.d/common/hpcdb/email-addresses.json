@@ -4,6 +4,7 @@
     },
     "source_query": {
         "records": {
+            "email_address_id": "uup.union_user_pi_id",
             "person_id": "uup.union_user_pi_id",
             "email_address": "''"
         },
