@@ -130,7 +130,7 @@
                 },
                 {
                     "realm": "Cloud",
-                    "group_by": "memory_buckets"
+                    "group_by": "vm_size_memory"
                 },
                 {
                     "realm": "Cloud",

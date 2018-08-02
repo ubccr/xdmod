@@ -7,14 +7,14 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 *
 * The total core reservation time of virtual machines, in hours
 */
-class DiskReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class AverageStorageReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
         parent::__construct(
             'COALESCE(SUM(jf.disk_reserved) / SUM(jf.wallduration),0)',
-            'avg_disk_reserved',
-            'Average Disk Reserved Weighted By Wall Hours',
+            'cloud_avg_disk_reserved',
+            'Average Storage Reserved Weighted By Wall Hours',
             'Bytes',
             2
         );
@@ -22,7 +22,7 @@ class DiskReservationStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The amount of disk space reserved by running virtual machines over wall time.<br/>
-            <i>Wall Time:</i> The linear duration between the start and end times of discrete virtual machine runs.';
+        return 'The average amount of disk space (in bytes) reserved by running virtual machines, weighted by wall hours.<br/>
+            <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
     }
 }

@@ -8,22 +8,22 @@
         "columns": [
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false
             },
             {
                 "name": "instance_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "extra": "auto_increment",
-                "comment": "Auto-increment relative to resource_id. Unknown = 1"
+                "comment": "Auto-increment relative to resource_id. Unknown = -1"
             },
             {
                 "name": "account_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
-                "comment": "Unknown = 1"
+                "comment": "Unknown = -1"
             },
             {
                 "name": "provider_identifier",
@@ -33,10 +33,10 @@
             },
             {
                 "name": "person_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
-                "comment": "Unknown = 1"
+                "comment": "Unknown = -1"
             }
         ],
 

@@ -7,13 +7,13 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 *
 * Sum of cores reserved on active virtual machines
 */
-class CoresAllocatedStatistic extends \DataWarehouse\Query\Cloud\Statistic
+class CoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
         parent::__construct(
             'COALESCE(SUM(jf.num_cores),0)',
-            'num_cores',
+            'cloud_num_cores',
             'Cores: Total',
             'Cores',
             0
