@@ -103,7 +103,7 @@ EOT
         $password = \xd_utilities\getConfiguration('database', 'pass');
         $port = \xd_utilities\getConfiguration('database', 'port');
         $host = \xd_utilities\getConfiguration('database', 'host');
-        MySQLHelper::grantAllPrivileges('localhost', $port, $adminUsername, $adminPassword, $host, $username, $password);
+        MySQLHelper::grantAllPrivileges($host, $port, $adminUsername, $adminPassword, $host, $username, $password);
 
     }
 
