@@ -21,6 +21,7 @@
 namespace ETL;
 
 use Log;
+use \CCR\Loggable;
 
 // Extending stdClass allows us to use this class with when a general class is used.
 

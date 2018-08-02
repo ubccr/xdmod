@@ -9,14 +9,13 @@
  * ==========================================================================================
  */
 
-namespace ETL\Configuration;
+namespace Configuration;
 
 // PEAR logger
 use Log;
 use stdClass;
-use ETL\Loggable;
+use CCR\Loggable;
 use ETL\JsonPointer;
-use ETL\Utilities;
 
 class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransformer
 {

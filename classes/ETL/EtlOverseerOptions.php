@@ -15,7 +15,7 @@ use Exception;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DbModel\Query;
 
-class EtlOverseerOptions extends Loggable
+class EtlOverseerOptions extends \CCR\Loggable
 {
     // Start of the ETL period
     private $startDate = null;
