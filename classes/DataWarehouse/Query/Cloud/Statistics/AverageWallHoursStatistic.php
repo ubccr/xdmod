@@ -14,18 +14,17 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance)
     {
-        $sql = 'COALESCE(SUM(jf.wallduration/3600.0) / SUM(jf.num_vms_running), 0)';
+        $sql = 'COALESCE(SUM(jf.wallduration / SUM(jf.num_vms_running) / 3600.0, 0)';
 
         if ($query_instance->getQueryType() == 'aggregate') {
             $date_table = $query_instance->getDateTable();
             if ($date_table) {
                 $date_id_field = new TableField($date_table, 'id');
 
-                $sql = 'COALESCE(SUM(jf.wallduration/3600.0) / SUM(CASE ' . $date_id_field . ' WHEN ' . $query_instance->getMinDateId() . ' THEN jf.num_vms_running ELSE jf.num_vms_started END), 0)';
+                $sql = 'COALESCE(SUM(jf.wallduration) / SUM(CASE ' . $date_id_field . ' WHEN ' . $query_instance->getMinDateId() . ' THEN jf.num_vms_running ELSE jf.num_vms_started END) / 3600.0, 0)';
             }
         }
 
-        $vm_count_formula = $query_instance->getQueryType() == 'aggregate' ? 'num_vms_started' : 'num_vms_running';
         parent::__construct(
             $sql,
             'cloud_avg_wallduration_hours',
