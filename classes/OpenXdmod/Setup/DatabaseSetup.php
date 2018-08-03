@@ -105,7 +105,7 @@ EOT
                 $settings,
                 $databases
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->console->displayBlankLine();
             $this->console->displayMessage('Failed to create databases:');
             $this->console->displayBlankLine();

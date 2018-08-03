@@ -43,11 +43,25 @@ class ListResourcesSetup extends SetupItem
             $this->console->displayBlankLine();
         }
 
+        $availableTypes = json_decode(file_get_contents(CONFIG_DIR . '/resource_types.json'));
+
         foreach ($resources as $resource) {
             $specs = $this->getSpecsForResource($resource['resource']);
 
+            // Look up the resource type in the list of available types
+
+            $resourceType = 'UNK';
+            foreach ( $availableTypes as $type ) {
+                if ( $type->id == $resource['resource_type_id'] ) {
+                    // Note that Console::prompt() expects lowercase values for options
+                    $resourceType = strtolower($type->abbrev);
+                    break;
+                }
+            }
+
             $this->console->displayMessage('Resource: ' . $resource['resource']);
             $this->console->displayMessage('Name: ' . $resource['name']);
+            $this->console->displayMessage('Type: ' . $resourceType);
             $this->console->displayMessage('Node count: ' . $specs['nodes']);
             $this->console->displayMessage('Processor count: ' . $specs['processors']);
             $this->console->displayMessage(str_repeat('-', 72));

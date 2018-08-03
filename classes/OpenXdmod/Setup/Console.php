@@ -111,7 +111,7 @@ class Console
 
         if (count($options) > 0) {
             if ($default != '' && !in_array(strtolower($default), $options)) {
-                throw new Exception('Default value is not an option');
+                throw new \Exception('Default value is not an option');
             }
 
             $lastChar = substr($prompt, -1, 1);

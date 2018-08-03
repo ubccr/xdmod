@@ -5,7 +5,6 @@
 
 namespace OpenXdmod\Setup;
 
-use Exception;
 use XDUser;
 
 /**
@@ -48,7 +47,7 @@ class AdminUserSetup extends SetupItem
             $user->setUserType(2);
 
             $user->saveUser();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->console->displayBlankLine();
             $this->console->displayMessage('Failed to create admin user:');
 

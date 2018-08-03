@@ -5,7 +5,6 @@
 
 namespace OpenXdmod\Setup;
 
-use Exception;
 use xd_utilities;
 use CCR\Json;
 use Xdmod\Template;
@@ -105,7 +104,7 @@ abstract class SetupItem
     {
         try {
             $data = Json::loadFile($path);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return array();
         }
 
@@ -260,7 +259,7 @@ abstract class SetupItem
         if ($returnVar != 0) {
             $msg = "Command exited with non-zero return status:\n"
                 . "command = $command\noutput =\n" . implode("\n", $output);
-            throw new Exception($msg);
+            throw new \Exception($msg);
         }
 
         return $output;

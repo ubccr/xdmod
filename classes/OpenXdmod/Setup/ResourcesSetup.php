@@ -117,9 +117,22 @@ class ResourcesSetup extends SubMenuSetupItem
      */
     public function addResource(array $resource)
     {
+        // Look up the resource type id for the string that was entered
+
+        $availableTypes = json_decode(file_get_contents(CONFIG_DIR . '/resource_types.json'));
+
+        $resourceTypeId = 0; // Unknown
+        foreach ( $availableTypes as $type ) {
+            // Note that Console::prompt() expects lowercase values for options
+            if ( strtolower($type->abbrev) == $resource['type'] ) {
+                $resourceTypeId = $type->id;
+                break;
+            }
+        }
+
         $this->resources[] = array(
             'resource'         => $resource['resource'],
-            'resource_type_id' => 1,
+            'resource_type_id' => $resourceTypeId,
             'name'             => $resource['name'],
         );
 
