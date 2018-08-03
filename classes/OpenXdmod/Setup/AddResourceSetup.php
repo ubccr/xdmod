@@ -46,6 +46,7 @@ EOT
 
         $resource = $this->console->prompt('Resource Name:');
         $name     = $this->console->prompt('Formal Name:');
+        $type     = $this->console->prompt('Resource Type:', 'hpc', array('cloud', 'hpc'));
 
         $this->console->displayBlankLine();
         $this->console->displayMessage(<<<"EOT"
@@ -67,6 +68,7 @@ EOT
             array(
                 'resource'   => $resource,
                 'name'       => $name,
+                'type'       => $type,
                 'processors' => (int)$cpus,
                 'nodes'      => (int)$nodes,
                 'ppn'        => (int)$ppn,

@@ -105,6 +105,7 @@ foreach resource $resources {
 	selectMenuOption 1
 	provideInput {Resource Name:} [lindex $resource 0]
 	provideInput {Formal Name:} [lindex $resource 1]
+	provideInput {Resource Type*} {}
 	provideInput {How many nodes does this resource have?} [lindex $resource 2]
 	provideInput {How many total processors (cpu cores) does this resource have?} [lindex $resource 3]
 }
