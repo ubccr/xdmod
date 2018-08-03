@@ -7,12 +7,14 @@
 namespace ComponentTests\ETL;
 
 use ETL\Ingestor\CloudStateReconstructorTransformIngestor;
+use ETL\Ingestor\IngestorOptions;
+use ETL\Configuration\EtlConfiguration;
 
 /**
  * Test Cloud State FSM
  */
 
-class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_TestCase
+class CloudStateReconstructorTransformIngestorTest extends IngestorTest
 {
     private $valid_event = array(
         "instance_id" => 2343,
@@ -62,24 +64,28 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
 
     public function __construct()
     {
-        $this->fsm = new CloudStateReconstructorTransformIngestor();
+        $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_with_variables_8.0.0.json');
+
+        $options = new IngestorOptions();
+        $conf = new ETLConfiguration($configFile);
+        $this->fsm = new CloudStateReconstructorTransformIngestor($options, $conf, null);
     }
 
-    protected function testValidTransformation() 
+    public function testValidTransformation() 
     {
-        $this->fsm::transformHelper($this->valid_event, 1);
-        $event = $this->fsm::transformHelper($this->valid_end_event, 1);
+        $this->fsm->transformHelper($this->valid_event, 1);
+        $event = $this->fsm->transformHelper($this->valid_end_event, 1);
         
         $this->assertEquals($this->valid_transform, $event);
     }
 
-    protected function testInvalidTransformation() 
+    public function testInvalidTransformation() 
     {
-        $this->assertEquals(array(), $this->fsm::transformHelper($this->invalid_event, 1));
+        $this->assertEquals(array(), $this->fsm->transformHelper($this->invalid_event, 1));
     }
 
-    protected function testZeroTransformation() 
+    public function testZeroTransformation() 
     {
-        $this->assertEquals(null, $this->fsm::transformHelper($this->zero_event, 1));
+        $this->assertEquals(null, $this->fsm->transformHelper($this->zero_event, 1));
     }
 }
