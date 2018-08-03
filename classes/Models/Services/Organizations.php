@@ -114,6 +114,6 @@ SQL;
             )
         );
 
-        return count($rows) > 0 ? $rows[0]['organization_id'] : UNKNOWN_ORGANIZATION_ID;
+        return count($rows) > 0 ? $rows[0]['organization_id'] : -1;
     }
 }
