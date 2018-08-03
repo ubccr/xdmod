@@ -202,7 +202,7 @@ WHERE id = :id
 UNION
 SELECT name
 FROM modw.organization
-WHERE id = :uknown_organization_id;
+WHERE id = :unknown_organization_id;
 SQL;
 
         $rows = $this->_pdo->query(
