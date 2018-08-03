@@ -131,6 +131,6 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
     public function transformHelper(array $srcRecord, &$orderId) 
     {
-        transform($srcRecord, $orderId);
+        return transform($srcRecord, $orderId);
     }
 }
