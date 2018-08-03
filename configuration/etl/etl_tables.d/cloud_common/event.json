@@ -8,7 +8,7 @@
         "columns": [
             {
                 "name": "resource_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false
             },
             {
@@ -19,7 +19,7 @@
             },
             {
                 "name": "instance_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "default": 1,
                 "comment": "Optional instance event is associated with. Unknown = 1"
@@ -46,7 +46,7 @@
             },
             {
                 "name": "host_id",
-                "type": "int(11) unsigned",
+                "type": "int(11)",
                 "nullable": false,
                 "comment": "Host where the event occured. Unknown = 1"
             },

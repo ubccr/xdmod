@@ -8,10 +8,10 @@
  * ------------------------------------------------------------------------------------------
  */
 
-namespace ETL;
+namespace CCR;
 
 // PEAR logger
-use Log;
+use \Log as Logger;
 use Exception;
 use PDOException;
 use ETL\DataEndpoint\iDataEndpoint;
@@ -29,7 +29,7 @@ class Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(Log $logger = null)
+    public function __construct(Logger $logger = null)
     {
         $this->setLogger($logger);
     }  // __construct()
@@ -43,9 +43,9 @@ class Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function setLogger(Log $logger = null)
+    public function setLogger(Logger $logger = null)
     {
-        $this->logger = ( null === $logger ? Log::singleton('null') : $logger );
+        $this->logger = ( null === $logger ? Logger::singleton('null') : $logger );
         return $this;
     }  // setLogger()
 

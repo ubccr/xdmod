@@ -13,11 +13,6 @@ namespace User;
 
 interface iRole
 {
-
-    // parameters: Parameters associated with a user and the role of interest
-    //  @returns array
-    public function getParameters();
-
 	public function getAllQueryRealms($query_groupname);
 } //iRole
 

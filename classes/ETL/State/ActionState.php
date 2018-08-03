@@ -25,7 +25,7 @@ use Log;
 use stdClass;
 use Exception;
 use PDO;
-use ETL\Loggable;
+use CCR\Loggable;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 
 class ActionState extends Loggable implements iActionState

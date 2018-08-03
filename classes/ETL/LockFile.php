@@ -14,6 +14,7 @@ namespace ETL;
 
 use Exception;
 use Log;
+use \CCR\Loggable;
 
 class LockFile extends Loggable
 {

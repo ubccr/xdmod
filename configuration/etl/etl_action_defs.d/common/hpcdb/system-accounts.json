@@ -4,6 +4,7 @@
     },
     "source_query": {
         "records": {
+            "system_account_id": "uupr.union_user_pi_resource_id",
             "resource_id": "r.resource_id",
             "person_id": "uup.union_user_pi_id",
             "username": "uup.union_user_pi_name",

@@ -14,7 +14,7 @@ use DataWarehouse\Query\Exceptions\AccessDeniedException;
  *
  * @Class XDUser
  */
-class XDUser extends ETL\Loggable implements JsonSerializable
+class XDUser extends CCR\Loggable implements JsonSerializable
 {
 
     private $_pdo;                       // PDO Handle (set in __construct)
@@ -2965,5 +2965,28 @@ SQL;
             }
         }
         return $results;
+    }
+
+    /**
+     * Retrieve the `organization_id` for this user. This corresponds with the value found in the
+     * `moddb.Users.organization_id` column.
+     *
+     * @return mixed
+     */
+    public function getOrganizationID()
+    {
+        return $this->_organizationID;
+    }
+
+    /**
+     * Set the `organization_id` for this user. This corresponds to the value found in the
+     * `moddb.Users.organization_id` column.
+     *
+     * @param int $organizationID the id of the organization that this user should be associated
+     *            with
+     */
+    public function setOrganizationID($organizationID)
+    {
+        $this->_organizationID = $organizationID;
     }
 }//XDUser

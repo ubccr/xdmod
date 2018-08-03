@@ -343,6 +343,7 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
      * @param $userName
      * @param int $userGroup
      * @return int the user id for the provided user name / user group.
+     * @throws Exception
      */
     protected function retrieveUserId($userName, $userGroup = 3)
     {
@@ -373,6 +374,39 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         $this->helper->logoutDashboard();
 
         return $userId;
+    }
+
+    /**
+     * @param string $userId    the `id` of the user whose properties we are retrieving.
+     * @param array $properties the set of properties that we want to retrieve from the user.
+     * @return mixed|array      An empty array if none of the requested properties are found. If
+     *                          only one property is requested / found then return the properties
+     *                          value. Else, return the properties that were found in an associative
+     *                          array.
+     * @throws Exception
+     */
+    protected function retrieveUserProperties($userId, array $properties)
+    {
+        $this->helper->authenticateDashboard('mgr');
+
+        $response = $this->helper->post(
+            'controllers/user_admin.php',
+            null,
+            array(
+                'operation' => 'get_user_details',
+                'uid' => $userId
+            )
+        );
+
+        $this->validateResponse($response);
+
+        $user = $response[0]['user_information'];
+        $keys = array_intersect($properties, array_keys($user));
+        $results = array_intersect_key($user, array_flip($keys));
+
+        $this->helper->logoutDashboard();
+
+        return count($results) === 1  && count($properties) === 1 ? array_pop($results) : $results;
     }
 
     /**

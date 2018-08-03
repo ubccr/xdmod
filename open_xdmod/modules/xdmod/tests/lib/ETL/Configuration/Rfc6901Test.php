@@ -9,8 +9,8 @@
 
 namespace UnitTesting\ETL\Configuration;
 
-use ETL\Configuration\Configuration;
-use ETL\Configuration\JsonReferenceTransformer;
+use Configuration\Configuration;
+use Configuration\JsonReferenceTransformer;
 
 class Rfc6901Test extends \PHPUnit_Framework_TestCase
 {

@@ -41,7 +41,7 @@
                     "class": "GroupByYear"
                 },
                 {
-                    "name": "memory_buckets",
+                    "name": "vm_size_memory",
                     "class": "GroupByVMMemory"
                 },
                 {
@@ -54,50 +54,50 @@
                 }
             ],
             "statistics": [{
-                    "name": "num_vms_ended",
+                    "name": "cloud_num_vms_ended",
                     "class": "VMCountStatistic"
                 },
                 {
-                    "name": "num_vms_running",
+                    "name": "cloud_num_vms_running",
                     "class": "RunningVMCountStatistic",
                     "control": true
                 },
                 {
-                    "name": "num_vms_started",
+                    "name": "cloud_num_vms_started",
                     "class": "StartedVMCountStatistic",
                     "control": true
                 },
                 {
-                    "name": "avg_wallduration_hours",
+                    "name": "cloud_avg_wallduration_hours",
                     "class": "AverageWallHoursStatistic"
                 },
                 {
-                    "name": "core_time",
+                    "name": "cloud_core_time",
                     "class": "CoreHoursStatistic"
                 },
                 {
-                    "name": "wall_time",
+                    "name": "cloud_wall_time",
                     "class": "WallHoursStatistic"
                 },
                 {
-                    "name": "avg_num_cores",
-                    "class": "AverageCoresAllocatedStatistic"
+                    "name": "cloud_avg_num_cores",
+                    "class": "AverageCoresReservedStatistic"
                 },
                 {
-                    "name": "num_cores",
-                    "class": "CoresAllocatedStatistic"
+                    "name": "cloud_num_cores",
+                    "class": "CoresReservedStatistic"
                 },
                 {
-                    "name": "avg_cores_reserved",
-                    "class": "CoreReservationStatistic"
+                    "name": "cloud_avg_cores_reserved",
+                    "class": "WeightedCoresReserved"
                 },
                 {
-                    "name": "avg_memory_reserved",
-                    "class": "MemoryReservationStatistic"
+                    "name": "cloud_avg_memory_reserved",
+                    "class": "AverageMemoryReserved"
                 },
                 {
-                    "name": "avg_disk_reserved",
-                    "class": "DiskReservationStatistic"
+                    "name": "cloud_avg_disk_reserved",
+                    "class": "AverageStorageReservedStatistic"
                 }
             ]
         }

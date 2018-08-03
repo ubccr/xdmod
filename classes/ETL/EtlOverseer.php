@@ -19,7 +19,7 @@ use \Exception;  // Base exception
 use Log;
 use ETL\Configuration\EtlConfiguration;
 
-class EtlOverseer extends Loggable implements iEtlOverseer
+class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
 {
     // true if data endpoints have been verified
     private $verifiedDataEndpoints = false;

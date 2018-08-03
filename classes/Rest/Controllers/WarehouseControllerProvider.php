@@ -5,6 +5,7 @@ namespace Rest\Controllers;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\BadRequestException;
+use Models\Services\Parameters;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerCollection;
@@ -878,7 +879,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
             foreach ($roles as $role) {
                 $roleIdentifier = $role->getIdentifier(true);
                 $isMostPrivilegedRole = $roleIdentifier === $mostPrivilegedRoleIdentifier;
-                foreach ($role->getParameters() as $dimensionId => $valueId) {
+
+                $parameters = Parameters::getParameters($user, $role->getIdentifier());
+                foreach ($parameters as $dimensionId => $valueId) {
                     if (!$multipleProvidersSupported && $dimensionId === $serviceProviderDimensionId) {
                         continue;
                     }
@@ -1256,7 +1259,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $query = new $QueryClass("day", $startDate, $endDate, null, "", array(), 'tg_usage', array(), false);
 
             $allRoles = $user->getAllRoles();
-            $query->setMultipleRoleParameters($allRoles);
+            $query->setMultipleRoleParameters($allRoles, $user);
 
             $query->setRoleParameters($params);
 
@@ -1483,7 +1486,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $query = new $QueryClass($params, $action);
 
         $allRoles = $user->getAllRoles();
-        $query->setMultipleRoleParameters($allRoles);
+        $query->setMultipleRoleParameters($allRoles, $user);
 
         $dataSet = new \DataWarehouse\Data\RawDataset($query, $user);
 
@@ -2070,7 +2073,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $query = new $QueryClass($params, "brief");
 
         $allRoles = $user->getAllRoles();
-        $query->setMultipleRoleParameters($allRoles);
+        $query->setMultipleRoleParameters($allRoles, $user);
 
         $dataSet = new \DataWarehouse\Data\RawDataset($query, $user);
 
