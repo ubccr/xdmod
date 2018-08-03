@@ -3,16 +3,36 @@
     {
       "username": "test.cd.one-center",
       "long_name": "Auk, Great",
-      "dimensionNames": {},
-      "filters": {}
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Auk, G",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": false
+          }
+        ]
+      }
     }
   ],
   [
     {
       "username": "test.cs.one-center",
       "long_name": "Auk, Little",
-      "dimensionNames": {},
-      "filters": {}
+      "dimensionNames": {
+        "person": "User"
+      },
+      "filters": {
+        "person": [
+          {
+            "valueName": "Auk, L",
+            "isUserSpecificFilter": true,
+            "isMostPrivilegedRoleFilter": false
+          }
+        ]
+      }
     }
   ],
   [

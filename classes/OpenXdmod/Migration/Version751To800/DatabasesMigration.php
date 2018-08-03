@@ -21,6 +21,14 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
     {
         parent::execute();
 
+        $this->runEtl(
+            array(
+                'process-sections' => array(
+                    'acls-import'
+                )
+            )
+        );
+
         $this->updateTimePeriods();
 
         $this->logger->notice(

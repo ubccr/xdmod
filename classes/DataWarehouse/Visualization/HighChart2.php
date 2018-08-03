@@ -57,6 +57,8 @@ class HighChart2
 
     protected $_subtitleText = '';
 
+    protected $user;
+
     /**
      * The role restrictions string builder used by this chart.
      *
@@ -77,6 +79,7 @@ class HighChart2
         $scale,
         $width,
         $height,
+        $user,
         $swap_xy = false,
         $showContextMenu = true,
         $share_y_axis = false,
@@ -148,6 +151,7 @@ class HighChart2
         );
 
         $this->roleRestrictionsStringBuilder = new RoleRestrictionsStringBuilder();
+        $this->user = $user;
     } // __construct()
 
     // ---------------------------------------------------------
@@ -773,7 +777,8 @@ class HighChart2
             $this->_aggregationUnit,
             $data_series,
             $global_filters,
-            $this->_queryType
+            $this->_queryType,
+            $this->user
         );
 
         $this->_chart['metrics'] = $metrics;

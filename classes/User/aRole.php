@@ -239,49 +239,6 @@ abstract class aRole implements \User\iRole
 
         if ($simulatedActiveRole != NULL) {
             $this->_simulated_organization = $simulatedActiveRole;
-
-            $query = "
-                SELECT
-                    p.param_name,
-                    p.param_op,
-                    p.param_value
-                FROM UserRoleParameters AS p,
-                    Roles AS r
-                WHERE user_id = :user_id
-                    AND r.abbrev = :abbrev
-                    AND r.role_id = p.role_id
-                    AND p.param_value = :param_value
-            ";
-            $query_params = array(
-                ':user_id' => $user->getUserID(),
-                ':abbrev' => $this->getIdentifier(),
-                ':param_value' => $simulatedActiveRole,
-            );
-        } else {
-            $query = "
-                SELECT
-                    p.param_name,
-                    p.param_op,
-                    p.param_value
-                FROM UserRoleParameters AS p,
-                    Roles AS r
-                WHERE user_id = :user_id
-                    AND r.abbrev = :abbrev
-                    AND r.role_id = p.role_id
-                    AND p.is_active = 1
-            ";
-            $query_params = array(
-                ':user_id' => $user->getUserID(),
-                ':abbrev' => $this->getIdentifier(),
-            );
-        }
-
-        $dbh = DB::factory('database');
-
-        $results = $dbh->query($query, $query_params);
-
-        foreach ($results as $result) {
-            $this->addParameter($result['param_name'], $result['param_value']);
         }
     }
 
@@ -302,27 +259,6 @@ abstract class aRole implements \User\iRole
         }
 
         return $this->_user_id;
-    }
-
-    /**
-     * Role parameter accessor.
-     *
-     * @return array
-     */
-    public function getParameters()
-    {
-        return $this->_params;
-    }
-
-    /**
-     * Add a parameter.
-     *
-     * @param string $param_name
-     * @param mixed $param_value
-     */
-    protected function addParameter($param_name, $param_value)
-    {
-        $this->_params[$param_name] = $param_value;
     }
 
     /**
