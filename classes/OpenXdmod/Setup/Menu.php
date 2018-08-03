@@ -80,6 +80,6 @@ class Menu
             }
         }
 
-        throw new Exception("No handler found for trigger '$trigger'");
+        throw new \Exception("No handler found for trigger '$trigger'");
     }
 }

@@ -50,7 +50,7 @@ class ListResourcesSetup extends SetupItem
 
             // Look up the resource type in the list of available types
 
-            $resourceType = 'Unknown';
+            $resourceType = 'UNK';
             foreach ( $availableTypes as $type ) {
                 if ( $type->id == $resource['resource_type_id'] ) {
                     // Note that Console::prompt() expects lowercase values for options
