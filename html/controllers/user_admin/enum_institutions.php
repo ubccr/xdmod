@@ -1,19 +1,11 @@
 <?php
 	
 	// Operation: user_admin->enum_institutions
-
-   \xd_security\assertParametersSet(array(
-      'start' => RESTRICTION_NUMERIC_POS,
-      'limit' => RESTRICTION_NUMERIC_POS
-   ));
-	
-	// -----------------------------
-		
 	$xda = new XDAdmin();
 			
    $name_filter = (isset($_POST['query'])) ? $_POST['query'] : NULL;
 
-	list($institutionCount, $institutions) = $xda->enumerateInstitutions($_POST['start'], $_POST['limit'], $name_filter);
+	list($institutionCount, $institutions) = $xda->enumerateInstitutions($name_filter);
 			
    $institutionEntries = array();
    

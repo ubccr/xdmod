@@ -166,13 +166,11 @@ SQL;
     /**
      * Get a listing of institutions along with their id.
      *
-     * @param int $start
-     * @param int $limit
      * @param int $nameFilter
      *
      * @return array
      */
-    public function enumerateInstitutions($start, $limit = null, $nameFilter = NULL)
+    public function enumerateInstitutions($nameFilter = NULL)
     {
         $filter
             = !empty($nameFilter)
