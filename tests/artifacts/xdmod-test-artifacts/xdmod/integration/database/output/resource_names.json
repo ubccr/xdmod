@@ -8,6 +8,10 @@
         "name": "Mortorq"
     },
     {
+        "code": "openstack",
+        "name": "OpenStack"
+    },
+    {
         "code": "phillips",
         "name": "Phillips"
     },

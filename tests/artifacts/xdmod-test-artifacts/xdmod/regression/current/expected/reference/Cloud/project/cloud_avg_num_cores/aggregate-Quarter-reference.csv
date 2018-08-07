@@ -1,0 +1,10 @@
+title
+"Average Cores Reserved Per VM: by Project"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Project,"Average Cores Reserved Per VM"
+zealous,1.2745
+---------

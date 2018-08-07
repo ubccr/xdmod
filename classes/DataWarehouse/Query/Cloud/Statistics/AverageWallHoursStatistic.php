@@ -14,7 +14,7 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance)
     {
-        $sql = 'COALESCE(SUM(jf.wallduration / SUM(jf.num_vms_running) / 3600.0, 0)';
+        $sql = 'COALESCE(SUM(jf.wallduration) / SUM(jf.num_vms_running) / 3600.0, 0)';
 
         if ($query_instance->getQueryType() == 'aggregate') {
             $date_table = $query_instance->getDateTable();
@@ -36,7 +36,7 @@ class AverageWallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return "The average time a virtual machine was running, in hours.<br/> 
+        return "The average time a virtual machine was running, in hours.<br/>
             <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.";
     }
 }

@@ -1,0 +1,10 @@
+title
+"Number of VMs Started: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[2 - 4 GB] Number of VMs Started","[< 2 GB] Number of VMs Started","[8 - 16 GB] Number of VMs Started","[4 - 8 GB] Number of VMs Started"
+2018,41,6,3,1
+---------

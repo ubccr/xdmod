@@ -1,0 +1,10 @@
+title
+"Cores: Total: by Submission Venue"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"Submission Venue","Cores: Total"
+"OpenStack API",135
+---------

@@ -1,0 +1,10 @@
+title
+"Average Cores Reserved Per VM: by Resource"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Resource,"Average Cores Reserved Per VM"
+openstack,1.3366
+---------

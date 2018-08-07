@@ -1,0 +1,10 @@
+title
+"Average Cores Reserved Per VM: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[1] Average Cores Reserved Per VM","[2 - 3] Average Cores Reserved Per VM","[4 - 7] Average Cores Reserved Per VM"
+2018-04,1.0000,2.0000,4.0000
+---------

@@ -1,0 +1,10 @@
+title
+"Core Hours: Total: by Resource"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[openstack] Core Hours: Total"
+2018,1755.9078
+---------

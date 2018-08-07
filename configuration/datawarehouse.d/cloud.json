@@ -9,10 +9,6 @@
                     "class": "GroupByNone"
                 },
                 {
-                    "name": "person",
-                    "class": "GroupByPerson"
-                },
-                {
                     "name": "project",
                     "class": "GroupByProject"
                 },
@@ -89,11 +85,11 @@
                 },
                 {
                     "name": "cloud_avg_cores_reserved",
-                    "class": "WeightedCoresReserved"
+                    "class": "WeightedCoresReservedStatistic"
                 },
                 {
                     "name": "cloud_avg_memory_reserved",
-                    "class": "AverageMemoryReserved"
+                    "class": "AverageMemoryReservedStatistic"
                 },
                 {
                     "name": "cloud_avg_disk_reserved",

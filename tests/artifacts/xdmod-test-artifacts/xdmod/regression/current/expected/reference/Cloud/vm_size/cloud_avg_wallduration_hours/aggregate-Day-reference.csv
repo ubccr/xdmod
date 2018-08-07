@@ -1,0 +1,12 @@
+title
+"Average Wall Hours per VM: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Size: Cores","Average Wall Hours per VM"
+1,21.23302326
+"2 - 3",41.97088889
+"4 - 7",35.26490741
+---------

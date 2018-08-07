@@ -1,0 +1,10 @@
+title
+"Number of VMs Running: by Instance Type"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[c1.m4] Number of VMs Running","[c1.m1] Number of VMs Running","[c2.m4] Number of VMs Running","[c4.m16] Number of VMs Running","[c2.m8] Number of VMs Running"
+2018-04,37,6,4,3,1
+---------
