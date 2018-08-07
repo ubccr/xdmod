@@ -26,7 +26,7 @@
     "cloud-state-pipeline": [
         {
             "name": "cloud-state-action",
-            "class": "StateReconstructorTransformIngestor",
+            "class": "CloudStateReconstructorTransformIngestor",
             "definition_file": "cloud_common/cloud_state.json",
             "truncate_destination": true,
             "description": "Reconstructs discrete runs from cloud events"
