@@ -20,9 +20,6 @@ then
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
-    #Copying roles file so Cloud realm shows up
-    cp $BASEDIR/../../../../../configuration/datawarehouse.d/cloud.json /etc/xdmod/datawarehouse.d/
-    cp $BASEDIR/../../../../../configuration/roles.d/cloud.json /etc/xdmod/roles.d/
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do
         xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
@@ -37,6 +34,7 @@ then
     #Set path to Open Stack test data in Open Stack ingestion file
     sed -i "s%/path/to/data%$REF_DIR/openstack%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
     #Ingesting cloud data from references folder
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
@@ -53,15 +51,13 @@ then
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
-    #Copying roles file so Cloud realm shows up
-    cp $BASEDIR/../../../../../configuration/datawarehouse.d/cloud.json /etc/xdmod/datawarehouse.d/
-    cp $BASEDIR/../../../../../configuration/roles.d/cloud.json /etc/xdmod/roles.d/
     #Adding open stack resource since there is no way to automatically add a cloud resource.
     mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
     UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Set path to Open Stack test data in Open Stack ingestion file
     sed -i "s%/path/to/data%$REF_DIR/openstack%" /etc/xdmod/etl/etl.d/jobs_cloud_openstack.json
     #Ingesting cloud data from references folder
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack

@@ -1,0 +1,10 @@
+title
+"Cores: Total: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[1] Cores: Total","[2 - 3] Cores: Total","[4 - 7] Cores: Total"
+2018,43,10,12
+---------

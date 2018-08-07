@@ -1,0 +1,10 @@
+title
+"Core Hours: Total: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[1] Core Hours: Total","[2 - 3] Core Hours: Total","[4 - 7] Core Hours: Total"
+2018,913.0200,419.7089,423.1789
+---------

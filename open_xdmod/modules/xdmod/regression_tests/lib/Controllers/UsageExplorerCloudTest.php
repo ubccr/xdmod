@@ -10,17 +10,17 @@ class UsageExplorerCloudTest extends UsageExplorerTest
         parent::defaultSetup();
 
         $statistics = array(
-            'num_vms_ended',
-            'num_vms_running',
-            'num_vms_started',
-            'avg_wallduration_hours',
-            'core_time',
-            'wall_time',
-            'avg_num_cores',
-            'num_cores',
-            'avg_cores_reserved',
-            'avg_memory_reserved',
-            'avg_disk_reserved'
+            'cloud_num_vms_ended',
+            'cloud_num_vms_running',
+            'cloud_num_vms_started',
+            'cloud_avg_wallduration_hours',
+            'cloud_core_time',
+            'cloud_wall_time',
+            'cloud_avg_num_cores',
+            'cloud_num_cores',
+            'cloud_avg_cores_reserved',
+            'cloud_avg_memory_reserved',
+            'cloud_avg_disk_reserved'
         );
 
         $group_bys = array(
@@ -29,7 +29,7 @@ class UsageExplorerCloudTest extends UsageExplorerTest
             'project',
             'configuration',
             'resource',
-            'memory_buckets',
+            'vm_size_memory',
             'vm_size',
             'submission_venue'
         );

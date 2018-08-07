@@ -1,0 +1,10 @@
+title
+"Wall Hours: Total: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[1] Wall Hours: Total","[2 - 3] Wall Hours: Total","[4 - 7] Wall Hours: Total"
+2018,913.0200,209.8544,105.7947
+---------

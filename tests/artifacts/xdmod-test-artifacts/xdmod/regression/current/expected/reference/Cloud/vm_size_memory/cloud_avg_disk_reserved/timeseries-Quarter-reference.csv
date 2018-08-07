@@ -1,0 +1,10 @@
+title
+"Average Storage Reserved Weighted By Wall Hours (Bytes): by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[< 2 GB] Average Storage Reserved Weighted By Wall Hours (Bytes)","[2 - 4 GB] Average Storage Reserved Weighted By Wall Hours (Bytes)","[4 - 8 GB] Average Storage Reserved Weighted By Wall Hours (Bytes)","[8 - 16 GB] Average Storage Reserved Weighted By Wall Hours (Bytes)"
+"2018 Q2",21474836480.0000,21474836480.0000,21474836480.0000,21474836480.0000
+---------

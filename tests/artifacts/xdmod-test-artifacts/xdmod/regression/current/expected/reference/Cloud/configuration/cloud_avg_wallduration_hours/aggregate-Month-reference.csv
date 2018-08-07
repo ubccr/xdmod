@@ -1,0 +1,14 @@
+title
+"Average Wall Hours per VM: by Instance Type"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"Instance Type","Average Wall Hours per VM"
+c2.m4,52.40465278
+c4.m16,35.26490741
+c1.m4,24.49683934
+c1.m1,1.10615741
+c2.m8,0.23583333
+---------

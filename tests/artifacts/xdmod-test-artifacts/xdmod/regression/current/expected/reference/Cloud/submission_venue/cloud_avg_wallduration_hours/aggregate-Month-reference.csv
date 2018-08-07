@@ -1,0 +1,10 @@
+title
+"Average Wall Hours per VM: by Submission Venue"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"Submission Venue","Average Wall Hours per VM"
+"OpenStack API",24.09155229
+---------
