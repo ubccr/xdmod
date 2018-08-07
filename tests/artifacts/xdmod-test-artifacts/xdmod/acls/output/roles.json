@@ -110,11 +110,6 @@
                 },
                 {
                     "realm": "Cloud",
-                    "group_by": "person",
-                    "disable": true
-                },
-                {
-                    "realm": "Cloud",
                     "group_by": "project"
                 },
                 {

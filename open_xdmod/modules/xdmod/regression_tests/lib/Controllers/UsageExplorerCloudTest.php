@@ -25,7 +25,6 @@ class UsageExplorerCloudTest extends UsageExplorerTest
 
         $group_bys = array(
             'none',
-            'person',
             'project',
             'configuration',
             'resource',

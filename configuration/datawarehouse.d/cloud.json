@@ -9,10 +9,6 @@
                     "class": "GroupByNone"
                 },
                 {
-                    "name": "person",
-                    "class": "GroupByPerson"
-                },
-                {
                     "name": "project",
                     "class": "GroupByProject"
                 },
