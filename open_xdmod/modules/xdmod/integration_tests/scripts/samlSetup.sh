@@ -1,10 +1,27 @@
 #!/bin/bash
+
+DEFAULT_INSTALL_DIR=/usr/share/xdmod
+DEFAULT_VENDOR_DIR="$DEFAULT_INSTALL_DIR/vendor"
+if [ "$1" = "xsede" ]; then
+  INSTALL_DIR=/xdmod
+  VENDOR_DIR="$INSTALL_DIR/share/vendor"
+else
+  INSTALL_DIR="$DEFAULT_INSTALL_DIR"
+  VENDOR_DIR="$DEFAULT_VENDOR_DIR"
+fi
+
+
+
 httpd -k stop
 cd /root
 git clone https://github.com/mcguinness/saml-idp/
 cd saml-idp
 git checkout 8ff807a91f4badc3c0a10551e1d789df140a66cc
 rm -f package-lock.json
+
+# make sure that openssl is installed
+yum -y install openssl
+
 openssl req -x509 -new -newkey rsa:2048 -nodes -subj '/C=US/ST=New York/L=Buffalo/O=UB/CN=CCR Test Identity Provider' -keyout idp-private-key.pem -out idp-public-cert.pem -days 7300
 echo "installing saml idp server"
 npm set progress=false
@@ -98,9 +115,8 @@ module.exports = {
   metadata: metadata
 }
 EOF
-
-sed -i -- 's%#Alias /simplesaml /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www%Alias /simplesaml /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www%' /etc/httpd/conf.d/xdmod.conf
-sed -i -- 's%#<Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>%<Directory /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www>%' /etc/httpd/conf.d/xdmod.conf
+sed -i -- "s%#Alias /simplesaml $DEFAULT_VENDOR_DIR/simplesamlphp/simplesamlphp/www%Alias /simplesaml $VENDOR_DIR/simplesamlphp/simplesamlphp/www%" /etc/httpd/conf.d/xdmod.conf
+sed -i -- "s%#<Directory $DEFAULT_VENDOR_DIR/simplesamlphp/simplesamlphp/www>%<Directory $VENDOR_DIR/simplesamlphp/simplesamlphp/www>%" /etc/httpd/conf.d/xdmod.conf
 sed -i -- 's/#    Options FollowSymLinks/    Options FollowSymLinks/' /etc/httpd/conf.d/xdmod.conf
 sed -i -- 's/#    AllowOverride All/    AllowOverride All/' /etc/httpd/conf.d/xdmod.conf
 sed -i -- 's/#    <IfModule mod_authz_core.c>/    <IfModule mod_authz_core.c>/' /etc/httpd/conf.d/xdmod.conf
@@ -109,11 +125,11 @@ sed -i -- 's%#    </IfModule>%    </IfModule>%' /etc/httpd/conf.d/xdmod.conf
 sed -i -- 's%#</Directory>%</Directory>%' /etc/httpd/conf.d/xdmod.conf
 
 
-cp /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config-templates/config.php /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
-sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('localhost:8080'),/" /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
-sed -i -- "s/'session.phpsession.cookiename' => 'SimpleSAML',/'session.phpsession.cookiename' => null,/" /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/config.php
+cp "$VENDOR_DIR/simplesamlphp/simplesamlphp/config-templates/config.php" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
+sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('localhost:8080'),/" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
+sed -i -- "s/'session.phpsession.cookiename' => 'SimpleSAML',/'session.phpsession.cookiename' => null,/" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
 
-cat > /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config/authsources.php <<EOF
+cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 <?php
 \$config = array(
   /*
@@ -150,7 +166,7 @@ EOF
 
 CERTCONTENTS=`sed -n '2,21p' /root/saml-idp/idp-public-cert.pem | perl -ne 'chomp and print'`
 
-cat > /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php <<EOF
+cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <<EOF
 <?php
 
 \$metadata['urn:example:idp'] = array (
