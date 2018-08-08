@@ -1,16 +1,7 @@
 #!/bin/bash
 
-DEFAULT_INSTALL_DIR=/usr/share/xdmod
-DEFAULT_VENDOR_DIR="$DEFAULT_INSTALL_DIR/vendor"
-if [ "$1" = "xsede" ]; then
-  INSTALL_DIR=/xdmod
-  VENDOR_DIR="$INSTALL_DIR/share/vendor"
-else
-  INSTALL_DIR="$DEFAULT_INSTALL_DIR"
-  VENDOR_DIR="$DEFAULT_VENDOR_DIR"
-fi
-
-
+INSTALL_DIR=${INSTALL_DIR:-/usr/share/xdmod}
+VENDOR_DIR=${VENDOR_DIR:-$INSTALL_DIR/vendor}
 
 httpd -k stop
 cd /root
