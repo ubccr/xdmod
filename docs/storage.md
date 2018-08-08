@@ -106,7 +106,7 @@ names are currently limited to 255 characters.
 
 ## ETL Commands
 
-Ingest a single files:
+Ingest all files in the data directory:
 
 ```
 $ /usr/share/xdmod/tools/etl/etl_overseer.php \
