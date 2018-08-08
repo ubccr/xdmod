@@ -117,10 +117,10 @@ Ingest and aggregate data:
 
 ```
 $ /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -p xdmod.staging-ingest-storage \
     -p xdmod.staging-ingest-common \
-    -p xdmod.hpcdb-ingest-storage \
-    -p xdmod.hpcdb-ingest-common
+    -p xdmod.staging-ingest-storage \
+    -p xdmod.hpcdb-ingest-common \
+    -p xdmod.hpcdb-ingest-storage
 $ /usr/share/xdmod/tools/etl/etl_overseer.php \
     -a xdmod.hpcdb-xdw-ingest.resource \
     -a xdmod.hpcdb-xdw-ingest.field-of-science-hierarchy \
