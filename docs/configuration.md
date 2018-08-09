@@ -91,6 +91,7 @@ For each resource you will need this information:
   displaying data about specific resources.
 - Formal name - A possibly longer, more descriptive name for the
   resource.
+- Resource type - The type that best describes this resource.
 - Node count - The current number of nodes in the resource.
 - Processor count - The total sum of all the processors (CPU cores) in
   the resource.
@@ -101,12 +102,16 @@ values:
 
 - Resource name: physics
 - Formal name: Physics Department Cluster
+- Resource type: hpc
 - Node count: 100
 - Processor count: 1600
 
 The resource name supplied here must be specified during the shredding
 process.  If you are using the Slurm helper script, this name must match
 the cluster name used by Slurm.
+
+The resource type defines metadata that can be used to group and filter resources
+in the XDMoD user interface.
 
 The number of nodes and cores in your resource are used to display the
 utilization charts (the percentage of your cluster that is being used).
