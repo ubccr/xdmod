@@ -87,6 +87,7 @@ class EtlOverseerOptions extends \CCR\Loggable
 
     const RESTRICT_START_DATE = 'start_date';
     const RESTRICT_END_DATE = 'end_date';
+    const RESTRICT_NUMBER_OF_DAYS = 'number_of_days';
     const RESTRICT_LAST_MODIFIED_START_DATE = 'last_modified_start_date';
     const RESTRICT_LAST_MODIFIED_END_DATE = 'last_modified_end_date';
     const RESTRICT_INCLUDE_ONLY_RESOURCES = 'include_only_resource_codes';
@@ -250,6 +251,11 @@ class EtlOverseerOptions extends \CCR\Loggable
                 case self::RESTRICT_LAST_MODIFIED_END_DATE:
                     if ( null !== ($value = $this->getLastModifiedEndDate()) ) {
                         $replacement = $endpoint->quote($value);
+                    }
+                    break;
+                case self::RESTRICT_NUMBER_OF_DAYS:
+                    if ( null !== ($value = $this->getNumberOfDays()) ) {
+                        $replacement = $value;
                     }
                     break;
                 case self::RESTRICT_INCLUDE_ONLY_RESOURCES:
