@@ -177,18 +177,9 @@ SQL;
             ? "WHERE name LIKE " . $this->modw->quote("%$nameFilter%")
             : '';
 
-        $institutionCountQuery = $this->modw->query(
-            "SELECT COUNT(*) AS total_records FROM organization $filter"
-        );
-
         $query = "SELECT o.id, o.name FROM modw.organization o $filter ORDER BY o.name ASC";
 
-        $institutionResults = $this->modw->query($query);
-
-        return array(
-            $institutionCountQuery[0]['total_records'],
-            $institutionResults
-        );
+        return $this->modw->query($query);
     }
 
     /**

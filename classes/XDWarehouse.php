@@ -198,11 +198,8 @@ class XDWarehouse
         $query = <<<SQL
 SELECT name
 FROM modw.organization
-WHERE id = :id
-UNION
-SELECT name
-FROM modw.organization
-WHERE id = :unknown_organization_id;
+WHERE id = :id OR id = :unknown_organization_id
+ORDER BY id DESC;
 SQL;
 
         $rows = $this->_pdo->query(

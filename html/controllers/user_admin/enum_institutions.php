@@ -6,23 +6,12 @@ $xda = new XDAdmin();
 
 $name_filter = (isset($_POST['query'])) ? $_POST['query'] : NULL;
 
-list($institutionCount, $institutions) = $xda->enumerateInstitutions($name_filter);
-
-$institutionEntries = array();
-
-foreach ($institutions as $institution) {
-
-    $institutionEntries[] = array(
-        'id' => $institution['id'],
-        'name' => $institution['name']
-    );
-
-} // foreach
+$institutions = $xda->enumerateInstitutions($name_filter);
 
 $returnData['status'] = 'success';
 $returnData['success'] = true;
-$returnData['total_institution_count'] = $institutionCount;
+$returnData['total_institution_count'] = count($institutions);
 
-$returnData['institutions'] = $institutionEntries;
+$returnData['institutions'] = $institutions;
 
 \xd_controller\returnJSON($returnData);

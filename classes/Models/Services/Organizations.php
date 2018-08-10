@@ -104,6 +104,13 @@ SQL;
         );
     }
 
+    /**
+     * Attempt to retrieve the organization_id for the specified person_id.
+     *
+     * @param int $personId
+     * @return int id of the organization or -1 if not found
+     * @throws \Exception
+     */
     public static function getOrganizationIdForPerson($personId)
     {
         $db = DB::factory('database');
