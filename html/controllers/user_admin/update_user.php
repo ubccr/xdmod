@@ -5,6 +5,7 @@
 use Models\Services\Acls;
 use Models\Acl;
 use Models\Services\Centers;
+use Models\Services\Organizations;
 
 $params = array('uid' => RESTRICTION_UID);
 
@@ -155,6 +156,9 @@ if (!isset($_POST['is_active'])) {
 
 // -----------------------------
 
+$user_to_update->setOrganizationID(Organizations::getOrganizationForUser($user_to_update->getUserID()));
+// -----------------------------
+
 if (isset($_POST['institution'])) {
 
     if ($_POST['institution'] == -1) {
@@ -165,8 +169,6 @@ if (isset($_POST['institution'])) {
     }
 
 }//if (isset($_POST['institution']))
-
-// -----------------------------
 
 try {
     $user_to_update->saveUser();

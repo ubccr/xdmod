@@ -151,7 +151,7 @@ class XdmodApplicationFactory
         $restControllers = $config['rest'];
         foreach ($restControllers as $key => $config) {
             if (!array_key_exists('prefix', $config) || !array_key_exists('controller', $config)) {
-                throw new Exception("Required REST endpoint information (prefix or controller) missing for $key.");
+                throw new \Exception("Required REST endpoint information (prefix or controller) missing for $key.");
             }
 
             $prefix = $config['prefix'];

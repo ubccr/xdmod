@@ -166,38 +166,20 @@ SQL;
     /**
      * Get a listing of institutions along with their id.
      *
-     * @param int $start
-     * @param int $limit
      * @param int $nameFilter
      *
      * @return array
      */
-    public function enumerateInstitutions($start, $limit, $nameFilter = NULL)
+    public function enumerateInstitutions($nameFilter = NULL)
     {
-        $start = (int)$start;
-        $limit = (int)$limit;
-
         $filter
             = !empty($nameFilter)
             ? "WHERE name LIKE " . $this->modw->quote("%$nameFilter%")
             : '';
 
-        $institutionCountQuery = $this->modw->query(
-            "SELECT COUNT(*) AS total_records FROM organization $filter"
-        );
+        $query = "SELECT o.id, o.name FROM modw.organization o $filter ORDER BY o.name ASC";
 
-        $institutionResults = $this->modw->query("
-            SELECT id, name
-            FROM organization
-            $filter
-            ORDER BY name ASC
-            LIMIT $limit OFFSET $start
-        ");
-
-        return array(
-            $institutionCountQuery[0]['total_records'],
-            $institutionResults
-        );
+        return $this->modw->query($query);
     }
 
     /**

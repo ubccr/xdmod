@@ -6,26 +6,17 @@
 
    $roles = $xda->enumerateAcls();
 
-try {
-    $multipleServiceProviders = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
-}
-catch(Exception $e){
-    $multipleServiceProviders = false;
-}
-
 foreach($roles as $currentRole) {
     // requiresCenter can only be true iff the current install supports
     // multiple service providers.
     if ($currentRole['name'] !== 'pub') {
-        $requiresCenters = $currentRole['requires_center'];
-        $displayCenters = $requiresCenters && $multipleServiceProviders;
         $roleEntries[] = array(
             'acl' => $currentRole['display'],
             'acl_id' => $currentRole['name'],
             'include' => false,
             'primary' => false,
-            'displays_center' => (bool) $displayCenters,
-            'requires_center' => (bool) $requiresCenters
+            'displays_center' => false,
+            'requires_center' => false
         );
     }
 }//foreach

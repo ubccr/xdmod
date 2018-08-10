@@ -10,17 +10,30 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
     userTypeRecentlyAdded: 0,
 
     initComponent: function () {
-
-        var me = this;
+        var self = this;
         var base_controller = '../controllers/user_admin.php';
 
         // conditionally overridden in the call to initialize()
         var account_request_id = '';
 
-        //conditionally overridden in the call to initialize()
+        // conditionally overridden in the call to initialize()
         var account_creation_callback;
 
         var leftColumnFieldWidth = 205;
+
+        var cmbInstitution = new CCR.xdmod.ui.InstitutionDropDown({
+            controllerBase: base_controller,
+            fieldLabel: 'Institution',
+            emptyText: 'No Institution Selected',
+            width: leftColumnFieldWidth,
+            allowBlank: false
+        });
+
+        cmbInstitution.setDisabled(true);
+
+        cmbInstitution.on('change', function (combo) {
+            combo.removeClass('admin_panel_invalid_text_entry');
+        });
 
         var cmbUserMapping = new CCR.xdmod.ui.TGUserDropDown({
             dashboardMode: true,
@@ -29,28 +42,21 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             fieldLabel: 'Map To',
             emptyText: 'User not mapped',
             hiddenName: 'nm_new_user_mapping',
-            width: 150
+            width: 150,
+            cascadeOptions: {
+                component: cmbInstitution,
+                valueProperty: 'id'
+            }
         });
 
-        cmbUserMapping.on('disable', function () { cmbUserMapping.reset(); });
-
-        var cmbInstitution = new CCR.xdmod.ui.InstitutionDropDown({
-            controllerBase: base_controller,
-            disabled: true,
-            fieldLabel: 'Institution',
-            emptyText: 'No Institution Selected',
-            width: leftColumnFieldWidth
-        });
-
-        cmbInstitution.on('disable', function () { cmbInstitution.reset(); });
-        cmbInstitution.on('change', function (combo) {
-            combo.removeClass('admin_panel_invalid_text_entry');
+        cmbUserMapping.on('disable', function () {
+            cmbUserMapping.reset();
         });
 
         var storeUserType = new DashboardStore({
             url: base_controller,
             root: 'user_types',
-            baseParams: { 'operation' : 'enum_user_types' },
+            baseParams: { operation: 'enum_user_types' },
             fields: ['id', 'type'],
             autoLoad: true,
             listeners: {
@@ -80,13 +86,16 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             width: 160
         });
 
-        cmbUserType.on('disable', function () { cmbUserType.reset(); });
+        cmbUserType.on('disable', function () {
+            cmbUserType.reset();
+        });
 
         var btnFindUser = new Ext.Button({
             text: 'Find',
             width: 50,
 
             handler: function () {
+                // eslint-disable-next-line no-use-before-define
                 var fieldsToValidate = [txtFirstName, txtLastName];
 
                 // Sanitization
@@ -98,6 +107,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     }
                 }
 
+                /* eslint-disable no-use-before-define */
                 var searchCrit = {
                     first_name: txtFirstName.getValue(),
                     last_name: txtLastName.getValue()
@@ -106,12 +116,13 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 if (txtEmailAddress.getValue() !== '') {
                     searchCrit.email_address = txtEmailAddress.getValue();
                 }
+                /* eslint-enable no-use-before-define */
 
                 if (cmbInstitution.getValue() !== '') {
                     searchCrit.organization = cmbInstitution.getValue();
                 }
 
-                me.setUserMapping(searchCrit, true);
+                self.setUserMapping(searchCrit, true);
             }
         });
 
@@ -130,7 +141,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             minLength: minUsernameLength,
             minLengthText: 'Minimum length (' + minUsernameLength + ' characters) not met.',
             maxLength: maxUsernameLength,
-            maxLengthText: 'Maximum length (' + maxUsernameLength +  ' characters) exceeded.',
+            maxLengthText: 'Maximum length (' + maxUsernameLength + ' characters) exceeded.',
             regex: XDMoD.regex.usernameCharacters,
             regexText: 'The username must consist of alphanumeric characters only, or it can be an e-mail address.',
 
@@ -269,9 +280,8 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         };
 
         this.setUserMapping = function (searchCrit, prompt) {
+            // eslint-disable-next-line no-param-reassign
             prompt = prompt || false;
-
-            var me = this;
 
             Ext.Ajax.request({
                 url: '../controllers/user_admin.php',
@@ -283,12 +293,14 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
 
                 method: 'POST',
 
-                scope: me,
+                scope: self,
 
                 callback: function (options, success, response) {
                     var json;
                     if (success) {
                         json = CCR.safelyDecodeJSONResponse(response);
+
+                        // eslint-disable-next-line no-param-reassign
                         success = CCR.checkDecodedJSONResponseSuccess(json);
                     }
 
@@ -307,7 +319,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                                 json.data[0].person_name
                             );
                         } else {
-                            me.displayUserGrid(json.data);
+                            self.displayUserGrid(json.data);
                         }
                     } else if (prompt) {
                         if (json.total === 0) {
@@ -316,7 +328,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                                 searchCrit.first_name + '".';
                             CCR.xdmod.ui.userManagementMessage(msg, false);
                         } else {
-                            me.displayUserGrid(json.data);
+                            self.displayUserGrid(json.data);
                         }
                     }
                 }
@@ -457,19 +469,13 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             win.show();
         };
 
-        /* eslint-disable no-use-before-define */
-        var roleGridClickHandler = function () {
-            var selRoles = newUserRoleGrid.getSelectedAcls();
-            cmbInstitution.setDisabled(selRoles.itemExists('cc') === -1);
-        };
-
         var newUserRoleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment_n',
             role_description_column_width: 140,
             layout: 'fit',
-            height: 200,
-            selectionChangeHandler: roleGridClickHandler
+            height: 200
         });
+
         /* eslint-enable no-use-before-define */
 
         this.setCallback = function (callback) {
@@ -500,7 +506,6 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             cmbUserType.reset();
 
             cmbInstitution.reset();
-            cmbInstitution.setDisabled(true);
 
             newUserRoleGrid.reset();
         };
@@ -537,7 +542,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 cmbInstitution.removeClass('admin_panel_invalid_text_entry');
                 cmbUserType.removeClass('admin_panel_invalid_text_entry');
 
-                if (!me.getForm().isValid()) {
+                if (!self.getForm().isValid()) {
                     CCR.xdmod.ui.userManagementMessage('Please fix any fields marked as invalid.', false);
                     return;
                 }
@@ -555,7 +560,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     return;
                 }
 
-                if (!cmbUserMapping.disabled && cmbUserMapping.getValue() == cmbUserMapping.getRawValue()) {
+                if (!cmbUserMapping.disabled && cmbUserMapping.getValue() === cmbUserMapping.getRawValue()) {
                     cmbUserMapping.addClass('admin_panel_invalid_text_entry');
 
                     CCR.xdmod.ui.userManagementMessage('Cannot find <b>' + cmbUserMapping.getValue() + '</b> in the directory.<br>Please select a name from the drop-down list.', false);
@@ -616,6 +621,8 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                         var json;
                         if (success) {
                             json = CCR.safelyDecodeJSONResponse(response);
+
+                            // eslint-disable-next-line no-param-reassign
                             success = CCR.checkDecodedJSONResponseSuccess(json);
                         }
 
@@ -627,8 +634,8 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                             return;
                         }
 
-                        me.usersRecentlyAdded = true;
-                        me.userTypeRecentlyAdded = json.user_type;
+                        self.usersRecentlyAdded = true;
+                        self.userTypeRecentlyAdded = json.user_type;
 
                         CCR.xdmod.ui.userManagementMessage(json.message, json.success);
 
@@ -652,7 +659,9 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     new Ext.Button({
                         text: 'Close',
                         iconCls: 'general_btn_close',
-                        handler: function () { me.parentWindow.hide(); }
+                        handler: function () {
+                            self.parentWindow.hide();
+                        }
                     })
                 ]
             },
@@ -673,8 +682,8 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 items: [
                     {
                         border: false,
-                        baseCls:'x-plain',
-                        bodyStyle:'padding:5px 0px 5px 5px',
+                        baseCls: 'x-plain',
+                        bodyStyle: 'padding:5px 0px 5px 5px',
                         items: [
                             fsUserInformation,
                             fsUserDetails
@@ -683,8 +692,8 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     {
                         border: false,
                         width: 300,
-                        baseCls:'x-plain',
-                        bodyStyle:'padding:5px 5px 5px 5px',
+                        baseCls: 'x-plain',
+                        bodyStyle: 'padding:5px 5px 5px 5px',
                         items: [
                             fsRoleAssignment,
                             fsUserType
@@ -695,6 +704,14 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             listeners: {
                 activate: function () {
                     newUserRoleGrid.reset();
+                    cmbInstitution.getStore().load(
+                        {
+                            params: {
+                                start: 0,
+                                limit: 5000
+                            }
+                        }
+                    );
                 }
             }
         });
@@ -702,7 +719,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         XDMoD.CreateUser.superclass.initComponent.call(this);
     },
 
-    onRender : function (ct, position) {
+    onRender: function (ct, position) {
         XDMoD.CreateUser.superclass.onRender.call(this, ct, position);
     }
 });

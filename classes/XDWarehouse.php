@@ -195,15 +195,23 @@ class XDWarehouse
      */
     public function resolveInstitutionName($institution_id)
     {
-        $instQuery = $this->_pdo->query(
-            "SELECT name FROM organization WHERE id = :id",
-            array('id' => $institution_id)
+        $query = <<<SQL
+SELECT name
+FROM modw.organization
+WHERE id = :id OR id = :unknown_organization_id
+ORDER BY id DESC;
+SQL;
+
+        $rows = $this->_pdo->query(
+            $query,
+            array(
+                ':id' => $institution_id,
+                ':unknown_organization_id' => -1
+            )
 
         );
 
-        if (count($instQuery) == 0){ return NO_MAPPING; }
-
-        return $instQuery[0]['name'];
+        return $rows[0]['name'];
     }
 
     /**
