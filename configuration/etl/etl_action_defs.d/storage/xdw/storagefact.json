@@ -54,6 +54,9 @@
                 "type": "INNER",
                 "on": "req.request_id = pi.request_id"
             }
+        ],
+        "where": [
+            "su.storage_usage_id > COALESCE((SELECT MAX(id) FROM ${DESTINATION_SCHEMA}.storagefact), 0)"
         ]
     }
 }
