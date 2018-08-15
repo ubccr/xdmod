@@ -145,11 +145,74 @@ class ResourcesSetup extends SubMenuSetupItem
     }
 
     /**
-     * Save the current list of resources.
+     * Save the current list of resources. If a cloud resource exists in the list of resources
+     * add the cloud acl files and run acl config commands
      */
     public function save()
     {
         $this->saveJsonConfig($this->resources,     'resources');
         $this->saveJsonConfig($this->resourceSpecs, 'resource_specs');
+
+        $cloud_resources_exist = array_filter($this->resources, function($resource){
+            return $resource['resource_type_id'] == 5;
+        });
+
+        if(!empty($cloud_resources_exist)){
+            $this->addCloudAcls();
+            exit(12);
+        }
+    }
+
+    /**
+     * Checks to see if the cloud.json files in configuration/datawarehouse.d and configuration/roles.d
+     * match the cloud.json files in templates/datawarehouse.d and templates/roles.d
+     */
+    private function doCloudAclFilesMatch(){
+        $datawarehouse_config = CONFIG_DIR.'/datawarehouse.d/cloud.json';
+        $roles_config = CONFIG_DIR.'/roles.d/cloud.json';
+
+        if(!file_exists($datawarehouse_config) || !file_exists($roles_config)){
+            return false;
+        }
+
+        $datawarehouse_config_template = md5(file_get_contents(TEMPLATE_DIR.'/datawarehouse.d/cloud.json'));
+        $roles_config_template = md5(file_get_contents(TEMPLATE_DIR.'/roles.d/cloud.json'));
+
+        return ((md5(file_get_contents($datawarehouse_config)) == $datawarehouse_config_template) && (md5(file_get_contents($roles_config)) == $roles_config_template)) ? true : false;
+    }
+
+    /**
+     * Moves cloud.json files from templates/datawarehouse.d and templates/roles.d to configuration/roles.d
+     * and configuration/datawarehouse.d and then runs acls-xdmod-management, acl-config and acl-import to
+     * enable the Cloud realm.
+     */
+    private function addCloudAcls(){
+      $datawarehouse_config_dir = CONFIG_DIR.'/datawarehouse.d';
+      $roles_config_dir = CONFIG_DIR.'/roles.d';
+
+      $datawarehouse_config_template_dir = TEMPLATE_DIR.'/datawarehouse.d';
+      $roles_config_template_dir = TEMPLATE_DIR.'/roles.d';
+
+      if(!$this->doCloudAclFilesMatch()){
+            if(!is_dir($datawarehouse_config_dir)){
+                mkdir($datawarehouse_config_dir);
+            }
+
+            if(!is_dir($roles_config_dir)){
+                mkdir($roles_config_dir);
+            }
+
+            $this->console->displayMessage("Enabling cloud realm. Please wait a few moments.");
+            copy(TEMPLATE_DIR.'/datawarehouse.d/cloud.json', $datawarehouse_config_dir.'/cloud.json');
+            copy(TEMPLATE_DIR.'/roles.d/cloud.json', $roles_config_dir.'/cloud.json');
+
+            $manage_acls = new AclEtl(['section' => 'acls-xdmod-management']);
+            $manage_acls->execute();
+
+            shell_exec('acl-config');
+
+            $import_acls = new AclEtl(['section' => 'acls-import']);
+            $import_acls->execute();
+        }
     }
 }
