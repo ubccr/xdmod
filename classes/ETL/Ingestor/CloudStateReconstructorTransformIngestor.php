@@ -49,20 +49,20 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $this->_stop_event_ids = array(self::STOP, self::TERMINATE, self::SUSPEND, self::SHELVE);
         $this->_start_event_ids = array(self::START, self::RESUME, self::STATE_REPORT, self::UNSHELVE);
         $this->_all_event_ids = array_merge($this->_start_event_ids, $this->_stop_event_ids);
-        $this->_end_time = $etlConfig->getVariableStore()->endDate;
+        $this->_end_time = $etlConfig->getVariableStore()->endDate ? date('Y-m-d H:i:s', strtotime($etlConfig->getVariableStore()->endDate)) : null;
 
         $this->resetInstance();
     }
 
     private function initInstance($srcRecord)
     {
-        $default_end_time = isset($this->_end_time) ? strtotime($this->_end_time) : $srcRecord['event_time_utc'];
+        $default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_time_utc'];
 
         $this->_instance_state = array(
             'instance_id' => $srcRecord['instance_id'],
             'start_time' => $srcRecord['event_time_utc'],
             'start_event_id' => $srcRecord['event_type_id'],
-            'end_time' => date('Y-m-d H:i:s', $default_end_time),
+            'end_time' => $default_end_time,
             'end_event_id' => self::STOP
         );
     }
