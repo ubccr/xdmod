@@ -19,7 +19,7 @@
                 "alias": "r"
             },
             {
-                "type": "LEFT OUTER",
+                "type": "INNER",
                 "schema": "${SOURCE_SCHEMA}",
                 "name": "staging_resource_spec",
                 "alias": "rs",
