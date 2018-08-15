@@ -168,13 +168,13 @@ class ResourcesSetup extends SubMenuSetupItem
      */
     private function doCloudAclFilesMatch()
     {
-        $roles_config = CONFIG_DIR.'/roles.d/cloud.json';
+        $roles_config = CONFIG_DIR . '/roles.d/cloud.json';
 
         if (!file_exists($roles_config)) {
             return false;
         }
 
-        $roles_config_template = md5(file_get_contents(TEMPLATE_DIR.'/roles.d/cloud.json'));
+        $roles_config_template = md5(file_get_contents(TEMPLATE_DIR . '/roles.d/cloud.json'));
 
         return (md5(file_get_contents($roles_config)) == $roles_config_template) ? true : false;
     }
@@ -186,8 +186,8 @@ class ResourcesSetup extends SubMenuSetupItem
      */
     private function addCloudAcls()
     {
-        $roles_config_dir = CONFIG_DIR.'/roles.d';
-        $roles_config_template_dir = TEMPLATE_DIR.'/roles.d';
+        $roles_config_dir = CONFIG_DIR . '/roles.d';
+        $roles_config_template_dir = TEMPLATE_DIR . '/roles.d';
 
         if (!$this->doCloudAclFilesMatch()) {
 
@@ -196,7 +196,7 @@ class ResourcesSetup extends SubMenuSetupItem
             }
 
             $this->console->displayMessage("Enabling cloud realm. Please wait a few moments.");
-            copy(TEMPLATE_DIR.'/roles.d/cloud.json', $roles_config_dir.'/cloud.json');
+            copy(TEMPLATE_DIR . '/roles.d/cloud.json', $roles_config_dir.'/cloud.json');
 
             $manage_acls = new AclEtl(['section' => 'acls-xdmod-management']);
             $manage_acls->execute();
