@@ -6,8 +6,8 @@
          cacheTokens="true"
          colors="true"
          convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+         convertNoticesToExceptions="false"
+         convertWarningsToExceptions="false"
          forceCoversAnnotation="false"
          mapTestClassNameToCoveredClassName="false"
          printerClass="PHPUnit_TextUI_ResultPrinter"
@@ -18,11 +18,12 @@
          stopOnSkipped="false"
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
          verbose="true">
-    <testsuite name="roles">
+    <testsuite name="Roles">
         <directory>lib/Roles</directory>
+        <exclude>lib/ETL</exclude>
     </testsuite>
-    <testsuite name="non-roles">
-        <directory>lib</directory>
+    <testsuite name="ETL">
+        <directory>lib/ETL</directory>
         <exclude>lib/Roles</exclude>
     </testsuite>
 </phpunit>
