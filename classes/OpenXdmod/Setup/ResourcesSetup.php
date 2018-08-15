@@ -186,13 +186,13 @@ class ResourcesSetup extends SubMenuSetupItem
      * enable the Cloud realm.
      */
     private function addCloudAcls(){
-      $datawarehouse_config_dir = CONFIG_DIR.'/datawarehouse.d';
-      $roles_config_dir = CONFIG_DIR.'/roles.d';
+        $datawarehouse_config_dir = CONFIG_DIR.'/datawarehouse.d';
+        $roles_config_dir = CONFIG_DIR.'/roles.d';
 
-      $datawarehouse_config_template_dir = TEMPLATE_DIR.'/datawarehouse.d';
-      $roles_config_template_dir = TEMPLATE_DIR.'/roles.d';
+        $datawarehouse_config_template_dir = TEMPLATE_DIR.'/datawarehouse.d';
+        $roles_config_template_dir = TEMPLATE_DIR.'/roles.d';
 
-      if(!$this->doCloudAclFilesMatch()){
+        if(!$this->doCloudAclFilesMatch()){
             if(!is_dir($datawarehouse_config_dir)){
                 mkdir($datawarehouse_config_dir);
             }
