@@ -97,6 +97,6 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
 
     public function testZeroTransformation()
     {
-        $this->assertEquals(null, $this->fsm->transformHelper($this->zero_event)[0]);
+        $this->assertEquals(array(), $this->fsm->transformHelper($this->zero_event));
     }
 }

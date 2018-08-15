@@ -130,7 +130,6 @@ class Loggable
         $logMessage['message'] = $message;
 
         $this->logger->log($logMessage, $logLevel);
-
         throw new Exception($message);
 
     }  // logAndThrowException()
