@@ -74,9 +74,8 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
 
         // This needs to be explicitly defined here so PHP 5.4 doesn't complain
-        $definitionLoc = BASE_DIR . "/tests/artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input/etl_action_defs_8.0.0.d/cloud_state.json";
-        $this->options_array["definition_file"] = $definitionLoc;
-
+        $this->options_array["definition_file"] = BASE_DIR . "/tests/artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input/etl_action_defs_8.0.0.d/cloud_state.json";
+        
         $options = new IngestorOptions($this->options_array);
         $conf = new ETLConfiguration($configFile);
 
