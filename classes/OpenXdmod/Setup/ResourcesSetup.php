@@ -159,7 +159,6 @@ class ResourcesSetup extends SubMenuSetupItem
 
         if(!empty($cloud_resources_exist)){
             $this->addCloudAcls();
-            exit(12);
         }
     }
 
