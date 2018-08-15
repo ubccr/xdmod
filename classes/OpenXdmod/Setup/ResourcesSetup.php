@@ -178,7 +178,7 @@ class ResourcesSetup extends SubMenuSetupItem
         $datawarehouse_config_template = md5(file_get_contents(TEMPLATE_DIR.'/datawarehouse.d/cloud.json'));
         $roles_config_template = md5(file_get_contents(TEMPLATE_DIR.'/roles.d/cloud.json'));
 
-        return ((md5(file_get_contents($datawarehouse_config)) == $datawarehouse_config_template) && (md5(file_get_contents($roles_config)) == $roles_config_template)) ? true : false;
+        return ((md5(file_get_contents($datawarehouse_config)) == $datawarehouse_config_template) || (md5(file_get_contents($roles_config)) == $roles_config_template)) ? true : false;
     }
 
     /**
