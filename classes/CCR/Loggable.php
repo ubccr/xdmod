@@ -129,9 +129,7 @@ class Loggable
 
         $logMessage['message'] = $message;
 
-        if ($this->logger) {
-            $this->logger->log($logMessage, $logLevel);
-        }
+        $this->logger->log($logMessage, $logLevel);
 
         throw new Exception($message);
 
