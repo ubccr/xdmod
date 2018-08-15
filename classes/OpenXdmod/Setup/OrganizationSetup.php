@@ -34,9 +34,7 @@ class OrganizationSetup extends SetupItem
 
         $portalSettings = $this->loadIniConfig('portal_settings');
 
-        if (!isset($portalSettings['default_organization_name'])) {
-            $portalSettings['default_organization_name'] = $org['name'];
-        }
+        $portalSettings['sso_default_organization_name'] = $org['name'];
 
         $this->saveIniConfig($portalSettings, 'portal_settings');
     }
