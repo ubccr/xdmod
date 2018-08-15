@@ -104,10 +104,10 @@ EML;
         $this->logger = Log::factory(
             'XDSamlAuthentication',
             array(
-               'file' => false,
-               'db' => true,
-               'mail' => false,
-               'console' => false
+                'file' => false,
+                'db' => true,
+                'mail' => false,
+                'console' => false
             )
         );
         $this->emailLogger = Log::factory(
@@ -124,7 +124,7 @@ EML;
         );
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
         try {
-            $this->_allowLocalAccessViaSSO = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false: true;
+            $this->_allowLocalAccessViaSSO = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false : true;
         } catch (Exception $e) {
         }
         if ($this->isSamlConfigured()) {
