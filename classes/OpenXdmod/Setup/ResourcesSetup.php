@@ -153,7 +153,7 @@ class ResourcesSetup extends SubMenuSetupItem
         $this->saveJsonConfig($this->resources,     'resources');
         $this->saveJsonConfig($this->resourceSpecs, 'resource_specs');
 
-        $cloud_resources_exist = array_filter($this->resources, function($resource){
+        $cloud_resources_exist = array_filter($this->resources, function ($resource) {
             return $resource['resource_type_id'] == 5;
         });
 
