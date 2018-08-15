@@ -166,11 +166,12 @@ class ResourcesSetup extends SubMenuSetupItem
      * Checks to see if the cloud.json files in configuration/datawarehouse.d and configuration/roles.d
      * match the cloud.json files in templates/datawarehouse.d and templates/roles.d
      */
-    private function doCloudAclFilesMatch(){
+    private function doCloudAclFilesMatch()
+    {
         $datawarehouse_config = CONFIG_DIR.'/datawarehouse.d/cloud.json';
         $roles_config = CONFIG_DIR.'/roles.d/cloud.json';
 
-        if(!file_exists($datawarehouse_config) || !file_exists($roles_config)){
+        if (!file_exists($datawarehouse_config) || !file_exists($roles_config)) {
             return false;
         }
 
@@ -185,19 +186,20 @@ class ResourcesSetup extends SubMenuSetupItem
      * and configuration/datawarehouse.d and then runs acls-xdmod-management, acl-config and acl-import to
      * enable the Cloud realm.
      */
-    private function addCloudAcls(){
+    private function addCloudAcls()
+    {
         $datawarehouse_config_dir = CONFIG_DIR.'/datawarehouse.d';
         $roles_config_dir = CONFIG_DIR.'/roles.d';
 
         $datawarehouse_config_template_dir = TEMPLATE_DIR.'/datawarehouse.d';
         $roles_config_template_dir = TEMPLATE_DIR.'/roles.d';
 
-        if(!$this->doCloudAclFilesMatch()){
-            if(!is_dir($datawarehouse_config_dir)){
+        if (!$this->doCloudAclFilesMatch()) {
+            if (!is_dir($datawarehouse_config_dir)) {
                 mkdir($datawarehouse_config_dir);
             }
 
-            if(!is_dir($roles_config_dir)){
+            if (!is_dir($roles_config_dir)) {
                 mkdir($roles_config_dir);
             }
 
