@@ -2,16 +2,26 @@
 -- in volume.delete.end events and also root volumes which are inferred from compute.instance.create
 -- events.
 
+CREATE TEMPORARY TABLE ${DESTINATION_SCHEMA}.tmp_volume_delete
+AS
+SELECT
+	event_time_utc,
+	openstack_resource_id,
+	resource_id
+FROM
+	${DESTINATION_SCHEMA}.openstack_raw_event
+WHERE
+	event_type = "volume.delete.end";
+//
+
 UPDATE
 	${DESTINATION_SCHEMA}.asset AS a
 LEFT JOIN
-	${DESTINATION_SCHEMA}.openstack_raw_event AS raw
+	${DESTINATION_SCHEMA}.tmp_volume_delete AS raw
 ON
   raw.resource_id = a.resource_id AND raw.openstack_resource_id = a.provider_identifier
 SET
-	a.destroy_time_utc = raw.event_time_utc
-WHERE
-	raw.event_type = "volume.delete.end";
+	a.destroy_time_utc = raw.event_time_utc;
 //
 
 UPDATE
