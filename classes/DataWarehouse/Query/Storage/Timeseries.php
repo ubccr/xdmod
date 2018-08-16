@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\Storage
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
@@ -25,7 +24,7 @@ class Timeseries extends \DataWarehouse\Query\Timeseries
         parent::__construct(
             'Storage',
             'modw_aggregates',
-            'storage_user_usage',
+            'storagefact',
             array(),
             $aggregationUnitName,
             $startDate,

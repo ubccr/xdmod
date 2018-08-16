@@ -44,7 +44,9 @@
                 "common/staging/union-user-pi-resource.json",
                 "common/staging/union-user-pi.json",
                 "common/staging/user-pi-resource.json",
-                "jobs/staging/job.json"
+                "jobs/staging/job.json",
+                "storage/staging/mountpoint.json",
+                "storage/staging/usage.json"
             ]
         }
     ],
@@ -158,23 +160,102 @@
         },
         {
             "name": "union-user-pi-resource--pi",
-            "description": "Ingest PI/Resource permutations (combined with User/Resource permutations)",
+            "description": "Ingest job PI/Resource permutations (combined with User/Resource permutations)",
             "definition_file": "jobs/staging/union-user-pi-resource--pi.json"
         },
         {
             "name": "union-user-pi-resource--user",
-            "description": "Ingest User/Resource permutations (combined with PI/Resource permutations)",
+            "description": "Ingest job User/Resource permutations (combined with PI/Resource permutations)",
             "definition_file": "jobs/staging/union-user-pi-resource--user.json"
         },
         {
             "name": "user-pi-resource",
-            "description": "Ingest User/PI/Resource permutations",
+            "description": "Ingest job User/PI/Resource permutations",
             "definition_file": "jobs/staging/user-pi-resource.json"
         },
         {
             "name": "job",
             "description": "Ingest job data",
             "definition_file": "jobs/staging/job.json"
+        }
+    ],
+    "staging-ingest-storage": [
+        {
+            "name": "usage",
+            "description": "Ingest storage usage data",
+            "class": "StructuredFileIngestor",
+            "definition_file": "storage/staging/usage.json",
+            "endpoints": {
+                "source": {
+                    "type": "directoryscanner",
+                    "name": "usage-directory",
+                    "path": "storage",
+                    "file_pattern": "/\\.json$/",
+                    "recursion_depth": 1,
+                    "handler": {
+                        "type": "jsonfile",
+                        "name": "Storage usage input file",
+                        "record_schema_path": "storage/usage.schema.json",
+                        "field_names": [
+                            "resource",
+                            "mountpoint",
+                            "user",
+                            "pi",
+                            "dt",
+                            "file_count",
+                            "logical_usage",
+                            "physical_usage",
+                            "soft_threshold",
+                            "hard_threshold"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "mountpoint",
+            "description": "Ingest storage usage data",
+            "definition_file": "storage/staging/mountpoint.json"
+        },
+        {
+            "name": "pi-resource",
+            "description": "Ingest storage PI/Resource permutations",
+            "definition_file": "storage/staging/pi-resource.json"
+        },
+        {
+            "name": "pi",
+            "description": "Ingest storage PIs",
+            "definition_file": "storage/staging/pi.json"
+        },
+        {
+            "name": "resource",
+            "description": "Ingest storage resources",
+            "definition_file": "storage/staging/resource.json"
+        },
+        {
+            "name": "union-user-pi--pi",
+            "description": "Ingest storage PIs (combined with users)",
+            "definition_file": "storage/staging/union-user-pi--pi.json"
+        },
+        {
+            "name": "union-user-pi--user",
+            "description": "Ingest storage users (combined with PIs)",
+            "definition_file": "storage/staging/union-user-pi--user.json"
+        },
+        {
+            "name": "union-user-pi-resource--pi",
+            "description": "Ingest storage PI/Resource permutations (combined with User/Resource permutations)",
+            "definition_file": "storage/staging/union-user-pi-resource--pi.json"
+        },
+        {
+            "name": "union-user-pi-resource--user",
+            "description": "Ingest storage User/Resource permutations (combined with PI/Resource permutations)",
+            "definition_file": "storage/staging/union-user-pi-resource--user.json"
+        },
+        {
+            "name": "user-pi-resource",
+            "description": "Ingest storage User/PI/Resource permutations",
+            "definition_file": "storage/staging/user-pi-resource.json"
         }
     ]
 }

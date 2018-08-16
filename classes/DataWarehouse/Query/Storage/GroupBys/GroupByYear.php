@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\Storage
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
@@ -17,6 +16,11 @@ use DataWarehouse\Query\Storage\GroupByAggregationUnit;
  */
 class GroupByYear extends GroupByAggregationUnit
 {
+    public static function getLabel()
+    {
+        return 'Year';
+    }
+
     public function __construct()
     {
         parent::__construct(
@@ -28,17 +32,12 @@ class GroupByYear extends GroupByAggregationUnit
                     DATE(gt.year_start) AS long_name,
                     DATE(gt.year_start) AS short_name,
                     gt.year_start_ts AS start_ts
-                FROM modw.years gt
+                FROM years gt
                 WHERE 1
                 ORDER BY gt.id ASC
             '
         );
         $this->setAvailableOnDrilldown(false);
-    }
-
-    public static function getLabel()
-    {
-        return 'Year';
     }
 
     public function applyTo(
@@ -52,11 +51,11 @@ class GroupByYear extends GroupByAggregationUnit
             $this->getIdColumnName($multiGroup)
         );
         $nameField = new FormulaField(
-            'date(' . $query->getDateTable()->getAlias() . '.year_start)',
+            'DATE(' . $query->getDateTable()->getAlias() . '.year_start)',
             $this->getLongNameColumnName($multiGroup)
         );
         $shortnameField = new FormulaField(
-            'date(' . $query->getDateTable()->getAlias() . '.year_start)',
+            'DATE(' . $query->getDateTable()->getAlias() . '.year_start)',
             $this->getShortNameColumnName($multiGroup)
         );
         $valueField = new TableField(
@@ -67,9 +66,7 @@ class GroupByYear extends GroupByAggregationUnit
         $query->addField($nameField);
         $query->addField($shortnameField);
         $query->addField($valueField);
-
         $query->addGroup($idField);
-
         $this->addOrder($query, $multiGroup);
     }
 }

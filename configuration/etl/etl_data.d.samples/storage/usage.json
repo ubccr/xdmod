@@ -1,0 +1,26 @@
+[
+    {
+        "resource": "nfs",
+        "mountpoint": "/home",
+        "user": "root",
+        "pi": "root",
+        "soft_threshold": 0,
+        "hard_threshold": 0,
+        "file_count": 12345,
+        "logical_usage": 56789012345,
+        "physical_usage": 78901234567,
+        "dt": "2018-01-01T00:00:00Z"
+    },
+    {
+        "resource": "nfs",
+        "mountpoint": "/home",
+        "user": "jdoe",
+        "pi": "jdoe",
+        "soft_threshold": 1000000000,
+        "hard_threshold": 1100000000,
+        "file_count": 123456,
+        "logical_usage": 10000000,
+        "physical_usage": 12000000,
+        "dt": "2018-01-01T00:00:00Z"
+    }
+]

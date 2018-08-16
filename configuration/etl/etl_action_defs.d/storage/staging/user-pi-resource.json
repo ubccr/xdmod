@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/user-pi-resource.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "user_name": "DISTINCT su.user_name",
+            "pi_name": "su.pi_name",
+            "resource_name": "su.resource_name"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_storage_usage",
+                "alias": "su"
+            }
+        ]
+    }
+}

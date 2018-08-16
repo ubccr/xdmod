@@ -206,9 +206,9 @@
             ]
         },
         "Storage": {
-            "schema": "modw_storage",
-            "table": "user_usage",
-            "datasource": "File system storage logs",
+            "schema": "modw",
+            "table": "storagefact",
+            "datasource": "Storage usage logs",
             "group_bys": [
                 {
                     "name": "none",
@@ -231,16 +231,40 @@
                     "class": "GroupByYear"
                 },
                 {
-                    "name": "file_system",
-                    "class": "GroupByFileSystem"
+                    "name": "resource",
+                    "class": "GroupByResource"
+                },
+                {
+                    "name": "resource_type",
+                    "class": "GroupByResourceType"
+                },
+                {
+                    "name": "mountpoint",
+                    "class": "GroupByMountpoint"
+                },
+                {
+                    "name": "person",
+                    "class": "GroupByPerson"
+                },
+                {
+                    "name": "pi",
+                    "class": "GroupByPI"
                 },
                 {
                     "name": "username",
                     "class": "GroupByUsername"
                 },
                 {
-                    "name": "directory",
-                    "class": "GroupByDirectory"
+                    "name": "nsfdirectorate",
+                    "class": "GroupByNSFDirectorate"
+                },
+                {
+                    "name": "parentscience",
+                    "class": "GroupByParentScience"
+                },
+                {
+                    "name": "fieldofscience",
+                    "class": "GroupByScience"
                 }
             ],
             "statistics": [

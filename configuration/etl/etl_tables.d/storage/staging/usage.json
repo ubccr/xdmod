@@ -1,0 +1,140 @@
+{
+    "table_definition": {
+        "name": "staging_storage_usage",
+        "engine": "InnoDB",
+        "comment": "Storage usage data",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_name",
+                "type": "varchar(200)",
+                "nullable": false,
+                "comment": "Resource name"
+            },
+            {
+                "name": "mountpoint_name",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "File system mountpoint"
+            },
+            {
+                "name": "user_name",
+                "type": "varchar(30)",
+                "nullable": false,
+                "comment": "User's system username"
+            },
+            {
+                "name": "pi_name",
+                "type": "varchar(30)",
+                "nullable": false,
+                "comment": "PI's system username"
+            },
+            {
+                "name": "dt",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "Date and time usage data was collected"
+            },
+            {
+                "name": "file_count",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "File count"
+            },
+            {
+                "name": "logical_usage",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Logical file system usage in bytes"
+            },
+            {
+                "name": "physical_usage",
+                "type": "bigint(20) unsigned",
+                "nullable": true,
+                "comment": "Physical file system usage in bytes"
+            },
+            {
+                "name": "soft_threshold",
+                "type": "bigint(20) unsigned",
+                "nullable": true,
+                "comment": "Soft threshold in bytes"
+            },
+            {
+                "name": "hard_threshold",
+                "type": "bigint(20) unsigned",
+                "nullable": true,
+                "comment": "Hard threshold in bytes"
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ]
+            },
+            {
+                "name": "uk_usage",
+                "is_unique": true,
+                "columns": [
+                    "resource_name",
+                    "mountpoint_name",
+                    "user_name",
+                    "pi_name",
+                    "dt"
+                ]
+            },
+            {
+                "name": "idx_mountpoint_name",
+                "columns": [
+                    "mountpoint_name"
+                ]
+            },
+            {
+                "name": "idx_user_name",
+                "columns": [
+                    "user_name"
+                ]
+            },
+            {
+                "name": "idx_pi_name",
+                "columns": [
+                    "pi_name"
+                ]
+            },
+            {
+                "name": "idx_dt",
+                "columns": [
+                    "dt"
+                ]
+            },
+            {
+                "name": "idx_resource_name_pi_name_user_name",
+                "columns": [
+                    "resource_name",
+                    "pi_name",
+                    "user_name"
+                ]
+            },
+            {
+                "name": "idx_resource_name_user_name",
+                "columns": [
+                    "resource_name",
+                    "user_name"
+                ]
+            }
+        ]
+    }
+}

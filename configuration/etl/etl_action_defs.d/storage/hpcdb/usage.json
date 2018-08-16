@@ -1,0 +1,76 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/storage/hpcdb/usage.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "storage_usage_id": "su.id",
+            "resource_id": "r.resource_id",
+            "mountpoint_id": "sm.mountpoint_id",
+            "person_id": "uup.union_user_pi_id",
+            "account_id": "p.pi_id",
+            "allocation_id": "pr.pi_resource_id",
+            "allocation_breakdown_id": "upr.user_pi_resource_id",
+            "dt": "su.dt",
+            "ts": "UNIX_TIMESTAMP(su.dt)",
+            "file_count": "su.file_count",
+            "logical_usage": "su.logical_usage",
+            "physical_usage": "su.physical_usage",
+            "soft_threshold": "su.soft_threshold",
+            "hard_threshold": "su.hard_threshold"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_storage_usage",
+                "alias": "su"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_storage_mountpoint",
+                "alias": "sm",
+                "on": "su.mountpoint_name = sm.path"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_union_user_pi",
+                "alias": "uup",
+                "on": "su.user_name = uup.union_user_pi_name"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_pi",
+                "alias": "p",
+                "on": "su.pi_name = p.pi_name"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource",
+                "alias": "r",
+                "on": "su.resource_name = r.resource_name"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_pi_resource",
+                "alias": "pr",
+                "on": "su.pi_name = pr.pi_name AND su.resource_name = pr.resource_name"
+            },
+            {
+                "type": "INNER",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_user_pi_resource",
+                "alias": "upr",
+                "on": "su.user_name = upr.user_name AND su.pi_name = upr.pi_name AND su.resource_name = upr.resource_name"
+            }
+
+        ],
+        "where": [
+            "su.id > COALESCE((SELECT MAX(storage_usage_id) FROM ${DESTINATION_SCHEMA}.hpcdb_storage_usage), 0)"
+        ]
+    }
+}

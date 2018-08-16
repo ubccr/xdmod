@@ -1,0 +1,204 @@
+{
+    "table_definition": {
+        "name": "hpcdb_storage_usage",
+        "engine": "InnoDB",
+        "comment": "Storage usage records",
+        "columns": [
+            {
+                "name": "storage_usage_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Storage usage record ID",
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "File system ID"
+            },
+            {
+                "name": "mountpoint_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Mountpoint ID"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Person ID"
+            },
+            {
+                "name": "account_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "allocation_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "allocation_breakdown_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "dt",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "Date and time usage data was collected"
+            },
+            {
+                "name": "ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "Date and time usage data was collected"
+            },
+            {
+                "name": "file_count",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "File count"
+            },
+            {
+                "name": "logical_usage",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Logical file system usage in bytes"
+            },
+            {
+                "name": "physical_usage",
+                "type": "bigint(20) unsigned",
+                "nullable": true,
+                "comment": "Physical file system usage in bytes"
+            },
+            {
+                "name": "soft_threshold",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Soft threshold in bytes"
+            },
+            {
+                "name": "hard_threshold",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Hard threshold in bytes"
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "storage_usage_id"
+                ]
+            },
+            {
+                "name": "idx_resource_id",
+                "columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "idx_mountpoint_id",
+                "columns": [
+                    "mountpoint_id"
+                ]
+            },
+            {
+                "name": "idx_person_id",
+                "columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "idx_account_id",
+                "columns": [
+                    "account_id"
+                ]
+            },
+            {
+                "name": "idx_allocation_id",
+                "columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "idx_allocation_breakdown_id",
+                "columns": [
+                    "allocation_breakdown_id"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_storage_resource_id",
+                "columns": [
+                    "resource_id"
+                ],
+                "referenced_table": "hpcdb_resources",
+                "referenced_columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "fk_storage_mountpoint_id",
+                "columns": [
+                    "mountpoint_id"
+                ],
+                "referenced_table": "hpcdb_storage_mountpoints",
+                "referenced_columns": [
+                    "mountpoint_id"
+                ]
+            },
+            {
+                "name": "fk_storage_person_id",
+                "columns": [
+                    "person_id"
+                ],
+                "referenced_table": "hpcdb_people",
+                "referenced_columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "fk_storage_account_id",
+                "columns": [
+                    "account_id"
+                ],
+                "referenced_table": "hpcdb_accounts",
+                "referenced_columns": [
+                    "account_id"
+                ]
+            },
+            {
+                "name": "fk_storage_allocation_id",
+                "columns": [
+                    "allocation_id"
+                ],
+                "referenced_table": "hpcdb_allocations",
+                "referenced_columns": [
+                    "allocation_id"
+                ]
+            },
+            {
+                "name": "fk_storage_allocation_breakdown_id",
+                "columns": [
+                    "allocation_breakdown_id"
+                ],
+                "referenced_table": "hpcdb_allocation_breakdown",
+                "referenced_columns": [
+                    "allocation_breakdown_id"
+                ]
+            }
+        ]
+    }
+}

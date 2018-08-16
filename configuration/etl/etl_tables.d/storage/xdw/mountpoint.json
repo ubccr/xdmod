@@ -1,35 +1,36 @@
 {
     "table_definition": {
-        "name": "directory",
-        "engine": "InnoDB",
-        "comment": "Directory dimension",
+        "name": "mountpoint",
+        "engine": "MyISAM",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "comment": "Storage file system mountpoints",
         "columns": [
             {
-                "name": "directory_id",
+                "name": "mountpoint_id",
                 "type": "int(11)",
                 "nullable": false,
-                "extra": "AUTO_INCREMENT"
+                "extra": "auto_increment"
             },
             {
                 "name": "path",
                 "type": "varchar(255)",
-                "nullable": false,
-                "comment": "File system path"
+                "nullable": false
             }
         ],
         "indexes": [
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "directory_id"
+                    "mountpoint_id"
                 ]
             },
             {
                 "name": "uk_path",
+                "is_unique": true,
                 "columns": [
                     "path"
-                ],
-                "is_unique": true
+                ]
             }
         ]
     }

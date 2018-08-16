@@ -18,7 +18,9 @@
                 "common/staging/union-user-pi-resource.json",
                 "common/staging/union-user-pi.json",
                 "common/staging/user-pi-resource.json",
-                "jobs/staging/job.json"
+                "jobs/staging/job.json",
+                "storage/staging/mountpoint.json",
+                "storage/staging/usage.json"
             ],
             "endpoints": {
                 "destination": {
@@ -62,7 +64,9 @@
                 "common/hpcdb/resource-allocated.json",
                 "common/hpcdb/resource-specs.json",
                 "common/hpcdb/resources.json",
-                "jobs/hpcdb/jobs.json"
+                "jobs/hpcdb/jobs.json",
+                "storage/hpcdb/mountpoints.json",
+                "storage/hpcdb/usage.json"
             ],
             "endpoints": {
                 "destination": {
@@ -91,6 +95,46 @@
                     "name": "HPCDB Database",
                     "config": "database",
                     "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "name": "update-modw-tables",
+            "description": "Update modw tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "storage/xdw/mountpoint.json",
+                "storage/xdw/storagefact.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
+            "name": "modw-schema-version-history",
+            "description": "Update modw schema version history",
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "jobs/xdw/schema-version-history.json",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Schema version history",
+                    "path": "migrations/7.5.1-8.0.0/xdw/schema-version-history.json"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Data Warehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
                 }
             }
         },

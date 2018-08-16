@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\Storage
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
@@ -10,40 +9,37 @@ use DataWarehouse\Query\Model\Table;
 use DataWarehouse\Query\Storage\GroupBy;
 
 /**
- * File system directory GroupBy.
+ * class for adding group by mountpoint to a query
  */
-class GroupByDirectory extends GroupBy
+class GroupByMountpoint extends GroupBy
 {
+    public static function getLabel()
+    {
+        return 'Mountpoint';
+    }
+
     public function __construct()
     {
         parent::__construct(
-            'directory',
+            'mountpoint',
             array(),
             '
                 SELECT DISTINCT
-                    gt.directory_id AS id,
+                    gt.mountpoint_id AS id,
                     gt.path AS short_name,
                     gt.path AS long_name
-                FROM modw_storage.directory gt
+                FROM mountpoint gt
                 WHERE 1
                 ORDER BY gt.path
             '
         );
-
-        $this->_id_field_name = 'directory_id';
+        $this->_id_field_name = 'mountpoint_id';
+        $this->pk_field_name = 'mountpoint_id';
+        $this->fk_field_name = 'mountpoint_id';
         $this->_long_name_field_name = 'path';
         $this->_short_name_field_name = 'path';
         $this->_order_id_field_name = 'path';
-        $this->table = new Table(
-            $this->schema,
-            'directory',
-            'dir'
-        );
-        $this->info = 'A directory is a file system structure which contains files and other directories.';
-    }
-
-    public static function getLabel()
-    {
-        return 'Directory';
+        $this->table = new Table($this->schema, 'mountpoint', 'm');
+        $this->info = 'A mountpoint is a directory where a file system is mounted.';
     }
 }

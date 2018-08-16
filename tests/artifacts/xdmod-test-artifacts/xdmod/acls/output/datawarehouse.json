@@ -4,7 +4,8 @@
             "schema": "modw_aggregates",
             "table": "jobfact",
             "datasource": "HPcDB",
-            "group_bys": [{
+            "group_bys": [
+                {
                     "name": "none",
                     "class": "GroupByNone"
                 },
@@ -82,7 +83,8 @@
                     "visible": false
                 }
             ],
-            "statistics": [{
+            "statistics": [
+                {
                     "name": "job_count",
                     "class": "JobCountStatistic"
                 },
@@ -204,10 +206,11 @@
             ]
         },
         "Storage": {
-            "schema": "modw_storage",
-            "table": "user_usage",
-            "datasource": "File system storage logs",
-            "group_bys": [{
+            "schema": "modw",
+            "table": "storagefact",
+            "datasource": "Storage usage logs",
+            "group_bys": [
+                {
                     "name": "none",
                     "class": "GroupByNone"
                 },
@@ -228,19 +231,44 @@
                     "class": "GroupByYear"
                 },
                 {
-                    "name": "file_system",
-                    "class": "GroupByFileSystem"
+                    "name": "resource",
+                    "class": "GroupByResource"
+                },
+                {
+                    "name": "resource_type",
+                    "class": "GroupByResourceType"
+                },
+                {
+                    "name": "mountpoint",
+                    "class": "GroupByMountpoint"
+                },
+                {
+                    "name": "person",
+                    "class": "GroupByPerson"
+                },
+                {
+                    "name": "pi",
+                    "class": "GroupByPI"
                 },
                 {
                     "name": "username",
                     "class": "GroupByUsername"
                 },
                 {
-                    "name": "directory",
-                    "class": "GroupByDirectory"
+                    "name": "nsfdirectorate",
+                    "class": "GroupByNSFDirectorate"
+                },
+                {
+                    "name": "parentscience",
+                    "class": "GroupByParentScience"
+                },
+                {
+                    "name": "fieldofscience",
+                    "class": "GroupByScience"
                 }
             ],
-            "statistics": [{
+            "statistics": [
+                {
                     "name": "user_count",
                     "class": "UserCountStatistic"
                 },
@@ -289,7 +317,8 @@
             "schema": "modw_cloud",
             "table": "cloudfact",
             "datasource": "Cloud",
-            "group_bys": [{
+            "group_bys": [
+                {
                     "name": "none",
                     "class": "GroupByNone"
                 },
@@ -334,7 +363,8 @@
                     "class": "GroupBySubmissionVenue"
                 }
             ],
-            "statistics": [{
+            "statistics": [
+                {
                     "name": "cloud_num_vms_ended",
                     "class": "VMCountStatistic"
                 },

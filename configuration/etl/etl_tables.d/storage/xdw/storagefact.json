@@ -1,0 +1,183 @@
+{
+    "table_definition": {
+        "name": "storagefact",
+        "engine": "MyISAM",
+        "comment": "Storage usage fact table",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Storage usage record ID",
+                "extra": "auto_increment"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Resource ID"
+            },
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Resource ID"
+            },
+            {
+                "name": "resourcetype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Resource type ID"
+            },
+            {
+                "name": "mountpoint_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Mountpoint directory ID"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Person ID"
+            },
+            {
+                "name": "principalinvestigator_person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "PI Person ID"
+            },
+            {
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "System account ID"
+            },
+            {
+                "name": "fos_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Field of science ID"
+            },
+            {
+                "name": "dt",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "Date and time usage data was collected"
+            },
+            {
+                "name": "ts",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "Timestamp when usage data was collected"
+            },
+            {
+                "name": "file_count",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "File count"
+            },
+            {
+                "name": "logical_usage",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Logical storage usage in bytes"
+            },
+            {
+                "name": "physical_usage",
+                "type": "bigint(20) unsigned",
+                "nullable": true,
+                "comment": "Physical storage usage in bytes"
+            },
+            {
+                "name": "soft_threshold",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Soft threshold in bytes"
+            },
+            {
+                "name": "hard_threshold",
+                "type": "bigint(20) unsigned",
+                "nullable": false,
+                "comment": "Hard threshold in bytes"
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ]
+            },
+            {
+                "name": "idx_resource_id",
+                "columns": [
+                    "resource_id"
+                ]
+            },
+            {
+                "name": "idx_resourcetype_id",
+                "columns": [
+                    "resourcetype_id"
+                ]
+            },
+            {
+                "name": "idx_mountpoint_id",
+                "columns": [
+                    "mountpoint_id"
+                ]
+            },
+            {
+                "name": "idx_person_id",
+                "columns": [
+                    "person_id"
+                ]
+            },
+            {
+                "name": "idx_principalinvestigator_person_id",
+                "columns": [
+                    "principalinvestigator_person_id"
+                ]
+            },
+            {
+                "name": "idx_systemaccount_id",
+                "columns": [
+                    "systemaccount_id"
+                ]
+            },
+            {
+                "name": "idx_fos_id",
+                "columns": [
+                    "fos_id"
+                ]
+            },
+            {
+                "name": "idx_ts",
+                "columns": [
+                    "ts"
+                ]
+            },
+            {
+                "name": "uk_dimensions",
+                "is_unique": true,
+                "columns": [
+                    "resource_id",
+                    "resourcetype_id",
+                    "mountpoint_id",
+                    "person_id",
+                    "principalinvestigator_person_id",
+                    "systemaccount_id",
+                    "fos_id",
+                    "ts"
+                ]
+            }
+        ]
+    }
+}
