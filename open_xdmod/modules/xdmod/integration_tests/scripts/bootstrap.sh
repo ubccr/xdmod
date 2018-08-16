@@ -29,7 +29,7 @@ then
     xdmod-ingestor
     php /root/bin/createusers.php
     #Copying roles file so Cloud realm shows up
-    mkdir /etc/xdmod/roles.d
+    mkdir -p /etc/xdmod/roles.d
     cp $BASEDIR/../../../../../templates/roles.d/cloud.json /etc/xdmod/roles.d/
     #Adding open stack resource since there is no way to automatically add a cloud resource.
     mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
@@ -57,7 +57,7 @@ then
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
     #Copying roles file so Cloud realm shows up
-    mkdir /etc/xdmod/roles.d
+    mkdir -p /etc/xdmod/roles.d
     cp $BASEDIR/../../../../../templates/roles.d/cloud.json /etc/xdmod/roles.d/
     #Adding open stack resource since there is no way to automatically add a cloud resource.
     mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
