@@ -15,7 +15,6 @@ class XDReportManager
     private $_user = null;
     private $_user_id = null;
     private $_charts_per_page = 1;
-    private $_active_role_id = null;
     private $_report_name = null;
     private $_report_title = null;
     private $_report_header = null;
@@ -47,7 +46,6 @@ class XDReportManager
         $this->_pdo = DB::factory('database');
         $this->_user = $user;
         $this->_user_id         = $user->getUserID();
-        $this->_active_role_id  = $user->getActiveRole()->getIdentifier(true);
     }
 
     public function emptyCache()
@@ -293,8 +291,7 @@ class XDReportManager
                     schedule,
                     delivery,
                     selected,
-                    charts_per_page,
-                    active_role
+                    charts_per_page
                 ) VALUES (
                     :report_id,
                     :user_id,
@@ -308,8 +305,7 @@ class XDReportManager
                     :report_schedule,
                     :report_delivery,
                     :selected,
-                    :charts_per_page,
-                    :active_role_id
+                    :charts_per_page
                 )
             ",
             array(
@@ -325,8 +321,7 @@ class XDReportManager
                 'report_schedule' => $this->_report_schedule,
                 'report_delivery' => $this->_report_delivery,
                 'selected'        => 0,
-                'charts_per_page' => $this->_charts_per_page,
-                'active_role_id'  => $this->_active_role_id,
+                'charts_per_page' => $this->_charts_per_page
             )
         );
     }
@@ -415,36 +410,6 @@ class XDReportManager
         }
 
         return $param_value;
-    }
-
-    public function enumReportsUnderOtherRoles()
-    {
-        $results = $this->_pdo->query(
-            '
-                SELECT active_role, COUNT(*) AS num_reports
-                FROM moddb.Reports
-                WHERE user_id = :user_id AND active_role != :active_role
-                GROUP BY active_role
-            ',
-            array(
-                'user_id'     => $this->_user_id,
-                'active_role' => $this->_active_role_id,
-            )
-        );
-
-        $reportBreakdown = array();
-
-        foreach ($results as $r) {
-
-            $reportBreakdown[] = array(
-                'role'        => \xd_roles\getFormalRoleNameFromIdentifier(
-                    $r['active_role']
-                ),
-                'num_reports' => $r['num_reports']
-            );
-        }
-
-        return $reportBreakdown;
     }
 
     public function fetchChartPool()

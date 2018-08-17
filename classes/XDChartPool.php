@@ -55,35 +55,6 @@ use CCR\DB;
                
       }//emptyCache
 
-		// --------------------------------------------
-		      
-		public function enumChartsUnderOtherRoles() {
-
-         $results = $this->_pdo->query(
-            'SELECT active_role, COUNT(*) AS num_charts FROM ChartPool WHERE user_id=:user_id AND active_role != :active_role GROUP BY active_role',
-            array(
-               'user_id' => $this->_user_id,
-               'active_role' => $this->_user->getActiveRole()->getIdentifier(true)
-            )
-         );
-			
-			$chartBreakdown = array();
-			
-			foreach ($results as $r) {
-			
-			   $chartBreakdown[] = array(
-                                 'role' => \xd_roles\getFormalRoleNameFromIdentifier($r['active_role']),
-                                 'num_charts' => $r['num_charts']
-			                       );
-			
-			}//foreach
-
-			return $chartBreakdown;
-		
-		}//enumChartsUnderOtherRoles
-		
-		// --------------------------------------------
-		
 		public function addChartToQueue($chartIdentifier, $chartTitle, $chartDrillDetails, $chartDateDesc) {
 
          if (empty($chartIdentifier)){
@@ -103,8 +74,8 @@ use CCR\DB;
             throw new Exception("chart_exists_in_queue");
          }
 	
-         $insertQuery = "INSERT INTO {$this->_table_name} (user_id, chart_id, chart_title, chart_drill_details, chart_date_description, type, active_role) VALUES " .
-                        "(:user_id, :chart_id, :chart_title, :chart_drill_details, :chart_date_description, 'image', :active_role)";
+         $insertQuery = "INSERT INTO {$this->_table_name} (user_id, chart_id, chart_title, chart_drill_details, chart_date_description, type) VALUES " .
+                        "(:user_id, :chart_id, :chart_title, :chart_drill_details, :chart_date_description, 'image')";
 	        
          $this->_pdo->execute(
             $insertQuery, 
@@ -113,8 +84,7 @@ use CCR\DB;
                'chart_id' => $chartIdentifier,
                'chart_title'=> $chartTitle, 
                'chart_date_description' => $chartDateDesc,
-               'chart_drill_details'=> $chartDrillDetails,
-               'active_role' => $this->_user->getActiveRole()->getIdentifier(true)
+               'chart_drill_details'=> $chartDrillDetails
             )
          );
 		
