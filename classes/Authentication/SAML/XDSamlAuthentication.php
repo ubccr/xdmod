@@ -220,7 +220,18 @@ EML;
                 return false;
             }
 
-            $this->handleNotifications($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
+            try {
+                $this->handleNotifications($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
+            } catch (Exception $e) {
+                $errorMsgFormat = "[%s] %s\n%s";
+                $errorMsg = sprintf(
+                    $errorMsgFormat,
+                    $e->getCode(),
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                );
+                $this->logger->err("Error dispatching SSO Notification\n$errorMsg");
+            }
 
             return $newUser;
         }
