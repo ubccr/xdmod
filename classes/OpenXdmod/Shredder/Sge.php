@@ -251,6 +251,7 @@ class Sge extends Shredder
         'wait_time'       => 'GREATEST(CAST(start_time AS SIGNED) - CAST(submission_time AS SIGNED), 0)',
         'node_count'      => 'COUNT(DISTINCT hostname)',
         'cpu_count'       => 'GREATEST(COALESCE(slots, 1), COALESCE(resource_list_num_proc, 1))',
+        'node_list'       => 'GROUP_CONCAT(hostname)',
     );
 
     /**
