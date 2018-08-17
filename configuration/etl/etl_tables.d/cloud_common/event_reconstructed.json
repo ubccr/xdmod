@@ -5,6 +5,11 @@
         "engine": "MyISAM",
         "columns": [
             {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
                 "name": "instance_id",
                 "type": "int(11)",
                 "nullable": false

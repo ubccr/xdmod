@@ -52,10 +52,10 @@
                 "is_unique": true
             },
             {
-                "name": "increment_key",
+                "name": "autoincrement_key",
                 "columns": [
-                    "resource_id",
-                    "account_id"
+                    "account_id",
+                    "resource_id"
                 ],
                 "is_unique": true
             },

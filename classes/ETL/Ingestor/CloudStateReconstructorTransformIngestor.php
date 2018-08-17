@@ -59,6 +59,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_time_utc'];
 
         $this->_instance_state = array(
+            'resource_id' => $srcRecord['resource_id'],
             'instance_id' => $srcRecord['instance_id'],
             'start_time' => $srcRecord['event_time_utc'],
             'start_event_id' => $srcRecord['event_type_id'],
@@ -105,7 +106,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
         $transformedRecord = array();
 
-        if ($this->_instance_state['instance_id'] !== $srcRecord['instance_id']) {
+        if ( ($this->_instance_state['instance_id'] !== $srcRecord['instance_id']) || ($this->_instance_state['resource_id'] !== $srcRecord['resource_id'])) {
             $transformedRecord[] = $this->_instance_state;
             $this->initInstance($srcRecord);
         } elseif (in_array($srcRecord['event_type_id'], $this->_start_event_ids)) {
@@ -115,7 +116,6 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
             $transformedRecord[] = $this->_instance_state;
             $this->resetInstance();
         }
-
         return $transformedRecord;
     }
 
@@ -128,7 +128,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
 
-        $sql = "$sql \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 ASC";
+        $sql = "$sql \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC";
 
         return $sql;
     }
