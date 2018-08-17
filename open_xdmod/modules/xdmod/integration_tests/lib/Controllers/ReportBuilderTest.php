@@ -117,7 +117,7 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
         $actual = $response[0];
 
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals($expected, $actual);
 
         if ($user !== 'pub') {
             $this->helper->logout();
