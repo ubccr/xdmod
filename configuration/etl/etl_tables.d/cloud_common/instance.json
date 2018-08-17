@@ -62,8 +62,8 @@
 
                 "name": "increment_key",
                 "columns": [
-                    "resource_id",
-                    "instance_id"
+                    "instance_id",
+                    "resource_id"
                 ],
                 "is_unique": true
             }

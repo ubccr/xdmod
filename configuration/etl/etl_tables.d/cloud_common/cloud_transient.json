@@ -99,6 +99,24 @@
                 "type": "int(5)",
                 "nullable": true
             }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "instance"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "increment_key",
+                "columns": [
+                    "instance_id",
+                    "resource_id"
+                ],
+                "is_unique": true
+            }
         ]
     }
 }
