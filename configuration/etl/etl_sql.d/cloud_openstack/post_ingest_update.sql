@@ -3,6 +3,7 @@
 -- events.
 
 CREATE TEMPORARY TABLE ${DESTINATION_SCHEMA}.tmp_volume_delete
+(INDEX resource_id_openstack_resource_key (`resource_id`, `openstack_resource_id`))
 AS
 SELECT
 	event_time_utc,
