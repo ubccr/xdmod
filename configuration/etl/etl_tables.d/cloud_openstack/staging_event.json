@@ -88,7 +88,7 @@
             },
             {
                 "name": "volume_id",
-                "type": "varchar(11)",
+                "type": "varchar(64)",
                 "nullable": true,
                 "default": null,
                 "comment": "Volume associated with the event."
