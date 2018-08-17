@@ -60,8 +60,8 @@
 
                 "name": "autoincrement_key",
                 "columns": [
-                    "resource_id",
-                    "avail_zone_id"
+                    "avail_zone_id",
+                    "resource_id"
                 ],
                 "is_unique": true
             }
