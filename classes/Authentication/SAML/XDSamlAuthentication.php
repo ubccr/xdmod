@@ -220,18 +220,7 @@ EML;
                 return false;
             }
 
-            try {
-                $this->handleNotifications($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
-            } catch (Exception $e) {
-                $errorMsgFormat = "[%s] %s\n%s";
-                $errorMsg = sprintf(
-                    $errorMsgFormat,
-                    $e->getCode(),
-                    $e->getMessage(),
-                    $e->getTraceAsString()
-                );
-                $this->logger->err("Error dispatching SSO Notification\n$errorMsg");
-            }
+            $this->handleNotifications($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
 
             return $newUser;
         }
@@ -364,10 +353,16 @@ EML;
             );
         } catch (Exception $e) {
             // log the exception so we have some persistent visibility into the problem.
-            $this->logger->err("[SSO] There was an error sending a notification email to: $toAddress");
+            $errorMsgFormat = "[%s] %s\n%s";
+            $errorMsg = sprintf(
+                $errorMsgFormat,
+                $e->getCode(),
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
 
-            // re-throw the exception because calling code should be aware that this function
-            // encountered an exception.
+            $this->logger->err("Error encountered while emailing\n$errorMsg");
+
             throw $e;
         }
     }
