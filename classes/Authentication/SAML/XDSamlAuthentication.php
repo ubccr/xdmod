@@ -97,8 +97,6 @@ EML;
 
     private $logger = null;
 
-    private $emailLogger = null;
-
     public function __construct()
     {
         $this->logger = Log::factory(
@@ -110,18 +108,7 @@ EML;
                 'console' => false
             )
         );
-        $this->emailLogger = Log::factory(
-            'XDSamlAuthentication-email',
-            array(
-                'file' => false,
-                'db' => false,
-                'console' => false,
-                'mail' => true,
-                'emailTo' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
-                'emailFrom' => \xd_utilities\getConfiguration('mailer', 'sender_email'),
-                'emailSubject' => 'XDMoD SSO: Additional Actions Necessary'
-            )
-        );
+
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
         try {
             $this->_allowLocalAccessViaSSO = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false : true;
