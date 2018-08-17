@@ -295,23 +295,44 @@ EML;
             : $samlAttributes['email_address'][0];
 
         $userOrganization = $user->getOrganizationID();
+        $organizationFound = (!isset($userOrganization) || $userOrganization === -1);
 
         $emailBody = sprintf(
             self::BASE_ADMIN_EMAIL,
             $user->getFormalName(true),
             $user->getUsername(),
-            $user->getEmailAddress(),
+            $userEmail,
             $userOrganization,
             Organizations::getNameById($userOrganization),
             json_encode($samlAttributes, JSON_PRETTY_PRINT)
         );
 
-        $organizationFound = (!isset($userOrganization) || $userOrganization === -1);
+        $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
+        $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
 
         if (!$organizationFound && $this->_emailAdminForUnknownUserOrganization) {
-            $this->notifyAdminOfUserWithUnknownOrganization($linked, $emailBody);
+            $subject = sprintf(
+                'New %s Single Sign On User Created',
+                ($linked ? 'Linked' : 'Unlinked')
+            );
+
+            $this->notify(
+                $techSupportRecipient,
+                $techSupportRecipient,
+                '',
+                $senderEmail,
+                $subject,
+                $emailBody
+            );
         } elseif (!$organizationFound && !empty($userEmail)) {
-            $this->notifyUserOfUnknownOrganization($userEmail);
+            $this->notify(
+                $userEmail,
+                $techSupportRecipient,
+                '',
+                $senderEmail,
+                self::USER_EMAIL_SUBJECT,
+                self::USER_EMAIL_BODY
+            );
         } elseif (empty($userEmail)) {
             $title = 'Unable to determine email address for new SSO User.';
             $this->logger->err(sprintf("%s\n\n%s", $title, $emailBody));
@@ -319,53 +340,33 @@ EML;
     }
 
     /**
-     * Sends an email notifying XDMoD admins of new account.
+     * Attempt to generate / send a notification email with the specified parameters.
      *
-     * @param boolean $linked whether Single Sign On user is linked to this account
-     * @param string $emailBody the body of the email to be sent to the administrator.
-     * @throws Exception if there is a problem sending email.
-     */
-    private function notifyAdminOfUserWithUnknownOrganization($linked, $emailBody)
-    {
-        $title = sprintf(
-            'New %s Single Sign On User Created',
-            ($linked ? 'linked' : 'unlinked')
-        );
-
-        $email = sprintf(
-            "%s\n%s",
-            $title,
-            $emailBody
-        );
-
-        $this->emailLogger->notice($email);
-    }
-
-    /**
-     * Notify the user at $emailAddress that we were unable to determine an organization to
-     * associate them with and that there may be additional steps required to fully setup their
-     * user account.
+     * @param string $toAddress    the address that the notification will be sent to.
+     * @param string $fromAddress  the address that the notification will be sent from.
+     * @param string $fromName     A name to be used when identifying the `$fromAddress`
+     * @param string $replyAddress the address to be used when a user replies to the notification.
+     * @param string $subject      the subject of the notification.
+     * @param string $body         the body of the notification.
      *
-     * @param string $emailAddress
-     * @throws Exception if there is a problem sending the email notification.
+     * @throws Exception if there is a problem sending the notification email.
      */
-    public function notifyUserOfUnknownOrganization($emailAddress)
+    public function notify($toAddress, $fromAddress, $fromName, $replyAddress, $subject, $body)
     {
         try {
-
             MailWrapper::sendMail(
                 array(
-                    'subject' => self::USER_EMAIL_SUBJECT,
-                    'body' => self::USER_EMAIL_BODY,
-                    'toAddress' => $emailAddress,
-                    'fromAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
-                    'fromName' => '',
-                    'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
+                    'subject' => $subject,
+                    'body' => $body,
+                    'toAddress' => $toAddress,
+                    'fromAddress' => $fromAddress,
+                    'fromName' => $fromName,
+                    'replyAddress' => $replyAddress
                 )
             );
         } catch (Exception $e) {
             // log the exception so we have some persistent visibility into the problem.
-            $this->logger->err("There was an error sending a notification email to new SSO User: $emailAddress");
+            $this->logger->err("[SSO] There was an error sending a notification email to: $toAddress");
 
             // re-throw the exception because calling code should be aware that this function
             // encountered an exception.
