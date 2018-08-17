@@ -88,7 +88,7 @@
             },
             {
                 "name": "volume_id",
-                "type": "varchar(64)",
+                "type": "int(11)",
                 "nullable": true,
                 "default": null,
                 "comment": "Volume associated with the event."
@@ -131,6 +131,13 @@
                 "name": "event_data",
                 "columns": [
                     "event_data"
+                ],
+                "is_unique": false
+            },
+            {
+                "name": "volume_id",
+                "columns": [
+                    "volume_id"
                 ],
                 "is_unique": false
             }
