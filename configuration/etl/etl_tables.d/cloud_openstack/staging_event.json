@@ -133,6 +133,13 @@
                     "event_data"
                 ],
                 "is_unique": false
+            },
+            {
+                "name": "volume_id",
+                "columns": [
+                    "volume_id"
+                ],
+                "is_unique": false
             }
         ]
     }
