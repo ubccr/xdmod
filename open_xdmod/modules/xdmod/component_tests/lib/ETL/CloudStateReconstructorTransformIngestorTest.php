@@ -16,7 +16,8 @@ use ETL\Configuration\EtlConfiguration;
 
 class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_TestCase
 {
-    private $valid_event = array(
+    private $event_start_res01 = array(
+        "resource_id" => 12,
         "instance_id" => 2343,
         "event_time_utc" => "2018-02-06 17:09:01",
         "event_type_id" => 2,
@@ -25,24 +26,37 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         "end_event_id" => -1
     );
 
-    private $valid_end_event = array(
+    private $event_end_res01 = array(
+        "resource_id" => 12,
         "instance_id" => 2343,
-        "event_time_utc" => "2018-02-07 17:09:01",
+        "event_time_utc" => "2018-02-07 18:09:01",
         "event_type_id" => 4,
         "start_event_id" => -1,
         "end_time" => -1,
         "end_event_id" => -1
     );
 
-    private $valid_transform = array(
+    private $event_end_res02 = array(
+        "resource_id" => 13,
+        "instance_id" => 2343,
+        "event_time_utc" => "2018-02-07 18:09:01",
+        "event_type_id" => 4,
+        "start_event_id" => -1,
+        "end_time" => -1,
+        "end_event_id" => -1
+    );
+
+    private $event_transform_res01 = array(
+        "resource_id" => 12,
         "instance_id" => 2343,
         "start_time" => "2018-02-06 17:09:01",
         "start_event_id" => 2,
-        "end_time" => "2018-02-07 17:09:01",
+        "end_time" => "2018-02-07 18:09:01",
         "end_event_id" => 4
     );
 
-    private $invalid_event = array(
+    private $event_err_res01 = array(
+        "resource_id" => 12,
         "instance_id" => -1,
         "event_time_utc" => "2018-02-06 17:09:01",
         "event_type_id" => 29,
@@ -51,13 +65,23 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         "end_event_id" => -1
     );
 
-    private $zero_event = array(
+    private $event_zero = array(
+        "resource_id" => 12,
         "instance_id" => 0,
         "event_time_utc" => 0,
         "event_type_id" => 0,
         "start_event_id" => 0,
         "end_time" => 0,
         "end_event_id" => 0
+    );
+
+    private $event_flush = array(
+        "resource_id" => 12,
+        "instance_id" => 2343,
+        "start_time" => "2018-02-06 17:09:01",
+        "start_event_id" => 2,
+        "end_time" => "2018-02-06 17:09:01",
+        "end_event_id" => 4
     );
 
     private $options_array = array(
@@ -82,21 +106,51 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         $this->fsm = new CloudStateReconstructorTransformIngestor($options, $conf);
     }
 
-    public function testValidTransformation()
+    // happy path
+    public function testValidStartEnd()
     {
-        $this->fsm->transformHelper($this->valid_event);
-        $event = $this->fsm->transformHelper($this->valid_end_event);
+        $this->fsm->transformHelper($this->event_start_res01);
+        $event = $this->fsm->transformHelper($this->event_end_res01);
         
-        $this->assertEquals($this->valid_transform, $event[0]);
+        $this->assertEquals($this->event_transform_res01, $event[0]);
     }
 
-    public function testInvalidTransformation()
+    // what happens when we hit an invalid start event
+    public function testInvalidStart()
     {
-        $this->assertEquals(array(), $this->fsm->transformHelper($this->invalid_event));
+        $this->assertEquals(array(), $this->fsm->transformHelper($this->event_err_res01));
     }
 
-    public function testZeroTransformation()
+    // what happens when we hit a valid start and then invalid end event
+    public function testValidStartInvalidEnd()
     {
-        $this->assertEquals(array(), $this->fsm->transformHelper($this->zero_event));
+        $this->fsm->transformHelper($this->event_start_res01);
+        $event = $this->fsm->transformHelper($this->event_err_res01);
+
+        $this->assertEquals(array(), $event);
+    }
+
+    // what happens when we hit the dummy row
+    public function testZeroEvent()
+    {
+        $this->assertEquals(array(), $this->fsm->transformHelper($this->event_zero));
+    }
+
+    // what happens when we hit a valid start event and then the dummy row
+    public function testValidAndZeroEvent()
+    {
+        $this->fsm->transformHelper($this->event_start_res01);
+        $event = $this->fsm->transformHelper($this->event_zero);
+
+        $this->assertEquals($this->event_flush, $event[0]);
+    }
+
+    // what happens when you hit a valid end event from another resource
+    public function testTwoResourceEvents()
+    {
+        $this->fsm->transformHelper($this->event_start_res01);
+        $event = $this->fsm->transformHelper($this->event_end_res02);
+        
+        $this->assertEquals($this->event_flush, $event[0]);
     }
 }

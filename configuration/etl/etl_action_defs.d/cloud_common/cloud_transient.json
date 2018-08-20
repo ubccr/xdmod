@@ -34,29 +34,29 @@
                 "name": "event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "ev",
-                "on": "e.start_event_id = ev.event_type_id and e.start_time = ev.event_time_utc and e.instance_id = ev.instance_id"
+                "on": "e.start_event_id = ev.event_type_id AND e.start_time = ev.event_time_utc AND e.instance_id = ev.instance_id AND e.resource_id = ev.resource_id"
             },
             {
                 "name": "instance",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "it",
-                "on": "e.instance_id = it.instance_id"
+                "on": "e.instance_id = it.instance_id AND e.resource_id = it.resource_id"
             },
             {
                 "name": "instance_data",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "itd",
-                "on": "itd.resource_id = it.resource_id and itd.event_id = ev.event_id"
+                "on": "itd.resource_id = it.resource_id AND itd.event_id = ev.event_id"
             },
             {
                 "name": "instance_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "itt",
-                "on": "itt.resource_id = it.resource_id and itt.instance_type_id = itd.instance_type_id"
+                "on": "itt.resource_id = it.resource_id AND itt.instance_type_id = itd.instance_type_id"
             }
         ],
         "orderby": [
-            "instance_id ASC, start_time ASC"
+            "resource_id ASC, instance_id ASC, start_time ASC"
         ]
     }
 }

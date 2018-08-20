@@ -52,10 +52,14 @@
                 "is_unique": true
             },
             {
-                "name": "increment_key",
+                "#": "The ordering of autoincrement id + resource_id is explicit and mandatory.",
+                "#": "This is because MyISAM mandates that composite keys containing an",
+                "#": "autoincrement value have said value as the first key.",
+                "#": "See the following for details: https://www.ryadel.com/en/mysql-two-columns-primary-key-with-auto-increment/",
+                "name": "autoincrement_key",
                 "columns": [
-                    "resource_id",
-                    "account_id"
+                    "account_id",
+                    "resource_id"
                 ],
                 "is_unique": true
             },

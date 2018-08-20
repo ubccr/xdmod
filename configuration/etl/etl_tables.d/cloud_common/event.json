@@ -80,7 +80,8 @@
             {
                 "name": "fk_instance",
                 "columns": [
-                    "instance_id"
+                    "instance_id",
+                    "resource_id"
                 ],
                 "is_unique": false
             }
