@@ -178,7 +178,10 @@ EML;
             $emailAddress = !empty($samlAttrs['email_address'][0]) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
             $personId = \DataWarehouse::getPersonIdByUsername($thisSystemUserName);
 
-            $samlOrganization = $samlAttrs['organization'];
+            if (isset($samlAttrs['organization'])) {
+                $samlOrganization = $samlAttrs['organization'];
+            }
+
             if ($this->_forceDefaultOrganization) {
                 $userOrganization = Organizations::getIdByName($this->_defaultOrganizationName);
             } elseif (!empty($samlOrganization)) {
