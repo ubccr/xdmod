@@ -106,10 +106,11 @@ names are currently limited to 255 characters.
 
 ## ETL Commands
 
-Ingest all files in the data directory:
+Ingest all files in the `/path/to/storage/logs` directory:
 
 ```
 $ /usr/share/xdmod/tools/etl/etl_overseer.php \
+    -d STORAGE_LOG_DIRECTORY=/path/to/storage/logs \
     -p xdmod.staging-ingest-storage
 ```
 

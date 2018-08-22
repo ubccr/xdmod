@@ -189,7 +189,7 @@
                 "source": {
                     "type": "directoryscanner",
                     "name": "usage-directory",
-                    "path": "storage",
+                    "path": "${STORAGE_LOG_DIRECTORY}",
                     "file_pattern": "/\\.json$/",
                     "recursion_depth": 1,
                     "handler": {
