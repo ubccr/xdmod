@@ -127,7 +127,7 @@ EML;
             }
         }
 
-        $this->_defaultOrganizationName = \xd_utilities\getConfiguration('sso', 'default_organization_name');
+        $this->_defaultOrganizationName = ORGANIZATION_NAME;
         $this->_forceDefaultOrganization = \xd_utilities\getConfiguration('sso', 'force_default_organization') === 'on';
         $this->_emailAdminForUnknownUserOrganization = \xd_utilities\getConfiguration('sso', 'email_admin_sso_unknown_org') === 'on';
     }

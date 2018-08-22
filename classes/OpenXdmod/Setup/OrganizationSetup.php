@@ -31,11 +31,5 @@ class OrganizationSetup extends SetupItem
         );
 
         $this->saveJsonConfig($org, 'organization');
-
-        $portalSettings = $this->loadIniConfig('portal_settings');
-
-        $portalSettings['sso_default_organization_name'] = $org['name'];
-
-        $this->saveIniConfig($portalSettings, 'portal_settings');
     }
 }
