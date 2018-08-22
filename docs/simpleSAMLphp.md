@@ -64,8 +64,14 @@ Templates will exist inside the Open XDMoD shared data directory:
 The things that are required currently for login are:
 
 *   `username`
+    * This will be used to identify Users via the `moddb.Users.username` column
 
 This is currently the main identifying piece of information that must be created, we use it with an identifier of `itname` in our authentication code, so this means you need to edit the file `/etc/xdmod/simplesamlphp/config/authsources.php` and make sure that an attribute is mapped to this index.
+
+Conditionally, if your installation supports multiple organizations then you must provide the following:
+
+*    `organization`
+     * This will be used to identify which Organization the user should be associated with via the `modw.organization.name` column
 
 Here is an example:
 
@@ -90,7 +96,7 @@ $config = array(
         'middleName' => 'middle_name',
         'lastName' => 'last_name',
         'personId' => 'person_id',
-        'orgId' => 'organization_id',
+        'orgId' => 'organization',
         'fieldOfScience' => 'field_of_science',
         'itname' => 'username'
       )
