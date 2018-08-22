@@ -6,7 +6,8 @@
         "cd": [1],
         "usr": []
       },
-      "long_name": "Auk, Great"
+      "long_name": "Auk, Great",
+      "output": "create_user-cd.one-center"
     }
   ],
   [
@@ -16,7 +17,8 @@
         "cs": [1],
         "usr": []
       },
-      "long_name": "Auk, Little"
+      "long_name": "Auk, Little",
+      "output": "create_user-cs.one-center"
     }
   ],
   [
@@ -25,7 +27,8 @@
       "acls": {
         "pi": []
       },
-      "long_name": "Flycatcher, Taiga"
+      "long_name": "Flycatcher, Taiga",
+      "output": "create_user-pi"
     }
   ],
   [
@@ -34,7 +37,8 @@
       "acls": {
         "usr": []
       },
-      "long_name": "Honey-buzzard"
+      "long_name": "Honey-buzzard",
+      "output": "create_user-normal_user"
     }
   ],
   [
@@ -78,7 +82,8 @@
         "usr": [],
         "dev": []
       },
-      "long_name": "Honey-buzzard"
+      "long_name": "Honey-buzzard",
+      "output": "create_user-usr_dev"
     }
   ],
   [
@@ -88,7 +93,8 @@
         "usr": [],
         "mgr": []
       },
-      "long_name": "Honey-buzzard"
+      "long_name": "Honey-buzzard",
+      "output": "create_user-usr_mgr"
     }
   ],
   [
@@ -99,7 +105,8 @@
         "mgr": [],
         "dev": []
       },
-      "long_name": "Honey-buzzard"
+      "long_name": "Honey-buzzard",
+      "output": "create_user-usr_mgr_dev"
     }
   ]
 ]
