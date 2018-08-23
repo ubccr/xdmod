@@ -178,14 +178,31 @@ EML;
             $emailAddress = !empty($samlAttrs['email_address'][0]) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
             $personId = \DataWarehouse::getPersonIdByUsername($thisSystemUserName);
 
-            if (isset($samlAttrs['organization'])) {
-                $samlOrganization = $samlAttrs['organization'];
-            }
-
+            /* - If the `force_default_organization` property in `portal_settings.ini` === 'on'
+             *   - Then the users organization is determined by the run time constant
+             *     `ORGANIZATION_NAME` ( which is derived from the `organization.json` configuration
+             *     file. ) This value will be used to find a corresponding record in the
+             *     `modw.organization` table via the `name` column.
+             * - If SAML has been provided with an `organization` property.
+             *   - Then the users organization will be determined by attempting to find a record in
+             *     the `modw.organization` table that has a `name` column that matches the provided
+             *     value.
+             * - If we were able to identify which `person` this user should be associated with
+             *   - then look up which organization they are associated with and associate their
+             *     User record with it as well.
+             * - and finally, if none of the other <> are satisfied, associate this user with the
+             *   Unknown organization ( i.e. -1 )
+             *
+             * The default settings in an OpenXDMoD installation are:
+             *   - `force_default_organization="on"`
+             *   - `email_admin_sso_unknown_org="on"`
+             */
             if ($this->_forceDefaultOrganization) {
                 $userOrganization = Organizations::getIdByName($this->_defaultOrganizationName);
-            } elseif (!empty($samlOrganization)) {
-                $userOrganization = Organizations::getIdByName($samlOrganization[0]);
+            } elseif (!empty($samlAttrs['organization'])) {
+                $userOrganization = Organizations::getIdByName($samlAttrs['organization'][0]);
+            } elseif ($personId !== -1) {
+                $userOrganization = Organizations::getOrganizationIdForPerson($personId);
             } else {
                 $userOrganization = -1;
             }
