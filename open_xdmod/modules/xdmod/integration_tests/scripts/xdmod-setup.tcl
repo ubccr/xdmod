@@ -109,6 +109,14 @@ foreach resource $resources {
 	provideInput {How many nodes does this resource have?} [lindex $resource 2]
 	provideInput {How many total processors (cpu cores) does this resource have?} [lindex $resource 3]
 }
+
+selectMenuOption 1
+provideInput {Resource Name:} openstack
+provideInput {Formal Name:} OpenStack
+provideInput {Resource Type*} cloud
+provideInput {How many nodes does this resource have?} 123
+provideInput {How many total processors (cpu cores) does this resource have?} 234
+
 selectMenuOption s
 confirmFileWrite yes
 enterToContinue

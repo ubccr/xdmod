@@ -28,12 +28,8 @@ then
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     xdmod-ingestor
     php /root/bin/createusers.php
-    #Copying roles file so Cloud realm shows up
-    mkdir -p /etc/xdmod/roles.d
-    cp $BASEDIR/../../../../../templates/roles.d/cloud.json /etc/xdmod/roles.d/
     #Adding open stack resource since there is no way to automatically add a cloud resource.
-    mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
-    UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
+    mysql -e "UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Ingesting cloud data from references folder
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
@@ -41,10 +37,6 @@ then
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
     acl-import
-    #Running acl pipelines to ensure the Cloud realm shows up
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p acls-xdmod-management
-    acl-config
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p acls-import
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
@@ -56,20 +48,16 @@ then
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
+    expect $BASEDIR/xdmod-upgrade-add-cloud-resource.tcl | col -b
     #Copying roles file so Cloud realm shows up
-    mkdir -p /etc/xdmod/roles.d
-    cp $BASEDIR/../../../../../templates/roles.d/cloud.json /etc/xdmod/roles.d/
+    #mkdir -p /etc/xdmod/roles.d
+    #cp $BASEDIR/../../../../../templates/roles.d/cloud.json /etc/xdmod/roles.d/
     #Adding open stack resource since there is no way to automatically add a cloud resource.
-    mysql -e "INSERT INTO modw.resourcefact (resourcetype_id, organization_id, name, code, resource_origin_id) VALUES (1,1,'OpenStack', 'openstack', 6);
-    UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
+    mysql -e "UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Ingesting cloud data from references folder
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
-    #Running acl pipelines to ensure the Cloud realm shows up
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p acls-xdmod-management
-    acl-config
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p acls-import
 fi
