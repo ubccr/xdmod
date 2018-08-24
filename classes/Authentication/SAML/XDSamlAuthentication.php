@@ -224,19 +224,28 @@ EML;
      */
     public function getOrganizationId($samlAttrs, $personId)
     {
-        if (\xd_utilities\getConfiguration('sso', 'force_default_organization') === 'on') {
+        $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
+
+        $forceDefaultOrganization = null;
+        try {
+            $forceDefaultOrganization = \xd_utilities\getConfiguration('sso', 'force_default_organization') === 'on';
+        } catch (Exception $e) {
+            $this->notify(
+                $techSupportRecipient,
+                $techSupportRecipient,
+                '',
+                $techSupportRecipient,
+                'Error retrieving XDMoD configuration property "force_default_organization" form portal_settings.ini',
+                $e->getMessage()
+            );
+        }
+
+        if ($forceDefaultOrganization) {
             return Organizations::getIdByName(ORGANIZATION_NAME);
-        } else{
-            if(!empty($samlAttrs['organization'])) {
-                $userOrganization = Organizations::getIdByName($samlAttrs['organization'][0]);
-                if ($userOrganization === -1 && $personId !== -1) {
-                    return Organizations::getOrganizationIdForPerson($personId);
-                }
-                return $userOrganization;
-            }
-            if ($personId !== -1) {
-                return Organizations::getOrganizationIdForPerson($personId);
-            }
+        } elseif ($personId !== -1 ) {
+            return Organizations::getOrganizationIdForPerson($personId);
+        } elseif(!empty($samlAttrs['organization'])) {
+            return Organizations::getIdByName($samlAttrs['organization'][0]);
         }
         return -1;
     }
@@ -290,6 +299,8 @@ EML;
      */
     private function handleNotifications(XDUser $user, $samlAttributes, $linked)
     {
+        $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
+        $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
 
         $userEmail = $user->getEmailAddress()
             ? $user->getEmailAddress()
@@ -297,6 +308,20 @@ EML;
 
         $userOrganization = $user->getOrganizationID();
         $organizationFound = (!isset($userOrganization) || $userOrganization === -1);
+
+        $emailAdminOnUnknownOrg = null;
+        try {
+            $emailAdminOnUnknownOrg = \xd_utilities\getConfiguration('sso', 'email_admin_sso_unknown_org') === 'on';
+        } catch (Exception $e) {
+            $this->notify(
+                $techSupportRecipient,
+                $techSupportRecipient,
+                '',
+                $techSupportRecipient,
+                'Error retrieving XDMoD configuration property "email_admin_sso_unknown_org" form portal_settings.ini',
+                $e->getMessage()
+            );
+        }
 
         $emailBody = sprintf(
             self::BASE_ADMIN_EMAIL,
@@ -308,10 +333,7 @@ EML;
             json_encode($samlAttributes, JSON_PRETTY_PRINT)
         );
 
-        $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
-        $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
-
-        if (!$organizationFound && \xd_utilities\getConfiguration('sso', 'email_admin_sso_unknown_org') === 'on') {
+        if (!$organizationFound && $emailAdminOnUnknownOrg) {
             $subject = sprintf(
                 'New %s Single Sign On User Created',
                 ($linked ? 'Linked' : 'Unlinked')
