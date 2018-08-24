@@ -87,7 +87,7 @@ To get a better idea of how these properties translate into expected behavior du
 | force_default_organization | on  | true                    | false        | The user is associated with the organization defined in `organization.json`|
 | force_default_organization | on  | false                   | true         | The user is associated with the organization defined in `organization.json`|
 | force_default_organization | on  | false                   | false        | The user is associated with the organization defined in `organization.json`|
-| force_default_organization | off | true                    | true         | The user is associated with the SAML Organization if found, else the Persons organization if found, else the Unknown organization|
+| force_default_organization | off | true                    | true         | The user is associated with the the Person's organization if found, else the Unknown Organization|
 | force_default_organization | off | true                    | false        | The user is associated with the SAML Organization if found, else the Unknown organization|
 | force_default_organization | off | false                   | true         | The user is associated with the Persons organization if found, else the Unknown organization|
 | force_default_organization | off | false                   | false        | The user is associated with the Unknown organization|

@@ -2,8 +2,11 @@
 
 namespace Authentication\SAML;
 
+use CCR\MailWrapper;
 use \Exception;
 use CCR\Log;
+use Models\Services\Organizations;
+use XDUser;
 
 class XDSamlAuthentication
 {
@@ -34,6 +37,41 @@ class XDSamlAuthentication
      * @var boolean
      */
     protected $_allowLocalAccessViaSSO = true;
+
+    const BASE_ADMIN_EMAIL = <<<EML
+
+Person Details -----------------------------------
+Name:              %s
+Username:          %s
+E-Mail:            %s
+Organization ID:   %s
+Organization Name: %s
+
+SAML Attributes ----------------------------------
+%s
+
+Notes: -------------------------------------------
+
+Unable to Identify Users Organization.
+
+Additional Setup Required.
+EML;
+
+    const USER_EMAIL_SUBJECT = 'XDMoD SSO User: Additional Actions Required';
+
+    const USER_EMAIL_BODY = <<<EML
+
+Greetings,
+
+This email is notify you that XDMoD was unable to determine which organization to associate you with.
+Administrative Users have been notified that additional setup will be required. You may not have full
+access until this additional setup is complete.
+
+Thank you,
+
+XDMoD SSO User Creation
+EML;
+
     private $logger = null;
 
     public function __construct()
@@ -41,15 +79,16 @@ class XDSamlAuthentication
         $this->logger = Log::factory(
             'XDSamlAuthentication',
             array(
-               'file' => false,
-               'db' => true,
-               'mail' => false,
-               'console' => false
+                'file' => false,
+                'db' => true,
+                'mail' => false,
+                'console' => false
             )
         );
+
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
         try {
-            $this->_allowLocalAccessViaSSO = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false: true;
+            $this->_allowLocalAccessViaSSO = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false : true;
         } catch (Exception $e) {
         }
         if ($this->isSamlConfigured()) {
@@ -81,6 +120,7 @@ class XDSamlAuthentication
      * Attempts to find a valid XDMoD user associated with the attributes we receive from SAML
      *
      * @return mixed a valid XDMoD user if we have one, false otherwise
+     * @throws Exception
      */
     public function getXdmodAccount()
     {
@@ -110,6 +150,9 @@ class XDSamlAuthentication
             }
             $emailAddress = !empty($samlAttrs['email_address'][0]) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
             $personId = \DataWarehouse::getPersonIdByUsername($thisSystemUserName);
+
+            $userOrganization = $this->getOrganizationId($samlAttrs, $personId);
+
             if (!isset($samlAttrs["first_name"])) {
                 $samlAttrs["first_name"] = array("UNKNOWN");
             }
@@ -129,7 +172,7 @@ class XDSamlAuthentication
                     $samlAttrs["last_name"][0],
                     array(ROLE_ID_USER),
                     ROLE_ID_USER,
-                    null,
+                    $userOrganization,
                     $personId
                 );
             } catch (Exception $e) {
@@ -142,10 +185,69 @@ class XDSamlAuthentication
                 $this->logger->err('User creation failed: ' . $e->getMessage());
                 return false;
             }
-            self::notifyAdminOfNewUser($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
+
+            $this->handleNotifications($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
+
             return $newUser;
         }
         return false;
+    }
+
+    /**
+     * Retrieves the organization_id that this User should be associated with. There is one
+     * configuration property that affects the return value of this function,
+     * `force_default_organization`. It does so in the following ways:
+     *
+     * - If the `force_default_organization` property in `portal_settings.ini` === 'on'
+     *   - Then the users organization is determined by the run time constant
+     *     `ORGANIZATION_NAME` ( which is derived from the `organization.json` configuration
+     *     file. ) This value will be used to find a corresponding record in the
+     *     `modw.organization` table via the `name` column.
+     * - If SAML has been provided with an `organization` property.
+     *   - Then the users organization will be determined by attempting to find a record in
+     *     the `modw.organization` table that has a `name` column that matches the provided
+     *     value.
+     *   - If unable to identify an organization in the previous step and a personId has been
+     *     supplied, attempt to retrieve the organization_id for this person via the
+     *     `modw.person.id` column.
+     * - If we were able to identify which `person` this user should be associated with
+     *   - then look up which organization they are associated via the `modw.person.id` column.
+     * - and finally, if none of the other conditions are satisfied, return the Unknown organization
+     *   ( i.e. -1 )
+     *
+     * The default setting for an OpenXDMoD installation is:
+     *   - `force_default_organization="on"`
+     * @param array $samlAttrs the saml attributes returned for this user
+     * @param int   $personId  the id property for the Person this user has been associated with.
+     * @return int the id of the organization that a new SSO user should be associated with.
+     * @throws Exception if there is a problem retrieving an organization_id
+     */
+    public function getOrganizationId($samlAttrs, $personId)
+    {
+        $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
+
+        $forceDefaultOrganization = null;
+        try {
+            $forceDefaultOrganization = \xd_utilities\getConfiguration('sso', 'force_default_organization') === 'on';
+        } catch (Exception $e) {
+            $this->notify(
+                $techSupportRecipient,
+                $techSupportRecipient,
+                '',
+                $techSupportRecipient,
+                'Error retrieving XDMoD configuration property "force_default_organization" form portal_settings.ini',
+                $e->getMessage()
+            );
+        }
+
+        if ($forceDefaultOrganization) {
+            return Organizations::getIdByName(ORGANIZATION_NAME);
+        } elseif ($personId !== -1 ) {
+            return Organizations::getOrganizationIdForPerson($personId);
+        } elseif(!empty($samlAttrs['organization'])) {
+            return Organizations::getIdByName($samlAttrs['organization'][0]);
+        }
+        return -1;
     }
 
     /**
@@ -176,40 +278,128 @@ class XDSamlAuthentication
                 );
             }
             return array(
-                    'url' => $this->_as->getLoginUrl($returnTo),
-                    'organization' => $orgDisplay,
-                    'icon' => $icon
-                );
+                'url' => $this->_as->getLoginUrl($returnTo),
+                'organization' => $orgDisplay,
+                'icon' => $icon
+            );
         } else {
             return false;
         }
     }
 
     /**
-     * Sends an email notifying XDMoD admin of new account.
+     * Determine / handle any notifications that may be required as a part of this SSO User -> XDMoD
+     * User operation.
      *
-     * @param \XDUser $user The newly minted XDMoD user
-     * @param array $samlAttributes SAML attributes associated with this user
-     * @param boolean $linked whether Single Sign On user is linked to this account
-     * @param boolean $error whether or not we had issues creating Single Sign On user
+     * @param XDUser $user the XDMoD User instance to be used during notification.
+     * @param array $samlAttributes the attributes that we received via SAML for this user.
+     * @param boolean $linked whether or not we were able to link the SSO User with an XDMoD Person.
+     * @throws Exception if there is a problem with notifying the user.
+     * @throws Exception if there is a problem retrieving the name for the users organization.
      */
-    private function notifyAdminOfNewUser($user, $samlAttributes, $linked, $error = false)
+    private function handleNotifications(XDUser $user, $samlAttributes, $linked)
     {
-        $body =
-        "\n\nPerson Details ----------------------------------\n\n" .
-        "\nName:                     " . $user->getFormalName(true) .
-        "\nUsername:                 " . $user->getUsername() .
-        "\nE-Mail:                   " . $user->getEmailAddress();
+        $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
+        $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
 
-        if (count($samlAttributes) != 0) {
-            $body = $body . "\n\n" .
-                "Additional SAML Attributes ----------------------------------\n\n" .
-                print_r($samlAttributes, true);
+        $userEmail = $user->getEmailAddress()
+            ? $user->getEmailAddress()
+            : $samlAttributes['email_address'][0];
+
+        $userOrganization = $user->getOrganizationID();
+        $organizationFound = (!isset($userOrganization) || $userOrganization === -1);
+
+        $emailAdminOnUnknownOrg = null;
+        try {
+            $emailAdminOnUnknownOrg = \xd_utilities\getConfiguration('sso', 'email_admin_sso_unknown_org') === 'on';
+        } catch (Exception $e) {
+            $this->notify(
+                $techSupportRecipient,
+                $techSupportRecipient,
+                '',
+                $techSupportRecipient,
+                'Error retrieving XDMoD configuration property "email_admin_sso_unknown_org" form portal_settings.ini',
+                $e->getMessage()
+            );
         }
-        if ($error) {
-            $this->logger->err("Error Creating Single Sign On user" . $body);
-        } else {
-            $this->logger->notice("New " . ($linked ? "linked": "unlinked") . " Single Sign On user created" . $body);
+
+        $emailBody = sprintf(
+            self::BASE_ADMIN_EMAIL,
+            $user->getFormalName(true),
+            $user->getUsername(),
+            $userEmail,
+            $userOrganization,
+            Organizations::getNameById($userOrganization),
+            json_encode($samlAttributes, JSON_PRETTY_PRINT)
+        );
+
+        if (!$organizationFound && $emailAdminOnUnknownOrg) {
+            $subject = sprintf(
+                'New %s Single Sign On User Created',
+                ($linked ? 'Linked' : 'Unlinked')
+            );
+
+            $this->notify(
+                $techSupportRecipient,
+                $techSupportRecipient,
+                '',
+                $senderEmail,
+                $subject,
+                $emailBody
+            );
+        } elseif (!$organizationFound && !empty($userEmail)) {
+            $this->notify(
+                $userEmail,
+                $techSupportRecipient,
+                '',
+                $senderEmail,
+                self::USER_EMAIL_SUBJECT,
+                self::USER_EMAIL_BODY
+            );
+        } elseif (empty($userEmail)) {
+            $title = 'Unable to determine email address for new SSO User.';
+            $this->logger->err(sprintf("%s\n\n%s", $title, $emailBody));
+        }
+    }
+
+    /**
+     * Attempt to generate / send a notification email with the specified parameters.
+     *
+     * @param string $toAddress    the address that the notification will be sent to.
+     * @param string $fromAddress  the address that the notification will be sent from.
+     * @param string $fromName     A name to be used when identifying the `$fromAddress`
+     * @param string $replyAddress the address to be used when a user replies to the notification.
+     * @param string $subject      the subject of the notification.
+     * @param string $body         the body of the notification.
+     *
+     * @throws Exception if there is a problem sending the notification email.
+     */
+    public function notify($toAddress, $fromAddress, $fromName, $replyAddress, $subject, $body)
+    {
+        try {
+            MailWrapper::sendMail(
+                array(
+                    'subject' => $subject,
+                    'body' => $body,
+                    'toAddress' => $toAddress,
+                    'fromAddress' => $fromAddress,
+                    'fromName' => $fromName,
+                    'replyAddress' => $replyAddress
+                )
+            );
+        } catch (Exception $e) {
+            // log the exception so we have some persistent visibility into the problem.
+            $errorMsgFormat = "[%s] %s\n%s";
+            $errorMsg = sprintf(
+                $errorMsgFormat,
+                $e->getCode(),
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+
+            $this->logger->err("Error encountered while emailing\n$errorMsg");
+
+            throw $e;
         }
     }
 }
