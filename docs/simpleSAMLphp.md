@@ -61,13 +61,40 @@ Templates will exist inside the Open XDMoD shared data directory:
 *   `/usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/config-templates/`
 *   `/usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/metadata-templates/`
 
-The things that are required currently for login are:
+The properties that are required currently for login are:
 
 *   `username`
+    * This will be used to identify Users via the `moddb.Users.username` column
 
 This is currently the main identifying piece of information that must be created, we use it with an identifier of `itname` in our authentication code, so this means you need to edit the file `/etc/xdmod/simplesamlphp/config/authsources.php` and make sure that an attribute is mapped to this index.
 
-Here is an example:
+Conditionally, if your installation supports multiple organizations then you must provide the following:
+
+*    `organization`
+     * This will be used to identify which Organization the user should be associated with via the `modw.organization.name` column
+
+There are two configuration properties in `portal_settings.ini` that support and interact with this SAML property.
+*    `force_default_organization`: `on`|`off`
+     * Controls how Organization association is handled when new SSO users log in to XDMoD.
+*    `email_admin_sso_unknown_org` : `on`|`off`
+     * Controls whether or not XDMoD Admins are emailed when the system is unable to determine which organization to associate with a new SSO User.
+
+To get a better idea of how these properties translate into expected behavior during SSO login. Please refer to the table below:
+
+|Property Name               |Value|SAML Organization Present|Person Present|Expected Behavior |
+|:---------------------------|:---:|:-----------------------:|:------------:|:-----------------|
+| force_default_organization | on  | true                    | true         | The user is associated with the organization defined in `organization.json`|
+| force_default_organization | on  | true                    | false        | The user is associated with the organization defined in `organization.json`|
+| force_default_organization | on  | false                   | true         | The user is associated with the organization defined in `organization.json`|
+| force_default_organization | on  | false                   | false        | The user is associated with the organization defined in `organization.json`|
+| force_default_organization | off | true                    | true         | The user is associated with the SAML Organization if found, else the Persons organization if found, else the Unknown organization|
+| force_default_organization | off | true                    | false        | The user is associated with the SAML Organization if found, else the Unknown organization|
+| force_default_organization | off | false                   | true         | The user is associated with the Persons organization if found, else the Unknown organization|
+| force_default_organization | off | false                   | false        | The user is associated with the Unknown organization|
+| email_admin_sso_unknown_org| on  | *                       | *            | If an organization cannot be identified with the provided information then the admins will be notified|
+
+
+Here is an example `authsources.php` file:
 
 ```php
 <?php
@@ -90,7 +117,7 @@ $config = array(
         'middleName' => 'middle_name',
         'lastName' => 'last_name',
         'personId' => 'person_id',
-        'orgId' => 'organization_id',
+        'orgId' => 'organization',
         'fieldOfScience' => 'field_of_science',
         'itname' => 'username'
       )
