@@ -11,6 +11,7 @@ AS
 SELECT
   instance_type_id,
   instance_type,
+  resource_id,
   IF ( @current_instance_type = instance_type AND @prev_start IS NOT NULL, @prev_start - INTERVAL 1 SECOND, NULL) AS end_time,
   @current_instance_type := instance_type AS junk1,
   @prev_start := start_time AS junk2
@@ -25,6 +26,8 @@ SET
   a.end_time = e.end_time
 WHERE
  a.instance_type_id = e.instance_type_id
+AND 
+ a.resource_id = e.resource_id
 //
 
 -- The UpdateIngestor does not yet support queries as source data. Update the accounts table with
