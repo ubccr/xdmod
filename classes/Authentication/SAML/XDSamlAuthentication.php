@@ -178,34 +178,7 @@ EML;
             $emailAddress = !empty($samlAttrs['email_address'][0]) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
             $personId = \DataWarehouse::getPersonIdByUsername($thisSystemUserName);
 
-            /* - If the `force_default_organization` property in `portal_settings.ini` === 'on'
-             *   - Then the users organization is determined by the run time constant
-             *     `ORGANIZATION_NAME` ( which is derived from the `organization.json` configuration
-             *     file. ) This value will be used to find a corresponding record in the
-             *     `modw.organization` table via the `name` column.
-             * - If SAML has been provided with an `organization` property.
-             *   - Then the users organization will be determined by attempting to find a record in
-             *     the `modw.organization` table that has a `name` column that matches the provided
-             *     value.
-             * - If we were able to identify which `person` this user should be associated with
-             *   - then look up which organization they are associated with and associate their
-             *     User record with it as well.
-             * - and finally, if none of the other <> are satisfied, associate this user with the
-             *   Unknown organization ( i.e. -1 )
-             *
-             * The default settings in an OpenXDMoD installation are:
-             *   - `force_default_organization="on"`
-             *   - `email_admin_sso_unknown_org="on"`
-             */
-            if ($this->_forceDefaultOrganization) {
-                $userOrganization = Organizations::getIdByName($this->_defaultOrganizationName);
-            } elseif (!empty($samlAttrs['organization'])) {
-                $userOrganization = Organizations::getIdByName($samlAttrs['organization'][0]);
-            } elseif ($personId !== -1) {
-                $userOrganization = Organizations::getOrganizationIdForPerson($personId);
-            } else {
-                $userOrganization = -1;
-            }
+            $userOrganization = $this->getOrganizationId($samlAttrs, $personId);
 
             if (!isset($samlAttrs["first_name"])) {
                 $samlAttrs["first_name"] = array("UNKNOWN");
@@ -245,6 +218,54 @@ EML;
             return $newUser;
         }
         return false;
+    }
+
+    /**
+     * Retrieves the organization_id that this User should be associated with.
+     *
+     * - If the `force_default_organization` property in `portal_settings.ini` === 'on'
+     *   - Then the users organization is determined by the run time constant
+     *     `ORGANIZATION_NAME` ( which is derived from the `organization.json` configuration
+     *     file. ) This value will be used to find a corresponding record in the
+     *     `modw.organization` table via the `name` column.
+     * - If SAML has been provided with an `organization` property.
+     *   - Then the users organization will be determined by attempting to find a record in
+     *     the `modw.organization` table that has a `name` column that matches the provided
+     *     value.
+     *   - If unable to identify an organization in the previous step and a personId has been
+     *     supplied, attempt to retrieve the organization_id for this person and associate their
+     *     User record with it as well.
+     * - If we were able to identify which `person` this user should be associated with
+     *   - then look up which organization they are associated with and associate their
+     *     User record with it as well.
+     * - and finally, if none of the other conditions are satisfied, associate this user with the
+     *   Unknown organization ( i.e. -1 )
+     *
+     * The default settings in an OpenXDMoD installation are:
+     *   - `force_default_organization="on"`
+     *   - `email_admin_sso_unknown_org="on"`
+     * @param array $samlAttrs the saml attributes returned for this user
+     * @param int   $personId  the id property for the Person this user has been associated with.
+     * @return int the id of the organization that a new SSO user should be associated with.
+     * @throws Exception if there is a problem retrieving an organization_id
+     */
+    public function getOrganizationId($samlAttrs, $personId)
+    {
+        if ($this->_forceDefaultOrganization) {
+            return Organizations::getIdByName($this->_defaultOrganizationName);
+        } else{
+            if(!empty($samlAttrs['organization'])) {
+                $userOrganization = Organizations::getIdByName($samlAttrs['organization'][0]);
+                if ($userOrganization === -1 && $personId !== -1) {
+                    return Organizations::getOrganizationIdForPerson($personId);
+                }
+                return $userOrganization;
+            }
+            if ($personId !== -1) {
+                return Organizations::getOrganizationIdForPerson($personId);
+            }
+        }
+        return -1;
     }
 
     /**
