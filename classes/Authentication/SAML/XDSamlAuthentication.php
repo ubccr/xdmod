@@ -38,29 +38,6 @@ class XDSamlAuthentication
      */
     protected $_allowLocalAccessViaSSO = true;
 
-    /**
-     * The name of the organization to be used when `force_default_organization` is true.
-     *
-     * @var string
-     */
-    protected $_defaultOrganizationName;
-
-    /**
-     * Always use the organization identified by `default_organization_name` when assigning an
-     * organization to a new SSO user.
-     *
-     * @var bool
-     */
-    protected $_forceDefaultOrganization;
-
-    /**
-     * Controls when the admins are notified when an organization cannot be identified for a new SSO
-     * user.
-     *
-     * @var bool
-     */
-    protected $_emailAdminForUnknownUserOrganization;
-
     const BASE_ADMIN_EMAIL = <<<EML
 
 Person Details -----------------------------------
@@ -126,10 +103,6 @@ EML;
                 $this->_as = new \SimpleSAML_Auth_Simple($this->_sources[0]);
             }
         }
-
-        $this->_defaultOrganizationName = ORGANIZATION_NAME;
-        $this->_forceDefaultOrganization = \xd_utilities\getConfiguration('sso', 'force_default_organization') === 'on';
-        $this->_emailAdminForUnknownUserOrganization = \xd_utilities\getConfiguration('sso', 'email_admin_sso_unknown_org') === 'on';
     }
 
     /**
@@ -251,8 +224,8 @@ EML;
      */
     public function getOrganizationId($samlAttrs, $personId)
     {
-        if ($this->_forceDefaultOrganization) {
-            return Organizations::getIdByName($this->_defaultOrganizationName);
+        if (\xd_utilities\getConfiguration('sso', 'force_default_organization') === 'on') {
+            return Organizations::getIdByName(ORGANIZATION_NAME);
         } else{
             if(!empty($samlAttrs['organization'])) {
                 $userOrganization = Organizations::getIdByName($samlAttrs['organization'][0]);
@@ -338,7 +311,7 @@ EML;
         $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
         $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
 
-        if (!$organizationFound && $this->_emailAdminForUnknownUserOrganization) {
+        if (!$organizationFound && \xd_utilities\getConfiguration('sso', 'email_admin_sso_unknown_org') === 'on') {
             $subject = sprintf(
                 'New %s Single Sign On User Created',
                 ($linked ? 'Linked' : 'Unlinked')
