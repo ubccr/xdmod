@@ -1,0 +1,21 @@
+{
+    "#": "Ingest resource names from resource config data.  This is needed for",
+    "#": "cloud resources since a primary key must be assigned to the resource",
+    "#": "before the data for that resource is ingested and the cloud data",
+    "#": "does not contain the name of the resource.",
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/resource.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_name": "DISTINCT rc.resource"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_config",
+                "alias": "rc"
+            }
+        ]
+    }
+}
