@@ -74,7 +74,7 @@
             }
         },
         {
-            "name": "resources",
+            "name": "resource-config",
             "description": "Ingest resource configuration file",
             "definition_file": "common/staging/resource-config.json",
             "endpoints": {
@@ -94,6 +94,13 @@
                     ]
                 }
             }
+        },
+        {
+            "class": "DatabaseIngestor",
+            "name": "resources",
+            "truncate_destination": false,
+            "description": "Ingest resource names from resource config",
+            "definition_file": "common/staging/resource.json"
         },
         {
             "name": "resource-specs",
