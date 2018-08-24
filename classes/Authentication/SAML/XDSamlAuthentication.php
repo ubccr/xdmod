@@ -221,7 +221,9 @@ EML;
     }
 
     /**
-     * Retrieves the organization_id that this User should be associated with.
+     * Retrieves the organization_id that this User should be associated with. There is one
+     * configuration property that affects the return value of this function,
+     * `force_default_organization`. It does so in the following ways:
      *
      * - If the `force_default_organization` property in `portal_settings.ini` === 'on'
      *   - Then the users organization is determined by the run time constant
@@ -233,17 +235,15 @@ EML;
      *     the `modw.organization` table that has a `name` column that matches the provided
      *     value.
      *   - If unable to identify an organization in the previous step and a personId has been
-     *     supplied, attempt to retrieve the organization_id for this person and associate their
-     *     User record with it as well.
+     *     supplied, attempt to retrieve the organization_id for this person via the
+     *     `modw.person.id` column.
      * - If we were able to identify which `person` this user should be associated with
-     *   - then look up which organization they are associated with and associate their
-     *     User record with it as well.
-     * - and finally, if none of the other conditions are satisfied, associate this user with the
-     *   Unknown organization ( i.e. -1 )
+     *   - then look up which organization they are associated via the `modw.person.id` column.
+     * - and finally, if none of the other conditions are satisfied, return the Unknown organization
+     *   ( i.e. -1 )
      *
-     * The default settings in an OpenXDMoD installation are:
+     * The default setting for an OpenXDMoD installation is:
      *   - `force_default_organization="on"`
-     *   - `email_admin_sso_unknown_org="on"`
      * @param array $samlAttrs the saml attributes returned for this user
      * @param int   $personId  the id property for the Person this user has been associated with.
      * @return int the id of the organization that a new SSO user should be associated with.
