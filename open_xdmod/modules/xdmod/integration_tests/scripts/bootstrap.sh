@@ -49,9 +49,6 @@ then
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
     expect $BASEDIR/xdmod-upgrade-add-cloud-resource.tcl | col -b
-    #Copying roles file so Cloud realm shows up
-    #mkdir -p /etc/xdmod/roles.d
-    #cp $BASEDIR/../../../../../templates/roles.d/cloud.json /etc/xdmod/roles.d/
     #Adding open stack resource since there is no way to automatically add a cloud resource.
     mysql -e "UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Ingesting cloud data from references folder
