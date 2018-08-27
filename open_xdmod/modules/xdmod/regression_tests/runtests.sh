@@ -35,7 +35,7 @@ if [ ! -x "$phpunit" ]; then
 fi
 if [ "$REG_TEST_ALL" == "1" ]; then
     set +e
-    $phpunit $PUB lib/Controllers/UsageExplorerTest.php
+    $phpunit $PUB lib/Controllers/UsageExplorerTest.php lib/Controllers/UsageChartsTest.php
     REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerTest.php
     REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerTest.php
     REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php
@@ -51,7 +51,7 @@ else
     REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerTest.php & pipid=$!
     REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php & cdpid=$!
     REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerTest.php & cspid=$!
-    $phpunit $PUB lib/Controllers/UsageExplorerTest.php & pubpid=$!
+    $phpunit $PUB lib/Controllers/UsageExplorerTest.php lib/Controllers/UsageChartsTest.php & pubpid=$!
 
     REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerCloudTest.php & usrpid=$!
     REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerCloudTest.php & pipid=$!
