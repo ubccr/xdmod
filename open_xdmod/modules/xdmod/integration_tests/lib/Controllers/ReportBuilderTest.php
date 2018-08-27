@@ -222,7 +222,6 @@ TXT;
         $chartParams = array();
 
         foreach ($charts as $chart) {
-            $chartParams = array();
             $this->log("Creating Chart...");
 
             // create the chart...
@@ -264,11 +263,14 @@ TXT;
                 }
 
                 // save the chartParams off so we can use 'um later
-                $chartParams[] = array(
+                $chartParams[$queuedChart['chart_id']] = array(
                     'params' => $results,
                     'chart_id' => $queuedChart['chart_id'],
                     'start_date' => $startDate,
-                    'end_date' => $endDate
+                    'end_date' => $endDate,
+                    'chart_title' => $queuedChart['chart_title'],
+                    'chart_drill_details' => $queuedChart['chart_drill_details'],
+                    'chart_date_desc' => $queuedChart['chart_date_description'],
                 );
 
                 // render the chart image so that a temp file is created on the backend.
@@ -280,7 +282,7 @@ TXT;
         // render the charts as volatile
         // also, ensure the chart values in the report data are up to date.
         $count = 1;
-        foreach ($chartParams as $chartData) {
+        foreach ($chartParams as $id => $chartData) {
             // first, retrieve the data previously gathered in the chart creation
             // & rendering loop above.
             $params = $chartData['params'];
@@ -289,11 +291,20 @@ TXT;
             $chartRef = $params['ref'];
 
             // generate the cacheRef && chartData keys & values.
-            $chartCacheRefKey = "chart_cache_ref_$count";
-            $chartCacheRef = "$startDate-$endDate;xd_report_$chartRef";
+            $chartCacheRefKey = "chart_cacheref_$count";
+            $chartCacheRef = "$startDate;$endDate;xd_report_$chartRef";
 
             $chartDataKey = "chart_data_$count";
-            $chartDataValue = $chartData['chart_id'];
+
+            $chartDataValue = array();
+            $chartDataValue[] = preg_replace('/;/m', '%3B', $chartData['chart_id']);
+            $chartDataValue[] = preg_replace('/;/m', '%3B', $chartData['chart_title']);
+            $chartDataValue[] = preg_replace('/;/m', '%3B', $chartData['chart_drill_details']);
+            $chartDataValue[] = $chartData['chart_date_desc'];
+            $chartDataValue[] = 'Previous month';
+            $chartDataValue[] = 'image';
+
+            $chartDataValue = implode(';', $chartDataValue);
 
             // Update the chart type to volatile
             $params['type'] = 'volatile';
