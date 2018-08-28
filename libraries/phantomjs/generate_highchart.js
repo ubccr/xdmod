@@ -38,7 +38,7 @@ page.open(address, function (status) {
 
    if (output_format === 'svg') {
       console.log(page.evaluate(function () {
-         return chart.getSVG();
+          return chart.getSVG(inputChartOptions);
       }));
 
       phantom.exit(0);

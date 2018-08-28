@@ -63,7 +63,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
 
         $expectedHashes = array();
 
-        $hashFile = realpath(__DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod') . '/regression/images/expected-2.json';
+        $hashFile = realpath(__DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod') . '/regression/images/expected.json';
         if (file_exists($hashFile)) {
             $expectedHashes = json_decode(file_get_contents($hashFile), true);
         }
@@ -124,6 +124,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
             'statistic' => $statistics,
             'group_by' => $group_bys,
             'log_scale' => array('y', 'n'),
+            'format' => array('png', 'svg'),
             'show_aggregate_labels' => array('y', 'n'),
             'show_trend_line' => array('y', 'n'),
             'display_type' => array('line', 'area', 'bar')
@@ -133,6 +134,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
             'dataset_type' => array('aggregate'),
             'statistic' => $statistics,
             'group_by' => $group_bys,
+            'format' => array('png', 'svg'),
             'log_scale' => array('y', 'n'),
             'show_aggregate_labels' => array('y', 'n'),
             'display_type' => array('line', 'h_bar', 'bar', 'pie')
