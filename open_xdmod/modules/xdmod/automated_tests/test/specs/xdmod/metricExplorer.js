@@ -1,6 +1,8 @@
 var expected = global.testHelpers.artifacts.getArtifact('metricExplorer');
 var logIn = require('./loginPage.page.js');
 var me = require('./metricExplorer.page.js');
+var reportGen = require('./reportGenerator.page');
+
 var cheerio = require('cheerio');
 describe('Metric Explorer', function metricExplorer() {
     var baselineDate = {
@@ -461,7 +463,6 @@ describe('Metric Explorer', function metricExplorer() {
 
         it('Select "Available For Report"', function shouldBeEnabled() {
             var isSelected = browser.isSelected(me.selectors.availableForReport);
-            console.log('isSelected: ' + isSelected);
             if (isSelected === false) {
                 browser.waitForLoadedThenClick(me.selectors.availableForReport, 5000);
                 var nowSelected = browser.isSelected(me.selectors.availableForReport);
@@ -469,18 +470,17 @@ describe('Metric Explorer', function metricExplorer() {
             }
         });
         it('Select the Report Generator tab', function selectReportGenerator() {
-            browser.waitForLoadedThenClick('#main_tab_panel__report_generator');
-            browser.waitForVisible('#report_generator', 3000);
+            browser.waitForLoadedThenClick(reportGen.selectors.tab());
+            browser.waitForVisible(reportGen.selectors.panel(), 3000);
         });
         it('Check that the last entry has the same title as the one we just made available for report', function titleIsTheSame() {
-            browser.waitForVisible('#chart_pool_panel div.x-grid3-row-last span.chart_title');
-            var text = browser.getText('#chart_pool_panel div.x-grid3-row-last span.chart_title');
-            expect(text.trim()).to.equal(chartTitle.trim());
+            const availableCharts = reportGen.getAvailableCharts();
+            const lastAvailable = availableCharts[availableCharts.length - 1];
+            expect(lastAvailable.getTitle()).to.equal(chartTitle.trim());
         });
         it('Select the Metric Explorer Tab again', function selectTabAgain() {
             browser.waitForLoadedThenClick(me.selectors.tab);
             browser.waitForVisible(me.selectors.container, 3000);
-            $container = cheerio.load(browser.getHTML(me.selectors.container));
         });
         it('Select the first saved chart again', function selectFirstChartAgain() {
             browser.waitForChart();
@@ -493,7 +493,8 @@ describe('Metric Explorer', function metricExplorer() {
         });
         it('uncheck available for report', function uncheckAvailableForReport() {
             browser.waitForLoadedThenClick(me.selectors.availableForReport, 5000);
-            browser.isSelected(me.selectors.availableForReport);
+            var isSelected = browser.isSelected(me.selectors.availableForReport);
+            expect(isSelected).to.equal(false);
         });
     });
 
