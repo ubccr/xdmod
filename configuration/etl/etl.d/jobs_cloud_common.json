@@ -131,7 +131,7 @@
         },
         {
             "name": "IngestResourceConfig",
-            "description": "Ingest resource configuration file",
+            "description": "Ingest resource configuration file. Modeled after action in staging-ingest-common.resource-config",
             "definition_file": "common/staging/resource-config.json",
             "class": "StructuredFileIngestor",
             "endpoints": {
@@ -162,7 +162,7 @@
             "class": "DatabaseIngestor",
             "name": "IngestResourcesStaging",
             "truncate_destination": false,
-            "description": "Ingest resource names from resource config",
+            "description": "Ingest resource names from staging table. Modeled after action in staging-ingest-common.resources",
             "definition_file": "common/staging/resource.json",
             "endpoints": {
                 "source": {
@@ -182,7 +182,7 @@
         {
             "class": "DatabaseIngestor",
             "name": "HpcdbIngestResources",
-            "description": "Ingest resources",
+            "description": "Ingest resources from staging table to table in modw_hpcdb. Modeled after action in hpcdb-ingest-common.resources",
             "definition_file": "common/hpcdb/resources.json",
             "endpoints": {
                 "source": {
@@ -203,7 +203,7 @@
             "class": "DatabaseIngestor",
             "name": "IngestResourcefact",
             "definition_file": "jobs/xdw/resource-fact.json",
-            "description": "resource records",
+            "description": "Ingest resource information into resourcefact table. Modeled after hpcdb-xdw-ingest.resource",
             "endpoints": {
                 "source": {
                     "type": "mysql",
