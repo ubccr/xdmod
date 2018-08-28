@@ -4,27 +4,74 @@ title: Storage (Beta)
 
 **NOTE: Storage metrics are currently considered beta quality.**
 
+These instructions use the file paths from the RPM installation.  If you've
+installed from source they will need to be adjusted accordingly.
+
 ## Setup
 
-Add storage query descripters to public (or another) role in `roles.json`:
+### Add Storage Resource
 
-Note: these changes must be made directly to `roles.json` and not added to
-separate file in `roles.d`.
+Add a storage resource using the `xdmod-setup` script or by manually modifying
+`/etc/xdmod/resources.json`.  If you use the `xdmod-setup` script be sure to
+select a storage resource type or you will need to manually add the roles
+configuration as described in the following section.
+
+### Update Roles Configuration
+
+If you did not use the `xdmod-setup` script you must enable the storage query
+descripters.  This can be done by creating a new file, `roles.d/storage.json`,
+with the appropriate contents.  An example is shown below and can be copied from
+`/usr/share/xdmod/templates/roles.d/storage.json`.
 
 ```json
 {
-    "roles": {
-
-        ...
-
-        "pub": {
-
-            ...
-
-            "query_descripters": [
-
-                ...
-
+    "+roles": {
+        "+default": {
+            "+query_descripters": [
+                {
+                    "realm": "Storage",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "mountpoint"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "person"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "pi"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "username"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "nsfdirectorate"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "parentscience"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "fieldofscience"
+                }
+            ]
+        },
+         "+pub": {
+            "+query_descripters": [
                 {
                     "realm": "Storage",
                     "group_by": "none"
@@ -72,15 +119,13 @@ separate file in `roles.d`.
 }
 ```
 
-After modifying `roles.json` you must update the ACL database tables:
+After adding the file you must update the ACL database tables:
 
 ```
-$ acl-import
+$ acl-config && acl-import
 ```
 
 ## Input Format
-
-Copy JSON files to `/etc/xdmod/etl/etl_data.d/storage/`.
 
 NOTE: The thresholds and usage numbers are all measured in bytes.  Mountpoint
 names are currently limited to 255 characters.

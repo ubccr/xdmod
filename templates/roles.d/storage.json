@@ -1,0 +1,93 @@
+{
+    "+roles": {
+        "+default": {
+            "+query_descripters": [
+                {
+                    "realm": "Storage",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "mountpoint"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "person"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "pi"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "username"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "nsfdirectorate"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "parentscience"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "fieldofscience"
+                }
+            ]
+        },
+        "+pub": {
+            "+query_descripters": [
+                {
+                    "realm": "Storage",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "mountpoint"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "person"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "pi"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "username",
+                    "disable": true
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "nsfdirectorate"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "parentscience"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "fieldofscience"
+                }
+            ]
+        }
+    }
+}

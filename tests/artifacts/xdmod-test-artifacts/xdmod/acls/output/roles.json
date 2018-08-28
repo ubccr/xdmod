@@ -453,30 +453,6 @@
         "dev": {
             "display": "Developer",
             "type": "feature"
-        },
-        "storage": {
-            "display": "Storage",
-            "type": "data",
-            "dimensions": [
-                "person"
-            ],
-            "query_descripters": [{
-                    "realm": "Storage",
-                    "group_by": "none"
-                },
-                {
-                    "realm": "Storage",
-                    "group_by": "username"
-                },
-                {
-                    "realm": "Storage",
-                    "group_by": "file_system"
-                },
-                {
-                    "realm": "Storage",
-                    "group_by": "directory"
-                }
-            ]
         }
     }
 }

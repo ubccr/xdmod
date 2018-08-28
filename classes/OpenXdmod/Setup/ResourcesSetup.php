@@ -160,6 +160,39 @@ class ResourcesSetup extends SubMenuSetupItem
         if (!empty($cloud_resources_exist)) {
             $this->addCloudAcls();
         }
+
+        // Any resource type that contains the string "storage" is considered to
+        // be a storage resource type.
+        $storageResourceTypeIds = array_map(
+            function ($type) {
+                return $type['id'];
+            },
+            array_filter(
+                json_decode(
+                    file_get_contents(CONFIG_DIR . '/resource_types.json'),
+                    true
+                ),
+                function ($type) {
+                    return preg_match('/storage/i', $type['description']) === 1;
+                }
+            )
+        );
+
+        $storageResources = array_filter(
+            $this->resources,
+            function ($resource) use ($storageResourceTypeIds) {
+                return in_array(
+                    $resource['resource_type_id'],
+                    $storageResourceTypeIds
+                );
+            }
+        );
+
+        if (empty($storageResources)) {
+            $this->removeStorageRolesConfig();
+        } else {
+            $this->addStorageRolesConfig();
+        }
     }
 
     /**
@@ -177,6 +210,22 @@ class ResourcesSetup extends SubMenuSetupItem
         $roles_config_template = md5(file_get_contents(TEMPLATE_DIR . '/roles.d/cloud.json'));
 
         return (md5(file_get_contents($roles_config)) == $roles_config_template) ? true : false;
+    }
+
+    /**
+     * Checks to see if the storage.json file in configuration/roles.d matches
+     * the storage.json file in templates/roles.d.
+     */
+    private function doesStorageRolesFileMatch()
+    {
+        $rolesConfig = CONFIG_DIR . '/roles.d/storage.json';
+
+        if (!file_exists($rolesConfig)) {
+            return false;
+        }
+
+        return file_get_contents($rolesConfig)
+            === file_get_contents(TEMPLATE_DIR . '/roles.d/storage.json');
     }
 
     /**
@@ -198,13 +247,58 @@ class ResourcesSetup extends SubMenuSetupItem
             $this->console->displayMessage("Enabling cloud realm. Please wait a few moments.");
             copy(TEMPLATE_DIR . '/roles.d/cloud.json', $roles_config_dir.'/cloud.json');
 
-            $manage_acls = new AclEtl(['section' => 'acls-xdmod-management']);
-            $manage_acls->execute();
-
-            shell_exec('acl-config');
-
-            $import_acls = new AclEtl(['section' => 'acls-import']);
-            $import_acls->execute();
+            $this->updateAcls();
         }
+    }
+
+    /**
+     * Copy storage roles file if it doesn't exist or is different from the
+     * version included and then update ACLs.
+     */
+    private function addStorageRolesConfig()
+    {
+        $rolesDir = CONFIG_DIR . '/roles.d';
+
+        if (!$this->doesStorageRolesFileMatch()) {
+            if (!is_dir($rolesDir)) {
+                mkdir($rolesDir);
+            }
+            $this->console->displayMessage(
+                'Enabling storage realm.  Please wait.'
+            );
+            copy(
+                TEMPLATE_DIR . '/roles.d/storage.json',
+                $rolesDir . '/storage.json'
+            );
+            $this->updateAcls();
+        }
+    }
+
+    /**
+     * Remove storage roles configuration file and update ACLs.
+     */
+    private function removeStorageRolesConfig()
+    {
+        $storageRolesConfig = CONFIG_DIR . '/roles.d/storage.json';
+
+        if (file_exists($storageRolesConfig)) {
+            $this->console->displayMessage(
+                'Disabling storage realm.  Please wait.'
+            );
+            unlink($storageRolesConfig);
+            $this->updateAcls();
+        }
+    }
+
+    /**
+     * Execute all ACL actions.
+     */
+    private function updateAcls()
+    {
+        $manageAcls = new AclEtl(['section' => 'acls-xdmod-management']);
+        $manageAcls->execute();
+        passthru('acl-config');
+        $importAcls = new AclEtl(['section' => 'acls-import']);
+        $importAcls->execute();
     }
 }
