@@ -35,7 +35,7 @@ if [ ! -x "$phpunit" ]; then
 fi
 if [ "$REG_TEST_ALL" == "1" ]; then
     set +e
-    $phpunit $PUB lib/Controllers/UsageExplorerTest.php
+    $phpunit $PUB .
     REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerTest.php
     REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerTest.php
     REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php
@@ -45,19 +45,17 @@ if [ "$REG_TEST_ALL" == "1" ]; then
     REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerCloudTest.php
     REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerCloudTest.php
     REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerCloudTest.php
-    $phpunit $PUB lib/Controllers/UsageExplorerCloudTest.php
 else
     REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerTest.php & usrpid=$!
     REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerTest.php & pipid=$!
     REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerTest.php & cdpid=$!
     REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerTest.php & cspid=$!
-    $phpunit $PUB lib/Controllers/UsageExplorerTest.php & pubpid=$!
+    $phpunit $PUB . & pubpid=$!
 
     REG_TEST_USER_ROLE=usr $phpunit $REGUSER lib/Controllers/UsageExplorerCloudTest.php & usrpid=$!
     REG_TEST_USER_ROLE=pi $phpunit $PI lib/Controllers/UsageExplorerCloudTest.php & pipid=$!
     REG_TEST_USER_ROLE=cd $phpunit $CD lib/Controllers/UsageExplorerCloudTest.php & cdpid=$!
     REG_TEST_USER_ROLE=cs $phpunit $CS lib/Controllers/UsageExplorerCloudTest.php & cspid=$!
-    $phpunit $PUB lib/Controllers/UsageExplorerCloudTest.php & pubpid=$!
 
     EXIT_STATUS=0
     for pid in $usrpid $pipid $cdpid $cspid $pubpid;
