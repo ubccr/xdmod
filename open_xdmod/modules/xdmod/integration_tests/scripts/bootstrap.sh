@@ -28,7 +28,7 @@ then
     xdmod-import-csv -t names -i $REF_DIR/names.csv
     xdmod-ingestor
     php /root/bin/createusers.php
-    #Adding open stack resource since there is no way to automatically add a cloud resource.
+    #Updating minmaxdate table so data for cloud realm shows up
     mysql -e "UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Ingesting cloud data from references folder
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
@@ -49,7 +49,7 @@ then
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
     expect $BASEDIR/xdmod-upgrade-add-cloud-resource.tcl | col -b
-    #Adding open stack resource since there is no way to automatically add a cloud resource.
+    #Updating minmaxdate table so data for cloud realm shows up
     mysql -e "UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Ingesting cloud data from references folder
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
