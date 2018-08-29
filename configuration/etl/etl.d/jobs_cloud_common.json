@@ -128,6 +128,98 @@
                     "path": "cloud_common/processor_buckets.json"
                 }
             }
+        },
+        {
+            "name": "IngestResourceConfig",
+            "description": "Ingest resource configuration file. Modeled after action in staging-ingest-common.resource-config",
+            "definition_file": "common/staging/resource-config.json",
+            "class": "StructuredFileIngestor",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resources configuration",
+                    "path": "${base_dir}/../resources.json",
+                    "record_schema_path": "common/resources.schema.json",
+                    "field_names": [
+                        "resource",
+                        "name",
+                        "description",
+                        "resource_type_id",
+                        "pi_column",
+                        "shared_jobs",
+                        "timezone"
+                    ]
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "class": "DatabaseIngestor",
+            "name": "IngestResourcesStaging",
+            "truncate_destination": false,
+            "description": "Ingest resource names from staging table. Modeled after action in staging-ingest-common.resources",
+            "definition_file": "common/staging/resource.json",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
+        },
+        {
+            "class": "DatabaseIngestor",
+            "name": "HpcdbIngestResources",
+            "description": "Ingest resources from staging table to table in modw_hpcdb. Modeled after action in hpcdb-ingest-common.resources",
+            "definition_file": "common/hpcdb/resources.json",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
+            "class": "DatabaseIngestor",
+            "name": "IngestResourcefact",
+            "definition_file": "jobs/xdw/resource-fact.json",
+            "description": "Ingest resource information into resourcefact table. Modeled after hpcdb-xdw-ingest.resource",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB",
+                    "config": "datawarehouse",
+                    "schema": "mod_hpcdb",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            }
         }
     ]
 }

@@ -12,54 +12,8 @@ lappend resources [list phillips Phillips 400 4000]
 lappend resources [list pozidriv Posidriv 400 4000]
 lappend resources [list robertson Robertson 400 4000]
 
-#-------------------------------------------------------------------------------
-# Helper functions
-
-proc selectMenuOption { option } {
-
-	expect {
-		-re "\nSelect an option .*: "
-	}
-	send $option\n
-}
-
-proc answerQuestion { question response } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		-re "\n$question: \\\[.*\\\] "
-	}
-	send $response\n
-}
-
-proc provideInput { prompt response } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		"\n$prompt "
-	}
-	send $response\n
-}
-
-proc providePassword { prompt password } {
-	provideInput $prompt $password
-	provideInput "(confirm) $prompt" $password
-
-}
-
-proc enterToContinue { } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		"\nPress ENTER to continue. "
-	}
-	send \n
-}
-
-proc confirmFileWrite { response } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		-re "\nOverwrite config file .*\\\[.*\\\] "
-	}
-	send $response\n
-}
+# Load helper functions from helper-functions.tcl
+source [file join [file dirname [info script]] helper-functions.tcl]
 
 #-------------------------------------------------------------------------------
 # main body - note there are some hardcoded addresses, usernames and passwords here
@@ -109,6 +63,14 @@ foreach resource $resources {
 	provideInput {How many nodes does this resource have?} [lindex $resource 2]
 	provideInput {How many total processors (cpu cores) does this resource have?} [lindex $resource 3]
 }
+
+selectMenuOption 1
+provideInput {Resource Name:} openstack
+provideInput {Formal Name:} OpenStack
+provideInput {Resource Type*} cloud
+provideInput {How many nodes does this resource have?} 123
+provideInput {How many total processors (cpu cores) does this resource have?} 234
+
 selectMenuOption s
 confirmFileWrite yes
 enterToContinue
