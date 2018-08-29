@@ -77,7 +77,7 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $this->verbose = getenv('TEST_VERBOSE');
         if (!isset($this->verbose)) {
-            $this->verbose = true;
+            $this->verbose = false;
         }
         $this->helper = new XdmodTestHelper(__DIR__ . '/../../');
     }
