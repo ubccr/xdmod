@@ -148,19 +148,22 @@ class ResourcesSetup extends SubMenuSetupItem
     /**
      * Save the current list of resources.
      *
-     * If a cloud resource exists in the list of resources then add the roles
-     * file and run the ACL actions.  If there are no cloud resources in the
-     * list then remove the roles file and run the ACL actions.
+     * If a realm specific resource exists in the list of resources then add
+     * the roles file for that realm and run the ACL actions.  If there are no
+     * realm specific resources in the list then remove the roles file for that
+     * realm and run the ACL actions.
      */
     public function save()
     {
         $this->saveJsonConfig($this->resources,     'resources');
         $this->saveJsonConfig($this->resourceSpecs, 'resource_specs');
 
-        if ($this->getRealmSpecificResources('cloud')) {
-            $this->addRolesFile('cloud');
-        } else {
-            $this->removeRolesFile('cloud');
+        foreach (array('cloud', 'storage') as $realm) {
+            if ($this->getRealmSpecificResources($realm)) {
+                $this->addRolesFile($realm);
+            } else {
+                $this->removeRolesFile($realm);
+            }
         }
     }
 
