@@ -12,54 +12,8 @@ lappend resources [list phillips Phillips 400 4000]
 lappend resources [list pozidriv Posidriv 400 4000]
 lappend resources [list robertson Robertson 400 4000]
 
-#-------------------------------------------------------------------------------
-# Helper functions
-
-proc selectMenuOption { option } {
-
-	expect {
-		-re "\nSelect an option .*: "
-	}
-	send $option\n
-}
-
-proc answerQuestion { question response } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		-re "\n$question: \\\[.*\\\] "
-	}
-	send $response\n
-}
-
-proc provideInput { prompt response } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		"\n$prompt "
-	}
-	send $response\n
-}
-
-proc providePassword { prompt password } {
-	provideInput $prompt $password
-	provideInput "(confirm) $prompt" $password
-
-}
-
-proc enterToContinue { } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		"\nPress ENTER to continue. "
-	}
-	send \n
-}
-
-proc confirmFileWrite { response } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		-re "\nOverwrite config file .*\\\[.*\\\] "
-	}
-	send $response\n
-}
+# Load helper functions from helper-functions.tcl
+source [file join [file dirname [info script]] helper-functions.tcl]
 
 #-------------------------------------------------------------------------------
 # main body - note there are some hardcoded addresses, usernames and passwords here

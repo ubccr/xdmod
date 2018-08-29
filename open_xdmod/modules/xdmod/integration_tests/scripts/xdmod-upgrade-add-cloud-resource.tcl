@@ -2,42 +2,8 @@
 # Expect script that runs xdmod-upgrade to upgrade an already installed Open
 # XDMoD instance.
 
-#-------------------------------------------------------------------------------
-
-# Helper functions
-proc provideInput { prompt response } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		"\n$prompt "
-	}
-	send $response\n
-}
-
-proc selectMenuOption { option } {
-
-	expect {
-		-re "\nSelect an option .*: "
-	}
-	send $option\n
-}
-
-proc enterToContinue { } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		"\nPress ENTER to continue. "
-	}
-	send \n
-}
-
-proc confirmFileWrite { response } {
-	expect {
-		timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-		-re "\nOverwrite config file .*\\\[.*\\\] "
-	}
-	send $response\n
-}
-
-#-------------------------------------------------------------------------------
+# Load helper functions from helper-functions.tcl
+source [file join [file dirname [info script]] helper-functions.tcl]
 
 set timeout 10
 spawn "xdmod-setup"
