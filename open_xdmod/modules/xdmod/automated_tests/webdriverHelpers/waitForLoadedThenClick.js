@@ -9,5 +9,6 @@
 module.exports = function waitForLoadedThenClick(selector, maskMs) {
     var maskTimeOut = maskMs || 9000;
     browser.waitForVisible('.ext-el-mask-msg', maskTimeOut, true);
+    browser.waitForVisible(selector, maskTimeOut);
     return browser.click(selector);
 };
