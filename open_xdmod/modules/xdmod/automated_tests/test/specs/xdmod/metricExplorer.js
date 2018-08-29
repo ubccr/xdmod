@@ -450,9 +450,19 @@ describe('Metric Explorer', function metricExplorer() {
         var chartTitle = '';
         it('Start with the scratchpad', function startWithScratchPad() {
             me.clear();
-            browser.waitForChart();
+            me.waitForLoaded();
+        });
+        it('Create a chart', function createAChart() {
+            chartName += '_2';
+            me.createNewChart(chartName, 'Timeseries', 'Line');
+            me.setDateRange('2016-12-30', '2017-01-02');
+            me.addDataViaCatalog('Jobs', 'Node Hours: Total', 'None');
+            me.checkChart(chartName, 'Node Hours: Total', expected.legend);
+            me.saveChanges();
+            me.clear();
         });
         it('Select the first saved chart', function selectFirstSavedChart() {
+            me.waitForLoaded();
             browser.waitForLoadedThenClick(me.selectors.load.button());
             browser.waitForLoadedThenClick(me.selectors.load.firstSaved);
             browser.waitForVisible(me.selectors.chart.title, 5000);
