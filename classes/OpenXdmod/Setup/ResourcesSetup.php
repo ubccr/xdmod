@@ -216,6 +216,15 @@ class ResourcesSetup extends SubMenuSetupItem
      * Checks to see if the storage.json file in configuration/roles.d matches
      * the storage.json file in templates/roles.d.
      */
+    private function doesStorageRolesFileExist()
+    {
+        return file_exists(CONFIG_DIR . '/roles.d/storage.json');
+    }
+
+    /**
+     * Checks to see if the storage.json file in configuration/roles.d matches
+     * the storage.json file in templates/roles.d.
+     */
     private function doesStorageRolesFileMatch()
     {
         $rolesConfig = CONFIG_DIR . '/roles.d/storage.json';
@@ -260,6 +269,19 @@ class ResourcesSetup extends SubMenuSetupItem
         $rolesDir = CONFIG_DIR . '/roles.d';
 
         if (!$this->doesStorageRolesFileMatch()) {
+            if ($this->doesStorageRolesFileExist()) {
+                $this->console->displayBlankLine();
+                $this->console->displayMessage(<<<'EOMSG'
+Storage roles file exists and does not match the default storage roles file.  No
+changes will be made to the storage roles file.   Please consult the
+documentation for more information about the storage roles file.
+EOMSG
+                );
+                $this->console->displayBlankLine();
+                $this->console->prompt('Press ENTER to continue.');
+                return;
+            }
+
             if (!is_dir($rolesDir)) {
                 mkdir($rolesDir);
             }
