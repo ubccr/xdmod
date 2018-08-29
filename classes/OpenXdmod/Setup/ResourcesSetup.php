@@ -1,5 +1,6 @@
 <?php
 /**
+ * @author Greg Dean
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
@@ -145,66 +146,179 @@ class ResourcesSetup extends SubMenuSetupItem
     }
 
     /**
-     * Save the current list of resources. If a cloud resource exists in the list of resources
-     * add the cloud acl files and run acl config commands
+     * Save the current list of resources.
+     *
+     * If a cloud resource exists in the list of resources then add the roles
+     * file and run the ACL actions.  If there are no cloud resources in the
+     * list then remove the roles file and run the ACL actions.
      */
     public function save()
     {
         $this->saveJsonConfig($this->resources,     'resources');
         $this->saveJsonConfig($this->resourceSpecs, 'resource_specs');
 
-        $cloud_resources_exist = array_filter($this->resources, function ($resource) {
-            return $resource['resource_type_id'] == 5;
-        });
-
-        if (!empty($cloud_resources_exist)) {
-            $this->addCloudAcls();
+        if ($this->getRealmSpecificResources('cloud')) {
+            $this->addRolesFile('cloud');
+        } else {
+            $this->removeRolesFile('cloud');
         }
     }
 
     /**
-     * Checks to see if the cloud.json files in configuration/datawarehouse.d and configuration/roles.d
-     * match the cloud.json files in templates/datawarehouse.d and templates/roles.d
+     * Checks if a roles file exists for the given realm.
+     *
+     * @param string $realm The name of the realm in all lower-case letters.
+     *
+     * @return boolean True if the file exists.
      */
-    private function doCloudAclFilesMatch()
+    private function rolesFileExists($realm)
     {
-        $roles_config = CONFIG_DIR . '/roles.d/cloud.json';
+        return file_exists(CONFIG_DIR . '/roles.d/' . $realm . '.json');
+    }
 
-        if (!file_exists($roles_config)) {
+    /**
+     * Checks to see if the roles file in configuration/roles.d matches the
+     * roles file in and templates/roles.d for the given realm.
+     *
+     * @param string $realm The name of the realm in all lower-case letters.
+     *
+     * @return boolean True if the file exists and is the same as the default.
+     */
+    private function rolesFileMatches($realm)
+    {
+        $rolesFile = CONFIG_DIR . '/roles.d/' . $realm . '.json';
+
+        if (!file_exists($rolesFile)) {
             return false;
         }
 
-        $roles_config_template = md5(file_get_contents(TEMPLATE_DIR . '/roles.d/cloud.json'));
-
-        return (md5(file_get_contents($roles_config)) == $roles_config_template) ? true : false;
+        return file_get_contents(TEMPLATE_DIR . '/roles.d/' . $realm . '.json')
+            === file_get_contents($rolesFile);
     }
 
     /**
-     * Moves cloud.json files from templates/datawarehouse.d and templates/roles.d to configuration/roles.d
-     * and configuration/datawarehouse.d and then runs acls-xdmod-management, acl-config and acl-import to
-     * enable the Cloud realm.
+     * Copies roles file from templates/roles.d to configuration/roles.d
+     * to enable the realm.
+     *
+     * @param string $realm The name of the realm in all lower-case letters.
      */
-    private function addCloudAcls()
+    private function addRolesFile($realm)
     {
-        $roles_config_dir = CONFIG_DIR . '/roles.d';
-        $roles_config_template_dir = TEMPLATE_DIR . '/roles.d';
-
-        if (!$this->doCloudAclFilesMatch()) {
-
-            if (!is_dir($roles_config_dir)) {
-                mkdir($roles_config_dir);
+        if (!$this->rolesFileMatches($realm)) {
+            if ($this->rolesFileExists($realm)) {
+                $this->console->displayBlankLine();
+                $this->console->displayMessage(<<<"EOMSG"
+Roles file for the $realm realm exists and does not match the default
+roles file for the $realm realm.  No changes will be made to the $realm
+roles file.  Please consult the documentation for more information about
+the $realm roles file.
+EOMSG
+                );
+                $this->console->displayBlankLine();
+                $this->console->prompt('Press ENTER to continue.');
+                return;
             }
-
-            $this->console->displayMessage("Enabling cloud realm. Please wait a few moments.");
-            copy(TEMPLATE_DIR . '/roles.d/cloud.json', $roles_config_dir.'/cloud.json');
-
-            $manage_acls = new AclEtl(['section' => 'acls-xdmod-management']);
-            $manage_acls->execute();
-
-            shell_exec('acl-config');
-
-            $import_acls = new AclEtl(['section' => 'acls-import']);
-            $import_acls->execute();
+            $rolesConfigDir = CONFIG_DIR . '/roles.d';
+            if (!is_dir($rolesConfigDir)) {
+                mkdir($rolesConfigDir);
+            }
+            $this->console->displayMessage(
+                "Enabling $realm realm. Please wait."
+            );
+            copy(
+                TEMPLATE_DIR . '/roles.d/' . $realm . '.json',
+                $rolesConfigDir . '/' . $realm . '.json'
+            );
+            $this->updateAcls();
         }
+    }
+
+    /**
+     * Remove roles configuration file and update ACLs.
+     *
+     * @param string $realm The name of the realm in all lower-case letters.
+     */
+    private function removeRolesFile($realm)
+    {
+        $rolesFile = CONFIG_DIR . '/roles.d/' . $realm . '.json';
+
+        if (file_exists($rolesFile)) {
+            $this->console->displayMessage(
+                "Disabling $realm realm.  Please wait."
+            );
+            unlink($rolesFile);
+            $this->updateAcls();
+        }
+    }
+
+    /**
+     * Execute all ACL actions.
+     */
+    private function updateAcls()
+    {
+        $manageAcls = new AclEtl(['section' => 'acls-xdmod-management']);
+        $manageAcls->execute();
+        passthru('acl-config');
+        $importAcls = new AclEtl(['section' => 'acls-import']);
+        $importAcls->execute();
+    }
+
+    /**
+     * Get all of the current resources that belong to a specific realm.
+     *
+     * Only applies to resource types that contain the name of the realm in the
+     * description of the resource type.  For the default resource types this
+     * works for both "cloud" and "storage".  Does not work for "jobs" or
+     * "supremm".
+     *
+     * @param string $realm The name of the realm in all lower-case letters.
+     *
+     * @return array
+     */
+    private function getRealmSpecificResources($realm)
+    {
+        $resourceTypeIds = $this->getRealmResourceTypeIds($realm);
+
+        return array_filter(
+            $this->resources,
+            function ($resource) use ($resourceTypeIds) {
+                return in_array(
+                    $resource['resource_type_id'],
+                    $resourceTypeIds
+                );
+            }
+        );
+    }
+
+    /**
+     * Get all the resource type IDs for a given realm.
+     *
+     * Only applies to resource types that contain the name of the realm in the
+     * description of the resource type.  For the default resource types this
+     * works for both "cloud" and "storage".  Does not work for "jobs" or
+     * "supremm".
+     *
+     * @param string $realm The name of the realm in all lower-case letters.
+     *
+     * @return array
+     */
+    private function getRealmResourceTypeIds($realm)
+    {
+        return array_map(
+            function ($type) {
+                return $type['id'];
+            },
+            array_filter(
+                json_decode(
+                    file_get_contents(CONFIG_DIR . '/resource_types.json'),
+                    true
+                ),
+                function ($type) {
+                    return preg_match('/' . $realm . '/i', $type['description'])
+                        === 1;
+                }
+            )
+        );
+
     }
 }
