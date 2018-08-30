@@ -313,12 +313,11 @@ EOMSG
                     file_get_contents(CONFIG_DIR . '/resource_types.json'),
                     true
                 ),
-                function ($type) {
+                function ($type) use ($realm) {
                     return preg_match('/' . $realm . '/i', $type['description'])
                         === 1;
                 }
             )
         );
-
     }
 }
