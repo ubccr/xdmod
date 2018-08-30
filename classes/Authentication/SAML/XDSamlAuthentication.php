@@ -253,12 +253,25 @@ EML;
     /**
      * Retrieves the login url we want to use with this authentication provider.
      *
-     * @param string $returnTo the URI to redirect to after auth. default is null.
+     * @param string $returnTo the URI to redirect to after auth.
      *
-     * @return mixed An array containing a login link + redirect, the name of the organization (eg. Twitter),
+     * @return the login URL or false if no provider is configured
+     */
+    public function getLoginURL($returnTo)
+    {
+        if ($this->_as) {
+            return $this->_as->getLoginURL($returnTo);
+        }
+        return false;
+    }
+
+    /**
+     * Retrieves display information for the SSO login button.
+     *
+     * @return mixed An array containing the name of the organization (eg. Twitter),
      * and an icon (eg. A logo with the Twitter icon + 'Sign in with Twitter' ). false if none found.
      */
-    public function getLoginLink($returnTo = null)
+    public function getLoginLink()
     {
         if ($this->isSamlConfigured()) {
             $idpAuth = \SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler()->getList();
@@ -278,7 +291,6 @@ EML;
                 );
             }
             return array(
-                'url' => $this->_as->getLoginUrl($returnTo),
                 'organization' => $orgDisplay,
                 'icon' => $icon
             );

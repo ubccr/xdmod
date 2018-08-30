@@ -119,6 +119,7 @@ TXT;
         $root = $this->prefix;
         $controller->post("$root/login", '\Rest\Controllers\AuthenticationControllerProvider::login');
         $controller->post("$root/logout", '\Rest\Controllers\AuthenticationControllerProvider::logout');
+        $controller->get("$root/idpredirect", '\Rest\Controllers\AuthenticationControllerProvider::getIdpRedirect');
     }
 
     /**
@@ -168,6 +169,22 @@ TXT;
             'success' => true,
             'message' => 'User logged out successfully'
         ));
+    }
+
+    /**
+     * Return an IDP redirect URL for SSO login
+     */
+    public function getIdpRedirect(Request $request, Application $app)
+    {
+        $auth = new \Authentication\SAML\XDSamlAuthentication();
+
+        $redirectUrl = $auth->getLoginURL($this->getStringParam($request, 'returnTo', true));
+
+        if ($redirectUrl === false ) {
+            throw new \Exception('SSO not configured.');
+        }
+
+        return $app->json($redirectUrl);
     }
 
     /**

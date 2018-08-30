@@ -313,7 +313,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             }
             if ($auth && $auth->isSamlConfigured()) {
                 print "CCR.xdmod.isSSOConfigured = true;\n";
-                print "CCR.xdmod.SSOLoginLink = " . json_encode($auth->getLoginLink('/gui/general/login.php')) . ";\n";
+                print "CCR.xdmod.SSOLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";
             } else {
                 print "CCR.xdmod.isSSOConfigured = false;";
             }

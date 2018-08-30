@@ -1046,7 +1046,27 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
             anchor: '100%',
             id: 'SSOLoginLink',
             handler: function () {
-                document.location = CCR.xdmod.SSOLoginLink.url;
+                Ext.Ajax.request({
+                    url: '/rest/auth/idpredirect',
+                    method: 'GET',
+                    params: {
+                        returnTo: '/gui/general/login.php' + document.location.hash
+                    },
+                    success: function (response) {
+                        var destination = Ext.decode(response.responseText);
+                        document.location = destination;
+                    },
+                    failure: function (response, opts) {
+                        var message = 'Please contact the XDMoD administrator.';
+                        if (response.responseText) {
+                            var decoded = Ext.decode(response.responseText);
+                            if (decoded.message) {
+                                message = decoded.message + '<br />' + message;
+                            }
+                        }
+                        Ext.Msg.alert('Error ' + response.status + ' ' + response.statusText, message);
+                    }
+                });
             }
         }]
     }) : null;

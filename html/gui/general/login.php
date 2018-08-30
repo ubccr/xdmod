@@ -47,7 +47,7 @@ if ($auth && $auth->isSamlConfigured()) {
   <script type="text/javascript">
     function loadPortal() {
       setTimeout(function(){
-        parent.location.href = '/index.php';
+        parent.location.href = '/index.php' + document.location.hash;
       }, 3000);
     }
 
