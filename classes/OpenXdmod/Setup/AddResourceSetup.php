@@ -75,6 +75,9 @@ EOT
         $this->console->displayMessage(<<<"EOT"
 The number of nodes and processors are used to determine resource
 utilization.
+
+If this is a storage resource you may enter 0 for the number of nodes
+and processors.
 EOT
         );
         $this->console->displayBlankLine();
