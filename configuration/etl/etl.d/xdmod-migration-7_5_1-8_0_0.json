@@ -78,6 +78,24 @@
             }
         },
         {
+            "name": "truncate-mod_hpcdb-email_addresses",
+            "description": "Truncate HPCDB email_addresses table",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "migrations/7.5.1-8.0.0/hpcdb/truncate-email-addresses.sql"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
+        },
+        {
             "name": "mod_hpcdb-schema-version-history",
             "description": "Update mod_hpcdb schema version history",
             "namespace": "ETL\\Ingestor",
