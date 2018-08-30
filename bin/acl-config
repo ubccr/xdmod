@@ -381,12 +381,21 @@ function backupNonManagedTables(iDatabase $db, array $tables)
 {
     global $dryRun, $log;
     $log->info("Backing Up User Related Tables...");
-
+    $handle = $db->handle();
     foreach($tables as $table => $queries) {
         $creationQuery = $queries['create'];
+        $quotedTable= $handle->quote($table . '_bkup');
+
+        $exists = count($db->query("SHOW TABLES LIKE $quotedTable")) > 0;
+
+        if ($exists) {
+            $db->execute("DROP TABLE ${table}_bkup");
+        }
+
         $query = <<<SQL
-CREATE TEMPORARY TABLE ${table}_bkup AS $creationQuery;
+CREATE TABLE ${table}_bkup AS $creationQuery;
 SQL;
+
         $log->debug("Backup query [$table]: $query");
 
         if ($dryRun) {
