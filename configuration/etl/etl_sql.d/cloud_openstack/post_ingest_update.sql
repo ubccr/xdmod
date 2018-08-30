@@ -78,5 +78,3 @@ AND
 TRUNCATE ${DESTINATION_SCHEMA}.openstack_raw_event;
 
 TRUNCATE ${DESTINATION_SCHEMA}.openstack_raw_instance_type;
-
-TRUNCATE ${DESTINATION_SCHEMA}.openstack_staging_event;
