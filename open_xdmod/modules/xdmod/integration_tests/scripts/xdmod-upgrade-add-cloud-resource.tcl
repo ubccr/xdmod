@@ -5,7 +5,7 @@
 # Load helper functions from helper-functions.tcl
 source [file join [file dirname [info script]] helper-functions.tcl]
 
-set timeout 10
+set timeout 240
 spawn "xdmod-setup"
 
 selectMenuOption 4

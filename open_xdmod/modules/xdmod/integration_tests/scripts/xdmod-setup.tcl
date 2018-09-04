@@ -20,7 +20,7 @@ source [file join [file dirname [info script]] helper-functions.tcl]
 # they should typically not be changed as they need to match up with the
 # settings in the docker container
 
-set timeout 10
+set timeout 240
 spawn "xdmod-setup"
 
 selectMenuOption 1
@@ -42,11 +42,9 @@ answerQuestion {DB Admin Username} root
 providePassword {DB Admin Password:} {}
 confirmFileWrite yes
 enterToContinue
-set timeout 240
 provideInput {Do you want to see the output*} {no}
 provideInput {Do you want to see the output*} {no}
 provideInput {Do you want to see the output*} {no}
-set timeout 10
 
 selectMenuOption 3
 provideInput {Organization Name:} Screwdriver
