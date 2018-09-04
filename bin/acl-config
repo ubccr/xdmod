@@ -23,11 +23,13 @@ $opts = array(
     't' => 'dryrun',
     'v' => 'verbose',
     'd' => 'debug',
+    'r' => 'recover',
     'h' => 'help'
 );
 
 $dryRun = false;
 $logLevel = Log::ERR;
+$recover = false;
 
 try {
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
@@ -50,6 +52,10 @@ try {
             case 'help':
                 displayHelp();
                 exit(0);
+                break;
+            case 'r':
+            case 'recover':
+                $recover = true;
                 break;
         }
     }
@@ -85,7 +91,9 @@ try {
  **/
 function main()
 {
-    global $dryRun, $log, $verify, $logLevel;
+    global $dryRun, $log, $verify, $logLevel, $recover;
+
+    $schema = 'moddb';
 
     $log->notice("*** Beginning Acl Configuration Tool...");
     $log->info(
@@ -317,20 +325,44 @@ SQL;
         )
     );
 
-    backupNonManagedTables($db, $tablesToBeBackedUp);
+    $nonManagedBackupTables = array_reduce(
+        array_keys($tablesToBeBackedUp),
+        function($carry, $item) {
+            $carry[] = "${item}_bkup";
+            return $carry;
+        },
+        array()
+    );
+
+    $backupTablesExist = tablesExist($db, $nonManagedBackupTables, $schema, false);
+
+    if ($backupTablesExist && !$recover) {
+        $log->err('Backup tables detected! ');
+        $log->err('Unable to continue!');
+        $log->err('This may indicate a failed previous run.');
+        $log->err('Please see the XDMoD Troubleshooting documentation to resolve.');
+        exit(1);
+    } else if (!$backupTablesExist && $recover) {
+        $log->err('Recover mode specified but no backup tables exist!');
+        $log->err('Unable to continue.!');
+        $log->err('If you are not trying to recover from a failed acl-config then please remove the recover flag and try again');
+        $log->err('If you have been encountering errors then please contact XDMoD Support.');
+        exit(1);
+    }  else if (!$backupTablesExist && !$recover){
+        // this is a "normal" run so make sure to make a quick backup of the non-managed tables.
+        backupNonManagedTables($db, $tablesToBeBackedUp);
+    }
 
     wipeManagedTables($db);
 
     createManagedTables();
-
-    repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
     // Process the xdmod module first
     if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
         processModules(
             $db,
             array(
-                    DEFAULT_MODULE_NAME => $modules[DEFAULT_MODULE_NAME]
+                DEFAULT_MODULE_NAME => $modules[DEFAULT_MODULE_NAME]
             )
         );
         unset($modules[DEFAULT_MODULE_NAME]);
@@ -366,6 +398,9 @@ SQL;
 
     // Now re-populate the user related tables.
     repopulateNonManagedTables($db, $tablesToBeBackedUp);
+
+    // Make sure we drop the backup tables
+    dropTables($db, $nonManagedBackupTables);
 }
 
 /**
@@ -385,9 +420,6 @@ function backupNonManagedTables(iDatabase $db, array $tables)
     foreach($tables as $table => $queries) {
         $creationQuery = $queries['create'];
 
-        // Make sure that the backup table is blown away if present.
-        $db->execute("DROP TABLE IF EXISTS ${table}_bkup");
-
         $query = <<<SQL
 CREATE TABLE ${table}_bkup AS $creationQuery;
 SQL;
@@ -398,6 +430,7 @@ SQL;
             $log->notice("Table[$table] would have been created");
             continue;
         }
+
         // throws exception or returns row count
         $rows = $db->execute($query);
         $log->debug(sprintf('Inserted %d rows into %s', $rows, $table));
@@ -1994,6 +2027,63 @@ function verifyDatabase()
     } catch (Exception $e) {
     }
     return $result;
+}
+
+/**
+ * Determines whether all of the provided tables currently exist.
+ *
+ * @param iDatabase $db to execute the required sql statement
+ * @param array $tables an array of table names ( as strings )
+ * @param string $schema the db schema that $tables belong to
+ * @param bool $all only return true if all of the provided tables exist. Defaults to `true`.
+ *
+ * @return bool true if they do, false if they do not.
+ */
+function tablesExist(iDatabase $db, array $tables, $schema, $all = true)
+{
+    $handle = $db->handle();
+    $query = <<<SQL
+SELECT *
+FROM information_schema.tables
+WHERE table_schema = :table_schema
+AND table_name in (:table_list);
+SQL;
+
+    $tables = array_reduce(
+        $tables,
+        function($carry, $item) use ($handle)
+        {
+            $carry[] = $handle->quote($item);
+            return $carry;
+        },
+        array()
+    );
+
+    $tableList = implode(',', $tables);
+    $params = array(
+        ':table_schema' => $schema,
+        ':table_list' => $tableList
+    );
+    $results = $db->query(
+        $query,
+        $params
+    );
+
+    if ($all) {
+        return count($tables) === count($results);
+    }
+
+    return count($results) > 0;
+}
+
+function dropTables(iDatabase $db, array $tables)
+{
+    $tableList = implode(
+        ',',
+        $tables
+    );
+
+    $db->execute("DROP TABLE $tableList");
 }
 
 /**
