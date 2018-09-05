@@ -36,7 +36,11 @@ then
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
-    acl-import
+
+    #Running acl pipelines to ensure the Cloud realm shows up
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p acls-xdmod-management
+    acl-config
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p acls-import
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
