@@ -60,7 +60,6 @@
     {
         "class": "DatabaseIngestor",
         "name": "IngestResourcesStaging",
-        "truncate_destination": false,
         "description": "Ingest resource names from staging table. Modeled after action in staging-ingest-common.resources",
         "definition_file": "common/staging/resource.json",
         "endpoints": {
@@ -96,8 +95,7 @@
                 "type": "mysql",
                 "name": "HPCDB",
                 "config": "database",
-                "schema": "mod_hpcdb",
-                "create_schema_if_not_exists": true
+                "schema": "mod_hpcdb"
             }
         }
     }
