@@ -340,14 +340,11 @@ SQL;
         $log->err('This may indicate a failed previous run.');
         $log->err('Please see the XDMoD Troubleshooting documentation to resolve.');
         exit(1);
-    } else if (!$backupTablesExist && $recover) {
-        $log->err('Recover mode specified but no backup tables exist!');
-        $log->err('Unable to continue.!');
-        $log->err('If you are not trying to recover from a failed acl-config then please remove the recover flag and try again');
-        $log->err('If you have been encountering errors then please contact XDMoD Support.');
-        exit(1);
-    }  else if (!$backupTablesExist && !$recover){
-        // this is a "normal" run so make sure to make a quick backup of the non-managed tables.
+    } elseif (!$backupTablesExist) {
+        if ($recover) {
+            $log->warning('Recover mode specified but no backup tables exist.');
+            $log->warning('Script execution will continue as normal.');
+        }
         backupNonManagedTables($db, $tablesToBeBackedUp);
     }
 
