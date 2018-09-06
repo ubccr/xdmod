@@ -19,6 +19,8 @@ use CCR\Json;
 use User\Roles;
 use Xdmod\Config;
 
+const SCHEMA = 'moddb';
+
 $opts = array(
     't' => 'dryrun',
     'v' => 'verbose',
@@ -332,7 +334,7 @@ SQL;
         array()
     );
 
-    $backupTablesExist = tablesExist($db, $nonManagedBackupTables, 'moddb', false);
+    $backupTablesExist = tablesExist($db, $nonManagedBackupTables, SCHEMA, false);
 
     if ($backupTablesExist && !$recover) {
         $log->err('Backup tables detected! ');
