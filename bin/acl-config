@@ -342,13 +342,20 @@ SQL;
      * Definitions:
      *
      *   - non-managed tables: These are tables that we are not able to be re-create from our
-     *     available configuration files ( roles.json / datawarehouse.json ).
+     *     available configuration files ( roles.json / datawarehouse.json ). In these tables case,
+     *     a record is added when a user is created with / updated to have a relationship with a
+     *     particular acl. This is most often done via the User Management portion of the Internal
+     *     Dashboard.
+     *     Also, these tables, and their need to re-generate their managed table foreign keys, are
+     *     the reason we have a "recovery" flag in the first place.
+     *
      *     Current tables include:
      *       - user_acls
      *       - user_acl_group_by_parameters
      *
      *   - managed tables: These tables are able to be re-created from our available configuration 
      *     files ( roles.json / datawarehouse.json ).
+     *
      *     Current tables include:
      *       - user_acl_group_by_parameters
      *       - user_acls
