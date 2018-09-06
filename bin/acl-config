@@ -93,8 +93,6 @@ function main()
 {
     global $dryRun, $log, $verify, $logLevel, $recover;
 
-    $schema = 'moddb';
-
     $log->notice("*** Beginning Acl Configuration Tool...");
     $log->info(
         sprintf(
@@ -316,12 +314,12 @@ SQL;
 
     $tablesToBeBackedUp = array(
         'user_acls' => array(
-            'create' => $userAclCreateBkup,
-            'populate' => $userAclRepopulate
+            'create_sql' => $userAclCreateBkup,
+            'populate_sql' => $userAclRepopulate
         ),
         'user_acl_group_by_parameters' => array(
-            'create' => $uagbpCreateBkup,
-            'populate' =>$uagbpRepopulate
+            'create_sql' => $uagbpCreateBkup,
+            'populate_sql' =>$uagbpRepopulate
         )
     );
 
@@ -334,7 +332,7 @@ SQL;
         array()
     );
 
-    $backupTablesExist = tablesExist($db, $nonManagedBackupTables, $schema, false);
+    $backupTablesExist = tablesExist($db, $nonManagedBackupTables, 'moddb', false);
 
     if ($backupTablesExist && !$recover) {
         $log->err('Backup tables detected! ');
@@ -418,7 +416,7 @@ function backupNonManagedTables(iDatabase $db, array $tables)
     $log->info("Backing Up User Related Tables...");
 
     foreach($tables as $table => $queries) {
-        $creationQuery = $queries['create'];
+        $creationQuery = $queries['create_sql'];
 
         $query = <<<SQL
 CREATE TABLE ${table}_bkup AS $creationQuery;
@@ -523,7 +521,7 @@ function repopulateNonManagedTables(iDatabase $db, array $tables)
     $log->info("Repopulating Tables...");
 
     foreach($tables as $table => $queries) {
-        $query = $queries['populate'];
+        $query = $queries['populate_sql'];
 
         if ($dryRun) {
             $log->info("For Table[$table]: \n$query");
@@ -2138,14 +2136,24 @@ function displayHelp()
 Usage: acl-config [options]
 
 Options:
-    -t | --dryrun        : Only log potential changes to the console. No actual
-                           changes will be committed to the database.
+    -t, --dryrun
+        Only log potential changes to the console. No actual
+        changes will be committed to the database.
 
-    -v | --verbose       : Output additional processing information.
+    -r, --recover
+        Indicate that the current non-managed backup tables should be used during
+        re-population as opposed to regenerating them from scratch. This flag
+        should specified if a previous execution errored out or was cancelled
+        before completion.
 
-    -d | --debug         : Output debug related information.
+    -v, --verbose
+        Output additional processing information.
 
-    -h | --help          : Display this help message and then exit.
+    -d, --debug
+        Output debug related information.
+
+    -h, --help
+        Display this help message and then exit.
 
 EOT;
     echo $usage;
