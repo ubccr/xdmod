@@ -334,6 +334,83 @@ SQL;
         array()
     );
 
+    /* acl-config "recovery" documentation
+     *
+     * Before diving into a description of how acl-config's "recovery" flag works, some definitions
+     * are included below to help while reading the rest of the documentation.
+     *
+     * Definitions:
+     *
+     *   - non-managed tables: These are tables that we are not able to be re-create from our
+     *     available configuration files ( roles.json / datawarehouse.json ).
+     *     Current tables include:
+     *       - user_acls
+     *       - user_acl_group_by_parameters
+     *
+     *   - managed tables: These tables are able to be re-created from our available configuration 
+     *     files ( roles.json / datawarehouse.json ).
+     *     Current tables include:
+     *       - user_acl_group_by_parameters
+     *       - user_acls
+     *       - acl_tabs
+     *       - tabs
+     *       - acl_hierarchies
+     *       - acl_group_bys
+     *       - acls
+     *       - acl_types
+     *       - group_bys
+     *       - statistics
+     *       - hierarchies
+     *       - realms
+     *       - modules
+     *
+     * Now we will walk through a number of script executions which will provide the necessary
+     * context for understanding how the "recovery" process is implemented. These script executions
+     * occur in the order they are presented.
+     *
+     * - Successful Script Execution:
+     *   - command line: `acl-config`
+     *   - Order of Operations:
+     *     - Backup tables do not exist by default so the first thing that occurs is that they are
+     *       created / populated.
+     *       - `backupNonManagedTables($db, $tablesToBeBackedUp);`
+     *     - Managed tables are wiped / re-created from the various configuration files ( roles.json,
+     *       datawarehouse.json )
+     *     - The non-managed tables are restored using the newly populated managed tables and the
+     *       backup tables.
+     *     - The backup tables are removed:
+     *       - `dropTables($db, $nonManagedBackupTables);`
+     *       - *** NOTE *** if the script completes successfully the backup tables will not be
+     *         present after the script ends.
+     *
+     * - Unsuccessful Script Execution:
+     *   - command line: `acl-config`
+     *   - Order of Operations:
+     *     - Backup tables do not exist by default so the first thing that occurs is that they are
+     *       created / populated.
+     *       - `backupNonManagedTables($db, $tablesToBeBackedUp);`
+     *     - *** at some point during the managed table wipe / re-creation an error occurs or the
+     *       script is killed. ***
+     *     - The removal of the backup tables is never executed and so they are still present.
+     *
+     * - Recovery Script Execution:
+     *   - command line: `acl-config [-r|--recovery]`
+     *   - Order of Operations:
+     *     - Backup tables *do* exist as the previous execution was not successful.
+     *     - Because the backup tables exist *and* the recover flag was supplied we skip the step
+     *       that creates / populates the backup tables.
+     *     - Managed tables are wiped / re-created from the various configuration files ( roles.json,
+     *       datawarehouse.json )
+     *     - The non-managed tables are restored from the existing backup tables and newly populated
+     *       managed tables. This is where the *recovery* occurs.
+     *     - The backup tables are removed.
+     *
+     * *** Important Notes ***
+     *
+     * - If there are changes to the non-managed tables ( user_acls, user_acl_group_by_parameters )
+     *   *after* a failed run but *before* acl-config is run with the --recover flag, then these
+     *   changes will *not* be recovered.
+     */
     $backupTablesExist = tablesExist($db, $nonManagedBackupTables, SCHEMA, false);
 
     if ($backupTablesExist && !$recover) {
