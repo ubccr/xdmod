@@ -2147,7 +2147,7 @@ SQL;
     );
 
     $tableList = implode(',', $tables);
-    $params = array(z
+    $params = array(
         ':table_schema' => $schema,
         ':table_list' => $tableList
     );
@@ -2173,6 +2173,13 @@ function dropTables(iDatabase $db, array $tables)
     $db->execute("DROP TABLE $tableList");
 }
 
+/**
+ * Attempt to run the ETL process identified by $processName.
+ *
+ * @param string $processName the name of the ETL process that is to be executed.
+ * @param bool $quiet         Defaults to true, if set to false then additional logging output may be
+ *                            generated
+ */
 function runEtlProcess($processName, $quiet=true)
 {
     global $dryRun, $log;
