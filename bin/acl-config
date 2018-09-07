@@ -110,6 +110,9 @@ function main()
         exit($result);
     }
 
+    // Make sure that all of the required tables are present
+    runEtlProcess('acls-xdmod-management');
+
     // a role/acl blacklist. 'default' doesn't actually exist so don't bother
     // processing it.
     $blacklist = array('default');
@@ -353,7 +356,7 @@ SQL;
      *       - user_acls
      *       - user_acl_group_by_parameters
      *
-     *   - managed tables: These tables are able to be re-created from our available configuration 
+     *   - managed tables: These tables are able to be re-created from our available configuration
      *     files ( roles.json / datawarehouse.json ).
      *
      *     Current tables include:
@@ -436,7 +439,10 @@ SQL;
 
     wipeManagedTables($db);
 
-    createManagedTables();
+    // Create Managed Tables
+    runEtlProcess('acls-xdmod-management');
+
+    repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
     // Process the xdmod module first
     if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
@@ -480,8 +486,8 @@ SQL;
     // Now re-populate the user related tables.
     repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
-    // Make sure we drop the backup tables
-    dropTables($db, $nonManagedBackupTables);
+    // Run the acl cleanup scripts
+    runEtlProcess('acls-import');
 }
 
 /**
@@ -2165,6 +2171,35 @@ function dropTables(iDatabase $db, array $tables)
     );
 
     $db->execute("DROP TABLE $tableList");
+}
+
+function runEtlProcess($processName, $quiet=true)
+{
+    global $dryRun, $log;
+
+    $parts = array(
+        'php',
+        BASE_DIR . '/tools/etl/etl_overseer.php',
+        '-p',
+        $processName
+    );
+
+    if ($quiet) {
+        $parts[] = '-v';
+        $parts[] = 'quiet';
+    }
+
+    $cmd = implode(
+        ' ',
+        $parts
+    );
+
+    if ($dryRun) {
+        $log->info("Would have executed: $cmd");
+        return;
+    }
+
+    echo exec($cmd);
 }
 
 /**
