@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Setup;
 
+use Models\Services\Organizations;
 use XDUser;
 
 /**
@@ -26,6 +27,17 @@ class AdminUserSetup extends SetupItem
         $lastName     = $this->console->prompt('Last name:');
         $emailAddress = $this->console->prompt('Email address:');
 
+        // Retrieve the organization that XDMoD is currently setup for so that the Admin user can
+        // be associated with it. If we are unable to retrieve / lookup the organization then
+        // default to the 'Unknown' organization.
+        try {
+            $organizationData = $this->loadJsonConfig('organization');
+
+            $organization = Organizations::getIdByName($organizationData['name']);
+        } catch (\Exception $e) {
+            $organization = -1;
+        }
+
         try {
             $user = new XDUser(
                 $username,
@@ -39,7 +51,7 @@ class AdminUserSetup extends SetupItem
                 $lastName,
                 array(ROLE_ID_MANAGER, ROLE_ID_USER),
                 ROLE_ID_MANAGER,
-                null,
+                $organization,
                 -1
             );
 
