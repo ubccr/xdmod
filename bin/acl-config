@@ -2166,14 +2166,33 @@ SQL;
     return count($results) > 0;
 }
 
+/**
+ * Attempt to issue a DROP TABLE statement for each of the provided $tables.
+ *
+ * @param iDatabase $db     the database to issue the sql statements to.
+ * @param string[]  $tables an array of string table names that are to be dropped.
+ */
 function dropTables(iDatabase $db, array $tables)
 {
+    global $dryRun, $log;
+
+    $log->info("*** Dropping Tables...");
+
     $tableList = implode(
         ',',
         $tables
     );
 
+    if ($dryRun) {
+        $log->notice("Would have dropped tables: $tableList");
+        return;
+    }
+
+    $log->info("\t [$tableList]");
+
     $db->execute("DROP TABLE $tableList");
+
+    $log->info("*** Tables Dropped!");
 }
 
 /**
@@ -2186,6 +2205,8 @@ function dropTables(iDatabase $db, array $tables)
 function runEtlProcess($processName, $quiet=true)
 {
     global $dryRun, $log;
+
+    $log->info("*** Running ETL Process [$processName]...");
 
     $parts = array(
         'php',
@@ -2203,6 +2224,8 @@ function runEtlProcess($processName, $quiet=true)
         ' ',
         $parts
     );
+
+    $log->info("\tCmd: $cmd ...");
 
     if ($dryRun) {
         $log->info("Would have executed: $cmd");
