@@ -486,6 +486,9 @@ SQL;
     // Now re-populate the user related tables.
     repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
+    // Make sure we drop the backup tables
+    dropTables($db, $nonManagedBackupTables);
+
     // Run the acl cleanup scripts
     runEtlProcess('acls-import');
 }
