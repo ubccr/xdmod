@@ -59,7 +59,7 @@
                 "name": "host",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "h",
-                "on": "h.hostname = h.hostname = raw.hostname AND h.resource_id = raw.resource_id",
+                "on": "h.hostname = raw.hostname AND h.resource_id = raw.resource_id",
                 "type": "LEFT OUTER"
             },
             {
