@@ -10,8 +10,23 @@
 	
 	$page_title = xd_utilities\getConfiguration('general', 'title');
 	$site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
-  
-   $validationCheck = XDUser::validateRID($_GET['rid']);
+
+$params = array(
+    'rid' => RESTRICTION_RID
+);
+
+$isValid = xd_security\secureCheck($params, 'GET');
+
+if (!$isValid) {
+    $validationCheck = array(
+        'status' => INVALID,
+        'user_first_name' => 'INVALID',
+        'user_id' => INVALID
+    );
+} else {
+    $validationCheck = XDUser::validateRID($_GET['rid']);
+}
+
 
 	// -------------------------------
    

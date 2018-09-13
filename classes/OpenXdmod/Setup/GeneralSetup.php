@@ -129,6 +129,11 @@ EOT
             );
         }
 
+        if (empty($settings['general_application_secret'])) {
+            $settings['general_application_secret'] = bin2hex(\random_bytes(256));
+            $settings['general_email_token_expiration'] = '600';
+        }
+
         $this->saveIniConfig($settings, 'portal_settings');
     }
 }

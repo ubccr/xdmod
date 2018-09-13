@@ -2686,38 +2686,6 @@ SQL;
 
     }//_generateToken
 
-
-    // --------------------------------
-
-    /*
-     *
-     * @function validateRID
-     * (determines whether the reset identifier (RID) is valid -- used for account password updating)
-     *
-     * @param string $rid
-     *
-     * @return array:  if first element in the array is VALID, then the array structure will be (VALID, id, first_name)
-     *                 if first element in the array is INVALID, then the array structure will be (INVALID)
-     *
-     */
-
-    public static function validateRID($rid)
-    {
-
-        $pdo = DB::factory('database');
-
-        $accountCheck = $pdo->query("SELECT id, first_name FROM Users WHERE MD5(CONCAT(username, password_last_updated)) = :rid", array(
-            ':rid' => $rid,
-        ));
-
-        if (count($accountCheck) > 0) {
-            return array('status' => VALID, 'user_id' => $accountCheck[0]['id'], 'user_first_name' => $accountCheck[0]['first_name']);
-        } else {
-            return array('status' => INVALID);
-        }
-
-    }//validateRID
-
     /*
      * @function isSSOUser
      *
@@ -2988,5 +2956,90 @@ SQL;
     public function setOrganizationID($organizationID)
     {
         $this->_organizationID = $organizationID;
+    }
+
+    /**
+     * Generate an RID value from the provided $user. This value is intended to be used in
+     * authenticating / authorizing a password reset. If an $expiration value is provided, that will
+     * be used instead of generating one via the 'email_token_expiration' portal settings value.
+     *
+     * @param int|null    $expiration the date after which this rid is considered invalid.
+     * @return string in the form "userId|expiration|hash"
+     * @throws Exception If there are any missing configuration properties that this function relies
+     * on. These include: email_token_expiration and application_secret.
+     */
+    public function generateRID($expiration = null)
+    {
+        $expiresIn = \xd_utilities\getConfiguration('general', 'email_token_expiration');
+        $appSecret = \xd_utilities\getConfiguration('general', 'application_secret');
+
+        $userId = $this->_id;
+        $userSecret = $this->_password;
+
+        if ($expiration === null) {
+            $expiration = time() + $expiresIn;
+        }
+
+        $hash = hash_hmac("sha256", "$userId $expiration $userSecret", $appSecret);
+
+        return "$userId|$expiration|$hash";
+    }
+
+    /**
+     * This function will determine whether or not the provided $rid is valid. This includes
+     * checking if the expiration date has passed, that the username provided is found to exist, and
+     * whether or not the information contained within RID has retained it's integrity (i.e. that
+     * somebody hasn't tried to monkey with the username / expiration date ).
+     *
+     * @param string $rid the rid value to be validated.
+     * @return array
+     * @throws Exception if there is a problem decoding the RID or if the
+     * email_token_expiration_format configuration property is not present.
+     */
+    public static function validateRID($rid)
+    {
+        $log = \CCR\Log::factory('xms.auth.rid', array(
+            'console' => false,
+            'db' => true,
+            'mail' => false,
+            'file' => LOG_DIR . '/xms-auth-rid.log',
+            'fileLogLevel' => PEAR_LOG_DEBUG
+        ));
+
+        $results = array(
+            'status' => INVALID,
+            'user_first_name' => 'INVALID',
+            'user_id' => INVALID
+        );
+
+        list($userId, $expiration, $hash) = explode('|', $rid);
+
+        $now = time();
+
+        if ($now >= $expiration) {
+            $expirationDate = date('Y-m-d H:i:s', $expiration);
+            $log->debug("RID Token expired for: $userId | expired: $expirationDate");
+            return $results;
+        }
+
+        try {
+            $user = XDUser::getUserByID($userId);
+            if ($user === null) {
+                return $results;
+            }
+            $expected = explode('|', $user->generateRID($expiration))[2];
+            $valid = hash_equals($expected, $hash);
+
+            $results['status'] = $valid ? VALID : INVALID;
+            $results['user_first_name'] = $valid ? $user->getFirstName() : 'INVALID';
+            $results['user_id'] = $valid ? $user->getUserID() : INVALID;
+        } catch (Exception $e) {
+            // If there was an exception then it was because we couldn't find a user by that username
+            // so log the error and return the default information.
+            $expirationDate = date('Y-m-d H:i:s', $expiration );
+            $log->debug("Error occurred while validating RID for User: $userId, Expiration: $expirationDate");
+        }
+
+        return $results;
     }
 }//XDUser

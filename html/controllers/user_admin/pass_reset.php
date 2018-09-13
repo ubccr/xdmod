@@ -33,7 +33,7 @@ $page_title = \xd_utilities\getConfiguration('general', 'title');
 try {
     $userName = $user_to_email->getUsername();
 
-    $rid = md5($userName . $user_to_email->getPasswordLastUpdatedTimestamp());
+    $rid = $user_to_email->generateRID();
 
     $site_address
         = \xd_utilities\getConfigurationUrlBase('general', 'site_address');

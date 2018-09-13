@@ -103,7 +103,7 @@ try {
     $message = "Welcome to the $page_title.  Your account has been created.\n\n";
     $message .= "Your username is: ".$_POST['username']."\n\n";
     $message .= "Please visit the following page to create your password:\n\n";
-    $message .= "${site_address}password_reset.php?mode=new&rid=".md5($newuser->getUsername().$newuser->getPasswordLastUpdatedTimestamp())."\n\n";
+    $message .= "${site_address}password_reset.php?mode=new&rid=".$newuser->generateRID()."\n\n";
     $message .= "Once you have created a password, you will be directed to $site_address where you can then log in using your credentials.\n\n";
 
     $message .= "For assistance on using the portal, please consult the User Manual:\n";
