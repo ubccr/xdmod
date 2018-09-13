@@ -95,7 +95,7 @@ if ($auth && $auth->isSamlConfigured()) {
         <tr>
             <td colspan=2 align="center">
               <p>
-                Welcome, <?php print $formal_name; ?>
+                Welcome, <?php print htmlentities($formal_name); ?>
               </p>
               <p>
                 <img src="/gui/images/progbar.gif" />
