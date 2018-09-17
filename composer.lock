@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dee85577d637de75c104abcb6eadb5dc",
+    "content-hash": "a5be36586e9602c001b1c38855e29123",
     "packages": [
         {
             "name": "analog/analog",
@@ -1273,6 +1273,7 @@
             "keywords": [
                 "microframework"
             ],
+            "abandoned": "symfony/flex",
             "time": "2015-06-04T21:24:58+00:00"
         },
         {
@@ -2061,16 +2062,16 @@
         },
         {
             "name": "ubccr/simplesamlphp-module-authglobus",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ubccr/simplesamlphp-module-authglobus.git",
-                "reference": "dd7ac21f475e5b8b34d21be080c27b993f0ba249"
+                "reference": "d81f53960bdfdb015de267d804863e85d2efb5f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authglobus/zipball/dd7ac21f475e5b8b34d21be080c27b993f0ba249",
-                "reference": "dd7ac21f475e5b8b34d21be080c27b993f0ba249",
+                "url": "https://api.github.com/repos/ubccr/simplesamlphp-module-authglobus/zipball/d81f53960bdfdb015de267d804863e85d2efb5f6",
+                "reference": "d81f53960bdfdb015de267d804863e85d2efb5f6",
                 "shasum": ""
             },
             "require": {
@@ -2083,7 +2084,7 @@
             "type": "simplesamlphp-module",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-3.0"
+                "LGPL-3.0"
             ],
             "authors": [
                 {
@@ -2093,7 +2094,7 @@
                 }
             ],
             "description": "Globus Auth module for SimpleSAMLphp.",
-            "time": "2018-02-05T16:11:08+00:00"
+            "time": "2018-09-10T15:22:34+00:00"
         },
         {
             "name": "whitehat101/apr1-md5",
