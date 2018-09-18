@@ -901,7 +901,8 @@ SQL;
             if ($this->_password == "" || is_null($this->_password)) {
                 $update_data['password'] = NULL;
             } else {
-                $update_data['password'] = password_hash($this->_password, PASSWORD_DEFAULT);
+                $this->_password = password_hash($this->_password, PASSWORD_DEFAULT);
+                $update_data['password'] = $this->_password;
             }
             $update_data['password_last_updated'] = 'NOW()';
         }
