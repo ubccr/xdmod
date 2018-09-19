@@ -282,6 +282,7 @@ DatasetProcessor.prototype.process = function (totalCores, coreIndex) {
                     self.emit('error', self.dataset.name + ': ' + "Create index " + idx + " returned " + err);
                     self._processEnded = true;
                     self.onEndProcess();
+                    return;
                 }
 
                 self.emit('message', self.dataset.name + ': query \'' + self.collection.collectionName + '\' ' + util.inspect(query));
@@ -297,15 +298,19 @@ DatasetProcessor.prototype.process = function (totalCores, coreIndex) {
 
                 self.stream.on("data", multiCore === true ?
                     function (doc) {
+                        self.stats.currentlyProcessing += 1;
                         //todo: maybe consider using a real hashing mechanism. this might just do though.
                         var re = /(\d+)/;
                         var match = re.exec(doc._id);
 
                         if (match && parseInt(match[0], 10) % totalCores == coreIndex) {
                             self.onDoc(doc);
+                        } else {
+                            self.stats.currentlyProcessing -= 1;
                         }
                     } :
                     function (doc) {
+                        self.stats.currentlyProcessing += 1;
                          self.onDoc(doc);
                     }
                 )
@@ -391,7 +396,7 @@ DatasetProcessor.prototype.onBeginDoc = function () {
     if (!this.stream) {
         throw Error(self.dataset.name + ': ' + 'DatasetProcessor::onBeginDoc called before this.stream init');
     }
-    if (++this.stats.currentlyProcessing >= this.config.maxProcessing) {
+    if (this.stats.currentlyProcessing >= this.config.maxProcessing) {
         this.stream.pause(); //pause until doc is processed.
     }
 }
