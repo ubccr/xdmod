@@ -21,9 +21,4 @@ class StartedSessionsCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
         <b>Start:</b> A session start event is defined as the initial creation, resume from pause/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (eg a state report) is treated as the start of a new session.<br/>
         <b>Stop:</b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM.";
     }
-
-    public function isVisible()
-    {
-        return true;
-    }
 }
