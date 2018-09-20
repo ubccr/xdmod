@@ -25,7 +25,7 @@ class GroupByProject extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "The project associated with a running virtual machine.";
+        return "The project associated with a running session of a virtual machine.";
     }
 
     public function __construct()

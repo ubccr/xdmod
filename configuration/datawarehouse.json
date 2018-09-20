@@ -365,17 +365,17 @@
             ],
             "statistics": [
                {
-                   "name": "cloud_num_vms_ended",
-                   "class": "VMCountStatistic"
+                   "name": "cloud_num_sessions_ended",
+                   "class": "SessionsCountStatistic"
                },
                {
-                   "name": "cloud_num_vms_running",
-                   "class": "RunningVMCountStatistic",
+                   "name": "cloud_num_sessions_running",
+                   "class": "RunningSessionsCountStatistic",
                    "control": true
                },
                {
-                   "name": "cloud_num_vms_started",
-                   "class": "StartedVMCountStatistic",
+                   "name": "cloud_num_sessions_started",
+                   "class": "StartedSessionsCountStatistic",
                    "control": true
                },
                {
@@ -391,14 +391,6 @@
                    "class": "WallHoursStatistic"
                },
                {
-                   "name": "cloud_avg_num_cores",
-                   "class": "AverageCoresReservedStatistic"
-               },
-               {
-                   "name": "cloud_num_cores",
-                   "class": "CoresReservedStatistic"
-               },
-               {
                    "name": "cloud_avg_cores_reserved",
                    "class": "WeightedCoresReservedStatistic"
                },
@@ -407,8 +399,8 @@
                    "class": "AverageMemoryReservedStatistic"
                },
                {
-                   "name": "cloud_avg_disk_reserved",
-                   "class": "AverageStorageReservedStatistic"
+                   "name": "cloud_avg_rv_storage_reserved",
+                   "class": "AverageRootVolumeStorageReservedStatistic"
                }
             ]
         }

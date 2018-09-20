@@ -1,0 +1,10 @@
+title
+"Number of Active Sessions (Number of Sessions): by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[1] Number of Active Sessions (Number of Sessions)","[2 - 3] Number of Active Sessions (Number of Sessions)","[4 - 7] Number of Active Sessions (Number of Sessions)"
+2018-04,43,5,3
+---------

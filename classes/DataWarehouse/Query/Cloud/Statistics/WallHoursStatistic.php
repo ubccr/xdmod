@@ -5,7 +5,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 * @author Rudra Chakraborty
 * @date 04-17-2018
 *
-* The total core reservation time of virtual machines, in hours
+* Wall duration in hours.
 */
 class WallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
@@ -23,6 +23,6 @@ class WallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function getInfo()
     {
         return 'The total wall time in which a virtual machine was running, in hours.<br/>
-        <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
+        <b>Wall Time:</b> The linear duration between the start and end times of discrete sessions.';
     }
 }

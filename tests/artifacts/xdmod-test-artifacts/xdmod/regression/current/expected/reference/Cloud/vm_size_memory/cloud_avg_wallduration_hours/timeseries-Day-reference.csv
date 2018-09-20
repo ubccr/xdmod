@@ -1,11 +1,11 @@
 title
-"Average Wall Hours per VM: by VM Size: Memory"
+"Average Wall Hours per Session: by VM Size: Memory"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[8 - 16 GB] Average Wall Hours per VM","[2 - 4 GB] Average Wall Hours per VM","[< 2 GB] Average Wall Hours per VM","[4 - 8 GB] Average Wall Hours per VM"
+Day,"[8 - 16 GB] Average Wall Hours per Session","[2 - 4 GB] Average Wall Hours per Session","[< 2 GB] Average Wall Hours per Session","[4 - 8 GB] Average Wall Hours per Session"
 2018-04-18,2.21361111,1.84577160,0.01555556,0.23583333
 2018-04-19,0,6.47998538,0.23756944,0
 2018-04-20,0,6.64260101,0,0

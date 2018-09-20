@@ -5,7 +5,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 * @author Rudra Chakraborty
 * @date 04-17-2018
 *
-* The total core reservation time of virtual machines, in hours
+* The average memory reserved by a VM, weighted by wall hours
 */
 class AverageMemoryReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
@@ -22,7 +22,7 @@ class AverageMemoryReservedStatistic extends \DataWarehouse\Query\Cloud\Statisti
 
     public function getInfo()
     {
-        return 'The average amount of memory (in bytes) reserved by running virtual machines, weighted by wall hours.<br/>
-        <b>Wall Time:</b> The linear duration between the start and end times of discrete virtual machine runs.';
+        return 'The average amount of memory (in bytes) reserved by running sessions, weighted by wall hours.<br/>
+        <b>Wall Time:</b> The duration between the start and end times of an individual session.';
     }
 }

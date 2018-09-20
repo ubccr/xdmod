@@ -1,11 +1,11 @@
 title
-"Average Wall Hours per VM"
+"Average Wall Hours per Session"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Screwdriver] Average Wall Hours per VM"
+Day,"[Screwdriver] Average Wall Hours per Session"
 2018-04-18,1.72284091
 2018-04-19,5.39434783
 2018-04-20,6.64260101

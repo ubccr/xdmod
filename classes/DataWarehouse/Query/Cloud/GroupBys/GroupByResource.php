@@ -18,7 +18,7 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return 'A resource is a remote computer that can host VM instances.';
+        return 'A resource is defined as any remote infrastructure that hosts cloud instances.';
     }
 
     public function __construct()

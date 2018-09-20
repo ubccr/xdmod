@@ -1,10 +1,10 @@
 title
-"Average Wall Hours per VM: by Resource"
+"Average Wall Hours per Session: by Resource"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Quarter,"[openstack] Average Wall Hours per VM"
+Quarter,"[openstack] Average Wall Hours per Session"
 "2018 Q2",24.09155229
 ---------

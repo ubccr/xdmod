@@ -5,7 +5,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 * @author Rudra Chakraborty
 * @date 04-17-2018
 *
-* The total core reservation time of virtual machines, in hours
+* Core Consumption of Sessions, in hours.
 */
 class CoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
@@ -22,7 +22,7 @@ class CoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
 
     public function getInfo()
     {
-        return 'The total number of Core Hours consumed by running virtual machines.<br/>
+        return 'The total number of Core Hours consumed by running sessions.<br/>
         <b>Core Hours</b>: The product of the number of cores assigned to a VM and its wall time, in hours.';
     }
 }

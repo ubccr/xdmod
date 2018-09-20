@@ -38,7 +38,7 @@ class GroupByVMCores extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return     "A categorization of virtual machines into discrete groups based on the number of cores used by each VM.";
+        return     "A categorization of sessions into discrete groups based on the number of cores used by each VM.";
     }
 
     public static function getLabel()

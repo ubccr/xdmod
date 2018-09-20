@@ -24,7 +24,7 @@
                 "name": "host_resource_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: The resource id of the host of a VM where event(s) occured."
+                "comment": "DIMENSION: The resource id of the host of a VM where sessions ran."
             },{
                 "name": "account_id",
                 "type": "smallint(5) unsigned",
@@ -71,10 +71,10 @@
                 "nullable": false,
                 "comment": "FACT: Memory reserved by a VM."
             },{
-                "name": "disk_reserved",
+                "name": "rv_storage_reserved",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Disk space reserved by a VM."
+                "comment": "FACT: Root volume storage space reserved by a VM."
             },{
                 "name": "memory_mb",
                 "type": "int(11)",
@@ -86,30 +86,30 @@
                 "nullable": false,
                 "comment": "DIMENSION: Disk size in GB reserved by a VM."
             },{
-                "name": "num_vms_running",
+                "name": "num_sessions_running",
                 "type": "int(11)",
                 "nullable": true,
-                "comment": "FACT: Number of VMs extant in some fashion in a given period."
+                "comment": "FACT: Number of sessions extant in some fashion in a given period."
             },{
-                "name": "num_vms_started",
+                "name": "num_sessions_started",
                 "type": "int(11)",
                 "nullable": true,
-                "comment": "FACT: Number of VMs started over a given period."
+                "comment": "FACT: Number of sessions started over a given period."
             },{
-                "name": "num_vms_ended",
+                "name": "num_sessions_ended",
                 "type": "int(11)",
                 "nullable": true,
-                "comment": "FACT: Number of VMs ended over a given period."
+                "comment": "FACT: Number of sessions ended over a given period."
             },{
                 "name": "wallduration",
                 "type": "decimal(18,0)",
                 "nullable": true,
-                "comment": "FACT: (seconds) The wallduration of the VMs that were running during this period."
+                "comment": "FACT: (seconds) The wallduration of the sessions that were running during this period."
             },{
                 "name": "submission_venue_id",
                 "type": "int(5)",
                 "nullable": true,
-                "comment": "DIMENSION: The venue that a job or cloud instance was initiated from"
+                "comment": "DIMENSION: The venue that a job or cloud instance was initiated from."
             }
         ],
 
