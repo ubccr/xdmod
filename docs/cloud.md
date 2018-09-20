@@ -63,32 +63,32 @@ If you choose to use the generic file format for ingesting event data each event
 
 ```json
 {
-	"node_controller": IP address of node controller,
-	"public_ip": Publically available IP address,
+	"node_controller": "IP address of node controller",
+	"public_ip": "Publically available IP address",
 	"account": "Account that user is logged into",
-	"event_type": Type of event,
-	"event_time": Time that event happened,
+	"event_type": "Type of event",
+	"event_time": "Time that event happened",
 	"instance_type": {
-		"name": Name of VM,
-		"cpu": Number of CPU's the instance has,
-		"memory": Amount of memory the instance has,
-		"disk": Amount of storage space in GB this instance has,
-		"networkInterfaces": Number of network interfaces
+		"name": "Name of VM",
+		"cpu": "Number of CPU's the instance has",
+		"memory": "Amount of memory the instance has",
+		"disk": "Amount of storage space in GB this instance has",
+		"networkInterfaces": "Number of network interfaces"
 	},
-	"image_type": Name of the type of image this instance uses,
-	"instance_id": ID for the VM instance,
-	"record_type": Type of record from list in modw_cloud.record_type table,
+	"image_type": "Name of the type of image this instance uses",
+	"instance_id": "ID for the VM instance",
+	"record_type": "Type of record from list in modw_cloud.record_type table",
 	"block_devices": [{
-		"account": Account that the storage device belongs to,
-		"attach_time": Time that the storage device was attached to this instance,
-		"backing": type of storage used for this block device, either `ebs` or `instance-store`
-		"create_time": Time the storage device was created,
-		"user": User that the storage device was created by
-		"id": ID of the storage volume,
-		"size": Size in GB of the storage volume
+		"account": "Account that the storage device belongs to",
+		"attach_time": "Time that the storage device was attached to this instance",
+		"backing": "type of storage used for this block device, either ebs or instance-store",
+		"create_time": "Time the storage device was created",
+		"user": "User that the storage device was created by",
+		"id": "ID of the storage volume",
+		"size": "Size in GB of the storage volume"
 	}],
 	"private_ip": null,
-	"root_type": Type of storage initial storage volume is, either `ebs` or `instance-store`
+	"root_type": "Type of storage initial storage volume is, either ebs or instance-store
 }
 ```
 ## Adding and Enabling Cloud Resources
