@@ -12,7 +12,7 @@ class CoreHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.core_time) / 3600.0 ,0)',
+            'COALESCE(SUM(jf.core_time) / 3600.0, 0)',
             'cloud_core_time',
             'Core Hours: Total',
             'Hours',

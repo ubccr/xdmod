@@ -12,7 +12,7 @@ class AverageRootVolumeStorageReservedStatistic extends \DataWarehouse\Query\Clo
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.rv_storage_reserved) / SUM(jf.wallduration),0)',
+            'COALESCE(SUM(jf.rv_storage_reserved) / SUM(jf.wallduration), 0)',
             'cloud_avg_rv_storage_reserved',
             'Average Root Volume Storage Reserved Weighted By Wall Hours',
             'Bytes',

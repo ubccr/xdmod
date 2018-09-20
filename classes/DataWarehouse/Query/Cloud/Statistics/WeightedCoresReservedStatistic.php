@@ -12,7 +12,7 @@ class WeightedCoresReservedStatistic extends \DataWarehouse\Query\Cloud\Statisti
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.core_time) / SUM(jf.wallduration),0)',
+            'COALESCE(SUM(jf.core_time) / SUM(jf.wallduration), 0)',
             'cloud_avg_cores_reserved',
             'Average Cores Reserved Weighted By Wall Hours',
             'Cores',

@@ -4,8 +4,7 @@
             "schema": "modw_aggregates",
             "table": "jobfact",
             "datasource": "HPcDB",
-            "group_bys": [
-                {
+            "group_bys": [{
                     "name": "none",
                     "class": "GroupByNone"
                 },
@@ -83,8 +82,7 @@
                     "visible": false
                 }
             ],
-            "statistics": [
-                {
+            "statistics": [{
                     "name": "job_count",
                     "class": "JobCountStatistic"
                 },
@@ -209,8 +207,7 @@
             "schema": "modw",
             "table": "storagefact",
             "datasource": "Storage usage logs",
-            "group_bys": [
-                {
+            "group_bys": [{
                     "name": "none",
                     "class": "GroupByNone"
                 },
@@ -267,8 +264,7 @@
                     "class": "GroupByScience"
                 }
             ],
-            "statistics": [
-                {
+            "statistics": [{
                     "name": "user_count",
                     "class": "UserCountStatistic"
                 },
@@ -317,8 +313,7 @@
             "schema": "modw_cloud",
             "table": "cloudfact",
             "datasource": "Cloud",
-            "group_bys": [
-                {
+            "group_bys": [{
                     "name": "none",
                     "class": "GroupByNone"
                 },
@@ -327,81 +322,80 @@
                     "class": "GroupByProject"
                 },
                 {
-                   "name": "configuration",
-                   "class": "GroupByConfiguration"
+                    "name": "configuration",
+                    "class": "GroupByConfiguration"
                 },
                 {
-                   "name": "resource",
-                   "class": "GroupByResource"
+                    "name": "resource",
+                    "class": "GroupByResource"
                 },
                 {
-                   "name": "day",
-                   "class": "GroupByDay"
+                    "name": "day",
+                    "class": "GroupByDay"
                 },
                 {
-                   "name": "month",
-                   "class": "GroupByMonth"
+                    "name": "month",
+                    "class": "GroupByMonth"
                 },
                 {
-                   "name": "quarter",
-                   "class": "GroupByQuarter"
+                    "name": "quarter",
+                    "class": "GroupByQuarter"
                 },
                 {
-                   "name": "year",
-                   "class": "GroupByYear"
+                    "name": "year",
+                    "class": "GroupByYear"
                 },
                 {
-                   "name": "vm_size_memory",
-                   "class": "GroupByVMMemory"
+                    "name": "vm_size_memory",
+                    "class": "GroupByVMMemory"
                 },
                 {
-                   "name": "vm_size",
-                   "class": "GroupByVMCores"
+                    "name": "vm_size",
+                    "class": "GroupByVMCores"
                 },
                 {
-                   "name": "submission_venue",
-                   "class": "GroupBySubmissionVenue"
+                    "name": "submission_venue",
+                    "class": "GroupBySubmissionVenue"
                 }
             ],
-            "statistics": [
-               {
-                   "name": "cloud_num_sessions_ended",
-                   "class": "SessionsCountStatistic"
-               },
-               {
-                   "name": "cloud_num_sessions_running",
-                   "class": "RunningSessionsCountStatistic",
-                   "control": true
-               },
-               {
-                   "name": "cloud_num_sessions_started",
-                   "class": "StartedSessionsCountStatistic",
-                   "control": true
-               },
-               {
-                   "name": "cloud_avg_wallduration_hours",
-                   "class": "AverageWallHoursStatistic"
-               },
-               {
-                   "name": "cloud_core_time",
-                   "class": "CoreHoursStatistic"
-               },
-               {
-                   "name": "cloud_wall_time",
-                   "class": "WallHoursStatistic"
-               },
-               {
-                   "name": "cloud_avg_cores_reserved",
-                   "class": "WeightedCoresReservedStatistic"
-               },
-               {
-                   "name": "cloud_avg_memory_reserved",
-                   "class": "AverageMemoryReservedStatistic"
-               },
-               {
-                   "name": "cloud_avg_rv_storage_reserved",
-                   "class": "AverageRootVolumeStorageReservedStatistic"
-               }
+            "statistics": [{
+                    "name": "cloud_num_sessions_ended",
+                    "class": "SessionsCountStatistic"
+                },
+                {
+                    "name": "cloud_num_sessions_running",
+                    "class": "RunningSessionsCountStatistic",
+                    "control": true
+                },
+                {
+                    "name": "cloud_num_sessions_started",
+                    "class": "StartedSessionsCountStatistic",
+                    "control": true
+                },
+                {
+                    "name": "cloud_avg_wallduration_hours",
+                    "class": "AverageWallHoursStatistic"
+                },
+                {
+                    "name": "cloud_core_time",
+                    "class": "CoreHoursStatistic"
+                },
+                {
+                    "name": "cloud_wall_time",
+                    "class": "WallHoursStatistic"
+                },
+                {
+                    "name": "cloud_avg_cores_reserved",
+                    "class": "WeightedCoresReservedStatistic"
+                },
+                {
+                    "name": "cloud_avg_memory_reserved",
+                    "class": "AverageMemoryReservedStatistic"
+                },
+                {
+                    "name": "cloud_avg_rv_storage_reserved",
+                    "class": "AverageRootVolumeStorageReservedStatistic"
+                }
             ]
         }
     }

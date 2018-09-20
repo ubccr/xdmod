@@ -12,7 +12,7 @@ class WallHoursStatistic extends \DataWarehouse\Query\Cloud\Statistic
     public function __construct($query_instance = null)
     {
         parent::__construct(
-            'COALESCE(SUM(jf.wallduration) / 3600.0 ,0)',
+            'COALESCE(SUM(jf.wallduration) / 3600.0, 0)',
             'cloud_wall_time',
             'Wall Hours: Total',
             'Hours',
