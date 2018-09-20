@@ -19,15 +19,19 @@ use CCR\Json;
 use User\Roles;
 use Xdmod\Config;
 
+const SCHEMA = 'moddb';
+
 $opts = array(
     't' => 'dryrun',
     'v' => 'verbose',
     'd' => 'debug',
+    'r' => 'recover',
     'h' => 'help'
 );
 
 $dryRun = false;
 $logLevel = Log::ERR;
+$recover = false;
 
 try {
     $options = getopt(implode('', array_keys($opts)), array_values($opts));
@@ -50,6 +54,10 @@ try {
             case 'help':
                 displayHelp();
                 exit(0);
+                break;
+            case 'r':
+            case 'recover':
+                $recover = true;
                 break;
         }
     }
@@ -85,7 +93,7 @@ try {
  **/
 function main()
 {
-    global $dryRun, $log, $verify, $logLevel;
+    global $dryRun, $log, $verify, $logLevel, $recover;
 
     $log->notice("*** Beginning Acl Configuration Tool...");
     $log->info(
@@ -308,29 +316,134 @@ SQL;
 
     $tablesToBeBackedUp = array(
         'user_acls' => array(
-            'create' => $userAclCreateBkup,
-            'populate' => $userAclRepopulate
+            'create_sql' => $userAclCreateBkup,
+            'populate_sql' => $userAclRepopulate
         ),
         'user_acl_group_by_parameters' => array(
-            'create' => $uagbpCreateBkup,
-            'populate' =>$uagbpRepopulate
+            'create_sql' => $uagbpCreateBkup,
+            'populate_sql' =>$uagbpRepopulate
         )
     );
 
-    backupNonManagedTables($db, $tablesToBeBackedUp);
+    $nonManagedBackupTables = array_reduce(
+        array_keys($tablesToBeBackedUp),
+        function($carry, $item) {
+            $carry[] = "${item}_bkup";
+            return $carry;
+        },
+        array()
+    );
+
+    /* acl-config "recovery" documentation
+     *
+     * Before diving into a description of how acl-config's "recovery" flag works, some definitions
+     * are included below to help while reading the rest of the documentation.
+     *
+     * Definitions:
+     *
+     *   - non-managed tables: These are tables that we are not able to be re-create from our
+     *     available configuration files ( roles.json / datawarehouse.json ). In these tables case,
+     *     a record is added when a user is created with / updated to have a relationship with a
+     *     particular acl. This is most often done via the User Management portion of the Internal
+     *     Dashboard.
+     *     Also, these tables, and their need to re-generate their managed table foreign keys, are
+     *     the reason we have a "recovery" flag in the first place.
+     *
+     *     Current tables include:
+     *       - user_acls
+     *       - user_acl_group_by_parameters
+     *
+     *   - managed tables: These tables are able to be re-created from our available configuration 
+     *     files ( roles.json / datawarehouse.json ).
+     *
+     *     Current tables include:
+     *       - user_acl_group_by_parameters
+     *       - user_acls
+     *       - acl_tabs
+     *       - tabs
+     *       - acl_hierarchies
+     *       - acl_group_bys
+     *       - acls
+     *       - acl_types
+     *       - group_bys
+     *       - statistics
+     *       - hierarchies
+     *       - realms
+     *       - modules
+     *
+     * Now we will walk through a number of script executions which will provide the necessary
+     * context for understanding how the "recovery" process is implemented. These script executions
+     * occur in the order they are presented.
+     *
+     * - Successful Script Execution:
+     *   - command line: `acl-config`
+     *   - Order of Operations:
+     *     - Backup tables do not exist by default so the first thing that occurs is that they are
+     *       created / populated.
+     *       - `backupNonManagedTables($db, $tablesToBeBackedUp);`
+     *     - Managed tables are wiped / re-created from the various configuration files ( roles.json,
+     *       datawarehouse.json )
+     *     - The non-managed tables are restored using the newly populated managed tables and the
+     *       backup tables.
+     *     - The backup tables are removed:
+     *       - `dropTables($db, $nonManagedBackupTables);`
+     *       - *** NOTE *** if the script completes successfully the backup tables will not be
+     *         present after the script ends.
+     *
+     * - Unsuccessful Script Execution:
+     *   - command line: `acl-config`
+     *   - Order of Operations:
+     *     - Backup tables do not exist by default so the first thing that occurs is that they are
+     *       created / populated.
+     *       - `backupNonManagedTables($db, $tablesToBeBackedUp);`
+     *     - *** at some point during the managed table wipe / re-creation an error occurs or the
+     *       script is killed. ***
+     *     - The removal of the backup tables is never executed and so they are still present.
+     *
+     * - Recovery Script Execution:
+     *   - command line: `acl-config [-r|--recovery]`
+     *   - Order of Operations:
+     *     - Backup tables *do* exist as the previous execution was not successful.
+     *     - Because the backup tables exist *and* the recover flag was supplied we skip the step
+     *       that creates / populates the backup tables.
+     *     - Managed tables are wiped / re-created from the various configuration files ( roles.json,
+     *       datawarehouse.json )
+     *     - The non-managed tables are restored from the existing backup tables and newly populated
+     *       managed tables. This is where the *recovery* occurs.
+     *     - The backup tables are removed.
+     *
+     * *** Important Notes ***
+     *
+     * - If there are changes to the non-managed tables ( user_acls, user_acl_group_by_parameters )
+     *   *after* a failed run but *before* acl-config is run with the --recover flag, then these
+     *   changes will *not* be recovered.
+     */
+    $backupTablesExist = tablesExist($db, $nonManagedBackupTables, SCHEMA, false);
+
+    if ($backupTablesExist && !$recover) {
+        $log->err('Backup tables detected! ');
+        $log->err('Unable to continue!');
+        $log->err('This may indicate a failed previous run.');
+        $log->err('Please see the XDMoD Troubleshooting documentation to resolve.');
+        exit(1);
+    } elseif (!$backupTablesExist) {
+        if ($recover) {
+            $log->warning('Recover mode specified but no backup tables exist.');
+            $log->warning('Script execution will continue as normal.');
+        }
+        backupNonManagedTables($db, $tablesToBeBackedUp);
+    }
 
     wipeManagedTables($db);
 
     createManagedTables();
-
-    repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
     // Process the xdmod module first
     if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
         processModules(
             $db,
             array(
-                    DEFAULT_MODULE_NAME => $modules[DEFAULT_MODULE_NAME]
+                DEFAULT_MODULE_NAME => $modules[DEFAULT_MODULE_NAME]
             )
         );
         unset($modules[DEFAULT_MODULE_NAME]);
@@ -366,6 +479,9 @@ SQL;
 
     // Now re-populate the user related tables.
     repopulateNonManagedTables($db, $tablesToBeBackedUp);
+
+    // Make sure we drop the backup tables
+    dropTables($db, $nonManagedBackupTables);
 }
 
 /**
@@ -383,16 +499,19 @@ function backupNonManagedTables(iDatabase $db, array $tables)
     $log->info("Backing Up User Related Tables...");
 
     foreach($tables as $table => $queries) {
-        $creationQuery = $queries['create'];
+        $creationQuery = $queries['create_sql'];
+
         $query = <<<SQL
-CREATE TEMPORARY TABLE ${table}_bkup AS $creationQuery;
+CREATE TABLE ${table}_bkup AS $creationQuery;
 SQL;
+
         $log->debug("Backup query [$table]: $query");
 
         if ($dryRun) {
             $log->notice("Table[$table] would have been created");
             continue;
         }
+
         // throws exception or returns row count
         $rows = $db->execute($query);
         $log->debug(sprintf('Inserted %d rows into %s', $rows, $table));
@@ -485,7 +604,7 @@ function repopulateNonManagedTables(iDatabase $db, array $tables)
     $log->info("Repopulating Tables...");
 
     foreach($tables as $table => $queries) {
-        $query = $queries['populate'];
+        $query = $queries['populate_sql'];
 
         if ($dryRun) {
             $log->info("For Table[$table]: \n$query");
@@ -1992,6 +2111,63 @@ function verifyDatabase()
 }
 
 /**
+ * Determines whether all of the provided tables currently exist.
+ *
+ * @param iDatabase $db to execute the required sql statement
+ * @param array $tables an array of table names ( as strings )
+ * @param string $schema the db schema that $tables belong to
+ * @param bool $all only return true if all of the provided tables exist. Defaults to `true`.
+ *
+ * @return bool true if they do, false if they do not.
+ */
+function tablesExist(iDatabase $db, array $tables, $schema, $all = true)
+{
+    $handle = $db->handle();
+    $query = <<<SQL
+SELECT *
+FROM information_schema.tables
+WHERE table_schema = :table_schema
+AND table_name in (:table_list);
+SQL;
+
+    $tables = array_reduce(
+        $tables,
+        function($carry, $item) use ($handle)
+        {
+            $carry[] = $handle->quote($item);
+            return $carry;
+        },
+        array()
+    );
+
+    $tableList = implode(',', $tables);
+    $params = array(
+        ':table_schema' => $schema,
+        ':table_list' => $tableList
+    );
+    $results = $db->query(
+        $query,
+        $params
+    );
+
+    if ($all) {
+        return count($tables) === count($results);
+    }
+
+    return count($results) > 0;
+}
+
+function dropTables(iDatabase $db, array $tables)
+{
+    $tableList = implode(
+        ',',
+        $tables
+    );
+
+    $db->execute("DROP TABLE $tableList");
+}
+
+/**
  * Takes in one of the PEAR Log Levels and returns a string representation of
  * this scripts verbosity level.
  *     - LOG::NOTICE -> 'none'
@@ -2043,14 +2219,24 @@ function displayHelp()
 Usage: acl-config [options]
 
 Options:
-    -t | --dryrun        : Only log potential changes to the console. No actual
-                           changes will be committed to the database.
+    -t, --dryrun
+        Only log potential changes to the console. No actual
+        changes will be committed to the database.
 
-    -v | --verbose       : Output additional processing information.
+    -r, --recover
+        Indicate that the current non-managed backup tables should be used during
+        re-population as opposed to regenerating them from scratch. This flag
+        should specified if a previous execution errored out or was cancelled
+        before completion.
 
-    -d | --debug         : Output debug related information.
+    -v, --verbose
+        Output additional processing information.
 
-    -h | --help          : Display this help message and then exit.
+    -d, --debug
+        Output debug related information.
+
+    -h, --help
+        Display this help message and then exit.
 
 EOT;
     echo $usage;

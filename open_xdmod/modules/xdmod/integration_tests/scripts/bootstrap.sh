@@ -33,10 +33,10 @@ then
     #Ingesting cloud data from references folder
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
-    acl-import
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
@@ -54,6 +54,7 @@ then
     #Ingesting cloud data from references folder
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline

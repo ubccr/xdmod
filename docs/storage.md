@@ -16,12 +16,15 @@ Add a storage resource using the `xdmod-setup` script or by manually modifying
 select a storage resource type or you will need to manually add the roles
 configuration as described in the following section.
 
+The resource name (also referred to as the resource code; not the formal name)
+must then be used in the JSON storage input files described below.
+
 ### Update Roles Configuration
 
 If you did not use the `xdmod-setup` script you must enable the storage query
-descripters.  This can be done by creating a new file, `roles.d/storage.json`,
-with the appropriate contents.  An example is shown below and can be copied from
-`/usr/share/xdmod/templates/roles.d/storage.json`.
+descripters manually.  This can be done by creating a new file,
+`roles.d/storage.json`, with the appropriate contents.  An example is shown
+below and can be copied from `/usr/share/xdmod/templates/roles.d/storage.json`.
 
 ```json
 {
@@ -127,8 +130,8 @@ $ acl-config && acl-import
 
 ## Input Format
 
-NOTE: The thresholds and usage numbers are all measured in bytes.  Mountpoint
-names are currently limited to 255 characters.
+**NOTE**: The thresholds and usage numbers are all measured in bytes.
+Mountpoint names are currently limited to 255 characters.
 
 ```json
 [
@@ -149,7 +152,10 @@ names are currently limited to 255 characters.
 ]
 ```
 
-## ETL Commands
+## Data Ingestion
+
+All of the following commands must be executed in the order specified below to
+fully ingest storage data into the data warehouse.
 
 Ingest all files in the `/path/to/storage/logs` directory:
 
@@ -159,16 +165,19 @@ $ /usr/share/xdmod/tools/etl/etl_overseer.php \
     -p xdmod.staging-ingest-storage
 ```
 
+**NOTE**: The above command will ingest all files in the `/path/to/storage/logs`
+directory even if they have already been ingested.
+
 Ingest and aggregate data:
 
 ```
 $ /usr/share/xdmod/tools/etl/etl_overseer.php \
     -p xdmod.staging-ingest-common \
-    -p xdmod.staging-ingest-storage \
     -p xdmod.hpcdb-ingest-common \
     -p xdmod.hpcdb-ingest-storage
 $ /usr/share/xdmod/tools/etl/etl_overseer.php \
     -a xdmod.hpcdb-xdw-ingest.resource \
+    -a xdmod.hpcdb-xdw-ingest.field-of-science \
     -a xdmod.hpcdb-xdw-ingest.field-of-science-hierarchy \
     -a xdmod.hpcdb-xdw-ingest.organization \
     -a xdmod.hpcdb-xdw-ingest.pi-person \
