@@ -27,7 +27,7 @@ class PersonControllerProvider extends BaseControllerProvider
 
         $controller
             ->get("$root/{id}/organization", "$class::getOrganizationForPerson")
-            ->assert('id', '\d+')
+            ->assert('id', '(-)?\d+')
             ->convert('id', "$conversions::toInt");
     }
 
