@@ -7,47 +7,47 @@
                     "metrics": {
                         "cloud_avg_cores_reserved": {
                             "text": "Average Cores Reserved Weighted By Wall Hours",
-                            "info": "The average number of cores assigned to running sessions, weighted by wall hours.<br\/>\n            <b>Core Hours<\/b>: The product of the number of cores assigned to a VM and its wall time, in hours.<br\/>\n            <b>Wall Time:<\/b> The duration between the start and end times of an individual session.",
+                            "info": "The average number of cores assigned to running sessions, weighted by wall hours.<br\/>\n            <b>Core Hours<\/b>: The product of the number of cores assigned to a VM and its wall time, in hours.<br\/>\n            <b>Wall Time:<\/b> The duration between the start and end times of an individual session.<br\/>\n            <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.",
                             "std_err": false
                         },
                         "cloud_avg_memory_reserved": {
                             "text": "Average Memory Reserved Weighted By Wall Hours (Bytes)",
-                            "info": "The average amount of memory (in bytes) reserved by running sessions, weighted by wall hours.<br\/>\n        <b>Wall Time:<\/b> The duration between the start and end times of an individual session.",
+                            "info": "The average amount of memory (in bytes) reserved by running sessions, weighted by wall hours.<br\/>\n        <b>Wall Time:<\/b> The duration between the start and end times of an individual session.<br\/>\n        <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.",
                             "std_err": false
                         },
                         "cloud_avg_rv_storage_reserved": {
                             "text": "Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)",
-                            "info": "The average amount of root volume storage space (in bytes) reserved by running sessions, weighted by wall hours.<br\/>\n            <b>Wall Time:<\/b> The duration between the start and end times of an individual session.",
+                            "info": "The average amount of root volume storage space (in bytes) reserved by running sessions, weighted by wall hours.<br\/>\n        <b>Wall Time:<\/b> The duration between the start and end times of an individual session.<br\/>\n        <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.",
                             "std_err": false
                         },
                         "cloud_avg_wallduration_hours": {
                             "text": "Average Wall Hours per Session",
-                            "info": "The average wall time that a session was running, in hours.<br\/>\n            <b>Wall Time:<\/b> The duration between the start and end times of an individual session.",
+                            "info": "The average wall time that a session was running, in hours.<br\/>\n            <b>Wall Time:<\/b> The duration between the start and end times of an individual session.<br\/>\n            <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.",
                             "std_err": false
                         },
                         "cloud_core_time": {
                             "text": "Core Hours: Total",
-                            "info": "The total number of Core Hours consumed by running sessions.<br\/>\n        <b>Core Hours<\/b>: The product of the number of cores assigned to a VM and its wall time, in hours.",
+                            "info": "The total number of Core Hours consumed by running sessions.<br\/>\n        <b>Core Hours<\/b>: The product of the number of cores assigned to a VM and its wall time, in hours.<br\/>\n        <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.",
                             "std_err": false
                         },
                         "cloud_num_sessions_running": {
                             "text": "Number of Active Sessions (Number of Sessions)",
-                            "info": "The total number of sessions on a cloud resource.<br\/>\n            <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.<br\/>\n            <b>Start:<\/b> A session start event is defined as the initial creation, resume from pause\/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (eg a state report) is treated as the start of a new session.<br\/>\n            <b>Stop:<\/b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM. ",
+                            "info": "The total number of sessions on a cloud resource.<br\/>\n            <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.<br\/>\n            <b>Start:<\/b> A session start event is defined as the initial creation, resume from pause\/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (e.g. a state report) is treated as the start of a new session.<br\/>\n            <b>Stop:<\/b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM. ",
                             "std_err": false
                         },
                         "cloud_num_sessions_ended": {
                             "text": "Number of Sessions Ended",
-                            "info": "The total number of sessions that were ended on a cloud resource. A session is ended when a VM is paused, shelved, stopped, or terminated on a cloud resource.<br\/>\n        <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.<br\/>\n        <b>Start:<\/b> A session start event is defined as the initial creation, resume from pause\/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (eg a state report) is treated as the start of a new session.<br\/>\n        <b>Stop:<\/b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM.",
+                            "info": "The total number of sessions that were ended on a cloud resource. A session is ended when a VM is paused, shelved, stopped, or terminated on a cloud resource.<br\/>\n        <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.<br\/>\n        <b>Start:<\/b> A session start event is defined as the initial creation, resume from pause\/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (e.g. a state report) is treated as the start of a new session.<br\/>\n        <b>Stop:<\/b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM.",
                             "std_err": false
                         },
                         "cloud_num_sessions_started": {
                             "text": "Number of Sessions Started",
-                            "info": "The total number of sessions started on a cloud resource. A session begins when a VM is created, unshelved, or resumes running on a cloud resource.<br\/>\n        <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.<br\/>\n        <b>Start:<\/b> A session start event is defined as the initial creation, resume from pause\/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (eg a state report) is treated as the start of a new session.<br\/>\n        <b>Stop:<\/b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM.",
+                            "info": "The total number of sessions started on a cloud resource. A session begins when a VM is created, unshelved, or resumes running on a cloud resource.<br\/>\n        <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.<br\/>\n        <b>Start:<\/b> A session start event is defined as the initial creation, resume from pause\/suspension, or unshelving of a VM. In the event that no such event has been collected, the first heartbeat event (e.g. a state report) is treated as the start of a new session.<br\/>\n        <b>Stop:<\/b> A session stop event is defined as a pause, shelving, suspension, or termination event of a VM.",
                             "std_err": false
                         },
                         "cloud_wall_time": {
                             "text": "Wall Hours: Total",
-                            "info": "The total wall time in which a virtual machine was running, in hours.<br\/>\n        <b>Wall Time:<\/b> The linear duration between the start and end times of discrete sessions.",
+                            "info": "The total wall time in which a virtual machine was running, in hours.<br\/>\n        <b>Wall Time:<\/b> The linear duration between the start and end times of discrete sessions.<br\/>\n        <b>Session:<\/b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a VM. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.",
                             "std_err": false
                         }
                     },
@@ -66,7 +66,7 @@
                         },
                         "resource": {
                             "text": "Resource",
-                            "info": "A resource is defined as any remote infrastructure that hosts cloud instances."
+                            "info": "A resource is defined as any infrastructure that hosts virtual machines."
                         },
                         "submission_venue": {
                             "text": "Submission Venue",
@@ -78,7 +78,7 @@
                         },
                         "vm_size_memory": {
                             "text": "VM Size: Memory",
-                            "info": "A categorization of sessions into discrete groups based on the amound of memory reserved by each VM."
+                            "info": "A categorization of sessions into discrete groups based on the amount of memory reserved by each VM."
                         }
                     },
                     "text": "Cloud",
