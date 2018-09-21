@@ -879,6 +879,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $mostPrivilegedRoleIdentifier = $user->getMostPrivilegedRole()->getIdentifier(true);
             foreach ($roles as $role) {
                 $roleIdentifier = $role->getIdentifier(true);
+
+                // the $personId !== -1 has been added so that people mapped ot the Unknown Person
+                // do not have their quick filters automatically set.
                 $isMostPrivilegedRole = ($roleIdentifier === $mostPrivilegedRoleIdentifier) && $personId !== -1;
 
                 $parameters = Parameters::getParameters($user, $role->getIdentifier());
