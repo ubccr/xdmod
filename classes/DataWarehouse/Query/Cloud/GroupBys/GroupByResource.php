@@ -18,7 +18,7 @@ class GroupByResource extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return 'A resource is defined as any remote infrastructure that hosts cloud instances.';
+        return 'A resource is defined as any infrastructure that hosts virtual machines.';
     }
 
     public function __construct()

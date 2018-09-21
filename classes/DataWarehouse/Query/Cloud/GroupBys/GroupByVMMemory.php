@@ -25,7 +25,7 @@ class GroupByVMMemory extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return "A categorization of sessions into discrete groups based on the amound of memory reserved by each VM.";
+        return "A categorization of sessions into discrete groups based on the amount of memory reserved by each VM.";
     }
 
     public function __construct()

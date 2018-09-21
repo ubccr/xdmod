@@ -5,7 +5,7 @@ namespace DataWarehouse\Query\Cloud\Statistics;
 * @author Rudra Chakraborty
 * @date 04-17-2018
 *
-* The average memory reserved by a VM, weighted by wall hours
+* Memory reserved, weighted by wall hours
 */
 class AverageMemoryReservedStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {

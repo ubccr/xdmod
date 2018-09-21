@@ -89,7 +89,7 @@
                 "name": "num_sessions_running",
                 "type": "int(11)",
                 "nullable": true,
-                "comment": "FACT: Number of sessions extant in some fashion in a given period."
+                "comment": "FACT: Number of sessions running in a given period."
             },{
                 "name": "num_sessions_started",
                 "type": "int(11)",
@@ -104,12 +104,12 @@
                 "name": "wallduration",
                 "type": "decimal(18,0)",
                 "nullable": true,
-                "comment": "FACT: (seconds) The wallduration of the sessions that were running during this period."
+                "comment": "FACT: (seconds) The wall duration of the sessions that were running during this period."
             },{
                 "name": "submission_venue_id",
                 "type": "int(5)",
                 "nullable": true,
-                "comment": "DIMENSION: The venue that a job or cloud instance was initiated from."
+                "comment": "DIMENSION: The venue that a job or virtual machine was initiated from."
             }
         ],
 
