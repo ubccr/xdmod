@@ -11,7 +11,7 @@ class StartedSessionsCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
 {
     public function __construct($query_instance = null)
     {
-        parent::__construct('coalesce(SUM(jf.num_sessions_started), 0)', 'cloud_num_sessions_started', 'Number of Sessions Started', 'Number of Sessions', 0);
+        parent::__construct('COALESCE(SUM(jf.num_sessions_started), 0)', 'cloud_num_sessions_started', 'Number of Sessions Started', 'Number of Sessions', 0);
     }
 
     public function getInfo()
