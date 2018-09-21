@@ -23,6 +23,7 @@ class AverageMemoryReservedStatistic extends \DataWarehouse\Query\Cloud\Statisti
     public function getInfo()
     {
         return 'The average amount of memory (in bytes) reserved by running sessions, weighted by wall hours.<br/>
-        <b>Wall Time:</b> The duration between the start and end times of an individual session.';
+        <b>Wall Time:</b> The duration between the start and end times of an individual session.<br/>
+        <b>Session:</b> A session is defined as a discrete run of a virtual machine (VM) on a cloud resource; i.e. any start and stop of a virtual machine. For example, if a single VM is stopped and restarted ten times in a given day, this would be counted as ten sessions for that day.';
     }
 }
