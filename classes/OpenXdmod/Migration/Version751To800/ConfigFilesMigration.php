@@ -18,6 +18,9 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         $this->assertPortalSettingsIsWritable();
 
         // Set new options in portal_settings.ini.
-        $this->writePortalSettingsFile();
+        $this->writePortalSettingsFile(array(
+            'general_application_secret' => bin2hex(\random_bytes(256)),
+            "general_email_token_expiration" => "600"
+        ));
     }
 }
