@@ -102,7 +102,7 @@
                     "handler": {
                         "type": "jsonfile",
                         "record_separator": "\n",
-                        "record_schema_path": "cloud/event.schema.json",
+                        "record_schema_path": "cloud/volume.schema.json",
                         "#": "Return one record for each element in the block_devices array.",
                         "#": ".block_devices[] returns a result for each block_device array element",
                         "#": "so use this to create one object per element and then move the keys",

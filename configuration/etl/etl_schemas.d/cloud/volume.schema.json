@@ -1,0 +1,45 @@
+{
+    "type": "object",
+    "description": "Cloud Accounting Record",
+    "properties": {
+        "instance_id": {
+            "type": [ "string", "null" ]
+        },
+        "account_number": {
+            "type": [ "string", "null" ]
+        },
+        "event_time": {
+            "type": "string",
+            "format": "full-date",
+            "description": "Instance requested start time in RFC-3339 format (YYYY-MM-DDTHH:mm:ssZ)"
+        },
+        "account": {
+            "type": "string",
+            "description": "Account the instance was run under."
+        },
+        "backing": {
+            "type": "string",
+            "enum": [
+                "ebs",
+                "instance-store"
+            ]
+        },
+        "create_time": {
+            "type": "string",
+            "format": "full-date",
+            "description": "Disk creation time in RFC-3339 format (YYYY-MM-DDTHH:mm:ssZ)"
+        },
+        "user": {
+            "type": "string",
+            "description": "Name of user volume belongs to"
+        },
+        "id": {
+            "type": "string",
+            "description": "Volume Identifier"
+        },
+        "size": {
+            "type": "string",
+            "description": "Size in MB"
+        }
+    }
+}
