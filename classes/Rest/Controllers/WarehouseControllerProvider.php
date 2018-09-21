@@ -880,7 +880,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             foreach ($roles as $role) {
                 $roleIdentifier = $role->getIdentifier(true);
 
-                // the $personId !== -1 has been added so that people mapped ot the Unknown Person
+                // the $personId !== -1 has been added so that people mapped to the Unknown Person
                 // do not have their quick filters automatically set.
                 $isMostPrivilegedRole = ($roleIdentifier === $mostPrivilegedRoleIdentifier) && $personId !== -1;
 
