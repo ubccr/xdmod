@@ -6,7 +6,13 @@ $xda = new XDAdmin();
 
 $name_filter = (isset($_POST['query'])) ? $_POST['query'] : NULL;
 
-$institutions = $xda->enumerateInstitutions($name_filter);
+$query = $xda->enumerateInstitutions($name_filter);
+
+if (count($query) > 0) {
+    $institutions = $query;
+} else {
+    $institutions = $xda->enumerateInstitutions(null);
+}
 
 $returnData['status'] = 'success';
 $returnData['success'] = true;
