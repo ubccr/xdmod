@@ -1,10 +1,10 @@
 title
-"Average Wall Hours per VM: by Project"
+"Average Wall Hours per Session: by Project"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Project,"Average Wall Hours per VM"
+Project,"Average Wall Hours per Session"
 zealous,24.09155229
 ---------

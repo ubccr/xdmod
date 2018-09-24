@@ -1,11 +1,11 @@
 title
-"Average Wall Hours per VM: by VM Size: Cores"
+"Average Wall Hours per Session: by VM Size: Cores"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[1] Average Wall Hours per VM","[2 - 3] Average Wall Hours per VM","[4 - 7] Average Wall Hours per VM"
+Day,"[1] Average Wall Hours per Session","[2 - 3] Average Wall Hours per Session","[4 - 7] Average Wall Hours per Session"
 2018-04-18,1.80728395,0.47208333,2.21361111
 2018-04-19,5.15600529,7.89694444,0
 2018-04-20,4.90686111,24.00000000,0

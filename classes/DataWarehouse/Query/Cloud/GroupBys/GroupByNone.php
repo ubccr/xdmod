@@ -27,7 +27,7 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
     }
     public function getInfo()
     {
-        return     "Summarizes jobs reported to the ".ORGANIZATION_NAME." central database (excludes non-".ORGANIZATION_NAME." usage of the resource).";
+        return "Summarizes cloud data reported to the " . ORGANIZATION_NAME . ".";
     }
     public function getDefaultDisplayType($dataset_type = null)
     {
@@ -46,7 +46,8 @@ class GroupByNone extends \DataWarehouse\Query\Cloud\GroupBy
 
     // JMS Oct 15
     // Use the GroupBy subclass to add a Where clause and needed Join
-    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group, $operation, $whereConstraint) {
+    public function addWhereJoin(\DataWarehouse\Query\Query &$query, \DataWarehouse\Query\Model\Table $data_table, $multi_group, $operation, $whereConstraint)
+    {
         // NO-OP
     }
 

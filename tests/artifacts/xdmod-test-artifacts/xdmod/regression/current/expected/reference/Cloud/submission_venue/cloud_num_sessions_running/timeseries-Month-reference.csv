@@ -1,0 +1,10 @@
+title
+"Number of Active Sessions (Number of Sessions): by Submission Venue"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[OpenStack API] Number of Active Sessions (Number of Sessions)"
+2018-04,51
+---------

@@ -1,0 +1,10 @@
+title
+"Number of Sessions Started: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[2 - 4 GB] Number of Sessions Started","[< 2 GB] Number of Sessions Started","[8 - 16 GB] Number of Sessions Started","[4 - 8 GB] Number of Sessions Started"
+"2018 Q2",41,6,3,1
+---------
