@@ -1,5 +1,5 @@
 XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
-
+    id: 'xdmod-profile-general-settings',
     autoHeight: true,
     border: false,
     frame: true,
@@ -106,7 +106,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             width: passwordFieldWidth,
             inputType: 'password',
             disabled: true,
-            cls: 'user_profile_password_field',
+            cls: 'user_profile_password_field new_password',
 
             allowBlank: false,
             blankText: fieldRequiredText,
@@ -126,7 +126,7 @@ XDMoD.ProfileGeneralSettings = Ext.extend(Ext.form.FormPanel, {
             width: passwordFieldWidth,
             inputType: 'password',
             disabled: true,
-            cls: 'user_profile_password_field',
+            cls: 'user_profile_password_field password_again',
             msgTarget: 'under',
             submitValue: false,
 

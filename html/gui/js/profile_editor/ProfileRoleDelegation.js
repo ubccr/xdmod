@@ -57,7 +57,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
         // ---------------------------------------------------------
 
         var cmbCenterStaff = new Ext.form.ComboBox({
-
+            cls: 'center_staff',
             editable: false,
             fieldLabel: 'Staff Member',
             store: storeCenterStaff,

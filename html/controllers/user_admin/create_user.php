@@ -78,19 +78,20 @@ try {
     $newuser->saveUser();
     // =============================
     foreach ($acls as $acl => $centers) {
-        if (count($centers) > 0) {
-            $centerConfig = array();
-            $count = 0;
-            foreach($centers as $center) {
-                if ($count === 0) {
-                    $config = array('primary' => 1, 'active' => 1);
-                } else {
-                    $config = array('primary' => 0, 'active' => 0);
-                }
-                $centerConfig[$center] = $config;
-                $count += 1;
-            }
-            $newuser->setOrganizations($centerConfig, $acl);
+        // Now that the user has been updated, We need to check if they have been assigned any
+        // 'center' acls. If they have and if an 'institution' has been provided ( it should have
+        // been ) then we need to call `setOrganizations` so that the UserRoleParameters and
+        // user_acl_group_by_parameters tables are updated accordingly.
+        if (in_array($acl, array('cd', 'cs')) && isset($_POST['institution'])) {
+            $newuser->setOrganizations(
+                array(
+                    $_POST['institution'] => array(
+                        'primary'=> 1,
+                        'active' => 1
+                    )
+                ),
+                $acl
+            );
         }
     }
     // =============================
