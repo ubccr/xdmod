@@ -7,7 +7,7 @@ The Cloud realm in XDMoD tracks events that occur in cloud systems, such as star
 - Average Root Volume Storage Reserved Weighed By Wall Hours (Bytes)
   - The average amount of root volume disk space (in bytes) reserved by running sessions, weighted by wall hours.
 - Average Wall Hours per Session
-  - The average wall ime that a session was running, in hours
+  - The average wall time that a session was running, in hours
 - Core Hours: Total
   - The total number of core hours consumed by running sessions
 - Number of Sessions Ended
@@ -35,7 +35,7 @@ The Cloud realm in XDMoD tracks events that occur in cloud systems, such as star
 
 ## Getting cloud metrics data
 
-XDMoD provides the ability to read data from a predefined infrastructure-agnostic file format containing cloud system events. For OpenStack based systems we also support data ingest directly with the application of a patch that can be installed to access events via the OpenStack API and create cloud event logs for direct ingestion into XDMoD.
+XDMoD provides the ability to read data from a predefined infrastructure-agnostic file format containing cloud system events. For OpenStack based systems we also support data ingest directly with the application of a patch that can be installed to access events via the OpenStack API and create cloud event logs for direct ingestion into XDMoD. The patch can be found at https://github.com/ubccr/openstack-api-reporting-patch.
 
 ## Events needed
 
@@ -44,7 +44,7 @@ There are a set of events that are necessary to be included in the cloud log fil
 - Starting and stopping an instance    
 - Starting and stopping a storage volume
 - Attaching or detaching a storage volume
-- Instance heartbeat - This is an event that checks in regular intervals, usually one hour, to see if an instance is still active. This event is required for accurate displaying of cloud metrics
+- Instance heartbeat - This is an event that checks in regular intervals, usually one hour, to see if an instance is still active. This event is required for accurate displaying of cloud metrics.
 
 
 ## Details of OpenStack file format for ingestion
@@ -58,8 +58,8 @@ Once the patch is installed the `openstack_api_reporting.py` file should be run 
 If you choose to use the generic file format for ingesting event data each event being tracked should create a JSON record with the following attributes. The formatting below is purely for readability. When adding events to your json log file there should only be line breaks between each event record, not each attribute in the event record.
 
 ### Special Notes
-- The instance_type attribute is a JSON Object with details of instance type for the VM this event occurred on
-- The block_devices attribute is a JSON object that lists information about block storage devices attached to this VM when then event occurred. If multiple storage devices are attached the should each be listed here
+- The instance_type attribute is a JSON Object with details of the instance type for the VM this event occurred on.
+- The block_devices attribute is a JSON object that lists information about block storage devices attached to this VM when the event occurred. If multiple storage devices are attached the should each be listed here as a separate JSON object.
 
 ```json
 {
@@ -88,7 +88,7 @@ If you choose to use the generic file format for ingesting event data each event
 		"size": "Size in GB of the storage volume"
 	}],
 	"private_ip": null,
-	"root_type": "Type of storage initial storage volume is, either ebs or instance-store
+	"root_type": "Type of storage initial storage volume is, either ebs or instance-store"
 }
 ```
 ## Adding and Enabling Cloud Resources
