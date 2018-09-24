@@ -1,5 +1,8 @@
+## Prerequisites
+- A full working installation of XDMoD with jobs data that is ingested daily
+
 ## What are cloud metrics?
-The Cloud realm in XDMoD tracks events that occur in cloud systems, such as starting or ending a VM session and creating or deleting a storage volume. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs. In this beta release we support an initial set of cloud metrics with additional metrics to be added in subsequent releases.
+The Cloud realm in XDMoD tracks events that occur in cloud systems, such as starting or ending sessions of a VM or the amount of root volume storage used by running sessions. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs. In this beta release we support an initial set of cloud metrics with additional metrics to be added in subsequent releases.
 
 ## Available Metrics (8.0beta)
 - Average Memory Reserved Weighted By Wall Hours (Bytes)
@@ -20,7 +23,6 @@ The Cloud realm in XDMoD tracks events that occur in cloud systems, such as star
   - The total wall time in which a sessions was running, in hours.
 
 ## Dimensions Available For Grouping
-
 - Instance Type
   - The instance type of the virtual machines
 - Project
@@ -34,11 +36,9 @@ The Cloud realm in XDMoD tracks events that occur in cloud systems, such as star
 
 
 ## Getting cloud metrics data
-
-XDMoD provides the ability to read data from a predefined infrastructure-agnostic file format containing cloud system events. For OpenStack based systems we also support data ingest directly with the application of a patch that can be installed to access events via the OpenStack API and create cloud event logs for direct ingestion into XDMoD. The patch can be found at https://github.com/ubccr/openstack-api-reporting-patch.
+XDMoD provides the ability to read data from a predefined infrastructure-agnostic file format containing cloud system events. For OpenStack based systems we also support data ingest using the OpenStack API and a <a href="https://github.com/ubccr/openstack-api-reporting-patch">patch</a> to create cloud event logs for direct ingestion into XDMoD.
 
 ## Events needed
-
 There are a set of events that are necessary to be included in the cloud log files in order for the cloud metrics to display accurate data. Below is a list of a few examples of these events while the full list of events that XDMoD tracks can be found in the file `configuration/etl/etl_data.d/cloud_common/event_type.json`
 
 - Starting and stopping an instance    
@@ -48,14 +48,12 @@ There are a set of events that are necessary to be included in the cloud log fil
 
 
 ## Details of OpenStack file format for ingestion
-
-The XDMoD team have released a set of patches and a script that will create a properly formatted JSON file for ingestion by XDMoD. These patches and the script to create a JSON file for ingestion can be found at https://github.com/ubccr/openstack-api-reporting-patch.
+The XDMoD team have released a set of patches and a script that will create a properly formatted JSON file for ingestion by XDMoD. These patches and the script to create a JSON file for ingestion can be found in <a href="https://github.com/ubccr/openstack-api-reporting-patch">one of our github repositories</a>.
 
 Once the patch is installed the `openstack_api_reporting.py` file should be run once a day to get event data from the previous day.
 
 ## Details of generic file format for ingestion
-
-If you choose to use the generic file format for ingesting event data each event being tracked should create a JSON record with the following attributes. The formatting below is purely for readability. When adding events to your json log file there should only be line breaks between each event record, not each attribute in the event record.
+If you choose to use the generic file format for ingesting event data each event being tracked should create a JSON record with the following attributes. The formatting below is purely for readability. When adding events to your JSON log file there should only be line breaks between each event record, not each attribute in the event record.
 
 ### Special Notes
 - The instance_type attribute is a JSON Object with details of the instance type for the VM this event occurred on.
@@ -91,10 +89,10 @@ If you choose to use the generic file format for ingesting event data each event
 	"root_type": "Type of storage initial storage volume is, either ebs or instance-store"
 }
 ```
+
 ## Adding and Enabling Cloud Resources
 
 ### Add a cloud resource
-
 Cloud resources are added by using the xdmod-setup command.
 
 1.  Type `xdmod-setup`
@@ -107,7 +105,6 @@ Cloud resources are added by using the xdmod-setup command.
 
 
 ### Ingesting cloud event data
-
 The commands that need to be run to ingest your cloud data depend on the format of the event data in your cloud log files. The -d option is used to specify a directory where the log files are located. When running this command replace `/path/to/log/files` with the directory where your log files are.
 
 #### Generic Format
@@ -122,3 +119,6 @@ php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common -p jobs-cloud-com
 php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r name_of_resource -d "CLOUD_EVENT_LOG_DIRECTORY=/path/to/log/files" -p jobs-cloud-extract-openstack &&
 php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
 ```
+
+##Known Issues
+  - Cloud metrics do not display for any date past the date you last ingested jobs data. In order to prevent this your XDMoD installation must ingest new jobs data daily.
