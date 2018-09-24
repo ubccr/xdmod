@@ -3,7 +3,74 @@
 <p>Below is a list of Open XDMoD releases with major features and bug fixes
 listed.</p>
 
-<h2> Version 8.0.0 (2018-??-??) </h2>
+<h2> Version 8.0.0 (2018-09-30) </h2>
+
+<div>
+    <strong>Features</strong>
+    <ul>
+        <li>General
+            <ul>
+                <li>Added a <b>beta</b> version of the Cloud realm to provide metrics relevant to
+                    cloud computing resources.</li>
+                <li>Added a <b>beta</b> version of the Storage realm to provide metrics relevant to
+                    storage systems installed at a center.</li>
+                <li>Federated XDMoD has been released for production. Federated XDMoD allows
+                    individual, locally managed, XDMoD instances to report all or a subset of their
+                    accounting data to a central Hub which provides a global view of the federation.
+                </li>
+                <li>All XDMoD user profiles are now associated with an organization. Previously, this
+                    was only required for Campus Champions.</li>
+                <li>Hardened the login and password reset process as a result of a security audit by
+                    University of Cambridge.</li>
+                <li>Improved support for resource manager job arrays.</li>
+                <li>Many improvements to the documentation based on support tickets.</li>
+            </ul>
+        </li>
+        <li>ETL
+            <ul>
+                <li>Reorganized several ETL pipelines.</li>
+                <li>Improved data sanitization for tighter checks present in MySQL 5.7.</li>
+                <li>Refactored Jobs realm ingestion to utilize ETLv2.</li>
+                <li>Standardize action names to follow the format module.pipeline.action. For
+                    example, xdmod.acls.manage-tables.</li>
+                <li>Added character set and coalition to table definitions.</li>
+                <li>Added support for foreign key constraints.</li>
+                <li>Added support for the definition of ETL variables on the command line using -d
+                    variable=value.</li>
+                <li>Add ingestion of node hostname data from SGE logs.</li>
+                <li>Various ETL performance improvements.</li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div>
+    <strong> Bug Fixes </strong>
+    <ul>
+        <li>User Interface
+            <ul>
+                <li>Deep linking when logged in using SSO has been restored.</li>
+                <li>Update the logrotate configuration to use the su and create options.</li>
+            </ul>
+        </li>
+        <li>ETL
+            <ul>
+                <li>Add primary keys to select ETL source queries.</li>
+                <li>When modifying an existing table, preserve the order of the columns in the
+                    definition file.</li>
+                <li>Ensure that file handles are flushed before inserting the final chunk of
+                    data.</li>
+            </ul>
+        </li>
+        <li>Misc
+            <ul>
+                <li>Fixed several exceptions that were outside of a namespace.</li>
+                <li>Fixed an issue where ACLs were not properly created on upgrade.</li>
+                <li>Several minor bugfixes</li>
+            </ul>
+        </li>
+    </ul>
+</div>
 
 <h2> Version 7.5.1 (2018-05-23) </h2>
 
