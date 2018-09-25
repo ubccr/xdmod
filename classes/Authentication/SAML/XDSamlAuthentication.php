@@ -61,7 +61,7 @@ EML;
 
     const USER_EMAIL_BODY = <<<EML
 
-Greetings,
+Dear %s,
 
 This email is notify you that XDMoD was unable to determine which organization to associate you with.
 Administrative Users have been notified that additional setup will be required. You may not have full
@@ -232,9 +232,7 @@ EML;
         } catch (Exception $e) {
             $this->notify(
                 $techSupportRecipient,
-                $techSupportRecipient,
-                '',
-                $techSupportRecipient,
+                null,
                 'Error retrieving XDMoD configuration property "force_default_organization" form portal_settings.ini',
                 $e->getMessage()
             );
@@ -312,7 +310,6 @@ EML;
     private function handleNotifications(XDUser $user, $samlAttributes, $linked)
     {
         $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
-        $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
 
         $userEmail = $user->getEmailAddress()
             ? $user->getEmailAddress()
@@ -327,9 +324,7 @@ EML;
         } catch (Exception $e) {
             $this->notify(
                 $techSupportRecipient,
-                $techSupportRecipient,
-                '',
-                $techSupportRecipient,
+                null,
                 'Error retrieving XDMoD configuration property "email_admin_sso_unknown_org" form portal_settings.ini',
                 $e->getMessage()
             );
@@ -353,9 +348,7 @@ EML;
 
             $this->notify(
                 $techSupportRecipient,
-                $techSupportRecipient,
-                '',
-                $senderEmail,
+                null,
                 $subject,
                 $emailBody
             );
@@ -363,10 +356,8 @@ EML;
             $this->notify(
                 $userEmail,
                 $techSupportRecipient,
-                '',
-                $senderEmail,
                 self::USER_EMAIL_SUBJECT,
-                self::USER_EMAIL_BODY
+                sprintf(self::USER_EMAIL_BODY, $user->getFormalName())
             );
         } elseif (empty($userEmail)) {
             $title = 'Unable to determine email address for new SSO User.';
@@ -386,19 +377,18 @@ EML;
      *
      * @throws Exception if there is a problem sending the notification email.
      */
-    public function notify($toAddress, $fromAddress, $fromName, $replyAddress, $subject, $body)
+    public function notify($toAddress, $replyAddress, $subject, $body)
     {
+        $settings = array(
+            'subject' => $subject,
+            'body' => $body,
+            'toAddress' => $toAddress
+        );
+        if ($replyAddress !== null) {
+            $settings['replyAddress'] = $replyAddress;
+        }
         try {
-            MailWrapper::sendMail(
-                array(
-                    'subject' => $subject,
-                    'body' => $body,
-                    'toAddress' => $toAddress,
-                    'fromAddress' => $fromAddress,
-                    'fromName' => $fromName,
-                    'replyAddress' => $replyAddress
-                )
-            );
+            MailWrapper::sendMail($settings);
         } catch (Exception $e) {
             // log the exception so we have some persistent visibility into the problem.
             $errorMsgFormat = "[%s] %s\n%s";
