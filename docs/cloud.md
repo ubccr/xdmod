@@ -112,12 +112,14 @@ The commands that need to be run to ingest your cloud data depend on the format 
 php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common -p jobs-cloud-common -p ingest-resources &&
 php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-eucalyptus -r name_of_resource -d "CLOUD_EVENT_LOG_DIRECTORY=/path/to/log/files" &&
 php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
+xdmod-build-filter-lists --realm Cloud
 ```
 #### OpenStack Format
 ```
 php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common -p jobs-cloud-common -p ingest-resources &&
 php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r name_of_resource -d "CLOUD_EVENT_LOG_DIRECTORY=/path/to/log/files" -p jobs-cloud-extract-openstack &&
 php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
+xdmod-build-filter-lists --realm Cloud
 ```
 
 ##Known Issues
