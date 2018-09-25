@@ -247,12 +247,10 @@ TXT;
                         'body' => sprintf(
                             self::USER_NOTIFICATION_EMAIL,
                             $user->getFormalName(),
-                            \xd_utilities\getConfiguration('mailer', 'sender_email')
+                            \xd_utilities\getConfiguration('general', 'tech_support_recipient')
                         ),
                         'toAddress' => $user->getEmailAddress(),
-                        'fromAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
-                        'fromName' => '',
-                        'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
+                        'replyAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient')
                     )
                 );
             } catch (\Exception $e) {
