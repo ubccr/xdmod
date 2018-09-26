@@ -1,0 +1,13 @@
+{
+  "top_roles": {
+    "cd": "Center Director",
+    "cs": "Center Staff",
+    "pi": "Principal Investigator",
+    "usr": "User",
+    "mgr": "User"
+  },
+  "organization": {
+    "name": "screw",
+    "display": "Screwdriver"
+  }
+}
