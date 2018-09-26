@@ -45,7 +45,16 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             width: 150,
             cascadeOptions: {
                 component: cmbInstitution,
-                valueProperty: 'id'
+                valueProperty: 'id',
+                callback: function (oldValue, newValue) {
+                    // If our new person value is the Unknown person than make sure that the
+                    // cascade control is enabled for manual override.
+                    if (newValue === '-1') {
+                        cmbInstitution.setDisabled(false);
+                    } else {
+                        cmbInstitution.setDisabled(true);
+                    }
+                }
             }
         });
 

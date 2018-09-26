@@ -110,6 +110,9 @@ if (isset($_POST['user_type'])) {
 
 }
 
+// Store this users original set of acls before they are possibly modified below.
+$originalAcls = $user_to_update->getAcls(true);
+
 // ===========================================
 // Make sure that we're not attempting to enable / disable the user before
 // processing 'acls'
@@ -154,20 +157,22 @@ if (!isset($_POST['is_active'])) {
     } // if (isset($_POST['acls'])) {
 }
 
-// -----------------------------
-
-$user_to_update->setOrganizationID(Organizations::getOrganizationForUser($user_to_update->getUserID()));
-// -----------------------------
-
+// 'institution' now corresponds to a Users organization and is not only present when they are a
+// campus champion. This means we need to make sure that the User's organization_id is populated but
+// that the old behavior of having `setInstitution` called w/ the 'institution' value is still
+// retained as this will have an effect on the results of CampusChampionRole's `getIdentifier`
+// function ( which is often displayed to the user ).
 if (isset($_POST['institution'])) {
+    $user_to_update->setOrganizationID($_POST['institution']);
 
-    if ($_POST['institution'] == -1) {
+    $oldCampusChampion = in_array(ROLE_ID_CAMPUS_CHAMPION, $originalAcls);
+    $newCampusChampion = in_array(ROLE_ID_CAMPUS_CHAMPION, array_keys($acls));
+
+    if ($newCampusChampion && !$oldCampusChampion) {
+        $user_to_update->setInstitution($_POST['institution']);
+    } elseif (!$newCampusChampion && $oldCampusChampion) {
         $user_to_update->disassociateWithInstitution();
-    } else {
-        $isPrimary = isset($acls) ? array_key_exists(ROLE_ID_CAMPUS_CHAMPION, $acls) : false;
-        $user_to_update->setInstitution($_POST['institution'], $isPrimary);
     }
-
 }//if (isset($_POST['institution']))
 
 try {
