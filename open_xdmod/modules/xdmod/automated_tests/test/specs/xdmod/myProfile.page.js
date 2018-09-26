@@ -6,10 +6,7 @@ class MyProfile {
         this.container = '//div[@id="xdmod-profile-editor"]';
 
         this.general = `${this.container}//div[@id="xdmod-profile-general-settings"]`;
-        this.roleDelegation = `${this.container}//div[@id="tab_role_delegation"]`;
-
         this.userInformation = `${this.general}//div[contains(@class, "user_profile_section_general")]`;
-        this.updatePassword = `${this.general}//div[contains(@class, "user_profile_section_password")]`;
 
         this.selectors = {
             tabs: {
@@ -76,31 +73,6 @@ class MyProfile {
     }
 
     /**
-     * Retrieve an XPath for a control, identified by the name parameter, within
-     * the 'Update Password' section of the 'General' tab. `names` are provided
-     * by `this.names.general.update_password`.
-     *
-     * @param name {string}
-     * @returns {string}
-     */
-    generalUpdatePassword(name) {
-        return `${this.updatePassword}//input[contains(@class, "${name}")]`;
-    }
-
-    /**
-     * Retrieve an XPath for a control, identified by the name parameter, within
-     * the 'Role Delegation' tab. `names` are provided by
-     * `this.names.role_delegation`.
-     *
-     *
-     * @param name {string}
-     * @returns {string}
-     */
-    roleDelegationInput(name) {
-        return `${this.roleDelegation}//input[contains(@class, "${name}")]`;
-    }
-
-    /**
      * Retrieve an XPath for a button, identified by the name parameter, within
      * the 'My Profile' window. Values for name provided by `this.names.buttons`
      *
@@ -111,4 +83,5 @@ class MyProfile {
         return `${this.general}//button[contains(@class, "${name}")]`;
     }
 }
+
 module.exports = new MyProfile();
