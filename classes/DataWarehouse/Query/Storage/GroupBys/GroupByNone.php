@@ -45,11 +45,6 @@ class GroupByNone extends GroupBy
         return 'stack';
     }
 
-    public function getDefaultShowTrendLine()
-    {
-        return 'y';
-    }
-
     public function addOrder(
         Query &$query,
         $multiGroup = false,
