@@ -15,7 +15,9 @@ $creator = \xd_security\assertDashboardUserLoggedIn();
     'first_name'    => RESTRICTION_FIRST_NAME,
     'last_name'     => RESTRICTION_LAST_NAME,
   //  'assignment'    => RESTRICTION_ASSIGNMENT,
-    'user_type'     => RESTRICTION_GROUP
+    'user_type'     => RESTRICTION_GROUP,
+    'institution'   => RESTRICTION_INSTITUTION
+
 ));
 
 \xd_security\assertEmailParameterSet('email_address');

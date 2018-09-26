@@ -34,7 +34,8 @@ $params = array(
     'last_name' => RESTRICTION_LAST_NAME,
     'assigned_user' => RESTRICTION_ASSIGNMENT,
     'is_active' => RESTRICTION_ACTIVE_FLAG,
-    'user_type' => RESTRICTION_GROUP
+    'user_type' => RESTRICTION_GROUP,
+    'institution' => RESTRICTION_INSTITUTION
 );
 
 \xd_security\assertEmailParameterSet('email_address');
@@ -108,7 +109,6 @@ if (isset($_POST['user_type'])) {
     }
 
 }
-
 
 // ===========================================
 // Make sure that we're not attempting to enable / disable the user before
