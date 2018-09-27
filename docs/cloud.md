@@ -98,7 +98,7 @@ Cloud resources are added by using the xdmod-setup command.
 1.  Type `xdmod-setup`.
 2.  Select option 4, `Resources`, on Open XDMoD Setup screen.
 3.  Then select option 1, `Add a new resource`.
-4.  Enter information for the prompts that follow. When you see the Resource Type prompt, enter `cloud` as the resource type
+4.  Enter information for the prompts that follow. When you see the Resource Type prompt, enter `cloud` as the resource type.
 5.  Once you finish with all the prompts you will be redirected to the `Resource Setup` screen. At this screen choose the `s` option to save the information you just entered to the resources.json configuration file.
 6.  Run the following command from the command line to load data from resources.json file into the database:
 `php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources`
