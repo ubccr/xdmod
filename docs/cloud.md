@@ -2,7 +2,7 @@
 - A full working installation of XDMoD with jobs data that is ingested daily. [XDMoD install instructions](install.html)
 
 ## What are cloud metrics?
-The Cloud realm in XDMoD tracks events that occur in cloud systems, such as starting or ending sessions of a VM or the amount of root volume storage used by running sessions. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs. In this beta release we support an initial set of cloud metrics with additional metrics to be added in subsequent releases.
+The Cloud realm in XDMoD tracks events that occur in cloud infrastructure systems which can also referred to as Infrastructure as a Service(IaaS) cloud computing systems. A variety of events are tracked such as starting or ending sessions of a VM or the amount of root volume storage used by running sessions. The characteristics of cloud instances differ in several ways from traditional HPC resources, hence the metrics that we track for cloud systems differ from the metrics we track for traditional HPC jobs. In this beta release we support an initial set of cloud metrics with additional metrics to be added in subsequent releases.
 
 ## Available metrics (8.0beta)
 - Average Memory Reserved Weighted By Wall Hours (Bytes)
@@ -44,8 +44,7 @@ There are a set of events that are necessary to be included in the cloud log fil
 - Starting and stopping an instance.
 - Starting and stopping a storage volume.
 - Attaching or detaching a storage volume.
-- Instance heartbeat - This is an event that checks in regular intervals, usually one hour, to see if an instance is still active. This event is required for accurate displaying of cloud metrics.
-
+- Instance heartbeat - This is an event that reports if an instance is still active. This event is usually reported once an hour and is required for accurate displaying of cloud metrics.
 
 ## Details of OpenStack file format for ingestion
 The XDMoD team has released a set of patches and a script that will create a properly formatted JSON file for ingestion by XDMoD. These patches and the script to create a JSON file for ingestion can be found in the [openstack-api-reporting-patch repository](https://github.com/ubccr/openstack-api-reporting-patch).
@@ -81,7 +80,7 @@ If you choose to use the generic file format for ingesting event data each event
 		"id": "ID of the storage volume",
 		"size": "Size in GB of the storage volume"
 	}],
-	"private_ip": null,
+	"private_ip": "Private IP address used by the instance",
 	"root_type": "Type of storage initial storage volume is, either ebs or instance-store"
 }
 ```
