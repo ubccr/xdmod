@@ -46,6 +46,37 @@ class GroupByNSFDirectorate extends GroupBy
         $this->info = HIERARCHY_TOP_LEVEL_INFO;
     }
 
+    public function applyTo(
+        Query &$query,
+        Table $data_table,
+        $multi_group = false
+    ) {
+        $query->addTable($this->table);
+
+        $fos_directorate_id_field = new TableField($this->table, $this->_id_field_name, $this->getIdColumnName($multi_group));
+        $fos_directorate_name_field = new TableField($this->table, $this->_long_name_field_name, $this->getLongNameColumnName($multi_group));
+        $fos_directorate_shortname_field = new TableField($this->table, $this->_short_name_field_name, $this->getShortNameColumnName($multi_group));
+        $order_id_field = new TableField($this->table, $this->_order_id_field_name, $this->getOrderIdColumnName($multi_group));
+
+        $query->addField($order_id_field);
+        $query->addField($fos_directorate_id_field);
+        $query->addField($fos_directorate_name_field);
+        $query->addField($fos_directorate_shortname_field);
+
+        $query->addGroup($fos_directorate_id_field);
+
+        $fostable_id_field = new TableField($this->table, 'id');
+        $datatable_fos_id_field = new TableField($data_table, 'fos_id');
+        $query->addWhereCondition(
+            new WhereCondition(
+                $fostable_id_field,
+                '=',
+                $datatable_fos_id_field
+            )
+        );
+        $this->addOrder($query, $multi_group);
+    }
+
     public function addWhereJoin(
         Query &$query,
         Table $data_table,
