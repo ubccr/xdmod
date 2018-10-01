@@ -10,6 +10,7 @@ XDMoD.Summary.TabPanel = Ext.extend(Ext.TabPanel, {
 
     // TODO: This isn't the top tab panel anymore, so it should be renamed.
     id: 'top-tab-panel',
+    cls: 'summary_tab',
 
     frame: false,
     border: false,

@@ -912,7 +912,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var mnuActions = new Ext.menu.Menu({
             plain: true,
             showSeparator: false,
-            cls: 'no-icon-menu',
+            cls: 'no-icon-menu existing_users_action_menu',
 
             items: [
                 {
