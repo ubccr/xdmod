@@ -13,7 +13,7 @@ XDMoD.ProfileEditorConstants = {
 // --------------------------------------------
 
 XDMoD.ProfileEditor = Ext.extend(Ext.Window,  {
-
+    id: 'xdmod-profile-editor',
    width:375,
 
    border:false,

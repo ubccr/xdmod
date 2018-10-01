@@ -174,6 +174,7 @@ define('RESTRICTION_CHART_TYPE', '/^.{1,}$/');
 define('RESTRICTION_CHART_MODULE', '/^.{1,}$/');
 define('RESTRICTION_OPERATION', '/^[_a-z]+$/');
 define('RESTRICTION_SEARCH_MODE', '/^\bformal_name\b|\busername\b$/');
+define('RESTRICTION_INSTITUTION', '/^(-)?[0-9]+$/');
 
 // Associated with 'id' in modw.daterange
 define('RESTRICTION_DATE_RANGE_ID', '/^[0-9]{1,2}$/');
