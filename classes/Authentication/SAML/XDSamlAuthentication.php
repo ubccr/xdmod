@@ -57,21 +57,6 @@ Unable to Identify Users Organization.
 Additional Setup Required.
 EML;
 
-    const USER_EMAIL_SUBJECT = 'XDMoD SSO User: Additional Actions Required';
-
-    const USER_EMAIL_BODY = <<<EML
-
-Dear %s
-
-This email is notify you that XDMoD was unable to determine which organization to associate you with.
-Administrative Users have been notified that additional setup will be required. You may not have full
-access until this additional setup is complete.
-
-Thank you,
-
-XDMoD SSO User Creation
-EML;
-
     private $logger = null;
 
     public function __construct()
@@ -311,41 +296,28 @@ EML;
      */
     private function handleNotifications(XDUser $user, $samlAttributes, $linked)
     {
-        $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
-        $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
+        // We only notify admins iff we were unable to identify which organization the user should
+        // be associated with ( i.e. we had to assign them to the 'Unknown' organization ).
+        if ($user->getOrganizationID() === -1) {
+            $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
+            $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
 
-        $userEmail = $user->getEmailAddress()
-            ? $user->getEmailAddress()
-            : $samlAttributes['email_address'][0];
+            $userEmail = $user->getEmailAddress()
+                ? $user->getEmailAddress()
+                : $samlAttributes['email_address'][0];
 
-        $userOrganization = $user->getOrganizationID();
-        $organizationFound = (!isset($userOrganization) || $userOrganization === -1);
+            $userOrganization = $user->getOrganizationID();
 
-        $emailAdminOnUnknownOrg = null;
-        try {
-            $emailAdminOnUnknownOrg = \xd_utilities\getConfiguration('sso', 'email_admin_sso_unknown_org') === 'on';
-        } catch (Exception $e) {
-            $this->notify(
-                $techSupportRecipient,
-                $techSupportRecipient,
-                '',
-                $techSupportRecipient,
-                'Error retrieving XDMoD configuration property "email_admin_sso_unknown_org" form portal_settings.ini',
-                $e->getMessage()
+            $emailBody = sprintf(
+                self::BASE_ADMIN_EMAIL,
+                $user->getFormalName(true),
+                $user->getUsername(),
+                $userEmail,
+                $userOrganization,
+                Organizations::getNameById($userOrganization),
+                json_encode($samlAttributes, JSON_PRETTY_PRINT)
             );
-        }
 
-        $emailBody = sprintf(
-            self::BASE_ADMIN_EMAIL,
-            $user->getFormalName(true),
-            $user->getUsername(),
-            $userEmail,
-            $userOrganization,
-            Organizations::getNameById($userOrganization),
-            json_encode($samlAttributes, JSON_PRETTY_PRINT)
-        );
-
-        if (!$organizationFound && $emailAdminOnUnknownOrg) {
             $subject = sprintf(
                 'New %s Single Sign On User Created',
                 ($linked ? 'Linked' : 'Unlinked')
@@ -359,18 +331,6 @@ EML;
                 $subject,
                 $emailBody
             );
-        } elseif (!$organizationFound && !empty($userEmail)) {
-            $this->notify(
-                $userEmail,
-                $techSupportRecipient,
-                '',
-                $senderEmail,
-                self::USER_EMAIL_SUBJECT,
-                sprintf(self::USER_EMAIL_BODY, $user->getFormalName())
-            );
-        } elseif (empty($userEmail)) {
-            $title = 'Unable to determine email address for new SSO User.';
-            $this->logger->err(sprintf("%s\n\n%s", $title, $emailBody));
         }
     }
 

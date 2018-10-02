@@ -50,7 +50,6 @@ multiple_service_providers = "off"
 
 [sso]
 force_default_organization = "on"
-email_admin_sso_unknown_org = "on"
 
 [internal]
 dw_desc_cache = "off"
