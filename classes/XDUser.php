@@ -2978,7 +2978,8 @@ SQL;
         $userSecret = $this->_password;
 
         if ($expiration === null) {
-            $expiration = time() + $expiresIn;
+            // set default expiration time of 10 minutes if we don't get one from configuration
+            $expiration = !empty($expiresIn) && is_numeric($expiresIn) ? time() + $expiresIn : time() + 600;
         }
 
         $hash = hash_hmac("sha256", "$userId $expiration $userSecret", $appSecret);
