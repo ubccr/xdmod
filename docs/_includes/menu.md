@@ -43,6 +43,7 @@ Using
 - [HOWTOs](howto.html)
 - [Frequently Asked Questions](faq.html)
 - [Troubleshooting](troubleshooting.html)
+- [Cloud Metrics (Beta)](cloud.html)
 
 Resource Manager Notes
 ----------------------
