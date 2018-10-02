@@ -33,6 +33,11 @@ class RunningSessionsCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
         );
     }
 
+    public function getLabel() 
+    {
+        return parent::getLabel(false);
+    }
+
     public function getInfo()
     {
         return  "The total number of sessions on a cloud resource.<br/>

@@ -1,10 +1,10 @@
 title
-"Number of Active Sessions (Number of Sessions): by Project"
+"Number of Active Sessions: by Project"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Month,"[zealous] Number of Active Sessions (Number of Sessions)"
+Month,"[zealous] Number of Active Sessions"
 2018-04,51
 ---------

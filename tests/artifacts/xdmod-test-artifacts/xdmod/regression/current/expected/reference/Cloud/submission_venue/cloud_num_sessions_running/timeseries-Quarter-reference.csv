@@ -1,10 +1,10 @@
 title
-"Number of Active Sessions (Number of Sessions): by Submission Venue"
+"Number of Active Sessions: by Submission Venue"
 parameters
 
 start,end
 2018-04-18,2018-04-30
 ---------
-Quarter,"[OpenStack API] Number of Active Sessions (Number of Sessions)"
+Quarter,"[OpenStack API] Number of Active Sessions"
 "2018 Q2",51
 ---------
