@@ -283,7 +283,7 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         return $userId;
     }
 
-    protected function updateUser($userId, $password = null, $firstName = null, $lastName = null, $emailAddress = null)
+    protected function updateCurrentUser($userId, $password = null, $firstName = null, $lastName = null, $emailAddress = null)
     {
         $helper = new XdmodTestHelper();
         $helper->authenticateDashboard('mgr');
@@ -333,6 +333,53 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         );
 
         $helper->logout();
+    }
+
+    /**
+     * Update the user identified by $userId w/ the values supplied for the rest of the function
+     * arguments. Note that this utilizes the user_admin/update_user operation to do the updating
+     * as opposed to the `updateCurrentUser` function that utilizes the `users/current` rest path.
+     *
+     * @param int    $userId
+     * @param string $emailAddress
+     * @param array  $acls
+     * @param int    $assignedPerson
+     * @param int    $institution
+     * @param int    $user_type
+     * @throws Exception
+     */
+    protected function updateUser($userId, $emailAddress, $acls, $assignedPerson, $institution, $user_type, $sticky = false)
+    {
+        $data = array(
+            'operation' => 'update_user',
+            'uid' => $userId,
+            'email_address' => $emailAddress,
+            'acls' => json_encode(
+                $acls
+            ),
+            'assigned_user' => $assignedPerson,
+            'institution' => $institution,
+            'user_type' => $user_type,
+            'sticky' => $sticky
+        );
+        $this->helper->authenticateDashboard('mgr');
+
+        $response = $this->helper->post('controllers/user_admin.php', null, $data);
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+
+        $data = $response[0];
+
+        $this->assertArrayHasKey('success', $data, "Expected the returned data structure to contain a 'success' property.");
+        $this->assertArrayHasKey('status', $data, "Expected the returned data structure to contain a 'status' property.");
+        $this->assertArrayHasKey('username', $data, "Expected the returned data structure to contain a 'username' property.");
+        $this->assertArrayHasKey('user_type', $data, "Expected the returned data structure to contain a 'user_type' property.");
+
+        $this->assertTrue($data['success'], "Expected the 'success' property to be: true Received: " . $data['success']);
+
+        $this->helper->logoutDashboard();
     }
 
     /**

@@ -94,7 +94,7 @@ SQL;
      * $organizationName.
      *
      * @param string $organizationName the name of the organization to retrieve.
-     * @return int|null null if no record is found else the organization_id as an int.
+     * @return int -1 if no record is found else the organization_id as an int.
      * @throws \Exception if there is a problem retrieving a db connection.
      * @throws \Exception if there is a problem executing the sql statement.
      */

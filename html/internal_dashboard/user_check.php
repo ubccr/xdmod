@@ -14,8 +14,9 @@ if (isset($_POST['xdmod_username']) && isset($_POST['xdmod_password'])) {
         denyWithMessage('Invalid login');
     }
 
+    $user->postLogin();
+
     $_SESSION['xdDashboardUser'] = $user->getUserID();
-    XDSessionManager::recordLogin($user);
 }
 
 // Check that the user has been set in the session.

@@ -4,23 +4,25 @@ require_once __DIR__ . '/../../../configuration/linker.php';
 $formal_name = isset($_REQUEST['xd_user_formal_name']) ? $_REQUEST['xd_user_formal_name'] :  "";
 $samlError = false;
 $auth = null;
+$message = '';
+
 try {
     $auth = new Authentication\SAML\XDSamlAuthentication();
 } catch (InvalidArgumentException $ex) {
  // This will catch when a configuration directory does not exist if it is set in the environment level
 }
-if ($auth && $auth->isSamlConfigured()) {
-    $xdmodUser = $auth->getXdmodAccount();
-    if ($xdmodUser && $xdmodUser != "EXCEPTION" && $xdmodUser != "ERROR" && $xdmodUser != "EXISTS" && $xdmodUser != "AMBIGUOUS") {
+try {
+    if ($auth && $auth->isSamlConfigured()) {
+        $xdmodUser = $auth->getXdmodAccount();
         if ($xdmodUser->getAccountStatus()) {
-            \XDSessionManager::recordLogin($xdmodUser);
             $formal_name = $xdmodUser->getFormalName();
+            $xdmodUser->postLogin();
         } else {
-            $samlError = "INACTIVE";
+            $message = 'Your account is currently inactive, please contact an administrator.';
         }
-    } else {
-        $samlError = $xdmodUser;
     }
+} catch (Exception $e) {
+    $message = $e->getMessage();
 }
 // Used for Single Sign On  or samlErrors
 ?>
@@ -57,24 +59,8 @@ if ($auth && $auth->isSamlConfigured()) {
   </script>
 </head>
     <?php
-    if ($samlError) {
-        $message = "";
-        switch ($samlError) {
-            case "ERROR":
-                $message = "There was an error with your account; an administrator has been notified.";
-                break;
-            case "INACTIVE":
-                $message = "Your account is currently inactive, please contact an administrator.";
-                break;
-            case "EXISTS":
-                $message = "An account is currently configured with this information, please contact an administrator.";
-                break;
-            case "AMBIGUOUS":
-                $message = "Multiple users configured with the same information, please contact an administrator.";
-                break;
-            default:
-                $message = "An unknown error has occured.";
-        }
+
+    if (!empty($message)) {
     ?>
       <body class="error_message">
         <p>

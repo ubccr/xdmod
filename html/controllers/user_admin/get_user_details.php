@@ -49,6 +49,7 @@ use Models\Services\Acls;
    }	
 
 	$userDetails['is_active'] = $selected_user->getAccountStatus() ? 'active' : 'disabled' ;
+    $userDetails['sticky'] = $selected_user->isSticky();
 
     $acls = Acls::listUserAcls($selected_user);
     $populatedAcls = array_reduce(

@@ -204,13 +204,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             settingsAreDirty = true;
             saveIndicator.show();
 
-            // If the currently selected person is the Unknown person then make sure we
-            // enable the institution drop down for manual overrides.
-            if (cmbUserMapping.getValue() === '-1') {
-                cmbInstitution.setDisabled(false);
-            } else {
-                cmbInstitution.setDisabled(true);
-            }
+            stickyCheckbox.setValue(true);
             /* eslint-enable no-use-before-define */
         };
 
@@ -359,6 +353,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         }, this, { single: true });
 
         // ------------------------------------------
+        var stickyCheckbox = new Ext.form.Checkbox({
+            boxLabel: 'Manually Overridden',
+            labelStyle: 'display: none; visible: none'
+        });
+
 
         var cmbInstitution = new CCR.xdmod.ui.InstitutionDropDown({
             fieldLabel: 'Institution',
@@ -369,7 +368,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             allowBlank: false
         });
 
-        cmbInstitution.setDisabled(true);
 
         // ------------------------------------------
 
@@ -762,7 +760,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 cmbUserType,
                 lblXSEDEUser,
                 cmbUserMapping,
-                cmbInstitution
+                cmbInstitution,
+                stickyCheckbox
             ]
         });
 
@@ -850,7 +849,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         '-1' :
                         cmbUserMapping.getValue(),
                     institution: cmbInstitution.getValue(),
-                    user_type: userType
+                    user_type: userType,
+                    sticky: stickyCheckbox.getValue()
                 };
 
                 Ext.Ajax.request({
@@ -1142,9 +1142,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         // We then disable / enable controls based on the information retrieved.
                         userSettings.setDisabled(false);
 
-                        // We disabled cmbInstitution because it's always disabled now.
-                        cmbInstitution.setDisabled(true);
-
                         userEditor.setTitle('User Details: ' + Ext.util.Format.htmlEncode(json.user_information.formal_name));
 
                         existingUserEmailField.setValue(json.user_information.email_address);
@@ -1170,15 +1167,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             cmbUserType.setDisabled(false);
                             cmbUserType.setValue(cached_user_type);
                         }
-
+                        stickyCheckbox.setValue(Boolean(json.user_information.sticky));
                         cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
-
-                        // If the current person mapped is the Unknown person then make
-                        // sure to enable the institution drop down for manual override.
-                        // we don't need an else as it's already setDisabled(true) above.
-                        if (cmbUserMapping.getValue() === '-1') {
-                            cmbInstitution.setDisabled(false);
-                        }
 
                         /**
                          * acls are in the form:

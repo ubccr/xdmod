@@ -69,7 +69,7 @@ class DataWarehouse
      * @param string username
      * @return person_id or -1 if the person_id could not be determined
      */
-    public function getPersonIdFromPII($username, $organization) {
+    public static function getPersonIdFromPII($username, $organization) {
 
         $config = Config::factory();
         $query = $config['user_management']['person_mapping'];

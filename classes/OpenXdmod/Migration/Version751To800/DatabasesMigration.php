@@ -21,6 +21,13 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
     {
         parent::execute();
 
+        // Ensure that the User table is updated.
+        $this->runEtl(
+            array(
+                'actions' => 'xdmod.xdb-bootstrap.xdb-table-create'
+            )
+        );
+
         $this->runEtl(
             array(
                 'process-sections' => array(

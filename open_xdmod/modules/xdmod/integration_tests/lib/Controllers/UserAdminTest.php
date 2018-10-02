@@ -176,7 +176,7 @@ class UserAdminTest extends BaseUserAdminTest
         // users password so that it can be used to login in future tests.
         if ($userId !== null) {
             $username = array_search($userId, self::$newUsers);
-            $this->updateUser($userId, $username);
+            $this->updateCurrentUser($userId, $username);
         }
     }
 
