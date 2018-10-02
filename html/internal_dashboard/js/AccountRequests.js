@@ -359,7 +359,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
                                 text: 'Create & Manage Users',
                                 scale: 'small',
                                 iconCls: 'btn_group',
-                                id: 'about_button',
+                                id: 'acct_requests_create_manage_users',
                                 handler: function () {
                                     self.adminPanel.showPanel({
                                         doListReload: false,

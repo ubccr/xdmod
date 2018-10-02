@@ -203,6 +203,14 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             /* eslint-disable no-use-before-define */
             settingsAreDirty = true;
             saveIndicator.show();
+
+            // If the currently selected person is the Unknown person then make sure we
+            // enable the institution drop down for manual overrides.
+            if (cmbUserMapping.getValue() === '-1') {
+                cmbInstitution.setDisabled(false);
+            } else {
+                cmbInstitution.setDisabled(true);
+            }
             /* eslint-enable no-use-before-define */
         };
 
@@ -904,7 +912,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var mnuActions = new Ext.menu.Menu({
             plain: true,
             showSeparator: false,
-            cls: 'no-icon-menu',
+            cls: 'no-icon-menu existing_users_action_menu',
 
             items: [
                 {
@@ -1164,6 +1172,13 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
+
+                        // If the current person mapped is the Unknown person then make
+                        // sure to enable the institution drop down for manual override.
+                        // we don't need an else as it's already setDisabled(true) above.
+                        if (cmbUserMapping.getValue() === '-1') {
+                            cmbInstitution.setDisabled(false);
+                        }
 
                         /**
                          * acls are in the form:

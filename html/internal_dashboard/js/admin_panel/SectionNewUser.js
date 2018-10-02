@@ -22,6 +22,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         var leftColumnFieldWidth = 205;
 
         var cmbInstitution = new CCR.xdmod.ui.InstitutionDropDown({
+            cls: 'new_user_institution',
             controllerBase: base_controller,
             fieldLabel: 'Institution',
             emptyText: 'No Institution Selected',
@@ -36,6 +37,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         });
 
         var cmbUserMapping = new CCR.xdmod.ui.TGUserDropDown({
+            cls: 'new_user_map_to',
             dashboardMode: true,
             user_management_mode: true,
             controllerBase: '../controllers/sab_user.php',
@@ -45,7 +47,16 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             width: 150,
             cascadeOptions: {
                 component: cmbInstitution,
-                valueProperty: 'id'
+                valueProperty: 'id',
+                callback: function (oldValue, newValue) {
+                    // If our new person value is the Unknown person than make sure that the
+                    // cascade control is enabled for manual override.
+                    if (newValue === '-1') {
+                        cmbInstitution.setDisabled(false);
+                    } else {
+                        cmbInstitution.setDisabled(true);
+                    }
+                }
             }
         });
 
@@ -72,6 +83,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         });
 
         var cmbUserType = new Ext.form.ComboBox({
+            cls: 'new_user_user_type',
             editable: false,
             fieldLabel: 'User Type',
             store: storeUserType,
@@ -131,6 +143,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         var minUsernameLength = XDMoD.constants.minUsernameLength;
         var maxUsernameLength = XDMoD.constants.maxUsernameLength;
         var txtUsername = new Ext.form.TextField({
+            cls: 'new_user_username',
             fieldLabel: 'Username',
             emptyText: minUsernameLength + ' min, ' + maxUsernameLength + ' max',
             msgTarget: 'under',
@@ -173,6 +186,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
 
         var maxFirstNameLength = XDMoD.constants.maxFirstNameLength;
         var txtFirstName = new Ext.form.TextField({
+            cls: 'new_user_first_name',
             fieldLabel: 'First Name',
             emptyText: '1 min, ' + maxFirstNameLength + ' max',
             msgTarget: 'under',
@@ -194,6 +208,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
 
         var maxLastNameLength = XDMoD.constants.maxLastNameLength;
         var txtLastName = new Ext.form.TextField({
+            cls: 'new_user_last_name',
             fieldLabel: 'Last Name',
             emptyText: '1 min, ' + maxLastNameLength + ' max',
             msgTarget: 'under',
@@ -216,6 +231,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         var minEmailLength = XDMoD.constants.minEmailLength;
         var maxEmailLength = XDMoD.constants.maxEmailLength;
         var txtEmailAddress = new Ext.form.TextField({
+            cls: 'new_user_email_address',
             fieldLabel: 'E-Mail Address',
             emptyText: minEmailLength + ' min, ' + maxEmailLength + ' max',
             msgTarget: 'under',

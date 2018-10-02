@@ -252,7 +252,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
         // ---------------------------------
 
         var existingUserGrid = new Ext.grid.GridPanel({
-
+            cls: 'existing_user_grid',
             store: self.storeProvider,
             region: 'center',
 
@@ -422,7 +422,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
                                 text: 'Create & Manage Users',
                                 scale: 'small',
                                 iconCls: 'btn_group',
-                                id: 'about_button',
+                                id: 'current_users_create_manage_users',
                                 handler: function () {
                                     self.adminPanel.showPanel({
                                         doListReload: true,

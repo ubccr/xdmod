@@ -30,7 +30,7 @@ XDMoD.AdminPanel = Ext.extend(Ext.Window,  {
             tabCls: 'tab-strip',
             border: false
          },
-
+          cls: 'user_management_tabs',
          items: [
                sectionNewUser,
                sectionExistingUsers

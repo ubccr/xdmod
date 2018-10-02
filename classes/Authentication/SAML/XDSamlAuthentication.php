@@ -61,7 +61,7 @@ EML;
 
     const USER_EMAIL_BODY = <<<EML
 
-Greetings,
+Dear %s
 
 This email is notify you that XDMoD was unable to determine which organization to associate you with.
 Administrative Users have been notified that additional setup will be required. You may not have full
@@ -366,7 +366,7 @@ EML;
                 '',
                 $senderEmail,
                 self::USER_EMAIL_SUBJECT,
-                self::USER_EMAIL_BODY
+                sprintf(self::USER_EMAIL_BODY, $user->getFormalName())
             );
         } elseif (empty($userEmail)) {
             $title = 'Unable to determine email address for new SSO User.';

@@ -40,7 +40,7 @@ EML;
 
     const USER_NOTIFICATION_EMAIL = <<<EML
 
-Greetings,
+Dear %s,
 
 This email is to notify you that XDMoD has detected a change in your organization affiliation. We
 have taken steps to ensure that this is accurately reflected in our systems. If you have any questions
@@ -246,6 +246,7 @@ TXT;
                         'subject' => 'XDMoD User: Organization Update',
                         'body' => sprintf(
                             self::USER_NOTIFICATION_EMAIL,
+                            $user->getFormalName(),
                             \xd_utilities\getConfiguration('mailer', 'sender_email')
                         ),
                         'toAddress' => $user->getEmailAddress(),
