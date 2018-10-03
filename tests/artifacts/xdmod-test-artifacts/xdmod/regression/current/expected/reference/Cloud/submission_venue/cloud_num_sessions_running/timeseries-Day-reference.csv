@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[OpenStack API] Number of Active Sessions"
+Day,"[OpenStack API] Number of Active Sessions (Number of Sessions)"
 2018-04-18,22
 2018-04-19,23
 2018-04-20,11

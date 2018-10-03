@@ -5,6 +5,6 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Quarter,"[2 - 4 GB] Number of Active Sessions","[< 2 GB] Number of Active Sessions","[8 - 16 GB] Number of Active Sessions","[4 - 8 GB] Number of Active Sessions"
+Quarter,"[2 - 4 GB] Number of Active Sessions (Number of Sessions)","[< 2 GB] Number of Active Sessions (Number of Sessions)","[8 - 16 GB] Number of Active Sessions (Number of Sessions)","[4 - 8 GB] Number of Active Sessions (Number of Sessions)"
 "2018 Q2",41,6,3,1
 ---------

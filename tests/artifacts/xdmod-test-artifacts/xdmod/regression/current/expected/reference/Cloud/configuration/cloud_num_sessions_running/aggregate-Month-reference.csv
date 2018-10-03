@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-"Instance Type","Number of Active Sessions"
+"Instance Type","Number of Active Sessions (Number of Sessions)"
 c1.m4,37
 c1.m1,6
 c2.m4,4
