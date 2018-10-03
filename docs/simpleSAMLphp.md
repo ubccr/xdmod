@@ -73,7 +73,7 @@ Conditionally, if your installation supports multiple organizations then you mus
 *    `organization`
      * This will be used to identify which Organization the user should be associated with via the `modw.organization.name` column
 
-There are two configuration properties in `portal_settings.ini` that support and interact with this SAML property.
+There is one property in `portal_settings.ini` that supports and interacts with this SAML property.
 *    `force_default_organization`: `on`|`off`
      * Controls how Organization association is handled when new SSO users log in to XDMoD.
 
