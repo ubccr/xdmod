@@ -124,7 +124,7 @@ class XDWarehouse
 
                 $usersQuery = $this->_pdo->query(
                     "
-                        SELECT p.id, p.first_name, p.last_name
+                        SELECT p.id, p.long_name
                         FROM person AS p
                         $filter
                         ORDER BY p.last_name ASC, p.first_name ASC
@@ -401,4 +401,3 @@ SQL;
         return $users;
     }
 }
-

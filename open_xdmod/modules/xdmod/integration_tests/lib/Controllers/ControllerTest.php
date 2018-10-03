@@ -349,14 +349,14 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             $found = array_filter(
                 $actualUsers,
                 function ($value) use ($expectedUser) {
-                    return $expectedUser['person_name']=== $value['person_name'];
+                    return $expectedUser['person_name'] === $value['person_name'];
                 }
             );
             if (empty($found)) {
                 $notFound []= $expectedUser;
             }
         }
-        $this->assertEmpty($notFound, "There were expected users missing in actual. \nExpected: " . json_encode($notFound) . "\nActual: " . json_encode($actualUsers));
+        $this->assertEmpty($notFound, "There were expected users missing in actual (person_id is not actually checked and may be different).\nExpected: " . json_encode($notFound) . "\nActual: " . json_encode($actualUsers));
         $this->helper->logoutDashboard();
     }
 
