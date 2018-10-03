@@ -47,7 +47,7 @@ describe('Internal Dashboard', function () {
             browser.waitForInvisible(page.selectors.combo.container);
 
             const mapTo = browser.getValue(page.selectors.create_manage_users.new_user.mapTo());
-            expect(mapTo).to.equal('Unknown, Unknown');
+            expect(mapTo).to.equal('Unknown');
 
             // Wait for the institution combo to be enabled / have a value.
             browser.waitForEnabled(page.selectors.create_manage_users.new_user.institution());
