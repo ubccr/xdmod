@@ -74,10 +74,7 @@ foreach ($users as $currentUser) {
     $entry_id++;
 
     if ($searchMethod == FORMAL_NAME_SEARCH) {
-        $personName
-            = $currentUser['last_name']
-            . ', '
-            . $currentUser['first_name'];
+        $personName = $currentUser['long_name'];
         $personID = $currentUser['id'];
     }
 
@@ -106,4 +103,3 @@ $returnData = array(
 );
 
 xd_controller\returnJSON($returnData);
-
