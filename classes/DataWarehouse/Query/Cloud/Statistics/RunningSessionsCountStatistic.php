@@ -33,7 +33,7 @@ class RunningSessionsCountStatistic extends \DataWarehouse\Query\Cloud\Statistic
         );
     }
 
-    public function getLabel() 
+    public function getLabel()
     {
         return parent::getLabel(false);
     }
