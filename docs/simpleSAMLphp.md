@@ -89,8 +89,6 @@ To get a better idea of how these properties translate into expected behavior du
 | force_default_organization | off | true                    | false        | The user is associated with the SAML Organization if found, else the Unknown organization|
 | force_default_organization | off | false                   | true         | The user is associated with the Persons organization if found, else the Unknown organization|
 | force_default_organization | off | false                   | false        | The user is associated with the Unknown organization|
-| email_admin_sso_unknown_org| on  | *                       | *            | If an organization cannot be identified with the provided information then the admins will be notified|
-
 
 Here is an example `authsources.php` file:
 
