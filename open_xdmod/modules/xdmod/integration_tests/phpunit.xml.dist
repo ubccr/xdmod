@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
          backupGlobals="true"
@@ -18,4 +19,13 @@
          stopOnSkipped="false"
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
          verbose="true">
+<testsuites>
+    <testsuite name="default">
+        <directory>./lib/</directory>
+        <exclude>./lib/Controllers/SSOLoginTest.php</exclude>
+    </testsuite>
+    <testsuite name="sso">
+        <file>./lib/Controllers/SSOLoginTest.php</file>
+    </testsuite>
+</testsuites>
 </phpunit>

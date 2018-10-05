@@ -139,6 +139,60 @@ class XdmodTestHelper
     }
 
     /**
+     * Retrieves the name and value of all input elements for an html form.
+     * @throws \Exception if there is more than one form with a action attribute in the document
+     */
+    private function getHTMLFormData($html)
+    {
+        $dom = new \DOMDocument;
+
+        $libxmlErrorSetting = libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        // restore original error handling settings
+        libxml_use_internal_errors($libxmlErrorSetting);
+
+        $xpath = new \DOMXpath($dom);
+
+        $form = $xpath->query("//form[@action]");
+        if ($form->length != 1) {
+            throw \Exception('Unexpected number of form elements in html');
+        }
+        $action = $form->item(0)->getAttribute('action');
+
+        $elements = $xpath->query("//form[@action]//input");
+        $formInputs = array();
+        foreach ($elements as $element) {
+            $formInputs[$element->getAttribute('name')] = $element->getAttribute('value');
+        }
+
+        return array($action, $formInputs);
+    }
+
+    /*
+     * Authenticate a user via SSO. SSO authentication requires a saml-idp
+     * server. This is setup in the integration_tests/scripts/samlSetup.sh
+     */
+    public function authenticateSSO($parameters)
+    {
+        $result = $this->get('rest/auth/idpredirect', array('returnTo' => '/gui/general/login.php'));
+        $nextlocation = $result[0];
+        $result = $this->get($nextlocation, null, true);
+
+        list($action, $authSettings) = $this->getHTMLFormData($result[0]);
+
+        $finalSettings = array_merge($authSettings, $parameters);
+
+        $providerInfo = parse_url($result[1]['url']);
+        $url = $providerInfo['scheme'] . '://' . $providerInfo['host'] . ':' . $providerInfo['port'] . $action;
+
+        $result = $this->post($url, null, $finalSettings, true);
+
+        list($action, $credentials) = $this->getHTMLFormData($result[0]);
+
+        $result = $this->post($action, null, $credentials, true);
+    }
+
+    /**
      * Attempt to authenticate using the provided $userrole against XDMoD's
      * internal dashboard.
      *
@@ -223,9 +277,13 @@ class XdmodTestHelper
         return $this->docurl();
     }
 
-    public function get($path, $params = null)
+    public function get($path, $params = null, $isurl = false)
     {
-        $url = $this->siteurl . $path;
+        if ($isurl) {
+            $url = $path;
+        } else {
+            $url = $this->siteurl . $path;
+        }
 
         if ($params !== null) {
             $url .= "?" . http_build_query($params);
@@ -240,9 +298,13 @@ class XdmodTestHelper
         return $this->docurl();
     }
 
-    public function post($path, $params, $data)
+    public function post($path, $params, $data, $isurl = false)
     {
-        $url = $this->siteurl . $path;
+        if ($isurl) {
+            $url = $path;
+        } else {
+            $url = $this->siteurl . $path;
+        }
 
         if ($params !== null) {
             $url .= "?" . http_build_query($params);

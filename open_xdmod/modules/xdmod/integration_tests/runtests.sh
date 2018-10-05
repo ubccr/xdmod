@@ -19,7 +19,7 @@ if [ ! -x "$phpunit" ]; then
 fi
 
 # Run the tests in UserAdminTest.createUsers
-$phpunit . --group UserAdminTest.createUsers $UATCU
+$phpunit --testsuite default --group UserAdminTest.createUsers $UATCU
 
 # Run everything else
-$phpunit . --exclude-group UserAdminTest.createUsers $UATXCU
+$phpunit --testsuite default --exclude-group UserAdminTest.createUsers $UATXCU
