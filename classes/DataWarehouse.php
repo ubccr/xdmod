@@ -61,32 +61,28 @@ class DataWarehouse
         destroy();
     }
 
-    /************************************************************
-	 * @function getPersonIdByUsername
-	 * @access public
-	 *
-	 * @param string username
-	 *
-	 * @return person_id or UNKNOWN_USER_TYPE (-1)
-	 ************************************************************/
-    public function getPersonIdByUsername($username = null){
-        if(!empty($username)){
-            $dbh = self::connect();
-            $personId = $dbh->query(
-                " SELECT person_id
-				FROM modw.systemaccount
-				WHERE username = :username
-				LIMIT 1",
-                array(
-                ':username' => $username,
-                )
-            );
-            if(count($personId) > 0){
-                return $personId[0]['person_id'];
-            }
+    /**
+     * @function getPersonIdByUsername
+     *
+     * Return the person_id of a user based on the username if available and
+     * unique.
+     *
+     * @param string username
+     * @return person_id or -1 if the person_id could not be determined
+     */
+    public function getPersonIdByUsername($username) {
+
+        $config = Config::factory();
+        $query = $config['user_management']['person_mapping'];
+
+        $dbh = self::connect();
+        $personId = $dbh->query($query, array(':username' => $username));
+        if(count($personId) === 1){
+            return $personId[0]['person_id'];
         }
-        return UNKNOWN_USER_TYPE;
+        return -1;
     }
+
     /************************************************************
 	 * @function getAllocations()
 	 * @access public
