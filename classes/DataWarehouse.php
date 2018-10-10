@@ -62,21 +62,28 @@ class DataWarehouse
     }
 
     /**
-     * @function getPersonIdByUsername
+     * @function getPersonIdFromPII
      *
-     * Return the person_id of a user based on the username if available and
-     * unique.
+     * Return the person_id of a user based on username and organization.
      *
      * @param string username
      * @return person_id or -1 if the person_id could not be determined
      */
-    public function getPersonIdByUsername($username) {
+    public function getPersonIdFromPII($username, $organization) {
 
         $config = Config::factory();
         $query = $config['user_management']['person_mapping'];
 
         $dbh = self::connect();
-        $personId = $dbh->query($query, array(':username' => $username));
+        $stmt = $dbh->handle()->prepare($query);
+        $stmt->bindParam(':username', $username);
+
+        if (preg_match('/\W:organization\b/', $query) === 1) {
+            $stmt->bindParam(':organization', $organization);
+        }
+        $stmt->execute();
+
+        $personId = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if(count($personId) === 1){
             return $personId[0]['person_id'];
         }

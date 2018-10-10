@@ -134,7 +134,7 @@ EML;
                 }
             }
             $emailAddress = !empty($samlAttrs['email_address'][0]) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
-            $personId = \DataWarehouse::getPersonIdByUsername($thisSystemUserName);
+            $personId = \DataWarehouse::getPersonIdFromPII($thisSystemUserName, $samlAttrs['organization']);
 
             $userOrganization = $this->getOrganizationId($samlAttrs, $personId);
 
