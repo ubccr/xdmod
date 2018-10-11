@@ -37,6 +37,10 @@ then
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
     php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
+
+    # This will ensure that the users created in `/root/bin/createusers.php`
+    # have their organizations set correctly.
+    php /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.acls-import
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
