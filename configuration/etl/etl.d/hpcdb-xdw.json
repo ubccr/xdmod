@@ -55,6 +55,7 @@
         "name": "field-of-science-hierarchy",
         "definition_file": "jobs/xdw/field-of-science-hierarchy.json",
         "description": "field of science hierarchy records",
+        "#": "disable to allow order_id to be set",
         "optimize_query": false
     }, {
         "name": "organization",
