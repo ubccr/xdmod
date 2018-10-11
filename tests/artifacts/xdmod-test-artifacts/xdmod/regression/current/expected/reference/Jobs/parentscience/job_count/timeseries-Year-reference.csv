@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[Unknown] Number of Jobs Ended"
-2016,54747
-2017,16566
+Year,"[Social and Economic Science] Number of Jobs Ended","[Chemistry] Number of Jobs Ended","[Microelectronic Information Processing Systems] Number of Jobs Ended","[Earth Sciences] Number of Jobs Ended","[Polar Programs] Number of Jobs Ended","[Astronomical Sciences] Number of Jobs Ended","[Design and Manufacturing Systems] Number of Jobs Ended","[Environmental Biology] Number of Jobs Ended","[Electrical and Communication Systems] Number of Jobs Ended","[Materials Research] Number of Jobs Ended","[Molecular Biosciences] Number of Jobs Ended","[Mechanical and Structural Systems] Number of Jobs Ended","[Arts] Number of Jobs Ended","[Mathematical Sciences] Number of Jobs Ended","[Computer and Computation Research] Number of Jobs Ended","[Chemical, Thermal Systems] Number of Jobs Ended","[Physics] Number of Jobs Ended","[Atmospheric Sciences] Number of Jobs Ended"
+2016,43748,6559,1681,1026,98,782,214,100,133,153,84,64,61,17,20,3,3,1
+2017,13956,410,986,3,814,11,103,139,28,0,34,28,5,48,0,0,0,1
 ---------

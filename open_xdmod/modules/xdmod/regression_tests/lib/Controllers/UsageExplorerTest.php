@@ -76,6 +76,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     $this->assertEquals($expected, $csvdata);
                     return;
                 }
+                self::$messages[] = "Raw Expected:\n$expected\n\nRaw Actual:\n$csvdata\n";
 
                 $failures = $this->csvDataDiff($expected, $csvdata, $fullTestName);
                 if(empty($failures))

@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[Unknown] Screwdriver Utilization (%)"
-2016,0.438738615
-2017,0.039828675
+Year,"[Computer and Information Science and Engineering] Screwdriver Utilization (%)","[Engineering] Screwdriver Utilization (%)","[Mathematical and Physical Sciences] Screwdriver Utilization (%)","[Social, Behavioral, and Economic Sciences] Screwdriver Utilization (%)","[Geosciences] Screwdriver Utilization (%)","[Biological Sciences] Screwdriver Utilization (%)","[Humanities/Arts] Screwdriver Utilization (%)"
+2016,0.177463359,0.195577678,0.172231744,0.088013042,0.013642322,0.026430159,0.017242731
+2017,0.034665359,0.010157923,0.008739462,0.004949477,0.027280343,0.005071424,0.000428009
 ---------
