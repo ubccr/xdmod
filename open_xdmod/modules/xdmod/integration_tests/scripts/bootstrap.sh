@@ -24,6 +24,8 @@ then
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-setup.tcl | col -b
+    xdmod-import-csv -t hierarchy -i $REF_DIR/hierarchy.csv
+    xdmod-import-csv -t group-to-hierarchy -i $REF_DIR/group-to-hierarchy.csv
     for resource in $REF_DIR/*.log; do
         sudo -u xdmod xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
     done
