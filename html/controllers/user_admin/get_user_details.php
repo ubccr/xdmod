@@ -55,18 +55,7 @@ use Models\Services\Acls;
     $populatedAcls = array_reduce(
         $acls,
         function ($carry, $item) use ($selected_user) {
-            $aclName = $item['name'];
-            $aclCenters = array();
-            if ($item['requires_center'] == true) {
-                $aclCenters = Acls::getDescriptorParamValues(
-                    $selected_user,
-                    $aclName,
-                    'provider'
-                );
-            }
-
-            $carry[$aclName] = $aclCenters;
-
+            $carry[$item['name']] = array();
             return $carry;
         },
         array()
