@@ -713,57 +713,6 @@ SQL;
     }
 
     /**
-     * Attempt to retrieve all descriptor param values for the provided user,
-     * acl and group by.
-     *
-     * @param XDUser $user        the user to use when determining the param
-     * value
-     * @param string $aclName     the name of the acl this descriptor param
-     * value is associated with
-     * @param string $groupByName the name of the group by this descriptor param
-     * value is associated with
-     * @return array|string[]
-     * @throws Exception if the user's userId is null
-     * @throws Exception if the aclName is null
-     * @throws Exception if the gropuByName is null
-     */
-    public static function getDescriptorParamValues(XDUser $user, $aclName, $groupByName)
-    {
-        if (null == $user->getUserID()) {
-            throw new Exception('A valid user id must be supplied.');
-        }
-        if (null === $aclName) {
-            throw new Exception('A valid acl name is required.');
-        }
-        if (null === $groupByName) {
-            throw new Exception('A valid group by name is required.');
-        }
-
-        $query = <<<SQL
-SELECT DISTINCT uagbp.value
-FROM user_acl_group_by_parameters uagbp
-  JOIN group_bys gb ON gb.group_by_id = uagbp.group_by_id
-  JOIN acls a ON a.acl_id = uagbp.acl_id
-WHERE uagbp.user_id = :user_id
-  AND a.name = :acl_name
-  AND gb.name = :group_by_name;
-SQL;
-        $db = DB::factory('database');
-        $rows = $db->query($query, array(
-            ':user_id' => $user->getUserID(),
-            ':acl_name' => $aclName,
-            ':group_by_name' => $groupByName
-        ));
-        if (count($rows) > 0) {
-            return array_reduce($rows, function ($carry, $item) {
-                $carry [] = $item['value'];
-                return $carry;
-            }, array());
-        }
-        return array();
-    }
-
-    /**
      * Attempt to retrieve the "most privileged" acl for the provided user.
      * "most privileged" in this context is the acl that fulfills the following
      * requirements:
