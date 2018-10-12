@@ -65,6 +65,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             Ext.apply(this, {
                     layout: 'table',
                     width: 1000,
+                autoScroll: true,
                     border: false,
                     layoutConfig: {
                         columns: 2
