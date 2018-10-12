@@ -382,6 +382,7 @@ class RoleParametersTest extends BaseTest
                 $aclId = implode('_', $acls);
                 $username = "user-$aclId";
                 $mostPrivileged = mostPrivileged($baseAcls, $acls);
+                $personId = $this->peopleHelper->getPersonIdByLongName($aclPersons[$mostPrivileged]);
 
                 $testCase = array(
                     'username' => $username,
@@ -390,6 +391,8 @@ class RoleParametersTest extends BaseTest
                     'last_name' => "User - $aclId",
                     'acls' => $acls,
                     'primary_role' => $mostPrivileged,
+                    'organization_id' => $organizationId,
+                    'person_id' => $personId
                 );
 
                 // We need to generate the expected results for this test case and include the
@@ -405,21 +408,17 @@ class RoleParametersTest extends BaseTest
                             $expected[$acl],
                             array('provider' => $organizationId)
                         );
-
-                        $testCase['organization_id'] = $organizationId;
                     }
 
                     if (in_array($acl, $aclsThatRequirePerson)) {
                         if (!isset($expected[$acl])) {
                             $expected[$acl] = array();
                         }
-                        $personId = $this->peopleHelper->getPersonIdByLongName($aclPersons[$mostPrivileged]);
+
                         $expected[$acl] = array_merge(
                             $expected[$acl],
                             array('person' => $personId)
                         );
-
-                        $testCase['person_id'] = $personId;
                     }
 
                     if (in_array($acl, $aclsThatRequirePi)) {
@@ -433,8 +432,6 @@ class RoleParametersTest extends BaseTest
                             $expected[$acl],
                             array('pi' => $personId)
                         );
-
-                        $testCase['person_id'] = $personId;
                     }
 
                     // Feature acls don't have any parameters and return an empty array.

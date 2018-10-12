@@ -745,56 +745,25 @@ SQL;
         }
 
         $query = <<<SQL
-SELECT DISTINCT
-  a.*,
-  aclp.abbrev organization,
-  aclp.id     organization_id,
-  aclh.level
+SELECT
+       a.*,
+       o.abbrev as organization,
+       o.id as organization_id,
+       aclh.level
 FROM acls a
-  JOIN user_acls ua
-    ON a.acl_id = ua.acl_id
-  JOIN acl_types at
-    ON a.acl_type_id = at.acl_type_id
-  LEFT JOIN (
-    SELECT
-      ah.acl_id,
-      ah.level
-    FROM acl_hierarchies ah
-      JOIN hierarchies h
-        ON ah.hierarchy_id = h.hierarchy_id
-    WHERE h.name = :acl_hierarchy_name
-  ) aclh
-    ON aclh.acl_id = ua.acl_id
-  LEFT JOIN (
-    SELECT
-      uagbp.acl_id,
-      uagbp.user_id,
-      o.abbrev,
-      o.id
-    FROM modw.organization o
-      JOIN user_acl_group_by_parameters uagbp
-        ON o.id = uagbp.value
-      JOIN group_bys gb
-        ON uagbp.group_by_id = gb.group_by_id
-      WHERE gb.name = 'provider'
-  ) aclp
-    ON aclp.acl_id = ua.acl_id AND
-    aclp.user_id = ua.user_id
--- left join to allows us to prefer user_acl_group_by_parameter records
--- with values found in modw.serviceprovider
-  LEFT JOIN (
-    SELECT DISTINCT
-      gt.organization_id AS id,
-      gt.short_name AS short_name,
-      gt.long_name AS long_name
-    FROM
-      modw.serviceprovider gt
-    WHERE 1
-  ) spv ON spv.id = aclp.id
-WHERE ua.user_id = :user_id AND
-  at.name != 'feature'
-ORDER BY COALESCE(aclh.level, 0) DESC, COALESCE(aclp.id, 0) DESC
-LIMIT 1
+JOIN user_acls ua ON a.acl_id = ua.acl_id
+JOIN acl_types at on a.acl_type_id = at.acl_type_id
+JOIN Users u ON ua.user_id = u.id
+JOIN modw.organization o ON o.id = u.organization_id
+LEFT JOIN (SELECT ah.acl_id, ah.level
+           FROM acl_hierarchies ah
+                  JOIN hierarchies h ON ah.hierarchy_id = h.hierarchy_id
+           WHERE h.name = :acl_hierarchy_name) aclh
+         ON aclh.acl_id = ua.acl_id
+WHERE u.id = :user_id AND
+      at.name != 'feature'
+ORDER BY COALESCE(aclh.level, 0) DESC
+LIMIT 1;
 SQL;
         $db = DB::factory('database');
         $rows = $db->query($query, array(
