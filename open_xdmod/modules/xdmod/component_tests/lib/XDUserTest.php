@@ -1629,7 +1629,7 @@ class XDUserTest extends BaseTest
     {
         $newUserName = isset($username) ? $username : self::getUserName(self::DEFAULT_TEST_USER_NAME);
 
-        $user = UserHelper::getUser($newUserName, $password, $firstName, $middleName, $lastName, $acls, $primaryRole, $email);
+        $user = UserHelper::getUser($newUserName, $password, $firstName, $middleName, $lastName, $acls, $primaryRole, $email, 1);
 
         self::$users[$newUserName] = $user;
         return $user;
