@@ -55,6 +55,30 @@
         "type": "BTREE",
         "is_unique": true
       }
+    ],
+    "foreign_key_constraints": [
+      {
+        "name": "fk_a_module_id",
+        "columns": [
+          "module_id"
+        ],
+        "referenced_table": "modules",
+        "referenced_columns": [
+          "module_id"
+        ],
+        "on_delete": "CASCADE"
+      },
+      {
+        "name": "fk_a_acl_type_id",
+        "columns": [
+          "acl_type_id"
+        ],
+        "referenced_table": "acl_types",
+        "referenced_columns": [
+          "acl_type_id"
+        ],
+        "on_delete": "CASCADE"
+      }
     ]
   }
 }

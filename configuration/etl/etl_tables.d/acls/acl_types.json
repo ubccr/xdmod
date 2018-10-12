@@ -35,6 +35,19 @@
         "type": "BTREE",
         "is_unique": true
       }
+    ],
+    "foreign_key_constraints": [
+      {
+        "name": "fk_atp_module_id",
+        "columns": [
+          "module_id"
+        ],
+        "referenced_table": "modules",
+        "referenced_columns": [
+          "module_id"
+        ],
+        "on_delete": "CASCADE"
+      }
     ]
   }
 }

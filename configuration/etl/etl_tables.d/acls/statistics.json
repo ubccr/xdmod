@@ -35,6 +35,30 @@
         "type": "BTREE",
         "is_unique": true
       }
+    ],
+    "foreign_key_constraints": [
+      {
+        "name": "fk_s_module_id",
+        "columns": [
+          "module_id"
+        ],
+        "referenced_table": "modules",
+        "referenced_columns": [
+          "module_id"
+        ],
+        "on_delete": "CASCADE"
+      },
+      {
+        "name": "fk_s_realm_id",
+        "columns": [
+          "realm_id"
+        ],
+        "referenced_table": "realms",
+        "referenced_columns": [
+          "realm_id"
+        ],
+        "on_delete": "CASCADE"
+      }
     ]
   }
 }

@@ -51,6 +51,63 @@
         ],
         "type": "BTREE",
         "is_unique": true
+      },
+      {
+        "name": "uniq_acl_group_by_realm_statistic",
+        "columns": [
+          "acl_id",
+          "group_by_id",
+          "realm_id",
+          "statistic_id"
+        ],
+        "type": "BTREE",
+        "is_unique": true
+      }
+    ],
+    "foreign_key_constraints": [
+      {
+        "name": "fk_agb_acl_id",
+        "columns": [
+          "acl_id"
+        ],
+        "referenced_table": "acls",
+        "referenced_columns": [
+          "acl_id"
+        ],
+        "on_delete": "CASCADE"
+      },
+      {
+        "name": "fk_agb_group_by_id",
+        "columns": [
+          "group_by_id"
+        ],
+        "referenced_table": "group_bys",
+        "referenced_columns": [
+          "group_by_id"
+        ],
+        "on_delete": "CASCADE"
+      },
+      {
+        "name": "fk_agb_realm_id",
+        "columns": [
+          "realm_id"
+        ],
+        "referenced_table": "realms",
+        "referenced_columns": [
+          "realm_id"
+        ],
+        "on_delete": "CASCADE"
+      },
+      {
+        "name": "fk_agb_statistic_id",
+        "columns": [
+          "statistic_id"
+        ],
+        "referenced_table": "statistics",
+        "referenced_columns": [
+          "statistic_id"
+        ],
+        "on_delete": "CASCADE"
       }
     ]
   }

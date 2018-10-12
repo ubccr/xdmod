@@ -41,6 +41,30 @@
                     "tab_id"
                 ]
             }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_at_acl_id",
+                "columns": [
+                    "acl_id"
+                ],
+                "referenced_table": "acls",
+                "referenced_columns": [
+                    "acl_id"
+                ],
+                "on_delete": "CASCADE"
+            },
+            {
+                "name": "fk_at_tab_id",
+                "columns": [
+                    "tab_id"
+                ],
+                "referenced_table": "tabs",
+                "referenced_columns": [
+                    "tab_id"
+                ],
+                "on_delete": "CASCADE"
+            }
         ]
     }
 }
