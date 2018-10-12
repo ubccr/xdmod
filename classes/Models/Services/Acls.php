@@ -713,56 +713,6 @@ SQL;
     }
 
     /**
-     * Attempt to retrieve the descriptor param value specific to the provided
-     * user, acl and group_by. Note: if there is more than one param value that
-     * matches the parameters provided then only the first one ( as
-     * determined by natural table ordering ) will be returned by this function.
-     *
-     * @param XDUser $user        the user to use when determining the param
-     * value
-     * @param string $aclName     the name of the acl this descriptor param
-     * value is associated with
-     * @param string $groupByName the name of the group by this descriptor param
-     * value is associated with
-     * @return null|string null if the value is not found, else it's returned as
-     * a string
-     * @throws Exception if the user's userId is null
-     * @throws Exception if the provided acl name is null
-     * @throws Exception if the provided group by name is null
-     */
-    public static function getDescriptorParamValue(XDUser $user, $aclName, $groupByName)
-    {
-        if (null == $user->getUserID()) {
-            throw new Exception('A valid user id must be supplied.');
-        }
-        if (null === $aclName) {
-            throw new Exception('A valid acl name is required.');
-        }
-        if (null === $groupByName) {
-            throw new Exception('A valid group by name is required.');
-        }
-        $db = DB::factory('database');
-        $query = <<<SQL
-SELECT DISTINCT uagbp.value
-FROM user_acl_group_by_parameters uagbp
-  JOIN group_bys gb ON gb.group_by_id = uagbp.group_by_id
-  JOIN acls a ON a.acl_id = uagbp.acl_id
-WHERE uagbp.user_id = :user_id
-  AND a.name = :acl_name
-  AND gb.name = :group_by_name;
-SQL;
-        $rows = $db->query($query, array(
-            ':user_id' => $user->getUserID(),
-            ':acl_name' => $aclName,
-            ':group_by_name' => $groupByName
-        ));
-        if (count($rows) > 0) {
-            return $rows[0]['value'];
-        }
-        return null;
-    }
-
-    /**
      * Attempt to retrieve all descriptor param values for the provided user,
      * acl and group by.
      *
