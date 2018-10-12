@@ -46,7 +46,7 @@ if (
 
     // Add an additional filter to eventually produce a listing of
     // individuals affiliated with the same university as this user.
-    $university_id = Acls::getDescriptorParamValue($user, ROLE_ID_CAMPUS_CHAMPION, 'provider');
+    $university_id = $user->getOrganizationID();
 }
 
 if ($_POST['search_mode'] == 'formal_name') {
