@@ -308,7 +308,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             }
         } catch (exception $ex) {
         }
-        print "CCR.xdmod.captcha_sitekey = '" . $captchaSiteKey . "';";
+        print "CCR.xdmod.captcha_sitekey = '" . $captchaSiteKey . "';\n";
         if (!$userLoggedIn) {
             $auth = null;
             try {
@@ -317,10 +317,20 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
                 // This will catch when a configuration directory does not exist if it is set in the environment level
             }
             if ($auth && $auth->isSamlConfigured()) {
+                $ssoColapse = 'true';
+                try {
+                    $ssoColapseSetting = filter_var(xd_utilities\getConfiguration('sso', 'colapse_local_login'), FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
+                    if($ssoColapseSetting === false){
+                        $ssoColapse = 'false';
+                    }
+                } catch (exception $ex) {
+                }
+
                 print "CCR.xdmod.isSSOConfigured = true;\n";
                 print "CCR.xdmod.SSOLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";
+                print "CCR.xdmod.SSOcolapseLocalLogin = " . $ssoColapse . "\n";
             } else {
-                print "CCR.xdmod.isSSOConfigured = false;";
+                print "CCR.xdmod.isSSOConfigured = false;\n";
             }
         }
         if ($userLoggedIn) {
