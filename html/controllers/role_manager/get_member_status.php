@@ -1,8 +1,5 @@
 <?php
 
-use Models\Services\Centers;
-use Models\Services\Users;
-
 \xd_security\assertParameterSet('member_id', RESTRICTION_UID);
 
 try {
