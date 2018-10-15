@@ -1113,7 +1113,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     if (CCR.xdmod.isSSOConfigured) {
         loginItems.push(SSOLoginFrm);
-        if (CCR.xdmod.SSOcolapseLocalLogin) {
+        if (CCR.xdmod.SSOcollapseLocalLogin) {
             localLoginFrm.collapsible = true;
             localLoginFrm.collapsed = true;
             localLoginFrm.titleCollapse = true;
