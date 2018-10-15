@@ -1052,7 +1052,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                     id: 'forgot_password_link'
                 },
                 {
-                xtype: 'tbtext',
+                    xtype: 'tbtext',
                     html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
                     id: 'sign_up_link'
                 }]
@@ -1121,7 +1121,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
             /**
              * the span is added to the title because without it the cursor does not show as clickable.
              */
-            localLoginFrm.title = '<span style="cursor:pointer;">Sign in with a local XDMoD account:</span>';
+            localLoginFrm.title = '<span style="cursor:pointer;">' + localLoginFrm.title + '</span>';
         }
         loginItems.push(localLoginFrm);
     } else {
