@@ -416,9 +416,15 @@ class MySQLHelper
         $dbUsername,
         $dbPassword
     ) {
+        /**
+         *  The privileges are listed out instead of ALL so that the user
+         *  created cannot administrate users or database tasks.
+         */
         $stmt = "GRANT TRIGGER, DROP, INDEX, CREATE, INSERT,"
             . " SELECT, DELETE, UPDATE, CREATE VIEW, SHOW VIEW,"
             . " ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES,"
+            . " CREATE ROUTINE, ALTER ROUTINE, EVENT, RELOAD, FILE,"
+            . " CREATE TABLESPACE, PROCESS, REFERENCES,"
             . " LOCK TABLES"
             . " ON *.* TO '$dbUsername'@'$localHost'"
             . " IDENTIFIED BY '$dbPassword';FLUSH PRIVILEGES;";
