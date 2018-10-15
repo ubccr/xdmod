@@ -34,7 +34,7 @@ try {
     }
 
     // They must not already be a Center Director for the organization.
-    if (Centers::hasCenterRelation($memberUserId, $organization, ROLE_ID_CENTER_DIRECTOR)) {
+    if ($member->getOrganizationID() === $organization && $member->hasAcl(ROLE_ID_CENTER_DIRECTOR)) {
         $returnData['success'] = false;
         $returnData['message'] = "is a Center Director";
         \xd_controller\returnJSON($returnData);
@@ -42,7 +42,7 @@ try {
 
     // They must not be a Center Staff for the organization.
     // Although this makes them eligible for demotion.
-    if (Centers::hasCenterRelation($memberUserId, $organization, ROLE_ID_CENTER_STAFF)) {
+    if ($member->getOrganizationID() === $organization && $member->hasAcl(ROLE_ID_CENTER_STAFF)) {
         $returnData['success'] = false;
         $returnData['message'] = "is already a Center Staff";
         \xd_controller\returnJSON($returnData);

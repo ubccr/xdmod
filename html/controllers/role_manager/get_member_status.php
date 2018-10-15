@@ -28,14 +28,14 @@ try {
     }
 
     // They must not already be a Center Director for the organization.
-    if (Centers::hasCenterRelation($memberUserId, $organization, ROLE_ID_CENTER_DIRECTOR)) {
+    if ($member->getOrganizationID() === $organization && $member->hasAcl(ROLE_ID_CENTER_DIRECTOR)) {
         $returnData['success'] = false;
         $returnData['message'] = "is a Center Director";
         \xd_controller\returnJSON($returnData);
     }
 
     // This makes them ineligible for promotion, but eligible for demotion.
-    if (Centers::hasCenterRelation($memberUserId, $organization, ROLE_ID_CENTER_STAFF)) {
+    if ($member->getOrganizationID() === $organization && $member->hasAcl(ROLE_ID_CENTER_STAFF)) {
         $returnData['eligible'] = false;
     }
 
