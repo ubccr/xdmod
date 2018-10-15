@@ -135,7 +135,7 @@ class UserControllerProvider extends BaseControllerProvider
             'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
             'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']),
             'field_of_science' => $user->getFieldOfScience(),
-            'active_role' => $user->getActiveRole()->getFormalName(),
+            'active_role' => $user->getMostPrivilegedRole()->getFormalName(),
             'most_privileged_role' => $user->getMostPrivilegedRole()->getFormalName(),
         );
     }
