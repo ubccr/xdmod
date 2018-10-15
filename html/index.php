@@ -317,18 +317,18 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
                 // This will catch when a configuration directory does not exist if it is set in the environment level
             }
             if ($auth && $auth->isSamlConfigured()) {
-                $ssoCollapse = 'true';
+                $ssoShowLocalLogin = false;
                 try {
-                    $ssoCollapseSetting = filter_var(xd_utilities\getConfiguration('sso', 'collapse_local_login'), FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
-                    if($ssoCollapseSetting === false){
-                        $ssoCollapse = 'false';
-                    }
+                    $ssoShowLocalLogin = filter_var(
+                        xd_utilities\getConfiguration('sso', 'show_local_login'),
+                        FILTER_VALIDATE_BOOLEAN
+                    );
                 } catch (exception $ex) {
                 }
 
                 print "CCR.xdmod.isSSOConfigured = true;\n";
                 print "CCR.xdmod.SSOLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";
-                print "CCR.xdmod.SSOcollapseLocalLogin = " . $ssoCollapse . "\n";
+                print "CCR.xdmod.SSOShowLocalLogin = " . json_encode($ssoShowLocalLogin) . "\n";
             } else {
                 print "CCR.xdmod.isSSOConfigured = false;\n";
             }

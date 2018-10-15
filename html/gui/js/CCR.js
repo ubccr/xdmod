@@ -1023,40 +1023,41 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
             },
             hidden: true
         },
-        new Ext.Container({
+        {
+            xtype: 'container',
             anchor: 'form',
             autoWidth: true,
             height: 38,
             layout: {
                 type: 'hbox'
             },
-            items: [
-                new Ext.Button({
-                    width: 75,
-                    height: 22,
-                    text: 'Sign in',
-                    id: 'btn_sign_in',
-                    handler: signInWithLocalAccount
-                }),
-                new Ext.Container({
-                    autoEl: 'div',
-                    autoWidth: true,
-                    flex: 2,
-                    height: 38,
-                    id: 'assistancePrompt',
-                    items: [{
-                        xtype: 'tbtext',
-                        html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
-                        id: 'forgot_password_link'
-                    },
-                    {
-                        xtype: 'tbtext',
-                        html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
-                        id: 'sign_up_link'
-                    }]
-                })
-            ]
-        })
+            items: [{
+                xtype: 'button',
+                width: 75,
+                height: 22,
+                text: 'Sign in',
+                id: 'btn_sign_in',
+                handler: signInWithLocalAccount
+            },
+            {
+                xtype: 'container',
+                autoEl: 'div',
+                autoWidth: true,
+                flex: 2,
+                height: 38,
+                id: 'assistancePrompt',
+                items: [{
+                    xtype: 'tbtext',
+                    html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
+                    id: 'forgot_password_link'
+                },
+                {
+                xtype: 'tbtext',
+                    html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+                    id: 'sign_up_link'
+                }]
+            }]
+        }
     ];
 
     var SSOLoginFrm = CCR.xdmod.isSSOConfigured ? new Ext.form.FormPanel({
@@ -1113,7 +1114,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     if (CCR.xdmod.isSSOConfigured) {
         loginItems.push(SSOLoginFrm);
-        if (CCR.xdmod.SSOcollapseLocalLogin) {
+        if (!CCR.xdmod.SSOShowLocalLogin) {
             localLoginFrm.collapsible = true;
             localLoginFrm.collapsed = true;
             localLoginFrm.titleCollapse = true;

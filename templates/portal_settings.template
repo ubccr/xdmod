@@ -50,9 +50,9 @@ multiple_service_providers = "off"
 
 [sso]
 force_default_organization = "on"
-; used to collapse the local sign in portion of the sign in modal
-; setting to false will show it.
-collapse_local_login = "true"
+; used to show local sign in portion of the sign in modal
+; setting to true will show it.
+show_local_login = "false"
 
 [internal]
 dw_desc_cache = "off"
