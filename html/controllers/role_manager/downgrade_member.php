@@ -14,16 +14,18 @@ $returnData = array();
 try {
 
     $activeUser = \xd_security\getLoggedInUser();
-    $organization = $activeUser->getActiveOrganization();
-    $memberUserId = $member->getUserID();
+    $organization = $activeUser->getOrganizationID();
 
     // An eligible user must be associated with the currently logged in users center.
-    if (!Users::userIsAssociatedWithCenter($memberUserId, $organization)) {
+    if ($activeUser->getOrganizationID() !== $organization) {
         \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
-    //
-    Users::demoteUserFromCenterStaff($member, $organization);
+    // Remove the center staff acl from the user.
+    $member->setRoles(array_diff($member->getAcls(true), array(ROLE_ID_CENTER_STAFF)));
+
+    // Save the acl changes.
+    $member->saveUser();
 
     $returnData['success'] = true;
 

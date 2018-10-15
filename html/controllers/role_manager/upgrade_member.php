@@ -1,8 +1,5 @@
 <?php
 
-use Models\Services\Users;
-use Models\Services\Centers;
-
 \xd_security\assertParameterSet('member_id', RESTRICTION_UID);
 
 try {
@@ -25,16 +22,13 @@ try {
         );
     }
 
-    $organization = $activeUser->getActiveOrganization();
-    $memberUserId = $member->getUserID();
-
     // An eligible user must be associated with the currently logged in users center.
-    if (!Users::userIsAssociatedWithCenter($memberUserId, $organization)) {
+    if ($member->getOrganizationID() !== $activeUser->getOrganizationID()) {
         \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
     // They must not already be a Center Director for the organization.
-    if ($member->getOrganizationID() === $organization && $member->hasAcl(ROLE_ID_CENTER_DIRECTOR)) {
+    if ($member->hasAcl(ROLE_ID_CENTER_DIRECTOR)) {
         $returnData['success'] = false;
         $returnData['message'] = "is a Center Director";
         \xd_controller\returnJSON($returnData);
@@ -42,13 +36,18 @@ try {
 
     // They must not be a Center Staff for the organization.
     // Although this makes them eligible for demotion.
-    if ($member->getOrganizationID() === $organization && $member->hasAcl(ROLE_ID_CENTER_STAFF)) {
+    if ($member->hasAcl(ROLE_ID_CENTER_STAFF)) {
         $returnData['success'] = false;
         $returnData['message'] = "is already a Center Staff";
         \xd_controller\returnJSON($returnData);
     }
 
-    Users::promoteUserToCenterStaff($member, $organization);
+    // Add the Center Staff acl to the user.
+    $member->setRoles(array_merge($member->getAcls(true), array(ROLE_ID_CENTER_STAFF)));
+
+    // Save changes
+    $member->saveUser();
+
     $returnData['success'] = true;
     $returnData['message'] = "has been upgraded to Center Staff<br />(promoted by {$activeUser->getFormalName()})";
 

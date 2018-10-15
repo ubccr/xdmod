@@ -19,23 +19,23 @@ try {
     );
 
     $activeUser = \xd_security\getLoggedInUser();
-    $organization = $activeUser->getActiveOrganization();
-    $memberUserId = $member->getUserID();
+    $organization = $activeUser->getOrganizationID();
+    $memberOrganization = $member->getOrganizationID();
 
     // An eligible user must be associated with the currently logged in users center.
-    if (!Users::userIsAssociatedWithCenter($memberUserId, $organization)) {
+    if ($memberOrganization !== $organization) {
         \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
     // They must not already be a Center Director for the organization.
-    if ($member->getOrganizationID() === $organization && $member->hasAcl(ROLE_ID_CENTER_DIRECTOR)) {
+    if ($memberOrganization === $organization && $member->hasAcl(ROLE_ID_CENTER_DIRECTOR)) {
         $returnData['success'] = false;
         $returnData['message'] = "is a Center Director";
         \xd_controller\returnJSON($returnData);
     }
 
     // This makes them ineligible for promotion, but eligible for demotion.
-    if ($member->getOrganizationID() === $organization && $member->hasAcl(ROLE_ID_CENTER_STAFF)) {
+    if ($memberOrganization === $organization && $member->hasAcl(ROLE_ID_CENTER_STAFF)) {
         $returnData['eligible'] = false;
     }
 
