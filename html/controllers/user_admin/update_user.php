@@ -4,8 +4,6 @@
 
 use Models\Services\Acls;
 use Models\Acl;
-use Models\Services\Centers;
-use Models\Services\Organizations;
 
 $params = array('uid' => RESTRICTION_UID);
 
