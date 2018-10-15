@@ -126,6 +126,7 @@ class UserControllerProvider extends BaseControllerProvider
         if ($emailAddress == NO_EMAIL_ADDRESS_SET) {
             $emailAddress = '';
         }
+        $mostPrivilegedFormalName = $user->getMostPrivilegedRole()->getFormalName();
 
         return array(
             'first_name' => $user->getFirstName(),
@@ -135,8 +136,8 @@ class UserControllerProvider extends BaseControllerProvider
             'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
             'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']),
             'field_of_science' => $user->getFieldOfScience(),
-            'active_role' => $user->getMostPrivilegedRole()->getFormalName(),
-            'most_privileged_role' => $user->getMostPrivilegedRole()->getFormalName(),
+            'active_role' => $mostPrivilegedFormalName,
+            'most_privileged_role' => $mostPrivilegedFormalName
         );
     }
 
