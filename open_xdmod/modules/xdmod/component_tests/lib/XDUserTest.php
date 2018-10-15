@@ -912,36 +912,6 @@ class XDUserTest extends BaseTest
     /**
      * @throws Exception
      */
-    public function testUpgradeStaffMemberSaveUser()
-    {
-        $user = XDUser::getUserByUserName(self::PRINCIPAL_INVESTIGATOR_USER_NAME);
-
-        Users::promoteUserToCenterStaff($user, self::DEFAULT_CENTER);
-
-        $newRoles = $user->getRoles();
-
-        $this->assertTrue(in_array(self::CENTER_STAFF_ACL_NAME, $newRoles));
-    }
-
-    /**
-     * @depends testUpgradeStaffMemberSaveUser
-     * @throws Exception
-     */
-    public function testDowngradeStaffMemberSaveUser()
-    {
-
-        $user = XDUser::getUserByUserName(self::PRINCIPAL_INVESTIGATOR_USER_NAME);
-
-        Users::demoteUserFromCenterStaff($user, self::DEFAULT_CENTER);
-
-        $newRoles = $user->getRoles();
-
-        $this->assertTrue(!in_array(self::CENTER_STAFF_ACL_NAME, $newRoles));
-    }
-
-    /**
-     * @throws Exception
-     */
     public function testSaveUserUpdatePassword()
     {
         $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
