@@ -36,48 +36,6 @@ class Centers
     }
 
     /**
-     * Retrieves whether or not the User identified by $userId has a "valid"
-     * relation with the Center identified by $centerId.
-     * In this context "valid" means:
-     *   - The user has a user_acl record for $centerAclName
-     *   - The user has a corresponding user_acl_group_by_parameter record for
-     *     $centerAclName / $centerId
-     * @param $userId
-     * @param $centerId
-     * @param $centerAclName
-     * @return bool true if the user has a relationship w/ the acl identified by $centerAclName and a
-     * corresponding record in user_acl_group_by_parameters else false.
-     * @throws Exception if there is a problem obtaining a database connection
-     * @throws Exception if there is a problem executing a sql statement
-     */
-    public static function hasCenterRelation($userId, $centerId, $centerAclName)
-    {
-        $query = <<<SQL
-SELECT DISTINCT
-  u.id,
-  u.username,
-  ua.*,
-  uagbp.value
-FROM Users u
-JOIN user_acls ua ON u.id = ua.user_id
-JOIN acls a ON ua.acl_id = a.acl_id
-JOIN user_acl_group_by_parameters uagbp
-ON u.id = uagbp.user_id
-   AND uagbp.acl_id = a.acl_id
-WHERE a.name = :acl_name AND
-  uagbp.value = :center_id AND
-      u.id = :user_id;
-SQL;
-        $params = array(
-            ':user_id' => $userId,
-            ':center_id' => $centerId,
-            ':acl_name' => $centerAclName
-        );
-        $db = DB::factory('database');
-        return count($db->query($query, $params)) > 0;
-    }
-
-    /**
      * Remove a center relation for the center identified by $centerId / $aclName
      * from the user identified by $userId.
      *
