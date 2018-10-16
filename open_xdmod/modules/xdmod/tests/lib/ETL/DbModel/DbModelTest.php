@@ -141,6 +141,37 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test foreign key constraint verification error
+     *
+     * @expectedException Exception
+     * @expectedExceptionMessage Columns in foreign key constraint 'invalid_fk' must be contained at the beginning of an index
+     */
+
+    public function testForeignKeyConstraintVerificationError()
+    {
+        // Foreign key constraint with no corresponding index.
+        $config = (object) array(
+            'name' => "fk_verification_error",
+            'columns' => array( (object) array(
+                'name' => 'column1',
+                'type' => 'int(11)',
+                'nullable' => true,
+            )),
+            'foreign_key_constraints' => array( (object) array(
+                'name' => 'invalid_fk',
+                'columns' => array('column1'),
+                'referenced_table' => 'other_table',
+                'referenced_columns' => array(
+                    'other_column',
+                ),
+            )),
+        );
+
+        $table = new Table($config);  // No logger here
+        $table->verify();
+    }
+
+    /**
      * Verify creating table elements manually.
      */
 
@@ -245,6 +276,10 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/alter_table-charset.sql';
         $expected = trim(file_get_contents($file));
         $this->assertEquals($expected, $generated, sprintf("%s(): %s", __FUNCTION__, $file));
+
+        // The table should generate no SQL if there are no changes.
+        $generated = $currentTable->getAlterSql($currentTable);
+        $this->assertFalse($generated, sprintf("%s(): Expected false (no SQL)", __FUNCTION__));
 
         // Alter the table by manually adding columns, index, and trigger.
 

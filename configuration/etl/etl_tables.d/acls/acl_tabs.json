@@ -40,6 +40,12 @@
                     "acl_id",
                     "tab_id"
                 ]
+            },
+            {
+                "name": "idx_tab_id",
+                "columns": [
+                    "tab_id"
+                ]
             }
         ],
         "foreign_key_constraints": [

@@ -62,6 +62,30 @@
         ],
         "type": "BTREE",
         "is_unique": true
+      },
+      {
+        "name": "idx_acl_id",
+        "columns": [
+          "acl_id"
+        ]
+      },
+      {
+        "name": "idx_group_by_id",
+        "columns": [
+          "group_by_id"
+        ]
+      },
+      {
+        "name": "idx_realm_id",
+        "columns": [
+          "realm_id"
+        ]
+      },
+      {
+        "name": "idx_statistic_id",
+        "columns": [
+          "statistic_id"
+        ]
       }
     ],
     "foreign_key_constraints": [

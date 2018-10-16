@@ -166,13 +166,36 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
             }
         }  // foreach ( $this->indexes as $index )
 
-        // Verify foreign key constraint columns match table columns
+        // Verify foreign key constraint columns match table columns and are
+        // contained in the beginning of an index.
 
         foreach ( $this->foreign_key_constraints as $constraint ) {
             $missingColumnNames = array_diff($constraint->columns, $columnNames);
             if ( 0 != count($missingColumnNames) ) {
                 $this->logAndThrowException(
                     sprintf("Columns in foreign key constraint '%s' not found in table definition: %s", $constraint->name, implode(", ", $missingColumnNames))
+                );
+            }
+
+            $foundCorrespondingIndex = false;
+            foreach ( $this->indexes as $index ) {
+                // Skip any index with fewer columns than the constraint.
+                if ( count($constraint->columns) > count($index->columns) ) {
+                    continue;
+                }
+                // Compare columns starting at the beginning of the index.
+                foreach ( $constraint->columns as $i => $column ) {
+                    if ( $column != $index->columns[$i] ) {
+                        // Index doesn't match, check next index.
+                        continue 2;
+                    }
+                }
+                $foundCorrespondingIndex = true;
+                break;
+            }
+            if ( ! $foundCorrespondingIndex ) {
+                $this->logAndThrowException(
+                    sprintf("Columns in foreign key constraint '%s' must be contained at the beginning of an index", $constraint->name)
                 );
             }
         }  // foreach ( $this->foreign_key_constraints as $constraint )
@@ -333,13 +356,18 @@ SELECT
     tc.constraint_name AS name,
     GROUP_CONCAT(kcu.column_name ORDER BY position_in_unique_constraint ASC) AS columns,
     kcu.referenced_table_name AS referenced_table,
-    GROUP_CONCAT(kcu.referenced_column_name ORDER BY position_in_unique_constraint ASC) AS referenced_columns
+    GROUP_CONCAT(kcu.referenced_column_name ORDER BY position_in_unique_constraint ASC) AS referenced_columns,
+    rc.update_rule AS on_update,
+    rc.delete_rule AS on_delete
 FROM information_schema.table_constraints tc
 INNER JOIN information_schema.key_column_usage kcu
     ON tc.table_schema = kcu.table_schema
     AND tc.table_name = kcu.table_name
     AND tc.constraint_schema = kcu.constraint_schema
     AND tc.constraint_name = kcu.constraint_name
+INNER JOIN information_schema.referential_constraints rc
+    ON tc.constraint_schema = rc.constraint_schema
+    AND tc.constraint_name = rc.constraint_name
 WHERE tc.constraint_type = 'FOREIGN KEY'
     AND tc.table_schema = :schema
     AND tc.table_name = :tablename
@@ -795,7 +823,7 @@ ORDER BY trigger_name ASC";
 
             // When adding columns, maintain the same order as in the definition array. Note that
             // array_diff() maintains the array index so we are able to look up the previous column.
-            
+
             $position = "FIRST";
             if ( $index > 0 ) {
                 $afterColName = $destColNames[$index-1];
@@ -806,7 +834,7 @@ ORDER BY trigger_name ASC";
                 }
                 $position = "AFTER " . $destination->quote($afterColName);
             }
-            
+
             $alterList[] = sprintf(
                 "ADD COLUMN %s %s",
                 $destination->getColumn($name)->getSql($includeSchema),
@@ -845,7 +873,7 @@ ORDER BY trigger_name ASC";
                     $position = "AFTER " . $destination->quote($destColNames[$index-1]);
                 }
             }
-            
+
             $changeList[] = sprintf(
                 "CHANGE COLUMN %s %s %s",
                 $destination->quote($name),
@@ -858,7 +886,7 @@ ORDER BY trigger_name ASC";
             $destColumn = $destination->getColumn($toColumnName);
             $currentColumn = $this->getColumn($fromColumnName);
             $index = array_search($toColumnName, $destColNames);
-            
+
             $position = "FIRST";
             if ( $index > 0 ) {
                 $position = "AFTER " . $destination->quote($destColNames[$index-1]);

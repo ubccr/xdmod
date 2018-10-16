@@ -34,6 +34,18 @@
         ],
         "type": "BTREE",
         "is_unique": true
+      },
+      {
+        "name": "idx_module_id",
+        "columns": [
+          "module_id"
+        ]
+      },
+      {
+        "name": "idx_realm_id",
+        "columns": [
+          "realm_id"
+        ]
       }
     ],
     "foreign_key_constraints": [

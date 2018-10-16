@@ -169,7 +169,9 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
     }
 
     /**
-     * Foreign key constraints are considered equal if all properties are the same.
+     * Foreign key constraints are considered equal if all properties are the
+     * same.  For "ON DELETE" and "ON UPDATE" the operations "NO ACTION" and
+     * "RESTRICT" are the same as omitting an operation.
      */
     public function compare(iEntity $cmp)
     {
@@ -181,10 +183,22 @@ class ForeignKeyConstraint extends NamedEntity implements iEntity
             || $this->columns != $cmp->columns
             || $this->referenced_table != $cmp->referenced_table
             || $this->referenced_columns != $cmp->referenced_columns
-            || $this->on_delete != $cmp->on_delete
-            || $this->on_update != $cmp->on_update
         ) {
             return -1;
+        }
+
+        if ($this->on_delete != $cmp->on_delete
+            && !in_array($this->on_delete, array(null, 'RESTRICT', 'NO ACTION'))
+            && !in_array($cmp->on_delete, array(null, 'RESTRICT', 'NO ACTION'))
+        ) {
+            return -2;
+        }
+
+        if ($this->on_update != $cmp->on_update
+            && !in_array($this->on_update, array(null, 'RESTRICT', 'NO ACTION'))
+            && !in_array($cmp->on_update, array(null, 'RESTRICT', 'NO ACTION'))
+        ) {
+            return -3;
         }
 
         return 0;
