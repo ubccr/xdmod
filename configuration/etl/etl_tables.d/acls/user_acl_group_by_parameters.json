@@ -39,6 +39,24 @@
         ],
         "type": "BTREE",
         "is_unique": true
+      },
+      {
+        "name": "idx_user_id",
+        "columns": [
+          "user_id"
+        ]
+      },
+      {
+        "name": "idx_acl_id",
+        "columns": [
+          "acl_id"
+        ]
+      },
+      {
+        "name": "idx_group_by_id",
+        "columns": [
+          "group_by_id"
+        ]
       }
     ],
     "foreign_key_constraints": [

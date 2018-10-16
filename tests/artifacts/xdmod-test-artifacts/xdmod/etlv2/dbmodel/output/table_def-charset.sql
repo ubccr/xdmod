@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS `test_db_model` (
   `inferred` int(1) unsigned NULL DEFAULT 0 COMMENT 'Not explicitly provided by source but inferred from other data',
   INDEX `fk_col` USING BTREE (`col1`),
   UNIQUE INDEX `fk_instance` USING BTREE (`instance_id`, `inferred`),
-  CONSTRAINT `con_col1` FOREIGN KEY (`col1`) REFERENCES `db_test_model2` (`col3`)
+  CONSTRAINT `con_col1` FOREIGN KEY (`col1`) REFERENCES `db_test_model2` (`col3`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE = MyISAM CHARSET = latin1 COLLATE = latin1_swedish_ci COMMENT = 'Events on an instance';

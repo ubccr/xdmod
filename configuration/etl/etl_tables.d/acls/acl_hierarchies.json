@@ -49,6 +49,12 @@
           "hierarchy_id"
         ],
         "type": "BTREE"
+      },
+      {
+        "name": "idx_hierarchy_id",
+        "columns": [
+          "hierarchy_id"
+        ]
       }
     ],
     "foreign_key_constraints": [

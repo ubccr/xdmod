@@ -78,7 +78,9 @@
                 "referenced_table": "db_test_model2",
                 "referenced_columns": [
                     "col3"
-                ]
+                ],
+                "on_delete": "CASCADE",
+                "on_update": "NO ACTION"
             }
         ],
         "triggers": []
