@@ -920,12 +920,10 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                 }],
                 layout: 'border',
                 height: 160,
-                items: [
-                    {
+                items: [{
                     xtype: 'fieldset',
                     region: 'center',
-                    items: [
-                    {
+                    items: [{
                         xtype: 'realmcombo',
                         id: 'basic-search-realm',
                         panel: self,
@@ -1019,24 +1017,24 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                             self.fireEvent('search_requested', self, 'Lookup', params);
                         }
                     }]
-            }]
-        },
-        {
-            xtype: "panel",
-            id: "job-viewer-advanced-search",
-            title: "Advanced Search",
-            tools: [{
-                id: 'help',
-                qtip: 'Use the advanced search form to search for jobs based on one or more filters and a date range.'
-            }],
-            height: 375,
-            layout: 'border',
-            items: [{
-                region: 'center',
-                id: 'criteria_advanced',
-                xtype: 'fieldset',
-                labelWidth: 55,
+                }]
+            },
+            {
+                xtype: 'panel',
+                id: 'job-viewer-advanced-search',
+                title: 'Advanced Search',
+                tools: [{
+                    id: 'help',
+                    qtip: 'Use the advanced search form to search for jobs based on one or more filters and a date range.'
+                }],
+                height: 375,
+                layout: 'border',
                 items: [{
+                    region: 'center',
+                    id: 'criteria_advanced',
+                    xtype: 'fieldset',
+                    labelWidth: 55,
+                    items: [{
                         xtype: 'datefield',
                         id: 'search_start_date',
                         format: 'Y-m-d',
@@ -1369,7 +1367,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                             self.fireEvent('search_requested', self, 'Search', params);
                         }
                     }]
-            }]
+                }]
 
         },
         {
