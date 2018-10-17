@@ -64,6 +64,8 @@
             "configuration/portal_settings.ini",
             "configuration/portal_settings.d",
             "configuration/processor_buckets.json",
+            "configuration/rawstatistics.json",
+            "configuration/rawstatistics.d",
             "configuration/resource_specs.json",
             "configuration/resource_types.json",
             "configuration/resources.json",

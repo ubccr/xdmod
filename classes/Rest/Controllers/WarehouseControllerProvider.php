@@ -1482,8 +1482,15 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobDataSet(XDUser $user, $realm, $jobId, $action)
     {
+        $config = \Xdmod\Config::factory();
+
+        $rawstats = $config['rawstatistics'];
+        if (!isset($rawstats['realms'][$realm])) {
+            throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
+        }
+
         $params = array(
-            new \DataWarehouse\Query\Model\Parameter('_id', '=', $jobId)
+            new \DataWarehouse\Query\Model\Parameter($rawstats['realms'][$realm]['primary_key'], '=', $jobId)
         );
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
@@ -1761,17 +1768,26 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function processHistoryDefaultRealmRequest(Application $app, $action)
     {
+        $config = \Xdmod\Config::factory();
+
+        $rawstats = $config['rawstatistics'];
+
+        $results = array();
+
+        if (isset($rawstats['realms'])) {
+            foreach($rawstats['realms'] as $realm => $realmconfig) {
+                $results[] = array('dtype' => 'realm',
+                    'realm' => $realm,
+                    'text' => $realmconfig['name']
+                );
+            }
+        }
+
         return $app->json(
             array(
                 'success' => true,
                 'action' => $action,
-                'results' => array(
-                    array(
-                        'dtype' => 'realm',
-                        'realm' => 'SUPREMM',
-                        'text' => 'SUPREMM'
-                    )
-                )
+                'results' => $results
             )
         );
     }
@@ -2062,14 +2078,21 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobByPrimaryKey(Application $app, \XDUser $user, $realm, $searchparams)
     {
+        $config = \Xdmod\Config::factory();
+
+        $rawstats = $config['rawstatistics'];
+        if (!isset($rawstats['realms'][$realm])) {
+            throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
+        }
+
         if (isset($searchparams['jobref'])) {
             $params = array(
-                new \DataWarehouse\Query\Model\Parameter('_id', '=', $searchparams['jobref'])
+                new \DataWarehouse\Query\Model\Parameter($rawstats['realms'][$realm]['primary_key'], '=', $searchparams['jobref'])
             );
         } else {
             $params = array(
                 new \DataWarehouse\Query\Model\Parameter("resource_id", "=", $searchparams['resource_id']),
-                new \DataWarehouse\Query\Model\Parameter("local_job_id", "=", $searchparams['local_job_id'])
+                new \DataWarehouse\Query\Model\Parameter($rawstats['realms'][$realm]['ident_key'], "=", $searchparams['local_job_id'])
             );
         }
 
