@@ -5,7 +5,10 @@
 # set of commands that are run would work on a real production system.
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-REF_DIR=$BASEDIR/../../tests/artifacts/xdmod-test-artifacts/xdmod/referencedata
+REF_SOURCE=`realpath $BASEDIR/../../tests/artifacts/xdmod-test-artifacts/xdmod/referencedata`
+REF_DIR=/var/tmp/referencedata
+
+cp -r $REF_SOURCE /var/tmp/
 
 set -e
 set -o pipefail
@@ -22,24 +25,24 @@ then
     FLUSH PRIVILEGES;"
     expect $BASEDIR/xdmod-setup.tcl | col -b
     for resource in $REF_DIR/*.log; do
-        xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
+        sudo -u xdmod xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
     done
-    xdmod-ingestor
-    xdmod-import-csv -t names -i $REF_DIR/names.csv
-    xdmod-ingestor
+    sudo -u xdmod xdmod-ingestor
+    sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
+    sudo -u xdmod xdmod-ingestor
     php /root/bin/createusers.php
     # This will ensure that the users created in `/root/bin/createusers.php`
     # have their organizations set correctly.
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.acls-import
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.acls-import
     #Updating minmaxdate table so data for cloud realm shows up
     mysql -e "UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Ingesting cloud data from references folder
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
@@ -55,10 +58,10 @@ then
     #Updating minmaxdate table so data for cloud realm shows up
     mysql -e "UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
     #Ingesting cloud data from references folder
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
-    php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
 fi

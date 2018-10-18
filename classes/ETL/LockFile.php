@@ -73,7 +73,7 @@ class LockFile extends Loggable
         parent::__construct($logger);
 
         if ( null === $lockDir || "" === $lockDir ) {
-            $lockDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'xdmod';
+            $lockDir = sys_get_temp_dir();
             $this->logger->info("Empty lock directory specified, using temp directory: $lockDir");
         }
 
