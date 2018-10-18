@@ -71,6 +71,7 @@
             "configuration/processor_buckets.json",
             "configuration/rawstatistics.json",
             "configuration/rawstatistics.d",
+            {"configuration/rawstatistics.d/z_jobs.json": "rawstatistics.d/z_jobs.json"},
             "configuration/resource_specs.json",
             "configuration/resource_types.json",
             "configuration/resources.json",

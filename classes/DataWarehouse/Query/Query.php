@@ -725,6 +725,15 @@ class Query
         $data_query .= ") as a WHERE a.total IS NOT NULL";
         return $data_query;
     }
+
+    protected function nextPdoIndex($value)
+    {
+        $pdosubst = ':subst' . $this->pdoindex;
+        $this->pdoparams[$pdosubst] = $value;
+        $this->pdoindex += 1;
+        return $pdosubst;
+    }
+
     public function setParameters(array $parameters = array())
     {
         $this->parameters = $parameters;
