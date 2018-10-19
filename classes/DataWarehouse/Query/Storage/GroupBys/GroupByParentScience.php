@@ -77,42 +77,6 @@ class GroupByParentScience extends GroupBy
         $this->addOrder($query, $multi_group);
     }
 
-    public function addWhereJoin(
-        Query &$query,
-        Table $data_table,
-        $multi_group = false,
-        $operation = '=',
-        $whereConstraint = 'NULL'
-    ) {
-        // construct the join between the main data_table and this group by table
-        $query->addTable($this->table);
-
-        $fostable_id_field = new TableField($this->table, 'parent_id');
-        $datatable_fos_id_field = new TableField($data_table, 'fos_id');
-
-        // the where condition that specifies the join of the tables
-        $query->addWhereCondition(
-            new WhereCondition(
-                $fostable_id_field,
-                '=',
-                $datatable_fos_id_field
-            )
-        );
-
-        // the where condition that specifies the constraint on the joined table
-        if (is_array($whereConstraint)) {
-            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
-        }
-
-        $query->addWhereCondition(
-            new WhereCondition(
-                $fostable_id_field,
-                $operation,
-                $whereConstraint
-            )
-        );
-    }
-
     public function pullQueryParameters(&$request)
     {
         return parent::pullQueryParameters2(

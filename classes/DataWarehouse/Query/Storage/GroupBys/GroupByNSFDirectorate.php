@@ -77,39 +77,6 @@ class GroupByNSFDirectorate extends GroupBy
         $this->addOrder($query, $multi_group);
     }
 
-    public function addWhereJoin(
-        Query &$query,
-        Table $data_table,
-        $multi_group = false,
-        $operation = '=',
-        $whereConstraint = 'NULL'
-    ) {
-        $query->addTable($this->table);
-
-        $fostable_id_field = new TableField($this->table, 'directorate_id');
-        $datatable_fos_id_field = new TableField($data_table, 'fos_id');
-
-        $query->addWhereCondition(
-            new WhereCondition(
-                $fostable_id_field,
-                '=',
-                $datatable_fos_id_field
-            )
-        );
-
-        if (is_array($whereConstraint)) {
-            $whereConstraint = '(' . implode(',', $whereConstraint) . ')';
-        }
-
-        $query->addWhereCondition(
-            new WhereCondition(
-                $fostable_id_field,
-                $operation,
-                $whereConstraint
-            )
-        );
-    }
-
     public function pullQueryParameters(&$request)
     {
         return parent::pullQueryParameters2(

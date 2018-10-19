@@ -111,7 +111,7 @@ class GroupByNSFDirectorate extends \DataWarehouse\Query\Jobs\GroupBy
    {
       $query->addTable($this->fos_table);
 
-      $fostable_id_field = new \DataWarehouse\Query\Model\TableField($this->fos_table,'directorate_id');
+      $fostable_id_field = new \DataWarehouse\Query\Model\TableField($this->fos_table,'id');
       $datatable_fos_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'fos_id');
 
       $query->addWhereCondition(
