@@ -46,6 +46,11 @@ merge `portal_settings.ini`.  This file will be updated by the upgrade
 script.  If you have manually edited this file, you should create a
 backup and merge any changes after running the upgrade script.
 
+### Verify server configuration settings
+
+Double check that the MySQL server configuration settings are consistent with
+the recommended values listed on the [software requirements page][mysql-config].
+
 ### Upgrade Database Schema and Config Files
 
     # xdmod-upgrade
@@ -89,6 +94,11 @@ changed in the new version.  You do not need to merge
 If you have manually edited this file, you should create a backup and
 merge any changes after running the upgrade script.
 
+### Verify server configuration settings
+
+Double check that the MySQL server configuration settings are consistent with
+the recommended values listed on the [software requirements page][mysql-config].
+
 ### Upgrade Database Schema and Config Files
 
     # /opt/xdmod-new/bin/xdmod-upgrade
@@ -99,6 +109,7 @@ merge any changes after running the upgrade script.
 - This upgrade includes config file changes.
     - The contents of `resource_types.json` has been changed to include
       additional resource types.
+- The recommended [MySQL server settings][mysql-config] were updated.
 
 7.5.0 to 7.5.1 Upgrade Notes
 ----------------------------
@@ -244,3 +255,4 @@ take over an hour if you have millions of job records in your database.
 - This upgrade includes config file format changes.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
+[mysql-config]: software-requirements.md#mysql
