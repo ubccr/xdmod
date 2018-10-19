@@ -81,7 +81,7 @@ class GroupByParentScience extends \DataWarehouse\Query\Jobs\GroupBy
       // construct the join between the main data_table and this group by table
       $query->addTable($this->fos_table);
 
-      $fostable_id_field = new \DataWarehouse\Query\Model\TableField($this->fos_table,'parent_id');
+      $fostable_id_field = new \DataWarehouse\Query\Model\TableField($this->fos_table,'id');
       $datatable_fos_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'fos_id');
 
       // the where condition that specifies the join of the tables
