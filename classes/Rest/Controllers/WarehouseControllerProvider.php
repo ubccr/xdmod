@@ -1776,7 +1776,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         if (isset($rawstats['realms'])) {
             foreach($rawstats['realms'] as $realm => $realmconfig) {
-                $results[] = array('dtype' => 'realm',
+                $results[] = array(
+                    'dtype' => 'realm',
                     'realm' => $realm,
                     'text' => $realmconfig['name']
                 );
