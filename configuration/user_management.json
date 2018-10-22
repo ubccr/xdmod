@@ -1,0 +1,3 @@
+{
+    "person_mapping": "SELECT DISTINCT(person_id) AS person_id FROM `modw`.`systemaccount` WHERE username = :username"
+}

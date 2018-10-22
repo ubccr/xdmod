@@ -72,6 +72,7 @@
             "configuration/rest.d",
             "configuration/setup.json",
             "configuration/update_check.json",
+            "configuration/user_management.json",
             "configuration/assets.json",
             "configuration/modules.json",
             "configuration/hierarchies.json",
