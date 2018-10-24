@@ -191,6 +191,28 @@ class DataWarehouseInitializer
         );
     }
 
+    public function ingestCloudDataOpenStack()
+    {
+        $this->logger->debug('Ingesting OpenStack data');
+        $this->runEtlPipeline('jobs-cloud-extract-openstack');
+    }
+
+    public function ingestCloudDataGeneric()
+    {
+        $this->logger->debug('Ingesting cloud data in generic format');
+        $this->runEtlPipeline('jobs-cloud-eucalyptus');
+    }
+
+    public function aggregateCloudData()
+    {
+        $this->logger->debug('Aggregating cloud data');
+        $this->runEtlPipeline('cloud-state-pipeline');
+
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('Cloud');
+    }
+
     /**
      * Initialize aggregate database.
      *
