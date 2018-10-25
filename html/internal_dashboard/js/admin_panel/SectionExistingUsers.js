@@ -203,8 +203,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             /* eslint-disable no-use-before-define */
             settingsAreDirty = true;
             saveIndicator.show();
-
-            stickyCheckbox.setValue(true);
+            if (cmbUserMapping.startValue !== cmbUserMapping.getValue() || cmbInstitution.startValue !== cmbInstitution.getValue()) {
+                stickyCheckbox.setValue(true);
+            } else {
+                stickyCheckbox.setValue(false);
+            }
             /* eslint-enable no-use-before-define */
         };
 
@@ -364,7 +367,11 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             emptyText: 'No Institution Selected',
             width: 165,
             listWidth: 310,
-            listeners: { change: comboChangeHandler },
+            listeners: {
+                select: comboChangeHandler,
+                blur: comboChangeHandler,
+                change: comboChangeHandler
+            },
             allowBlank: false
         });
 
@@ -685,7 +692,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 valueProperty: 'id'
             },
             listeners: {
-                change: comboChangeHandler
+                change: comboChangeHandler,
+                select: comboChangeHandler,
+                blur: comboChangeHandler
             }
         });
 
