@@ -168,7 +168,7 @@ EML;
 
             return $newUser;
         }
-        throw new Exception('An unknown error has occurred.');
+        throw new \DataWarehouse\Query\Exceptions\AccessDeniedException('Authentication failure.');
     }
 
     /**
