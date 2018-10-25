@@ -111,7 +111,7 @@ if (isset($_POST['user_type'])) {
 }
 
 if (isset($_POST['sticky'])) {
-    $user_to_update->setSticky($_POST['sticky'] === 'true' ? 1 : 0);
+    $user_to_update->setSticky($_POST['sticky'] === 'true');
 }
 
 // Store this users original set of acls before they are possibly modified below.
