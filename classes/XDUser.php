@@ -84,13 +84,9 @@ Username:         %s
 E-Mail:           %s
 Old Organization: %s
 New Organization: %s
-EML;
-
-    const ACL_EMAIL_ADDITION = <<<EML
 Old Acls:         %s
 New Acls:         %s
 EML;
-
 
     const USER_NOTIFICATION_EMAIL = <<<EML
 
@@ -104,23 +100,6 @@ Thank You,
 
 XDMoD
 EML;
-
-    const EMAIL_EXCEPTION_MSG = <<<TXT
-
-There was an unexpected error while attempting to send an email.
-
-To:               %s
-Old Organization: %s
-New Organization: %s
-Original Acls:    %s
-New Acls:         %s
-
-Exception:
-  Code:           %s
-  Message:        %s
-  Stack Trace:
-    %s
-TXT;
 
     /**
      * The acls in OpenXDMoD that have a dependency on centers / organizations.
@@ -3225,7 +3204,7 @@ SQL;
                     array(
                         'subject' => 'XDMoD User: Organization Update',
                         'body' => sprintf(
-                            self::ADMIN_NOTIFICATION_EMAIL . self::ACL_EMAIL_ADDITION,
+                            self::ADMIN_NOTIFICATION_EMAIL,
                             $this->getFormalName(),
                             $this->getUsername(),
                             $this->getEmailAddress(),
@@ -3235,8 +3214,19 @@ SQL;
                             json_encode($otherAcls)
                         ),
                         'toAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
-                        'fromAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email'),
-                        'fromName' => \xd_utilities\getConfiguration('mailer', 'sender_email'),
+                    )
+                );
+
+                // Notify the user that there was an organization change detected.
+                MailWrapper::sendMail(
+                    array(
+                        'subject' => 'XDMoD User: Organization Update',
+                        'body' => sprintf(
+                            self::USER_NOTIFICATION_EMAIL,
+                            $this->getFormalName(),
+                            \xd_utilities\getConfiguration('mailer', 'sender_email')
+                        ),
+                        'toAddress' => $this->getEmailAddress(),
                         'replyAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient')
                     )
                 );
@@ -3245,22 +3235,6 @@ SQL;
             // Update / save the user with their new organization
             $this->setOrganizationId($expectedOrganization);
             $this->saveUser();
-
-            // Notify the user that there was an organization change detected.
-            MailWrapper::sendMail(
-                array(
-                    'subject' => 'XDMoD User: Organization Update',
-                    'body' => sprintf(
-                        self::USER_NOTIFICATION_EMAIL,
-                        $this->getFormalName(),
-                        \xd_utilities\getConfiguration('mailer', 'sender_email')
-                    ),
-                    'toAddress' => $this->getEmailAddress(),
-                    'fromAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
-                    'fromName' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
-                    'replyAddress' => \xd_utilities\getConfiguration('mailer', 'sender_email')
-                )
-            );
         }
     }
 
