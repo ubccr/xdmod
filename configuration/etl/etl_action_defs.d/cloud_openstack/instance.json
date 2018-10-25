@@ -26,14 +26,14 @@
                 "name": "account",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "act",
-                "on": "act.provider_account = raw.project_id",
+                "on": "act.provider_account = raw.project_id AND act.resource_id = raw.resource_id",
                 "type": "LEFT OUTER"
             },
             {
                 "name": "user",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "u",
-                "on": "u.provider_account = raw.user_id",
+                "on": "u.provider_account = raw.user_id AND u.resource_id = raw.resource_id",
                 "type": "LEFT OUTER"
             }
         ],

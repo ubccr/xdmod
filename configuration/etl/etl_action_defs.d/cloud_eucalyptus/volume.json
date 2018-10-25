@@ -25,7 +25,7 @@
                 "name": "account",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "act",
-                "on": "act.provider_account = raw.provider_account_number"
+                "on": "act.provider_account = raw.provider_account_number AND act.resource_id = raw.resource_id"
             },
             {
                 "name": "asset_type",
