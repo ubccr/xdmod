@@ -3226,8 +3226,7 @@ SQL;
                             $this->getFormalName(),
                             \xd_utilities\getConfiguration('mailer', 'sender_email')
                         ),
-                        'toAddress' => $this->getEmailAddress(),
-                        'replyAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient')
+                        'toAddress' => $this->getEmailAddress()
                     )
                 );
             }
