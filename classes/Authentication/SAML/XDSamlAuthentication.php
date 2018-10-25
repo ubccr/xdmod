@@ -31,13 +31,6 @@ class XDSamlAuthentication
      */
     protected $_isConfigured = false;
 
-    /**
-     * Whether or not we allow Single Sign On users local access. Defaults to true.
-     *
-     * @var boolean
-     */
-    protected $_allowLocalAccessViaSSO = true;
-
     const BASE_ADMIN_EMAIL = <<<EML
 
 Person Details -----------------------------------
@@ -72,10 +65,6 @@ EML;
         );
 
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
-        try {
-            $this->_allowLocalAccessViaSSO = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false : true;
-        } catch (Exception $e) {
-        }
         if ($this->isSamlConfigured()) {
             try {
                 $authSource = \xd_utilities\getConfiguration('authentication', 'source');
