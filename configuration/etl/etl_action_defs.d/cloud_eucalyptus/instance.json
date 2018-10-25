@@ -25,7 +25,7 @@
                 "name": "account",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "act",
-                "on": "act.provider_account = raw.provider_account",
+                "on": "act.provider_account = raw.provider_account AND act.resource_id = raw.resource_id",
                 "type": "LEFT OUTER"
             }
         ],
