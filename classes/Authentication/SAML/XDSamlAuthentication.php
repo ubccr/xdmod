@@ -44,8 +44,6 @@ Person Details -----------------------------------
 Name:              %s
 Username:          %s
 E-Mail:            %s
-Organization ID:   %s
-Organization Name: %s
 
 SAML Attributes ----------------------------------
 %s
@@ -292,71 +290,33 @@ EML;
      * @param array $samlAttributes the attributes that we received via SAML for this user.
      * @param boolean $linked whether or not we were able to link the SSO User with an XDMoD Person.
      * @throws Exception if there is a problem with notifying the user.
-     * @throws Exception if there is a problem retrieving the name for the users organization.
      */
     private function handleNotifications(XDUser $user, $samlAttributes, $linked)
     {
-        // We only notify admins iff we were unable to identify which organization the user should
-        // be associated with ( i.e. we had to assign them to the 'Unknown' organization ).
-        if ($user->getOrganizationID() === -1) {
-            $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
-            $senderEmail = \xd_utilities\getConfiguration('mailer', 'sender_email');
-
-            $userEmail = $user->getEmailAddress()
-                ? $user->getEmailAddress()
-                : $samlAttributes['email_address'][0];
-
-            $userOrganization = $user->getOrganizationID();
-
-            $emailBody = sprintf(
-                self::BASE_ADMIN_EMAIL,
-                $user->getFormalName(true),
-                $user->getUsername(),
-                $userEmail,
-                $userOrganization,
-                Organizations::getNameById($userOrganization),
-                json_encode($samlAttributes, JSON_PRETTY_PRINT)
-            );
-
-            $subject = sprintf(
-                'New %s Single Sign On User Created',
-                ($linked ? 'Linked' : 'Unlinked')
-            );
-
-            $this->notify(
-                $techSupportRecipient,
-                $techSupportRecipient,
-                '',
-                $senderEmail,
-                $subject,
-                $emailBody
-            );
+        if ($user->getOrganizationID() !== -1) {
+            // Only send email if we were unable to identify an organization for the user.
+            return;
         }
-    }
 
-    /**
-     * Attempt to generate / send a notification email with the specified parameters.
-     *
-     * @param string $toAddress    the address that the notification will be sent to.
-     * @param string $fromAddress  the address that the notification will be sent from.
-     * @param string $fromName     A name to be used when identifying the `$fromAddress`
-     * @param string $replyAddress the address to be used when a user replies to the notification.
-     * @param string $subject      the subject of the notification.
-     * @param string $body         the body of the notification.
-     *
-     * @throws Exception if there is a problem sending the notification email.
-     */
-    public function notify($toAddress, $fromAddress, $fromName, $replyAddress, $subject, $body)
-    {
+        $subject = sprintf(
+            'New %s Single Sign On User Created',
+            ($linked ? 'Linked' : 'Unlinked')
+        );
+
+        $body = sprintf(
+            self::BASE_ADMIN_EMAIL,
+            $user->getFormalName(true),
+            $user->getUsername(),
+            $user>getEmailAddress(),
+            json_encode($samlAttributes, JSON_PRETTY_PRINT)
+        );
+
         try {
             MailWrapper::sendMail(
                 array(
                     'subject' => $subject,
                     'body' => $body,
-                    'toAddress' => $toAddress,
-                    'fromAddress' => $fromAddress,
-                    'fromName' => $fromName,
-                    'replyAddress' => $replyAddress
+                    'toAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient')
                 )
             );
         } catch (Exception $e) {
