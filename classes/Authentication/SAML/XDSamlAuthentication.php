@@ -161,9 +161,7 @@ EML;
     }
 
     /**
-     * Retrieves the organization_id that this User should be associated with. There is one
-     * configuration property that affects the return value of this function,
-     * `force_default_organization`. It does so in the following ways:
+     * Retrieves the organization_id that this User should be associated with.
      *
      * - If we were able to identify which `person` this user should be associated with
      *   - then look up which organization they are associated via the `modw.person.id` column.
