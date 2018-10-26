@@ -21,13 +21,14 @@ class Organizations
     public static function getNameById($organizationId)
     {
         $query = <<<SQL
-SELECT o.name
+SELECT o.name, o.id
 FROM modw.organization o
 WHERE o.id = :organization_id
 UNION
-SELECT unk.name
+SELECT unk.name, unk.id
 FROM modw.organization unk
 WHERE unk.id = -1
+ORDER BY id DESC
 SQL;
         $params = array(
             ':organization_id' => $organizationId
