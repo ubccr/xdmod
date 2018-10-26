@@ -4,8 +4,10 @@ require_once dirname(__FILE__) . '/../configuration/linker.php';
 
 use CCR\DB;
 use CCR\Log;
+use CCR\MailWrapper;
 use Models\Acl;
 use Models\Services\Acls;
+use Models\Services\Organizations;
 use User\aRole;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 
@@ -74,6 +76,70 @@ class XDUser extends CCR\Loggable implements JsonSerializable
     const PUBLIC_USER = 1;
     const INTERNAL_USER = 2;
 
+    const ADMIN_NOTIFICATION_EMAIL = <<<EML
+
+User Organization Update --------------------------------
+Name:             %s
+Username:         %s
+E-Mail:           %s
+Old Organization: %s
+New Organization: %s
+Old Acls:         %s
+New Acls:         %s
+EML;
+
+    const USER_NOTIFICATION_EMAIL = <<<EML
+
+Dear %s,
+
+This email is to notify you that XDMoD has detected a change in your organization affiliation. We
+have taken steps to ensure that this is accurately reflected in our systems. If you have any questions
+or concerns please contact us @ %s.
+
+Thank You,
+
+XDMoD
+EML;
+
+    /**
+     * The acls in OpenXDMoD that have a dependency on centers / organizations.
+     * NOTE: This should be pulled from a configuration file not hard coded. Explore in future
+     * commit.
+     *
+     * @var array
+     */
+    private static $CENTER_ACLS = array('cd', 'cs');
+
+    /**
+     * These are the only SSO attribtutes that should be included when setting `$this->ssoAttrs;`
+     *
+     * @var array
+     */
+    private static $INCLUDE_SSO_ATTRS = array('username', 'organization', 'system_username', 'email_address');
+
+    /**
+     * The attributes present when a user logs in via SSO. Defaults to an empty array otherwise.
+     *
+     * @var array
+     */
+    private $ssoAttrs;
+
+    /**
+     * The current session token for this user. Populated via XDSessionManager::recordLogin when
+     * XDUser::postLogin() is called.
+     *
+     * @var string
+     */
+    private $currentToken;
+
+    /**
+     * The state of this user's `sticky` bit. Corresponds to the moddb.Users.sticky column.
+     * Indicates that the organization_id and or the person_id has been manually overridden and
+     * should not be automatically updated.
+     *
+     * @var boolean
+     */
+    private $sticky;
     // ---------------------------
 
     /*
@@ -90,9 +156,19 @@ class XDUser extends CCR\Loggable implements JsonSerializable
      *
      */
 
-    function __construct($username = NULL, $password = NULL, $email_address = NO_EMAIL_ADDRESS_SET,
-        $first_name = NULL, $middle_name = NULL, $last_name = NULL,
-        $role_set = array(ROLE_ID_USER), $primary_role = ROLE_ID_USER, $organization_id = NULL, $person_id = NULL
+    function __construct(
+        $username = null,
+        $password = null,
+        $email_address = NO_EMAIL_ADDRESS_SET,
+        $first_name = null,
+        $middle_name = null,
+        $last_name = null,
+        $role_set = array(ROLE_ID_USER),
+        $primary_role = ROLE_ID_USER,
+        $organization_id = null,
+        $person_id = null,
+        array $ssoAttrs = array(),
+        $sticky = false
     ) {
 
         $this->_pdo = DB::factory('database');
@@ -164,6 +240,9 @@ class XDUser extends CCR\Loggable implements JsonSerializable
         // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
         // these roles using getPrimaryRole() and getActiveRole()
         $this->_primary_role = $this->_active_role = \User\aRole::factory($primary_role_name);
+
+        $this->sticky = $sticky;
+
         parent::__construct(
             Log::factory(
                 'xduser.sql',
@@ -175,6 +254,8 @@ class XDUser extends CCR\Loggable implements JsonSerializable
                 )
             )
         );
+
+        $this->setSSOAttrs($ssoAttrs);
     }//construct
 
     // ---------------------------
@@ -432,7 +513,7 @@ class XDUser extends CCR\Loggable implements JsonSerializable
 
         $userCheck = $pdo->query("
          SELECT username, password, email_address, first_name, middle_name, last_name,
-         time_created, time_last_updated, password_last_updated, account_is_active, organization_id, person_id, field_of_science, token, user_type
+         time_created, time_last_updated, password_last_updated, account_is_active, organization_id, person_id, field_of_science, token, user_type, sticky
          FROM Users
          WHERE id=:id
       ", array(
@@ -477,6 +558,8 @@ class XDUser extends CCR\Loggable implements JsonSerializable
         // datatypes are not passed back unless using prepared statements so force to int
         // See: http://stackoverflow.com/questions/1197005/how-to-get-numeric-types-from-mysql-using-pdo
         $user->_user_type = (int)$userCheck[0]['user_type'];
+
+        $user->sticky = (bool)$userCheck[0]['sticky'];
 
         // We retrieve the most privileged acl for this user and use it for the
         // active / primary role.
@@ -777,13 +860,13 @@ SQL;
      */
     public function getUpdateQuery($updateToken = false, $includePassword = false)
     {
-        $result = 'UPDATE moddb.Users SET username = :username,  email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type WHERE id = :id';
+        $result = 'UPDATE moddb.Users SET username = :username,  email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type, sticky = :sticky WHERE id = :id';
         if ($updateToken && $includePassword) {
-            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type, password_last_updated = :password_last_updated WHERE id = :id';
+            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type, password_last_updated = :password_last_updated, sticky = :sticky WHERE id = :id';
         } else if (!$updateToken && $includePassword) {
-            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type, password_last_updated = :password_last_updated WHERE id = :id';
+            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type, password_last_updated = :password_last_updated, sticky = :sticky WHERE id = :id';
         } else if ($updateToken && !$includePassword) {
-            $result = 'UPDATE moddb.Users SET username = :usernam, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type WHERE id = :id';
+            $result = 'UPDATE moddb.Users SET username = :usernam, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type, sticky = :sticky WHERE id = :id';
         }
         return $result;
     }
@@ -802,13 +885,13 @@ SQL;
      */
     public function getInsertQuery($updateToken = false, $includePassword = false)
     {
-        $result = 'INSERT INTO moddb.Users (username, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type) VALUES (:username, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type)';
+        $result = 'INSERT INTO moddb.Users (username, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type, sticky) VALUES (:username, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type, :sticky)';
         if ($updateToken && $includePassword) {
-            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type) VALUES (:username, :password, :password_last_updated, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type)';
+            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type, sticky) VALUES (:username, :password, :password_last_updated, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type, :sticky)';
         } else if (!$updateToken && $includePassword) {
-            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated,  email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type) VALUES (:username, :password, :password_last_updated, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type)';
+            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated,  email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type, sticky) VALUES (:username, :password, :password_last_updated, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type, :sticky)';
         } else if ($updateToken && !$includePassword) {
-            $result = 'INSERT INTO moddb.Users (username, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type) VALUES (:username, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type)';
+            $result = 'INSERT INTO moddb.Users (username, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type, sticky) VALUES (:username, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type, :sticky)';
         }
         return $result;
     }
@@ -923,6 +1006,8 @@ SQL;
             $this->_token = $update_data['token'];
         }
         $update_data['user_type'] = $this->_user_type;
+        $update_data['sticky'] = $this->sticky ? 1 : 0;
+
         /* END: Query Data Population */
         try {
             /* BEGIN: Construct the parameterized query */
@@ -3043,5 +3128,184 @@ SQL;
         }
 
         return $results;
+    }
+
+    /**
+     * Executes any actions that need to be conducted immediately after a user is logged into XDMoD.
+     *
+     * @throws Exception if there is a problem executing any of the required post logged in steps.
+     */
+    public function postLogin() {
+        if (!$this->isSticky()) {
+            $this->updatePerson();
+            $this->synchronizeOrganization();
+        }
+        $this->currentToken = XDSessionManager::recordLogin($this);
+    }
+
+    /**
+     * Attempts to synchronize this users organization. This will ensure that if the organization
+     * assigned to the user is not the same as the organization that should be assigned to the user
+     * ( i.e. the organization assigned to this users person has been updated ). They have their
+     * organization updated. If they have been associated with a 'center' related acl, center
+     * director or center staff, then they are to have these acls removed and an email notice sent
+     * to the admin / user notifying them that additional steps will need to be taken before their
+     * former level of access is restored.
+     *
+     * @throws Exception
+     */
+    public function synchronizeOrganization()
+    {
+        // This is pulled from the moddb.Users.organization_id column for this user record.
+        $actualOrganization = $this->getOrganizationID();
+
+        // Retrieve the organization associated with this users Person. This is the value we expect
+        // the user's organization to match.
+        $expectedOrganization = Organizations::getOrganizationIdForPerson($this->getPersonID());
+
+        // If we have ssoAttrs available and this user's person's organization is 'Unknown' ( -1 ).
+        // Then go ahead and lookup the organization value from sso.
+        if ($expectedOrganization == -1 && count($this->ssoAttrs) > 0) {
+            $expectedOrganization = Organizations::getIdByName($this->ssoAttrs['organization'][0]);
+        }
+
+        // If these don't match then the user's organization has been updated. Steps need to be taken.
+        if ($actualOrganization !== $expectedOrganization) {
+            $originalAcls = $this->getAcls(true);
+
+            // if the user is currently assigned an acl that interacts with XDMoD's centers ( i.e.
+            // center director, center staff etc. ) then we need to remove these acls and notify
+            // the admins that additional setup may be required for this user.
+            if (count(array_intersect($originalAcls, self::$CENTER_ACLS)) > 0) {
+                $otherAcls = array_values(array_diff($originalAcls, self::$CENTER_ACLS));
+
+                // Make sure that they at least have 'usr'
+                if (empty($otherAcls)) {
+                    $otherAcls = array('usr');
+                }
+
+                // Now we need to make sure that the user is only assigned their non-center acls so
+                // clear any existing acls they have.
+                $this->setAcls(array());
+
+                // Update the user w/ their new set of acls.
+                foreach($otherAcls as $aclName) {
+                    $acl = Acls::getAclByName($aclName);
+                    $this->addAcl($acl);
+                }
+
+                // Retrieving the names for display purposes.
+                $userOrganizationName = Organizations::getNameById($actualOrganization);
+                $currentOrganizationName = Organizations::getNameById($expectedOrganization);
+
+                // Notify the XDMoD Admin that a user has had their privileges altered due to an
+                // organization change so that they can take any further steps that may be required.
+                MailWrapper::sendMail(
+                    array(
+                        'subject' => 'XDMoD User: Organization Update',
+                        'body' => sprintf(
+                            self::ADMIN_NOTIFICATION_EMAIL,
+                            $this->getFormalName(),
+                            $this->getUsername(),
+                            $this->getEmailAddress(),
+                            $userOrganizationName,
+                            $currentOrganizationName,
+                            json_encode($originalAcls),
+                            json_encode($otherAcls)
+                        ),
+                        'toAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
+                    )
+                );
+
+                // Notify the user that there was an organization change detected.
+                MailWrapper::sendMail(
+                    array(
+                        'subject' => 'XDMoD User: Organization Update',
+                        'body' => sprintf(
+                            self::USER_NOTIFICATION_EMAIL,
+                            $this->getFormalName(),
+                            \xd_utilities\getConfiguration('mailer', 'sender_email')
+                        ),
+                        'toAddress' => $this->getEmailAddress()
+                    )
+                );
+            }
+
+            // Update / save the user with their new organization
+            $this->setOrganizationId($expectedOrganization);
+            $this->saveUser();
+        }
+    }
+
+    /**
+     * Updates this Users Person / Organization if they are not currently assigned to the Unknown User && they there are
+     * ssoAttrs available ( logged in via SSO ). Also, if the person identified via ssoAttrs is not the Unknown User &&
+     * is different than the users curent Person.
+     *
+     */
+    public function updatePerson()
+    {
+        $currentPersonId = $this->getPersonID();
+        $hasSSO = count($this->ssoAttrs) > 0;
+
+        if ($currentPersonId == -1 && $hasSSO) {
+            $username = $this->ssoAttrs['username'][0];
+            $systemUserName = isset($this->ssoAttrs['system_username']) ? $this->ssoAttrs['system_username'][0] : $username;
+            $expectedPersonId = \DataWarehouse::getPersonIdFromPII($systemUserName, null);
+
+            // As long as the identified person is not Unknown and it is different than our current Person Id
+            // go ahead and update this user with the new person & that person's organization.
+            if ($expectedPersonId != -1 && $currentPersonId != $expectedPersonId) {
+                $organizationId = Organizations::getOrganizationIdForPerson($expectedPersonId);
+                $this->setPersonID($expectedPersonId);
+                $this->setOrganizationID($organizationId);
+
+                $this->saveUser();
+            }
+        }
+    }
+
+    public function setSSOAttrs($ssoAttrs)
+    {
+        $this->ssoAttrs = array_reduce(
+            array_intersect(self::$INCLUDE_SSO_ATTRS, array_keys($ssoAttrs)),
+            function ($carry, $key) use ($ssoAttrs) {
+                $carry[$key] = $ssoAttrs[$key];
+                return $carry;
+            },
+            array()
+        );
+    }
+
+    /**
+     * Retrieve this users current session token. This will only be populated if the user has had
+     * its `postLogin` function called.
+     *
+     * @return string
+     */
+    public function getSessionToken()
+    {
+        return $this->currentToken;
+    }
+
+    /**
+     * Set's the value of this user's `sticky` bit.
+     *
+     * @param $sticky
+     */
+    public function setSticky($sticky)
+    {
+        $this->sticky = $sticky;
+    }
+
+    /**
+     * Return's the value of this user's `sticky` bit. If true, then this user's person and or
+     * organization has been manually overridden, do not update unless via the admin interface.
+     *
+     * @return bool
+     */
+    public function isSticky()
+    {
+        return $this->sticky;
     }
 }//XDUser

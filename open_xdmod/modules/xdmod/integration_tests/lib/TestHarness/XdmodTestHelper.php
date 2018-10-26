@@ -172,15 +172,19 @@ class XdmodTestHelper
      * Authenticate a user via SSO. SSO authentication requires a saml-idp
      * server. This is setup in the integration_tests/scripts/samlSetup.sh
      */
-    public function authenticateSSO($parameters)
+    public function authenticateSSO($parameters, $includeDefault = true)
     {
         $result = $this->get('rest/auth/idpredirect', array('returnTo' => '/gui/general/login.php'));
         $nextlocation = $result[0];
         $result = $this->get($nextlocation, null, true);
 
         list($action, $authSettings) = $this->getHTMLFormData($result[0]);
+        if ($includeDefault) {
+            $finalSettings = array_merge($authSettings, $parameters);
+        } else {
+            $finalSettings = $parameters;
+        }
 
-        $finalSettings = array_merge($authSettings, $parameters);
 
         $providerInfo = parse_url($result[1]['url']);
         $url = $providerInfo['scheme'] . '://' . $providerInfo['host'] . ':' . $providerInfo['port'] . $action;

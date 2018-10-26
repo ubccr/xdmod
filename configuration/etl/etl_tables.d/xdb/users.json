@@ -96,6 +96,13 @@
                 "name": "user_type",
                 "type": "int(11)",
                 "nullable": false
+            },
+            {
+                "name": "sticky",
+                "comment": "Set when an admin manually updates the [person|organization]_id. Indicates that further modification must be made manually by an admin.",
+                "type": "tinyint(1) unsigned",
+                "nullable": false,
+                "default": 0
             }
         ],
         "indexes": [

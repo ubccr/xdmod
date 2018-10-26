@@ -28,29 +28,43 @@ class UserOrganizationTest extends BaseUserAdminTest
      */
     public function testOrganizationUpdateOnLogin(array $options)
     {
+        $centerRelatedAcls = array('cd', 'cs');
+
         $user = $options['user'];
         $newOrganization = $options['organization'];
 
         $this->createTestOrganization($newOrganization);
 
         if (is_string($user)) {
-            $this->helper->authenticate($user);
             $userName = $this->config['role'][$user]['username'];
             $userGroup = 1;
+            $userCenterRoles = array_intersect($centerRelatedAcls, array($user));
+
+            $this->helper->authenticate($user);
         } else {
             $this->createUser($user);
             $userName = $user['username'];
             $userGroup = $user['user_type'];
+            $userAcls = isset($user['acls']) ? $user['acls'] : array();
+            $userCenterRoles = array_intersect($centerRelatedAcls, array_keys($userAcls));
+
             $this->helper->authenticateDirect($userName, $userName);
         }
 
         $userId = $this->retrieveUserId($userName, $userGroup);
 
-        $requestedProperties = array('institution', 'person');
-        $currentUserInfo = $this->retrieveUserProperties($userId, array('institution', 'assigned_user_id'));
+        $requestedProperties = array(
+            'institution',
+            'assigned_user_id',
+            'acls',
+            'email_address',
+            'user_type'
+        );
+
+        $currentUserInfo = $this->retrieveUserProperties($userId, $requestedProperties);
 
         $this->assertCount(
-            2,
+            count($requestedProperties),
             $currentUserInfo,
             sprintf(
                 "Unable to retrieve properties for %s\n\tRequested: %s\n\tFound:           %s",
@@ -62,6 +76,9 @@ class UserOrganizationTest extends BaseUserAdminTest
 
         $originalOrganization = $currentUserInfo['institution'];
         $currentPerson = $currentUserInfo['assigned_user_id'];
+        $originalAcls = array_keys($currentUserInfo['acls']);
+        $emailAddress = $currentUserInfo['email_address'];
+        $userType = $currentUserInfo['user_type'];
 
         $this->updatePersonOrganization($currentPerson, $newOrganization);
 
@@ -111,6 +128,35 @@ class UserOrganizationTest extends BaseUserAdminTest
                 $finalOrganization
             )
         );
+
+        // If the user had center related roles we have a few more things to check.
+        if (count($userCenterRoles) > 0) {
+            $currentUserAcls = array_keys($this->retrieveUserProperties($userId, array('acls')));
+            $missingAcls = array_diff($originalAcls, $currentUserAcls);
+
+            // They should have had their center related role revoked, so they should have at least
+            // one acl missing.
+            $this->assertTrue(count($missingAcls) > 0);
+            $this->assertTrue(count($missingAcls) === count($userCenterRoles));
+
+            $userAcls = array_reduce(
+                $originalAcls,
+                function ($carry, $item) {
+                    $carry[$item] = array();
+                    return $carry;
+                },
+                array()
+            );
+
+            $this->updateUser(
+                $userId,
+                $emailAddress,
+                $userAcls,
+                $currentPerson,
+                $originalOrganization,
+                $userType
+            );
+        }
 
         $this->deleteTestOrganization($newOrganization);
     }

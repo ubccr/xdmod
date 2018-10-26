@@ -30,7 +30,7 @@
          exit;
       }
 
-      XDSessionManager::recordLogin($user);
+      $user->postLogin();
 
       $redirect_url = str_replace('internal_dashboard/controllers/pseudo_login.php', '', getAbsoluteURL());
    

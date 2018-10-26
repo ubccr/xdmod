@@ -25,6 +25,7 @@
         <exclude>./lib/Controllers/SSOLoginTest.php</exclude>
     </testsuite>
     <testsuite name="sso">
+        <file>./lib/Controllers/BaseUserAdminTest.php</file>
         <file>./lib/Controllers/SSOLoginTest.php</file>
     </testsuite>
 </testsuites>
