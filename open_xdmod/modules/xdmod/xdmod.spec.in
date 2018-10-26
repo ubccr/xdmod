@@ -88,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
-* Tue Oct 29 2018 Steven M. Gallo <smgallo@buffalo.edu> 8.0.0-1.0
+* Tue Oct 30 2018 Steven M. Gallo <smgallo@buffalo.edu> 8.0.0-1.0
 - Features
     - General
         - Added a **beta** version of the Cloud realm to provide metrics relevant to cloud computing resources.
