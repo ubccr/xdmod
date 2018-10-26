@@ -1,7 +1,41 @@
 Open XDMoD Change Log
 =====================
-## 2018-??-?? v8.0.0
+## 2018-10-30 v8.0.0
 
+- Features
+    - General
+        - Added a **beta** version of the Cloud realm to provide metrics relevant to cloud computing resources.
+        - Added a **beta** version of the Storage realm to provide metrics relevant to storage systems installed at a center.
+        - Federated XDMoD has been released for production. Federated XDMoD allows individual, locally managed, XDMoD instances to report all or a subset of their accounting data to a central Hub which provides a global view of the federation.
+        - All XDMoD user profiles are now associated with an organization. Previously, this was only required for Campus Champions.
+        - Added support for automatically detecting / assigning a new SSO User's organization.
+        - Added support for automatically detecting if a user's organization has changed and updating their accounts accordingly. This may include, but is not limited to, the removal of elevated privileges.
+        - Hardened the login and password reset process as a result of a security audit by University of Cambridge.
+        - Improved support for resource manager job arrays.
+        - Many improvements to the documentation.
+    - ETL
+        - Reorganized several ETL pipelines.
+        - Improved data sanitization for tighter checks present in MySQL 5.7.
+        - Refactored Jobs realm ingestion to utilize ETLv2.
+        - Standardize action names to follow the format module.pipeline.action. For example, xdmod.acls.manage-tables.
+        - Added character set and coalition to table definitions.
+        - Added support for foreign key constraints.
+        - Added support for the definition of ETL variables on the command line using -d variable=value.
+        - Add ingestion of node hostname data from SGE logs.
+        - Various ETL performance improvements.
+- Bug Fixes
+    - User Interface
+        - Deep linking when logged in using SSO has been restored.
+        - Update the logrotate configuration to use the su and create options.
+    - ETL
+        - Add primary keys to select ETL source queries.
+        - When modifying an existing table, preserve the order of the columns in the definition file.
+        - Ensure that file handles are flushed before inserting the final chunk of data.
+    - Misc
+        - Fixed several exceptions that were outside of a namespace.
+        - Fixed an issue where ACLs were not properly created on upgrade.
+        - Several minor bugfixes
+ 
 ## 2018-05-23 v7.5.1
 
 - Bug Fixes
