@@ -1130,7 +1130,7 @@ class Query
 
         foreach($rolearray as $role) {
 
-            $roleparams = Parameters::getParameters($user, $role->getIdentifier());
+            $roleparams = Parameters::getParameters($user, $role);
 
             if(count($roleparams) == 0 ) {
                 // Empty where condition translates to a "WHERE 1". There is no need to add the other

@@ -875,16 +875,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
         // Generate user-specific quick filters if logged in.
         if (!$user->isPublicUser()) {
             $personId = (int)$user->getPersonID();
-            $roles = $user->getAllRoles();
-            $mostPrivilegedRoleIdentifier = $user->getMostPrivilegedRole()->getIdentifier(true);
-            foreach ($roles as $role) {
-                $roleIdentifier = $role->getIdentifier(true);
-
+            $acls = $user->getAcls(true);
+            $mostPrivilegedAcl = $user->getMostPrivilegedRole()->getIdentifier();
+            foreach ($acls as $acl) {
                 // the $personId !== -1 has been added so that people mapped to the Unknown Person
                 // do not have their quick filters automatically set.
-                $isMostPrivilegedRole = ($roleIdentifier === $mostPrivilegedRoleIdentifier) && $personId !== -1;
+                $isMostPrivilegedRole = ($acl === $mostPrivilegedAcl) && $personId !== -1;
 
-                $parameters = Parameters::getParameters($user, $role->getIdentifier());
+                $parameters = Parameters::getParameters($user, $acl);
                 foreach ($parameters as $dimensionId => $valueId) {
                     if (!$multipleProvidersSupported && $dimensionId === $serviceProviderDimensionId) {
                         continue;
@@ -1262,8 +1260,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
             $query = new $QueryClass("day", $startDate, $endDate, null, "", array(), 'tg_usage', array(), false);
 
-            $allRoles = $user->getAllRoles();
-            $query->setMultipleRoleParameters($allRoles, $user);
+            $acls = $user->getacls(true);
+            $query->setMultipleRoleParameters($acls, $user);
 
             $query->setRoleParameters($params);
 
@@ -1492,8 +1490,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
         $query = new $QueryClass(array('primary_key' => $jobId), $action);
 
-        $allRoles = $user->getAllRoles();
-        $query->setMultipleRoleParameters($allRoles, $user);
+        $acls = $user->getAcls(true);
+        $query->setMultipleRoleParameters($acls, $user);
 
         $dataSet = new \DataWarehouse\Data\RawDataset($query, $user);
 
@@ -2098,8 +2096,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
         $query = new $QueryClass($params, "brief");
 
-        $allRoles = $user->getAllRoles();
-        $query->setMultipleRoleParameters($allRoles, $user);
+        $acls = $user->getAcls(true);
+        $query->setMultipleRoleParameters($acls, $user);
 
         $dataSet = new \DataWarehouse\Data\RawDataset($query, $user);
 

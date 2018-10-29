@@ -575,27 +575,28 @@ class MetricExplorer extends Common
         $group_by_name = null,
         $statistic_name = null
     ) {
-        $userRoles = $user->getAllRoles(true);
+        $userAcls = $user->getAcls(true);
+        $userAcls[] = ROLE_ID_PUBLIC;
 
-        $authorizedRoles = array();
-        foreach ($userRoles as $userRole) {
+        $authorizedAcls = array();
+        foreach ($userAcls as $userAcl) {
             $accessPermitted = Acls::hasDataAccess(
                 $user,
                 $realm_name,
                 $group_by_name,
                 $statistic_name,
-                $userRole->getIdentifier()
+                $userAcl
             );
             if ($accessPermitted) {
-                $authorizedRoles[] = $userRole;
+                $authorizedAcls[] = $userAcl;
             }
         }
 
-        if (empty($authorizedRoles)) {
+        if (empty($authorizedAcls)) {
             throw new AccessDeniedException();
         }
 
-        return $authorizedRoles;
+        return $authorizedAcls;
     }
 
     /**

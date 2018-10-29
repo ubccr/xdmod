@@ -1128,46 +1128,6 @@ class XDUserTest extends BaseTest
     }
 
     /**
-     * @dataProvider provideGetAllRoles
-     * @param string $userName
-     * @param $output
-     * @throws Exception
-     */
-    public function testGetAllRoles($userName, $output)
-    {
-
-        $user = XDUser::getUserByUserName($userName);
-        $allRoles = $user->getAllRoles();
-        $actual = array_reduce(
-            $allRoles,
-            function ($carry, $item) {
-                $carry[] = $item->getIdentifier();
-                return $carry;
-            },
-            array()
-        );
-        $expected = Json::loadFile(
-            $this->getTestFiles()->getFile('acls', $output)
-        );
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return array|object
-     * @throws Exception
-     */
-    public function provideGetAllRoles()
-    {
-        return Json::loadFile(
-            $this->getTestFiles()->getFile(
-                'acls',
-                'get_all_roles',
-                'input'
-            )
-        );
-    }
-
-    /**
      * @dataProvider provideIsCenterDirectorOfOrganizationValidCenter
      * @param string $userName The name of the user to test
      * @param int $organizationId The organization id to test

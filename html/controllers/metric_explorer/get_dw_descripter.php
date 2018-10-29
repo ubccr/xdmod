@@ -5,11 +5,12 @@ use Models\Services\Acls;
 @require_once('common.php');
 
 $user = \xd_security\getLoggedInUser();
-$roles = $user->getAllRoles(true);
+$roles = $user->getAcls(true);
+$roles [] = ROLE_ID_PUBLIC;
 
 $roleDescriptors = array();
 foreach ($roles as $activeRole) {
-    $shortRole = $activeRole->getIdentifier();
+    $shortRole = $activeRole;
     $us_pos = strpos($shortRole, '_');
     if ($us_pos > 0)
     {
