@@ -2353,32 +2353,6 @@ SQL;
         return $role;
     }//getMostPrivilegedRole
 
-    /* @function getAllRoles
-     *
-     * Returns an array containing all roles that a user is assigned
-     *
-     * @param boolean $includePublicRole (Optional) If true, the roles returned
-     *                                   will include the public role.
-     *                                   (Defaults to false.)
-     */
-    function getAllRoles($includePublicRole = false)
-    {
-        $allroles = array();
-
-        foreach ($this->enumAllAvailableRoles() as $availableRole) {
-            $roleData = array_pad(explode(':', $availableRole['param_value']), 2, NULL);
-            $allroles[] = $this->assumeActiveRole($roleData[0], $roleData[1]);
-        }
-
-        if ($includePublicRole) {
-            $allroles[] = $this->assumeActiveRole(ROLE_ID_PUBLIC);
-        }
-
-        return $allroles;
-    }
-
-    // ---------------------------
-
     /*
      *
      * @function _isValidOrganizationID

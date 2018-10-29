@@ -77,17 +77,15 @@ TXT;
 
         $user = XDUser::getUserByUserName($userName);
 
-        $allRoles = $user->getAllRoles();
+        $acls = $user->getAcls(true);
 
-        foreach ($allRoles as $role) {
-            $roleName = $role->getIdentifier();
-
+        foreach ($acls as $acl) {
             $actual = Acls::hasDataAccess(
                 $user,
                 $realm,
                 $groupBy,
                 $statistic,
-                $roleName
+                $acl
             );
 
             // We also check the MetricExplorer::checkDataAccess function as it's
@@ -126,7 +124,7 @@ TXT;
                     $realm,
                     $groupBy,
                     $statistic,
-                    $roleName,
+                    $acl,
                     self::HAS_DATA_ACCESS,
                     json_encode($expected),
                     self::HAS_DATA_ACCESS,
@@ -139,7 +137,7 @@ TXT;
                 $actual,
                 sprintf(
                     "[%s] Expected does not match Actual: %s => %s",
-                    $roleName,
+                    $acl,
                     $expected ? 'true' : "false",
                     $actual ? 'true' : 'false'
                 )
