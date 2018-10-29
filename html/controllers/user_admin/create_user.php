@@ -94,15 +94,6 @@ try {
             );
         }
     }
-    // =============================
-
-    // 'institution' now corresponds to a Users organization and will always be present, not only
-    // when a user has been assigned the campus champion acl. This means we need to update the logic
-    // that gates  the `setInstitution` function call to include a check if the user has been
-    // assigned the Campus Champion acl.
-    if (isset($_POST['institution']) && in_array(ROLE_ID_CAMPUS_CHAMPION, array_keys($acls))) {
-        $newuser->setInstitution($_POST['institution']);
-    }
 
     $page_title = \xd_utilities\getConfiguration('general', 'title');
     $site_address = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
