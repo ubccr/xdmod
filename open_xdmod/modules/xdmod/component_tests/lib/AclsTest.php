@@ -183,8 +183,8 @@ TXT;
 
         $user = XDUser::getUserByUserName($username);
 
-        $roles = $user->getAllRoles();
-        foreach ($roles as $role) {
+        $acls = $user->getAcls();
+        foreach ($acls as $acl) {
             if (isset($realm) && isset($groupBy) && isset($statistic)) {
                 $actual = $this->extractDataFrom(
                     Acls::getQueryDescripters(
@@ -228,7 +228,7 @@ TXT;
                     $realm,
                     $groupBy,
                     $statistic,
-                    $role->getIdentifier(),
+                    $acl,
                     self::GET_QUERY_DESCRIPTERS,
                     print_r($expected, true),
                     self::GET_QUERY_DESCRIPTERS,
