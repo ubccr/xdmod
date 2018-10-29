@@ -530,7 +530,7 @@ CCR.xdmod.enumAssignedResourceProviders = function () {
         assignedResourceProviders[CCR.xdmod.UserTypes.CenterDirector] = CCR.xdmod.org_abbrev;
     }
 
-    if (CCR.xdmod.ui.allRoles.indexOf(CCR.xdmod.UserTypes.CenterStaff) !== -1) {
+    if (CCR.xdmod.ui.allRoles.indexOf(CCR.xdmod.UserTypes.CenterStaff) !== -1 ) {
         assignedResourceProviders[CCR.xdmod.UserTypes.CenterStaff] = CCR.xdmod.org_abbrev;
     }
 

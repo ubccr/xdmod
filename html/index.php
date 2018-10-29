@@ -290,7 +290,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         print "CCR.xdmod.ui.disabledMenus = " . json_encode(Acls::getDisabledMenus($user, $realms)) . ";\n";
 
         if ($userLoggedIn) {
-            print "CCR.xdmod.ui.allRoles = " . json_encode($user->enumAllAvailableRoles()) . "\n";
+            print "CCR.xdmod.ui.allRoles = " . json_encode($user->getAcls(true)) . "\n";
         }
 
         print "CCR.xdmod.org_name = " . json_encode(ORGANIZATION_NAME) . ";\n";
