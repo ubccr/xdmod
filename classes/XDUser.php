@@ -2197,9 +2197,6 @@ SQL;
 
     public function getMostPrivilegedRole()
     {
-
-        // XDUser::enumAllAvailableRoles already orders the roles in terms of 'visibility' / 'highest privilege'
-        // so just acquire the first item in the set.
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
         $roleName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
         $role = aRole::factory($roleName);
