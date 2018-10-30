@@ -78,33 +78,6 @@ try {
     );
     $newuser->setUserType($_POST['user_type']);
     $newuser->saveUser();
-    // =============================
-    foreach ($acls as $acl => $centers) {
-        // Now that the user has been updated, We need to check if they have been assigned any
-        // 'center' acls. If they have and if an 'institution' has been provided ( it should have
-        // been ) then we need to call `setOrganizations` so that the UserRoleParameters and
-        // user_acl_group_by_parameters tables are updated accordingly.
-        if (in_array($acl, array('cd', 'cs')) && isset($_POST['institution'])) {
-            $newuser->setOrganizations(
-                array(
-                    $_POST['institution'] => array(
-                        'primary'=> 1,
-                        'active' => 1
-                    )
-                ),
-                $acl
-            );
-        }
-    }
-    // =============================
-
-    // 'institution' now corresponds to a Users organization and will always be present, not only
-    // when a user has been assigned the campus champion acl. This means we need to update the logic
-    // that gates  the `setInstitution` function call to include a check if the user has been
-    // assigned the Campus Champion acl.
-    if (isset($_POST['institution']) && in_array(ROLE_ID_CAMPUS_CHAMPION, array_keys($acls))) {
-        $newuser->setInstitution($_POST['institution']);
-    }
 
     $page_title = \xd_utilities\getConfiguration('general', 'title');
     $site_address = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
