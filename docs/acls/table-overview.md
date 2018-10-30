@@ -67,13 +67,3 @@ This table tracks which acls have access to which group bys.
 
 ## Acl Tabs (acl_tabs)
 This table tracks which acls have access to which tabs.
-
-## User Acl Group By Parameters (user_acl_group_by_parameters)
-It so happens that, to complete a particular query a user may need to supply
-a piece of information that they do not normally have a relation to. The most 
-common is to an organization ( Persons have a relation to organization, but Users do not). 
-This is mainly used when a particular query needs to be filtered so that only a subset is
-visible. In the organization example, a Center Director of an organization is only allowed
-to view the information from his center. As such a record will be created here
-with a reference to the organization_id in question and the group_by used to filter
-the query. 
