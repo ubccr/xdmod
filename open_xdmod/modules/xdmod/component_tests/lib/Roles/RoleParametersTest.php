@@ -195,17 +195,6 @@ class RoleParametersTest extends BaseTest
             $user->setUserType(DEMO_USER_TYPE);
 
             $user->saveUser();
-
-            // set the organizations if necessary
-            foreach ($centerAcls as $centerAcl) {
-                if (isset($organizationId)) {
-                    $user->setOrganizations(
-                        array($organizationId => array('active' => 1, 'primary' => 1)),
-                        $centerAcl
-                    );
-                }
-            }
-
         } catch (\Exception $e) {
             echo sprintf(
                 "\n-=-=-=-=-=-=-=-=-=-=-=-=-\n[%s] %s\n%s",
