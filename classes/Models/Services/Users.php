@@ -148,111 +148,21 @@ SQLF;
     {
         $db = DB::factory(self::DB_SECTION_NAME);
         $query = <<<SQL
-SELECT DISTINCT
-  u.id,
-  CONCAT(u.last_name, ', ', u.first_name, ' [', o.abbrev, ']') AS name
+SELECT DISTINCT u.id, CONCAT(u.last_name, ', ', u.first_name, ' [', o.abbrev,
+                             ']') AS name
 FROM Users u
-  -- This left join retrieves the correct center associated with this user.
-  -- The order of precedence is as follows:
-  --   - a record in user_acl_group_by_parameters for a center
-  --   - a Users.organization_id that is a valid center
-  --   - a modw.person.organization_id that is a valid center and is related via their
-  --     Users.person_id value
-  JOIN
-  (
-      -- This retrieves all of the centers for a particular user
-      SELECT DISTINCT
-        uagbp.user_id,
-        uagbp.value organization_id
-      FROM moddb.user_acl_group_by_parameters uagbp
-        JOIN modw.organization o ON uagbp.value = o.id
-        JOIN modw.resourcefact rf ON o.id = rf.organization_id
-        JOIN moddb.group_bys gb
-          ON uagbp.group_by_id = gb.group_by_id AND gb.name = 'provider'
-   UNION
-      -- this retrieves all of the centers that a user is directly associated with
-      SELECT DISTINCT
-        u.id user_id,
-        u.organization_id
-      FROM moddb.Users u
-        JOIN modw.organization o ON o.id = u.organization_id
-        JOIN modw.resourcefact rf ON o.id = rf.organization_id
-      UNION
-      -- this retrieves all centers that a users person is directly associated with
-      SELECT DISTINCT
-        u.id user_id,
-        o.id organization_id
-      FROM moddb.Users u
-        JOIN modw.person p ON p.id = u.person_id
-        JOIN modw.organization o ON o.id = p.organization_id
-        JOIN modw.resourcefact rf ON o.id = rf.organization_id
-  ) uo
-    ON uo.user_id = u.id
-  -- This left join retrieves the correct center value for the specified :user_id
-  -- i.e. the user running this query.
-  -- The order of precedence is as follows:
-  --   - a record in user_acl_group_by_parameters for a center
-  --   - a Users.organization_id that is a valid center
-  --   - a modw.person.organization_id that is a valid center and is related via their
-  --     Users.person_id value
-  JOIN
-  (
-    SELECT src.organization_id
-    FROM (
-      SELECT user_org.*
-      FROM (
-        SELECT DISTINCT
-          uagbp.value organization_id,
-          1
-        FROM moddb.user_acl_group_by_parameters uagbp
-        JOIN modw.organization o ON uagbp.value = o.id
-        JOIN modw.resourcefact rf ON o.id = rf.organization_id
-        JOIN moddb.group_bys gb
-          ON uagbp.group_by_id = gb.group_by_id AND gb.name = 'provider'
-        JOIN moddb.acls a ON uagbp.acl_id = a.acl_id AND a.name = 'cd'
-        WHERE uagbp.user_id = :user_id
-        UNION
-        SELECT DISTINCT
-          u.organization_id,
-          2
-        FROM moddb.Users u
-        JOIN modw.organization o ON o.id = u.organization_id
-        JOIN modw.resourcefact rf ON o.id = rf.organization_id
-        WHERE u.id = :user_id
-        UNION
-        SELECT DISTINCT
-          o.id organization_id,
-          3
-        FROM moddb.Users u
-        JOIN modw.person p ON p.id = u.person_id
-        JOIN modw.organization o ON o.id = p.organization_id
-        JOIN modw.resourcefact rf ON o.id = rf.organization_id
-        WHERE u.id = :user_id
-      ) user_org
-      ORDER BY 2
-      LIMIT 1
-    ) src
-  ) co ON uo.organization_id = co.organization_id
-  -- This left join retrieves all users that have a 'cd' record and the associated center id (value)
-  -- The reason we need this information is so that we can exclude all users who are center 
-  -- directors for the center of the user running this query. ( Center Directors cannot demote 
-  -- other center directors ).
-  LEFT JOIN
-  (
-    SELECT DISTINCT
-      uagbp.user_id,
-      uagbp.value
-    FROM moddb.user_acl_group_by_parameters uagbp
-      JOIN acls a ON uagbp.acl_id = a.acl_id
-    WHERE a.name = 'cd'
-  ) has_cd
-    ON has_cd.user_id = u.id AND has_cd.value = co.organization_id
-  -- This join allows us to retrieve more information about the current users center.
-  JOIN modw.organization o
-    ON o.id = co.organization_id
+       JOIN (SELECT u.organization_id FROM Users u WHERE u.id = :user_id) uo
+         ON u.organization_id = uo.organization_id
+       LEFT JOIN (SELECT u.id as user_id, u.organization_id as value
+                  FROM Users u
+                         JOIN user_acls ua ON ua.user_id = u.id
+                         JOIN acls a ON ua.acl_id = a.acl_id
+                  WHERE a.name = 'cd') has_cd ON has_cd.user_id = u.id AND
+                                                 has_cd.value = u.organization_id -- This join allows us to retrieve more information about the current users center.
+       JOIN modw.organization o ON o.id = u.organization_id
 WHERE
-  -- We also only want users that do not have the 'cd' acl
-  has_cd.user_id IS NULL;
+    -- We also only want users that do not have the 'cd' acl
+    has_cd.user_id IS NULL;
 SQL;
         $params = array(
             ':user_id' => $userId
