@@ -48,7 +48,7 @@ class CenterStaffRole extends CenterDirectorRole
         $pdo = DB::factory('database');
 
         $centerData = $pdo->query(
-            "SELECT u.organization_id FROM Users u WHERE u.id = :user_id",
+            "SELECT u.organization_id FROM Users u JOIN user_acls ua ON ua.user_id = u.id JOIN acls a ON a.acl_id = ua.acl_id WHERE u.id = :user_id AND a.name = 'cs'",
             array(
                 ':user_id' => $this->getCorrespondingUserID()
             )
