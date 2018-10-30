@@ -76,24 +76,6 @@ try {
     );
     $newuser->setUserType($_POST['user_type']);
     $newuser->saveUser();
-    // =============================
-    foreach ($acls as $acl => $centers) {
-        // Now that the user has been updated, We need to check if they have been assigned any
-        // 'center' acls. If they have and if an 'institution' has been provided ( it should have
-        // been ) then we need to call `setOrganizations` so that the UserRoleParameters and
-        // user_acl_group_by_parameters tables are updated accordingly.
-        if (in_array($acl, array('cd', 'cs')) && isset($_POST['institution'])) {
-            $newuser->setOrganizations(
-                array(
-                    $_POST['institution'] => array(
-                        'primary'=> 1,
-                        'active' => 1
-                    )
-                ),
-                $acl
-            );
-        }
-    }
 
     $page_title = \xd_utilities\getConfiguration('general', 'title');
     $site_address = \xd_utilities\getConfigurationUrlBase('general', 'site_address');

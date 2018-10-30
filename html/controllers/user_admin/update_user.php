@@ -159,37 +159,14 @@ if (!isset($_POST['is_active'])) {
     } // if (isset($_POST['acls'])) {
 }
 
+// 'institution' now corresponds to a Users organization and is not only present when they are a
+// campus champion. This means we need to make sure that the User's organization_id is populated
+if (isset($_POST['institution'])) {
+    $user_to_update->setOrganizationID($_POST['institution']);
+}//if (isset($_POST['institution']))
+
 try {
     $user_to_update->saveUser();
-
-    if (!isset($_POST['is_active'])) {
-        if (isset($_POST['acls']) && isset($acls)) {
-
-            // clear the organizations first.
-            $user_to_update->setOrganizations(array(), ROLE_ID_CENTER_DIRECTOR);
-            $user_to_update->setOrganizations(array(), ROLE_ID_CENTER_STAFF);
-
-            // then add each new one.
-            foreach ($acls as $aclName => $centers) {
-                // Now that the user has been created, We need to check if they have been assigned
-                // any 'center' acls. If they have and if an 'institution' has been provided ( it
-                // should have been ) then we need to call `setOrganizations` so that the
-                // UserRoleParameters and user_acl_group_by_parameters tables are updated
-                // accordingly.
-                if (in_array($aclName, array('cd', 'cs')) && isset($_POST['institution'])) {
-                    $user_to_update->setOrganizations(
-                        array(
-                            $_POST['institution'] => array(
-                                'primary'=> 1,
-                                'active' => 1
-                            )
-                        ),
-                        $aclName
-                    );
-                }
-            }
-        }
-    }
 } catch (Exception $e) {
     $returnData['success'] = false;
     $returnData['status'] = $e->getMessage();
