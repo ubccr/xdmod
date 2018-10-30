@@ -33,8 +33,7 @@
         "acls/user_acls.json",
         "acls/acl_group_bys.json",
         "acls/tabs.json",
-        "acls/acl_tabs.json",
-        "acls/user_acl_group_by_parameters.json"
+        "acls/acl_tabs.json"
       ],
       "enabled": true
     }
