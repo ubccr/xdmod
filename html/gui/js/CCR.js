@@ -526,14 +526,13 @@ CCR.xdmod.enumAssignedResourceProviders = function () {
 
     var assignedResourceProviders = {};
 
-    for (var x = 0; x < CCR.xdmod.ui.allRoles.length; x++) {
-        var role_data = CCR.xdmod.ui.allRoles[x].param_value.split(':');
-        var role_id = role_data[0];
+    if (CCR.xdmod.ui.allRoles.indexOf(CCR.xdmod.UserTypes.CenterDirector) !== -1) {
+        assignedResourceProviders[CCR.xdmod.UserTypes.CenterDirector] = CCR.xdmod.org_abbrev;
+    }
 
-        if (role_id == CCR.xdmod.UserTypes.CenterDirector || role_id == CCR.xdmod.UserTypes.CenterStaff) {
-            assignedResourceProviders[role_data[1]] = CCR.xdmod.ui.allRoles[x].description.split(' - ')[1];
-        }
-    } //for
+    if (CCR.xdmod.ui.allRoles.indexOf(CCR.xdmod.UserTypes.CenterStaff) !== -1) {
+        assignedResourceProviders[CCR.xdmod.UserTypes.CenterStaff] = CCR.xdmod.org_abbrev;
+    }
 
     return assignedResourceProviders;
 }; //enumAssignedResourceProviders
