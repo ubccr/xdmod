@@ -97,6 +97,13 @@ class SSOLoginTest extends BaseUserAdminTest
     const SET_ORGANIZATION = 'set_organization';
 
     /**
+     * Key to use when providing / retrieving information to be used when removing an organization.
+     * i.e. the 'organization_id' value.
+     * @var string
+     */
+    const REMOVE_ORGANIZATION = 'remove_organization';
+
+    /**
      * used to test that SSO logins work correctly and the correct user information
      * is reported
      *
@@ -120,6 +127,7 @@ class SSOLoginTest extends BaseUserAdminTest
 
         $removePerson = \xd_utilities\array_get($testOptions, self::REMOVE_PERSON, null);
         $removeSystemAccount = \xd_utilities\array_get($testOptions, self::REMOVE_SYSTEM_ACCOUNT, null);
+        $removeOrganization = \xd_utilities\array_get($testOptions, self::REMOVE_ORGANIZATION, null);
 
         $username = \xd_utilities\array_get($ssoSettings, self::SSO_USERNAME, '');
 
@@ -142,6 +150,14 @@ class SSOLoginTest extends BaseUserAdminTest
                 $createSystemAccount['person_long_name'],
                 $createSystemAccount['resource_id'],
                 $createSystemAccount['username']
+            );
+        }
+
+        if ($setOrganization && !$this->organizationExists($setOrganization)) {
+            $this->createOrganization(
+                $setOrganization,
+                "test",
+                "Test Organization"
             );
         }
 
@@ -256,6 +272,10 @@ class SSOLoginTest extends BaseUserAdminTest
 
         if ($removeSystemAccount) {
             $this->removeSystemAccount($removeSystemAccount);
+        }
+
+        if ($removeOrganization) {
+            $this->removeOrganization($removeOrganization);
         }
 
         if ($removePerson) {
@@ -1040,10 +1060,60 @@ class SSOLoginTest extends BaseUserAdminTest
                 ),
                 array(
                     self::EXPECTED_ORG => 1,
-                    self::REMOVE_USER => true
+                    self::REMOVE_USER => true,
+                    self::REMOVE_ORGANIZATION => 2
                 )
-            ),
+            )
         );
+    }
+
+    public function organizationExists($organizationId)
+    {
+        $query = "SELECT * FROM modw.organization WHERE id = :organization_id";
+        $params = array(
+            ':organization_id' => $organizationId
+        );
+        $db = DB::factory('database');
+        $results = $db->query($query, $params);
+
+        return count($results) > 0;
+    }
+
+    public function createOrganization($id, $abbrev, $name, $shortName = null, $longName = null)
+    {
+        if ($shortName === null) {
+            $shortName = $name;
+        }
+
+        if ($longName === null) {
+            $longName = "$abbrev - $name";
+        }
+
+        $query = <<<SQL
+INSERT INTO modw.organization(id, abbrev, name, short_name, long_name)
+VALUES(:organization_id, :abbrev, :name, :short_name, :long_name); 
+SQL;
+        $params = array(
+            ':organization_id' => $id,
+            ':abbrev' => $abbrev,
+            ':name'=> $name,
+            ':short_name' => $shortName,
+            ':long_name'=> $longName
+        );
+
+        $db = DB::factory('database');
+        $db->execute($query, $params);
+    }
+
+    public function removeOrganization($organizationId)
+    {
+        $query = "DELETE FROM modw.organization WHERE id = :organization_id";
+        $params = array(
+            ':organization_id' => $organizationId
+        );
+
+        $db = DB::factory('database');
+        $db->execute($query, $params);
     }
 
     public function createSystemAccount($personLongName, $resourceId, $username)
