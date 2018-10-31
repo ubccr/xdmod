@@ -16,6 +16,10 @@ use CCR\DB\iDatabase;
 use CCR\Log;
 use CCR\Json;
 
+use ETL\Configuration\EtlConfiguration;
+use ETL\EtlOverseer;
+use ETL\EtlOverseerOptions;
+use ETL\Utilities;
 use User\Roles;
 use Xdmod\Config;
 
@@ -2199,40 +2203,51 @@ function dropTables(iDatabase $db, array $tables)
  * Attempt to run the ETL process identified by $processName.
  *
  * @param string $processName the name of the ETL process that is to be executed.
- * @param bool $quiet         Defaults to true, if set to false then additional logging output may be
- *                            generated
+ * @param array $params
+ * @throws Exception
  */
-function runEtlProcess($processName, $quiet=true)
+function runEtlProcess($processName, $params = array())
 {
     global $dryRun, $log;
 
-    $log->info("*** Running ETL Process [$processName]...");
-
-    $parts = array(
-        'php',
-        BASE_DIR . '/tools/etl/etl_overseer.php',
-        '-p',
-        $processName
+    $log->debug(
+        sprintf(
+            'Running ETL pipeline "%s" with parameters %s',
+            $processName,
+            json_encode($params)
+        )
     );
+    if (!$dryRun) {
+        $etlConfig = new EtlConfiguration(
+            CONFIG_DIR . '/etl/etl.json',
+            null,
+            $log,
+            array('default_module_name' => 'xdmod')
+        );
+        $etlConfig->initialize();
+        Utilities::setEtlConfig($etlConfig);
 
-    if ($quiet) {
-        $parts[] = '-v';
-        $parts[] = 'quiet';
+        $scriptOptions = array_merge(
+            array(
+                'default-module-name' => 'xdmod',
+                'process-sections' => array($processName),
+            ),
+            $params
+        );
+        $log->debug(
+            sprintf(
+                'Running ETL pipeline with script options %s',
+                json_encode($scriptOptions)
+            )
+        );
+
+        $overseerOptions = new EtlOverseerOptions(
+            $scriptOptions,
+            $log
+        );
+        $overseer = new EtlOverseer($overseerOptions, $log);
+        $overseer->execute($etlConfig);
     }
-
-    $cmd = implode(
-        ' ',
-        $parts
-    );
-
-    $log->info("\tCmd: $cmd ...");
-
-    if ($dryRun) {
-        $log->info("Would have executed: $cmd");
-        return;
-    }
-
-    echo exec($cmd);
 }
 
 /**
