@@ -2,6 +2,8 @@
 
 namespace DataWarehouse\Access;
 
+use CCR\DB;
+use CCR\Log;
 use Exception;
 
 use DataWarehouse;
@@ -973,6 +975,8 @@ class Usage extends Common
             $usageFilterValues = explode(',', $usageValue);
 
             foreach ($usageFilterValues as $usageFilterValue) {
+                $usageFilterValue = $this->translateFilterValue($usageFilterType, $usageFilterValue);
+
                 $meFilters[] = array(
                     'id' => "$usageFilterType=$usageFilterValue",
                     'value_id' => $usageFilterValue,
@@ -1106,5 +1110,77 @@ class Usage extends Common
             . '_'
             . ($isTimeseries ? 'timeseries' : 'aggregate')
         ;
+    }
+
+    /**
+     * Attempts to translate the $usageFilterValue ( if not numeric ) via a sql query, based on
+     * $usageFilterType. Currently supported $usageFilterType values and the tables ( columns ) they
+     * lookup values in are:
+     *   - 'pi':       modw.systemaccount ( username )
+     *   - 'resource': modw.resourcefact  ( code )
+     *   - 'project':  modw_cloud.account ( display )
+     *
+     * If the $usageFilterValue is numeric or the $usageFilterType is not one of those currently
+     * supported then $usageFilterValue is returned.
+     *
+     * @param string $usageFilterType  the 'type' of filter to translate. Currently supported
+     *                                 values: pi, resource, project
+     * @param mixed  $usageFilterValue the value to be translated
+     * @return int|string an int will be returned if, the $usageFilterValue is not numeric and a
+     * record is found. Else, the unmodified $usageFilterValue is returned.
+     */
+    private function translateFilterValue($usageFilterType, $usageFilterValue)
+    {
+        /**
+         * Anonymous function to prevent code duplication. $query is expected to minimally fulfill
+         * the following:
+         *   - contain one column in the select clause called 'value'
+         *   - utilize at least one parameter named ':param'
+         *
+         * This function will execute the provided $query with $value as it's only parameter. If any
+         * records are found then the the first record's 'value' column is returned. If no records
+         * are found then $value is returned.
+         *
+         * @param string $query the sql query to be executed
+         * @param string $value the one parameter that will be provided to $query.
+         * @return int|string all current queries return an int id value. If no rows are found then
+         * the string $value is returned.
+         */
+        $lookupValue = function ($query, $value) {
+            $db = DB::factory('database');
+            $results = $db->query(
+                $query,
+                array(
+                    ':param' => $value
+                )
+            );
+            return count($results) > 0 ? $results[0]['value'] : $value;
+        };
+
+        if (!is_numeric($usageFilterValue)) {
+            switch ($usageFilterType) {
+                case 'pi':
+                    // NOTE: At the time of writing there is no instance where multiple records have
+                    // the same username but different person_id values.
+                    return $lookupValue(
+                        "SELECT DISTINCT sa.person_id AS value FROM modw.systemaccount sa WHERE sa.username = :param;",
+                        $usageFilterValue
+                    );
+                case 'resource':
+                    return $lookupValue(
+                        "SELECT id AS value FROM modw.resourcefact WHERE code = :param;",
+                        $usageFilterValue
+                    );
+                case 'project':
+                    return $lookupValue(
+                        "SELECT account_id AS value FROM modw_cloud.account WHERE display = :param",
+                        $usageFilterValue
+                    );
+                default:
+                    return $usageFilterValue;
+            }
+        }
+
+        return $usageFilterValue;
     }
 }
