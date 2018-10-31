@@ -580,31 +580,6 @@ SQL;
     $log->info("Managed Tables Wiped!");
 }
 
-function createManagedTables()
-{
-    global $dryRun, $log;
-
-    $cmd = implode(
-        ' ',
-        array(
-            'php',
-            BASE_DIR . '/tools/etl/etl_overseer.php',
-            '-p',
-            'acls-xdmod-management',
-            '-v',
-            'quiet'
-        )
-    );
-
-    if ($dryRun) {
-        $log->info("Would have executed: $cmd");
-        return;
-    }
-
-    echo exec($cmd);
-}
-
-
 /**
  * Re-populate the user related tables
  * @param iDatabase $db the database to utilize while re-populating the tables.
