@@ -1158,7 +1158,7 @@ class Usage extends Common
                 ',',
                 array_reduce(
                     $rows,
-                    function($carry, $item) {
+                    function ($carry, $item) {
                         $carry[] = $item['value'];
                         return $carry;
                     },
