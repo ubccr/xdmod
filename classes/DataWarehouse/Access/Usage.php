@@ -9,6 +9,7 @@ use Exception;
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
 use Models\Services\Acls;
+use PDO;
 use XDChartPool;
 use XDUser;
 
@@ -1131,6 +1132,7 @@ class Usage extends Common
      */
     private function translateFilterValue($usageFilterType, $usageFilterValue)
     {
+
         /**
          * Anonymous function to prevent code duplication. $query is expected to minimally fulfill
          * the following:
@@ -1142,39 +1144,50 @@ class Usage extends Common
          * are found then $value is returned.
          *
          * @param string $query the sql query to be executed
-         * @param string $value the one parameter that will be provided to $query.
+         * @param array $values the one parameter that will be provided to $query.
          * @return int|string all current queries return an int id value. If no rows are found then
          * the string $value is returned.
          */
-        $lookupValue = function ($query, $value) {
+        $lookupValue = function ($query, array $values) {
             $db = DB::factory('database');
-            $results = $db->query(
+            $rows = $db->query(
                 $query,
-                array(
-                    ':param' => $value
+                $values
+            );
+            return implode(
+                ',',
+                array_reduce(
+                    $rows,
+                    function($carry, $item) {
+                        $carry[] = $item['value'];
+                        return $carry;
+                    },
+                    array()
                 )
             );
-            return count($results) > 0 ? $results[0]['value'] : $value;
         };
 
         if (!is_numeric($usageFilterValue)) {
+            $usageFilterValues = explode(',', $usageFilterValue);
+            $inClause = str_repeat('?,', count($usageFilterValues) -1 ) . '?';
+
             switch ($usageFilterType) {
                 case 'pi':
                     // NOTE: At the time of writing there is no instance where multiple records have
                     // the same username but different person_id values.
                     return $lookupValue(
-                        "SELECT DISTINCT sa.person_id AS value FROM modw.systemaccount sa WHERE sa.username = :param;",
-                        $usageFilterValue
+                        "SELECT DISTINCT sa.person_id AS value FROM modw.systemaccount sa WHERE sa.username IN ($inClause);",
+                        $usageFilterValues
                     );
                 case 'resource':
                     return $lookupValue(
-                        "SELECT id AS value FROM modw.resourcefact WHERE code = :param;",
-                        $usageFilterValue
+                        "SELECT id AS value FROM modw.resourcefact WHERE code IN ($inClause)",
+                        $usageFilterValues
                     );
                 case 'project':
                     return $lookupValue(
-                        "SELECT account_id AS value FROM modw_cloud.account WHERE display = :param",
-                        $usageFilterValue
+                        "SELECT account_id AS value FROM modw_cloud.account WHERE display IN ($inClause)",
+                        $usageFilterValues
                     );
                 default:
                     return $usageFilterValue;
