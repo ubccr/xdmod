@@ -78,7 +78,7 @@ abstract class TimeAggregationUnit
 
         $dateResult = \DataWarehouse::connect()->query($query);
 
-        // this should not occur unless something is wrong with the aggregate table(s)
+        // this should not occur unless the aggregation table is empty
         if (null === $dateResult[0]['minPeriodId'] || null === $dateResult[0]['minPeriodId']) {
             return array(-1, -1);
         }
