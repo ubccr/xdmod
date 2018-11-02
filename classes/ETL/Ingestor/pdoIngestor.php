@@ -524,7 +524,16 @@ class pdoIngestor extends aIngestor
             return 0;
         }
 
-        $totalRecordsProcessed = $this->destinationHandle->execute($sql);
+        try {
+            $totalRecordsProcessed = $this->destinationHandle->execute($sql);
+        }
+        catch (Exception $e) {
+            $this->logAndThrowException(
+                $e->getMessage(),
+                array('exception' => $e)
+            );
+        }
+
         $this->logger->info(
             sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
         );
