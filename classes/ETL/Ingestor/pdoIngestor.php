@@ -850,12 +850,13 @@ class pdoIngestor extends aIngestor
                             $numFilesLoaded++;
                         }
                         catch (Exception $e) {
-                            $msg = array('message'    => $e->getMessage(),
-                                         'stacktrace' => $e->getTraceAsString(),
-                                         'statement'  => $loadStatement
+                            $this->logAndThrowException(
+                                $e->getMessage(),
+                                array(
+                                    'exception' => $e,
+                                    'sql' => $loadStatement
+                                )
                             );
-                            $this->logger->err($msg);
-                            throw $e;
                         }
                     }  // foreach ( $loadStatementList as $etlTableKey => $loadStatement )
 
@@ -892,12 +893,13 @@ class pdoIngestor extends aIngestor
 
                 }
                 catch (Exception $e) {
-                    $msg = array('message'    => $e->getMessage(),
-                                 'stacktrace' => $e->getTraceAsString(),
-                                 'statement'  => $loadStatement
-                        );
-                    $this->logger->err($msg);
-                    throw $e;
+                    $this->logAndThrowException(
+                        $e->getMessage(),
+                        array(
+                            'exception' => $e,
+                            'sql' => $loadStatement
+                        )
+                    );
                 }
 
                 // Cleanup
