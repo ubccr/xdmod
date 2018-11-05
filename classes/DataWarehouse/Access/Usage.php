@@ -1137,16 +1137,15 @@ class Usage extends Common
          * Anonymous function to prevent code duplication. $query is expected to minimally fulfill
          * the following:
          *   - contain one column in the select clause called 'value'
-         *   - utilize at least one parameter named ':param'
          *
-         * This function will execute the provided $query with $value as it's only parameter. If any
-         * records are found then the the first record's 'value' column is returned. If no records
-         * are found then $value is returned.
+         * This function will execute the provided $query with $values as the set of parameters. If
+         * any records are found then their 'value' columns are returned.
          *
          * @param string $query the sql query to be executed
          * @param array $values the one parameter that will be provided to $query.
-         * @return int|string all current queries return an int id value. If no rows are found then
-         * the string $value is returned.
+         *
+         * @return int[]|array all current queries return an int array. If no rows are found then
+         * an empty array is returned.
          */
         $lookupValue = function ($query, array $values) {
             $db = DB::factory('database');
