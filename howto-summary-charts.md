@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.5/howto-summary-charts.html
+redirect_to: /8.0/howto-summary-charts.html
 ---

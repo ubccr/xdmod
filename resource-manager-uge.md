@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.5/resource-manager-uge.html
+redirect_to: /8.0/resource-manager-uge.html
 ---

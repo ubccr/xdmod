@@ -25,13 +25,21 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://open.xdmod.org" # the base hostname & protocol for your site
 github_username: ubccr
 github_url: https://github.com/ubccr/xdmod
-latest_version: "7.5"
+latest_version: "8.0"
 version_list:
+    - "8.0"
     - "7.5"
     - "7.0"
-    - "6.6"
 
 defaults:
+    -
+        scope:
+            path: "8.0"
+            type: "pages"
+        values:
+            layout: "page"
+            version: "8.0"
+            menu_markdown: "8.0/menu.md"
     -
         scope:
             path: "7.5"
@@ -48,14 +56,6 @@ defaults:
             layout: "page"
             version: "7.0"
             menu_markdown: "7.0/menu.md"
-    -
-        scope:
-            path: "6.6"
-            type: "pages"
-        values:
-            layout: "page"
-            version: "6.6"
-            menu_markdown: "6.6/menu.md"
 
 # Build settings
 markdown: kramdown

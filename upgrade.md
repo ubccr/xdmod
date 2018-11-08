@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.5/upgrade.html
+redirect_to: /8.0/upgrade.html
 ---

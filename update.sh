@@ -3,13 +3,8 @@
 
 set -e
 
-ENDPOINT=https://api.github.com/repos/ubccr/xdmod
-BRANCHFILTER='xdmod[0-9]\.[0-9]'
-
-#branches=$(curl -s $ENDPOINT/releases | jq .[].target_commitish | grep -o $BRANCHFILTER)
-#latest=$(curl -s $ENDPOINT/releases/latest | jq .target_commitish | grep -o $BRANCHFILTER)
-branches="xdmod7.5 xdmod7.0 xdmod6.6"
-latest="xdmod7.5"
+branches="xdmod8.0 xdmod7.5 xdmod7.0"
+latest="xdmod8.0"
 
 for branch in $branches;
 do

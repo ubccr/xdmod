@@ -1,3 +1,3 @@
 ---
-redirect_to: /7.5/software-requirements.html
+redirect_to: /8.0/software-requirements.html
 ---
