@@ -323,4 +323,54 @@ class Utilities
 
         return $localVariableMap;
     }  // quoteVariables()
+
+    public static function runEtlPipeline(array $pipelines, $logger, array $params=array())
+    {
+        $logger->debug(
+            sprintf(
+                'Shredding directory using ETL pipeline "%s" with parameters %s',
+                implode(', ', $pipelines),
+                json_encode($params)
+            )
+        );
+
+        $configOptions = array('default_module_name' => 'xdmod');
+        if( array_key_exists('variable-overrides', $params) ){
+            $configOptions['config_variables'] = $params['variable-overrides'];
+        }
+
+        $etlConfig = new EtlConfiguration(
+            CONFIG_DIR . '/etl/etl.json',
+            null,
+            $logger,
+            $configOptions
+        );
+        $etlConfig->initialize();
+        self::setEtlConfig($etlConfig);
+
+        $scriptOptions = array_merge(
+            array(
+                'default-module-name' => 'xdmod',
+                'process-sections' => $pipelines,
+            ),
+            $params
+        );
+        $logger->debug(
+            sprintf(
+                'Running ETL pipeline with script options %s',
+                json_encode($scriptOptions)
+            )
+        );
+
+        $overseerOptions = new EtlOverseerOptions(
+            $scriptOptions,
+            $logger
+        );
+
+        $utilitySchema = $etlConfig->getGlobalEndpoint('utility')->getSchema();
+        $overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.resourcefact", $utilitySchema));
+
+        $overseer = new EtlOverseer($overseerOptions, $logger);
+        $overseer->execute($etlConfig);
+    } // runEtlPipeline
 }  // class Utilities

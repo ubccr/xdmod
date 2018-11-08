@@ -42,7 +42,7 @@ function main()
         array('q', 'quiet'),
 
         array('', 'ingest'),
-        array('', 'aggregate'),
+        array('', 'aggregate::'),
 
         // Dates used by ingestion.
         array('', 'start-date:'),
@@ -57,9 +57,8 @@ function main()
         array('', 'ingest-staging'),
         array('', 'ingest-hpcdb'),
 
-        array('', 'ingest-cloud-openstack'),
-        array('', 'ingest-cloud-generic'),
-        array('', 'aggregate-cloud'),
+        //Type of data that is being ingested.
+        array('', 'datatype:'),
 
         // Specify an ingestor.
         array('', 'ingestor:'),
@@ -79,9 +78,9 @@ function main()
     }
 
     $help = $ingest = $aggregate = $aggregateCloud = $noAppend = $ingestAll = $ingestShredded
-        = $ingestStaging = $ingestHpcdb = $ingestCloudOpenStack = $ingestCloudGeneric = false;
+        = $ingestStaging = $ingestHpcdb = $datatype = false;
 
-    $startDate = $endDate = $lastModifiedStartDate = null;
+    $startDate = $endDate = $lastModifiedStartDate = $realmToAggregate = $datatypeValue = null;
 
     $logLevel = -1;
 
@@ -112,6 +111,7 @@ function main()
                 break;
             case 'aggregate':
                 $aggregate = true;
+                $realmToAggregate = $value;
                 break;
             case 'start-date':
                 $startDate = $value;
@@ -134,14 +134,9 @@ function main()
             case 'ingest-hpcdb':
                 $ingestHpcdb = true;
                 break;
-            case 'ingest-cloud-openstack':
-                $ingestCloudOpenStack = true;
-                break;
-            case 'ingest-cloud-generic':
-                $ingestCloudGeneric = true;
-                break;
-            case 'aggregate-cloud';
-                $aggregateCloud = true;
+            case 'datatype':
+                $datatype = true;
+                $datatypeValue = $value;
                 break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
@@ -198,6 +193,11 @@ function main()
         $logger->info("Using today '$endDate' for end date");
     }
 
+    if($datatype !== false && $datatypeValue === null){
+        $logger->crit("You must specify the type of data you want to ingest");
+        exit(1);
+    }
+
     $hpcdbDb = DB::factory('hpcdb');
     $dwDb = DB::factory('datawarehouse');
 
@@ -233,7 +233,7 @@ function main()
         $ingest = $aggregate = true;
     }
     // If any ingestion phase is specified, don't aggregate.
-    if ($ingestAll || $ingestShredded || $ingestStaging || $ingestHpcdb || $ingestCloudGeneric || $ingestCloudOpenStack || $aggregateCloud) {
+    if ($ingestAll || $ingestShredded || $ingestStaging || $ingestHpcdb || $datatype) {
         $aggregate = false;
     }
 
@@ -242,7 +242,7 @@ function main()
         try {
 
             // If no ingestion phase is specified, ingest all.
-            if (!$ingestShredded && !$ingestStaging && !$ingestHpcdb && !$ingestCloudOpenStack && !$ingestCloudGeneric) {
+            if (!$ingestShredded && !$ingestStaging && !$ingestHpcdb && !$datatype){
                 $ingestAll = true;
             }
 
@@ -262,12 +262,12 @@ function main()
                     $dwi->ingestAllHpcdb($startDate, $endDate);
                 }
 
-                if($ingestCloudOpenStack){
+                if($datatypeValue == 'openstack'){
                     $dwi->ingestCloudDataOpenStack();
                 }
 
-                if($ingestCloudGeneric){
-                    $dwi->ingestCloudDataGeneric();
+                if($datatypeValue == 'generalcloud'){
+                    $dwi->ingestCloudDataGeneral();
                 }
             }
         } catch (Exception $e) {
@@ -280,14 +280,15 @@ function main()
         $logger->info('Done ingesting data');
     }
 
-    if ($aggregate || $aggregateCloud) {
+    if ($aggregate) {
         $logger->info('Aggregating data');
         try {
-            if($aggregate){
+            //If there is no realm specified to aggregate then all realms should be aggregated
+            if($realmToAggregate === null){
                 $dwi->aggregateAllJobs($lastModifiedStartDate);
             }
 
-            if($aggregateCloud){
+            if($realmToAggregate == 'cloud' || $realmToAggregate === null){
                 $dwi->aggregateCloudData();
             }
         } catch (Exception $e) {

@@ -126,6 +126,8 @@ class DataWarehouseInitializer
         $this->ingestAllShredded($startDate, $endDate);
         $this->ingestAllStaging($startDate, $endDate);
         $this->ingestAllHpcdb($startDate, $endDate);
+        $this->ingestCloudDataGeneral();
+        $this->ingestCloudDataOpenStack();
     }
 
     /**
@@ -193,24 +195,57 @@ class DataWarehouseInitializer
 
     public function ingestCloudDataOpenStack()
     {
-        $this->logger->debug('Ingesting OpenStack data');
-        $this->runEtlPipeline('jobs-cloud-extract-openstack');
+        try {
+            $this->logger->notice('Ingesting OpenStack event log data');
+            $this->runEtlPipeline('jobs-cloud-extract-openstack');
+        }
+        catch( Exception $e ) {
+            if( $e->getCode() == '1146' ){
+              $this->logger->debug('Data for OpenStack event data has not been shredded. Skipping ingestion.');
+            }
+            else {
+              throw $e;
+            }
+        }
     }
 
-    public function ingestCloudDataGeneric()
+    public function ingestCloudDataGeneral()
     {
-        $this->logger->debug('Ingesting cloud data in generic format');
-        $this->runEtlPipeline('jobs-cloud-eucalyptus');
+        try {
+            $this->logger->notice('Ingesting general cloud log files');
+            $this->runEtlPipeline('jobs-cloud-extract-eucalyptus');
+        }
+        catch( Exception $e ){
+            //Error Code 42S02 can
+            if( $e->getCode() == '1146' ){
+              $this->logger->debug('Data for general cloud event data has not been shredded. Skipping ingestion.');
+            }
+            else {
+              throw $e;
+            }
+        }
+    }
+
+    public function aggregateAll($lastModifiedStartDate)
+    {
+        $this->aggregateAllJobs($lastModifiedStartDate);
+        $this->aggregateCloudData();
     }
 
     public function aggregateCloudData()
     {
-        $this->logger->debug('Aggregating cloud data');
-        $this->runEtlPipeline('cloud-state-pipeline');
-
-        $filterListBuilder = new FilterListBuilder();
-        $filterListBuilder->setLogger($this->logger);
-        $filterListBuilder->buildRealmLists('Cloud');
+        try {
+            $this->logger->notice('Aggregating Cloud data');
+            $this->runEtlPipeline('cloud-state-pipeline');
+        }
+        catch( Exception $e ) {
+            if( $e->getCode() == '1146' ){
+              $this->logger->debug('Tables needed for aggregating the Cloud realm do not exist. Skipping Cloud realm aggregation');
+            }
+            else {
+              throw $e;
+            }
+        }
     }
 
     /**

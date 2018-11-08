@@ -233,7 +233,7 @@ function main()
         $logger->notice("Job errors written to '$jobErrorLogFile'");
     }
 
-    if (!$dryRun && !in_array($format, array('openstack', 'genericcloud'))) {
+    if (!$dryRun && !in_array($format, array('openstack', 'generalcloud'))) {
         $logger->notice('Normalizing data');
 
         try {

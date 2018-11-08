@@ -1,6 +1,6 @@
 <?php
 /**
- * OpenStack cloud event data shredder.
+ * Generic cloud event data shredder.
  *
  * @author Greg Dean <gmdean@ccr.buffalo.edu>
  */
@@ -11,7 +11,7 @@ use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
 use ETL\Utilities;
 
-class OpenStack extends Shredder
+class Generalcloud extends Shredder
 {
     /**
      * @inheritdoc
@@ -40,14 +40,13 @@ class OpenStack extends Shredder
             return false;
         }
 
-        $this->logger->debug("Shredding directory '$directory'");
         Utilities::runEtlPipeline(array('jobs-common','jobs-cloud-common','ingest-resources'), $this->logger);
         Utilities::runEtlPipeline(
-            array('jobs-cloud-ingest-openstack'),
+            array('jobs-cloud-ingest-eucalyptus'),
             $this->logger,
             array(
-             'include-only-resource-codes' => $this->resource,
-             'variable-overrides' => ['CLOUD_EVENT_LOG_DIRECTORY' => $directory]
+              'include-only-resource-codes' => $this->resource,
+              'variable-overrides' => ['CLOUD_EVENT_LOG_DIRECTORY' => $directory]
             )
         );
     }
