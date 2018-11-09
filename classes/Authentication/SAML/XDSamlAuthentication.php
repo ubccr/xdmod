@@ -259,7 +259,7 @@ EML;
             self::BASE_ADMIN_EMAIL,
             $user->getFormalName(true),
             $user->getUsername(),
-            $user>getEmailAddress(),
+            $user->getEmailAddress(),
             json_encode($samlAttributes, JSON_PRETTY_PRINT)
         );
 
