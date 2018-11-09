@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[Unknown] Number of Jobs Running"
-"2016 Q4",56209
-"2017 Q1",16566
+Quarter,"[Social, Behavioral, and Economic Sciences] Number of Jobs Running","[Mathematical and Physical Sciences] Number of Jobs Running","[Computer and Information Science and Engineering] Number of Jobs Running","[Geosciences] Number of Jobs Running","[Engineering] Number of Jobs Running","[Biological Sciences] Number of Jobs Running","[Humanities/Arts] Number of Jobs Running"
+"2016 Q4",44240,7588,2475,1137,510,193,66
+"2017 Q1",13956,469,986,818,159,173,5
 ---------

@@ -23,32 +23,9 @@ expect {
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1
     }
-    -re "\nDo you want to run aggregation now.*\\\]" {
-        send yes\n
-    }
-}
-expect {
-    timeout {
-        send_user "\nFailed to get prompt\n"; exit 1
-    }
-    -re "\nAdmin Username:" {
-        send root\n
-    }
-}
-
-expect {
-    timeout {
-        send_user "\nFailed to get prompt\n"; exit 1
-    }
-    -re "\nAdmin Password:" {
-        send \n
-        exp_continue
-    }
     "Upgrade Complete" {
         lassign [wait] pid spawnid os_error_flag value
     }
 }
-
-
 
 exit $value

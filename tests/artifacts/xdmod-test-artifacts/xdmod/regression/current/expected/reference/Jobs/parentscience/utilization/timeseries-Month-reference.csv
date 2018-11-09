@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[Unknown] Screwdriver Utilization (%)"
-2016-12,5.179946229
-2017-01,0.468950525
+Month,"[Electrical and Communication Systems] Screwdriver Utilization (%)","[Microelectronic Information Processing Systems] Screwdriver Utilization (%)","[Chemistry] Screwdriver Utilization (%)","[Social and Economic Science] Screwdriver Utilization (%)","[Design and Manufacturing Systems] Screwdriver Utilization (%)","[Mathematical Sciences] Screwdriver Utilization (%)","[Materials Research] Screwdriver Utilization (%)","[Mechanical and Structural Systems] Screwdriver Utilization (%)","[Chemical, Thermal Systems] Screwdriver Utilization (%)","[Astronomical Sciences] Screwdriver Utilization (%)","[Molecular Biosciences] Screwdriver Utilization (%)","[Polar Programs] Screwdriver Utilization (%)","[Arts] Screwdriver Utilization (%)","[Earth Sciences] Screwdriver Utilization (%)","[Physics] Screwdriver Utilization (%)","[Environmental Biology] Screwdriver Utilization (%)","[Atmospheric Sciences] Screwdriver Utilization (%)","[Computer and Computation Research] Screwdriver Utilization (%)"
+2016-12,2.709666513,2.091824065,1.526450343,1.039121726,0.590510753,0.590335797,0.580617869,0.477002511,0.440388889,0.361837101,0.301165332,0.024481892,0.203575474,0.180667563,0.053390905,0.021762134,0.048421446,0.003388497
+2017-01,0.127823691,0.408156651,0.057097689,0.058276100,0.102244334,0.083316402,0,0.000912345,0,0.059738501,0.045086479,0.320594063,0.005039464,0.001103457,0,0.029250896,0.000116487,0
 ---------

@@ -8,7 +8,7 @@
     "dependencies": {
         "cloneextend": "0.0.x",
         "ini": "1.2.x",
-        "mongodb": "2.1.x",
+        "mongodb": "3.1.x",
         "mysql": "2.2.x",
         "tv4": "^1.0.13",
         "winston": "0.7.x",

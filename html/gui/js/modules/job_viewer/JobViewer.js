@@ -216,7 +216,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             modal: true,
             title: 'Search',
             layout: 'fit',
-            resizable: false,
+            resizable: true,
+            boxMaxHeight: 641,
+            boxMaxWidth: 1014,
             items: [searchPanel]
         });
         searchPanel.relayEvents(self.searchWindow, ['show', 'hide', 'move']);
