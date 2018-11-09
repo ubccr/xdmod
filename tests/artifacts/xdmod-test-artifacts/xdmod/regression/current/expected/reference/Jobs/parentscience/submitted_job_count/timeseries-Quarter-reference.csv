@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[Unknown] Number of Jobs Submitted"
-"2016 Q4",56209
-"2017 Q1",13034
+Quarter,"[Social and Economic Science] Number of Jobs Submitted","[Chemistry] Number of Jobs Submitted","[Microelectronic Information Processing Systems] Number of Jobs Submitted","[Earth Sciences] Number of Jobs Submitted","[Polar Programs] Number of Jobs Submitted","[Astronomical Sciences] Number of Jobs Submitted","[Design and Manufacturing Systems] Number of Jobs Submitted","[Environmental Biology] Number of Jobs Submitted","[Electrical and Communication Systems] Number of Jobs Submitted","[Materials Research] Number of Jobs Submitted","[Molecular Biosciences] Number of Jobs Submitted","[Mechanical and Structural Systems] Number of Jobs Submitted","[Arts] Number of Jobs Submitted","[Mathematical Sciences] Number of Jobs Submitted","[Computer and Computation Research] Number of Jobs Submitted","[Chemical, Thermal Systems] Number of Jobs Submitted","[Physics] Number of Jobs Submitted","[Atmospheric Sciences] Number of Jobs Submitted"
+"2016 Q4",44240,6580,2455,1026,110,787,298,100,145,153,93,64,66,65,20,3,3,1
+"2017 Q1",11534,388,212,3,739,6,19,64,16,0,25,28,0,0,0,0,0,0
 ---------
