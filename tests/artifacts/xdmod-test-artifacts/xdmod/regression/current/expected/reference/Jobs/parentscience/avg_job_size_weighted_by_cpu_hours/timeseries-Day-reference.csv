@@ -5,16 +5,16 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Unknown] Job Size: Weighted By CPU Hours (Core Count)"
-2016-12-22,12.0000
-2016-12-23,11.8381
-2016-12-24,11.5600
-2016-12-25,14.0099
-2016-12-26,18.3933
-2016-12-27,67.8600
-2016-12-28,107.6133
-2016-12-29,87.5874
-2016-12-30,69.1154
-2016-12-31,43.3544
-2017-01-01,22.2755
+Day,"[Chemical, Thermal Systems] Job Size: Weighted By CPU Hours (Core Count)","[Atmospheric Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Chemistry] Job Size: Weighted By CPU Hours (Core Count)","[Mechanical and Structural Systems] Job Size: Weighted By CPU Hours (Core Count)","[Electrical and Communication Systems] Job Size: Weighted By CPU Hours (Core Count)","[Materials Research] Job Size: Weighted By CPU Hours (Core Count)","[Environmental Biology] Job Size: Weighted By CPU Hours (Core Count)","[Astronomical Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Molecular Biosciences] Job Size: Weighted By CPU Hours (Core Count)","[Polar Programs] Job Size: Weighted By CPU Hours (Core Count)","[Mathematical Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Physics] Job Size: Weighted By CPU Hours (Core Count)","[Arts] Job Size: Weighted By CPU Hours (Core Count)","[Social and Economic Science] Job Size: Weighted By CPU Hours (Core Count)","[Design and Manufacturing Systems] Job Size: Weighted By CPU Hours (Core Count)","[Earth Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Microelectronic Information Processing Systems] Job Size: Weighted By CPU Hours (Core Count)","[Computer and Computation Research] Job Size: Weighted By CPU Hours (Core Count)"
+2016-12-22,0,0,12.0000,0,0,0,0,0,12.0000,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,12.0000,0,0,0,0,1.0000,12.0000,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,12.0000,0,0,0,0,1.0000,12.0000,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,15.9210,0,0,0,0,1.0000,12.0000,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,20.0000,0,0,0,0,1.0000,12.0000,0,16.0000,0,0,0,0,0,0,0
+2016-12-27,0,0,22.5565,0,96.0000,110.0862,0,58.2272,19.8357,0,15.9632,0,0,1.0000,0,0,0,0
+2016-12-28,0,0,146.7685,0,96.0000,87.9948,0,43.0772,33.0691,0,15.3614,12.0000,0,1.0000,1.0000,20.0000,2.8865,0
+2016-12-29,0,160.0000,141.7754,112.0000,95.9456,65.2945,0,47.7147,28.0857,40.0000,14.9544,12.0000,11.5552,10.2034,1.0000,18.5337,1.6782,1.0000
+2016-12-30,320.0517,160.0000,138.9738,111.6728,94.9365,54.3936,65.8038,40.9495,28.3785,36.0526,15.0028,12.0000,11.8713,10.9005,1.0000,4.0431,1.9041,1.0000
+2016-12-31,336.0000,0,99.3288,111.0872,90.9081,37.7420,95.7214,50.6854,34.6323,34.2349,11.9136,0,11.8540,10.8898,13.5207,6.2480,1.7162,1.0000
+2017-01-01,0,160.0000,14.4798,1.0000,90.0978,0,47.3679,55.6210,35.3735,11.9990,10.2559,0,10.7741,10.5763,13.8313,7.4372,1.5550,0
 ---------

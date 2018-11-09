@@ -6,5 +6,44 @@ start,end
 2016-12-22,2017-01-01
 ---------
 "PI Group","Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
-Unknown,4.29578563,0.08956571094180898
+"Galactic Astronomy",214.25581950,2.0529931333004057
+"Cell Biology",71.34538580,15.241596218036447
+"Polar Aeronomy and Astrophysics",52.74111111,37.29241880267786
+"Quantum Electronics, Waves, and Beams",44.54427399,7.275316793106799
+"Solid State Chemistry and Polymers",35.12637367,1.715055012550036
+"Global Atmospheric Research",31.02180556,3.7428536858056267
+"Solid-State and Microstructures",26.77900440,0.3093136712992847
+"Systematic and Population Biology",12.67979893,0.790292910753799
+"Stellar Astronomy and Astrophysics",9.21498611,3.9691829026306045
+"Biochemistry and Molecular Structure and Function",8.19083333,2.9697909176657884
+"Fluid, Particulate, and Hydraulic Systems",6.67768519,0.98851049021015
+"Polar Ocean and Climate Systems",5.36508929,0.1678514684969954
+Arts,4.87037458,0.44747381160758987
+"Algebra and Number Theory",4.41189394,0.6571458545780616
+Tectonics,3.92752472,0.08635320372070841
+"Theoretical Physics",3.72481481,0.0007211928415468717
+"Design and Computer-Integrated Engineering",2.15222222,0.6988290975119311
+Sociology,2.05341236,0.02664920179778262
+"Metals, Ceramics, and Electronic Materials",1.98928571,0.9136179906052265
+"Emerging Technologies Initiation",1.88463542,0.5086144929601321
+"Decision, Risk, and Management Science",0.74204509,0.007451042072537693
+"Statistics and Probability",0.67655350,0.18487368040866786
+"Computer and Computation Theory",0.32390278,0.2312398274998169
+Economics,0.29952899,0.12719098377944033
+"Experimental Systems",0.20924174,0.04281469020992288
+"Systems Prototyping and Fabrication",0.20714974,0.015675479418422043
+"Design, Tools, and Test",0.09777778,0
+"Polar Meteorology",0.08220238,0.011574714004551338
+"Physical Chemistry",0.06381908,0.014079147600380438
+"Operations Research and Production Systems",0.05740350,0.004593062258338075
+"Geology and Paleontology",0.04034722,0.034861577990454876
+Biophysics,0.03987455,0.015476567200768681
+Seismology,0.01747222,0.00747562396751627
+"Extragalactic Astronomy and Cosmology",0.01408333,0.0026920235401535287
+Geophysics,0.00105159,0.00005735857833479565
+"Structures and Building Systems",0.00059028,0.000142636082683637
+"Volcanology and Mantle Geochemistry",0.00027778,0
+"Organic and Macromolecular Chemistry",0.00016667,0.00003513641844631532
+"Mechanics and Materials",0.00012566,0.000016471282949086855
+"Law and Social Sciences",0.00000000,0
 ---------

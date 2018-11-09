@@ -5,16 +5,16 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Unknown] Wait Hours: Per Job"
-2016-12-22,4.66625000
-2016-12-23,9.59638889
-2016-12-24,0.00000000
-2016-12-25,36.96185185
-2016-12-26,0.00066667
-2016-12-27,63.81457885
-2016-12-28,8.81944104
-2016-12-29,4.73013286
-2016-12-30,7.20200027
-2016-12-31,2.68411411
-2017-01-01,1.71038090
+Day,"[Galactic Astronomy] Wait Hours: Per Job","[Cell Biology] Wait Hours: Per Job","[Polar Aeronomy and Astrophysics] Wait Hours: Per Job","[Quantum Electronics, Waves, and Beams] Wait Hours: Per Job","[Solid State Chemistry and Polymers] Wait Hours: Per Job","[Global Atmospheric Research] Wait Hours: Per Job","[Solid-State and Microstructures] Wait Hours: Per Job","[Systematic and Population Biology] Wait Hours: Per Job","[Stellar Astronomy and Astrophysics] Wait Hours: Per Job","[Biochemistry and Molecular Structure and Function] Wait Hours: Per Job","[Fluid, Particulate, and Hydraulic Systems] Wait Hours: Per Job","[Polar Ocean and Climate Systems] Wait Hours: Per Job","[Arts] Wait Hours: Per Job","[Algebra and Number Theory] Wait Hours: Per Job","[Tectonics] Wait Hours: Per Job","[Theoretical Physics] Wait Hours: Per Job","[Design and Computer-Integrated Engineering] Wait Hours: Per Job","[Sociology] Wait Hours: Per Job","[Metals, Ceramics, and Electronic Materials] Wait Hours: Per Job","[Emerging Technologies Initiation] Wait Hours: Per Job","[Decision, Risk, and Management Science] Wait Hours: Per Job","[Statistics and Probability] Wait Hours: Per Job","[Computer and Computation Theory] Wait Hours: Per Job","[Economics] Wait Hours: Per Job","[Experimental Systems] Wait Hours: Per Job","[Systems Prototyping and Fabrication] Wait Hours: Per Job","[Design, Tools, and Test] Wait Hours: Per Job","[Polar Meteorology] Wait Hours: Per Job","[Physical Chemistry] Wait Hours: Per Job","[Operations Research and Production Systems] Wait Hours: Per Job","[Geology and Paleontology] Wait Hours: Per Job","[Biophysics] Wait Hours: Per Job","[Seismology] Wait Hours: Per Job","[Extragalactic Astronomy and Cosmology] Wait Hours: Per Job","[Geophysics] Wait Hours: Per Job","[Structures and Building Systems] Wait Hours: Per Job","[Volcanology and Mantle Geochemistry] Wait Hours: Per Job","[Organic and Macromolecular Chemistry] Wait Hours: Per Job","[Mechanics and Materials] Wait Hours: Per Job","[Law and Social Sciences] Wait Hours: Per Job"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9.33222222,0,0,0.00027778,0,0,0,0,0,0,0,0
+2016-12-23,9.59638889,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.00000000,0,0,0.00000000,0,0,0,0,0,0,0,0
+2016-12-24,0.00000000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.00000000,0,0,0.00000000,0,0,0,0,0,0,0,0
+2016-12-25,0.00000000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,36.96185185,0,0,0.00000000,0,0,0,0,0,0,0,0
+2016-12-26,0.00000000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.00066667,0,0,0,0,0,0,0.00000000,0,0,0.00000000,0,0,0,0,0,0,0,0
+2016-12-27,0.00055556,273.48105556,0,103.71148148,57.59064815,0,0,0,76.08611111,50.82250000,0,0,0,0,0,0,0,0.00000000,0,0,0,0.00000000,0,0,0,0,0,0,0.00288889,0,0,0.00000000,0,0,0,0,0,0,0,0
+2016-12-28,0.00000000,280.72700000,0,108.01750000,80.35419753,0,0,0,36.87611111,0.00000000,0,0,0,5.30577160,0,3.72481481,0,0.00000000,0,0,0,1.68000000,0,0,0.46633333,0.02977924,0,0,7.07458333,0.07195578,0,0.00000000,0,0,0,0,0.00027778,0.00018519,0,0
+2016-12-29,150.26646605,12.05893162,0.00166667,41.77958333,22.19675214,25.72861111,0.00444444,0,5.85819444,0.00000000,0,0,0.87133838,0.00000000,0,0.00000000,0,7.73980283,1.98928571,3.47907407,0.79222222,4.46097222,0.01788889,0,0.13063131,0.04237662,0,0,1.33660948,0.04464331,0,0.00000000,0.00000000,0,0,0.00062500,0.00000000,0.00000000,0,0
+2016-12-30,224.39559552,55.29648148,105.48055556,0.00222222,31.96192488,0.00000000,18.02518519,13.00438580,14.90583333,5.14571429,6.67768519,0,5.77518519,0.38944444,2.58369031,0.00000000,0,1.39468892,0.00000000,1.47605556,0.84532650,0.00000000,0.42590741,0.59636111,0.31423611,0.32754774,0.09777778,0.17850082,0.02575712,0.13344771,0.05370370,0.00000000,0.00000000,0.01437500,0.00105159,0.00055556,0.00000000,0.00020833,0.00009921,0.00000000
+2016-12-31,4.34280303,351.74604167,0.00000000,0.00076389,33.49272778,0,27.32576747,3.35838889,0.95052083,0.00000000,0.00000000,0.02019097,0.00000000,0.00000000,7.36601918,0,2.15222222,2.90176261,0.00000000,0.07819444,0.55391509,0.00626263,0.00000000,0.33598291,0.26094444,0.35169374,0,0.02144676,0.03724051,0.01543544,0.00000000,0.00027778,0.02496032,0.01388889,0,0.00000000,0,0.00013889,0.00010913,0
+2017-01-01,0.00666667,0.00000000,0,1.52939815,0,36.31500000,0.00000000,13.14023981,1.45988889,0,0,5.48065465,0.00000000,0.00000000,0,0,0.00000000,1.47548426,0,3.00597222,0,0.00000000,0,0.00020531,0.01934028,0.03615605,0,0.00010305,0.09531934,0.01760234,0.00027778,0.04938889,0.00000000,0,0,0,0,0.00013889,0.00016865,0
 ---------

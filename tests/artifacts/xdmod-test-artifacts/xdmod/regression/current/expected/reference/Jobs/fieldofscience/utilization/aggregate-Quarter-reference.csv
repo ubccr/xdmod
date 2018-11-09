@@ -6,5 +6,44 @@ start,end
 2016-12-22,2017-01-01
 ---------
 "PI Group","Screwdriver Utilization (%)"
-Unknown,15.919618124
+"Quantum Electronics, Waves, and Beams",6.977956216
+"Systems Prototyping and Fabrication",6.345087174
+"Organic and Macromolecular Chemistry",5.647449285
+Sociology,3.042824279
+"Physical Chemistry",2.185335508
+"Stellar Astronomy and Astrophysics",2.082928977
+"Emerging Technologies Initiation",1.844111111
+"Metals, Ceramics, and Electronic Materials",1.741571970
+"Statistics and Probability",1.652354588
+"Operations Research and Production Systems",1.453984454
+"Structures and Building Systems",1.339121212
+"Fluid, Particulate, and Hydraulic Systems",1.241095960
+"Solid State Chemistry and Polymers",1.055762731
+Biophysics,1.030328862
+"Polar Ocean and Climate Systems",0.905197285
+"Cell Biology",0.824535064
+Tectonics,0.813495818
+"Experimental Systems",0.697648253
+Arts,0.587914825
+"Design and Computer-Integrated Engineering",0.498325337
+"Algebra and Number Theory",0.492239583
+"Galactic Astronomy",0.435759242
+"Theoretical Physics",0.150465278
+"Systematic and Population Biology",0.143763994
+Economics,0.137021096
+"Global Atmospheric Research",0.136788721
+"Decision, Risk, and Management Science",0.112092014
+"Biochemistry and Molecular Structure and Function",0.096737190
+"Solid-State and Microstructures",0.096551531
+"Polar Aeronomy and Astrophysics",0.095358691
+"Volcanology and Mantle Geochemistry",0.090921717
+Seismology,0.058963016
+"Geology and Paleontology",0.055902909
+"Polar Meteorology",0.012856034
+"Computer and Computation Theory",0.009549400
+"Mechanics and Materials",0.007729745
+"Extragalactic Astronomy and Cosmology",0.005669429
+"Design, Tools, and Test",0.002664773
+Geophysics,0.002134364
+"Law and Social Sciences",0.000098485
 ---------
