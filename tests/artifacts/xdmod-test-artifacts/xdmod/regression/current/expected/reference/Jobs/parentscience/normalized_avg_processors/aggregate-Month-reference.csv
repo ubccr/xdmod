@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[Unknown] Job Size: Normalized (% of Total Cores)"
-2016-12,0.042694764
-2017-01,0.045663105
+Month,"[Chemical, Thermal Systems] Job Size: Normalized (% of Total Cores)","[Atmospheric Sciences] Job Size: Normalized (% of Total Cores)","[Environmental Biology] Job Size: Normalized (% of Total Cores)","[Electrical and Communication Systems] Job Size: Normalized (% of Total Cores)","[Physics] Job Size: Normalized (% of Total Cores)","[Mechanical and Structural Systems] Job Size: Normalized (% of Total Cores)","[Materials Research] Job Size: Normalized (% of Total Cores)","[Arts] Job Size: Normalized (% of Total Cores)","[Mathematical Sciences] Job Size: Normalized (% of Total Cores)","[Polar Programs] Job Size: Normalized (% of Total Cores)","[Molecular Biosciences] Job Size: Normalized (% of Total Cores)","[Chemistry] Job Size: Normalized (% of Total Cores)","[Design and Manufacturing Systems] Job Size: Normalized (% of Total Cores)","[Astronomical Sciences] Job Size: Normalized (% of Total Cores)","[Social and Economic Science] Job Size: Normalized (% of Total Cores)","[Microelectronic Information Processing Systems] Job Size: Normalized (% of Total Cores)","[Computer and Computation Research] Job Size: Normalized (% of Total Cores)","[Earth Sciences] Job Size: Normalized (% of Total Cores)"
+2016-12,5.600000000,4.000000000,1.222000000,0.311637931,0.300000000,0.371875000,0.177995643,0.138636364,0.136538462,0.025757576,0.057526882,0.053202888,0.041694631,0.043085557,0.045129182,0.028604888,0.025000000,0.017726608
+2017-01,0,4.000000000,0.947482014,0.774107143,0,0.025000000,0,0.130000000,0.132291667,0.139527027,0.101838235,0.067682927,0.073300971,0.523863636,0.045808971,0.027484787,0,0.241666667
 ---------
