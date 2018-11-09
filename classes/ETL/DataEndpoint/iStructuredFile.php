@@ -8,6 +8,19 @@
  * record. Each record returned by the iterator methods must be traversable (either an
  * array, object, or implementing the Traversable interface)
  *
+ * Structured file endpoints implement the `Iterator` and `Countable` interfaces and data **must**
+ * be read by iterating over the records and operating on the fields within the returned record,
+ * **indeed no access to the internal record list is provided**. The reason for this is to allow the
+ * structured file implementation to manipulate access to the record list as needed.  Two use cases
+ * illustrate the need for this abstraction:
+ * 1. Structured files support validation of their records against a schema. If an invalid record is
+ *    encountered, the implementation must be able to warn and skip invalid records rather than
+ *    skipping all subsequent records in the file.
+ * 2. When parsing multiple structured files in a directory (e.g., using the DirectoryScanner
+ *    endpoint), the fact that the data is contained in multiple files is hidden from the consumer of
+ *    the data. The consumer receives a stream of records and the scanner transparently moves from one
+ *    structured file to the next untill all files are processed.
+ *
  * @author Steve Gallo  <smgallo@buffalo.edu>
  * @date 2017-05-10
  * ==========================================================================================
