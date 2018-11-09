@@ -6,5 +6,22 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Department,"Number of Users: Active"
-Unknown,66
+"Astronomical Sciences",11
+Chemistry,6
+"Electrical and Communication Systems",6
+"Social and Economic Science",6
+"Earth Sciences",5
+"Molecular Biosciences",5
+"Mechanical and Structural Systems",4
+"Microelectronic Information Processing Systems",4
+Arts,3
+"Materials Research",3
+"Mathematical Sciences",3
+"Polar Programs",3
+"Design and Manufacturing Systems",2
+"Atmospheric Sciences",1
+"Chemical, Thermal Systems",1
+"Computer and Computation Research",1
+"Environmental Biology",1
+Physics,1
 ---------

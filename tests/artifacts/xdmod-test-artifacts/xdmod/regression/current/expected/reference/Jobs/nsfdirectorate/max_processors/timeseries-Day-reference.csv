@@ -5,16 +5,16 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Unknown] Job Size: Max (Core Count)"
-2016-12-22,12
-2016-12-23,12
-2016-12-24,12
-2016-12-25,24
-2016-12-26,24
-2016-12-27,144
-2016-12-28,192
-2016-12-29,192
-2016-12-30,336
-2016-12-31,336
-2017-01-01,192
+Day,"[Engineering] Job Size: Max (Core Count)","[Biological Sciences] Job Size: Max (Core Count)","[Mathematical and Physical Sciences] Job Size: Max (Core Count)","[Geosciences] Job Size: Max (Core Count)","[Computer and Information Science and Engineering] Job Size: Max (Core Count)","[Social, Behavioral, and Economic Sciences] Job Size: Max (Core Count)","[Humanities/Arts] Job Size: Max (Core Count)"
+2016-12-22,0,12,12,0,0,0,0
+2016-12-23,0,12,12,0,0,0,0
+2016-12-24,0,12,12,0,0,0,0
+2016-12-25,0,12,24,0,0,0,0
+2016-12-26,0,12,24,0,0,0,0
+2016-12-27,96,64,144,0,0,1,0
+2016-12-28,96,64,192,20,8,1,0
+2016-12-29,112,64,192,160,8,56,12
+2016-12-30,336,192,192,160,108,56,12
+2016-12-31,336,192,192,60,12,48,12
+2017-01-01,96,192,72,160,8,48,12
 ---------

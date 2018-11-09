@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[Unknown] Number of Resources: Active"
-2016,5
-2017,5
+Year,"[Social and Economic Science] Number of Resources: Active","[Chemistry] Number of Resources: Active","[Astronomical Sciences] Number of Resources: Active","[Materials Research] Number of Resources: Active","[Polar Programs] Number of Resources: Active","[Arts] Number of Resources: Active","[Earth Sciences] Number of Resources: Active","[Electrical and Communication Systems] Number of Resources: Active","[Mathematical Sciences] Number of Resources: Active","[Molecular Biosciences] Number of Resources: Active","[Atmospheric Sciences] Number of Resources: Active","[Chemical, Thermal Systems] Number of Resources: Active","[Computer and Computation Research] Number of Resources: Active","[Design and Manufacturing Systems] Number of Resources: Active","[Environmental Biology] Number of Resources: Active","[Mechanical and Structural Systems] Number of Resources: Active","[Microelectronic Information Processing Systems] Number of Resources: Active","[Physics] Number of Resources: Active"
+2016,5,4,3,3,3,2,2,2,2,2,1,1,1,1,1,1,1,1
+2017,5,4,2,0,2,2,1,2,2,2,1,0,0,1,1,1,1,0
 ---------
