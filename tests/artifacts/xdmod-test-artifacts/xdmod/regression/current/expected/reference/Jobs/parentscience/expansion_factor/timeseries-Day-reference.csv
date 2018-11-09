@@ -5,16 +5,16 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Unknown] User Expansion Factor"
-2016-12-22,1.0249
-2016-12-23,1.0302
-2016-12-24,1.0368
-2016-12-25,1.0813
-2016-12-26,1.1760
-2016-12-27,2.0450
-2016-12-28,1.5085
-2016-12-29,1.3802
-2016-12-30,4.9345
-2016-12-31,2.5839
-2017-01-01,2.7546
+Day,"[Environmental Biology] User Expansion Factor","[Astronomical Sciences] User Expansion Factor","[Atmospheric Sciences] User Expansion Factor","[Social and Economic Science] User Expansion Factor","[Polar Programs] User Expansion Factor","[Materials Research] User Expansion Factor","[Molecular Biosciences] User Expansion Factor","[Electrical and Communication Systems] User Expansion Factor","[Earth Sciences] User Expansion Factor","[Chemical, Thermal Systems] User Expansion Factor","[Arts] User Expansion Factor","[Physics] User Expansion Factor","[Computer and Computation Research] User Expansion Factor","[Chemistry] User Expansion Factor","[Mathematical Sciences] User Expansion Factor","[Microelectronic Information Processing Systems] User Expansion Factor","[Design and Manufacturing Systems] User Expansion Factor","[Mechanical and Structural Systems] User Expansion Factor"
+2016-12-22,0,0,0,0,0,0,1.0000,0,0,0,0,0,0,1.0495,0,0,0,0
+2016-12-23,0,1.0610,0,0,0,0,1.0000,0,0,0,0,0,0,1.0495,0,0,0,0
+2016-12-24,0,1.0610,0,0,0,0,1.0000,0,0,0,0,0,0,1.0495,0,0,0,0
+2016-12-25,0,1.0610,0,0,0,0,1.0000,0,0,0,0,0,0,1.1562,0,0,0,0
+2016-12-26,0,1.0610,0,0,0,0,1.0000,0,0,0,0,0,0,1.2735,1.0000,0,0,0
+2016-12-27,0,1.7724,0,1.0000,0,1.9856,2.9970,2.5533,0,0,0,0,0,1.2277,1.0000,0,0,0
+2016-12-28,0,1.5437,0,1.0000,0,2.1159,2.6841,2.5716,1.0000,0,0,1.0866,0,1.0169,1.0175,1.0014,1.0013,0
+2016-12-29,0,3.5124,3.8567,3.5135,1.0000,2.0971,2.3663,2.2683,1.0000,0,1.0436,1.0866,1.0011,1.0285,1.0515,1.0012,1.0011,1.0000
+2016-12-30,82.2879,144.6787,3.8567,5.1671,1.7535,2.6830,2.1869,2.1328,1.1782,1.4992,1.4225,1.0801,1.0787,1.0357,1.0535,1.0023,1.0011,1.0000
+2016-12-31,30.3841,1.2803,0,8.2251,1.0129,8.1155,3.8407,2.3853,1.6005,1.1213,1.1163,0,1.0006,1.0953,1.0103,1.0186,1.0085,1.0000
+2017-01-01,66.3373,1.3741,1677.0769,21.0966,3.5481,0,4.3551,1.4790,1.0001,0,1.1040,0,0,1.0599,1.0060,1.0087,1.0125,1.0002
 ---------

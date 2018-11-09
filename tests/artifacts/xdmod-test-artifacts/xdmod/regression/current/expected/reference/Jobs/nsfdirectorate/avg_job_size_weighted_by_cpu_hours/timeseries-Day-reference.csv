@@ -5,16 +5,16 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Unknown] Job Size: Weighted By CPU Hours (Core Count)"
-2016-12-22,12.0000
-2016-12-23,11.8381
-2016-12-24,11.5600
-2016-12-25,14.0099
-2016-12-26,18.3933
-2016-12-27,67.8600
-2016-12-28,107.6133
-2016-12-29,87.5874
-2016-12-30,69.1154
-2016-12-31,43.3544
-2017-01-01,22.2755
+Day,"[Engineering] Job Size: Weighted By CPU Hours (Core Count)","[Mathematical and Physical Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Biological Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Geosciences] Job Size: Weighted By CPU Hours (Core Count)","[Humanities/Arts] Job Size: Weighted By CPU Hours (Core Count)","[Social, Behavioral, and Economic Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Computer and Information Science and Engineering] Job Size: Weighted By CPU Hours (Core Count)"
+2016-12-22,0,12.0000,12.0000,0,0,0,0
+2016-12-23,0,11.6809,12.0000,0,0,0,0
+2016-12-24,0,11.1538,12.0000,0,0,0,0
+2016-12-25,0,15.1906,12.0000,0,0,0,0
+2016-12-26,0,19.3287,12.0000,0,0,0,0
+2016-12-27,96.0000,63.9290,19.8357,0,0,1.0000,0
+2016-12-28,88.1962,124.0581,33.0691,20.0000,0,1.0000,2.8865
+2016-12-29,89.9037,104.0892,28.0857,88.5857,11.5552,10.2034,1.6777
+2016-12-30,112.1825,99.9328,32.5776,23.1791,11.8713,10.9005,1.9011
+2016-12-31,112.3553,64.8745,36.8877,7.7053,11.8540,10.8898,1.7160
+2017-01-01,68.1385,22.6656,38.3114,12.0180,10.7741,10.5763,1.5550
 ---------

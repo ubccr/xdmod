@@ -5,16 +5,16 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Unknown] Number of Resources: Active"
-2016-12-22,2
-2016-12-23,2
-2016-12-24,2
-2016-12-25,2
-2016-12-26,3
-2016-12-27,5
-2016-12-28,5
-2016-12-29,5
-2016-12-30,5
-2016-12-31,5
-2017-01-01,5
+Day,"[Social and Economic Science] Number of Resources: Active","[Chemistry] Number of Resources: Active","[Astronomical Sciences] Number of Resources: Active","[Materials Research] Number of Resources: Active","[Polar Programs] Number of Resources: Active","[Arts] Number of Resources: Active","[Earth Sciences] Number of Resources: Active","[Electrical and Communication Systems] Number of Resources: Active","[Mathematical Sciences] Number of Resources: Active","[Molecular Biosciences] Number of Resources: Active","[Atmospheric Sciences] Number of Resources: Active","[Chemical, Thermal Systems] Number of Resources: Active","[Computer and Computation Research] Number of Resources: Active","[Design and Manufacturing Systems] Number of Resources: Active","[Environmental Biology] Number of Resources: Active","[Mechanical and Structural Systems] Number of Resources: Active","[Microelectronic Information Processing Systems] Number of Resources: Active","[Physics] Number of Resources: Active"
+2016-12-22,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+2016-12-23,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+2016-12-24,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+2016-12-25,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+2016-12-26,0,1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
+2016-12-27,1,2,3,1,0,0,0,1,2,2,0,0,0,0,0,0,0,0
+2016-12-28,1,3,3,2,0,0,1,1,2,2,0,0,0,1,0,0,1,1
+2016-12-29,4,3,3,3,1,2,2,2,2,2,1,0,1,1,0,1,1,1
+2016-12-30,5,4,3,3,2,2,2,2,2,2,1,1,1,1,1,1,1,1
+2016-12-31,5,4,2,2,3,2,1,2,2,2,0,1,1,1,1,1,1,0
+2017-01-01,5,4,2,0,2,2,1,2,2,2,1,0,0,1,1,1,1,0
 ---------

@@ -5,16 +5,16 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Unknown] Number of Jobs Ended"
-2016-12-22,0
-2016-12-23,0
-2016-12-24,0
-2016-12-25,0
-2016-12-26,0
-2016-12-27,0
-2016-12-28,0
-2016-12-29,0
-2016-12-30,26606
-2016-12-31,28141
-2017-01-01,16566
+Day,"[Sociology] Number of Jobs Ended","[Physical Chemistry] Number of Jobs Ended","[Decision, Risk, and Management Science] Number of Jobs Ended","[Systems Prototyping and Fabrication] Number of Jobs Ended","[Tectonics] Number of Jobs Ended","[Galactic Astronomy] Number of Jobs Ended","[Polar Ocean and Climate Systems] Number of Jobs Ended","[Operations Research and Production Systems] Number of Jobs Ended","[Systematic and Population Biology] Number of Jobs Ended","[Polar Meteorology] Number of Jobs Ended","[Solid State Chemistry and Polymers] Number of Jobs Ended","[Solid-State and Microstructures] Number of Jobs Ended","[Mechanics and Materials] Number of Jobs Ended","[Cell Biology] Number of Jobs Ended","[Economics] Number of Jobs Ended","[Arts] Number of Jobs Ended","[Statistics and Probability] Number of Jobs Ended","[Quantum Electronics, Waves, and Beams] Number of Jobs Ended","[Experimental Systems] Number of Jobs Ended","[Biophysics] Number of Jobs Ended","[Organic and Macromolecular Chemistry] Number of Jobs Ended","[Computer and Computation Theory] Number of Jobs Ended","[Stellar Astronomy and Astrophysics] Number of Jobs Ended","[Emerging Technologies Initiation] Number of Jobs Ended","[Biochemistry and Molecular Structure and Function] Number of Jobs Ended","[Geophysics] Number of Jobs Ended","[Algebra and Number Theory] Number of Jobs Ended","[Extragalactic Astronomy and Cosmology] Number of Jobs Ended","[Seismology] Number of Jobs Ended","[Design and Computer-Integrated Engineering] Number of Jobs Ended","[Structures and Building Systems] Number of Jobs Ended","[Metals, Ceramics, and Electronic Materials] Number of Jobs Ended","[Geology and Paleontology] Number of Jobs Ended","[Fluid, Particulate, and Hydraulic Systems] Number of Jobs Ended","[Theoretical Physics] Number of Jobs Ended","[Global Atmospheric Research] Number of Jobs Ended","[Polar Aeronomy and Astrophysics] Number of Jobs Ended","[Design, Tools, and Test] Number of Jobs Ended","[Law and Social Sciences] Number of Jobs Ended","[Volcanology and Mantle Geochemistry] Number of Jobs Ended"
+2016-12-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-30,19044,3823,1700,788,1,732,0,34,90,68,63,3,28,60,20,39,6,8,7,0,4,19,3,5,11,14,10,4,1,0,4,6,1,2,3,1,1,1,1,1
+2016-12-31,22026,2719,933,869,999,29,4,180,10,24,83,97,28,5,24,22,1,16,16,4,13,1,8,4,4,0,0,6,7,0,4,1,2,1,0,0,1,0,0,0
+2017-01-01,13931,402,0,972,0,2,752,94,139,62,0,1,28,7,25,5,47,20,14,27,8,0,9,7,0,0,1,0,2,9,0,0,1,0,0,1,0,0,0,0
 ---------
