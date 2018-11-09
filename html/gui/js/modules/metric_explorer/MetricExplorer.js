@@ -887,12 +887,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (drillId) {
             if (CCR.xdmod.ui.jobViewer && legendItemClick === false) {
 
-                var raw_data_allowed_realms = ['SUPREMM'];
-
                 var raw_data_disabled = true;
-                var raw_data_tooltip = 'Show raw data is only available for the following data realms: ' + raw_data_allowed_realms.join(', ');
+                var raw_data_tooltip = 'Show raw data is only available for the following data realms: ' + CCR.xdmod.ui.rawDataAllowedRealms.join(', ');
 
-                if (raw_data_allowed_realms.indexOf(realm) !== -1) {
+                if (CCR.xdmod.ui.rawDataAllowedRealms.indexOf(realm) !== -1) {
                     if (dimension == 'none') {
                         raw_data_disabled = true;
                         raw_data_tooltip = 'Show raw data is only available for drilled-down datasets. <br />' +
