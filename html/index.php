@@ -282,6 +282,11 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.isCenterDirector = $primary_center_director;\n";
         }
 
+        $config = \Xdmod\Config::factory();
+        $rawDataRealms = array_keys($config['rawstatistics']['realms']);
+
+        print "CCR.xdmod.ui.rawDataAllowedRealms = " . json_encode($rawDataRealms) . ";\n";
+
         print "CCR.xdmod.ui.disabledMenus = " . json_encode(Acls::getDisabledMenus($user, $realms)) . ";\n";
 
         if ($userLoggedIn) {
