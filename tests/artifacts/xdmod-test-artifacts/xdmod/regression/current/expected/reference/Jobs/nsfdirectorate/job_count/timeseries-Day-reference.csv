@@ -5,16 +5,16 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Unknown] Number of Jobs Ended"
-2016-12-22,0
-2016-12-23,0
-2016-12-24,0
-2016-12-25,0
-2016-12-26,0
-2016-12-27,0
-2016-12-28,0
-2016-12-29,0
-2016-12-30,26606
-2016-12-31,28141
-2017-01-01,16566
+Day,"[Social, Behavioral, and Economic Sciences] Number of Jobs Ended","[Mathematical and Physical Sciences] Number of Jobs Ended","[Computer and Information Science and Engineering] Number of Jobs Ended","[Geosciences] Number of Jobs Ended","[Engineering] Number of Jobs Ended","[Biological Sciences] Number of Jobs Ended","[Humanities/Arts] Number of Jobs Ended"
+2016-12-22,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,0,0,0
+2016-12-27,0,0,0,0,0,0,0
+2016-12-28,0,0,0,0,0,0,0
+2016-12-29,0,0,0,0,0,0,0
+2016-12-30,20765,4654,815,88,84,161,39
+2016-12-31,22983,2860,886,1037,330,23,22
+2017-01-01,13956,469,986,818,159,173,5
 ---------
