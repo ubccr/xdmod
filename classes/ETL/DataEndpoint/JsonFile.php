@@ -132,11 +132,10 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
         }
 
         $validator = new Validator();
-        $messages = array();
-        $recordIndex = 0;
+        $recordCount = 0;
 
-        foreach ($this->recordList as $record) {
-            $recordIndex++;
+        foreach ($this->recordList as $index => $record) {
+            $recordCount++;
             $validator->check($record, $schemaObject);
 
             if ( $validator->isValid() ) {
@@ -147,14 +146,12 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
             foreach ($validator->getErrors() as $err) {
                 $errors[] = $err['message'];
             }
-            $messages[] = sprintf("Record %d: %s", $recordIndex, implode(', ', $errors));
-            $validator->reset();  // Without reset error messages accumulate
-        }
+            $this->logger->warning(sprintf("Record %d: %s", $recordCount, implode(', ', $errors)));
 
-        if ( 0 != count($messages) ) {
-            $this->logAndThrowException(
-                sprintf("Error validating JSON '%s': %s", $this->path, implode('; ', $messages))
-            );
+            // Remove invalid records from the list (i.e., skip them)
+            unset($this->recordList[$index]);
+
+            $validator->reset();  // Without reset error messages accumulate
         }
 
         return true;

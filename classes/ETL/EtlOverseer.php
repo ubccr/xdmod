@@ -176,6 +176,14 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
 
                 if ( isset($action->getOptions()->include_only_resource_codes) || isset($action->getOptions()->exclude_resource_codes) ) {
                     $this->queryResourceCodeToIdMap($etlConfig);
+
+                    // Verify that specified resource codes are valid
+
+                    $codeList = array_merge(
+                        $action->getOptions()->include_only_resource_codes,
+                        $action->getOptions()->exclude_resource_codes
+                    );
+                    $this->verifyResourceCodes($codeList);
                 }
 
                 $action->initialize($this->etlOverseerOptions);
@@ -273,6 +281,32 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
         $this->etlOverseerOptions->setResourceCodeToIdMap($map);
     }
 
+    /**
+     * Verify that the specified resource codes are present in the resource code to resource id map.
+     *
+     * @param array $codeList A list of resource codes to verify.
+     *
+     * @return Nothing.
+     * @throws Exception if at least one resource code is not found in the map.
+     */
+
+    protected function verifyResourceCodes($codeList)
+    {
+        $missing = array();
+        $map = $this->etlOverseerOptions->getResourceCodeToIdMap();
+        foreach ( $codeList as $code ) {
+            if ( ! array_key_exists($code, $map) ) {
+                $missing[] = $code;
+            }
+        }
+
+        if ( count($missing) > 0 ) {
+            $this->logAndThrowException(
+                sprintf("Unknown resource code(s) specified: '%s'", implode("','", $missing))
+            );
+        }
+    }
+
     /* ------------------------------------------------------------------------------------------
      * @see iEtlOverseer::execute()
      * ------------------------------------------------------------------------------------------
@@ -290,6 +324,14 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
             || count($this->etlOverseerOptions->getExcludeResourceCodes()) > 0
         ) {
             $this->queryResourceCodeToIdMap($etlConfig);
+
+            // Verify that specified resource codes are valid
+
+            $codeList = array_merge(
+                $this->etlOverseerOptions->getIncludeOnlyResourceCodes(),
+                $this->etlOverseerOptions->getExcludeResourceCodes()
+            );
+            $this->verifyResourceCodes($codeList);
         }
 
         // Pre-pend the default module name to any section names that are not already qualified.

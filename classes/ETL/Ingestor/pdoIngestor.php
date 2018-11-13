@@ -524,7 +524,16 @@ class pdoIngestor extends aIngestor
             return 0;
         }
 
-        $totalRecordsProcessed = $this->destinationHandle->execute($sql);
+        try {
+            $totalRecordsProcessed = $this->destinationHandle->execute($sql);
+        }
+        catch (Exception $e) {
+            $this->logAndThrowException(
+                $e->getMessage(),
+                array('exception' => $e)
+            );
+        }
+
         $this->logger->info(
             sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
         );
@@ -841,12 +850,13 @@ class pdoIngestor extends aIngestor
                             $numFilesLoaded++;
                         }
                         catch (Exception $e) {
-                            $msg = array('message'    => $e->getMessage(),
-                                         'stacktrace' => $e->getTraceAsString(),
-                                         'statement'  => $loadStatement
+                            $this->logAndThrowException(
+                                $e->getMessage(),
+                                array(
+                                    'exception' => $e,
+                                    'sql' => $loadStatement
+                                )
                             );
-                            $this->logger->err($msg);
-                            throw $e;
                         }
                     }  // foreach ( $loadStatementList as $etlTableKey => $loadStatement )
 
@@ -883,12 +893,13 @@ class pdoIngestor extends aIngestor
 
                 }
                 catch (Exception $e) {
-                    $msg = array('message'    => $e->getMessage(),
-                                 'stacktrace' => $e->getTraceAsString(),
-                                 'statement'  => $loadStatement
-                        );
-                    $this->logger->err($msg);
-                    throw $e;
+                    $this->logAndThrowException(
+                        $e->getMessage(),
+                        array(
+                            'exception' => $e,
+                            'sql' => $loadStatement
+                        )
+                    );
                 }
 
                 // Cleanup

@@ -399,7 +399,9 @@ abstract class aAction extends aEtlObject
             && 0 != count($value)
         ) {
             $resourceCode = current($value);
-            $resourceId = $this->etlOverseerOptions->getResourceIdFromCode($resourceCode);
+            if ( false === ($resourceId = $this->etlOverseerOptions->getResourceIdFromCode($resourceCode)) ) {
+                $this->logAndThrowException(sprintf("Unknown resource code: '%s'", $resourceCode));
+            }
             if ( count($value) > 1 ) {
                 $this->logger->info(
                     sprintf(
