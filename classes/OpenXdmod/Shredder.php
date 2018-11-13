@@ -810,6 +810,14 @@ class Shredder
             $errorMessages[] = 'Job start time as after job end time.';
             $valid = false;
         }
+        elseif ( $startTime !== null
+                 && $endTime != null
+                 && $walltime != null
+                 && ($endTime - $startTime) > $walltime ) {
+            $this->logger->debug('Found difference between end time and start time ('.$endTime-$startTime.') bigger than walltime ('.$walltime.') reported by scheduler. Probably job was suspended or gang scheduled');
+            $errorMessages[] = 'Difference between job end and start times is bigger than wall time reported by scheduler. Probably job was suspended or gang scheduled.';
+            $valid = false;
+        }
 
         return array($valid, $errorMessages);
     }
@@ -871,6 +879,14 @@ class Shredder
             // Assume the end time is correct.
             $startTime = $endTime - $walltime;
             $this->logger->debug("Setting start time to $startTime");
+        }
+        elseif ( ($endTime - $startTime) > $walltime)
+        {
+            // Fix end time to startTime + walltime.
+            //If those doesn't match duratin is probably overestimated -
+            //because of job suspention or gang scheduling mechanisms
+            $endTime = $startTime + $walltime;
+            $this->logger->debug("Setting end time to $endTime");
         }
 
         return array($startTime, $endTime, $walltime);

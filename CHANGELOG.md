@@ -1,5 +1,9 @@
 Open XDMoD Change Log
 =====================
+
+- Features
+    - Set end time to start time + walltime if the elapsed time is shorter than end - start. This situatin indicates that job was suspended or gang scheduled and using end and time dates from scheduler will lead to overestimated utilization of the cluster.
+
 ## 2018-10-30 v8.0.0
 
 - Features
