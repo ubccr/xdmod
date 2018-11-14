@@ -268,35 +268,16 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         }
 
         // render the charts as volatile
-        // also, ensure the chart values in the report data are up to date.
-        $count = 1;
         foreach ($chartParams as $chartData) {
             // first, retrieve the data previously gathered in the chart creation
             // & rendering loop above.
             $params = $chartData['params'];
-            $startDate = $chartData['start_date'];
-            $endDate = $chartData['end_date'];
-            $chartRef = $params['ref'];
-
-            // generate the cacheRef && chartData keys & values.
-            $chartCacheRefKey = "chart_cache_ref_$count";
-            $chartCacheRef = "$startDate-$endDate;xd_report_$chartRef";
-
-            $chartDataKey = "chart_data_$count";
-            $chartDataValue = $chartData['chart_id'];
 
             // Update the chart type to volatile
             $params['type'] = 'volatile';
 
             // render the volatile chart.
             $this->reportImageRenderer($params);
-
-            // Ensure that the chart_ref & chart_data values for this entry
-            // are up to date.
-            $data[$chartCacheRefKey] = $chartCacheRef;
-            $data[$chartDataKey] = $chartDataValue;
-
-            $count++;
         }
 
         // Retrieve the next available report name for this user.
