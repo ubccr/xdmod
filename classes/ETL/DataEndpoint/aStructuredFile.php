@@ -2,7 +2,8 @@
 /* ==========================================================================================
  * Abstract class to define properties and implement methods required by all structured
  * files. Methods supporting the Iterator and Countable interfaces that iStructuredFile
- * extends are defined here as well.
+ * extends are defined here as well as abstract methods that are file format and/or
+ * implementation specific such as verifyData() and decodeRecord().
  *
  * @see Iterator
  * @see Countable

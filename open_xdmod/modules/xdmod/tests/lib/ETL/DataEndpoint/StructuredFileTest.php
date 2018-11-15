@@ -16,7 +16,7 @@
  * #9: Parsing a simple JSON file containing multiple records separated by a newline and
  *     filtered through an external process.
  * #10: Successful JSON schema validation.
- * #11: Failed JSON schema validation.
+ * #11: Skip records that fail JSON schema validation.
  * #12: Parse JSON object, no field names specified (already tested by #1, #2).
  * #13: Parse JSON array of objects, subset of field names specified.
  * #14: Parse JSON array of objects, extra field names specified (expect null values).
@@ -497,9 +497,8 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
     }  // testSchemaValidationSuccess()
 
     /**
-     * Test #11: Failed JSON schema validation.
-     *
-     * @expectedException Exception
+     * Test #11: Skip records that fail JSON schema validation.
+     * Out of 3 records parsed, only 1 passes schema validation.
      */
 
     public function testSchemaValidationFailure()
@@ -516,6 +515,30 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
         $file = DataEndpoint::factory($options, $this->logger);
         $file->verify();
         $generated = $file->parse();
+
+        $this->assertEquals(1, $file->count(), "Expected 1 out of 3 valid records");
+
+        $expected = (object) array(
+            'organizations' => array(
+                (object) array(
+                    'division' => 'IN-UROL',
+                    'appointment_type' => 'Faculty',
+                    'name' => 'Indiana University',
+                    'id' => 'majohnson'
+                )
+            ),
+            'first_name' => 'Mario',
+            'last_name' => 'Johnson',
+            'groups' => array(
+                'PSYC-CHFAC',
+                'IUCC-Newsletter',
+                'ET_STU03'
+            )
+        );
+
+        foreach ($file as $index => $record) {
+            $this->assertEquals($expected, $record, "Valid record does not match expected values");
+        }
 
     }  // testSchemaValidationFailure()
 
