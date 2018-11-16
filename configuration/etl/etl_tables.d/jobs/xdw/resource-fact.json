@@ -29,7 +29,8 @@
                 "name": "name",
                 "type": "varchar(200)",
                 "comment": "The name of the resource.",
-                "nullable": true
+                "nullable": false,
+                "default": ""
             },
             {
                 "name": "code",
@@ -47,7 +48,8 @@
                 "name": "start_date",
                 "type": "datetime",
                 "comment": "The date the resource was put into commission.",
-                "nullable": true
+                "nullable": false,
+                "default": "0000-00-00 00:00:00"
             },
             {
                 "name": "start_date_ts",

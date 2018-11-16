@@ -76,7 +76,7 @@ added with this command for CentOS 7:
     # yum install httpd php php-cli php-mysql php-gd php-mcrypt \
                   gmp-devel php-gmp php-pdo php-xml \
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
-                  java-1.7.0-openjdk java-1.7.0-openjdk-devel \
+                  java-1.8.0-openjdk java-1.8.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
                   ghostscript php-mbstring jq
 
