@@ -269,14 +269,9 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
         // render the charts as volatile
         foreach ($chartParams as $chartData) {
-            // first, retrieve the data previously gathered in the chart creation
-            // & rendering loop above.
             $params = $chartData['params'];
 
-            // Update the chart type to volatile
             $params['type'] = 'volatile';
-
-            // render the volatile chart.
             $this->reportImageRenderer($params);
         }
 
