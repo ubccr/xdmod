@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# This file is generally used in the docker build to speed things up.
+# Set it to something different if you want to use your own.
+CACHEFILE='/tmp/browser-tests-node-modules.tar.gz'
 set -e
 set -o pipefail
 
@@ -16,6 +18,12 @@ then
 fi
 
 pushd `dirname $0`
+
+
+if [[ ! -d 'node_modules' && -f $CACHEFILE ]];
+then
+    tar -moxf $CACHEFILE
+fi
 npm set progress=false
 npm install --quiet
 
