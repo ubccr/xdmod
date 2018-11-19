@@ -103,7 +103,7 @@ class Query
         $this->setRealmName($realm_name);
         $this->setQueryGroupname($query_groupname);
 
-        $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory($aggregation_unit_name,$start_date, $end_date, "{$datatable_schema}.{$datatable_name}_by_");
+        $this->_aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::factory($aggregation_unit_name,$start_date, $end_date);
         $this->setDataTable($datatable_schema, "{$datatable_name}_by_{$this->_aggregation_unit}");
 
         $this->setDuration($start_date, $end_date, $aggregation_unit_name);
