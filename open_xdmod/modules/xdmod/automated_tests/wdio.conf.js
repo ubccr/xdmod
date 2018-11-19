@@ -20,7 +20,7 @@ var HeadlessChrome = {
 };
 var Chrome = {
     browserName: 'chrome',
-    version: '67.0',
+    version: '70.0',
     screenResolution: '2560x1600',
     chromeOptions: {
         args: [
