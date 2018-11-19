@@ -12,9 +12,6 @@ abstract class TimeAggregationUnit
     //The unit name is passed to this class via the constructor by extending subclasses
     private $_unit_name;
 
-    //The schema + table name of the aggregate table we're generating units for
-    private $_agg_table_prefix;
-
     //protected constructor can only be called from extending classes.
     protected function __construct($unit_name)
     {
@@ -66,32 +63,51 @@ abstract class TimeAggregationUnit
      * @return array The miniumum and maximum date ids or -1, -1 if out of bounds
      */
     public function getDateRangeIds($start, $end){
-        $unit = $this->getUnitName();
-
-        // this is needed because we can't be consistent about anything.
-        $unit_id = $unit . '_id';
-        $query = 'SELECT
-        MIN(' . $unit_id . ') as minPeriodId,
-        MAX(' . $unit_id . ') as maxPeriodId
-    FROM
-        ' . $this->getAggTablePrefix() . $unit . ' p;';
-
-        $dateResult = \DataWarehouse::connect()->query($query);
-
-        // this should not occur unless the aggregation table is empty
-        if (null === $dateResult[0]['minPeriodId'] || null === $dateResult[0]['minPeriodId']) {
-            return array(-1, -1);
+        $queryParams = array(
+            $start,
+            $start,
+            $start,
+            $end,
+            $end,
+            $end
+        );
+        $dateResult = \DataWarehouse::connect()->query(
+            'SELECT
+                MIN(p.id) as minPeriodId,
+                MAX(p.id) as maxPeriodId
+            FROM
+                ' . $this->getUnitName() . 's p
+            JOIN
+                (
+                SELECT
+                    CASE
+                      WHEN ? > max_job_date THEN NULL
+                      WHEN ? < min_job_date
+                      THEN min_job_date
+                      ELSE ?
+                    END AS adj_start_date,
+                    CASE
+                      WHEN ? < min_job_date THEN NULL
+                      WHEN ? > max_job_date THEN max_job_date
+                      ELSE ?
+                    END AS adj_end_date
+                  FROM
+                    minmaxdate
+                ) mmd
+             WHERE
+                mmd.adj_start_date IS NOT NULL
+                AND mmd.adj_end_date IS NOT NULL
+                AND
+                    (
+                        mmd.adj_start_date BETWEEN p.' . $this->getUnitName() . '_start AND p.' . $this->getUnitName() . '_end
+                        OR mmd.adj_end_date BETWEEN p.' . $this->getUnitName() . '_start AND p.' . $this->getUnitName() . '_end
+                    );',
+            $queryParams
+        );
+        if(null === $dateResult[0]['minPeriodId'] || null === $dateResult[0]['minPeriodId']){
+            return array(-1,-1);
         }
-
-        return array_values($dateResult[0]);
-    }
-
-    public function getAggTablePrefix() {
-        return $this->_agg_table_prefix;
-    }
-
-    public function setAggTablePrefix($aggregate_table_prefix) {
-        $this->_agg_table_prefix = $aggregate_table_prefix;
+         return array_values($dateResult[0]);
     }
 
     /**
@@ -161,8 +177,6 @@ abstract class TimeAggregationUnit
      * @param $time_period: the name of the time aggregation unit. ie: day, week, month, quarter.
      * @param $start_date: if time_period is auto this is used to figure out aggregation unit
      * @param $end_date: if time_period is auto this is used to figure out aggregation unit
-     * @param $aggregate_table_prefix: the schema + table name of the aggregate table we are generating units for.
-     *  ie "jobfact_by_"
      *
      * @return class a subclass of TimeAggregationUnit based on $time_period requested.
      * @throws Exception if $time_period is not registered
@@ -170,21 +184,18 @@ abstract class TimeAggregationUnit
      * TimeAggregationUnit subclasses must be registed using TimeAggregationUnit::registerUnit first
      *
      */
-    public static function factory($time_period, $start_date, $end_date, $aggregate_table_prefix)
+    public static function factory($time_period, $start_date, $end_date)
     {
         self::registerAggregationUnits();
 
         $time_period = self::deriveAggregationUnitName($time_period, $start_date, $end_date);
 
-        if (isset(self::$_unit_name_to_class_name[$time_period])) {
+        if(isset(self::$_unit_name_to_class_name[$time_period])) {
             $class_name = self::$_unit_name_to_class_name[$time_period];
-            
-            // we need the derived class to have the realm so we know which aggregate table to use
-            $class = new $class_name;
-            $class->setAggTablePrefix($aggregate_table_prefix);
-            
-            return $class;
-        } else {
+
+            return new $class_name;
+        }
+        else {
             throw new Exception("TimeAggregationUnit: Time period {$time_period} is invalid.");
         }
     } //factory
