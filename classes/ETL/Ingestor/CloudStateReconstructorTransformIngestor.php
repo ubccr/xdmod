@@ -25,14 +25,22 @@ use Log;
 class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iAction
 {
     // Discrete Event Types
+    // Start events
     const START = 2;
-    const STOP = 4;
-    const TERMINATE = 6;
     const RESUME = 8;
     const STATE_REPORT = 16;
+    const UNSHELVE = 20;
+    const UNPAUSE = 57;
+    const UNSUSPEND = 61;
+    const POWER_ON = 59;
+
+    //End events
+    const STOP = 4;
+    const TERMINATE = 6;
     const SUSPEND = 17;
     const SHELVE = 19;
-    const UNSHELVE = 20;
+    const POWER_OFF = 45;
+    const PAUSE = 55;
 
     private $_stop_event_ids;
     private $_start_event_ids;
@@ -46,8 +54,8 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        $this->_stop_event_ids = array(self::STOP, self::TERMINATE, self::SUSPEND, self::SHELVE);
-        $this->_start_event_ids = array(self::START, self::RESUME, self::STATE_REPORT, self::UNSHELVE);
+        $this->_stop_event_ids = array(self::STOP, self::TERMINATE, self::SUSPEND, self::SHELVE, self::POWER_OFF, self::PAUSE);
+        $this->_start_event_ids = array(self::START, self::RESUME, self::STATE_REPORT, self::UNSHELVE, self::UNPAUSE, self::UNSUSPEND, self::POWER_ON);
         $this->_all_event_ids = array_merge($this->_start_event_ids, $this->_stop_event_ids);
         $this->_end_time = $etlConfig->getVariableStore()->endDate ? date('Y-m-d H:i:s', strtotime($etlConfig->getVariableStore()->endDate)) : null;
 
