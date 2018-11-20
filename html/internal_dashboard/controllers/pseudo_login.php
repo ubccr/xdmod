@@ -9,13 +9,14 @@
 
    // ======================================================================
    
-   function getAbsoluteURL() {
-   
-      $protocol = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
-      
-      return $protocol.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
-   
-   }//getAbsoluteURL
+function getAbsoluteURL()
+{
+    $protocol = 'http://';
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        $protocol = 'https://';
+    }
+    return $protocol.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+}
    
    // ======================================================================
       
