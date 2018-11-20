@@ -106,7 +106,8 @@
                 "columns": [
                     "resource_id",
                     "instance",
-                    "start_event_id"
+                    "start_time",
+                    "end_time"
                 ],
                 "is_unique": true
             },
@@ -115,7 +116,8 @@
                 "columns": [
                     "instance_id",
                     "resource_id",
-                    "start_event_id"
+                    "start_time",
+                    "end_time"
                 ],
                 "is_unique": true
             }
