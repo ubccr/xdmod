@@ -6,5 +6,22 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Department,"Wall Hours: Per Job","Std Dev: Wall Hours: Per Job"
-Unknown,1.79457892,0.0259028363905744
+"Mathematical Sciences",50.44206410,
+"Design and Manufacturing Systems",49.15940063,1.0910353513705056
+Physics,44.13648148,3.8863777173028686
+"Microelectronic Information Processing Systems",25.45968035,0.10340711182738624
+"Molecular Biosciences",18.40561205,2.6523848250332356
+Arts,17.27322391,1.2812633375632778
+"Electrical and Communication Systems",16.57502415,1.675444082244451
+"Chemical, Thermal Systems",15.43750000,9.334819660458281
+"Materials Research",9.15687182,1.3644148657479764
+"Earth Sciences",8.48227702,0.06190189958135605
+"Computer and Computation Research",5.04208333,1.9381499596292342
+"Atmospheric Sciences",4.51402778,3.1765790052054
+"Mechanical and Structural Systems",2.25963164,0.45223146995766755
+"Astronomical Sciences",2.09553699,0.37523899443145664
+"Polar Programs",1.95093933,0.06980480406246423
+Chemistry,0.64439083,0.06267511493298365
+"Social and Economic Science",0.28820096,0.004430889448528951
+"Environmental Biology",0.18926081,0.027954377835160745
 ---------

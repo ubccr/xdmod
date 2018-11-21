@@ -1,6 +1,6 @@
 {
     "name": "xdmod",
-    "version": "8.0.0",
+    "version": "8.1.0",
     "release": "1.0",
     "files": {
         "include_paths": [
@@ -23,6 +23,11 @@
             "#xdmod-.*\\.rpm$#",
             "#xdmod-.*\\.tar\\.gz$#",
             "#^\\/configuration\\/.+\\..+\\.template$#"
+        ]
+    },
+    "commands": {
+        "pre_build": [
+            "find . -type f -name .eslintrc.json -delete"
         ]
     },
     "file_maps": {
@@ -64,6 +69,8 @@
             "configuration/portal_settings.ini",
             "configuration/portal_settings.d",
             "configuration/processor_buckets.json",
+            "configuration/rawstatistics.json",
+            "configuration/rawstatistics.d",
             "configuration/resource_specs.json",
             "configuration/resource_types.json",
             "configuration/resources.json",

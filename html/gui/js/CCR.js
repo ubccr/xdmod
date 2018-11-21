@@ -978,6 +978,9 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
                 if (success) {
                     decodedResponse = CCR.checkDecodedJSONResponseSuccess(data);
+                    if (Ext.isGecko) {
+                        Ext.getCmp('local_login_submit').fireEvent('click');
+                    }
                 }
 
                 if (decodedResponse) {
@@ -1004,42 +1007,63 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         });
     };
 
-    var localLoginItems = [txtLoginUsername, txtLoginPassword, {
-        xtype: 'tbtext',
-        id: 'login_response'
-    }, new Ext.Container({
-        anchor: 'form',
-        autoWidth: true,
-        autoHeight: true,
-        layout: {
-            type: 'hbox'
+    var localLoginItems = [
+        txtLoginUsername,
+        txtLoginPassword,
+        {
+            xtype: 'tbtext',
+            id: 'login_response'
         },
-        items: [new Ext.Button({
-            width: 75,
-            height: 22,
-            text: 'Sign in',
-            id: 'btn_sign_in',
-            handler: signInWithLocalAccount
-        }), new Ext.Container({
-            autoEl: 'div',
+        {
+            xtype: 'field',
+            id: 'local_login_submit',
+            autoCreate: {
+                tag: 'input',
+                type: 'submit'
+            },
+            hidden: true
+        },
+        {
+            xtype: 'container',
+            anchor: 'form',
             autoWidth: true,
-            autoHeight: true,
-            id: 'assistancePrompt',
+            height: 38,
+            layout: {
+                type: 'hbox'
+            },
             items: [{
-                xtype: 'tbtext',
-                html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
-                id: 'forgot_password_link'
-            }, {
-                xtype: 'tbtext',
-                html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
-                id: 'sign_up_link'
+                xtype: 'button',
+                width: 75,
+                height: 22,
+                text: 'Sign in',
+                id: 'btn_sign_in',
+                handler: signInWithLocalAccount
+            },
+            {
+                xtype: 'container',
+                autoEl: 'div',
+                autoWidth: true,
+                flex: 2,
+                height: 38,
+                id: 'assistancePrompt',
+                items: [{
+                    xtype: 'tbtext',
+                    html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
+                    id: 'forgot_password_link'
+                },
+                {
+                    xtype: 'tbtext',
+                    html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+                    id: 'sign_up_link'
+                }]
             }]
-        })]
-    })];
+        }
+    ];
 
     var SSOLoginFrm = CCR.xdmod.isSSOConfigured ? new Ext.form.FormPanel({
         id: 'sso_login_form',
         title: 'Sign in with ' + accountName + ':',
+        width: 321,
         items: [{
             xtype: 'button',
             text: '<img src="' + CCR.xdmod.SSOLoginLink.icon + '" alt="Login here."></img>',
@@ -1090,6 +1114,15 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     if (CCR.xdmod.isSSOConfigured) {
         loginItems.push(SSOLoginFrm);
+        if (!CCR.xdmod.SSOShowLocalLogin) {
+            localLoginFrm.collapsible = true;
+            localLoginFrm.collapsed = true;
+            localLoginFrm.titleCollapse = true;
+            /**
+             * the span is added to the title because without it the cursor does not show as clickable.
+             */
+            localLoginFrm.title = '<span style="cursor:pointer;">' + localLoginFrm.title + '</span>';
+        }
         loginItems.push(localLoginFrm);
     } else {
         loginItems.push(localLoginFrm);

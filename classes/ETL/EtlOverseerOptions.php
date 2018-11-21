@@ -789,8 +789,7 @@ class EtlOverseerOptions extends \CCR\Loggable
 
         foreach ( $codes as $code ) {
             if ( false === ($resourceId = $this->getResourceIdFromCode($code)) ) {
-                $msg = "Unknown include resource code: '$code'";
-                $this->logAndThrowException($msg);
+                $this->logAndThrowException(sprintf("Unknown resource code: '%s'", $code));
             } else {
                 $resourceIdList[] = $resourceId;
             }

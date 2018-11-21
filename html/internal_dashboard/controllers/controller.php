@@ -151,7 +151,9 @@ switch ($operation) {
             header("Content-type: application/xls");
             header("Content-Disposition:attachment;filename=\"xdmod_visitation_stats_by_$timeframe.csv\"");
 
-            print implode(',', array_keys($response['stats'][0])) . "\n";
+            if (isset($response['stats'][0])) {
+                print implode(',', array_keys($response['stats'][0])) . "\n";
+            }
 
             $previous_timeframe = '';
 

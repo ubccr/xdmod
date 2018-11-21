@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "name": "dummy_table",
+        "engine": "MyISAM",
+        "comment": "Use with dummy actions",
+        "columns": [
+            {
+                "name": "my_int",
+                "type": "int",
+                "nullable": false
+            },
+            {
+                "name": "my_varchar8",
+                "type": "varchar(8)",
+                "nullable": false
+            }
+        ]
+    }
+}
