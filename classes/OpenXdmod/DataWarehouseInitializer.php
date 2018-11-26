@@ -216,7 +216,6 @@ class DataWarehouseInitializer
             $this->runEtlPipeline('jobs-cloud-extract-eucalyptus');
         }
         catch( Exception $e ){
-            //Error Code 42S02 can
             if( $e->getCode() == '1146' ){
               $this->logger->debug('Data for general cloud event data has not been shredded. Skipping ingestion.');
             }
@@ -246,6 +245,10 @@ class DataWarehouseInitializer
               throw $e;
             }
         }
+
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('Cloud');
     }
 
     /**
