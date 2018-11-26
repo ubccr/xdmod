@@ -126,7 +126,7 @@ class DataWarehouseInitializer
         $this->ingestAllShredded($startDate, $endDate);
         $this->ingestAllStaging($startDate, $endDate);
         $this->ingestAllHpcdb($startDate, $endDate);
-        $this->ingestCloudDataGeneral();
+        $this->ingestCloudDataGeneric();
         $this->ingestCloudDataOpenStack();
     }
 
@@ -193,6 +193,11 @@ class DataWarehouseInitializer
         );
     }
 
+    /**
+     * Extracting openstack data from the openstack_raw_events table. If the raw
+     * tables do not exist then catch the resulting exception and display a message
+     * saying that there is no OpenStack data to ingest.
+     */
     public function ingestCloudDataOpenStack()
     {
         try {
@@ -209,15 +214,20 @@ class DataWarehouseInitializer
         }
     }
 
-    public function ingestCloudDataGeneral()
+    /**
+     * Extracting openstack data from the generic_raw_events table. If the raw
+     * tables do not exist then catch the resulting exception and display a message
+     * saying that there is no generic cloud data to ingest.
+     */
+    public function ingestCloudDataGeneric()
     {
         try {
-            $this->logger->notice('Ingesting general cloud log files');
+            $this->logger->notice('Ingesting generic cloud log files');
             $this->runEtlPipeline('jobs-cloud-extract-eucalyptus');
         }
         catch( Exception $e ){
             if( $e->getCode() == '1146' ){
-              $this->logger->debug('Data for general cloud event data has not been shredded. Skipping ingestion.');
+              $this->logger->debug('Data for generic cloud event data has not been shredded. Skipping ingestion.');
             }
             else {
               throw $e;
@@ -225,17 +235,20 @@ class DataWarehouseInitializer
         }
     }
 
-    public function aggregateAll($lastModifiedStartDate)
-    {
-        $this->aggregateAllJobs($lastModifiedStartDate);
-        $this->aggregateCloudData();
-    }
-
+    /**
+     * Aggregating all cloud data. If the appropriate tables do not exist then
+     * catch the resulting exception and display a message saying that there
+     * is no cloud data to aggregate and cloud aggregation is being skipped.
+     */
     public function aggregateCloudData()
     {
         try {
             $this->logger->notice('Aggregating Cloud data');
             $this->runEtlPipeline('cloud-state-pipeline');
+
+            $filterListBuilder = new FilterListBuilder();
+            $filterListBuilder->setLogger($this->logger);
+            $filterListBuilder->buildRealmLists('Cloud');
         }
         catch( Exception $e ) {
             if( $e->getCode() == '1146' ){
@@ -245,10 +258,6 @@ class DataWarehouseInitializer
               throw $e;
             }
         }
-
-        $filterListBuilder = new FilterListBuilder();
-        $filterListBuilder->setLogger($this->logger);
-        $filterListBuilder->buildRealmLists('Cloud');
     }
 
     /**

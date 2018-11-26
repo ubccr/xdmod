@@ -1,19 +1,19 @@
 <?php
 /**
- * OpenStack cloud event data shredder.
+ * Generic cloud event data shredder.
  *
  * @author Greg Dean <gmdean@ccr.buffalo.edu>
  */
 
 namespace OpenXdmod\Shredder;
 
-class OpenStack extends Cloud
+class Genericcloud extends Cloud
 {
     /**
      * @inheritdoc
      */
     public function shredDirectory($directory)
     {
-        parent::shredDirectory($directory, ['jobs-cloud-ingest-openstack']);
+        parent::shredDirectory($directory, ['jobs-cloud-ingest-eucalyptus']);
     }
 }
