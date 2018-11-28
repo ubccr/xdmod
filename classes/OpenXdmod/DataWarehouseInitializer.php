@@ -138,9 +138,11 @@ class DataWarehouseInitializer
      */
     public function ingestAllShredded($startDate = null, $endDate = null)
     {
-        $this->logger->debug('Ingesting shredded data to staging tables');
-        $this->runEtlPipeline('staging-ingest-common');
-        $this->runEtlPipeline('staging-ingest-jobs');
+        if( $this->realmEnabled('Jobs')){
+            $this->logger->debug('Ingesting shredded data to staging tables');
+            $this->runEtlPipeline('staging-ingest-common');
+            $this->runEtlPipeline('staging-ingest-jobs');
+        }
     }
 
     /**
@@ -151,9 +153,11 @@ class DataWarehouseInitializer
      */
     public function ingestAllStaging($startDate = null, $endDate = null)
     {
-        $this->logger->debug('Ingesting staging data to HPCDB');
-        $this->runEtlPipeline('hpcdb-ingest-common');
-        $this->runEtlPipeline('hpcdb-ingest-jobs');
+        if( $this->realmEnabled('Jobs')){
+            $this->logger->debug('Ingesting staging data to HPCDB');
+            $this->runEtlPipeline('hpcdb-ingest-common');
+            $this->runEtlPipeline('hpcdb-ingest-jobs');
+        }
     }
 
     /**
@@ -164,33 +168,35 @@ class DataWarehouseInitializer
      */
     public function ingestAllHpcdb($startDate = null, $endDate = null)
     {
-        $this->logger->debug('Ingesting HPCDB data to modw');
+        if( $this->realmEnabled('Jobs')){
+            $this->logger->debug('Ingesting HPCDB data to modw');
 
-        if ($startDate !== null || $endDate !== null) {
-            $params = array();
-            if ($startDate !== null) {
-                $params['start-date'] = $startDate . ' 00:00:00';
+            if ($startDate !== null || $endDate !== null) {
+                $params = array();
+                if ($startDate !== null) {
+                    $params['start-date'] = $startDate . ' 00:00:00';
+                }
+                if ($endDate !== null) {
+                    $params['end-date'] = $endDate . ' 23:59:59';
+                }
+                $this->runEtlPipeline(
+                    'hpcdb-prep-xdw-job-ingest-by-date-range',
+                    $params
+                );
+            } else {
+                $this->runEtlPipeline('hpcdb-prep-xdw-job-ingest-by-new-jobs');
             }
-            if ($endDate !== null) {
-                $params['end-date'] = $endDate . ' 23:59:59';
-            }
+
+            // Use current time from the database in case clocks are not
+            // synchronized.
+            $lastModifiedStartDate
+                = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
+
             $this->runEtlPipeline(
-                'hpcdb-prep-xdw-job-ingest-by-date-range',
-                $params
+                'hpcdb-xdw-ingest',
+                array('last-modified-start-date' => $lastModifiedStartDate)
             );
-        } else {
-            $this->runEtlPipeline('hpcdb-prep-xdw-job-ingest-by-new-jobs');
         }
-
-        // Use current time from the database in case clocks are not
-        // synchronized.
-        $lastModifiedStartDate
-            = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
-
-        $this->runEtlPipeline(
-            'hpcdb-xdw-ingest',
-            array('last-modified-start-date' => $lastModifiedStartDate)
-        );
     }
 
     /**
@@ -200,16 +206,18 @@ class DataWarehouseInitializer
      */
     public function ingestCloudDataOpenStack()
     {
-        try {
-            $this->logger->notice('Ingesting OpenStack event log data');
-            $this->runEtlPipeline('jobs-cloud-extract-openstack');
-        }
-        catch( Exception $e ) {
-            if( $e->getCode() == '1146' ){
-              $this->logger->debug('Data for OpenStack event data has not been shredded. Skipping ingestion.');
+        if( $this->realmEnabled('Cloud') ){
+            try{
+                $this->logger->notice('Ingesting OpenStack event log data');
+                $this->runEtlPipeline('jobs-cloud-extract-openstack');
             }
-            else {
-              throw $e;
+            catch( Exception $e ){
+                if( $e->getCode() == 1146 ){
+                    $this->logger->notice('No OpenStack events to ingest');
+                }
+                else{
+                  throw $e;
+                }
             }
         }
     }
@@ -221,16 +229,18 @@ class DataWarehouseInitializer
      */
     public function ingestCloudDataGeneric()
     {
-        try {
-            $this->logger->notice('Ingesting generic cloud log files');
-            $this->runEtlPipeline('jobs-cloud-extract-eucalyptus');
-        }
-        catch( Exception $e ){
-            if( $e->getCode() == '1146' ){
-              $this->logger->debug('Data for generic cloud event data has not been shredded. Skipping ingestion.');
+        if( $this->realmEnabled('Cloud')){
+            try{
+                $this->logger->notice('Ingesting generic cloud log files');
+                $this->runEtlPipeline('jobs-cloud-extract-eucalyptus');
             }
-            else {
-              throw $e;
+            catch( Exception $e ){
+                if( $e->getCode() == 1146 ){
+                    $this->logger->notice('No cloud event data to ingest');
+                }
+                else{
+                  throw $e;
+                }
             }
         }
     }
@@ -242,21 +252,13 @@ class DataWarehouseInitializer
      */
     public function aggregateCloudData()
     {
-        try {
-            $this->logger->notice('Aggregating Cloud data');
-            $this->runEtlPipeline('cloud-state-pipeline');
+        if( $this->realmEnabled('Cloud')){
+          $this->logger->notice('Aggregating Cloud data');
+          $this->runEtlPipeline('cloud-state-pipeline');
 
-            $filterListBuilder = new FilterListBuilder();
-            $filterListBuilder->setLogger($this->logger);
-            $filterListBuilder->buildRealmLists('Cloud');
-        }
-        catch( Exception $e ) {
-            if( $e->getCode() == '1146' ){
-              $this->logger->debug('Tables needed for aggregating the Cloud realm do not exist. Skipping Cloud realm aggregation');
-            }
-            else {
-              throw $e;
-            }
+          $filterListBuilder = new FilterListBuilder();
+          $filterListBuilder->setLogger($this->logger);
+          $filterListBuilder->buildRealmLists('Cloud');
         }
     }
 
@@ -286,13 +288,15 @@ class DataWarehouseInitializer
      */
     public function aggregateAllJobs($lastModifiedStartDate)
     {
-        $this->runEtlPipeline(
-            'jobs-xdw-aggregate',
-            array('last-modified-start-date' => $lastModifiedStartDate)
-        );
-        $filterListBuilder = new FilterListBuilder();
-        $filterListBuilder->setLogger($this->logger);
-        $filterListBuilder->buildRealmLists('Jobs');
+        if( $this->realmEnabled('Jobs') ){
+            $this->runEtlPipeline(
+                'jobs-xdw-aggregate',
+                array('last-modified-start-date' => $lastModifiedStartDate)
+            );
+            $filterListBuilder = new FilterListBuilder();
+            $filterListBuilder->setLogger($this->logger);
+            $filterListBuilder->buildRealmLists('Jobs');
+        }
     }
 
     /**
@@ -342,6 +346,12 @@ class DataWarehouseInitializer
             'class'    => get_class($this),
             'function' => __FUNCTION__,
         ));
+    }
+
+    private function realmEnabled($realm)
+    {
+        $realms = $this->warehouseDb->query("SELECT * FROM moddb.realms WHERE display = :realm", [':realm' => $realm]);
+        return (count($realms) > 0) ? true : false;
     }
 
     /**

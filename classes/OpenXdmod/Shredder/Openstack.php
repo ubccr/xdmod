@@ -7,7 +7,7 @@
 
 namespace OpenXdmod\Shredder;
 
-class OpenStack extends Cloud
+class OpenStack extends aCloud
 {
     /**
      * @inheritdoc

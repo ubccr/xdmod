@@ -29,8 +29,8 @@ then
     for resource in $REF_DIR/*.log; do
         sudo -u xdmod xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
     done
-    sudo -u xdmod xdmod-ingestor
     sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
+    sudo -u xdmod xdmod-ingestor
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
     sudo -u xdmod xdmod-ingestor
     php /root/bin/createusers.php

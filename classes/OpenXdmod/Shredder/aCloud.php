@@ -7,13 +7,11 @@
 namespace OpenXdmod\Shredder;
 
 use Exception;
-use DateTime;
-use DateTimeZone;
 use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
 use ETL\Utilities;
 
-abstract class Cloud extends Shredder{
+abstract class aCloud extends Shredder{
 
   /**
    * @inheritdoc
@@ -48,7 +46,7 @@ abstract class Cloud extends Shredder{
           return false;
       }
 
-      Utilities::runEtlPipeline(array('jobs-common','jobs-cloud-common','ingest-resources'), $this->logger);
+      Utilities::runEtlPipeline(array('jobs-common','jobs-cloud-common','ingest-organizations', 'ingest-resource-types', 'ingest-resources'), $this->logger);
       Utilities::runEtlPipeline(
           $pipelines,
           $this->logger,

@@ -7,7 +7,7 @@
 
 namespace OpenXdmod\Shredder;
 
-class Genericcloud extends Cloud
+class Genericcloud extends aCloud
 {
     /**
      * @inheritdoc
