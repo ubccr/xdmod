@@ -1124,73 +1124,44 @@ class Usage extends Common
      * If the $usageFilterValue is numeric or the $usageFilterType is not one of those currently
      * supported then $usageFilterValue is returned.
      *
-     * @param string $usageFilterType  the 'type' of filter to translate. Currently supported
+     * @param string $usageFilterType the 'type' of filter to translate. Currently supported
      *                                 values: pi, resource, project
-     * @param mixed  $usageFilterValue the value to be translated
+     * @param string|int  $usageFilterValue the value to be translated
      * @return int|string an int will be returned if, the $usageFilterValue is not numeric and a
      * record is found. Else, the unmodified $usageFilterValue is returned.
+     * @throws Exception if there is a problem connecting to the db or executing a query.
      */
     private function translateFilterValue($usageFilterType, $usageFilterValue)
     {
+        // If the value is already a number then just return it. We do this because this function is
+        // about tranlsating a non-numeric value to a numeric one ( i.e. an id )
+        if (is_numeric($usageFilterValue)) {
+            return $usageFilterValue;
+        }
 
-        /**
-         * Anonymous function to prevent code duplication. $query is expected to minimally fulfill
-         * the following:
-         *   - contain one column in the select clause called 'value'
-         *
-         * This function will execute the provided $query with $values as the set of parameters. If
-         * any records are found then their 'value' columns are returned.
-         *
-         * @param string $query the sql query to be executed
-         * @param array $values the one parameter that will be provided to $query.
-         *
-         * @return int[]|array all current queries return an int array. If no rows are found then
-         * an empty array is returned.
-         */
-        $lookupValue = function ($query, array $values) {
+        $query = null;
+
+        switch ($usageFilterType) {
+            case 'pi':
+                // NOTE: At the time of writing there is no instance where multiple records have
+                // the same username but different person_id values.
+                $query = "SELECT DISTINCT sa.person_id AS value FROM modw.systemaccount sa WHERE sa.username = :value;";
+                break;
+            case 'resource':
+                $query = "SELECT id AS value FROM modw.resourcefact WHERE code = :value";
+                break;
+            case 'project':
+                $query = "SELECT account_id AS value FROM modw_cloud.account WHERE display = :value";
+                break;
+        }
+
+        if ($query !== null) {
             $db = DB::factory('database');
-            $rows = $db->query(
-                $query,
-                $values
-            );
-            return implode(
-                ',',
-                array_reduce(
-                    $rows,
-                    function ($carry, $item) {
-                        $carry[] = $item['value'];
-                        return $carry;
-                    },
-                    array()
-                )
-            );
-        };
 
-        if (!is_numeric($usageFilterValue)) {
-            $usageFilterValues = explode(',', $usageFilterValue);
-            $inClause = str_repeat('?,', count($usageFilterValues) -1 ) . '?';
+            $stmt = $db->prepare($query);
+            $stmt->execute(array(':value' => $usageFilterValue));
 
-            switch ($usageFilterType) {
-                case 'pi':
-                    // NOTE: At the time of writing there is no instance where multiple records have
-                    // the same username but different person_id values.
-                    return $lookupValue(
-                        "SELECT DISTINCT sa.person_id AS value FROM modw.systemaccount sa WHERE sa.username IN ($inClause);",
-                        $usageFilterValues
-                    );
-                case 'resource':
-                    return $lookupValue(
-                        "SELECT id AS value FROM modw.resourcefact WHERE code IN ($inClause)",
-                        $usageFilterValues
-                    );
-                case 'project':
-                    return $lookupValue(
-                        "SELECT account_id AS value FROM modw_cloud.account WHERE display IN ($inClause)",
-                        $usageFilterValues
-                    );
-                default:
-                    return $usageFilterValue;
-            }
+            return implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN, 0));
         }
 
         return $usageFilterValue;
