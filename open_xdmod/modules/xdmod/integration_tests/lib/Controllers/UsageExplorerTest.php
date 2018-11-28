@@ -694,7 +694,7 @@ EOF;
              */
             return array_reduce(
                 $results,
-                function($carry, $item) {
+                function ($carry, $item) {
                     $results = array();
                     foreach($item as $subItem) {
                         foreach($subItem as $key => $value) {
