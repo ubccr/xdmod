@@ -151,4 +151,39 @@ abstract class DatabasesMigration extends Migration
 
         return self::$mysqlAdminCredentials;
     }
+
+    /**
+     * Run an etlv2 action.
+     *
+     * This helper function provides the necessary boilerplate to execute
+     * an etlv2 pipeline.
+     *
+     * @param array $scriptOptions the options to pass to the etlv2 class
+     */
+    protected function runEtlv2(array $scriptOptions) {
+        if (empty($scriptOptions['chunk-size-days'])) {
+            $scriptOptions['chunk-size-days'] = 365;
+        }
+        if (empty($scriptOptions['default-module-name'])) {
+            $scriptOptions['default-module-name'] = 'xdmod';
+        }
+        if(empty($scriptOptions['start-date'])){
+            $scriptOptions['start-date'] = date('Y-m-d', strtotime('2000-01-01'));
+        }
+        if(empty($scriptOptions['end-date'])){
+            $scriptOptions['end-date'] = date('Y-m-d', strtotime('2038-01-18'));
+        }
+        if(empty($scriptOptions['last-modified-start-date'])){
+            $scriptOptions['last-modified-start-date'] = date('Y-m-d');
+        }
+
+        $etlConfig = new \ETL\Configuration\EtlConfiguration(CONFIG_DIR . '/etl/etl.json', null, $this->logger, array('default_module_name' => $scriptOptions['default-module-name']));
+        $etlConfig->initialize();
+        \ETL\Utilities::setEtlConfig($etlConfig);
+
+        $overseerOptions = new \ETL\EtlOverseerOptions($scriptOptions, $this->logger);
+
+        $overseer = new \ETL\EtlOverseer($overseerOptions, $this->logger);
+        $overseer->execute($etlConfig);
+    }
 }
