@@ -4,6 +4,7 @@ namespace IntegrationTests\Controllers;
 
 use CCR\Json;
 use TestHarness\TestFiles;
+use TestHarness\XdmodTestHelper;
 use Xdmod\Config;
 
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
@@ -23,6 +24,11 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
             "controller_module"=> "user_interface"
         );
     }
+
+    /**
+     * @var XdmodTestHelper
+     */
+    protected $helper;
 
     protected function setUp()
     {
@@ -97,7 +103,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 
     /*
      * Check that the System Username plots are not available to the public user
-     * 
+     *
      */
     public function testSystemUsernameAccess()
     {
@@ -472,5 +478,263 @@ EOF;
         $tests[] = array('usr', $chartSettings, $expectedNames);
 
         return $tests;
+    }
+
+    /**
+     * This test exercises the new Usage feature of allowing non-numeric values for a certain subset
+     * of the currently supported filters ( when those filters are supplied as '<filter_key>_filter' )
+     * Examples:
+     *   pi=40            => pi_filter=taifl
+     *   resource=1       => resource_filter=frearson
+     *   project_filter=2 => project_filter=zealous
+     *
+     * @dataProvider provideFilterIdLookup
+     *
+     * @param $options
+     * @throws \Exception if there is a problem authenticating
+     */
+    public function testFilterIdLookup($options)
+    {
+        $user = $options['user'];
+        $data = $options['data'];
+        $expectedValue = $options['expected']['value'];
+        $expectedXpath = $options['expected']['xpath'];
+
+        if ($user !== 'pub') {
+            $this->helper->authenticate($user);
+        }
+
+        $results = $this->helper->post('controllers/user_interface.php', null, $data);
+
+        $xml = simplexml_load_string($results[0]);
+
+        $results = $xml->xpath($expectedXpath);
+
+        $actualValue = is_array($expectedValue) ? $results : array_pop($results);
+        for ($i = 0; $i < count($expectedValue); $i++) {
+            $expected = $expectedValue[$i];
+            $actual = $actualValue[$i];
+            $this->assertEquals($expected, (string)$actual);
+        }
+
+        if ($user !== 'pub') {
+            $this->helper->logout();
+        }
+    }
+
+    /**
+     * @return array
+     * in the form:
+     * array(
+     *   array(
+     *     array(
+     *       'user'     => 'the user under whom this test should be run',
+     *       'data'     => 'the POST data for the request that will be issued',
+     *       'expected' => 'information that describes what values we expect and how to get them'
+     *     )
+     *   ),
+     *   array(
+     *     array(
+     *       'user'     => ... ,
+     *       'data'     => ... ,
+     *       'expected' => ...
+     *     )
+     *   ),
+     *   etc. etc.
+     * )
+     */
+    public function provideFilterIdLookup()
+    {
+
+        $users = array('pub','cd', 'cs', 'pi', 'usr');
+
+        // Base POST parameters for the request we are testing.
+        $baseData = array(
+            'dataset_type' => 'aggregate',
+            'query_group' => 'tg_usage',
+            'limit' => 10,
+            'format' => 'xml',
+            'operation' => 'get_data'
+        );
+
+        // Per realm test scenario data.
+        $realmData = array(
+            // Jobs, single value filter tests
+            array(
+                'realm' => 'Jobs',
+                'filters' => array(
+                    array(
+                        array('resource' => '1'),
+                        array('resource_filter'=> '1'),
+                        array('resource_filter' => 'frearson')
+                    ),
+                    array(
+                        array('pi' => '40'),
+                        array('pi_filter' => '40'),
+                        array('pi_filter' => 'taifl')
+                    )
+                ),
+                'expected' => array(
+                    'value' => array('frearson', '78142.2133'),
+                    'xpath' => '//rows//row//cell/value'
+                ),
+                'additional_data' => array(
+                    'group_by' => 'resource',
+                    'statistic' => 'total_cpu_hours',
+                    'start_date' => '2016-12-22',
+                    'end_date' => '2017-01-01'
+                )
+            ),
+            // Cloud, single value filter tests
+            array(
+                'realm' => 'Cloud',
+                'filters' => array(
+                    array(
+                        array('project' => '2'),
+                        array('project_filter' => '2'),
+                        array('project_filter'=> 'zealous')
+                    )
+                ),
+                'expected' => array(
+                    'value' => array('zealous', '1755.9078'),
+                    'xpath' => '//rows//row//cell/value'
+                ),
+                'additional_data' => array(
+                    'group_by' => 'project',
+                    'statistic' => 'cloud_core_time',
+                    'start_date' => '2018-04-01',
+                    'end_date' => '2018-05-01'
+                )
+            ),
+            // Jobs, multi-value filter tests
+            array(
+                'realm' => 'Jobs',
+                'filters' => array(
+                    array(
+                        array('resource' => '4,1'),
+                        array('resource_filter'=> '1,4'),
+                        array('resource_filter' => 'frearson,pozidriv')
+                    ),
+                    array(
+                        array('pi' => '40,22'),
+                        array('pi_filter' => '22,40'),
+                        array('pi_filter' => 'taifl,henha')
+                    )
+                ),
+                'expected' => array(
+                    'value' => array('frearson', '78142.2133', 'pozidriv', '25358.4119'),
+                    'xpath' => '//rows//row//cell//value'
+                ),
+                'additional_data' => array(
+                    'group_by' => 'resource',
+                    'statistic' => 'total_cpu_hours',
+                    'start_date' => '2016-12-22',
+                    'end_date' => '2017-01-01'
+                )
+            ),
+            // Cloud, multi-value filter tests. ( Note: at time of writing, only one project has any
+            // core_time in the docker image. )
+            array(
+                'realm' => 'Cloud',
+                'filters' => array(
+                    array(
+                        array('project_filter' => '1,2,3'),
+                        array('project_filter'=> 'zealous,youthful,zen')
+                    )
+                ),
+                'expected' => array(
+                    'value' => array('zealous', '1755.9078'),
+                    'xpath' => '//rows//row//cell/value'
+                ),
+                'additional_data' => array(
+                    'group_by' => 'project',
+                    'statistic' => 'cloud_core_time',
+                    'start_date' => '2018-04-01',
+                    'end_date' => '2018-05-01'
+                )
+            )
+        );
+
+        /**
+         * Generates all combinations of the elements contained within $data.
+         *
+         * @param array $data
+         * @return array
+         */
+        function generateCombinations(array $data)
+        {
+            $results = array(array());
+            foreach ($data as $datum) {
+                $temp = array();
+                foreach ($datum as $subDatum) {
+                    foreach($results as $result) {
+                        $temp[] = array_merge($result, array($subDatum));
+                    }
+                }
+                $results = $temp;
+            }
+
+            /* Results are currently in the form:
+             * array(
+             *   array(
+             *     array( key 1 => value 1),
+             *     array( key 2 => value 2),
+             *   )
+             * )
+             *
+             * We need it in the following format:
+             * array (
+             *    array( key 1 => value 1, key 2 => value 2 ),
+             *    array( key 1 => value 1, key 3 => value 3 ),
+             *    etc, etc.
+             * )
+             *
+             * This is so that each of the second level arrays are suitable for merging into an
+             * existing associative array.
+             */
+            return array_reduce(
+                $results,
+                function($carry, $item) {
+                    $results = array();
+                    foreach($item as $subItem) {
+                        foreach($subItem as $key => $value) {
+                            $results[$key] = $value;
+                        }
+                    }
+                    array_push($carry, $results);
+                    return $carry;
+                },
+                array()
+            );
+        } // allCombinations
+
+        $results = array();
+        foreach($users as $user) {
+            foreach($realmData as $realmDatum) {
+                $realm = $realmDatum['realm'];
+                $filterCombos = generateCombinations($realmDatum['filters']);
+
+                foreach($filterCombos as $filterCombo) {
+                    $requestData = array_merge($baseData, $filterCombo);
+                    $requestData['realm'] = $realm;
+
+                    // Because a PHP boolean is interpreted as a 1 / 0 when building the request
+                    // parameters.
+                    $requestData['public_user'] = $user === 'pub' ? 'true' : 'false';
+
+                    $requestData = array_merge($requestData, $realmDatum['additional_data']);
+
+                    $results[] = array(array(
+                        'user' => $user,
+                        'data' => $requestData,
+                        'expected' => $realmDatum['expected']
+                    ));
+
+                }
+            }
+        }
+
+
+        return $results;
     }
 }
