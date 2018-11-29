@@ -13,14 +13,13 @@
  */
 var version = "0.9beta",
 	events = require('events'),
-	winston = require('winston'),
 	config = require('./config.js'),
 	ETLProfile = require('./lib/etl_profile.js'),
 	util = require('util'),
 	markProcessedRecords = true,
 	DatasetProcessor = require('./lib/dataset_processor.js');
 
-require('winston-mysql-transport');
+var winston = require('winston');
 
 //ETL details
 
@@ -36,15 +35,26 @@ require('winston-mysql-transport');
 var ETL = module.exports = function() {
 	events.EventEmitter.call(this);
 
-	var etlLogger = new winston.Logger({
-		transports: [
-			new winston.transports.Console({
-				colorize: process.stdout.isTTY,
-				timestamp: true,
-				level: process.env.logLevel || "warn"
-			})
-		]
-	});
+    const logFormat = winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.printf(info => {
+            return `${info.timestamp} - ${info.level}: ${info.message}`;
+        })
+    );
+
+    const colourLogFormat = winston.format.combine(
+        winston.format.colorize(),
+        logFormat
+    );
+
+    var etlLogger = winston.createLogger({
+        transports: [
+            new winston.transports.Console({
+                format: process.stdout.isTTY ? colourLogFormat : logFormat,
+                level: process.env.logLevel || 'warn'
+            })
+        ]
+    });
 
 	this.on('message', function(msg) {
 		etlLogger.info(msg);
