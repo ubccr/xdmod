@@ -348,6 +348,11 @@ class DataWarehouseInitializer
         ));
     }
 
+    /**
+     * Check to see if a realm exists in the realms table
+     *
+     * @param string $realm The realm you are checking to see if exists
+     */
     private function realmEnabled($realm)
     {
         $realms = $this->warehouseDb->query("SELECT * FROM moddb.realms WHERE display = :realm", [':realm' => $realm]);
