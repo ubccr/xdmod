@@ -1,5 +1,5 @@
 {
-    "#": "Raw volume information from the Eucalyptus log files.",
+    "#": "Raw volume information from the generic cloud log files.",
 
     "#": "Note that almost any field in the raw event logs can be NULL so most fields are nullable.",
     "#": "These will be stored here and filtered out later. For example, several events with type",
@@ -9,7 +9,7 @@
     "#": "restrict entries to unique volumes",
 
     "table_definition": {
-        "name": "eucalyptus_raw_volume",
+        "name": "generic_cloud_raw_volume",
         "engine": "MyISAM",
         "comment": "Raw block devices/volumes from the log file.",
         "columns": [
