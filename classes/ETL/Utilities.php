@@ -324,7 +324,7 @@ class Utilities
         return $localVariableMap;
     }  // quoteVariables()
 
-    public static function runEtlPipeline(array $pipelines, $logger, array $params=array())
+    public static function runEtlPipeline(array $pipelines, $logger, array $params = array())
     {
         $logger->debug(
             sprintf(
