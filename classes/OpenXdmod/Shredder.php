@@ -1030,3 +1030,4 @@ class Shredder
         throw new Exception("No config found for '$name' in '$file'");
     }
 }
+
