@@ -37,12 +37,12 @@ abstract class aCloud extends Shredder{
   public function shredDirectory($directory, array $pipelines)
   {
       if (!is_dir($directory)) {
-          $this->logger->err("'$directory' is not a directory");
+          $this->logger->crit("'$directory' is not a directory");
           return false;
       }
 
       if (empty($pipelines)) {
-          $this->logger->err("A pipeline to run was not specified. Please provide a pipeline to run.");
+          $this->logger->crit("A pipeline to run was not specified. Please provide a pipeline to run.");
           return false;
       }
 

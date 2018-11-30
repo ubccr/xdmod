@@ -14,6 +14,6 @@ class OpenStack extends aCloud
      */
     public function shredDirectory($directory)
     {
-        parent::shredDirectory($directory, ['jobs-cloud-ingest-openstack']);
+        return parent::shredDirectory($directory, ['jobs-cloud-ingest-openstack']);
     }
 }
