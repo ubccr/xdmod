@@ -223,7 +223,7 @@ class DataWarehouseInitializer
     }
 
     /**
-     * Extracting openstack data from the generic_raw_events table. If the raw
+     * Extracting cloud log data from the generic_raw_events table. If the raw
      * tables do not exist then catch the resulting exception and display a message
      * saying that there is no generic cloud data to ingest.
      */
