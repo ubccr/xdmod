@@ -44,7 +44,7 @@ class OpenstackShredderTest extends \PHPUnit_Framework_TestCase
 
         $shredder->setLogger(\Log::singleton('null'));
 
-        $shredder->setResource('openstack');
+        $shredder->setResource('testresource');
 
         $this->assertFalse($shredder->shredDirectory("/directory/does/not/exist"));
     }

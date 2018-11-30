@@ -14,6 +14,7 @@ class Genericcloud extends aCloud
      */
     public function shredDirectory($directory)
     {
-        return parent::shredDirectory($directory, ['jobs-cloud-ingest-eucalyptus']);
+        $this->setEtlPipeline(['jobs-cloud-ingest-eucalyptus']);
+        return parent::shredDirectory($directory);
     }
 }

@@ -11,49 +11,56 @@ use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
 use ETL\Utilities;
 
-abstract class aCloud extends Shredder{
+abstract class aCloud extends Shredder
+{
 
-  /**
-   * @inheritdoc
-   */
-  public function __construct(iDatabase $db)
-  {
-      $this->logger = \Log::singleton('null');
-  }
+    protected $etlPipelines = array();
 
-  /**
-   * Shredding by specifing a single file in not supported by the cloud pipelines.
-   * Throw an exception if someone tries to shred cloud data using the -i flag instead
-   * of using -d
-   */
-  public function shredFile($line)
-  {
-      throw new Exception('Cloud resources do not support shredding by file. Please use the -d option and specify a directory');
-  }
+    /**
+     * @inheritdoc
+     */
+    public function __construct(iDatabase $db)
+    {
+        $this->logger = \Log::singleton('null');
+    }
 
-  /**
-   * @inheritdoc
-   */
-  public function shredDirectory($directory, array $pipelines)
-  {
-      if (!is_dir($directory)) {
-          $this->logger->crit("'$directory' is not a directory");
-          return false;
-      }
+    /**
+     * Shredding by specifing a single file in not supported by the cloud pipelines.
+     * Throw an exception if someone tries to shred cloud data using the -i flag instead
+     * of using -d
+     */
+    public function shredFile($line)
+    {
+        throw new Exception('Cloud resources do not support shredding by file. Please use the -d option and specify a directory');
+    }
 
-      if (empty($pipelines)) {
-          $this->logger->crit("A pipeline to run was not specified. Please provide a pipeline to run.");
-          return false;
-      }
+    /**
+     * @inheritdoc
+     */
+    public function shredDirectory($directory)
+    {
+        if (!is_dir($directory)) {
+            $this->logger->crit("'$directory' is not a directory");
+            return false;
+        }
 
-      Utilities::runEtlPipeline(array('jobs-common','jobs-cloud-common','ingest-organizations', 'ingest-resource-types', 'ingest-resources'), $this->logger);
-      Utilities::runEtlPipeline(
-          $pipelines,
-          $this->logger,
-          array(
-            'include-only-resource-codes' => $this->resource,
-            'variable-overrides' => ['CLOUD_EVENT_LOG_DIRECTORY' => $directory]
-          )
-      );
-  }
+        if (empty($this->etlPipelines)) {
+            $this->logger->crit("A pipeline to run was not specified. Please provide a pipeline to run.");
+            return false;
+        }
+
+        Utilities::runEtlPipeline(array('jobs-common','jobs-cloud-common','ingest-organizations', 'ingest-resource-types', 'ingest-resources'), $this->logger);
+        Utilities::runEtlPipeline(
+            $this->etlPipelines,
+            $this->logger,
+            array(
+              'include-only-resource-codes' => $this->resource,
+              'variable-overrides' => ['CLOUD_EVENT_LOG_DIRECTORY' => $directory]
+            )
+        );
+    }
+
+    public function setEtlPipeline(array $pipelines){
+        $this->etlPipelines = $pipelines;
+    }
 }

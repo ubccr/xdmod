@@ -216,7 +216,7 @@ class DataWarehouseInitializer
                     $this->logger->notice('No OpenStack events to ingest');
                 }
                 else{
-                  throw $e;
+                    throw $e;
                 }
             }
         }
@@ -239,7 +239,7 @@ class DataWarehouseInitializer
                     $this->logger->notice('No cloud event data to ingest');
                 }
                 else{
-                  throw $e;
+                    throw $e;
                 }
             }
         }
@@ -253,12 +253,12 @@ class DataWarehouseInitializer
     public function aggregateCloudData()
     {
         if( $this->realmEnabled('Cloud')){
-          $this->logger->notice('Aggregating Cloud data');
-          $this->runEtlPipeline('cloud-state-pipeline');
+            $this->logger->notice('Aggregating Cloud data');
+            $this->runEtlPipeline('cloud-state-pipeline');
 
-          $filterListBuilder = new FilterListBuilder();
-          $filterListBuilder->setLogger($this->logger);
-          $filterListBuilder->buildRealmLists('Cloud');
+            $filterListBuilder = new FilterListBuilder();
+            $filterListBuilder->setLogger($this->logger);
+            $filterListBuilder->buildRealmLists('Cloud');
         }
     }
 
