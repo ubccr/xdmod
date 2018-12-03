@@ -1160,8 +1160,7 @@ class Usage extends Common
 
             $stmt = $db->prepare($query);
             $stmt->execute(array(':value' => $usageFilterValue));
-
-            return implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN, 0));
+            return $stmt->fetch()[0];
         }
 
         return $usageFilterValue;
