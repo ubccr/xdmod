@@ -78,9 +78,9 @@ function main()
     }
 
     $help = $ingest = $aggregate = $noAppend = $ingestAll = $ingestShredded
-        = $ingestStaging = $ingestHpcdb = $datatype = false;
+        = $ingestStaging = $ingestHpcdb = $datatype = $realmToAggregate = false;
 
-    $startDate = $endDate = $lastModifiedStartDate = $realmToAggregate = $datatypeValue = null;
+    $startDate = $endDate = $lastModifiedStartDate = $datatypeValue = null;
 
     $logLevel = -1;
 
