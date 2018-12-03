@@ -10,6 +10,8 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 {
 
     protected $testFiles;
+    protected $aggregateViewObject;
+    protected $pubViewObject;
 
     protected function setUp()
     {
@@ -17,12 +19,74 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
         $this->testFiles = new TestFiles(__DIR__ . '/../../');
     }
 
+    // all these lazy gets are a workaround for the static gimmickyness of PHPUnit
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
             $this->testFiles = new TestFiles(__DIR__ . '/../../');
         }
         return $this->testFiles;
+    }
+
+    public function getPubView()
+    {
+        if (!isset($this->pubViewObject))
+        {
+            $this->pubViewObject = array(
+                "public_user" => "true",
+                "realm" => "Jobs",
+                "group_by" => "none",
+                "start_date"=> "2017-05-01",
+                "end_date" => "2017-05-31",
+                "statistic" => "job_count",
+                "operation" => "get_charts",
+                "controller_module"=> "user_interface"
+            );
+        }
+
+        return $this->pubViewObject;
+    }
+
+    public function getAggView()
+    {
+        if (!isset($this->aggregateViewObject))
+        {
+            $this->aggregateViewObject = (object) array(
+                "public_user" => "true",
+                "realm" => "Jobs",
+                "group_by" => "none",
+                "statistic" => "avg_wallduration_hours",
+                "start_date" => "2016-01-01",
+                "end_date" => "2016-12-31",
+                "operation" => "get_charts",
+                "timeframe_label" => "User Defined",
+                "scale" => "1",
+                "aggregation_unit" => "Auto",
+                "dataset_type" => "aggregate",
+                "thumbnail" => "n",
+                "query_group" => "tg_usage",
+                "display_type" => "line",
+                "combine_type" => "side",
+                "limit" => "10",
+                "offset" => "0",
+                "log_scale" => "n",
+                "show_guide_lines" => "y",
+                "show_trend_line" => "n",
+                "show_error_bars" => "n",
+                "show_aggregate_labels" => "n",
+                "show_error_labels" => "n",
+                "hide_tooltip" => "false",
+                "show_title" => "y",
+                "width" => "1377",
+                "height" => "590",
+                "legend_type" => "bottom_center",
+                "font_size" => "3",
+                "interactive_elements" => "y",
+                "controller_module" => "user_interface"
+            );
+        }
+
+        return $this->aggregateViewObject;
     }
 
     /**
@@ -39,31 +103,17 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 
     public function corruptDataProvider()
     {
-        $defaultJson = <<<EOF
-        {
-            "public_user": "true",
-            "realm": "Jobs",
-            "group_by": "none",
-            "start_date": "2017-05-01",
-            "end_date": "2017-05-31",
-            "statistic": "job_count",
-            "operation": "get_charts",
-            "controller_module": "user_interface"
-        }
-EOF;
         $tests = array();
+        $view = $this->getPubView();
 
-        $input = json_decode($defaultJson, true);
-        unset($input['end_date']);
-        $tests[] = array($input, 'end_date param is not in the correct format of Y-m-d.');
+        $view['end_date'] = null;
+        $tests[] = array($view, 'end_date param is not in the correct format of Y-m-d.');
 
-        $input = json_decode($defaultJson, true);
-        unset($input['start_date']);
-        $tests[] = array($input, 'start_date param is not in the correct format of Y-m-d.');
+        $view['start_date'] = null;
+        $tests[] = array($view, 'start_date param is not in the correct format of Y-m-d.');
 
-        $input = json_decode($defaultJson, true);
-        $input['group_by'] = 'elephants';
-        $tests[] = array($input, 'Query: Unknown Group By "elephants" Specified');
+        $view['group_by'] = "elephants";
+        $tests[] = array($view, 'Query: Unknown Group By "elephants" Specified');
 
         return $tests;
     }
@@ -101,20 +151,10 @@ EOF;
      */
     public function testSystemUsernameAccess()
     {
-        $defaultJson = <<<EOF
-{
-    "public_user": "true",
-    "realm": "Jobs",
-    "group_by": "username",
-    "statistic": "job_count",
-    "start_date": "2017-05-01",
-    "end_date": "2017-05-31",
-    "operation": "get_charts",
-    "controller_module": "user_interface"
-}
-EOF;
-
-        $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($defaultJson, true));
+        $view = $this->getPubView();
+        $view['group_by'] = "username";
+        
+        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
 
         $expectedErrorMessage = <<<EOF
 Your user account does not have permission to view the requested data.  If you
@@ -127,44 +167,9 @@ EOF;
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
     }
 
-    public function testAggregateView()
+    public function testAggregateViewValidData()
     {
-         $defaultJson = <<<EOF
-{
-    "public_user": "true",
-    "realm": "Jobs",
-    "group_by": "none",
-    "statistic": "avg_wallduration_hours",
-    "start_date": "2016-01-01",
-    "end_date": "2016-12-31",
-    "operation": "get_charts",
-    "timeframe_label": "User Defined",
-    "scale": "1",
-    "aggregation_unit": "Auto",
-    "dataset_type": "aggregate",
-    "thumbnail": "n",
-    "query_group": "tg_usage",
-    "display_type": "line",
-    "combine_type": "side",
-    "limit": "10",
-    "offset": "0",
-    "log_scale": "n",
-    "show_guide_lines": "y",
-    "show_trend_line": "n",
-    "show_error_bars": "n",
-    "show_aggregate_labels": "n",
-    "show_error_labels": "n",
-    "hide_tooltip": "false",
-    "show_title": "y",
-    "width": "1377",
-    "height": "590",
-    "legend_type": "bottom_center",
-    "font_size": "3",
-    "interactive_elements": "y",
-    "controller_module": "user_interface"
-}
-EOF;
-        $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($defaultJson, true));
+        $response = $this->helper->post('/controllers/user_interface.php', null, $this->getAggView());
 
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
@@ -183,6 +188,75 @@ EOF;
         );
 
         $this->assertEquals($expected['value'], $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+    }
+
+    public function testAggregateViewPastStartEnd()
+    {
+        $view = $this->getAggView();
+        $view->start_date = "2015-01-01";
+        $view->end_date = "2015-12-31";
+
+        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
+
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+
+        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
+
+        $this->assertCount(1, $dataseries);
+        $this->assertArrayHasKey('data', $dataseries[0]);
+        $this->assertCount(1, $dataseries[0]['data']);
+        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
+
+        $this->assertNull($dataseries[0]['data'][0]['y']);
+    }
+
+    public function testAggregateViewStartFutureEnd()
+    {
+        $view = $this->getAggView();
+        $view->start_date = "2017-01-01";
+        $view->end_date = "2017-12-31";
+
+        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
+
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+
+        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
+
+        $this->assertCount(1, $dataseries);
+        $this->assertArrayHasKey('data', $dataseries[0]);
+        $this->assertCount(1, $dataseries[0]['data']);
+        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
+
+        $this->assertEquals(1.01283296, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+    }
+
+    public function testAggregateViewFutureStartEnd()
+    {
+        $view = $this->getAggView();
+        $view->start_date = "2018-01-01";
+        $view->end_date = "2018-12-31";
+        
+        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
+
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertEquals($response[1]['http_code'], 200);
+
+        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+
+        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
+
+        $this->assertCount(1, $dataseries);
+        $this->assertArrayHasKey('data', $dataseries[0]);
+        $this->assertCount(1, $dataseries[0]['data']);
+        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
+
+        $this->assertNull($dataseries[0]['data'][0]['y']);
     }
 
     /**
