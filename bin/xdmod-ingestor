@@ -284,11 +284,11 @@ function main()
         $logger->info('Aggregating data');
         try {
             //If there is no realm specified to aggregate then all realms should be aggregated
-            if($realmToAggregate == 'job' || $realmToAggregate === null){
+            if($realmToAggregate == 'job' || $realmToAggregate === false){
                 $dwi->aggregateAllJobs($lastModifiedStartDate);
             }
 
-            if($realmToAggregate == 'cloud' || $realmToAggregate === null){
+            if($realmToAggregate == 'cloud' || $realmToAggregate === false){
                 $dwi->aggregateCloudData();
             }
         } catch (Exception $e) {
