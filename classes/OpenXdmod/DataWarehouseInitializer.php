@@ -140,8 +140,7 @@ class DataWarehouseInitializer
     {
         if( $this->realmEnabled('Jobs')){
             $this->logger->debug('Ingesting shredded data to staging tables');
-            $this->runEtlPipeline('staging-ingest-common');
-            $this->runEtlPipeline('staging-ingest-jobs');
+            Utilities::runEtlPipeline(['staging-ingest-common', 'staging-ingest-jobs'], $this->logger);
         }
     }
 
@@ -155,8 +154,7 @@ class DataWarehouseInitializer
     {
         if( $this->realmEnabled('Jobs')){
             $this->logger->debug('Ingesting staging data to HPCDB');
-            $this->runEtlPipeline('hpcdb-ingest-common');
-            $this->runEtlPipeline('hpcdb-ingest-jobs');
+            Utilities::runEtlPipeline(['hpcdb-ingest-common', 'hpcdb-ingest-jobs'], $this->logger);
         }
     }
 
@@ -179,12 +177,13 @@ class DataWarehouseInitializer
                 if ($endDate !== null) {
                     $params['end-date'] = $endDate . ' 23:59:59';
                 }
-                $this->runEtlPipeline(
-                    'hpcdb-prep-xdw-job-ingest-by-date-range',
+                Utilities::runEtlPipeline(
+                    ['hpcdb-prep-xdw-job-ingest-by-date-range'],
+                    $this->logger,
                     $params
                 );
             } else {
-                $this->runEtlPipeline('hpcdb-prep-xdw-job-ingest-by-new-jobs');
+                Utilities::runEtlPipeline(['hpcdb-prep-xdw-job-ingest-by-new-jobs'], $this->logger);
             }
 
             // Use current time from the database in case clocks are not
@@ -192,8 +191,9 @@ class DataWarehouseInitializer
             $lastModifiedStartDate
                 = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
 
-            $this->runEtlPipeline(
-                'hpcdb-xdw-ingest',
+            Utilities::runEtlPipeline(
+                ['hpcdb-xdw-ingest'],
+                $this->logger,
                 array('last-modified-start-date' => $lastModifiedStartDate)
             );
         }
@@ -209,7 +209,7 @@ class DataWarehouseInitializer
         if( $this->realmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting OpenStack event log data');
-                $this->runEtlPipeline('jobs-cloud-extract-openstack');
+                Utilities::runEtlPipeline(['jobs-cloud-extract-openstack'], $this->logger);
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -232,7 +232,7 @@ class DataWarehouseInitializer
         if( $this->realmEnabled('Cloud')){
             try{
                 $this->logger->notice('Ingesting generic cloud log files');
-                $this->runEtlPipeline('jobs-cloud-extract-eucalyptus');
+                Utilities::runEtlPipeline(['jobs-cloud-extract-eucalyptus'], $this->logger);
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -254,7 +254,7 @@ class DataWarehouseInitializer
     {
         if( $this->realmEnabled('Cloud')){
             $this->logger->notice('Aggregating Cloud data');
-            $this->runEtlPipeline('cloud-state-pipeline');
+            Utilities::runEtlPipeline(['cloud-state-pipeline'], $this->logger);
 
             $filterListBuilder = new FilterListBuilder();
             $filterListBuilder->setLogger($this->logger);
@@ -289,8 +289,9 @@ class DataWarehouseInitializer
     public function aggregateAllJobs($lastModifiedStartDate)
     {
         if( $this->realmEnabled('Jobs') ){
-            $this->runEtlPipeline(
-                'jobs-xdw-aggregate',
+            Utilities::runEtlPipeline(
+                ['jobs-xdw-aggregate'],
+                $this->logger,
                 array('last-modified-start-date' => $lastModifiedStartDate)
             );
             $filterListBuilder = new FilterListBuilder();
@@ -357,53 +358,5 @@ class DataWarehouseInitializer
     {
         $realms = $this->warehouseDb->query("SELECT * FROM moddb.realms WHERE display = :realm", [':realm' => $realm]);
         return (count($realms) > 0) ? true : false;
-    }
-
-    /**
-     * Run an ETL pipeline.
-     *
-     * @param string $name Pipeline or "section" to run.
-     * @param array $params Parameters to be passed to used to construct
-     *   EtlOverseerOptions.
-     */
-    private function runEtlPipeline($name, $params = array())
-    {
-        $this->logger->debug(
-            sprintf(
-                'Running ETL pipeline "%s" with parameters %s',
-                $name,
-                json_encode($params)
-            )
-        );
-
-        $etlConfig = new EtlConfiguration(
-            CONFIG_DIR . '/etl/etl.json',
-            null,
-            $this->logger,
-            array('default_module_name' => 'xdmod')
-        );
-        $etlConfig->initialize();
-        Utilities::setEtlConfig($etlConfig);
-
-        $scriptOptions = array_merge(
-            array(
-                'default-module-name' => 'xdmod',
-                'process-sections' => array($name),
-            ),
-            $params
-        );
-        $this->logger->debug(
-            sprintf(
-                'Running ETL pipeline with script options %s',
-                json_encode($scriptOptions)
-            )
-        );
-
-        $overseerOptions = new EtlOverseerOptions(
-            $scriptOptions,
-            $this->logger
-        );
-        $overseer = new EtlOverseer($overseerOptions, $this->logger);
-        $overseer->execute($etlConfig);
     }
 }
