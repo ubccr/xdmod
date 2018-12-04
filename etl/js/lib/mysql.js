@@ -217,36 +217,43 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
         return reqDims.concat(restDims).concat(metrics);
     };
 
-	this.getAggregationTableFields = function() {
-		var ret = [],
-			colKeys = Object.keys(this.columns).sort();
-		for(var col in colKeys) {
-			var column = this.columns[colKeys[col]];
-			
-			var aggColumn = {};
-            for( x in column ){
-                aggColumn[x] = column[x];
-            }
-			ret.push(aggColumn);		
-		}	
-		
-		ret.sort(dynamicSortMultiple("name"));	
-		return ret;
-	},
-	this.getErrorInsertStatement = function(replace_, ignore, values, _version) {
-		if(_version === undefined || _version === null) throw Error('_version cannot be undefined or null');
-		//if(_id === undefined || _id === null) throw Error('_id cannot be undefined or null');
-		var allEntries = [];
+    this.getAggregationTableFields = function () {
+        var ret = [];
+        var colKeys = Object.keys(this.columns).sort();
+        for (let i = 0; i < colKeys.length; i++) {
+            if (this.columns.hasOwnProperty(colKeys[i])) {
+                let column = this.columns[colKeys[i]];
 
-		for(var c in values) {
-			var column = this.columns[c];
-			allEntries.push(c);
-		}
-		return (replace_ ? 'replace' : ('insert' + (ignore ? ' ignore' : '' )))
-			+ ' into ' + this.meta.schema + '.' + this.name + '_errors (_id,' + allEntries.join(',') + ',_version)'
-			+ ' values (:_id, :' + allEntries.join(',:') + ',' + _version + ')'; 
-	},
-}
+                let aggColumn = {};
+                for (let x in column) {
+                    if (column.hasOwnProperty(x)) {
+                        aggColumn[x] = column[x];
+                    }
+                }
+                ret.push(aggColumn);
+            }
+        }
+
+        ret.sort(dynamicSortMultiple('name'));
+        return ret;
+    };
+
+    this.getErrorInsertStatement = function (replace_, ignore, values, _version) {
+        if (_version === undefined || _version === null) {
+            throw Error('_version cannot be undefined or null');
+        }
+        var allEntries = [];
+        for (let c in values) {
+            if (values.hasOwnProperty(c)) {
+                allEntries.push(c);
+            }
+        }
+
+        return (replace_ ? 'replace' : ('insert' + (ignore ? ' ignore' : '')))
+            + ' into ' + this.meta.schema + '.' + this.name + '_errors (_id,' + allEntries.join(',') + ',_version)'
+            + ' values (:_id, :' + allEntries.join(',:') + ',' + _version + ')';
+    };
+};
 
 module.exports.sqlType = function (type, length) {
     switch (type) {
