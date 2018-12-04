@@ -482,11 +482,14 @@ EOF;
 
     /**
      * This test exercises the new Usage feature of allowing non-numeric values for a certain subset
-     * of the currently supported filters ( when those filters are supplied as '<filter_key>_filter' )
+     * of the currently supported filters ( when those filters are supplied as '<filter_key>_filter' ).
+     * Notice that the corresponding string value is quoted w/ either single or double quotes. This
+     * is required so that we can tell the difference between strings and numbers.
+     *
      * Examples:
-     *   pi=40            => pi_filter=taifl
-     *   resource=1       => resource_filter=frearson
-     *   project_filter=2 => project_filter=zealous
+     *   pi=40            => pi_filter="taifl"
+     *   resource=1       => resource_filter='frearson'
+     *   project_filter=2 => project_filter="zealous"
      *
      * @dataProvider provideFilterIdLookup
      *
@@ -497,8 +500,9 @@ EOF;
     {
         $user = $options['user'];
         $data = $options['data'];
+
         $expectedValue = $options['expected']['value'];
-        $expectedXpath = $options['expected']['xpath'];
+        $expectedXpath = isset($options['expected']['xpath']) ? $options['expected']['xpath'] : null;
 
         if ($user !== 'pub') {
             $this->helper->authenticate($user);
@@ -506,15 +510,22 @@ EOF;
 
         $results = $this->helper->post('controllers/user_interface.php', null, $data);
 
-        $xml = simplexml_load_string($results[0]);
+        if ($expectedXpath !== null) {
+            $xml = simplexml_load_string($results[0]);
 
-        $results = $xml->xpath($expectedXpath);
+            $results = $xml->xpath($expectedXpath);
 
-        $actualValue = is_array($expectedValue) ? $results : array_pop($results);
-        for ($i = 0; $i < count($expectedValue); $i++) {
-            $expected = $expectedValue[$i];
-            $actual = $actualValue[$i];
-            $this->assertEquals($expected, (string)$actual);
+            $actualValue = is_array($expectedValue) ? $results : array_pop($results);
+
+            for ($i = 0; $i < count($expectedValue); $i++) {
+                $expected = $expectedValue[$i];
+                $actual = $actualValue[$i];
+                $this->assertEquals($expected, (string)$actual);
+            }
+        } else {
+            $actual = $results[0];
+
+            $this->assertEquals($expectedValue, $actual);
         }
 
         if ($user !== 'pub') {
@@ -523,6 +534,11 @@ EOF;
     }
 
     /**
+     * Provides the test data for testFilterIdLookup.
+     *
+     * NOTE: string values supplied to the '*_filter' parameters need to be quoted w/ single or
+     * double quotes to be treated as strings.
+     *
      * @return array
      * in the form:
      * array(
@@ -566,12 +582,12 @@ EOF;
                     array(
                         array('resource' => '1'),
                         array('resource_filter'=> '1'),
-                        array('resource_filter' => 'frearson')
+                        array('resource_filter' => '"frearson"')
                     ),
                     array(
                         array('pi' => '40'),
                         array('pi_filter' => '40'),
-                        array('pi_filter' => 'taifl')
+                        array('pi_filter' => '"taifl"')
                     )
                 ),
                 'expected' => array(
@@ -592,7 +608,7 @@ EOF;
                     array(
                         array('project' => '2'),
                         array('project_filter' => '2'),
-                        array('project_filter'=> 'zealous')
+                        array('project_filter'=> '"zealous"')
                     )
                 ),
                 'expected' => array(
@@ -613,12 +629,12 @@ EOF;
                     array(
                         array('resource' => '4,1'),
                         array('resource_filter'=> '1,4'),
-                        array('resource_filter' => 'frearson,pozidriv')
+                        array('resource_filter' => '\'frearson\',"pozidriv"')
                     ),
                     array(
                         array('pi' => '40,22'),
                         array('pi_filter' => '22,40'),
-                        array('pi_filter' => 'taifl,henha')
+                        array('pi_filter' => '"taifl",\'henha\'')
                     )
                 ),
                 'expected' => array(
@@ -639,7 +655,7 @@ EOF;
                 'filters' => array(
                     array(
                         array('project_filter' => '1,2,3'),
-                        array('project_filter'=> 'zealous,youthful,zen')
+                        array('project_filter'=> '\'zealous\',\'youthful\',\'zen\'')
                     )
                 ),
                 'expected' => array(
@@ -651,6 +667,62 @@ EOF;
                     'statistic' => 'cloud_core_time',
                     'start_date' => '2018-04-01',
                     'end_date' => '2018-05-01'
+                )
+            ),
+            // Jobs, multi-value ( inc. invalid numeric values ) filter tests
+            array(
+                'realm' => 'Jobs',
+                'filters' => array(
+                    array(
+                        array('resource' => '4,1,99999'),
+                        array('resource_filter'=> '1,4,99999'),
+                        array('resource_filter' => '"frearson","pozidriv"')
+                    ),
+                    array(
+                        array('pi' => '40,22,99999'),
+                        array('pi_filter' => '22,40,99999'),
+                        array('pi_filter' => '"taifl","henha"')
+                    )
+                ),
+                'expected' => array(
+                    'value' => array('frearson', '78142.2133', 'pozidriv', '25358.4119'),
+                    'xpath' => '//rows//row//cell//value'
+                ),
+                'additional_data' => array(
+                    'group_by' => 'resource',
+                    'statistic' => 'total_cpu_hours',
+                    'start_date' => '2016-12-22',
+                    'end_date' => '2017-01-01'
+                )
+            ),
+            // Jobs, multi-value ( inc. unknown string values ) filter tests
+            array(
+                'realm' => 'Jobs',
+                'filters' => array(
+                    array(
+                        array('resource_filter' => '"frearson","pozidriv","unknownresource"')
+                    ),
+                    array(
+                        array('pi_filter' => '"taifl",\'henha\',"unknownperson"')
+                    )
+                ),
+                'expected' => array(
+                    'value' => array(
+                        'success' => false,
+                        'count' => 0,
+                        'total' => 0,
+                        'totalCount'=> 0,
+                        'results' => array(),
+                        'data' => array(),
+                        'message' => 'Invalid filter value detected',
+                        'code' => 0
+                    )
+                ),
+                'additional_data' => array(
+                    'group_by' => 'resource',
+                    'statistic' => 'total_cpu_hours',
+                    'start_date' => '2016-12-22',
+                    'end_date' => '2017-01-01'
                 )
             )
         );

@@ -976,15 +976,17 @@ class Usage extends Common
             $usageFilterValues = explode(',', $usageValue);
 
             foreach ($usageFilterValues as $usageFilterValue) {
-                $usageFilterValue = $this->translateFilterValue($usageFilterType, $usageFilterValue);
+                $translatedValues = $this->translateFilterValue($usageFilterType, $usageFilterValue);
 
-                $meFilters[] = array(
-                    'id' => "$usageFilterType=$usageFilterValue",
-                    'value_id' => $usageFilterValue,
-                    'dimension_id' => $usageFilterType,
-                    'realms' => array($usageRealm),
-                    'checked' => true,
-                );
+                foreach($translatedValues as $translatedValue) {
+                    $meFilters[] = array(
+                        'id' => "$usageFilterType=$translatedValue",
+                        'value_id' => $translatedValue,
+                        'dimension_id' => $usageFilterType,
+                        'realms' => array($usageRealm),
+                        'checked' => true,
+                    );
+                }
             }
         }
 
@@ -1114,30 +1116,27 @@ class Usage extends Common
     }
 
     /**
-     * Attempts to translate the $usageFilterValue ( if not numeric ) via a sql query, based on
-     * $usageFilterType. Currently supported $usageFilterType values and the tables ( columns ) they
-     * lookup values in are:
+     * Attempts to translate the $usageFilterValue which is either a quoted string ( single or double ),
+     * numeric string, or number via a sql query, based on $usageFilterType. If a non-quoted string
+     * is supplied it will be treated as a number. This affects the logic of what values are returned.
+     * Currently supported $usageFilterType values and the tables ( columns ) they lookup values
+     * in are:
+     *
      *   - 'pi':       modw.systemaccount ( username )
      *   - 'resource': modw.resourcefact  ( code )
      *   - 'project':  modw_cloud.account ( display )
      *
      * If the $usageFilterValue is numeric or the $usageFilterType is not one of those currently
-     * supported then $usageFilterValue is returned.
+     * supported then array($usageFilterValue) is returned.
      *
      * @param string $usageFilterType the 'type' of filter to translate. Currently supported
      *                                 values: pi, resource, project
      * @param string|int  $usageFilterValue the value to be translated
-     * @return int|string an int will be returned if, the $usageFilterValue is not numeric and a
-     * record is found. Else, the unmodified $usageFilterValue is returned.
+     * @return array of the translated values.
      * @throws Exception if there is a problem connecting to the db or executing a query.
      */
     private function translateFilterValue($usageFilterType, $usageFilterValue)
     {
-        // If the value is already a number then just return it. We do this because this function is
-        // about tranlsating a non-numeric value to a numeric one ( i.e. an id )
-        if (is_numeric($usageFilterValue)) {
-            return $usageFilterValue;
-        }
 
         $query = null;
 
@@ -1156,13 +1155,38 @@ class Usage extends Common
         }
 
         if ($query !== null) {
+            $filterValueIsString = preg_match('/[\'"]+/', $usageFilterValue) === 1;
+
+            $value = $filterValueIsString
+                ? preg_replace('/[\'"]+/', '', $usageFilterValue)
+                : $usageFilterValue;
+
             $db = DB::factory('database');
 
             $stmt = $db->prepare($query);
-            $stmt->execute(array(':value' => $usageFilterValue));
-            return $stmt->fetch()[0];
+            $stmt->execute(array(':value' => $value));
+
+            $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+            if ($rows !== false) {
+                $rowCount = count($rows);
+
+                if ($rowCount === 0 && !$filterValueIsString) {
+                    return array($usageFilterValue);
+                } elseif ($rowCount > 0 && !$filterValueIsString) {
+                    // This occurs when the username, code, or display matches an all numeric value.
+                    // In this case we prefer the value found in the db to the value supplied by the
+                    // user.
+                    //
+                    return $rows;
+                } elseif ($rowCount > 0) {
+                    return $rows;
+                } elseif ($rowCount === 0 && $filterValueIsString) {
+                    throw new Exception("Invalid filter value detected");
+                }
+            }
         }
 
-        return $usageFilterValue;
+        return array($usageFilterValue);
     }
 }
