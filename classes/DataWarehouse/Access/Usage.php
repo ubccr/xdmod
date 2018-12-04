@@ -1154,12 +1154,12 @@ class Usage extends Common
                 break;
         }
 
-        if ($query !== null) {
-            $filterValueIsString = preg_match('/[\'"]+/', $usageFilterValue) === 1;
+        $filterValueIsString = preg_match('/^[\'"].*[\'"]$/', $usageFilterValue) === 1;
 
-            $value = $filterValueIsString
-                ? preg_replace('/[\'"]+/', '', $usageFilterValue)
-                : $usageFilterValue;
+        // We only attempt translation if we support the `$usageFilterType` provided and
+        // the `$usageFilterValue` is a quoted string.
+        if ($query !== null && $filterValueIsString) {
+            $value = trim($usageFilterValue, '\'"');
 
             $db = DB::factory('database');
 
@@ -1168,23 +1168,13 @@ class Usage extends Common
 
             $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
-            if ($rows !== false) {
-                $rowCount = count($rows);
-
-                if ($rowCount === 0 && !$filterValueIsString) {
-                    return array($usageFilterValue);
-                } elseif ($rowCount > 0 && !$filterValueIsString) {
-                    // This occurs when the username, code, or display matches an all numeric value.
-                    // In this case we prefer the value found in the db to the value supplied by the
-                    // user.
-                    //
-                    return $rows;
-                } elseif ($rowCount > 0) {
-                    return $rows;
-                } elseif ($rowCount === 0 && $filterValueIsString) {
-                    throw new Exception("Invalid filter value detected");
-                }
+            // We need to test if there was an error ( bool returned ) because count(bool) === 1.
+            if ($rows !== false && count($rows) > 0) {
+                return $rows;
             }
+
+            // If a string was provided but no id(s) were found then exception out.
+            throw new Exception("Invalid filter value detected");
         }
 
         return array($usageFilterValue);
