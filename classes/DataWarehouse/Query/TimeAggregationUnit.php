@@ -77,7 +77,7 @@ abstract class TimeAggregationUnit
         FROM
             ' . $this->getAggTablePrefix() . $unit . ' p
         JOIN
-            modw.' . $unit . 's u ON u.id = p.' . $unit . '_id
+            modw.' . $unit . 's u ON u.id = p.' . $unit_id . '
         WHERE
             u.' . $unit . '_start <= ? AND
             u.' . $unit . '_end > ?';

@@ -8,85 +8,9 @@ use Xdmod\Config;
 
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 {
-
-    protected $testFiles;
-    protected $aggregateViewObject;
-    protected $pubViewObject;
-
     protected function setUp()
     {
         $this->helper = new \TestHarness\XdmodTestHelper();
-        $this->testFiles = new TestFiles(__DIR__ . '/../../');
-    }
-
-    // all these lazy gets are a workaround for the static gimmickyness of PHPUnit
-    public function getTestFiles()
-    {
-        if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../../');
-        }
-        return $this->testFiles;
-    }
-
-    public function getPubView()
-    {
-        if (!isset($this->pubViewObject))
-        {
-            $this->pubViewObject = array(
-                "public_user" => "true",
-                "realm" => "Jobs",
-                "group_by" => "none",
-                "start_date"=> "2017-05-01",
-                "end_date" => "2017-05-31",
-                "statistic" => "job_count",
-                "operation" => "get_charts",
-                "controller_module"=> "user_interface"
-            );
-        }
-
-        return $this->pubViewObject;
-    }
-
-    public function getAggView()
-    {
-        if (!isset($this->aggregateViewObject))
-        {
-            $this->aggregateViewObject = (object) array(
-                "public_user" => "true",
-                "realm" => "Jobs",
-                "group_by" => "none",
-                "statistic" => "avg_wallduration_hours",
-                "start_date" => "2016-01-01",
-                "end_date" => "2016-12-31",
-                "operation" => "get_charts",
-                "timeframe_label" => "User Defined",
-                "scale" => "1",
-                "aggregation_unit" => "Auto",
-                "dataset_type" => "aggregate",
-                "thumbnail" => "n",
-                "query_group" => "tg_usage",
-                "display_type" => "line",
-                "combine_type" => "side",
-                "limit" => "10",
-                "offset" => "0",
-                "log_scale" => "n",
-                "show_guide_lines" => "y",
-                "show_trend_line" => "n",
-                "show_error_bars" => "n",
-                "show_aggregate_labels" => "n",
-                "show_error_labels" => "n",
-                "hide_tooltip" => "false",
-                "show_title" => "y",
-                "width" => "1377",
-                "height" => "590",
-                "legend_type" => "bottom_center",
-                "font_size" => "3",
-                "interactive_elements" => "y",
-                "controller_module" => "user_interface"
-            );
-        }
-
-        return $this->aggregateViewObject;
     }
 
     /**
@@ -104,7 +28,16 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
     public function corruptDataProvider()
     {
         $tests = array();
-        $view = $this->getPubView();
+        $view = array(
+            "public_user" => "true",
+            "realm" => "Jobs",
+            "group_by" => "none",
+            "start_date"=> "2017-05-01",
+            "end_date" => "2017-05-31",
+            "statistic" => "job_count",
+            "operation" => "get_charts",
+            "controller_module"=> "user_interface"
+        );
 
         $view['end_date'] = null;
         $tests[] = array($view, 'end_date param is not in the correct format of Y-m-d.');
@@ -120,6 +53,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Checks the structure of the get_tabs endpoint.
+     * @dataProvider corruptDataProvider
      */
     public function testGetTabs()
     {
@@ -149,11 +83,9 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
     /*
      * Check that the System Username plots are not available to the public user
      */
-    public function testSystemUsernameAccess()
+    public function testSystemUsernameAccess($view)
     {
-        $view = $this->getPubView();
         $view['group_by'] = "username";
-        
         $response = $this->helper->post('/controllers/user_interface.php', null, $view);
 
         $expectedErrorMessage = <<<EOF
@@ -167,15 +99,77 @@ EOF;
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
     }
 
-    public function testAggregateViewValidData()
+    public function aggregateDataProvider() 
+    {
+        $view = (object) array(
+            "public_user" => "true",
+            "realm" => "Jobs",
+            "group_by" => "none",
+            "statistic" => "avg_wallduration_hours",
+            "start_date" => "2016-01-01",
+            "end_date" => "2016-12-31",
+            "operation" => "get_charts",
+            "timeframe_label" => "User Defined",
+            "scale" => "1",
+            "aggregation_unit" => "Auto",
+            "dataset_type" => "aggregate",
+            "thumbnail" => "n",
+            "query_group" => "tg_usage",
+            "display_type" => "line",
+            "combine_type" => "side",
+            "limit" => "10",
+            "offset" => "0",
+            "log_scale" => "n",
+            "show_guide_lines" => "y",
+            "show_trend_line" => "n",
+            "show_error_bars" => "n",
+            "show_aggregate_labels" => "n",
+            "show_error_labels" => "n",
+            "hide_tooltip" => "false",
+            "show_title" => "y",
+            "width" => "1377",
+            "height" => "590",
+            "legend_type" => "bottom_center",
+            "font_size" => "3",
+            "interactive_elements" => "y",
+            "controller_module" => "user_interface"
+        );
+
+        $view->start_date = "2016-01-01";
+        $view->end_date = "2016-12-31";
+        $validRange = array($view, 2.03112893);
+
+        $view->start_date = "2017-01-01";
+        $view->end_date = "2017-12-31";
+        $validStart = array($view, 1.01283296);
+
+        $view->start_date = "2015-01-01";
+        $view->end_date = "2015-12-31";
+        $past = array($view, null);
+
+        $view->start_date = "2018-01-01";
+        $view->end_date = "2018-12-31";
+        $future = array($view, null);
+
+        return array(
+            $validRange,
+            $validStart,
+            $past,
+            $future
+        );
+    }
+
+    /**
+     * @dataProvider aggregateDataProvider
+     */
+    public function testAggregateViewValidData($view, $expected)
     {
         $response = $this->helper->post('/controllers/user_interface.php', null, $this->getAggView());
 
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
 
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
-
+        $plotdata = json_decode($response[0], true);
         $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
 
         $this->assertCount(1, $dataseries);
@@ -183,80 +177,7 @@ EOF;
         $this->assertCount(1, $dataseries[0]['data']);
         $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
 
-        $expected = Json::loadFile(
-            $this->getTestFiles()->getFile('controllers', 'aggregate_view-1')
-        );
-
-        $this->assertEquals($expected['value'], $dataseries[0]['data'][0]['y'], '', 1.0e-6);
-    }
-
-    public function testAggregateViewPastStartEnd()
-    {
-        $view = $this->getAggView();
-        $view->start_date = "2015-01-01";
-        $view->end_date = "2015-12-31";
-
-        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
-
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
-        $this->assertEquals($response[1]['http_code'], 200);
-
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
-
-        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
-
-        $this->assertCount(1, $dataseries);
-        $this->assertArrayHasKey('data', $dataseries[0]);
-        $this->assertCount(1, $dataseries[0]['data']);
-        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
-
-        $this->assertNull($dataseries[0]['data'][0]['y']);
-    }
-
-    public function testAggregateViewStartFutureEnd()
-    {
-        $view = $this->getAggView();
-        $view->start_date = "2017-01-01";
-        $view->end_date = "2017-12-31";
-
-        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
-
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
-        $this->assertEquals($response[1]['http_code'], 200);
-
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
-
-        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
-
-        $this->assertCount(1, $dataseries);
-        $this->assertArrayHasKey('data', $dataseries[0]);
-        $this->assertCount(1, $dataseries[0]['data']);
-        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
-
-        $this->assertEquals(1.01283296, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
-    }
-
-    public function testAggregateViewFutureStartEnd()
-    {
-        $view = $this->getAggView();
-        $view->start_date = "2018-01-01";
-        $view->end_date = "2018-12-31";
-        
-        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
-
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
-        $this->assertEquals($response[1]['http_code'], 200);
-
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
-
-        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
-
-        $this->assertCount(1, $dataseries);
-        $this->assertArrayHasKey('data', $dataseries[0]);
-        $this->assertCount(1, $dataseries[0]['data']);
-        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
-
-        $this->assertNull($dataseries[0]['data'][0]['y']);
+        $this->assertEquals($expected, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
     }
 
     /**
