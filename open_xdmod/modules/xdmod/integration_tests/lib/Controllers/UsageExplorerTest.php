@@ -99,7 +99,7 @@ EOF;
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
     }
 
-    public function aggregateDataProvider() 
+    public function aggregateDataProvider()
     {
         $view = (object) array(
             "public_user" => "true",
