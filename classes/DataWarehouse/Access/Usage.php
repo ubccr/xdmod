@@ -966,29 +966,6 @@ class Usage extends Common
         $usageFilterSuffix = '_filter';
         $usageFilterSuffixLength = strlen($usageFilterSuffix);
         $usageRealm = \xd_utilities\array_get($usageRequest, 'realm');
-        $meFilters = array();
-        foreach ($usageRequest as $usageKey => $usageValue) {
-            if (!\xd_utilities\string_ends_with($usageKey, $usageFilterSuffix)) {
-                continue;
-            }
-
-            $usageFilterType = substr($usageKey, 0, -$usageFilterSuffixLength);
-            $usageFilterValues = explode(',', $usageValue);
-
-            foreach ($usageFilterValues as $usageFilterValue) {
-                $translatedValues = $this->translateFilterValue($usageFilterType, $usageFilterValue);
-
-                foreach($translatedValues as $translatedValue) {
-                    $meFilters[] = array(
-                        'id' => "$usageFilterType=$translatedValue",
-                        'value_id' => $translatedValue,
-                        'dimension_id' => $usageFilterType,
-                        'realms' => array($usageRealm),
-                        'checked' => true,
-                    );
-                }
-            }
-        }
 
         // Create global filters from any Usage drilldowns.
         $realmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
@@ -998,18 +975,42 @@ class Usage extends Common
             $realmGroupBy = new $realmGroupByClass();
             return $realmGroupBy->getName();
         }, $realmGroupByClasses);
+
+        $meFilters = array();
+
+        // Extract the supported filter values from $usageRequest
         foreach ($usageRequest as $usageKey => $usageValue) {
-            if (!in_array($usageKey, $realmGroupByNames)) {
-                continue;
+
+            // handles '<dimension>_filter' properties
+            if (\xd_utilities\string_ends_with($usageKey, $usageFilterSuffix)) {
+                $usageFilterType = substr($usageKey, 0, -$usageFilterSuffixLength);
+                $usageFilterValues = explode(',', $usageValue);
+
+                foreach ($usageFilterValues as $usageFilterValue) {
+                    $translatedValues = $this->translateFilterValue($usageFilterType, $usageFilterValue);
+
+                    foreach($translatedValues as $translatedValue) {
+                        $meFilters[] = array(
+                            'id' => "$usageFilterType=$translatedValue",
+                            'value_id' => $translatedValue,
+                            'dimension_id' => $usageFilterType,
+                            'realms' => array($usageRealm),
+                            'checked' => true,
+                        );
+                    }
+                }
             }
 
-            $meFilters[] = array(
-                'id' => "$usageKey=$usageValue",
-                'value_id' => $usageValue,
-                'dimension_id' => $usageKey,
-                'realms' => array($usageRealm),
-                'checked' => true,
-            );
+            // handles '<dimension>' properties
+            if (in_array($usageKey, $realmGroupByNames)) {
+                $meFilters[] = array(
+                    'id' => "$usageKey=$usageValue",
+                    'value_id' => $usageValue,
+                    'dimension_id' => $usageKey,
+                    'realms' => array($usageRealm),
+                    'checked' => true,
+                );
+            }
         }
 
         // Store the global filters in the Metric Explorer request.
@@ -1142,8 +1143,7 @@ class Usage extends Common
 
         switch ($usageFilterType) {
             case 'pi':
-                // NOTE: At the time of writing there is no instance where multiple records have
-                // the same username but different person_id values.
+                // This query may return multiple values
                 $query = "SELECT DISTINCT sa.person_id AS value FROM modw.systemaccount sa WHERE sa.username = :value;";
                 break;
             case 'resource':
