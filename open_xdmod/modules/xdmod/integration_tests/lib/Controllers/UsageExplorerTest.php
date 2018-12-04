@@ -714,7 +714,7 @@ EOF;
                         'totalCount'=> 0,
                         'results' => array(),
                         'data' => array(),
-                        'message' => 'Invalid filter value detected',
+                        'message' => 'Invalid filter value detected: resource',
                         'code' => 0
                     )
                 ),
