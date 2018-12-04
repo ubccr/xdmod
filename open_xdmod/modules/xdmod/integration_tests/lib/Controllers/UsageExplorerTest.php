@@ -525,7 +525,15 @@ EOF;
         } else {
             $actual = $results[0];
 
-            $this->assertEquals($expectedValue, $actual);
+            foreach($expectedValue as $key => $value) {
+                $this->assertArrayHasKey($key, $actual);
+
+                if (is_array($value)) {
+                    // If we have an array value just make sure that the keys from the expected ==
+                    // the keys from the actual
+                    $this->assertEquals(array_keys($value), array_keys($actual[$key]));
+                }
+            }
         }
 
         if ($user !== 'pub') {
@@ -714,7 +722,7 @@ EOF;
                         'totalCount'=> 0,
                         'results' => array(),
                         'data' => array(),
-                        'message' => 'Invalid filter value detected: resource',
+                        'message' => 'Invalid filter value detected: %s',
                         'code' => 0
                     )
                 ),
