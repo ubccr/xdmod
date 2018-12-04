@@ -11,8 +11,7 @@
  *
  */
 
-var mysql = require('mysql'),
-	util = require('util');
+var util = require('util');
 
 function dynamicSort(property) { 
     return function (obj1,obj2) {
@@ -73,6 +72,117 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
     };
 
     /**
+     * Return the column descriptors in order. Required
+     * dimensions first then optional dimensions then the metrics.
+     */
+    this.getColumns = function () {
+        var requiredDimensions = [];
+        var optionalDimensions = [];
+        var metrics = [];
+
+        var columnNames = Object.keys(this.columns).sort();
+        for (let i = 0; i < columnNames.length; i++) {
+            let colname = columnNames[i];
+            if (this.columns.hasOwnProperty(colname)) {
+                let column = this.columns[colname];
+
+                column.name = colname;
+
+                if (column.nullable === false) {
+                    if (column.def === null) {
+                        column.dimension_type = 'required';
+                        requiredDimensions.push(column);
+                    } else {
+                        column.dimension_type = 'optional';
+                        optionalDimensions.push(column);
+                    }
+                } else {
+                    column.dimension_type = 'metric';
+                    metrics.push(column);
+                }
+            }
+        }
+        return requiredDimensions.concat(optionalDimensions, metrics);
+    };
+
+    /**
+     * return the dynamic table fields.
+     * @param isErrorTable whether to return the structure of the error table (true) or the main table (false)
+     */
+    this.getDynamicTableFields = function (isErrorTable) {
+        if (isErrorTable) {
+            return this.getDynamicErrorTableFields();
+        }
+        return this.getDynamicFactTableFields();
+    };
+
+    /**
+     * return the dynamic table fields for the fact table
+     */
+    this.getDynamicFactTableFields = function () {
+        var tableFields = [{
+            name: '_id',
+            type: 'int32',
+            nullable: false,
+            extra: 'auto_increment'
+        }];
+
+        tableFields.push(...this.getColumns());
+
+        tableFields.push(...[{
+            name: '_version',
+            type: 'int32',
+            nullable: false
+        }, {
+            name: 'last_modified',
+            type: 'timestamp',
+            nullable: false,
+            def: 'CURRENT_TIMESTAMP',
+            extra: 'ON UPDATE CURRENT_TIMESTAMP'
+        }]);
+
+        return tableFields;
+    };
+
+    /**
+     * return the dynamic table fields for the error table
+     */
+    this.getDynamicErrorTableFields = function () {
+        var tableFields = [{
+            name: '_id',
+            type: 'int32',
+            nullable: false
+        }];
+
+        var columns = this.getColumns();
+        for (let i = 0; i < columns.length; i++) {
+            if (columns[i].dimension_type === 'required') {
+                tableFields.push({
+                    name: columns[i].name,
+                    type: columns[i].type,
+                    nullable: columns[i].nullable,
+                    comments: 'DIMENSION VALUE'
+                });
+            } else {
+                tableFields.push({
+                    name: columns[i].name,
+                    type: 'int32',
+                    nullable: true,
+                    comments: 'ERROR CODE'
+                });
+            }
+        }
+
+        tableFields.push({
+            name: '_version',
+            type: 'int32',
+            nullable: false
+        });
+
+        return tableFields;
+    };
+
+    /**
      * return an array of arrays containing the colunm type, name, description and units
      */
     this.getTableDocumentation = function () {
@@ -107,67 +217,6 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
         return reqDims.concat(restDims).concat(metrics);
     };
 
-	this.getCreateTableStatement = function() {
-		var reqDims = [], 
-			restDims = [], 
-			metrics = [],
-			colKeys = Object.keys(this.columns).sort();
-		for(var col in colKeys) {
-			var column = this.columns[colKeys[col]];
-			column.name = colKeys[col];
-			column.sqlType = sqlType(column.type, column.length);
-
-			var comments = 'COMMENT ' + mysql.escape(column.comments?column.comments:'');
-			if(column.nullable === false ) {
-				if(column.def === null) {
-					reqDims.push(column.name + ' ' + column.sqlType + ' NOT NULL ' + comments);
-				} else {
-					restDims.push(column.name + ' ' + column.sqlType + ' NOT NULL DEFAULT \'' + column.def + '\' ' + comments);
-				}
-			} else{
-				metrics.push(column.name + ' ' + column.sqlType + ' DEFAULT ' + (column.def === null? 'NULL':'\'' + column.def + '\'') + ' ' + comments);
-			}
-		}
-		
-    var allDims = [
-        '    _id INT NOT NULL AUTO_INCREMENT',
-        reqDims.join(',\n    '),
-        restDims.join(',\n    '),
-        metrics.join(',\n    '),
-        '_version INT NOT NULL',
-        '`last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-        'UNIQUE KEY pk_index (' + this.meta.unique.join(',') + ')',
-        this.extras.join(',\n    '),
-        'PRIMARY KEY (_id)'
-    ];
-		
-    var ret = ['CREATE TABLE IF NOT EXISTS ' + this.name + '(\n' + allDims.join(',\n    ') + '\n) engine = myisam'];
-
-        if(this.triggers) {
-            var verbs = { before: "BEFORE", after: "AFTER" };
-            var nouns = { insert: "INSERT", update: "UPDATE", del: "DELETE" };
-
-            for(var verb in verbs) {
-                for(var noun in nouns) {
-                    var action = verb + "_" + noun;
-                    if(this.triggers.hasOwnProperty(action)) {
-                        var triggername = "`"+this.meta.schema+ "`.`" + this.name + verb + noun + "`";
-                        var stmt = "DELIMITER $$\n";
-                        stmt += "DROP TRIGGER IF EXISTS " + triggername + "$$\n";
-                        stmt += "USE `"+this.meta.schema+"`$$\n";
-                        stmt += "CREATE TRIGGER " + triggername + "\n";
-                        stmt += verbs[verb] + ' ' + nouns[noun] + ' ON `' + this.name + '`\n';
-                        stmt += "FOR EACH ROW\nBEGIN\n";
-                        stmt += this.triggers[action];
-                        stmt += "END$$\nDELIMITER ;\n";
-                        ret.push(stmt);
-                    }
-                }
-            }
-        }
-		
-		return ret;
-	},
 	this.getAggregationTableFields = function() {
 		var ret = [],
 			colKeys = Object.keys(this.columns).sort();
@@ -197,40 +246,6 @@ var DynamicTable = module.exports.DynamicTable = function(table) {
 			+ ' into ' + this.meta.schema + '.' + this.name + '_errors (_id,' + allEntries.join(',') + ',_version)'
 			+ ' values (:_id, :' + allEntries.join(',:') + ',' + _version + ')'; 
 	},
-	this.getCreateErrorTableStatement = function() {
-		var reqDims = [], 
-			restDims = [], 
-			metrics = [],
-			colKeys = Object.keys(this.columns).sort();
-		for(var col in colKeys) {
-			var column = this.columns[colKeys[col]];
-			column.sqlType = sqlType(column.type, column.length);
-			
-			if(column.nullable === false) {
-				if(column.def === null) {
-					reqDims.push(colKeys[col] + ' ' + column.sqlType + ' NOT NULL COMMENT \'DIMENSION VALUE\'');
-				} else {
-					restDims.push(colKeys[col] + ' int DEFAULT NULL COMMENT \'ERROR CODE\'');
-				}
-			} else
-			{
-				metrics.push(colKeys[col] + ' int DEFAULT NULL COMMENT \'ERROR CODE\'');
-			}
-		}
-		
-		var allDims = [
-			'    _id INT NOT NULL', 
-			reqDims.join(',\n    '),
-			restDims.join(',\n    '), 
-			metrics.join(',\n    '), 
-			'_version INT NOT NULL'
-		];
-		allDims.push( this.meta.extras.join(',\n    '), '    PRIMARY KEY (_id)'/*, 'KEY version_index (_version)'*/);
-
-    var ret = 'CREATE TABLE IF NOT EXISTS ' + this.name + '_errors (' + allDims.join(',\n    ') + '\n) engine = myisam';
-		
-		return ret;
-	}
 }
 
 module.exports.sqlType = function (type, length) {
@@ -245,15 +260,16 @@ module.exports.sqlType = function (type, length) {
             return 'double';
         case 'string':
             return 'varchar(' + (length !== undefined ? length : 50) + ')';
+        case 'timestamp':
+            return 'timestamp';
         case 'array':
             throw Error('Type ' + type + ' should not be in a table as a column');
         default:
             throw Error('Type ' + type + ' is unknown');
     }
 };
-var sqlType = module.exports.sqlType;
 
-var queryFormat = module.exports.queryFormat = function (query, values) {
+module.exports.queryFormat = function (query, values) {
     if (!values) return query;
     var ret = query.replace(/\:(\w+)/g, function (txt, key) {
         if (values.hasOwnProperty(key)) {
