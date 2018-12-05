@@ -1174,7 +1174,7 @@ class Usage extends Common
             }
 
             // If a string was provided but no id(s) were found then exception out.
-            throw new Exception(sprintf("Invalid filter value detected: %s", $usageFilterValue));
+            throw new Exception(sprintf("Invalid value detected for filter '%s': %s", $usageFilterType, $usageFilterValue));
         }
 
         return array($usageFilterValue);
