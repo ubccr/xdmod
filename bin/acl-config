@@ -1569,7 +1569,6 @@ function processQueryDescriptors(iDatabase $db, $module, $acl, array $realms, ar
      *     :statistic_name - string
      **/
     $query = <<<SQL
-INSERT INTO acl_group_bys(realm_id, acl_id, group_by_id, statistic_id, visible, enabled)
 SELECT inc.*
 FROM (
     SELECT
@@ -1607,6 +1606,13 @@ SQL;
 
     $totalInserted = 0;
     $totalProcessed = 0;
+
+    $bulkdatafile = tmpfile();
+
+    if ($bulkdatafile === false) {
+        throw new \Exception('Error creating temporary file');
+    }
+
     foreach ($queryDescriptors as $queryDescriptor) {
 
         $realm = isset($queryDescriptor['realm']) ? $queryDescriptor['realm'] : null;
@@ -1664,7 +1670,14 @@ SQL;
 
             $statement->execute($params);
 
-            $inserted = $statement->rowCount();
+            $inserted = 0;
+            while ($row = $statement->fetch(PDO::FETCH_NUM) ) {
+                $inserted += 1;
+                if (fwrite($bulkdatafile, join($row, ',') . "\n") === false) {
+                    throw new \Exception('Error writing to temporary file');
+                }
+            }
+
             $totalInserted += $inserted;
             if ($inserted === 0) {
                 $log->info("[ALREADY EXISTS] Query Descriptor for [ $module, $realm, $acl, $groupBy, $statisticName ]");
@@ -1676,6 +1689,20 @@ SQL;
         $totalProcessed += $processed;
         $log->info("Processed $processed statistics");
     }
+
+    fflush($bulkdatafile);
+
+    $bulkload = 'LOAD DATA LOCAL INFILE \'' . stream_get_meta_data($bulkdatafile)['uri'] . '\' INTO TABLE `acl_group_bys` FIELDS TERMINATED BY \',\' (realm_id, acl_id, group_by_id, statistic_id, visible, enabled)';
+    $databaseHelper = CCR\DB\MySQLHelper::factory($db);
+    $output = $databaseHelper->executeStatement($bulkload);
+
+    if (count($output) > 0) {
+        $this->logger->warning($bulkload);
+        foreach($output as $line) {
+            $this->logger->warning($line);
+        }
+    }
+
     $log->notice(sprintf("Processed %s query descriptors for Module($module) and Acl($acl)", count($queryDescriptors)));
     $log->notice("\tTotal Processed: $totalProcessed, Total Inserted: $totalInserted");
 }

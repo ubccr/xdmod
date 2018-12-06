@@ -38,7 +38,6 @@ email_token_expiration = "[:general_email_token_expiration:]"
 [features]
 xsede = "off"
 appkernels = "off"
-singlejobviewer = "off"
 
 ; Enable support for multiple service providers.
 ;

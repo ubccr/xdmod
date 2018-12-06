@@ -462,6 +462,31 @@ class Query
         return $this->_stat_fields;
     }
 
+    /**
+     * Add a where condition to the query and add the data to the pdo parameters. This
+     * function should be used when the right hand side of the where condition is untrused
+     * user supplied data.
+     *
+     * Note this function does not handle pdo parameterization of 'IN' conditions.
+     */
+    public function addPdoWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition)
+    {
+        // key on the non-parameterized form since the substitution string is different every time.
+        $key = $where_condition->__toString();
+
+        if (isset($this->_where_conditions[$key])) {
+            return;
+        }
+
+        $namedParam = $this->getNamedParameterMarker($where_condition->_right);
+
+        $this->_where_conditions[$key] = new \DataWarehouse\Query\Model\WhereCondition(
+            $where_condition->_left,
+            $where_condition->_operation,
+            $namedParam
+        );
+    }
+
     public function addWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition)
     {
         $this->_where_conditions[$where_condition->__toString()] = $where_condition;
@@ -725,6 +750,22 @@ class Query
         $data_query .= ") as a WHERE a.total IS NOT NULL";
         return $data_query;
     }
+
+    /**
+     * Store a bound parameter for the query and return the named parameter
+     * marker that should be used in the SQL query.
+     *
+     * @param the value to bind to the query
+     * @return string a named parameter marker.
+     */
+    protected function getNamedParameterMarker($value)
+    {
+        $pdosubst = ':subst' . $this->pdoindex;
+        $this->pdoparams[$pdosubst] = $value;
+        $this->pdoindex += 1;
+        return $pdosubst;
+    }
+
     public function setParameters(array $parameters = array())
     {
         $this->parameters = $parameters;
