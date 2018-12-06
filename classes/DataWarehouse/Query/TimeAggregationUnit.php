@@ -65,24 +65,23 @@ abstract class TimeAggregationUnit
      *
      * @return array The miniumum and maximum date ids or -1, -1 if out of bounds
      */
-    public function getDateRangeIds($start, $end){
+    public function getDateRangeIds($start, $end)
+    {
         $unit = $this->getUnitName();
-
-        // this is needed because we can't be consistent about anything.
         $unit_id = $unit . '_id';
+
         $query = 'SELECT
-        MIN(' . $unit_id . ') as minPeriodId,
-        MAX(' . $unit_id . ') as maxPeriodId
-    FROM
-        ' . $this->getAggTablePrefix() . $unit . ' p;';
+        COALESCE(MIN(' . $unit_id . '), -1) as minPeriodId,
+        COALESCE(MAX(' . $unit_id . '), -1) as maxPeriodId
+        FROM
+            ' . $this->getAggTablePrefix() . $unit . ' p
+        JOIN
+            modw.' . $unit . 's u ON u.id = p.' . $unit_id . '
+        WHERE
+            u.' . $unit . '_start <= ? AND
+            u.' . $unit . '_end > ?';
 
-        $dateResult = \DataWarehouse::connect()->query($query);
-
-        // this should not occur unless the aggregation table is empty
-        if (null === $dateResult[0]['minPeriodId'] || null === $dateResult[0]['minPeriodId']) {
-            return array(-1, -1);
-        }
-
+        $dateResult = \DataWarehouse::connect()->query($query, array($end, $start));
         return array_values($dateResult[0]);
     }
 

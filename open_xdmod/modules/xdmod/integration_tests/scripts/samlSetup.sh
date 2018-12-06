@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Used for docker build, cache file will need to be upgraded if newer version is needed
+CACHE_FILE='/tmp/saml-idp.tar.gz'
+
 DEFAULT_INSTALL_DIR=/usr/share/xdmod
 DEFAULT_VENDOR_DIR=$DEFAULT_INSTALL_DIR/vendor
 
@@ -7,21 +10,26 @@ INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
 VENDOR_DIR=${VENDOR_DIR:-$DEFAULT_VENDOR_DIR}
 
 httpd -k stop
-cd /root
-git clone https://github.com/mcguinness/saml-idp/
-cd saml-idp
-git checkout 8ff807a91f4badc3c0a10551e1d789df140a66cc
-rm -f package-lock.json
+cd /tmp
 
-# make sure that openssl is installed
-yum -y install openssl
+echo "installing saml idp server"
+if [ -f $CACHE_FILE ];
+then
+    echo "using cached copy"
+    tar -zxf $CACHE_FILE
+    cd saml-idp
+else
+    git clone https://github.com/mcguinness/saml-idp/
+    cd saml-idp
+    git checkout 8ff807a91f4badc3c0a10551e1d789df140a66cc
+    rm -f package-lock.json
+    npm set progress=false
+    npm install --quiet --silent
+fi
 
 openssl req -x509 -new -newkey rsa:2048 -nodes -subj '/C=US/ST=New York/L=Buffalo/O=UB/CN=CCR Test Identity Provider' -keyout idp-private-key.pem -out idp-public-cert.pem -days 7300
-echo "installing saml idp server"
-npm set progress=false
-npm install --quiet --silent
 
-cat > /root/saml-idp/config.js <<EOF
+cat > /tmp/saml-idp/config.js <<EOF
 /**
  * User Profile
  */
@@ -177,7 +185,7 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 );
 EOF
 
-CERTCONTENTS=`sed -n '2,21p' /root/saml-idp/idp-public-cert.pem | perl -ne 'chomp and print'`
+CERTCONTENTS=`sed -n '2,21p' idp-public-cert.pem | perl -ne 'chomp and print'`
 
 cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <<EOF
 <?php
@@ -231,5 +239,5 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
 );
 EOF
 
-node app.js  --acs http://localhost:8080/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud http://localhost:8080/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey ./idp-private-key.pem --httpsCert ./idp-public-cert.pem  --https false > /var/log/xdmod/samlidp.log 2>&1 &
+node app.js  --acs http://localhost:8080/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud http://localhost:8080/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https false > /var/log/xdmod/samlidp.log 2>&1 &
 httpd -k start
