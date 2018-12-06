@@ -137,10 +137,10 @@ function help () {
 # shellcheck disable=SC2015
 [[ "${__usage+x}" ]] || read -r -d '' __usage <<-'EOF' || true # exits non-zero when EOF encountered
   -b --base_dir       [arg] The directory that contains the XDMoD source code.                        Default="/root/src/github.com/ubccr/xdmod"
-  -x --xdebug_script  [arg] The XDebug script that will be auto-prepended.                            Default="/root/src/github.com/ubccr/xdmod/tools/dev/start_xdebug.sh"
+  -x --xdebug_script  [arg] The XDebug script that will be auto-prepended.                            Default="/root/src/github.com/ubccr/xdmod/tools/dev/start_xdebug.php"
   -p --process_script [arg] The script that is responsible for processing the raw code coverage data. Default="/root/src/github.com/ubccr/xdmod/tools/dev/combine_xdebug.php"
   -i --install_dir    [arg] Location that the XDebug script should be copied to.                      Default="/usr/share/xdmod"
-  -c --coverage_dir   [arg] Location that the code coverage raw data will reside.                     Default="/usr/share/xdmod/coverage"
+  -c --coverage_dir   [arg] Location that the code coverage raw data will reside.                     Default="/usr/share/xdmod/coverage_data"
   -r --report_dir     [arg] Location that the code coverage reports should reside.                    Default="/usr/share/xdmod/coverage_reports"
   -v                  Enable verbose mode, print script as it is executed
   -d --debug          Enables debug mode
