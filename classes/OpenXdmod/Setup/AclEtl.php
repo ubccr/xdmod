@@ -54,9 +54,40 @@ class AclEtl
             fwrite(STDOUT, "Command: $cmd\n");
         }
 
-        $output = shell_exec($cmd);
+        $pipes = array();
+
+        $process = proc_open(
+            $cmd,
+            array(
+                0 => array('file', '/dev/null', 'r'), // STDIN : Script doesn't need STDIN
+                1 => array('pipe', 'w'),              // STDOUT
+                2 => array('pipe', 'w')               // STDERR
+            ),
+            $pipes
+        );
+
+        if (!is_resource($process)) {
+            throw new \Exception("Failed to create subprocess: %s", $cmd);
+        }
+
+        $stdOut = stream_get_contents($pipes[1]);
+        if (false === $stdOut) {
+            throw new \Exception("Failed to get STDOUT for %s", $cmd);
+        }
+
+        $stdErr = stream_get_contents($pipes[2]);
+        if (false === $stdErr) {
+            throw new \Exception("Failed to get STDERR for %s", $cmd);
+        }
+
+        $exitCode = proc_close($process);
+
+        if ($exitCode !== 0) {
+            throw new \Exception($stdErr);
+        }
+
         if ($this->logLevel !== 'quiet') {
-            fwrite(STDOUT, "$output\n");
+            fwrite(STDOUT, "$stdOut\n");
         }
     }
 }
