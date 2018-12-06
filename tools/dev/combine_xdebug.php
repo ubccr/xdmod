@@ -26,12 +26,12 @@ foreach ($coverages as $coverage_file) {
     $matches = array();
     $codecoverageData = json_decode(file_get_contents($coverage_file), JSON_OBJECT_AS_ARRAY);
     if ($codecoverageData !== null) {
-        $test_name = str_ireplace(basename($coverage_file,".json"),"coverage-", "");
+        $test_name = str_ireplace(basename($coverage_file, ".json"), "coverage-", "");
         $final_coverage->append($codecoverageData, $test_name);
     }
 }
 
 echo "Generating final report..." . PHP_EOL;
 $report = new PHP_CodeCoverage_Report_XML();
-$report->process($final_coverage,$reportDir);
-echo "Report generated succesfully". PHP_EOL;
+$report->process($final_coverage, $reportDir);
+echo "Report generated succesfully" . PHP_EOL;

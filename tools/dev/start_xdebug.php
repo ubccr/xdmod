@@ -1,5 +1,7 @@
 <?php
 
+namespace CCR\CodeCoverage;
+
 xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 
 function end_coverage()
@@ -26,7 +28,7 @@ function end_coverage()
 
 class coverage_dumper
 {
-    function __destruct()
+    public function __destruct()
     {
         try {
             end_coverage();
