@@ -66,7 +66,7 @@ class AclEtl
             $pipes
         );
 
-        if (!is_resource($process)) {
+        if ( false === is_resource($process) ) {
             throw new \Exception("Failed to create subprocess: %s", $cmd);
         }
 
