@@ -67,7 +67,9 @@ class AclEtl
         );
 
         if ( false === is_resource($process) ) {
-            throw new \Exception("Failed to create subprocess: %s", $cmd);
+            throw new \Exception(
+                sprintf("Failed to create subprocess '%s': %s", $cmd, (null !== error_get_last() ? error_get_last() : "") )
+            );
         }
 
         $stdOut = stream_get_contents($pipes[1]);
