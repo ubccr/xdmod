@@ -2219,37 +2219,37 @@ function runEtlProcess($processName, $params = array())
             json_encode($params)
         )
     );
-    if (!$dryRun) {
-        $etlConfig = new EtlConfiguration(
-            CONFIG_DIR . '/etl/etl.json',
-            null,
-            $log,
-            array('default_module_name' => 'xdmod')
-        );
-        $etlConfig->initialize();
-        Utilities::setEtlConfig($etlConfig);
 
-        $scriptOptions = array_merge(
-            array(
-                'default-module-name' => 'xdmod',
-                'process-sections' => array($processName),
-            ),
-            $params
-        );
-        $log->debug(
-            sprintf(
-                'Running ETL pipeline with script options %s',
-                json_encode($scriptOptions)
-            )
-        );
+    $etlConfig = new EtlConfiguration(
+        CONFIG_DIR . '/etl/etl.json',
+        null,
+        $log,
+        array('default_module_name' => 'xdmod')
+    );
+    $etlConfig->initialize();
+    Utilities::setEtlConfig($etlConfig);
 
-        $overseerOptions = new EtlOverseerOptions(
-            $scriptOptions,
-            $log
-        );
-        $overseer = new EtlOverseer($overseerOptions, $log);
-        $overseer->execute($etlConfig);
-    }
+    $scriptOptions = array_merge(
+        array(
+            'default-module-name' => 'xdmod',
+            'process-sections' => array($processName),
+            'dryrun' => $dryRun
+        ),
+        $params
+    );
+    $log->debug(
+        sprintf(
+            'Running ETL pipeline with script options %s',
+            json_encode($scriptOptions)
+        )
+    );
+
+    $overseerOptions = new EtlOverseerOptions(
+        $scriptOptions,
+        $log
+    );
+    $overseer = new EtlOverseer($overseerOptions, $log);
+    $overseer->execute($etlConfig);
 }
 
 /**
