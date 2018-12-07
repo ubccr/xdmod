@@ -157,10 +157,5 @@
         "sql_file_list": [
             "jobs/job-record-hpc-post-ingest.sql"
         ]
-    }, {
-        "name": "min-max-date",
-        "definition_file": "jobs/xdw/min-max-date.json",
-        "description": "Job Record min and max job dates",
-        "truncate_destination": true
     }]
 }
