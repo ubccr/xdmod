@@ -21,13 +21,9 @@
         "exclude_patterns": [
             "#/\\.#",
             "#xdmod-.*\\.rpm$#",
+            "#\\.eslintrc\\.json$#",
             "#xdmod-.*\\.tar\\.gz$#",
             "#^\\/configuration\\/.+\\..+\\.template$#"
-        ]
-    },
-    "commands": {
-        "pre_build": [
-            "find . -type f -name .eslintrc.json -delete"
         ]
     },
     "file_maps": {

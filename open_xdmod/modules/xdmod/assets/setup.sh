@@ -9,7 +9,7 @@ xdmod_dir="$module_dir/../../.."
 
 echo Installing composer managed dependencies
 cd $xdmod_dir
-composer install --no-dev
+composer install --no-dev --prefer-dist
 
 echo Compiling report builder code
 cd "$xdmod_dir/reporting/jasper_builder"
