@@ -148,18 +148,19 @@ SQLF;
     {
         $db = DB::factory(self::DB_SECTION_NAME);
         $query = <<<SQL
-SELECT DISTINCT u.id, CONCAT(u.last_name, ', ', u.first_name, ' [', o.abbrev,
-                             ']') AS name
+SELECT DISTINCT
+    u.id,
+    CONCAT(u.last_name, ', ', u.first_name, ' [', o.abbrev, ']') AS name
 FROM Users u
-       JOIN (SELECT u.organization_id FROM Users u WHERE u.id = :user_id) uo
-         ON u.organization_id = uo.organization_id
-       LEFT JOIN (SELECT u.id as user_id, u.organization_id as value
-                  FROM Users u
-                         JOIN user_acls ua ON ua.user_id = u.id
-                         JOIN acls a ON ua.acl_id = a.acl_id
-                  WHERE a.name = 'cd') has_cd ON has_cd.user_id = u.id AND
-                                                 has_cd.value = u.organization_id -- This join allows us to retrieve more information about the current users center.
-       JOIN modw.organization o ON o.id = u.organization_id
+    JOIN (SELECT u.organization_id FROM Users u WHERE u.id = :user_id) uo
+        ON u.organization_id = uo.organization_id
+    LEFT JOIN (SELECT u.id as user_id, u.organization_id as value
+               FROM Users u
+                   JOIN user_acls ua ON ua.user_id = u.id
+                   JOIN acls a ON ua.acl_id = a.acl_id
+               WHERE a.name = 'cd') has_cd ON has_cd.user_id = u.id AND
+                                              has_cd.value = u.organization_id -- This join allows us to retrieve more information about the current users center.
+    JOIN modw.organization o ON o.id = u.organization_id
 WHERE
     -- We also only want users that do not have the 'cd' acl
     has_cd.user_id IS NULL;
