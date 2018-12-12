@@ -54,7 +54,7 @@ use Models\Services\Acls;
     $acls = Acls::listUserAcls($selected_user);
     $populatedAcls = array_reduce(
         $acls,
-        function ($carry, $item) use ($selected_user) {
+        function ($carry, $item) {
             $carry[$item['name']] = array();
             return $carry;
         },
