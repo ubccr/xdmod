@@ -867,6 +867,27 @@ class Packager
        }
     }
 
+    /** Check to see if a file or directory is to be excluded from the build
+     * because of the configuration settings.
+     *
+     * @param filePath path of file to check
+     * @return true if the file is to be excluded false otherwise.
+     */
+    private function isFilePathExcluded($filePath)
+    {
+        if (array_search($filePath, $this->config->getFileExcludePaths()) !== false) {
+            return true;
+        }
+
+        foreach ($this->config->getFileExcludePatterns() as $pattern) {
+            if (preg_match($pattern, $filePath) === 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Copy a directory recursively.
      *
@@ -875,6 +896,10 @@ class Packager
      */
     private function copyDir($srcDir, $destDir)
     {
+        if ($this->isFilePathExcluded($srcDir)) {
+            return;
+        }
+
         if (!is_dir($srcDir)) {
             throw new Exception("Directory '$srcDir' does not exist");
         }
@@ -894,6 +919,10 @@ class Packager
 
             $srcFile  = "$srcDir/$file";
             $destFile = "$destDir/$file";
+
+            if ($this->isFilePathExcluded($srcFile)) {
+                continue;
+            }
 
             if (is_file($srcFile)) {
                 $this->copyFile($srcFile, $destFile);
