@@ -269,10 +269,66 @@ SQL;
       WHERE a.acl_id IS NOT NULL
 SQL;
 
+    /**
+     * to serve as the select query that will be used to create the backup
+     * table 'user_acl_group_by_parameters_bkup'.
+     */
+    $uagbpCreateBkup = <<<SQL
+    SELECT
+      uagbp.user_id,
+      a.name  AS acl_name,
+      m.name  AS group_by_module_name,
+      r.name  AS group_by_realm_name,
+      gb.name AS group_by_name,
+      uagbp.value
+    FROM user_acl_group_by_parameters uagbp
+      JOIN acls a ON a.acl_id = uagbp.acl_id
+      JOIN group_bys gb ON gb.group_by_id = uagbp.group_by_id
+      JOIN realms r ON r.realm_id = gb.realm_id
+      JOIN modules m ON m.module_id = gb.module_id;
+SQL;
+
+    /**
+     * Serves as the insertion query to utilize when reconstituting the
+     * user_acl_group_by_parameters table. A number of steps have been
+     * taken to ensure that orphan records are not introduced into the
+     * system post sync. In particular we prevent orphan records from the
+     * following tables:
+     *   - acls
+     *   - modules
+     *   - realms
+     *   - group_bys
+     */
+    $uagbpRepopulate = <<<SQL
+INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
+  SELECT
+    uagbp.user_id,
+    a.acl_id,
+    gb.group_by_id,
+    uagbp.value
+  FROM user_acl_group_by_parameters_bkup uagbp
+    LEFT JOIN acls a ON a.name = uagbp.acl_name
+    LEFT JOIN modules m ON m.name = uagbp.group_by_module_name
+    LEFT JOIN realms r ON r.name = uagbp.group_by_realm_name
+    LEFT JOIN group_bys gb
+      ON gb.name = uagbp.group_by_name AND
+         gb.module_id = m.module_id AND
+         gb.realm_id = r.realm_id
+  WHERE a.acl_id IS NOT NULL AND
+        m.module_id IS NOT NULL AND
+        r.realm_id IS NOT NULL AND
+        gb.group_by_id IS NOT NULL;
+SQL;
+
+
     $tablesToBeBackedUp = array(
         'user_acls' => array(
             'create_sql' => $userAclCreateBkup,
             'populate_sql' => $userAclRepopulate
+        ),
+        'user_acl_group_by_parameters' => array(
+            'create_sql' => $uagbpCreateBkup,
+            'populate_sql' =>$uagbpRepopulate
         )
     );
 
@@ -302,11 +358,13 @@ SQL;
      *
      *     Current tables include:
      *       - user_acls
+     *       - user_acl_group_by_parameters
      *
      *   - managed tables: These tables are able to be re-created from our available configuration
      *     files ( roles.json / datawarehouse.json ).
      *
      *     Current tables include:
+     *       - user_acl_group_by_parameters
      *       - user_acls
      *       - acl_tabs
      *       - tabs
@@ -363,7 +421,7 @@ SQL;
      *
      * *** Important Notes ***
      *
-     * - If there are changes to the non-managed tables ( user_acls )
+     * - If there are changes to the non-managed tables ( user_acls, user_acl_group_by_parameters )
      *   *after* a failed run but *before* acl-config is run with the --recover flag, then these
      *   changes will *not* be recovered.
      */
@@ -488,6 +546,7 @@ function wipeManagedTables(iDatabase $db)
     $log->info("Wiping Managed Tables...");
 
     $tables = array(
+        'user_acl_group_by_parameters',
         'user_acls',
         'acl_tabs',
         'tabs',

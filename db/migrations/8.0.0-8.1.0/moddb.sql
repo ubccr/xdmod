@@ -1,3 +1,2 @@
--- These tables are no longer necessary.
-DROP TABLE `moddb`.`user_acl_group_by_parameters`;
+-- This table is no longer necessary
 DROP TABLE `moddb`.`UserRoleParameters`;
