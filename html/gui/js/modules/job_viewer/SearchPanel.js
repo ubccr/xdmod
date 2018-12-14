@@ -65,6 +65,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             Ext.apply(this, {
                     layout: 'table',
                     width: 1000,
+                autoScroll: true,
                     border: false,
                     layoutConfig: {
                         columns: 2
@@ -128,8 +129,6 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             window.setHeight(adjHeight);
             window.setWidth(adjWidth);
             window.setPosition(adjX, adjY);
-
-            this._selectInitial('realm-field', 0, null);
 
             this.shown = true;
             if (!this.children) {
@@ -291,25 +290,38 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             });
         }, // search_requested
 
+        basic_search_realm_selected: function (realm) {
+            var basicSearch = Ext.getCmp('job-viewer-search-lookup');
+            basicSearch.disable();
+            var jobidField = Ext.getCmp('basic-localjobid');
+            jobidField.reset();
+            var resource = Ext.getCmp('basic-resource');
+            resource.store.load({
+                params: {
+                    realm: realm
+                }
+            });
+        },
+
         /**
          * Event fired when a realm has been selected.
          *
          * @param realm
          */
         realm_selected: function (realm) {
-            var self = this;
-            if (CCR.exists(self.valueField) && CCR.exists(self.valueField.store)) {
-                Ext.apply(self.valueField.store.baseParams, {
+            Ext.getCmp('search-add').disable();
+            Ext.getCmp('job-viewer-search-search').disable();
+            this.searchStore.removeAll();
+            this.valueField.store.setBaseParam({
+                realm: realm
+            });
+            this.searchField.reset();
+            this.searchField.store.load({
+                params: {
                     realm: realm
-                });
-            }
-            if (CCR.exists(self.searchField) && CCR.exists(self.searchField.store)) {
-                Ext.apply(self.searchField.store.baseParams, {
-                    realm: realm
-                });
-                self._selectInitial('search-field');
-            }
-        }, // realm_selected
+                }
+            });
+        },
 
         validate_search_criteria: function() {
             var lookupValid, searchValid;
@@ -633,7 +645,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             fields: [
                 {name: 'dtype', mapping: 'dtype', type: 'string'},
                 {name: 'jobid', mapping: 'jobid', type: 'int'},
-                {name: 'local_job_id', mapping: 'local_job_id', type: 'int'},
+                { name: 'local_job_id', mapping: 'local_job_id', type: 'string' },
                 {name: 'name', mapping: 'name', type: 'string'},
                 {name: 'realm', mapping: 'realm', type: 'string'},
                 {name: 'resource', mapping: 'resource', type: 'string'},
@@ -908,12 +920,16 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                     qtip: 'Use the quick lookup form to search for a job based on its ID and the resource on which it ran.'
                 }],
                 layout: 'border',
-                height: 135,
-                items: [
-                    {
+                height: 160,
+                items: [{
                     xtype: 'fieldset',
                     region: 'center',
-                    items: [
+                    items: [{
+                        xtype: 'realmcombo',
+                        id: 'basic-search-realm',
+                        panel: self,
+                        realmSelectEvent: 'basic_search_realm_selected'
+                    },
                     {
                         xtype: 'combo',
                         fieldLabel: 'Resource',
@@ -929,10 +945,15 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                         enableKeyEvents: true,
                         store: new Ext.data.JsonStore({
                             proxy: new Ext.data.HttpProxy({
-                                url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/dimensions/resource?querygroup=tg_usage&realm=SUPREMM&filter=true&token=' + self.token
+                                url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/dimensions/resource',
+                                method: 'GET'
                             }),
-                            idProperty: 'id',
-                            autoLoad: false,
+                            baseParams: {
+                                realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
+                                token: self.token
+                            },
+                            storeId: 'jobviewer-basicsearch-resource',
+                            autoLoad: true,
                             root: 'results',
                             fields: [
                                 {name: 'id', type: 'string'},
@@ -949,12 +970,6 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                             }
                         }),
                         listeners: {
-                            render: {
-                                fn: function (combo) {
-                                    combo.getStore().load();
-                                },
-                                single: true
-                            },
                             select: function( /* combo, record, index */ ) {
                                 self.fireEvent('validate_search_criteria');
                             },
@@ -964,12 +979,11 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                         }
                     },
                     {
-                        xtype: 'numberfield',
+                        xtype: 'textfield',
                         fieldLabel: 'Job Number',
                         emptyText: 'Enter Job #',
                         id: 'basic-localjobid',
-                        allowNegative: false,
-                        autoStripChars: true,
+                        stripCharsRe: /(^\s+|\s+$)/g,
                         width: 200,
                         enableKeyEvents: true,
                         listeners: {
@@ -992,7 +1006,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                         handler: function( /*button, event*/ ) {
                             var resourceField = Ext.getCmp('basic-resource');
                             var localjobidField = Ext.getCmp('basic-localjobid');
-                            var realmField = Ext.getCmp('realm-field');
+                            var realmField = Ext.getCmp('basic-search-realm');
                             var params = {
                                 realm: realmField.getValue(),
                                 params: JSON.stringify({
@@ -1003,24 +1017,24 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                             self.fireEvent('search_requested', self, 'Lookup', params);
                         }
                     }]
-            }]
-        },
-        {
-            xtype: "panel",
-            id: "job-viewer-advanced-search",
-            title: "Advanced Search",
-            tools: [{
-                id: 'help',
-                qtip: 'Use the advanced search form to search for jobs based on one or more filters and a date range.'
-            }],
-            height: 400,
-            layout: 'border',
-            items: [{
-                region: 'center',
-                id: 'criteria_advanced',
-                xtype: 'fieldset',
-                labelWidth: 55,
+                }]
+            },
+            {
+                xtype: 'panel',
+                id: 'job-viewer-advanced-search',
+                title: 'Advanced Search',
+                tools: [{
+                    id: 'help',
+                    qtip: 'Use the advanced search form to search for jobs based on one or more filters and a date range.'
+                }],
+                height: 375,
+                layout: 'border',
                 items: [{
+                    region: 'center',
+                    id: 'criteria_advanced',
+                    xtype: 'fieldset',
+                    labelWidth: 55,
+                    items: [{
                         xtype: 'datefield',
                         id: 'search_start_date',
                         format: 'Y-m-d',
@@ -1070,73 +1084,9 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                     },
                     {
                         id: 'realm-field',
-                        xtype: 'combo',
-                        hidden: true,
-                        fieldLabel: 'Realm',
-                        disabled: true,
-                        emptyText: 'Select a Realm',
-                        triggerAction: 'all',
-                        selectOnFocus: true,
-                        displayField: 'name',
-                        valueField: 'name',
-                        forceSelection: true,
-                        store: new Ext.data.JsonStore({
-                            proxy: new Ext.data.HttpProxy({
-                                method: 'GET',
-                                /*'/rest/datawarehouse/explorer/realms/'*/
-                                url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/realms'
-                            }),
-                            baseParams: {
-                                token: self.token,
-                                querygroup: 'tg_usage',
-                                filter: true
-                            },
-                            storeId: 'realmStore',
-                            root: 'results',
-                            fields: ['name'],
-                            listeners: {
-
-                                load: function (store, records /*, options*/) {
-                                    if (CCR.exists(records)) {
-                                        for (var i = 0; i < records.length; i++) {
-                                            var record = records[i];
-                                            record.set('name', record.json);
-                                            if ('SUPREMM' !== record.get('name')) {
-                                                store.remove(record);
-                                            }
-                                        }
-                                    }
-                                },
-                                exception: function (proxy, type, action, exception, response) {
-                                    switch (response.status) {
-                                        case 403:
-                                        case 500:
-                                            var details = Ext.decode(response.responseText);
-                                            Ext.Msg.alert("Error " + response.status + " " + response.statusText, details.message);
-                                            break;
-                                        case 401:
-                                            // Do nothing
-                                            break;
-                                        default:
-                                            Ext.Msg.alert(response.status + ' ' + response.statusText, response.responseText);
-                                    }
-                                }
-                            }
-                        }),
-                        listeners: {
-                            select: function (field, record /*, index*/) {
-                                if (CCR.exists(record)) {
-                                    var value = record.get('name');
-                                    self.fireEvent('realm_selected', value);
-                                }
-
-                            },
-                            afterrender: function (field) {
-                                if (!CCR.exists(self.realmField)) {
-                                    self.realmField = field;
-                                }
-                            }
-                        }
+                        xtype: 'realmcombo',
+                        panel: self,
+                        realmSelectEvent: 'realm_selected'
                     },
                     {
                         xtype: 'compositefield',
@@ -1167,6 +1117,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                                     }),
                                     baseParams: {
                                         token: self.token,
+                                        realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
                                         querygroup: 'tg_usage'
 
                                     },
@@ -1175,6 +1126,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                                         direction: 'ASC'
                                     },
                                     groupField: 'Category',
+                                    autoLoad: true,
                                     storeId: 'dimensionResults',
                                     reader: new Ext.data.JsonReader({
                                         root: 'results',
@@ -1247,6 +1199,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                                     baseParams: {
                                         token: self.token,
                                         querygroup: 'tg_usage',
+                                        realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
                                         filter: 'true'
                                     },
                                     storeId: 'valueStore',
@@ -1414,7 +1367,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                             self.fireEvent('search_requested', self, 'Search', params);
                         }
                     }]
-            }]
+                }]
 
         },
         {
@@ -1595,8 +1548,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
     },
 
     /**
-     * Perform the steps necessary to get the SearchPanel ready
-     * for the editing of a 'Quick Search'
+     * Load the Quick Job Lookup form with the provided searchTerms.
      *
      * @param {Object} searchTerms
      */
@@ -1605,32 +1557,19 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
 
         var params = JSON.parse(searchTerms.params);
 
-        // populate the basic settings.
+        Ext.getCmp('basic-search-realm').setValue(searchTerms.realm);
+        Ext.getCmp('basic-localjobid').setValue(params.local_job_id);
+
         var resourceField = Ext.getCmp('basic-resource');
-        var localJobIdField = Ext.getCmp('basic-localjobid');
-
-        var setLocalJobId = function() {
-            localJobIdField.setValue(params.local_job_id);
-            localJobIdField.focus();
-            self.fireEvent('validate_search_criteria');
-        };
-        var setResourceId = function() {
-            resourceField.setValue(params.resource_id);
-            var id = resourceField.store.find('id', params.resource_id);
-            resourceField.selectedIndex = id || - 1;
-            setLocalJobId();
-        };
-
-        var loadListener = function() {
-            setResourceId();
-            resourceField.un('load', loadListener);
-        };
-
-        if (resourceField.store.getTotalCount() < 1) {
-            resourceField.store.on('load', loadListener);
-        } else {
-            setResourceId();
-        }
+        resourceField.store.load({
+            params: {
+                realm: searchTerms.realm
+            },
+            callback: function () {
+                resourceField.setValue(params.resource_id);
+                self.fireEvent('validate_search_criteria');
+            }
+        });
     },
 
     /**
@@ -1651,21 +1590,10 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
         startDateField.setValue(startDate);
         endDateField.setValue(endDate);
 
+        var realmField = Ext.getCmp('realm-field');
+
         var realm = searchTerms.realm;
-
-        var setRealm = function() {
-            if (realm === undefined) {
-                var defaultRealm = self.realmField.store.getAt(0);
-                if (defaultRealm) {
-                    realm = defaultRealm.get('name');
-                }
-            }
-
-            self.realmField.setValue(realm);
-
-            var id = self.realmField.store.find('name', realm);
-            self.realmField.selectedIndex = id || - 1;
-        };
+        realmField.setValue(searchTerms.realm);
 
         var clearSearchCriteria = function() {
             var store = CCR.exists(self.searchStore) ? self.searchStore : null;
@@ -1733,23 +1661,9 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             }
         };
 
-        var setState = function() {
-            setRealm();
-            clearSearchCriteria();
-            addSearchCriteria();
-            self.resetResults();
-        };
-
-        var realmLoadListener = function() {
-            setState();
-            self.realmField.store.un('load', realmLoadListener);
-        };
-
-        if (this.realmField.store.getTotalCount() < 1) {
-            this.realmField.store.on('load', realmLoadListener);
-        } else {
-            setState();
-        }
+        clearSearchCriteria();
+        addSearchCriteria();
+        self.resetResults();
     },
 
     /**
@@ -2039,3 +1953,28 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
 
 });
 
+
+XDMoD.Module.JobViewer.RealmCombo = Ext.extend(Ext.form.ComboBox, {
+    fieldLabel: 'Realm',
+    mode: 'local',
+    typeAhead: true,
+    triggerAction: 'all',
+    selectOnFocus: true,
+    forceSelection: true,
+    store: CCR.xdmod.ui.rawDataAllowedRealms,
+    value: CCR.xdmod.ui.rawDataAllowedRealms[0],
+    listeners: {
+        select: function (field) {
+            if (field.startValue !== field.getValue()) {
+                this.panel.fireEvent(this.realmSelectEvent, field.getValue());
+            }
+        },
+        blur: function (field) {
+            if (field.startValue !== field.getValue()) {
+                this.panel.fireEvent(this.realmSelectEvent, field.getValue());
+            }
+        }
+    }
+});
+
+Ext.reg('realmcombo', XDMoD.Module.JobViewer.RealmCombo);

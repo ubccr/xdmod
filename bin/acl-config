@@ -16,6 +16,10 @@ use CCR\DB\iDatabase;
 use CCR\Log;
 use CCR\Json;
 
+use ETL\Configuration\EtlConfiguration;
+use ETL\EtlOverseer;
+use ETL\EtlOverseerOptions;
+use ETL\Utilities;
 use User\Roles;
 use Xdmod\Config;
 
@@ -109,6 +113,9 @@ function main()
     if ($result > 0) {
         exit($result);
     }
+
+    // Make sure that all of the required tables are present
+    runEtlProcess('acls-xdmod-management');
 
     // a role/acl blacklist. 'default' doesn't actually exist so don't bother
     // processing it.
@@ -353,7 +360,7 @@ SQL;
      *       - user_acls
      *       - user_acl_group_by_parameters
      *
-     *   - managed tables: These tables are able to be re-created from our available configuration 
+     *   - managed tables: These tables are able to be re-created from our available configuration
      *     files ( roles.json / datawarehouse.json ).
      *
      *     Current tables include:
@@ -436,7 +443,10 @@ SQL;
 
     wipeManagedTables($db);
 
-    createManagedTables();
+    // Create Managed Tables
+    runEtlProcess('acls-xdmod-management');
+
+    repopulateNonManagedTables($db, $tablesToBeBackedUp);
 
     // Process the xdmod module first
     if (array_key_exists(DEFAULT_MODULE_NAME, $modules)) {
@@ -482,6 +492,9 @@ SQL;
 
     // Make sure we drop the backup tables
     dropTables($db, $nonManagedBackupTables);
+
+    // Run the acl cleanup scripts
+    runEtlProcess('acls-import');
 }
 
 /**
@@ -566,31 +579,6 @@ SQL;
 
     $log->info("Managed Tables Wiped!");
 }
-
-function createManagedTables()
-{
-    global $dryRun, $log;
-
-    $cmd = implode(
-        ' ',
-        array(
-            'php',
-            BASE_DIR . '/tools/etl/etl_overseer.php',
-            '-p',
-            'acls-xdmod-management',
-            '-v',
-            'quiet'
-        )
-    );
-
-    if ($dryRun) {
-        $log->info("Would have executed: $cmd");
-        return;
-    }
-
-    echo exec($cmd);
-}
-
 
 /**
  * Re-populate the user related tables
@@ -1569,7 +1557,6 @@ function processQueryDescriptors(iDatabase $db, $module, $acl, array $realms, ar
      *     :statistic_name - string
      **/
     $query = <<<SQL
-INSERT INTO acl_group_bys(realm_id, acl_id, group_by_id, statistic_id, visible, enabled)
 SELECT inc.*
 FROM (
     SELECT
@@ -1607,6 +1594,13 @@ SQL;
 
     $totalInserted = 0;
     $totalProcessed = 0;
+
+    $bulkdatafile = tmpfile();
+
+    if ($bulkdatafile === false) {
+        throw new \Exception('Error creating temporary file');
+    }
+
     foreach ($queryDescriptors as $queryDescriptor) {
 
         $realm = isset($queryDescriptor['realm']) ? $queryDescriptor['realm'] : null;
@@ -1664,7 +1658,14 @@ SQL;
 
             $statement->execute($params);
 
-            $inserted = $statement->rowCount();
+            $inserted = 0;
+            while ($row = $statement->fetch(PDO::FETCH_NUM) ) {
+                $inserted += 1;
+                if (fwrite($bulkdatafile, join($row, ',') . "\n") === false) {
+                    throw new \Exception('Error writing to temporary file');
+                }
+            }
+
             $totalInserted += $inserted;
             if ($inserted === 0) {
                 $log->info("[ALREADY EXISTS] Query Descriptor for [ $module, $realm, $acl, $groupBy, $statisticName ]");
@@ -1676,6 +1677,20 @@ SQL;
         $totalProcessed += $processed;
         $log->info("Processed $processed statistics");
     }
+
+    fflush($bulkdatafile);
+
+    $bulkload = 'LOAD DATA LOCAL INFILE \'' . stream_get_meta_data($bulkdatafile)['uri'] . '\' INTO TABLE `acl_group_bys` FIELDS TERMINATED BY \',\' (realm_id, acl_id, group_by_id, statistic_id, visible, enabled)';
+    $databaseHelper = CCR\DB\MySQLHelper::factory($db);
+    $output = $databaseHelper->executeStatement($bulkload);
+
+    if (count($output) > 0) {
+        $this->logger->warning($bulkload);
+        foreach($output as $line) {
+            $this->logger->warning($line);
+        }
+    }
+
     $log->notice(sprintf("Processed %s query descriptors for Module($module) and Acl($acl)", count($queryDescriptors)));
     $log->notice("\tTotal Processed: $totalProcessed, Total Inserted: $totalInserted");
 }
@@ -2157,14 +2172,84 @@ SQL;
     return count($results) > 0;
 }
 
+/**
+ * Attempt to issue a DROP TABLE statement for each of the provided $tables.
+ *
+ * @param iDatabase $db     the database to issue the sql statements to.
+ * @param string[]  $tables an array of string table names that are to be dropped.
+ */
 function dropTables(iDatabase $db, array $tables)
 {
+    global $dryRun, $log;
+
+    $log->info("*** Dropping Tables...");
+
     $tableList = implode(
         ',',
         $tables
     );
 
+    if ($dryRun) {
+        $log->notice("Would have dropped tables: $tableList");
+        return;
+    }
+
+    $log->info("\t [$tableList]");
+
     $db->execute("DROP TABLE $tableList");
+
+    $log->info("*** Tables Dropped!");
+}
+
+/**
+ * Attempt to run the ETL process identified by $processName.
+ *
+ * @param string $processName the name of the ETL process that is to be executed.
+ * @param array $params
+ * @throws Exception
+ */
+function runEtlProcess($processName, $params = array())
+{
+    global $dryRun, $log;
+
+    $log->debug(
+        sprintf(
+            'Running ETL pipeline "%s" with parameters %s',
+            $processName,
+            json_encode($params)
+        )
+    );
+
+    $etlConfig = new EtlConfiguration(
+        CONFIG_DIR . '/etl/etl.json',
+        null,
+        $log,
+        array('default_module_name' => 'xdmod')
+    );
+    $etlConfig->initialize();
+    Utilities::setEtlConfig($etlConfig);
+
+    $scriptOptions = array_merge(
+        array(
+            'default-module-name' => 'xdmod',
+            'process-sections' => array($processName),
+            'dryrun' => $dryRun
+        ),
+        $params
+    );
+    $log->debug(
+        sprintf(
+            'Running ETL pipeline with script options %s',
+            json_encode($scriptOptions)
+        )
+    );
+
+    $overseerOptions = new EtlOverseerOptions(
+        $scriptOptions,
+        $log
+    );
+    $overseer = new EtlOverseer($overseerOptions, $log);
+    $overseer->execute($etlConfig);
 }
 
 /**

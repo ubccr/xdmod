@@ -53,6 +53,87 @@ var generateJobListTableIdentifier = function (table) {
 
 
 module.exports = {
+
+    /**
+     * Create an ETLv2 table definition for the provided dynamic table.
+     *
+     * @param table the DynamicTable to process.
+     * @param isErrorTable whether to create the definition of the associated error table
+     *        or the fact table.
+     *
+     * @return [Object] the ETLv2 table definition.
+     */
+    createDynamicTableDefinition: function (table, isErrorTable) {
+        var tableDefinition = {
+            name: table.name,
+            engine: 'MyISAM',
+            comment: '',
+            columns: []
+        };
+        var tableColumns = table.getDynamicTableFields(isErrorTable);
+
+        if (isErrorTable) {
+            tableDefinition.name += '_errors';
+        }
+
+        for (let i = 0; i < tableColumns.length; i++) {
+            let definition = {
+                name: tableColumns[i].name,
+                type: sqlType(tableColumns[i].type, tableColumns[i].length),
+                nullable: tableColumns[i].nullable,
+                comment: tableColumns[i].comments
+            };
+            if (tableColumns[i].hasOwnProperty('def')) {
+                definition.default = tableColumns[i].def;
+            }
+            if (tableColumns[i].hasOwnProperty('extra')) {
+                definition.extra = tableColumns[i].extra;
+            }
+            tableDefinition.columns.push(definition);
+        }
+
+        tableDefinition.indexes = [{
+            name: 'PRIMARY',
+            columns: [
+                tableDefinition.columns[0].name
+            ],
+            type: 'BTREE',
+            is_unique: true
+        }];
+
+        if (!isErrorTable) {
+            if (table.meta.unique) {
+                tableDefinition.indexes.push({
+                    name: 'pk_index',
+                    columns: table.meta.unique,
+                    type: 'BTREE',
+                    is_unique: true
+                });
+            }
+        }
+
+        for (let i = 0; i < table.meta.extras.length; i++) {
+            if (typeof table.meta.extras[i] === 'string') {
+                // text string definitions are deprecated. Support only one
+                // type of definition for backwards compatibility
+                let match = /^KEY ([^\s]+) \(([^)]+)\)$/.exec(table.meta.extras[i]);
+                if (!match) {
+                    throw new Error('Unsupported table metadata definition ' + table.meta.extras[i]);
+                }
+                tableDefinition.indexes.push({
+                    name: match[1],
+                    columns: match[2].split(','),
+                    type: 'BTREE',
+                    is_unique: false
+                });
+            } else {
+                tableDefinition.indexes.push(table.meta.extras[i]);
+            }
+        }
+
+        return tableDefinition;
+    },
+
     /**
      * Generate the configuration files for the aggregation tables. This will
      * generate two table definitions and two action files. One for the days
@@ -298,7 +379,15 @@ module.exports = {
         return action;
     },
 
-    generateAggregates: function (profile, xdmodConfigDirectory) {
+    /**
+     * generate the etlv2 table definitions and action files for all supported tables
+     * in a given etl profile and write them to the specified path.
+     *
+     * @param profile The etl profile object
+     * @param xdmodConfigDirectory the path to the XDMoD configuration directory under
+     *        which the config files will be written.
+     */
+    generateDefinitionFiles: function (profile, xdmodConfigDirectory) {
         var etlv2ConfigDir = xdmodConfigDirectory + '/etl';
         var tables = profile.getAggregationTables();
 
@@ -322,6 +411,20 @@ module.exports = {
 
                 let joblistTableDefn = module.exports.createJobListTableDefinition(table);
                 mkdirAndWrite(tableDefnDir, generateJobListTableIdentifier(table), joblistTableDefn);
+            }
+        }
+
+        var facttables = profile.getTables();
+
+        for (let t in facttables) {
+            if (facttables.hasOwnProperty(t)) {
+                let table = facttables[t];
+                let tableDefnDir = etlv2ConfigDir + '/etl_tables.d/' + table.meta.schema.substring(5);
+
+                [true, false].forEach(function (isErrorTable) {
+                    let tableDefn = module.exports.createDynamicTableDefinition(table, isErrorTable);
+                    mkdirAndWrite(tableDefnDir, tableDefn.name, tableDefn);
+                });
             }
         }
     }

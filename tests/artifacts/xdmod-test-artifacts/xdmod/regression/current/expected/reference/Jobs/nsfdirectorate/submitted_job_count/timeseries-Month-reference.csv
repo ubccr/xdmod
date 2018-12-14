@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[Unknown] Number of Jobs Submitted"
-2016-12,56209
-2017-01,13034
+Month,"[Social, Behavioral, and Economic Sciences] Number of Jobs Submitted","[Mathematical and Physical Sciences] Number of Jobs Submitted","[Computer and Information Science and Engineering] Number of Jobs Submitted","[Geosciences] Number of Jobs Submitted","[Engineering] Number of Jobs Submitted","[Biological Sciences] Number of Jobs Submitted","[Humanities/Arts] Number of Jobs Submitted"
+2016-12,44240,7588,2475,1137,510,193,66
+2017-01,11534,394,212,742,63,89,0
 ---------

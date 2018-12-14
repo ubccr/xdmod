@@ -20,7 +20,6 @@
             {
                 "name": "queue_origin_id",
                 "type": "char(50)",
-                "default": "NULL",
                 "nullable": true
             }
         ],

@@ -259,11 +259,7 @@ EOMSG
      */
     private function updateAcls()
     {
-        $manageAcls = new AclEtl(['section' => 'acls-xdmod-management']);
-        $manageAcls->execute();
         passthru('acl-config');
-        $importAcls = new AclEtl(['section' => 'acls-import']);
-        $importAcls->execute();
     }
 
     /**

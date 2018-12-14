@@ -1482,12 +1482,15 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobDataSet(XDUser $user, $realm, $jobId, $action)
     {
-        $params = array(
-            new \DataWarehouse\Query\Model\Parameter('_id', '=', $jobId)
-        );
+        $config = \Xdmod\Config::factory();
+
+        $rawstats = $config['rawstatistics'];
+        if (!isset($rawstats['realms'][$realm])) {
+            throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
+        }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
-        $query = new $QueryClass($params, $action);
+        $query = new $QueryClass(array('primary_key' => $jobId), $action);
 
         $allRoles = $user->getAllRoles();
         $query->setMultipleRoleParameters($allRoles, $user);
@@ -1761,17 +1764,27 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function processHistoryDefaultRealmRequest(Application $app, $action)
     {
+        $config = \Xdmod\Config::factory();
+
+        $rawstats = $config['rawstatistics'];
+
+        $results = array();
+
+        if (isset($rawstats['realms'])) {
+            foreach($rawstats['realms'] as $realm => $realmconfig) {
+                $results[] = array(
+                    'dtype' => 'realm',
+                    'realm' => $realm,
+                    'text' => $realmconfig['name']
+                );
+            }
+        }
+
         return $app->json(
             array(
                 'success' => true,
                 'action' => $action,
-                'results' => array(
-                    array(
-                        'dtype' => 'realm',
-                        'realm' => 'SUPREMM',
-                        'text' => 'SUPREMM'
-                    )
-                )
+                'results' => $results
             )
         );
     }
@@ -2062,15 +2075,24 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobByPrimaryKey(Application $app, \XDUser $user, $realm, $searchparams)
     {
-        if (isset($searchparams['jobref'])) {
+        $config = \Xdmod\Config::factory();
+
+        $rawstats = $config['rawstatistics'];
+        if (!isset($rawstats['realms'][$realm])) {
+            throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
+        }
+
+        if (isset($searchparams['jobref']) && is_int($searchparams['jobref'])) {
             $params = array(
-                new \DataWarehouse\Query\Model\Parameter('_id', '=', $searchparams['jobref'])
+                'primary_key' => $searchparams['jobref']
+            );
+        } elseif (isset($searchparams['resource_id']) && isset($searchparams['local_job_id'])) {
+            $params = array(
+                'resource_id' => $searchparams['resource_id'],
+                'job_identifier' => $searchparams['local_job_id']
             );
         } else {
-            $params = array(
-                new \DataWarehouse\Query\Model\Parameter("resource_id", "=", $searchparams['resource_id']),
-                new \DataWarehouse\Query\Model\Parameter("local_job_id", "=", $searchparams['local_job_id'])
-            );
+            throw new BadRequestException('invalid search parameters');
         }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";

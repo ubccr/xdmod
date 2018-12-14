@@ -282,6 +282,11 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.isCenterDirector = $primary_center_director;\n";
         }
 
+        $config = \Xdmod\Config::factory();
+        $rawDataRealms = array_keys($config['rawstatistics']['realms']);
+
+        print "CCR.xdmod.ui.rawDataAllowedRealms = " . json_encode($rawDataRealms) . ";\n";
+
         print "CCR.xdmod.ui.disabledMenus = " . json_encode(Acls::getDisabledMenus($user, $realms)) . ";\n";
 
         if ($userLoggedIn) {
@@ -303,7 +308,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             }
         } catch (exception $ex) {
         }
-        print "CCR.xdmod.captcha_sitekey = '" . $captchaSiteKey . "';";
+        print "CCR.xdmod.captcha_sitekey = '" . $captchaSiteKey . "';\n";
         if (!$userLoggedIn) {
             $auth = null;
             try {
@@ -312,10 +317,20 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
                 // This will catch when a configuration directory does not exist if it is set in the environment level
             }
             if ($auth && $auth->isSamlConfigured()) {
+                $ssoShowLocalLogin = false;
+                try {
+                    $ssoShowLocalLogin = filter_var(
+                        xd_utilities\getConfiguration('sso', 'show_local_login'),
+                        FILTER_VALIDATE_BOOLEAN
+                    );
+                } catch (exception $ex) {
+                }
+
                 print "CCR.xdmod.isSSOConfigured = true;\n";
                 print "CCR.xdmod.SSOLoginLink = " . json_encode($auth->getLoginLink()) . ";\n";
+                print "CCR.xdmod.SSOShowLocalLogin = " . json_encode($ssoShowLocalLogin) . "\n";
             } else {
-                print "CCR.xdmod.isSSOConfigured = false;";
+                print "CCR.xdmod.isSSOConfigured = false;\n";
             }
         }
         if ($userLoggedIn) {
@@ -460,7 +475,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <script type="text/javascript" src="gui/js/ChangeStack.js"></script>
 
     <?php /* Single Job Viewer */ ?>
-    <?php if (xd_utilities\getConfiguration('features', 'singlejobviewer') == 'on'): ?>
+    <?php if (!empty($rawDataRealms)): ?>
         <script type="text/javascript" src="gui/js/modules/job_viewer/JobViewer.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/ChartPanel.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/ChartTab.js"></script>

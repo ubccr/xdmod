@@ -103,11 +103,29 @@ class Loggable
         $message = "{$this}: " . ( is_string($message) ? $message : "" );
         $logLevel = PEAR_LOG_ERR;
         $exceptionProvided = false;
+        $code = 0;
 
         if ( null !== $options ) {
 
             if ( array_key_exists('exception', $options) && $options['exception'] instanceof Exception ) {
-                $message .= " Exception: '" . $options['exception']->getMessage() . "'";
+                // Don't add the exception message if it is the same as the general message
+                $exceptionMessage = $options['exception']->getMessage();
+                if ( $message != $exceptionMessage ) {
+                    $message .= sprintf(" Exception: '%s'", $exceptionMessage);
+                }
+
+                // PDOException uses a string exception code (typically a five characters alphanumeric
+                // identifier defined in the ANSI SQL standard) while Exception uses an int. Use the
+                // driver specific error code instead so that we can propagate the error code with
+                // the newly thrown Exception.
+                // See: https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
+
+                if ( $options['exception'] instanceof PDOException ) {
+                    $code = $options['exception']->errorInfo[1];
+                } else {
+                    $code = $options['exception']->getCode();
+                }
+
                 $exceptionProvided = true;
             }
 
@@ -130,7 +148,7 @@ class Loggable
         $logMessage['message'] = $message;
 
         $this->logger->log($logMessage, $logLevel);
-        throw new Exception($message);
+        throw new Exception($message, $code);
 
     }  // logAndThrowException()
 

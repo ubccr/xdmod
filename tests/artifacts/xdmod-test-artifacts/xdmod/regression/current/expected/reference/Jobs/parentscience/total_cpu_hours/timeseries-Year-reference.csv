@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[Unknown] CPU Hours: Total"
-2016,770775.9989
-2017,69779.8381
+Year,"[Chemistry] CPU Hours: Total","[Electrical and Communication Systems] CPU Hours: Total","[Social and Economic Science] CPU Hours: Total","[Microelectronic Information Processing Systems] CPU Hours: Total","[Materials Research] CPU Hours: Total","[Mathematical Sciences] CPU Hours: Total","[Astronomical Sciences] CPU Hours: Total","[Polar Programs] CPU Hours: Total","[Design and Manufacturing Systems] CPU Hours: Total","[Molecular Biosciences] CPU Hours: Total","[Mechanical and Structural Systems] CPU Hours: Total","[Chemical, Thermal Systems] CPU Hours: Total","[Arts] CPU Hours: Total","[Earth Sciences] CPU Hours: Total","[Physics] CPU Hours: Total","[Environmental Biology] CPU Hours: Total","[Atmospheric Sciences] CPU Hours: Total","[Computer and Computation Research] CPU Hours: Total"
+2016,181708.6489,161279.3508,154621.3128,62252.6842,51837.5633,35136.7867,32304.8164,2185.7433,17573.6000,17925.3606,14195.5947,13105.9733,12116.8122,10753.3333,1588.9133,647.6411,1441.0222,100.8417
+2017,6796.9089,7608.0661,8671.4836,12146.7419,0,4958.9922,3555.6356,19081.7586,3042.7914,2683.5472,27.1514,0,299.9489,32.8389,0,870.5067,3.4667,0
 ---------

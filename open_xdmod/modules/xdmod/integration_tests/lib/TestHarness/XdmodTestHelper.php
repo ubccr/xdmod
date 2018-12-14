@@ -194,6 +194,13 @@ class XdmodTestHelper
         list($action, $credentials) = $this->getHTMLFormData($result[0]);
 
         $result = $this->post($action, null, $credentials, true);
+
+        if ($result[1]['http_code'] !== 200) {
+            throw new \Exception('SSO signin failure: HTTP code' . $result[1]['http_code']);
+        }
+        if (strpos($result[0], 'Logging you into XDMoD') === false) {
+            throw new \Exception('SSO signin failure: ' . $result[0]);
+        }
     }
 
     /**

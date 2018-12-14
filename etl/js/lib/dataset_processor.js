@@ -240,15 +240,16 @@ DatasetProcessor.prototype.process = function (totalCores, coreIndex) {
     var self = this;
     var multiCore = totalCores !== undefined && coreIndex !== undefined;
     if (this.dataset.input.dbEngine == 'mongodb') {
-        var uri_decode_auth = this.dataset.input.config.uri.indexOf('@') > -1;
-
-        MongoClient.connect(self.dataset.input.config.uri, {native_parser: true, uri_decode_auth: uri_decode_auth}, function(err, db) {
+        MongoClient.connect(self.dataset.input.config.uri, { useNewUrlParser: true }, function (err, client) {
             if (err) {
                 self.emit("error", self.dataset.name + ': ' + "MongoClient Open Error: " + util.inspect(err));
                 self._processEnded = true;
                 self.onEndProcess();
                 return;
             }
+
+            self.client = client;
+            var db = client.db();
 
             self.emit('message', self.dataset.name + ': connected to database \'' + db.databaseName + '\'');
 
@@ -267,8 +268,7 @@ DatasetProcessor.prototype.process = function (totalCores, coreIndex) {
                 return;
             }
 
-            self.db = db;
-            self.collection = self.db.collection(self.dataset.input.config.collection);
+            self.collection = db.collection(self.dataset.input.config.collection);
 
             // Ensure the query is indexed
             var indexParams = {};
@@ -378,8 +378,8 @@ DatasetProcessor.prototype.onEndProcess = function () {
     if (this.stats.currentlyMarking === 0) {
         this.mysqlPool.end();
         this.emit('message', this.dataset.name + ': mysqlPool closed');
-        if (this.db) {
-            this.db.close();
+        if (this.client) {
+            this.client.close(true);
             this.emit('message', this.dataset.name + ': mongo connection closed');
         }
 
