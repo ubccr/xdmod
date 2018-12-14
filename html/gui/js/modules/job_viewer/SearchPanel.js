@@ -645,7 +645,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             fields: [
                 {name: 'dtype', mapping: 'dtype', type: 'string'},
                 {name: 'jobid', mapping: 'jobid', type: 'int'},
-                {name: 'local_job_id', mapping: 'local_job_id', type: 'int'},
+                { name: 'local_job_id', mapping: 'local_job_id', type: 'string' },
                 {name: 'name', mapping: 'name', type: 'string'},
                 {name: 'realm', mapping: 'realm', type: 'string'},
                 {name: 'resource', mapping: 'resource', type: 'string'},
@@ -979,12 +979,11 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                         }
                     },
                     {
-                        xtype: 'numberfield',
+                        xtype: 'textfield',
                         fieldLabel: 'Job Number',
                         emptyText: 'Enter Job #',
                         id: 'basic-localjobid',
-                        allowNegative: false,
-                        autoStripChars: true,
+                        stripCharsRe: /(^\s+|\s+$)/g,
                         width: 200,
                         enableKeyEvents: true,
                         listeners: {
