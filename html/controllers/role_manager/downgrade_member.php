@@ -1,7 +1,5 @@
 <?php
 
-use Models\Services\Users;
-
 \xd_security\assertParameterSet('member_id', RESTRICTION_UID);
 
 $member = XDUser::getUserByID($_POST['member_id']);
@@ -14,10 +12,9 @@ $returnData = array();
 try {
 
     $activeUser = \xd_security\getLoggedInUser();
-    $organization = $activeUser->getOrganizationID();
 
     // An eligible user must be associated with the currently logged in users center.
-    if ($activeUser->getOrganizationID() !== $organization) {
+    if ($activeUser->getOrganizationID() !== $member->getOrganizationID()) {
         \xd_response\presentError('center_mismatch_between_member_and_director');
     }
 
