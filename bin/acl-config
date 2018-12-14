@@ -236,7 +236,7 @@ function main()
     $db = DB::factory('database');
 
     // Ensure that we're starting from scratch while backing up the tables that
-    // we do not manage ( user_acls). These
+    // we do not manage ( user_acls, user_acl_group_by_parameters ). These
     // tables will be re-populated after we are done creating / re-populating
     // the managed tables.
 
