@@ -2,7 +2,7 @@
   "table_definition": {
     "name": "user_acl_group_by_parameters",
     "engine": "InnoDB",
-    "comment": "Tracks which `Users` have which `acls`",
+    "comment": "Allows for the association of a user's acl, a group_by ( dimension ) and a particular value found within that group_by. This allows us to restrict what data a user is allowed to view via Acl's.",
     "columns": [
       {
         "name": "user_acl_parameter_id",
