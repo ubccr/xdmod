@@ -10,28 +10,42 @@ $reportDir = '__REPORT_DIR__';
 
 include_once("$baseDir/vendor/autoload.php");
 
-$final_coverage = new PHP_CodeCoverage();
-$final_coverage->filter()->addDirectoryToWhitelist("$installDir/classes");
-$final_coverage->filter()->addDirectoryToWhitelist("$installDir/html/controllers");
-$final_coverage->filter()->addDirectoryToWhitelist("$installDir/html/internal_dashboard");
-$final_coverage->filter()->addDirectoryToWhitelist("$installDir/xdmod/libraries");
+$coverageData = array();
 
-$coverages = glob("$coverageDir/*.json");
-$count = count($coverages);
+$coverageFiles = glob("$coverageDir/*.json");
+$count = count($coverageFiles);
 $i = 0;
 
-foreach ($coverages as $coverage_file) {
+foreach ($coverageFiles as $coverageFile) {
     $i++;
-    echo "Processing coverage ($i/$count) from $coverage_file". PHP_EOL;
+    echo "Processing coverage ($i/$count) from $coverageFile". PHP_EOL;
     $matches = array();
-    $codecoverageData = json_decode(file_get_contents($coverage_file), JSON_OBJECT_AS_ARRAY);
-    if ($codecoverageData !== null) {
-        $test_name = str_ireplace(basename($coverage_file, ".json"), "coverage-", "");
-        $final_coverage->append($codecoverageData, $test_name);
+    $codeCoverageData = json_decode(file_get_contents($coverageFile), JSON_OBJECT_AS_ARRAY);
+    if ($codeCoverageData !== null) {
+        $testName = str_ireplace("coverage-", "", basename($coverageFile, ".json"));
+        $testName = substr($testName, 0, strrpos($testName, '-'));
+        echo "Test Name: $testName\n";
+        echo "Coverage Keys: " . print_r(array_keys($coverageData), true) . PHP_EOL;
+        if (!array_key_exists($testName, $coverageData)) {
+            echo "\tGenerating new Code Coverage for : $testName\n";
+            $coverage = new PHP_CodeCoverage();
+            $coverage->filter()->addDirectoryToWhitelist("$installDir/classes");
+            $coverage->filter()->addDirectoryToWhitelist("$installDir/html/controllers");
+            $coverage->filter()->addDirectoryToWhitelist("$installDir/html/internal_dashboard");
+            $coverage->filter()->addDirectoryToWhitelist("$installDir/libraries");
+            $coverageData[$testName] = $coverage;
+        }
+        $testCoverage = $coverageData[$testName];
+        $testCoverage->append($codeCoverageData, $testName);
+
+        $coverageData[$testName] = $testCoverage;
     }
 }
 
 echo "Generating final report..." . PHP_EOL;
-$report = new PHP_CodeCoverage_Report_XML();
-$report->process($final_coverage, $reportDir);
-echo "Report generated succesfully" . PHP_EOL;
+foreach($coverageData as $testName => $coverage) {
+    $report = new PHP_CodeCoverage_Report_HTML();
+    $report->process($coverage, $reportDir . DIRECTORY_SEPARATOR . $testName);
+}
+echo "Report generated successfully" . PHP_EOL;
+
