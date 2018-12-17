@@ -229,7 +229,7 @@ class DataWarehouseInitializer
      */
     public function ingestCloudDataGeneric()
     {
-        if( $this->realmEnabled('Cloud')){
+        if( $this->realmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting generic cloud log files');
                 $this->runEtlPipeline('jobs-cloud-extract-eucalyptus');
@@ -252,7 +252,7 @@ class DataWarehouseInitializer
      */
     public function aggregateCloudData()
     {
-        if( $this->realmEnabled('Cloud')){
+        if( $this->realmEnabled('Cloud') ){
             $this->logger->notice('Aggregating Cloud data');
             $this->runEtlPipeline('cloud-state-pipeline');
 

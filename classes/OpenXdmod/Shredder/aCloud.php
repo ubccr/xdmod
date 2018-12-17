@@ -64,7 +64,7 @@ abstract class aCloud extends Shredder
     /**
      * Returns false so the same function in the parent class is not called since the cloud formats do not have jobs to ingest
      */
-    public function getJobIngestor(){
+    public function getJobIngestor($ingestAll = false){
         return false;
     }
 }

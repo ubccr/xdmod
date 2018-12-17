@@ -9,7 +9,7 @@ namespace OpenXdmod\Shredder;
 
 use CCR\DB\iDatabase;
 
-class OpenStack extends aCloud
+class Openstack extends aCloud
 {
     /**
      * @inheritdoc
