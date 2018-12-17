@@ -304,18 +304,8 @@ ETLProfile.prototype.createOutputTables = function (outputmode) {
 			//todo: create a table for etl profiles
 			//todo: create a table to hold a list of all datasets across all etl profiles
             var poolConnectionMax = 2;
-            var tables = this.getTables();
 
             var allStatements = [];
-            //create the dynamic tables
-            for (var t in tables) {
-                var table = tables[t];
-				self.emit('message', 'Processing table: ' + table.name);
-                var createStatement = table.getCreateTableStatement();
-                allStatements = allStatements.concat(createStatement);
-				var createErrorTableStatement = table.getCreateErrorTableStatement();
-				allStatements.push(createErrorTableStatement);
-            }
             // create/populate dimension tables
             for (var t in this.schema.dimension_tables) {
                 var table_defn = this.schema.dimension_tables[t];
@@ -449,7 +439,7 @@ ETLProfile.prototype.aggregate = function () {
     var self = this;
 	try { 
         if (this.output.dbEngine === 'mysqldb') {
-            etlv2.generateAggregates(this, config.xdmodBuildConfigDir);
+            etlv2.generateDefinitionFiles(this, config.xdmodBuildConfigDir);
         } else {
             //other db engines not yet supported. , this class can be specialized 
 			//or modularized at that time. 

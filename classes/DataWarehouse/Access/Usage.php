@@ -2,11 +2,14 @@
 
 namespace DataWarehouse\Access;
 
+use CCR\DB;
+use CCR\Log;
 use Exception;
 
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
 use Models\Services\Acls;
+use PDO;
 use XDChartPool;
 use XDUser;
 
@@ -963,25 +966,6 @@ class Usage extends Common
         $usageFilterSuffix = '_filter';
         $usageFilterSuffixLength = strlen($usageFilterSuffix);
         $usageRealm = \xd_utilities\array_get($usageRequest, 'realm');
-        $meFilters = array();
-        foreach ($usageRequest as $usageKey => $usageValue) {
-            if (!\xd_utilities\string_ends_with($usageKey, $usageFilterSuffix)) {
-                continue;
-            }
-
-            $usageFilterType = substr($usageKey, 0, -$usageFilterSuffixLength);
-            $usageFilterValues = explode(',', $usageValue);
-
-            foreach ($usageFilterValues as $usageFilterValue) {
-                $meFilters[] = array(
-                    'id' => "$usageFilterType=$usageFilterValue",
-                    'value_id' => $usageFilterValue,
-                    'dimension_id' => $usageFilterType,
-                    'realms' => array($usageRealm),
-                    'checked' => true,
-                );
-            }
-        }
 
         // Create global filters from any Usage drilldowns.
         $realmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
@@ -991,18 +975,42 @@ class Usage extends Common
             $realmGroupBy = new $realmGroupByClass();
             return $realmGroupBy->getName();
         }, $realmGroupByClasses);
+
+        $meFilters = array();
+
+        // Extract the supported filter values from $usageRequest
         foreach ($usageRequest as $usageKey => $usageValue) {
-            if (!in_array($usageKey, $realmGroupByNames)) {
-                continue;
+
+            // handles '<dimension>_filter' properties
+            if (\xd_utilities\string_ends_with($usageKey, $usageFilterSuffix)) {
+                $usageFilterType = substr($usageKey, 0, -$usageFilterSuffixLength);
+                $usageFilterValues = explode(',', $usageValue);
+
+                foreach ($usageFilterValues as $usageFilterValue) {
+                    $translatedValues = $this->translateFilterValue($usageFilterType, $usageFilterValue);
+
+                    foreach($translatedValues as $translatedValue) {
+                        $meFilters[] = array(
+                            'id' => "$usageFilterType=$translatedValue",
+                            'value_id' => $translatedValue,
+                            'dimension_id' => $usageFilterType,
+                            'realms' => array($usageRealm),
+                            'checked' => true,
+                        );
+                    }
+                }
             }
 
-            $meFilters[] = array(
-                'id' => "$usageKey=$usageValue",
-                'value_id' => $usageValue,
-                'dimension_id' => $usageKey,
-                'realms' => array($usageRealm),
-                'checked' => true,
-            );
+            // handles '<dimension>' properties
+            if (in_array($usageKey, $realmGroupByNames)) {
+                $meFilters[] = array(
+                    'id' => "$usageKey=$usageValue",
+                    'value_id' => $usageValue,
+                    'dimension_id' => $usageKey,
+                    'realms' => array($usageRealm),
+                    'checked' => true,
+                );
+            }
         }
 
         // Store the global filters in the Metric Explorer request.
@@ -1106,5 +1114,69 @@ class Usage extends Common
             . '_'
             . ($isTimeseries ? 'timeseries' : 'aggregate')
         ;
+    }
+
+    /**
+     * Attempts to translate the $usageFilterValue which is either a quoted string ( single or double ),
+     * numeric string, or number via a sql query, based on $usageFilterType. If a non-quoted string
+     * is supplied it will be treated as a number. This affects the logic of what values are returned.
+     * Currently supported $usageFilterType values and the tables ( columns ) they lookup values
+     * in are:
+     *
+     *   - 'pi':       modw.systemaccount ( username )
+     *   - 'resource': modw.resourcefact  ( code )
+     *   - 'project':  modw_cloud.account ( display )
+     *
+     * If the $usageFilterValue is numeric or the $usageFilterType is not one of those currently
+     * supported then array($usageFilterValue) is returned.
+     *
+     * @param string $usageFilterType the 'type' of filter to translate. Currently supported
+     *                                 values: pi, resource, project
+     * @param string|int  $usageFilterValue the value to be translated
+     * @return array of the translated values.
+     * @throws Exception if there is a problem connecting to the db or executing a query.
+     */
+    private function translateFilterValue($usageFilterType, $usageFilterValue)
+    {
+
+        $query = null;
+
+        switch ($usageFilterType) {
+            case 'pi':
+                // This query may return multiple values
+                $query = "SELECT DISTINCT sa.person_id AS value FROM modw.systemaccount sa WHERE sa.username = :value;";
+                break;
+            case 'resource':
+                $query = "SELECT id AS value FROM modw.resourcefact WHERE code = :value";
+                break;
+            case 'project':
+                $query = "SELECT account_id AS value FROM modw_cloud.account WHERE display = :value";
+                break;
+        }
+
+        $filterValueIsString = preg_match('/^[\'"].*[\'"]$/', $usageFilterValue) === 1;
+
+        // We only attempt translation if we support the `$usageFilterType` provided and
+        // the `$usageFilterValue` is a quoted string.
+        if ($query !== null && $filterValueIsString) {
+            $value = trim($usageFilterValue, '\'"');
+
+            $db = DB::factory('database');
+
+            $stmt = $db->prepare($query);
+            $stmt->execute(array(':value' => $value));
+
+            $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+            // We need to test if there was an error ( bool returned ) because count(bool) === 1.
+            if ($rows !== false && count($rows) > 0) {
+                return $rows;
+            }
+
+            // If a string was provided but no id(s) were found then exception out.
+            throw new Exception(sprintf("Invalid value detected for filter '%s': %s", $usageFilterType, $usageFilterValue));
+        }
+
+        return array($usageFilterValue);
     }
 }

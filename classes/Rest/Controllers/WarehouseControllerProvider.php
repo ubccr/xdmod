@@ -1489,12 +1489,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
 
-        $params = array(
-            new \DataWarehouse\Query\Model\Parameter($rawstats['realms'][$realm]['primary_key'], '=', $jobId)
-        );
-
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
-        $query = new $QueryClass($params, $action);
+        $query = new $QueryClass(array('primary_key' => $jobId), $action);
 
         $allRoles = $user->getAllRoles();
         $query->setMultipleRoleParameters($allRoles, $user);
@@ -2086,15 +2082,17 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
 
-        if (isset($searchparams['jobref'])) {
+        if (isset($searchparams['jobref']) && is_int($searchparams['jobref'])) {
             $params = array(
-                new \DataWarehouse\Query\Model\Parameter($rawstats['realms'][$realm]['primary_key'], '=', $searchparams['jobref'])
+                'primary_key' => $searchparams['jobref']
+            );
+        } elseif (isset($searchparams['resource_id']) && isset($searchparams['local_job_id'])) {
+            $params = array(
+                'resource_id' => $searchparams['resource_id'],
+                'job_identifier' => $searchparams['local_job_id']
             );
         } else {
-            $params = array(
-                new \DataWarehouse\Query\Model\Parameter("resource_id", "=", $searchparams['resource_id']),
-                new \DataWarehouse\Query\Model\Parameter($rawstats['realms'][$realm]['ident_key'], "=", $searchparams['local_job_id'])
-            );
+            throw new BadRequestException('invalid search parameters');
         }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";

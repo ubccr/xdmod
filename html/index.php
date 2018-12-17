@@ -475,7 +475,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <script type="text/javascript" src="gui/js/ChangeStack.js"></script>
 
     <?php /* Single Job Viewer */ ?>
-    <?php if (xd_utilities\getConfiguration('features', 'singlejobviewer') == 'on'): ?>
+    <?php if (!empty($rawDataRealms)): ?>
         <script type="text/javascript" src="gui/js/modules/job_viewer/JobViewer.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/ChartPanel.js"></script>
         <script type="text/javascript" src="gui/js/modules/job_viewer/ChartTab.js"></script>
