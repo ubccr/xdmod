@@ -233,12 +233,17 @@ function main()
         $logger->notice("Job errors written to '$jobErrorLogFile'");
     }
 
-    if (!$dryRun && in_array($format, array('pbs', 'slurm', 'lsf', 'sge', 'uge'))) {
-        $logger->notice('Normalizing data');
+    if (!$dryRun) {
+        $logger->notice('Normalizing data!');
 
         try {
             $ingestor = $shredder->getJobIngestor();
-            $ingestor->ingest();
+            // The cloud shredders do not have jobs to ingest and return false when
+            // getJobInestor is called for them so we don't have to hard code skippping 
+            // those formats here.
+            if($ingestor !== false){
+                $ingestor->ingest();
+            }
         } catch (Exception $e) {
             $logger->crit(array(
                 'message'    => 'Ingestion failed: ' . $e->getMessage(),

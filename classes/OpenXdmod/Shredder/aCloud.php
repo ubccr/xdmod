@@ -19,9 +19,10 @@ abstract class aCloud extends Shredder
     /**
      * @inheritdoc
      */
-    public function __construct(iDatabase $db)
+    public function __construct(iDatabase $db, array $pipelines)
     {
         $this->logger = \Log::singleton('null');
+        $this->etlPipelines = $pipelines;
     }
 
     /**
@@ -60,7 +61,10 @@ abstract class aCloud extends Shredder
         );
     }
 
-    public function setEtlPipeline(array $pipelines){
-        $this->etlPipelines = $pipelines;
+    /**
+     * Returns false so the same function in the parent class is not called since the cloud formats do not have jobs to ingest
+     */
+    public function getJobIngestor(){
+        return false;
     }
 }
