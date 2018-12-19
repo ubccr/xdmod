@@ -962,34 +962,10 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                 if (child) {
 
-                    tree.expandPath(child.getPath(), null, function (success) {
-                        // If the summary node was successfully expanded...
-                        if (success) {
-                            // If available, open the default statistic.
-                            //
-                            // Open XDMoD Default: CPU Hours: Total
-                            // XDMoD Default: XD SUs Charged: Total
-                            var defaultStatistic = CCR.xdmod.features.xsede ? "total_su" : "total_cpu_hours";
-                            var jobCountNode = child.findChild("statistic", defaultStatistic);
-                            if (jobCountNode && !jobCountNode.disabled) {
-                                tree.getSelectionModel().select(jobCountNode);
-                                return;
-                            }
+                    tree.getSelectionModel().select(child);
 
-                            // Otherwise, open the first available statistic,
-                            // if any.
-                            var firstAvailableStatisticNode = child.findChildBy(function (n) {
-                                return !n.disabled;
-                            });
-                            if (firstAvailableStatisticNode) {
-                                tree.getSelectionModel().select(firstAvailableStatisticNode);
-                                return;
-                            }
-                        }
+                    tree.expandPath(child.getPath(), null, function () {
 
-                        // If none of the summary node's children could be
-                        // opened, select the summary node.
-                        tree.getSelectionModel().select(child);
                     });
 
                 } //if(child)
