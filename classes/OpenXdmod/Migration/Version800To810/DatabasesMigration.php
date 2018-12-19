@@ -76,7 +76,7 @@ EOT
                 $ingestPipeline = array('jobs-cloud-ingest-openstack');
                 $extractPipeline = array('jobs-cloud-extract-openstack');
             }
-            else if($cloudLogFormat == 'generic'){
+            elseif($cloudLogFormat == 'generic'){
                 $ingestPipeline = array('jobs-cloud-ingest-openstack');
                 $extractPipeline = array('jobs-cloud-extract-openstack');
             }
