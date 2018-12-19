@@ -1353,6 +1353,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     this.legendTypeComboBox.disable();
                     this.chartTitleField.disable();
 
+                    parameters.summary = true;
                     parameters.operation = 'get_charts';
                     chartStore.load({
                         params: parameters
@@ -1408,17 +1409,56 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                         this.charts = [];
 
-                        var ind = 0;
+                        var menuParams = getMenuParameters(n);
 
                         chartStore.each(function (r) {
 
                             var id = r.get('random_id');
 
-                            var task = new Ext.util.DelayedTask(function () {
+                            var chartContainer = Ext.get(id);
 
+                            if (!chartContainer) {
+                                return;
+                            }
+
+                            chartContainer.setWidth(CCR.xdmod.ui.thumbWidth * chartThumbScale);
+                            chartContainer.setHeight(CCR.xdmod.ui.thumbHeight * chartThumbScale);
+                            chartContainer.mask('Loading...');
+
+                            var chart_params = Ext.apply({}, Ext.util.JSON.decode(r.get('chart_settings')), menuParams);
+
+                            var deferStore = new Ext.data.JsonStore({
+                                storeId: 'chart_store_' + id,
+                                autoDestroy: true,
+                                root: 'data',
+                                totalProperty: 'totalCount',
+                                successProperty: 'success',
+                                messageProperty: 'message',
+                                fields: self.chartDataFields,
+                                baseParams: {
+                                    operation: 'get_charts',
+                                    public_user: public_user,
+                                    controller_module: self.module_id
+                                },
+                                proxy: new Ext.data.HttpProxy({
+                                    method: 'POST',
+                                    url: this.chartDataURL
+                                }),
+                                listeners: {
+                                    exception: function (reader, type, action, opt, response) {
+                                        handleDataException(response, type);
+                                    }
+                                }
+                            });
+
+                            var chartBuilder = function (chartRecords, options, success) {
                                 // If the rendering target no longer
                                 // exists, don't create the chart.
                                 if (!Ext.get(id)) {
+                                    return;
+                                }
+
+                                if (!success) {
                                     return;
                                 }
 
@@ -1466,20 +1506,23 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                                 }; //baseChartOptions
 
-                                var chartOptions = r.get('hc_jsonstore');
+                                var chartOptions = {};
+                                if (chartRecords.length > 0) {
+                                    chartOptions = chartRecords[0].get('hc_jsonstore');
+                                }
                                 jQuery.extend(true, chartOptions, baseChartOptions);
 
                                 chartOptions.exporting.enabled = false;
                                 chartOptions.credits.enabled = false;
 
                                 this.charts.push(new Highcharts.Chart(chartOptions));
+                            };
 
-                            }, this); //task
-
-                            task.delay(0);
-
-                            return true;
-
+                            deferStore.load({
+                                params: chart_params,
+                                callback: chartBuilder,
+                                scope: self
+                            });
                         }, this); //chartStore.each(function(r)
 
                         self.getDurationSelector().enable();
