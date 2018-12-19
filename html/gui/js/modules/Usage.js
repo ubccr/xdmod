@@ -1428,7 +1428,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             var chart_params = Ext.apply({}, Ext.util.JSON.decode(r.get('chart_settings')), menuParams);
 
                             var deferStore = new Ext.data.JsonStore({
-                                storeId: 'chart_store_' + id,
                                 autoDestroy: true,
                                 root: 'data',
                                 totalProperty: 'totalCount',
