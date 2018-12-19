@@ -431,6 +431,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         var self = this;
 
+        var handleDataException;
+
         var public_user = this.public_user || CCR.xdmod.publicUser;
 
         /*
@@ -1185,6 +1187,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         function onSelectNode(model, n) {
+            var parameters;
 
             if (!n || !n.text) return;
             if (!self.getDurationSelector().validate()) return;
@@ -1246,7 +1249,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 this.legendTypeComboBox.disable();
 
 
-                var parameters = [];
+                parameters = [];
 
                 if (n.attributes.node_type == 'statistic') {
                     parameters = getChartParameters(n);
@@ -1321,7 +1324,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 } else if (n.attributes.node_type == 'statistic') {
 
                     view.tpl = largeChartTemplate;
-                    var parameters = getChartParameters(n);
+                    parameters = getChartParameters(n);
                     this.legendTypeComboBox.enable();
                     this.chartTitleField.enable();
 
@@ -1344,7 +1347,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 } else if (n.attributes.node_type == 'group_by') {
 
                     view.tpl = thumbnailChartTemplate;
-                    var parameters = getMenuParameters(n);
+                    parameters = getMenuParameters(n);
                     chartStore.removeAll(true);
                     maximizeScale.call(this);
                     this.legendTypeComboBox.disable();
@@ -1538,7 +1541,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        var handleDataException = function (response, exceptionType) {
+        handleDataException = function (response, exceptionType) {
             var viewer = CCR.xdmod.ui.Viewer.getViewer();
 
             if (exceptionType === 'response') {
