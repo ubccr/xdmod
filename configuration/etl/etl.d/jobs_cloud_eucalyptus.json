@@ -20,7 +20,13 @@
             }
         },
 
-        "jobs-cloud-eucalyptus": {
+        "jobs-cloud-ingest-eucalyptus": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true
+        },
+        "jobs-cloud-extract-eucalyptus": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "truncate_destination": false,
@@ -30,7 +36,7 @@
 
     "#": "Current Cloud job ingestion",
 
-    "jobs-cloud-eucalyptus": [
+    "jobs-cloud-ingest-eucalyptus": [
         {
             "name": "EucalyptusRawCloudEventLogIngestor",
             "description": "Raw Eucalyptus cloud instance data from log files",
@@ -117,7 +123,9 @@
                 }
             },
             "stop_on_exception": false
-        },
+        }
+    ],
+    "jobs-cloud-extract-eucalyptus": [
         {
             "name": "EucalyptusCloudAccountIngestor",
             "description": "Eucalyptus cloud account data",
