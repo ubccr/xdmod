@@ -356,7 +356,7 @@ class DataWarehouseInitializer
     private function realmEnabled($realm)
     {
         $realms = $this->warehouseDb->query("SELECT * FROM moddb.realms WHERE display = :realm", [':realm' => $realm]);
-        return (count($realms) > 0) ? true : false;
+        return (count($realms) > 0);
     }
 
     /**
