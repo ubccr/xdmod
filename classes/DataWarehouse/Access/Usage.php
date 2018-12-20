@@ -39,6 +39,99 @@ class Usage extends Common
     const DEFAULT_SCALE = 1.0;
 
     /**
+     * return the metadata about the summary charts for a given realm & group_by. The
+     * chart data itself is not queried by this call.
+     */
+    private function getSummaryCharts(XDUser $user) {
+
+        $usageCharts = array();
+
+        $requestedRealms = array_map('trim', explode(',', $this->request['realm']));
+        foreach ($requestedRealms as $usageRealm) {
+
+            $usageGroupBy = \xd_utilities\array_get($this->request, 'group_by', 'none');
+
+            $usageRealmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
+            $usageGroupByObject = $usageRealmAggregateClass::getGroupBy($usageGroupBy);
+
+            $usageSubnotes = array();
+            if ($usageGroupBy === 'resource' || array_key_exists('resource', $this->request)) {
+                $usageSubnotes[] = '* Resources marked with asterisk do not provide processor'
+                    . ' counts per job when submitting to the '
+                    . ORGANIZATION_NAME . ' Central Database. This affects the'
+                    . ' accuracy of the following (and related) statistics: Job'
+                    . ' Size and CPU Consumption';
+            }
+
+            $usageChartSettings = array(
+                'dataset_type' => \xd_utilities\array_get($this->request, 'dataset_type', $usageGroupByObject->getDefaultDatasetType()),
+                'display_type' => \xd_utilities\array_get($this->request, 'display_type', $usageGroupByObject->getDefaultDisplayType($usageGroupByObject->getDefaultDatasetType())),
+                'combine_type' => \xd_utilities\array_get($this->request, 'combine_type', $usageGroupByObject->getDefaultCombineMethod()),
+                'show_legend' => \xd_utilities\array_get($this->request, 'show_legend', $usageGroupByObject->getDefaultShowLegend()),
+                'show_guide_lines' => \xd_utilities\array_get($this->request, 'show_guide_lines', $usageGroupByObject->getDefaultShowGuideLines()),
+                'log_scale' => \xd_utilities\array_get($this->request, 'log_scale', $usageGroupByObject->getDefaultLogScale()),
+                'limit' => \xd_utilities\array_get($this->request, 'limit', $usageGroupByObject->getDefaultLimit()),
+                'offset' => \xd_utilities\array_get($this->request, 'offset', $usageGroupByObject->getDefaultOffset()),
+                'show_trend_line' => \xd_utilities\array_get($this->request, 'show_trend_line', $usageGroupByObject->getDefaultShowTrendLine()),
+                'show_error_bars' => \xd_utilities\array_get($this->request, 'show_error_bars', $usageGroupByObject->getDefaultShowErrorBars()),
+                'show_aggregate_labels' => \xd_utilities\array_get($this->request, 'show_aggregate_labels', $usageGroupByObject->getDefaultShowAggregateLabels()),
+                'show_error_labels' => \xd_utilities\array_get($this->request, 'show_error_labels', $usageGroupByObject->getDefaultShowErrorLabels()),
+                'hide_tooltip' => \xd_utilities\array_get($this->request, 'hide_tooltip', false),
+                'enable_errors' => 'n',
+                'thumbnail' => 'y',
+                'enable_trend_line' => \xd_utilities\array_get($this->request, 'enable_trend_line', $usageGroupByObject->getDefaultEnableTrendLine()),
+                'realm' => $usageRealm,
+                'group_by' => $usageGroupBy
+            );
+
+            $userStatistics = Acls::getPermittedStatistics($user, $usageRealm, $usageGroupBy);
+
+            foreach ($userStatistics as $userStatistic) {
+
+                $statsClass = $usageRealmAggregateClass::getStatistic($userStatistic);
+
+                if (!$statsClass->isVisible()) {
+                    continue;
+                }
+
+                $errorstat = 'sem_' . $userStatistic;
+                if (in_array($errorstat, array_keys($usageRealmAggregateClass::getRegisteredStatistics())) ) {
+                    $usageChartSettings['enable_errors'] = 'y';
+                } else {
+                    $usageChartSettings['enable_errors'] = 'n';
+                }
+                $usageChartSettings['statistic'] = $userStatistic;
+
+                $usageChart = array(
+                        'hc_jsonstore' => array('title' => array('text' => '')),
+                        'id' => "statistic_${usageRealm}_${usageGroupBy}_${userStatistic}",
+                        'short_title' => $statsClass->getLabel(),
+                        'random_id' => 'chart_' . mt_rand(),
+                        'subnotes' => $usageSubnotes,
+                        'group_description' => $usageGroupByObject->getDescription(),
+                        'description' => $statsClass->getDescription($usageGroupByObject),
+                        'chart_settings' => json_encode($usageChartSettings),
+                );
+
+                $usageCharts[] = $usageChart;
+            }
+        }
+
+        usort($usageCharts, function ($a, $b) {
+            return strcmp($a['short_title'], $b['short_title']);
+        });
+
+        $data = array(
+            'success' => true,
+            'message' => 'success',
+            'totalCount' => count($usageCharts),
+            'data' => $usageCharts
+        );
+
+        return $this->exportImage($data, null, null, null, 'hc_jsonstore', null);
+    }
+
+    /**
      * Get charts by converting a Usage tab-style request to Metric Explorer
      * requests.
      *
@@ -50,6 +143,11 @@ class Usage extends Common
      *                             headers: Headers to set on the response.
      */
     public function getCharts(XDUser $user, $chartsKey = 'data') {
+
+        if (isset($this->request['summary'])) {
+            return $this->getSummaryCharts($user);
+        }
+
         // Determine which realms are being requested.
         if (empty($this->request['realm'])) {
             throw new Exception('One or more realms must be specified.');
