@@ -29,6 +29,7 @@ then
     for resource in $REF_DIR/*.log; do
         sudo -u xdmod xdmod-shredder -r `basename $resource .log` -f slurm -i $resource;
     done
+    sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
     sudo -u xdmod xdmod-ingestor
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
     sudo -u xdmod xdmod-ingestor
@@ -36,13 +37,6 @@ then
     # This will ensure that the users created in `/root/bin/createusers.php`
     # have their organizations set correctly.
     sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.acls-import
-    #Ingesting cloud data from references folder
-    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-common
-    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-common
-    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources
-    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-ingest-openstack -r openstack -d "CLOUD_EVENT_LOG_DIRECTORY=$REF_DIR/openstack"
-    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p jobs-cloud-extract-openstack
-    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p cloud-state-pipeline
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
