@@ -140,7 +140,7 @@ class DataWarehouseInitializer
     {
         if( $this->isRealmEnabled('Jobs')){
             $this->logger->debug('Ingesting shredded data to staging tables');
-            Utilities::runEtlPipeline(['staging-ingest-common', 'staging-ingest-jobs'], $this->logger);
+            Utilities::runEtlPipeline(array('staging-ingest-common', 'staging-ingest-jobs'), $this->logger);
         }
     }
 
@@ -154,7 +154,7 @@ class DataWarehouseInitializer
     {
         if( $this->isRealmEnabled('Jobs')){
             $this->logger->debug('Ingesting staging data to HPCDB');
-            Utilities::runEtlPipeline(['hpcdb-ingest-common', 'hpcdb-ingest-jobs'], $this->logger);
+            Utilities::runEtlPipeline(array('hpcdb-ingest-common', 'hpcdb-ingest-jobs'), $this->logger);
         }
     }
 
@@ -178,12 +178,12 @@ class DataWarehouseInitializer
                     $params['end-date'] = $endDate . ' 23:59:59';
                 }
                 Utilities::runEtlPipeline(
-                    ['hpcdb-prep-xdw-job-ingest-by-date-range'],
+                    array('hpcdb-prep-xdw-job-ingest-by-date-range'),
                     $this->logger,
                     $params
                 );
             } else {
-                Utilities::runEtlPipeline(['hpcdb-prep-xdw-job-ingest-by-new-jobs'], $this->logger);
+                Utilities::runEtlPipeline(array('hpcdb-prep-xdw-job-ingest-by-new-jobs'), $this->logger);
             }
 
             // Use current time from the database in case clocks are not
@@ -192,7 +192,7 @@ class DataWarehouseInitializer
                 = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
 
             Utilities::runEtlPipeline(
-                ['hpcdb-xdw-ingest'],
+                array('hpcdb-xdw-ingest'),
                 $this->logger,
                 array('last-modified-start-date' => $lastModifiedStartDate)
             );
@@ -209,7 +209,7 @@ class DataWarehouseInitializer
         if( $this->isRealmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting OpenStack event log data');
-                Utilities::runEtlPipeline(['jobs-cloud-extract-openstack'], $this->logger);
+                Utilities::runEtlPipeline(array('jobs-cloud-extract-openstack'), $this->logger);
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -232,7 +232,7 @@ class DataWarehouseInitializer
         if( $this->isRealmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting generic cloud log files');
-                Utilities::runEtlPipeline(['jobs-cloud-extract-eucalyptus'], $this->logger);
+                Utilities::runEtlPipeline(array('jobs-cloud-extract-eucalyptus'), $this->logger);
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -254,7 +254,7 @@ class DataWarehouseInitializer
     {
         if( $this->isRealmEnabled('Cloud') ){
             $this->logger->notice('Aggregating Cloud data');
-            Utilities::runEtlPipeline(['cloud-state-pipeline'], $this->logger);
+            Utilities::runEtlPipeline(array('cloud-state-pipeline'), $this->logger);
 
             $filterListBuilder = new FilterListBuilder();
             $filterListBuilder->setLogger($this->logger);
@@ -291,7 +291,8 @@ class DataWarehouseInitializer
 
         if( $this->isRealmEnabled('Jobs') ){
             Utilities::runEtlPipeline(
-                'jobs-xdw-aggregate',
+                array('jobs-xdw-aggregate'),
+                $this->logger,
                 array('last-modified-start-date' => $lastModifiedStartDate)
             );
             $filterListBuilder = new FilterListBuilder();
