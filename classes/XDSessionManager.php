@@ -133,6 +133,13 @@ class XDSessionManager
         // authentication (via tokens) trip the first Exception as the
         // result of invoking resolveUserFromToken($token)
         session_destroy();
+
+        try {
+            $auth = new Authentication\SAML\XDSamlAuthentication();
+            $auth->logout();
+        } catch (InvalidArgumentException $ex) {
+         // This will catch when a configuration directory does not exist if it is set in the environment level
+        }
     }
 
     /**

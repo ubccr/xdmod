@@ -18,6 +18,13 @@ class XDSamlAuthentication
     protected $_as = null;
 
     /**
+     * The selected auth source name (used for logout)
+     *
+     * @var string
+     */
+
+    protected $authSourceName = null;
+    /**
      * Enumerated potential auth sources
      *
      * @var array
@@ -29,7 +36,7 @@ class XDSamlAuthentication
      *
      * @var boolean
      */
-    protected $_isConfigured = false;
+    protected $_isConfigured = null;
 
     const BASE_ADMIN_EMAIL = <<<EML
 
@@ -70,8 +77,10 @@ EML;
                 $authSource = null;
             }
             if (!is_null($authSource) && array_search($authSource, $this->_sources) !== false) {
+                $this->authSourceName = $authSource;
                 $this->_as = new \SimpleSAML\Auth\Simple($authSource);
             } else {
+                $this->authSourceName = $this->_sources[0];
                 $this->_as = new \SimpleSAML\Auth\Simple($this->_sources[0]);
             }
         }
@@ -84,10 +93,20 @@ EML;
      */
     public function isSamlConfigured()
     {
-        $this->_isConfigured = count($this->_sources) > 0 ? true : false;
+        if($this->_isConfigured === null){
+            $this->_isConfigured = (count($this->_sources));
+        }
         return $this->_isConfigured;
     }
 
+    /**
+     * Logs out of the saml session
+     */
+    public function logout(){
+        if ($this->isSamlConfigured()) {
+            \SimpleSAML_Session::getSessionFromRequest()->doLogout($this->authSourceName);
+        }
+    }
     /**
      * Attempts to find a valid XDMoD user associated with the attributes we receive from SAML
      *
