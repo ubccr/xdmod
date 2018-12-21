@@ -620,7 +620,7 @@ EOF;
                     )
                 ),
                 'expected' => array(
-                    'value' => array('zealous', '1755.9078'),
+                    'value' => array('zealous', '1754.1644'),
                     'xpath' => '//rows//row//cell/value'
                 ),
                 'additional_data' => array(
@@ -667,7 +667,7 @@ EOF;
                     )
                 ),
                 'expected' => array(
-                    'value' => array('zealous', '1755.9078'),
+                    'value' => array('zealous', '1754.1644'),
                     'xpath' => '//rows//row//cell/value'
                 ),
                 'additional_data' => array(

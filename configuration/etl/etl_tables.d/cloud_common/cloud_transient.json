@@ -105,7 +105,8 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "instance"
+                    "instance",
+                    "start_time"
                 ],
                 "is_unique": true
             },
@@ -113,7 +114,8 @@
                 "name": "increment_key",
                 "columns": [
                     "instance_id",
-                    "resource_id"
+                    "resource_id",
+                    "start_time"
                 ],
                 "is_unique": true
             }
