@@ -168,23 +168,20 @@ class DataWarehouseInitializer
     {
         if( $this->isRealmEnabled('Jobs')){
             $this->logger->debug('Ingesting HPCDB data to modw');
+            $params = array();
+            $pipeline = array('hpcdb-prep-xdw-job-ingest-by-new-jobs');
 
             if ($startDate !== null || $endDate !== null) {
-                $params = array();
                 if ($startDate !== null) {
                     $params['start-date'] = $startDate . ' 00:00:00';
                 }
                 if ($endDate !== null) {
                     $params['end-date'] = $endDate . ' 23:59:59';
                 }
-                Utilities::runEtlPipeline(
-                    array('hpcdb-prep-xdw-job-ingest-by-date-range'),
-                    $this->logger,
-                    $params
-                );
-            } else {
-                Utilities::runEtlPipeline(array('hpcdb-prep-xdw-job-ingest-by-new-jobs'), $this->logger);
+                $pipeline = array('hpcdb-prep-xdw-job-ingest-by-date-range');
             }
+
+            Utilities::runEtlPipeline($pipeline, $this->logger, $params);
 
             // Use current time from the database in case clocks are not
             // synchronized.
