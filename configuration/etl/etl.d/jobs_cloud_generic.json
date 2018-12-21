@@ -117,7 +117,9 @@
                 }
             },
             "stop_on_exception": false
-        },
+        }
+    ],
+    "jobs-cloud-extract-eucalyptus": [
         {
             "name": "GenericCloudAccountIngestor",
             "description": "Generic cloud account data",

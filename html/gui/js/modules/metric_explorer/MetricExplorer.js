@@ -2962,8 +2962,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        this.on('duration_change', function( /*d*/ ) {
-            this.saveQuery();
+        this.on('duration_change', function (duration) {
+            if (duration.changed) {
+                this.saveQuery();
+            } else {
+                this.reloadChart();
+            }
         });
 
         // ---------------------------------------------------------
@@ -6277,25 +6281,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         XDMoD.Module.MetricExplorer.superclass.initComponent.apply(this, arguments);
 
         this.addEvents("dwdesc_loaded");
-        var durationToolbar = this.getDurationSelector();
-        var origRefreshOnHandle = durationToolbar.refreshButton.handler;
-        durationToolbar.refreshButton.handler = function() {
-            var changed = function(component) {
-                if (CCR.exists(component)) {
-                    if (CCR.isType(component.didChange, CCR.Types.Function)) {
-                        return component.didChange();
-                    }
-                }
-                return undefined;
-            };
-
-            var startChanged = changed(this.startDateField);
-            var endChanged = changed(this.endDateField);
-
-            if (startChanged || endChanged) {
-                origRefreshOnHandle.call(durationToolbar);
-            }
-        };
     }, //initComponent
 
     listeners: {

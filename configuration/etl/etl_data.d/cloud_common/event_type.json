@@ -54,5 +54,12 @@
     [51, "RESIZE_END",                        "Resize Instance End",           "End resizing of instance"],
     [52, "RESIZE_PREP_START",                 "Instance Resize Prep Start",    "Start prep for resizing instance"],
     [53, "RESIZE_PREP_END",                   "Instance Resize Prep End",	     "End prep for resizing instance"],
-    [54, "START_SHELVE",                      "Start Shelve",                  "Start shelving of instance"]
+    [54, "PAUSE_START",                       "Start Pause Instance",          "Start pausing an instance"],
+    [55, "PAUSE_END",                         "End Pause Instance",            "End pausing an instance"],
+    [56, "UNPAUSE_START",                     "Start Unpause Instance",        "Start Unpausing an instance"],
+    [57, "UNPAUSE_END",                       "End Unpause Instance",          "End Unpausing an instance"],
+    [58, "POWER_ON_START",                    "Power On Instance Start",       "Start powering on an instance"],
+    [59, "POWER_ON_END",                      "Power On Instance End",         "End powering on an instance"],
+    [60, "UNSUSPEND_START",                   "Unsuspend Instance Start",      "Start unsuspending an instance"],
+    [61, "UNSUSPEND_END",                     "Unsuspend Instance End",        "End unsuspending an instance"]
 ]

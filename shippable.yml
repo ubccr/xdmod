@@ -18,6 +18,7 @@ build:
         - composer install --no-progress
         - ~/bin/buildrpm xdmod
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/bootstrap.sh
+        - ./open_xdmod/modules/xdmod/integration_tests/scripts/validate.sh
         - composer install --no-progress
         - cp ~/assets/secrets.json open_xdmod/modules/xdmod/integration_tests/.secrets.json
         - ./open_xdmod/modules/xdmod/regression_tests/runtests.sh --junit-output-dir `pwd`/shippable/testresults/

@@ -2,11 +2,14 @@
 
 namespace DataWarehouse\Access;
 
+use CCR\DB;
+use CCR\Log;
 use Exception;
 
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
 use Models\Services\Acls;
+use PDO;
 use XDChartPool;
 use XDUser;
 
@@ -36,6 +39,99 @@ class Usage extends Common
     const DEFAULT_SCALE = 1.0;
 
     /**
+     * return the metadata about the summary charts for a given realm & group_by. The
+     * chart data itself is not queried by this call.
+     */
+    private function getSummaryCharts(XDUser $user) {
+
+        $usageCharts = array();
+
+        $requestedRealms = array_map('trim', explode(',', $this->request['realm']));
+        foreach ($requestedRealms as $usageRealm) {
+
+            $usageGroupBy = \xd_utilities\array_get($this->request, 'group_by', 'none');
+
+            $usageRealmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
+            $usageGroupByObject = $usageRealmAggregateClass::getGroupBy($usageGroupBy);
+
+            $usageSubnotes = array();
+            if ($usageGroupBy === 'resource' || array_key_exists('resource', $this->request)) {
+                $usageSubnotes[] = '* Resources marked with asterisk do not provide processor'
+                    . ' counts per job when submitting to the '
+                    . ORGANIZATION_NAME . ' Central Database. This affects the'
+                    . ' accuracy of the following (and related) statistics: Job'
+                    . ' Size and CPU Consumption';
+            }
+
+            $usageChartSettings = array(
+                'dataset_type' => \xd_utilities\array_get($this->request, 'dataset_type', $usageGroupByObject->getDefaultDatasetType()),
+                'display_type' => \xd_utilities\array_get($this->request, 'display_type', $usageGroupByObject->getDefaultDisplayType($usageGroupByObject->getDefaultDatasetType())),
+                'combine_type' => \xd_utilities\array_get($this->request, 'combine_type', $usageGroupByObject->getDefaultCombineMethod()),
+                'show_legend' => \xd_utilities\array_get($this->request, 'show_legend', $usageGroupByObject->getDefaultShowLegend()),
+                'show_guide_lines' => \xd_utilities\array_get($this->request, 'show_guide_lines', $usageGroupByObject->getDefaultShowGuideLines()),
+                'log_scale' => \xd_utilities\array_get($this->request, 'log_scale', $usageGroupByObject->getDefaultLogScale()),
+                'limit' => \xd_utilities\array_get($this->request, 'limit', $usageGroupByObject->getDefaultLimit()),
+                'offset' => \xd_utilities\array_get($this->request, 'offset', $usageGroupByObject->getDefaultOffset()),
+                'show_trend_line' => \xd_utilities\array_get($this->request, 'show_trend_line', $usageGroupByObject->getDefaultShowTrendLine()),
+                'show_error_bars' => \xd_utilities\array_get($this->request, 'show_error_bars', $usageGroupByObject->getDefaultShowErrorBars()),
+                'show_aggregate_labels' => \xd_utilities\array_get($this->request, 'show_aggregate_labels', $usageGroupByObject->getDefaultShowAggregateLabels()),
+                'show_error_labels' => \xd_utilities\array_get($this->request, 'show_error_labels', $usageGroupByObject->getDefaultShowErrorLabels()),
+                'hide_tooltip' => \xd_utilities\array_get($this->request, 'hide_tooltip', false),
+                'enable_errors' => 'n',
+                'thumbnail' => 'y',
+                'enable_trend_line' => \xd_utilities\array_get($this->request, 'enable_trend_line', $usageGroupByObject->getDefaultEnableTrendLine()),
+                'realm' => $usageRealm,
+                'group_by' => $usageGroupBy
+            );
+
+            $userStatistics = Acls::getPermittedStatistics($user, $usageRealm, $usageGroupBy);
+
+            foreach ($userStatistics as $userStatistic) {
+
+                $statsClass = $usageRealmAggregateClass::getStatistic($userStatistic);
+
+                if (!$statsClass->isVisible()) {
+                    continue;
+                }
+
+                $errorstat = 'sem_' . $userStatistic;
+                if (in_array($errorstat, array_keys($usageRealmAggregateClass::getRegisteredStatistics())) ) {
+                    $usageChartSettings['enable_errors'] = 'y';
+                } else {
+                    $usageChartSettings['enable_errors'] = 'n';
+                }
+                $usageChartSettings['statistic'] = $userStatistic;
+
+                $usageChart = array(
+                        'hc_jsonstore' => array('title' => array('text' => '')),
+                        'id' => "statistic_${usageRealm}_${usageGroupBy}_${userStatistic}",
+                        'short_title' => $statsClass->getLabel(),
+                        'random_id' => 'chart_' . mt_rand(),
+                        'subnotes' => $usageSubnotes,
+                        'group_description' => $usageGroupByObject->getDescription(),
+                        'description' => $statsClass->getDescription($usageGroupByObject),
+                        'chart_settings' => json_encode($usageChartSettings),
+                );
+
+                $usageCharts[] = $usageChart;
+            }
+        }
+
+        usort($usageCharts, function ($a, $b) {
+            return strcmp($a['short_title'], $b['short_title']);
+        });
+
+        $data = array(
+            'success' => true,
+            'message' => 'success',
+            'totalCount' => count($usageCharts),
+            'data' => $usageCharts
+        );
+
+        return $this->exportImage($data, null, null, null, 'hc_jsonstore', null);
+    }
+
+    /**
      * Get charts by converting a Usage tab-style request to Metric Explorer
      * requests.
      *
@@ -47,6 +143,11 @@ class Usage extends Common
      *                             headers: Headers to set on the response.
      */
     public function getCharts(XDUser $user, $chartsKey = 'data') {
+
+        if (isset($this->request['summary'])) {
+            return $this->getSummaryCharts($user);
+        }
+
         // Determine which realms are being requested.
         if (empty($this->request['realm'])) {
             throw new Exception('One or more realms must be specified.');
@@ -963,25 +1064,6 @@ class Usage extends Common
         $usageFilterSuffix = '_filter';
         $usageFilterSuffixLength = strlen($usageFilterSuffix);
         $usageRealm = \xd_utilities\array_get($usageRequest, 'realm');
-        $meFilters = array();
-        foreach ($usageRequest as $usageKey => $usageValue) {
-            if (!\xd_utilities\string_ends_with($usageKey, $usageFilterSuffix)) {
-                continue;
-            }
-
-            $usageFilterType = substr($usageKey, 0, -$usageFilterSuffixLength);
-            $usageFilterValues = explode(',', $usageValue);
-
-            foreach ($usageFilterValues as $usageFilterValue) {
-                $meFilters[] = array(
-                    'id' => "$usageFilterType=$usageFilterValue",
-                    'value_id' => $usageFilterValue,
-                    'dimension_id' => $usageFilterType,
-                    'realms' => array($usageRealm),
-                    'checked' => true,
-                );
-            }
-        }
 
         // Create global filters from any Usage drilldowns.
         $realmAggregateClass = "\\DataWarehouse\\Query\\$usageRealm\\Aggregate";
@@ -991,18 +1073,42 @@ class Usage extends Common
             $realmGroupBy = new $realmGroupByClass();
             return $realmGroupBy->getName();
         }, $realmGroupByClasses);
+
+        $meFilters = array();
+
+        // Extract the supported filter values from $usageRequest
         foreach ($usageRequest as $usageKey => $usageValue) {
-            if (!in_array($usageKey, $realmGroupByNames)) {
-                continue;
+
+            // handles '<dimension>_filter' properties
+            if (\xd_utilities\string_ends_with($usageKey, $usageFilterSuffix)) {
+                $usageFilterType = substr($usageKey, 0, -$usageFilterSuffixLength);
+                $usageFilterValues = explode(',', $usageValue);
+
+                foreach ($usageFilterValues as $usageFilterValue) {
+                    $translatedValues = $this->translateFilterValue($usageFilterType, $usageFilterValue);
+
+                    foreach($translatedValues as $translatedValue) {
+                        $meFilters[] = array(
+                            'id' => "$usageFilterType=$translatedValue",
+                            'value_id' => $translatedValue,
+                            'dimension_id' => $usageFilterType,
+                            'realms' => array($usageRealm),
+                            'checked' => true,
+                        );
+                    }
+                }
             }
 
-            $meFilters[] = array(
-                'id' => "$usageKey=$usageValue",
-                'value_id' => $usageValue,
-                'dimension_id' => $usageKey,
-                'realms' => array($usageRealm),
-                'checked' => true,
-            );
+            // handles '<dimension>' properties
+            if (in_array($usageKey, $realmGroupByNames)) {
+                $meFilters[] = array(
+                    'id' => "$usageKey=$usageValue",
+                    'value_id' => $usageValue,
+                    'dimension_id' => $usageKey,
+                    'realms' => array($usageRealm),
+                    'checked' => true,
+                );
+            }
         }
 
         // Store the global filters in the Metric Explorer request.
@@ -1106,5 +1212,69 @@ class Usage extends Common
             . '_'
             . ($isTimeseries ? 'timeseries' : 'aggregate')
         ;
+    }
+
+    /**
+     * Attempts to translate the $usageFilterValue which is either a quoted string ( single or double ),
+     * numeric string, or number via a sql query, based on $usageFilterType. If a non-quoted string
+     * is supplied it will be treated as a number. This affects the logic of what values are returned.
+     * Currently supported $usageFilterType values and the tables ( columns ) they lookup values
+     * in are:
+     *
+     *   - 'pi':       modw.systemaccount ( username )
+     *   - 'resource': modw.resourcefact  ( code )
+     *   - 'project':  modw_cloud.account ( display )
+     *
+     * If the $usageFilterValue is numeric or the $usageFilterType is not one of those currently
+     * supported then array($usageFilterValue) is returned.
+     *
+     * @param string $usageFilterType the 'type' of filter to translate. Currently supported
+     *                                 values: pi, resource, project
+     * @param string|int  $usageFilterValue the value to be translated
+     * @return array of the translated values.
+     * @throws Exception if there is a problem connecting to the db or executing a query.
+     */
+    private function translateFilterValue($usageFilterType, $usageFilterValue)
+    {
+
+        $query = null;
+
+        switch ($usageFilterType) {
+            case 'pi':
+                // This query may return multiple values
+                $query = "SELECT DISTINCT sa.person_id AS value FROM modw.systemaccount sa WHERE sa.username = :value;";
+                break;
+            case 'resource':
+                $query = "SELECT id AS value FROM modw.resourcefact WHERE code = :value";
+                break;
+            case 'project':
+                $query = "SELECT account_id AS value FROM modw_cloud.account WHERE display = :value";
+                break;
+        }
+
+        $filterValueIsString = preg_match('/^[\'"].*[\'"]$/', $usageFilterValue) === 1;
+
+        // We only attempt translation if we support the `$usageFilterType` provided and
+        // the `$usageFilterValue` is a quoted string.
+        if ($query !== null && $filterValueIsString) {
+            $value = trim($usageFilterValue, '\'"');
+
+            $db = DB::factory('database');
+
+            $stmt = $db->prepare($query);
+            $stmt->execute(array(':value' => $value));
+
+            $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+            // We need to test if there was an error ( bool returned ) because count(bool) === 1.
+            if ($rows !== false && count($rows) > 0) {
+                return $rows;
+            }
+
+            // If a string was provided but no id(s) were found then exception out.
+            throw new Exception(sprintf("Invalid value detected for filter '%s': %s", $usageFilterType, $usageFilterValue));
+        }
+
+        return array($usageFilterValue);
     }
 }

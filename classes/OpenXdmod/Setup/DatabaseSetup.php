@@ -179,14 +179,7 @@ EOT
         /**
          *  ETLv2 database bootstrap end
          */
-
-        $aclSetup = new AclSetup($this->console);
-        $aclSetup->handle();
-
         $aclConfig = new AclConfig($this->console);
         $aclConfig->handle();
-
-        $aclImport = new AclImportXdmod($this->console);
-        $aclImport->handle();
     }
 }
