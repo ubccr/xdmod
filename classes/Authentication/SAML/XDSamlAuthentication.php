@@ -97,7 +97,10 @@ EML;
     public function getXdmodAccount()
     {
         $samlAttrs = $this->_as->getAttributes();
-
+        /*
+         * SimpleSAMLphp uses its own session, this sets it back.
+         */
+        \SimpleSAML_Session::getSessionFromRequest()->cleanup();
         if ($this->_as->isAuthenticated()) {
             $userName = $samlAttrs['username'][0];
 

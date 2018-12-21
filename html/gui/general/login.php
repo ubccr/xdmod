@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../../configuration/linker.php';
-
+@session_start();
 $formal_name = isset($_REQUEST['xd_user_formal_name']) ? $_REQUEST['xd_user_formal_name'] :  "";
 $samlError = false;
 $auth = null;
@@ -50,7 +50,7 @@ try {
     function loadPortal() {
       setTimeout(function(){
         parent.location.href = '/index.php' + document.location.hash;
-      }, 3000);
+      }, 1500);
     }
 
     function contactAdmin() {
