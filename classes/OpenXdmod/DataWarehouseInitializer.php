@@ -138,7 +138,7 @@ class DataWarehouseInitializer
      */
     public function ingestAllShredded($startDate = null, $endDate = null)
     {
-        if( $this->realmEnabled('Jobs')){
+        if( $this->isRealmEnabled('Jobs')){
             $this->logger->debug('Ingesting shredded data to staging tables');
             $this->runEtlPipeline('staging-ingest-common');
             $this->runEtlPipeline('staging-ingest-jobs');
@@ -153,7 +153,7 @@ class DataWarehouseInitializer
      */
     public function ingestAllStaging($startDate = null, $endDate = null)
     {
-        if( $this->realmEnabled('Jobs')){
+        if( $this->isRealmEnabled('Jobs')){
             $this->logger->debug('Ingesting staging data to HPCDB');
             $this->runEtlPipeline('hpcdb-ingest-common');
             $this->runEtlPipeline('hpcdb-ingest-jobs');
@@ -168,7 +168,7 @@ class DataWarehouseInitializer
      */
     public function ingestAllHpcdb($startDate = null, $endDate = null)
     {
-        if( $this->realmEnabled('Jobs')){
+        if( $this->isRealmEnabled('Jobs')){
             $this->logger->debug('Ingesting HPCDB data to modw');
 
             if ($startDate !== null || $endDate !== null) {
@@ -206,7 +206,7 @@ class DataWarehouseInitializer
      */
     public function ingestCloudDataOpenStack()
     {
-        if( $this->realmEnabled('Cloud') ){
+        if( $this->isRealmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting OpenStack event log data');
                 $this->runEtlPipeline('jobs-cloud-extract-openstack');
@@ -229,7 +229,7 @@ class DataWarehouseInitializer
      */
     public function ingestCloudDataGeneric()
     {
-        if( $this->realmEnabled('Cloud') ){
+        if( $this->isRealmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting generic cloud log files');
                 $this->runEtlPipeline('jobs-cloud-extract-eucalyptus');
@@ -252,7 +252,7 @@ class DataWarehouseInitializer
      */
     public function aggregateCloudData()
     {
-        if( $this->realmEnabled('Cloud') ){
+        if( $this->isRealmEnabled('Cloud') ){
             $this->logger->notice('Aggregating Cloud data');
             $this->runEtlPipeline('cloud-state-pipeline');
 
@@ -288,7 +288,7 @@ class DataWarehouseInitializer
      */
     public function aggregateAllJobs($lastModifiedStartDate)
     {
-        if( $this->realmEnabled('Jobs') ){
+        if( $this->isRealmEnabled('Jobs') ){
             $this->runEtlPipeline(
                 'jobs-xdw-aggregate',
                 array('last-modified-start-date' => $lastModifiedStartDate)
@@ -353,7 +353,7 @@ class DataWarehouseInitializer
      *
      * @param string $realm The realm you are checking to see if exists
      */
-    public function realmEnabled($realm)
+    public function isRealmEnabled($realm)
     {
         $realms = $this->warehouseDb->query("SELECT * FROM moddb.realms WHERE display = :realm", [':realm' => $realm]);
         return (count($realms) > 0);

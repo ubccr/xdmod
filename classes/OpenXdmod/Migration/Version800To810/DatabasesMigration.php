@@ -22,7 +22,7 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         $dwDb = DB::factory('datawarehouse');
         $dwi = new DataWarehouseInitializer($hpcdbDb, $dwDb);
 
-        if($dwi->realmEnabled('Cloud')){
+        if($dwi->isRealmEnabled('Cloud')){
             $console = Console::factory();
             $console->displayMessage(<<<"EOT"
 There have been updates to cloud aggregation statistics to make the data more accurate.
