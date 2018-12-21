@@ -7,14 +7,14 @@
 
 namespace OpenXdmod\Shredder;
 
-class OpenStack extends aCloud
+use CCR\DB\iDatabase;
+
+class Openstack extends aCloud
 {
     /**
      * @inheritdoc
      */
-    public function shredDirectory($directory)
-    {
-        $this->setEtlPipeline(['jobs-cloud-ingest-openstack']);
-        return parent::shredDirectory($directory);
+    public function __construct(iDatabase $db){
+        parent::__construct($db, ['jobs-cloud-ingest-openstack']);
     }
 }

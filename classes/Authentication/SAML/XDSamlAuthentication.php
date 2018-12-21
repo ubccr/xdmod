@@ -70,9 +70,9 @@ EML;
                 $authSource = null;
             }
             if (!is_null($authSource) && array_search($authSource, $this->_sources) !== false) {
-                $this->_as = new \SimpleSAML_Auth_Simple($authSource);
+                $this->_as = new \SimpleSAML\Auth\Simple($authSource);
             } else {
-                $this->_as = new \SimpleSAML_Auth_Simple($this->_sources[0]);
+                $this->_as = new \SimpleSAML\Auth\Simple($this->_sources[0]);
             }
         }
     }

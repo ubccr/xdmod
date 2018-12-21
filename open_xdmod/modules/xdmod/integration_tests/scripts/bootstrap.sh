@@ -37,8 +37,6 @@ then
     # This will ensure that the users created in `/root/bin/createusers.php`
     # have their organizations set correctly.
     sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.acls-import
-    #Updating minmaxdate table so data for cloud realm shows up
-    mysql -e "UPDATE modw.minmaxdate SET max_job_date = '2018-07-01';"
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
@@ -46,4 +44,6 @@ then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
+    sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
+    sudo -u xdmod xdmod-ingestor
 fi

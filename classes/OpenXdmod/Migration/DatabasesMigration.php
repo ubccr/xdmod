@@ -81,6 +81,7 @@ abstract class DatabasesMigration extends Migration
             'mod_hpcdb'       => 'hpcdb',
             'modw_etl'        => 'logger',
             'modw_supremm'    => 'datawarehouse',
+            'modw_cloud'      => 'datawarehouse'
         );
 
         $dir = BASE_DIR . '/db/migrations/'

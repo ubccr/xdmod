@@ -57,7 +57,7 @@ function main()
         array('', 'ingest-staging'),
         array('', 'ingest-hpcdb'),
 
-        //Type of data that is being ingested.
+        // Type of data that is being ingested.
         array('', 'datatype:'),
 
         // Specify an ingestor.
@@ -78,9 +78,9 @@ function main()
     }
 
     $help = $ingest = $aggregate = $noAppend = $ingestAll = $ingestShredded
-        = $ingestStaging = $ingestHpcdb = $datatype = false;
+        = $ingestStaging = $ingestHpcdb = $datatype = $realmToAggregate = false;
 
-    $startDate = $endDate = $lastModifiedStartDate = $realmToAggregate = $datatypeValue = null;
+    $startDate = $endDate = $lastModifiedStartDate = $datatypeValue = null;
 
     $logLevel = -1;
 
@@ -283,12 +283,12 @@ function main()
     if ($aggregate) {
         $logger->info('Aggregating data');
         try {
-            //If there is no realm specified to aggregate then all realms should be aggregated
-            if($realmToAggregate == 'job' || $realmToAggregate === null){
+            // If there is no realm specified to aggregate then all realms should be aggregated
+            if($realmToAggregate == 'job' || $realmToAggregate === false){
                 $dwi->aggregateAllJobs($lastModifiedStartDate);
             }
 
-            if($realmToAggregate == 'cloud' || $realmToAggregate === null){
+            if($realmToAggregate == 'cloud' || $realmToAggregate === false){
                 $dwi->aggregateCloudData();
             }
         } catch (Exception $e) {

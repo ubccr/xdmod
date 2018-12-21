@@ -24,7 +24,6 @@
                 "jobs/xdw/job-times.json",
                 "jobs/xdw/job-wait-times.json",
                 "jobs/xdw/jobhosts.json",
-                "jobs/xdw/min-max-date.json",
                 "jobs/xdw/months.json",
                 "jobs/xdw/node-count.json",
                 "jobs/xdw/organization.json",

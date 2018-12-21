@@ -7,14 +7,14 @@
 
 namespace OpenXdmod\Shredder;
 
+use CCR\DB\iDatabase;
+
 class Genericcloud extends aCloud
 {
     /**
      * @inheritdoc
      */
-    public function shredDirectory($directory)
-    {
-        $this->setEtlPipeline(['jobs-cloud-ingest-eucalyptus']);
-        return parent::shredDirectory($directory);
+    public function __construct(iDatabase $db){
+        parent::__construct($db, ['jobs-cloud-ingest-eucalyptus']);
     }
 }
