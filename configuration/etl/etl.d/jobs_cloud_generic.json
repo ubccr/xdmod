@@ -20,7 +20,13 @@
             }
         },
 
-        "jobs-cloud-generic": {
+        "jobs-cloud-ingest-generic": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true
+        },
+        "jobs-cloud-extract-generic": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "truncate_destination": false,
@@ -30,7 +36,7 @@
 
     "#": "Current Cloud job ingestion",
 
-    "jobs-cloud-generic": [
+    "jobs-cloud-ingest-generic": [
         {
             "name": "GenericRawCloudEventLogIngestor",
             "description": "Raw generic cloud instance data from log files",
@@ -119,7 +125,7 @@
             "stop_on_exception": false
         }
     ],
-    "jobs-cloud-extract-eucalyptus": [
+    "jobs-cloud-extract-generic": [
         {
             "name": "GenericCloudAccountIngestor",
             "description": "Generic cloud account data",
