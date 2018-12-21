@@ -36,7 +36,7 @@
     [34, 42,    "compute.instance.finish_resize.start"],
     [35, 43,    "compute.instance.finish_resize.end"],
     [36, 44,    "compute.instance.power_off.start"],
-    [37, 17,    "compute.instance.power_off.end"],
+    [37, 45,    "compute.instance.power_off.end"],
     [38, 46,    "compute.instance.rebuild.start"],
     [39, 47,    "compute.instance.rebuild.end"],
     [40, 48,    "compute.instance.resize.confirm.start"],
@@ -46,6 +46,13 @@
     [44, 52,    "compute.instance.resize.prep.start"],
     [45, 53,    "compute.instance.resize.prep.end"],
     [46, 54,    "compute.instance.shelve_offload.start"],
-    [47, 7,    "compute.instance.power_on.start"],
-    [48, 8,    "compute.instance.power_off.end"]
+    [47, 7,     "compute.instance.resume.start"],
+    [48, 8,     "compute.instance.resume.end"],
+    [49, 58,    "compute.instance.power_on.start"],
+    [50, 59,    "compute.instance.power_on.end"],
+    [51, 20,    "compute.instance.unshelve.end"],
+    [52, 57,    "compute.instance.unpause.end"],
+    [53, 61,    "compute.instance.unsuspend.end"],
+    [54, 17,    "compute.instance.suspend.end"],
+    [55, 55,    "compute.instance.pause.end"]
 ]
