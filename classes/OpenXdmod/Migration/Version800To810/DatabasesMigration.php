@@ -5,6 +5,8 @@ namespace OpenXdmod\Migration\Version800To810;
 use CCR\DB;
 use OpenXdmod\DataWarehouseInitializer;
 use OpenXdmod\Setup\Console;
+use XDUser;
+use UserStorage;
 
 /**
 * Migrate databases from version 8.0.0 to 8.1.0.
@@ -60,6 +62,15 @@ your cloud data using the commands recommended in our documentation.
 EOT
             );
         }
+
+        $db = DB::factory('database');
+
+        $result = $db->query('SELECT id FROM Users');
+        foreach ($result as $row)
+        {
+            $user = XDUser::getUserByID($row['id']);
+            $this->migrateMetricExplorerQueries($user);
+        }
     }
 
     /**
@@ -68,31 +79,33 @@ EOT
      */
     private function migrateMetricExplorerQueries(XDUser $user)
     {
-        $metaData = new \UserStorage($user, self::_QUERY_METADATA);
+        $metaData = new UserStorage($user, self::_QUERY_METADATA);
         $migrated = $this->isMetaDataValid($metaData);
+
+        $queries = new UserStorage($user, self::_QUERIES_STORE);
 
         if (!$migrated) {
             $this->migrateOldQueries($user, $queries);
-            $metaData->upsert(0, array(self::_QUERIES_MIGRATED => true));
         }
+
+        $oldQueryProfile = $user->getProfile();
+        $oldQueryProfile->dropValue(self::_OLD_QUERIES_STORE);
+        $oldQueryProfile->save();
+
+        $metaData->del();
     }
 
     /**
      * A helper function that is used to migrate / clean up users old query
      * stores to the new ones.
      *
-     * @param \XDUser $user
-     * @param \UserStorage $queries
-     * @param bool|true $removeOldQueries
+     * @param XDUser $user
+     * @param UserStorage $queries
      *
      * @throws \Exception
      */
-    private function migrateOldQueries(\XDUser $user, \UserStorage $queries, $removeOldQueries = true)
+    private function migrateOldQueries(XDUser $user, UserStorage $queries)
     {
-        if (!isset($user)) {
-            return;
-        }
-
         $profile = $user->getProfile();
         $oldQueries = $profile->fetchValue(self::_OLD_QUERIES_STORE);
 
@@ -143,17 +156,15 @@ EOT
     }
 
     /**
-     * @param \UserStorage $metaData
+     * @param UserStorage $metaData
      * @return bool
      */
-    public function isMetaDataValid(\UserStorage $metaData)
+    public function isMetaDataValid(UserStorage $metaData)
     {
 
         $meta = $this->toArray($metaData->get());
 
         if (count($meta) < 1 || (count($meta) > 1 && !isset($meta[0][self::_QUERIES_MIGRATED]))) {
-            $meta[self::_QUERIES_MIGRATED] = false;
-            $metaData->upsert(0, $meta);
             return false;
         }
 
