@@ -1133,9 +1133,20 @@ SQL;
     public function getLastLoginTimestamp()
     {
 
-        $results = $this->_pdo->query("SELECT FROM_UNIXTIME(init_time) as lastLogin FROM SessionManager WHERE user_id=:user_id ORDER BY init_time DESC LIMIT 1", array(
-            ':user_id' => $this->_id,
-        ));
+        $results = $this->_pdo->query(
+            "SELECT
+                FROM_UNIXTIME(FLOOR(init_time)) AS lastLogin
+            FROM
+                SessionManager
+            WHERE
+                user_id = :user_id
+            ORDER BY
+                init_time DESC
+            LIMIT 1",
+            array(
+                ':user_id' => $this->_id,
+            )
+        );
 
         if (count($results) == 0) {
             return "Never logged in";

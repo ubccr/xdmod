@@ -1,0 +1,77 @@
+{
+    "defaults": {
+        "global": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "class": "DatabaseIngestor",
+            "truncate_destination": false,
+            "enabled": true,
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+
+    "ingest-resource-types": [
+      {
+          "name": "ResourceTypesStaging",
+          "description": "Ingest resource types file",
+          "class": "StructuredFileIngestor",
+          "definition_file": "common/staging/resource-type.json",
+          "endpoints": {
+              "source": {
+                  "type": "jsonfile",
+                  "name": "Resource types",
+                  "path": "${base_dir}/../resource_types.json",
+                  "record_schema_path": "common/resource-types.schema.json"
+              },
+              "destination": {
+                  "type": "mysql",
+                  "name": "Shredder/Staging Database",
+                  "config": "database",
+                  "schema": "mod_shredder"
+              }
+          }
+      },
+      {
+          "name": "ResourceTypesHpcdb",
+          "description": "Ingest resource types",
+          "definition_file": "common/hpcdb/resource-types.json",
+          "endpoints": {
+              "destination": {
+                  "type": "mysql",
+                  "name": "HPCDB Database",
+                  "config": "database",
+                  "schema": "mod_hpcdb"
+              }
+          }
+      },
+      {
+          "name": "ResourceTypesDatawarehouse",
+          "definition_file": "jobs/xdw/resource-type.json",
+          "description": "resource type records",
+          "endpoints": {
+              "source": {
+                  "type": "mysql",
+                  "name": "HPCDB",
+                  "config": "datawarehouse",
+                  "schema": "mod_hpcdb",
+                  "create_schema_if_not_exists": true
+              }
+          }
+      }
+   ]
+}
