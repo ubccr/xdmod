@@ -3245,6 +3245,12 @@ SQL;
             // Update / save the user with their new organization
             $this->setOrganizationId($expectedOrganization);
             $this->saveUser();
+
+            // Since we've removed this users relation to center acls we need to make sure that
+            // user_acl_group_by_parameters stays in sync.
+            foreach(self::$CENTER_ACLS as $acl) {
+                $this->setOrganizations(array(), $acl);
+            }
         }
     }
 
@@ -3272,6 +3278,21 @@ SQL;
                 $this->setOrganizationID($organizationId);
 
                 $this->saveUser();
+
+                // We need to make sure that we preserve this users center related information
+                // in user_acl_group_by_parameters.
+                $centerAcls = array_intersect($this->getAcls(true), array('cd', 'cs'));
+                foreach ($centerAcls as $acl) {
+                    $this->setOrganizations(
+                        array(
+                            $this->getOrganizationID() => array(
+                                'primary' => 1,
+                                'active' => 1
+                            )
+                        ),
+                        $acl
+                    );
+                }
             }
         }
     }
