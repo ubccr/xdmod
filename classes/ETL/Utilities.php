@@ -328,7 +328,7 @@ class Utilities
     {
         $logger->debug(
             sprintf(
-                'Shredding directory using ETL pipeline "%s" with parameters %s',
+                'Running ETL pipeline "%s" with parameters %s',
                 implode(', ', $pipelines),
                 json_encode($params)
             )
