@@ -9,6 +9,7 @@ use TimePeriodGenerator;
 use CCR\DB\MySQLHelper;
 use CCR\DB;
 use CCR\Log;
+use ETL\Utilities;
 
 /**
  * Database setup.
@@ -140,28 +141,13 @@ EOT
         /**
          *  ETLv2 database bootstrap start
          */
-        $scriptOptions = array(
-            'default-module-name' => 'xdmod',
-            'process-sections' => array(
-                'xdb-bootstrap',
-                'jobs-xdw-bootstrap',
-                'shredder-bootstrap',
-                'staging-bootstrap',
-                'hpcdb-bootstrap',
-            ),
-        );
-
-        $etlConfig = new \ETL\Configuration\EtlConfiguration(
-            CONFIG_DIR . '/etl/etl.json',
-            null,
-            $logger,
-            array('default_module_name' => $scriptOptions['default-module-name'])
-        );
-        $etlConfig->initialize();
-        \ETL\Utilities::setEtlConfig($etlConfig);
-        $overseerOptions = new \ETL\EtlOverseerOptions($scriptOptions, $logger);
-        $overseer = new \ETL\EtlOverseer($overseerOptions, $logger);
-        $overseer->execute($etlConfig);
+        Utilities::runEtlPipeline(array(
+            'xdb-bootstrap',
+            'jobs-xdw-bootstrap',
+            'shredder-bootstrap',
+            'staging-bootstrap',
+            'hpcdb-bootstrap',
+        ), $logger);
 
 
         $aggregationUnits = array(
