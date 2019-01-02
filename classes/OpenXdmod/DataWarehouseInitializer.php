@@ -229,11 +229,7 @@ class DataWarehouseInitializer
         if( $this->isRealmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting generic cloud log files');
-<<<<<<< HEAD
                 $this->runEtlPipeline('jobs-cloud-extract-generic');
-=======
-                Utilities::runEtlPipeline(array('jobs-cloud-extract-eucalyptus'), $this->logger);
->>>>>>> c259a080f322ac8c70cf7513283e31fc8957b1d2
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
