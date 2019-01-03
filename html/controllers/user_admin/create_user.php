@@ -56,6 +56,8 @@ else {
     \xd_response\presentError("Acl information is required");
 }
 
+$sticky = isset($_POST['sticky']) ? (bool)$_POST['sticky'] : false;
+
 try {
     $password_chars = 'abcdefghijklmnopqrstuvwxyz!@#$%-_=+ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
     $max_password_chars_index = strlen($password_chars) - 1;
@@ -74,7 +76,9 @@ try {
         array_keys($acls),
         ROLE_ID_USER,
         $_POST['institution'],
-        $_POST['assignment']
+        $_POST['assignment'],
+        array(),
+        $sticky
     );
     $newuser->setUserType($_POST['user_type']);
     $newuser->saveUser();

@@ -551,7 +551,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             handler: function () {
                 var institution = (cmbInstitution.getValue().length > 0) ? cmbInstitution.getValue() : -1;
                 var mapped_user_id = (cmbUserMapping.getValue().length > 0) ? cmbUserMapping.getValue() : -1;
-
+                var manualOverride = mapped_user_id === -1 && institution !== -1;
                 // Sanitization
 
                 cmbUserMapping.removeClass('admin_panel_invalid_text_entry');
@@ -625,7 +625,8 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     acls: Ext.util.JSON.encode(populatedAcls),
                     assignment: mapped_user_id,
                     institution: institution,
-                    user_type: cmbUserType.getValue()
+                    user_type: cmbUserType.getValue(),
+                    sticky: manualOverride
                 };
 
                 Ext.Ajax.request({
