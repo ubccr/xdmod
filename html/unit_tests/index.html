@@ -10,6 +10,9 @@
   <div id="messages"></div>
   <div id="fixtures"></div>
 
+  <!-- Array.prototype.includes polyfill -->
+  <script src="./Array.prototype.includes.js"></script>
+
   <!-- Test harness scripts pulled from github CDN -->
   <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
   <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
@@ -39,10 +42,12 @@
   <!-- Files to test -->
   <script>
 Ext.ns('CCR', 'CCR.xdmod', 'CCR.xdmod.ui', 'XDMoD.REST');
+CCR.xdmod.ui.rawDataAllowedRealms = ['Jobs'];
   </script>
   <script data-cover src="../gui/js/ChangeStack.js"></script>
   <script data-cover src="../gui/js/CCR.js"></script>
 
+  <script type="text/javascript" src="../gui/js/ExportPanel.js"></script>
   <script type="text/javascript" src="../gui/js/PortalModule.js"></script>
   <script type="text/javascript" src="../gui/js/RealTimeValidatingTextField.js"></script>
   <script type="text/javascript" src="../gui/js/plugins/CollapsedPanelTitlePlugin.js"></script>
