@@ -20,13 +20,13 @@
             }
         },
 
-        "jobs-cloud-ingest-eucalyptus": {
+        "jobs-cloud-ingest-generic": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "truncate_destination": false,
             "enabled": true
         },
-        "jobs-cloud-extract-eucalyptus": {
+        "jobs-cloud-extract-generic": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "truncate_destination": false,
@@ -34,19 +34,18 @@
         }
     },
 
-    "#": "Current Cloud job ingestion",
-
-    "jobs-cloud-ingest-eucalyptus": [
+    "#": "Ingests cloud data from a file formatted in our generic cloud format",
+    "jobs-cloud-ingest-generic": [
         {
-            "name": "EucalyptusRawCloudEventLogIngestor",
-            "description": "Raw Eucalyptus cloud instance data from log files",
+            "name": "GenericRawCloudEventLogIngestor",
+            "description": "Raw generic cloud instance data from log files",
             "class": "StructuredFileIngestor",
-            "definition_file": "cloud_eucalyptus/raw_cloud_job_logs.json",
+            "definition_file": "cloud_generic/raw_cloud_job_logs.json",
             "truncate_destination": true,
             "endpoints": {
                 "source": {
                     "type": "directoryscanner",
-                    "name": "Eucalyptus event logs",
+                    "name": "Generic cloud event logs",
                     "#": "Relative paths are searched in $BASEDIR/etl_data.d",
                     "path": "${CLOUD_EVENT_LOG_DIRECTORY}",
                     "directory_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}/",
@@ -90,15 +89,15 @@
             "#": "these device array elements into individual devive records with select event",
             "#": "metadata.",
 
-            "name": "EucalyptusRawCloudVolumeIngestor",
-            "description": "Raw Eucalyptus block devices associated with an event",
+            "name": "GenericRawCloudVolumeIngestor",
+            "description": "Raw generic cloud block devices associated with an event",
             "class": "StructuredFileIngestor",
-            "definition_file": "cloud_eucalyptus/raw_volume.json",
+            "definition_file": "cloud_generic/raw_volume.json",
             "truncate_destination": true,
             "endpoints": {
                 "source": {
                     "type": "directoryscanner",
-                    "name": "Eucalyptus volume logs",
+                    "name": "Generic volume logs",
                     "path": "${CLOUD_EVENT_LOG_DIRECTORY}",
                     "directory_pattern": "/[0-9]{4}-[0-9]{2}-[0-9]{2}/",
                     "file_pattern": "/acct\\.json/",
@@ -125,94 +124,95 @@
             "stop_on_exception": false
         }
     ],
-    "jobs-cloud-extract-eucalyptus": [
+    "#": "Extracts data from raw data tables into fact and dimension tables used for aggregation",
+    "jobs-cloud-extract-generic": [
         {
-            "name": "EucalyptusCloudAccountIngestor",
-            "description": "Eucalyptus cloud account data",
+            "name": "GenericCloudAccountIngestor",
+            "description": "Generic cloud account data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/account.json"
+            "definition_file": "cloud_generic/account.json"
         },
         {
-            "name": "EucalyptusCloudHostIngestor",
-            "description": "Eucalyptus cloud host data",
+            "name": "GenericCloudHostIngestor",
+            "description": "Generic cloud host data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/host.json"
+            "definition_file": "cloud_generic/host.json"
         },
         {
-            "name": "EucalyptusCloudImageIngestor",
-            "description": "Eucalyptus cloud image data",
+            "name": "GenericCloudImageIngestor",
+            "description": "Generic cloud image data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/image.json"
+            "definition_file": "cloud_generic/image.json"
         },
         {
-            "name": "EucalyptusCloudInstanceTypeIngestor",
-            "description": "Eucalyptus cloud instance type data",
+            "name": "GenericCloudInstanceTypeIngestor",
+            "description": "Generic cloud instance type data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/instance_type.json"
+            "definition_file": "cloud_generic/instance_type.json"
         },
         {
-            "name": "EucalyptusCloudInstanceIngestor",
-            "description": "Eucalyptus cloud instance data",
+            "name": "GenericCloudInstanceIngestor",
+            "description": "Generic cloud instance data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/instance.json"
+            "definition_file": "cloud_generic/instance.json"
         },
         {
-            "name": "EucalyptusCloudVolumeAssetIngestor",
-            "description": "Eucalyptus cloud attachable volume (block device) data from raw logs",
+            "name": "GenericCloudVolumeAssetIngestor",
+            "description": "Generic cloud attachable volume (block device) data from raw logs",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/volume.json"
+            "definition_file": "cloud_generic/volume.json"
         },
         {
-            "name": "EucalyptusCloudPostIngestUpdates",
-            "description": "Post-ingest updates for massaging Eucalyptus data",
+            "name": "GenericCloudPostIngestUpdates",
+            "description": "Post-ingest updates for massaging Generic cloud data",
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "class": "ExecuteSql",
             "sql_file_list": [
-                "cloud_eucalyptus/post_ingest_updates.sql"
+                "cloud_generic/post_ingest_updates.sql"
             ]
         },
         {
             "#": "Events must be ingested after all other dimensions",
-            "name": "EucalyptusCloudStagingEventIngestor",
-            "description": "Eucalyptus staging data for cloud events",
+            "name": "GenericCloudStagingEventIngestor",
+            "description": "Generic staging data for cloud events",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/staging_event.json"
+            "definition_file": "cloud_generic/staging_event.json"
         },
         {
             "#": "Instance data must be ingested after staging events",
-            "name": "EucalyptusCloudRootVolumeAssetIngestor",
-            "description": "Infer Eucalyptus instance root volume data from instance types",
+            "name": "GenericCloudRootVolumeAssetIngestor",
+            "description": "Infer Generic instance root volume data from instance types",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/root_volume.json"
+            "definition_file": "cloud_generic/root_volume.json"
         },
         {
             "#": "Instance data must be ingested after staging events",
-            "name": "EucalyptusCloudIpAddressAssetIngestor",
-            "description": "Eucalyptus cloud attachable IP address data from staging events",
+            "name": "GenericCloudIpAddressAssetIngestor",
+            "description": "Generic cloud attachable IP address data from staging events",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/ip_address.json"
+            "definition_file": "cloud_generic/ip_address.json"
         },
         {
             "#": "Instance data must be ingested after staging events",
-            "name": "EucalyptusCloudEventIngestor",
-            "description": "Eucalyptus cloud event and instance data",
+            "name": "GenericCloudEventIngestor",
+            "description": "Generic cloud event and instance data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/event.json"
+            "definition_file": "cloud_generic/event.json"
         },
         {
             "#": "Asset data must be ingested after events",
-            "name": "EucalyptusCloudEventAssetRootVolumeIngestor",
-            "description": "Eucalyptus cloud instance root volume assets associated with START events",
+            "name": "GenericCloudEventAssetRootVolumeIngestor",
+            "description": "Generic cloud instance root volume assets associated with START events",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/event_asset_root_volume.json"
+            "definition_file": "cloud_generic/event_asset_root_volume.json"
         },
         {
             "#": "Asset data must be ingested after events",
-            "name": "EucalyptusCloudEventAssetIngestor",
-            "description": "Eucalyptus cloud assets associated with events",
+            "name": "GenericCloudEventAssetIngestor",
+            "description": "Generic cloud assets associated with events",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_eucalyptus/event_asset.json"
+            "definition_file": "cloud_generic/event_asset.json"
         }
     ]
 }

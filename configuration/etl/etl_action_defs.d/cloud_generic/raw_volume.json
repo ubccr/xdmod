@@ -3,12 +3,12 @@
 
     "table_definition": [
         {
-            "$ref": "${table_definition_dir}/cloud_eucalyptus/raw_volume.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_generic/raw_volume.json#/table_definition"
         }
     ],
 
     "destination_record_map": {
-        "eucalyptus_raw_volume": {
+        "generic_cloud_raw_volume": {
             "resource_id": "${RESOURCE_ID}",
             "provider_instance_identifier": "instance_id",
             "provider_account_number": "account_number",
