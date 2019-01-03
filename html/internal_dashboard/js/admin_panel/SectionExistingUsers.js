@@ -686,7 +686,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             user_management_mode: true,
             fieldLabel: 'Map To',
             emptyText: 'User not mapped',
-            hiddenName: 'nm_existing_user_mapping',
             width: 165,
             cascadeOptions: {
                 component: cmbInstitution,
