@@ -17,7 +17,7 @@
 
         "joins": [
             {
-                "name": "eucalyptus_raw_event",
+                "name": "generic_cloud_raw_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             },

@@ -44,7 +44,7 @@
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
             "class": "SimpleAggregator",
-            "description": "Aggregate Eucalyptus cloud records.",
+            "description": "Aggregate cloud records.",
             "definition_file": "cloud_common/cloud_metrics_aggregation.json",
             "truncate_destination": true,
             "table_prefix": "cloudfact_by_",

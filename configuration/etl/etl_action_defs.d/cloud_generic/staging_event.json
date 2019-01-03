@@ -1,7 +1,7 @@
 {
     "table_definition": [
         {
-            "$ref": "${table_definition_dir}/cloud_eucalyptus/staging_event.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_generic/staging_event.json#/table_definition"
         }
     ],
 
@@ -32,7 +32,7 @@
 
         "joins": [
             {
-                "name": "eucalyptus_raw_event",
+                "name": "generic_cloud_raw_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             },

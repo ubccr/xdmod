@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "name": "eucalyptus_staging_event",
+        "name": "generic_cloud_staging_event",
         "engine": "MyISAM",
         "comment": "Staged events with some ids.",
         "columns": [

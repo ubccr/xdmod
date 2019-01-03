@@ -28,7 +28,7 @@
 
         "joins": [
             {
-                "name": "eucalyptus_raw_instance_type",
+                "name": "generic_cloud_raw_instance_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             },{
