@@ -34,8 +34,7 @@
         }
     },
 
-    "#": "Current Cloud job ingestion",
-
+    "#": "Ingests cloud data from a file formatted in our generic cloud format",
     "jobs-cloud-ingest-generic": [
         {
             "name": "GenericRawCloudEventLogIngestor",
@@ -125,6 +124,7 @@
             "stop_on_exception": false
         }
     ],
+    "#": "Extracts data from raw data tables into fact and dimension tables used for aggregation",
     "jobs-cloud-extract-generic": [
         {
             "name": "GenericCloudAccountIngestor",
