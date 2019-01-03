@@ -199,8 +199,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var comboChangeHandler = function (f, newValue, oldValue) {
             /* eslint-disable no-use-before-define */
-            if (!Ext.isEmpty(cmbUserMapping.originalValue) && String(cmbUserMapping.originalValue) !== String(cmbUserMapping.getValue()) ||
-                !Ext.isEmpty(cmbInstitution.originalValue) && String(cmbInstitution.originalValue) !== String(cmbInstitution.getValue())
+            if ((!Ext.isEmpty(cmbUserMapping.originalValue) && String(cmbUserMapping.originalValue) !== String(cmbUserMapping.getValue())) ||
+                (!Ext.isEmpty(cmbInstitution.originalValue) && String(cmbInstitution.originalValue) !== String(cmbInstitution.getValue()))
             ) {
                 stickyCheckbox.setValue(true);
             } else {
@@ -360,7 +360,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             boxLabel: 'Manually Overridden',
             labelStyle: 'display: none; visible: none',
             listeners: {
-                check: function() {
+                check: function () {
                     self.updateSaveIndicator();
                 }
             }
@@ -724,12 +724,13 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
          *
          * @returns {boolean} true if there have been changes else false.
          */
-        self.userSettingsDirty = function() {
-            let fieldValues = userSettings.getForm().getFieldValues();
-            for (let id in fieldValues) {
+        self.userSettingsDirty = function () {
+            // eslint-disable-next-line no-use-before-define
+            var fieldValues = userSettings.getForm().getFieldValues();
+            for (var id in fieldValues) {
                 if (fieldValues.hasOwnProperty(id)) {
-                    let field = Ext.getCmp(id);
-                    let value = field.getValue();
+                    var field = Ext.getCmp(id);
+                    var value = field.getValue();
 
                     // We need to check that the field we're checking has an
                     // `originalValue` in place. If not, then prefer using the
@@ -737,7 +738,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     // `startValue` is not present.
                     if (Ext.isEmpty(field.originalValue)) {
                         if (!Ext.isEmpty(field.startValue)) {
-                            field.originalValue = field.startValue
+                            field.originalValue = field.startValue;
                         } else if (!Ext.isEmpty(value)) {
                             field.originalValue = value;
                         }
@@ -1343,7 +1344,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
          * Updates the save indicator based on whether or not changes have been
          * made.
          */
-        self.updateSaveIndicator = function() {
+        self.updateSaveIndicator = function () {
             if (self.inDirtyState()) {
                 saveIndicator.show();
             } else {
