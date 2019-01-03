@@ -730,24 +730,28 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             for (var id in fieldValues) {
                 if (fieldValues.hasOwnProperty(id)) {
                     var field = Ext.getCmp(id);
-                    var value = field.getValue();
 
-                    // We need to check that the field we're checking has an
-                    // `originalValue` in place. If not, then prefer using the
-                    // `startValue` and finally the fields current value if
-                    // `startValue` is not present.
-                    if (Ext.isEmpty(field.originalValue)) {
-                        if (!Ext.isEmpty(field.startValue)) {
-                            field.originalValue = field.startValue;
-                        } else if (!Ext.isEmpty(value)) {
-                            field.originalValue = value;
+                    // Only check a field if it's been rendered.
+                    if (field.rendered) {
+                        var value = field.getValue();
+
+                        // We need to check that the field we're checking has an
+                        // `originalValue` in place. If not, then prefer using the
+                        // `startValue` and finally the fields current value if
+                        // `startValue` is not present.
+                        if (Ext.isEmpty(field.originalValue)) {
+                            if (!Ext.isEmpty(field.startValue)) {
+                                field.originalValue = field.startValue;
+                            } else if (!Ext.isEmpty(value)) {
+                                field.originalValue = value;
+                            }
                         }
-                    }
 
-                    // We explicitly cast each side to string so that we can
-                    // utilize the more stringent `===`.
-                    if (String(field.originalValue) !== String(value)) {
-                        return true;
+                        // We explicitly cast each side to string so that we can
+                        // utilize the more stringent `===`.
+                        if (String(field.originalValue) !== String(value)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -1204,7 +1208,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             cmbUserType.setDisabled(false);
                             cmbUserType.setValue(cached_user_type);
                         }
-                        stickyCheckbox.setValue(Boolean(json.user_information.sticky));
+                        var sticky = Boolean(json.user_information.sticky);
+                        stickyCheckbox.setValue(sticky);
+                        stickyCheckbox.originalValue = sticky;
                         cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
 
                         /**
