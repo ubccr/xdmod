@@ -17,7 +17,7 @@
 
         "joins": [
             {
-                "name": "eucalyptus_raw_volume",
+                "name": "generic_cloud_raw_volume",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "raw"
             },

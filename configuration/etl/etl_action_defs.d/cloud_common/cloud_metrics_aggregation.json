@@ -1,5 +1,5 @@
 {
-    "#": "Aggregation of Cloud Data ingested from Eucalyptus",
+    "#": "Aggregation of Cloud data",
         "table_definition": {
             "$ref": "${table_definition_dir}/cloud_common/cloudfact_by_.json#/table_definition"
         },

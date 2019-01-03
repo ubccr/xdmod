@@ -20,7 +20,7 @@
 
         "joins": [
             {
-                "name": "eucalyptus_staging_event",
+                "name": "generic_cloud_staging_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "staging"
             },
