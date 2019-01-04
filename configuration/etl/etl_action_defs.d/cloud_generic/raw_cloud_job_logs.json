@@ -1,20 +1,20 @@
 {
-    "#": "Load raw event data from Eucalyptus log files. The resource id will be specified on",
+    "#": "Load raw event data from generic cloud log files. The resource id will be specified on",
     "#": "the ETL command line at run time.",
 
     "table_definition": [
         {
-            "$ref": "${table_definition_dir}/cloud_eucalyptus/raw_event.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_generic/raw_event.json#/table_definition"
         },
         {
-            "$ref": "${table_definition_dir}/cloud_eucalyptus/raw_instance_type.json#/table_definition"
+            "$ref": "${table_definition_dir}/cloud_generic/raw_instance_type.json#/table_definition"
         }
     ],
 
     "#": "Note that JSON pointers are used below to access data in nested JSON objects",
 
     "destination_record_map": {
-        "eucalyptus_raw_event": {
+        "generic_cloud_raw_event": {
             "event_type": "event_type",
             "record_type": "record_type",
             "event_time_utc": "event_time",
@@ -28,7 +28,7 @@
             "first_volume": "/block_devices/0/id",
             "root_volume_type": "root_type"
         },
-        "eucalyptus_raw_instance_type": {
+        "generic_cloud_raw_instance_type": {
             "instance_type": "/instance_type/name",
             "resource_id": "${RESOURCE_ID}",
             "display": "/instance_type/name",

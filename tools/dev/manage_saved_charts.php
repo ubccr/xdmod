@@ -33,7 +33,7 @@ $scriptOptions = array(
     'source' => null,
     'user' => null,
     'verbose' => false,
-    'xdmod-root' => '/usr/share/xdmod/'
+    'xdmod-root' => null
 );
 
 $supportedOperations = array(
@@ -125,14 +125,17 @@ if ( null === $scriptOptions['user'] ) {
     usage_and_exit("Must specify a user" . PHP_EOL);
 }
 
-if ( ! is_dir($scriptOptions['xdmod-root']) ) {
-    usage_and_exit(sprintf("xdmod-root is not a directory: '%s'", $scriptOptions['xdmod-root']) . PHP_EOL);
+$linker = __DIR__ . '/../../configuration/linker.php';
+
+if ($scriptOptions['xdmod-root'] !== null) {
+    if ( ! is_dir($scriptOptions['xdmod-root']) ) {
+        usage_and_exit(sprintf("xdmod-root is not a directory: '%s'", $scriptOptions['xdmod-root']) . PHP_EOL);
+    }
+    $linker = $scriptOptions['xdmod-root'] . DIRECTORY_SEPARATOR . 'share/configuration/linker.php';
 }
 
-$linker = $scriptOptions['xdmod-root'] . DIRECTORY_SEPARATOR . 'share/configuration/linker.php';
-
 if ( ! is_readable($linker) ) {
-    usage_and_exit(sprinf("XDMoD linker not readable: '%s'", $linker) . PHP_EOL);
+    usage_and_exit(sprintf("XDMoD linker not readable: '%s'", $linker) . PHP_EOL);
 }
 
 require_once $linker;

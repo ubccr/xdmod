@@ -15,6 +15,6 @@ class Genericcloud extends aCloud
      * @inheritdoc
      */
     public function __construct(iDatabase $db){
-        parent::__construct($db, ['jobs-cloud-ingest-eucalyptus']);
+        parent::__construct($db, ['jobs-cloud-ingest-generic']);
     }
 }
