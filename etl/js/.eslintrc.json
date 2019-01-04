@@ -6,6 +6,8 @@
       "ecmaVersion": 6
   },
   "rules": {
+      "no-underscore-dangle": 0,
+      "no-param-reassign": 0,
       "no-template-curly-in-string": 0
   }
 }
