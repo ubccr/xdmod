@@ -38,6 +38,9 @@ class Parameters
                 case 'provider':
                     $parameters['provider'] = (string)$user->getOrganizationID();
                     break;
+                case 'institution':
+                    $parameters['institution'] = (string)$user->getOrganizationID();
+                    break;
                 case 'person':
                     $parameters['person'] = (string)$user->getPersonID();
                     break;
