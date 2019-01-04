@@ -611,9 +611,6 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
 
         $this->handle = $iterator;
 
-        // Rewind the handle so it is ready to use.
-        $this->handle->rewind();
-
         return $this->handle;
 
     }  // connect()
@@ -781,9 +778,10 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             // By default the key is the path and the value is an SplFileInfo object.
             // http://php.net/manual/en/class.splfileinfo.php
 
-            $this->logger->debug("Initializing first file iterator");
+            $key = $this->handle->key();
+            $this->logger->debug(sprintf("Initializing first file iterator: %s", $key));
 
-            $this->initializeCurrentFileIterator($this->handle->key());
+            $this->initializeCurrentFileIterator($key);
 
             // Save the first file iterator so we don't need to re-parse the first file on rewind
 
@@ -1035,6 +1033,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
         // If current file iterator is NULL then initialize it
 
         if ( null === $this->currentFileIterator ) {
+            $this->rewind();
             $this->valid();
         }
 
