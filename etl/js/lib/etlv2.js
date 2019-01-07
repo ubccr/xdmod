@@ -28,7 +28,7 @@ var remapSql = function (sql) {
     return output;
 };
 
-var mkdirAndWrite = function (dirname, filename, data) {
+var mkdirAndWrite = function (dirname, filename, data, type = 'json') {
     try {
         fs.mkdirSync(dirname);
     } catch (exception) {
@@ -37,7 +37,11 @@ var mkdirAndWrite = function (dirname, filename, data) {
             throw exception;
         }
     }
-    fs.writeFileSync(dirname + '/' + filename + '.json', JSON.stringify(data, null, 4));
+    if (type === 'json') {
+        fs.writeFileSync(dirname + '/' + filename + '.json', JSON.stringify(data, null, 4));
+    } else {
+        fs.writeFileSync(dirname + '/' + filename, data);
+    }
 };
 
 var generateAggTableIdentifier = function (table, hasJobList) {
@@ -390,6 +394,11 @@ module.exports = {
     generateDefinitionFiles: function (profile, xdmodConfigDirectory) {
         var etlv2ConfigDir = xdmodConfigDirectory + '/etl';
         var tables = profile.getAggregationTables();
+
+        if (profile.schema.postprocess) {
+            let sqlDefnDir = etlv2ConfigDir + '/etl_sql.d/' + profile.name.toLowerCase().split(' ')[0];
+            mkdirAndWrite(sqlDefnDir, 'postprocess.sql', profile.schema.postprocess.join('//\n'), 'sql');
+        }
 
         for (let t in tables) {
             if (tables.hasOwnProperty(t)) {

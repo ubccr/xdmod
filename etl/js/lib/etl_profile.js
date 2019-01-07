@@ -194,24 +194,7 @@ ETLProfile.prototype.processDataset = function (dataset, totalCores, coreIndex, 
                 for (let ds = 0; ds < self.datasets.length; ds++) {
                     DatasetProcessor.addStats(allProcessingDetails, self.datasets[ds]._processingDetails);
                 }
-
-                if (self.schema.postprocess) {
-                    var mysqlConfig = util._extend({
-                        multipleStatements: true
-                    }, self.output.config);
-                    var myhandle = mysql.createConnection(mysqlConfig);
-                    var postProcessingStatements = self.schema.postprocess.join(";");
-                    myhandle.query(postProcessingStatements, function(err, result) {
-                        myhandle.end();
-                        if (err) {
-                            self.emit('error', err + ': ' + postProcessingStatements);
-                        }
-                        self.emit('message', "Ran post-process statements. Results: " + JSON.stringify(result, null, 4) );
-                        self.emit('afterprocessall', allProcessingDetails);
-                    });
-                } else {
-                    self.emit('afterprocessall', allProcessingDetails);
-                }
+                self.emit('afterprocessall', allProcessingDetails);
             }
         });
     });
