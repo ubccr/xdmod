@@ -1,6 +1,7 @@
 <?php
 /** =========================================================================================
  * Directory Scanner Data Endpoint. The Directory Scanner is a wrapper around Structured
+ * DUMMY
  * File endpoints that recursively scans a directory for files and instantiates Structured
  * File endpoint each file in a directory (or subdirectory) matching a set of optionally
  * specified criteria. It supports file name pattern matching and last modified dates. The
@@ -612,7 +613,6 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
         $this->handle = $iterator;
 
         // Rewind the handle so it is ready to use.
-        $this->handle->rewind();
 
         return $this->handle;
 
