@@ -14,36 +14,12 @@ use XDUser;
 
 class MetricExplorerControllerProvider extends BaseControllerProvider
 {
-
-
     /**
      * The identifier that is used to store 'queries' in the user profile.
      *
      * @var string
      */
     const _QUERIES_STORE = 'queries_store';
-
-    /**
-     * The identifier that was used to store 'queries' in the user profile.
-     * This will be used to find old values to migrate to the new storage
-     * methodology.
-     *
-     * @var string
-     */
-    const _OLD_QUERIES_STORE = 'queries';
-
-    /**
-     * The identifier that is used to store metadata about the queries.
-     *
-     * @var string
-     */
-    const _QUERY_METADATA = 'query_metadata';
-
-    /**
-     *
-     * @var string
-     */
-    const _QUERIES_MIGRATED = 'queries_migrated';
 
 # ==============================================================================
 
@@ -107,15 +83,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
 
             $user = $this->authorize($request);
             if (isset($user)) {
-                $metaData = new \UserStorage($user, self::_QUERY_METADATA);
                 $queries = new \UserStorage($user, self::_QUERIES_STORE);
-                $migrated = $this->isMetaDataValid($metaData);
-
-                if (!$migrated) {
-                    $this->migrateOldQueries($user, $queries);
-                    $metaData->upsert(0, array(self::_QUERIES_MIGRATED => true));
-                }
-
                 $data = $queries->get();
 
                 foreach ($data as &$query) {
@@ -401,46 +369,6 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
         );
     }
 
-    /**
-     * A helper function that is used to migrate / clean up users old query
-     * stores to the new ones.
-     *
-     * @param \XDUser $user
-     * @param \UserStorage $queries
-     * @param bool|true $removeOldQueries
-     *
-     * @throws \Exception
-     */
-    private function migrateOldQueries(\XDUser $user, \UserStorage $queries, $removeOldQueries = true)
-    {
-        if (!isset($user)) {
-            return;
-        }
-
-        $profile = $user->getProfile();
-        $oldQueries = $profile->fetchValue(self::_OLD_QUERIES_STORE);
-
-        if (isset($oldQueries) && !is_array($oldQueries)) {
-            $oldQueries = json_decode($oldQueries, true);
-        }
-
-        if (isset($oldQueries['data'])) {
-            $oldQueries = $oldQueries['data'];
-            if (isset($oldQueries) && !is_array($oldQueries)) {
-                $oldQueries = json_decode($oldQueries, true);
-            }
-        }
-
-        if (isset($oldQueries) && count($oldQueries) > 0) {
-            $validQueries = $this->retrieveValidQueries($oldQueries);
-            if (count($validQueries) > 0) {
-                foreach ($validQueries as $query) {
-                    $queries->insert($query);
-                }
-            }
-        }
-    }
-
     private function removeRoleFromQuery(XDUser $user, array &$query)
     {
         // If the query doesn't have a config, stop.
@@ -463,59 +391,5 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
 
         // Store the updated config in the query.
         $query['config'] = json_encode($queryConfig);
-    }
-
-    /**
-     * Another helper function that just encapsulates the logic of what it means
-     * to filter valid queries from the old queries.
-     *
-     * @param array $oldQueries the array that will be used as a source for valid
-     *                          queries.
-     *
-     * @return array of queries that contain non-null and non-empty string name
-     *               and config properties.
-     */
-    private function retrieveValidQueries(array $oldQueries)
-    {
-        $results = array();
-        foreach ($oldQueries as $oldQuery) {
-            $hasName = !empty($oldQuery['name']);
-            $hasConfig = !empty($oldQuery['config']);
-            $isValid = $hasName && $hasConfig;
-
-            if ($isValid) {
-                $results[] = $oldQuery;
-            }
-        }
-        return $results;
-    }
-
-    /**
-     * @param \UserStorage $metaData
-     * @return bool
-     */
-    public function isMetaDataValid(\UserStorage $metaData)
-    {
-
-        $meta = $this->toArray($metaData->get());
-
-        if (count($meta) < 1 || (count($meta) > 1 && !isset($meta[0][self::_QUERIES_MIGRATED]))) {
-            $meta[self::_QUERIES_MIGRATED] = false;
-            $metaData->upsert(0, $meta);
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     *
-     * @param mixed $value
-     *
-     * @return mixed
-     */
-    private function toArray($value)
-    {
-        return is_string($value) ? json_decode($value) : $value;
     }
 }

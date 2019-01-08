@@ -86,20 +86,8 @@ try {
 
     if (!isset($_REQUEST['public_user']) || $_REQUEST['public_user'] != 'true')
     {
-        $userProfile = $logged_in_user->getProfile();
-
-        // Attempt to retrieve the queries from the new location, falling back
-        // to the old location. In either case normalize the results so that
-        // the proceeding code can be standardized.
-        $queries = $userProfile->fetchValue('queries_store');
-        if (!isset($queries)) {
-            $queries = $userProfile->fetchValue('queries');
-            if ($queries != null) {
-                $queries = array_values(json_decode($queries, true));
-            }
-        } else if (isset($queries['data'])) {
-            $queries = $queries['data'];
-        }
+        $queryStore = new \UserStorage($logged_in_user, 'queries_store');
+        $queries = $queryStore->get();
 
         if ($queries != NULL) {
             foreach ($queries as $i => $query) {
