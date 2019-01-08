@@ -5,7 +5,9 @@ namespace Rest\Controllers;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\BadRequestException;
+use Models\Services\Acls;
 use Models\Services\Parameters;
+use Models\Services\Realms;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerCollection;
@@ -689,7 +691,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $queryGroup = $this->getStringParam($request, 'querygroup', false, self::_DEFAULT_QUERY_GROUP);
 
         // Get the realms for the query group and the user's active role.
-        $realms = array_keys($user->getActiveRole()->getAllQueryRealms($queryGroup));
+        $realms = Realms::getRealmsForUser($user);
 
         // Return the realms found.
         return $app->json(array(
@@ -715,23 +717,24 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $user = $this->authorize($request);
 
         // Get parameters.
-        $realm = $this->getStringParam($request, 'realm');
-        $queryGroup = $this->getStringParam($request, 'querygroup', false, self::_DEFAULT_QUERY_GROUP);
+        $realmParam = $this->getStringParam($request, 'realm');
 
         // Get the dimensions for the query group, realm, and user's active role.
+        $groupBys = Acls::getQueryDescripters(
+            $user,
+            $realmParam
+        );
+
         $dimensionsToReturn = array();
-        $realms = $user->getActiveRole()->getAllQueryRealms($queryGroup);
-        foreach ($realms as $query_realm_key => $query_realm_object) {
-            if ($realm == null || $realm == $query_realm_key) {
-                foreach ($query_realm_object as $k => $v) {
-                    if ($k != "none") {
-                        $dimensionsToReturn[] = array(
-                            "id" => $k,
-                            "name" => $v['all']->getGroupByLabel(),
-                            'Category' => $v['all']->getGroupByCategory(),
-                            'description' => $v['all']->getGroupByDescription()
-                        );
-                    }
+        foreach($groupBys as $groupByName => $queryDescriptors) {
+            foreach($queryDescriptors as $queryDescriptor) {
+                if ($groupByName !== 'none') {
+                    $dimensionsToReturn[] = array(
+                        'id' => $queryDescriptor->getGroupByName(),
+                        'name' => $queryDescriptor->getGroupByLabel(),
+                        'Category' => $queryDescriptor->getGroupByCategory(),
+                        'description' => $queryDescriptor->getGroupByDescription()
+                    );
                 }
             }
         }
@@ -845,16 +848,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
         // Generate user-specific quick filters if logged in.
         if (!$user->isPublicUser()) {
             $personId = (int)$user->getPersonID();
-            $roles = $user->getAllRoles();
-            $mostPrivilegedRoleIdentifier = $user->getMostPrivilegedRole()->getIdentifier(true);
-            foreach ($roles as $role) {
-                $roleIdentifier = $role->getIdentifier(true);
+            $acls = $user->getAcls(true);
+            $mostPrivilegedAcl = $user->getMostPrivilegedRole()->getName();
+            foreach ($acls as $acl) {
+                $isMostPrivilegedRole = ($acl === $mostPrivilegedAcl) && $personId !== -1;
+                $parameters = Parameters::getParameters($user, $acl);
 
-                // the $personId !== -1 has been added so that people mapped to the Unknown Person
-                // do not have their quick filters automatically set.
-                $isMostPrivilegedRole = ($roleIdentifier === $mostPrivilegedRoleIdentifier) && $personId !== -1;
-
-                $parameters = Parameters::getParameters($user, $role->getIdentifier());
                 foreach ($parameters as $dimensionId => $valueId) {
                     if (!$multipleProvidersSupported && $dimensionId === $serviceProviderDimensionId) {
                         continue;
@@ -885,6 +884,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                         $dimensionIdsToNames[$dimensionId] = MetricExplorer::getDimensionName($user, $dimensionId);
                     }
                 }
+
             }
         }
 
@@ -1157,14 +1157,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     public function processJobSearch(Request $request, Application $app, XDUser $user, $realm, $startDate, $endDate, $action)
     {
-
-        $activeRole = $user->getActiveRole();
-        $queryRealms = isset($activeRole) ? $activeRole->getAllQueryRealms('tg_usage') : array();
+        $queryRealms = Acls::getQueryDescripters($user, $realm);
 
         $offset = $this->getIntParam($request, 'start', true);
         $limit = $this->getIntParam($request, 'limit', true);
 
-        $allowableDimensions = array_keys($queryRealms[$realm]);
+        $allowableDimensions = array_keys($queryRealms);
 
         $params = $this->parseRestArguments($request, $allowableDimensions, false, 'params');
 

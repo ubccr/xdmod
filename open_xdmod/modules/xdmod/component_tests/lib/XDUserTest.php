@@ -605,47 +605,6 @@ class XDUserTest extends BaseTest
     }
 
     /**
-     * @throws Exception
-     */
-    public function testGetPrimaryRoleWithPublicUser()
-    {
-        $user = XDUser::getPublicUser();
-        $primaryRole = $user->getPrimaryRole();
-
-        $this->assertNotNull($primaryRole);
-    }
-
-    /**
-     * @expectedException Exception
-     **/
-    public function testGetPrimaryRoleWithNewUser()
-    {
-        $user = self::getUser(null, 'test', 'a', 'user');
-
-        $user->getPrimaryRole();
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetActiveRoleWithPublicUser()
-    {
-        $user = XDUser::getPublicUser();
-        $activeRole = $user->getActiveRole();
-
-        $this->assertNotNull($activeRole);
-    }
-
-    /**
-     * @expectedException Exception
-     **/
-    public function testGetActiveRoleWithNewUserShouldFail()
-    {
-        $user = self::getUser(null, 'test', 'a', 'user');
-        $user->getActiveRole();
-    }
-
-    /**
      * Expect that it should complain about not having a valid user type.
      *
      * @expectedException Exception
@@ -690,28 +649,6 @@ class XDUserTest extends BaseTest
 
         $user->saveUser();
         $this->assertNotNull($user->getUserID());
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testCreateUserWithNonStandardPrimaryRole()
-    {
-        $user = self::getUser(null, 'test', 'a', 'user', array(ROLE_ID_USER, ROLE_ID_MANAGER), ROLE_ID_MANAGER);
-
-        $this->assertEquals('0', $user->getUserID());
-
-        $user->setUserType(DEMO_USER_TYPE);
-
-        $user->saveUser();
-
-        $actual = $user->getActiveRole()->getIdentifier();
-
-        // This is due to the way 'most privileged' works. It prefers acls that
-        // take part in a hierarchy as opposed to those that do not. Since 'usr'
-        // is a part of a hierarchy ( 'mgr' just enables access to certain
-        // features ) then that is what is returned.
-        $this->assertEquals(ROLE_ID_USER, $actual);
     }
 
     /**
@@ -807,106 +744,6 @@ class XDUserTest extends BaseTest
     {
         $user = XDUser::getUserByID(null);
         $this->assertNull($user);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage You must call saveUser() on this newly created XDUser prior to using getActiveRole()
-     */
-    public function testGetActiveRoleOnUnSavedUserFails()
-    {
-        $anotherUser = self::getUser(null, 'public', 'a', 'user');
-        $anotherUser->getActiveRole();
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage An additional parameter must be passed for this role (organization id)
-     */
-    public function testSetActiveRoleForCenterDirectorWithNoRoleParamShouldFail()
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-
-        $user->setActiveRole(self::CENTER_DIRECTOR_ACL_NAME);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage An invalid organization id has been specified for the role you are attempting to make active
-     */
-    public function testSetActiveRoleForCenterDirectorWithInvalidOrgIDShouldFail()
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-
-        $user->setActiveRole(self::CENTER_DIRECTOR_ACL_NAME, self::INVALID_ID);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage An additional parameter must be passed for this role (organization id)
-     */
-    public function testSetActiveRoleForCenterStaffWithNoRoleParamShouldFail()
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-
-        $user->setActiveRole(self::CENTER_STAFF_ACL_NAME);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage An invalid organization id has been specified for the role you are attempting to make active
-     */
-    public function testSetActiveRoleForCenterStaffWithInvalidOrgIDShouldFail()
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-
-        $user->setActiveRole(self::CENTER_STAFF_ACL_NAME, self::INVALID_ID);
-    }
-
-    /**
-     * @dataProvider provideSetActiveRoleForCenterDirectorWithValidOrgID
-     * @param $validServiceProviderId
-     * @throws Exception
-     */
-    public function testSetActiveRoleForCenterDirectorWithValidOrgID($validServiceProviderId)
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-
-        $user->setActiveRole(self::CENTER_DIRECTOR_ACL_NAME, $validServiceProviderId);
-
-        $activeRole = $user->getActiveRole();
-        $this->assertNotNull($activeRole);
-
-        $activeRoleName = $activeRole->getIdentifier();
-        $this->assertEquals(self::CENTER_DIRECTOR_ACL_NAME, $activeRoleName);
-    }
-
-    /**
-     * @return array|object
-     * @throws Exception
-     */
-    public function provideSetActiveRoleForCenterDirectorWithValidOrgID()
-    {
-        return Json::loadFile(
-            $this->getTestFiles()->getFile('acls', 'center_director_valid_organization_ids')
-        );
-    }
-
-    /**
-     * @dataProvider provideSetActiveRoleForCenterDirectorWithValidOrgID
-     * @throws Exception
-     */
-    public function testSetActiveRoleForCenterStaffWithValidOrgID($validServiceProviderId)
-    {
-        $user = XDUser::getUserByUserName(self::CENTER_STAFF_USER_NAME);
-
-        $user->setActiveRole(self::CENTER_STAFF_ACL_NAME, $validServiceProviderId);
-
-        $activeRole = $user->getActiveRole();
-        $this->assertNotNull($activeRole);
-
-        $activeRoleName = $activeRole->getIdentifier();
-        $this->assertEquals(self::CENTER_STAFF_ACL_NAME, $activeRoleName);
     }
 
     /**

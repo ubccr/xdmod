@@ -37,8 +37,6 @@ class XDUser extends CCR\Loggable implements JsonSerializable
     private $_timePasswordUpdated;
 
     private $_roles;
-    private $_primary_role;             // Instance of class \User\aRole
-    private $_active_role;              // Instance of class \User\aRole
 
     private $_field_of_science = 0;
 
@@ -50,14 +48,17 @@ class XDUser extends CCR\Loggable implements JsonSerializable
     private $_update_token = false;
     private $_token;
 
-    private $_cachedActiveRole;
-
     /**
      * An array that is assumed to be stored in the following manner:
      *   _acls[$acl->name] = $acl;
      * @var Acl[]
      */
     private $_acls;
+
+    /**
+     * @var Acl
+     */
+    private $_mostPrivilegedAcl;
 
     /**
      * A static reference to the public user. That is used as a singleton so
@@ -108,7 +109,7 @@ EML;
      *
      * @var array
      */
-    private static $CENTER_ACLS = array('cd', 'cs');
+    public static $CENTER_ACLS = array('cd', 'cs', 'cc');
 
     /**
      * These are the only SSO attribtutes that should be included when setting `$this->ssoAttrs;`
@@ -231,15 +232,6 @@ EML;
 
         $this->_update_token = true;
         $this->_token = NULL;
-
-        // =================================
-
-        $primary_role_name = self::_getFormalRoleName($primary_role);
-
-        // These roles cannot be used immediately after constructing a new XDUser (since a user id has not been defined at this point).
-        // If you are explicitly calling 'new XDUser(...)', saveUser() must be called on the newly created XDUser object before accessing
-        // these roles using getPrimaryRole() and getActiveRole()
-        $this->_primary_role = $this->_active_role = \User\aRole::factory($primary_role_name);
 
         $this->sticky = $sticky;
 
@@ -561,13 +553,7 @@ EML;
 
         $user->sticky = (bool)$userCheck[0]['sticky'];
 
-        // We retrieve the most privileged acl for this user and use it for the
-        // active / primary role.
-        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user);
-        $activeRoleFormalName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
-
-        $user->_primary_role = $user->_active_role = aRole::factory($activeRoleFormalName);
-        $user->_active_role->configure($user);
+        $user->_mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user);
 
         // BEGIN: ACL population
         $query = <<<SQL
@@ -1092,19 +1078,16 @@ SQL;
             throw new Exception('Unable to determine this users most privileged acl. There may be a problem with the state of the database.');
         }
 
-        $activeRoleName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
-        $this->_primary_role = $this->_active_role = aRole::factory($activeRoleName);
+        $mostPrivilegedRoleId = $this->_getRoleID($mostPrivilegedAcl->getName());
 
-        $active_role_id = $this->_getRoleID($this->_active_role->getIdentifier());
         $this->_pdo->execute(
             "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
-            array('id' => $this->_id, 'roleId' => $active_role_id)
+            array('id' => $this->_id, 'roleId' => $mostPrivilegedRoleId)
         );
-        $this->_active_role->configure($this);
 
         $this->_pdo->execute(
             "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
-            array(':id' => $this->_id, ':roleId' => $active_role_id)
+            array(':id' => $this->_id, ':roleId' => $mostPrivilegedRoleId)
         );
 
         $timestampData = $this->_pdo->query(
@@ -1770,12 +1753,6 @@ SQL
                 ':acl_id' => $acl->getAclId()
             )
         );
-        // =======================================
-
-        $active_is_in_set = false;
-        $primary_is_in_set = false;
-
-        $active_organization = NULL;
 
         foreach ($organization_ids as $organization_id => $config) {
 
@@ -1784,23 +1761,16 @@ SQL
 
             if (($config['active'] == true) && ($reassignActiveToPrimary == false)) {
                 $active_flag = 1;
-                $active_is_in_set = true;
             }
 
             if ($config['primary'] == true) {
 
                 $primary_flag = 1;
-                $primary_is_in_set = true;
 
                 if ($reassignActiveToPrimary == true) {
                     $active_flag = 1;
-                    $active_is_in_set = true;
                 }
 
-            }
-
-            if ($active_flag == 1) {
-                $active_organization = $organization_id;
             }
 
             $insertStatement = "INSERT INTO UserRoleParameters " .
@@ -1842,17 +1812,6 @@ SQL
                 )
             );
         }//foreach
-
-        // =======================================
-
-        if ($active_is_in_set == true) {
-            $this->setActiveRole($role, $active_organization);
-        }
-
-        if ($primary_is_in_set == true) {
-            $this->setPrimaryRole($role);
-        }
-
     }//setOrganizations
 
     // ---------------------------
@@ -2189,81 +2148,6 @@ SQL;
         $this->setAcls($acls);
     }
 
-    // ---------------------------
-
-    /*
-     *
-     * @function getPrimaryRole
-     *
-     * @return string
-     *
-     */
-
-    public function getPrimaryRole()
-    {
-
-        if ($this->_id == NULL) {
-            throw new Exception('You must call saveUser() on this newly created XDUser prior to using getPrimaryRole()');
-        }
-
-        return $this->_primary_role;
-
-    }//getPrimaryRole
-
-    // ---------------------------
-
-    /*
-     *
-     * @function setPrimaryRole
-     *
-     * @param string $primary_role
-     *
-     */
-
-    public function setPrimaryRole($primary_role)
-    {
-
-        $primary_role_name = self::_getFormalRoleName($primary_role);
-
-        if ($primary_role_name == NULL) {
-            throw new Exception("Attempting to set an invalid primary role");
-        }
-
-        $this->_primary_role = \User\aRole::factory($primary_role_name);
-
-        if ($this->_id != NULL) {
-            $this->_primary_role->configure($this);
-        }
-
-    }//setPrimaryRole
-
-    // ---------------------------
-
-    /*
-     *
-     * @function getActiveRole
-     *
-     * @return aRole subclass instance
-     *
-     */
-
-    public function getActiveRole()
-    {
-        if ($this->_id == NULL) {
-            throw new Exception('You must call saveUser() on this newly created XDUser prior to using getActiveRole()');
-        }
-
-        return $this->_active_role;
-
-    }//getActiveRole
-
-
-    public function setCachedActiveRole($role)
-    {
-
-        $this->_cachedActiveRole = $role;
-
-    }
 
     /*
      *
@@ -2394,101 +2278,6 @@ SQL;
         return $virtual_active_role;
 
     }//assumeActiveRole
-
-    // ---------------------------
-
-    /*
-     *
-     * @function setActiveRole  (NOTE: When using setActiveRole(), ensure that a subsequent call to saveUser() is made)
-     *
-     * @param int $active_role (see constants.php, ROLE_ID_... constants)
-     * @param int $role_param [required depending on what role is being set as active]
-     *
-     */
-
-    public function setActiveRole($active_role, $role_param = NULL)
-    {
-
-        $active_role_name = self::_getFormalRoleName($active_role);
-
-        if ($active_role_name == NULL) {
-            throw new Exception("Attempting to set an invalid active role");
-        }
-
-        $role_id = $this->_getRoleIDFromIdentifier($active_role);
-
-        $campus_champion_role_id = $this->_getRoleIDFromIdentifier(ROLE_ID_CAMPUS_CHAMPION);
-
-        if ($active_role == ROLE_ID_CENTER_DIRECTOR || $active_role == ROLE_ID_CENTER_STAFF) {
-
-            if ($role_param === NULL) {
-                throw new Exception("An additional parameter must be passed for this role (organization id)");
-            }
-
-            if ($this->_isValidOrganizationID($role_id, $role_param) == true) {
-
-                $this->_pdo->execute("UPDATE moddb.UserRoleParameters SET is_active=0 WHERE user_id=:user_id AND role_id != :role_id", array(
-                    ':user_id' => $this->_id,
-                    ':role_id' => $campus_champion_role_id,
-                ));
-                $this->_pdo->execute("UPDATE moddb.UserRoleParameters SET is_active=1 WHERE user_id=:user_id AND role_id=:role_id AND param_value=:param_value", array(
-                    ':user_id' => $this->_id,
-                    ':role_id' => $role_id,
-                    ':param_value' => $role_param,
-                ));
-
-            } else {
-
-                throw new Exception("An invalid organization id has been specified for the role you are attempting to make active");
-
-            }
-
-        } else {
-
-            $this->_pdo->execute("UPDATE moddb.UserRoleParameters SET is_active=0 WHERE user_id=:user_id AND role_id != :role_id", array(
-                ':user_id' => $this->_id,
-                ':role_id' => $campus_champion_role_id,
-            ));
-
-        }
-
-        $this->_pdo->execute("UPDATE moddb.UserRoles SET is_active=0 WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
-        ));
-        $this->_pdo->execute("UPDATE moddb.UserRoles SET is_active=1 WHERE user_id=:user_id AND role_id=:role_id", array(
-            ':user_id' => $this->_id,
-            ':role_id' => $role_id,
-        ));
-
-        $this->_active_role = \User\aRole::factory($active_role_name);
-
-        if ($this->_id != NULL) {
-            $this->_active_role->configure($this);
-        }
-
-    }//setActiveRole
-
-
-    // ---------------------------
-
-    /*
-     *
-     * @function assignActiveRoleToPrimary (Re-assigns the user's active role to their primary role (failover))
-     *
-     */
-
-    public function assignActiveRoleToPrimary()
-    {
-
-        $this->_pdo->execute("UPDATE moddb.UserRoles SET is_active=is_primary WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
-        ));
-        $this->_pdo->execute("UPDATE moddb.UserRoleParameters SET is_active=is_primary WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
-        ));
-
-    }//assignActiveRoleToPrimary
-
 
     // ---------------------------
 

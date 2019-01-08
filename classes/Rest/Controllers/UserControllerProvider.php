@@ -2,6 +2,7 @@
 
 namespace Rest\Controllers;
 
+use Models\Services\Organizations;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -126,7 +127,12 @@ class UserControllerProvider extends BaseControllerProvider
         if ($emailAddress == NO_EMAIL_ADDRESS_SET) {
             $emailAddress = '';
         }
-
+        $mostPrivileged = $user->getMostPrivilegedRole();
+        $mostPrivilegedFormalName = $mostPrivileged->getFormalName();
+        if (count(array_intersect(XDUser::$CENTER_ACLS, $user->getAcls(true))) > 0) {
+            $organization = Organizations::getAbbrevById($user->getOrganizationID());
+            $mostPrivilegedFormalName = "$mostPrivilegedFormalName - $organization";
+        }
         return array(
             'first_name' => $user->getFirstName(),
             'last_name' => $user->getLastName(),
@@ -135,8 +141,8 @@ class UserControllerProvider extends BaseControllerProvider
             'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
             'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']),
             'field_of_science' => $user->getFieldOfScience(),
-            'active_role' => $user->getActiveRole()->getFormalName(),
-            'most_privileged_role' => $user->getMostPrivilegedRole()->getFormalName(),
+            'active_role' => $mostPrivilegedFormalName,
+            'most_privileged_role' => $mostPrivilegedFormalName,
         );
     }
 

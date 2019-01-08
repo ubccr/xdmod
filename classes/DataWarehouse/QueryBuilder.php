@@ -237,8 +237,6 @@ class QueryBuilder
             }
         }
 
-        $user->setCachedActiveRole($activeRole);
-
         if (!isset($request['start_date'])) {
             throw new \Exception(
                 'Parameter start_date (yyyy-mm-dd) is not set'
@@ -365,8 +363,6 @@ class QueryBuilder
                 $query_group = 'tg' . $suffix;
             }
         }
-
-        $user->setCachedActiveRole($activeRole);
 
         $query_descripter = Acls::getQueryDescripters(
             $user,

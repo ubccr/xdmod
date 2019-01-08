@@ -245,7 +245,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     $primary_center_director = (
         $user->hasAcl(ROLE_ID_CENTER_DIRECTOR) &&
-        true //($user->getPromoter(ROLE_ID_CENTER_DIRECTOR, $user->getActiveRole()->getActiveCenter()) == -1)
+        true
     ) ? 'true' : 'false';
     $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
         $carry [] = $item->getName();
