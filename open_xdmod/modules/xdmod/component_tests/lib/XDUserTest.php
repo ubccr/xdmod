@@ -979,7 +979,7 @@ class XDUserTest extends BaseTest
         $user = XDUser::getUserByUserName($userName);
         $mostPrivilegedRole = $user->getMostPrivilegedRole();
         $this->assertNotNull($mostPrivilegedRole);
-        $this->assertEquals($mostPrivilegedRole->getIdentifier(), $expected);
+        $this->assertEquals($mostPrivilegedRole->getName(), $expected);
 
     }
 

@@ -128,7 +128,7 @@ class UserControllerProvider extends BaseControllerProvider
             $emailAddress = '';
         }
         $mostPrivileged = $user->getMostPrivilegedRole();
-        $mostPrivilegedFormalName = $mostPrivileged->getFormalName();
+        $mostPrivilegedFormalName = $mostPrivileged->getDisplay();
         if (count(array_intersect(XDUser::$CENTER_ACLS, $user->getAcls(true))) > 0) {
             $organization = Organizations::getAbbrevById($user->getOrganizationID());
             $mostPrivilegedFormalName = "$mostPrivilegedFormalName - $organization";

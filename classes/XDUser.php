@@ -2153,22 +2153,17 @@ SQL;
      *
      * @function getMostPrivilegedRole
      *
-     * @return aRole subclass instance
+     * @return Acl
      *
      */
 
     public function getMostPrivilegedRole()
     {
+        if (!isset($this->_mostPrivilegedAcl)) {
+            $this->_mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
+        }
 
-        // XDUser::enumAllAvailableRoles already orders the roles in terms of 'visibility' / 'highest privilege'
-        // so just acquire the first item in the set.
-        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
-        $roleName = self::_getFormalRoleName($mostPrivilegedAcl->getName());
-        $role = aRole::factory($roleName);
-
-        $role->configure($this, $mostPrivilegedAcl->getOrganizationId());
-
-        return $role;
+        return $this->_mostPrivilegedAcl;
     }//getMostPrivilegedRole
 
     /* @function getAllRoles
@@ -2524,6 +2519,16 @@ SQL;
             ? $this->_acls
             : array_keys($this->_acls);
     } // getAcls
+
+    /**
+     * Retrieve an array of names for this user's currently assigned Acls.
+     *
+     * @return String[]
+     */
+    public function getAclNames()
+    {
+        return array_keys($this->_acls);
+    }
 
     /**
      * Overwrite this users current set of acls with the provided ones.
