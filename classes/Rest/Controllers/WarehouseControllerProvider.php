@@ -256,10 +256,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             ->convert('action', "$conversions::toString");
 
         // Metrics routes
-
-        $controller
-            ->get("$root/query_groups", "$current::getQueryGroups");
-
         $controller
             ->get("$root/realms", "$current::getRealms");
 
@@ -283,9 +279,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $controller
             ->get("$root/quick_filters", "$current::getQuickFilters");
-
-        $controller
-            ->get("$root/metrics", "$current::getMetrics");
 
         $controller
             ->get("$root/aggregation_units", "$current::getAggregationUnits");
@@ -677,29 +670,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Get the query groups available for the user's active role.
-     *
-     * Ported from: classes/REST/DataWarehouse/Explorer.php
-     *
-     * @param  Request $request The request used to make this call.
-     * @param  Application $app The router application.
-     * @return Response             A response containing the following info:
-     *                              success: A boolean indicating if the call was successful.
-     *                              results: An object containing data about
-     *                                       the query groups retrieved.
-     */
-    public function getQueryGroups(Request $request, Application $app)
-    {
-        $user = $this->authorize($request);
-
-        // Return the query groups that are available for the user's active role.
-        return $app->json(array(
-            'success' => true,
-            'results' => $user->getActiveRole()->getAllGroupNames(),
-        ));
-    }
-
-    /**
      * Get the realms available for the user's active role.
      *
      * Ported from: classes/REST/DataWarehouse/Explorer.php
@@ -995,57 +965,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $payload,
             $status
         );
-    }
-
-    /**
-     * Get the metrics available for the user's active role.
-     *
-     * Ported from: classes/REST/DataWarehouse/Explorer.php
-     *
-     * @param  Request $request The request used to make this call.
-     * @param  Application $app The router application.
-     * @return Response             A response containing the following info:
-     *                              success: A boolean indicating if the call was successful.
-     *                              results: An object containing data about
-     *                                       the metrics retrieved.
-     */
-    public function getMetrics(Request $request, Application $app)
-    {
-        $user = $this->authorize($request);
-
-        // Get parameters.
-        $realm = $this->getStringParam($request, 'realm');
-        $dimension = $this->getStringParam($request, 'dimension');
-        $queryGroup = $this->getStringParam($request, 'querygroup', false, self::_DEFAULT_QUERY_GROUP);
-
-        // Get the metrics available for the query group, realm, dimension, and
-        // user's active role.
-        $factsToReturn = array();
-        $realms = $user->getActiveRole()->getAllQueryRealms($queryGroup);
-        foreach ($realms as $query_realm_key => $query_realm_object) {
-            if ($realm == null || $realm == $query_realm_key) {
-                $query_class_name = \DataWarehouse\QueryBuilder::getQueryRealmClassname($query_realm_key);
-
-                $query_class_name::registerGroupBys();
-                $query_class_name::registerStatistics();
-
-                $group_bys = array_keys($query_realm_object);
-                foreach ($group_bys as $group_by) {
-                    if ($dimension == null || $dimension == $group_by) {
-                        $group_by_instance = $query_class_name::getGroupBy($group_by);
-
-                        $factsToReturn = array_merge($factsToReturn, $group_by_instance->getPermittedStatistics());
-                    }
-                }
-            }
-        }
-        $factsToReturn = array_values(array_unique($factsToReturn));
-
-        // Return the metrics found.
-        return $app->json(array(
-            'success' => true,
-            'results' => $factsToReturn,
-        ));
     }
 
     /**

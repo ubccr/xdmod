@@ -1725,74 +1725,6 @@ SQL
 
     }//disassociateWithInstitution
 
-    // ---------------------------
-
-    /*
-     *
-     * @function getActiveRoleID
-     *
-     * @returns string (the id of the active role) (see ROLES section in constants.php)
-     *
-     */
-
-    public function getActiveRoleID()
-    {
-
-        return $this->_active_role->getIdentifier();
-
-    }//getActiveRoleID
-
-    // ---------------------------
-
-    private function _getActiveProvider($role_id)
-    {
-
-        $active_provider = $this->_pdo->query("SELECT param_value FROM UserRoleParameters " .
-            "WHERE user_id=:user_id AND role_id=:role_id AND param_name='provider' AND is_active=1", array(
-            ':user_id' => $this->_id,
-            ':role_id' => $role_id,
-        ));
-
-        if (count($active_provider) > 0) {
-            return $active_provider[0]['param_value'];
-        } else {
-            return NULL;
-        }
-
-    }//_getActiveProvider
-
-    public function getActiveRoleSettings()
-    {
-
-        $mainRole = $this->_pdo->query("SELECT r.abbrev, r.role_id FROM Roles AS r, UserRoles AS ur WHERE r.role_id = ur.role_id AND ur.user_id=:user_id AND ur.is_active=1", array(
-            ':user_id' => $this->_id,
-        ));
-
-        $mainRoleID = $mainRole[0]['role_id'];
-        $mainRole = $mainRole[0]['abbrev'];
-
-        $activeCenter = -1;
-
-        if ($mainRole == ROLE_ID_CENTER_DIRECTOR || $mainRole == ROLE_ID_CENTER_STAFF) {
-
-            $activeCenter = $this->_pdo->query("SELECT param_value FROM UserRoleParameters WHERE user_id=:user_id AND role_id=:role_id AND is_active=1", array(
-                ':user_id' => $this->_id,
-                ':role_id' => $mainRoleID,
-            ));
-
-            if (count($activeCenter) > 0)
-                $activeCenter = $activeCenter[0]['param_value'];
-            else
-                $activeCenter = -1;
-
-        }
-
-        return array('main_role' => $mainRole, 'active_center' => $activeCenter);
-
-    }//getActiveRoleSettings
-
-    // ---------------------------
-
     /*
      *
      * @function setOrganizations
@@ -2332,15 +2264,6 @@ SQL;
         $this->_cachedActiveRole = $role;
 
     }
-
-    public function getCachedActiveRole()
-    {
-
-        return $this->_cachedActiveRole;
-
-    }
-
-    // ---------------------------
 
     /*
      *
