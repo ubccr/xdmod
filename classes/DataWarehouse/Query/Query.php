@@ -1130,7 +1130,7 @@ class Query
 
         foreach($rolearray as $role) {
 
-            $roleparams = Parameters::getParameters($user, $role->getIdentifier());
+            $roleparams = Parameters::getParameters($user, $role);
 
             if(count($roleparams) == 0 ) {
                 // Empty where condition translates to a "WHERE 1". There is no need to add the other
@@ -1497,6 +1497,7 @@ class Query
 	public static function &get_group_by_name_to_instance()
     {
         $realm = static::getRealm();
+        self::initData($realm);
 
         if (!isset(self::$_group_by_name_to_instance[$realm])) {
             self::$_group_by_name_to_instance[$realm] = array();
@@ -1510,6 +1511,7 @@ class Query
     public static function &get_group_by_name_to_class_name()
     {
         $realm = static::getRealm();
+        self::initData($realm);
 
         if (!isset(self::$_group_by_name_to_class_name[$realm])) {
             self::$_group_by_name_to_class_name[$realm] = array();
@@ -1523,12 +1525,32 @@ class Query
     public static function &get_statistic_name_to_class_name()
     {
         $realm = static::getRealm();
+        self::initData($realm);
 
         if (!isset(self::$_statistic_name_to_class_name[$realm])) {
             self::$_statistic_name_to_class_name[$realm] = array();
         }
 
         return self::$_statistic_name_to_class_name[$realm];
+    }
+
+    /**
+     * This function checks to see if the stats have been initialized for the provided $realm and if
+     * not, it calls `registerStatistics` and `registerGroupBys`.
+     *
+     * Note: This is required because of the public static functions above. Since they are
+     * `public static` they can be called without having to instantiate Query ( or calling
+     * `Query::getGroupBy` ). So this function provides an easy method of ensuring that the
+     * statistics / groupBys data structures are populated before use.
+     *
+     * @param string $realm
+     */
+    private static function initData($realm)
+    {
+        if (!self::$_stats_initialized[$realm]) {
+            self::registerStatistics();
+            self::registerGroupBys();
+        }
     }
 
     /*

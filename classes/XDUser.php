@@ -2180,11 +2180,11 @@ SQL;
 
         foreach ($this->enumAllAvailableRoles() as $availableRole) {
             $roleData = array_pad(explode(':', $availableRole['param_value']), 2, NULL);
-            $allroles[] = $this->assumeActiveRole($roleData[0], $roleData[1]);
+            $allroles[] = $roleData[0];
         }
 
         if ($includePublicRole) {
-            $allroles[] = $this->assumeActiveRole(ROLE_ID_PUBLIC);
+            $allroles[] = ROLE_ID_PUBLIC;
         }
 
         return $allroles;
@@ -2245,36 +2245,6 @@ SQL;
         return $role_data[0]['role_id'];
 
     }//_getRoleIDFromIdentifier
-
-    // ---------------------------
-
-    /*
-     *
-     * @function assumeActiveRole
-     *
-     * Allows this user to take on a role, yet does not 'record' this fact into the database (a 'virtual' role, if you will)
-     *
-     * @param int $active_role (see constants.php, ROLE_ID_... constants)
-     * @param int $role_param [depending on the role, a specific value tied to that role that behaves as an additional filter (e.g. organization / institution id)
-     *
-     *
-     */
-
-    public function assumeActiveRole($active_role, $role_param = NULL)
-    {
-
-        if (empty($active_role)) $active_role = ROLE_ID_PUBLIC;
-
-        $active_role_name = self::_getFormalRoleName($active_role);
-
-        $virtual_active_role = \User\aRole::factory($active_role_name);
-        $virtual_active_role->configure($this, $role_param);
-
-        return $virtual_active_role;
-
-    }//assumeActiveRole
-
-    // ---------------------------
 
     /*
      *
@@ -2415,20 +2385,23 @@ SQL;
         return $this->_timeUpdated;
     }
 
-    // ---------------------------
-
-    /*
+    /**
      * @function _getFormalRoleName
      * (determines the formal description of a role based on its abbreviation)
      *
-     * @return string representing the formal role name if the abbreviation is recognized
-     * @return NULL otherwise
+     * @param string $role_abbrev the role abbreviation to use when looking up the formal name.
+     * @param bool   $pubDisplay  Determines whether or not to return the public roles `display`
+     * property or it's `name` property. We default to true ( i.e. `display` ) as that is the
+     * behavior that currently exists.
      *
+     * @return string representing the formal role name if the abbreviation is recognized
+     * @throws Exception
      */
-
-    public static function _getFormalRoleName($role_abbrev)
+    public static function _getFormalRoleName($role_abbrev, $pubDisplay = true)
     {
         $pdo = DB::factory('database');
+        $pubColumn = $pubDisplay ? 'display' : 'name';
+
         $query = <<<SQL
 SELECT CASE WHEN a.acl_id IS NULL
   THEN pub.description
@@ -2436,7 +2409,7 @@ SELECT CASE WHEN a.acl_id IS NULL
 FROM (
        SELECT
          acl_id,
-         display AS description
+         $pubColumn AS description
        FROM acls
        WHERE name = :pub_abbrev
      ) pub

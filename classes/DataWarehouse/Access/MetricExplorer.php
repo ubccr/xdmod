@@ -585,7 +585,7 @@ class MetricExplorer extends Common
                 $realm_name,
                 $group_by_name,
                 $statistic_name,
-                $userRole->getIdentifier()
+                $userRole
             );
             if ($accessPermitted) {
                 $authorizedRoles[] = $userRole;
@@ -618,11 +618,8 @@ class MetricExplorer extends Common
         } else {
             $activeRoleComponents = explode(':', $activeRoleId);
             $activeRoleComponents = array_pad($activeRoleComponents, 2, null);
-            $activeRole = $user->assumeActiveRole(
-                $activeRoleComponents[0],
-                $activeRoleComponents[1]
-            );
-            $activeRoleParameters = Parameters::getParameters($user, $activeRole->getIdentifier());
+            $activeRoleName = XDUser::_getFormalRoleName($activeRoleComponents[0], false);
+            $activeRoleParameters = Parameters::getParameters($user, $activeRoleName);
         }
 
         // For each set of filter parameters the role has, create an

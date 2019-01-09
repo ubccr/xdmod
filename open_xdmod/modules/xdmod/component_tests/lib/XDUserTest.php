@@ -1004,15 +1004,7 @@ class XDUserTest extends BaseTest
     {
 
         $user = XDUser::getUserByUserName($userName);
-        $allRoles = $user->getAllRoles();
-        $actual = array_reduce(
-            $allRoles,
-            function ($carry, $item) {
-                $carry[] = $item->getIdentifier();
-                return $carry;
-            },
-            array()
-        );
+        $actual = $user->getAllRoles();
         $expected = Json::loadFile(
             $this->getTestFiles()->getFile('acls', $output)
         );
