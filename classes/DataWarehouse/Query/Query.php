@@ -1536,7 +1536,8 @@ class Query
 
     /**
      * This function checks to see if the stats have been initialized for the provided $realm and if
-     * not, it calls `registerStatistics` and `registerGroupBys`.
+     * not, it calls `registerStatistics`. It also checks if the group bys have been initialized and
+     * if not calls`registerGroupBys`.
      *
      * Note: This is required because of the public static functions above. Since they are
      * `public static` they can be called without having to instantiate Query ( or calling
@@ -1549,6 +1550,10 @@ class Query
     {
         if (!self::$_stats_initialized[$realm]) {
             self::registerStatistics();
+
+        }
+
+        if (!self::$_group_bys_initialized[$realm]) {
             self::registerGroupBys();
         }
     }
