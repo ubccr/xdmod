@@ -18,9 +18,9 @@
 
         "joins": [
             {
-                "name": "generic_cloud_staging_event",
+                "name": "event",
                 "schema": "${SOURCE_SCHEMA}",
-                "alias": "staging"
+                "alias": "ev"
             },
             {
                 "name": "event",
@@ -32,12 +32,12 @@
                 "name": "asset",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "a",
-                "on": "a.resource_id = staging.resource_id AND a.provider_identifier = staging.event_data"
+                "on": "a.resource_id = ev.resource_id AND a.provider_identifier = ev.event_data"
             }
         ],
 
         "where": [
-            "staging.event_data IS NOT NULL"
+            "ev.event_data IS NOT NULL"
         ]
     }
 }
