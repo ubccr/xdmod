@@ -733,11 +733,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
                     // Only check a field if it's been rendered.
                     if (field.rendered) {
-                        var value = field.getValue();
-
-                        // We explicitly cast each side to string so that we can
-                        // utilize the more stringent `===`.
-                        if (field.originalValue !== value) {
+                        if (field.originalValue !== field.getValue()) {
                             return true;
                         }
                     }
