@@ -2,6 +2,7 @@
 
 namespace Rest\Controllers;
 
+use Models\Services\Acls;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -386,6 +387,15 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
         $activeRoleId = $queryConfig->active_role;
         unset($queryConfig->active_role);
 
+        // Check whether or not $activeRoleId is an acl name or acl display value.
+        // ( Old queries may acl display ).
+        $activeRole = Acls::getAclByName($activeRoleId);
+        if ($activeRole === null) {
+            $activeRole = Acls::getAclByDisplay($activeRoleId);
+            if ($activeRole !== null) {
+                $activeRoleId = $activeRole->getName();
+            }
+        }
         // Convert the active role into global filters.
         MetricExplorer::convertActiveRoleToGlobalFilters($user, $activeRoleId, $queryConfig->global_filters);
 

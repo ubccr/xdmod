@@ -618,8 +618,12 @@ class MetricExplorer extends Common
         } else {
             $activeRoleComponents = explode(':', $activeRoleId);
             $activeRoleComponents = array_pad($activeRoleComponents, 2, null);
-            $activeRoleName = XDUser::_getFormalRoleName($activeRoleComponents[0], false);
-            $activeRoleParameters = Parameters::getParameters($user, $activeRoleName);
+            $activeRoleId = $activeRoleComponents[0];
+            $activeRole = Acls::getAclByName($activeRoleId);
+            if ($activeRole === null) {
+                $activeRoleId = ROLE_ID_PUBLIC;
+            }
+            $activeRoleParameters = Parameters::getParameters($user, $activeRoleId);
         }
 
         // For each set of filter parameters the role has, create an
