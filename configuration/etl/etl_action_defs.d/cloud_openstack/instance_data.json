@@ -1,0 +1,31 @@
+{
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/instance_data.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "event_id": "ev.event_id",
+            "resource_id": "staging.resource_id",
+            "instance_type_id": "staging.instance_type_id",
+            "host_id": "staging.host_id",
+            "image_id": "staging.image_id"
+        },
+
+        "joins": [
+            {
+                "name": "openstack_staging_event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "staging"
+            },
+            {
+                "name": "event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ev",
+                "on": "ev.resource_id = staging.resource_id AND ev.instance_id = staging.instance_id AND ev.event_time_utc = staging.event_time_utc AND ev.event_type_id = staging.event_type_id"
+            }
+        ]
+    }
+}

@@ -13,8 +13,8 @@
 
     "source_query": {
         "records": {
-            "resource_id": "staging.resource_id",
-            "event_id": "staging.event_id",
+            "resource_id": "ev.resource_id",
+            "event_id": "ev.event_id",
             "asset_id": "a.asset_id"
         },
 
@@ -23,6 +23,12 @@
                 "name": "openstack_staging_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "staging"
+            },
+            {
+                "name": "event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ev",
+                "on": "ev.resource_id = staging.resource_id AND ev.instance_id = staging.instance_id AND ev.event_time_utc = staging.event_time_utc AND ev.event_type_id = staging.event_type_id"
             },
             {
                 "name": "asset",

@@ -44,3 +44,5 @@ JOIN ${DESTINATION_SCHEMA}.generic_cloud_raw_volume v
   ON v.provider_account_number = a.provider_account AND v.resource_id = a.resource_id
 SET a.display = v.provider_account_name
 //
+
+TRUNCATE ${DESTINATION_SCHEMA}.generic_cloud_staging_event;

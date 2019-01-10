@@ -196,9 +196,16 @@
         {
             "#": "Instance data must be ingested after staging events",
             "name": "GenericCloudEventIngestor",
-            "description": "Generic cloud event and instance data",
+            "description": "Generic cloud event",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_generic/event.json"
+        },
+        {
+            "#": "Instance data must be ingested after events",
+            "name": "GenericCloudInstanceDataIngestor",
+            "description": "Generic cloud instance data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_generic/instance_data.json"
         },
         {
             "#": "Asset data must be ingested after events",
