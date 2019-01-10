@@ -56,7 +56,7 @@ else {
     \xd_response\presentError("Acl information is required");
 }
 
-$sticky = isset($_POST['sticky']) ? (bool)$_POST['sticky'] : false;
+$sticky = filter_var($_POST['sticky'], FILTER_VALIDATE_BOOLEAN);
 
 try {
     $password_chars = 'abcdefghijklmnopqrstuvwxyz!@#$%-_=+ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';

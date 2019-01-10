@@ -199,8 +199,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var comboChangeHandler = function (f, newValue, oldValue) {
             /* eslint-disable no-use-before-define */
-            if ((!Ext.isEmpty(cmbUserMapping.originalValue) && String(cmbUserMapping.originalValue) !== String(cmbUserMapping.getValue())) ||
-                (!Ext.isEmpty(cmbInstitution.originalValue) && String(cmbInstitution.originalValue) !== String(cmbInstitution.getValue()))
+            if ((cmbUserMapping.originalValue !== cmbUserMapping.getValue()) ||
+                (cmbInstitution.originalValue !== cmbInstitution.getValue())
             ) {
                 stickyCheckbox.setValue(true);
             } else {
@@ -735,21 +735,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     if (field.rendered) {
                         var value = field.getValue();
 
-                        // We need to check that the field we're checking has an
-                        // `originalValue` in place. If not, then prefer using the
-                        // `startValue` and finally the fields current value if
-                        // `startValue` is not present.
-                        if (Ext.isEmpty(field.originalValue)) {
-                            if (!Ext.isEmpty(field.startValue)) {
-                                field.originalValue = field.startValue;
-                            } else if (!Ext.isEmpty(value)) {
-                                field.originalValue = value;
-                            }
-                        }
-
                         // We explicitly cast each side to string so that we can
                         // utilize the more stringent `===`.
-                        if (String(field.originalValue) !== String(value)) {
+                        if (field.originalValue !== value) {
                             return true;
                         }
                     }
@@ -919,7 +907,21 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
                         self.resetDirtyState();
 
-                        // eslint-disable-next-line no-use-before-define
+                        // Reset the user setting fields so that their original
+                        // and start values are the same as their current values.
+                        var fieldValues = userSettings.getForm().getFieldValues();
+                        for (var id in fieldValues) {
+                            if (fieldValues.hasOwnProperty(id)) {
+                                var field = Ext.getCmp(id);
+                                if (field.originalValue !== field.getValue()) {
+                                    field.originalValue = field.getValue();
+                                }
+                                if (field.startValue !== field.getValue()) {
+                                    field.startValue = field.getValue();
+                                }
+                            }
+                        }
+
                         self.updateSaveIndicator();
 
                         CCR.xdmod.ui.userManagementMessage(
@@ -1186,11 +1188,12 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         userEditor.setTitle('User Details: ' + Ext.util.Format.htmlEncode(json.user_information.formal_name));
 
                         existingUserEmailField.setValue(json.user_information.email_address);
+                        existingUserEmailField.originalValue = json.user_information.email_address;
+
 
                         // Remaining inputs ----------------------
-
-                        cached_user_type = parseInt(json.user_information.user_type, 10);
                         cmbUserMapping.initializeWithValue(json.user_information.assigned_user_id, json.user_information.assigned_user_name);
+                        cmbUserMapping.originalValue = json.user_information.assigned_user_id;
 
                         if (cached_user_type === CCR.xdmod.SSO_USER_TYPE) {
                             // XSEDE-derived User: Can't change user type
@@ -1206,13 +1209,17 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             mnuItemPasswordReset.show();
 
                             cmbUserType.setDisabled(false);
+
+                            cached_user_type = parseInt(json.user_information.user_type, 10);
                             cmbUserType.setValue(cached_user_type);
+                            cmbUserType.originalValue = cached_user_type;
                         }
                         var sticky = Boolean(json.user_information.sticky);
-                        stickyCheckbox.setValue(sticky);
                         stickyCheckbox.originalValue = sticky;
-                        cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
+                        stickyCheckbox.setValue(sticky);
 
+                        cmbInstitution.initializeWithValue(json.user_information.institution, json.user_information.institution_name);
+                        cmbInstitution.originalValue = json.user_information.institution;
                         /**
                          * acls are in the form:
                          * {
