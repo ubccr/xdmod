@@ -1548,12 +1548,12 @@ class Query
      */
     private static function initData($realm)
     {
-        if (!self::$_stats_initialized[$realm]) {
+        if (!isset(self::$_stats_initialized[$realm])) {
             self::registerStatistics();
 
         }
 
-        if (!self::$_group_bys_initialized[$realm]) {
+        if (!isset(self::$_group_bys_initialized[$realm])) {
             self::registerGroupBys();
         }
     }
