@@ -223,7 +223,6 @@ class QueryBuilder
                     substr($query_group, 0, strpos($query_group, $suffix))
                 );
 
-                $role_data = array_pad($role_data, 2, NULL);
                 $activeRole = XDUser::_getFormalRoleName($role_data[0], true);
 
                 $role_parameters = Parameters::getParameters($user, $activeRole);
@@ -344,7 +343,6 @@ class QueryBuilder
                     substr($query_group, 0, strpos($query_group, $suffix))
                 );
 
-                $role_data = array_pad($role_data, 2, NULL);
                 $activeRole = XDUser::_getFormalRoleName($role_data[0], true);
 
                 $role_parameters = Parameters::getParameters($user, $activeRole);

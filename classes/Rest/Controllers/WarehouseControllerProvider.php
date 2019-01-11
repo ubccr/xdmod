@@ -1157,12 +1157,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     public function processJobSearch(Request $request, Application $app, XDUser $user, $realm, $startDate, $endDate, $action)
     {
-        $queryRealms = Acls::getQueryDescripters($user, $realm);
+        $queryDescripters = Acls::getQueryDescripters($user, $realm);
 
         $offset = $this->getIntParam($request, 'start', true);
         $limit = $this->getIntParam($request, 'limit', true);
 
-        $allowableDimensions = array_keys($queryRealms);
+        $allowableDimensions = array_keys($queryDescripters);
 
         $params = $this->parseRestArguments($request, $allowableDimensions, false, 'params');
 
