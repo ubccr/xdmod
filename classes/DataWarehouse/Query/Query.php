@@ -1497,11 +1497,8 @@ class Query
 	public static function &get_group_by_name_to_instance()
     {
         $realm = static::getRealm();
-        self::initData($realm);
 
-        if (!isset(self::$_group_by_name_to_instance[$realm])) {
-            self::$_group_by_name_to_instance[$realm] = array();
-        }
+        self::initData($realm);
 
         return self::$_group_by_name_to_instance[$realm];
     }
@@ -1511,11 +1508,8 @@ class Query
     public static function &get_group_by_name_to_class_name()
     {
         $realm = static::getRealm();
-        self::initData($realm);
 
-        if (!isset(self::$_group_by_name_to_class_name[$realm])) {
-            self::$_group_by_name_to_class_name[$realm] = array();
-        }
+        self::initData($realm);
 
         return self::$_group_by_name_to_class_name[$realm];
     }
@@ -1525,11 +1519,8 @@ class Query
     public static function &get_statistic_name_to_class_name()
     {
         $realm = static::getRealm();
-        self::initData($realm);
 
-        if (!isset(self::$_statistic_name_to_class_name[$realm])) {
-            self::$_statistic_name_to_class_name[$realm] = array();
-        }
+        self::initData($realm);
 
         return self::$_statistic_name_to_class_name[$realm];
     }
