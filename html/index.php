@@ -248,7 +248,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type='text/javascript'>
 
         <?php
-        print "CCR.xdmod.publicUser = " . json_encode($userLoggedIn) . ";\n";
+        print "CCR.xdmod.publicUser = " . json_encode(!$userLoggedIn) . ";\n";
 
         $tech_support_recipient = xd_utilities\getConfiguration('general', 'tech_support_recipient');
         print "CCR.xdmod.tech_support_recipient = CCR.xdmod.support_email = '$tech_support_recipient';\n";
