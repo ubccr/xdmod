@@ -92,6 +92,17 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     protected $lastModifiedEndTimestamp = null;
 
     /** -----------------------------------------------------------------------------------------
+     * A regular expression used to determine the last modified time based on the filename.  If
+     * specified, implies that the last modification time will be taken from the filename rather
+     * than calling stat().
+     *
+     * @var string | null
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $lastModifiedFileRegex = null;
+
+    /** -----------------------------------------------------------------------------------------
      * A handler template that will be used to instantiate the handler for each file matched
      * by the directory scanner. The file name will be injected into the template.
      *
@@ -187,7 +198,8 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             'directory_pattern'   => 'string',
             'recursion_depth'     => 'int',
             'last_modified_start' => 'string',
-            'last_modified_end'   => 'string'
+            'last_modified_end'   => 'string',
+            'last_modified_file_regex' => 'string'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
@@ -249,6 +261,23 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                         );
                     } else {
                         $this->lastModifiedEndTimestamp = $ts;
+                    }
+                    break;
+
+                case 'last_modified_file_regex':
+                    if ( false === @preg_match($value, "") ) {
+                        $errorList = error_get_last();
+                        $errorMessage = ( count($errorList) > 0 ? $errorList[0]['message'] : null );
+                        $this->logAndThrowException(
+                            sprintf(
+                                "Error setting %s (%s): %s",
+                                $property,
+                                $value,
+                                ( count($errorList) > 0 ? $errorList[0]['message'] : 'Unknown error' )
+                            )
+                        );
+                    } else {
+                        $this->lastModifiedFileRegex = $value;
                     }
                     break;
 
@@ -329,7 +358,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     }  // getMaxRecursionDepth()
 
     /** -----------------------------------------------------------------------------------------
-     * @return string|null The minumum last modified time for a file.
+     * @return int|null The minumum last modified timestamp for a file.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -339,7 +368,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     }  // getLastModifiedStartTime()
 
     /** -----------------------------------------------------------------------------------------
-     * @return string|null The maximum last modified time for a file.
+     * @return int|null The maximum last modified timestamp for a file.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -347,6 +376,17 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     {
         return $this->lastModifiedEndTimestamp;
     }  // getLastModifiedEndTime()
+
+    /** -----------------------------------------------------------------------------------------
+     * @return string|null The regex used to determine the last modified time of a file based on
+     * the filename.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getLastModifiedFileRegex()
+    {
+        return $this->lastModifiedFileRegex;
+    }  // getLastModifiedFileRegex()
 
     /** -----------------------------------------------------------------------------------------
      * @return object The handler template that will be used to create a configuration for the
@@ -572,32 +612,60 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             // PHP 5.3 does not allow us to reference the object in the callback
             $lmStartTs = $this->lastModifiedStartTimestamp;
             $lmEndTs = $this->lastModifiedEndTimestamp;
+            $lmRegex = $this->lastModifiedFileRegex;
+            $logger = $this->logger;
 
             $this->logger->info(
                 sprintf(
-                    "Applying mtime filter: (start: %s, end: %s)",
+                    "Applying mtime filter: (start: %s, end: %s%s)",
                     ( null === $lmStartTs ? "null" : $lmStartTs ),
-                    ( null === $lmEndTs ? "null" : $lmEndTs )
+                    ( null === $lmEndTs ? "null" : $lmEndTs ),
+                    ( null !== $lmRegex ? ", file_regex: $lmRegex" : "" )
                 )
             );
 
             try {
                 $callbackIterator = new \CallbackFilterIterator(
                     $iterator,
-                    function ($current, $key, $iterator) use ($lmStartTs, $lmEndTs) {
+                    function ($current, $key, $iterator) use ($lmStartTs, $lmEndTs, $lmRegex, $logger) {
+
+                        // If the last modified regex is specified, use that to determine the
+                        // modification time based on the filename.
+
+                        if ( null !== $lmRegex ) {
+                            $matches = null;
+                            $retval = preg_match($lmRegex, $current->getFilename(), $matches);
+                            if ( 0 === $retval ) {
+                                return false;
+                            } else {
+                                if ( false === ($ts = strtotime($matches[0])) ) {
+                                    $logger->warning(
+                                        sprintf(
+                                            "Skipping file '%s'. Regex '%s' matches but could not be converted to a timestamp.",
+                                            $current->getFilename(),
+                                            $lmRegex
+                                        )
+                                    );
+                                    return false;
+                                }
+                            }
+                        } else {
+                            $ts = $current->getMTime();
+                        }
+
                         if ( null !== $lmStartTs && null !== $lmEndTs ) {
-                            return $current->getMTime() >= $lmStartTs && $current->getMTime() <= $lmEndTs;
+                            return $ts >= $lmStartTs && $ts <= $lmEndTs;
                         } elseif ( null !== $lmStartTs ) {
-                            return $current->getMTime() >= $lmStartTs;
+                            return $ts >= $lmStartTs;
                         } elseif ( null !== $lmEndTs ) {
-                            return $current->getMTime() <= $lmEndTs;
+                            return $ts <= $lmEndTs;
                         } else {
                             return false;
                         }
                     }
                 );
                 $iterator = $callbackIterator;
-            }  catch ( Exception $e ) {
+            } catch ( Exception $e ) {
                 $this->logAndThrowException(
                     sprintf(
                         "Error applying last modified filter (start: %s, end: %s): %s",

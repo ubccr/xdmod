@@ -163,8 +163,6 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
     {
         // Restrict to files matching "euca*.json", and modified recently.
 
-        self::TEST_ARTIFACT_INPUT_PATH;
-
         $origFile = self::TEST_ARTIFACT_INPUT_PATH . '/euca_acct.json';
         $newFile = self::TEST_ARTIFACT_INPUT_PATH . '/directory_scanner/euca_my_new_file.json';
         $startDate = date('c');
@@ -201,4 +199,142 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $scanner->getNumRecordsParsed());
 
     }  // testLastModifiedFilter()
+
+    /**
+     * Test catching a bad regex.
+     *
+     * @expectedException Exception
+     */
+
+    public function testLastModifiedBadRegex()
+    {
+        // Restrict to files matching "*.json", and modified in the specified range.
+
+        $config = array(
+            'name' => 'Files using regex',
+            'type' => 'directoryscanner',
+            'path' => sys_get_temp_dir(),
+            'file_pattern' => '/\.json$/',
+            'last_modified_start' => '2018-02-01',
+            'last_modified_end' => '2018-03-31',
+            'last_modified_file_regex' => 'badregex',
+            'handler' => (object) array(
+                'extension' => '.json',
+                'type' => 'jsonfile',
+                'record_separator' => "\n"
+            )
+        );
+        $options = new DataEndpointOptions($config);
+        $scanner = DataEndpoint::factory($options, $this->logger);
+
+    }  // testLastModifiedFilterUsingRegex()
+
+    /**
+     * Test a bad regex that matches the file but is not a timestamp.
+     */
+
+    public function testLastModifiedRegexNotTimestamp()
+    {
+        $origFile = self::TEST_ARTIFACT_INPUT_PATH . '/euca_acct.json';
+        $newDir = sys_get_temp_dir() . '/xdmod_test';
+        @mkdir($newDir, 0750, true);
+
+        $fileList = array();
+        $startDate = '2018-02-01';
+        $endDate = '2018-03-31';
+        @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-01-01.json'));
+        @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-regex-not-timestamp.json'));
+
+        $config = array(
+            'name' => 'Files using regex that is not a timestamp',
+            'type' => 'directoryscanner',
+            'path' => $newDir,
+            'file_pattern' => '/\.json$/',
+            'last_modified_start' => '2018-02-01',
+            'last_modified_end' => '2018-03-31',
+            'last_modified_file_regex' => '/regex-not-timestamp/',
+            'handler' => (object) array(
+                'extension' => '.json',
+                'type' => 'jsonfile',
+                'record_separator' => "\n"
+            )
+        );
+        $options = new DataEndpointOptions($config);
+        $scanner = DataEndpoint::factory($options, $this->logger);
+        $scanner->verify();
+        $scanner->connect();
+
+        // The directory is scanned when connect() is called but each file isn't processed
+        // until we iterate over it.
+
+        foreach ( $scanner as $key => $val ) {
+        }
+
+        // Cleanup
+
+        foreach ( $fileList as $file ) {
+            @unlink($file);
+        }
+        rmdir($newDir);
+
+        $this->assertEquals(0, $scanner->getNumFilesScanned(), "Number of files scanned using bad last modified regex");
+    }  // testLastModifiedFilterRegexNotTimestamp()
+
+    /**
+     * Test trying to read a file modified between a particular start and end date using
+     * a modification time parsed from the filename using a regex.
+     */
+
+    public function testLastModifiedFiltersUsingRegex()
+    {
+        // Restrict to files matching "*.json", and modified in the specified range.
+
+        $origFile = self::TEST_ARTIFACT_INPUT_PATH . '/euca_acct.json';
+        $newDir = sys_get_temp_dir() . '/xdmod_test';
+        @mkdir($newDir, 0750, true);
+
+        $fileList = array();
+        $startDate = '2018-02-01';
+        $endDate = '2018-03-31';
+        @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-01-01.json'));
+        @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-02-01.json'));
+        @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-03-01.json'));
+        @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-04-01.json'));
+
+        $config = array(
+            'name' => 'Files using regex',
+            'type' => 'directoryscanner',
+            'path' => $newDir,
+            'file_pattern' => '/\.json$/',
+            'last_modified_start' => '2018-02-01',
+            'last_modified_end' => '2018-03-31',
+            'last_modified_file_regex' => '/\d{4}-\d{2}-\d{2}/',
+            'handler' => (object) array(
+                'extension' => '.json',
+                'type' => 'jsonfile',
+                'record_separator' => "\n"
+            )
+        );
+        $options = new DataEndpointOptions($config);
+        $scanner = DataEndpoint::factory($options, $this->logger);
+        $scanner->verify();
+        $scanner->connect();
+
+        // The directory is scanned when connect() is called but each file isn't processed
+        // until we iterate over it.
+
+        foreach ( $scanner as $key => $val ) {
+        }
+
+        // Cleanup
+
+        foreach ( $fileList as $file ) {
+            @unlink($file);
+        }
+        rmdir($newDir);
+
+        $this->assertEquals(2, $scanner->getNumFilesScanned(), "Number of files scanned using last modified regex");
+        $this->assertEquals(4, $scanner->getNumRecordsParsed(), "Number of records found using last modified regex");
+
+    }  // testLastModifiedFilterUsingRegex()
 }  // class DirectoryScannerTest
