@@ -601,8 +601,8 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     return;
                 }
 
-                var mappedUser = parseInt(cmbUserMapping.getValue());
-                var institution = parseInt(cmbInstitution.getValue());
+                var mappedUser = parseInt(cmbUserMapping.getValue(), 10);
+                var institution = parseInt(cmbInstitution.getValue(), 10);
                 var manualOverride = mappedUser === -1 && institution !== -1;
 
                 var populatedAcls = {};
