@@ -25,10 +25,10 @@ build:
         - cp -f /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
         - ./open_xdmod/modules/xdmod/integration_tests/runtests.sh --junit-output-dir `pwd`/shippable/testresults/
         - ./open_xdmod/modules/xdmod/component_tests/runtests.sh --log-junit `pwd`/shippable/testresults/xdmod-component.xml
-        - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults
         - ./open_xdmod/modules/xdmod/integration_tests/scripts/samlSetup.sh
         - ./open_xdmod/modules/xdmod/automated_tests/runtests.sh --headless --log-junit `pwd`/shippable/testresults --sso
         - ./vendor/phpunit/phpunit/phpunit -c ./open_xdmod/modules/xdmod/integration_tests/phpunit.xml.dist --testsuite sso --log-junit `pwd`/shippable/testresults/xdmod-sso-integration.xml
+        - mv ./configuration/portal_settings.ini.old ./configuration/portal_settings.ini
     on_failure:
         - cat /var/log/xdmod/*

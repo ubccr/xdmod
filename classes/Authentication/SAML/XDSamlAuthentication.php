@@ -31,13 +31,6 @@ class XDSamlAuthentication
      */
     protected $_isConfigured = false;
 
-    /**
-     * Whether or not we allow Single Sign On users local access. Defaults to true.
-     *
-     * @var boolean
-     */
-    protected $_allowLocalAccessViaSSO = true;
-
     const BASE_ADMIN_EMAIL = <<<EML
 
 Person Details -----------------------------------
@@ -72,10 +65,6 @@ EML;
         );
 
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
-        try {
-            $this->_allowLocalAccessViaSSO = strtolower(\xd_utilities\getConfiguration('authentication', 'allowLocalAccessViaFederation')) === "false" ? false : true;
-        } catch (Exception $e) {
-        }
         if ($this->isSamlConfigured()) {
             try {
                 $authSource = \xd_utilities\getConfiguration('authentication', 'source');
@@ -110,98 +99,79 @@ EML;
     public function getXdmodAccount()
     {
         $samlAttrs = $this->_as->getAttributes();
-        if (!isset($samlAttrs["username"])) {
-            $thisUserName = null;
-        } else {
-            $thisUserName = !empty($samlAttrs['username'][0]) ? $samlAttrs['username'][0] : null;
-        }
-        if (!isset($samlAttrs["system_username"])) {
-            $thisSystemUserName = $thisUserName;
-        } else {
-            $thisSystemUserName = !empty($samlAttrs['system_username'][0]) ? $samlAttrs['system_username'][0] : null;
-        }
-        if ($this->_as->isAuthenticated() && !empty($thisUserName)) {
-            $xdmodUserId = \XDUser::userExistsWithUsername($thisUserName);
-            if ($xdmodUserId !== INVALID) {
-                return \XDUser::getUserByID($xdmodUserId);
-            } elseif ($this->_allowLocalAccessViaSSO && isset($samlAttrs['email_address'])) {
-                $xdmodUserId = \XDUser::userExistsWithEmailAddress($samlAttrs['email_address'][0]);
-                if ($xdmodUserId === AMBIGUOUS) {
-                    return "AMBIGUOUS";
-                }
-                if ($xdmodUserId !== INVALID) {
-                    return \XDUser::getUserByID($xdmodUserId);
-                }
-            }
-            $emailAddress = !empty($samlAttrs['email_address'][0]) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
-            $personId = \DataWarehouse::getPersonIdFromPII($thisSystemUserName, $samlAttrs['organization']);
 
+        if ($this->_as->isAuthenticated()) {
+            $userName = $samlAttrs['username'][0];
+
+            $xdmodUserId = \XDUser::userExistsWithUsername($userName);
+
+            if ($xdmodUserId !== INVALID) {
+                $user = \XDUser::getUserByID($xdmodUserId);
+                $user->setSSOAttrs($samlAttrs);
+                return $user;
+            }
+
+            // If we've gotten this far then we're creating a new user. Proceed with gathering the
+            // information we'll need to do so.
+            $emailAddress = isset($samlAttrs['email_address']) ? $samlAttrs['email_address'][0] : NO_EMAIL_ADDRESS_SET;
+            $systemUserName = isset($samlAttrs['system_username']) ? $samlAttrs['system_username'][0] : $userName;
+            $firstName = isset($samlAttrs['first_name']) ? $samlAttrs['first_name'][0] : 'UNKNOWN';
+            $middleName = isset($samlAttrs['middle_name']) ? $samlAttrs['middle_name'][0] : null;
+            $lastName = isset($samlAttrs['last_name']) ? $samlAttrs['last_name'][0] : null;
+            $personId = \DataWarehouse::getPersonIdFromPII($systemUserName, $samlAttrs['organization'][0]);
+
+            // Attempt to identify which organization this user should be associated with. Prefer
+            // using the personId if not unknown, then fall back to the saml attributes if the
+            // 'organization' property is present, and finally defaulting to the Unknown organization
+            // if none of the preceding conditions are met.
             $userOrganization = $this->getOrganizationId($samlAttrs, $personId);
 
-            if (!isset($samlAttrs["first_name"])) {
-                $samlAttrs["first_name"] = array("UNKNOWN");
-            }
-            if (!isset($samlAttrs["middle_name"])) {
-                $samlAttrs["middle_name"] = array(null);
-            }
-            if (!isset($samlAttrs["last_name"])) {
-                $samlAttrs["last_name"] = array("UNKNOWN");
-            }
             try {
                 $newUser = new \XDUser(
-                    $thisUserName,
+                    $userName,
                     null,
                     $emailAddress,
-                    $samlAttrs["first_name"][0],
-                    $samlAttrs["middle_name"][0],
-                    $samlAttrs["last_name"][0],
+                    $firstName,
+                    $middleName,
+                    $lastName,
                     array(ROLE_ID_USER),
                     ROLE_ID_USER,
                     $userOrganization,
-                    $personId
+                    $personId,
+                    $samlAttrs
                 );
             } catch (Exception $e) {
-                return "EXISTS";
+                throw new Exception('An account is currently configured with this information, please contact an administrator.');
             }
+
             $newUser->setUserType(SSO_USER_TYPE);
+
             try {
                 $newUser->saveUser();
             } catch (Exception $e) {
                 $this->logger->err('User creation failed: ' . $e->getMessage());
-                return false;
+                throw $e;
             }
 
             $this->handleNotifications($newUser, $samlAttrs, ($personId != UNKNOWN_USER_TYPE));
 
             return $newUser;
         }
-        return false;
+        throw new \DataWarehouse\Query\Exceptions\AccessDeniedException('Authentication failure.');
     }
 
     /**
-     * Retrieves the organization_id that this User should be associated with. There is one
-     * configuration property that affects the return value of this function,
-     * `force_default_organization`. It does so in the following ways:
+     * Retrieves the organization_id that this User should be associated with.
      *
-     * - If the `force_default_organization` property in `portal_settings.ini` === 'on'
-     *   - Then the users organization is determined by the run time constant
-     *     `ORGANIZATION_NAME` ( which is derived from the `organization.json` configuration
-     *     file. ) This value will be used to find a corresponding record in the
-     *     `modw.organization` table via the `name` column.
+     * - If we were able to identify which `person` this user should be associated with
+     *   - then look up which organization they are associated via the `modw.person.id` column.
      * - If SAML has been provided with an `organization` property.
      *   - Then the users organization will be determined by attempting to find a record in
      *     the `modw.organization` table that has a `name` column that matches the provided
-     *     value.
-     *   - If unable to identify an organization in the previous step and a personId has been
-     *     supplied, attempt to retrieve the organization_id for this person via the
-     *     `modw.person.id` column.
-     * - If we were able to identify which `person` this user should be associated with
-     *   - then look up which organization they are associated via the `modw.person.id` column.
+     *     value. If no records are found then the 'Unknown' organization ( -1 ) is returned.
      * - and finally, if none of the other conditions are satisfied, return the Unknown organization
      *   ( i.e. -1 )
      *
-     * The default setting for an OpenXDMoD installation is:
-     *   - `force_default_organization="on"`
      * @param array $samlAttrs the saml attributes returned for this user
      * @param int   $personId  the id property for the Person this user has been associated with.
      * @return int the id of the organization that a new SSO user should be associated with.
@@ -209,25 +179,7 @@ EML;
      */
     public function getOrganizationId($samlAttrs, $personId)
     {
-        $techSupportRecipient = \xd_utilities\getConfiguration('general', 'tech_support_recipient');
-
-        $forceDefaultOrganization = null;
-        try {
-            $forceDefaultOrganization = \xd_utilities\getConfiguration('sso', 'force_default_organization') === 'on';
-        } catch (Exception $e) {
-            $this->notify(
-                $techSupportRecipient,
-                $techSupportRecipient,
-                '',
-                $techSupportRecipient,
-                'Error retrieving XDMoD configuration property "force_default_organization" form portal_settings.ini',
-                $e->getMessage()
-            );
-        }
-
-        if ($forceDefaultOrganization) {
-            return Organizations::getIdByName(ORGANIZATION_NAME);
-        } elseif ($personId !== -1 ) {
+        if ($personId !== -1 ) {
             return Organizations::getOrganizationIdForPerson($personId);
         } elseif(!empty($samlAttrs['organization'])) {
             return Organizations::getIdByName($samlAttrs['organization'][0]);

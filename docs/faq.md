@@ -51,6 +51,7 @@ configuration.
     thread_cache_size       = 8
     query_cache_limit       = 16M
     query_cache_size        = 1G
+    group_concat_max_len    = 16M
 
 [optimizing-mysql]: https://dev.mysql.com/doc/refman/5.5/en/optimizing-the-server.html
 

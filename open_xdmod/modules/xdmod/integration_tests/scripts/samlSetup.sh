@@ -35,7 +35,8 @@ var profile = {
   mobilePhone: '+1-415-555-5141',
   groups: 'Simple AIdP Users, West Coast Users, Cloud Users',
   itname: 'samlj',
-  orgId: 'University At Buffalo',
+  system_username: 'samlj',
+  orgId: 'Screwdriver',
   fieldOfScience: 'Computational Research'
 }
 
@@ -57,8 +58,14 @@ var metadata = [{
 }, {
   id: "itname",
   optional:'false',
-  displayName: 'System Username',
+  displayName: 'Organization Username',
   description: 'The system user',
+  multiValue: false
+}, {
+  id: 'system_username',
+  optional: 'true',
+  displayName: 'System Username',
+  description: 'Username of account used to run jobs.',
   multiValue: false
 }, {
   id: "firstName",
@@ -147,6 +154,18 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
         'orgId' => 'organization',
         'fieldOfScience' => 'field_of_science',
         'itname' => 'username'
+      ),
+      60 => array(
+        'class' => 'authorize:Authorize',
+        'username' => array(
+          '/\S+/'
+        ),
+      ),
+      61 => array(
+        'class' => 'authorize:Authorize',
+        'organization' => array(
+          '/\S+/'
+        )
       )
     )
   ),

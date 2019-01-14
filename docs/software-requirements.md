@@ -76,7 +76,7 @@ added with this command for CentOS 7:
     # yum install httpd php php-cli php-mysql php-gd php-mcrypt \
                   gmp-devel php-gmp php-pdo php-xml \
                   php-pear-MDB2 php-pear-MDB2-Driver-mysql \
-                  java-1.7.0-openjdk java-1.7.0-openjdk-devel \
+                  java-1.8.0-openjdk java-1.8.0-openjdk-devel \
                   mariadb-server mariadb cronie logrotate \
                   ghostscript php-mbstring jq
 
@@ -130,6 +130,15 @@ database.
 **NOTE**: Open XDMoD does not support any of the strict
 [Server SQL Modes][sql-mode].  You must set `sql_mode = ''` in your MySQL
 server configuration.
+
+**NOTE**: Open XDMoD uses the `GROUP_CONCAT()` sql function. The `group_concat_max_len` server system variable must be changed to 16MB from its default value of 1024 bytes. The `max_allowed_packet`
+setting must be set to at least 16MB. The recommended setting in the mysql server configuration file is as follows:
+
+```ini
+[mysqld]
+max_allowed_packet   = 16M
+group_concat_max_len = 16M
+```
 
 [sql-mode]: https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html
 

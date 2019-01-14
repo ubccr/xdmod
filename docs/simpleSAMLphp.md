@@ -73,24 +73,16 @@ Conditionally, if your installation supports multiple organizations then you mus
 *    `organization`
      * This will be used to identify which Organization the user should be associated with via the `modw.organization.name` column
 
-There is one property in `portal_settings.ini` that supports and interacts with this SAML property.
-*    `force_default_organization`: `on`|`off`
-     * Controls how Organization association is handled when new SSO users log in to XDMoD.
-
 To get a better idea of how these properties translate into expected behavior during SSO login. Please refer to the table below:
 
-|Property Name               |Value|SAML Organization Present|Person Present|Expected Behavior |
-|:---------------------------|:---:|:-----------------------:|:------------:|:-----------------|
-| force_default_organization | on  | true                    | true         | The user is associated with the organization defined in `organization.json`|
-| force_default_organization | on  | true                    | false        | The user is associated with the organization defined in `organization.json`|
-| force_default_organization | on  | false                   | true         | The user is associated with the organization defined in `organization.json`|
-| force_default_organization | on  | false                   | false        | The user is associated with the organization defined in `organization.json`|
-| force_default_organization | off | true                    | true         | The user is associated with the the Person's organization if found, else the Unknown Organization|
-| force_default_organization | off | true                    | false        | The user is associated with the SAML Organization if found, else the Unknown organization|
-| force_default_organization | off | false                   | true         | The user is associated with the Persons organization if found, else the Unknown organization|
-| force_default_organization | off | false                   | false        | The user is associated with the Unknown organization|
+|SAML Organization Present|Person Present|Expected Behavior |
+|:-----------------------:|:------------:|:-----------------|
+| true                    | true         | The user is associated with the the Person's organization if found, else the SAML Organization if found, else the Unknown Organization|
+| true                    | false        | The user is associated with the SAML Organization if found, else the Unknown organization|
+| false                   | true         | The user is associated with the Persons organization if found, else the Unknown organization|
+| false                   | false        | The user is associated with the Unknown organization|
 
-Here is an example `authsources.php` file:
+Here is an example `authsources.php` file **note: keys 60 and 61 must be present** These check that the _mandatory_ username and organization properties are present.
 
 ```php
 <?php
@@ -116,6 +108,20 @@ $config = array(
         'orgId' => 'organization',
         'fieldOfScience' => 'field_of_science',
         'itname' => 'username'
+      ),
+      // Ensures that the 'username' property has one or more non-whitespace characters
+      60 => array(
+        'class' => 'authorize:Authorize',
+        'username' => array(
+          '/\S+/'
+        ),
+      ),
+      // Ensures that the 'organization' property has one or more non-whitespace characters
+      61 => array(
+        'class' => 'authorize:Authorize',
+        'organization' => array(
+           '/\S+/'
+        )
       )
     )
   ),
