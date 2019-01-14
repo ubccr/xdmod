@@ -48,16 +48,14 @@ class CenterStaffRole extends CenterDirectorRole
         $pdo = DB::factory('database');
 
         $centerData = $pdo->query(
-            "SELECT urp.param_value FROM moddb.UserRoleParameters AS urp, moddb.Roles AS r ".
-                "WHERE urp.user_id=:user_id AND urp.is_active=1 AND r.role_id = urp.role_id AND r.abbrev=:role_id",
+            "SELECT u.organization_id FROM Users u WHERE u.id = :user_id",
             array(
-                'user_id' => $this->getCorrespondingUserID(),
-                'role_id' => ROLE_ID_CENTER_STAFF
+                'user_id' => $this->getCorrespondingUserID()
             )
         );
 
         if (count($centerData) > 0)
-            return $centerData[0]['param_value'];
+            return $centerData[0]['organization_id'];
         else
             return -1;
 
