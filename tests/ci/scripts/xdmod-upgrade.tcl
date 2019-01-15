@@ -5,6 +5,8 @@
 #-------------------------------------------------------------------------------
 # Helper functions
 
+source [file join [file dirname [info script]] helper-functions.tcl]
+
 proc confirmUpgrade { } {
     expect {
         timeout { send_user "\nFailed to get prompt\n"; exit 1 }
@@ -19,6 +21,7 @@ proc confirmUpgrade { } {
 set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
+provideInput {Enable Novice User Tab*} {off}
 expect {
     -re "\nDo you want to run aggregation now.*\\\]" {
         send yes\n

@@ -33,6 +33,7 @@ answerQuestion {Java Path} /usr/bin/java
 answerQuestion {Javac Path} /usr/bin/javac
 provideInput {PhantomJS Path:} /usr/local/bin/phantomjs
 provideInput {Center Logo Path:} {}
+provideInput {Novice User Tab*} {off}
 confirmFileWrite yes
 enterToContinue
 
