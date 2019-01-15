@@ -388,7 +388,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
         unset($queryConfig->active_role);
 
         // Check whether or not $activeRoleId is an acl name or acl display value.
-        // ( Old queries may acl display ).
+        // ( Old queries may utilize the `display` property).
         $activeRole = Acls::getAclByName($activeRoleId);
         if ($activeRole === null) {
             $activeRole = Acls::getAclByDisplay($activeRoleId);

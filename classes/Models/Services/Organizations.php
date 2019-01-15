@@ -60,6 +60,13 @@ SQL;
         return !empty($rows) ? $rows[0]['id'] : -1;
     }
 
+    /**
+     * Retrieve an organizations `abbrev` value based on the provided `$organizationId`.
+     *
+     * @param integer $organizationId
+     * @return string
+     * @throws \Exception
+     */
     public static function getAbbrevById($organizationId)
     {
         $db = DB::factory('database');

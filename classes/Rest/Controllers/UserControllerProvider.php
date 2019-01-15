@@ -142,7 +142,7 @@ class UserControllerProvider extends BaseControllerProvider
             'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']),
             'field_of_science' => $user->getFieldOfScience(),
             'active_role' => $mostPrivilegedFormalName,
-            'most_privileged_role' => $mostPrivilegedFormalName,
+            'most_privileged_role' => $mostPrivilegedFormalName
         );
     }
 

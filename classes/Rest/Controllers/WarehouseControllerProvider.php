@@ -732,6 +732,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                     $dimensionsToReturn[] = array(
                         'id' => $queryDescriptor->getGroupByName(),
                         'name' => $queryDescriptor->getGroupByLabel(),
+                        // NOTE: 'Category' is capitalized for historical reasons.
                         'Category' => $queryDescriptor->getGroupByCategory(),
                         'description' => $queryDescriptor->getGroupByDescription()
                     );
