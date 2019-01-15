@@ -617,7 +617,6 @@ class MetricExplorer extends Common
             );
         } else {
             $activeRoleComponents = explode(':', $activeRoleId);
-            $activeRoleComponents = array_pad($activeRoleComponents, 2, null);
             $activeRoleId = $activeRoleComponents[0];
             $activeRole = Acls::getAclByName($activeRoleId);
             if ($activeRole === null) {
