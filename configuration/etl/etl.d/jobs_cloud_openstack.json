@@ -147,6 +147,7 @@
             "name": "OpenStackCloudStagingEventIngestor",
             "description": "OpenStack staging data for cloud events",
             "class": "DatabaseIngestor",
+            "truncate_destination": true,
             "definition_file": "cloud_openstack/staging_event.json"
         },
         {

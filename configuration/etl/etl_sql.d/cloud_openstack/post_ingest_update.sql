@@ -1,7 +1,6 @@
 -- Update destroy times of volume assets. This updates both volumes that are destoyed
 -- in volume.delete.end events and also root volumes which are inferred from compute.instance.create
 -- events.
-
 CREATE TEMPORARY TABLE ${DESTINATION_SCHEMA}.tmp_volume_delete
 (INDEX resource_id_openstack_resource_key (`resource_id`, `openstack_resource_id`))
 AS
@@ -49,6 +48,11 @@ WHERE
 -- updates. We also cannot specify the target of the update in a subquery. I've opted to use a
 -- temporary table to calculate the end times and then perform the update.
 
+-- The tmp_end_times table is created when ingestion is run for the generic format and OpenStack format. IF
+-- the ingestion for both formats are done on the same connection a error is thrown saying that the temporary
+-- tale already exists when ingestion for the second format is run. To prevent this we drop the table and
+-- recreate it.
+DROP TEMPORARY TABLE IF EXISTS ${DESTINATION_SCHEMA}.tmp_end_times;
 CREATE TEMPORARY TABLE ${DESTINATION_SCHEMA}.tmp_end_times
 AS
 SELECT
@@ -78,5 +82,3 @@ AND
 TRUNCATE ${DESTINATION_SCHEMA}.openstack_raw_event;
 
 TRUNCATE ${DESTINATION_SCHEMA}.openstack_raw_instance_type;
-
-TRUNCATE ${DESTINATION_SCHEMA}.openstack_staging_event;
