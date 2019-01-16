@@ -86,50 +86,5 @@
       return $role_label;
 
    }//getFormalRoleNameFromIdentifier
-   
-   // ----------------------------------------------------------
 
-   /*
-    *
-    * @function determineActiveRoleForUser
-    *
-    * Determines what active role this user should take on (if 'active_role' is supplied in a URL that triggers this
-    * function, then the active role will be derived from the value associated with the 'active_role' param in the URL)
-    *
-    * @param XDUser $user
-    *
-    * @return an instance of a role class (e.g. any of which extends aRole -- CenterDirector, CampusChampion, etc..)
-    *
-    */
-       
-   function determineActiveRoleForUser($user) {
-   
-   	if (isset($_REQUEST['active_role'])) {
-   	  
-   	  $role_data = explode(';', $_REQUEST['active_role']);
-   	  $role_data = array_pad($role_data, 2, NULL);
-   	  
-   	  return $user->assumeActiveRole($role_data[0], $role_data[1]);
-   	  
-   	}
-   
-   	return $user->getActiveRole();
-   
-   }//determineActiveRoleForUser
-   
-   function determineActiveRoleForUser2($user, $active_role) {
-   
-   	if (isset($active_role)) {
-   	  
-   	  $role_data = explode(':', $active_roles);
-   	  $role_data = array_pad($role_data, 2, NULL);
-   	  
-   	  return $user->assumeActiveRole($role_data[0], $role_data[1]);
-   	  
-   	}
-   
-   	return $user->getActiveRole();
-   
-   }//determineActiveRoleForUser2
-      
 ?>

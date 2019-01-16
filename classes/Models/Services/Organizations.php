@@ -61,6 +61,24 @@ SQL;
     }
 
     /**
+     * Retrieve an organizations `abbrev` value based on the provided `$organizationId`.
+     *
+     * @param integer $organizationId
+     * @return string
+     * @throws \Exception
+     */
+    public static function getAbbrevById($organizationId)
+    {
+        $db = DB::factory('database');
+        $rows = $db->query(
+            "SELECT o.abbrev FROM modw.organization o WHERE o.id = :organization_id",
+            array(':organization_id' => $organizationId)
+        );
+
+        return $rows[0]['abbrev'];
+    }
+
+    /**
      * Attempt to retrieve the organization_id for the specified person_id.
      *
      * @param int $personId
