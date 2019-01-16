@@ -70,4 +70,14 @@ class ColumnLayout
             $this->settings[$itemId][1]
         );
     }
+
+    /**
+     * return whether an item has configured layout settings
+     * @param $itemId the identifier for the item
+     * @return boolean whether the item has a layout setting
+     */
+    public function hasLayout($itemId)
+    {
+        return isset($this->settings[$itemId]);
+    }
 }

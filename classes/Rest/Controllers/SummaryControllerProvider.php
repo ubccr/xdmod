@@ -68,7 +68,14 @@ class SummaryControllerProvider extends BaseControllerProvider
         }
 
         foreach ($presetPortlets as $portlet) {
-            list($chartLocation, $column) = $layout->getLocation('PP' . $portlet['name']);
+
+            if (isset($portlet['region']) && $portlet['region'] === 'top') {
+                $chartLocation = 'FW' . $portlet['name'];
+                $column = -1;
+            } else {
+                list($chartLocation, $column) = $layout->getLocation('PP' . $portlet['name']);
+            }
+
             $summaryPortlets[$chartLocation] = array(
                 'name' => 'PP' . $portlet['name'],
                 'type' => $portlet['type'],
@@ -110,7 +117,7 @@ class SummaryControllerProvider extends BaseControllerProvider
                     $name = 'UC' . $query['name'];
 
                     if (preg_match('/summary_(?P<index>\S+)/', $query['name'], $matches) > 0) {
-                        if (isset($summaryPortlets[$matches['index']])) {
+                        if ($layout->hasLayout('PC' . $matches['index'])) {
                             $name = 'PC' . $matches['index'];
                         }
                     }
@@ -132,7 +139,7 @@ class SummaryControllerProvider extends BaseControllerProvider
         return $app->json(array(
             'success' => true,
             'total' => count($summaryPortlets),
-            'portalConfig' => array('columns' => $layout->getColumnCount(), 'layoutstyle' => 'portal'),
+            'portalConfig' => array('columns' => $layout->getColumnCount()),
             'data' => array_values($summaryPortlets)
         ));
     }
