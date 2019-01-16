@@ -9,8 +9,6 @@
         }
     ],
 
-    "#": "Also bring in root volumes",
-
     "source_query": {
         "records": {
             "resource_id": "ev.resource_id",
