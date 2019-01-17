@@ -10,8 +10,6 @@ $returnData = array();
 try {
    $user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));
 
-    $activeRole = $user->getMostPrivilegedRole();
-
     if (isset($_REQUEST['node']) && $_REQUEST['node'] == 'realms') {
         $query_group_name = 'tg_usage';
 

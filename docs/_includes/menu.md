@@ -27,7 +27,6 @@ Installing
 - [Configuration Guide](configuration.html)
    - [Single Sign On Authentication](simpleSAMLphp.html)
      - [LDAP Authentication](simpleSAMLphp-ldap.html)
-   - [Storage (Beta) Guide](storage.html)
 - [Database Guide](databases.html)
 - [Upgrade Guide](upgrade.html)
 
@@ -44,6 +43,7 @@ Using
 - [Frequently Asked Questions](faq.html)
 - [Troubleshooting](troubleshooting.html)
 - [Cloud Metrics (Beta)](cloud.html)
+- [Storage Metrics (Beta)](storage.html)
 
 Resource Manager Notes
 ----------------------
