@@ -291,6 +291,16 @@
             "definition_file": "cloud_generic/volume.json"
         },
         {
+            "name": "GenericCloudPostIngestUpdates",
+            "description": "Post-ingest updates for massaging Generic cloud data",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "cloud_generic/post_ingest_updates.sql"
+            ]
+        },
+        {
             "#": "Events must be ingested after all other dimensions",
             "name": "GenericCloudStagingEventIngestor",
             "description": "Generic staging data for cloud events",
@@ -347,16 +357,6 @@
             "description": "Generic cloud assets associated with events",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_generic/event_asset.json"
-        },
-        {
-            "name": "GenericCloudPostIngestUpdates",
-            "description": "Post-ingest updates for massaging Generic cloud data",
-            "namespace": "ETL\\Maintenance",
-            "options_class": "MaintenanceOptions",
-            "class": "ExecuteSql",
-            "sql_file_list": [
-                "cloud_generic/post_ingest_updates.sql"
-            ]
         }
     ]
 }
