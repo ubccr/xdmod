@@ -1,7 +1,7 @@
 {
     "#": "Associate events with assets. Only volume assets are associated as they are",
     "#": "the only assets that we have data for to associate with instances using the",
-    "#": "volume_id field. See also event_asset_root_volume.def.json",
+    "#": "event_data field. See also event_asset_root_volume.def.json",
 
     "table_definition": [
         {
