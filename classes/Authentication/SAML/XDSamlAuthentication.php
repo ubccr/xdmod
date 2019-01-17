@@ -31,13 +31,6 @@ class XDSamlAuthentication
      */
     protected $_sources = null;
 
-    /**
-     * Whether or not SAML is configured. Defaults to false.
-     *
-     * @var boolean
-     */
-    protected $_isConfigured = null;
-
     const BASE_ADMIN_EMAIL = <<<EML
 
 Person Details -----------------------------------
@@ -93,10 +86,7 @@ EML;
      */
     public function isSamlConfigured()
     {
-        if($this->_isConfigured === null){
-            $this->_isConfigured = (count($this->_sources));
-        }
-        return $this->_isConfigured;
+        return !empty($this->_sources);
     }
 
     /**

@@ -9,7 +9,10 @@ $message = '';
 try {
     $auth = new Authentication\SAML\XDSamlAuthentication();
 } catch (InvalidArgumentException $ex) {
- // This will catch when a configuration directory does not exist if it is set in the environment level
+    // This will catch when apache or nginx have been set up
+    // to to have an alternate saml configuration directory
+    // that does not exist, so we ignore it as saml isnt set
+    // up and we dont have to do anything with it
 }
 try {
     if ($auth && $auth->isSamlConfigured()) {
