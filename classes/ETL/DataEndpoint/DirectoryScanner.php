@@ -337,14 +337,13 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
 
                 case 'last_modified_file_regex':
                     if ( false === @preg_match($value, "") ) {
-                        $errorList = error_get_last();
-                        $errorMessage = ( count($errorList) > 0 ? $errorList[0]['message'] : null );
+                        $error = error_get_last();
                         $this->logAndThrowException(
                             sprintf(
                                 "Error setting %s (%s): %s",
                                 $property,
                                 $value,
-                                ( count($errorList) > 0 ? $errorList[0]['message'] : 'Unknown error' )
+                                ( null !== $error ? $error['message'] : 'Unknown error' )
                             )
                         );
                     } else {
@@ -354,14 +353,13 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
 
                 case 'last_modified_dir_regex':
                     if ( false === @preg_match($value, "") ) {
-                        $errorList = error_get_last();
-                        $errorMessage = ( count($errorList) > 0 ? $errorList[0]['message'] : null );
+                        $error = error_get_last();
                         $this->logAndThrowException(
                             sprintf(
                                 "Error setting %s (%s): %s",
                                 $property,
                                 $value,
-                                ( count($errorList) > 0 ? $errorList[0]['message'] : 'Unknown error' )
+                                ( null !== $error ? $error['message'] : 'Unknown error' )
                             )
                         );
                     } else {
@@ -674,7 +672,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                             $tsString = $matches[0];
                             if ( $numMatches > 1 && null !== $lmDirReformat ) {
                                 $tsString = $lmDirReformat;
-                                for ( $i=1; $i < $numMatches; $i++ ){
+                                for ($i=1; $i < $numMatches; $i++) {
                                     $tsString = str_replace(sprintf('$%d', $i), $matches[$i], $tsString);
                                 }
                             }
@@ -700,7 +698,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                                 return $ts <= $lmEndTs;
                             }
 
-                        } else if ( $iterator->hasChildren() ) {
+                        } elseif ( $iterator->hasChildren() ) {
                             return true;
                         }
                     } else {
