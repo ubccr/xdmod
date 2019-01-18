@@ -490,12 +490,38 @@ class Configuration extends Loggable implements \Iterator
         // it.
 
         foreach ( $localConfigObj->getTransformedConfig() as $k => $v ) {
+
+            // Normalize incoming keys starting w/ '+'
+            if (substr($k, 0, 1) === '+') {
+                $k = substr($k, 1, strlen($k) - 1);
+            }
+
             if ( $overwrite || ! isset($this->transformedConfig->$k) ) {
                 $this->transformedConfig->$k = $v;
-            } elseif ( is_array($this->transformedConfig->$k) ) {
-                array_push($this->transformedConfig->$k, $v);
+            } elseif (is_object($this->transformedConfig->$k) && is_object($v)) {
+                $this->transformedConfig->$k = $this->mergeObjects($this->transformedConfig->$k, $v);
+            } elseif (is_scalar($this->transformedConfig->$k) && is_scalar($v)) {
+                $this->transformedConfig->$k = $v;
+            } elseif(is_array($this->transformedConfig->$k) && is_array($v)) {
+                $this->transformedConfig->$k = array_merge($this->transformedConfig->$k, $v);
             } else {
-                $this->logger->debug("Skip duplicate key in local config (overwrite == false)");
+                $msg = <<<TXT
+Unable to merge files due to mismatched types.
+  Provided: %s [%s]
+  Expected: %s [%s]
+  From:     %s
+TXT;
+
+                $this->logger->warning(
+                    sprintf(
+                        $msg,
+                        $k,
+                        gettype($v),
+                        $k,
+                        gettype($this->transformedConfig->$k),
+                        $localConfigObj->getFilename()
+                    )
+                );
             }
         }
 
@@ -514,6 +540,41 @@ class Configuration extends Loggable implements \Iterator
         return $this;
 
     }  // merge()
+
+    /**
+     * Merge $incoming into $existing. This function supports the legacy behavior of having
+     * $incoming properties start with '+' as well as the new behavior of not requiring the '+' in
+     * properties.
+     *
+     * @param \stdClass $existing
+     * @param \stdClass $incoming
+     * @return \stdClass
+     */
+    protected function mergeObjects(\stdClass &$existing, \stdClass $incoming)
+    {
+        $properties = get_object_vars($incoming);
+        foreach($properties as $property => $incomingValue) {
+            if (strpos($property, '+') !== false) {
+                $property = substr($property, 1, strlen($property) - 1);
+            }
+
+            if ( ! isset($existing->$property) ) {
+                $existing->$property = $incoming->$property;
+            } else {
+                $existingValue = $existing->$property;
+
+                if (is_object($existingValue) && is_object($incomingValue)) {
+                    $existing->$property = $this->mergeObjects($existingValue, $incomingValue);
+                } elseif (is_array($existingValue) && is_array($incomingValue)) {
+                    $existing->$property = array_merge($existingValue, $incomingValue);
+                } else {
+                    $existing->$property = $incomingValue;
+                }
+            }
+        }
+
+        return $existing;
+    }
 
     /**
      * Perform any tasks that need to occur after merging the local configuration objects into the
@@ -982,6 +1043,16 @@ class Configuration extends Loggable implements \Iterator
     {
         return ( array_key_exists($property, $this->sectionData) && null !== $this->sectionData[$property] );
     }  // __isset()
+
+    /**
+     * Return this Configuration's $filename property.
+     *
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
 
     /** -----------------------------------------------------------------------------------------
      * Return the JSON representation of the parsed and translated Configuration.
