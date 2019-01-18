@@ -9,7 +9,7 @@ $roles = $user->getAllRoles(true);
 
 $roleDescriptors = array();
 foreach ($roles as $activeRole) {
-    $shortRole = $activeRole->getIdentifier();
+    $shortRole = $activeRole;
     $us_pos = strpos($shortRole, '_');
     if ($us_pos > 0)
     {

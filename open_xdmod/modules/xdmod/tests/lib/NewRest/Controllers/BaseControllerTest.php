@@ -82,12 +82,12 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function generateUserDataSet()
     {
-        $mgr = $this->createUser(array('mgr', 'usr'), 'mgr');
-        $cd = $this->createUser(array('cd', 'usr'), 'cd');
-        $pi = $this->createUser(array('pi', 'usr'), 'pi');
+        $mgr = $this->createUser(array('mgr', 'usr'));
+        $cd = $this->createUser(array('cd', 'usr'));
+        $pi = $this->createUser(array('pi', 'usr'));
         $usr = $this->createUser(array('usr'), 'usr');
-        $sab = $this->createUser(array('usr', 'sab'), 'sab');
-        $pub = $this->createUser(array('pub'), 'pub');
+        $sab = $this->createUser(array('usr', 'sab'));
+        $pub = $this->createUser(array('pub'));
 
         $accessDeniedException = 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException';
         $unauthorizedException = 'Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException';
@@ -138,19 +138,10 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @param array $roles an array of strings representing the
      *                              roles / acls this user is assigned
-     * @param string $activeRole this is used by the old version of
-     *                              isAuthorized only and represents the users
-     *                              currently active role.
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createUser(array $roles, $activeRole)
+    protected function createUser(array $roles)
     {
-        $activeRoleBuilder = $this->getMockBuilder('\User\aRole')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getIdentifier'));
-        $mockActiveRole = $activeRoleBuilder->getMockForAbstractClass();
-        $mockActiveRole->method('getIdentifier')->willReturn($activeRole);
-
         $builder = $this->getMockBuilder('\XDUser')
             ->disableOriginalConstructor()
             ->setMethods(
@@ -158,7 +149,6 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
                     'getRoles',
                     'isManager',
                     'isPublicUser',
-                    'getActiveRole',
                     'hasAcl',
                     '__toString'
                 )
@@ -171,7 +161,6 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
         $stub->method('isPublicUser')->willReturnCallback(function () use ($roles) {
             return in_array(ROLE_ID_PUBLIC, $roles);
         });
-        $stub->method('getActiveRole')->willReturn($mockActiveRole);
         $stub->method('hasAcl')->willReturnCallback(function () use ($roles) {
             $args = func_get_args();
             if (count($args) >= 1) {
@@ -183,8 +172,7 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
         $stub->method('__toString')->willReturn(json_encode(array(
             'roles' => $roles,
             'is_manager' => in_array(ROLE_ID_MANAGER, $roles),
-            'is_public_user' => in_array(ROLE_ID_PUBLIC, $roles),
-            'active_role' => $activeRole
+            'is_public_user' => in_array(ROLE_ID_PUBLIC, $roles)
         )));
         $stub->method('hasAcls')->willreturnCallback(
             function () use ($roles) {

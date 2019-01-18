@@ -147,6 +147,7 @@
             "name": "OpenStackCloudStagingEventIngestor",
             "description": "OpenStack staging data for cloud events",
             "class": "DatabaseIngestor",
+            "truncate_destination": true,
             "definition_file": "cloud_openstack/staging_event.json"
         },
         {
@@ -157,11 +158,18 @@
             "definition_file": "cloud_openstack/root_volume.json"
         },
         {
-            "#": "Instance data must be ingested after staging events",
+            "#": "Events must be ingested after all other dimensions",
             "name": "OpenStackCloudEventIngestor",
-            "description": "OpenStack cloud event and instance data",
+            "description": "OpenStack cloud event",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_openstack/event.json"
+        },
+        {
+            "#": "Instance data must be ingested after events",
+            "name": "OpenStackInstanceDataIngestor",
+            "description": "OpenStack instance data",
+            "class": "DatabaseIngestor",
+            "definition_file": "cloud_openstack/instance_data.json"
         },
         {
             "#": "Events must be ingested after all other dimensions",
