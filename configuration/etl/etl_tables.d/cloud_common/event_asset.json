@@ -24,6 +24,15 @@
         ],
         "indexes": [
             {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "event_id",
+                    "asset_id"
+                ],
+                "is_unique": true
+            },
+            {
                 "name": "fk_event",
                 "columns": [
                     "resource_id",
