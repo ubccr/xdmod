@@ -125,20 +125,21 @@ ETL.prototype.integrateWithXDMoD = function() {
 		etlProfile.integrateWithXDMoD();
 	});
 }
-ETL.prototype.runRegressionTests = function() {
-	var self = this;
-	self.emit('message', 'Regression Testing...');
-	config.profiles.forEach(function(etl_profile) {
-		var etlProfile = new ETLProfile(etl_profile);
-		etlProfile.on('message', function(msg) {
-			self.emit('message', msg);
-		});
-		etlProfile.on('error', function(error) {
-			self.emit('error', error);
-		});
-		etlProfile.regressionTests();
-	});
-}
+
+ETL.prototype.runRegressionTests = function () {
+    var self = this;
+    self.emit('message', 'Regression Testing...');
+    config.profiles.forEach(function (etl_profile) {
+        var etlProfile = new ETLProfile(etl_profile);
+        etlProfile.on('message', function (msg) {
+            self.emit('message', msg);
+        });
+        etlProfile.on('error', function (error) {
+            self.emit('error', error);
+        });
+        etlProfile.regressionTests();
+    });
+};
 
 ETL.prototype.processAll = function(totalCores, coreIndex, datasetNames) {
 	var self = this;
