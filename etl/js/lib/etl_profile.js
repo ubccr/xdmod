@@ -786,7 +786,7 @@ ETLProfile.prototype.regressionTests = function () {
             if ( dataset.input.getQuery() == null ) {
                 throw "GetQuery returned null";
             }
-            coll = { update: function(x,y,z,a) { } };
+            var coll = { updateOne: function () { } };
             cof = { errors: null, warnings: null };
             dataset.input.markAsProcessed(coll, 1, cof, console.log);
 
