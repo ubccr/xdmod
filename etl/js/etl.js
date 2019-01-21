@@ -135,6 +135,7 @@ ETL.prototype.runRegressionTests = function () {
             self.emit('message', msg);
         });
         etlProfile.on('error', function (error) {
+            process.exitCode = 1;
             self.emit('error', error);
         });
         etlProfile.regressionTests();
