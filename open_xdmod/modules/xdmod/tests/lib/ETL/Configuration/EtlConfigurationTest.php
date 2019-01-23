@@ -163,7 +163,7 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         if (!is_file($expectedFilePath)) {
             $config = Config::factory();
             $actual = $config[$section];
-            @file_put_contents($expectedFilePath, json_encode($actual) + "\n");
+            @file_put_contents($expectedFilePath, json_encode($actual) . "\n");
             echo "\nGenerated Expected Output for: $expectedFilePath\n";
         } else {
             $expected = @file_get_contents($expectedFilePath);
