@@ -180,7 +180,7 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
                 )
             );
             $config->initialize();
-            $actual = $config->toJson();
+            $actual = $config->toJson() . "\n";
 
             $this->assertEquals($expected, $actual);
         }
