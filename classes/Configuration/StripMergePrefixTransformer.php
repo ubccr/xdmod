@@ -6,7 +6,17 @@ use CCR\Loggable;
 use Log;
 use stdClass;
 
-class PlusKeyTransformer extends Loggable implements iConfigFileKeyTransformer
+/**
+ * Class StripMergePrefixTransformer
+ *
+ * This class allows config files designed to work with `Config` to work with the new
+ * `Configuration` class. It accomplishes this by stripping the merge prefix "+" from keys. This
+ * works because the default merge behavior of `Configuration` is the same as `Config` w/ '+'
+ * prefixed keys.
+ *
+ * @package Configuration
+ */
+class StripMergePrefixTransformer extends Loggable implements iConfigFileKeyTransformer
 {
     const MERGE_PREFIX = '+';
 

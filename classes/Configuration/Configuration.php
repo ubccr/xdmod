@@ -390,7 +390,7 @@ class Configuration extends Loggable implements \Iterator
     {
         $this->addKeyTransformer(new CommentTransformer($this->logger));
         $this->addKeyTransformer(new JsonReferenceTransformer($this->logger));
-        $this->addKeyTransformer(new PlusKeyTransformer($this->logger));
+        $this->addKeyTransformer(new StripMergePrefixTransformer($this->logger));
         return $this;
     }  //preTransformTasks()
 
