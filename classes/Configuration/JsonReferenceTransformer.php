@@ -1,5 +1,5 @@
 <?php
-/* ==========================================================================================
+/** =========================================================================================
  * Evaluate JSON references (https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) where
  * the `$ref` gets logically replaced with the thing that it points to. For example,
  * { "$ref": "http://example.com/example.json#/foo/bar" }
@@ -17,21 +17,11 @@ use stdClass;
 use CCR\Loggable;
 use ETL\JsonPointer;
 
-class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransformer
+class JsonReferenceTransformer extends aUrlTransformer implements iConfigFileKeyTransformer
 {
     const REFERENCE_KEY = '$ref';
 
-    /* ------------------------------------------------------------------------------------------
-     * @see iConfigFileKeyTransformer::__construct()
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function __construct(Log $logger = null)
-    {
-        parent::__construct($logger);
-    }  // construct()
-
-    /* ------------------------------------------------------------------------------------------
+    /** -----------------------------------------------------------------------------------------
      * @see iConfigFileKeyTransformer::keyMatches()
      * ------------------------------------------------------------------------------------------
      */
@@ -41,9 +31,8 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
         return (self::REFERENCE_KEY == $key);
     }  // keyMatches()
 
-    /* ------------------------------------------------------------------------------------------
-     * Comments remove both the key and the value from the configuration and stop processing of the
-     * key.
+    /** -----------------------------------------------------------------------------------------
+     * Transform the JSON pointer into the actual JSON that it references.
      *
      * @see iConfigFileKeyTransformer::transform()
      * ------------------------------------------------------------------------------------------
@@ -94,29 +83,9 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
             );
         }
 
-        $parsedUrl = parse_url($value);
-        $path = $this->qualifyPath($parsedUrl['path'], $config);
-        $this->logger->debug(
-            sprintf("(%s) Resolve JSON reference '%s' to file '%s'", get_class($this), $value, $path)
-        );
-
+        $parsedUrl = null;
+        $contents = $this->getContentsFromUrl($value, $parsedUrl, $config);
         $fragment = ( array_key_exists('fragment', $parsedUrl) ? $parsedUrl['fragment'] : '' );
-
-        // If no scheme was provided, default to the file scheme. Also ensure that the
-        // file path is properly formatted.
-
-        $scheme = ( array_key_exists('scheme', $parsedUrl) ? $parsedUrl['scheme'] : 'file' );
-        if ( 'file' == $scheme ) {
-            $path = 'file://' . $path;
-        }
-
-        // Open the file and return the contents.
-
-        $contents = @file_get_contents($path);
-        if ( false === $contents ) {
-            $this->logAndThrowException('Failed to open file: ' . $path);
-        }
-
         $key = null;
 
         JsonPointer::setLoggable($this);
@@ -133,24 +102,4 @@ class JsonReferenceTransformer extends Loggable implements iConfigFileKeyTransfo
         return true;
 
     }  // transform()
-
-    /* ------------------------------------------------------------------------------------------
-     * Qualify the path using the base directory from the configuration object if it is
-     * not already fully qualified.
-     *
-     * @param string $path The path to qualify
-     * @param Configuration $config $The configuration object that called the transformer
-     *
-     * @returns A fully qualified path
-     * ------------------------------------------------------------------------------------------
-     */
-
-    protected function qualifyPath($path, Configuration $config)
-    {
-        $path = $config->getVariableStore()->substitute(
-            $path,
-            "Undefined macros in JSON reference"
-        );
-        return \xd_utilities\qualify_path($path, $config->getBaseDir());
-    }
 }  // class JsonReferenceTransformer
