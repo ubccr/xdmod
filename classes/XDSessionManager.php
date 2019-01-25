@@ -133,6 +133,16 @@ class XDSessionManager
         // authentication (via tokens) trip the first Exception as the
         // result of invoking resolveUserFromToken($token)
         session_destroy();
+
+        try {
+            $auth = new Authentication\SAML\XDSamlAuthentication();
+            $auth->logout();
+        } catch (InvalidArgumentException $ex) {
+          // This will catch when apache or nginx have been set up
+          // to to have an alternate saml configuration directory
+          // that does not exist, so we ignore it as saml isnt set
+          // up and we dont have to do anything with it
+        }
     }
 
     /**

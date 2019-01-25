@@ -98,6 +98,13 @@
                 "name": "submission_venue_id",
                 "type": "int(5)",
                 "nullable": true
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [

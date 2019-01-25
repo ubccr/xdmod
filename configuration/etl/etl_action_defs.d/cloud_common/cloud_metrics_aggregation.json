@@ -5,8 +5,8 @@
         },
         "aggregation_period_query": {
             "overseer_restrictions": {
-                "#last_modified_start_date": "last_modified >= ${VALUE}",
-                "#last_modified_end_date": "last_modified <= ${VALUE}",
+                "last_modified_start_date": "last_modified >= ${VALUE}",
+                "last_modified_end_date": "last_modified <= ${VALUE}",
                 "include_only_resource_codes": "resource_id IN ${VALUE}",
                 "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
             }

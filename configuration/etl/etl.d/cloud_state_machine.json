@@ -28,25 +28,24 @@
             "name": "cloud-state-action",
             "class": "CloudStateReconstructorTransformIngestor",
             "definition_file": "cloud_common/cloud_state.json",
-            "truncate_destination": true,
+            "truncate_destination": false,
             "description": "Reconstructs discrete runs from cloud events"
         },
         {
             "name": "cloud-transient",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_common/cloud_transient.json",
-            "truncate_destination": true,
+            "truncate_destination": false,
             "description": "Builds intermediate cloud event table"
         },
         {
-            "#": "Asset data must be aggregated post ingestion",
             "name": "CloudEventAggregator",
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
             "class": "SimpleAggregator",
-            "description": "Aggregate cloud records.",
+            "description": "Aggregate OpenStack/Generic cloud records.",
             "definition_file": "cloud_common/cloud_metrics_aggregation.json",
-            "truncate_destination": true,
+            "truncate_destination": false,
             "table_prefix": "cloudfact_by_",
             "aggregation_units": [
                 "day", "month", "quarter", "year"

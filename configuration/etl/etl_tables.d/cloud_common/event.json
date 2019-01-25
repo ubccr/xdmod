@@ -14,8 +14,9 @@
             {
                 "name": "event_id",
                 "type": "bigint(20) unsigned",
+                "extra": "auto_increment",
                 "nullable": false,
-                "comment": "Generated during intermediate ingest, relative to the resource."
+                "comment": "Generated during ingest, relative to the resource."
             },
             {
                 "name": "instance_id",
@@ -55,6 +56,13 @@
                 "type": "int(5)",
                 "nullable": false,
                 "default": -1
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [
@@ -62,11 +70,24 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "event_id",
                     "instance_id",
                     "event_time_utc",
                     "event_type_id",
                     "host_id"
+                ],
+                "is_unique": true
+            },
+            {
+                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
+                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
+                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
+                "#": "useful when you want to put data into ordered groups.",
+                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
+
+                "name": "increment_key",
+                "columns": [
+                    "resource_id",
+                    "event_id"
                 ],
                 "is_unique": true
             },

@@ -102,7 +102,7 @@
                 "comment": "FACT: Number of sessions ended over a given period."
             },{
                 "name": "wallduration",
-                "type": "decimal(18,0)",
+                "type": "bigint(42)",
                 "nullable": true,
                 "comment": "FACT: (seconds) The wall duration of the sessions that were running during this period."
             },{

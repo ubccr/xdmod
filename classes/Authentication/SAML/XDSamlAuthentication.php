@@ -18,18 +18,18 @@ class XDSamlAuthentication
     protected $_as = null;
 
     /**
+     * The selected auth source name (used for logout)
+     *
+     * @var string
+     */
+
+    protected $authSourceName = null;
+    /**
      * Enumerated potential auth sources
      *
      * @var array
      */
     protected $_sources = null;
-
-    /**
-     * Whether or not SAML is configured. Defaults to false.
-     *
-     * @var boolean
-     */
-    protected $_isConfigured = false;
 
     const BASE_ADMIN_EMAIL = <<<EML
 
@@ -70,8 +70,10 @@ EML;
                 $authSource = null;
             }
             if (!is_null($authSource) && array_search($authSource, $this->_sources) !== false) {
+                $this->authSourceName = $authSource;
                 $this->_as = new \SimpleSAML\Auth\Simple($authSource);
             } else {
+                $this->authSourceName = $this->_sources[0];
                 $this->_as = new \SimpleSAML\Auth\Simple($this->_sources[0]);
             }
         }
@@ -84,10 +86,17 @@ EML;
      */
     public function isSamlConfigured()
     {
-        $this->_isConfigured = count($this->_sources) > 0 ? true : false;
-        return $this->_isConfigured;
+        return !empty($this->_sources);
     }
 
+    /**
+     * Logs out of the saml session
+     */
+    public function logout(){
+        if ($this->isSamlConfigured()) {
+            \SimpleSAML_Session::getSessionFromRequest()->doLogout($this->authSourceName);
+        }
+    }
     /**
      * Attempts to find a valid XDMoD user associated with the attributes we receive from SAML
      *
@@ -97,7 +106,10 @@ EML;
     public function getXdmodAccount()
     {
         $samlAttrs = $this->_as->getAttributes();
-
+        /*
+         * SimpleSAMLphp uses its own session, this sets it back.
+         */
+        \SimpleSAML_Session::getSessionFromRequest()->cleanup();
         if ($this->_as->isAuthenticated()) {
             $userName = $samlAttrs['username'][0];
 

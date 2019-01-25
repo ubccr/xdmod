@@ -32,6 +32,26 @@
                 "name": "end_event_id",
                 "type": "int(11)",
                 "nullable": false
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
+            }
+        ],
+        "indexes": [{
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "instance_id",
+                    "start_event_id",
+                    "start_time",
+                    "end_event_id",
+                    "end_time"
+                ],
+                "is_unique": true
             }
         ]
     }
