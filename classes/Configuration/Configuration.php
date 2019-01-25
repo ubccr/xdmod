@@ -390,6 +390,7 @@ class Configuration extends Loggable implements \Iterator
     {
         $this->addKeyTransformer(new CommentTransformer($this->logger));
         $this->addKeyTransformer(new JsonReferenceTransformer($this->logger));
+        $this->addKeyTransformer(new StripMergePrefixTransformer($this->logger));
         return $this;
     }  //preTransformTasks()
 
@@ -485,19 +486,12 @@ class Configuration extends Loggable implements \Iterator
     protected function merge(Configuration $localConfigObj, $overwrite = false)
     {
 
-        // If overwriting or the key doesn't exist, set it. Otherwise if the value is an
-        // array append it. If not overwriting and the value is not an array silently skip
-        // it.
-
-        foreach ( $localConfigObj->getTransformedConfig() as $k => $v ) {
-            if ( $overwrite || ! isset($this->transformedConfig->$k) ) {
-                $this->transformedConfig->$k = $v;
-            } elseif ( is_array($this->transformedConfig->$k) ) {
-                array_push($this->transformedConfig->$k, $v);
-            } else {
-                $this->logger->debug("Skip duplicate key in local config (overwrite == false)");
-            }
-        }
+        $this->transformedConfig = $this->mergeLocal(
+            $this->transformedConfig,
+            $localConfigObj->getTransformedConfig(),
+            $localConfigObj->getFilename(),
+            $overwrite
+        );
 
         foreach ( $localConfigObj->getSectionNames() as $sectionName ) {
             $localConfigData = $localConfigObj->getSectionData($sectionName);
@@ -514,6 +508,47 @@ class Configuration extends Loggable implements \Iterator
         return $this;
 
     }  // merge()
+
+    /**
+     * Merge $incoming object into the $existing object recursively.
+     *
+     * @param \stdClass $existing the object to be merged into.
+     * @param \stdClass $incoming the object to be merged from.
+     * @param string    $incomingFileName the file that $incoming originates from.
+     * @param boolean   $overwrite whether or not to force overwriting of $existing w/ $incoming.
+     * @return \stdClass the updated $existing object.
+     */
+    protected function mergeLocal(\stdClass &$existing, \stdClass $incoming, $incomingFileName, $overwrite)
+    {
+        foreach($incoming as $property => $incomingValue) {
+
+            if ( $overwrite || ! isset($existing->$property) ) {
+                $existing->$property = $incoming->$property;
+            } else {
+                $existingValue = $existing->$property;
+
+                if (is_object($existingValue) && is_object($incomingValue)) {
+                    $existing->$property = $this->mergeLocal($existingValue, $incomingValue, $incomingFileName, $overwrite);
+                } elseif (is_array($existingValue) && is_array($incomingValue)) {
+                    $existing->$property = array_merge($existingValue, $incomingValue);
+                } elseif (is_scalar($existingValue) && is_scalar($incomingValue)) {
+                    $existing->$property = $incomingValue;
+                } else {
+                    $this->logger->warning(
+                        sprintf(
+                            "Type mismatch. Unable to merge local value for key '%s' (type: %s) with global value (type: %s) from local file %s",
+                            $property,
+                            gettype($incomingValue),
+                            gettype($existingValue),
+                            $incomingFileName
+                        )
+                    );
+                }
+            }
+        }
+
+        return $existing;
+    }
 
     /**
      * Perform any tasks that need to occur after merging the local configuration objects into the
@@ -982,6 +1017,16 @@ class Configuration extends Loggable implements \Iterator
     {
         return ( array_key_exists($property, $this->sectionData) && null !== $this->sectionData[$property] );
     }  // __isset()
+
+    /**
+     * Return this Configuration's $filename property.
+     *
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
 
     /** -----------------------------------------------------------------------------------------
      * Return the JSON representation of the parsed and translated Configuration.
