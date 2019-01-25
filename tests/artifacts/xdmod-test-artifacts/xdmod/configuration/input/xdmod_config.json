@@ -1,0 +1,14 @@
+[
+  [
+    {
+      "section": "roles",
+      "expected": "xdmod_config_roles.json"
+    }
+  ],
+  [
+    {
+      "section": "datawarehouse",
+      "expected": "xdmod_config_datawarehouse.json"
+    }
+  ]
+]
