@@ -234,15 +234,15 @@ function main()
     }
 
     if (!$dryRun) {
-        $logger->notice('Normalizing data!');
-
         try {
             $ingestor = $shredder->getJobIngestor();
-            // The cloud shredders do not have jobs to ingest and return false when
-            // getJobInestor is called for them so we don't have to hard code skippping 
-            // those formats here.
-            if($ingestor !== false){
+            // The cloud and storage shredders do not have jobs to ingest and
+            // return false when getJobInestor is called for them so we don't
+            // have to hard code skipping those formats here.
+            if ($ingestor !== false) {
+                $logger->notice('Normalizing data');
                 $ingestor->ingest();
+                $logger->notice('Done normalizing data');
             }
         } catch (Exception $e) {
             $logger->crit(array(
@@ -251,8 +251,6 @@ function main()
             ));
             exit(1);
         }
-
-        $logger->notice('Done normalizing data');
     }
 
     // NOTE: "process_end_time" is needed for the log summary.
@@ -291,10 +289,11 @@ Usage: xdmod-shredder [-v] -r resource -f format [-i file|-d dir]
     -f, --format *format*
         Specify the log file format ("pbs" for PBS/TORQUE, "sge" for Sun
         Grid Engine, "uge" for Univa Grid Engine 8.2+, "slurm" for
-        Slurm or "lsf" for LSF).
+        Slurm or "lsf" for LSF, "storage" for storage data).
 
     -i, --input *file*
-        Specify a single log file to shred.
+        Specify a single log file to shred.  Not applicable to cloud and
+        storage data.
 
     -d, --dir *directory*
         Specify a directory containing log files to shred.  Log files in

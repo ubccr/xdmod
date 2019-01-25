@@ -89,7 +89,7 @@
         "class": "DatabaseIngestor",
         "name": "IngestResourcefact",
         "definition_file": "jobs/xdw/resource-fact.json",
-        "description": "Ingest resource information into resourcefact table. Modeled after hpcdb-xdw-ingest.resource",
+        "description": "Ingest resource information into resourcefact table. Modeled after hpcdb-xdw-ingest-common.resource",
         "endpoints": {
             "source": {
                 "type": "mysql",

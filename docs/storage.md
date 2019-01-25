@@ -196,9 +196,7 @@ fully ingest storage data into the data warehouse.
 Ingest all files in the `/path/to/storage/logs` directory:
 
 ```
-$ /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -d STORAGE_LOG_DIRECTORY=/path/to/storage/logs \
-    -p xdmod.staging-ingest-storage
+$ xdmod-shredder -f storage -r resource-name -d /path/to/storage/logs
 ```
 
 **NOTE**: The above command will ingest all files in the `/path/to/storage/logs`
@@ -207,28 +205,6 @@ directory even if they have already been ingested.
 Ingest and aggregate data:
 
 ```
-$ /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -p xdmod.staging-ingest-common \
-    -p xdmod.hpcdb-ingest-common \
-    -p xdmod.hpcdb-ingest-storage
-$ /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -a xdmod.hpcdb-xdw-ingest.resource \
-    -a xdmod.hpcdb-xdw-ingest.field-of-science \
-    -a xdmod.hpcdb-xdw-ingest.field-of-science-hierarchy \
-    -a xdmod.hpcdb-xdw-ingest.organization \
-    -a xdmod.hpcdb-xdw-ingest.pi-person \
-    -a xdmod.hpcdb-xdw-ingest.person \
-    -a xdmod.hpcdb-xdw-ingest.people-under-pi \
-    -a xdmod.hpcdb-xdw-ingest.principal-investigator \
-    -a xdmod.hpcdb-xdw-ingest.resource-type \
-    -a xdmod.hpcdb-xdw-ingest.system-account
-$ /usr/share/xdmod/tools/etl/etl_overseer.php \
-    -p xdmod.xdw-ingest-storage \
-    -p xdmod.xdw-aggregate-storage
-```
-
-Rebuild filter lists after aggregation:
-
-```
-$ /usr/bin/xdmod-build-filter-lists -r Storage
+$ xdmod-ingestor --ingest --datatype storage
+$ xdmod-ingestor --aggregate=storage
 ```
