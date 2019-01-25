@@ -1,23 +1,17 @@
 {
     "table_definition": [
         {
-            "$ref": "${table_definition_dir}/cloud_common/instance_data.json#/table_definition"
-        },
-        {
             "$ref": "${table_definition_dir}/cloud_common/event.json#/table_definition"
         }
     ],
 
     "source_query": {
         "records": {
-            "event_id": "staging.event_id",
             "resource_id": "staging.resource_id",
             "instance_id": "staging.instance_id",
-            "instance_type_id": "staging.instance_type_id",
             "event_time_utc": "staging.event_time_utc",
             "event_type_id": "staging.event_type_id",
             "record_type_id": "staging.record_type_id",
-            "image_id": "staging.image_id",
             "host_id": "staging.host_id"
         },
 
@@ -28,24 +22,5 @@
                 "alias": "staging"
             }
         ]
-    },
-
-    "destination_field_map": {
-        "instance_data": {
-            "resource_id": "resource_id",
-            "event_id": "event_id",
-            "instance_type_id": "instance_type_id",
-            "image_id": "image_id",
-            "host_id": "host_id"
-        },
-        "event": {
-            "event_id": "event_id",
-            "resource_id": "resource_id",
-            "instance_id": "instance_id",
-            "event_time_utc": "event_time_utc",
-            "event_type_id": "event_type_id",
-            "record_type_id": "record_type_id",
-            "host_id": "host_id"
-        }
     }
 }
