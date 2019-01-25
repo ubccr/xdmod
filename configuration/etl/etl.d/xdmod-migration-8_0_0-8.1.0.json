@@ -7,7 +7,7 @@
             "namespace": "ETL\\Maintenance",
             "class": "ManageTables",
             "options_class": "MaintenanceOptions",
-            "definitione_file_list": [
+            "definition_file_list": [
                 "cloud_common/cloud_transient.json",
                 "cloud_common/event.json",
                 "cloud_common/event_reconstructed.json"
