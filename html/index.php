@@ -239,14 +239,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <?php
-
-    $manager = $user->isManager() ? 'true' : 'false';
-    $developer = $user->isDeveloper() ? 'true' : 'false';
-
-    $primary_center_director = (
-        $user->hasAcl(ROLE_ID_CENTER_DIRECTOR) &&
-        true //($user->getPromoter(ROLE_ID_CENTER_DIRECTOR, $user->getActiveRole()->getActiveCenter()) == -1)
-    ) ? 'true' : 'false';
     $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
         $carry [] = $item->getName();
         return $carry;
@@ -256,7 +248,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type='text/javascript'>
 
         <?php
-        print "CCR.xdmod.publicUser = " . ($userLoggedIn ? 'false' : 'true') . ";\n";
+        print "CCR.xdmod.publicUser = " . json_encode(!$userLoggedIn) . ";\n";
 
         $tech_support_recipient = xd_utilities\getConfiguration('general', 'tech_support_recipient');
         print "CCR.xdmod.tech_support_recipient = CCR.xdmod.support_email = '$tech_support_recipient';\n";
@@ -270,16 +262,15 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.fullName = " . json_encode($user->getFormalName()) . ";\n";
             $userType = $user->getUserType();
             print "CCR.xdmod.ui.usertype = '$userType';\n";
-            $userIsSSO = ($userType === SSO_USER_TYPE) ? "true" : "false";
-            print "CCR.xdmod.ui.userIsSSO = $userIsSSO;\n";
+            print "CCR.xdmod.ui.userIsSSO = " . json_encode(($userType === SSO_USER_TYPE)) . ";\n";
             print "CCR.xdmod.ui.mappedPID = '{$user->getPersonID(TRUE)}';\n";
 
             $obj_warehouse = new XDWarehouse();
             print 'CCR.xdmod.ui.mappedPName = ' . json_encode($obj_warehouse->resolveName($user->getPersonID(true))) . ";\n";
 
-            print "CCR.xdmod.ui.isManager = $manager;\n";
-            print "CCR.xdmod.ui.isDeveloper = $developer;\n";
-            print "CCR.xdmod.ui.isCenterDirector = $primary_center_director;\n";
+            print "CCR.xdmod.ui.isManager = " . json_encode($user->isManager()) . ";\n";
+            print "CCR.xdmod.ui.isDeveloper = " . json_encode($user->isDeveloper()) . ";\n";
+            print "CCR.xdmod.ui.isCenterDirector = " . json_encode($user->hasAcl(ROLE_ID_CENTER_DIRECTOR)) . ";\n";
         }
 
         $config = \Xdmod\Config::factory();

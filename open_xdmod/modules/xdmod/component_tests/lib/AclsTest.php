@@ -80,14 +80,12 @@ TXT;
         $allRoles = $user->getAllRoles();
 
         foreach ($allRoles as $role) {
-            $roleName = $role->getIdentifier();
-
             $actual = Acls::hasDataAccess(
                 $user,
                 $realm,
                 $groupBy,
                 $statistic,
-                $roleName
+                $role
             );
 
             // We also check the MetricExplorer::checkDataAccess function as it's
@@ -126,7 +124,7 @@ TXT;
                     $realm,
                     $groupBy,
                     $statistic,
-                    $roleName,
+                    $role,
                     self::HAS_DATA_ACCESS,
                     json_encode($expected),
                     self::HAS_DATA_ACCESS,
@@ -139,7 +137,7 @@ TXT;
                 $actual,
                 sprintf(
                     "[%s] Expected does not match Actual: %s => %s",
-                    $roleName,
+                    $role,
                     $expected ? 'true' : "false",
                     $actual ? 'true' : 'false'
                 )
@@ -230,7 +228,7 @@ TXT;
                     $realm,
                     $groupBy,
                     $statistic,
-                    $role->getIdentifier(),
+                    $role,
                     self::GET_QUERY_DESCRIPTERS,
                     print_r($expected, true),
                     self::GET_QUERY_DESCRIPTERS,

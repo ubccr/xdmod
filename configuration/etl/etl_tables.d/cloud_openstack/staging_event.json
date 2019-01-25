@@ -10,13 +10,6 @@
                 "nullable": false
             },
             {
-                "name": "event_id",
-                "type": "bigint(20)",
-                "extra": "auto_increment",
-                "nullable": false,
-                "comment": "Auto-increment relative to resource_id. Unknown = -1"
-            },
-            {
                 "name": "instance_id",
                 "type": "int(11)",
                 "nullable": false,
@@ -110,20 +103,6 @@
                     "record_type_id",
                     "account_id",
                     "host_id"
-                ],
-                "is_unique": true
-            },
-            {
-                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
-                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
-                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
-                "#": "useful when you want to put data into ordered groups.",
-                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
-
-                "name": "increment_key",
-                "columns": [
-                    "resource_id",
-                    "event_id"
                 ],
                 "is_unique": true
             },
