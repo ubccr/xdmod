@@ -128,6 +128,7 @@ class DataWarehouseInitializer
         $this->ingestAllHpcdb($startDate, $endDate);
         $this->ingestCloudDataGeneric();
         $this->ingestCloudDataOpenStack();
+        $this->ingestStorageData();
     }
 
     /**
@@ -189,7 +190,7 @@ class DataWarehouseInitializer
                 = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
 
             Utilities::runEtlPipeline(
-                array('hpcdb-xdw-ingest'),
+                array('hpcdb-xdw-ingest-common', 'hpcdb-xdw-ingest-jobs'),
                 $this->logger,
                 array('last-modified-start-date' => $lastModifiedStartDate)
             );
@@ -243,6 +244,31 @@ class DataWarehouseInitializer
     }
 
     /**
+     * Ingest storage data.
+     *
+     * If the storage realm is not enabled then do nothing.
+     */
+    public function ingestStorageData()
+    {
+        if (!$this->isRealmEnabled('Storage')) {
+            $this->logger->notice('Storage realm not enabled, not ingesting');
+            return;
+        }
+
+        $this->logger->notice('Ingesting storage data');
+        Utilities::runEtlPipeline(
+            [
+                'staging-ingest-common',
+                'hpcdb-ingest-common',
+                'hpcdb-ingest-storage',
+                'hpcdb-xdw-ingest-common',
+                'xdw-ingest-storage',
+            ],
+            $this->logger
+        );
+    }
+
+    /**
      * Aggregating all cloud data. If the appropriate tables do not exist then
      * catch the resulting exception and display a message saying that there
      * is no cloud data to aggregate and cloud aggregation is being skipped.
@@ -257,6 +283,25 @@ class DataWarehouseInitializer
             $filterListBuilder->setLogger($this->logger);
             $filterListBuilder->buildRealmLists('Cloud');
         }
+    }
+
+    /**
+     * Aggregate storage data.
+     *
+     * If the storage realm is not enabled then do nothing.
+     */
+    public function aggregateStorageData()
+    {
+        if (!$this->isRealmEnabled('Storage')) {
+            $this->logger->notice('Storage realm not enabled, not aggregating');
+            return;
+        }
+
+        $this->logger->notice('Aggregating storage data');
+        Utilities::runEtlPipeline(['xdw-aggregate-storage'], $this->logger);
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('Storage');
     }
 
     /**

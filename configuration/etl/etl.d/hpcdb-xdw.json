@@ -1,6 +1,10 @@
 {
     "defaults": {
         "global": {
+            "class": "DatabaseIngestor",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "enabled": true,
             "endpoints": {
                 "source": {
                     "type": "mysql",
@@ -17,17 +21,11 @@
                     "create_schema_if_not_exists": true
                 }
             }
-        },
-        "hpcdb-xdw-ingest": {
-            "class": "DatabaseIngestor",
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions",
-            "enabled": true
         }
     },
 
-    "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
-    "hpcdb-xdw-ingest": [{
+    "#": "Ingestion of common (multiple realm) data from HPCDB to XDMoD Data Warehouse (xdw)",
+    "hpcdb-xdw-ingest-common": [{
         "name": "account",
         "definition_file": "jobs/xdw/account.json",
         "description": "Account records"
@@ -64,10 +62,6 @@
         "#": "disable to allow order_id to be set",
         "optimize_query": false
     }, {
-        "name": "node-count",
-        "definition_file": "jobs/xdw/node-count.json",
-        "description": "node count records"
-    }, {
         "name": "pi-person",
         "definition_file": "jobs/xdw/piperson.json",
         "description": "PI Person records",
@@ -87,10 +81,6 @@
         "name": "principal-investigator",
         "definition_file": "jobs/xdw/principal-investigator.json",
         "description": "principal investigator records"
-    }, {
-        "name": "queue",
-        "definition_file": "jobs/xdw/queue.json",
-        "description": "queue records"
     }, {
         "name": "request",
         "definition_file": "jobs/xdw/request.json",
@@ -115,6 +105,17 @@
         "name": "system-account",
         "definition_file": "jobs/xdw/system-account.json",
         "description": "system account records"
+    }],
+
+    "#": "New job ingestion from HPCDB to XDMoD DataWarehouse (xdw)",
+    "hpcdb-xdw-ingest-jobs": [{
+        "name": "node-count",
+        "definition_file": "jobs/xdw/node-count.json",
+        "description": "node count records"
+    }, {
+        "name": "queue",
+        "definition_file": "jobs/xdw/queue.json",
+        "description": "queue records"
     }, {
         "name": "hosts",
         "class": "HpcdbHostsIngestor",
