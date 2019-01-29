@@ -3,6 +3,10 @@
 
 USE modw_cloud;
 
-UPDATE event SET last_modified = now() WHERE last_modified = '0000-00-00 00:00:00';
-UPDATE event_reconstructed SET last_modified = now() WHERE last_modified = '0000-00-00 00:00:00';
-UPDATE cloud_events_transient SET last_modified = now() WHERE last_modified = '0000-00-00 00:00:00';
+ALTER TABLE event ADD last_modified timestamp;
+ALTER TABLE event_reconstructed ADD last_modified timestamp;
+ALTER TABLE cloud_events_transient ADD last_modified timestamp;
+
+UPDATE event SET last_modified = now() WHERE last_modified = '0000-00-00 00:00:00' OR last_modified = null;
+UPDATE event_reconstructed SET last_modified = now() WHERE last_modified = '0000-00-00 00:00:00' OR last_modified = null;
+UPDATE cloud_events_transient SET last_modified = now() WHERE last_modified = '0000-00-00 00:00:00' OR last_modified = null;
