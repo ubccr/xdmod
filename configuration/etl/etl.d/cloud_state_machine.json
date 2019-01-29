@@ -39,6 +39,16 @@
             "description": "Builds intermediate cloud event table"
         },
         {
+            "name": "modw-cloud-update-tables",
+            "description": "Update modw_cloud schema version history",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "migrations/8.0.0-8.1.0/cloud_common/fix-last-modified-columns.sql"
+            ]
+        },
+        {
             "name": "CloudEventAggregator",
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
