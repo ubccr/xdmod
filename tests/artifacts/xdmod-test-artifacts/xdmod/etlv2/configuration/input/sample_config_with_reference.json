@@ -1,0 +1,5 @@
+{
+    "subreference": {
+        "$ref": "file://${TMPDIR}/sample_config_with_variables.json#/key_two"
+    }
+}
