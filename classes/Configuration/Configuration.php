@@ -651,7 +651,11 @@ class Configuration extends Loggable implements \Iterator
                     continue;
                 }
 
-                $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this) );
+                try {
+                    $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this) );
+                } catch ( Exception $e ) {
+                    throw new Exception(sprintf("%s: %s", $this->filename, $e->getMessage()));
+                }
 
                 if ( null === $transformKey && null === $value ) {
 

@@ -88,9 +88,12 @@ class JsonReferenceTransformer extends aUrlTransformer implements iConfigFileKey
         $fragment = ( array_key_exists('fragment', $this->parsedUrl) ? $this->parsedUrl['fragment'] : '' );
         $key = null;
 
-        JsonPointer::setLoggable($this);
-        $value = JsonPointer::extractFragment($contents, $fragment);
-        JsonPointer::setLoggable(null);
+        try {
+            $value = JsonPointer::extractFragment($contents, $fragment);
+        } catch ( \Exception $e ) {
+            // Re-throw the exception with additional file information
+            throw new \Exception(sprintf("%s in file %s", $e->getMessage(), $this->parsedUrl['path']));
+        }
 
         if ( false === $value ) {
             $this->logAndThrowException(
