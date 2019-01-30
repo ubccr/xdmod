@@ -12,6 +12,14 @@ use CCR\Loggable;
 
 abstract class aUrlTransformer extends Loggable
 {
+    /**
+     * @var array $parsedUrl
+     *
+     * The results of the url parsed by parse_url()
+     */
+
+    protected $parsedUrl = null;
+
     /** -----------------------------------------------------------------------------------------
      * @see iConfigFileKeyTransformer::__construct()
      * ------------------------------------------------------------------------------------------
@@ -51,8 +59,6 @@ abstract class aUrlTransformer extends Loggable
      * Note: This method specifically supports file URLs.
      *
      * @param string $url The URL to process
-     * @param array $parsedUrl Reference to a variable that will be populated with the value
-     *   returned by parse_url()
      * @param Configuration $config The Configuration object that called this method
      *
      * @return The contents of the file referenced by the URL
@@ -60,26 +66,35 @@ abstract class aUrlTransformer extends Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getContentsFromUrl($url, &$parsedUrl, Configuration $config)
+    public function getContentsFromUrl($url, Configuration $config)
     {
-        $parsedUrl = parse_url($url);
+
+        $url = $config->getVariableStore()->substitute(
+            $url,
+            "Undefined macros in URL reference"
+        );
+
+        $this->parsedUrl = parse_url($url);
+        // We need to process variables on the url BEFORE parsing the URL...
 
         // Ensure the value contains a file path
 
-        if ( empty($parsedUrl['path']) ) {
+        if ( empty($this->parsedUrl['path']) ) {
             $this->logAndThrowException(
                 sprintf("(%s) Unable to extract path from URL: %s", get_class($this), $url)
             );
         }
 
-        $path = $this->qualifyPath($parsedUrl['path'], $config);
+        $path = \xd_utilities\qualify_path($this->parsedUrl['path'], $config->getBaseDir());
+
+        // $path = $this->qualifyPath($this->parsedUrl['path'], $config);
         $this->logger->debug(
-            sprintf("(%s) Resolved reference '%s' to '%s'", get_class($this), $parsedUrl['path'], $path)
+            sprintf("(%s) Resolved reference '%s' to '%s'", get_class($this), $this->parsedUrl['path'], $path)
         );
 
         // If no scheme was provided, default to the file scheme.
 
-        $scheme = ( array_key_exists('scheme', $parsedUrl) ? $parsedUrl['scheme'] : 'file' );
+        $scheme = ( array_key_exists('scheme', $this->parsedUrl) ? $this->parsedUrl['scheme'] : 'file' );
         if ( 'file' == $scheme ) {
             $path = 'file://' . $path;
         }
@@ -96,4 +111,4 @@ abstract class aUrlTransformer extends Loggable
 
         return $contents;
     }
-} // class aFilePathTransformer
+} // class aUrlTransformer

@@ -39,7 +39,7 @@ class IncludeTransformer extends aUrlTransformer implements iConfigFileKeyTransf
         }
 
         $parsedUrl = null;
-        $contents = $this->getContentsFromUrl($value, $parsedUrl, $config);
+        $contents = $this->getContentsFromUrl($value, $config);
         $key = null;
         $value = json_encode($contents);
 
