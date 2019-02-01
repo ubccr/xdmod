@@ -109,9 +109,9 @@
                     "resource_id",
                     "instance",
                     "start_time",
-                    "start_event_id",
+                    "start_event_type_id",
                     "end_time",
-                    "end_event_id"
+                    "end_event_type_id"
                 ],
                 "is_unique": true
             },
