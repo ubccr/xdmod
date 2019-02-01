@@ -291,7 +291,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                             sprintf("%s: Relative path provided, absolute path recommended", $this)
                         );
                         if ( isset($options->paths->data_dir) ) {
-                            $this->logger->info(
+                            $this->logger->debug(
                                 sprintf("Qualifying relative path %s with %s", $this->path, $options->paths->data_dir)
                             );
                             $this->path = \xd_utilities\qualify_path($this->path, $options->paths->data_dir);
@@ -658,7 +658,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                     // the last modified pattern must be traversed or we won't get past the root
                     // directory.  We must also traverse individual files or nothing will make it
                     // past this filter.
-  
+
                     if ( $current->isDir() ) {
                         $logger->debug(sprintf("Examine directory: %s", $key));
 
@@ -676,7 +676,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                                     $tsString = str_replace(sprintf('$%d', $i), $matches[$i], $tsString);
                                 }
                             }
-                            
+
                             $logger->debug(sprintf("Reformatted '%s' to '%s' using '%s'", $matches[0], $tsString, $lmDirReformat));
 
                             if ( false === ($ts = strtotime($tsString)) ) {
@@ -689,7 +689,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                                 );
                                 return false;
                             }
- 
+
                             if ( null !== $lmStartTs && null !== $lmEndTs ) {
                                 return $ts >= $lmStartTs && $ts <= $lmEndTs;
                             } elseif ( null !== $lmStartTs ) {
