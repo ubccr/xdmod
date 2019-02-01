@@ -270,7 +270,7 @@ class Configuration extends Loggable implements \Iterator
             return;
         }
 
-        $this->logger->info("Loading" . ( $this->isLocalConfig ? " local" : "" ) . " configuration file " . $this->filename);
+        $this->logger->debug("Loading" . ( $this->isLocalConfig ? " local" : "" ) . " configuration file " . $this->filename);
 
         // Parse the configuration file
 
