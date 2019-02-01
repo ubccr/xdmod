@@ -527,7 +527,7 @@ class Configuration extends Loggable implements \Iterator
             if ( $overwrite || ! isset($existing->$property) ) {
                 $existing->$property = $incoming->$property;
             } else {
-                $existingValue = $existing->$property;
+                $existingValue = &$existing->$property;
 
                 if (is_object($existingValue) && is_object($incomingValue)) {
                     $existing->$property = $this->mergeLocal($existingValue, $incomingValue, $incomingFileName, $overwrite);
