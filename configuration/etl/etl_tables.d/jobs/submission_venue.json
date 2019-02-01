@@ -28,7 +28,7 @@
             },
             {
                 "name": "order_id",
-                "type": "int(5) UNSIGNED",
+                "type": "int(5) unsigned",
                 "nullable": false
             }
         ],
