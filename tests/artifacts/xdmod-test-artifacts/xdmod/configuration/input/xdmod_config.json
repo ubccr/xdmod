@@ -2,13 +2,13 @@
   [
     {
       "section": "roles",
-      "expected": "xdmod_config_roles.json"
+      "expected": "xdmod_config_roles"
     }
   ],
   [
     {
       "section": "datawarehouse",
-      "expected": "xdmod_config_datawarehouse.json"
+      "expected": "xdmod_config_datawarehouse"
     }
   ]
 ]
