@@ -1,0 +1,9 @@
+[
+  [
+    {
+      "base_file": "roles-multi_extends_chain",
+      "local_dir": "roles.d",
+      "expected": "roles-multi_extends_chain"
+    }
+  ]
+]

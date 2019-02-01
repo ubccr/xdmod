@@ -512,13 +512,15 @@ class Configuration extends Loggable implements \Iterator
     /**
      * Merge $incoming object into the $existing object recursively.
      *
-     * @param \stdClass $existing the object to be merged into.
-     * @param \stdClass $incoming the object to be merged from.
+     * @param \stdClass $existing         the object to be merged into.
+     * @param \stdClass $incoming         the object to be merged from.
      * @param string    $incomingFileName the file that $incoming originates from.
-     * @param boolean   $overwrite whether or not to force overwriting of $existing w/ $incoming.
+     * @param bool      $overwrite        whether or not to force overwriting of all $existing w/
+     * $incoming.
+     * @param bool      $overwriteScalar  whether or not to force overwriting of just scalar values.
      * @return \stdClass the updated $existing object.
      */
-    protected function mergeLocal(\stdClass &$existing, \stdClass $incoming, $incomingFileName, $overwrite)
+    protected function mergeLocal(\stdClass &$existing, \stdClass $incoming, $incomingFileName, $overwrite = false, $overwriteScalar = true)
     {
         foreach($incoming as $property => $incomingValue) {
 
@@ -530,9 +532,30 @@ class Configuration extends Loggable implements \Iterator
                 if (is_object($existingValue) && is_object($incomingValue)) {
                     $existing->$property = $this->mergeLocal($existingValue, $incomingValue, $incomingFileName, $overwrite);
                 } elseif (is_array($existingValue) && is_array($incomingValue)) {
-                    $existing->$property = array_merge($existingValue, $incomingValue);
+
+
+                    /* Since we only deal with numeric arrays ( of stdClass objects ) we can't rely
+                     * on `array_merge` as that could lead to duplicate values. Instead we utilize
+                     * `in_array` which works as expected for stdClass objects.
+                     *
+                     * From: https://secure.php.net/manual/en/function.array-merge.php
+                     * "If the input arrays have the same string keys, then the later value for that
+                     * key will overwrite the previous one. If, however, the arrays contain numeric
+                     * keys, the later value will not overwrite the original value, but will be
+                     * appended."
+                     */
+                    foreach($incomingValue as $value) {
+                        if (!in_array($value, $existingValue)) {
+                            array_push($existingValue, $value);
+                        }
+                    }
                 } elseif (is_scalar($existingValue) && is_scalar($incomingValue)) {
-                    $existing->$property = $incomingValue;
+                    // When this function is used to `extend` an entry we do not want to overwrite
+                    // values that already exist as the json merge step has already occurred. In
+                    // that case $overwriteScalar will be false.
+                    if ($overwriteScalar) {
+                        $existing->$property = $incomingValue;
+                    }
                 } else {
                     $this->logger->warning(
                         sprintf(
@@ -560,9 +583,148 @@ class Configuration extends Loggable implements \Iterator
 
     protected function postMergeTasks()
     {
+        $this->processExtends();
 
         return $this;
     }  // postMergeTasks()
+
+    /**
+     * Handle the processing of the `extends` property within `$this->transformedConfig`. This will
+     * result in merging properties from the `extends` target into the object that defined the
+     * `extends` property. After the processing is done the `extends` property will be removed.
+     */
+    protected function processExtends()
+    {
+        /* build a data structure for tracking which properties `extend` other properties.
+         * This will be in the form:
+         * array(
+         *   'extender' => 'extendee',
+         *    ...
+         * )
+         *
+         * a concrete example would be:
+         * array(
+         *   'usr' => 'default', // usr extends default
+         *   'pi'  => 'usr',     // pi extends usr
+         *   'cs'  => 'pi',      // cs extends pi
+         *   'cd'  => 'cs'       // cd extends cs
+         * )
+         */
+        $extends = $this->findExtends($this->transformedConfig);
+
+        // only operate as long as there is something left to extend
+        while (count($extends) > 0) {
+            // The things being extended
+            $targets = array_unique(array_values($extends));
+
+            // the extenders of said things
+            $children = array_keys($extends);
+
+            // finding the extended that do not themselves extend something. aka the bottom of the
+            // dependency tree.
+            $roots = array_diff($targets, $children);
+
+            // finding the everything that extends these root elements.
+            $extenders = array_keys(
+                array_filter(
+                    $extends,
+                    function ($key) use ($roots) {
+                        return in_array($key, $roots);
+                    }
+                )
+            );
+
+            // Actually do the extending.
+            $this->resolveExtends($this->transformedConfig, $extenders);
+
+            // Now that we've finished extending $extenders, remove them.
+            foreach($extenders as $extender) {
+                unset($extends[$extender]);
+            }
+        }
+    } // processExtends
+
+    /**
+     * Iterate through $config and find any objects that contain an `extends` property for later
+     * processing.
+     *
+     * @param stdClass    $config    the object that is being iterated over.
+     * @param string|null $parentKey the key of the object that contains `extends`.
+     * @return array in the form:
+     * array(
+     *   'extender' => 'extendee'
+     * )
+     */
+    protected function findExtends(\stdClass $config, $parentKey = null)
+    {
+        $extends = array();
+        foreach($config as $k => $v) {
+            if ($k === 'extends' && is_string($v)) {
+                $extends[$parentKey] = $v;
+            } elseif (is_object($v)) {
+                $extends = array_merge($extends, $this->findExtends($v, $k));
+            }
+        }
+        return $extends;
+    }
+
+    /**
+     * Modify the properties in $config that are also found in $extenders by merging in their
+     * `extends` target. This function does not handle the overall ordering of extension, this must
+     * be controlled by the caller.
+     *
+     * NOTE: After an `extends` property has been successfully merged, it will itself be unset and
+     * therefor not present in the resultant object.
+     *
+     * @param stdClass $config    the base object that will be recursively traversed to find and
+     * resolve instances of the `extends` property.
+     * @param string[] $extenders the array of property keys whose values define an `extends`
+     * property.
+     * @throws Exception if unable to resolve the merging of an extender and it's extendee.
+     */
+    protected function resolveExtends(\stdClass &$config, array $extenders)
+    {
+        foreach($config as $k => $v) {
+            if (in_array($k, $extenders)) {
+                $target = $this->findByKey($v->extends);
+                if ($target === null) {
+                    $this->logAndThrowException("Unable to find 'extends' target $v");
+                }
+                $config->$k = $this->mergeLocal($v, $target, "extending-{$v->extends}", false, false);
+                unset($config->$k->extends);
+            } elseif (is_object($v)) {
+                $this->resolveExtends($v, $extenders);
+            }
+        }
+
+    }
+
+    /**
+     * Find $key in this `Configuration`s `transformedConfig` and return it's value. If not found,
+     * null will be returned.
+     *
+     * @param string        $key      the key being looked for in $incoming ( or `transformedConfig`
+     *                                if $incoming is not set. )
+     * @param stdClass|null $incoming the stdClass to be searched for key.
+     * @return mixed|null `$key`s value if found, else null.
+     */
+    protected function findByKey($key, $incoming = null)
+    {
+        if (null === $incoming) {
+            $incoming = $this->transformedConfig;
+        }
+        foreach($incoming as $k => $v) {
+            if ($k === $key) {
+                return $v;
+            } elseif (is_object($v)) {
+                $found = $this->findByKey($key, $v);
+                if ($found !== null) {
+                    return $found;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * Perform variable substitution on an entity. The entity may be a simple string, an array, or

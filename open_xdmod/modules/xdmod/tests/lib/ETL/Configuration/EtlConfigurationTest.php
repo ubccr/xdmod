@@ -10,11 +10,9 @@
 namespace UnitTesting\ETL\Configuration;
 
 use ETL\Configuration\EtlConfiguration;
-use ETL\EtlOverseerOptions;
 use CCR\Json;
 use Configuration\Configuration;
 use TestHarness\TestFiles;
-use Xdmod\Config;
 
 class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -156,40 +154,110 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testConfigEquivalence(array $options)
     {
         $section = $options['section'];
-        $expectedFileName = $options['expected'];
 
-        $expectedFilePath = $this->testFiles->getFile('configuration', $expectedFileName);
+        $expectedFilePath = $this->testFiles->getFile(
+            'configuration',
+            $options['expected']
+        );
+
+        $configFile = implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, "$section.json"));
+        $localConfigDir = implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, "$section.d"));
+
+        $config = new Configuration(
+            $configFile,
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => $localConfigDir
+            )
+        );
+        $config->initialize();
+        $actual = sprintf("%s\n", $config->toJson());
 
         if (!is_file($expectedFilePath)) {
-            $config = Config::factory();
-            $actual = $config[$section];
-            @file_put_contents($expectedFilePath, json_encode($actual) . "\n");
+            @file_put_contents($expectedFilePath, $actual);
             echo "\nGenerated Expected Output for: $expectedFilePath\n";
         } else {
             $expected = @file_get_contents($expectedFilePath);
-
-            $configFile = implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, "$section.json"));
-            $configDir = implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, "$section.d"));
-
-            $config = new Configuration(
-                $configFile,
-                CONFIG_DIR,
-                null,
-                array(
-                    'local_config_dir' => $configDir
-                )
-            );
-            $config->initialize();
-            $actual = $config->toJson() . "\n";
 
             $this->assertEquals($expected, $actual);
         }
     }
 
+    /**
+     * Provide test data for `testConfigurationEquivalence`
+     *
+     * @return array|object
+     * @throws \Exception
+     */
     public function provideTestConfigEquivalence()
     {
         return JSON::loadFile(
             $this->testFiles->getFile('configuration', 'xdmod_config', 'input')
+        );
+    }
+
+    /**
+     * This test ensures that
+     *
+     * @dataProvider provideTestMultiExtends
+     *
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testMultiExtends(array $options)
+    {
+        $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
+
+        $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
+        $localDir = dirname(
+            $this->testFiles->getfile(
+                'configuration',
+                implode(
+                    DIRECTORY_SEPARATOR,
+                    array(
+                        '.',
+                        $options['local_dir'],
+                        '.')
+                ),
+                'input'
+            )
+        );
+        $expectedFilePath = $this->testFiles->getFile('configuration', $options['expected']);
+
+        $config = new Configuration(
+            $baseFile,
+            $baseDir,
+            null,
+            array(
+                'local_config_dir' => $localDir
+            )
+        );
+
+        $config->initialize();
+
+        $actual = sprintf("%s\n", $config->toJson());
+
+        if (!is_file($expectedFilePath)) {
+            @file_put_contents($expectedFilePath, $actual);
+            echo "\nGenerated Expected Output for: $expectedFilePath\n";
+        } else {
+            $expected = @file_get_contents($expectedFilePath);
+
+            $this->assertEquals($expected, $actual);
+        }
+    }
+
+    /**
+     * Provide test data for
+     *
+     * @return array|object
+     * @throws \Exception
+     */
+    public function provideTestMultiExtends()
+    {
+        return JSON::loadFile(
+            $this->testFiles->getFile('configuration', 'multi_extends', 'input')
         );
     }
 }  // class EtlConfigurationTest
