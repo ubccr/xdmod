@@ -391,6 +391,7 @@ class Configuration extends Loggable implements \Iterator
         $this->addKeyTransformer(new CommentTransformer($this->logger));
         $this->addKeyTransformer(new JsonReferenceTransformer($this->logger));
         $this->addKeyTransformer(new StripMergePrefixTransformer($this->logger));
+        $this->addKeyTransformer(new IncludeTransformer($this->logger));
         return $this;
     }  //preTransformTasks()
 
@@ -650,7 +651,11 @@ class Configuration extends Loggable implements \Iterator
                     continue;
                 }
 
-                $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this) );
+                try {
+                    $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this) );
+                } catch ( Exception $e ) {
+                    throw new Exception(sprintf("%s: %s", $this->filename, $e->getMessage()));
+                }
 
                 if ( null === $transformKey && null === $value ) {
 
@@ -705,6 +710,14 @@ class Configuration extends Loggable implements \Iterator
                         $element = $this->processKeyTransformers($element);
                     }
                 }  // foreach ( $value as $element )
+            }
+
+            // If we have replaced the object by something that is not Traversable (such as an
+            // included string) then do not continue the loop or the foreach will try to call
+            // valid() and next() on a non-Traversable.
+
+            if ( ! ( is_array($obj) || is_object($obj) || ($obj instanceof \Traversable) ) ) {
+                break;
             }
 
         }  // foreach ( $obj as $key => $value )
