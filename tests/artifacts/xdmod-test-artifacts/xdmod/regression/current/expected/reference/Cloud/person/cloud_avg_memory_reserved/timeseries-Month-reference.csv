@@ -1,0 +1,10 @@
+title
+"Average Memory Reserved Weighted By Wall Hours (Bytes): by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Scaup, Lesser] Average Memory Reserved Weighted By Wall Hours (Bytes)","[Bunting, Reed] Average Memory Reserved Weighted By Wall Hours (Bytes)","[Albatross, Yellow-nosed] Average Memory Reserved Weighted By Wall Hours (Bytes)"
+2018-04,5597586865.0629,4472021504.9981,3626414819.0708
+---------

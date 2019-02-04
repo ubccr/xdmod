@@ -1,0 +1,12 @@
+title
+"Average Wall Hours per Session: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Average Wall Hours per Session"
+"Bunting, Reed",36.50143519
+"Scaup, Lesser",27.87274691
+"Albatross, Yellow-nosed",0.40893939
+---------

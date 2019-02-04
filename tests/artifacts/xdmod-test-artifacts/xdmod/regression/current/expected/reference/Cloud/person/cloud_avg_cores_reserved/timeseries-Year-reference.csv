@@ -1,0 +1,10 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[Bunting, Reed] Average Cores Reserved Weighted By Wall Hours","[Scaup, Lesser] Average Cores Reserved Weighted By Wall Hours","[Albatross, Yellow-nosed] Average Cores Reserved Weighted By Wall Hours"
+2018,2.0145,1.3040,1.0000
+---------

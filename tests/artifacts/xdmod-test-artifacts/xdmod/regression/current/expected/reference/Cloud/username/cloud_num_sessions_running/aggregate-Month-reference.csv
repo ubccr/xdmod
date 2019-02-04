@@ -1,0 +1,12 @@
+title
+"Number of Active Sessions: by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"System Username","Number of Active Sessions (Number of Sessions)"
+aytinis,36
+yenal,11
+reebu,6
+---------

@@ -29,6 +29,12 @@
             "options_class": "IngestorOptions",
             "truncate_destination": false,
             "enabled": true
+        },
+        "jobs-cloud-import-users-openstack": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "truncate_destination": false,
+            "enabled": true
         }
     },
 
@@ -85,7 +91,128 @@
             }
         }
     ],
-
+    "jobs-cloud-import-users-openstack": [
+      {
+          "name": "OpenStackStagingUserIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_openstack/union_user_pi.json",
+          "endpoints": {
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_shredder",
+                  "create_schema_if_not_exists": "true"
+              }
+          }
+      },
+      {
+          "name": "OpenStackCloudStagingUserResourceIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "cloud_openstack/union_user_pi_resource.json",
+          "endpoints": {
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_shredder",
+                  "create_schema_if_not_exists": "true"
+              }
+          }
+      },
+      {
+          "name": "OpenStackCloudStagingHpcdbPeopleIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "common/hpcdb/people.json",
+          "endpoints": {
+              "source": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_shredder",
+                  "create_schema_if_not_exists": "true"
+              },
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_hpcdb",
+                  "create_schema_if_not_exists": "true"
+              }
+          }
+      },
+      {
+          "name": "OpenStackCloudStagingHpcdbSystemAccountIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "common/hpcdb/system-accounts.json",
+          "endpoints": {
+            "source": {
+                "type" : "mysql",
+                "name" : "Cloud DB",
+                "config" : "datawarehouse",
+                "schema": "mod_shredder",
+                "create_schema_if_not_exists": "true"
+            },
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "mod_hpcdb",
+                  "create_schema_if_not_exists": "true"
+              }
+          }
+      },
+      {
+          "name": "OpenStackCloudStagingSystemAccountIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "jobs/xdw/system-account.json",
+          "endpoints": {
+            "source": {
+                "type" : "mysql",
+                "name" : "Cloud DB",
+                "config" : "datawarehouse",
+                "schema": "mod_hpcdb",
+                "create_schema_if_not_exists": "true"
+            },
+              "destination": {
+                  "type" : "mysql",
+                  "name" : "Cloud DB",
+                  "config" : "datawarehouse",
+                  "schema": "modw",
+                  "create_schema_if_not_exists": "true"
+              }
+          }
+      },
+      {
+          "name": "OpenStackCloudStagingPersonIngestor",
+          "description": "OpenStack cloud account data",
+          "class": "DatabaseIngestor",
+          "definition_file": "jobs/xdw/person.json",
+            "endpoints": {
+                "source": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "mod_hpcdb",
+                    "create_schema_if_not_exists": "true"
+                },
+                "destination": {
+                    "type" : "mysql",
+                    "name" : "Cloud DB",
+                    "config" : "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": "true"
+                }
+            },
+            "#": "disable to allow order_id to be set",
+            "optimize_query": false
+      }
+    ],
     "jobs-cloud-extract-openstack": [
         {
             "name": "OpenStackEventMapInitializer",
@@ -119,12 +246,6 @@
             "definition_file": "cloud_openstack/image.json"
         },
         {
-            "name": "OpenStackCloudUserIngestor",
-            "description": "OpenStack cloud user data",
-            "class": "DatabaseIngestor",
-            "definition_file": "cloud_openstack/user.json"
-        },
-        {
             "name": "OpenStackCloudInstanceTypeIngestor",
             "description": "Open Stack cloud instance type data",
             "class": "DatabaseIngestor",
@@ -147,8 +268,15 @@
             "name": "OpenStackCloudStagingEventIngestor",
             "description": "OpenStack staging data for cloud events",
             "class": "DatabaseIngestor",
-            "truncate_destination": true,
-            "definition_file": "cloud_openstack/staging_event.json"
+            "definition_file": "cloud_openstack/staging_event.json",
+            "endpoints": {
+              "utility": {
+                "type": "mysql",
+                "name": "Cloud DB",
+                "config": "datawarehouse",
+                "schema": "mod_shredder"
+              }
+            }
         },
         {
             "#": "Events must be ingested after all other dimensions",

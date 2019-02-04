@@ -1,0 +1,12 @@
+title
+"Number of Sessions Started: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Number of Sessions Started"
+"Scaup, Lesser",36
+"Albatross, Yellow-nosed",11
+"Bunting, Reed",6
+---------

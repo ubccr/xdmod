@@ -1,0 +1,12 @@
+title
+"Wall Hours: Total: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Wall Hours: Total"
+"Scaup, Lesser",1003.4189
+"Bunting, Reed",219.0086
+"Albatross, Yellow-nosed",4.4983
+---------

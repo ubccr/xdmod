@@ -1,0 +1,10 @@
+title
+"Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes): by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Albatross, Yellow-nosed] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)","[Bunting, Reed] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)","[Scaup, Lesser] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)"
+2018-04,21474836480.0000,21474836480.0000,21474836480.0000
+---------

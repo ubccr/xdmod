@@ -32,6 +32,18 @@
                 "default": "0000-00-00 00:00:00"
             },
             {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
                 "name": "event_type_id",
                 "type": "int(11)",
                 "nullable": false,
@@ -63,10 +75,10 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "event_id",
                     "instance_id",
                     "event_time_utc",
                     "event_type_id",
+                    "person_id",
                     "host_id"
                 ],
                 "is_unique": true
