@@ -107,6 +107,7 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
+                    "instance_id",
                     "instance",
                     "start_time",
                     "start_event_type_id",
