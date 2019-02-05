@@ -16,7 +16,7 @@ use Configuration\Configuration;
 use TestHarness\TestFiles;
 use Xdmod\Config;
 
-class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
+class EtlConfigurationTest extends \UnitTesting\BaseTest
 {
     const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
@@ -121,6 +121,7 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         );
         $configObj->initialize();
         $generated = json_decode($configObj->toJson());
+        $this->filterKeysRecursive(array('key'), $generated);
         $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_with_variables.json';
         $expected = json_decode(file_get_contents($file));
 
