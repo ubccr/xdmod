@@ -137,7 +137,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
 
-        $sql = "$sql \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC";
+        $sql = "$sql \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 DESC";
 
         return $sql;
     }
