@@ -1,0 +1,12 @@
+{
+    "reference": {
+        "$ref": "file://${TMPDIR}/sample_config_with_variables.json#/key_one"
+    },
+    "include": {
+        "#": "Implicit file reference",
+        "$include": "${SQLDIR}/query_with_variables.sql"
+    },
+    "reference_with_subreference": {
+        "$ref": "file://${TMPDIR}/sample_config_with_reference.json"
+    }
+}

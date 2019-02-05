@@ -1,0 +1,1 @@
+{"reference":{"name":"resource_allocations","engine":"MyISAM","columns":[{"name":"resource","type":"varchar(40)","nullable":true}]},"include":"\"SELECT\\n  name,\\n  description\\nFROM modw.jobs j\\nWHERE 1;\\n\"","reference_with_subreference":{"subreference":[{"object1":"value"},{"object2":"value"}]}}
