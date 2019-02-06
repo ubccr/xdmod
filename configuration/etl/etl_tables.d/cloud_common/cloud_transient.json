@@ -110,9 +110,7 @@
                     "instance_id",
                     "instance",
                     "start_time",
-                    "start_event_type_id",
-                    "end_time",
-                    "end_event_type_id"
+                    "start_event_type_id"
                 ],
                 "is_unique": true
             },

@@ -136,8 +136,9 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         // is lost. To work around this we add a dummy row filled with zeroes.
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
+        $subSelect = "(SELECT DISTINCT instance_id from event WHERE last_modified > " . date('Y-m-d H:i:s', strtotime('-1 hour')) . ")";
 
-        $sql = "$sql WHERE event_type_id IN (" . implode(',', $this->_all_event_ids) . ") \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC, 4 DESC";
+        $sql = "$sql WHERE instance_id IN " . $subSelect . " AND event_type_id IN (" . implode(',', $this->_all_event_ids) . ") \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC, 4 DESC";
 
         return $sql;
     }
