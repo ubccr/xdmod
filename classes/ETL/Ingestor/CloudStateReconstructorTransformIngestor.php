@@ -137,7 +137,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
 
-        $sql = "$sql WHERE event_type_id IN (" . implode(',', $this->_all_event_ids) . ") \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC";
+        $sql = "$sql WHERE event_type_id IN (" . implode(',', $this->_all_event_ids) . ") \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC, 4 DESC";
 
         return $sql;
     }

@@ -46,10 +46,8 @@
                 "columns": [
                     "resource_id",
                     "instance_id",
-                    "start_event_id",
                     "start_time",
-                    "end_event_id",
-                    "end_time"
+                    "start_event_id"
                 ],
                 "is_unique": true
             }
