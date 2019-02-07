@@ -149,7 +149,13 @@ class XdmodConfiguration extends Configuration
             if (in_array($k, $extenders)) {
                 $target = $this->findByKey($v->$extendsProperty, $config);
                 if ($target === null) {
-                    $this->logAndThrowException("Unable to find $extendsProperty target $v");
+                    $this->logAndThrowException(
+                        sprintf(
+                            "Unable to find %s target %s",
+                            $extendsProperty,
+                            json_encode($v)
+                        )
+                    );
                 }
 
                 $config->$k = $this->mergeLocal($v, $target, "extending-{$v->$extendsProperty}", false, false);

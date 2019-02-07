@@ -370,6 +370,4 @@ class ModuleConfiguration extends XdmodConfiguration
     {
         return $this->annotatedConfig;
     } // getAnnotatedConfig
-
-
 }

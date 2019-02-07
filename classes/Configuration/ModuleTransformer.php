@@ -23,8 +23,12 @@ class ModuleTransformer extends Loggable implements iConfigFileKeyTransformer
 
     public function transform(&$key, &$value, stdClass $obj, Configuration $config)
     {
-        if ($config instanceof ModuleConfiguration) {
-            $config->setModule($value);
+        if ($config instanceof ModuleConfiguration ) {
+            $currentModule = $config->getModule();
+            // Only set the module if it has not been set yet.
+            if (empty($currentModule)) {
+                $config->setModule($value);
+            }
         }
     }
 }
