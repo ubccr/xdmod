@@ -63,7 +63,6 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "event_id",
                     "instance_id",
                     "event_time_utc",
                     "event_type_id",
