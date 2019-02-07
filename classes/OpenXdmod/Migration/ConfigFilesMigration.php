@@ -188,6 +188,29 @@ abstract class ConfigFilesMigration extends Migration
     }
 
     /**
+     * Write the contents of a config file.
+     *
+     * @param string $name The config file name (without ".json").
+     * @param array $data The data to store in the config file.
+     */
+    protected function writeJsonPartialConfigFile($directory, $name, array $data)
+    {
+        $json = Json::prettyPrint(json_encode($data));
+
+        $dirFiles = $this->config->getPartialFilePaths($directory);
+
+        $partialConfigFile = array_filter($dirFiles, function($file) use ($name){
+            if(basename($file) === $name.'.json'){
+              return $file;
+            }
+        });
+
+        if (file_put_contents($partialConfigFile[0], $json) === false) {
+            throw new Exception("Failed write to file '$partialConfigFile[0]'");
+        }
+    }
+
+    /**
      * Check if portal_settings.ini is writable.
      *
      * @throws Exception if portal_settings.ini is not writable.
