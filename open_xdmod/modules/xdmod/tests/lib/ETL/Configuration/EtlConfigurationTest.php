@@ -11,13 +11,26 @@ namespace UnitTesting\ETL\Configuration;
 
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
+use CCR\Json;
+use Configuration\Configuration;
+use TestHarness\TestFiles;
+use Xdmod\Config;
 
-class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
+class EtlConfigurationTest extends \UnitTesting\BaseTest
 {
     const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
     const TMPDIR = '/tmp/xdmod-etl-configuration-test';
     private static $defaultModuleName = null;
+
+    private $testFiles;
+
+    public function __construct($name = null, array $data = array(), $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->testFiles = new TestFiles(__DIR__ . '/../../../');
+    }
+
 
     public static function setUpBeforeClass()
     {
@@ -108,6 +121,7 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         );
         $configObj->initialize();
         $generated = json_decode($configObj->toJson());
+        $this->filterKeysRecursive(array('key'), $generated);
         $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_with_variables.json';
         $expected = json_decode(file_get_contents($file));
 
@@ -119,5 +133,64 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         rmdir(self::TMPDIR);
 
         $this->assertEquals($expected, $generated, $file);
+    }
+
+    /**
+     * Tests if `Configuration\Configuration` can produce the same basic output as `Config`. This is
+     * part of the Configuration Code Consolidation.
+     *
+     * NOTE ========================================================================================
+     * This Test should be moved to ConfigurationTest.php and the `@depend` removed once
+     * https://app.asana.com/0/807629084565719/1101232922862525/f has been addressed.
+     * =============================================================================================
+     * @depends testConfigurationVariables
+     *
+     * @dataProvider provideTestConfigEquivalence
+     *
+     * @param array $options options that control how the test is to be conducted. Required
+     * key / values are:
+     *   - section : The section that will be requested from `Config` to generate the expected
+     *               output
+     *   - expected: The filename to use when generating or retrieving the expected output.
+     * @throws \Exception
+     */
+    public function testConfigEquivalence(array $options)
+    {
+        $section = $options['section'];
+        $expectedFileName = $options['expected'];
+
+        $expectedFilePath = $this->testFiles->getFile('configuration', $expectedFileName);
+
+        if (!is_file($expectedFilePath)) {
+            $config = Config::factory();
+            $actual = $config[$section];
+            @file_put_contents($expectedFilePath, json_encode($actual) . "\n");
+            echo "\nGenerated Expected Output for: $expectedFilePath\n";
+        } else {
+            $expected = @file_get_contents($expectedFilePath);
+
+            $configFile = implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, "$section.json"));
+            $configDir = implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, "$section.d"));
+
+            $config = new Configuration(
+                $configFile,
+                CONFIG_DIR,
+                null,
+                array(
+                    'local_config_dir' => $configDir
+                )
+            );
+            $config->initialize();
+            $actual = $config->toJson() . "\n";
+
+            $this->assertEquals($expected, $actual);
+        }
+    }
+
+    public function provideTestConfigEquivalence()
+    {
+        return JSON::loadFile(
+            $this->testFiles->getFile('configuration', 'xdmod_config', 'input')
+        );
     }
 }  // class EtlConfigurationTest
