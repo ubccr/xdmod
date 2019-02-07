@@ -124,10 +124,12 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
          * Updates the save indicator based on whether or not changes have been
          * made.
          */
-        self.updateSaveIndicator = function () {
+        var updateSaveIndicator = function () {
             if (self.inDirtyState()) {
+                // eslint-disable-next-line no-use-before-define
                 saveIndicator.show();
             } else {
+                // eslint-disable-next-line no-use-before-define
                 saveIndicator.hide();
             }
         };
@@ -220,7 +222,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             }
             /* eslint-enable no-use-before-define */
 
-            self.updateSaveIndicator();
+            updateSaveIndicator();
         };
 
         // ------------------------------------------------------------------
@@ -294,8 +296,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         if (resp === 'no') {
                             self.resetDirtyState();
 
-                            // eslint-disable-next-line no-use-before-define
-                            self.updateSaveIndicator();
+                            updateSaveIndicator();
                             self.reloadUserList(menuItem.type_id);
                         }
                     }
@@ -373,7 +374,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             labelStyle: 'display: none; visible: none',
             listeners: {
                 check: function () {
-                    self.updateSaveIndicator();
+                    updateSaveIndicator();
                 }
             }
         });
@@ -684,8 +685,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         return;
                     }
 
-                    // eslint-disable-next-line no-use-before-define
-                    self.updateSaveIndicator();
+                    updateSaveIndicator();
                 }
             }
         });
@@ -719,7 +719,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         /* eslint-disable no-use-before-define */
         var roleGrid = new XDMoD.Admin.AclGrid({
             cls: 'admin_panel_section_role_assignment',
-            selectionChangeHandler: self.updateSaveIndicator,
+            selectionChangeHandler: updateSaveIndicator,
             border: false
         });
         /* eslint-enable no-use-before-define */
@@ -727,7 +727,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
 
         self.inDirtyState = function () {
-            return (roleGrid.isInDirtyState() || self.userSettingsDirty());
+            // eslint-disable-next-line no-use-before-define
+            return (roleGrid.isInDirtyState() || userSettingsDirty());
         };
 
         /**
@@ -736,7 +737,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
          *
          * @returns {boolean} true if there have been changes else false.
          */
-        self.userSettingsDirty = function () {
+        var userSettingsDirty = function () {
             // eslint-disable-next-line no-use-before-define
             var fieldValues = userSettings.getForm().getFieldValues();
             for (var id in fieldValues) {
@@ -756,6 +757,28 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         self.resetDirtyState = function () {
             roleGrid.setDirtyState(false);
+        };
+
+        /**
+         * Reset the start / original values for the User Settings fields for
+         * accurate change tracking.
+         */
+        var resetUserSettings = function () {
+            // Reset the user setting fields so that their original
+            // and start values are the same as their current values.
+            // eslint-disable-next-line no-use-before-define
+            var fieldValues = userSettings.getForm().getFieldValues();
+            for (var id in fieldValues) {
+                if (fieldValues.hasOwnProperty(id)) {
+                    var field = Ext.getCmp(id);
+                    if (field.originalValue !== field.getValue()) {
+                        field.originalValue = field.getValue();
+                    }
+                    if (field.startValue !== field.getValue()) {
+                        field.startValue = field.getValue();
+                    }
+                }
+            }
         };
 
         // ------------------------------------------
@@ -914,23 +937,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                         }
 
                         self.resetDirtyState();
+                        resetUserSettings();
 
-                        // Reset the user setting fields so that their original
-                        // and start values are the same as their current values.
-                        var fieldValues = userSettings.getForm().getFieldValues();
-                        for (var id in fieldValues) {
-                            if (fieldValues.hasOwnProperty(id)) {
-                                var field = Ext.getCmp(id);
-                                if (field.originalValue !== field.getValue()) {
-                                    field.originalValue = field.getValue();
-                                }
-                                if (field.startValue !== field.getValue()) {
-                                    field.startValue = field.getValue();
-                                }
-                            }
-                        }
-
-                        self.updateSaveIndicator();
+                        updateSaveIndicator();
 
                         CCR.xdmod.ui.userManagementMessage(
                             json.status,
@@ -1139,8 +1148,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                     roleGrid.setDirtyState(false);
                     roleGrid.reset();
 
-                    // eslint-disable-next-line no-use-before-define
-                    self.updateSaveIndicator();
+                    resetUserSettings();
+                    updateSaveIndicator();
 
                     cmbUserMapping.removeClass('admin_panel_invalid_text_entry');
                     cmbInstitution.removeClass('admin_panel_invalid_text_entry');
@@ -1327,7 +1336,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                                 if (resp === 'no') {
                                     self.resetDirtyState();
                                     // eslint-disable-next-line no-use-before-define
-                                    self.updateSaveIndicator();
+                                    updateSaveIndicator();
 
                                     selected_user_id = component.store.getAt(rowindex).data.id;
                                     selected_username = component.store.getAt(rowindex).data.username;
@@ -1359,18 +1368,6 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             html: '<span style="color: #f00">(There are unsaved changes to this account)</span>',
             hidden: true
         });
-
-        /**
-         * Updates the save indicator based on whether or not changes have been
-         * made.
-         */
-        self.updateSaveIndicator = function () {
-            if (self.inDirtyState()) {
-                saveIndicator.show();
-            } else {
-                saveIndicator.hide();
-            }
-        };
 
         Ext.apply(this, {
             title: 'Current Users',
