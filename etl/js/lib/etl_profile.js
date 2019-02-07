@@ -128,10 +128,11 @@ ETLProfile.prototype.processDatasets = function (datasetNames, totalCores, coreI
 	}
 }
 ETLProfile.prototype.processDataset = function (dataset, totalCores, coreIndex, markProcessedRecords) {
-	this.emit('message', 'ETLProfile: processDataset: ' + dataset.name+ '[totalCores: '+totalCores+', coreIndex: ' + coreIndex + ']' );
+    this.emit('message', 'ETLProfile: processDataset: ' + dataset.name + '[totalCores: ' + totalCores + ', coreIndex: ' + coreIndex + ']');
     var self = this;
+    var datasetProcessor;
     try {
-        var datasetProcessor = new DatasetProcessor(this, dataset, markProcessedRecords);
+        datasetProcessor = new DatasetProcessor(this, dataset, markProcessedRecords);
     } catch (ex) {
         self.emit('error', ex);
         return;
@@ -142,85 +143,63 @@ ETLProfile.prototype.processDataset = function (dataset, totalCores, coreIndex, 
     datasetProcessor.on('error', function (error) {
         self.emit('error', error);
     });
-	datasetProcessor.on('afterprocess', function (processingDetails, etlLog) {
-       	self.emit('message', dataset.name + ': afterprocess: \n' + util.inspect(processingDetails));
+    datasetProcessor.on('afterprocess', function (processingDetails, etlLog) {
+        self.emit('message', dataset.name + ': afterprocess: \n' + util.inspect(processingDetails));
 
-		self.emit('message', 'Loggin ETL run');
-		var etlLogHeader = {
-			etlProfileName: "etlProfile.name",
-			etlProfileVersion: "etlProfile.version", 
-			dataset: "etlProfile.dataset[i].name",
-			start_ts: "etl start time",
-			end_ts: "etl end time",
-			min_index: "min record etld",
-			max_index: "max record etld",
-			processed: "number of docs processed",
-			good: "number of processed that were good",
-			details: "any extras"
-		};
+        self.emit('message', 'Loggin ETL run');
+        var etlLogHeader = {
+            etlProfileName: 'etlProfile.name',
+            etlProfileVersion: 'etlProfile.version',
+            dataset: 'etlProfile.dataset[i].name',
+            start_ts: 'etl start time',
+            end_ts: 'etl end time',
+            min_index: 'min record etld',
+            max_index: 'max record etld',
+            processed: 'number of docs processed',
+            good: 'number of processed that were good',
+            details: 'any extras'
+        };
 
-		for(var key in etlLog) {
-			if(! (key in etlLogHeader)) {
-				
-				throw Error ('The etlLog must conform to the etlLogHeader. key: ' + key + '\netLogHeader: ' + util.inspect(etlLogHeader) + '\nGiven etlLog: ' +util.inspect(etlLog));
-			}
-		}
-		
-		var etlLogKeys = Object.keys(etlLog);
-		var mysqlConfig = util._extend({
-			multipleStatements: true,
-			}, config.etlLogging.config); 
-		var mysqlConnection = mysql.createConnection(mysqlConfig);
-		var insertLog = 'insert into ' + config.etlLogging.config.database + '.log (' + etlLogKeys.join(',') + ') values (:' + etlLogKeys.join(',:') + ')';
-		insertLog = queryFormat(insertLog,etlLog);
-		//console.log(insertLog);
-		mysqlConnection.query(insertLog, function (err, result) {
-			mysqlConnection.end();
-			if (err) {
-				self.emit('error', err);
-				return;
-			}
-			
-			dataset._processed = true;
-			dataset._processingDetails = processingDetails;
-			
-			var allProcessed = true;
-			for(var ds = 0; ds < self.datasets.length && allProcessed; ds++) {
-				allProcessed = allProcessed && (self.datasets[ds]._processed === true);
-			}
-			if(allProcessed === true) {
-				//combine all processing details and send as one
-				var allProcessingDetails = DatasetProcessor.initBaseStats();
-				for(var ds = 0; ds < self.datasets.length; ds++) {
-					DatasetProcessor.addStats(allProcessingDetails, self.datasets[ds]._processingDetails);
-				}
+        for (var key in etlLog) {
+            if (!(key in etlLogHeader)) {
+                throw Error('The etlLog must conform to the etlLogHeader. key: ' + key + '\netLogHeader: ' + util.inspect(etlLogHeader) + '\nGiven etlLog: ' + util.inspect(etlLog));
+            }
+        }
 
-				if( self.schema.postprocess ) {
-					var mysqlConfig = util._extend({
-						multipleStatements: true
-					}, self.output.config);
-					var myhandle = mysql.createConnection(mysqlConfig);
-					var postProcessingStatements = self.schema.postprocess.join(";");
-					myhandle.query(postProcessingStatements, function(err, result) {
-						myhandle.end();
-						if (err) {
-							self.emit('error', err + ': ' + postProcessingStatements);
-						}
-						self.emit('message', "Ran post-process statements. Results: " + JSON.stringify(result, null, 4) );
-						self.emit('afterprocessall', allProcessingDetails);
-					});
-				} else {
-					self.emit('afterprocessall', allProcessingDetails);
-				}
+        var etlLogKeys = Object.keys(etlLog);
+        var mysqlConfig = util._extend({
+            multipleStatements: true
+        }, config.etlLogging.config);
+        var mysqlConnection = mysql.createConnection(mysqlConfig);
+        var insertLog = 'insert into ' + config.etlLogging.config.database + '.log (' + etlLogKeys.join(',') + ') values (:' + etlLogKeys.join(',:') + ')';
+        insertLog = queryFormat(insertLog, etlLog);
 
-			}
-		});
-		
+        mysqlConnection.query(insertLog, function (err, result) {
+            mysqlConnection.end();
+            if (err) {
+                self.emit('error', err);
+                return;
+            }
 
-		
+            dataset._processed = true;
+            dataset._processingDetails = processingDetails;
+
+            var allProcessed = true;
+            for (let ds = 0; ds < self.datasets.length && allProcessed; ds++) {
+                allProcessed = allProcessed && (self.datasets[ds]._processed === true);
+            }
+            if (allProcessed === true) {
+                // combine all processing details and send as one
+                var allProcessingDetails = DatasetProcessor.initBaseStats();
+                for (let ds = 0; ds < self.datasets.length; ds++) {
+                    DatasetProcessor.addStats(allProcessingDetails, self.datasets[ds]._processingDetails);
+                }
+                self.emit('afterprocessall', allProcessingDetails);
+            }
+        });
     });
     datasetProcessor.process(totalCores, coreIndex);
-}
+};
 
 /*
 * @returns the dynamic tables for the etl profile. 
@@ -807,7 +786,7 @@ ETLProfile.prototype.regressionTests = function () {
             if ( dataset.input.getQuery() == null ) {
                 throw "GetQuery returned null";
             }
-            coll = { update: function(x,y,z,a) { } };
+            var coll = { updateOne: function () { } };
             cof = { errors: null, warnings: null };
             dataset.input.markAsProcessed(coll, 1, cof, console.log);
 

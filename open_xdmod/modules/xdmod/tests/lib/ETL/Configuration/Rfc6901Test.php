@@ -107,8 +107,8 @@ class Rfc6901Test extends \PHPUnit_Framework_TestCase
     }
 
      /**
-     * Include whole document
-     */
+      * Include whole document
+      */
 
     public function testRfc6901SpecialCharacter()
     {
@@ -120,5 +120,19 @@ class Rfc6901Test extends \PHPUnit_Framework_TestCase
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
         $this->assertEquals($value, 'specialchar');
+    }
+
+     /**
+      * Include whole document
+      *
+      * @expectedException Exception
+      */
+
+    public function testRfc6901BadFragment()
+    {
+        $key = '$ref';
+        $value = 'rfc6901.json#/does-not-exist';
+        $obj = (object) array($key => $value);
+        $this->transformer->transform($key, $value, $obj, $this->config);
     }
 }  // class Rfc6901Test
