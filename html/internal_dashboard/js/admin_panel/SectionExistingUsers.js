@@ -1205,10 +1205,9 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                             mnuItemPasswordReset.show();
 
                             cmbUserType.setDisabled(false);
-
-                            cached_user_type = parseInt(json.user_information.user_type, 10);
+                            cached_user_type = String(json.user_information.user_type);
                             cmbUserType.setValue(cached_user_type);
-                            cmbUserType.originalValue = cached_user_type;
+                            cmbUserType.originalValue = cmbUserType.getValue();
                         }
                         var sticky = Boolean(json.user_information.sticky);
                         stickyCheckbox.originalValue = sticky;
