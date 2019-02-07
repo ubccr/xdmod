@@ -120,6 +120,18 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
             user_update_callback = callback;
         };
 
+        /**
+         * Updates the save indicator based on whether or not changes have been
+         * made.
+         */
+        self.updateSaveIndicator = function () {
+            if (self.inDirtyState()) {
+                saveIndicator.show();
+            } else {
+                saveIndicator.hide();
+            }
+        };
+
         function userRenderer(
             val,
             metaData,
