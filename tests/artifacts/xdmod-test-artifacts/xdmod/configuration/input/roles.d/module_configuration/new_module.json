@@ -1,0 +1,21 @@
+{
+  "module": "new_module",
+  "+roles": {
+    "+default": {
+      "+query_descripters": [
+        {
+          "realm": "NewModule",
+          "group_by": "none"
+        }
+      ]
+    },
+    "+pub": {
+      "+query_descripters": [
+        {
+          "realm": "NewModule",
+          "group_by": "none"
+        }
+      ]
+    }
+  }
+}
