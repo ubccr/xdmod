@@ -9,7 +9,6 @@
             "start_event_type_id": "e.start_event_id",
             "end_time": "e.end_time",
             "end_event_type_id": "e.end_event_id",
-            "start_event_id": "ev.event_id",
             "resource_id": "it.resource_id",
             "instance": "it.provider_identifier",
             "instance_type": "itt.instance_type",
