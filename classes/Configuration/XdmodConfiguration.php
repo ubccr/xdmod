@@ -142,7 +142,7 @@ class XdmodConfiguration extends Configuration
      * property.
      * @throws Exception if unable to resolve the merging of an extender and it's extendee.
      */
-    protected function resolveExtends(\stdClass &$config, array $extenders)
+    protected function resolveExtends(\stdClass $config, array $extenders)
     {
         $extendsProperty = self::EXTENDS_KEYWORD;
         foreach ($config as $k => $v) {

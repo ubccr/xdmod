@@ -224,7 +224,7 @@ class EtlConfigurationTest extends \PHPUnit_Framework_TestCase
         $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
 
         $localDir = $this->interpretDirOption($options['local_dir']);
-        $localConfigDir = $localConfigDir = dirname(
+        $localConfigDir = dirname(
             $this->testFiles->getfile(
                 'configuration',
                 implode(
