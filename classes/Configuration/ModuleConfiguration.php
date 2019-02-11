@@ -11,7 +11,89 @@ use stdClass;
  *
  * Provides for tracking which module provides which portions of this configuration files contents.
  * You can retrieve which portions of this configuration file were provided by a particular module
- * via the `filterByMetaData`. Providing
+ * via the `filterByMetaData`.
+ *
+ * Example Merged Config[ XDMoD module, additional module: NewModule ]:
+ * $transformedConfig = stdClass(
+ *     roles: stdClass(
+ *         default: stdClass(
+ *             query_descripters: array(
+ *                 stdClass(
+ *                     realm: 'Jobs',
+ *                     group_by: 'none'
+ *                 ),
+ *                 ...
+ *                 stdClass(
+ *                     realm: 'Cloud',
+ *                     group_by: 'submission_venue'
+ *                 ),
+ *                 stdClass(
+ *                     realm: 'NewRealm',
+ *                     group_by: 'none'
+ *                 )
+ *             )
+ *         )
+ *     )
+ * );
+ *
+ * The annotated config would look like:
+ * $annotatedConfig = stdClass(
+ *     roles: stdClass(
+ *         default: stdClass(
+ *             query_descripters: array(
+ *                 stdClass(
+ *                     realm: 'Jobs',
+ *                     group_by: 'none',
+ *                     modules: array(
+ *                         'xdmod'
+ *                         'NewRealm'
+ *                     )
+ *                 ),
+ *                 ...
+ *                 stdClass(
+ *                     realm: 'Cloud',
+ *                     group_by: 'submission_venue',
+ *                     modules: array(
+ *                         'xdmod',
+ *                         'NewRealm'
+ *                     )
+ *                 ),
+ *                 stdClass(
+ *                     realm: 'NewRealm',
+ *                     group_by: 'none',
+ *                     modules: array(
+ *                         'NewRealm'
+ *                     )
+ *                 )
+ *             ),
+ *             modules: array(
+ *                 'xdmod',
+ *                 'NewRealm'
+ *             )
+ *         ),
+ *         modules: array(
+ *             'xdmod',
+ *             'NewRealm'
+ *         )
+ *     ),
+ *     modules: array(
+ *         'xdmod',
+ *         'NewRealm'
+ *     )
+ * );
+ *
+ * Now, when a user calls `$moduleConfiguration->filterByRealm('xdmod');`, it will recursively
+ * traverse the annotated config and only include those properties whose `modules` property includes
+ * the requested module. Please note that the final $annotatedConfig will be the results of both
+ * merging in any local config files contained in this configuration files .d directory and
+ * processing of any `extends` found within the merged file.
+ *
+ * The overall processing order for `ModuleConfiguration` is:
+ *  - Read specified configuration file ( ex. roles.json )
+ *  - If the `local_config_dir` option is provided then all files found in this directory will be
+ *    merged into the base file.
+ *  - The merged configuration data will be recursively scanned for any `extends` keywords and these
+ *    will be resolved. Order of extension will be taken into account.
  *
  * @package Configuration
  */
@@ -212,9 +294,13 @@ class ModuleConfiguration extends XdmodConfiguration
     } // hasObjects
 
     /**
+     * A helper method that allows the caller to just specify which module they want to filter this
+     * configuration files contents by as opposed to worrying about building up the whole `$metadata`
+     * argument for `filterByMetaData`.
      *
+     * @param string $module the module that will be used to filter the contents of this
+     * configuration file.
      *
-     * @param $module
      * @return mixed
      */
     public function filterByModule($module)

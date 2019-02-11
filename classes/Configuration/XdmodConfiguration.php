@@ -10,6 +10,33 @@ use stdClass;
  *
  * This class adds the ability for configuration files to have `extends` properties processed.
  *
+ * The `extends` property is processed via the following steps:
+ *   - We find all of the configuration entries that have a property matching:
+ *     `extends: '<some string>'` and gather them into an array of the format:
+ *     array(
+ *         'extender1' => 'extendee1',
+ *         'extender2' => 'extendee2'
+ *          etc. etc.
+ *     )
+ *     NOTE: an entity that extends one thing, can itself be extended by another.
+ *  - for each entry in this `extender` => `extendee` array we:
+ *    - We next collect a unique list of `extendees` into an array.
+ *    - We then find all of the entries that extend these extendees
+ *    - We next diff the unique extendee list w/ the extenders to find those entries that do not
+ *      themselves extend something. You can think of these entries as the root of the dependency tree.
+ *    - Next, we find all of the entries that extend these root entries.
+ *    - Now we resolve `extends` for these "first-level" extenders. The resolution process is as
+ *      follows:
+ *        - Recursively iterate through configuration that is resolving extends
+ *        - If one of the current objects keys matches one of those who defines an `extends` keyword
+ *          then:
+ *            - iterate through the current object and find the `extendee`, returning it's value.
+ *            - If one is not found then an exception will be thrown, else
+ *            - We merge the `extendee` into the `extender`. This follows the same merge logic that is
+ *              used for merging local config files into a main config file.
+ *            - finally, the `extends` property is removed from the parent object.
+ *     - Finally, we unset each processed `$extender` from the array that we are processing so that
+ *       we eventually finish.
  * @package Configuration
  */
 class XdmodConfiguration extends Configuration
