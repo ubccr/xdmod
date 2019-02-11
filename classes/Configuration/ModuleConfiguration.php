@@ -376,17 +376,19 @@ class ModuleConfiguration extends XdmodConfiguration
         }
 
         if ($processChildren) {
-            foreach($source as $property => $value) {
+            foreach($source as $property => &$value) {
                 if (is_object($value)) {
                     $newValue = $this->performRecursiveFilter($metadata, $value);
                     if ($newValue !== null) {
                         $source->$property = $newValue;
                     }
-                } elseif (is_array($value) && $this->hasObjects($value)) {
+                } elseif (is_array($value)) {
                     foreach($value as $k => $v) {
-                        $newValue = $this->performRecursiveFilter($metadata, $v);
-                        if ($newValue === null) {
-                            unset($source->$property[$k]);
+                        if (is_object($v)) {
+                            $newValue = $this->performRecursiveFilter($metadata, $v);
+                            if ($newValue === null) {
+                                unset($value[$k]);
+                            }
                         }
                     }
                 }
