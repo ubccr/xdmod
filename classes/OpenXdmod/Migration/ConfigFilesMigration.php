@@ -202,7 +202,7 @@ abstract class ConfigFilesMigration extends Migration
 
         $partialConfigFile = array_filter($dirFiles, function($file) use ($name){
             if(basename($file) === $name.'.json'){
-              return $file;
+                return $file;
             }
         });
 

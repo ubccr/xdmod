@@ -41,7 +41,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         $rolesConfigFolder = $this->config->getPartialFilePaths('roles');
 
         if($cloudFile = array_search(CONFIG_DIR."/roles.d/cloud.json", $rolesConfigFolder) === false){
-          throw new Exception("cloud.json file not found in roles.d folder");
+            throw new Exception("cloud.json file not found in roles.d folder");
         }
 
         $this->cloudRolesFile = Json::loadFile($rolesConfigFolder[$cloudFile]);
@@ -61,7 +61,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
 
         $group_bys_found = array_filter($this->cloudRolesFile['+roles'][$role]['+query_descripters'], function($descripters) use ($groupBy){
             if($descripters['group_by'] === $groupBy){
-              return $descripters;
+                return $descripters;
             }
         });
 
