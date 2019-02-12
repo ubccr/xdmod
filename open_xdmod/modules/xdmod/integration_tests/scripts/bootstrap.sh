@@ -44,7 +44,6 @@ then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
-    mysql -e "TRUNCATE TABLE modw_cloud.event;"
     sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
     sudo -u xdmod xdmod-ingestor
 fi

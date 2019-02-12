@@ -34,14 +34,14 @@
             {
                 "name": "person_id",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null
+                "nullable": false,
+                "default": -1
             },
             {
                 "name": "systemaccount_id",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null
+                "nullable": false,
+                "default": -1
             },
             {
                 "name": "event_type_id",
@@ -78,7 +78,6 @@
                     "instance_id",
                     "event_time_utc",
                     "event_type_id",
-                    "person_id",
                     "host_id"
                 ],
                 "is_unique": true

@@ -69,3 +69,4 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
             $this->cloudRolesFile['+roles'][$role]['+query_descripters'][] = array('realm' => 'Cloud', 'group_by' => $groupBy);
         }
     }
+}

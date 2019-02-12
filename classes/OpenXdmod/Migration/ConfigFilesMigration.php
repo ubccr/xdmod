@@ -188,8 +188,9 @@ abstract class ConfigFilesMigration extends Migration
     }
 
     /**
-     * Write the contents of a config file.
+     * Write the contents of a partial config file.
      *
+     * @param string $directory The directory where the partial config file lives (without ".d")
      * @param string $name The config file name (without ".json").
      * @param array $data The data to store in the config file.
      */
