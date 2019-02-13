@@ -21,6 +21,8 @@ For more information, including information about additional Open XDMoD
 capabilities provided as optional modules, please visit
 [the Open XDMoD website](http://open.xdmod.org).
 
+[![DOI](https://zenodo.org/badge/72233032.svg)](https://zenodo.org/badge/latestdoi/72233032)
+
 ## Support
 
 Support is available by emailing ccr-xdmod-help@buffalo.edu. Please include the following in your support request. Failure to include this information may delay support. See the [Open XDMoD Support](http://open.xdmod.org/support.html) page for additional information.
