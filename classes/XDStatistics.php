@@ -2,105 +2,109 @@
 
 use CCR\DB;
 
-class XDStatistics {
+class XDStatistics
+{
 
-   function getUserVisitStats($aggregation_type = 'month', $user_types = array()) {
-   
-      $db = DB::factory('database');
+    function getUserVisitStats($aggregation_type = 'month', $user_types = array())
+    {
 
-      // The query does not consider internal and/or testing users
+        $db = DB::factory('database');
 
-      $user_type_filter = '';
-      
-      if (count($user_types) > 0) {
-         $user_type_filter = 'AND u.user_type IN ('.implode(',', $user_types).') ';
-      }
-      
-      $query = "SELECT u.id, u.last_name, u.first_name, u.email_address, sm.init_time, u.username, 
+        // The query does not consider internal and/or testing users
+
+        $user_type_filter = '';
+
+        if (count($user_types) > 0) {
+            $user_type_filter = 'AND u.user_type IN (' . implode(',', $user_types) . ') ';
+        }
+
+        $query = "SELECT u.id, u.last_name, u.first_name, u.email_address, sm.init_time, u.username, 
                 GROUP_CONCAT(r.description ORDER BY r.description) AS role_list, u.user_type  
                 FROM SessionManager AS sm, UserRoles AS ur, Users AS u, Roles AS r 
                 WHERE u.id = ur.user_id AND ur.role_id = r.role_id AND sm.user_id = u.id 
                 $user_type_filter 
                 GROUP BY CONCAT(u.id, '-', sm.init_time) ORDER BY sm.init_time DESC, r.description DESC";
 
-      $results = $db->query($query);
+        $results = $db->query($query);
 
-      foreach ($results as &$r) {
-   
-         $time_frags = explode('.', $r['init_time']);
-   
-         //$r['init_time_datestamp'] = date('m/d/Y, g:i:s A', $time_frags[0]);
-         
-         if ($aggregation_type == 'month') {
-            $r['init_time_datestamp'] = date('Y-m', $time_frags[0]);
-         }
+        foreach ($results as &$r) {
 
-         if ($aggregation_type == 'year') {         
-            $r['init_time_datestamp'] = date('Y', $time_frags[0]);
-         }
+            $time_frags = explode('.', $r['init_time']);
 
-      }
+            //$r['init_time_datestamp'] = date('m/d/Y, g:i:s A', $time_frags[0]);
 
-      $monthAgg = array();
+            if ($aggregation_type == 'month') {
+                $r['init_time_datestamp'] = date('Y-m', $time_frags[0]);
+            }
 
-      foreach ($results as $r) {
+            if ($aggregation_type == 'year') {
+                $r['init_time_datestamp'] = date('Y', $time_frags[0]);
+            }
 
-         if (!isset($monthAgg[$r['init_time_datestamp']])) { $monthAgg[$r['init_time_datestamp']] = array(); }
+        }
 
-         $monthAgg[$r['init_time_datestamp']][] = $r;
+        $monthAgg = array();
 
-      }
-   
-      $allData = array();
-      $visit_freqs = array();
+        foreach ($results as $r) {
 
-      foreach ($monthAgg as $m => $recs) {
+            if (!isset($monthAgg[$r['init_time_datestamp']])) {
+                $monthAgg[$r['init_time_datestamp']] = array();
+            }
 
-         $userCounts = array();
-         $userEntries = array();
+            $monthAgg[$r['init_time_datestamp']][] = $r;
 
-         foreach ($recs as $rr) {
+        }
 
-            if (!isset($userCounts[$rr['id']])) { $userCounts[$rr['id']] = 0; }
-            $userCounts[$rr['id']]++;
+        $allData = array();
+        $visit_freqs = array();
 
-         }//foreach
+        foreach ($monthAgg as $m => $recs) {
 
-         foreach ($recs as &$rr) {
+            $userCounts = array();
+            $userEntries = array();
 
-            unset($rr['init_time']);
+            foreach ($recs as $rr) {
 
-            $dd = $rr;
+                if (!isset($userCounts[$rr['id']])) {
+                    $userCounts[$rr['id']] = 0;
+                }
+                $userCounts[$rr['id']]++;
 
-            $dd['timeframe'] = $dd['init_time_datestamp'];
+            }//foreach
 
-            unset($dd['init_time_datestamp']);
-            unset($dd['id']);
+            foreach ($recs as &$rr) {
 
-            $dd['visit_frequency'] = $userCounts[$rr['id']];
+                unset($rr['init_time']);
 
-            $userEntries[$rr['id']] = $dd;
+                $dd = $rr;
 
-         }//foreach
+                $dd['timeframe'] = $dd['init_time_datestamp'];
 
-         $allData = array_merge($allData, array_values($userEntries));
+                unset($dd['init_time_datestamp']);
+                unset($dd['id']);
 
-      }//foreach	
+                $dd['visit_frequency'] = $userCounts[$rr['id']];
 
-      //return ($allData);
+                $userEntries[$rr['id']] = $dd;
 
-      foreach ($allData as $ad) {
+            }//foreach
 
-         $visit_freqs[] = $ad['timeframe'].';'.str_pad($ad['visit_frequency'], 5, "0", STR_PAD_LEFT);
+            $allData = array_merge($allData, array_values($userEntries));
 
-      }//foreach ($allData as $ad)
+        }//foreach
 
-      array_multisort($visit_freqs, SORT_DESC, $allData);
-         
-      return $allData;
+        //return ($allData);
 
-   }//getUserVisitStats
+        foreach ($allData as $ad) {
 
-}//XDStatistics
+            $visit_freqs[] = $ad['timeframe'] . ';' . str_pad($ad['visit_frequency'], 5, "0", STR_PAD_LEFT);
 
-?>
+        }//foreach ($allData as $ad)
+
+        array_multisort($visit_freqs, SORT_DESC, $allData);
+
+        return $allData;
+
+    } //getUserVisitStats
+
+} //XDStatistics
