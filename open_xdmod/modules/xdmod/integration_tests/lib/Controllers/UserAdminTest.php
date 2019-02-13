@@ -767,6 +767,57 @@ class UserAdminTest extends BaseUserAdminTest
     }
 
     /**
+     * @depends testGetUserVisitsExport
+     * @dataProvider provideGetUserVisitsIncrements
+     *
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testGetUserVisitsIncrements(array $options)
+    {
+        $user = $options['user'];
+        $difference = $options['difference'];
+
+        $before = $this->getUserVisits($options);
+
+        $this->helper->authenticate($user);
+
+        $this->helper->logout();
+
+        $after = $this->getUserVisits($options);
+
+        $matches = ($after === ($before + $difference));
+
+        $this->assertTrue(
+            $matches,
+            sprintf(
+                "Before: [%d][%s] After: [%d][%s] Expected Difference [%d][%s] Actual Difference [%d]\n %s === ( %s + %s )",
+                $before,
+                gettype($before),
+                $after,
+                gettype($after),
+                $difference,
+                gettype($difference),
+                $after - $before,
+                $after,
+                $before,
+                $difference
+            )
+        );
+    }
+
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
+    public function provideGetUserVisitsIncrements()
+    {
+        return JSON::loadFile(
+            $this->getTestFiles()->getFile('user_admin', 'get_user_visits_increment', 'input')
+        );
+    }
+
+    /**
      * Executes a request to the
      * 'internal_dashboard/controllers/controller.php?operation=enum_user_visits'
      * endpoint. Validates the response and returned data structure.
