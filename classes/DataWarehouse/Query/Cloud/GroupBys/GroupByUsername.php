@@ -128,30 +128,4 @@ class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
             "select distinct username as field_label from modw.systemaccount  where username in (_filter_) order by username"
         );
     }
-
-    public function getPossibleValues($hint = null, $limit = null, $offset = null, array $parameters = array())
-    {
-        if ($this->_possible_values_query == null) {
-            return array();
-        }
-
-        $possible_values_query = $this->_possible_values_query;
-
-        foreach ($parameters as $pname => $pvalue) {
-            if ($pname == 'person') {
-                $possible_values_query = str_ireplace('where ', "where gt.person_id = $pvalue and ", $possible_values_query);
-            } elseif ($pname == 'provider') {
-                $possible_values_query = str_ireplace('from ', "from modw.resourcefact rf, ", $possible_values_query);
-                $possible_values_query = str_ireplace('where ', "where rf.organization_id = $pvalue and gt.resource_id = rf.id  and ", $possible_values_query);
-            } elseif ($pname == 'institution') {
-                $possible_values_query = str_ireplace('from ', "from modw.person p, ", $possible_values_query);
-                $possible_values_query = str_ireplace('where ', "where p.organization_id = $pvalue and gt.person_id = p.id  and ", $possible_values_query);
-            } elseif ($pname == 'pi') {
-                $possible_values_query = str_ireplace('from ', "from modw.peopleunderpi pup, ", $possible_values_query);
-                $possible_values_query = str_ireplace('where ', "where pup.principalinvestigator_person_id = $pvalue and gt.person_id = pup.person_id  and ", $possible_values_query);
-            }
-        }
-
-        return parent::getPossibleValues($hint, $limit, $offset, $parameters, $possible_values_query);
-    }
 }
