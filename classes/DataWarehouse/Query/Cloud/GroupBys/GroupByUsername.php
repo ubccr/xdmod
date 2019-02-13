@@ -27,14 +27,14 @@ class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
             'username',
             array(),
             "select distinct
-								gt.username as id,
-								gt.username as short_name,
-								gt.username as long_name
-								from systemaccount gt
-								where 1
-								order by gt.username",
+                gt.username as id,
+                gt.username as short_name,
+                gt.username as long_name
+                from systemaccount gt
+                where 1
+                order by gt.username",
             array()
-                            );
+        );
         $this->_id_field_name = 'username';
         $this->_short_name_field_name = 'username';
         $this->_long_name_field_name = 'username';
@@ -54,7 +54,7 @@ class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
             $systemaccounttable_id_field,
             '=',
             $datatable_systemaccount_id_field
-                                                ));
+        ));
 
         $id_field = new \DataWarehouse\Query\Model\TableField($this->systemaccount_table, $this->_id_field_name, $this->getIdColumnName($multi_group));
         $name_field =  new \DataWarehouse\Query\Model\TableField($this->systemaccount_table, $this->_long_name_field_name, $this->getLongNameColumnName($multi_group));
@@ -89,7 +89,7 @@ class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
             $systemaccounttable_id_field,
             '=',
             $datatable_systemaccount_id_field
-                                                ));
+        ));
 
         // the where condition that specifies the constraint on the joined table
         // note that the where condition applies to strings

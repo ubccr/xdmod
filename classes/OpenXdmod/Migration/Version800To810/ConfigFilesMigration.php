@@ -59,7 +59,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
             throw new Exception("Role not found in cloud.json file");
         }
 
-        $group_bys_found = array_filter($this->cloudRolesFile['+roles'][$role]['+query_descripters'], function($descripters) use ($groupBy){
+        $group_bys_found = array_filter($this->cloudRolesFile['+roles'][$role]['+query_descripters'], function ($descripters) use ($groupBy) {
             if($descripters['group_by'] === $groupBy){
                 return $descripters;
             }
