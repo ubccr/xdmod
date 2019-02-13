@@ -200,7 +200,7 @@ abstract class ConfigFilesMigration extends Migration
 
         $dirFiles = $this->config->getPartialFilePaths($directory);
 
-        $partialConfigFile = array_filter($dirFiles, function($file) use ($name){
+        $partialConfigFile = array_filter($dirFiles, function ($file) use ($name) {
             if(basename($file) === $name.'.json'){
                 return $file;
             }

@@ -19,7 +19,7 @@ class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
 
     public function getInfo()
     {
-        return 	"The specific system username associated with a running session of a virtual machine.";
+        return "The specific system username associated with a running session of a virtual machine.";
     }
     public function __construct()
     {
@@ -74,7 +74,7 @@ class GroupByUsername extends \DataWarehouse\Query\Cloud\GroupBy
     public function addWhereJoin(
         \DataWarehouse\Query\Query &$query,
         \DataWarehouse\Query\Model\Table $data_table,
-        $multi_group = false,
+        $multi_group,
         $operation,
         $whereConstraint
     ) {
