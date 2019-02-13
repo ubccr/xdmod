@@ -28,9 +28,9 @@ class XDStatistics
 
         $db = DB::factory('database');
 
-        $aggregationFormat = '%m';
+        $aggregationFormat = '%Y-%m';
         if ($aggregation_type === 'year') {
-            $aggregationFormat = '%Y-%m';
+            $aggregationFormat = '%Y';
         }
 
         // Default to a no-op if no use_types are provided.
