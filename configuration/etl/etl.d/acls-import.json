@@ -68,6 +68,15 @@
                     "sql_file": "acls/xdmod/update_user_organizations.sql"
                 }
             ]
+        },
+        {
+            "name": "xdmod-populate-report-template-acls",
+            "description": "Ensure that moddb.report_template_acls is populated from moddb.ReportTemplateAcls",
+            "sql_file_list": [
+                {
+                    "sql_file": "acls/xdmod/populate_report_template_acls.sql"
+                }
+            ]
         }
 
     ]
