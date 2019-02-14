@@ -16,7 +16,7 @@ use CCR\Loggable;
 
 class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
 {
-    const COMMENT_CHAR = '#';
+    const COMMENT_PREFIX = '#';
 
     /* ------------------------------------------------------------------------------------------
      * @see iConfigFileKeyTransformer::__construct()
@@ -35,7 +35,7 @@ class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
 
     public function keyMatches($key)
     {
-        return ( 0 === strpos($key, self::COMMENT_CHAR) );
+        return ( 0 === strpos($key, self::COMMENT_PREFIX) );
     }  // keyMatches()
 
     /* ------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
 
     public function transform(&$key, &$value, stdClass $obj, Configuration $config)
     {
-        $this->logger->trace("Remove comment '$key'");
+        $this->logger->trace(sprintf("Remove comment '%s'", $key));
         $key = null;
         $value = null;
 

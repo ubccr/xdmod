@@ -557,6 +557,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         }; //updateDisabledMenus
 
+        var tree;
+
         // ---------------------------------------------------------
 
             function reloadTree() {
@@ -567,6 +569,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 if (selNode) selModel.unselect(selNode, true);
 
                 tree.root.removeAll(true);
+                delete tree.loader.baseParams.category;
+                delete tree.loader.baseParams.group_by;
                 tree.loader.on('load', selectFirstNode, this, {
                     single: true
                 });
@@ -668,7 +672,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        var tree = new Ext.tree.TreePanel({
+        tree = new Ext.tree.TreePanel({
 
             id: 'tree_' + this.id,
             useArrows: true,

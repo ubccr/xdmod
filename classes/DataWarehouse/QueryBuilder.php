@@ -4,6 +4,7 @@ namespace DataWarehouse;
 
 use Models\Services\Acls;
 use Models\Services\Parameters;
+use XDUser;
 
 /**
  * Singleton class for helping guide the creation of a Query object.
@@ -190,8 +191,6 @@ class QueryBuilder
         $rp_usage_regex   = '/rp_(?P<rp_id>[0-9]+)_usage/';
         $rp_summary_regex = '/rp_(?P<rp_id>[0-9]+)_summary/';
 
-        $activeRole = $user->getMostPrivilegedRole();
-
         if (
                $query_group === 'my_usage'
             || $query_group === 'my_summary'
@@ -224,20 +223,13 @@ class QueryBuilder
                     substr($query_group, 0, strpos($query_group, $suffix))
                 );
 
-                $role_data = array_pad($role_data, 2, NULL);
+                $activeRole = XDUser::_getFormalRoleName($role_data[0], true);
 
-                $activeRole = $user->assumeActiveRole(
-                    $role_data[0],
-                    $role_data[1]
-                );
-
-                $role_parameters = Parameters::getParameters($user, $activeRole->getIdentifier());
+                $role_parameters = Parameters::getParameters($user, $activeRole);
                 $request = array_merge($request, $role_parameters);
                 $query_group = 'tg' . $suffix;
             }
         }
-
-        $user->setCachedActiveRole($activeRole);
 
         if (!isset($request['start_date'])) {
             throw new \Exception(
@@ -327,8 +319,6 @@ class QueryBuilder
         $rp_usage_regex   = '/rp_(?P<rp_id>[0-9]+)_usage/';
         $rp_summary_regex = '/rp_(?P<rp_id>[0-9]+)_summary/';
 
-        $activeRole = $user->getMostPrivilegedRole();
-
         if (preg_match($rp_usage_regex, $query_group, $matches) > 0) {
             $request['provider'] = $matches['rp_id'];
             $query_group         = 'tg_usage';
@@ -353,20 +343,13 @@ class QueryBuilder
                     substr($query_group, 0, strpos($query_group, $suffix))
                 );
 
-                $role_data = array_pad($role_data, 2, NULL);
+                $activeRole = XDUser::_getFormalRoleName($role_data[0], true);
 
-                $activeRole = $user->assumeActiveRole(
-                    $role_data[0],
-                    $role_data[1]
-                );
-
-                $role_parameters = Parameters::getParameters($user, $activeRole->getIdentifier());
+                $role_parameters = Parameters::getParameters($user, $activeRole);
                 $request = array_merge($request, $role_parameters);
                 $query_group = 'tg' . $suffix;
             }
         }
-
-        $user->setCachedActiveRole($activeRole);
 
         $query_descripter = Acls::getQueryDescripters(
             $user,

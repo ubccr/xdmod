@@ -529,6 +529,24 @@ SQL;
     }
 
     /**
+     * Attempt to retrieve an Acl via it's `display` value. This corresponds to `moddb.acls.display`
+     * If an acl is not found then null will be returned.
+     *
+     * @param string $display
+     * @return Acl|null
+     * @throws Exception
+     */
+    public static function getAclByDisplay($display)
+    {
+        $db = DB::factory('database');
+        $rows = $db->query('SELECT * FROM acls a WHERE a.display = :display', array(':display' => $display));
+        if (count($rows) > 0) {
+            return new Acl($rows[0]);
+        }
+        return null;
+    }
+
+    /**
      * Attempt to retrieve all descriptors for the provided user.
      *
      * @param XDUser $user the user to use when retrieving the descriptors.

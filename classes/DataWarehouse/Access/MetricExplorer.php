@@ -5,6 +5,7 @@ namespace DataWarehouse\Access;
 use Exception;
 use Models\Services\Parameters;
 use Models\Services\Acls;
+use Models\Services\Realms;
 use PDOException;
 use stdClass;
 
@@ -584,7 +585,7 @@ class MetricExplorer extends Common
                 $realm_name,
                 $group_by_name,
                 $statistic_name,
-                $userRole->getIdentifier()
+                $userRole
             );
             if ($accessPermitted) {
                 $authorizedRoles[] = $userRole;
@@ -616,12 +617,12 @@ class MetricExplorer extends Common
             );
         } else {
             $activeRoleComponents = explode(':', $activeRoleId);
-            $activeRoleComponents = array_pad($activeRoleComponents, 2, null);
-            $activeRole = $user->assumeActiveRole(
-                $activeRoleComponents[0],
-                $activeRoleComponents[1]
-            );
-            $activeRoleParameters = Parameters::getParameters($user, $activeRole->getIdentifier());
+            $activeRoleId = $activeRoleComponents[0];
+            $activeRole = Acls::getAclByName($activeRoleId);
+            if ($activeRole === null) {
+                $activeRoleId = ROLE_ID_PUBLIC;
+            }
+            $activeRoleParameters = Parameters::getParameters($user, $activeRoleId);
         }
 
         // For each set of filter parameters the role has, create an
@@ -1010,7 +1011,7 @@ class MetricExplorer extends Common
      * @return array              The realms available to the user.
      */
     public static function getRealmsFromUser(XDUser $user, $queryGroup = 'tg_usage') {
-        return array_keys($user->getMostPrivilegedRole()->getAllQueryRealms($queryGroup));
+        return Realms::getRealmsForUser($user);
     }
 
     /**

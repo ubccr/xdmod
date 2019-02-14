@@ -92,6 +92,81 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     protected $lastModifiedEndTimestamp = null;
 
     /** -----------------------------------------------------------------------------------------
+     * Multiple methods may be used to determine the last modified date of a file and these are
+     * implicitly determined based on parameters specified.  This variable overrides that behavior
+     * and explicitly specifies the methods to use.
+     *
+     * file - Use the last modified timestamp of the file, either via a regex on the filename or by
+     *   calling stat() on the file itself. (default)
+     * directory - Use the last modified timestamp of the directory
+     *
+     * @var array | null
+     * ------------------------------------------------------------------------------------------
+     */
+    protected $lastModifiedMethods = null;
+
+    /** -----------------------------------------------------------------------------------------
+     * A regular expression used to determine the last modified time based on the filename.  The
+     * matching string is converted to a timestamp using strtotime(). If specified, implies that the
+     * last modification time will be taken from the filename rather than calling stat().
+     *
+     * @var string | null
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $lastModifiedFileRegex = null;
+
+    /** -----------------------------------------------------------------------------------------
+     * A regular expression used to determine the last modified time based on the directory. If the
+     * directory matches the regex then the last modified times are compared to the timestamp
+     * generated from the match.  If the timestamp falls within the specified last modified time
+     * then the directory is traversed, otherwise it is not. Directories that do not match the regex
+     * at all are also traversed, otherwise we would never get past the top level directory.
+     *
+     * The date string specified in the directory does not need to be contiguous (e.g., it may be
+     * separated by slashes), but it must be able to be parsed by strtotime(). For example,
+     * "2012-01" is properly parsed but "201201" returns 2019-01-17 and "2012/01" returns
+     * 1970-01-01. To reconstruct a non-contiguous date, a parenthesized regex is used and the
+     * individual sub-patterns are reconstructed according to $lastModifiedDirFormat.
+     *
+     * Example directories with matching patterns are:
+     *
+     * BASEDIR/YYYY/MM/HOSTNAME/YYYY-MM-DD
+     * $lastModifiedDirRegex: /[0-9]{4}-[0-9]{2}-[0-9]{2}/
+     * $lastModifiedDirFormat: null
+     *
+     * BASEDIR/HOSTNAME/YYYY/MM/DD
+     * $lastModifiedDirRegex: /[0-9]{4}\/[0-9]{2}\/[0-9]{2}/
+     * $lastModifiedDirFormat: null
+     *
+     * BASEDIR/HOSTNAME/YYYYMM
+     * $lastModifiedDirRegex: /([0-9]{4})([0-9]{2})/
+     * $lastModifiedDirRegexReformat: '$1-$2'
+     *
+     * @var string | null
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $lastModifiedDirRegex = null;
+
+    /** -----------------------------------------------------------------------------------------
+     * When a parenthesized regex is specified in $lastModifiedDirRegex, the format needed to
+     * re-construct a timestamp based on the captured parenthesized sub-expressions can be specified
+     * here. If no sub-expressions are provided or captured then this value is ignored. $1 refers to
+     * the first captured sub-expression, $2 the second, and so on. These are replaced in the format
+     * specified here.
+     *
+     * For example, given the directory "vortex/20180103" with regex
+     * "/([0-9]{4})([0-9]{2})([0-9]{2})/" and format "$1-$2-$3" the resulting timestamp would be
+     * "2018-01-03".
+     *
+     * @var string | null
+     * ------------------------------------------------------------------------------------------
+     */
+
+    protected $lastModifiedDirRegexReformat = null;
+
+    /** -----------------------------------------------------------------------------------------
      * A handler template that will be used to instantiate the handler for each file matched
      * by the directory scanner. The file name will be injected into the template.
      *
@@ -187,7 +262,11 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             'directory_pattern'   => 'string',
             'recursion_depth'     => 'int',
             'last_modified_start' => 'string',
-            'last_modified_end'   => 'string'
+            'last_modified_end'   => 'string',
+            'last_modified_methods'   => 'string',
+            'last_modified_file_regex' => 'string',
+            'last_modified_dir_regex'  => 'string',
+            'last_modified_dir_regex_reformat' => 'string'
         );
 
         if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
@@ -212,7 +291,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                             sprintf("%s: Relative path provided, absolute path recommended", $this)
                         );
                         if ( isset($options->paths->data_dir) ) {
-                            $this->logger->info(
+                            $this->logger->debug(
                                 sprintf("Qualifying relative path %s with %s", $this->path, $options->paths->data_dir)
                             );
                             $this->path = \xd_utilities\qualify_path($this->path, $options->paths->data_dir);
@@ -230,6 +309,10 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
 
                 case 'recursion_depth':
                     $this->maxRecursionDepth = $value;
+                    break;
+
+                case 'last_modified_methods':
+                    $this->lastModifiedMethods = array_map('trim', explode(',', $value));
                     break;
 
                 case 'last_modified_start':
@@ -250,6 +333,42 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                     } else {
                         $this->lastModifiedEndTimestamp = $ts;
                     }
+                    break;
+
+                case 'last_modified_file_regex':
+                    if ( false === @preg_match($value, "") ) {
+                        $error = error_get_last();
+                        $this->logAndThrowException(
+                            sprintf(
+                                "Error setting %s (%s): %s",
+                                $property,
+                                $value,
+                                ( null !== $error ? $error['message'] : 'Unknown error' )
+                            )
+                        );
+                    } else {
+                        $this->lastModifiedFileRegex = $value;
+                    }
+                    break;
+
+                case 'last_modified_dir_regex':
+                    if ( false === @preg_match($value, "") ) {
+                        $error = error_get_last();
+                        $this->logAndThrowException(
+                            sprintf(
+                                "Error setting %s (%s): %s",
+                                $property,
+                                $value,
+                                ( null !== $error ? $error['message'] : 'Unknown error' )
+                            )
+                        );
+                    } else {
+                        $this->lastModifiedDirRegex = $value;
+                    }
+                    break;
+
+                case 'last_modified_dir_regex_reformat':
+                    $this->lastModifiedDirRegexReformat = $value;
                     break;
 
                 case 'handler':
@@ -278,6 +397,22 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
 
                 default:
                     break;
+            }
+        }
+
+        // Implictly discover the methods to use when determining the last modified time of a file
+        // based on the last modified parameters specified. The default is 'file', unless a
+        // directory regex is specified. Any values specified in last_modified_methods overrides
+        // this.
+
+        if (
+            null === $this->lastModifiedMethods &&
+            (null !== $this->lastModifiedStartTimestamp || null !== $this->lastModifiedEndTimestamp)
+        ) {
+            if ( null !== $this->lastModifiedDirRegex ) {
+                $this->lastModifiedMethods = array('directory');
+            } else {
+                $this->lastModifiedMethods = array('file');
             }
         }
 
@@ -329,7 +464,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     }  // getMaxRecursionDepth()
 
     /** -----------------------------------------------------------------------------------------
-     * @return string|null The minumum last modified time for a file.
+     * @return int|null The minumum last modified timestamp for a file.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -339,7 +474,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     }  // getLastModifiedStartTime()
 
     /** -----------------------------------------------------------------------------------------
-     * @return string|null The maximum last modified time for a file.
+     * @return int|null The maximum last modified timestamp for a file.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -347,6 +482,17 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     {
         return $this->lastModifiedEndTimestamp;
     }  // getLastModifiedEndTime()
+
+    /** -----------------------------------------------------------------------------------------
+     * @return string|null The regex used to determine the last modified time of a file based on
+     * the filename.
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function getLastModifiedFileRegex()
+    {
+        return $this->lastModifiedFileRegex;
+    }  // getLastModifiedFileRegex()
 
     /** -----------------------------------------------------------------------------------------
      * @return object The handler template that will be used to create a configuration for the
@@ -453,6 +599,124 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             );
         }
 
+        // Filter out directories "." and "..". This and other filters could be
+        // included in a single CallbackFilterIterator bit I've decided to keep them
+        // split out for readability, debugging, and error reporting.
+
+        // For the CallbackFilter classes, the types of the callback parameters depend
+        // on the flags passed to RecursiveDirectoryIterator::__construct(). In our
+        // case, $current is a SplFileInfo object and the key is the fill path to the
+        // file.
+
+        try {
+            $dotDirFilterIterator = new \RecursiveCallbackFilterIterator(
+                $iterator,
+                function ($current, $key, $iterator) {
+                    return ( ! $iterator->isDot() );
+                }
+            );
+            $iterator = $dotDirFilterIterator;
+        }  catch ( Exception $e ) {
+            $this->logAndThrowException(
+                sprintf("Error applying dot directory filters: %s", $e->getMessage())
+            );
+        }
+
+        // If a directory regex and last modified times have been specified apply them here. Note
+        // that we must use the RecursiveCallbackFilterIterator and not the CallbackFilterIterator
+        // when applying it to the RecursiveDirectoryIterator.
+
+        if (
+            null !== $this->lastModifiedDirRegex &&
+            null !== $this->lastModifiedMethods &&
+            in_array('directory', $this->lastModifiedMethods) &&
+            (null !== $this->lastModifiedStartTimestamp || null !== $this->lastModifiedEndTimestamp)
+        ) {
+            // PHP 5.3 does not allow us to reference the object in the callback
+            $lmStartTs = $this->lastModifiedStartTimestamp;
+            $lmEndTs = $this->lastModifiedEndTimestamp;
+            $lmDirRegex = $this->lastModifiedDirRegex;
+            $lmDirReformat = $this->lastModifiedDirRegexReformat;
+            $logger = $this->logger;
+
+            $this->logger->info(
+                sprintf(
+                    "Applying mtime directory filter: (start: %s, end: %s, dir_regex: %s%s)",
+                    ( null === $lmStartTs ? "null" : $lmStartTs ),
+                    ( null === $lmEndTs ? "null" : $lmEndTs ),
+                    $lmDirRegex,
+                    ( null !== $lmDirReformat ? ", dir_reformat: $lmDirReformat" : "" )
+                )
+            );
+
+            $directoryRegexIterator = new \RecursiveCallbackFilterIterator(
+                $iterator,
+                function ($current, $key, $iterator) use ($lmStartTs, $lmEndTs, $lmDirRegex, $lmDirReformat, $logger) {
+
+                    // Do not traverse any directories that match the last modified pattern and fall
+                    // outside of the requested last modified range. Directories that do not match
+                    // the last modified pattern must be traversed or we won't get past the root
+                    // directory.  We must also traverse individual files or nothing will make it
+                    // past this filter.
+
+                    if ( $current->isDir() ) {
+                        $logger->debug(sprintf("Examine directory: %s", $key));
+
+                        $matches = array();
+                        if ( 0 !== preg_match($lmDirRegex, $key, $matches) ) {
+
+                            // Reconstruct the timestamp if we have captured sub-expressions and a
+                            // re-format was specified
+
+                            $numMatches = count($matches);
+                            $tsString = $matches[0];
+                            if ( $numMatches > 1 && null !== $lmDirReformat ) {
+                                $tsString = $lmDirReformat;
+                                for ($i=1; $i < $numMatches; $i++) {
+                                    $tsString = str_replace(sprintf('$%d', $i), $matches[$i], $tsString);
+                                }
+                            }
+
+                            $logger->debug(sprintf("Reformatted '%s' to '%s' using '%s'", $matches[0], $tsString, $lmDirReformat));
+
+                            if ( false === ($ts = strtotime($tsString)) ) {
+                                $logger->warning(
+                                    sprintf(
+                                        "Skipping directory '%s'. Regex '%s' matches but could not be converted to a timestamp.",
+                                        $key,
+                                        $lmDirRegex
+                                    )
+                                );
+                                return false;
+                            }
+
+                            if ( null !== $lmStartTs && null !== $lmEndTs ) {
+                                return $ts >= $lmStartTs && $ts <= $lmEndTs;
+                            } elseif ( null !== $lmStartTs ) {
+                                return $ts >= $lmStartTs;
+                            } elseif ( null !== $lmEndTs ) {
+                                return $ts <= $lmEndTs;
+                            }
+
+                        } elseif ( $iterator->hasChildren() ) {
+                            return true;
+                        }
+                    } else {
+                        // In order to process files, the directory that the file resides in must
+                        // match the directory pattern.
+                        //
+                        if ( 0 !== preg_match($lmDirRegex, $current->getPath()) ) {
+                            return true;
+                        } else {
+                            $logger->debug(sprintf("Skipping file where path does not match directory regex: %s", $key));
+                        }
+                    }
+                    return false;
+                }
+            );
+            $iterator = $directoryRegexIterator;
+        }
+
         // Apply the recursion iterator that will traverse the directory iterator
 
         try {
@@ -469,29 +733,6 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
         }  catch ( Exception $e ) {
             $this->logAndThrowException(
                 sprintf("Error creating RecursiveIteratorIterator: %s", $e->getMessage())
-            );
-        }
-
-        // Filter out directories "." and "..". This and other filters could be
-        // included in a single CallbackFilterIterator bit I've decided to keep them
-        // split out for readability, debugging, and error reporting.
-
-        // For the CallbackFilter classes, the types of the callback parameters depend
-        // on the flags passed to RecursiveDirectoryIterator::__construct(). In our
-        // case, $current is a SplFileInfo object and the key is the fill path to the
-        // file.
-
-        try {
-            $dotDirFilterIterator = new \CallbackFilterIterator(
-                $iterator,
-                function ($current, $key, $iterator) {
-                    return ( ! $iterator->isDot() );
-                }
-            );
-            $iterator = $dotDirFilterIterator;
-        }  catch ( Exception $e ) {
-            $this->logAndThrowException(
-                sprintf("Error applying dot directory filters: %s", $e->getMessage())
             );
         }
 
@@ -567,37 +808,67 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             }
         }
 
-        if ( null !== $this->lastModifiedStartTimestamp || null !== $this->lastModifiedEndTimestamp ) {
+        if (
+            null !== $this->lastModifiedMethods &&
+            in_array('file', $this->lastModifiedMethods) &&
+            (null !== $this->lastModifiedStartTimestamp || null !== $this->lastModifiedEndTimestamp)
+        ) {
 
             // PHP 5.3 does not allow us to reference the object in the callback
             $lmStartTs = $this->lastModifiedStartTimestamp;
             $lmEndTs = $this->lastModifiedEndTimestamp;
+            $lmRegex = $this->lastModifiedFileRegex;
+            $logger = $this->logger;
 
             $this->logger->info(
                 sprintf(
-                    "Applying mtime filter: (start: %s, end: %s)",
+                    "Applying mtime filter: (start: %s, end: %s%s)",
                     ( null === $lmStartTs ? "null" : $lmStartTs ),
-                    ( null === $lmEndTs ? "null" : $lmEndTs )
+                    ( null === $lmEndTs ? "null" : $lmEndTs ),
+                    ( null !== $lmRegex ? ", file_regex: $lmRegex" : "" )
                 )
             );
 
             try {
                 $callbackIterator = new \CallbackFilterIterator(
                     $iterator,
-                    function ($current, $key, $iterator) use ($lmStartTs, $lmEndTs) {
-                        if ( null !== $lmStartTs && null !== $lmEndTs ) {
-                            return $current->getMTime() >= $lmStartTs && $current->getMTime() <= $lmEndTs;
-                        } elseif ( null !== $lmStartTs ) {
-                            return $current->getMTime() >= $lmStartTs;
-                        } elseif ( null !== $lmEndTs ) {
-                            return $current->getMTime() <= $lmEndTs;
+                    function ($current, $key, $iterator) use ($lmStartTs, $lmEndTs, $lmRegex, $logger) {
+
+                        // If the last modified regex is specified, use that to determine the
+                        // modification time based on the filename.
+
+                        if ( null !== $lmRegex ) {
+                            $matches = null;
+                            $retval = preg_match($lmRegex, $current->getFilename(), $matches);
+                            if ( 0 === $retval ) {
+                                return false;
+                            } else {
+                                if ( false === ($ts = strtotime($matches[0])) ) {
+                                    $logger->warning(
+                                        sprintf(
+                                            "Skipping file '%s'. Regex '%s' matches but could not be converted to a timestamp.",
+                                            $current->getFilename(),
+                                            $lmRegex
+                                        )
+                                    );
+                                    return false;
+                                }
+                            }
                         } else {
-                            return false;
+                            $ts = $current->getMTime();
+                        }
+
+                        if ( null !== $lmStartTs && null !== $lmEndTs ) {
+                            return $ts >= $lmStartTs && $ts <= $lmEndTs;
+                        } elseif ( null !== $lmStartTs ) {
+                            return $ts >= $lmStartTs;
+                        } elseif ( null !== $lmEndTs ) {
+                            return $ts <= $lmEndTs;
                         }
                     }
                 );
                 $iterator = $callbackIterator;
-            }  catch ( Exception $e ) {
+            } catch ( Exception $e ) {
                 $this->logAndThrowException(
                     sprintf(
                         "Error applying last modified filter (start: %s, end: %s): %s",
