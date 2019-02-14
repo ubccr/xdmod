@@ -269,6 +269,10 @@ function main()
                 if($datatypeValue == 'genericcloud'){
                     $dwi->ingestCloudDataGeneric();
                 }
+
+                if ($datatypeValue == 'storage') {
+                    $dwi->ingestStorageData();
+                }
             }
         } catch (Exception $e) {
             $logger->crit(array(
@@ -290,6 +294,10 @@ function main()
 
             if($realmToAggregate == 'cloud' || $realmToAggregate === false){
                 $dwi->aggregateCloudData();
+            }
+
+            if ($realmToAggregate == 'storage' || $realmToAggregate === false) {
+                $dwi->aggregateStorageData();
             }
         } catch (Exception $e) {
             $logger->crit(array(

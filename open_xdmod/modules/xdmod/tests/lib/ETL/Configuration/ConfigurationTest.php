@@ -9,12 +9,27 @@
 
 namespace UnitTesting\ETL\Configuration;
 
+use CCR\Log;
 use Configuration\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output";
+
+    protected static $logger = null;
+
+    public static function setupBeforeClass()
+    {
+      // Set up a logger so we can get warnings and error messages from the ETL infrastructure
+        $conf = array(
+            'file' => false,
+            'db' => false,
+            'mail' => false,
+            'consoleLogLevel' => Log::DEBUG
+        );
+        self::$logger = Log::factory('PHPUnit', $conf);
+    }
 
     /**
      * Test JSON parse errors
@@ -85,6 +100,18 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test inclusion of a reference with fully qualified path names.
+     *
+     * @expectedException Exception
+     */
+
+    public function testBadFragment()
+    {
+        $configObj = new Configuration(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_bad_fragment.json');
+        $configObj->initialize();
+    }
+
+    /**
      * Test variables in the configuration file.
      */
 
@@ -100,5 +127,40 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config.expected'));
         $this->assertEquals($generated, $expected);
+    }
+
+    /**
+     * Test inclusion of a the following with:
+     * - A JSON reference with variables in the referenced JSON
+     * - A JSON-encoded include file with variables in the include path. Note that a comment is
+     *   included in the reference object to ensure comments are removed before transformers are
+     *   processed.
+     * - A nested JSON reference
+     */
+
+    public function testJsonReferenceAndIncludeWithVariables()
+    {
+        @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json', '/tmp/sample_config_with_variables.json');
+        @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_reference.json', '/tmp/sample_config_with_reference.json');
+        $configObj = new Configuration(
+            self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_transformer_keys.json',
+            null,
+            self::$logger,
+            array(
+                'config_variables' => array(
+                    'TABLE_NAME' => 'resource_allocations',
+                    'WIDTH' => 40,
+                    'TMPDIR' => '/tmp',
+                    'SQLDIR'  => 'etl_sql.d',
+                    'SOURCE_SCHEMA' => 'modw'
+                )
+            )
+        );
+        $configObj->initialize();
+        $generated = json_decode($configObj->toJson());
+        $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config_with_transformer_keys.expected'));
+        @unlink('/tmp/sample_config_with_variables.json');
+        @unlink('/tmp/sample_config_with_reference.json');
+        $this->assertEquals($generated, $expected, "Test multiple transformer directives");
     }
 } // class ConfigurationTest
