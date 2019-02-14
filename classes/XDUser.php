@@ -1156,31 +1156,6 @@ SQL;
 
     }//getTokenExpiration
 
-    // ---------------------------
-
-    /*
-     *
-     * @function _getRoleID
-     *
-     * @param string $role_abbrev
-     *
-     * @return int
-     *
-     */
-
-    private function _getRoleID($role_abbrev)
-    {
-
-        $roleResults = $this->_pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
-            ':abbrev' => $role_abbrev,
-        ));
-
-        return count($roleResults) > 0 ? $roleResults[0]['role_id'] : null;
-
-    }//_getRoleID
-
-    // ---------------------------
-
     /*
      *
      * @function removeUser
@@ -1666,13 +1641,10 @@ SQL
             throw new Exception("This user must be saved prior to calling setOrganization()");
         }
 
-        $role_id = $this->_getRoleID($role);
-        if (null === $role_id) {
-            throw new Exception("Unable to retrieve id for role: $role");
-        }
         $acl = Acls::getAclByName($role);
-
-        // -------------------------------------------------------
+        if (null === $acl) {
+            throw new Exception("Unable to retrieve acl for: $role");
+        }
 
         $this->_pdo->execute(
             "DELETE FROM user_acl_group_by_parameters WHERE user_id = :user_id AND acl_id = :acl_id AND group_by_id IN (SELECT gb.group_by_id FROM group_bys gb WHERE gb.name = 'provider')",
@@ -1907,32 +1879,6 @@ SQL;
 
         return $allroles;
     }
-
-    /*
-     *
-     * @function _getRoleIDFromIdentifier
-     *
-     * @param string $identifier (see constants.php, ROLE_ID_... constants)
-     *
-     * @return int (the numerical id corresponding to the role identifier passed in)
-     *
-     */
-
-    private function _getRoleIDFromIdentifier($identifier)
-    {
-
-        $role_data = $this->_pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
-            ':abbrev' => $identifier,
-        ));
-
-        if (count($role_data) == 0) {
-            //throw new Exception('Invalid role identifier specified -- '.$identifier);
-            return -1;
-        }
-
-        return $role_data[0]['role_id'];
-
-    }//_getRoleIDFromIdentifier
 
     /*
      *
