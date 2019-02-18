@@ -38,6 +38,22 @@
         "acls/report_template_acls.json"
       ],
       "enabled": true
+    },
+    {
+      "name": "report-template-acls-staging",
+      "namespace": "ETL\\Ingestor",
+      "class": "StructuredFileIngestor",
+      "options_class": "IngestorOptions",
+      "description": "report-template-acls-staging + data",
+      "definition_file": "acls/report-template-acls-staging.json",
+      "endpoints": {
+        "source": {
+          "type": "jsonfile",
+          "name": "report-template-acls-staging",
+          "path": "acls/report-template-acls-staging.json"
+        }
+      },
+      "truncate_destination": true
     }
   ]
 }
