@@ -78,7 +78,7 @@ class XdmodConfiguration extends Configuration
      * @param stdClass $source
      * @throws Exception
      */
-    protected function handleExtendsFor($source)
+    protected function handleExtendsFor(stdClass $source)
     {
 
         $extends = $this->findExtends($source);
@@ -141,14 +141,22 @@ class XdmodConfiguration extends Configuration
      * array(
      *   'extender' => 'extendee'
      * )
+     * @throws Exception
      */
     protected function findExtends(\stdClass $config, $parentKey = null)
     {
         $extends = array();
         foreach ($config as $k => $v) {
-            if ($k === self::EXTENDS_KEYWORD && is_string($v)) {
+            if ($k === self::EXTENDS_KEYWORD && $parentKey === null) {
+                $this->logAndThrowException(
+                    sprintf(
+                        "Invalid configuration format in %s, `extends` is not supported at the root level of a configuration file.",
+                        $this->getFilename()
+                    )
+                );
+            } elseif($k === self::EXTENDS_KEYWORD && is_string($v)) {
                 $extends[$parentKey] = $v;
-            } elseif (is_object($v)) {
+            } elseif(is_object($v)) {
                 $extends = array_merge($extends, $this->findExtends($v, $k));
             }
         }
