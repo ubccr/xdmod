@@ -75,7 +75,7 @@ class XdmodConfiguration extends Configuration
      * result in merging properties from the `extends` target into the object that defined the
      * `extends` property. After the processing is done the `extends` property will be removed.
      *
-     * @param $source
+     * @param stdClass $source
      * @throws Exception
      */
     protected function handleExtendsFor($source)

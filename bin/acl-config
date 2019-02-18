@@ -139,6 +139,8 @@ function main()
     $moduleConfig->initialize();
 
     // Module Retrieval
+    // We're using json_[decode/encode] here to essentially make a copy of $moduleConfig->transformedConfig
+    // that will not keep a reference to the original object.
     $modules = json_decode(json_encode($moduleConfig->getTransformedConfig()), true);
 
     // Remove the warning to users that this files contents are automatically
@@ -220,7 +222,7 @@ function main()
         }
 
         // Process the realms provided by this module, if any.
-        if (count(get_object_vars($realms)) > 0 && property_exists($realms, 'realms')) {
+        if (property_exists($realms, 'realms')) {
             foreach ($realms->realms as $realm => $data) {
                 $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
                 $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
