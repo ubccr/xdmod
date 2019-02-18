@@ -128,7 +128,10 @@ class LockFile extends Loggable
      *
      * @param array $actionList A list of action names to be executed by this ETL process.
      *
-     * @return boolean TRUE if the lock was generated, FALSE otherwise.
+     * @return boolean TRUE if the lock was generated.
+     *
+     * @throws Exception If a process is already running with overlapping actions.
+     * @throws Exception If the lock could not be obtained.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -140,10 +143,9 @@ class LockFile extends Loggable
 
         if ( false === ($dh = opendir($this->lockDir)) ) {
             $error = error_get_last();
-            $this->logger->warning(
+            $this->logAndThrowException(
                 sprintf("Error opening lock directory '%s': %s", $this->lockDir, $error['message'])
             );
-            return false;
         }
 
         // Cleanup any lockfiles not associated with a running process
@@ -188,10 +190,9 @@ class LockFile extends Loggable
 
         if ( false === ($fp = @fopen($lockFile, 'w')) ) {
             $error = error_get_last();
-            $this->logger->warning(
+            $this->logAndThrowException(
                 sprintf("Error creating lock file '%s': %s", $lockFile, $error['message'])
             );
-            return false;
         }
 
         // Obtain an advisory lock. This advisory will be memoved if the process dies or

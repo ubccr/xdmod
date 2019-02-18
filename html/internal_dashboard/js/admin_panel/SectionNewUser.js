@@ -45,6 +45,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             emptyText: 'User not mapped',
             hiddenName: 'nm_new_user_mapping',
             width: 150,
+            allowBlank: false,
             cascadeOptions: {
                 component: cmbInstitution,
                 valueProperty: 'id',
@@ -549,9 +550,6 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             iconCls: 'admin_panel_btn_create_user',
 
             handler: function () {
-                var institution = (cmbInstitution.getValue().length > 0) ? cmbInstitution.getValue() : -1;
-                var mapped_user_id = (cmbUserMapping.getValue().length > 0) ? cmbUserMapping.getValue() : -1;
-
                 // Sanitization
 
                 cmbUserMapping.removeClass('admin_panel_invalid_text_entry');
@@ -603,6 +601,10 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     return;
                 }
 
+                var mappedUser = parseInt(cmbUserMapping.getValue(), 10);
+                var institution = parseInt(cmbInstitution.getValue(), 10);
+                var manualOverride = mappedUser === -1 && institution !== -1;
+
                 var populatedAcls = {};
                 // populate centers for any of the selected acls that have them
                 for (var i = 0; i < acls.length; i++) {
@@ -623,9 +625,10 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                     username: txtUsername.getValue(),
 
                     acls: Ext.util.JSON.encode(populatedAcls),
-                    assignment: mapped_user_id,
+                    assignment: mappedUser,
                     institution: institution,
-                    user_type: cmbUserType.getValue()
+                    user_type: cmbUserType.getValue(),
+                    sticky: manualOverride
                 };
 
                 Ext.Ajax.request({

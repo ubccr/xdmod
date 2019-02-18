@@ -20,11 +20,6 @@
                 "nullable": false
             },
             {
-                "name": "start_event_id",
-                "type": "int(11)",
-                "nullable": false
-            },
-            {
                 "name": "start_event_type_id",
                 "type": "int(11)",
                 "nullable": false

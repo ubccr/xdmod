@@ -54,7 +54,7 @@ class VariableStore extends Loggable
 
         if ( null === $store ) {
             return;
-        } elseif ( is_array($store) || $store instanceof VariableStore || $store instanceof \Traversable ) {
+        } elseif ( is_array($store) || $store instanceof \stdClass || $store instanceof VariableStore || $store instanceof \Traversable ) {
             foreach ( $store as $variable => $value ) {
                 $this->$variable = $value;
             }

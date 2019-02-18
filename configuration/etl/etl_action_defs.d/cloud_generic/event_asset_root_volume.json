@@ -13,34 +13,34 @@
 
     "source_query": {
         "records": {
-            "resource_id": "staging.resource_id",
-            "event_id": "staging.event_id",
+            "resource_id": "ev.resource_id",
+            "event_id": "ev.event_id",
             "asset_id": "a.asset_id"
         },
 
         "joins": [
             {
-                "name": "generic_cloud_staging_event",
+                "name": "event",
                 "schema": "${SOURCE_SCHEMA}",
-                "alias": "staging"
+                "alias": "ev"
             },
             {
                 "name": "instance",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "i",
-                "on": "i.instance_id = staging.instance_id AND i.resource_id = staging.resource_id"
+                "on": "i.instance_id = ev.instance_id AND i.resource_id = ev.resource_id"
             },
             {
                 "name": "asset",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "a",
-                "on": "a.resource_id = staging.resource_id AND a.provider_identifier = CONCAT('root-vol-', i.provider_identifier)"
+                "on": "a.resource_id = ev.resource_id AND a.provider_identifier = CONCAT('root-vol-', i.provider_identifier)"
             },
             {
                 "name": "event_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "etype",
-                "on": "etype.event_type_id = staging.event_type_id"
+                "on": "etype.event_type_id = ev.event_type_id"
             }
         ],
 
