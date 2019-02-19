@@ -98,15 +98,23 @@ class Trigger extends SchemaEntity implements iEntity
             return 1;
         }
 
-        // Schemas are optional for the trigger
+        if ( ($retval = parent::compare($cmp)) != 0 ) {
+            return $retval;
+        }
 
         // Triggers are considered equal if all non-null properties are the same.
 
-        if ( $this->name != $cmp->name
-             || $this->time != $cmp->time
-             || $this->event != $cmp->event
-             || $this->table != $cmp->table
-             || $this->body != $cmp->body ) {
+        if ( $this->time != $cmp->time ) {
+            $this->logCompareFailure('time', $this->time, $cmp->time, $this->name);
+            return -1;
+        } elseif ( $this->event != $cmp->event ) {
+            $this->logCompareFailure('event', $this->event, $cmp->event, $this->name);
+            return -1;
+        } elseif ( $this->table != $cmp->table ) {
+            $this->logCompareFailure('table', $this->table, $cmp->table, $this->name);
+            return -1;
+        } elseif ( $this->body != $cmp->body ) {
+            $this->logCompareFailure('body', $this->body, $cmp->body, $this->name);
             return -1;
         }
 
@@ -114,14 +122,8 @@ class Trigger extends SchemaEntity implements iEntity
         // a value will be provided when the database information schema is queried.
 
         if ( ( null !== $this->definer && null !== $cmp->definer ) && $this->definer != $cmp->definer ) {
-            return -2;
-        }
-
-        // The following properties do not have defaults set by the database and should be considered if
-        // one of them is set.
-
-        if ( ( null !== $this->schema || null !== $cmp->schema ) && $this->schema != $cmp->schema ) {
-            return -3;
+            $this->logCompareFailure('definer', $this->definer, $cmp->definer, $this->name);
+            return -1;
         }
 
     }  // compare()

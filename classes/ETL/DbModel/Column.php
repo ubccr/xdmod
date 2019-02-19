@@ -119,6 +119,10 @@ class Column extends NamedEntity implements iEntity
             return 1;
         }
 
+        if ( ($retval = parent::compare($cmp)) != 0 ) {
+            return $retval;
+        }
+
         // Columns are considered equal if all non-null properties in both Columns are the same. The
         // name and type are required but if other properties are set use those in the comparison as
         // well.
@@ -126,9 +130,8 @@ class Column extends NamedEntity implements iEntity
         // Note that the "enum" type will be handled in a special case below so only match types here
         // that are different and are not both enumerated.
 
-        if ( $this->name != $cmp->name
-             || ( $this->type != $cmp->type && ! (0 === strpos($this->type, 'enum') && 0 === strpos($cmp->type, 'enum')) )
-           ) {
+        if ( $this->type != $cmp->type && ! (0 === strpos($this->type, 'enum') && 0 === strpos($cmp->type, 'enum')) ) {
+            $this->logCompareFailure('type', $this->type, $cmp->type, $this->name);
             return -1;
         }
 
@@ -176,14 +179,18 @@ class Column extends NamedEntity implements iEntity
             // One TIMESTAMP column in a table can have the current timestamp as the default value
             // for initializing the column, as the auto-update value, or both. It is not possible to
             // have the current timestamp be the default value for one column and the auto-update
-            // value for another column.   to specify automatic initialization or updating for a
+            // value for another column.  To specify automatic initialization or updating for a
             // different TIMESTAMP column, you must suppress the automatic properties for the first
             // one.
 
-            if ( ( (null === $srcDefault && null === $srcExtra)
-                   || ('current_timestamp' === strtolower($srcDefault) && 'on update current_timestamp' === strtolower($srcExtra)) )
-                 && ('current_timestamp' != strtolower($destDefault) || null === $destExtra) )
-            {
+            if (
+                (
+                    (null === $srcDefault && null === $srcExtra)
+                    || ('current_timestamp' === strtolower($srcDefault) && 'on update current_timestamp' === strtolower($srcExtra))
+                )
+                && ('current_timestamp' != strtolower($destDefault) || null === $destExtra)
+            ) {
+                $this->logCompareFailure('timestamp', "$srcDefault $srcExtra", "$destDefault $destExtra", $this->name);
                 return -1;
             }
 
@@ -195,17 +202,20 @@ class Column extends NamedEntity implements iEntity
             if ( (null !== $srcDefault && null === $srcExtra) ) {
                 if ( null !== $destExtra ) {
                     // Extra has changed (destination has a value)
-                    return -2;
+                    $this->logCompareFailure('timestamp extra', $srcExtra, $destExtra, $this->name);
+                    return -1;
                 } elseif ( null === $destDefault ) {
                     // Default has changed from NULL to something
-                    return -3;
+                    $this->logCompareFailure('timestamp default', $srcDefault, $destDefault, $this->name);
+                    return -1;
                 } elseif ( strtolower($srcDefault) != strtolower($destDefault)
                             && ( ("0" == "$srcDefault" && '0000-00-00 00:00:00' != $destDefault)
                                  || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault) ) )
                 {
                     // Note the casting of 0 to "0" above is necessary because php considers 0 == "0000-01-01" to be true.
                     // Default has changed
-                    return -4;
+                    $this->logCompareFailure('timestamp default', $srcDefault, $destDefault, $this->name);
+                    return -1;
                 }
             }
 
@@ -215,13 +225,15 @@ class Column extends NamedEntity implements iEntity
 
             if ( null !== $srcDefault && null !== $srcExtra ) {
                 if ( strtolower($srcExtra) != strtolower($destExtra) ) {
-                    return -5;
+                    $this->logCompareFailure('timestamp extra', $srcExtra, $destExtra, $this->name);
+                    return -1;
                 } elseif ( strtolower($srcDefault) != strtolower($destDefault)
                             && ( ("0" == "$srcDefault" && '0000-00-00 00:00:00' != $destDefault)
                                  || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault)) )
                 {
                     // Note the casting of 0 to "0" above is necessary because php considers 0 == "0000-01-01" to be true.
-                    return -6;
+                    $this->logCompareFailure('timestamp default', $srcDefault, $destDefault, $this->name);
+                    return -1;
                 }
             }
 
@@ -234,7 +246,8 @@ class Column extends NamedEntity implements iEntity
                      || strtolower($srcExtra) != strtolower($destExtra)
                      || (null !== $destDefault && '0000-00-00 00:00:00' != $destDefault) )
                 {
-                    return -7;
+                    $this->logCompareFailure('timestamp', "$srcDefault $srcExtra", "$destDefault $destExtra", $this->name);
+                    return -1;
                 }
             }
 
@@ -242,11 +255,13 @@ class Column extends NamedEntity implements iEntity
             // The following properties do not have defaults set by the database and should be considered if
             // one of them is set.
             if ( ( null !== $this->default || null !== $cmp->default ) && $this->default != $cmp->default ) {
-                return -8;
+                $this->logCompareFailure('default', $this->default, $cmp->default, $this->name);
+                return -1;
             }
 
             if ( ( null !== $this->extra || null !== $cmp->extra ) && strtolower($this->extra) != strtolower($cmp->extra) ) {
-                return -9;
+                $this->logCompareFailure('extra', $this->extra, $cmp->extra, $this->name);
+                return -1;
             }
         } // else ( "timestamp" == $this->type )
 
@@ -261,7 +276,8 @@ class Column extends NamedEntity implements iEntity
             $cmpType = substr($cmp->type, 4);
             $cmpType = implode(',', preg_split('/\s*,\s*/', trim($cmpType, "() \t\n\r\0\x0B")));
             if ( $myType != $cmpType ) {
-                return -10;
+                $this->logCompareFailure('type enum', $myType, $cmpType, $this->name);
+                return -1;
             }
         }
 
@@ -269,25 +285,34 @@ class Column extends NamedEntity implements iEntity
         // a value will be provided when the database information schema is queried.
 
         if ( ( null !== $this->nullable && null !== $cmp->nullable ) && $this->nullable != $cmp->nullable ) {
-            return -11;
+            $this->logCompareFailure(
+                'nullable',
+                ($this->nullable ? 'true' : 'false'),
+                ($cmp->nullable ? 'true' : 'false'),
+                $this->name
+            );
+            return -1;
         }
 
         // The following properties do not have defaults set by the database and should be considered if
         // one of them is set.
 
         if ( ( null !== $this->comment || null !== $cmp->comment ) && $this->comment != $cmp->comment ) {
-            return -12;
+            $this->logCompareFailure('comment', $this->comment, $cmp->comment, $this->name);
+            return -1;
         }
 
         // Character set and collation have defaults that are set by the table, database or server.
         // See https://dev.mysql.com/doc/refman/5.5/en/charset-syntax.html
 
         if ( ( null !== $this->charset && null !== $cmp->charset ) && $this->charset != $cmp->charset ) {
-            return -13;
+            $this->logCompareFailure('charset', $this->charset, $cmp->charset, $this->name);
+            return -1;
         }
 
         if ( ( null !== $this->collation && null !== $cmp->collation ) && $this->collation != $cmp->collation ) {
-            return -14;
+            $this->logCompareFailure('collation', $this->collation, $cmp->collation, $this->name);
+            return -1;
         }
 
         return 0;

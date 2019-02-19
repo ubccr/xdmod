@@ -856,12 +856,8 @@ ORDER BY trigger_name ASC";
             $destColumn = $destination->getColumn($name);
             $compareCode = $destColumn->compare($this->getColumn($name));
 
-            if ( 0 == $compareCode  && ! in_array($name, $reorderedColNames) ) {
+            if ( 0 == $compareCode && ! in_array($name, $reorderedColNames) ) {
                 continue;
-            } elseif ( 0 != $compareCode ) {
-                $this->logger->debug(
-                    sprintf("Column comparison for '%s' returned %d", $name, $compareCode)
-                );
             }
 
             $position = "";
