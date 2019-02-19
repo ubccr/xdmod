@@ -1,0 +1,10 @@
+[
+  [
+    {
+      "base_file": "roles",
+      "local_dir": ["roles.d", "module_configuration"],
+      "expected": "module_config_roles",
+      "modules": ["xdmod", "new_module"]
+    }
+  ]
+]

@@ -2000,7 +2000,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
 
-        if (isset($searchparams['jobref']) && is_int($searchparams['jobref'])) {
+        if (isset($searchparams['jobref']) && is_numeric($searchparams['jobref'])) {
             $params = array(
                 'primary_key' => $searchparams['jobref']
             );
