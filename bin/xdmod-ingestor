@@ -333,7 +333,7 @@ Usage: xdmod-ingestor [-v]
     --debug
         Output debug level and above log messages.
 
-    --aggregate *realm*
+    --aggregate[=*realm*]
         If specified optional realm to aggregate (job, cloud, storage)
 
     --datatype [openstack, genericcloud, storage]
