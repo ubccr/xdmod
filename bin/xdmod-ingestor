@@ -334,10 +334,11 @@ Usage: xdmod-ingestor [-v]
         Output debug level and above log messages.
 
     --aggregate[=*realm*]
-        If specified optional realm to aggregate (job, cloud, storage)
+        If a *realm* (job, cloud, storage) is specified aggregate that realm
+        otherwise aggregate all realms.
 
-    --datatype [openstack, genericcloud, storage]
-        Ingest one specific datatype
+    --datatype *type*
+        Ingest one specific datatype (openstack, genericcloud, storage).
 
     -q, --quiet
         Output warning level and above log messages.
