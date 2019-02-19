@@ -333,6 +333,12 @@ Usage: xdmod-ingestor [-v]
     --debug
         Output debug level and above log messages.
 
+    --aggregate *realm*
+        If specified optional realm to aggregate (job, cloud, storage)
+
+    --datatype [openstack, genericcloud, storage]
+        Ingest one specific datatype
+
     -q, --quiet
         Output warning level and above log messages.
 
