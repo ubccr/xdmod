@@ -373,6 +373,8 @@ class Configuration extends Loggable implements \Iterator
         $parsed = $jsonFile->parse();
         if ($parsed === false) {
             $parsed = new stdClass();
+        } elseif(count($jsonFile) > 1) {
+            $parsed = $jsonFile->getRecordList();
         }
 
         $this->parsedConfig = $parsed;
@@ -413,7 +415,17 @@ class Configuration extends Loggable implements \Iterator
         // any properties that are references to other variables will remain references
 
         $tmp = unserialize(serialize($this->parsedConfig));
-        $this->transformedConfig = $this->processKeyTransformers($tmp);
+        if (is_array($tmp)) {
+            foreach($tmp as $key => $value) {
+                if (is_object($value)) {
+                    $tmp[$key] = $this->processKeyTransformers($value);
+                }
+            }
+            $this->transformedConfig = $tmp;
+        } else {
+            $this->transformedConfig = $this->processKeyTransformers($tmp);
+        }
+
 
         return $this;
 

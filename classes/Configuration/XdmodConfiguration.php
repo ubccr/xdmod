@@ -67,7 +67,17 @@ class XdmodConfiguration extends Configuration
      */
     protected function processExtends()
     {
-        $this->handleExtendsFor($this->transformedConfig);
+        if (is_array($this->transformedConfig)) {
+            foreach($this->transformedConfig as $key => &$value) {
+                if (is_object($value)) {
+                    $this->handleExtendsFor($value);
+                }
+            }
+
+        } elseif(is_object($this->transformedConfig)) {
+            $this->handleExtendsFor($this->transformedConfig);
+        }
+
     } // processExtends
 
     /**
