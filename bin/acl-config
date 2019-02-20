@@ -16,12 +16,8 @@ use CCR\DB\iDatabase;
 use CCR\Log;
 use CCR\Json;
 
-use ETL\Configuration\EtlConfiguration;
-use ETL\EtlOverseer;
-use ETL\EtlOverseerOptions;
 use ETL\Utilities;
 use User\Roles;
-use Xdmod\Config;
 
 const SCHEMA = 'moddb';
 
@@ -1997,7 +1993,7 @@ SQL;
  * Process each verification step to verify the Acl Setup. This includes:
  *     - Verifying that all of the relevant json files are valid syntactically.
  *     - Verifying that all of the relevant json files can be read and processed
- *       by the Xdmod\Config class.
+ *       by the Configuration\XdmodConfiguration class.
  *
  * @return int 0 if the verification was successful, 1 if it failed.
  **/
@@ -2100,9 +2096,10 @@ function verifyJsonSyntax()
 
 
 /**
- * Attempt to load an instance of Xdmod\Config and retrieve each section that
- * the Acl system depends on. If an exception occurs while attempting to
- * retrieve as section then we can assume there is a problem with that section.
+ * Attempt to load an instance of Configuration\XdmodConfiguration and retrieve
+ * each section that the Acl system depends on. If an exception occurs while
+ * attempting to retrieve as section then we can assume there is a problem with
+ * that section.
  *
  * @return boolean true if all configuration sections were loaded successfully else false.
  **/
@@ -2115,17 +2112,28 @@ function verifyConfigData()
     $invalid = array();
 
     $sections = array(
-        'modules',
-        'roles',
-        'datawarehouse'
+        'modules' => true,
+        'roles' => true,
+        'datawarehouse' => false
     );
 
-    $config = Config::factory();
-
-    foreach ($sections as $section) {
+    $baseDir = CONFIG_DIR;
+    foreach($sections as $section => $hasLocalConfig) {
+        $baseFile = implode(DIRECTORY_SEPARATOR, array($baseDir, "$section.json"));
+        $options = array();
+        if ($hasLocalConfig) {
+            $options['local_config_dir'] = implode(DIRECTORY_SEPARATOR, array($baseDir, "$section.d"));
+        }
 
         try {
-            $data = $config[$section];
+            $config = new \Configuration\XdmodConfiguration(
+                $baseFile,
+                $baseDir,
+                $log,
+                $options
+            );
+            $config->initialize();
+
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch (Exception $e) {
             $log->err("[FAIL] Unable to load section $section");

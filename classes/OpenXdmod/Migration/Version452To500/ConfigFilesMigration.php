@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Migration\Version452To500;
 
+use Configuration\XdmodConfiguration;
 use Exception;
 use Xdmod\Template;
 use xd_utilities;
@@ -27,9 +28,23 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
         $this->assertJsonConfigIsWritable('datawarehouse');
         $this->assertJsonConfigIsWritable('roles');
 
+        $configFile = new XdmodConfiguration(
+            'datawarehouse.json',
+            CONFIG_DIR,
+            $this->logger,
+            array(
+                'local_config_dir' => implode(
+                    DIRECTORY_SEPARATOR,
+                    array(
+                        CONFIG_DIR,
+                        'datawarehouse.d'
+                    )
+                )
+            )
+        );
+        $configFile->initialize();
 
-        // Update datawarehouse.json to the new format if necessary.
-        $datawarehouse = $this->config['datawarehouse'];
+        $datawarehouse = json_decode($configFile->toJson(), true);
 
         if (!isset($datawarehouse['realms'])) {
             $newDatawarehouse = array('realms' => array());
@@ -46,7 +61,21 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
         // Update roles.json to the new format as necessary.  The roles
         // may already have been updated by the RPM manager if it has
         // never been changed.
-        $roles = $this->config['roles'];
+        $roleConfigFile = new XdmodConfiguration(
+            'roles.json',
+            CONFIG_DIR,
+            $this->logger,
+            array(
+                'local_config_dir' => implode(
+                    DIRECTORY_SEPARATOR,
+                    array(
+                        CONFIG_DIR,
+                        'roles.d'
+                    )
+                )
+            )
+        );
+        $roles = json_decode($roleConfigFile->toJson(), true);
 
         // The first change replaces the top level array with an object
         // containing the key "roles" and an object containing all of

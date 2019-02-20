@@ -5,7 +5,7 @@
 
 namespace OpenXdmod\Setup;
 
-use Xdmod\Config;
+use Configuration\XdmodConfiguration;
 
 /**
  * Open XDMoD main setup menu.
@@ -18,8 +18,14 @@ class MainMenu extends Menu
      */
     public static function factory()
     {
-        $config  = Config::factory();
-        $itemConf = $config['setup']['menu'];
+        $configFile = new XdmodConfiguration(
+            'setup.json',
+            CONFIG_DIR
+        );
+        $configFile->initialize();
+        $config = json_decode($configFile->toJson(), true);
+
+        $itemConf = $config['menu'];
 
         // Sort menu items by relative position.
         usort(

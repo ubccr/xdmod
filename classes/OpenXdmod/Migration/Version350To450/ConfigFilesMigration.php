@@ -7,6 +7,7 @@
 
 namespace OpenXdmod\Migration\Version350To450;
 
+use Configuration\XdmodConfiguration;
 use Exception;
 use Xdmod\Template;
 use xd_utilities;
@@ -25,8 +26,12 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
 
         // The resource specs (nodes, processors and ppn) are now stored
         // in a separate file to allow changes over time.
-
-        $resources = $this->config['resources'];
+        $configFile = new XdmodConfiguration(
+            'resources.json',
+            CONFIG_DIR
+        );
+        $configFile->initialize();
+        $resources = json_decode($configFile->toJson(), true);
 
         $newResources     = array();
         $newResourceSpecs = array();
@@ -53,14 +58,25 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
         // Make sure both config files are writable before attempting
         // to overwrite the existing config.
 
-        $resourcesFile = $this->config->getFilePath('resources');
+        $resourcesFile = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->config->getBaseDir(),
+                'resources.json'
+            )
+        );
 
         if (!is_writable($resourcesFile)) {
             throw new Exception("Cannot write to file '$resourcesFile'");
         }
 
-        $resourceSpecsFile
-            = $this->config->getConfigDirPath() . '/' . 'resource_specs.json';
+        $resourceSpecsFile = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->config->getBaseDir(),
+                'resource_specs.json'
+            )
+        );
 
         // This file may not exist so create it.  Otherwise, the
         // writable check will always fail.

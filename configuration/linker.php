@@ -9,10 +9,18 @@ require_once($dir . '/constants.php');
 
 // If present, load linker configuration from linker.json and linker.d.
 require_once("$baseDir/classes/CCR/Json.php");
-require_once("$baseDir/classes/Xdmod/Config.php");
-$config = Xdmod\Config::factory();
+
 try {
-    $linkerConfig = $config['linker'];
+    $linkerConfigFilePath = implode(
+        DIRECTORY_SEPARATOR,
+        array(
+            CONFIG_DIR,
+            'linker.json'
+        )
+    );
+    $linkerConfig = CCR\Json::loadFile(
+        $linkerConfigFilePath
+    );
 } catch (Exception $e) {
     $configDir = $config->getConfigDirPath();
     echo "Could not find valid \"linker.json\" or \"linker.d\" files in \"$configDir\".\n";
@@ -213,12 +221,24 @@ function global_uncaught_exception_handler($exception)
 set_exception_handler('global_uncaught_exception_handler');
 
 // Configurable constants ---------------------------
+$organizationConfigFile = new \Configuration\XdmodConfiguration(
+    'organization.json',
+    CONFIG_DIR
+);
+$organizationConfigFile->initialize();
 
-$org = $config['organization'];
+
+$org = json_decode($organizationConfigFile->toJson(), true);
 define('ORGANIZATION_NAME', $org['name']);
 define('ORGANIZATION_NAME_ABBREV', $org['name']);
 
-$hierarchy = $config['hierarchy'];
+$hierarchyConfigFile = new \Configuration\XdmodConfiguration(
+    'hierarchy.json',
+    CONFIG_DIR
+);
+$hierarchyConfigFile->initialize();
+
+$hierarchy = json_decode($hierarchyConfigFile->toJson(), true);
 define('HIERARCHY_TOP_LEVEL_LABEL', $hierarchy['top_level_label']);
 define('HIERARCHY_TOP_LEVEL_INFO', $hierarchy['top_level_info']);
 define('HIERARCHY_MIDDLE_LEVEL_LABEL', $hierarchy['middle_level_label']);

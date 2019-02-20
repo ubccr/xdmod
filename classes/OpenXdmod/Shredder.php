@@ -7,11 +7,11 @@
 
 namespace OpenXdmod;
 
+use Configuration\XdmodConfiguration;
 use Exception;
 use PDOException;
 use CCR\DB\iDatabase;
 use PDODBMultiIngestor;
-use Xdmod\Config;
 
 class Shredder
 {
@@ -1016,8 +1016,13 @@ class Shredder
      */
     protected function getResourceConfig($name)
     {
-        $config = Config::factory();
-        $resources = $config['resources'];
+        $configFile = new XdmodConfiguration(
+            'resources.json',
+            CONFIG_DIR,
+            $this->logger
+        );
+        $configFile->initialize();
+        $resources = json_decode($configFile->toJson(), true);
 
         foreach ($resources as $resource) {
             if ($resource['resource'] === $name) {
@@ -1025,7 +1030,13 @@ class Shredder
             }
         }
 
-        $file = $config->getFilePath('resources');
+        $file = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+            $configFile->getBaseDir(),
+                'resources.json'
+            )
+        );
 
         throw new Exception("No config found for '$name' in '$file'");
     }

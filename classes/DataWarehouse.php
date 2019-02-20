@@ -15,7 +15,6 @@
  */
 
 use CCR\DB;
-use Xdmod\Config;
 
 /*
  *	@Class DataWarehouse
@@ -67,12 +66,18 @@ class DataWarehouse
      * Return the person_id of a user based on username and organization.
      *
      * @param string username
-     * @return person_id or -1 if the person_id could not be determined
+     * @return int person_id or -1 if the person_id could not be determined
+     * @throws Exception if there is a problem reading / processing `user_management.json`
      */
     public static function getPersonIdFromPII($username, $organization) {
 
-        $config = Config::factory();
-        $query = $config['user_management']['person_mapping'];
+        $configFile = new \Configuration\XdmodConfiguration(
+            'user_management.json',
+            CONFIG_DIR
+        );
+        $configFile->initialize();
+        $config = json_decode($configFile->toJson(), true);
+        $query = $config['person_mapping'];
 
         $dbh = self::connect();
         $stmt = $dbh->handle()->prepare($query);
@@ -358,11 +363,21 @@ class DataWarehouse
      *
      * @return array An associative array mapping categories to the realms
      *               they contain.
+     * @throws Exception if there is a problem reading / processing `datawarehouse.json`
      */
     public static function getCategories()
     {
-        $config = Config::factory();
-        $dwConfig = $config['datawarehouse'];
+        $configFile = new \Configuration\XdmodConfiguration(
+            'datawarehouse.json',
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'datawarehouse.d'))
+            )
+        );
+        $configFile->initialize();
+
+        $dwConfig = json_decode($configFile->toJson(), true);
 
         $categories = array();
         foreach ($dwConfig['realms'] as $realmName => $realm) {
@@ -388,8 +403,17 @@ class DataWarehouse
      */
     public static function getCategoryForRealm($realmName)
     {
-        $config = Config::factory();
-        $dwConfig = $config['datawarehouse'];
+        $configFile = new \Configuration\XdmodConfiguration(
+            'datawarehouse.json',
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'datawarehouse.d'))
+            )
+        );
+        $configFile->initialize();
+
+        $dwConfig = json_decode($configFile->toJson(), true);
 
         if (isset($dwConfig['realms'][$realmName]['category'])) {
             return $dwConfig['realms'][$realmName]['category'];

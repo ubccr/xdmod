@@ -30,7 +30,13 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
 
     public function modifyDatawarehouse()
     {
-        $datawarehouseFile = $this->config->getFilePath('datawarehouse');
+        $datawarehouseFile = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->config->getBaseDir(),
+                'datawarehouse.json'
+            )
+        );
         $datawarehouse = Json::loadFile($datawarehouseFile);
         $realms = isset($datawarehouse['realms']) ? $datawarehouse['realms'] : array();
         $jobs = isset($realms['Jobs']) ? $realms['Jobs'] : array();

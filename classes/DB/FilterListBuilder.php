@@ -6,7 +6,6 @@ use DB\Exceptions\TableNotFoundException;
 use DataWarehouse\Query\GroupBy;
 use DataWarehouse\Query\Query;
 use DataWarehouse\Query\TimeAggregationUnit;
-use Xdmod\Config;
 
 /**
  * Builds lists of filters for every realm's dimensions.
@@ -50,9 +49,21 @@ class FilterListBuilder extends Loggable
      */
     public function buildAllLists()
     {
+        $configFile = new \Configuration\XdmodConfiguration(
+            'datawarehouse.json',
+            CONFIG_DIR,
+            $this->_logger,
+            array(
+                'local_config_dir' => implode(
+                    DIRECTORY_SEPARATOR,
+                    array(CONFIG_DIR, 'datawarehouse.d')
+                )
+            )
+        );
+        $configFile->initialize();
+        $config = json_decode($configFile->toJson(), true);
         // Get the realms to be processed.
-        $config = Config::factory();
-        $realmNames = array_keys($config['datawarehouse']['realms']);
+        $realmNames = array_keys($config['realms']);
 
         // Generate lists for each realm's dimensions.
         foreach ($realmNames as $realmName) {
@@ -281,8 +292,23 @@ class FilterListBuilder extends Loggable
         if (!isset(self::$rolesDimensionNames)) {
             self::$rolesDimensionNames = array();
 
-            $config = Config::factory();
-            foreach ($config['roles']['roles'] as $roleData) {
+            $configFile = new \Configuration\XdmodConfiguration(
+                'roles.json',
+                CONFIG_DIR,
+                null,
+                array(
+                    'local_config_dir' => implode(
+                        DIRECTORY_SEPARATOR,
+                        array(CONFIG_DIR, 'roles.d')
+                    )
+                )
+            );
+            $configFile->initialize();
+
+            $config = json_decode($configFile->toJson(), true);
+            $roles = $config['roles'];
+
+            foreach ($roles as $roleData) {
                 $roleDimensionNames = \xd_utilities\array_get($roleData, 'dimensions', array());
                 foreach ($roleDimensionNames as $roleDimensionName) {
                     self::$rolesDimensionNames[$roleDimensionName] = true;

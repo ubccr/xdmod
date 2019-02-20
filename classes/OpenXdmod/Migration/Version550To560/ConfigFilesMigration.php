@@ -24,7 +24,13 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
         $this->assertJsonConfigIsWritable('roles');
 
         // Load the main roles config file.
-        $mainRolesConfigFile = $this->config->getFilePath('roles');
+        $mainRolesConfigFile = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->config->getBaseDir(),
+                'roles.json'
+            )
+        );
         $mainRolesConfig = Json::loadFile($mainRolesConfigFile);
 
         // Add dimension associations to each known role.
