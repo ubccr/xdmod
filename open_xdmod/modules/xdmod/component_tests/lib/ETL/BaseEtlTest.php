@@ -17,6 +17,8 @@ use ETL\aAction;
 
 abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
 {
+    protected static $logger = null;
+
     /**
      * Create a logger object for use when running ETL tests.
      *
@@ -72,7 +74,7 @@ abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
         EtlConfiguration $etlConfig,
         EtlOverseerOptions $overseerOptions
     ) {
-        $action = aAction::factory($etlConfig, $actionName);
+        $action = aAction::factory($etlConfig, $actionName, self::$logger);
         $action->execute($overseerOptions);
     }
 }
