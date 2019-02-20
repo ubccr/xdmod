@@ -49,7 +49,7 @@
         ],
         "triggers": [
             {
-                "name": "MYTRIGGER",
+                "name": "mytrigger",
                 "schema": "test",
                 "table": "normalize_table_test",
                 "time": "BEFORE",

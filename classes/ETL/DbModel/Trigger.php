@@ -68,10 +68,6 @@ class Trigger extends SchemaEntity implements iEntity
         }
 
         switch ( $property ) {
-            case 'name':
-                // Normalize property values to lowercase to match MySQL behavior
-                $value = strtolower($value);
-                break;
 
             case 'time':
             case 'event':
