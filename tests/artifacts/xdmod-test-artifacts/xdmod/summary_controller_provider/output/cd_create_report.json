@@ -1,0 +1,19 @@
+{
+    "success": 1,
+    "total": 1,
+    "data": {
+        "type": "Report",
+        "name": "TAS Report 1",
+        "chart_count": 2,
+        "charts_per_page": 1,
+        "creation_method": "Manual",
+        "report_delivery": "E-mail",
+        "report_format": "Pdf",
+        "report_id": "3-1551129597",
+        "report_name": "TAS Report 1",
+        "report_schedule": "Once",
+        "report_title": "",
+        "ts": 1551129597,
+        "config": 0
+    }
+}

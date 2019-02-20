@@ -74,6 +74,16 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       this.reportStore.on('load', function(s, r, o) {
 
+
+         // queueGrid.rowToSelect is set when a user clicks on a report from the charts
+         // and reports panel. It is used to go from the 'My Reports' grid to the report page
+         // itself 
+         if (queueGrid.rowToSelect !== undefined) {
+            var selModel = queueGrid.getSelectionModel();
+            selModel.selectRow(queueGrid.rowToSelect);
+            queueGrid.fireEvent('rowdblclick', queueGrid, queueGrid.rowToSelect);
+         } // 
+
          mnuNewBasedOn.toggleReportSelection(false);
 
          btnNewBasedOn.setDisabled(true);
@@ -233,7 +243,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          store: this.reportStore,
          //id: 'reportPool_queueGrid' + Ext.id(),
-
+         id: 'reportPool_queueGrid',
          viewConfig: {
             emptyText: reportsEmptyText,
             forceFit: true

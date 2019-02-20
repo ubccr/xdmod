@@ -6,7 +6,6 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use DataWarehouse\Query\Exceptions\BadRequestException;
-
 use Models\Services\Acls;
 use User\Roles;
 
@@ -21,6 +20,7 @@ class SummaryControllerProvider extends BaseControllerProvider
         $class = get_class($this);
 
         $controller->get("$root/portlets", "$class::getPortlets");
+        $controller->get("$root/chartsreports", "$class::getChartsReports");
 
         $controller->post("$root/layout", "$class::setLayout");
         $controller->delete("$root/layout", "$class::resetLayout");
@@ -48,8 +48,6 @@ class SummaryControllerProvider extends BaseControllerProvider
         return new \CCR\ColumnLayout($defaultColumnCount, $defaultLayout);
     }
 
-    /**
-     */
     public function getPortlets(Request $request, Application $app)
     {
         $user = $this->getUserFromRequest($request);
@@ -58,47 +56,43 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user);
 
-
         $layout = $this->getLayout($user);
 
         $presetPortlets = array();
         try {
             $presetPortlets = Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_portlets');
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
         }
 
         foreach ($presetPortlets as $portlet) {
-
             if (isset($portlet['region']) && $portlet['region'] === 'top') {
-                $chartLocation = 'FW' . $portlet['name'];
+                $chartLocation = 'FW'.$portlet['name'];
                 $column = -1;
             } else {
-                list($chartLocation, $column) = $layout->getLocation('PP' . $portlet['name']);
+                list($chartLocation, $column) = $layout->getLocation('PP'.$portlet['name']);
             }
 
             $summaryPortlets[$chartLocation] = array(
-                'name' => 'PP' . $portlet['name'],
+                'name' => 'PP'.$portlet['name'],
                 'type' => $portlet['type'],
                 'config' => $portlet['config'],
-                'column' => $column
+                'column' => $column,
             );
         }
 
         $presetCharts = Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_charts');
 
-        foreach ($presetCharts as $index => $presetChart)
-        {
-            list($chartLocation, $column) = $layout->getLocation('PC' . $index);
+        foreach ($presetCharts as $index => $presetChart) {
+            list($chartLocation, $column) = $layout->getLocation('PC'.$index);
             $summaryPortlets[$chartLocation] = array(
-                'name' => 'PC' . $index,
+                'name' => 'PC'.$index,
                 'type' => 'ChartPortlet',
                 'config' => $presetChart,
-                'column' => $column
+                'column' => $column,
             );
         }
 
-        if ($user->isPublicUser() === false)
-        {
+        if ($user->isPublicUser() === false) {
             $queryStore = new \UserStorage($user, 'queries_store');
             $queries = $queryStore->get();
 
@@ -114,11 +108,11 @@ class SummaryControllerProvider extends BaseControllerProvider
                         continue;
                     }
 
-                    $name = 'UC' . $query['name'];
+                    $name = 'UC'.$query['name'];
 
                     if (preg_match('/summary_(?P<index>\S+)/', $query['name'], $matches) > 0) {
-                        if ($layout->hasLayout('PC' . $matches['index'])) {
-                            $name = 'PC' . $matches['index'];
+                        if ($layout->hasLayout('PC'.$matches['index'])) {
+                            $name = 'PC'.$matches['index'];
                         }
                     }
 
@@ -128,7 +122,7 @@ class SummaryControllerProvider extends BaseControllerProvider
                         'name' => $name,
                         'type' => 'ChartPortlet',
                         'config' => $queryConfig,
-                        'column' => $column
+                        'column' => $column,
                     );
                 }
             }
@@ -140,13 +134,61 @@ class SummaryControllerProvider extends BaseControllerProvider
             'success' => true,
             'total' => count($summaryPortlets),
             'portalConfig' => array('columns' => $layout->getColumnCount()),
-            'data' => array_values($summaryPortlets)
+            'data' => array_values($summaryPortlets),
         ));
     }
 
     /**
-     * set the layout metadata
-     *
+     * Get charts and reports to display in the summary portlet.
+     **/
+    public function getChartsReports(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        if (isset($user)) {
+            // fetch charts
+            $queries = new \UserStorage($user, 'queries_store');
+            $data = $queries->get();
+            foreach ($data as &$query) {
+                $query['name'] = htmlspecialchars($query['name'], ENT_COMPAT, 'UTF-8', false);
+                $query['type'] = 'Chart';
+            }
+            // fetch reports
+            $rm = new \XDReportManager($user);
+
+            $reports = $rm->fetchReportTable();
+            $data2 = array();
+            $idx = 0;
+            foreach ($reports as &$report) {
+                $tmp = array();
+                $tmp['type'] = 'Report';
+                $tmp['name'] = $report['report_name'];
+                $tmp['chart_count'] = $report['chart_count'];
+                $tmp['charts_per_page'] = $report['charts_per_page'];
+                $tmp['creation_method'] = $report['creation_method'];
+                $tmp['report_delivery'] = $report['report_delivery'];
+                $tmp['report_format'] = $report['report_format'];
+                $tmp['report_id'] = $report['report_id'];
+                $tmp['report_name'] = $report['report_name'];
+                $tmp['report_schedule'] = $report['report_schedule'];
+                $tmp['report_title'] = $report['report_title'];
+                $tmp['ts'] = $report['last_modified'];
+                $tmp['config'] = $idx; // use config field to store index of reports
+                $data2[] = $tmp;
+                ++$idx;
+            }
+            $data = array_merge($data, $data2);
+            ksort($data);
+
+            return $app->json(array(
+                'success' => true,
+                'total' => count($data),
+                'data' => array_values($data),
+            ));
+        }
+    }
+
+    /**
+     * set the layout metadata.
      */
     public function setLayout(Request $request, Application $app)
     {
@@ -163,13 +205,12 @@ class SummaryControllerProvider extends BaseControllerProvider
         return $app->json(array(
             'success' => true,
             'total' => 1,
-            'data' => $storage->upsert(0, $content)
+            'data' => $storage->upsert(0, $content),
         ));
     }
 
     /**
-     * clear the layout metadata
-     *
+     * clear the layout metadata.
      */
     public function resetLayout(Request $request, Application $app)
     {
@@ -181,7 +222,7 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         return $app->json(array(
             'success' => true,
-            'total' => 1
+            'total' => 1,
         ));
     }
 }

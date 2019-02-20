@@ -1,9 +1,10 @@
 <?php
 
 namespace IntegrationTests\Controllers;
-
+use Traits\UtilityFunctions;
 class MetricExplorerTest extends \PHPUnit_Framework_TestCase
 {
+    use UtilityFunctions;
     protected function setUp()
     {
         $this->helper = new \TestHarness\XdmodTestHelper();
@@ -151,46 +152,4 @@ class MetricExplorerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($cleanup[0]['success']);
     }
 
-    public function chartDataProvider()
-    {
-        $emptyChart = <<< EOF
-{
-   "featured": false,
-   "trend_line": false,
-   "x_axis": {},
-   "y_axis": {},
-   "legend": {},
-   "defaultDatasetConfig": {
-      "display_type": "column"
-   },
-   "swap_xy": false,
-   "share_y_axis": false,
-   "hide_tooltip": true,
-   "show_remainder": false,
-   "timeseries": false,
-   "title": "Test",
-   "legend_type": "bottom_center",
-   "font_size": 3,
-   "show_filters": true,
-   "show_warnings": true,
-   "data_series": {
-      "data": [ ],
-      "total": 0
-   },
-   "aggregation_unit": "Auto",
-   "global_filters": {
-      "data": [ ],
-      "total": 0
-   },
-   "timeframe_label": "Previous month",
-   "start_date": "2017-08-01",
-   "end_date": "2017-08-31",
-   "start": 0,
-   "limit": 10
-}
-EOF;
-        return array(
-            array($emptyChart)
-        );
-    }
 }

@@ -79,13 +79,11 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     this.each(function (record) {
                         var config = record.get('config');
 
-                        if (config) {
-                            // make portal config variable in xdmod/configuration/roles.json optional
-                            config.start_date = durationSelector.getStartDate().format('Y-m-d');
-                            config.end_date = durationSelector.getEndDate().format('Y-m-d');
-                            config.aggregation_unit = durationSelector.getAggregationUnit();
-                            config.timeframe_label = durationSelector.getDurationLabel();
-                        }
+                    
+                        config.start_date = durationSelector.getStartDate().format('Y-m-d');
+                        config.end_date = durationSelector.getEndDate().format('Y-m-d');
+                        config.aggregation_unit = durationSelector.getAggregationUnit();
+                        config.timeframe_label = durationSelector.getDurationLabel();
 
                         try {
                             var portlet = Ext.ComponentMgr.create({
