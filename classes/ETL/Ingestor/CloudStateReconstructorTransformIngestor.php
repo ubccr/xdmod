@@ -101,10 +101,6 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
             }
         }
 
-        if (!in_array($srcRecord['event_type_id'], $this->_all_event_ids)) {
-            return array();
-        }
-
         if ($this->_instance_state === null) {
             if (in_array($srcRecord['event_type_id'], $this->_start_event_ids)) {
                 $this->initInstance($srcRecord);
