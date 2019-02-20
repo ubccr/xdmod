@@ -131,6 +131,10 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
                     );
                 }
+                // Normalize property values to lowercase to match MySQL behavior
+                if ( 'comment' != $property ) {
+                    $value = strtolower($value);
+                }
                 break;
 
             default:
@@ -959,8 +963,6 @@ ORDER BY trigger_name ASC";
 
         // The table schema may have been set after the table was initially created. If the trigger
         // doesn't explicitly define a schema, default to the table's schema.
-
-        // if ( null === $trigger->getSchema() ) $trigger->setSchema($this->getSchema());
 
         $currentTriggerNames = $this->getTriggerNames();
         $destTriggerNames = $destination->getTriggerNames();

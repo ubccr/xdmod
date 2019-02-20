@@ -71,6 +71,11 @@ class Column extends NamedEntity implements iEntity
 
         switch ( $property ) {
 
+            case 'name':
+                // Normalize property values to lowercase to match MySQL behavior
+                $value = strtolower($value);
+                break;
+
             case 'nullable':
                 $origValue = $value;
                 $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
@@ -88,6 +93,10 @@ class Column extends NamedEntity implements iEntity
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
                     );
                 }
+                // Normalize property values to lowercase to match MySQL behavior
+                if ( 'extra' == $property ) {
+                    $value = strtolower($value);
+                }
                 break;
 
             case 'type':
@@ -98,6 +107,8 @@ class Column extends NamedEntity implements iEntity
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
                     );
                 }
+                // Normalize property values to lowercase to match MySQL behavior
+                $value = strtolower($value);
                 break;
 
             default:
@@ -224,7 +235,7 @@ class Column extends NamedEntity implements iEntity
             // value.
 
             if ( null !== $srcDefault && null !== $srcExtra ) {
-                if ( strtolower($srcExtra) != strtolower($destExtra) ) {
+                if ( $srcExtra != $destExtra ) {
                     $this->logCompareFailure('timestamp extra', $srcExtra, $destExtra, $this->name);
                     return -1;
                 } elseif ( strtolower($srcDefault) != strtolower($destDefault)
@@ -243,7 +254,7 @@ class Column extends NamedEntity implements iEntity
 
             if ( null === $srcDefault && null !== $srcExtra ) {
                 if ( null === $destExtra
-                     || strtolower($srcExtra) != strtolower($destExtra)
+                     || $srcExtra != $destExtra
                      || (null !== $destDefault && '0000-00-00 00:00:00' != $destDefault) )
                 {
                     $this->logCompareFailure('timestamp', "$srcDefault $srcExtra", "$destDefault $destExtra", $this->name);
@@ -259,7 +270,7 @@ class Column extends NamedEntity implements iEntity
                 return -1;
             }
 
-            if ( ( null !== $this->extra || null !== $cmp->extra ) && strtolower($this->extra) != strtolower($cmp->extra) ) {
+            if ( ( null !== $this->extra || null !== $cmp->extra ) && $this->extra != $cmp->extra ) {
                 $this->logCompareFailure('extra', $this->extra, $cmp->extra, $this->name);
                 return -1;
             }

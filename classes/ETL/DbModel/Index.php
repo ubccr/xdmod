@@ -75,6 +75,15 @@ class Index extends NamedEntity implements iEntity
         }
 
         switch ( $property ) {
+            case 'name':
+                // Normalize property values to lowercase to match MySQL behavior. PRIMARY keys are
+                // represented in information schema as indexes named PRIMARY.
+                if ( 'PRIMARY' == strtoupper($value) ) {
+                    $value = 'PRIMARY';
+                } else {
+                    $value = strtolower($value);
+                }
+                break;
 
             case 'is_unique':
                 $origValue = $value;
@@ -96,6 +105,14 @@ class Index extends NamedEntity implements iEntity
                         sprintf("%s must be an non-empty array", $property)
                     );
                 }
+
+                // Normalize property values to lowercase to match MySQL behavior
+
+                $normalizedValues = array();
+                foreach ( $value as $column ) {
+                    $normalizedValues[] = strtolower($column);
+                }
+                $value = $normalizedValues;
                 break;
 
             case 'type':
@@ -104,6 +121,8 @@ class Index extends NamedEntity implements iEntity
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
                     );
                 }
+                // Normalize property values to lowercase to match MySQL behavior
+                $value = strtoupper($value);
                 break;
 
             default:

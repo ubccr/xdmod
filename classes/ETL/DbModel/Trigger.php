@@ -68,6 +68,11 @@ class Trigger extends SchemaEntity implements iEntity
         }
 
         switch ( $property ) {
+            case 'name':
+                // Normalize property values to lowercase to match MySQL behavior
+                $value = strtolower($value);
+                break;
+
             case 'time':
             case 'event':
             case 'table':
@@ -76,6 +81,13 @@ class Trigger extends SchemaEntity implements iEntity
                     $this->logAndThrowException(
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
                     );
+                }
+
+                // Normalize property values to lowercase to match MySQL behavior
+                if ( in_array($property, array('time', 'event')) ) {
+                    $value = strtoupper($value);
+                } elseif ( 'body' == $property && 0 !== stripos($value, "BEGIN") ) {
+                    $value = sprintf("BEGIN\n%s\nEND", $value);
                 }
                 break;
 
@@ -137,7 +149,7 @@ class Trigger extends SchemaEntity implements iEntity
     {
         // Triggers queried from MySQL contain the begin/end but the body in the JSON may or may not.
 
-        $addBeginEnd = ( 0 !== stripos($this->body, "BEGIN") );
+        // $addBeginEnd = ( 0 !== stripos($this->body, "BEGIN") );
         $name = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
         $tableName = ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
             $this->quote($this->table);
@@ -150,13 +162,7 @@ class Trigger extends SchemaEntity implements iEntity
         $parts[] = $this->time;
         $parts[] = $this->event;
         $parts[] = "ON $tableName FOR EACH ROW\n";
-        if ( $addBeginEnd ) {
-            $parts[] = "BEGIN\n";
-        }
         $parts[] = $this->body;
-        if ( $addBeginEnd ) {
-            $parts[] = "\nEND";
-        }
 
         return implode(" ", $parts);
 
