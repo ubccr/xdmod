@@ -1,0 +1,85 @@
+{
+  "comment": "",
+  "engine": "myisam",
+  "charset": "utf8",
+  "collation": "utf8_general_ci",
+  "columns": [
+    {
+      "type": "int(11) unsigned",
+      "charset": null,
+      "collation": null,
+      "nullable": false,
+      "default": null,
+      "extra": "auto_increment",
+      "comment": null,
+      "hints": null,
+      "name": "resource_id"
+    },
+    {
+      "type": "varchar(40)",
+      "charset": "utf8",
+      "collation": "utf8_general_ci",
+      "nullable": true,
+      "default": null,
+      "extra": null,
+      "comment": "This is a comment",
+      "hints": null,
+      "name": "resource"
+    },
+    {
+      "type": "varchar(16)",
+      "charset": "utf8",
+      "collation": "utf8_general_ci",
+      "nullable": false,
+      "default": "first name",
+      "extra": null,
+      "comment": null,
+      "hints": null,
+      "name": "random"
+    },
+    {
+      "type": "enum('Sample1','sample2')",
+      "charset": "utf8",
+      "collation": "utf8_general_ci",
+      "nullable": true,
+      "default": null,
+      "extra": null,
+      "comment": "Normalize only the 'enum' not the enum values!",
+      "hints": null,
+      "name": "myenum"
+    }
+  ],
+  "indexes": [
+    {
+      "columns": [
+        "resource",
+        "random"
+      ],
+      "type": "BTREE",
+      "is_unique": false,
+      "name": "index2"
+    },
+    {
+      "columns": [
+        "resource_id"
+      ],
+      "type": "BTREE",
+      "is_unique": true,
+      "name": "PRIMARY"
+    }
+  ],
+  "foreign_key_constraints": [],
+  "triggers": [
+    {
+      "time": "BEFORE",
+      "event": "INSERT",
+      "table": "normalize_table_test",
+      "body": "BEGIN\nSET @resource = CONCAT(@resource, 'X');\nEND",
+      "definer": "xdmod@localhost",
+      "schema": "test",
+      "name": "mytrigger"
+    }
+  ],
+  "schema": "test",
+  "name": "normalize_table_test"
+}

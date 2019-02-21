@@ -219,6 +219,7 @@ class VariableStore extends Loggable
      * identified using the ${} wrapper (e.g., ${VARIABLE}) and are case sensitive.
      *
      * NOTE: Map keys with a value of NULL are ignored.
+     * NOTE: Variables/macros are case INSENSITIVE.
      *
      * @param string $string Source string containing variables
      * @param string $exceptionPrefix An prefix for the exception message. Exceptions are only
@@ -259,7 +260,7 @@ class VariableStore extends Loggable
                 if ( null === $v ) {
                     continue;
                 }
-                $string = str_replace('${' . $k . '}', $v, $string);
+                $string = str_ireplace('${' . $k . '}', $v, $string);
             }
         } else {
 
@@ -276,10 +277,10 @@ class VariableStore extends Loggable
                         return;
                     }
                     $search = '${' . $k . '}';
-                    if ( false !== strpos($string, $search) ) {
+                    if ( false !== stripos($string, $search) ) {
                         $substitutionDetails['substituted'][] = $k;
                     }
-                    $string = str_replace($search, $v, $string);
+                    $string = str_ireplace($search, $v, $string);
                 },
                 $this->variables,
                 array_keys($this->variables)

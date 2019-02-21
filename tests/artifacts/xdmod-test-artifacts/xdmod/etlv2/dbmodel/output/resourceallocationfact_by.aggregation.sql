@@ -15,4 +15,4 @@ CREATE TABLE IF NOT EXISTS `resourceallocationfact_by_quarter` (
   INDEX `index_year` (`year`),
   INDEX `index_organization_id` (`organization_id`),
   INDEX `index_resource_id` (`resource_id`)
-) ENGINE = MyISAM COMMENT = 'Resource Allocation facts aggregated by quarter.';
+) ENGINE = myisam COMMENT = 'Resource Allocation facts aggregated by quarter.';

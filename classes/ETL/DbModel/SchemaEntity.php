@@ -97,4 +97,30 @@ class SchemaEntity extends NamedEntity
     {
         return ( $quote ? $this->quote($this->schema) : $this->schema );
     }  // getSchema()
+
+    /* ------------------------------------------------------------------------------------------
+     * @see iEntity::compare()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function compare(iEntity $cmp)
+    {
+
+        if ( ! $cmp instanceof SchemaEntity ) {
+            return 1;
+        }
+
+        if ( ($retval = parent::compare($cmp)) != 0 ) {
+            return $retval;
+        }
+
+        // One or the other value may be null so ensure inequality with things like empty strings
+
+        if ( $this->schema !== $cmp->schema ) {
+            $this->logCompareFailure('schema', $this->schema, $cmp->schema, $this->name);
+            return -1;
+        }
+
+        return 0;
+    }
 }  // class SchemaEntity

@@ -422,6 +422,31 @@ class Entity extends Loggable
     }  // resetPropertyValues()
 
     /* ------------------------------------------------------------------------------------------
+     * Log the reason that two entities failed comparison.
+     *
+     * @param string $property The property being compared.
+     * @param string $srcValue The value of the source property.
+     * @param string $compareValue The value being compared to the source value.
+     * @param string|null $name Optional name of the entity being compared.
+     * ------------------------------------------------------------------------------------------
+     */
+    protected function logCompareFailure($property, $srcValue, $compareValue, $name = null)
+    {
+        $classParts = explode('\\', get_class($this));
+        $this->logger->debug(
+            sprintf(
+                // '%s%s: comparison for "%s" failed ("%s" != "%s")',
+                '%s%s: values for "%s" differ ("%s" != "%s")',
+                array_pop($classParts),  // Strip the namespace from the class name
+                (null !== $name ? ' ' . $name : ''),
+                $property,
+                (null === $srcValue ? 'null' : $srcValue),
+                (null === $compareValue ? 'null' : $compareValue)
+            )
+        );
+    }
+
+    /* ------------------------------------------------------------------------------------------
      * Generic setter method for scalar properties. This method will set simple properties
      * and perform input verification on individual properties, which works well for
      * simple objects. If a more complex operation is required to initialize a composite,
