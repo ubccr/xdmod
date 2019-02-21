@@ -1,6 +1,6 @@
 {
-    "#": "Load raw event data from OpenStack log files. The resource id will be specified on",
-    "#": "the ETL command line at run time.",
+    "#": "Load raw event data from OpenStack log files. The resource id will be",
+    "#": "specified on the ETL command line at run time.",
 
     "table_definition": [
         {
@@ -18,7 +18,7 @@
             "event_type": "event_type",
             "record_type": "record_type",
             "event_time_utc": "generated",
-    	      "create_time_utc": "created_at",
+            "create_time_utc": "created_at",
             "provider_instance_identifier": "instance_id",
             "hostname": "host",
             "user_name": "user_name",
@@ -26,11 +26,11 @@
             "resource_id": "${RESOURCE_ID}",
             "instance_type": "instance_type",
             "provider_account": "user_name",
-    	      "project_name": "project_name",
-    	      "request_id": "request_id",
-    	      "project_id": "project_id",
-    	      "openstack_resource_id": "resource_id",
-    	      "disk_gb": "disk_gb",
+            "project_name": "project_name",
+            "request_id": "request_id",
+            "project_id": "project_id",
+            "openstack_resource_id": "resource_id",
+            "disk_gb": "disk_gb",
             "size": "size",
             "volume_id": "volume_id",
             "state": "state"
