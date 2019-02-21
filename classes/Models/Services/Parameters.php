@@ -38,7 +38,7 @@ class Parameters
 
         // We need to retrieve which dimensions this acl filters on. To do that we need to see how
         // it's configured
-        $roles = $configFile->toAssocArray();
+        $roles = $configFile->toAssocArray()['roles'];
 
         if (!isset($roles[$aclName])) {
             throw new \Exception("Unable to find configuration information for $aclName.");
