@@ -432,6 +432,106 @@ XDMoD.utils.syncWindowShadow = function (thisComponent) {
     });
 };
 
+XDMoD.utils.format = {
+
+    /**
+     * Return an at-a-glance time showing the top two units
+     * i.e. days and hours, hours and minutes, etc. If you the full breakdown
+     * of days,hours,minutes,seconds then it is difficult to comprehend.
+     *
+     * @param s
+     * @returns {*}
+     */
+    humanTime: function (seconds) {
+        var s = seconds;
+        var plural = function (val, unit, ignorezero) {
+            if (val > 1) {
+                return val + ' ' + unit + 's ';
+            } else if (val === 0) {
+                if (ignorezero) {
+                    return '';
+                }
+                return val + ' ' + unit + 's ';
+            }
+            return val + ' ' + unit + ' ';
+        };
+
+        var days = Math.floor(s / (24 * 3600));
+        if (days > 0) {
+            s %= (24 * 3600);
+            return plural(days, 'day', 0) + plural((s / 3600.0).toFixed(1), 'hour', 1);
+        }
+        var hours = Math.floor(s / 3600);
+        if (hours > 0) {
+            s %= 3600;
+            return plural(hours, 'hour', 0) + plural((s / 60.0).toFixed(1), 'minute', 1);
+        }
+        var minutes = Math.floor(s / 60);
+        if (minutes > 0) {
+            return plural(minutes, 'minute', 0) + plural(s % 60, 'second', 1);
+        }
+
+        return plural(s, 'second', 0);
+    },
+
+    /**
+     * Converts a number to a string with SI prefix notation
+     */
+    convertToSiPrefix: function (value, units, precision) {
+        if (isNaN(value)) {
+            return value;
+        }
+
+        var outval = null;
+
+        if (value > 1.0e12) {
+            outval = (value / 1.0e12).toPrecision(precision) + ' T' + units;
+        } else if (value > 1.0e9) {
+            outval = (value / 1.0e9).toPrecision(precision) + ' G' + units;
+        } else if (value > 1.0e6) {
+            outval = (value / 1.0e6).toPrecision(precision) + ' M' + units;
+        } else if (value > 1.0e3) {
+            outval = (value / 1.0e3).toPrecision(precision) + ' k' + units;
+        } else {
+            outval = Number(value).toPrecision(precision) + ' ' + units;
+        }
+
+        return outval;
+    },
+
+    /**
+     * A helper display function that applies the correct human readable byte
+     * measurement to the provided value (val), given in the correct precision
+     * and formatted with the provided units.
+     *
+     * @param {Number} val
+     * @param {String} units
+     * @param {Number} precision
+     * @returns {*}
+     */
+    convertToBinaryPrefix: function (val, units, precision) {
+        if (isNaN(val)) {
+            return val;
+        }
+
+        var outval = null;
+
+        if (val > 1099511627776.0) {
+            outval = (val / 1099511627776.0).toPrecision(precision) + ' Ti' + units;
+        } else if (val > 1073741824.0) {
+            outval = (val / 1073741824.0).toPrecision(precision) + ' Gi' + units;
+        } else if (val > 1048576.0) {
+            outval = (val / 1048576.0).toPrecision(precision) + ' Mi' + units;
+        } else if (val > 1024.0) {
+            outval = (val / 1024.0).toPrecision(precision) + ' Ki' + units;
+        } else {
+            outval = Number(val).toPrecision(precision) + ' ' + units;
+        }
+
+        return outval;
+    }
+};
+
 // =====================================================================
 
 Ext.Ajax.timeout = 86400000;
