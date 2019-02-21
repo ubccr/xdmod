@@ -184,7 +184,7 @@ abstract class TimeAggregationUnit
             
             return $class;
         } else {
-            throw new Exception("TimeAggregationUnit: Time period {$time_period} is invalid.");
+            throw new \Exception("TimeAggregationUnit: Time period {$time_period} is invalid.");
         }
     } //factory
 
