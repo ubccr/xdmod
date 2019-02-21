@@ -371,6 +371,16 @@ class Configuration extends Loggable implements \Iterator
         $jsonFile = DataEndpoint::factory($options, $this->logger);
 
         $parsed = $jsonFile->parse();
+
+        /* We currently support json files that have an object or an array as the root element.
+         * If the root element is an object then $parsed will contain the first element in the
+         * object ( missing both of these if cases ). If it's an array, then the `elseif` will hit
+         * and we use the `getRecordList` to retrieve all of the data parsed from the file as
+         * opposed to just the first record in the element.
+         *
+         * If there is a problem parsing the file then `false` will be returned. To allow for the
+         * the rest of this class to work we supply an empty object.
+         */
         if ($parsed === false) {
             $parsed = new stdClass();
         } elseif(count($jsonFile) > 1) {
@@ -415,6 +425,9 @@ class Configuration extends Loggable implements \Iterator
         // any properties that are references to other variables will remain references
 
         $tmp = unserialize(serialize($this->parsedConfig));
+
+        // We need to account for `parsedConfig` being an object or an array of objects. The
+        // following `if/else` statement handles either of these to scenarios.
         if (is_array($tmp)) {
             foreach($tmp as $key => $value) {
                 if (is_object($value)) {
