@@ -1104,6 +1104,16 @@ class Configuration extends Loggable implements \Iterator
         return json_encode($this->transformedConfig);
     }  // toJson()
 
+    /**
+     * Retrieve this `Configuration` objects data formatted as an associative array.
+     *
+     * @return array
+     */
+    public function toAssocArray()
+    {
+        return json_decode(json_encode($this->transformedConfig), true);
+    } // toAssocArray
+
     /** -----------------------------------------------------------------------------------------
      * Generate a string representation of this object. Typically the name, plus other pertinant
      * information as appropriate.

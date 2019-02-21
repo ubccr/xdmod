@@ -14,7 +14,7 @@ try {
         null
     );
     $configFile->initialize();
-    $config = json_decode($configFile->toJson(), true);
+    $config = $configFile->toAssocArray();
 
     $summaries = array();
 

@@ -95,7 +95,7 @@ class Assets
             );
             $config->initialize();
 
-            static::$assetsConfig = json_decode($config->toJson(), true);
+            static::$assetsConfig = $config->toAssocArray();
         }
 
         return static::$assetsConfig;

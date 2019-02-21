@@ -228,7 +228,7 @@ $organizationConfigFile = new \Configuration\XdmodConfiguration(
 $organizationConfigFile->initialize();
 
 
-$org = json_decode($organizationConfigFile->toJson(), true);
+$org = $organizationConfigFile->toAssocArray();
 define('ORGANIZATION_NAME', $org['name']);
 define('ORGANIZATION_NAME_ABBREV', $org['name']);
 
@@ -238,7 +238,7 @@ $hierarchyConfigFile = new \Configuration\XdmodConfiguration(
 );
 $hierarchyConfigFile->initialize();
 
-$hierarchy = json_decode($hierarchyConfigFile->toJson(), true);
+$hierarchy = $hierarchyConfigFile->toAssocArray();
 define('HIERARCHY_TOP_LEVEL_LABEL', $hierarchy['top_level_label']);
 define('HIERARCHY_TOP_LEVEL_INFO', $hierarchy['top_level_info']);
 define('HIERARCHY_MIDDLE_LEVEL_LABEL', $hierarchy['middle_level_label']);

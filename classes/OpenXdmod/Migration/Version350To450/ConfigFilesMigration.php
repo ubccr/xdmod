@@ -31,7 +31,7 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
             CONFIG_DIR
         );
         $configFile->initialize();
-        $resources = json_decode($configFile->toJson(), true);
+        $resources = $configFile->toAssocArray();
 
         $newResources     = array();
         $newResourceSpecs = array();

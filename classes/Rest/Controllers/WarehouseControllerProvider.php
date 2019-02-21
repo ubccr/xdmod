@@ -1411,7 +1411,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
         $configFile->initialize();
 
-        $rawstats = json_decode($configFile->toJson(), true);
+        $rawstats = $configFile->toAssocArray();
         if (!isset($rawstats['realms'][$realm])) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
@@ -1701,7 +1701,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
         $configFile->initialize();
 
-        $rawstats = json_decode($configFile->toJson(), true);
+        $rawstats = $configFile->toAssocArray();
 
         $results = array();
 
@@ -2020,7 +2020,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
         $configFile->initialize();
 
-        $rawstats = json_decode($configFile->toJson(), true);
+        $rawstats = $configFile->toAssocArray();
 
         if (!isset($rawstats['realms'][$realm])) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;

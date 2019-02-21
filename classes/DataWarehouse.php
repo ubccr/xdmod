@@ -76,7 +76,7 @@ class DataWarehouse
             CONFIG_DIR
         );
         $configFile->initialize();
-        $config = json_decode($configFile->toJson(), true);
+        $config = $configFile->toAssocArray();
         $query = $config['person_mapping'];
 
         $dbh = self::connect();
@@ -377,7 +377,7 @@ class DataWarehouse
         );
         $configFile->initialize();
 
-        $dwConfig = json_decode($configFile->toJson(), true);
+        $dwConfig = $configFile->toAssocArray();
 
         $categories = array();
         foreach ($dwConfig['realms'] as $realmName => $realm) {
@@ -413,7 +413,7 @@ class DataWarehouse
         );
         $configFile->initialize();
 
-        $dwConfig = json_decode($configFile->toJson(), true);
+        $dwConfig = $configFile->toAssocArray();
 
         if (isset($dwConfig['realms'][$realmName]['category'])) {
             return $dwConfig['realms'][$realmName]['category'];

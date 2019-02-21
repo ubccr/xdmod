@@ -50,7 +50,7 @@ function checkForNewerVersion()
         );
         $configFile->initialize();
 
-        $updateConfig = json_decode($configFile->toJson(), true);
+        $updateConfig = $configFile->toAssocArray();
 
         if (Version::isNewerVersionAvailable($updateConfig)) {
             $currVer   = Version::getCurrentVersionNumber();

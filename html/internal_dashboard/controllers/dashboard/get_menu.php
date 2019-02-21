@@ -12,7 +12,7 @@ try {
     );
     $configFile->initialize();
 
-    $config = json_decode($configFile->toJson(), true);
+    $config = $configFile->toAssocArray();
 
     $returnData = array(
         'success' => true,

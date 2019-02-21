@@ -98,7 +98,7 @@ class QueryBuilder
         );
         $configFile->initialize();
 
-        $config = json_decode($configFile->toJson(), true);
+        $config = $configFile->toAssocArray();
         $dwconfig = $config['realms'];
 
         foreach($dwconfig as $realmName => $data) {

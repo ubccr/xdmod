@@ -38,7 +38,7 @@ function main()
     );
     $configFile->initialize();
 
-    $updateConfig = json_decode($configFile->toJson(), true);
+    $updateConfig = $configFile->toAssocArray();
 
     if (!$updateConfig['enabled']) {
         exit;

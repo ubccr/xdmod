@@ -1022,7 +1022,7 @@ class Shredder
             $this->logger
         );
         $configFile->initialize();
-        $resources = json_decode($configFile->toJson(), true);
+        $resources = $configFile->toAssocArray();
 
         foreach ($resources as $resource) {
             if ($resource['resource'] === $name) {

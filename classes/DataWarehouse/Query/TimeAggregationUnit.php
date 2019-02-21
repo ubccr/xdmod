@@ -305,7 +305,7 @@ abstract class TimeAggregationUnit
             )
         );
         $configFile->initialize();
-        $config = json_decode($configFile->toJson(), true);
+        $config = $configFile->toAssocArray();
         $dw_config = $config['realms'];
 
         // Find the config for the given realm.

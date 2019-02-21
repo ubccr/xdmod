@@ -213,7 +213,7 @@ function listResources()
         $logger
     );
     $configFile->initialize();
-    $resourcesConfig = json_decode($configFile->toJson(), true);
+    $resourcesConfig = $configFile->toAssocArray();
 
     foreach ($resourcesConfig as $resourceData) {
         echo 'Resource: ', $resourceData['resource'], "\n";

@@ -95,7 +95,7 @@ class Roles
                 )
             );
             $configFile->initialize();
-            $data = json_decode($configFile->toJson(), true);
+            $data = $configFile->toAssocArray();
 
             self::$config = $data['roles'];
         }

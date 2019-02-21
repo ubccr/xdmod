@@ -1737,7 +1737,7 @@ class Query
                 )
             );
             $configFile->initialize();
-            self::$config = json_decode($configFile->toJson(), true);
+            self::$config = $configFile->toAssocArray();
         }
 
         return self::$config;

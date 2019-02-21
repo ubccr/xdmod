@@ -61,7 +61,7 @@ class FilterListBuilder extends Loggable
             )
         );
         $configFile->initialize();
-        $config = json_decode($configFile->toJson(), true);
+        $config = $configFile->toAssocArray();
         // Get the realms to be processed.
         $realmNames = array_keys($config['realms']);
 
@@ -305,7 +305,7 @@ class FilterListBuilder extends Loggable
             );
             $configFile->initialize();
 
-            $config = json_decode($configFile->toJson(), true);
+            $config = $configFile->toAssocArray();
             $roles = $config['roles'];
 
             foreach ($roles as $roleData) {

@@ -44,7 +44,7 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
         );
         $configFile->initialize();
 
-        $datawarehouse = json_decode($configFile->toJson(), true);
+        $datawarehouse = $configFile->toAssocArray();
 
         if (!isset($datawarehouse['realms'])) {
             $newDatawarehouse = array('realms' => array());
@@ -75,7 +75,7 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
                 )
             )
         );
-        $roles = json_decode($roleConfigFile->toJson(), true);
+        $roles = $roleConfigFile->toAssocArray();
 
         // The first change replaces the top level array with an object
         // containing the key "roles" and an object containing all of
