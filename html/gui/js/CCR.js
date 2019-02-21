@@ -476,27 +476,33 @@ XDMoD.utils.format = {
 
     /**
      * Converts a number to a string with SI prefix notation
+     *
+     * @param {Number} input     the number to format.
+     * @param {String} units     the unit name to append to the number.
+     * @param {Number} precision the number of significant figures to show.
+     * @returns {*}
      */
-    convertToSiPrefix: function (value, units, precision) {
-        if (isNaN(value)) {
-            return value;
+    convertToSiPrefix: function (input, units, precision) {
+        if (isNaN(input)) {
+            return input;
         }
 
-        var outval = null;
+        var value = Number(Number(input).toPrecision(precision));
+        var result;
 
-        if (value > 1.0e12) {
-            outval = (value / 1.0e12).toPrecision(precision) + ' T' + units;
-        } else if (value > 1.0e9) {
-            outval = (value / 1.0e9).toPrecision(precision) + ' G' + units;
-        } else if (value > 1.0e6) {
-            outval = (value / 1.0e6).toPrecision(precision) + ' M' + units;
-        } else if (value > 1.0e3) {
-            outval = (value / 1.0e3).toPrecision(precision) + ' k' + units;
+        if (value >= 1.0e12) {
+            result = (value / 1.0e12) + ' T' + units;
+        } else if (value >= 1.0e9) {
+            result = (value / 1.0e9) + ' G' + units;
+        } else if (value >= 1.0e6) {
+            result = (value / 1.0e6) + ' M' + units;
+        } else if (value >= 1.0e3) {
+            result = (value / 1.0e3) + ' k' + units;
         } else {
-            outval = Number(value).toPrecision(precision) + ' ' + units;
+            result = value + ' ' + units;
         }
 
-        return outval;
+        return result;
     },
 
     /**
