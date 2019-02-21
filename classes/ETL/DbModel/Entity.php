@@ -432,11 +432,12 @@ class Entity extends Loggable
      */
     protected function logCompareFailure($property, $srcValue, $compareValue, $name = null)
     {
+        $classParts = explode('\\', get_class($this));
         $this->logger->debug(
             sprintf(
                 // '%s%s: comparison for "%s" failed ("%s" != "%s")',
                 '%s%s: values for "%s" differ ("%s" != "%s")',
-                array_pop(explode('\\', get_class($this))),  // Strip the namespace from the class name
+                array_pop($classParts),  // Strip the namespace from the class name
                 (null !== $name ? ' ' . $name : ''),
                 $property,
                 (null === $srcValue ? 'null' : $srcValue),

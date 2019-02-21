@@ -174,7 +174,7 @@ abstract class aAction extends aEtlObject
                 );
                 $this->parsedDefinitionFile = new Configuration(
                     $this->definitionFile,
-                    ( isset($this->options->paths->base_dir) ? isset($this->options->paths->base_dir) : null ),
+                    ( isset($this->options->paths->base_dir) ? $this->options->paths->base_dir : null ),
                     $logger,
                     $options
                 );
