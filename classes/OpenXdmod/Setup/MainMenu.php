@@ -20,7 +20,11 @@ class MainMenu extends Menu
     {
         $configFile = new XdmodConfiguration(
             'setup.json',
-            CONFIG_DIR
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'setup.d'))
+            )
         );
         $configFile->initialize();
         $config = json_decode($configFile->toJson(), true);
