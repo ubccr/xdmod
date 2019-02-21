@@ -107,8 +107,13 @@ class Column extends NamedEntity implements iEntity
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
                     );
                 }
-                // Normalize property values to lowercase to match MySQL behavior
-                $value = strtolower($value);
+                // Normalize property values to lowercase to match MySQL behavior but handle enum
+                // properly by only lowercasing the "enum" itself and not the possible values.
+                if ( 0 === stripos($value, 'enum') ) {
+                    $value = strtolower(substr($value, 0, 4)) . substr($value, 4);
+                } else {
+                    $value = strtolower($value);
+                }
                 break;
 
             default:
@@ -276,7 +281,7 @@ class Column extends NamedEntity implements iEntity
             }
         } // else ( "timestamp" == $this->type )
 
-        // The enum type may be formatted by the database to add spaces between parameter
+        // The enum type may be formatted by the database to add/remove spaces between parameter
         // values. Normalize the values before comparing.
 
         if ( 0 === ($myStartPos = strpos($this->type, 'enum'))

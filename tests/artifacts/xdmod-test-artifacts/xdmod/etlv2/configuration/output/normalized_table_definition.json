@@ -36,6 +36,17 @@
       "comment": null,
       "hints": null,
       "name": "random"
+    },
+    {
+      "type": "enum('Sample1','sample2')",
+      "charset": "utf8",
+      "collation": "utf8_general_ci",
+      "nullable": true,
+      "default": null,
+      "extra": null,
+      "comment": "Normalize only the 'enum' not the enum values!",
+      "hints": null,
+      "name": "myenum"
     }
   ],
   "indexes": [
