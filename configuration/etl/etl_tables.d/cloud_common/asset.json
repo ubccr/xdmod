@@ -41,17 +41,17 @@
             },
             {
                 "name": "create_time_utc",
-                "type": "datetime",
+                "type": "decimal(16, 6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time that the asset was created in UTC."
+                "default": 0,
+                "comment": "The time that the asset was created as a unix timestamp to the microsecond."
             },
             {
                 "name": "destroy_time_utc",
-                "type": "datetime",
+                "type": "decimal(16, 6)",
                 "nullable": true,
                 "default": null,
-                "comment": "The time that the asset was destroyed in UTC."
+                "comment": "The time that the asset was destroyed as a unix timestamp to the microsecond."
             },
             {
                 "name": "size",

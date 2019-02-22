@@ -34,24 +34,24 @@
             },
             {
                 "name": "event_time_utc",
-                "type": "datetime",
+                "type": "decimal(16, 6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time of the event in UTC."
+                "default": 0,
+                "comment": "A unix timestamp to the microsecond."
             },
             {
                 "name": "attach_time_utc",
-                "type": "datetime",
+                "type": "decimal(16, 6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time that the volume was attached to an instance in UTC."
+                "default": 0,
+                "comment": "The time that the volume was attached to an instance as a unix timestamp to the microsecond."
             },
             {
                 "name": "create_time_utc",
-                "type": "datetime",
+                "type": "decimal(16, 6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time that the volume was created in UTC."
+                "default": 0,
+                "comment": "The time that the volume was created as a unix timestamp to the microsecond."
             },
             {
                 "name": "provider_volume_identifier",
