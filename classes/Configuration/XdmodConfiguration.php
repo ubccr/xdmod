@@ -67,7 +67,19 @@ class XdmodConfiguration extends Configuration
      */
     protected function processExtends()
     {
-        $this->handleExtendsFor($this->transformedConfig);
+        // This objects `transformedConfig` may be an object or an array of objects, this is handled
+        // by the following `if/elseif` statement.
+        if (is_array($this->transformedConfig)) {
+            foreach($this->transformedConfig as $key => &$value) {
+                if (is_object($value)) {
+                    $this->handleExtendsFor($value);
+                }
+            }
+
+        } elseif(is_object($this->transformedConfig)) {
+            $this->handleExtendsFor($this->transformedConfig);
+        }
+
     } // processExtends
 
     /**

@@ -87,6 +87,25 @@ class NamedEntity extends Entity
     }  // getName()
 
     /* ------------------------------------------------------------------------------------------
+     * @see iEntity::compare()
+     * ------------------------------------------------------------------------------------------
+     */
+
+    public function compare(iEntity $cmp)
+    {
+        if ( ! $cmp instanceof NamedEntity ) {
+            return 1;
+        }
+
+        if ( $this->name != $cmp->name ) {
+            $this->logCompareFailure('name', $this->name, $cmp->name);
+            return -1;
+        }
+
+        return 0;
+    }
+
+    /* ------------------------------------------------------------------------------------------
      * @see iEntity::__toString()
      * ------------------------------------------------------------------------------------------
      */

@@ -565,6 +565,16 @@ abstract class aStructuredFile extends File
         return count($this->recordList);
     }  // count()
 
+    /**
+     * A simple getter for the `recordList` property.
+     *
+     * @return array
+     */
+    public function getRecordList()
+    {
+        return $this->recordList;
+    }
+
     /** -----------------------------------------------------------------------------------------
      * Decodes a data string into a PHP object and add it to the record list.
      *

@@ -2,6 +2,7 @@
 
 namespace Rest\Controllers;
 
+use Configuration\XdmodConfiguration;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\BadRequestException;
@@ -1400,9 +1401,17 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobDataSet(XDUser $user, $realm, $jobId, $action)
     {
-        $config = \Xdmod\Config::factory();
+        $configFile = new XdmodConfiguration(
+            'rawstatistics.json',
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'rawstatistics.d'))
+            )
+        );
+        $configFile->initialize();
 
-        $rawstats = $config['rawstatistics'];
+        $rawstats = $configFile->toAssocArray();
         if (!isset($rawstats['realms'][$realm])) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
@@ -1682,9 +1691,17 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function processHistoryDefaultRealmRequest(Application $app, $action)
     {
-        $config = \Xdmod\Config::factory();
+        $configFile = new XdmodConfiguration(
+            'rawstatistics.json',
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'rawstatistics.d'))
+            )
+        );
+        $configFile->initialize();
 
-        $rawstats = $config['rawstatistics'];
+        $rawstats = $configFile->toAssocArray();
 
         $results = array();
 
@@ -1993,9 +2010,18 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobByPrimaryKey(Application $app, \XDUser $user, $realm, $searchparams)
     {
-        $config = \Xdmod\Config::factory();
+        $configFile = new XdmodConfiguration(
+            'rawstatistics.json',
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'rawstatistics.d'))
+            )
+        );
+        $configFile->initialize();
 
-        $rawstats = $config['rawstatistics'];
+        $rawstats = $configFile->toAssocArray();
+
         if (!isset($rawstats['realms'][$realm])) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }

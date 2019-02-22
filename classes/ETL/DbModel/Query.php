@@ -127,6 +127,16 @@ class Query extends Entity implements iEntity
                         sprintf("%s name must be an array, '%s' given", $property, gettype($value))
                     );
                 }
+
+                // Column names are not case sensitive in MySQL so we will convert group by and
+                // order by clauses to lowercase. However, if a case-sensitive entity such as a
+                // table is referenced in these clauses that will present an issue.  In
+                // PdoIngestor::initialize() these values are compared to destination table column
+                // names and source query records.
+
+                if ( in_array($property, array('groupby', 'orderby')) ) {
+                    $value = array_map('strtolower', $value);
+                }
                 break;
 
             case 'query_hint':
@@ -212,7 +222,8 @@ class Query extends Entity implements iEntity
             $this->logAndThrowException(sprintf("Empty formula for column '%s'", $columnName));
         }
 
-        $this->properties['records'][$columnName] = $formula;
+        // Column names are case-insentitive in MySQL
+        $this->properties['records'][strtolower($columnName)] = $formula;
 
         return $this;
 
