@@ -12,7 +12,6 @@ require_once __DIR__ . '/../configuration/linker.php';
 
 use CCR\Log;
 use CCR\Json;
-use Xdmod\Config;
 
 // Catch any unexpected exceptions.
 try {
@@ -158,9 +157,13 @@ function main()
         exit(1);
     }
 
-    $config = Config::factory();
-
-    $resourceSpecsFile = $config->getFilePath('resource-specs');
+    $resourceSpecsFile = implode(
+        DIRECTORY_SEPARATOR,
+        array(
+            CONFIG_DIR,
+            'resource-specs.json'
+        )
+    );
 
     $resourceSpecsData = Json::loadFile($resourceSpecsFile);
 

@@ -2,6 +2,7 @@
 
 namespace DataWarehouse;
 
+use Configuration\XdmodConfiguration;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use XDUser;
@@ -87,8 +88,18 @@ class QueryBuilder
             return;
         }
 
-        $config = \Xdmod\Config::factory();
-        $dwconfig = $config['datawarehouse']['realms'];
+        $configFile = new XdmodConfiguration(
+            'datawarehouse.json',
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir'=> implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'datawarehouse.d'))
+            )
+        );
+        $configFile->initialize();
+
+        $config = $configFile->toAssocArray();
+        $dwconfig = $config['realms'];
 
         foreach($dwconfig as $realmName => $data) {
             self::$_realms[$realmName] = array(

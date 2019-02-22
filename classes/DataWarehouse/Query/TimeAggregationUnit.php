@@ -1,6 +1,8 @@
 <?php
 namespace DataWarehouse\Query;
 
+use Configuration\XdmodConfiguration;
+
 /**
  * @author Amin Ghadersohi
  * @date 2011-Jan-07
@@ -294,8 +296,17 @@ abstract class TimeAggregationUnit
     public static function getMinUnitForRealm($realm)
     {
         // Open the datawarehouse config.
-        $config = \Xdmod\Config::factory();
-        $dw_config = $config['datawarehouse']['realms'];
+        $configFile = new XdmodConfiguration(
+            'datawarehouse.json',
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'datawarehouse.d'))
+            )
+        );
+        $configFile->initialize();
+        $config = $configFile->toAssocArray();
+        $dw_config = $config['realms'];
 
         // Find the config for the given realm.
         $this_realm_config = null;
