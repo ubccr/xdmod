@@ -12,5 +12,5 @@ ADD CONSTRAINT `con_col1` FOREIGN KEY (`col1`) REFERENCES `db_test_model2` (`col
 ALTER TABLE `test_db_model`
 CHANGE COLUMN `col1` `col1` varchar(32) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'mydefault' ,
 CHANGE COLUMN `instance_id` `instance_id` int(11) NULL DEFAULT -1 ;
-CREATE TRIGGER `before_ins` before insert ON `jobfact` FOR EACH ROW
+CREATE TRIGGER `before_ins` BEFORE INSERT ON `jobfact` FOR EACH ROW
  BEGIN DELETE FROM jobfactstatus WHERE job_id = NEW.job_id; END
