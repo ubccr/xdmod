@@ -27,6 +27,14 @@ from resource managers in high-performance computing environments.
 XDMoD presents resource utilization over set time periods and provides
 detailed interactive charts, graphs, and tables.
 
+%package devel
+Summary: Files used for XDMoD software development
+Group: Applications/Internet
+
+%description devel
+Development files for XDMoD software development. This includes API
+documentation for the pacakged libraries.
+
 %prep
 %setup -q -n %{name}-%{version}__PRERELEASE__
 
@@ -86,6 +94,37 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
+
+%exclude %{_datadir}/%{name}/html/gui/lib/extjs/docs
+%exclude %{_datadir}/%{name}/html/gui/lib/extjs/adapter
+%exclude %{_datadir}/%{name}/html/gui/lib/extjs/build
+%exclude %{_datadir}/%{name}/html/gui/lib/extjs/pkgs
+%exclude %{_datadir}/%{name}/html/gui/lib/extjs/src
+%exclude %{_datadir}/%{name}/html/gui/lib/extjs/test
+%exclude %{_datadir}/%{name}/html/gui/lib/extjs/welcome
+%exclude %{_datadir}/%{name}/html/gui/lib/extjs/examples/[A-t,v-z]*
+%exclude %{_datadir}/%{name}/html/gui/lib/highcharts/api
+%exclude %{_datadir}/%{name}/html/gui/lib/highcharts/examples
+%exclude %{_datadir}/%{name}/html/gui/lib/highcharts/gfx
+%exclude %{_datadir}/%{name}/html/gui/lib/highcharts/graphics
+%exclude %{_datadir}/%{name}/html/gui/lib/highcharts/index.htm
+%exclude %{_datadir}/%{name}/html/unit_tests
+
+%files devel
+%{_datadir}/%{name}/html/gui/lib/extjs/docs
+%{_datadir}/%{name}/html/gui/lib/extjs/adapter
+%{_datadir}/%{name}/html/gui/lib/extjs/build
+%{_datadir}/%{name}/html/gui/lib/extjs/pkgs
+%{_datadir}/%{name}/html/gui/lib/extjs/src
+%{_datadir}/%{name}/html/gui/lib/extjs/test
+%{_datadir}/%{name}/html/gui/lib/extjs/welcome
+%{_datadir}/%{name}/html/gui/lib/extjs/examples/[A-t,v-z]*
+%{_datadir}/%{name}/html/gui/lib/highcharts/api
+%{_datadir}/%{name}/html/gui/lib/highcharts/examples
+%{_datadir}/%{name}/html/gui/lib/highcharts/gfx
+%{_datadir}/%{name}/html/gui/lib/highcharts/graphics
+%{_datadir}/%{name}/html/gui/lib/highcharts/index.htm
+%{_datadir}/%{name}/html/unit_tests
 
 %changelog
 * Tue Oct 30 2018 Steven M. Gallo <smgallo@buffalo.edu> 8.0.0-1.0

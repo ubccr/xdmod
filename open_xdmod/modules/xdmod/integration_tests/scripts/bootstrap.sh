@@ -18,7 +18,7 @@ then
     rpm -qa | grep ^xdmod | xargs yum -y remove
     rm -rf /etc/xdmod
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
-    yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    find ~/rpmbuild/RPMS/  -type f \( -name \*.rpm ! -name xdmod-devel\*.rpm \) -print0 | xargs -0 yum -y install
     ~/bin/services start
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
