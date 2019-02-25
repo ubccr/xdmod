@@ -23,14 +23,12 @@
         "jobs-cloud-ingest-generic": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
-            "truncate_destination": false,
-            "enabled": true
+            "truncate_destination": false
         },
         "jobs-cloud-extract-generic": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
-            "truncate_destination": false,
-            "enabled": true
+            "truncate_destination": false
         },
         "jobs-cloud-import-users-generic": {
             "namespace": "ETL\\Ingestor",
