@@ -18,7 +18,7 @@ use ETL\aAction;
 use ETL\DataEndpoint\iRdbmsEndpoint;
 use ETL\DbModel\Query;
 use PDOException;
-use ETL\Utilities;
+use ETL\VariableStore;
 use Log;
 
 use PHPSQLParser\PHPSQLParser;
@@ -263,7 +263,8 @@ class VerifyDatabase extends aAction implements iAction
                 $this->logger->info(count($result) . " matches found");
                 if ( 0 != count($result) ) {
                     foreach ( $result as $row ) {
-                        $line = Utilities::substituteVariables($lineTemplate, $row);
+                        $vs = new VariableStore($row, $this->logger);
+                        $line = $vs->substitute($lineTemplate);
                         $this->logger->warning($line);
                         $lines[] = $line;
                     }
