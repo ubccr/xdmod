@@ -1019,7 +1019,10 @@ class Shredder
         $configFile = new XdmodConfiguration(
             'resources.json',
             CONFIG_DIR,
-            $this->logger
+            $this->logger,
+            array(
+                'force_return_array' => true
+            )
         );
         $configFile->initialize();
         $resources = $configFile->toAssocArray();
