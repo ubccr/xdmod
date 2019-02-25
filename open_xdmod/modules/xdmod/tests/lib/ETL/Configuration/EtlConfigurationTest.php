@@ -307,7 +307,7 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
 
         $expectedFile = $this->testFiles->getFile('configuration', $options['expected']);
         if (!is_file($expectedFile)) {
-            @file_put_contents($expectedFile, json_encode($actual));
+            @file_put_contents($expectedFile, sprintf("%s\n", json_encode($actual, JSON_PRETTY_PRINT)));
             echo "\nGenerated output for $expectedFile\n";
         } else {
             $expected = Json::loadFile($expectedFile);
