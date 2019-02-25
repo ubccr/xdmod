@@ -1021,7 +1021,7 @@ class Shredder
             CONFIG_DIR,
             $this->logger,
             array(
-                'force_return_array' => true
+                'force_array_return' => true
             )
         );
         $configFile->initialize();
