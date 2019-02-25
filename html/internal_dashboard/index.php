@@ -43,8 +43,6 @@ if (isset($_POST['direct_to'])) {
 
   <link rel="stylesheet" type="text/css" href="../gui/css/viewer.css">
 
-  <script type="text/javascript" src="../gui/lib/debug.js"></script>
-
   <!-- Non-GUI JS Class Definitions -->
 
   <script type="text/javascript" src="../js_classes/DateUtilities.js"></script>
