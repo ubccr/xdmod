@@ -35,8 +35,7 @@
         "jobs-cloud-import-users-generic": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
-            "truncate_destination": false,
-            "enabled": true
+            "truncate_destination": false
         }
     },
 
@@ -141,8 +140,7 @@
                   "type" : "mysql",
                   "name" : "Cloud DB",
                   "config" : "datawarehouse",
-                  "schema": "mod_shredder",
-                  "create_schema_if_not_exists": "true"
+                  "schema": "mod_shredder"
               }
           }
       },
@@ -156,8 +154,7 @@
                   "type" : "mysql",
                   "name" : "Cloud DB",
                   "config" : "datawarehouse",
-                  "schema": "mod_shredder",
-                  "create_schema_if_not_exists": "true"
+                  "schema": "mod_shredder"
               }
           }
       },
@@ -171,15 +168,13 @@
                   "type" : "mysql",
                   "name" : "Cloud DB",
                   "config" : "datawarehouse",
-                  "schema": "mod_shredder",
-                  "create_schema_if_not_exists": "true"
+                  "schema": "mod_shredder"
               },
               "destination": {
                   "type" : "mysql",
                   "name" : "Cloud DB",
                   "config" : "datawarehouse",
-                  "schema": "mod_hpcdb",
-                  "create_schema_if_not_exists": "true"
+                  "schema": "mod_hpcdb"
               }
           }
       },
@@ -193,15 +188,13 @@
                 "type" : "mysql",
                 "name" : "Cloud DB",
                 "config" : "datawarehouse",
-                "schema": "mod_shredder",
-                "create_schema_if_not_exists": "true"
+                "schema": "mod_shredder"
             },
               "destination": {
                   "type" : "mysql",
                   "name" : "Cloud DB",
                   "config" : "datawarehouse",
-                  "schema": "mod_hpcdb",
-                  "create_schema_if_not_exists": "true"
+                  "schema": "mod_hpcdb"
               }
           }
       },
@@ -215,15 +208,13 @@
                 "type" : "mysql",
                 "name" : "Cloud DB",
                 "config" : "datawarehouse",
-                "schema": "mod_hpcdb",
-                "create_schema_if_not_exists": "true"
+                "schema": "mod_hpcdb"
             },
               "destination": {
                   "type" : "mysql",
                   "name" : "Cloud DB",
                   "config" : "datawarehouse",
-                  "schema": "modw",
-                  "create_schema_if_not_exists": "true"
+                  "schema": "modw"
               }
           }
       },
@@ -237,15 +228,13 @@
                     "type" : "mysql",
                     "name" : "Cloud DB",
                     "config" : "datawarehouse",
-                    "schema": "mod_hpcdb",
-                    "create_schema_if_not_exists": "true"
+                    "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type" : "mysql",
                     "name" : "Cloud DB",
                     "config" : "datawarehouse",
-                    "schema": "modw",
-                    "create_schema_if_not_exists": "true"
+                    "schema": "modw"
                 }
             },
             "#": "disable to allow order_id to be set",

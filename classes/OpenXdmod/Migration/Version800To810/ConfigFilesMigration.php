@@ -14,59 +14,48 @@ use Exception;
  */
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
-
-    /**
-     * Data from cloud.json file in CONFIG_DIR/roles.d folder
-     */
-    private $cloudRolesFile;
-
     /**
      * Execute the migration.
      */
     public function execute()
     {
-        $this->setCloudRolesFile();
-        $this->addCloudRolesGroupBy('person', '+pub');
-        $this->addCloudRolesGroupBy('username', '+pub');
-        $this->addCloudRolesGroupBy('person', '+default');
-        $this->addCloudRolesGroupBy('username', '+default');
-        $this->writeJsonPartialConfigFile('roles', 'cloud', $this->cloudRolesFile);
+        if (file_exists(CONFIG_DIR."/roles.d/cloud.json")) {
+            $this->addCloudRolesGroupBy();
+        }
     }
 
     /**
-     * Find cloud.json file in config directory and assign it to $this->clouRolesFile
+     * Adds new group bys to roles.d/cloud.json
      */
-    private function setCloudRolesFile()
+    public function addCloudRolesGroupBy()
     {
-        $rolesConfigFolder = $this->config->getPartialFilePaths('roles');
-
-        if($cloudFile = array_search(CONFIG_DIR."/roles.d/cloud.json", $rolesConfigFolder) === false){
-            throw new Exception("cloud.json file not found in roles.d folder");
+        // Json::loadFile throws an exception if the file is completely empty or if there some other
+        // problem loading the file. If those exceptions are thrown catch them so the rest of the
+        // migration script can continue to run
+        try{
+            $cloudRolesFile = Json::loadFile(CONFIG_DIR."/roles.d/cloud.json");
+        }
+        catch(Exception $e){
+            return false;
         }
 
-        $this->cloudRolesFile = Json::loadFile($rolesConfigFolder[$cloudFile]);
-    }
-
-    /**
-     * Add a group by to a role in the cloud.json file
-     *
-     * @param $groupBy Name of group by that is being added
-     * @param $role Role that group by is being added to
-     */
-    private function addCloudRolesGroupBy($groupBy, $role)
-    {
-        if(!array_key_exists($role, $this->cloudRolesFile['+roles'])){
-            throw new Exception("Role not found in cloud.json file");
-        }
-
-        $group_bys_found = array_filter($this->cloudRolesFile['+roles'][$role]['+query_descripters'], function ($descripters) use ($groupBy) {
-            if($descripters['group_by'] === $groupBy){
-                return $descripters;
+        if (array_key_exists('+roles', $cloudRolesFile)) {
+            foreach($cloudRolesFile['+roles'] as $key => $value) {
+                $cloudRolesFile['+roles'][$key]['+query_descripters'][] = array('realm' => 'Cloud', 'group_by' => 'person');
+                $cloudRolesFile['+roles'][$key]['+query_descripters'][] = array('realm' => 'Cloud', 'group_by' => 'username');
             }
-        });
 
-        if(empty($group_bys_found)){
-            $this->cloudRolesFile['+roles'][$role]['+query_descripters'][] = array('realm' => 'Cloud', 'group_by' => $groupBy);
+            // An exception can be thrown if there is a problem writing the file. Catch and log the issue
+            // while letting the rest of the migration script run
+            try{
+                $this->writeJsonPartialConfigFile('roles', 'cloud', $cloudRolesFile);
+            }
+            catch(Exception $e){
+                $this->logger->notice("Unable to write to roles.d/cloud.json config file. Continuing upgrade");
+                return false;
+            }
         }
+
+        return true;
     }
 }

@@ -196,18 +196,11 @@ abstract class ConfigFilesMigration extends Migration
      */
     protected function writeJsonPartialConfigFile($directory, $name, array $data)
     {
-        $json = Json::prettyPrint(json_encode($data));
+        $json = json_encode($data, JSON_PRETTY_PRINT);
+        $file = CONFIG_DIR.'/'.$directory.'.d/'.$name.'.json';
 
-        $dirFiles = $this->config->getPartialFilePaths($directory);
-
-        $partialConfigFile = array_filter($dirFiles, function ($file) use ($name) {
-            if(basename($file) === $name.'.json'){
-                return $file;
-            }
-        });
-
-        if (file_put_contents($partialConfigFile[0], $json) === false) {
-            throw new Exception("Failed write to file '$partialConfigFile[0]'");
+        if (file_put_contents($file, $json) === false) {
+            throw new Exception("Failed write to file '$file'");
         }
     }
 
