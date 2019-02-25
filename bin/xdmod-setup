@@ -13,7 +13,6 @@ require_once __DIR__ . '/../configuration/linker.php';
 
 use OpenXdmod\Setup\MainMenu;
 use OpenXdmod\Setup\Console;
-use Xdmod\Config;
 use Xdmod\Version;
 
 // Catch unexpected exceptions.
@@ -45,8 +44,13 @@ function main()
 function checkForNewerVersion()
 {
     try {
-        $config = Config::factory();
-        $updateConfig = $config['update_check'];
+        $configFile = new \Configuration\XdmodConfiguration(
+            'update_check.json',
+            CONFIG_DIR
+        );
+        $configFile->initialize();
+
+        $updateConfig = $configFile->toAssocArray();
 
         if (Version::isNewerVersionAvailable($updateConfig)) {
             $currVer   = Version::getCurrentVersionNumber();

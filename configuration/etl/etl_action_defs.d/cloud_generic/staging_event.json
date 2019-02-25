@@ -18,7 +18,7 @@
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "event_time_utc": "raw.event_time_utc",
+            "event_time_utc": "UNIX_TIMESTAMP(CONVERT_TZ(raw.event_time_utc,'+00:00', @@session.time_zone))",
             "event_type_id": "COALESCE(etype.event_type_id, -1)",
             "record_type_id": "COALESCE(rtype.record_type_id, -1)",
             "user_name": "rv.provider_user",

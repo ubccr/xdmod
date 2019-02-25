@@ -6,6 +6,13 @@ use \UnitTesting\mock;
 
 class TimeAggregationUnitTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException Exception
+     */
+    public function testInvalidTimePeriod()
+    {
+        $aggunit = \DataWarehouse\Query\TimeAggregationUnit::factory('era', 'Palenzoic', 'Mesoproterozoic', 'fossilfact_by');
+    }
 
     public function testGetRawTimePeriod()
     {

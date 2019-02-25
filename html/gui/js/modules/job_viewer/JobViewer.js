@@ -371,105 +371,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     }, // setupComponents
 
     /**
-     * A helper display function that applies the correct human readable byte
-     * measurement to the provided value (val), given in the correct precision
-     * and formatted with the provided units.
-     *
-     * @param {Number} val
-     * @param {String} units
-     * @param {Number} precision
-     * @returns {*}
-     */
-    change: function (val, units, precision) {
-        if (isNaN(val)) {
-            return val;
-        }
-
-        var outval = null;
-
-        if (val > 1099511627776.0) {
-            outval = (val / 1099511627776.0).toPrecision(precision) + " Ti" + units;
-        } else if (val > 1073741824.0) {
-            outval = (val / 1073741824.0).toPrecision(precision) + " Gi" + units;
-        } else if (val > 1048576.0) {
-            outval = (val / 1048576.0).toPrecision(precision) + " Mi" + units;
-        } else if (val > 1024.0) {
-            outval = (val / 1024.0).toPrecision(precision) + " Ki" + units;
-        } else {
-            outval = (1.0 * val).toPrecision(precision) + " " + units;
-        }
-
-        return outval;
-    }, // change
-
-    /**
-     * Return an at-a-glance time showing the top two units
-     * i.e. days and hours, hours and minutes, etc. If you the full breakdown
-     * of days,hours,minutes,seconds then it is difficult to comprehend.
-     *
-     * @param s
-     * @returns {*}
-     */
-    humanTime: function (s) {
-        var plural = function (val, unit, ignorezero) {
-            if (val > 1) {
-                return val + " " + unit + "s ";
-            }
-            else if (val == 0) {
-                if (ignorezero) {
-                    return "";
-                }
-                return val + " " + unit + "s ";
-            }
-            else {
-                return val + " " + unit + " ";
-            }
-        }; // plural
-
-        var days = Math.floor(s / (24 * 3600));
-        if (days > 0) {
-            s %= (24 * 3600);
-            return plural(days, "day", 0) + plural((s / 3600.0).toFixed(1), "hour", 1);
-        }
-        var hours = Math.floor(s / 3600);
-        if (hours > 0) {
-            s %= 3600;
-            return plural(hours, "hour", 0) + plural((s / 60.0).toFixed(1), "minute", 1);
-        }
-        var minutes = Math.floor(s / 60);
-        if (minutes > 0) {
-            return plural(minutes, "minute", 0) + plural(s % 60, "second", 1);
-        }
-        ;
-        return plural(s, "second", 0);
-    }, // humanTime
-
-    /**
-     * Converts a number to a string with SI prefix notation
-     */
-    convertToSiPrefix: function(value, units, precision) {
-        if (isNaN(value)) {
-            return value;
-        }
-
-        var outval = null;
-
-        if (value > 1.0e12) {
-            outval = (value / 1.0e12).toPrecision(precision) + " T" + units;
-        } else if (value > 1.0e9) {
-            outval = (value / 1.0e9).toPrecision(precision) + " G" + units;
-        } else if (value > 1.0e6) {
-            outval = (value / 1.0e6).toPrecision(precision) + " M" + units;
-        } else if (value > 1.0e3) {
-            outval = (value / 1.0e3).toPrecision(precision) + " k" + units;
-        } else {
-            outval = Number(value).toPrecision(precision) + " " + units;
-        }
-
-        return outval;
-    },
-
-    /**
      * Helper function that formats the provided val based on the provided units.
      *
      * @param val
@@ -477,7 +378,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
      * @returns {*}
      */
     formatData: function (val, units) {
-        var self = this;
         switch (units) {
             case "TODO":
             case "":
@@ -485,7 +385,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 return val;
                 break;
             case "seconds":
-                return self.humanTime(val);
+                return XDMoD.utils.format.humanTime(val);
                 break;
             case "boolean":
                 return (val == 1) ? "True" : "False";
@@ -496,21 +396,21 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                 break;
             case "ratio":
             case "1":
-                return self.convertToSiPrefix(val, "", 3);
+                return XDMoD.utils.format.convertToSiPrefix(val, '', 3);
                 break;
             case 'bytes':
             case 'B':
             case 'B/s':
-                return self.change(val, units, 4);
+                return XDMoD.utils.format.convertToBinaryPrefix(val, units, 4);
                 break;
             case 'kilobyte':
-                return self.change(val * 1024.0, 'byte', 4);
+                return XDMoD.utils.format.convertToBinaryPrefix(val * 1024.0, 'byte', 4);
                 break;
             case 'megabyte':
-                return self.change(val * 1024.0 * 1024.0, 'byte', 4);
+                return XDMoD.utils.format.convertToBinaryPrefix(val * 1024.0 * 1024.0, 'byte', 4);
                 break;
             default:
-                return self.convertToSiPrefix(val, units, 4);
+                return XDMoD.utils.format.convertToSiPrefix(val, units, 4);
                 break;
         }
     }, // formatData

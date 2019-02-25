@@ -26,16 +26,85 @@
                     "group_by": "vm_size_memory"
                 },
                 {
-                  "realm": "Cloud",
-                  "group_by": "submission_venue"
+                    "realm": "Cloud",
+                    "group_by": "submission_venue"
                 },
                 {
-                  "realm": "Cloud",
-                  "group_by": "person"
+                    "realm": "Cloud",
+                    "group_by": "person"
                 },
                 {
-                  "realm": "Cloud",
-                  "group_by": "username"
+                    "realm": "Cloud",
+                    "group_by": "username"
+                }
+            ],
+            "+summary_charts": [{
+                    "data_series": {
+                        "data": [{
+                            "combine_type": "stack",
+                            "display_type": "column",
+                            "filters": {
+                                "data": [],
+                                "total": 0
+                            },
+                            "group_by": "project",
+                            "has_std_err": true,
+                            "ignore_global": false,
+                            "log_scale": false,
+                            "long_legend": true,
+                            "metric": "cloud_core_time",
+                            "realm": "Cloud",
+                            "sort_type": "value_desc",
+                            "std_err": false,
+                            "value_labels": false,
+                            "x_axis": true
+                        }],
+                        "total": 1
+                    },
+                    "global_filters": {
+                        "data": [],
+                        "total": 0
+                    },
+                    "legend_type": "off",
+                    "limit": 10,
+                    "show_filters": true,
+                    "start": 0,
+                    "timeseries": false,
+                    "title": "Cloud - Total CPU Hours by Project"
+                },
+                {
+                    "data_series": {
+                        "data": [{
+                            "combine_type": "stack",
+                            "display_type": "column",
+                            "filters": {
+                                "data": [],
+                                "total": 0
+                            },
+                            "group_by": "project",
+                            "has_std_err": true,
+                            "ignore_global": false,
+                            "log_scale": false,
+                            "long_legend": true,
+                            "metric": "cloud_num_sessions_started",
+                            "realm": "Cloud",
+                            "sort_type": "value_desc",
+                            "std_err": false,
+                            "value_labels": false,
+                            "x_axis": true
+                        }],
+                        "total": 1
+                    },
+                    "global_filters": {
+                        "data": [],
+                        "total": 0
+                    },
+                    "legend_type": "off",
+                    "limit": 10,
+                    "show_filters": true,
+                    "start": 0,
+                    "timeseries": false,
+                    "title": "Cloud - Number of Sessions Started by Project"
                 }
             ]
         },

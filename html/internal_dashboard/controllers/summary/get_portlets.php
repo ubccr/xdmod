@@ -5,15 +5,19 @@
  * @author Jeffrey T. Palmer <jtpalmer@ccr.buffalo.edu>
  */
 
-use Xdmod\Config;
 use Log\Summary;
 
 try {
-    $config = Config::factory();
+    $configFile = new \Configuration\XdmodConfiguration(
+        'internal_dashboard.json',
+        CONFIG_DIR
+    );
+    $configFile->initialize();
+    $config = $configFile->toAssocArray();
 
     $portlets = array();
 
-    foreach ($config['internal_dashboard']['portlets'] as $portlet) {
+    foreach ($config['portlets'] as $portlet) {
 
         // Add an empty config if none is found.
         if (!isset($portlet['config'])) {
@@ -24,7 +28,7 @@ try {
     }
 
     // Add log portlets.
-    foreach ($config['internal_dashboard']['logs'] as $log) {
+    foreach ($config['logs'] as $log) {
       $logSummary = Summary::factory($log['ident'], TRUE);
 
         if ($logSummary->getProcessStartRowId() === null) { continue; }

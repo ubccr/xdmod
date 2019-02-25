@@ -9,7 +9,6 @@
 require_once __DIR__ . '/../configuration/linker.php';
 
 use CCR\Log;
-use Xdmod\Config;
 use Xdmod\Version;
 
 $conf = array(
@@ -32,9 +31,14 @@ function main()
 {
     global $logger;
 
-    $config = Config::factory();
+    $configFile = new \Configuration\XdmodConfiguration(
+        'update_check.json',
+        CONFIG_DIR,
+        $logger
+    );
+    $configFile->initialize();
 
-    $updateConfig = $config['update_check'];
+    $updateConfig = $configFile->toAssocArray();
 
     if (!$updateConfig['enabled']) {
         exit;
