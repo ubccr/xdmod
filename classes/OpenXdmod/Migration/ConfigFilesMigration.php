@@ -180,7 +180,13 @@ abstract class ConfigFilesMigration extends Migration
     {
         $json = Json::prettyPrint(json_encode($data));
 
-        $file = $this->config->getFilePath($name);
+        $file = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->config->getBaseDir(),
+                "$name.json"
+            )
+        );
 
         if (file_put_contents($file, $json) === false) {
             throw new Exception("Failed write to file '$file'");
@@ -236,7 +242,13 @@ abstract class ConfigFilesMigration extends Migration
      */
     protected function assertJsonConfigIsWritable($name)
     {
-        $file = $this->config->getFilePath($name);
+        $file = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->config->getBaseDir(),
+                "$name.json"
+            )
+        );
 
         if (!is_writable($file)) {
             throw new Exception("Cannot write to file '$file'");

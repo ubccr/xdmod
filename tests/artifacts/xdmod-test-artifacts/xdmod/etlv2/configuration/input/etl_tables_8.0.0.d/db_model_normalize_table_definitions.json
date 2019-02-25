@@ -1,0 +1,66 @@
+{
+    "#": "Initialize a table to test multiple cases for normalization of a MySQL table definition",
+
+    "table_definition": {
+        "name": "normalize_table_test",
+        "engine": "myisam",
+        "charset": "UTF8",
+        "collation": "UTF8_GENERAL_CI",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) UNSIGNED",
+                "extra": "AUTO_INCREMENT",
+                "nullable": false
+            },
+            {
+                "name": "RESOURCE",
+                "type": "VARCHAR(40)",
+                "nullable": true,
+                "charset": "UTF8",
+                "collation": "utf8_general_ci",
+                "comment": "This is a comment"
+            },
+            {
+                "name": "RANDOM",
+                "type": "varchar(16)",
+                "nullable": false,
+                "#": "This changes the case of the comment from the baseline",
+                "default": "first name"
+            },
+            {
+                "name": "myenum",
+                "type": "ENUM('Sample1', 'sample2')",
+                "comment": "Normalize only the 'enum' not the enum values!"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "INDEX2",
+                "columns": [
+                    "RESOURCE",
+                    "RANDOM"
+                ],
+                "is_unique": false
+            }
+        ],
+        "triggers": [
+            {
+                "name": "mytrigger",
+                "schema": "test",
+                "table": "normalize_table_test",
+                "time": "BEFORE",
+                "event": "INSERT",
+                "body": "SET @resource = CONCAT(@resource, 'X');"
+            }
+        ]
+    }
+}
