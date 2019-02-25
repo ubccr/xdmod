@@ -283,6 +283,59 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
         );
     }
 
+    /**
+     * @dataProvider  provideTestToAssocArray
+     *
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testToAssocArray(array $options)
+    {
+        $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
+        $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
+        $configOptions = $options['options'];
+
+        $config = new XdmodConfiguration(
+            $baseFile,
+            $baseDir,
+            null,
+            $configOptions
+        );
+        $config->initialize();
+
+        $actual = $config->toAssocArray();
+
+        $expectedFile = $this->testFiles->getFile('configuration', $options['expected']);
+        if (!is_file($expectedFile)) {
+            @file_put_contents($expectedFile, json_encode($actual));
+            echo "\nGenerated output for $expectedFile\n";
+        } else {
+            $expected = Json::loadFile($expectedFile);
+
+            $this->assertEquals(
+                $expected,
+                $actual,
+                sprintf(
+                    "For [%s]\nExpected: %s\nActual: %s\n",
+                    $baseFile,
+                    json_encode($expected),
+                    json_encode($actual)
+                )
+            );
+        }
+    }
+
+    public function provideTestToAssocArray()
+    {
+        return JSON::loadFile(
+            $this->testFiles->getFile(
+                'configuration',
+                'to_assoc_array',
+                'input'
+            )
+        );
+    }
+
     protected function interpretDirOption($dir)
     {
         if (is_array($dir)) {
