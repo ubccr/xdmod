@@ -91,7 +91,7 @@ class VerifyDatabase extends aAction implements iAction
             'LAST_MODIFIED_END_DATE'
         );
 
-        $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableStore, $this->sourceEndpoint);
+        $localVariableMap = \ETL\Utilities::quoteVariables($varsToQuote, $this->variableStore, $this->sourceEndpoint);
         $this->variableStore->add($localVariableMap, true);
 
         // Our source query can be either a query specified directly in the definition file, or a
