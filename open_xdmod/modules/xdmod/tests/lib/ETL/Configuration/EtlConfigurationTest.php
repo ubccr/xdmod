@@ -377,16 +377,23 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
         $config->initialize();
 
         // Make sure that the actual is pretty-printed for ease of reading.
-        $actual = sprintf("%s\n", json_encode(json_decode($config->toJson()), JSON_PRETTY_PRINT));
+
 
         $expectedFilePath = $this->testFiles->getFile('configuration', $options['expected']);
         if (!is_file($expectedFilePath)) {
+            $actual = sprintf("%s\n", $config->toJson());
             @file_put_contents($expectedFilePath, $actual);
             echo "\nGenerated expected output for $expectedFilePath\n";
         } else {
-            $expected = @file_get_contents($expectedFilePath);
+            $actual = json_decode($config->toJson());
 
-            $this->assertEquals($expected, $actual);
+            $expected = json_decode(@file_get_contents($expectedFilePath));
+
+            $this->assertEquals($expected, $actual, sprintf(
+                "Expected: %s\nActual: %s\n",
+                json_encode($expected, JSON_PRETTY_PRINT),
+                json_encode($actual, JSON_PRETTY_PRINT)
+            ));
         }
     }
 
