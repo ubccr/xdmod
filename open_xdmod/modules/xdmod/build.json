@@ -25,6 +25,11 @@
             "#^\\/configuration\\/.+\\..+\\.template$#"
         ]
     },
+    "commands": {
+        "pre_build": [
+            "cd html/gui/js && php -f Error.js.php > Error.js"
+        ]
+    },
     "file_maps": {
         "data": [
             "classes",

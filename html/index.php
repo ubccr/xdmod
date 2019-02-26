@@ -154,7 +154,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <!-- Globals -->
-    <script type="text/javascript" src="gui/js/Error.js.php"></script>
+    <script type="text/javascript" src="gui/js/Error.js"></script>
     <script type="text/javascript" src="gui/js/globals.js"></script>
     <script type="text/javascript" src="gui/js/StringExtensions.js"></script>
     <!-- Plugins -->
@@ -214,7 +214,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <script type="text/javascript" src="gui/js/TGUserDropDown.js"></script>
 
-    <script language="JavaScript" src="gui/js/login.js.php"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/LoginPrompt.js"></script>
     <?php endif; ?>
