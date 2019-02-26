@@ -319,9 +319,8 @@ class Configuration extends Loggable implements \Iterator
                 $this->logAndThrowException(sprintf("Error opening configuration directory '%s'", $this->localConfigDir));
             }
 
-            // Examine the subdirectory for .json files and parse each one, then merge the results back
-            // into this object
-
+            // Examine the subdirectory for .json files and collect them for later use.
+            $files = array();
             while ( false !== ( $file = readdir($dh) ) ) {
 
                 // Only process .json files
@@ -333,15 +332,26 @@ class Configuration extends Loggable implements \Iterator
                 }
 
                 $fullPath = $this->localConfigDir . "/" . $file;
-                try {
-                    $localConfigObj = $this->processLocalConfig($fullPath);
-                } catch ( Exception $e ) {
-                    throw new Exception(sprintf("Processing %s: %s", $fullPath, $e->getMessage()));
-                }
-                $this->merge($localConfigObj);
-                $localConfigObj->cleanup();
+                $files[] = $fullPath;
 
             }  //  while ( false !== ( $file = readdir($dh) ) )
+
+            // Sort the retrieved .json files.
+            sort($files, SORT_STRING);
+
+            // Process each .json file before merging into the main file.
+            foreach( $files as $file ) {
+
+                try {
+                    $localConfigObj = $this->processLocalConfig($file);
+                } catch ( Exception $e ) {
+                    throw new Exception(sprintf("Processing %s: %s", $file, $e->getMessage()));
+                }
+
+                $this->merge($localConfigObj);
+
+                $localConfigObj->cleanup();
+            } // foreach($files as $file)
 
             closedir($dh);
 
