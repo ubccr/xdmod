@@ -143,8 +143,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
 
-    <script type="text/javascript" src="gui/lib/debug.js"></script>
-
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
     <?php endif; ?>
@@ -273,8 +271,18 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.isCenterDirector = " . json_encode($user->hasAcl(ROLE_ID_CENTER_DIRECTOR)) . ";\n";
         }
 
-        $config = \Xdmod\Config::factory();
-        $rawDataRealms = array_keys($config['rawstatistics']['realms']);
+        $configFile = new \Configuration\XdmodConfiguration(
+            'rawstatistics.json',
+            CONFIG_DIR,
+            null,
+            array(
+                    'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'rawstatistics.d'))
+            )
+        );
+        $configFile->initialize();
+
+        $config = json_decode($configFile->toJson(), true);
+        $rawDataRealms = array_keys($config['realms']);
 
         print "CCR.xdmod.ui.rawDataAllowedRealms = " . json_encode($rawDataRealms) . ";\n";
 

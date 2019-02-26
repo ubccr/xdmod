@@ -101,10 +101,6 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
             }
         }
 
-        if (!in_array($srcRecord['event_type_id'], $this->_all_event_ids)) {
-            return array();
-        }
-
         if ($this->_instance_state === null) {
             if (in_array($srcRecord['event_type_id'], $this->_start_event_ids)) {
                 $this->initInstance($srcRecord);
@@ -137,7 +133,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
 
-        $sql = "$sql \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC";
+        $sql = "$sql WHERE event_type_id IN (" . implode(',', $this->_all_event_ids) . ")\nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC, 4 DESC";
 
         return $sql;
     }

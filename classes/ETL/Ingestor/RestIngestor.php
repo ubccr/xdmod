@@ -19,7 +19,7 @@ use ETL\EtlOverseerOptions;
 use ETL\DbModel\Query;
 use ETL\aOptions;
 use ETL\iAction;
-use ETL\Utilities;
+use ETL\VariableStore;
 
 use Log;
 use PDO;
@@ -647,13 +647,8 @@ class RestIngestor extends aIngestor implements iAction
             // A format was specified. Substitute any existing parameters in the format string.
 
             $substitutionDetails = array();
-            $queryString = Utilities::substituteVariables(
-                $this->restRequestConfig->format,
-                $this->restParameters,
-                null,
-                null,
-                $substitutionDetails
-            );
+            $vs = new VariableStore($this->restParameters);
+            $queryString = $vs->substitute($this->restRequestConfig->format, null, $substitutionDetails);
 
             if ( false !== strpos($queryString, '${^REMAINING}') ) {
                 $used = array_combine($substitutionDetails['substituted'], $substitutionDetails['substituted']);
@@ -668,7 +663,9 @@ class RestIngestor extends aIngestor implements iAction
                         array_keys($remaining)
                     )
                 );
-                $queryString = Utilities::substituteVariables($queryString, array('^REMAINING' => $parameters));
+                $vs->clear();
+                $vs->add('^REMAINING', $parameters);
+                $queryString = $vs->substitute($queryString);
             }
         } else {
             // Use standard query string format

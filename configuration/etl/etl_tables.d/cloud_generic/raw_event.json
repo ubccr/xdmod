@@ -24,10 +24,10 @@
             },
             {
                 "name": "event_time_utc",
-                "type": "datetime",
+                "type": "char(26)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time of the event in UTC."
+                "default": "0000-00-00T00:00:00.000000",
+                "comment": "String representation of timestamp directly from the logs."
             },
             {
                 "name": "event_type",

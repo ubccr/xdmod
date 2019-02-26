@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS `test_db_model` (
   INDEX `fk_col` USING BTREE (`col1`),
   UNIQUE INDEX `fk_instance` USING BTREE (`instance_id`, `inferred`),
   CONSTRAINT `con_col1` FOREIGN KEY (`col1`) REFERENCES `db_test_model2` (`col3`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE = MyISAM CHARSET = latin1 COLLATE = latin1_swedish_ci COMMENT = 'Events on an instance';
+) ENGINE = myisam CHARSET = latin1 COLLATE = latin1_swedish_ci COMMENT = 'Events on an instance';

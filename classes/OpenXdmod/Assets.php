@@ -5,8 +5,6 @@
 
 namespace OpenXdmod;
 
-use Xdmod\Config;
-
 class Assets
 {
 
@@ -79,17 +77,25 @@ class Assets
      * Get the assets configuration object.
      *
      * @return array
+     * @throws \Exception
      */
     private static function getConfiguration()
     {
         if (static::$assetsConfig === null) {
-            $config = Config::factory();
+            $config = new \Configuration\XdmodConfiguration(
+                "assets.json",
+                CONFIG_DIR,
+                null,
+                array(
+                    'local_config_dir' => implode(
+                        DIRECTORY_SEPARATOR,
+                        array(CONFIG_DIR, 'assets.d')
+                    )
+                )
+            );
+            $config->initialize();
 
-            if (isset($config['assets'])) {
-                static::$assetsConfig = $config['assets'];
-            } else {
-                static::$assetsConfig = array();
-            }
+            static::$assetsConfig = $config->toAssocArray();
         }
 
         return static::$assetsConfig;

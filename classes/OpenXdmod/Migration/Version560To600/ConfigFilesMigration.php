@@ -219,11 +219,30 @@ class ConfigFilesMigration extends \OpenXdmod\Migration\ConfigFilesMigration
      */
     public function getSourceFiles()
     {
+        $localConfigDir = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->config->getBaseDir(),
+                'roles.d'
+            )
+        );
+        $localConfigFiles = array();
+        if (is_dir($localConfigDir)) {
+            $localConfigFiles = glob("$localConfigDir/*.json");
+            sort($localConfigFiles);
+        }
+
         return array_merge(
             array(
-                $this->config->getFilePath('roles')
+                implode(
+                    DIRECTORY_SEPARATOR,
+                    array(
+                        $this->config->getBaseDir(),
+                        'roles.json'
+                    )
+                )
             ),
-            $this->config->getPartialFilePaths('roles')
+            $localConfigFiles
         );
     }
 
