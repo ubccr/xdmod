@@ -336,6 +336,75 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
         );
     }
 
+    /**
+     * Test that checks that the local config files for a `Configuration` are sorted in alphabetical
+     * order.
+     *
+     * @dataProvider provideTestLocalConfigReadOrder
+     *
+     * @param array $options
+     *
+     * @throws \Exception
+     */
+    public function testLocalConfigReadOrder(array $options)
+    {
+        $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
+        $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
+
+        $localDir = $this->interpretDirOption($options['local_dir']);
+        $localConfigDir = dirname(
+            $this->testFiles->getfile(
+                'configuration',
+                implode(
+                    DIRECTORY_SEPARATOR,
+                    array(
+                        '.',
+                        $localDir,
+                        '.')
+                ),
+                'input'
+            )
+        );
+
+        $config = new XdmodConfiguration(
+            $baseFile,
+            $baseDir,
+            null,
+            array(
+                'local_config_dir' => $localConfigDir
+            )
+        );
+        $config->initialize();
+
+        // Make sure that the actual is pretty-printed for ease of reading.
+        $actual = sprintf("%s\n", json_encode(json_decode($config->toJson()), JSON_PRETTY_PRINT));
+
+        $expectedFilePath = $this->testFiles->getFile('configuration', $options['expected']);
+        if (!is_file($expectedFilePath)) {
+            @file_put_contents($expectedFilePath, $actual);
+            echo "\nGenerated expected output for $expectedFilePath\n";
+        } else {
+            $expected = @file_get_contents($expectedFilePath);
+
+            $this->assertEquals($expected, $actual);
+        }
+    }
+
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
+    public function provideTestLocalConfigReadOrder()
+    {
+        return JSON::loadFile(
+            $this->testFiles->getFile(
+                'configuration',
+                'read_order',
+                'input'
+            )
+        );
+    }
+
     protected function interpretDirOption($dir)
     {
         if (is_array($dir)) {
