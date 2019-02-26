@@ -102,7 +102,6 @@ if (isset($_POST['direct_to'])) {
   <script type="text/javascript" src="../gui/js/RESTDataProxy.js"></script>
   <script type="text/javascript" src="../gui/lib/printer/Printer-all.js"></script>
 
-  <script type="text/javascript" src="../gui/js/login.js.php"></script>
   <script type="text/javascript" src="../gui/js/LoginPrompt.js"></script>
 
   <script type="text/javascript" src="../gui/js/ContainerBodyMask.js"></script>
