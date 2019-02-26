@@ -19,7 +19,6 @@
 
 Ext.namespace('XDMoD.REST');
 
-XDMoD.REST.token = 'token_value';                  // The REST token will be cached here
 XDMoD.REST.baseURL = '/rest/';                     // Path to where the REST Front Controller resides
 
 // -----------------------------------------------------

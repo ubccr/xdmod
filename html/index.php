@@ -108,9 +108,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <title><?php print $page_title; ?></title>
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
-    <script type="text/javascript" src="gui/lib/oldie-console-patch.js"></script>
-    <script type="text/javascript" src="gui/lib/oldie-array-includes-polyfill.js"></script>
-    <script type="text/javascript" src="gui/lib/ie-object-values-polyfill.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
@@ -121,45 +118,15 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             console.log(XDMoD.referer);
         </script>
     <?php endif; ?>
-    <?php
-    ExtJS::loadSupportScripts('gui/lib');
-    ?>
-    <script type="text/javascript" src="gui/lib/ext-oldie-history-patch.js"></script>
-    <script type="text/javascript" src="gui/lib/jquery/jquery-1.12.4.min.js"></script>
-    <script type="text/javascript" src="gui/lib/jquery-noconflict.js"></script>
+    <link rel="stylesheet" type="text/css" href="gui/lib/extjs/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="gui/lib/extjs/resources/css/xtheme-gray.css">
+    <script type="text/javascript" src="libs.js"></script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
 
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
-    <?php endif; ?>
-
-    <!-- Non-GUI JS Class Definitions -->
-    <script type="text/javascript" src="js_classes/DateUtilities.js"></script>
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="js_classes/StringUtilities.js"></script>
-    <?php endif; ?>
-
-    <!-- Globals -->
-    <script type="text/javascript" src="gui/js/Error.js"></script>
-    <script type="text/javascript" src="gui/js/globals.js"></script>
-    <script type="text/javascript" src="gui/js/StringExtensions.js"></script>
-    <!-- Plugins -->
-    <script type="text/javascript" src="gui/js/plugins/ContextSensitiveHelper.js"></script>
-    <script type="text/javascript" src="gui/js/plugins/CollapsedPanelTitlePlugin.js"></script>
-
-    <!-- Libraries -->
-    <script type="text/javascript" src="gui/js/libraries/utilities.js"></script>
-
-    <script type="text/javascript" src="gui/js/SessionManager.js"></script>
-
-    <!-- RESTProxy -->
-
-    <script type="text/javascript" src="gui/js/RESTProxy.js"></script>
     <script type="text/javascript">
         <?php \xd_rest\printJavascriptVariables(); ?>
     </script>
-    <script type="text/javascript" src="gui/js/REST.js"></script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/MultiSelect.css"/>
     <link rel="stylesheet" type="text/css" href="gui/lib/extjs/examples/ux/css/Spinner.css"/>
@@ -171,44 +138,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <link rel="stylesheet" type="text/css" href="../gui/css/GroupTab.css"/>
     <?php endif; ?>
 
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/LockingGridView.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/ProgressBarPager.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGrid.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/GroupTabPanel.js"></script>
-        <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTab.js"></script>
-    <?php endif; ?>
-
-    <script type="text/javascript" src="gui/lib/MultiSelect.js"></script>
-    <script type="text/javascript" src="gui/lib/ItemSelector.js"></script>
-
-    <script type="text/javascript" src="gui/lib/NumberFormat.js"></script>
-    <script type="text/javascript" src="gui/js/multiline-tree-nodes.js"></script>
-
-    <script type="text/javascript" src="gui/lib/MessageWindow.js"></script>
-
-    <script type="text/javascript" src="gui/js/CCR.js"></script>
-    <script type="text/javascript" src="gui/js/HighChartWrapper.js"></script>
-    <script type="text/javascript" src="gui/js/RESTDataProxy.js"></script>
-    <script type="text/javascript" src="gui/js/CustomHttpProxy.js"></script>
-
-    <script type="text/javascript" src="gui/lib/printer/Printer-all.js"></script>
-
-    <script type="text/javascript" src="gui/js/TGUserDropDown.js"></script>
-
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/LoginPrompt.js"></script>
-    <?php endif; ?>
-
-    <script type="text/javascript" src="gui/lib/CheckColumn.js"></script>
-
-    <script type="text/javascript" src="gui/js/ContainerMask.js"></script>
-    <script type="text/javascript" src="gui/js/ContainerBodyMask.js"></script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/MetricExplorer.css"/>
     <link rel="stylesheet" type="text/css" href="gui/css/common.css"/>
@@ -232,6 +161,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <script type='text/javascript'>
 
         <?php
+        print "Ext.namespace('CCR.xdmod.ui');\n";
         print "CCR.xdmod.publicUser = " . json_encode(!$userLoggedIn) . ";\n";
 
         $tech_support_recipient = xd_utilities\getConfiguration('general', 'tech_support_recipient');
@@ -333,21 +263,13 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     </script>
 
+    <script type="text/javascript" src="app.js"></script>
+
     <?php if ($userLoggedIn): ?>
         <!-- Profile Editor -->
 
         <link rel="stylesheet" type="text/css" href="gui/css/ProfileEditor.css"/>
-        <script type="text/javascript" src="gui/js/profile_editor/ProfileGeneralSettings.js"></script>
-        <script type="text/javascript" src="gui/js/profile_editor/ProfileRoleDelegation.js"></script>
-        <script type="text/javascript" src="gui/js/profile_editor/ProfileEditor.js"></script>
     <?php endif; ?>
-
-    <!-- Data Warehouse -->
-    <script type="text/javascript" src="gui/js/common/data_warehouse/AddFilterWindow.js"></script>
-    <script type="text/javascript" src="gui/js/common/data_warehouse/FilterStore.js"></script>
-    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterStore.js"></script>
-    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterButton.js"></script>
-    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterToolbar.js"></script>
 
     <!-- Reporting  -->
 
@@ -358,106 +280,17 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/report_builder/ChartThumbPreview.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportExportMenu.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportCloneMenu.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ChartDateEditor.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/Reporting.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportManager.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/AvailableCharts.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/SaveReportAsDialog.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportCreatorGrid.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportCreator.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportsOverview.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportPreview.js"></script>
-    <?php endif; ?>
-
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
-        <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
-    <?php endif; ?>
-
-    <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
-    <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>
-    <script type="text/javascript" src="gui/lib/highchartsDateformats.src.js"></script>
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/highchartsChartClicks.src.js"></script>
-    <?php endif; ?>
-    <script type="text/javascript" src="gui/lib/highchartsDottedLineNullPlot.src.js"></script>
-    <script type="text/javascript" src="gui/lib/highcharts/js/modules/exporting.src.js"></script>
-
-    <script type="text/javascript" src="gui/js/HighChartPanel.js"></script>
-
-    <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/ChartDragDrop.css"/>
     <?php endif; ?>
-
-    <script type="text/javascript" src="gui/js/CustomJsonStore.js"></script>
-    <script type="text/javascript" src="gui/lib/Portal.js"></script>
-    <script type="text/javascript" src="gui/lib/PortalColumn.js"></script>
-    <script type="text/javascript" src="gui/lib/Portlet.js"></script>
 
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/TreeCheckbox.css"/>
         <link rel="stylesheet" type="text/css" href="gui/css/TriStateNodeUI.css"/>
-
-        <script type="text/javascript" src="gui/js/TreeCheckbox.js"></script>
-        <script type="text/javascript" src="gui/js/TriStateNodeUI.js"></script>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/js/RESTTree.js"></script>
-    <script type="text/javascript" src="gui/js/BufferView.js"></script>
-    <script type="text/javascript" src="gui/lib/Spinner.js"></script>
-    <script type="text/javascript" src="gui/lib/SpinnerField.js"></script>
-    <script type="text/javascript" src="gui/js/CustomCheckItem.js"></script>
-    <script type="text/javascript" src="gui/js/CustomDateField.js"></script>
-    <script type="text/javascript" src="gui/js/CustomSplitButton.js"></script>
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/CustomTwinTriggerField.js"></script>
-    <?php endif; ?>
-    <script type="text/javascript" src="gui/js/CustomRowNumberer.js"></script>
-    <script type="text/javascript" src="gui/js/CustomPagingToolbar.js"></script>
-    <script type="text/javascript" src="gui/js/DynamicGridPanel.js"></script>
-    <script type="text/javascript" src="gui/js/DurationToolbar.js"></script>
-    <script type="text/javascript" src="gui/js/ChartConfigMenu.js"></script>
-    <script type="text/javascript" src="gui/js/ChartToolbar.js"></script>
-    <script type="text/javascript" src="gui/js/DrillDownMenu.js"></script>
-
-    <script type="text/javascript" src="gui/js/ChartDragDrop.js"></script>
-    <script type="text/javascript" src="gui/lib/extjs/examples/ux/DataView-more.js"></script>
-    <script type="text/javascript" src="gui/js/FilterDimensionPanel.js"></script>
-
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/CustomMenu.js"></script>
-        <script type="text/javascript" src="gui/js/AddDataPanel.js"></script>
-    <?php endif; ?>
-
-    <script type="text/javascript" src="gui/js/ExportPanel.js"></script>
-
-    <script type="text/javascript" src="gui/js/CaptchaField.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/SignUpDialog.js"></script>
     <?php endif; ?>
-    <script type="text/javascript" src="gui/js/ContactDialog.js"></script>
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/RealTimeValidatingTextField.js"></script>
-    <?php endif; ?>
-
-    <script type="text/javascript" src="gui/js/PortalModule.js"></script>
-
-    <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
-
-    <script type="text/javascript" src="gui/js/modules/Summary.js"></script>
-    <script type="text/javascript" src="gui/js/modules/Usage.js"></script>
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/modules/ReportGenerator.js"></script>
-    <?php endif; ?>
-    <script type="text/javascript" src="gui/js/modules/About.js"></script>
-
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/modules/metric_explorer/MetricExplorer.js"></script>
-        <script type="text/javascript" src="gui/js/modules/metric_explorer/StatusButton.js"></script>
-        <script type="text/javascript" src="gui/js/ChangeStack.js"></script>
 
     <?php /* Single Job Viewer */ ?>
     <?php if (!empty($rawDataRealms)): ?>
@@ -476,13 +309,10 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <script type="text/javascript" src="gui/lib/groupdataview.js"></script>
         <script type="text/javascript" src="gui/lib/groupcombo.js"></script>
     <?php endif; ?>
-    <?php endif; ?>
 
     <?php
     xd_utilities\checkForCenterLogo();
     ?>
-
-    <script type="text/javascript" src="gui/js/Viewer.js"></script>
 
     <?php
     require_once dirname(__FILE__) . '/gaq.php';
