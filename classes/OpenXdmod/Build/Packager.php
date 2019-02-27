@@ -570,6 +570,10 @@ class Packager
             '.github',
             'assets',
             'docs',
+            'automated_tests',
+            'component_tests',
+            'integration_tests',
+            'regression_tests',
             'tests',
         ));
 
