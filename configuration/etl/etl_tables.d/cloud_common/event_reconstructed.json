@@ -15,7 +15,7 @@
             },
             {
                 "name": "start_time",
-                "type": "decimal(16, 6)",
+                "type": "decimal(16,6)",
                 "nullable": false
             },
             {
@@ -25,7 +25,7 @@
             },
             {
                 "name": "end_time",
-                "type": "decimal(16, 6)",
+                "type": "decimal(16,6)",
                 "nullable": false
             },
             {
