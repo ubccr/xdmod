@@ -331,8 +331,7 @@ class Configuration extends Loggable implements \Iterator
                     continue;
                 }
 
-                $fullPath = $this->localConfigDir . "/" . $file;
-                $files[] = $fullPath;
+                $files[] = $this->localConfigDir . "/" . $file;
 
             }  //  while ( false !== ( $file = readdir($dh) ) )
 
