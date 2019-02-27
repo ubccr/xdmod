@@ -54,10 +54,10 @@
             },
             {
                 "name": "start_time",
-                "type": "datetime",
+                "type": "char(26)",
                 "nullable": true,
-                "default": "0000-00-00 00:00:00",
-                "comment": "First time this configuration was encountered, defaults to unknown."
+                "default": "0000-00-00T00:00:00.000000",
+                "comment": "First time this configuration was encountered as a unix timestamp to the microsecond, defaults to unknown."
             }
         ],
         "indexes": [

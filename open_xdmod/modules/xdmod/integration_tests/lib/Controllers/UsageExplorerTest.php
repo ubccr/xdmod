@@ -2,10 +2,7 @@
 
 namespace IntegrationTests\Controllers;
 
-use CCR\Json;
-use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
-use Xdmod\Config;
 
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 {

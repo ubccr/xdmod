@@ -111,6 +111,15 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
                 $this->logger
             );
             $etlTable->schema = $this->destinationEndpoint->getSchema();
+            if ( array_key_exists($etlTable->name, $this->etlDestinationTableList) ) {
+                $this->logger->warning(
+                    sprintf(
+                        "Table definition for '%s' already exists, overriding with file %s",
+                        $etlTable->name,
+                        $defFile
+                    )
+                );
+            }
             $this->etlDestinationTableList[$etlTable->name] = $etlTable;
         }
     }  // createDestinationTableObjects()
