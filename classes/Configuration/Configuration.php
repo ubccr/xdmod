@@ -337,7 +337,7 @@ class Configuration extends Loggable implements \Iterator
             }  //  while ( false !== ( $file = readdir($dh) ) )
 
             // Sort the retrieved .json files.
-            sort($files, SORT_STRING);
+            sort($files, SORT_LOCALE_STRING);
 
             // Process each .json file before merging into the main file.
             foreach( $files as $file ) {
