@@ -1,0 +1,13 @@
+{
+    "success": true,
+    "total": 1,
+    "data": [
+        {
+            "name": "Wall Hours: Per Job",
+            "config": "{\u0022featured\u0022:false,\u0022trend_line\u0022:false,\u0022x_axis\u0022:{},\u0022y_axis\u0022:{},\u0022legend\u0022:{},\u0022defaultDatasetConfig\u0022:{},\u0022swap_xy\u0022:false,\u0022share_y_axis\u0022:false,\u0022hide_tooltip\u0022:false,\u0022show_remainder\u0022:false,\u0022timeseries\u0022:true,\u0022title\u0022:\u0022untitled query 1\u0022,\u0022legend_type\u0022:\u0022bottom_center\u0022,\u0022font_size\u0022:3,\u0022show_filters\u0022:true,\u0022show_warnings\u0022:true,\u0022data_series\u0022:{\u0022data\u0022:[{\u0022group_by\u0022:\u0022pi\u0022,\u0022color\u0022:\u0022auto\u0022,\u0022log_scale\u0022:false,\u0022std_err\u0022:false,\u0022value_labels\u0022:false,\u0022display_type\u0022:\u0022line\u0022,\u0022combine_type\u0022:\u0022side\u0022,\u0022sort_type\u0022:\u0022value_desc\u0022,\u0022ignore_global\u0022:false,\u0022long_legend\u0022:true,\u0022x_axis\u0022:false,\u0022has_std_err\u0022:false,\u0022trend_line\u0022:false,\u0022line_type\u0022:\u0022Solid\u0022,\u0022line_width\u0022:2,\u0022shadow\u0022:false,\u0022filters\u0022:{\u0022data\u0022:[],\u0022total\u0022:0},\u0022z_index\u0022:0,\u0022visibility\u0022:null,\u0022enabled\u0022:true,\u0022metric\u0022:\u0022avg_node_hours\u0022,\u0022realm\u0022:\u0022Jobs\u0022,\u0022category\u0022:\u0022Jobs\u0022,\u0022id\u0022:0.944585173914172}],\u0022total\u0022:1},\u0022aggregation_unit\u0022:\u0022Auto\u0022,\u0022global_filters\u0022:{\u0022data\u0022:[],\u0022total\u0022:0},\u0022timeframe_label\u0022:\u0022User Defined\u0022,\u0022start_date\u0022:\u00222009-01-01\u0022,\u0022end_date\u0022:\u00222019-01-31\u0022,\u0022start\u0022:0,\u0022limit\u0022:10}",
+            "ts": 1551214179.775,
+            "recordid": 0,
+            "type": "Chart"
+        }
+    ]
+}

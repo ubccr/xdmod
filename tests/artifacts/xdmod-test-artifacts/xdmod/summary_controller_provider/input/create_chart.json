@@ -2,13 +2,16 @@
   [
     {
       "user": "cd",
-      "data": {
-        "name": "untitled query 1",
-        "config": "{\"featured\":false,\"trend_line\":false,\"x_axis\":{},\"y_axis\":{},\"legend\":{},\"defaultDatasetConfig\":{},\"swap_xy\":false,\"share_y_axis\":false,\"hide_tooltip\":false,\"show_remainder\":false,\"timeseries\":true,\"title\":\"untitled query 1\",\"legend_type\":\"bottom_center\",\"font_size\":3,\"show_filters\":true,\"show_warnings\":true,\"data_series\":{\"data\":[{\"group_by\":\"pi\",\"color\":\"auto\",\"log_scale\":false,\"std_err\":false,\"value_labels\":false,\"display_type\":\"line\",\"combine_type\":\"side\",\"sort_type\":\"value_desc\",\"ignore_global\":false,\"long_legend\":true,\"x_axis\":false,\"has_std_err\":false,\"trend_line\":false,\"line_type\":\"Solid\",\"line_width\":2,\"shadow\":false,\"filters\":{\"data\":[],\"total\":0},\"z_index\":0,\"visibility\":null,\"enabled\":true,\"metric\":\"avg_processors\",\"realm\":\"Jobs\",\"category\":\"Jobs\",\"id\":0.3126902002102827}],\"total\":1},\"aggregation_unit\":\"Auto\",\"global_filters\":{\"data\":[],\"total\":0},\"timeframe_label\":\"User Defined\",\"start_date\":\"2009-01-01\",\"end_date\":\"2019-01-31\",\"start\":0,\"limit\":10}",
-        "ts": 1551118661.154
+      "chart": {
+        "chart_id": "controller_module=user_interface&aggregation_unit=Auto&combine_type=stack&dataset_type=timeseries&display_type=line&end_date=2018-01-31&font_size=3&group_by=none&hide_tooltip=false&interactive_elements=y&legend_type=bottom_center&limit=10&log_scale=n&offset=0&operation=get_charts&cdlic_user=false&query_group=tg_usage&realm=Jobs&show_aggregate_labels=n&show_error_bars=n&show_error_labels=n&show_guide_lines=y&show_trend_line=n&start_date=2018-01-01&statistic=avg_wallduration_hours&thumbnail=n&timeframe_label=Previous month",
+        "chart_title": "Wall Hours: Per Job",
+        "chart_drill_details": "",
+        "chart_date_desc": "2018-01-01 to 2018-01-31",
+        "module": "user_interface"
       },
       "expected": {
-        "file": "cd_valid_create_chart"
+        "file": "cd_valid_create_chart",
+        "output": "cd_chartsreports_chart_only"
       },
       "success": true
     }

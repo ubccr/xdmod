@@ -5,10 +5,9 @@ namespace IntegrationTests\Controllers;
 use CCR\Json;
 use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
-use Traits\UtilityFunctions;
 
 /**
- * Class ReportBuilderTest.
+ * Class ReportBuilderTest
  *
  * Currently tested controllers:
  *   - report_builder
@@ -33,10 +32,11 @@ use Traits\UtilityFunctions;
  *     - fetch_report_data.php
  *     - get_preview_data.php
  *     - send_report.php
+ *
+ * @package IntegrationTests\Controllers
  */
 class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 {
-    use UtilityFunctions;
     /**
      * @var XdmodTestHelper
      */
@@ -54,20 +54,19 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
     private static $DEFAULT_EXPECTED = array(
         'content_type' => 'application/json',
-        'http_code' => 200,
+        'http_code' => 200
     );
+
 
     /**
      * @return TestFiles
-     *
      * @throws \Exception
      */
     protected function getTestFiles()
     {
         if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__.'/../../');
+            $this->testFiles = new TestFiles(__DIR__ . '/../../');
         }
-
         return $this->testFiles;
     }
 
@@ -77,14 +76,12 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         if (!isset($this->verbose)) {
             $this->verbose = false;
         }
-        $this->helper = new XdmodTestHelper(__DIR__.'/../../');
+        $this->helper = new XdmodTestHelper(__DIR__ . '/../../');
     }
 
     /**
      * @dataProvider provideEnumAvailableCharts
-     *
      * @param array $options
-     *
      * @throws \Exception
      */
     public function testEnumAvailableCharts(array $options)
@@ -94,8 +91,8 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         $user = $options['user'];
         $expected = isset($options['expected']) ? $options['expected'] : self::$DEFAULT_EXPECTED;
         $output = isset($options['output']) ? $options['output'] : array(
-            'name' => $user."_$operation",
-            'extension' => '.json',
+            'name' => $user . "_$operation",
+            'extension' => '.json'
         );
 
         if ($user !== 'pub') {
@@ -103,10 +100,10 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         }
 
         $params = array(
-            'operation' => $operation,
+            'operation' => $operation
         );
 
-        $response = $this->helper->post('/controllers/report_builder.php', null, $params);
+        $response = $this->helper->post("/controllers/report_builder.php", null, $params);
 
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);
@@ -129,7 +126,6 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array|object
-     *
      * @throws \Exception
      */
     public function provideEnumAvailableCharts()
@@ -141,9 +137,7 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideEnumReports
-     *
      * @param array $options
-     *
      * @throws \Exception
      */
     public function testEnumReports(array $options)
@@ -153,8 +147,8 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         $user = $options['user'];
         $expected = isset($options['expected']) ? $options['expected'] : self::$DEFAULT_EXPECTED;
         $output = isset($options['output']) ? $options['output'] : array(
-            'name' => $user."_$operation",
-            'extension' => '.json',
+            'name' => $user . "_$operation",
+            'extension' => '.json'
         );
 
         if ($user !== 'pub') {
@@ -162,10 +156,10 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         }
 
         $params = array(
-            'operation' => $operation,
+            'operation' => $operation
         );
 
-        $response = $this->helper->post('/controllers/report_builder.php', null, $params);
+        $response = $this->helper->post("/controllers/report_builder.php", null, $params);
 
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);
@@ -184,11 +178,11 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         if ($user !== 'pub') {
             $this->helper->logout();
         }
+
     }
 
     /**
      * @return array|object
-     *
      * @throws \Exception
      */
     public function provideEnumReports()
@@ -200,9 +194,7 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideCreateReport
-     *
      * @param array $options
-     *
      * @throws \Exception
      */
     public function testCreateReport(array $options)
@@ -221,11 +213,11 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($charts as $chart) {
             $chartParams = array();
-            $this->log('Creating Chart...');
+            $this->log("Creating Chart...");
 
             // create the chart...
             $success = $this->createChart($chart);
-            $this->assertTrue($success, 'Unable to create chart: '.json_encode($chart));
+            $this->assertTrue($success, "Unable to create chart: " . json_encode($chart));
 
             // list available charts to retrieve information about chart previously created
             $availableCharts = $this->enumAvailableCharts();
@@ -266,12 +258,13 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
                     'params' => $results,
                     'chart_id' => $queuedChart['chart_id'],
                     'start_date' => $startDate,
-                    'end_date' => $endDate,
+                    'end_date' => $endDate
                 );
 
                 // render the chart image so that a temp file is created on the backend.
                 $this->reportImageRenderer($results);
             }
+
         }
 
         // render the charts as volatile
@@ -291,12 +284,12 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         $reportId = $this->createReport($data);
 
         // Ensure we were successful
-        $this->assertTrue(isset($reportId), 'Did not receive a report_id back from create_report');
+        $this->assertTrue(isset($reportId), "Did not receive a report_id back from create_report");
 
-        $this->log('Removing Report...');
+        $this->log("Removing Report...");
         // Attempt to remove the report
         $removedReport = $this->removeReportById($reportId);
-        $this->log('Report Removed!');
+        $this->log("Report Removed!");
 
         // Ensure that we were successful
         $this->assertTrue($removedReport, "Did not remove the report identified by: $reportId");
@@ -304,20 +297,19 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
         // Now, go through each of the charts and remove them as well.
         foreach ($charts as $chart) {
             $success = $this->removeChart($chart);
-            $this->assertTrue($success, 'Unable to remove chart: '.json_encode($chart));
+            $this->assertTrue($success, "Unable to remove chart: " . json_encode($chart));
         }
 
         $this->log("Logging out of: $user");
         if ($user !== 'pub') {
             $this->helper->logout();
         }
-        $this->log('Logged out!');
-        $this->log('**********');
+        $this->log("Logged out!");
+        $this->log("**********");
     }
 
     /**
      * @return array|object
-     *
      * @throws \Exception
      */
     public function provideCreateReport()
@@ -330,8 +322,8 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideCreateChart
      *
-     * @param array $options
      *
+     * @param array $options
      * @throws \Exception
      */
     public function testCreateChart(array $options)
@@ -364,7 +356,6 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array|object
-     *
      * @throws \Exception
      */
     public function provideCreateChart()
@@ -376,13 +367,12 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideEnumTemplates
-     *
      * @param array $options
-     *
      * @throws \Exception
      */
     public function testEnumTemplates(array $options)
     {
+
         $user = $options['user'];
         $expected = $options['expected'];
         $expectedFile = $expected['file'];
@@ -417,7 +407,6 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array|object
-     *
      * @throws \Exception
      */
     public function provideEnumTemplates()
@@ -428,16 +417,210 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Create the chart specified by the provided $data.
+     *
+     * @param array $data
+     * @param array $expected
+     * @return mixed
+     */
+    private function createChart(array $data, $expected = array())
+    {
+        $operation = 'add_to_queue';
+
+        if ((isset($data['operation']) && $data['operation'] !== $operation) ||
+            !isset($data['operation'])) {
+            $data['operation'] = $operation;
+        }
+
+        $action = 'add';
+        if (!array_key_exists('action', $expected)) {
+            $expected['action'] = $action;
+        }
+
+        if (!array_key_exists('response', $expected)) {
+            $expected['response'] = array(
+                'success' => true,
+                'action' => $action
+            );
+        }
+
+        return $this->processChartAction($data, $expected);
+    }
+
+    /**
+     * Remove the chart specified by the provided $data parameter.
+     *
+     * @param array $data
+     * @param array $expected
+     * @return mixed
+     */
+    private function removeChart(array $data, $expected = array())
+    {
+        $operation = 'remove_from_queue';
+        if ((isset($data['operation']) && $data['operation'] !== $operation) ||
+            !isset($data['operation'])) {
+            $data['operation'] = $operation;
+        }
+
+        $action = 'remove';
+        if (!array_key_exists('action', $expected)) {
+            $expected['action'] = $action;
+        }
+
+        if (!array_key_exists('response', $expected)) {
+            $expected['response'] = array(
+                'success' => true,
+                'action' => $action
+            );
+        }
+
+        return $this->processChartAction($data, $expected);
+    }
+
+    /**
+     * A generic helper function that does the heavy lifting for both add and
+     * remove Chart.
+     *
+     * @param array $data
+     * @param array $expected
+     * @return mixed
+     */
+    private function processChartAction(array $data, array $expected)
+    {
+        $expectedAction = $expected['action'];
+        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'application/json';
+        $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
+        $expectedResponse = $expected['response'];
+
+
+        $this->log("Processing Chart Action: $expectedAction");
+
+        $response = $this->helper->post('/controllers/chart_pool.php', null, $data);
+
+        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+
+        $this->assertEquals($expectedContentType, $response[1]['content_type']);
+        $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
+
+        $json = $response[0];
+
+        $this->log("\tResponse: " . json_encode($json));
+
+        $this->assertEquals($expectedResponse, $json);
+
+        return $json['success'];
+    }
+
+    /**
+     * Creates the report identified by the contents of $data.
+     *
+     * @param array $data
+     * @return mixed
+     */
+    private function createReport(array $data)
+    {
+        $this->log("Creating Report");
+        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+
+        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $json = $response[0];
+
+        $this->assertArrayHasKey('action', $json);
+        $this->assertArrayHasKey('phase', $json);
+        $this->assertArrayHasKey('status', $json);
+        $this->assertArrayHasKey('success', $json);
+        $this->assertArrayHasKey('report_id', $json);
+
+
+        $this->assertEquals('save_report', $json['action']);
+        $this->assertEquals('create', $json['phase']);
+        $this->assertEquals('success', $json['status']);
+        $this->assertEquals(true, $json['success']);
+
+        return $json['report_id'];
+    }
+
+    /**
+     * Attempts to remove the report identified by the provided $reportId.
+     *
+     * @param $reportId
+     * @return mixed
+     */
+    private function removeReportById($reportId)
+    {
+        $operation = 'remove_report_by_id';
+        $data = array(
+            'operation' => $operation,
+            'selected_report' => $reportId
+        );
+
+        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+
+        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $json = $response[0];
+
+        $this->log("Response Data: " . json_encode($json));
+
+        $this->assertArrayHasKey('action', $json);
+        $this->assertArrayHasKey('success', $json);
+
+        $this->assertEquals($operation, $json['action']);
+
+        return $json['success'];
+    }
+
+    /**
+     * Attempts to retrieve the next available report name for the currently
+     * logged in user.
+     *
+     * @return mixed
+     */
+    private function getNewReportName()
+    {
+        $data = array(
+            'operation' => 'get_new_report_name'
+        );
+
+        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+
+        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $json = $response[0];
+
+        $this->assertArrayHasKey('success', $json);
+        $this->assertArrayHasKey('report_name', $json);
+        $this->assertEquals(true, $json['success']);
+        $this->assertTrue(!empty($json['report_name']));
+
+        return $json['report_name'];
+    }
+
+    /**
      * Retrieves a list of all charts thare are currently available to the
      * logged in user.
      *
      * @return array json in the form:
-     *               {
-     *               "status": <string> ("success", ... ),
-     *               "has_charts": <boolean>,
-     *               "charts_in_other_roles": [],
-     *               "queue": [
-     *               {
+     *   {
+     *       "status": <string> ("success", ... ),
+     *       "has_charts": <boolean>,
+     *       "charts_in_other_roles": [],
+     *       "queue": [
+     *           {
      *               "chart_id": <string>,
      *               "thumbnail_link": <string> ( "/report_image_renderer.php?type=chart_pool&ref=3;19&token=" ),
      *               "chart_title": <string>,
@@ -445,26 +628,26 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
      *               "chart_date_description": <string> ( "2018-02-01 to 2018-02-28" ),
      *               "type": <string> ( "image" )
      *               "timeframe_type": <string> ( "Previous month" )
-     *               }
-     *               ]
-     *               }
+     *           }
+     *       ]
+     *   }
      */
     private function enumAvailableCharts()
     {
         $data = array(
-            'operation' => 'enum_available_charts',
+            'operation' => 'enum_available_charts'
         );
         $response = $this->helper->post('/controllers/report_builder.php', null, $data);
 
-        $this->log('Response Content-Type: ['.$response[1]['content_type'].']');
-        $this->log('Response HTTP-Code   : ['.$response[1]['http_code'].']');
+        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
 
         $json = $response[0];
 
-        $this->log('Response Data: '.json_encode($json));
+        $this->log("Response Data: " . json_encode($json));
 
         return $json;
     }
@@ -478,10 +661,17 @@ class ReportBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $response = $this->helper->get('/report_image_renderer.php', $params);
 
-        $this->log('Response Content-Type: ['.$response[1]['content_type'].']');
-        $this->log('Response HTTP-Code   : ['.$response[1]['http_code'].']');
+        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
         $this->assertEquals('image/png', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
+    }
+
+    private function log($msg)
+    {
+        if ($this->verbose) {
+            echo "$msg\n";
+        }
     }
 }

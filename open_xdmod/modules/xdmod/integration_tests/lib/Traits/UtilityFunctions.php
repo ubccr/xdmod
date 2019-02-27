@@ -85,7 +85,7 @@ trait UtilityFunctions
      *
      * @return mixed
      */
-    private function createReport(array $data)
+    public function createReport(array $data)
     {
         $this->log('Creating Report');
         $response = $this->helper->post('/controllers/report_builder.php', null, $data);
@@ -118,7 +118,7 @@ trait UtilityFunctions
      *
      * @return mixed
      */
-    private function getNewReportName()
+    public function getNewReportName()
     {
         $data = array(
             'operation' => 'get_new_report_name',
@@ -149,7 +149,7 @@ trait UtilityFunctions
      *
      * @return mixed
      */
-    private function removeReportById($reportId)
+    public function removeReportById($reportId)
     {
         $operation = 'remove_report_by_id';
         $data = array(
@@ -185,7 +185,7 @@ trait UtilityFunctions
      *
      * @return mixed
      */
-    private function removeChart(array $data, $expected = array())
+    public function removeChart(array $data, $expected = array())
     {
         $operation = 'remove_from_queue';
         if ((isset($data['operation']) && $data['operation'] !== $operation) ||
@@ -206,6 +206,42 @@ trait UtilityFunctions
         }
 
         return $this->processChartAction($data, $expected);
+    }
+
+    private function enumAvailableCharts()
+    {
+        $data = array(
+            'operation' => 'enum_available_charts'
+        );
+        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+
+        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $json = $response[0];
+
+        $this->log("Response Data: " . json_encode($json));
+
+        return $json;
+    }
+
+    /**
+     * Renders the report image ( chart ) identified by the contents of $params.
+     *
+     * @param array $params
+     */
+    public function reportImageRenderer(array $params)
+    {
+        $response = $this->helper->get('/report_image_renderer.php', $params);
+
+        $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+
+        $this->assertEquals('image/png', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
     }
 
     public function chartDataProvider()
