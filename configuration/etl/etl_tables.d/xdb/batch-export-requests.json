@@ -1,0 +1,120 @@
+{
+    "table_definition": {
+        "name": "batch_export_requests",
+        "comment": "Data warehouse batch export requests.",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
+                "name": "user_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "References the user that requested the export."
+            },
+            {
+                "name": "realm",
+                "type": "varchar(255)",
+                "nullable": false,
+                "comment": "The realm from which data will be exported."
+            },
+            {
+                "name": "start_date",
+                "type": "date",
+                "nullable": false,
+                "comment": "Start date for the date range of the data that will be exported."
+            },
+            {
+                "name": "end_date",
+                "type": "date",
+                "nullable": false,
+                "comment": "End date for the date range of the data that will be exported."
+            },
+            {
+                "name": "export_file_format",
+                "type": "enum('CSV','JSON')",
+                "nullable": false,
+                "comment": "File format that will be used to store the exported data."
+            },
+            {
+                "name": "requested_datetime",
+                "type": "datetime",
+                "nullable": false,
+                "comment": "Date and time the export request was created."
+            },
+            {
+                "name": "export_succeeded",
+                "type": "tinyint(1)",
+                "nullable": true,
+                "comment": "True if the export was a success, false if not, null if the request has not yet been processed."
+            },
+            {
+                "name": "export_created_datetime",
+                "type": "datetime",
+                "nullable": true,
+                "comment": "Date and time the export data was generated."
+            },
+            {
+                "name": "downloaded_datetime",
+                "type": "datetime",
+                "nullable": true,
+                "comment": "Date and time of the first download of the exported data."
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "idx_user_id",
+                "columns": [
+                    "user_id"
+                ]
+            },
+            {
+                "name": "idx_requested_datetime",
+                "columns": [
+                    "requested_datetime"
+                ]
+            }
+        ],
+        "foreign_key_constraints": [
+            {
+                "name": "fk_user_id",
+                "columns": [
+                    "user_id"
+                ],
+                "referenced_table": "Users",
+                "referenced_columns": [
+                    "id"
+                ],
+                "on_delete": "CASCADE"
+            }
+        ],
+        "triggers": [
+            {
+                "schema": "moddb",
+                "table": "batch_export_requests",
+                "name": "batch_export_requests_before_insert",
+                "time": "BEFORE",
+                "event": "INSERT",
+                "body": "SET NEW.requested_datetime = NOW();"
+            }
+        ]
+    }
+}
