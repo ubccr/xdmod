@@ -381,7 +381,7 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
 
         $expectedFilePath = $this->testFiles->getFile('configuration', $options['expected']);
         if (!is_file($expectedFilePath)) {
-            $actual = sprintf("%s\n", $config->toJson());
+            $actual = sprintf("%s\n", json_encode(json_decode($config->toJson()), JSON_PRETTY_PRINT));
             @file_put_contents($expectedFilePath, $actual);
             echo "\nGenerated expected output for $expectedFilePath\n";
         } else {
