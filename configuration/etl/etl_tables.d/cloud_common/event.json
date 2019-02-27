@@ -27,9 +27,9 @@
             },
             {
                 "name": "event_time_utc",
-                "type": "decimal(16, 6)",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": 0
+                "default": "0.000000"
             },
             {
                 "name": "event_type_id",
