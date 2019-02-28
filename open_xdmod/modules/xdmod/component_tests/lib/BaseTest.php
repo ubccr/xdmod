@@ -129,10 +129,10 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $tmpArray = array();
         foreach ($input as $key => &$value)
         {
-            if (is_array($value)) {
-                $value = $this->arrayFilterKeysRecursive($keyList, $value);
-            } elseif ( ! in_array($key, $keyList) ) {
+            if (!in_array($key, $keyList)) {
                 continue;
+            } elseif (is_array($value)) {
+                $value = $this->arrayFilterKeysRecursive($keyList, $value);
             }
             $tmpArray[$key] = $value;
         }
