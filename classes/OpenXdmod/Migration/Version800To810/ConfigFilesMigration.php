@@ -14,12 +14,21 @@ use Exception;
  */
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
+
+    private $cloudRolesFilePath;
+
+    public function __construct($currentVersion, $newVersion)
+    {
+         $this->cloudRolesFilePath = CONFIG_DIR."/roles.d/cloud.json";
+         parent::__construct($currentVersion, $newVersion);
+    }
+
     /**
      * Execute the migration.
      */
     public function execute()
     {
-        if (file_exists(CONFIG_DIR."/roles.d/cloud.json")) {
+        if (file_exists($this->cloudRolesFilePath)) {
             $this->addCloudRolesGroupBy();
         }
     }
@@ -33,7 +42,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         // problem loading the file. If those exceptions are thrown catch them so the rest of the
         // migration script can continue to run
         try{
-            $cloudRolesFile = Json::loadFile(CONFIG_DIR."/roles.d/cloud.json");
+            $cloudRolesFile = Json::loadFile($this->cloudRolesFilePath);
         }
         catch(Exception $e){
             return false;
@@ -48,7 +57,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
             // An exception can be thrown if there is a problem writing the file. Catch and log the issue
             // while letting the rest of the migration script run
             try{
-                $this->writeJsonPartialConfigFile('roles', 'cloud', $cloudRolesFile);
+                JSON::saveFile($this->cloudRolesFilePath, $cloudRolesFile);
             }
             catch(Exception $e){
                 $this->logger->notice("Unable to write to roles.d/cloud.json config file. Continuing upgrade");
