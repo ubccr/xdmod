@@ -19,7 +19,7 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
     private $event_start_res01 = array(
         "resource_id" => 12,
         "instance_id" => 2343,
-        "event_time_ts" => "2018-02-06 17:09:01",
+        "event_time_ts" => "1517936941.000000",
         "event_type_id" => 2,
         "start_event_id" => -1,
         "end_time_ts" => -1,
@@ -29,7 +29,7 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
     private $event_end_res01 = array(
         "resource_id" => 12,
         "instance_id" => 2343,
-        "event_time_ts" => "2018-02-07 18:09:01",
+        "event_time_ts" => "1518026941.000000",
         "event_type_id" => 4,
         "start_event_id" => -1,
         "end_time_ts" => -1,
@@ -39,7 +39,7 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
     private $event_end_res02 = array(
         "resource_id" => 13,
         "instance_id" => 2343,
-        "event_time_ts" => "2018-02-07 18:09:01",
+        "event_time_ts" => "1518026941.000000",
         "event_type_id" => 4,
         "start_event_id" => -1,
         "end_time_ts" => -1,
@@ -49,16 +49,16 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
     private $event_transform_res01 = array(
         "resource_id" => 12,
         "instance_id" => 2343,
-        "start_time_ts" => "2018-02-06 17:09:01",
+        "start_time_ts" => "1517936941.000000",
         "start_event_id" => 2,
-        "end_time_ts" => "2018-02-07 18:09:01",
+        "end_time_ts" => "1518026941.000000",
         "end_event_id" => 4
     );
 
     private $event_err_res01 = array(
         "resource_id" => 12,
         "instance_id" => -1,
-        "event_time_ts" => "2018-02-06 17:09:01",
+        "event_time_ts" => "1517936941.000000",
         "event_type_id" => 29,
         "start_event_id" => -1,
         "end_time_ts" => -1,
@@ -78,9 +78,9 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
     private $event_flush = array(
         "resource_id" => 12,
         "instance_id" => 2343,
-        "start_time_ts" => "2018-02-06 17:09:01",
+        "start_time_ts" => "1517936941.000000",
         "start_event_id" => 2,
-        "end_time_ts" => "2018-02-06 17:09:01",
+        "end_time_ts" => "1517936941.000000",
         "end_event_id" => 4
     );
 
