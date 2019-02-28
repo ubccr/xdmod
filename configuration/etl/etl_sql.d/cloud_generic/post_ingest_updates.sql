@@ -14,33 +14,33 @@ DROP TEMPORARY TABLE IF EXISTS ${DESTINATION_SCHEMA}.tmp_end_times;
 CREATE TEMPORARY TABLE ${DESTINATION_SCHEMA}.tmp_end_times
 AS
 SELECT
-  instance_type_id,
-  instance_type,
-  resource_id,
-  IF ( @current_instance_type = instance_type AND @prev_start IS NOT NULL, @prev_start - INTERVAL 1 SECOND, NULL) AS end_time,
-  @current_instance_type := instance_type AS junk1,
-  @prev_start := start_time AS junk2
+    instance_type_id,
+    instance_type,
+    resource_id,
+    IF ( @current_instance_type = instance_type AND @prev_start IS NOT NULL AND @prev_start <> 0, @prev_start - 1, NULL) AS end_time,
+    @current_instance_type := instance_type AS junk1,
+    @prev_start := start_time AS junk2
 FROM ${DESTINATION_SCHEMA}.instance_type
 ORDER BY instance_type, start_time DESC
 //
 
 UPDATE
-  ${DESTINATION_SCHEMA}.instance_type a
-  JOIN ${DESTINATION_SCHEMA}.tmp_end_times e
+    ${DESTINATION_SCHEMA}.instance_type a
+    JOIN ${DESTINATION_SCHEMA}.tmp_end_times e
 SET
-  a.end_time = e.end_time
+    a.end_time = e.end_time
 WHERE
- a.instance_type_id = e.instance_type_id
+    a.instance_type_id = e.instance_type_id
 AND
- a.resource_id = e.resource_id
+    a.resource_id = e.resource_id
 //
 
 -- The UpdateIngestor does not yet support queries as source data. Update the accounts table with
 -- the account names found in the block device records.
 
 UPDATE
-${DESTINATION_SCHEMA}.account a
+    ${DESTINATION_SCHEMA}.account a
 JOIN ${DESTINATION_SCHEMA}.generic_cloud_raw_volume v
-  ON v.provider_account_number = a.provider_account AND v.resource_id = a.resource_id
+    ON v.provider_account_number = a.provider_account AND v.resource_id = a.resource_id
 SET a.display = v.provider_account_name
 //

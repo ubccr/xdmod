@@ -58,14 +58,14 @@
             },
             {
                 "name": "start_time",
-                "type": "decimal(16, 6)",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": 0,
+                "default": "0.000000",
                 "comment": "First time that this configuration was seen as a unix timestamp to the microsecond. defaults to unknown."
             },
             {
                 "name": "end_time",
-                "type": "decimal(16, 6)",
+                "type": "decimal(16,6)",
                 "nullable": true,
                 "default": null,
                 "comment": "End time for this configuration as a unix timestamp to the microsecond., NULL if it is still in effect."
