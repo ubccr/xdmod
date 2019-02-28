@@ -21,7 +21,7 @@
       "options": {
         "force_array_return": true
       },
-      "expected": "resources_force_array_return"
+      "expected": "resources"
     }
   ],
   [
