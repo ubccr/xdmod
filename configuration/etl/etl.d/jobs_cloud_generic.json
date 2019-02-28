@@ -1,6 +1,5 @@
 {
     "defaults": {
-
         "global": {
             "endpoints": {
                 "source": {
@@ -19,7 +18,6 @@
                 }
             }
         },
-
         "jobs-cloud-ingest-generic": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
@@ -29,14 +27,8 @@
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "truncate_destination": false
-        },
-        "jobs-cloud-import-users-generic": {
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions",
-            "truncate_destination": false
         }
     },
-
     "#": "Ingests cloud data from a file formatted in our generic cloud format",
     "jobs-cloud-ingest-generic": [
         {
@@ -127,118 +119,6 @@
             "stop_on_exception": false
         }
     ],
-    "jobs-cloud-import-users-generic": [
-      {
-          "name": "GenericCloudStagingUserIngestor",
-          "description": "OpenStack cloud account data",
-          "class": "DatabaseIngestor",
-          "definition_file": "cloud_generic/union_user_pi.json",
-          "endpoints": {
-              "destination": {
-                  "type" : "mysql",
-                  "name" : "Cloud DB",
-                  "config" : "datawarehouse",
-                  "schema": "mod_shredder"
-              }
-          }
-      },
-      {
-          "name": "GenericCloudStagingUserResourceIngestor",
-          "description": "OpenStack cloud account data",
-          "class": "DatabaseIngestor",
-          "definition_file": "cloud_generic/union_user_pi_resource.json",
-          "endpoints": {
-              "destination": {
-                  "type" : "mysql",
-                  "name" : "Cloud DB",
-                  "config" : "datawarehouse",
-                  "schema": "mod_shredder"
-              }
-          }
-      },
-      {
-          "name": "GenericCloudCloudStagingHpcdbPeopleIngestor",
-          "description": "OpenStack cloud account data",
-          "class": "DatabaseIngestor",
-          "definition_file": "common/hpcdb/people.json",
-          "endpoints": {
-              "source": {
-                  "type" : "mysql",
-                  "name" : "Cloud DB",
-                  "config" : "datawarehouse",
-                  "schema": "mod_shredder"
-              },
-              "destination": {
-                  "type" : "mysql",
-                  "name" : "Cloud DB",
-                  "config" : "datawarehouse",
-                  "schema": "mod_hpcdb"
-              }
-          }
-      },
-      {
-          "name": "GenericCloudloudStagingHpcdbSystemAccountIngestor",
-          "description": "OpenStack cloud account data",
-          "class": "DatabaseIngestor",
-          "definition_file": "common/hpcdb/system-accounts.json",
-          "endpoints": {
-            "source": {
-                "type" : "mysql",
-                "name" : "Cloud DB",
-                "config" : "datawarehouse",
-                "schema": "mod_shredder"
-            },
-              "destination": {
-                  "type" : "mysql",
-                  "name" : "Cloud DB",
-                  "config" : "datawarehouse",
-                  "schema": "mod_hpcdb"
-              }
-          }
-      },
-      {
-          "name": "GenericCloudCloudStagingSystemAccountIngestor",
-          "description": "OpenStack cloud account data",
-          "class": "DatabaseIngestor",
-          "definition_file": "jobs/xdw/system-account.json",
-          "endpoints": {
-            "source": {
-                "type" : "mysql",
-                "name" : "Cloud DB",
-                "config" : "datawarehouse",
-                "schema": "mod_hpcdb"
-            },
-              "destination": {
-                  "type" : "mysql",
-                  "name" : "Cloud DB",
-                  "config" : "datawarehouse",
-                  "schema": "modw"
-              }
-          }
-      },
-      {
-          "name": "GenericCloudCloudStagingPersonIngestor",
-          "description": "Cloud account data",
-          "class": "DatabaseIngestor",
-          "definition_file": "jobs/xdw/person.json",
-            "endpoints": {
-                "source": {
-                    "type" : "mysql",
-                    "name" : "Cloud DB",
-                    "config" : "datawarehouse",
-                    "schema": "mod_hpcdb"
-                },
-                "destination": {
-                    "type" : "mysql",
-                    "name" : "Cloud DB",
-                    "config" : "datawarehouse",
-                    "schema": "modw"
-                }
-            },
-            "#": "disable to allow order_id to be set",
-            "optimize_query": false
-      }
-    ],
     "#": "Extracts data from raw data tables into fact and dimension tables used for aggregation",
     "jobs-cloud-extract-generic": [
         {
@@ -293,15 +173,7 @@
             "description": "Generic staging data for cloud events",
             "class": "DatabaseIngestor",
             "truncate_destination": "true",
-            "definition_file": "cloud_generic/staging_event.json",
-            "endpoints": {
-              "utility": {
-                "type": "mysql",
-                "name": "Cloud DB",
-                "config": "datawarehouse",
-                "schema": "mod_shredder"
-              }
-            }
+            "definition_file": "cloud_generic/staging_event.json"
         },
         {
             "#": "Instance data must be ingested after staging events",
