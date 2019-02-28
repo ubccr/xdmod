@@ -86,8 +86,8 @@ try {
     foreach ($acls as $acl => $centers) {
         // Now that the user has been updated, We need to check if they have been assigned any
         // 'center' acls. If they have and if an 'institution' has been provided ( it should have
-        // been ) then we need to call `setOrganizations` so that the UserRoleParameters and
-        // user_acl_group_by_parameters tables are updated accordingly.
+        // been ) then we need to call `setOrganizations` so that the user_acl_group_by_parameters
+        // table is updated accordingly.
         if (in_array($acl, array('cd', 'cs')) && isset($_POST['institution'])) {
             $newuser->setOrganizations(
                 array(
