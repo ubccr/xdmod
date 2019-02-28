@@ -40,15 +40,15 @@
                 "comment": "Optional account the asset is associated with. Unknown = 1."
             },
             {
-                "name": "create_time_utc",
-                "type": "decimal(16, 6)",
+                "name": "create_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false,
                 "default": 0,
                 "comment": "The time that the asset was created as a unix timestamp to the microsecond."
             },
             {
-                "name": "destroy_time_utc",
-                "type": "decimal(16, 6)",
+                "name": "destroy_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": true,
                 "default": null,
                 "comment": "The time that the asset was destroyed as a unix timestamp to the microsecond."
@@ -74,7 +74,7 @@
                     "asset_type_id",
                     "provider_identifier",
                     "account_id",
-                    "create_time_utc",
+                    "create_time_ts",
                     "size"
                 ],
                 "is_unique": true
