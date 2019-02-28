@@ -263,7 +263,12 @@
             "name": "GenericCloudInstanceTypeIngestor",
             "description": "Generic cloud instance type data",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_generic/instance_type.json"
+            "definition_file": "cloud_generic/instance_type.json",
+            "#": "Because the generic format allows for a Z at the end of the timestamp",	
+            "#": "the Z gets truncated off and throws this warning",
+            "hide_sql_warning_codes": [
+                1292
+            ]
         },
         {
             "name": "GenericCloudInstanceIngestor",
@@ -275,7 +280,12 @@
             "name": "GenericCloudVolumeAssetIngestor",
             "description": "Generic cloud attachable volume (block device) data from raw logs",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_generic/volume.json"
+            "definition_file": "cloud_generic/volume.json",
+            "#": "Because the generic format allows for a Z at the end of the timestamp",
+            "#": "the Z gets truncated off and throws this warning",
+            "hide_sql_warning_codes": [
+                1292
+            ]
         },
         {
             "name": "GenericCloudPostIngestUpdates",
