@@ -34,23 +34,23 @@
             },
             {
                 "name": "event_time_utc",
-                "type": "decimal(16, 6)",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": 0,
+                "default": "0.000000",
                 "comment": "A unix timestamp to the microsecond."
             },
             {
                 "name": "attach_time_utc",
-                "type": "decimal(16, 6)",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": 0,
+                "default": "0.000000",
                 "comment": "The time that the volume was attached to an instance as a unix timestamp to the microsecond."
             },
             {
                 "name": "create_time_utc",
-                "type": "decimal(16, 6)",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": 0,
+                "default": "0.000000",
                 "comment": "The time that the volume was created as a unix timestamp to the microsecond."
             },
             {
