@@ -121,15 +121,6 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         $this->assertEquals(array(), $this->fsm->transformHelper($this->event_err_res01));
     }
 
-    // what happens when we hit a valid start and then invalid end event
-    public function testValidStartInvalidEnd()
-    {
-        $this->fsm->transformHelper($this->event_start_res01);
-        $event = $this->fsm->transformHelper($this->event_err_res01);
-
-        $this->assertEquals(array(), $event);
-    }
-
     // what happens when we hit the dummy row
     public function testZeroEvent()
     {

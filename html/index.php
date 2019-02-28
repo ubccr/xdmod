@@ -143,8 +143,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
 
-    <script type="text/javascript" src="gui/lib/debug.js"></script>
-
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
     <?php endif; ?>

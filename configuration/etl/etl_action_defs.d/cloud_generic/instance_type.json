@@ -23,7 +23,7 @@
             "num_cores": "raw.num_cores",
             "memory_mb": "raw.memory_mb",
             "disk_gb": "raw.disk_gb",
-            "start_time": "IF(existing.start_time IS NULL OR raw.start_time < existing.start_time, raw.start_time, existing.start_time)"
+            "start_time": "IF(existing.start_time IS NULL OR UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time,'+00:00', @@session.time_zone)) < existing.start_time, UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time,'+00:00', @@session.time_zone)), existing.start_time)"
         },
 
         "joins": [
