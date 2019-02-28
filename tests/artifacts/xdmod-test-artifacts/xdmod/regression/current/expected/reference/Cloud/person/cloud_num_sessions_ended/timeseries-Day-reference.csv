@@ -5,7 +5,7 @@ parameters
 start,end
 2018-04-18,2018-04-30
 ---------
-Day,"[Scaup, Lesser] Number of Sessions Ended","[Albatross, Yellow-nosed] Number of Sessions Ended","[Bunting, Reed] Number of Sessions Ended"
+Day,"[Warbler, Yellow-rumped] Number of Sessions Ended","[Warbler, Blackburnian] Number of Sessions Ended","[Warbler, Yellow] Number of Sessions Ended"
 2018-04-18,13,0,2
 2018-04-19,11,11,1
 2018-04-20,7,0,0
