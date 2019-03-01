@@ -159,31 +159,38 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
         $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
         $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
 
-        $localDir = $this->interpretDirOption($options['local_dir']);
-        $localConfigDir = dirname(
-            $this->testFiles->getfile(
-                'configuration',
-                implode(
-                    DIRECTORY_SEPARATOR,
-                    array(
-                        '.',
-                        $localDir,
-                        '.')
-                ),
-                'input'
-            )
-        );
-
         $expectedFilePath = $this->testFiles->getFile('configuration', $options['expected']);
 
-        $config = new XdmodConfiguration(
-            $baseFile,
-            $baseDir,
-            null,
-            array(
-                'local_config_dir' => $localConfigDir
-            )
-        );
+        if (isset($options['local_dir'])) {
+            $localDir = $this->interpretDirOption($options['local_dir']);
+            $localConfigDir = dirname(
+                $this->testFiles->getfile(
+                    'configuration',
+                    implode(
+                        DIRECTORY_SEPARATOR,
+                        array(
+                            '.',
+                            $localDir,
+                            '.')
+                    ),
+                    'input'
+                )
+            );
+            $config = new XdmodConfiguration(
+                $baseFile,
+                $baseDir,
+                null,
+                array(
+                    'local_config_dir' => $localConfigDir
+                )
+            );
+        } else {
+            $config = new XdmodConfiguration(
+                $baseFile,
+                $baseDir
+            );
+        }
+
         $config->initialize();
 
         $actual = sprintf("%s\n", $config->toJson());
