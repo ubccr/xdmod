@@ -28,4 +28,7 @@ before_install: git clone --depth=1 --branch="v1" https://github.com/ubccr/xdmod
 install: .qa/travis/install.sh
 
 # Delegate the build step to the shared Travis build script
-script: .qa/travis/build.sh
+script:
+    - which phpcs
+    - phpcs --version
+    - .qa/travis/build.sh
