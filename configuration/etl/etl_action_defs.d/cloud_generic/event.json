@@ -9,7 +9,7 @@
         "records": {
             "resource_id": "staging.resource_id",
             "instance_id": "staging.instance_id",
-            "event_time_utc": "staging.event_time_utc",
+            "event_time_ts": "staging.event_time_ts",
             "event_type_id": "staging.event_type_id",
             "record_type_id": "staging.record_type_id",
             "host_id": "staging.host_id"
