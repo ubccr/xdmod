@@ -49,7 +49,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         }
 
         if (array_key_exists('+roles', $cloudRolesFile)) {
-            foreach($cloudRolesFile['+roles'] as $key => $value) {
+            foreach($cloudRolesFile['+roles'] as $key => $unused) {
                 $cloudRolesFile['+roles'][$key]['+query_descripters'][] = array('realm' => 'Cloud', 'group_by' => 'person');
                 $cloudRolesFile['+roles'][$key]['+query_descripters'][] = array('realm' => 'Cloud', 'group_by' => 'username');
             }
