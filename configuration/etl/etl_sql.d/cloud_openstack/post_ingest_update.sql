@@ -21,7 +21,7 @@ LEFT JOIN
 ON
     raw.resource_id = a.resource_id AND raw.openstack_resource_id = a.provider_identifier
 SET
-    a.destroy_time_utc = UNIX_TIMESTAMP(CONVERT_TZ(raw.event_time_utc,'+00:00', @@session.time_zone));
+    a.destroy_time_ts = UNIX_TIMESTAMP(CONVERT_TZ(raw.event_time_utc,'+00:00', @@session.time_zone));
 //
 
 UPDATE
@@ -35,7 +35,7 @@ LEFT JOIN
 ON
     staging.resource_id = i.resource_id AND staging.instance_id = i.instance_id
 SET
-    a.destroy_time_utc = staging.event_time_utc
+    a.destroy_time_ts = staging.event_time_ts
 WHERE
     staging.event_type_id = 4;
 //

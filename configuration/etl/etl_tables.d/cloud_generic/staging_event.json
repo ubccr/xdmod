@@ -17,7 +17,7 @@
                 "comment": "Optional instance the event is associated with. Unknown = -1"
             },
             {
-                "name": "event_time_utc",
+                "name": "event_time_ts",
                 "type": "decimal(16,6)",
                 "nullable": false,
                 "default": "0.000000",
@@ -105,7 +105,7 @@
                 "columns": [
                     "resource_id",
                     "instance_id",
-                    "event_time_utc",
+                    "event_time_ts",
                     "event_type_id",
                     "record_type_id",
                     "person_id",

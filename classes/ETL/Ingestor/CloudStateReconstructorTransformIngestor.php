@@ -64,14 +64,14 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
     private function initInstance($srcRecord)
     {
-        $default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_time_utc'];
+        $default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_time_ts'];
 
         $this->_instance_state = array(
             'resource_id' => $srcRecord['resource_id'],
             'instance_id' => $srcRecord['instance_id'],
-            'start_time' => $srcRecord['event_time_utc'],
+            'start_time_ts' => $srcRecord['event_time_ts'],
             'start_event_id' => $srcRecord['event_type_id'],
-            'end_time' => $default_end_time,
+            'end_time_ts' => $default_end_time,
             'end_event_id' => self::STOP
         );
     }
@@ -83,7 +83,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
     private function updateInstance($srcRecord)
     {
-        $this->_instance_state['end_time'] = $srcRecord['event_time_utc'];
+        $this->_instance_state['end_time_ts'] = $srcRecord['event_time_ts'];
         $this->_instance_state['end_event_id'] = $srcRecord['event_type_id'];
     }
 
