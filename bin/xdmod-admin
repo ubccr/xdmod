@@ -210,7 +210,10 @@ function listResources()
     $configFile = new \Configuration\XdmodConfiguration(
         'resources.json',
         CONFIG_DIR,
-        $logger
+        $logger,
+        array(
+                'force_array_return' => true
+        )
     );
     $configFile->initialize();
     $resourcesConfig = $configFile->toAssocArray();

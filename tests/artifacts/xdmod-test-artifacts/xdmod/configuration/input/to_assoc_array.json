@@ -1,0 +1,34 @@
+[
+  [
+    {
+      "base_file": "single_resource",
+      "options": {
+        "force_array_return": true
+      },
+      "expected": "single_resource_force_array_return"
+    }
+  ],
+  [
+    {
+      "base_file": "single_resource",
+      "options": [],
+      "expected": "single_resource"
+    }
+  ],
+  [
+    {
+      "base_file": "resources",
+      "options": {
+        "force_array_return": true
+      },
+      "expected": "resources"
+    }
+  ],
+  [
+    {
+      "base_file": "resources",
+      "options": [],
+      "expected": "resources"
+    }
+  ]
+]
