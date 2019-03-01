@@ -1425,7 +1425,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $dataSet = new \DataWarehouse\Data\RawDataset($query, $user);
 
         if (!$dataSet->hasResults()) {
-            $privilegedQuery = new $QueryClass($params, $action);
+            $privilegedQuery = new $QueryClass($params, $action); // <- this should fail the linter tests
             $results = $privilegedQuery->execute(1);
             if ($results['count'] != 0) {
                 throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
