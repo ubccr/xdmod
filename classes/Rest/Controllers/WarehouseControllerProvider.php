@@ -1417,7 +1417,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
-        $query = new $QueryClass(array('primary_key' => $jobId), $action);
+        $params = array('primary_key' => $jobId);
+        $query = new $QueryClass($undefined_variable, $action);
 
         $allRoles = $user->getAllRoles();
         $query->setMultipleRoleParameters($allRoles, $user);
@@ -1425,7 +1426,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $dataSet = new \DataWarehouse\Data\RawDataset($query, $user);
 
         if (!$dataSet->hasResults()) {
-            $privilegedQuery = new $QueryClass($params, $action); // <- this should fail the linter tests
+            $privilegedQuery = new $QueryClass($params, $action);
             $results = $privilegedQuery->execute(1);
             if ($results['count'] != 0) {
                 throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
