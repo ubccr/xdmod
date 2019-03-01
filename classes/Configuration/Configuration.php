@@ -233,7 +233,18 @@ class Configuration extends Loggable implements \Iterator
         }
 
         if ( isset($options['local_config_dir']) ) {
+
+            // Before continuing, make sure that the specified directory actually exists. It not
+            // existing could have unexpected consequences for an XDMoD installation.
+            if (!is_dir($options['local_config_dir'])) {
+                $this->logAndThrowException(sprintf("Unable to find the specified local configuration directory: %s",$options['local_config_dir']));
+            }
+
             $this->localConfigDir = $options['local_config_dir'];
+        } else {
+
+            // Set $localConfigDir to the default value.
+            $this->localConfigDir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
         }
 
         $this->isLocalConfig = ( isset($options['is_local_config']) && $options['is_local_config'] );
@@ -306,14 +317,9 @@ class Configuration extends Loggable implements \Iterator
 
         $this->interpretData();
 
-        // Process any local configuration files.
-
-        if ( ! $this->isLocalConfig && null !== $this->localConfigDir ) {
-
-            if ( ! is_dir($this->localConfigDir) ) {
-                $this->logger->debug(sprintf("Local configuration directory '%s' not found", $this->localConfigDir));
-                return;
-            }
+        // Process any local configuration files iff $localConfigDir exists, is actually a directory,
+        // and this is not a local config file itself.
+        if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) ) {
 
             if ( false === ($dh = @opendir($this->localConfigDir)) ) {
                 $this->logAndThrowException(sprintf("Error opening configuration directory '%s'", $this->localConfigDir));
@@ -353,8 +359,7 @@ class Configuration extends Loggable implements \Iterator
             } // foreach($files as $file)
 
             closedir($dh);
-
-        }  // if ( null !== $confSubdirectory )
+        } // if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) )
 
         $this->postMergeTasks();
 

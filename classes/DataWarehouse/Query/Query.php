@@ -1722,22 +1722,7 @@ class Query
     protected static function getConfigData()
     {
         if (!isset(self::$config)) {
-            $configFile = new XdmodConfiguration(
-                'datawarehouse.json',
-                CONFIG_DIR,
-                null,
-                array(
-                    'local_config_dir' => implode(
-                        DIRECTORY_SEPARATOR,
-                        array(
-                            CONFIG_DIR,
-                            'datawarehouse.d'
-                        )
-                    )
-                )
-            );
-            $configFile->initialize();
-            self::$config = $configFile->toAssocArray();
+            self::$config = XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
         }
 
         return self::$config;

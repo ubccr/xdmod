@@ -148,17 +148,9 @@ class XdmodApplicationFactory
         $versionedPathMountPoint = "/{" . self::API_SYMBOL . "}";
         $unversionedPathMountPoint = '';
 
-        $restConfigFile = new XdmodConfiguration(
-            'rest.json',
-            CONFIG_DIR,
-            null,
-            array(
-                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'rest.d'))
-            )
-        );
-        $restConfigFile->initialize();
+        // Retrieve the rest end point configuration
+        $restControllers = XdmodConfiguration::assocArrayFactory('rest.json', CONFIG_DIR);
 
-        $restControllers = $restConfigFile->toAssocArray();
         foreach ($restControllers as $key => $config) {
             if (!array_key_exists('prefix', $config) || !array_key_exists('controller', $config)) {
                 throw new \Exception("Required REST endpoint information (prefix or controller) missing for $key.");

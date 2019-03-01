@@ -49,19 +49,12 @@ class FilterListBuilder extends Loggable
      */
     public function buildAllLists()
     {
-        $configFile = new \Configuration\XdmodConfiguration(
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory(
             'datawarehouse.json',
             CONFIG_DIR,
-            $this->_logger,
-            array(
-                'local_config_dir' => implode(
-                    DIRECTORY_SEPARATOR,
-                    array(CONFIG_DIR, 'datawarehouse.d')
-                )
-            )
+            $this->_logger
         );
-        $configFile->initialize();
-        $config = $configFile->toAssocArray();
+
         // Get the realms to be processed.
         $realmNames = array_keys($config['realms']);
 

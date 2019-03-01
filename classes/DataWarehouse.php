@@ -367,17 +367,7 @@ class DataWarehouse
      */
     public static function getCategories()
     {
-        $configFile = new \Configuration\XdmodConfiguration(
-            'datawarehouse.json',
-            CONFIG_DIR,
-            null,
-            array(
-                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'datawarehouse.d'))
-            )
-        );
-        $configFile->initialize();
-
-        $dwConfig = $configFile->toAssocArray();
+        $dwConfig = \Configuration\XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
 
         $categories = array();
         foreach ($dwConfig['realms'] as $realmName => $realm) {
@@ -403,17 +393,7 @@ class DataWarehouse
      */
     public static function getCategoryForRealm($realmName)
     {
-        $configFile = new \Configuration\XdmodConfiguration(
-            'datawarehouse.json',
-            CONFIG_DIR,
-            null,
-            array(
-                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'datawarehouse.d'))
-            )
-        );
-        $configFile->initialize();
-
-        $dwConfig = $configFile->toAssocArray();
+        $dwConfig = \Configuration\XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
 
         if (isset($dwConfig['realms'][$realmName]['category'])) {
             return $dwConfig['realms'][$realmName]['category'];
