@@ -173,6 +173,13 @@ class Configuration extends Loggable implements \Iterator
 
     protected $initialized = false;
 
+    /**
+     * Will force the results of `parse` to be an array.
+     *
+     * @var boolean
+     */
+    protected $forceArrayReturn = false;
+
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
@@ -251,6 +258,10 @@ class Configuration extends Loggable implements \Iterator
             foreach ( $options['config_variables'] as $variable => $value ) {
                 $this->variableStore->overwrite($variable, $value);
             }
+        }
+
+        if ( isset($options['force_array_return']) ) {
+            $this->forceArrayReturn = $options['force_array_return'];
         }
     }  // __construct()
 
@@ -385,6 +396,10 @@ class Configuration extends Loggable implements \Iterator
             $parsed = new stdClass();
         } elseif(count($jsonFile) > 1) {
             $parsed = $jsonFile->getRecordList();
+        }
+
+        if ($this->forceArrayReturn && !is_array($parsed)) {
+            $parsed = array($parsed);
         }
 
         $this->parsedConfig = $parsed;
