@@ -2004,13 +2004,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $rawstats = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
 
         $realmExists = count(
-                array_filter(
-                    $rawstats,
-                    function ($item) use ($realm) {
-                        return $item['name'] === $realm;
-                    }
-                )
-            ) > 0;
+            array_filter(
+                $rawstats,
+                function ($item) use ($realm) {
+                    return $item['name'] === $realm;
+                }
+            )
+        ) > 0;
 
         if (!$realmExists) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;

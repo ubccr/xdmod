@@ -237,7 +237,7 @@ class Configuration extends Loggable implements \Iterator
             // Before continuing, make sure that the specified directory actually exists. It not
             // existing could have unexpected consequences for an XDMoD installation.
             if (!is_dir($options['local_config_dir'])) {
-                $this->logAndThrowException(sprintf("Unable to find the specified local configuration directory: %s",$options['local_config_dir']));
+                $this->logAndThrowException(sprintf("Unable to find the specified local configuration directory: %s", $options['local_config_dir']));
             }
 
             $this->localConfigDir = $options['local_config_dir'];
