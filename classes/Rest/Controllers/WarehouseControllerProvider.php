@@ -2005,7 +2005,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $realmExists = count(
             array_filter(
-                $rawstats,
+                $rawstats['realms'],
                 function ($item) use ($realm) {
                     return $item['name'] === $realm;
                 }
