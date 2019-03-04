@@ -1034,7 +1034,7 @@ class Shredder
         $file = implode(
             DIRECTORY_SEPARATOR,
             array(
-            $configFile->getBaseDir(),
+                CONFIG_DIR,
                 'resources.json'
             )
         );
