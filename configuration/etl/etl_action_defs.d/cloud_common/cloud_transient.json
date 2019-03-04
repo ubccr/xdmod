@@ -21,6 +21,8 @@
             "start_day_id": "YEAR(FROM_UNIXTIME(e.start_time_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(e.start_time_ts))",
             "end_day_id": "YEAR(FROM_UNIXTIME(e.end_time_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(e.end_time_ts))",
             "wallduration": "FLOOR(e.end_time_ts) - FLOOR(e.start_time_ts)",
+            "person_id": "ev.person_id",
+            "systemaccount_id": "ev.systemaccount_id",
             "submission_venue_id": "ev.submission_venue_id"
         },
         "joins": [

@@ -356,6 +356,14 @@
                 {
                     "name": "submission_venue",
                     "class": "GroupBySubmissionVenue"
+                },
+                {
+                    "name": "person",
+                    "class": "GroupByPerson"
+                },
+                {
+                    "name": "username",
+                    "class": "GroupByUsername"
                 }
             ],
             "statistics": [{

@@ -1,0 +1,12 @@
+title
+"Average Cores Reserved Weighted By Wall Hours: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Average Cores Reserved Weighted By Wall Hours"
+"Warbler, Yellow",2.0145
+"Warbler, Yellow-rumped",1.3040
+"Warbler, Blackburnian",1.0000
+---------

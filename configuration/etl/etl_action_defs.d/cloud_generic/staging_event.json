@@ -21,6 +21,8 @@
             "event_time_ts": "UNIX_TIMESTAMP(CONVERT_TZ(raw.event_time_utc,'+00:00', @@session.time_zone))",
             "event_type_id": "COALESCE(etype.event_type_id, -1)",
             "record_type_id": "COALESCE(rtype.record_type_id, -1)",
+            "user_name": "rv.provider_user",
+            "person_id": "su.union_user_pi_id",
             "account_id": "COALESCE(acct.account_id, -1)",
             "host_id": "COALESCE(h.host_id, -1)",
             "instance_id": "COALESCE(i.instance_id, -1)",
@@ -84,6 +86,18 @@
                 "type": "LEFT OUTER"
             },
             {
+                "name": "generic_cloud_raw_volume",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rv",
+                "on": "raw.provider_instance_identifier = rv.provider_instance_identifier"
+            },
+            {
+                "name": "staging_union_user_pi",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "su",
+                "on": "rv.provider_user = su.union_user_pi_name"
+            },
+            {
                 "name": "asset_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "atype",
@@ -99,6 +113,7 @@
             "etype.event_type_id",
             "rtype.record_type_id",
             "acct.account_id",
+            "su.union_user_pi_id",
             "h.host_id"
         ]
     }

@@ -28,7 +28,8 @@
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
                 "host_resource_id": "cet.resource_id",
                 "account_id": "instance.account_id",
-                "person_id": "instance.person_id",
+                "person_id": "cet.person_id",
+                "systemaccount_id": "cet.systemaccount_id",
                 "processorbucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.processor_buckets pb WHERE cet.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
                 "memorybucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.memory_buckets mb WHERE cet.memory_mb BETWEEN mb.min_memory AND mb.max_memory)",
                 "instance_type_id": "cet.instance_type_id",
@@ -52,6 +53,7 @@
               "configuration",
               "processorbucket_id",
               "account_id",
+              "systemaccount_id",
               "person_id"
             ],
             "joins":[

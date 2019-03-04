@@ -31,6 +31,20 @@
                 "comment": "Unknown = -1 for global dimensions"
             },
             {
+                "name": "user_name",
+                "type": "varchar(32)",
+                "nullable": true,
+                "default": null,
+                "comment": "Username associated with event"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null,
+                "comment": "Person ID associated with event"
+            },
+            {
                 "name": "record_type_id",
                 "type": "int(11)",
                 "nullable": false,
@@ -94,6 +108,7 @@
                     "event_time_ts",
                     "event_type_id",
                     "record_type_id",
+                    "person_id",
                     "account_id",
                     "host_id"
                 ],
