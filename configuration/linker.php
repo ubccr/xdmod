@@ -221,24 +221,17 @@ function global_uncaught_exception_handler($exception)
 set_exception_handler('global_uncaught_exception_handler');
 
 // Configurable constants ---------------------------
-$organizationConfigFile = new \Configuration\XdmodConfiguration(
+$org = \Configuration\XdmodConfiguration::assocArrayFactory(
     'organization.json',
     CONFIG_DIR
 );
-$organizationConfigFile->initialize();
-
-
-$org = $organizationConfigFile->toAssocArray();
 define('ORGANIZATION_NAME', $org['name']);
 define('ORGANIZATION_NAME_ABBREV', $org['name']);
 
-$hierarchyConfigFile = new \Configuration\XdmodConfiguration(
+$hierarchy = \Configuration\XdmodConfiguration::assocArrayFactory(
     'hierarchy.json',
     CONFIG_DIR
 );
-$hierarchyConfigFile->initialize();
-
-$hierarchy = $hierarchyConfigFile->toAssocArray();
 define('HIERARCHY_TOP_LEVEL_LABEL', $hierarchy['top_level_label']);
 define('HIERARCHY_TOP_LEVEL_INFO', $hierarchy['top_level_info']);
 define('HIERARCHY_MIDDLE_LEVEL_LABEL', $hierarchy['middle_level_label']);

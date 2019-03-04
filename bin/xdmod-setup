@@ -44,13 +44,10 @@ function main()
 function checkForNewerVersion()
 {
     try {
-        $configFile = new \Configuration\XdmodConfiguration(
+        $updateConfig = \Configuration\XdmodConfiguration::assocArrayFactory(
             'update_check.json',
             CONFIG_DIR
         );
-        $configFile->initialize();
-
-        $updateConfig = $configFile->toAssocArray();
 
         if (Version::isNewerVersionAvailable($updateConfig)) {
             $currVer   = Version::getCurrentVersionNumber();

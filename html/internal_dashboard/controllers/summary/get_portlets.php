@@ -8,12 +8,10 @@
 use Log\Summary;
 
 try {
-    $configFile = new \Configuration\XdmodConfiguration(
+    $config = \Configuration\XdmodConfiguration::assocArrayFactory(
         'internal_dashboard.json',
         CONFIG_DIR
     );
-    $configFile->initialize();
-    $config = $configFile->toAssocArray();
 
     $portlets = array();
 

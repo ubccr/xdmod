@@ -300,17 +300,13 @@ class EtlConfigurationTest extends \UnitTesting\BaseTest
     {
         $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
         $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
-        $configOptions = $options['options'];
 
-        $config = new XdmodConfiguration(
+        $actual = XdmodConfiguration::assocArrayFactory(
             $baseFile,
             $baseDir,
             null,
-            $configOptions
+            $options['options']
         );
-        $config->initialize();
-
-        $actual = $config->toAssocArray();
 
         $expectedFile = $this->testFiles->getFile('configuration', $options['expected']);
         if (!is_file($expectedFile)) {

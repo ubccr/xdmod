@@ -71,12 +71,10 @@ class DataWarehouse
      */
     public static function getPersonIdFromPII($username, $organization) {
 
-        $configFile = new \Configuration\XdmodConfiguration(
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory(
             'user_management.json',
             CONFIG_DIR
         );
-        $configFile->initialize();
-        $config = $configFile->toAssocArray();
         $query = $config['person_mapping'];
 
         $dbh = self::connect();
