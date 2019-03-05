@@ -21,7 +21,7 @@
             }
         ],
         "where": [
-          "raw.user_name IS NOT NULL"
+            "raw.user_name IS NOT NULL"
         ]
     }
 }

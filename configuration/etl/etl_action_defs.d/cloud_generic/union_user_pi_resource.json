@@ -21,7 +21,7 @@
             }
         ],
         "where": [
-          "raw.provider_user IS NOT NULL"
+            "raw.provider_user IS NOT NULL"
         ]
     }
 }
