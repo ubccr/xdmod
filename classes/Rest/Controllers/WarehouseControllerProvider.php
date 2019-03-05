@@ -1410,13 +1410,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 break;
             }
         }
-            array_filter(
-                $rawstats,
-                function ($item) use ($realm) {
-                    return $item['name'] === $realm;
-                }
-            )
-        ) > 0;
 
         if (!$realmExists) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
