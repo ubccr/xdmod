@@ -9,10 +9,12 @@
         "records": {
             "resource_id": "staging.resource_id",
             "instance_id": "staging.instance_id",
-            "event_time_utc": "staging.event_time_utc",
+            "event_time_ts": "staging.event_time_ts",
             "event_type_id": "staging.event_type_id",
             "record_type_id": "staging.record_type_id",
             "host_id": "staging.host_id",
+            "person_id": "staging.person_id",
+            "systemaccount_id": "sa.id",
             "submission_venue_id": 3
         },
 
@@ -21,6 +23,13 @@
                 "name": "openstack_staging_event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "staging"
+            },
+            {
+                "schema": "${UTILITY_SCHEMA}",
+                "name": "systemaccount",
+                "alias": "sa",
+                "type": "INNER",
+                "on": "staging.person_id = sa.person_id AND staging.resource_id = sa.resource_id"
             }
         ]
     }

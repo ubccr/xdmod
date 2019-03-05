@@ -128,29 +128,4 @@ class GroupByPerson extends \DataWarehouse\Query\Cloud\GroupBy
             "select long_name as field_label from modw.person  where id in (_filter_) order by order_id"
         );
     }
-
-    public function getPossibleValues($hint = null, $limit = null, $offset = null, array $parameters = array())
-    {
-        if ($this->_possible_values_query == null) {
-            return array();
-        }
-
-        $possible_values_query = $this->_possible_values_query;
-
-        foreach ($parameters as $pname => $pvalue) {
-            if ($pname == 'person') {
-                $possible_values_query = str_ireplace('where ', "where gt.id = $pvalue and ", $possible_values_query);
-            } elseif ($pname == 'provider') {//find the names all the people that have accounts on the resources at the provider.
-                $possible_values_query = str_ireplace('from ', "from modw.systemaccount sa,  modw.resourcefact rf, ", $possible_values_query);
-                $possible_values_query = str_ireplace('where ', "where rf.id = sa.resource_id and rf.organization_id = $pvalue and gt.id = sa.person_id  and ", $possible_values_query);
-            } elseif ($pname == 'institution') {
-                $possible_values_query = str_ireplace('where ', "where gt.organization_id = $pvalue  and ", $possible_values_query);
-            } elseif ($pname == 'pi') {
-                $possible_values_query = str_ireplace('from ', "from modw.peopleunderpi pup, ", $possible_values_query);
-                $possible_values_query = str_ireplace('where ', "where pup.principalinvestigator_person_id = $pvalue and gt.id = pup.person_id  and ", $possible_values_query);
-            }
-        }
-
-        return parent::getPossibleValues($hint, $limit, $offset, $parameters, $possible_values_query);
-    }
 }

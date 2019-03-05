@@ -90,6 +90,16 @@
                 "nullable": true
             },
             {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
                 "name": "submission_venue_id",
                 "type": "int(5)",
                 "nullable": true

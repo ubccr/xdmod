@@ -28,6 +28,14 @@
                 {
                   "realm": "Cloud",
                   "group_by": "submission_venue"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "person"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "username"
                 }
             ]
         },
@@ -59,6 +67,14 @@
                 {
                   "realm": "Cloud",
                   "group_by": "submission_venue"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "person"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "username"
                 }
             ]
         }

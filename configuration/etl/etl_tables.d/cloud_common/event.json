@@ -26,10 +26,22 @@
                 "comment": "Optional instance event is associated with. Unknown = 1"
             },
             {
-                "name": "event_time_utc",
+                "name": "event_time_ts",
                 "type": "decimal(16,6)",
                 "nullable": false,
                 "default": "0.000000"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
+            },
+            {
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
             },
             {
                 "name": "event_type_id",
@@ -63,8 +75,9 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
+                    "event_id",
                     "instance_id",
-                    "event_time_utc",
+                    "event_time_ts",
                     "event_type_id",
                     "host_id"
                 ],

@@ -207,7 +207,7 @@ class DataWarehouseInitializer
         if( $this->isRealmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting OpenStack event log data');
-                Utilities::runEtlPipeline(array('jobs-cloud-extract-openstack'), $this->logger);
+                Utilities::runEtlPipeline(array('jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'), $this->logger);
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -230,7 +230,7 @@ class DataWarehouseInitializer
         if( $this->isRealmEnabled('Cloud') ){
             try{
                 $this->logger->notice('Ingesting generic cloud log files');
-                Utilities::runEtlPipeline(array('jobs-cloud-extract-generic'), $this->logger);
+                Utilities::runEtlPipeline(array('jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'), $this->logger);
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
