@@ -3,6 +3,8 @@
 namespace Models\Services;
 
 use CCR\DB;
+use Configuration\XdmodConfiguration;
+use mysql_xdevapi\Exception;
 use User\Roles;
 
 class Tabs
@@ -58,14 +60,25 @@ SQL;
             ':acl_hierarchy_name' => self::DEFAULT_ACL_HIERARCHY
         ));
 
-        $sections = array('display', 'type', 'permitted_modules', 'query_descripters', 'summary_charts');
-        $acls = array();
+        $rolesConfig = new XdmodConfiguration(
+            'roles.json',
+            CONFIG_DIR,
+            null,
+            array(
+                'local_config_dir' => implode(
+                    DIRECTORY_SEPARATOR,
+                    array(
+                        CONFIG_DIR,
+                        'roles.d'
+                    )
+                )
+            )
+        );
+        $rolesConfig->initialize();
 
-        $roleNames = Roles::getRoleNames(array('default'));
-        foreach ($roleNames as $roleName) {
-            foreach ($sections as $section) {
-                $acls[$roleName][$section] = Roles::getConfig($roleName, $section);
-            }
+        $acls = $rolesConfig->toAssocArray()['roles'];
+        if (isset($acls['default'])) {
+            unset($acls['default']);
         }
 
         foreach ($rows as $row) {
