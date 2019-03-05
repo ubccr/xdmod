@@ -19,6 +19,9 @@
                 "alias": "r",
                 "on": "r.id = raw.resource_id"
             }
+        ],
+        "where": [
+            "raw.provider_user IS NOT NULL"
         ]
     }
 }
