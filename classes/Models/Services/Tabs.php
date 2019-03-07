@@ -4,8 +4,6 @@ namespace Models\Services;
 
 use CCR\DB;
 use Configuration\XdmodConfiguration;
-use mysql_xdevapi\Exception;
-use User\Roles;
 
 class Tabs
 {
