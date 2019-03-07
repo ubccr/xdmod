@@ -1107,6 +1107,48 @@ class Configuration extends Loggable implements \Iterator
         return $this->filename;
     }
 
+    /**
+     * A factory / helper method for instantiating a Configuration object, initializing it, and
+     * returning the results of its `toAssocArray` function.
+     *
+     * @param string         $filename the base configuration file name to be processed.
+     * @param string|null    $baseDir  the directory in which $filename can be found.
+     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
+     * @param array          $options  options that will be used during construction of the Configuration object.
+     *
+     * @return array the results of the instantiated configuration objects `toAssocArray` function.
+     */
+    public static function assocArrayFactory(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+
+        return self::factory($filename, $baseDir, $logger, $options)->toAssocArray();
+    }
+
+    /**
+     * A helper function that instantiates, initializes, and returns a Configuration object.
+     *
+     * @param string         $filename the base configuration file name to be processed.
+     * @param string|null    $baseDir  the directory in which $filename can be found.
+     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
+     * @param array          $options  options that will be used during construction of the Configuration object.
+     *
+     * @return Configuration an initialized instance of Configuration.
+     */
+    public static function factory(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+        $instance = new static($filename, $baseDir, $logger, $options);
+        $instance->initialize();
+        return $instance;
+    }
+
     /** -----------------------------------------------------------------------------------------
      * Return the JSON representation of the parsed and translated Configuration.
      *
