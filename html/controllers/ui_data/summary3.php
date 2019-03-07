@@ -86,9 +86,12 @@ try {
     $rolesConfig->initialize();
     $roles = $rolesConfig->toAssocArray()['roles'];
 
+    $mostPrivilegedAclName = $mostPrivilegedAcl->getName();
     $mostPrivilegedAclSummaryCharts = array();
-    if (isset($roles[$mostPrivilegedAcl->getName()]['summary_charts'])) {
-        $mostPrivilegedAclSummaryCharts = $roles[$mostPrivilegedAcl->getName()]['summary_charts'];
+    if (!isset($roles[$mostPrivilegedAclName]['summary_charts'])) {
+        $mostPrivilegedAclSummaryCharts = $roles['default']['summary_charts'];
+    } else {
+        $mostPrivilegedAclSummaryCharts = $roles[$mostPrivilegedAclName]['summary_charts'];
     }
 
     $summaryCharts = array_map(
