@@ -58,23 +58,9 @@ SQL;
             ':acl_hierarchy_name' => self::DEFAULT_ACL_HIERARCHY
         ));
 
-        $rolesConfig = new XdmodConfiguration(
-            'roles.json',
-            CONFIG_DIR,
-            null,
-            array(
-                'local_config_dir' => implode(
-                    DIRECTORY_SEPARATOR,
-                    array(
-                        CONFIG_DIR,
-                        'roles.d'
-                    )
-                )
-            )
-        );
-        $rolesConfig->initialize();
+        $aclConfig = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
+        $acls = $aclConfig['roles'];
 
-        $acls = $rolesConfig->toAssocArray()['roles'];
         if (isset($acls['default'])) {
             unset($acls['default']);
         }

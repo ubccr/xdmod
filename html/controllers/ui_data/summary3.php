@@ -69,25 +69,12 @@ try {
     }
     $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($logged_in_user);
 
-    $rolesConfig = new \Configuration\XdmodConfiguration(
-        'roles.json',
-        CONFIG_DIR,
-        null,
-        array(
-            'local_config_dir' => implode(
-                DIRECTORY_SEPARATOR,
-                array(
-                    CONFIG_DIR,
-                    'roles.d'
-                )
-            )
-        )
-    );
-    $rolesConfig->initialize();
-    $roles = $rolesConfig->toAssocArray()['roles'];
+    $rolesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
+    $roles = $rolesConfig['roles'];
 
     $mostPrivilegedAclName = $mostPrivilegedAcl->getName();
     $mostPrivilegedAclSummaryCharts = array();
+
     if (!isset($roles[$mostPrivilegedAclName]['summary_charts'])) {
         $mostPrivilegedAclSummaryCharts = $roles['default']['summary_charts'];
     } else {
