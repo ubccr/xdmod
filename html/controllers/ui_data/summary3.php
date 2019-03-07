@@ -73,7 +73,7 @@ try {
     $roles = $rolesConfig['roles'];
 
     $mostPrivilegedAclName = $mostPrivilegedAcl->getName();
-    $mostPrivilegedAclSummaryCharts = $mostPrivilegedAclSummaryCharts = $roles['default']['summary_charts'];
+    $mostPrivilegedAclSummaryCharts = $roles['default']['summary_charts'];
 
     if (isset($roles[$mostPrivilegedAclName]['summary_charts'])) {
         $mostPrivilegedAclSummaryCharts = $roles[$mostPrivilegedAclName]['summary_charts'];
