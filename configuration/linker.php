@@ -5,28 +5,8 @@ $baseDir = dirname($dir);
 
 require_once($dir . '/constants.php');
 
-// ---------------------------
-
-// If present, load linker configuration from linker.json and linker.d.
-require_once("$baseDir/classes/CCR/Json.php");
-
-try {
-    $linkerConfigFilePath = implode(
-        DIRECTORY_SEPARATOR,
-        array(
-            CONFIG_DIR,
-            'linker.json'
-        )
-    );
-    $linkerConfig = CCR\Json::loadFile(
-        $linkerConfigFilePath
-    );
-} catch (Exception $e) {
-    $configDir = $config->getConfigDirPath();
-    echo "Could not find valid \"linker.json\" or \"linker.d\" files in \"$configDir\".\n";
-    echo "Please set up valid linker configuration files and try again.\n";
-    exit(1);
-}
+// Read in the linker config files
+$linkerConfig = \Configuration\XdmodConfiguration::assocArrayFactory('linker.json', CONFIG_DIR);
 
 // Load configured autoloaders.
 if (isset($linkerConfig['autoloaders'])) {
