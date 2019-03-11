@@ -1,0 +1,5 @@
+{
+  "autoloaders": [
+    "vendor/autoload.php"
+  ]
+}

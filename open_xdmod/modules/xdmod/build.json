@@ -74,6 +74,7 @@
             "configuration/etl",
             "configuration/hierarchy.json",
             "configuration/internal_dashboard.json",
+            "configuration/autoloader.json",
             "configuration/linker.json",
             "configuration/organization.json",
             "configuration/portal_settings.ini",

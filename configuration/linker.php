@@ -5,15 +5,37 @@ $baseDir = dirname($dir);
 
 require_once($dir . '/constants.php');
 
+require_once("$baseDir/classes/CCR/Json.php");
+require_once("$baseDir/libraries/utilities.php");
+
+// If present, load autoloader configuration from autoloader.json and autoloader.d.
+try {
+    $autoloaderConfigFilePath = implode(
+        DIRECTORY_SEPARATOR,
+        array(
+            CONFIG_DIR,
+            'autoloader.json'
+        )
+    );
+    $autoLoaderConfigFile = CCR\Json::loadFile(
+        $autoloaderConfigFilePath
+    );
+
+    // Load configured autoloaders.
+    if (isset($autoLoaderConfigFile['autoloaders'])) {
+        foreach ($autoLoaderConfigFile['autoloaders'] as $autoloaderPath) {
+            require_once("$baseDir/$autoloaderPath");
+        }
+    }
+} catch (Exception $e) {
+    $configDir = $config->getConfigDirPath();
+    echo "Could not find valid \"autoloader.json\" or \"autoloader.d\" files in \"$configDir\".\n";
+    echo "Please set up valid autoloader configuration files and try again.\n";
+    exit(1);
+}
+
 // Read in the linker config files
 $linkerConfig = \Configuration\XdmodConfiguration::assocArrayFactory('linker.json', CONFIG_DIR);
-
-// Load configured autoloaders.
-if (isset($linkerConfig['autoloaders'])) {
-    foreach ($linkerConfig['autoloaders'] as $autoloaderPath) {
-        require_once("$baseDir/$autoloaderPath");
-    }
-}
 
 // Update PHP's include path to include certain XDMoD directories.
 if (isset($linkerConfig['include_dirs'])) {
@@ -52,8 +74,6 @@ function xdmodAutoload($className)
 spl_autoload_register('xdmodAutoload');
 
 // Libraries ---------------------------
-
-require_once($baseDir . '/libraries/utilities.php');
 
 $libraries = scandir($baseDir . '/libraries');
 
