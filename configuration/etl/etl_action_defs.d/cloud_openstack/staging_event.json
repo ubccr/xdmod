@@ -17,7 +17,7 @@
             "event_type_id": "COALESCE(etype.event_type_id, -1)",
             "record_type_id": "COALESCE(rtype.record_type_id, -1)",
             "user_name": "raw.user_name",
-            "person_id": "su.union_user_pi_id",
+            "person_id": "sa.person_id",
             "account_id": "COALESCE(acct.account_id, -1)",
             "host_id": "COALESCE(h.host_id, -1)",
             "instance_id": "COALESCE(i.instance_id, -1)",
@@ -81,10 +81,10 @@
                 "type": "LEFT OUTER"
             },
             {
-                "name": "staging_union_user_pi",
+                "name": "systemaccount",
                 "schema": "${UTILITY_SCHEMA}",
-                "alias": "su",
-                "on": "raw.user_name = su.union_user_pi_name"
+                "alias": "sa",
+                "on": "raw.user_name = sa.username AND raw.resource_id = sa.resource_id"
             }
         ],
 
@@ -99,7 +99,7 @@
             "etype.event_type_id",
             "rtype.record_type_id",
             "acct.account_id",
-            "su.union_user_pi_id",
+            "sa.person_id",
             "h.host_id"
         ]
     }
