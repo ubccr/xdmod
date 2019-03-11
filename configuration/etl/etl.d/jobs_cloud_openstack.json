@@ -262,7 +262,7 @@
                 "type": "mysql",
                 "name": "Cloud DB",
                 "config": "datawarehouse",
-                "schema": "mod_shredder"
+                "schema": "modw"
               }
             }
         },
