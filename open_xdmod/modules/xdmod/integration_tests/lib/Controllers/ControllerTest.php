@@ -538,9 +538,9 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             $testData
         );
 
-        $this->helper->authenticateDashboard('mgr');
+        $helper = $options['helper'];
 
-        $response = $this->helper->post("internal_dashboard/controllers/mailer.php", null, $data);
+        $response = $helper->post("internal_dashboard/controllers/mailer.php", null, $data);
 
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
@@ -560,7 +560,9 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $actual);
 
-        $this->helper->logoutDashboard();
+        if (isset($options['last'])) {
+            $helper->logoutDashboard();
+        }
     }
 
     /**
@@ -570,11 +572,18 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function provideEnumTargetAddresses()
     {
         $data = JSON::loadFile($this->getTestFiles()->getFile('controllers', 'enum_target_addresses-update_enum_user_types_and_roles', 'input'));
+
+        $helper = new XdmodTestHelper();
+        $helper->authenticateDashboard('mgr');
+
         foreach($data as $key => $test) {
             foreach($test[0]['data'] as $dataKey => $value) {
                 $data[$key][0]['data'][$dataKey] = TestParameterHelper::processParam($value);
             }
+            $data[$key][0]['helper'] = $helper;
         }
+        $data[count($data) -1][0]['last'] = true;
+
         return $data;
     }
 
