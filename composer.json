@@ -415,7 +415,15 @@
     },
     "autoload": {
         "classmap": [
-            "composer.scripts.php"
+            "composer.scripts.php",
+            "classes",
+            "classes/DB",
+            "classes/DB/DBModel",
+            "classes/DB/TimePeriodGenerators",
+            "classes/ExtJS",
+            "classes/Rest",
+            "classes/User",
+            "classes/ReportTemplates"
         ]
     }
 }
