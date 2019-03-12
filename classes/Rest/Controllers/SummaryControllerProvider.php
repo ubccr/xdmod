@@ -63,8 +63,10 @@ class SummaryControllerProvider extends BaseControllerProvider
         $layout = $this->getLayout($user);
 
         $presetPortlets = array();
+        $rolesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
+
         try {
-            $presetPortlets = Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_portlets');
+            $presetPortlets = $rolesConfig['roles'][$mostPrivilegedAcl->getName()]['summary_portlets'];
         } catch (\Exception $e){
         }
 
@@ -85,7 +87,7 @@ class SummaryControllerProvider extends BaseControllerProvider
             );
         }
 
-        $presetCharts = Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_charts');
+        $presetCharts = $rolesConfig['roles']['default']['summary_charts'];
 
         foreach ($presetCharts as $index => $presetChart)
         {
@@ -145,7 +147,7 @@ class SummaryControllerProvider extends BaseControllerProvider
         ));
     }
 
-/**
+    /**
      * Get charts and reports to display in the summary portlet.
      **/
     public function getChartsReports(Request $request, Application $app)
@@ -162,7 +164,7 @@ class SummaryControllerProvider extends BaseControllerProvider
             // fetch reports
             $rm = new \XDReportManager($user);
             $reports = $rm->fetchReportTable();
-            
+
             foreach ($reports as &$report) {
                 $tmp = array();
                 $tmp['type'] = 'Report';

@@ -233,6 +233,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          store: this.reportStore,
          //id: 'reportPool_queueGrid' + Ext.id(),
+         itemId: 'reportQueueGrid',
 
          viewConfig: {
             emptyText: reportsEmptyText,
@@ -253,7 +254,19 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
             {header: 'Schedule', width: 70, dataIndex: 'report_schedule', sortable: true},
             {header: 'Delivery Format', width: 70, dataIndex: 'report_format', sortable: true, renderer: reportFormatColumnRenderer},
             {header: '# Charts', width: 70, dataIndex: 'chart_count', sortable: true, renderer: numChartsColumnRenderer}
-         ]
+         ],
+         listeners: {
+            load_report: function (reportId) {
+               var queueGrid_self = this;
+               this.store.load({
+                  callback: function (records, operation, success) {
+                     var index = queueGrid_self.store.find('report_id', reportId);
+                     queueGrid_self.getSelectionModel().selectRow(index);
+                     editReport();
+                  }
+               });
+            }
+         }
 
       });//queueGrid
 
