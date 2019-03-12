@@ -475,7 +475,8 @@ class XDReportManager
                 r.format,
                 r.schedule,
                 r.delivery,
-                COUNT(rc.chart_id) AS chart_count
+                COUNT(rc.chart_id) AS chart_count,
+                r.last_modified
             FROM Reports r
             LEFT JOIN ReportCharts rc ON rc.report_id = r.report_id
             WHERE r.user_id = :user_id
@@ -487,7 +488,8 @@ class XDReportManager
                 r.charts_per_page,
                 r.format,
                 r.schedule,
-                r.delivery
+                r.delivery,
+                r.last_modified
         ";
 
         $Entries = array();
@@ -507,7 +509,8 @@ class XDReportManager
                 'report_format'   => $entry['format'],
                 'report_schedule' => $entry['schedule'],
                 'report_delivery' => $entry['delivery'],
-                'chart_count'     => $entry['chart_count']
+                'chart_count'     => $entry['chart_count'],
+                'last_modified' => strtotime($entry['last_modified'])
             );
         }
 
