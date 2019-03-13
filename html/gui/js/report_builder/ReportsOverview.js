@@ -262,11 +262,11 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
                   callback: function (records, operation, success) {
                      var index = queueGrid_self.store.find('report_id', reportId);
                      queueGrid_self.getSelectionModel().selectRow(index);
-                     if ((self.parent.reportCreator.report_id != reportId) && (self.parent.reportCreator.isDirty() == true)) {
+                     if ((self.parent.reportCreator.report_id !== reportId) && (self.parent.reportCreator.isDirty() === true)) {
                         Ext.Msg.show({
                            title:'Cannot open another report!',
                            msg: 'You cannot open another report because this report has unsaved changes.',
-                           buttons: Ext.Msg.OK,
+                           buttons: Ext.Msg.OK
                         });
                      } else {
                         editReport();
