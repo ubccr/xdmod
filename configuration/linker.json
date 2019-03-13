@@ -1,5 +1,12 @@
 {
     "include_dirs": [
-        "classes"
+        "classes",
+        "classes/DB",
+        "classes/DB/DBModel",
+        "classes/DB/TimePeriodGenerators",
+        "classes/ExtJS",
+        "classes/Rest",
+        "classes/User",
+        "classes/ReportTemplates"
     ]
 }
