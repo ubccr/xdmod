@@ -79,7 +79,14 @@
                 "name": "active_role",
                 "type": "varchar(30)",
                 "nullable": true
-            }
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
+            }	           
         ],
         "indexes": [],
         "triggers": []
