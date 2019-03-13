@@ -69,7 +69,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
             }
             $csvdata = preg_replace(self::$replaceRegex, self::$replacements, $csvdata);
 
-            if(!empty($expectedFile)){
+            if (getenv('REG_TEST_FORCE_GENERATION') !== '1') {
                 $expected = file_get_contents($expectedFile);
                 $expected = preg_replace(self::$replaceRegex, self::$replacements, $expected);
                 if($expected === $csvdata){
@@ -85,12 +85,12 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     self::$messages[] = "$fullTestName IS ONLY ==";
                     return;
                 }
-                elseif(substr($expectedFile, -13) !== 'reference.csv'){
-                    throw new \PHPUnit_Framework_ExpectationFailedException(
-                        count($failures)." assertions failed:\n\t".implode("\n\t", $failures)
-                    );
-                }
+
+                throw new \PHPUnit_Framework_ExpectationFailedException(
+                    count($failures)." assertions failed:\n\t".implode("\n\t", $failures)
+                );
             }
+            // else running in test artifact generation mode
 
             $endpoint = parse_url(self::$helper->getSiteUrl());
             $outputDir = self::$baseDir .
