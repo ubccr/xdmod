@@ -1016,7 +1016,7 @@ class Shredder
      */
     protected function getResourceConfig($name)
     {
-        $configFile = new XdmodConfiguration(
+        $resources = XdmodConfiguration::assocArrayFactory(
             'resources.json',
             CONFIG_DIR,
             $this->logger,
@@ -1024,8 +1024,6 @@ class Shredder
                 'force_array_return' => true
             )
         );
-        $configFile->initialize();
-        $resources = $configFile->toAssocArray();
 
         foreach ($resources as $resource) {
             if ($resource['resource'] === $name) {
@@ -1036,7 +1034,7 @@ class Shredder
         $file = implode(
             DIRECTORY_SEPARATOR,
             array(
-            $configFile->getBaseDir(),
+                CONFIG_DIR,
                 'resources.json'
             )
         );

@@ -4,36 +4,10 @@ $dir = dirname(__FILE__);
 $baseDir = dirname($dir);
 
 require_once($dir . '/constants.php');
+require_once($baseDir . '/libraries/utilities.php');
+require_once($baseDir . "/vendor/autoload.php");
 
-// ---------------------------
-
-// If present, load linker configuration from linker.json and linker.d.
-require_once("$baseDir/classes/CCR/Json.php");
-
-try {
-    $linkerConfigFilePath = implode(
-        DIRECTORY_SEPARATOR,
-        array(
-            CONFIG_DIR,
-            'linker.json'
-        )
-    );
-    $linkerConfig = CCR\Json::loadFile(
-        $linkerConfigFilePath
-    );
-} catch (Exception $e) {
-    $configDir = $config->getConfigDirPath();
-    echo "Could not find valid \"linker.json\" or \"linker.d\" files in \"$configDir\".\n";
-    echo "Please set up valid linker configuration files and try again.\n";
-    exit(1);
-}
-
-// Load configured autoloaders.
-if (isset($linkerConfig['autoloaders'])) {
-    foreach ($linkerConfig['autoloaders'] as $autoloaderPath) {
-        require_once("$baseDir/$autoloaderPath");
-    }
-}
+$linkerConfig = \Configuration\XdmodConfiguration::assocArrayFactory('linker.json', CONFIG_DIR);
 
 // Update PHP's include path to include certain XDMoD directories.
 if (isset($linkerConfig['include_dirs'])) {
@@ -70,10 +44,6 @@ function xdmodAutoload($className)
 }
 
 spl_autoload_register('xdmodAutoload');
-
-// Libraries ---------------------------
-
-require_once($baseDir . '/libraries/utilities.php');
 
 $libraries = scandir($baseDir . '/libraries');
 
@@ -221,24 +191,17 @@ function global_uncaught_exception_handler($exception)
 set_exception_handler('global_uncaught_exception_handler');
 
 // Configurable constants ---------------------------
-$organizationConfigFile = new \Configuration\XdmodConfiguration(
+$org = \Configuration\XdmodConfiguration::assocArrayFactory(
     'organization.json',
     CONFIG_DIR
 );
-$organizationConfigFile->initialize();
-
-
-$org = $organizationConfigFile->toAssocArray();
 define('ORGANIZATION_NAME', $org['name']);
 define('ORGANIZATION_NAME_ABBREV', $org['name']);
 
-$hierarchyConfigFile = new \Configuration\XdmodConfiguration(
+$hierarchy = \Configuration\XdmodConfiguration::assocArrayFactory(
     'hierarchy.json',
     CONFIG_DIR
 );
-$hierarchyConfigFile->initialize();
-
-$hierarchy = $hierarchyConfigFile->toAssocArray();
 define('HIERARCHY_TOP_LEVEL_LABEL', $hierarchy['top_level_label']);
 define('HIERARCHY_TOP_LEVEL_INFO', $hierarchy['top_level_info']);
 define('HIERARCHY_MIDDLE_LEVEL_LABEL', $hierarchy['middle_level_label']);

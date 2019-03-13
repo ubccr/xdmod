@@ -18,16 +18,7 @@ class MainMenu extends Menu
      */
     public static function factory()
     {
-        $configFile = new XdmodConfiguration(
-            'setup.json',
-            CONFIG_DIR,
-            null,
-            array(
-                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'setup.d'))
-            )
-        );
-        $configFile->initialize();
-        $config = $configFile->toAssocArray();
+        $config = XdmodConfiguration::assocArrayFactory('setup.json', CONFIG_DIR);
 
         $itemConf = $config['menu'];
 
