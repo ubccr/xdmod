@@ -1404,7 +1404,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $rawstats = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
 
         $realmExists = false;
-        foreach ($rawstats as $item) {
+        foreach ($rawstats['realms'] as $item) {
             if ($item['name'] === $realm) {
                 $realmExists = true;
                 break;
