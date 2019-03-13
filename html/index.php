@@ -268,18 +268,14 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.isCenterDirector = " . json_encode($user->hasAcl(ROLE_ID_CENTER_DIRECTOR)) . ";\n";
         }
 
-        $configFile = new \Configuration\XdmodConfiguration(
-            'rawstatistics.json',
-            CONFIG_DIR,
-            null,
-            array(
-                    'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'rawstatistics.d'))
-            )
-        );
-        $configFile->initialize();
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
 
-        $config = json_decode($configFile->toJson(), true);
-        $rawDataRealms = array_keys($config['realms']);
+        $rawDataRealms = array_map(
+            function ($item) {
+                return $item['name'];
+            },
+            $config['realms']
+        );
 
         print "CCR.xdmod.ui.rawDataAllowedRealms = " . json_encode($rawDataRealms) . ";\n";
 

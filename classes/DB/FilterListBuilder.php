@@ -49,19 +49,12 @@ class FilterListBuilder extends Loggable
      */
     public function buildAllLists()
     {
-        $configFile = new \Configuration\XdmodConfiguration(
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory(
             'datawarehouse.json',
             CONFIG_DIR,
-            $this->_logger,
-            array(
-                'local_config_dir' => implode(
-                    DIRECTORY_SEPARATOR,
-                    array(CONFIG_DIR, 'datawarehouse.d')
-                )
-            )
+            $this->_logger
         );
-        $configFile->initialize();
-        $config = $configFile->toAssocArray();
+
         // Get the realms to be processed.
         $realmNames = array_keys($config['realms']);
 
@@ -292,21 +285,11 @@ class FilterListBuilder extends Loggable
         if (!isset(self::$rolesDimensionNames)) {
             self::$rolesDimensionNames = array();
 
-            $configFile = new \Configuration\XdmodConfiguration(
+            $roles = \Configuration\XdmodConfiguration::assocArrayFactory(
                 'roles.json',
                 CONFIG_DIR,
-                null,
-                array(
-                    'local_config_dir' => implode(
-                        DIRECTORY_SEPARATOR,
-                        array(CONFIG_DIR, 'roles.d')
-                    )
-                )
-            );
-            $configFile->initialize();
-
-            $config = $configFile->toAssocArray();
-            $roles = $config['roles'];
+                null
+            )['roles'];
 
             foreach ($roles as $roleData) {
                 $roleDimensionNames = \xd_utilities\array_get($roleData, 'dimensions', array());
