@@ -9,7 +9,6 @@
   [
     {
       "base_file": "datawarehouse",
-      "local_dir": ["datawarehouse.d"],
       "expected": "xdmod_config_datawarehouse"
     }
   ],

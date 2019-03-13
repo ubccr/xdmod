@@ -296,16 +296,7 @@ abstract class TimeAggregationUnit
     public static function getMinUnitForRealm($realm)
     {
         // Open the datawarehouse config.
-        $configFile = new XdmodConfiguration(
-            'datawarehouse.json',
-            CONFIG_DIR,
-            null,
-            array(
-                'local_config_dir' => implode(DIRECTORY_SEPARATOR, array(CONFIG_DIR, 'datawarehouse.d'))
-            )
-        );
-        $configFile->initialize();
-        $config = $configFile->toAssocArray();
+        $config = XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
         $dw_config = $config['realms'];
 
         // Find the config for the given realm.

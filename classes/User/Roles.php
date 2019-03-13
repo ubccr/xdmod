@@ -47,24 +47,7 @@ class Roles
     protected static function getConfigData()
     {
         if (!isset(self::$config)) {
-            $configFile = new XdmodConfiguration(
-                'roles.json',
-                CONFIG_DIR,
-                null,
-                array(
-                    'local_config_dir' => implode(
-                        DIRECTORY_SEPARATOR,
-                        array(
-                            CONFIG_DIR,
-                            'roles.d'
-                        )
-                    )
-                )
-            );
-            $configFile->initialize();
-            $data = $configFile->toAssocArray();
-
-            self::$config = $data['roles'];
+            self::$config = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR)['roles'];
         }
 
         return self::$config;
