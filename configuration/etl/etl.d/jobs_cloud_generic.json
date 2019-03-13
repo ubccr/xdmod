@@ -264,7 +264,7 @@
             "description": "Generic cloud instance type data",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_generic/instance_type.json",
-            "#": "Because the generic format allows for a Z at the end of the timestamp",	
+            "#": "Because the generic format allows for a Z at the end of the timestamp",
             "#": "the Z gets truncated off and throws this warning",
             "hide_sql_warning_codes": [
                 1292
@@ -309,7 +309,7 @@
                 "type": "mysql",
                 "name": "Cloud DB",
                 "config": "datawarehouse",
-                "schema": "mod_shredder"
+                "schema": "modw"
               }
             },
             "#": "Because the generic format allows for a Z at the end of the timestamp",

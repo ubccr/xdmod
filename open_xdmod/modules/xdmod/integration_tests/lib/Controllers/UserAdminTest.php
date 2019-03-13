@@ -466,8 +466,7 @@ class UserAdminTest extends BaseUserAdminTest
         $testData = $options['data'];
         $expectedOutput = $options['output'];
         $expectedContentType = $options['content_type'];
-
-        $this->helper->authenticateDashboard('mgr');
+        $helper = $options['helper'];
 
         $data = array_merge(
             array(
@@ -476,7 +475,7 @@ class UserAdminTest extends BaseUserAdminTest
             $testData
         );
 
-        $response = $this->helper->post("internal_dashboard/controllers/controller.php", null, $data);
+        $response = $helper->post("internal_dashboard/controllers/controller.php", null, $data);
 
         $this->validateResponse($response, 200, $expectedContentType);
 
@@ -531,7 +530,9 @@ class UserAdminTest extends BaseUserAdminTest
             $this->assertTrue(false, "No idea how to evaluate the data for this test.");
         }
 
-        $this->helper->logoutDashboard();
+        if (isset($options['last'])) {
+            $helper->logoutDashboard();
+        }
     }
 
     /**
@@ -591,8 +592,7 @@ class UserAdminTest extends BaseUserAdminTest
         $testData = $options['data'];
         $expectedOutput = $options['output'];
         $expectedSuccess = $options['success'];
-
-        $this->helper->authenticateDashboard('mgr');
+        $helper = $options['helper'];
 
         $data = array_merge(
             array(
@@ -601,7 +601,7 @@ class UserAdminTest extends BaseUserAdminTest
             $testData
         );
 
-        $response = $this->helper->post("internal_dashboard/controllers/controller.php", null, $data);
+        $response = $helper->post("internal_dashboard/controllers/controller.php", null, $data);
         $expectedContentType = $expectedSuccess ? 'application/xls' : 'text/html; charset=UTF-8';
         $this->validateResponse($response, 200, $expectedContentType);
 
@@ -729,7 +729,9 @@ class UserAdminTest extends BaseUserAdminTest
             $this->assertEquals($expected, $actual);
         }
 
-        $this->helper->logoutDashboard();
+        if (isset($options['last'])) {
+            $helper->logoutDashboard();
+        }
     }
 
     /**
@@ -738,9 +740,19 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function provideGetUserVisits()
     {
-        return JSON::loadFile(
+        $data = JSON::loadFile(
             $this->getTestFiles()->getFile('user_admin', 'get_user_visits', 'input')
         );
+
+        $helper = new \TestHarness\XdmodTestHelper();
+        $helper->authenticateDashboard('mgr');
+
+        foreach($data as &$datum) {
+            $datum[0]['helper'] = $helper;
+        }
+        $data[count($data) - 1][0]['last'] = true;
+
+        return $data;
     }
 
     /**
