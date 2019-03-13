@@ -228,6 +228,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
                               CCR.xdmod.ui.createUserManualLink('report+generator');
 
       // ----------------------------------------------------
+      var editReport;
 
       var queueGrid = new Ext.grid.GridPanel({
 
@@ -255,27 +256,25 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
             {header: 'Delivery Format', width: 70, dataIndex: 'report_format', sortable: true, renderer: reportFormatColumnRenderer},
             {header: '# Charts', width: 70, dataIndex: 'chart_count', sortable: true, renderer: numChartsColumnRenderer}
          ],
-         listeners: {
-            load_report: function (reportId) {
-               var queueGrid_self = this;
-               this.store.load({
-                  callback: function (records, operation, success) {
-                     var index = queueGrid_self.store.find('report_id', reportId);
-                     queueGrid_self.getSelectionModel().selectRow(index);
-                     if ((self.parent.reportCreator.report_id !== reportId) && (self.parent.reportCreator.isDirty() === true)) {
-                        Ext.Msg.show({
-                           title:'Cannot open another report!',
-                           msg: 'You cannot open another report because this report has unsaved changes.',
-                           buttons: Ext.Msg.OK
-                        });
-                     } else {
-                        editReport();
-                     }
-                  }
-               });
-            }
-         }
-
+          listeners: {
+              load_report: function (reportId) {
+                  this.store.load({
+                      callback: function (records, operation, success) {
+                          var index = queueGrid.store.find('report_id', reportId);
+                          queueGrid.getSelectionModel().selectRow(index);
+                          if ((self.parent.reportCreator.report_id !== reportId) && (self.parent.reportCreator.isDirty() === true)) {
+                              Ext.Msg.show({
+                                  title: 'Cannot open another report!',
+                                  msg: 'You cannot open another report because this report has unsaved changes.',
+                                  buttons: Ext.Msg.OK
+                              });
+                          } else {
+                              editReport();
+                          }
+                      }
+                  });
+              }
+          }
       });//queueGrid
 
       queueGrid.getSelectionModel().on('rowselect', function(sm, row_index, rec) {
@@ -394,8 +393,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var editReport = function(){
-
+       editReport = function () {
          var record = queueGrid.getSelectionModel().getSelected();
 
          XDMoD.TrackEvent('Report Generator (My Reports)', 'Attempting to edit report', record.data.report_name);

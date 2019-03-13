@@ -8,6 +8,7 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
 
     initComponent: function () {
         var aspectRatio = 0.8;
+
         var searchField = new Ext.form.TwinTriggerField({
             xtype: 'twintriggerfield',
             validationEvent: false,
@@ -22,7 +23,7 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
                 this.store.clearFilter();
                 this.el.dom.value = '';
                 this.triggers[0].hide();
-            }, // onTrigger1Click
+            },
             onTrigger2Click: function () {
                 var v = this.getRawValue();
                 if (v.length < 1) {
@@ -31,7 +32,7 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
                 }
                 this.store.filter('name', v, true, true);
                 this.triggers[0].show();
-            }, // onTrigger2Click
+            },
             listeners: {
                 scope: this,
                 specialkey: function (field, e) {
@@ -41,8 +42,9 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
                         searchField.onTrigger2Click();
                     }
                 }
-            } // listeners
-        }); // searchField
+            }
+        });
+
         this.chartReportStore = new Ext.data.JsonStore({
             // store configs
             autoDestroy: true,
@@ -57,10 +59,10 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
                 'url',
                 'config',
                 'type',
-                {name: 'recordid', type: 'int'},
-                {name: 'ts',
+                { name: 'recordid', type: 'int' },
+                { name: 'ts',
                     convert: function (v, rec) {
-                        return Ext.util.Format.date(new Date(rec['ts'] * 1000).toString(), 'Y-m-d h:i:s');
+                        return Ext.util.Format.date(new Date(rec.ts * 1000).toString(), 'Y-m-d h:i:s');
                     }
                 }
             ]
@@ -75,9 +77,9 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
             },
             colModel: new Ext.grid.ColumnModel({
                 columns: [
-                    {header: 'Name', dataIndex: 'name'},
-                    {header: 'Last Modified', dataIndex: 'ts'},
-                    {header: 'Type', dataIndex: 'type'}
+                    { header: 'Name', dataIndex: 'name' },
+                    { header: 'Last Modified', dataIndex: 'ts' },
+                    { header: 'Type', dataIndex: 'type' }
                 ]
             }),
             tbar: {
@@ -97,11 +99,10 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
                             selModel.clearSelections();
                             CCR.xdmod.ui.reportGenerator.fireEvent('load_report', r.data.report_id);
                         }
-
                     }
                 }
             })
-        }); // chartReportGrid
+        });
         this.height = this.width * aspectRatio;
         this.items = [this.chartReportGrid];
         this.chartReportStore.reload();

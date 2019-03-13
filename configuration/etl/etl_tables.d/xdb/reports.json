@@ -86,7 +86,7 @@
                 "nullable": false,
                 "default": "CURRENT_TIMESTAMP",
                 "extra": "ON UPDATE CURRENT_TIMESTAMP"
-            }	           
+            }
         ],
         "indexes": [],
         "triggers": []
