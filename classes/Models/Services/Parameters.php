@@ -20,25 +20,9 @@ class Parameters
     {
         $parameters = array();
 
-        $configFile = new XdmodConfiguration(
-            'roles.json',
-            CONFIG_DIR,
-            null,
-            array(
-                'local_config_dir' => implode(
-                    DIRECTORY_SEPARATOR,
-                    array(
-                        CONFIG_DIR,
-                        'roles.d'
-                    )
-                )
-            )
-        );
-        $configFile->initialize();
-
         // We need to retrieve which dimensions this acl filters on. To do that we need to see how
         // it's configured
-        $roles = $configFile->toAssocArray()['roles'];
+        $roles = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR)['roles'];
 
         if (!isset($roles[$aclName])) {
             throw new \Exception("Unable to find configuration information for $aclName.");
