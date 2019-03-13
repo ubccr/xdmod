@@ -1,9 +1,5 @@
 Ext.namespace('XDMoD.Modules.SummaryPortlets');
 
-
-
-
-
 XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, {
 
     layout: 'fit',
@@ -12,7 +8,6 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
 
     initComponent: function () {
         var aspectRatio = 0.8;
-
         var searchField = new Ext.form.TwinTriggerField({
             xtype: 'twintriggerfield',
             validationEvent: false,
@@ -27,31 +22,27 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
                 this.store.clearFilter();
                 this.el.dom.value = '';
                 this.triggers[0].hide();
-            }, //onTrigger1Click
+            }, // onTrigger1Click
             onTrigger2Click: function () {
                 var v = this.getRawValue();
                 if (v.length < 1) {
                     this.onTrigger1Click();
                     return;
                 }
-        
-        
                 this.store.filter('name', v, true, true);
                 this.triggers[0].show();
-            }, //onTrigger2Click
+            }, // onTrigger2Click
             listeners: {
                 scope: this,
-                'specialkey': function (field, e) {
+                specialkey: function (field, e) {
                     // e.HOME, e.END, e.PAGE_UP, e.PAGE_DOWN,
                     // e.TAB, e.ESC, arrow keys: e.LEFT, e.RIGHT, e.UP, e.DOWN
-                    if (e.getKey() == e.ENTER) {
+                    if (e.getKey() === e.ENTER) {
                         searchField.onTrigger2Click();
                     }
                 }
-            } //listeners
-        
-        }); //searchField
-        
+            } // listeners
+        }); // searchField
         this.chartReportStore = new Ext.data.JsonStore({
             // store configs
             autoDestroy: true,
@@ -61,20 +52,19 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
             root: 'data',
             idProperty: 'name',
             fields: [
-                'name', 
-                'report_id', 
-                'url', 
-                'config', 
-                'type', 
-                { name: 'recordid', type: 'int' },
-                {
-                    name: 'ts', convert: function (v, rec) {
-                        return Ext.util.Format.date(new Date(rec["ts"] * 1000).toString(), 'Y-m-d h:i:s')
+                'name',
+                'report_id',
+                'url',
+                'config',
+                'type',
+                {name: 'recordid', type: 'int'},
+                {name: 'ts',
+                    convert: function (v, rec) {
+                        return Ext.util.Format.date(new Date(rec['ts'] * 1000).toString(), 'Y-m-d h:i:s');
                     }
                 }
             ]
         });
-        
         this.chartReportGrid = new Ext.grid.GridPanel({
             store: this.chartReportStore,
             border: false,
@@ -85,11 +75,10 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
             },
             colModel: new Ext.grid.ColumnModel({
                 columns: [
-                    { header: "Name", dataIndex: 'name' },
-                    { header: "Last Modified", dataIndex: 'ts' },
-                    { header: "Type", dataIndex: 'type' },
+                    {header: 'Name', dataIndex: 'name'},
+                    {header: 'Last Modified', dataIndex: 'ts'},
+                    {header: 'Type', dataIndex: 'type'}
                 ]
-        
             }),
             tbar: {
                 items: [
@@ -100,23 +89,22 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
                 singleSelect: true,
                 listeners: {
                     rowselect: function (selModel, index, r) {
-                        if (r.data.type == 'Chart') {
+                        if (r.data.type === 'Chart') {
                             selModel.clearSelections();
                             var config = Ext.util.JSON.decode(r.data.config);
                             XDMoD.Module.MetricExplorer.setConfig(config, config.summary_index, Boolean(config.preset));
-                        } else if (r.data.type == 'Report') {
+                        } else if (r.data.type === 'Report') {
                             selModel.clearSelections();
-                            CCR.xdmod.ui.reportGenerator.fireEvent('load_report', r.data.report_id)
+                            CCR.xdmod.ui.reportGenerator.fireEvent('load_report', r.data.report_id);
                         }
-        
+
                     }
                 }
             })
         }); // chartReportGrid
-        
         this.height = this.width * aspectRatio;
-        this.items = [this.chartReportGrid];    
-        this.chartReportStore.reload();    
+        this.items = [this.chartReportGrid];
+        this.chartReportStore.reload();
         XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet.superclass.initComponent.apply(this, arguments);
     },
     listeners: {

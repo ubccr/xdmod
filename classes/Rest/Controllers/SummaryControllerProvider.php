@@ -64,10 +64,10 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $presetPortlets = array();
         $rolesConfig = \Configuration\XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
-  
+
         try {
             $presetPortlets = $rolesConfig['roles'][$mostPrivilegedAcl->getName()]['summary_portlets'];
-        } catch (\Exception $e){          
+        } catch (\Exception $e){
         }
 
         foreach ($presetPortlets as $portlet) {
@@ -164,7 +164,7 @@ class SummaryControllerProvider extends BaseControllerProvider
             // fetch reports
             $rm = new \XDReportManager($user);
             $reports = $rm->fetchReportTable();
-            
+
             foreach ($reports as &$report) {
                 $tmp = array();
                 $tmp['type'] = 'Report';

@@ -257,15 +257,14 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          ],
          listeners: {
             load_report: function (reportId) {
-                var self = this;
-                this.store.load({
-                    callback: function(records, operation, success) {               
-                     var index = self.store.find('report_id', reportId);
-                     self.getSelectionModel().selectRow(index);
-                     var record = self.getSelectionModel().getSelected()
+               var queueGrid_self = this;
+               this.store.load({
+                  callback: function (records, operation, success) {
+                     var index = queueGrid_self.store.find('report_id', reportId);
+                     queueGrid_self.getSelectionModel().selectRow(index);
                      editReport();
-                    }
-               }); 
+                  }
+               });
             }
          }
 
