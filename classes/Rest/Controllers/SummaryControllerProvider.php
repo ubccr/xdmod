@@ -56,35 +56,33 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $summaryPortlets = array();
 
-        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user);
-
+        $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user)->getName();
 
         $layout = $this->getLayout($user);
 
-        $presetPortlets = array();
-        try {
-            $presetPortlets = Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_portlets');
-        } catch (\Exception $e){
-        }
+        $roleConfig = \Configuration\XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
+        $presets = $roleConfig['roles'][$mostPrivilegedAcl];
 
-        foreach ($presetPortlets as $portlet) {
+        if (isset($presets['summary_portlets'])) {
 
-            if (isset($portlet['region']) && $portlet['region'] === 'top') {
-                $chartLocation = 'FW' . $portlet['name'];
-                $column = -1;
-            } else {
-                list($chartLocation, $column) = $layout->getLocation('PP' . $portlet['name']);
+            foreach($presets['summary_portlets'] as $portlet) {
+                if (isset($portlet['region']) && $portlet['region'] === 'top') {
+                    $chartLocation = 'FW' . $portlet['name'];
+                    $column = -1;
+                } else {
+                    list($chartLocation, $column) = $layout->getLocation('PP' . $portlet['name']);
+                }
+
+                $summaryPortlets[$chartLocation] = array(
+                        'name' => 'PP' . $portlet['name'],
+                        'type' => $portlet['type'],
+                        'config' => $portlet['config'],
+                        'column' => $column
+                );
             }
-
-            $summaryPortlets[$chartLocation] = array(
-                'name' => 'PP' . $portlet['name'],
-                'type' => $portlet['type'],
-                'config' => $portlet['config'],
-                'column' => $column
-            );
         }
 
-        $presetCharts = Roles::getConfig($mostPrivilegedAcl->getName(), 'summary_charts');
+        $presetCharts = isset($presets['summary_charts']) ? $presets['summary_charts'] : $roleConfig['roles']['default']['summary_charts'];
 
         foreach ($presetCharts as $index => $presetChart)
         {
