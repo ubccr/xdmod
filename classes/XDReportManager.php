@@ -476,7 +476,7 @@ class XDReportManager
                 r.schedule,
                 r.delivery,
                 COUNT(rc.chart_id) AS chart_count,
-                r.last_modified
+                UNIX_TIMESTAMP(r.last_modified) as last_modified
             FROM Reports r
             LEFT JOIN ReportCharts rc ON rc.report_id = r.report_id
             WHERE r.user_id = :user_id
@@ -510,7 +510,7 @@ class XDReportManager
                 'report_schedule' => $entry['schedule'],
                 'report_delivery' => $entry['delivery'],
                 'chart_count'     => $entry['chart_count'],
-                'last_modified' => strtotime($entry['last_modified'])
+                'last_modified'   => $entry['last_modified']
             );
         }
 
