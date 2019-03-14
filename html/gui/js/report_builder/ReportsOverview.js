@@ -228,6 +228,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
                               CCR.xdmod.ui.createUserManualLink('report+generator');
 
       // ----------------------------------------------------
+      var editReport;
 
       var queueGrid = new Ext.grid.GridPanel({
 
@@ -257,11 +258,10 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          ],
          listeners: {
             load_report: function (reportId) {
-               var queueGrid_self = this;
                this.store.load({
                   callback: function (records, operation, success) {
-                     var index = queueGrid_self.store.find('report_id', reportId);
-                     queueGrid_self.getSelectionModel().selectRow(index);
+                     var index = queueGrid.store.find('report_id', reportId);
+                     queueGrid.getSelectionModel().selectRow(index);
                      if ((self.parent.reportCreator.report_id !== reportId) && (self.parent.reportCreator.isDirty() === true)) {
                         Ext.Msg.show({
                            title:'Cannot open another report!',
@@ -394,8 +394,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
       // ----------------------------------------------------
 
-      var editReport = function(){
-
+      editReport = function() {
          var record = queueGrid.getSelectionModel().getSelected();
 
          XDMoD.TrackEvent('Report Generator (My Reports)', 'Attempting to edit report', record.data.report_name);
