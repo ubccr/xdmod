@@ -377,13 +377,6 @@
             "dimensions": [
                 "provider"
             ],
-            "summary_portlets": [
-                {
-                    "name": "Charts and Reports",
-                    "type": "ChartsReportsPortlet",
-                    "config": {}
-                }
-            ],
             "extends": "default"
         },
         "pi": {
