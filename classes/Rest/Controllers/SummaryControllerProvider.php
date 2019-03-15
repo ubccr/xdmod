@@ -86,6 +86,12 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         foreach ($presetCharts as $index => $presetChart)
         {
+            /* The font size setting in the 'summary_charts' section was
+             * ignored and hard-coded to 2 in the code. Keep this behaviour
+             * for backwards compatibility
+             */
+            $presetChart['font_size'] = 2;
+
             list($chartLocation, $column) = $layout->getLocation('PC' . $index);
             $summaryPortlets[$chartLocation] = array(
                 'name' => 'PC' . $index,
