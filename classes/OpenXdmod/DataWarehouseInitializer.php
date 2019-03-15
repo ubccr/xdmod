@@ -128,7 +128,6 @@ class DataWarehouseInitializer
         $this->ingestAllHpcdb($startDate, $endDate);
         $this->ingestCloudDataGeneric();
         $this->ingestCloudDataOpenStack();
-        
         $this->ingestStorageData();
     }
 
