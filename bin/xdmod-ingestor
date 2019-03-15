@@ -263,11 +263,11 @@ function main()
                 }
 
                 if($datatypeValue == 'openstack'){
-                    $dwi->ingestCloudDataOpenStack($lastModifiedStartDate);
+                    $dwi->ingestCloudDataOpenStack();
                 }
 
                 if($datatypeValue == 'genericcloud'){
-                    $dwi->ingestCloudDataGeneric($lastModifiedStartDate);
+                    $dwi->ingestCloudDataGeneric();
                 }
 
                 if ($datatypeValue == 'storage') {
