@@ -7,8 +7,7 @@
             {
                 "name": "resource_id",
                 "type": "int(11)",
-                "nullable": false,
-                "default": -1
+                "nullable": false
             },
             {
                 "name": "instance_id",
@@ -41,8 +40,8 @@
             {
                 "name": "person_id",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null,
+                "nullable": false,
+                "default": -1,
                 "comment": "Person ID associated with event"
             },
             {

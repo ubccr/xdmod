@@ -33,8 +33,8 @@
             {
                 "name": "user_name",
                 "type": "varchar(32)",
-                "nullable": false,
-                "default": -1,
+                "nullable": true,
+                "default": null,
                 "comment": "Username associated with event"
             },
             {
