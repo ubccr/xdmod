@@ -263,11 +263,11 @@ function main()
                 }
 
                 if($datatypeValue == 'openstack'){
-                    $dwi->ingestCloudDataOpenStack();
+                    $dwi->ingestCloudDataOpenStack($lastModifiedStartDate);
                 }
 
                 if($datatypeValue == 'genericcloud'){
-                    $dwi->ingestCloudDataGeneric();
+                    $dwi->ingestCloudDataGeneric($lastModifiedStartDate);
                 }
 
                 if ($datatypeValue == 'storage') {
@@ -293,7 +293,7 @@ function main()
             }
 
             if($realmToAggregate == 'cloud' || $realmToAggregate === false){
-                $dwi->aggregateCloudData();
+                $dwi->aggregateCloudData($lastModifiedStartDate);
             }
 
             if ($realmToAggregate == 'storage' || $realmToAggregate === false) {

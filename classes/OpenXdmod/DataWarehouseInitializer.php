@@ -202,12 +202,16 @@ class DataWarehouseInitializer
      * tables do not exist then catch the resulting exception and display a message
      * saying that there is no OpenStack data to ingest.
      */
-    public function ingestCloudDataOpenStack()
+    public function ingestCloudDataOpenStack($lastModifiedStartDate)
     {
         if( $this->isRealmEnabled('Cloud') ){
-            try{
+            try {
                 $this->logger->notice('Ingesting OpenStack event log data');
-                Utilities::runEtlPipeline(array('jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'), $this->logger);
+                Utilities::runEtlPipeline(
+                    array('jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
+                    $this->logger,
+                    array('last-modified-start-date' => $lastModifiedStartDate)
+                );
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -225,12 +229,16 @@ class DataWarehouseInitializer
      * tables do not exist then catch the resulting exception and display a message
      * saying that there is no generic cloud data to ingest.
      */
-    public function ingestCloudDataGeneric()
+    public function ingestCloudDataGeneric($lastModifiedStartDate)
     {
         if( $this->isRealmEnabled('Cloud') ){
-            try{
+            try {
                 $this->logger->notice('Ingesting generic cloud log files');
-                Utilities::runEtlPipeline(array('jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'), $this->logger);
+                Utilities::runEtlPipeline(
+                    array('jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'),
+                    $this->logger,
+                    array('last-modified-start-date' => $lastModifiedStartDate)
+                );
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -273,11 +281,15 @@ class DataWarehouseInitializer
      * catch the resulting exception and display a message saying that there
      * is no cloud data to aggregate and cloud aggregation is being skipped.
      */
-    public function aggregateCloudData()
+    public function aggregateCloudData($lastModifiedStartDate)
     {
         if( $this->isRealmEnabled('Cloud') ){
             $this->logger->notice('Aggregating Cloud data');
-            Utilities::runEtlPipeline(array('cloud-state-pipeline'), $this->logger);
+            Utilities::runEtlPipeline(
+                array('cloud-state-pipeline'),
+                $this->logger,
+                array('last-modified-start-date' => $lastModifiedStartDate)
+            );
 
             $filterListBuilder = new FilterListBuilder();
             $filterListBuilder->setLogger($this->logger);
