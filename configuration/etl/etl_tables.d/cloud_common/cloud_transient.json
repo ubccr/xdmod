@@ -117,16 +117,7 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "instance",
-                    "start_time_ts"
-                ],
-                "is_unique": true
-            },
-            {
-                "name": "increment_key",
-                "columns": [
                     "instance_id",
-                    "resource_id",
                     "start_time_ts"
                 ],
                 "is_unique": true

@@ -14,7 +14,7 @@ then
 fi
 
 sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_upgrade -f openstack
-sudo -u xdmod xdmod-ingestor --datatype=openstack --last-modified-start-date "$last_modified_start_date"
+sudo -u xdmod xdmod-ingestor --datatype=openstack
 sudo -u xdmod xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
 
 newCount=$(mysql -N -B -e "SELECT SUM(num_sessions_ended) FROM modw_cloud.cloudfact_by_month WHERE month = 4;")

@@ -126,11 +126,8 @@ class DataWarehouseInitializer
         $this->ingestAllShredded($startDate, $endDate);
         $this->ingestAllStaging($startDate, $endDate);
         $this->ingestAllHpcdb($startDate, $endDate);
-
-        $lastModifiedStartDate = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
-
-        $this->ingestCloudDataGeneric($lastModifiedStartDate);
-        $this->ingestCloudDataOpenStack($lastModifiedStartDate);
+        $this->ingestCloudDataGeneric();
+        $this->ingestCloudDataOpenStack();
         
         $this->ingestStorageData();
     }
@@ -206,15 +203,14 @@ class DataWarehouseInitializer
      * tables do not exist then catch the resulting exception and display a message
      * saying that there is no OpenStack data to ingest.
      */
-    public function ingestCloudDataOpenStack($lastModifiedStartDate)
+    public function ingestCloudDataOpenStack()
     {
         if( $this->isRealmEnabled('Cloud') ){
             try {
                 $this->logger->notice('Ingesting OpenStack event log data');
                 Utilities::runEtlPipeline(
                     array('jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
-                    $this->logger,
-                    array('last-modified-start-date' => $lastModifiedStartDate)
+                    $this->logger
                 );
             }
             catch( Exception $e ){
@@ -233,15 +229,14 @@ class DataWarehouseInitializer
      * tables do not exist then catch the resulting exception and display a message
      * saying that there is no generic cloud data to ingest.
      */
-    public function ingestCloudDataGeneric($lastModifiedStartDate)
+    public function ingestCloudDataGeneric()
     {
         if( $this->isRealmEnabled('Cloud') ){
             try {
                 $this->logger->notice('Ingesting generic cloud log files');
                 Utilities::runEtlPipeline(
                     array('jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'),
-                    $this->logger,
-                    array('last-modified-start-date' => $lastModifiedStartDate)
+                    $this->logger
                 );
             }
             catch( Exception $e ){
