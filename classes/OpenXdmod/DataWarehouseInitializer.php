@@ -126,8 +126,12 @@ class DataWarehouseInitializer
         $this->ingestAllShredded($startDate, $endDate);
         $this->ingestAllStaging($startDate, $endDate);
         $this->ingestAllHpcdb($startDate, $endDate);
-        $this->ingestCloudDataGeneric();
-        $this->ingestCloudDataOpenStack();
+
+        $lastModifiedStartDate = $this->hpcdbDb->query('SELECT NOW() AS now FROM dual')[0]['now'];
+
+        $this->ingestCloudDataGeneric($lastModifiedStartDate);
+        $this->ingestCloudDataOpenStack($lastModifiedStartDate);
+        
         $this->ingestStorageData();
     }
 

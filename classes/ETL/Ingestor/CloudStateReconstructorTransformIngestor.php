@@ -58,7 +58,6 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         $this->_start_event_ids = array(self::START, self::RESUME, self::STATE_REPORT, self::UNSHELVE, self::UNPAUSE, self::UNSUSPEND, self::POWER_ON);
         $this->_all_event_ids = array_merge($this->_start_event_ids, $this->_stop_event_ids);
         $this->_end_time = $etlConfig->getVariableStore()->endDate ? date('Y-m-d H:i:s', strtotime($etlConfig->getVariableStore()->endDate)) : null;
-        
         $this->resetInstance();
     }
 
