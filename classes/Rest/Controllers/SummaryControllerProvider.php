@@ -76,7 +76,7 @@ class SummaryControllerProvider extends BaseControllerProvider
                 $summaryPortlets[$chartLocation] = array(
                         'name' => 'PP' . $portlet['name'],
                         'type' => $portlet['type'],
-                        'config' => $portlet['config'],
+                        'config' => isset($portlet['config']) ? $portlet['config'] : array(),
                         'column' => $column
                 );
             }
