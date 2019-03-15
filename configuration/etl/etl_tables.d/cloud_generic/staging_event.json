@@ -7,7 +7,8 @@
             {
                 "name": "resource_id",
                 "type": "int(11)",
-                "nullable": false
+                "nullable": false,
+                "default": -1
             },
             {
                 "name": "instance_id",

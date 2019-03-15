@@ -33,15 +33,15 @@
             {
                 "name": "user_name",
                 "type": "varchar(32)",
-                "nullable": true,
-                "default": null,
+                "nullable": false,
+                "default": -1,
                 "comment": "Username associated with event"
             },
             {
                 "name": "person_id",
                 "type": "int(11)",
-                "nullable": true,
-                "default": null,
+                "nullable": false,
+                "default": -1,
                 "comment": "Person ID associated with event"
             },
             {
