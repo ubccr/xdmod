@@ -249,7 +249,8 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
 
               token = tabPanel.id + CCR.xdmod.ui.tokenDelimiter + tab.id;
               Ext.History.add(token);
-            } else if (hasActiveTab && hasTab && tab.id !== CCR.xdmod.ui.activeTab.id) {
+            } else if (hasActiveTab && hasTab && tab.id !== CCR.xdmod.ui.activeTab.id ||
+                document.location.hash.indexOf(tab.id) === -1) {
               CCR.xdmod.ui.activeTab = tab;
 
               XDMoD.TrackEvent("Tab Change", tab.title);
@@ -295,6 +296,11 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
 
         // IF: we're changing tabs then go ahead and get on with it...
         if (tabId !== currentlyActiveId && tabPanel) {
+
+          if (parts.subtab) {
+            var tab = Ext.getCmp(tabId);
+            tab.subTab = parts.subtab;
+          }
           tabPanel.show();
           tabPanel.suspendEvents(false);
           tabPanel.setActiveTab(tabId);
@@ -303,6 +309,9 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
           // ELSE: we have to force the issue ( because activate won't be triggered. ).
           var currentlyActiveTab = Ext.getCmp(tabId);
           if (currentlyActiveTab) {
+            if (parts.subtab) {
+              currentlyActiveTab.subTab = parts.subtab;
+            }
             currentlyActiveTab.fireEvent('activate', currentlyActiveTab);
           }
         }

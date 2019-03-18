@@ -364,6 +364,12 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         <link rel="stylesheet" type="text/css" href="gui/css/AvailableCharts.css"/>
     <?php endif; ?>
 
+    <!-- App Kernels -->
+    <?php if ($userLoggedIn): ?>
+        <link rel="stylesheet" type="text/css" href="gui/lib/extjs/examples/ux/css/ColumnHeaderGroup.css"/>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/ColumnHeaderGroup.js"></script>
+    <?php endif; ?>
+
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/report_builder/ChartThumbPreview.js"></script>
         <script type="text/javascript" src="gui/js/report_builder/ReportExportMenu.js"></script>
