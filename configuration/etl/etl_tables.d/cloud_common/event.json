@@ -68,6 +68,13 @@
                 "type": "int(5)",
                 "nullable": false,
                 "default": -1
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [
@@ -110,6 +117,12 @@
                     "resource_id"
                 ],
                 "is_unique": false
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
+                ]
             }
         ]
     }
