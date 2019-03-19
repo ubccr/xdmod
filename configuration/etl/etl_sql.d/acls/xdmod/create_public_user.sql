@@ -54,22 +54,3 @@ LEFT JOIN Roles cur
   ON cur.abbrev = inc.abbrev           AND
      cur.description = inc.description
 WHERE cur.role_id IS NULL;
-
--- Create the association between the Public User and the Public Role.
-INSERT INTO UserRoles(user_id, role_id, is_primary, is_active)
-SELECT inc.*
-FROM (
-  SELECT
-    u.id as user_id,
-    r.role_id AS role_id,
-    true as is_primary,
-    true as is_active
-  FROM Users u, Roles r
-  WHERE     BINARY u.username = BINARY 'Public User'
-        AND BINARY r.abbrev   = BINARY 'pub'
-) inc
-LEFT JOIN UserRoles cur
-  ON cur.user_id = inc.user_id AND
-     cur.role_id = inc.role_id
-WHERE     cur.role_id IS NULL
-      AND cur.user_id IS NULL;

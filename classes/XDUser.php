@@ -1050,26 +1050,6 @@ SQL;
         }
         /* END:   ACL data processing */
 
-        /* BEGIN: UserRole Updating */
-
-        // Rebuild roles data for user --------------
-        $this->_pdo->execute(
-            'DELETE FROM UserRoles WHERE user_id=:id',
-            array('id' => $this->_id)
-        );
-
-        foreach ($this->_roles as $role) {
-            $roleId = $this->_getRoleID($role);
-            if ($roleId === null) {
-                continue;
-            }
-            $this->_pdo->execute(
-                "INSERT INTO UserRoles VALUES(:id, :roleId, '0', '0')",
-                array('id' => $this->_id,
-                    'roleId' => $roleId)
-            );
-        }
-
         // Retrieve this users most privileged acl as it will be used to set the
         // the _active_role property.
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
@@ -1077,18 +1057,6 @@ SQL;
         if (!isset($mostPrivilegedAcl)) {
             throw new Exception('Unable to determine this users most privileged acl. There may be a problem with the state of the database.');
         }
-
-        $mostPrivilegedRoleId = $this->_getRoleID($mostPrivilegedAcl->getName());
-
-        $this->_pdo->execute(
-            "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
-            array('id' => $this->_id, 'roleId' => $mostPrivilegedRoleId)
-        );
-
-        $this->_pdo->execute(
-            "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
-            array(':id' => $this->_id, ':roleId' => $mostPrivilegedRoleId)
-        );
 
         $timestampData = $this->_pdo->query(
             "SELECT time_created, time_last_updated, password_last_updated
@@ -1239,10 +1207,6 @@ SQL;
 
         $this->_pdo->execute("DELETE FROM user_acl_group_by_parameters WHERE user_id=:user_id", array(
             ':user_id' => $this->_id
-        ));
-
-        $this->_pdo->execute("DELETE FROM UserRoles WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
         ));
 
         // Make sure to remove the acl relations
