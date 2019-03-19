@@ -293,7 +293,7 @@ function main()
             }
 
             if($realmToAggregate == 'cloud' || $realmToAggregate === false){
-                $dwi->aggregateCloudData();
+                $dwi->aggregateCloudData($lastModifiedStartDate);
             }
 
             if ($realmToAggregate == 'storage' || $realmToAggregate === false) {

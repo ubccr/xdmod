@@ -103,6 +103,13 @@
                 "name": "submission_venue_id",
                 "type": "int(5)",
                 "nullable": true
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [
@@ -110,19 +117,16 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "instance",
-                    "start_time"
+                    "instance_id",
+                    "start_time_ts"
                 ],
                 "is_unique": true
             },
             {
-                "name": "increment_key",
+                "name": "index_last_modified",
                 "columns": [
-                    "instance_id",
-                    "resource_id",
-                    "start_time"
-                ],
-                "is_unique": true
+                    "last_modified"
+                ]
             }
         ]
     }
