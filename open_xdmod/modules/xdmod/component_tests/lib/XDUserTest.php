@@ -8,7 +8,6 @@ use Models\Acl;
 use Models\Services\Users;
 use ReflectionClass;
 use TestHarness\UserHelper;
-use User\Roles\CenterDirectorRole;
 use \XDUser;
 use Models\Services\Acls;
 use \Exception;
