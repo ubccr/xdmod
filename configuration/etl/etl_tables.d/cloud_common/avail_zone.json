@@ -41,11 +41,6 @@
         "#": "Note that the primary key is (resource, zone) rather than avail_zone_id so we can",
         "#": "take advantage of ON DUPLICATE KEY UPDATE to update existing entries and still use",
         "#": "auto_increment for new entries.",
-        "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
-        "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
-        "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
-        "#": "useful when you want to put data into ordered groups.",
-        "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
 
         "indexes": [
             {
@@ -53,6 +48,24 @@
                 "columns": [
                     "resource_id",
                     "avail_zone"
+                ],
+                "is_unique": true
+            },
+            {
+                "#": "For MyISAM tables, you can specify AUTO_INCREMENT on a secondary column in a",
+                "#": "multiple-column index. In this case, the generated value for the AUTO_INCREMENT column",
+                "#": "is calculated as MAX(auto_increment_column) + 1 WHERE prefix=given-prefix. This is",
+                "#": "useful when you want to put data into ordered groups.",
+                "#": "See [MyISAM Notes](https://dev.mysql.com/doc/refman/5.7/en/example-auto-increment.html)",
+
+                "#": "The ordering of autoincrement id + resource_id is explicit and mandatory.",
+                "#": "This is because MyISAM mandates that composite keys containing an",
+                "#": "autoincrement value have said value as the first key.",
+                "#": "See the following for details: https://www.ryadel.com/en/mysql-two-columns-primary-key-with-auto-increment/",
+                "name": "autoincrement_key",
+                "columns": [
+                    "resource_id",
+                    "avail_zone_id"
                 ],
                 "is_unique": true
             }
