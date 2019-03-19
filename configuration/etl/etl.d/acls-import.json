@@ -76,14 +76,6 @@
             "class": "DatabaseIngestor",
             "options_class": "IngestorOptions",
             "definition_file": "acls/report-template-acls.json",
-            "endpoints": {
-                "source": {
-                    "type": "mysql",
-                    "name": "XDMoD Configuration database",
-                    "config": "database",
-                    "schema": "moddb"
-                }
-            },
             "truncate_destination": true
         }
     ]
