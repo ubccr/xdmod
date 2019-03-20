@@ -207,13 +207,11 @@ function listResources()
 {
     global $logger;
 
-    $configFile = new \Configuration\XdmodConfiguration(
+    $resourcesConfig = \Configuration\XdmodConfiguration::assocArrayFactory(
         'resources.json',
         CONFIG_DIR,
         $logger
     );
-    $configFile->initialize();
-    $resourcesConfig = $configFile->toAssocArray();
 
     foreach ($resourcesConfig as $resourceData) {
         echo 'Resource: ', $resourceData['resource'], "\n";

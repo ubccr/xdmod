@@ -1,0 +1,27 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/staging/union-user-pi-resource.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "union_user_pi_name": "DISTINCT raw.user_name",
+            "resource_name": "r.code"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "openstack_raw_event",
+                "alias": "raw"
+            },
+            {
+                "schema": "${UTILITY_SCHEMA}",
+                "name": "resourcefact",
+                "alias": "r",
+                "on": "r.id = raw.resource_id"
+            }
+        ],
+        "where": [
+            "raw.user_name IS NOT NULL"
+        ]
+    }
+}

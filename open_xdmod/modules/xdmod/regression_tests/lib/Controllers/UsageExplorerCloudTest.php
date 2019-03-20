@@ -26,6 +26,8 @@ class UsageExplorerCloudTest extends UsageExplorerTest
             'project',
             'configuration',
             'resource',
+            'person',
+            'username',
             'vm_size_memory',
             'vm_size',
             'submission_venue'

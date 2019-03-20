@@ -31,14 +31,11 @@ function main()
 {
     global $logger;
 
-    $configFile = new \Configuration\XdmodConfiguration(
+    $updateConfig = \Configuration\XdmodConfiguration::assocArrayFactory(
         'update_check.json',
         CONFIG_DIR,
         $logger
     );
-    $configFile->initialize();
-
-    $updateConfig = $configFile->toAssocArray();
 
     if (!$updateConfig['enabled']) {
         exit;

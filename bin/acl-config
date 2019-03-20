@@ -16,6 +16,7 @@ use CCR\DB\iDatabase;
 use CCR\Log;
 use CCR\Json;
 
+use Configuration\Configuration;
 use ETL\Utilities;
 use User\Roles;
 
@@ -124,20 +125,8 @@ function main()
     // roles/datawarehouse
     $results = array();
 
-    $moduleConfig = new \Configuration\Configuration(
-        CONFIG_DIR . '/modules.json',
-        CONFIG_DIR,
-        $log,
-        array(
-                'local_config_dir' => CONFIG_DIR . '/modules.d'
-        )
-    );
-    $moduleConfig->initialize();
-
     // Module Retrieval
-    // We're using json_[decode/encode] here to essentially make a copy of $moduleConfig->transformedConfig
-    // that will not keep a reference to the original object.
-    $modules = json_decode(json_encode($moduleConfig->getTransformedConfig()), true);
+    $modules = Configuration::assocArrayFactory('modules.json', CONFIG_DIR, $log);
 
     // Remove the warning to users that this files contents are automatically
     // generated and that they modify it at their own risk.
@@ -153,35 +142,9 @@ function main()
     $allRoles = Roles::getRoleNames($blacklist);
 
     // Configuration Files
-    $hierarchyConfig = new \Configuration\ModuleConfiguration(
-        CONFIG_DIR . '/hierarchies.json',
-        CONFIG_DIR,
-        $log,
-        array(
-                'local_config_dir' => CONFIG_DIR . '/hierarchies.d'
-        )
-    );
-    $hierarchyConfig->initialize();
-
-    $roleConfig = new \Configuration\ModuleConfiguration(
-        CONFIG_DIR . '/roles.json',
-        CONFIG_DIR,
-        $log,
-        array(
-                'local_config_dir' => CONFIG_DIR .'/roles.d'
-        )
-    );
-    $roleConfig->initialize();
-
-    $realmConfig = new \Configuration\ModuleConfiguration(
-        CONFIG_DIR . '/datawarehouse.json',
-        CONFIG_DIR,
-        $log,
-        array(
-                'local_config_dir' => CONFIG_DIR .'/datawarehouse.d'
-        )
-    );
-    $realmConfig->initialize();
+    $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);
+    $roleConfig = \Configuration\ModuleConfiguration::factory('roles.json', CONFIG_DIR, $log);
+    $realmConfig = \Configuration\ModuleConfiguration::factory('datawarehouse.json', CONFIG_DIR, $log);
 
     foreach ($modules as $module => $moduleData) {
 
@@ -583,6 +546,7 @@ function wipeManagedTables(iDatabase $db)
         'tabs',
         'acl_hierarchies',
         'acl_group_bys',
+        'report_template_acls',
         'acls',
         'acl_types',
         'group_bys',
@@ -2111,29 +2075,11 @@ function verifyConfigData()
 
     $invalid = array();
 
-    $sections = array(
-        'modules' => true,
-        'roles' => true,
-        'datawarehouse' => false
-    );
+    $sections = array('modules', 'roles', 'datawarehouse');
 
-    $baseDir = CONFIG_DIR;
-    foreach($sections as $section => $hasLocalConfig) {
-        $baseFile = implode(DIRECTORY_SEPARATOR, array($baseDir, "$section.json"));
-        $options = array();
-        if ($hasLocalConfig) {
-            $options['local_config_dir'] = implode(DIRECTORY_SEPARATOR, array($baseDir, "$section.d"));
-        }
-
+    foreach($sections as $section) {
         try {
-            $config = new \Configuration\XdmodConfiguration(
-                $baseFile,
-                $baseDir,
-                $log,
-                $options
-            );
-            $config->initialize();
-
+            \Configuration\XdmodConfiguration::assocArrayFactory("$section.json", CONFIG_DIR);
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch (Exception $e) {
             $log->err("[FAIL] Unable to load section $section");

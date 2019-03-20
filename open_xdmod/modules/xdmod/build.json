@@ -35,7 +35,7 @@
             "#xdmod-.*\\.rpm$#",
             "#xdmod-.*\\.tar\\.gz$#",
             "#^\\/html\\/gui\\/lib\\/extjs\\/examples\\/[A-t,v-z].*#",
-            "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/images\\/[a,g-z].*#",
+            "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/images\\/[a,h-z].*#",
             "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/.*\\.swf#",
             "#^\\/configuration\\/.+\\..+\\.template$#"
         ]

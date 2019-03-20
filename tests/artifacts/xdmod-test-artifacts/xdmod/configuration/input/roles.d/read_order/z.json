@@ -1,0 +1,20 @@
+{
+  "+roles": {
+    "+default": {
+      "+query_descripters": [
+        {
+          "realm": "z",
+          "group_by": "none"
+        }
+      ]
+    },
+    "+pub": {
+      "+query_descripers": [
+        {
+          "realm": "z",
+          "group_by": "none"
+        }
+      ]
+    }
+  }
+}

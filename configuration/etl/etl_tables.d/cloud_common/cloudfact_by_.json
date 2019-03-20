@@ -36,6 +36,11 @@
                 "nullable": false,
                 "comment": "DIMENSION: The person id associated with a VM instance."
             },{
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The system account id associated with a VM instance."
+            },{
                 "name": "processorbucket_id",
                 "type": "int(4)",
                 "nullable": true,

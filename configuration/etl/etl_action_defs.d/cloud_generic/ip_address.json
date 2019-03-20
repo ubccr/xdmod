@@ -13,7 +13,7 @@
             "asset_type_id": "atype.asset_type_id",
             "provider_identifier": "staging.event_data",
             "account_id": "staging.account_id",
-            "create_time_utc": "staging.event_time_utc"
+            "create_time_ts": "staging.event_time_ts"
         },
 
         "joins": [

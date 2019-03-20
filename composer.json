@@ -415,7 +415,8 @@
     },
     "autoload": {
         "classmap": [
-            "composer.scripts.php"
+            "composer.scripts.php",
+            "classes"
         ]
     }
 }

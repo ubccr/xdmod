@@ -1,0 +1,10 @@
+title
+"Core Hours: Total: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[Warbler, Yellow-rumped] Core Hours: Total","[Warbler, Yellow] Core Hours: Total","[Warbler, Blackburnian] Core Hours: Total"
+2018,1308.4656,441.2006,4.4983
+---------

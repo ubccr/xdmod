@@ -173,6 +173,13 @@ class Configuration extends Loggable implements \Iterator
 
     protected $initialized = false;
 
+    /**
+     * Will force the results of `parse` to be an array.
+     *
+     * @var boolean
+     */
+    protected $forceArrayReturn = false;
+
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
@@ -226,7 +233,18 @@ class Configuration extends Loggable implements \Iterator
         }
 
         if ( isset($options['local_config_dir']) ) {
+
+            // Before continuing, make sure that the specified directory actually exists. It not
+            // existing could have unexpected consequences for an XDMoD installation.
+            if (!is_dir($options['local_config_dir'])) {
+                $this->logAndThrowException(sprintf("Unable to find the specified local configuration directory: %s", $options['local_config_dir']));
+            }
+
             $this->localConfigDir = $options['local_config_dir'];
+        } else {
+
+            // Set $localConfigDir to the default value.
+            $this->localConfigDir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
         }
 
         $this->isLocalConfig = ( isset($options['is_local_config']) && $options['is_local_config'] );
@@ -251,6 +269,10 @@ class Configuration extends Loggable implements \Iterator
             foreach ( $options['config_variables'] as $variable => $value ) {
                 $this->variableStore->overwrite($variable, $value);
             }
+        }
+
+        if ( isset($options['force_array_return']) ) {
+            $this->forceArrayReturn = $options['force_array_return'];
         }
     }  // __construct()
 
@@ -295,22 +317,16 @@ class Configuration extends Loggable implements \Iterator
 
         $this->interpretData();
 
-        // Process any local configuration files.
-
-        if ( ! $this->isLocalConfig && null !== $this->localConfigDir ) {
-
-            if ( ! is_dir($this->localConfigDir) ) {
-                $this->logger->debug(sprintf("Local configuration directory '%s' not found", $this->localConfigDir));
-                return;
-            }
+        // Process any local configuration files iff $localConfigDir exists, is actually a directory,
+        // and this is not a local config file itself.
+        if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) ) {
 
             if ( false === ($dh = @opendir($this->localConfigDir)) ) {
                 $this->logAndThrowException(sprintf("Error opening configuration directory '%s'", $this->localConfigDir));
             }
 
-            // Examine the subdirectory for .json files and parse each one, then merge the results back
-            // into this object
-
+            // Examine the subdirectory for .json files and collect them for later use.
+            $files = array();
             while ( false !== ( $file = readdir($dh) ) ) {
 
                 // Only process .json files
@@ -321,20 +337,29 @@ class Configuration extends Loggable implements \Iterator
                     continue;
                 }
 
-                $fullPath = $this->localConfigDir . "/" . $file;
-                try {
-                    $localConfigObj = $this->processLocalConfig($fullPath);
-                } catch ( Exception $e ) {
-                    throw new Exception(sprintf("Processing %s: %s", $fullPath, $e->getMessage()));
-                }
-                $this->merge($localConfigObj);
-                $localConfigObj->cleanup();
+                $files[] = $this->localConfigDir . "/" . $file;
 
             }  //  while ( false !== ( $file = readdir($dh) ) )
 
-            closedir($dh);
+            // Sort the retrieved .json files.
+            sort($files, SORT_LOCALE_STRING);
 
-        }  // if ( null !== $confSubdirectory )
+            // Process each .json file before merging into the main file.
+            foreach( $files as $file ) {
+
+                try {
+                    $localConfigObj = $this->processLocalConfig($file);
+                } catch ( Exception $e ) {
+                    throw new Exception(sprintf("Processing %s: %s", $file, $e->getMessage()));
+                }
+
+                $this->merge($localConfigObj);
+
+                $localConfigObj->cleanup();
+            } // foreach($files as $file)
+
+            closedir($dh);
+        } // if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) )
 
         $this->postMergeTasks();
 
@@ -385,6 +410,10 @@ class Configuration extends Loggable implements \Iterator
             $parsed = new stdClass();
         } elseif(count($jsonFile) > 1) {
             $parsed = $jsonFile->getRecordList();
+        }
+
+        if ($this->forceArrayReturn && !is_array($parsed)) {
+            $parsed = array($parsed);
         }
 
         $this->parsedConfig = $parsed;
@@ -1090,6 +1119,48 @@ class Configuration extends Loggable implements \Iterator
     public function getFilename()
     {
         return $this->filename;
+    }
+
+    /**
+     * A factory / helper method for instantiating a Configuration object, initializing it, and
+     * returning the results of its `toAssocArray` function.
+     *
+     * @param string         $filename the base configuration file name to be processed.
+     * @param string|null    $baseDir  the directory in which $filename can be found.
+     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
+     * @param array          $options  options that will be used during construction of the Configuration object.
+     *
+     * @return array the results of the instantiated configuration objects `toAssocArray` function.
+     */
+    public static function assocArrayFactory(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+
+        return self::factory($filename, $baseDir, $logger, $options)->toAssocArray();
+    }
+
+    /**
+     * A helper function that instantiates, initializes, and returns a Configuration object.
+     *
+     * @param string         $filename the base configuration file name to be processed.
+     * @param string|null    $baseDir  the directory in which $filename can be found.
+     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
+     * @param array          $options  options that will be used during construction of the Configuration object.
+     *
+     * @return Configuration an initialized instance of Configuration.
+     */
+    public static function factory(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+        $instance = new static($filename, $baseDir, $logger, $options);
+        $instance->initialize();
+        return $instance;
     }
 
     /** -----------------------------------------------------------------------------------------
