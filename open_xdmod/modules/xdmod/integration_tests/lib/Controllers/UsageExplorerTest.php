@@ -608,8 +608,8 @@ EOF;
                 'realm' => 'Cloud',
                 'filters' => array(
                     array(
-                        array('project' => '2'),
-                        array('project_filter' => '2'),
+                        array('project' => '3'),
+                        array('project_filter' => '3'),
                         array('project_filter'=> '"zealous"')
                     )
                 ),
@@ -656,7 +656,7 @@ EOF;
                 'realm' => 'Cloud',
                 'filters' => array(
                     array(
-                        array('project_filter' => '1,2,3'),
+                        array('project_filter' => '2,3,4'),
                         array('project_filter'=> '\'zealous\',\'youthful\',\'zen\'')
                     )
                 ),
