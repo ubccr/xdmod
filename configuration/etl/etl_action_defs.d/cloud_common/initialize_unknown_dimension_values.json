@@ -40,7 +40,7 @@
     "source_query": {
         "records": {
             "resource_id": "rf.id",
-            "unknown_id": -1,
+            "unknown_id": 1,
             "unknown_key": "'unknown'",
             "unknown_display": "'Unknown'"
         },
