@@ -64,8 +64,8 @@
                 "#": "See the following for details: https://www.ryadel.com/en/mysql-two-columns-primary-key-with-auto-increment/",
                 "name": "autoincrement_key",
                 "columns": [
-                    "avail_zone_id",
-                    "resource_id"
+                    "resource_id",
+                    "avail_zone_id"
                 ],
                 "is_unique": true
             }

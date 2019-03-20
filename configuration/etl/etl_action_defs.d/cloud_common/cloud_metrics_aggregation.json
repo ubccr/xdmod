@@ -50,8 +50,11 @@
               "${AGGREGATION_UNIT}_id",
               "year",
               "${AGGREGATION_UNIT}",
+              "host_resource_id",
               "configuration",
               "processorbucket_id",
+              "memorybucket_id",
+              "instance_type_id",
               "account_id",
               "systemaccount_id",
               "person_id"
