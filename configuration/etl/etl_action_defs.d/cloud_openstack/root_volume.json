@@ -18,7 +18,7 @@
             "provider_identifier": "CONCAT('root-vol-', i.provider_identifier)",
             "size": "itype.disk_gb",
             "account_id": "staging.account_id",
-            "create_time_utc": "staging.event_time_utc"
+            "create_time_ts": "staging.event_time_ts"
         },
 
         "joins": [

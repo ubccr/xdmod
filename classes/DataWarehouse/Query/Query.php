@@ -1,13 +1,13 @@
 <?php
 namespace DataWarehouse\Query;
 
+use Configuration\XdmodConfiguration;
 use Exception;
 
 use CCR\DB;
 use CCR\DB\PDODB;
 use FilterListHelper;
 use Models\Services\Parameters;
-use Xdmod\Config;
 
 /*
 * @author Amin Ghadersohi
@@ -1722,8 +1722,7 @@ class Query
     protected static function getConfigData()
     {
         if (!isset(self::$config)) {
-            $config = Config::factory();
-            self::$config = $config['datawarehouse'];
+            self::$config = XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
         }
 
         return self::$config;

@@ -34,24 +34,24 @@
             },
             {
                 "name": "event_time_utc",
-                "type": "datetime",
+                "type": "char(26)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
+                "default": "0000-00-00T00:00:00.000000",
                 "comment": "The time of the event in UTC."
             },
             {
                 "name": "attach_time_utc",
-                "type": "datetime",
+                "type": "char(26)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time that the volume was attached to an instance in UTC."
+                "default": "0000-00-00T00:00:00.000000",
+                "comment": "The time of the event in UTC."
             },
             {
                 "name": "create_time_utc",
-                "type": "datetime",
+                "type": "char(26)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time that the volume was created in UTC."
+                "default": "0000-00-00T00:00:00.000000",
+                "comment": "The time of the event in UTC."
             },
             {
                 "name": "provider_volume_identifier",

@@ -1,0 +1,32 @@
+[
+    {
+        "resource": "frearson",
+        "resource_type_id": 1,
+        "name": "Frearson"
+    },
+    {
+        "resource": "mortorq",
+        "resource_type_id": 1,
+        "name": "Mortorq"
+    },
+    {
+        "resource": "phillips",
+        "resource_type_id": 1,
+        "name": "Phillips"
+    },
+    {
+        "resource": "pozidriv",
+        "resource_type_id": 1,
+        "name": "Posidriv"
+    },
+    {
+        "resource": "robertson",
+        "resource_type_id": 1,
+        "name": "Robertson"
+    },
+    {
+        "resource": "openstack",
+        "resource_type_id": 5,
+        "name": "OpenStack"
+    }
+]

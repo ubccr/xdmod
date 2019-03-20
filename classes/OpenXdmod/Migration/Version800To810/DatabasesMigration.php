@@ -55,17 +55,66 @@ class DatabasesMigration extends \OpenXdmod\Migration\DatabasesMigration
         $hpcdbDb = DB::factory('hpcdb');
         $dwDb = DB::factory('datawarehouse');
         $dwi = new DataWarehouseInitializer($hpcdbDb, $dwDb);
-
+        $db = DB::factory('database');
         if($dwi->isRealmEnabled('Cloud')){
             $console->displayMessage(<<<"EOT"
-There have been updates to cloud aggregation statistics to make the data more accurate.
-If you have the Cloud realm enabled it is recommended that you re-ingest and aggregate
-your cloud data using the commands recommended in our documentation.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+There have been updates to cloud data the current data is INVALID.
+If you need the current data back it up NOW.
+After you press enter it will be removed.
+Canceling the upgrade process now will break XDMoD.
+
+After the upgrade is complete re-ingest and aggregate your cloud data using the
+commands recommended in our documentation.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 EOT
             );
-        }
+            $console->prompt("Press ENTER to continue.");
 
-        $db = DB::factory('database');
+            $db->execute('
+                DROP TABLE IF EXISTS `modw_cloud`.`account`;
+                DROP TABLE IF EXISTS `modw_cloud`.`asset`;
+                DROP TABLE IF EXISTS `modw_cloud`.`asset_type`;
+                DROP TABLE IF EXISTS `modw_cloud`.`avail_zone`;
+                DROP TABLE IF EXISTS `modw_cloud`.`cloud_events_transient`;
+                DROP TABLE IF EXISTS `modw_cloud`.`cloud_resource_metadata`;
+                DROP TABLE IF EXISTS `modw_cloud`.`cloudfact_by_day`;
+                DROP TABLE IF EXISTS `modw_cloud`.`cloudfact_by_month`;
+                DROP TABLE IF EXISTS `modw_cloud`.`cloudfact_by_quarter`;
+                DROP TABLE IF EXISTS `modw_cloud`.`cloudfact_by_year`;
+                DROP TABLE IF EXISTS `modw_cloud`.`event`;
+                DROP TABLE IF EXISTS `modw_cloud`.`event_asset`;
+                DROP TABLE IF EXISTS `modw_cloud`.`event_reconstructed`;
+                DROP TABLE IF EXISTS `modw_cloud`.`event_type`;
+                DROP TABLE IF EXISTS `modw_cloud`.`generic_cloud_raw_event`;
+                DROP TABLE IF EXISTS `modw_cloud`.`generic_cloud_raw_instance_type`;
+                DROP TABLE IF EXISTS `modw_cloud`.`generic_cloud_raw_volume`;
+                DROP TABLE IF EXISTS `modw_cloud`.`generic_cloud_staging_event`;
+                DROP TABLE IF EXISTS `modw_cloud`.`host`;
+                DROP TABLE IF EXISTS `modw_cloud`.`image`;
+                DROP TABLE IF EXISTS `modw_cloud`.`instance`;
+                DROP TABLE IF EXISTS `modw_cloud`.`instance_data`;
+                DROP TABLE IF EXISTS `modw_cloud`.`instance_type`;
+                DROP TABLE IF EXISTS `modw_cloud`.`job_record_event`;
+                DROP TABLE IF EXISTS `modw_cloud`.`memory_buckets`;
+                DROP TABLE IF EXISTS `modw_cloud`.`openstack_event_map`;
+                DROP TABLE IF EXISTS `modw_cloud`.`openstack_raw_event`;
+                DROP TABLE IF EXISTS `modw_cloud`.`openstack_raw_instance_type`;
+                DROP TABLE IF EXISTS `modw_cloud`.`openstack_staging_event`;
+                DROP TABLE IF EXISTS `modw_cloud`.`processor_buckets`;
+                DROP TABLE IF EXISTS `modw_cloud`.`record_type`;
+                DROP TABLE IF EXISTS `modw_cloud`.`region`;
+                DROP TABLE IF EXISTS `modw_cloud`.`user`;
+            ');
+        }
 
         $result = $db->query('SELECT id FROM Users');
         foreach ($result as $row)

@@ -26,10 +26,22 @@
                 "comment": "Optional instance event is associated with. Unknown = 1"
             },
             {
-                "name": "event_time_utc",
-                "type": "datetime",
+                "name": "event_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00"
+                "default": "0.000000"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
+            },
+            {
+                "name": "systemaccount_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
             },
             {
                 "name": "event_type_id",
@@ -56,6 +68,13 @@
                 "type": "int(5)",
                 "nullable": false,
                 "default": -1
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [
@@ -64,7 +83,7 @@
                 "columns": [
                     "resource_id",
                     "instance_id",
-                    "event_time_utc",
+                    "event_time_ts",
                     "event_type_id",
                     "host_id"
                 ],
@@ -98,6 +117,12 @@
                     "resource_id"
                 ],
                 "is_unique": false
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
+                ]
             }
         ]
     }

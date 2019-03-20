@@ -1,0 +1,12 @@
+title
+"Average Wall Hours per Session: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Average Wall Hours per Session"
+"Warbler, Yellow",36.50143519
+"Warbler, Yellow-rumped",27.87274691
+"Warbler, Blackburnian",0.40893939
+---------

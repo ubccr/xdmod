@@ -143,8 +143,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
 
-    <script type="text/javascript" src="gui/lib/debug.js"></script>
-
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
     <?php endif; ?>
@@ -209,14 +207,11 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <script type="text/javascript" src="gui/js/CCR.js"></script>
     <script type="text/javascript" src="gui/js/HighChartWrapper.js"></script>
-    <script type="text/javascript" src="gui/js/RESTDataProxy.js"></script>
-    <script type="text/javascript" src="gui/js/CustomHttpProxy.js"></script>
 
     <script type="text/javascript" src="gui/lib/printer/Printer-all.js"></script>
 
     <script type="text/javascript" src="gui/js/TGUserDropDown.js"></script>
 
-    <script language="JavaScript" src="gui/js/login.js.php"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/js/LoginPrompt.js"></script>
     <?php endif; ?>
@@ -273,8 +268,14 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
             print "CCR.xdmod.ui.isCenterDirector = " . json_encode($user->hasAcl(ROLE_ID_CENTER_DIRECTOR)) . ";\n";
         }
 
-        $config = \Xdmod\Config::factory();
-        $rawDataRealms = array_keys($config['rawstatistics']['realms']);
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
+
+        $rawDataRealms = array_map(
+            function ($item) {
+                return $item['name'];
+            },
+            $config['realms']
+        );
 
         print "CCR.xdmod.ui.rawDataAllowedRealms = " . json_encode($rawDataRealms) . ";\n";
 

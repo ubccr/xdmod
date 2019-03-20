@@ -31,6 +31,10 @@ expect {
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1
     }
+    "\nPress ENTER to continue." {
+        send \n
+        exp_continue
+    }
     "Upgrade Complete" {
         lassign [wait] pid spawnid os_error_flag value
     }

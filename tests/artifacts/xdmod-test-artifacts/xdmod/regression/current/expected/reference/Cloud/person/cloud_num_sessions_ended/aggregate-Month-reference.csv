@@ -1,0 +1,12 @@
+title
+"Number of Sessions Ended: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+User,"Number of Sessions Ended"
+"Warbler, Yellow-rumped",36
+"Warbler, Blackburnian",11
+"Warbler, Yellow",6
+---------

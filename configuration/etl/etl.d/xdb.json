@@ -51,8 +51,6 @@
                 "xdb/session-manager.json",
                 "xdb/users.json",
                 "xdb/user-profiles.json",
-                "xdb/user-role-parameters.json",
-                "xdb/user-roles.json",
                 "xdb/user-types.json",
                 "xdb/version-check.json"
             ]

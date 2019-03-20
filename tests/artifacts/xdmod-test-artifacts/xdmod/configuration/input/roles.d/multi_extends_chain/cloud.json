@@ -1,0 +1,94 @@
+{
+    "+roles": {
+        "+default": {
+            "+query_descripters": [{
+                    "realm": "Cloud",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "project"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "configuration"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size_memory"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "submission_venue"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "person"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "username"
+                }
+            ]
+        },
+        "+pub": {
+            "+query_descripters": [{
+                    "realm": "Cloud",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "project"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "configuration"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "vm_size_memory"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "submission_venue"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "person"
+                },
+                {
+                  "realm": "Cloud",
+                  "group_by": "username"
+                }
+            ]
+        },
+        "+usr": {
+            "usr": "cloud"
+        },
+        "+pi": {
+            "pi": "cloud"
+        },
+        "+cs": {
+            "cs": "cloud"
+        },
+        "+cd": {
+            "cd": "cloud"
+        }
+    }
+}

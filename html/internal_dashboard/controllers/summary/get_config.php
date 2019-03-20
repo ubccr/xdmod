@@ -5,15 +5,17 @@
  * @author Jeffrey T. Palmer <jtpalmer@ccr.buffalo.edu>
  */
 
-use Xdmod\Config;
 use Log\Summary;
 
 try {
-    $config = Config::factory();
+    $config = \Configuration\XdmodConfiguration::assocArrayFactory(
+        'internal_dashboard.json',
+        CONFIG_DIR
+    );
 
     $summaries = array();
 
-    foreach ($config['internal_dashboard']['summary'] as $summary) {
+    foreach ($config['summary'] as $summary) {
 
         // Add an empty config if none is found.
         if (!isset($summary['config'])) {
@@ -24,7 +26,7 @@ try {
         if ($summary['class'] === 'XDMoD.Log.TabPanel') {
             $logList = array();
 
-            foreach ($config['internal_dashboard']['logs'] as $log) {
+            foreach ($config['logs'] as $log) {
                 $logSummary = Summary::factory($log['ident']);
 
                 if ($logSummary->getProcessStartRowId() === null) {

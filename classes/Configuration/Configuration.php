@@ -75,14 +75,13 @@
 namespace Configuration;
 
 // PEAR logger
-use Log;
-
-use Exception;
-use stdClass;
 use CCR\Loggable;
-use ETL\VariableStore;
-use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint;
+use ETL\DataEndpoint\DataEndpointOptions;
+use ETL\VariableStore;
+use Exception;
+use Log;
+use stdClass;
 use Traversable;
 
 class Configuration extends Loggable implements \Iterator
@@ -174,6 +173,13 @@ class Configuration extends Loggable implements \Iterator
 
     protected $initialized = false;
 
+    /**
+     * Will force the results of `parse` to be an array.
+     *
+     * @var boolean
+     */
+    protected $forceArrayReturn = false;
+
     /** -----------------------------------------------------------------------------------------
      * Constructor. Read and parse the configuration file.
      *
@@ -227,7 +233,18 @@ class Configuration extends Loggable implements \Iterator
         }
 
         if ( isset($options['local_config_dir']) ) {
+
+            // Before continuing, make sure that the specified directory actually exists. It not
+            // existing could have unexpected consequences for an XDMoD installation.
+            if (!is_dir($options['local_config_dir'])) {
+                $this->logAndThrowException(sprintf("Unable to find the specified local configuration directory: %s", $options['local_config_dir']));
+            }
+
             $this->localConfigDir = $options['local_config_dir'];
+        } else {
+
+            // Set $localConfigDir to the default value.
+            $this->localConfigDir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
         }
 
         $this->isLocalConfig = ( isset($options['is_local_config']) && $options['is_local_config'] );
@@ -254,6 +271,9 @@ class Configuration extends Loggable implements \Iterator
             }
         }
 
+        if ( isset($options['force_array_return']) ) {
+            $this->forceArrayReturn = $options['force_array_return'];
+        }
     }  // __construct()
 
     /** -----------------------------------------------------------------------------------------
@@ -297,22 +317,16 @@ class Configuration extends Loggable implements \Iterator
 
         $this->interpretData();
 
-        // Process any local configuration files.
-
-        if ( ! $this->isLocalConfig && null !== $this->localConfigDir ) {
-
-            if ( ! is_dir($this->localConfigDir) ) {
-                $this->logger->debug(sprintf("Local configuration directory '%s' not found", $this->localConfigDir));
-                return;
-            }
+        // Process any local configuration files iff $localConfigDir exists, is actually a directory,
+        // and this is not a local config file itself.
+        if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) ) {
 
             if ( false === ($dh = @opendir($this->localConfigDir)) ) {
                 $this->logAndThrowException(sprintf("Error opening configuration directory '%s'", $this->localConfigDir));
             }
 
-            // Examine the subdirectory for .json files and parse each one, then merge the results back
-            // into this object
-
+            // Examine the subdirectory for .json files and collect them for later use.
+            $files = array();
             while ( false !== ( $file = readdir($dh) ) ) {
 
                 // Only process .json files
@@ -323,20 +337,29 @@ class Configuration extends Loggable implements \Iterator
                     continue;
                 }
 
-                $fullPath = $this->localConfigDir . "/" . $file;
-                try {
-                    $localConfigObj = $this->processLocalConfig($fullPath);
-                } catch ( Exception $e ) {
-                    throw new Exception(sprintf("Processing %s: %s", $fullPath, $e->getMessage()));
-                }
-                $this->merge($localConfigObj);
-                $localConfigObj->cleanup();
+                $files[] = $this->localConfigDir . "/" . $file;
 
             }  //  while ( false !== ( $file = readdir($dh) ) )
 
-            closedir($dh);
+            // Sort the retrieved .json files.
+            sort($files, SORT_LOCALE_STRING);
 
-        }  // if ( null !== $confSubdirectory )
+            // Process each .json file before merging into the main file.
+            foreach( $files as $file ) {
+
+                try {
+                    $localConfigObj = $this->processLocalConfig($file);
+                } catch ( Exception $e ) {
+                    throw new Exception(sprintf("Processing %s: %s", $file, $e->getMessage()));
+                }
+
+                $this->merge($localConfigObj);
+
+                $localConfigObj->cleanup();
+            } // foreach($files as $file)
+
+            closedir($dh);
+        } // if ( ! $this->isLocalConfig && null !== $this->localConfigDir && is_dir($this->localConfigDir) )
 
         $this->postMergeTasks();
 
@@ -371,7 +394,29 @@ class Configuration extends Loggable implements \Iterator
         ));
 
         $jsonFile = DataEndpoint::factory($options, $this->logger);
-        $this->parsedConfig = $jsonFile->parse();
+
+        $parsed = $jsonFile->parse();
+
+        /* We currently support json files that have an object or an array as the root element.
+         * If the root element is an object then $parsed will contain the first element in the
+         * object ( missing both of these if cases ). If it's an array, then the `elseif` will hit
+         * and we use the `getRecordList` to retrieve all of the data parsed from the file as
+         * opposed to just the first record in the element.
+         *
+         * If there is a problem parsing the file then `false` will be returned. To allow for the
+         * the rest of this class to work we supply an empty object.
+         */
+        if ($parsed === false) {
+            $parsed = new stdClass();
+        } elseif(count($jsonFile) > 1) {
+            $parsed = $jsonFile->getRecordList();
+        }
+
+        if ($this->forceArrayReturn && !is_array($parsed)) {
+            $parsed = array($parsed);
+        }
+
+        $this->parsedConfig = $parsed;
 
         return $this;
 
@@ -409,7 +454,20 @@ class Configuration extends Loggable implements \Iterator
         // any properties that are references to other variables will remain references
 
         $tmp = unserialize(serialize($this->parsedConfig));
-        $this->transformedConfig = $this->processKeyTransformers($tmp);
+
+        // We need to account for `parsedConfig` being an object or an array of objects. The
+        // following `if/else` statement handles either of these to scenarios.
+        if (is_array($tmp)) {
+            foreach($tmp as $key => $value) {
+                if (is_object($value)) {
+                    $tmp[$key] = $this->processKeyTransformers($value);
+                }
+            }
+            $this->transformedConfig = $tmp;
+        } else {
+            $this->transformedConfig = $this->processKeyTransformers($tmp);
+        }
+
 
         return $this;
 
@@ -440,7 +498,7 @@ class Configuration extends Loggable implements \Iterator
      *
      * @param string $localConfigFile The path to the local configuration file
      *
-     * @return stdClass A Configuration object containing the parsed config.
+     * @return Configuration A Configuration object containing the parsed config.
      * ------------------------------------------------------------------------------------------
      */
 
@@ -475,7 +533,7 @@ class Configuration extends Loggable implements \Iterator
      * broken out in its own method so child classes can implement logic specific to their
      * data if needed.
      *
-     * @param Configuration $subConfigObj A configuration object generated from a
+     * @param Configuration $localConfigObj A configuration object generated from a
      *   local config file
      * @param bool $overwrite If TRUE, overwrite data (e.g. a key) in this Configuration
      *   with data found in a local configuration.
@@ -486,7 +544,6 @@ class Configuration extends Loggable implements \Iterator
 
     protected function merge(Configuration $localConfigObj, $overwrite = false)
     {
-
         $this->transformedConfig = $this->mergeLocal(
             $this->transformedConfig,
             $localConfigObj->getTransformedConfig(),
@@ -513,27 +570,50 @@ class Configuration extends Loggable implements \Iterator
     /**
      * Merge $incoming object into the $existing object recursively.
      *
-     * @param \stdClass $existing the object to be merged into.
-     * @param \stdClass $incoming the object to be merged from.
+     * @param \stdClass $existing         the object to be merged into.
+     * @param \stdClass $incoming         the object to be merged from.
      * @param string    $incomingFileName the file that $incoming originates from.
-     * @param boolean   $overwrite whether or not to force overwriting of $existing w/ $incoming.
+     * @param bool      $overwrite        whether or not to force overwriting of all $existing w/
+     * $incoming.
+     * @param bool      $overwriteScalar  whether or not to force overwriting of just scalar values.
      * @return \stdClass the updated $existing object.
      */
-    protected function mergeLocal(\stdClass &$existing, \stdClass $incoming, $incomingFileName, $overwrite)
+    protected function mergeLocal(\stdClass $existing, \stdClass $incoming, $incomingFileName, $overwrite = false, $overwriteScalar = true)
     {
         foreach($incoming as $property => $incomingValue) {
 
             if ( $overwrite || ! isset($existing->$property) ) {
                 $existing->$property = $incoming->$property;
             } else {
-                $existingValue = $existing->$property;
+                $existingValue = &$existing->$property;
 
                 if (is_object($existingValue) && is_object($incomingValue)) {
                     $existing->$property = $this->mergeLocal($existingValue, $incomingValue, $incomingFileName, $overwrite);
                 } elseif (is_array($existingValue) && is_array($incomingValue)) {
-                    $existing->$property = array_merge($existingValue, $incomingValue);
+
+
+                    /* Since we only deal with numeric arrays ( of stdClass objects ) we can't rely
+                     * on `array_merge` as that could lead to duplicate values. Instead we utilize
+                     * `in_array` which works as expected for stdClass objects.
+                     *
+                     * From: https://secure.php.net/manual/en/function.array-merge.php
+                     * "If the input arrays have the same string keys, then the later value for that
+                     * key will overwrite the previous one. If, however, the arrays contain numeric
+                     * keys, the later value will not overwrite the original value, but will be
+                     * appended."
+                     */
+                    foreach($incomingValue as $value) {
+                        if (!in_array($value, $existingValue)) {
+                            array_push($existingValue, $value);
+                        }
+                    }
                 } elseif (is_scalar($existingValue) && is_scalar($incomingValue)) {
-                    $existing->$property = $incomingValue;
+                    // When this function is used to `extend` an entry we do not want to overwrite
+                    // values that already exist as the json merge step has already occurred. In
+                    // that case $overwriteScalar will be false.
+                    if ($overwriteScalar) {
+                        $existing->$property = $incomingValue;
+                    }
                 } else {
                     $this->logger->warning(
                         sprintf(
@@ -557,8 +637,8 @@ class Configuration extends Loggable implements \Iterator
      * customize the global configuration object as needed.
      *
      * @return Configuration This object to support method chaining.
+     * @throws Exception
      */
-
     protected function postMergeTasks()
     {
 
@@ -1041,6 +1121,48 @@ class Configuration extends Loggable implements \Iterator
         return $this->filename;
     }
 
+    /**
+     * A factory / helper method for instantiating a Configuration object, initializing it, and
+     * returning the results of its `toAssocArray` function.
+     *
+     * @param string         $filename the base configuration file name to be processed.
+     * @param string|null    $baseDir  the directory in which $filename can be found.
+     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
+     * @param array          $options  options that will be used during construction of the Configuration object.
+     *
+     * @return array the results of the instantiated configuration objects `toAssocArray` function.
+     */
+    public static function assocArrayFactory(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+
+        return self::factory($filename, $baseDir, $logger, $options)->toAssocArray();
+    }
+
+    /**
+     * A helper function that instantiates, initializes, and returns a Configuration object.
+     *
+     * @param string         $filename the base configuration file name to be processed.
+     * @param string|null    $baseDir  the directory in which $filename can be found.
+     * @param Log|null       $logger   a Log instance that Configuration will utilize during its processing.
+     * @param array          $options  options that will be used during construction of the Configuration object.
+     *
+     * @return Configuration an initialized instance of Configuration.
+     */
+    public static function factory(
+        $filename,
+        $baseDir = null,
+        Log $logger = null,
+        array $options = array()
+    ) {
+        $instance = new static($filename, $baseDir, $logger, $options);
+        $instance->initialize();
+        return $instance;
+    }
+
     /** -----------------------------------------------------------------------------------------
      * Return the JSON representation of the parsed and translated Configuration.
      *
@@ -1052,6 +1174,16 @@ class Configuration extends Loggable implements \Iterator
     {
         return json_encode($this->transformedConfig);
     }  // toJson()
+
+    /**
+     * Retrieve this `Configuration` objects data formatted as an associative array.
+     *
+     * @return array
+     */
+    public function toAssocArray()
+    {
+        return json_decode(json_encode($this->transformedConfig), true);
+    } // toAssocArray
 
     /** -----------------------------------------------------------------------------------------
      * Generate a string representation of this object. Typically the name, plus other pertinant

@@ -7,8 +7,7 @@
         "name": "openstack_raw_event",
         "engine": "MyISAM",
         "comment": "Raw events from Open Stack log events.",
-        "columns": [
-            {
+        "columns": [{
                 "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false
@@ -22,17 +21,17 @@
             },
             {
                 "name": "event_time_utc",
-                "type": "datetime",
+                "type": "char(26)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
+                "default": "0000-00-00T00:00:00.000000",
                 "comment": "The time of the event in UTC."
             },
             {
                 "name": "create_time_utc",
-                "type": "datetime",
+                "type": "char(26)",
                 "nullable": true,
-                "default": "0000-00-00 00:00:00",
-                "comment": "Time when the resource was created."
+                "default": "0000-00-00T00:00:00.000000",
+                "comment": "The time of the event in UTC."
             },
             {
                 "name": "event_type",
@@ -43,7 +42,7 @@
                 "name": "record_type",
                 "type": "varchar(64)",
                 "nullable": true,
-		            "default": null
+                "default": null
             },
             {
                 "name": "hostname",
@@ -83,17 +82,17 @@
                 "default": null
             },
             {
-            		"name": "project_id",
-            		"type": "varchar(64)",
-            		"nullable": true,
-            		"default": null
-      	    },
-      	    {
-            		"name": "request_id",
-            		"type": "varchar(64)",
-            		"nullable": true,
-            		"default": null
-      	    },
+                "name": "project_id",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "request_id",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null
+            },
             {
                 "name": "event_data",
                 "type": "varchar(256)",
@@ -102,28 +101,28 @@
                 "comment": "Additional data specific to an event (e.g., volume, IP address, etc.)"
             },
             {
-        	    	"name": "openstack_resource_id",
-        		    "type": "varchar(64)",
-        		    "nullable": true,
-        		    "default": null
-          	},
-      	    {
-            		"name": "disk_gb",
-            		"type": "int(11)",
-            		"nullable": true,
-            		"default": null
-      	    },
+                "name": "openstack_resource_id",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null
+            },
             {
-            		"name": "size",
-            		"type": "int(11)",
-            		"nullable": true,
-            		"default": null
-      	    },
+                "name": "disk_gb",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
             {
-            		"name": "volume_id",
-            		"type": "varchar(64)",
-            		"nullable": true,
-            		"default": null
+                "name": "size",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "volume_id",
+                "type": "varchar(64)",
+                "nullable": true,
+                "default": null
             },
             {
                 "name": "state",
@@ -132,14 +131,12 @@
                 "default": null
             }
         ],
-        "indexes": [
-            {
-                "name": "resource_id",
-                "columns": [
-                    "resource_id"
-                ],
-                "is_unique": false
-            }
-        ]
+        "indexes": [{
+            "name": "resource_id",
+            "columns": [
+                "resource_id"
+            ],
+            "is_unique": false
+        }]
     }
 }

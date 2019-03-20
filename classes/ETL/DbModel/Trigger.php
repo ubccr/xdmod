@@ -68,6 +68,7 @@ class Trigger extends SchemaEntity implements iEntity
         }
 
         switch ( $property ) {
+
             case 'time':
             case 'event':
             case 'table':
@@ -76,6 +77,13 @@ class Trigger extends SchemaEntity implements iEntity
                     $this->logAndThrowException(
                         sprintf("%s name must be a string, '%s' given", $property, gettype($value))
                     );
+                }
+
+                // Normalize property values to lowercase to match MySQL behavior
+                if ( in_array($property, array('time', 'event')) ) {
+                    $value = strtoupper($value);
+                } elseif ( 'body' == $property && 0 !== stripos($value, "BEGIN") ) {
+                    $value = sprintf("BEGIN\n%s\nEND", $value);
                 }
                 break;
 
@@ -98,15 +106,23 @@ class Trigger extends SchemaEntity implements iEntity
             return 1;
         }
 
-        // Schemas are optional for the trigger
+        if ( ($retval = parent::compare($cmp)) != 0 ) {
+            return $retval;
+        }
 
         // Triggers are considered equal if all non-null properties are the same.
 
-        if ( $this->name != $cmp->name
-             || $this->time != $cmp->time
-             || $this->event != $cmp->event
-             || $this->table != $cmp->table
-             || $this->body != $cmp->body ) {
+        if ( $this->time != $cmp->time ) {
+            $this->logCompareFailure('time', $this->time, $cmp->time, $this->name);
+            return -1;
+        } elseif ( $this->event != $cmp->event ) {
+            $this->logCompareFailure('event', $this->event, $cmp->event, $this->name);
+            return -1;
+        } elseif ( $this->table != $cmp->table ) {
+            $this->logCompareFailure('table', $this->table, $cmp->table, $this->name);
+            return -1;
+        } elseif ( $this->body != $cmp->body ) {
+            $this->logCompareFailure('body', $this->body, $cmp->body, $this->name);
             return -1;
         }
 
@@ -114,14 +130,8 @@ class Trigger extends SchemaEntity implements iEntity
         // a value will be provided when the database information schema is queried.
 
         if ( ( null !== $this->definer && null !== $cmp->definer ) && $this->definer != $cmp->definer ) {
-            return -2;
-        }
-
-        // The following properties do not have defaults set by the database and should be considered if
-        // one of them is set.
-
-        if ( ( null !== $this->schema || null !== $cmp->schema ) && $this->schema != $cmp->schema ) {
-            return -3;
+            $this->logCompareFailure('definer', $this->definer, $cmp->definer, $this->name);
+            return -1;
         }
 
     }  // compare()
@@ -135,7 +145,7 @@ class Trigger extends SchemaEntity implements iEntity
     {
         // Triggers queried from MySQL contain the begin/end but the body in the JSON may or may not.
 
-        $addBeginEnd = ( 0 !== stripos($this->body, "BEGIN") );
+        // $addBeginEnd = ( 0 !== stripos($this->body, "BEGIN") );
         $name = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
         $tableName = ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
             $this->quote($this->table);
@@ -148,13 +158,7 @@ class Trigger extends SchemaEntity implements iEntity
         $parts[] = $this->time;
         $parts[] = $this->event;
         $parts[] = "ON $tableName FOR EACH ROW\n";
-        if ( $addBeginEnd ) {
-            $parts[] = "BEGIN\n";
-        }
         $parts[] = $this->body;
-        if ( $addBeginEnd ) {
-            $parts[] = "\nEND";
-        }
 
         return implode(" ", $parts);
 

@@ -7,7 +7,7 @@
 
 namespace OpenXdmod\Migration;
 
-use Xdmod\Config;
+use Configuration\Configuration;
 
 abstract class Migration
 {
@@ -27,9 +27,9 @@ abstract class Migration
     protected $newVersion;
 
     /**
-     * Config object.
+     * An empty default Configuration object.
      *
-     * @var Xdmod\Config
+     * @var Configuration
      */
     protected $config;
 
@@ -51,8 +51,15 @@ abstract class Migration
         $this->currentVersion = $currentVersion;
         $this->newVersion     = $newVersion;
 
-        $this->config = Config::factory();
+
         $this->logger = \Log::singleton('null');
+
+        $this->config = new Configuration(
+            ".",
+            CONFIG_DIR,
+            $this->logger
+        );
+
     }
 
     /**

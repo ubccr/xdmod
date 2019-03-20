@@ -1,14 +1,22 @@
 [
   [
     {
-      "section": "roles",
-      "expected": "xdmod_config_roles.json"
+      "base_file": "roles",
+      "local_dir": ["roles.d", "xdmod_config"],
+      "expected": "xdmod_config_roles"
     }
   ],
   [
     {
-      "section": "datawarehouse",
-      "expected": "xdmod_config_datawarehouse.json"
+      "base_file": "datawarehouse",
+      "expected": "xdmod_config_datawarehouse"
+    }
+  ],
+  [
+    {
+      "base_file": "roles-multi_extends_chain",
+      "local_dir": ["roles.d","multi_extends_chain"],
+      "expected": "roles-multi_extends_chain"
     }
   ]
 ]
