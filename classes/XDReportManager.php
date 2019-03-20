@@ -2091,30 +2091,32 @@ class XDReportManager
     }
 
     public static function enumerateReportTemplates(
-        $roleCollection = array()
+        $acls = array()
     ) {
         $pdo = DB::factory('database');
-
-        $roleSet = "'" . implode("','", $roleCollection) . "'";
-
-        $results = $pdo->query(
-            "
-                SELECT DISTINCT
-                    rt.id,
-                    rt.name,
-                    rt.description,
-                    rt.use_submenu
-                FROM
-                    ReportTemplates   AS rt,
-                    Roles             AS r,
-                    ReportTemplateACL AS acl
-                WHERE rt.id = acl.template_id
-                    AND acl.role_id = r.role_id
-                    AND abbrev IN ($roleSet)
-            "
+        $aclNames = implode(
+            ',',
+            array_map(
+                function ($value) use ($pdo) {
+                    return $pdo->quote($value);
+                },
+                $acls
+            )
         );
 
-        return $results;
+        $query = <<<SQL
+        SELECT
+            rt.id,
+            rt.name,
+            rt.description,
+            rt.use_submenu
+        FROM ReportTemplates rt
+            JOIN report_template_acls rta ON rt.id = rta.report_template_id
+            JOIN acls a                   ON rta.acl_id = a.acl_id
+        WHERE a.name IN ($aclNames);
+SQL;
+
+        return $pdo->query($query);
     }
 
     /**

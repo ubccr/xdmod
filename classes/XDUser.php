@@ -1050,26 +1050,6 @@ SQL;
         }
         /* END:   ACL data processing */
 
-        /* BEGIN: UserRole Updating */
-
-        // Rebuild roles data for user --------------
-        $this->_pdo->execute(
-            'DELETE FROM UserRoles WHERE user_id=:id',
-            array('id' => $this->_id)
-        );
-
-        foreach ($this->_roles as $role) {
-            $roleId = $this->_getRoleID($role);
-            if ($roleId === null) {
-                continue;
-            }
-            $this->_pdo->execute(
-                "INSERT INTO UserRoles VALUES(:id, :roleId, '0', '0')",
-                array('id' => $this->_id,
-                    'roleId' => $roleId)
-            );
-        }
-
         // Retrieve this users most privileged acl as it will be used to set the
         // the _active_role property.
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
@@ -1077,18 +1057,6 @@ SQL;
         if (!isset($mostPrivilegedAcl)) {
             throw new Exception('Unable to determine this users most privileged acl. There may be a problem with the state of the database.');
         }
-
-        $mostPrivilegedRoleId = $this->_getRoleID($mostPrivilegedAcl->getName());
-
-        $this->_pdo->execute(
-            "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
-            array('id' => $this->_id, 'roleId' => $mostPrivilegedRoleId)
-        );
-
-        $this->_pdo->execute(
-            "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
-            array(':id' => $this->_id, ':roleId' => $mostPrivilegedRoleId)
-        );
 
         $timestampData = $this->_pdo->query(
             "SELECT time_created, time_last_updated, password_last_updated
@@ -1188,31 +1156,6 @@ SQL;
 
     }//getTokenExpiration
 
-    // ---------------------------
-
-    /*
-     *
-     * @function _getRoleID
-     *
-     * @param string $role_abbrev
-     *
-     * @return int
-     *
-     */
-
-    private function _getRoleID($role_abbrev)
-    {
-
-        $roleResults = $this->_pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
-            ':abbrev' => $role_abbrev,
-        ));
-
-        return count($roleResults) > 0 ? $roleResults[0]['role_id'] : null;
-
-    }//_getRoleID
-
-    // ---------------------------
-
     /*
      *
      * @function removeUser
@@ -1239,10 +1182,6 @@ SQL;
 
         $this->_pdo->execute("DELETE FROM user_acl_group_by_parameters WHERE user_id=:user_id", array(
             ':user_id' => $this->_id
-        ));
-
-        $this->_pdo->execute("DELETE FROM UserRoles WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
         ));
 
         // Make sure to remove the acl relations
@@ -1702,13 +1641,10 @@ SQL
             throw new Exception("This user must be saved prior to calling setOrganization()");
         }
 
-        $role_id = $this->_getRoleID($role);
-        if (null === $role_id) {
-            throw new Exception("Unable to retrieve id for role: $role");
-        }
         $acl = Acls::getAclByName($role);
-
-        // -------------------------------------------------------
+        if (null === $acl) {
+            throw new Exception("Unable to retrieve acl for: $role");
+        }
 
         $this->_pdo->execute(
             "DELETE FROM user_acl_group_by_parameters WHERE user_id = :user_id AND acl_id = :acl_id AND group_by_id IN (SELECT gb.group_by_id FROM group_bys gb WHERE gb.name = 'provider')",
@@ -1943,32 +1879,6 @@ SQL;
 
         return $allroles;
     }
-
-    /*
-     *
-     * @function _getRoleIDFromIdentifier
-     *
-     * @param string $identifier (see constants.php, ROLE_ID_... constants)
-     *
-     * @return int (the numerical id corresponding to the role identifier passed in)
-     *
-     */
-
-    private function _getRoleIDFromIdentifier($identifier)
-    {
-
-        $role_data = $this->_pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
-            ':abbrev' => $identifier,
-        ));
-
-        if (count($role_data) == 0) {
-            //throw new Exception('Invalid role identifier specified -- '.$identifier);
-            return -1;
-        }
-
-        return $role_data[0]['role_id'];
-
-    }//_getRoleIDFromIdentifier
 
     /*
      *
