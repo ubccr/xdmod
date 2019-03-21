@@ -1,0 +1,12 @@
+title
+"User Count (Number of Users): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[blaca] User Count (Number of Users)","[crcco] User Count (Number of Users)","[egyni] User Count (Number of Users)","[frahata] User Count (Number of Users)","[gresh] User Count (Number of Users)","[lanwa] User Count (Number of Users)","[ovenb] User Count (Number of Users)","[palsw] User Count (Number of Users)","[parcr] User Count (Number of Users)","[phivi] User Count (Number of Users)","[razor] User Count (Number of Users)","[rocdo] User Count (Number of Users)","[sante] User Count (Number of Users)","[savsp] User Count (Number of Users)","[swath] User Count (Number of Users)"
+2018-10-01,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+2019-01-01,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+---------

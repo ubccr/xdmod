@@ -1,0 +1,11 @@
+title
+"Logical Usage (Bytes): by Resource Type"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[Storage grid] Logical Usage (Bytes)","[Tape storage resource] Logical Usage (Bytes)"
+2018-01-01,721652704930133,79482625587200
+2019-01-01,700168617907200,79334460339200
+---------

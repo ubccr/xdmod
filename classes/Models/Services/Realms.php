@@ -9,7 +9,7 @@ class Realms
     {
         $db = DB::factory('database');
 
-        $results = $db->query("SELECT r.* FROM realms r");
+        $results = $db->query("SELECT r.* FROM realms r ORDER BY r.realm_id");
         return array_reduce($results, function ($carry, $item) {
             $carry[] = new Realm($item);
             return $carry;
@@ -34,7 +34,8 @@ class Realms
             FROM acl_group_bys agb
               JOIN user_acls ua ON agb.acl_id = ua.acl_id
               JOIN realms r ON r.realm_id = agb.realm_id
-            WHERE ua.user_id = :user_id;
+            WHERE ua.user_id = :user_id
+            ORDER BY r.realm_id
 SQL;
         $params = array(
             ':user_id'=> $user->getUserID()

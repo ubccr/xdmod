@@ -31,6 +31,11 @@ then
     done
     sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
     sudo -u xdmod xdmod-ingestor
+    for storage_dir in $REF_DIR/storage/*; do
+        sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
+    done
+    sudo -u xdmod xdmod-ingestor --ingest --datatype storage
+    sudo -u xdmod xdmod-ingestor --aggregate=storage
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
     sudo -u xdmod xdmod-ingestor
     php /root/bin/createusers.php
@@ -44,6 +49,16 @@ then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
+
+    # Add storage resources and data.  These resources and data should be added
+    # to the 8.1 Docker image and this script should then be removed.
+    expect $BASEDIR/xdmod-upgrade-add-storage-resources.tcl | col -b
+    for storage_dir in $REF_DIR/storage/*; do
+        sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
+    done
+    sudo -u xdmod xdmod-ingestor --ingest --datatype storage
+    sudo -u xdmod xdmod-ingestor --aggregate=storage
+
     sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
     sudo -u xdmod xdmod-ingestor
 fi

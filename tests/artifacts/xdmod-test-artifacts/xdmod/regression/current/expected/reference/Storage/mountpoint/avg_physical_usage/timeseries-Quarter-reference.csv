@@ -1,0 +1,11 @@
+title
+"Physical Usage (Bytes): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[/data] Physical Usage (Bytes)","[/projects] Physical Usage (Bytes)","[/scratch] Physical Usage (Bytes)"
+2018-10-01,0,0,0
+2019-01-01,0,0,0
+---------

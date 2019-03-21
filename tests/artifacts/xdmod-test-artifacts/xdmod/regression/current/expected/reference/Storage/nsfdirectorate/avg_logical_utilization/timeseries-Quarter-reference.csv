@@ -1,0 +1,11 @@
+title
+"Quota Utilization: Logical (%): by Decanal Unit"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[Geosciences] Quota Utilization: Logical (%)","[Mathematical and Physical Sciences] Quota Utilization: Logical (%)","[Biological Sciences] Quota Utilization: Logical (%)","[Unknown] Quota Utilization: Logical (%)","[Engineering] Quota Utilization: Logical (%)","[Computer and Information Science and Engineering] Quota Utilization: Logical (%)","[Humanities/Arts] Quota Utilization: Logical (%)","[Social, Behavioral, and Economic Sciences] Quota Utilization: Logical (%)"
+2018-10-01,538.2749,157.6511,114.5430,68.2127,63.2027,0.0000,0.0000,0.0000
+2019-01-01,525.4423,126.9565,103.6411,68.5146,60.5992,0.0000,0.0000,0.0000
+---------
