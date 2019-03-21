@@ -35,11 +35,6 @@
                 "nullable": false
             },
             {
-                "name": "instance",
-                "type": "varchar(64)",
-                "nullable": false
-            },
-            {
                 "name": "instance_type",
                 "type": "varchar(64)",
                 "nullable": false
