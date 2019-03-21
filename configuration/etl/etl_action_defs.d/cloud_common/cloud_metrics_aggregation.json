@@ -76,7 +76,7 @@
             "where": [
               "cet.start_day_id <= ${:PERIOD_END_DAY_ID} AND cet.end_day_id >= ${:PERIOD_START_DAY_ID}",
               "cet.instance_type != \"Unknown\"",
-              "cet.instance !=\"Unknown\"",
+              "cet.instance_id !=\"1\"",
               "cet.num_cores != 0"
           ],
             "macros": [{
