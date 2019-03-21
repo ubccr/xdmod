@@ -15,7 +15,7 @@ set -o pipefail
 
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
-    rpm -qa | grep ^xdmod | xargs yum -y remove
+    rpm -qa | grep ^xdmod | xargs yum -y remove || true
     rm -rf /etc/xdmod
     rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
