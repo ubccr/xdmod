@@ -44,12 +44,12 @@
                 "name": "processorbucket_id",
                 "type": "int(4)",
                 "nullable": true,
-                "comment": "FACT: Pre-determined processor bucket sizes. References processorbucket.id"
+                "comment": "DIMENSION: Pre-determined processor bucket sizes. References processorbucket.id"
             },{
                 "name": "memorybucket_id",
                 "type": "int(4)",
                 "nullable": true,
-                "comment": "FACT: Pre-determined memory bucket sizes. References memorybucket.id"
+                "comment": "DIMENSION: Pre-determined memory bucket sizes. References memorybucket.id"
             },{
                 "name": "instance_type_id",
                 "type": "int(11)",
@@ -64,7 +64,7 @@
                 "name": "num_cores",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Number of cores on a VM."
+                "comment": "FACT: Number of cores on a VM."
             },{
                 "name": "core_time",
                 "type": "bigint(42)",
@@ -84,12 +84,12 @@
                 "name": "memory_mb",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Amount of memory in MB reserved by a VM."
+                "comment": "FACT: Amount of memory in MB reserved by a VM."
             },{
                 "name": "disk_gb",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Disk size in GB reserved by a VM."
+                "comment": "FACT: Disk size in GB reserved by a VM."
             },{
                 "name": "num_sessions_running",
                 "type": "int(11)",
