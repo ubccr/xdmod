@@ -56,11 +56,6 @@
                 "nullable": false,
                 "comment": "DIMENSION: Type of instance on which an event occurred."
             },{
-                "name": "configuration",
-                "type": "varchar(256)",
-                "nullable": false,
-                "comment": "DIMENSION: configuration name of a VM configuration."
-            },{
                 "name": "num_cores",
                 "type": "int(11)",
                 "nullable": false,
