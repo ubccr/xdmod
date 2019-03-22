@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "name": "cloud_events_transient",
+        "name": "session_records",
         "comment": "The start and end times for cloud instances reconstructed from event data.",
         "engine": "MyISAM",
         "columns": [

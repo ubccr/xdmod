@@ -34,7 +34,7 @@
         {
             "name": "cloud-transient",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_common/cloud_transient.json",
+            "definition_file": "cloud_common/session_record.json",
             "truncate_destination": true,
             "description": "Builds intermediate cloud event table"
         },
