@@ -18,9 +18,6 @@
             "$ref": "${table_definition_dir}/cloud_common/account.json#/table_definition"
         },
         {
-            "$ref": "${table_definition_dir}/cloud_common/avail_zone.json#/table_definition"
-        },
-        {
             "$ref": "${table_definition_dir}/cloud_common/host.json#/table_definition"
         },
         {
@@ -31,16 +28,13 @@
         },
         {
             "$ref": "${table_definition_dir}/cloud_common/instance_type.json#/table_definition"
-        },
-        {
-            "$ref": "${table_definition_dir}/cloud_common/region.json#/table_definition"
         }
     ],
 
     "source_query": {
         "records": {
             "resource_id": "rf.id",
-            "unknown_id": -1,
+            "unknown_id": 1,
             "unknown_key": "'unknown'",
             "unknown_display": "'Unknown'"
         },
@@ -61,12 +55,6 @@
     },
 
     "destination_record_map": {
-        "avail_zone": {
-            "resource_id": "resource_id",
-            "avail_zone_id": "unknown_id",
-            "avail_zone": "unknown_key",
-            "display": "unknown_display"
-        },
         "account": {
             "resource_id": "resource_id",
             "account_id": "unknown_id",
@@ -93,12 +81,6 @@
             "resource_id": "resource_id",
             "instance_type_id": "unknown_id",
             "instance_type": "unknown_key",
-            "display": "unknown_display"
-        },
-        "region": {
-            "resource_id": "resource_id",
-            "region_id": "unknown_id",
-            "region": "unknown_key",
             "display": "unknown_display"
         }
     }
