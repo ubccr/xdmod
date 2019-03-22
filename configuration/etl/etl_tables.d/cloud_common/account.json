@@ -15,7 +15,7 @@
                 "type": "int(11)",
                 "nullable": false,
                 "extra": "auto_increment",
-                "comment": "Unknown = -1"
+                "comment": "Unknown = 1"
             },
             {
                 "name": "provider_account",
