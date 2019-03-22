@@ -1,6 +1,6 @@
 {
     "table_definition": {
-        "$ref": "${table_definition_dir}/cloud_common/session_record.json#/table_definition"
+        "$ref": "${table_definition_dir}/cloud_common/session_records.json#/table_definition"
     },
     "source_query": {
         "records": {
