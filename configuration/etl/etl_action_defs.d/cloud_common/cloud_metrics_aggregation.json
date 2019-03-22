@@ -5,8 +5,8 @@
         },
         "aggregation_period_query": {
             "overseer_restrictions": {
-                "#last_modified_start_date": "last_modified >= ${VALUE}",
-                "#last_modified_end_date": "last_modified <= ${VALUE}",
+                "last_modified_start_date": "last_modified >= ${VALUE}",
+                "last_modified_end_date": "last_modified <= ${VALUE}",
                 "include_only_resource_codes": "resource_id IN ${VALUE}",
                 "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
             }
@@ -33,7 +33,6 @@
                 "processorbucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.processor_buckets pb WHERE cet.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
                 "memorybucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.memory_buckets mb WHERE cet.memory_mb BETWEEN mb.min_memory AND mb.max_memory)",
                 "instance_type_id": "cet.instance_type_id",
-                "configuration": "cet.instance_type",
                 "num_cores": "SUM(cet.num_cores)",
                 "core_time": "COALESCE(SUM(cet.num_cores * ${wallduration_case_statement}), 0)",
                 "memory_reserved": "COALESCE(SUM((cet.memory_mb * POW(1024, 2)) * ${wallduration_case_statement}), 0)",
@@ -50,8 +49,10 @@
               "${AGGREGATION_UNIT}_id",
               "year",
               "${AGGREGATION_UNIT}",
-              "configuration",
+              "host_resource_id",
               "processorbucket_id",
+              "memorybucket_id",
+              "instance_type_id",
               "account_id",
               "systemaccount_id",
               "person_id"
@@ -75,7 +76,7 @@
             "where": [
               "cet.start_day_id <= ${:PERIOD_END_DAY_ID} AND cet.end_day_id >= ${:PERIOD_START_DAY_ID}",
               "cet.instance_type != \"Unknown\"",
-              "cet.instance !=\"Unknown\"",
+              "cet.instance_id !=\"1\"",
               "cet.num_cores != 0"
           ],
             "macros": [{

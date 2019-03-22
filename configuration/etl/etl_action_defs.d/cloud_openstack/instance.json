@@ -11,7 +11,7 @@
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "account_id": "COALESCE(act.account_id, -1)",
+            "account_id": "COALESCE(act.account_id, 1)",
             "provider_identifier": "COALESCE(raw.provider_instance_identifier, 'unknown')"
         },
 

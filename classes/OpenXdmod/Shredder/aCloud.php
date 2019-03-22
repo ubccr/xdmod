@@ -50,7 +50,7 @@ abstract class aCloud extends Shredder
             return false;
         }
 
-        Utilities::runEtlPipeline(array('jobs-common','jobs-cloud-common','ingest-organizations', 'ingest-resource-types', 'ingest-resources'), $this->logger);
+        Utilities::runEtlPipeline(array('jobs-common', 'ingest-organizations', 'ingest-resource-types', 'ingest-resources', 'jobs-cloud-common'), $this->logger);
         Utilities::runEtlPipeline(
             $this->etlPipelines,
             $this->logger,

@@ -8,7 +8,6 @@ use Models\Acl;
 use Models\Services\Users;
 use ReflectionClass;
 use TestHarness\UserHelper;
-use User\Roles\CenterDirectorRole;
 use \XDUser;
 use Models\Services\Acls;
 use \Exception;
@@ -953,35 +952,6 @@ class XDUserTest extends BaseTest
             array(''),
             array(null)
         );
-    }
-
-    /**
-     * @dataProvider provideGetRoleIDFromIdentifier
-     * @param string $role
-     * @throws Exception
-     */
-    public function testGetRoleIDFromIdentifier($role)
-    {
-        $db = DB::factory('database');
-        $results = array();
-
-        $row = $db->query(
-            "SELECT role_id FROM Roles WHERE abbrev = :abbrev",
-            array(':abbrev' => $role)
-        );
-        $this->assertNotEmpty($row);
-        $results[$role] = $row[0]['role_id'];
-
-
-        $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
-        $reflection = new ReflectionClass($user);
-        $getRoleIdFromIdentifier = $reflection->getMethod('_getRoleIDFromIdentifier');
-        $getRoleIdFromIdentifier->setAccessible(true);
-
-        foreach ($results as $roleName => $expected) {
-            $actual = $getRoleIdFromIdentifier->invoke($user, $roleName);
-            $this->assertEquals($expected, $actual);
-        }
     }
 
     public function provideGetRoleIDFromIdentifier()

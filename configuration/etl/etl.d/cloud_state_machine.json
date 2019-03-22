@@ -35,7 +35,6 @@
             "name": "cloud-transient",
             "class": "DatabaseIngestor",
             "definition_file": "cloud_common/cloud_transient.json",
-            "truncate_destination": true,
             "description": "Builds intermediate cloud event table"
         },
         {
@@ -46,7 +45,6 @@
             "class": "SimpleAggregator",
             "description": "Aggregate cloud records.",
             "definition_file": "cloud_common/cloud_metrics_aggregation.json",
-            "truncate_destination": true,
             "table_prefix": "cloudfact_by_",
             "aggregation_units": [
                 "day", "month", "quarter", "year"
