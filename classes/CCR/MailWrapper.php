@@ -17,7 +17,15 @@ class MailWrapper
         $mail->Body = $properties['body'];
 
         if(!empty($properties['subject'])) {
-            $mail->Subject = $properties['subject'];
+            $prefix = '';
+            try {
+                $prefix = \xd_utilities\getConfiguration('mailer', 'subject_prefix');
+            }
+            catch(\Exception $e){
+                // Do nothing, the configuration option
+                // does not exist;
+            }
+            $mail->Subject = !empty($prefix) ? $prefix . ': ' . $properties['subject']: $properties['subject'];
         } else {
             throw new \Exception('There is no subject');
         }
