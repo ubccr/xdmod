@@ -50,6 +50,14 @@ XDMoD.Module.About = Ext.extend(XDMoD.PortalModule, {
                     }  // listeners
                 },
                 {
+                    text: 'Federated',
+                    icon: '/gui/images/menu.png',
+                    leaf: true,
+                    listeners: {
+                        'click': treeNodeClick
+                    }  // listeners
+                },
+                {
                     text: 'Roadmap',
                     icon: '/gui/images/lorry.png',
                     leaf: true,
@@ -133,6 +141,7 @@ XDMoD.Module.About = Ext.extend(XDMoD.PortalModule, {
                 'XDMoD': '/about/xdmod.php',
                 'Open XDMoD': '/about/openxd.html',
                 'SUPReMM': '/about/supremm.html',
+                'Federated': '/about/federated.php',
                 'Roadmap': '/about/roadmap.php',
                 'Team': '/about/team.html',
                 'Publications': '/about/publications.html',
