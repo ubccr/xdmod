@@ -76,7 +76,7 @@ sender_name = "[:mailer_sender_name:]"
 sender_email = "[:mailer_sender_email:]"
 
 ; Add a prefix to all outbound emails
-subject_prefix = ""
+subject_prefix = "[:mailer_subject_prefix:]"
 
 ; To use a captcha on Signup and Contact by no logged in users XDMoD loadSupportScripts
 ; google recaptcha, to get the following information you must login to

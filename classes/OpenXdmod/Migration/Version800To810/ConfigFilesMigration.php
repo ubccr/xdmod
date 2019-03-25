@@ -32,6 +32,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
             $this->addCloudRolesGroupBy();
         }
         $this->assertPortalSettingsIsWritable();
+
         // Set new options in portal_settings.ini.
         $this->writePortalSettingsFile(array(
             'mailer_subject_prefix' => ''
