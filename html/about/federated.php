@@ -6,11 +6,11 @@ use CCR\DB;
 ?>
 <h1>Federated Open XDMoD</h1>
 <p>
-    A collection of independent XDMoD instances, each monitoring its own set of computing resources.
+    Federated XDMoD is a module that allows multiple different XDMoD installations to have their data automatically duplicated and displayed together in a central location.
+    This central XDMoD instance is known as a hub.
+    This hub is able to view the data from all of the other instances.
+    The individual instances are independent of each other.
     Each instance may comprise very different underlying resources, configurations, and aggregation levels.
-    Reporting on resource consumption on any one of these XDMoD instances could be done easily through the powerful user interface.
-    Reporting on the collection, however, would be difficult without a way to associate the data (and the aggregations) from these different instances.
-    Federation is the answer to reporting on this collection of XDMoD instances. Federation provides a combined, master view of job and performance data collected from individual XDMoD instances.
 </p>
 <p>
     <div style="text-align:center; width:65%;">
@@ -27,15 +27,17 @@ use CCR\DB;
     </div>
 </p>
 <p>
-    Thus, federation provides resource managers with a unified XDMoD monitor that consolidates the data from a network of disjoint XDMoD instances.
-    Once data is ingested on the individual XDMoD instances, it undergoes live replication to the central federation hub database, where it is then aggregated as appropriate to the requirements of the whole collection (aggregation is customized on each instance using local configuration files).
-    The federation hub can then provide an integrated view of job and performance data collected from entirely independent XDMoD instances.
+    A simple example use of the federated module is:
+    Three academic instituitions each with their own HPC resource.
+    Each institution has its own XDMoD instance which contains the accounting data for only their HPC resource.
+    These institutions federate their data to a central hub.
+    HPC accounting data for all three HPC resources is shown on the central hub.
+    This central hub can then be used to report on the combined data.
 </p>
 <p>
-    The independent XDMoD instances in a federation need have no knowledge of one another.
-    They may be closely related, and managed with the intent to fully share all data.
-    Alternatively, their data can be kept isolated from one another, and only made visible to the federation hub.
-    The only requirement is that each individual XDMoD instance must run the same version of XDMoD.
+    This example illistrates only one use case.
+    The federated module supports cloud data as well as HPC.  Support for other data realms is planned.
+    There are no pre defined limits on the number of instances that can be part of a federation.
 </p>
 <p>
     For more information see Section II of <a href="https://ieeexplore.ieee.org/document/8514918">Federating XDMoD to Monitor Affiliated Computing Resources</a>.
@@ -79,7 +81,7 @@ elseif ($role === 'hub'){
     $instanceResults = $db->query('SELECT * FROM federation_instances;');
     $instances = array();
     $lastCloudQuery = array();
-    $derived = 'A';
+    $derived = 1;
     foreach ($instanceResults as $instance) {
         $prefix = $instance['prefix'];
         $extra = json_decode($instance['extra'], true);
@@ -94,7 +96,7 @@ elseif ($role === 'hub'){
         $instances[$prefix]['extra'] = $extra;
         array_push(
             $lastCloudQuery,
-            '(SELECT \'' . $prefix . '\' AS prefix, FROM_UNIXTIME(event_time_ts) as event_ts FROM `' . $prefix . '-modw_cloud`.`event` ORDER BY 2 DESC LIMIT 1) ' . $derived
+            '(SELECT \'' . $prefix . '\' AS prefix, FROM_UNIXTIME(event_time_ts) as event_ts FROM `' . $prefix . '-modw_cloud`.`event` ORDER BY 2 DESC LIMIT 1) `A' . $derived . '`'
         );
         $derived++;
     }
