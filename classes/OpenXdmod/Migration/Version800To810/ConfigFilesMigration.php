@@ -31,6 +31,12 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
         if (file_exists($this->cloudRolesFilePath)) {
             $this->addCloudRolesGroupBy();
         }
+        $this->assertPortalSettingsIsWritable();
+
+        // Set new options in portal_settings.ini.
+        $this->writePortalSettingsFile(array(
+            'mailer_subject_prefix' => ''
+        ));
     }
 
     /**
