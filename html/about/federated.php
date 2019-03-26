@@ -6,11 +6,9 @@ use CCR\DB;
 ?>
 <h1>Federated Open XDMoD</h1>
 <p>
-    Federated XDMoD is a module that allows multiple different XDMoD installations to have their data automatically duplicated and displayed together in a central location.
-    This central XDMoD instance is known as a hub.
-    This hub is able to view the data from all of the other instances.
-    The individual instances are independent of each other.
-    Each instance may comprise very different underlying resources, configurations, and aggregation levels.
+    Federated XDMoD supports the collection and aggregation of data from a number of fully-functional and individually managed XDMoD instances into a single federated instance of XDMoD capable of displaying federation-wide metrics.
+    Each participating institution deploys an XDMoD instance through which local data will be collected and shipped to a central Federation Hub where it is aggregated to provide a federation-wide view of the data.
+    Data particular to an individual center is available from the Hub by applying filters and drill-downs.
 </p>
 <p>
     <div style="text-align:center; width:65%;">
