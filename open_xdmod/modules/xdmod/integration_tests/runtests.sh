@@ -23,3 +23,5 @@ $phpunit --testsuite default --group UserAdminTest.createUsers $UATCU
 
 # Run everything else
 $phpunit --testsuite default --exclude-group UserAdminTest.createUsers $UATXCU
+
+./email-subject-test.sh
