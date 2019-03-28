@@ -54,7 +54,7 @@ You must specify the format of the log files to be shredded. For HPC job account
 format depends upon the resource manager; for Cloud data the format should match that of 
 the event logs.
 
-Jobs:
+**Jobs:**
 
 For [TORQUE and OpenPBS][pbs] use `pbs`, for [Sun Grid Engine][sge] use
 `sge`, for [Univa Grid Engine 8.2+][uge] use `uge`, for [Slurm][] use
@@ -72,7 +72,7 @@ For [TORQUE and OpenPBS][pbs] use `pbs`, for [Sun Grid Engine][sge] use
 [slurm]: resource-manager-slurm.md
 [lsf]:   resource-manager-lsf.md
 
-Cloud:
+**Cloud:**
 
 The shredder accepts two different types of cloud data, `genericcloud` and `openstack`.
 The convention for shredding cloud files is identical to job data:

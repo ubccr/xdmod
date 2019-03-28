@@ -27,13 +27,13 @@ Advanced Usage
 
 The ingestor may be set to only ingest specific realms or timeframes.
 
-Jobs:
+**Jobs:**
 
 The following is an example of only aggregating the jobs realm.
 
     $ xdmod-ingestor --aggregate=jobs
 
-Cloud:
+**Cloud:**
 
 If you do not have jobs data and/or wish to break down your ingestion process to 
 exclusively ingest cloud data, you may do so as such. 
