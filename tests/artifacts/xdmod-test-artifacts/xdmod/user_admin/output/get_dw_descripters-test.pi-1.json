@@ -79,6 +79,14 @@
                         "vm_size_memory": {
                             "text": "VM Size: Memory",
                             "info": "A categorization of sessions into discrete groups based on the amount of memory reserved by each VM."
+                        },
+                        "username": {
+                            "text": "System Username",
+                            "info": "The specific system username associated with a running session of a virtual machine."
+                        },
+                        "person": {
+                            "text": "User",
+                            "info": "A person on a principal investigator's allocation, able to spin up and manipulate VM instances."
                         }
                     },
                     "text": "Cloud",

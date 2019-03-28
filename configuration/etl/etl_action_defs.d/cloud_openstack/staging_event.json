@@ -13,14 +13,16 @@
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "event_time_utc": "raw.event_time_utc",
+            "event_time_ts": "UNIX_TIMESTAMP(CONVERT_TZ(raw.event_time_utc,'+00:00', @@session.time_zone))",
             "event_type_id": "COALESCE(etype.event_type_id, -1)",
             "record_type_id": "COALESCE(rtype.record_type_id, -1)",
-            "account_id": "COALESCE(acct.account_id, -1)",
-            "host_id": "COALESCE(h.host_id, -1)",
-            "instance_id": "COALESCE(i.instance_id, -1)",
-            "image_id": "COALESCE(img.image_id, -1)",
-            "instance_type_id": "COALESCE(itype.instance_type_id, -1)",
+            "user_name": "raw.user_name",
+            "person_id": "sa.person_id",
+            "account_id": "COALESCE(acct.account_id, 1)",
+            "host_id": "COALESCE(h.host_id, 1)",
+            "instance_id": "COALESCE(i.instance_id, 1)",
+            "image_id": "COALESCE(img.image_id, 1)",
+            "instance_type_id": "COALESCE(itype.instance_type_id, 1)",
             "event_data": "raw.event_data",
             "volume_id": "raw.volume_id"
         },
@@ -77,6 +79,12 @@
                 "alias": "img",
                 "on": "img.image = raw.openstack_resource_id AND img.resource_id = raw.resource_id",
                 "type": "LEFT OUTER"
+            },
+            {
+                "name": "systemaccount",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "sa",
+                "on": "raw.user_name = sa.username AND raw.resource_id = sa.resource_id"
             }
         ],
 
@@ -91,6 +99,7 @@
             "etype.event_type_id",
             "rtype.record_type_id",
             "acct.account_id",
+            "sa.person_id",
             "h.host_id"
         ]
     }

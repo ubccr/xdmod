@@ -11,6 +11,7 @@ namespace UnitTesting\ETL\Configuration;
 
 use CCR\Log;
 use ETL\Utilities;
+use ETL\VariableStore;
 use ETL\DbModel\Table;
 use ETL\DbModel\AggregationTable;
 use ETL\DbModel\Query;
@@ -250,7 +251,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $obj = new Trigger($config, '`', $this->logger);
         $generated = $obj->getSql();
         $expected =
-            "CREATE TRIGGER `before_ins` before insert ON `jobfact` FOR EACH ROW"
+            "CREATE TRIGGER `before_ins` BEFORE INSERT ON `jobfact` FOR EACH ROW"
             . PHP_EOL
             . " BEGIN DELETE FROM jobfactstatus WHERE job_id = NEW.job_id; END";
         $this->assertEquals($expected, $generated);
@@ -354,14 +355,15 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $generated = $query->getSql();
 
         // Process variables present in the SQL
-        $variableMap = array(
-            'TIMEZONE' => 'America/New_York',
-            'SOURCE_SCHEMA' => 'xras'
+        $variableStore = new VariableStore(
+            array(
+                'TIMEZONE' => 'America/New_York',
+                'SOURCE_SCHEMA' => 'xras'
+            ),
+            $this->logger
         );
-        $generated = Utilities::substituteVariables(
+        $generated = $variableStore->substitute(
             $generated,
-            $variableMap,
-            $query,
             "Undefined macros found in source query"
         );
 
@@ -386,14 +388,15 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $generated = array_shift($generated);
 
         // Process variables present in the SQL
-        $variableMap = array(
-            'AGGREGATION_UNIT' => $aggregationUnit,
-            'SOURCE_SCHEMA' => 'xras'
+        $variableStore = new VariableStore(
+            array(
+                'AGGREGATION_UNIT' => $aggregationUnit,
+                'SOURCE_SCHEMA' => 'xras'
+            ),
+            $this->logger
         );
-        $generated = Utilities::substituteVariables(
+        $generated = $variableStore->substitute(
             $generated,
-            $variableMap,
-            $table,
             "Undefined macros found in source query"
         );
 
@@ -417,20 +420,21 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $generated = $table->query->getSql();
 
         // Process variables present in the SQL
-        $variableMap = array(
-            'AGGREGATION_UNIT' => $aggregationUnit,
-            'SOURCE_SCHEMA' => 'modw_ra',
-            'UTILITY_SCHEMA' => 'modw',
-            ':PERIOD_ID' => ':period_id',
-            ':YEAR_VALUE' => ':year_value',
-            ':PERIOD_VALUE' => ':period_value',
-            ':PERIOD_START_TS' => ':period_start_ts',
-            ':PERIOD_END_TS' => ':period_end_ts'
+        $variableStore = new VariableStore(
+            array(
+                'AGGREGATION_UNIT' => $aggregationUnit,
+                'SOURCE_SCHEMA' => 'modw_ra',
+                'UTILITY_SCHEMA' => 'modw',
+                ':PERIOD_ID' => ':period_id',
+                ':YEAR_VALUE' => ':year_value',
+                ':PERIOD_VALUE' => ':period_value',
+                ':PERIOD_START_TS' => ':period_start_ts',
+                ':PERIOD_END_TS' => ':period_end_ts'
+            ),
+            $this->logger
         );
-        $generated = Utilities::substituteVariables(
+        $generated = $variableStore->substitute(
             $generated,
-            $variableMap,
-            $table,
             "Undefined macros found in source query"
         );
 
@@ -454,14 +458,15 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $newQuery = new Query($obj, '"', $this->logger);
         $generated = $newQuery->getSql();
 
-        $variableMap = array(
-            'TIMEZONE' => 'America/New_York',
-            'SOURCE_SCHEMA' => 'xras'
+        $variableStore = new VariableStore(
+            array(
+                'TIMEZONE' => 'America/New_York',
+                'SOURCE_SCHEMA' => 'xras'
+            ),
+            $this->logger
         );
-        $generated = Utilities::substituteVariables(
+        $generated = $variableStore->substitute(
             $generated,
-            $variableMap,
-            $newQuery,
             "Undefined macros found in source query"
         );
 

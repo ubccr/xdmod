@@ -8,7 +8,6 @@ use CCR\MailWrapper;
 use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Organizations;
-use User\aRole;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 
 /**
@@ -153,7 +152,7 @@ EML;
      * @param string $first_name
      * @param string $last_name
      * @param array  $role_set
-     * @param string $primary_role  <--- reference to object returned from \User\aRole::factory(...)
+     * @param string $primary_role
      *
      */
 
@@ -1050,26 +1049,6 @@ SQL;
         }
         /* END:   ACL data processing */
 
-        /* BEGIN: UserRole Updating */
-
-        // Rebuild roles data for user --------------
-        $this->_pdo->execute(
-            'DELETE FROM UserRoles WHERE user_id=:id',
-            array('id' => $this->_id)
-        );
-
-        foreach ($this->_roles as $role) {
-            $roleId = $this->_getRoleID($role);
-            if ($roleId === null) {
-                continue;
-            }
-            $this->_pdo->execute(
-                "INSERT INTO UserRoles VALUES(:id, :roleId, '0', '0')",
-                array('id' => $this->_id,
-                    'roleId' => $roleId)
-            );
-        }
-
         // Retrieve this users most privileged acl as it will be used to set the
         // the _active_role property.
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($this);
@@ -1077,18 +1056,6 @@ SQL;
         if (!isset($mostPrivilegedAcl)) {
             throw new Exception('Unable to determine this users most privileged acl. There may be a problem with the state of the database.');
         }
-
-        $mostPrivilegedRoleId = $this->_getRoleID($mostPrivilegedAcl->getName());
-
-        $this->_pdo->execute(
-            "UPDATE UserRoles SET is_active='1' WHERE user_id=:id AND role_id=:roleId",
-            array('id' => $this->_id, 'roleId' => $mostPrivilegedRoleId)
-        );
-
-        $this->_pdo->execute(
-            "UPDATE UserRoles SET is_primary='1' WHERE user_id = :id AND role_id=:roleId",
-            array(':id' => $this->_id, ':roleId' => $mostPrivilegedRoleId)
-        );
 
         $timestampData = $this->_pdo->query(
             "SELECT time_created, time_last_updated, password_last_updated
@@ -1188,31 +1155,6 @@ SQL;
 
     }//getTokenExpiration
 
-    // ---------------------------
-
-    /*
-     *
-     * @function _getRoleID
-     *
-     * @param string $role_abbrev
-     *
-     * @return int
-     *
-     */
-
-    private function _getRoleID($role_abbrev)
-    {
-
-        $roleResults = $this->_pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
-            ':abbrev' => $role_abbrev,
-        ));
-
-        return count($roleResults) > 0 ? $roleResults[0]['role_id'] : null;
-
-    }//_getRoleID
-
-    // ---------------------------
-
     /*
      *
      * @function removeUser
@@ -1237,26 +1179,13 @@ SQL;
             ':user_id' => $this->_id,
         ));
 
-        $this->_pdo->execute("DELETE FROM UserRoleParameters WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
-        ));
-
         $this->_pdo->execute("DELETE FROM user_acl_group_by_parameters WHERE user_id=:user_id", array(
             ':user_id' => $this->_id
-        ));
-
-        $this->_pdo->execute("DELETE FROM UserRoles WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
         ));
 
         // Make sure to remove the acl relations
         $this->_pdo->execute("DELETE FROM user_acls WHERE user_id = :user_id", array(
             ':user_id' => $this->_id
-        ));
-
-        // Reset any associations to dependent users
-        $this->_pdo->execute("UPDATE UserRoleParameters SET promoter='-1' WHERE promoter=:promoter", array(
-            ':promoter' => $this->_id,
         ));
 
         $this->_pdo->execute("DELETE FROM Users WHERE id=:id", array(
@@ -1599,22 +1528,6 @@ SQL;
 
         $primary_flag = $is_primary ? 1 : 0;
 
-        $cleanupStatement = "DELETE FROM UserRoleParameters " .
-            "WHERE user_id=:user_id AND role_id=6 AND param_name='institution'";
-
-        $insertStatement = "INSERT INTO UserRoleParameters " .
-            "(user_id, role_id, param_name, param_op, param_value, is_primary, is_active, promoter) " .
-            "VALUES (:user_id, 6, 'institution', '=', :param_value, :is_primary, 1, -1)";
-
-        $this->_pdo->execute($cleanupStatement, array(
-            ':user_id' => $this->_id,
-        ));
-        $this->_pdo->execute($insertStatement, array(
-            ':user_id' => $this->_id,
-            ':param_value' => $institution_id,
-            ':is_primary' => $primary_flag,
-        ));
-
         $aclName = 'cd';
 
         $aclCleanup = <<<SQL
@@ -1672,7 +1585,7 @@ SQL;
 
     /*
      *
-     * @function disassociateWithOrganizations
+     * @function disassociateWithInstitution
      *
      * @param int $organization_id
      *
@@ -1688,12 +1601,6 @@ SQL;
             throw new Exception("This user must be saved prior to calling disassociateWithInstitution()");
         }
 
-        $cleanupStatement = "DELETE FROM UserRoleParameters " .
-            "WHERE user_id=:user_id AND role_id=6 AND param_name='institution'";
-
-        $this->_pdo->execute($cleanupStatement, array(
-            ':user_id' => $this->_id,
-        ));
         $this->_pdo->execute(<<<SQL
         DELETE FROM user_acl_group_by_parameters
 WHERE user_id = :user_id
@@ -1733,19 +1640,11 @@ SQL
             throw new Exception("This user must be saved prior to calling setOrganization()");
         }
 
-        $role_id = $this->_getRoleID($role);
-        if (null === $role_id) {
-            throw new Exception("Unable to retrieve id for role: $role");
-        }
         $acl = Acls::getAclByName($role);
+        if (null === $acl) {
+            throw new Exception("Unable to retrieve acl for: $role");
+        }
 
-        // -------------------------------------------------------
-
-        $this->_pdo->execute("DELETE FROM UserRoleParameters " .
-            "WHERE user_id=:user_id AND role_id=:role_id AND param_name='provider'", array(
-            ':user_id' => $this->_id,
-            ':role_id' => $role_id,
-        ));
         $this->_pdo->execute(
             "DELETE FROM user_acl_group_by_parameters WHERE user_id = :user_id AND acl_id = :acl_id AND group_by_id IN (SELECT gb.group_by_id FROM group_bys gb WHERE gb.name = 'provider')",
             array(
@@ -1755,35 +1654,6 @@ SQL
         );
 
         foreach ($organization_ids as $organization_id => $config) {
-
-            $active_flag = 0;
-            $primary_flag = 0;
-
-            if (($config['active'] == true) && ($reassignActiveToPrimary == false)) {
-                $active_flag = 1;
-            }
-
-            if ($config['primary'] == true) {
-
-                $primary_flag = 1;
-
-                if ($reassignActiveToPrimary == true) {
-                    $active_flag = 1;
-                }
-
-            }
-
-            $insertStatement = "INSERT INTO UserRoleParameters " .
-                "(user_id, role_id, param_name, param_op, param_value, is_primary, is_active, promoter) " .
-                "VALUES (:user_id, :role_id, 'provider', '=', :param_value, :is_primary, :is_active, -1)";
-
-            $this->_pdo->execute($insertStatement, array(
-                ':user_id' => $this->_id,
-                ':role_id' => $role_id,
-                ':param_value' => $organization_id,
-                ':is_primary' => $primary_flag,
-                ':is_active' => $active_flag,
-            ));
             $this->_pdo->execute(
                 <<<SQL
 INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
@@ -1814,116 +1684,6 @@ SQL
         }//foreach
     }//setOrganizations
 
-    // ---------------------------
-
-    /*
-     *
-     * @function enumCenterStaffSites
-     *
-     */
-
-    public function enumCenterStaffSites()
-    {
-
-        // This feature currently applies to center staff members...
-
-        if (empty($this->_id)) {
-            throw new Exception("This user must be saved prior to calling enumCenterStaffSites()");
-        }
-
-        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=5 AND param_name='provider' AND user_id=:user_id ORDER BY param_value", array(
-            ':user_id' => $this->_id,
-        ));
-
-        return $sites;
-
-    }//enumCenterStaffSites
-
-    // ---------------------------
-
-    /*
-     *
-     * @function enumCenterDirectorSites
-     *
-     */
-
-    public function enumCenterDirectorSites()
-    {
-
-        // This feature currently applies to center directors...
-
-        if (empty($this->_id)) {
-            throw new Exception("This user must be saved prior to calling enumCenterDirectorSites()");
-        }
-
-        $sites = $this->_pdo->query("SELECT param_value AS provider, is_primary FROM moddb.UserRoleParameters WHERE role_id=1 AND param_name='provider' AND user_id=:user_id ORDER BY param_value", array(
-            ':user_id' => $this->_id,
-        ));
-
-        return $sites;
-
-    }//enumCenterDirectorSites
-
-    // ---------------------------
-
-    /*
-     *
-     * @function disassociateWithOrganizations
-     *
-     * @param int $organization_id
-     *
-     *
-     */
-
-    public function disassociateWithOrganizations()
-    {
-
-        // This feature currently applies to center directors...
-
-        if (empty($this->_id)) {
-            throw new Exception("This user must be saved prior to calling disassociateWithOrganizations()");
-        }
-
-        $cleanupStatement = "DELETE FROM UserRoleParameters WHERE user_id=:user_id AND role_id=1 AND param_name='provider'";
-
-        $this->_pdo->execute($cleanupStatement, array(
-            ':user_id' => $this->_id,
-        ));
-
-    }//disassociateWithOrganizations
-
-    // ---------------------------
-
-    /*
-     *
-     * @function getInstitution
-     *
-     * @return array
-     *
-     *
-     */
-
-    public function getInstitution()
-    {
-
-        // This feature currently applies to campus champions...
-
-        if (empty($this->_id)) {
-            throw new Exception("This user must be saved prior to calling getInstitution()");
-        }
-
-        $query = "SELECT param_value FROM UserRoleParameters WHERE user_id=:user_id AND param_name='institution'";
-
-        $results = $this->_pdo->query($query, array(
-            ':user_id' => $this->_id,
-        ));
-
-        return (count($results) > 0) ? $results[0]['param_value'] : '-1';
-
-    }//getInstitution
-
-    // ---------------------------
-
     public function isCenterDirectorOfOrganization($organization_id)
     {
         $query = <<<SQL
@@ -1953,38 +1713,6 @@ SQL;
         return ($matches != 0);
 
     }//isCenterDirectorOfOrganization
-
-    // ---------------------------
-
-    /*
-     *
-     * @function getActiveOrganization
-     *
-     * @return int (corresponding to the primary organization)
-     *
-     *
-     */
-
-    public function getPrimaryOrganization()
-    {
-
-        // This feature currently applies to center directors...
-
-        if (empty($this->_id)) {
-            throw new Exception("This user must be saved prior to calling getPrimaryOrganization()");
-        }
-
-        $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev='cd' AND urp.user_id=:user_id AND urp.param_name='provider' AND urp.is_primary=1";
-
-        $results = $this->_pdo->query($query, array(
-            ':user_id' => $this->_id,
-        ));
-
-        return (count($results) > 0) ? $results[0]['param_value'] : '-1';
-
-    }//getPrimaryOrganization
-
-    // ---------------------------
 
     /*
      *
@@ -2035,45 +1763,6 @@ SQL;
 
     }//getActiveOrganization
 
-
-    // ---------------------------
-
-    /*
-     *
-     * @function getOrganizationCollection
-     *
-     * @return array of integers (where each int represents an organization that user is affiliated with as a center staff member or center director)
-     *
-     *
-     */
-
-    public function getOrganizationCollection($center_staff_or_director = ROLE_ID_CENTER_STAFF)
-    {
-
-        // This feature currently applies to center staff / center directors...
-
-        if (empty($this->_id)) {
-            throw new Exception("This user must be saved prior to calling getOrganizationCollection()");
-        }
-
-        $query = "SELECT urp.param_value FROM UserRoleParameters AS urp, Roles AS r WHERE urp.role_id = r.role_id AND r.abbrev=:abbrev AND urp.user_id=:user_id AND urp.param_name='provider' ORDER BY urp.param_value";
-
-        $center_collection = array();
-
-        $results = $this->_pdo->query($query, array(
-            ':abbrev' => $center_staff_or_director,
-            ':user_id' => $this->_id,
-        ));
-
-        foreach ($results as $center_data) {
-            $center_collection[] = $center_data['param_value'];
-        }
-
-        return $center_collection;
-
-    }//getOrganizationCollection
-
-    // ---------------------------
 
     /*
      *
@@ -2190,62 +1879,6 @@ SQL;
         return $allroles;
     }
 
-    // ---------------------------
-
-    /*
-     *
-     * @function _isValidOrganizationID
-     *
-     * @param int $role_id
-     * @param int $organization_id
-     *
-     * @return boolean
-     *
-     */
-
-    private function _isValidOrganizationID($role_id, $organization_id)
-    {
-
-        $results = $this->_pdo->query("SELECT COUNT(*) AS num_matches FROM UserRoleParameters WHERE user_id=:user_id AND role_id=:role_id AND param_value=:organization_id",
-            array(
-                'user_id' => $this->_id,
-                'role_id' => $role_id,
-                'organization_id' => $organization_id
-            )
-        );
-
-        return ($results[0]['num_matches'] != 0);
-
-    }//_isValidOrganizationID
-
-    // ---------------------------
-
-    /*
-     *
-     * @function _getRoleIDFromIdentifier
-     *
-     * @param string $identifier (see constants.php, ROLE_ID_... constants)
-     *
-     * @return int (the numerical id corresponding to the role identifier passed in)
-     *
-     */
-
-    private function _getRoleIDFromIdentifier($identifier)
-    {
-
-        $role_data = $this->_pdo->query("SELECT role_id FROM Roles WHERE abbrev=:abbrev", array(
-            ':abbrev' => $identifier,
-        ));
-
-        if (count($role_data) == 0) {
-            //throw new Exception('Invalid role identifier specified -- '.$identifier);
-            return -1;
-        }
-
-        return $role_data[0]['role_id'];
-
-    }//_getRoleIDFromIdentifier
-
     /*
      *
      * @function getUserID
@@ -2258,42 +1891,6 @@ SQL;
     {
         return (empty($this->_id)) ? '0' : $this->_id;
     }
-
-    // --------------------------------------------------
-
-    // @function getPromoter
-    //
-    // @param int $role_id (consult the ROLE_ID.. constants in constants.php)
-    // @param int $organization_id
-    //
-    // @returns id (the id of the user who promoted this user to center director)
-    //
-    // If the value returned is -1, then either:
-    // - The promoter's account has been removed from the system
-    // - The center director is a primary center director
-
-
-    public function getPromoter($role_id, $organization_id)
-    {
-
-        $pdo = DB::factory('database');
-
-        $promoterResults = $pdo->query(
-            "SELECT promoter FROM UserRoleParameters WHERE user_id=:user_id AND role_id=:role_id AND param_value=:param_value",
-            array(
-                'user_id' => $this->_id,
-                'role_id' => \xd_roles\getRoleIDFromIdentifier($role_id),
-                'param_value' => $organization_id
-            )
-        );
-
-        if (count($promoterResults) == 0) return -1;
-
-        return $promoterResults[0]['promoter'];
-
-    }//getPromoter
-
-    // ---------------------------
 
     /*
      *

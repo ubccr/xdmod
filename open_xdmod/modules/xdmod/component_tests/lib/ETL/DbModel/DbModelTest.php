@@ -11,7 +11,7 @@ namespace ComponentTests\ETL\DbModel;
 
 // Create a base ETL test class that allows us to run ETL actions and can be reused.
 
-
+use CCR\Log;
 use ETL\DbModel\Table;
 use ETL\EtlOverseerOptions;
 use ETL\Configuration\EtlConfiguration;
@@ -65,14 +65,14 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
     {
         // Execute a ManageTables action to create a new table. We are expecting the table does not
         // exist.
-        $this->executeEtlAction('modify-table.create-table', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('db-model-test.create-table', self::$etlConfig, self::$etlOverseerOptions);
 
         // We can use the global endpoint to discover a table in any schema as log as its name is
         // fully qualified. The action does not currently expose its endpoints.
         $existingTable = new Table(null, self::$endpoint->getSystemQuoteChar());
         $existingTable->discover('test.modify_table_test', self::$endpoint);
-        $actual = $existingTable->toJson();
-        $expected = file_get_contents(self::$testArtifactOutputPath . "/create_table.json");
+        $actual = $existingTable->toStdClass();
+        $expected = json_decode(file_get_contents(self::$testArtifactOutputPath . "/create_table.json"));
         $this->assertEquals($expected, $actual, "Create table");
 
     }
@@ -92,14 +92,14 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
     {
         // Execute a ManageTables action to modify the table and then discover the table to comapre
         // the result to the expected value.
-        $this->executeEtlAction('modify-table.modify-table', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('db-model-test.modify-table', self::$etlConfig, self::$etlOverseerOptions);
 
         // We can use the global endpoint to discover a table in any schema as log as its name is
         // fully qualified. The action does not currently expose its endpoints.
         $modifiedTable = new Table(null, self::$endpoint->getSystemQuoteChar());
         $modifiedTable->discover('test.modify_table_test', self::$endpoint);
-        $actual = $modifiedTable->toJson();
-        $expected = file_get_contents(self::$testArtifactOutputPath . "/modify_table.json");
+        $actual = $modifiedTable->toStdClass();
+        $expected = json_decode(file_get_contents(self::$testArtifactOutputPath . "/modify_table.json"));
         $this->assertEquals($expected, $actual, "Modify table");
     }
 
@@ -115,14 +115,14 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
     {
         // Execute a ManageTables action to reorder columns and then discover the table to comapre
         // the result to the expected value.
-        $this->executeEtlAction('modify-table.reorder-table-columns', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('db-model-test.reorder-table-columns', self::$etlConfig, self::$etlOverseerOptions);
 
         // We can use the global endpoint to discover a table in any schema as log as its name is
         // fully qualified. The action does not currently expose its endpoints.
         $modifiedTable = new Table(null, self::$endpoint->getSystemQuoteChar());
         $modifiedTable->discover('test.modify_table_test', self::$endpoint);
-        $actual = $modifiedTable->toJson();
-        $expected = file_get_contents(self::$testArtifactOutputPath . "/reorder_table_columns.json");
+        $actual = $modifiedTable->toStdClass();
+        $expected = json_decode(file_get_contents(self::$testArtifactOutputPath . "/reorder_table_columns.json"));
         $this->assertEquals($expected, $actual, "Reorder table columns");
     }
 
@@ -135,14 +135,35 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
     {
         // Execute a ManageTables action to reorder columns and then discover the table to comapre
         // the result to the expected value.
-        $this->executeEtlAction('modify-table.rename-and-reorder-table-column', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('db-model-test.rename-and-reorder-table-column', self::$etlConfig, self::$etlOverseerOptions);
 
         // We can use the global endpoint to discover a table in any schema as log as its name is
         // fully qualified. The action does not currently expose its endpoints.
         $modifiedTable = new Table(null, self::$endpoint->getSystemQuoteChar());
         $modifiedTable->discover('test.modify_table_test', self::$endpoint);
-        $actual = $modifiedTable->toJson();
-        $expected = file_get_contents(self::$testArtifactOutputPath . "/rename_and_reorder_table_column.json");
+        $actual = $modifiedTable->toStdClass();
+        $expected = json_decode(file_get_contents(self::$testArtifactOutputPath . "/rename_and_reorder_table_column.json"));
         $this->assertEquals($expected, $actual, "Rename and reorder table columns");
+    }
+
+    /**
+     * Test the following use cases:
+     * 1. Modify a table where the definition has variations in case that are typically normalized
+     *    by MySQL.
+     */
+
+    public function testNormalizationOfTableDefinition()
+    {
+        // Create a baseline table and then test normalization of DbModel values (e.g., nothing
+        // should be changed).
+        $this->executeEtlAction('db-model-test.create-baseline-normalized-table-definition', self::$etlConfig, self::$etlOverseerOptions);
+        $this->executeEtlAction('db-model-test.test-normalized-table-definition', self::$etlConfig, self::$etlOverseerOptions);
+        // We can use the global endpoint to discover a table in any schema as log as its name is
+        // fully qualified. The action does not currently expose its endpoints.
+        $modifiedTable = new Table(null, self::$endpoint->getSystemQuoteChar());
+        $modifiedTable->discover('test.normalize_table_test', self::$endpoint);
+        $actual = $modifiedTable->toStdClass();
+        $expected = json_decode(file_get_contents(self::$testArtifactOutputPath . "/normalized_table_definition.json"));
+        $this->assertEquals($expected, $actual, "Table definition normalization");
     }
 }

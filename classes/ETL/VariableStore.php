@@ -54,7 +54,7 @@ class VariableStore extends Loggable
 
         if ( null === $store ) {
             return;
-        } elseif ( is_array($store) || $store instanceof VariableStore || $store instanceof \Traversable ) {
+        } elseif ( is_array($store) || $store instanceof \stdClass || $store instanceof VariableStore || $store instanceof \Traversable ) {
             foreach ( $store as $variable => $value ) {
                 $this->$variable = $value;
             }
@@ -69,10 +69,21 @@ class VariableStore extends Loggable
     }  // __construct()
 
     /**
+     * Clear the variables in the store
+     */
+
+    public function clear()
+    {
+        $this->variables = array();
+    }
+
+    /**
      * Set a variable in the store.  If a variable should be overwritten use overwrite() instead.
      * Setting a variable to a NULL value will unset the variable.  If the variable is already set,
-     * do not overwrite and issue a warning.  We issue a warning because it may be the case that the
-     * developer is expecting a value to be updated and want to alter them that it is not.
+     * do not overwrite and issue a warning. This is done so that variables set early in a process
+     * (such as ETL) are not blindly changed causing unexpected results.  We issue a warning because
+     * it may be the case that the developer is expecting a value to be updated and want to alert
+     * them that it is not.
      *
      * @param string $var The name of the variable to set
      * @param scalar $value The value of the variable
@@ -219,6 +230,7 @@ class VariableStore extends Loggable
      * identified using the ${} wrapper (e.g., ${VARIABLE}) and are case sensitive.
      *
      * NOTE: Map keys with a value of NULL are ignored.
+     * NOTE: Variables/macros are case INSENSITIVE.
      *
      * @param string $string Source string containing variables
      * @param string $exceptionPrefix An prefix for the exception message. Exceptions are only
@@ -259,7 +271,7 @@ class VariableStore extends Loggable
                 if ( null === $v ) {
                     continue;
                 }
-                $string = str_replace('${' . $k . '}', $v, $string);
+                $string = str_ireplace('${' . $k . '}', $v, $string);
             }
         } else {
 
@@ -276,10 +288,10 @@ class VariableStore extends Loggable
                         return;
                     }
                     $search = '${' . $k . '}';
-                    if ( false !== strpos($string, $search) ) {
+                    if ( false !== stripos($string, $search) ) {
                         $substitutionDetails['substituted'][] = $k;
                     }
-                    $string = str_replace($search, $v, $string);
+                    $string = str_ireplace($search, $v, $string);
                 },
                 $this->variables,
                 array_keys($this->variables)

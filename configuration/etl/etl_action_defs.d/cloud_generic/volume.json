@@ -11,7 +11,7 @@
             "asset_type_id": "atype.asset_type_id",
             "account_id": "act.account_id",
             "provider_identifier": "raw.provider_volume_identifier",
-            "create_time_utc": "raw.create_time_utc",
+            "create_time_ts": "UNIX_TIMESTAMP(CONVERT_TZ(raw.create_time_utc,'+00:00', @@session.time_zone))",
             "size": "raw.disk_gb"
         },
 

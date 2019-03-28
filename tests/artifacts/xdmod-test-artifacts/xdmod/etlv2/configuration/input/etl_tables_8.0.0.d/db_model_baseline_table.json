@@ -1,0 +1,65 @@
+{
+    "#": "Initialize a table to test multiple cases for normalization of a MySQL table definition",
+
+    "table_definition": {
+        "name": "normalize_table_test",
+        "engine": "MyISAM",
+        "charset": "utf8",
+        "collation": "utf8_general_ci",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11) unsigned",
+                "extra": "auto_increment",
+                "nullable": false
+            },
+            {
+                "name": "resource",
+                "type": "varchar(40)",
+                "nullable": true,
+                "charset": "utf8",
+                "collation": "utf8_general_ci",
+                "comment": "This is a comment"
+            },
+            {
+                "name": "random",
+                "type": "varchar(16)",
+                "nullable": false,
+                "default": "First Name"
+            },
+            {
+                "name": "myenum",
+                "type": "enum('Sample1', 'sample2')",
+                "comment": "Normalize only the 'enum' not the enum values!"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "index2",
+                "columns": [
+                    "resource",
+                    "random"
+                ],
+                "is_unique": false
+            }
+        ],
+        "triggers": [
+            {
+                "name": "mytrigger",
+                "schema": "test",
+                "table": "normalize_table_test",
+                "time": "before",
+                "event": "insert",
+                "body": "SET @resource = CONCAT(@resource, 'X');"
+            }
+        ]
+    }
+}

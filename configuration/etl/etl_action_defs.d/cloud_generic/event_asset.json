@@ -26,7 +26,7 @@
                 "name": "event",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "ev",
-                "on": "ev.resource_id = staging.resource_id AND ev.instance_id = staging.instance_id AND ev.event_time_utc = staging.event_time_utc AND ev.event_type_id = staging.event_type_id"
+                "on": "ev.resource_id = staging.resource_id AND ev.instance_id = staging.instance_id AND ev.event_time_ts = staging.event_time_ts AND ev.event_type_id = staging.event_type_id"
             },
             {
                 "name": "asset",

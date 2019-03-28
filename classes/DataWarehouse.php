@@ -15,7 +15,6 @@
  */
 
 use CCR\DB;
-use Xdmod\Config;
 
 /*
  *	@Class DataWarehouse
@@ -67,12 +66,16 @@ class DataWarehouse
      * Return the person_id of a user based on username and organization.
      *
      * @param string username
-     * @return person_id or -1 if the person_id could not be determined
+     * @return int person_id or -1 if the person_id could not be determined
+     * @throws Exception if there is a problem reading / processing `user_management.json`
      */
     public static function getPersonIdFromPII($username, $organization) {
 
-        $config = Config::factory();
-        $query = $config['user_management']['person_mapping'];
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory(
+            'user_management.json',
+            CONFIG_DIR
+        );
+        $query = $config['person_mapping'];
 
         $dbh = self::connect();
         $stmt = $dbh->handle()->prepare($query);
@@ -358,11 +361,11 @@ class DataWarehouse
      *
      * @return array An associative array mapping categories to the realms
      *               they contain.
+     * @throws Exception if there is a problem reading / processing `datawarehouse.json`
      */
     public static function getCategories()
     {
-        $config = Config::factory();
-        $dwConfig = $config['datawarehouse'];
+        $dwConfig = \Configuration\XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
 
         $categories = array();
         foreach ($dwConfig['realms'] as $realmName => $realm) {
@@ -388,8 +391,7 @@ class DataWarehouse
      */
     public static function getCategoryForRealm($realmName)
     {
-        $config = Config::factory();
-        $dwConfig = $config['datawarehouse'];
+        $dwConfig = \Configuration\XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
 
         if (isset($dwConfig['realms'][$realmName]['category'])) {
             return $dwConfig['realms'][$realmName]['category'];

@@ -1,6 +1,8 @@
 <?php
 namespace DataWarehouse\Query;
 
+use Configuration\XdmodConfiguration;
+
 /**
  * @author Amin Ghadersohi
  * @date 2011-Jan-07
@@ -184,7 +186,7 @@ abstract class TimeAggregationUnit
             
             return $class;
         } else {
-            throw new Exception("TimeAggregationUnit: Time period {$time_period} is invalid.");
+            throw new \Exception("TimeAggregationUnit: Time period {$time_period} is invalid.");
         }
     } //factory
 
@@ -294,8 +296,8 @@ abstract class TimeAggregationUnit
     public static function getMinUnitForRealm($realm)
     {
         // Open the datawarehouse config.
-        $config = \Xdmod\Config::factory();
-        $dw_config = $config['datawarehouse']['realms'];
+        $config = XdmodConfiguration::assocArrayFactory('datawarehouse.json', CONFIG_DIR);
+        $dw_config = $config['realms'];
 
         // Find the config for the given realm.
         $this_realm_config = null;

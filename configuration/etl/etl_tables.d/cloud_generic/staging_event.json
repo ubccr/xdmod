@@ -13,15 +13,15 @@
                 "name": "instance_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Optional instance the event is associated with. Unknown = -1"
+                "default": 1,
+                "comment": "Optional instance the event is associated with. Unknown = 1"
             },
             {
-                "name": "event_time_utc",
-                "type": "datetime",
+                "name": "event_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false,
-                "default": "0000-00-00 00:00:00",
-                "comment": "The time of the event in UTC."
+                "default": "0.000000",
+                "comment": "The time of the event as a unix timestamp to the microsecond.."
             },
             {
                 "name": "event_type_id",
@@ -29,6 +29,20 @@
                 "nullable": false,
                 "default": -1,
                 "comment": "Unknown = -1 for global dimensions"
+            },
+            {
+                "name": "user_name",
+                "type": "varchar(32)",
+                "nullable": true,
+                "default": null,
+                "comment": "Username associated with event"
+            },
+            {
+                "name": "person_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1,
+                "comment": "Person ID associated with event"
             },
             {
                 "name": "record_type_id",
@@ -41,29 +55,29 @@
                 "name": "account_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Optional account the event is associated with. Unknown = -1"
+                "default": 1,
+                "comment": "Optional account the event is associated with. Unknown = 1"
             },
             {
                 "name": "host_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Host where the event occured. Unknown = -1"
+                "default": 1,
+                "comment": "Host where the event occured. Unknown = 1"
             },
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Instance type for the event. Unknown = -1"
+                "default": 1,
+                "comment": "Instance type for the event. Unknown = 1"
             },
             {
                 "name": "image_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
-                "comment": "Image associated with the event. Unknown = -1"
+                "default": 1,
+                "comment": "Image associated with the event. Unknown = 1"
             },
             {
                 "name": "event_data",
@@ -91,9 +105,10 @@
                 "columns": [
                     "resource_id",
                     "instance_id",
-                    "event_time_utc",
+                    "event_time_ts",
                     "event_type_id",
                     "record_type_id",
+                    "person_id",
                     "account_id",
                     "host_id"
                 ],

@@ -466,8 +466,7 @@ class UserAdminTest extends BaseUserAdminTest
         $testData = $options['data'];
         $expectedOutput = $options['output'];
         $expectedContentType = $options['content_type'];
-
-        $this->helper->authenticateDashboard('mgr');
+        $helper = $options['helper'];
 
         $data = array_merge(
             array(
@@ -476,7 +475,7 @@ class UserAdminTest extends BaseUserAdminTest
             $testData
         );
 
-        $response = $this->helper->post("internal_dashboard/controllers/controller.php", null, $data);
+        $response = $helper->post("internal_dashboard/controllers/controller.php", null, $data);
 
         $this->validateResponse($response, 200, $expectedContentType);
 
@@ -498,30 +497,28 @@ class UserAdminTest extends BaseUserAdminTest
             $expectedStats = $expected['stats'];
 
             $expectedDifferences = array('visit_frequency', 'timeframe');
-            $allFound = true;
+            $actualDifferences = array();
 
             foreach ($expectedStats as $key => $expectedStat) {
-                $entryExists = $this->entryExists(
+                $this->entryExists(
                     $actualStats,
-                    function ($key, $value) use ($expectedStat, $expectedDifferences) {
+                    function ($key, $value) use ($expectedStat, $expectedDifferences, $actualDifferences) {
                         $diff = array_diff_assoc($expectedStat, $value);
                         $missingDiff = array_diff(array_keys($diff), $expectedDifferences);
                         if (count($missingDiff) === 0) {
                             return true;
                         }
+                        $actualDifferences[] = $missingDiff;
                         return false;
                     }
                 );
-                if (!$entryExists) {
-                    $allFound = false;
-                    break;
-                }
             }
             $this->assertTrue(
-                $allFound,
+                empty($actualDifferences),
                 sprintf(
-                    "There were other differences besides the expected: %s",
-                    json_encode($expectedDifferences)
+                    "There were other differences besides the expected.\nExpected: %s\nActual: %s",
+                    json_encode($expectedDifferences),
+                    json_encode($actualDifferences)
                 )
             );
         } elseif (array_key_exists('message', $expected)) {
@@ -531,52 +528,16 @@ class UserAdminTest extends BaseUserAdminTest
             $this->assertTrue(false, "No idea how to evaluate the data for this test.");
         }
 
-        $this->helper->logoutDashboard();
+        if (isset($options['last'])) {
+            $helper->logoutDashboard();
+        }
     }
 
+
+
     /**
-     * @dataProvider provideGetUserVisitsIncrements
+     * @depends testGetUserVisits
      *
-     * @param array $options
-     * @throws \Exception
-     */
-    public function testGetUserVisitsIncrements(array $options)
-    {
-        $user = $options['user'];
-        $difference = $options['difference'];
-
-        $before = $this->getUserVisits($options);
-
-        $this->helper->authenticate($user);
-
-        $this->helper->logout();
-
-        $after = $this->getUserVisits($options);
-
-        $this->assertTrue(
-            $after === $before + $difference,
-            sprintf(
-                "Before: [%d] After: [%d] Expected Difference [%d] Actual Difference [%d]",
-                $before,
-                $after,
-                $difference,
-                $after - $before
-            )
-        );
-    }
-
-    /**
-     * @return array|object
-     * @throws \Exception
-     */
-    public function provideGetUserVisitsIncrements()
-    {
-        return JSON::loadFile(
-            $this->getTestFiles()->getFile('user_admin', 'get_user_visits_increment', 'input')
-        );
-    }
-
-    /**
      * @dataProvider provideGetUserVisits
      *
      * @param array $options
@@ -591,8 +552,7 @@ class UserAdminTest extends BaseUserAdminTest
         $testData = $options['data'];
         $expectedOutput = $options['output'];
         $expectedSuccess = $options['success'];
-
-        $this->helper->authenticateDashboard('mgr');
+        $helper = $options['helper'];
 
         $data = array_merge(
             array(
@@ -601,7 +561,7 @@ class UserAdminTest extends BaseUserAdminTest
             $testData
         );
 
-        $response = $this->helper->post("internal_dashboard/controllers/controller.php", null, $data);
+        $response = $helper->post("internal_dashboard/controllers/controller.php", null, $data);
         $expectedContentType = $expectedSuccess ? 'application/xls' : 'text/html; charset=UTF-8';
         $this->validateResponse($response, 200, $expectedContentType);
 
@@ -729,7 +689,9 @@ class UserAdminTest extends BaseUserAdminTest
             $this->assertEquals($expected, $actual);
         }
 
-        $this->helper->logoutDashboard();
+        if (isset($options['last'])) {
+            $helper->logoutDashboard();
+        }
     }
 
     /**
@@ -738,8 +700,69 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function provideGetUserVisits()
     {
-        return JSON::loadFile(
+        $data = JSON::loadFile(
             $this->getTestFiles()->getFile('user_admin', 'get_user_visits', 'input')
+        );
+
+        $helper = new \TestHarness\XdmodTestHelper();
+        $helper->authenticateDashboard('mgr');
+
+        foreach($data as &$datum) {
+            $datum[0]['helper'] = $helper;
+        }
+        $data[count($data) - 1][0]['last'] = true;
+
+        return $data;
+    }
+
+    /**
+     * @depends testGetUserVisitsExport
+     * @dataProvider provideGetUserVisitsIncrements
+     *
+     * @param array $options
+     * @throws \Exception
+     */
+    public function testGetUserVisitsIncrements(array $options)
+    {
+        $user = $options['user'];
+        $difference = $options['difference'];
+
+        $before = $this->getUserVisits($options);
+
+        $this->helper->authenticate($user);
+
+        $this->helper->logout();
+
+        $after = $this->getUserVisits($options);
+
+        $matches = ($after === ($before + $difference));
+
+        $this->assertTrue(
+            $matches,
+            sprintf(
+                "Before: [%d][%s] After: [%d][%s] Expected Difference [%d][%s] Actual Difference [%d]\n %s === ( %s + %s )",
+                $before,
+                gettype($before),
+                $after,
+                gettype($after),
+                $difference,
+                gettype($difference),
+                $after - $before,
+                $after,
+                $before,
+                $difference
+            )
+        );
+    }
+
+    /**
+     * @return array|object
+     * @throws \Exception
+     */
+    public function provideGetUserVisitsIncrements()
+    {
+        return JSON::loadFile(
+            $this->getTestFiles()->getFile('user_admin', 'get_user_visits_increment', 'input')
         );
     }
 
@@ -794,7 +817,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $this->helper->logoutDashboard();
 
-        return $results;
+        return (int)$results;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Rest\Controllers;
 
+use Configuration\XdmodConfiguration;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\BadRequestException;
@@ -1400,15 +1401,23 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobDataSet(XDUser $user, $realm, $jobId, $action)
     {
-        $config = \Xdmod\Config::factory();
+        $rawstats = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
 
-        $rawstats = $config['rawstatistics'];
-        if (!isset($rawstats['realms'][$realm])) {
+        $realmExists = false;
+        foreach ($rawstats['realms'] as $item) {
+            if ($item['name'] === $realm) {
+                $realmExists = true;
+                break;
+            }
+        }
+
+        if (!$realmExists) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
-        $query = new $QueryClass(array('primary_key' => $jobId), $action);
+        $params = array('primary_key' => $jobId);
+        $query = new $QueryClass($params, $action);
 
         $allRoles = $user->getAllRoles();
         $query->setMultipleRoleParameters($allRoles, $user);
@@ -1682,18 +1691,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function processHistoryDefaultRealmRequest(Application $app, $action)
     {
-        $config = \Xdmod\Config::factory();
-
-        $rawstats = $config['rawstatistics'];
+        $rawstats = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
 
         $results = array();
 
         if (isset($rawstats['realms'])) {
-            foreach($rawstats['realms'] as $realm => $realmconfig) {
+            foreach($rawstats['realms'] as $realmconfig) {
                 $results[] = array(
                     'dtype' => 'realm',
-                    'realm' => $realm,
-                    'text' => $realmconfig['name']
+                    'realm' => $realmconfig['name'],
+                    'text' => $realmconfig['display']
                 );
             }
         }
@@ -1993,14 +2000,22 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     private function getJobByPrimaryKey(Application $app, \XDUser $user, $realm, $searchparams)
     {
-        $config = \Xdmod\Config::factory();
+        $rawstats = XdmodConfiguration::assocArrayFactory('rawstatistics.json', CONFIG_DIR);
 
-        $rawstats = $config['rawstatistics'];
-        if (!isset($rawstats['realms'][$realm])) {
+        $realmExists = count(
+            array_filter(
+                $rawstats['realms'],
+                function ($item) use ($realm) {
+                    return $item['name'] === $realm;
+                }
+            )
+        ) > 0;
+
+        if (!$realmExists) {
             throw new \DataWarehouse\Query\Exceptions\AccessDeniedException;
         }
 
-        if (isset($searchparams['jobref']) && is_int($searchparams['jobref'])) {
+        if (isset($searchparams['jobref']) && is_numeric($searchparams['jobref'])) {
             $params = array(
                 'primary_key' => $searchparams['jobref']
             );

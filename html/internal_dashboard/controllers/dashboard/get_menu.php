@@ -5,14 +5,15 @@
  * @author Jeffrey T. Palmer <jtpalmer@ccr.buffalo.edu>
  */
 
-use Xdmod\Config;
-
 try {
-    $config = Config::factory();
+    $config = \Configuration\XdmodConfiguration::assocArrayFactory(
+        'internal_dashboard.json',
+        CONFIG_DIR
+    );
 
     $returnData = array(
         'success' => true,
-        'response' => $config['internal_dashboard']['menu'],
+        'response' => $config['menu'],
     );
 
     $returnData['count'] = count($returnData['response']);

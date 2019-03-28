@@ -32,10 +32,9 @@
             "description": "Reconstructs discrete runs from cloud events"
         },
         {
-            "name": "cloud-transient",
+            "name": "cloud-session-records",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_common/cloud_transient.json",
-            "truncate_destination": true,
+            "definition_file": "cloud_common/session_records.json",
             "description": "Builds intermediate cloud event table"
         },
         {
@@ -46,7 +45,6 @@
             "class": "SimpleAggregator",
             "description": "Aggregate cloud records.",
             "definition_file": "cloud_common/cloud_metrics_aggregation.json",
-            "truncate_destination": true,
             "table_prefix": "cloudfact_by_",
             "aggregation_units": [
                 "day", "month", "quarter", "year"

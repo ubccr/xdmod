@@ -64,14 +64,14 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
     private function initInstance($srcRecord)
     {
-        $default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_time_utc'];
+        $default_end_time = isset($this->_end_time) ? $this->_end_time : $srcRecord['event_time_ts'];
 
         $this->_instance_state = array(
             'resource_id' => $srcRecord['resource_id'],
             'instance_id' => $srcRecord['instance_id'],
-            'start_time' => $srcRecord['event_time_utc'],
+            'start_time_ts' => $srcRecord['event_time_ts'],
             'start_event_id' => $srcRecord['event_type_id'],
-            'end_time' => $default_end_time,
+            'end_time_ts' => $default_end_time,
             'end_event_id' => self::STOP
         );
     }
@@ -83,7 +83,7 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
 
     private function updateInstance($srcRecord)
     {
-        $this->_instance_state['end_time'] = $srcRecord['event_time_utc'];
+        $this->_instance_state['end_time_ts'] = $srcRecord['event_time_ts'];
         $this->_instance_state['end_event_id'] = $srcRecord['event_type_id'];
     }
 
@@ -99,10 +99,6 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
             } else {
                 return array();
             }
-        }
-
-        if (!in_array($srcRecord['event_type_id'], $this->_all_event_ids)) {
-            return array();
         }
 
         if ($this->_instance_state === null) {
@@ -136,8 +132,9 @@ class CloudStateReconstructorTransformIngestor extends pdoIngestor implements iA
         // is lost. To work around this we add a dummy row filled with zeroes.
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
+        $subSelect = "(SELECT DISTINCT instance_id from modw_cloud.event WHERE last_modified > \"" . $this->getEtlOverseerOptions()->getLastModifiedStartDate() . "\")";
 
-        $sql = "$sql \nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC";
+        $sql = "$sql WHERE instance_id IN " . $subSelect . " AND event_type_id IN (" . implode(',', $this->_all_event_ids) . ")\nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 2 DESC, 3 ASC, 4 DESC";
 
         return $sql;
     }

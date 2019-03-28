@@ -293,7 +293,7 @@ function main()
             }
 
             if($realmToAggregate == 'cloud' || $realmToAggregate === false){
-                $dwi->aggregateCloudData();
+                $dwi->aggregateCloudData($lastModifiedStartDate);
             }
 
             if ($realmToAggregate == 'storage' || $realmToAggregate === false) {
@@ -332,6 +332,13 @@ Usage: xdmod-ingestor [-v]
 
     --debug
         Output debug level and above log messages.
+
+    --aggregate[=*realm*]
+        If a *realm* (job, cloud, storage) is specified aggregate that realm
+        otherwise aggregate all realms.
+
+    --datatype *type*
+        Ingest one specific datatype (openstack, genericcloud, storage).
 
     -q, --quiet
         Output warning level and above log messages.

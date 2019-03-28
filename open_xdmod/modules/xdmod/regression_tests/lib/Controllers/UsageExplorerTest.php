@@ -8,6 +8,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
     protected static $helper;
     protected static $messages = array();
     protected static $expectedEndpoint;
+    protected static $timingOutputDir;
     /*
      * These are used when testing against two different databases
      * such as when doing federation testing, this allows certain values to be
@@ -56,6 +57,11 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
             $response = self::$helper->post('/controllers/user_interface.php', null, $input);
             $csvdata = $response[0];
             $curldata = $response[1];
+            if(!empty(self::$timingOutputDir)){
+                $time_data = $fullTestName . "," . $curldata['total_time'] . "," . $curldata['starttransfer_time'] . "\n";
+                $outputCSV = self::$timingOutputDir . "timings.csv";
+                file_put_contents($outputCSV, $time_data, FILE_APPEND | LOCK_EX);
+            }
             /*
              * this temporarliy allows the "failed" tests of the public
              * user to pass, need to figure out a more robust way for
@@ -69,7 +75,7 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
             }
             $csvdata = preg_replace(self::$replaceRegex, self::$replacements, $csvdata);
 
-            if(!empty($expectedFile)){
+            if (getenv('REG_TEST_FORCE_GENERATION') !== '1') {
                 $expected = file_get_contents($expectedFile);
                 $expected = preg_replace(self::$replaceRegex, self::$replacements, $expected);
                 if($expected === $csvdata){
@@ -85,12 +91,12 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
                     self::$messages[] = "$fullTestName IS ONLY ==";
                     return;
                 }
-                elseif(substr($expectedFile, -13) !== 'reference.csv'){
-                    throw new \PHPUnit_Framework_ExpectationFailedException(
-                        count($failures)." assertions failed:\n\t".implode("\n\t", $failures)
-                    );
-                }
+
+                throw new \PHPUnit_Framework_ExpectationFailedException(
+                    count($failures)." assertions failed:\n\t".implode("\n\t", $failures)
+                );
             }
+            // else running in test artifact generation mode
 
             $endpoint = parse_url(self::$helper->getSiteUrl());
             $outputDir = self::$baseDir .
@@ -124,6 +130,12 @@ class UsageExplorerTest extends \PHPUnit_Framework_TestCase
     }
     protected function defaultSetup(){
         self::$helper = new \TestHarness\XdmodTestHelper();
+
+        $timingTestDir = getenv('REG_TIME_LOGDIR');
+        if(!empty($timingTestDir)){
+            self::$timingOutputDir = $timingTestDir;
+        }
+
         $envUserrole = getenv('REG_TEST_USER_ROLE');
         if(!empty($envUserrole)){
             self::$helper->authenticate($envUserrole);

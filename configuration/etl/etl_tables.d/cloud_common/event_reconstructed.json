@@ -14,8 +14,8 @@
                 "nullable": false
             },
             {
-                "name": "start_time",
-                "type": "datetime",
+                "name": "start_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false
             },
             {
@@ -24,8 +24,8 @@
                 "nullable": false
             },
             {
-                "name": "end_time",
-                "type": "datetime",
+                "name": "end_time_ts",
+                "type": "decimal(16,6)",
                 "nullable": false
             },
             {

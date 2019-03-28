@@ -18,14 +18,16 @@
     "source_query": {
         "records": {
             "resource_id": "raw.resource_id",
-            "event_time_utc": "raw.event_time_utc",
+            "event_time_ts": "UNIX_TIMESTAMP(CONVERT_TZ(raw.event_time_utc,'+00:00', @@session.time_zone))",
             "event_type_id": "COALESCE(etype.event_type_id, -1)",
             "record_type_id": "COALESCE(rtype.record_type_id, -1)",
-            "account_id": "COALESCE(acct.account_id, -1)",
-            "host_id": "COALESCE(h.host_id, -1)",
-            "instance_id": "COALESCE(i.instance_id, -1)",
-            "instance_type_id": "COALESCE(itype.instance_type_id, -1)",
-            "image_id": "COALESCE(img.image_id, -1)",
+            "user_name": "rv.provider_user",
+            "person_id": "sa.person_id",
+            "account_id": "COALESCE(acct.account_id, 1)",
+            "host_id": "COALESCE(h.host_id, 1)",
+            "instance_id": "COALESCE(i.instance_id, 1)",
+            "instance_type_id": "COALESCE(itype.instance_type_id, 1)",
+            "image_id": "COALESCE(img.image_id, 1)",
             "event_data": "raw.event_data",
             "root_volume_type_id": "COALESCE(atype.asset_type_id, -1)"
         },
@@ -84,6 +86,18 @@
                 "type": "LEFT OUTER"
             },
             {
+                "name": "generic_cloud_raw_volume",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "rv",
+                "on": "raw.provider_instance_identifier = rv.provider_instance_identifier"
+            },
+            {
+                "name": "systemaccount",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "sa",
+                "on": "rv.provider_user = sa.username AND rv.resource_id = sa.resource_id"
+            },
+            {
                 "name": "asset_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "atype",
@@ -99,6 +113,7 @@
             "etype.event_type_id",
             "rtype.record_type_id",
             "acct.account_id",
+            "sa.person_id",
             "h.host_id"
         ]
     }

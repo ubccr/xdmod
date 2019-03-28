@@ -16,12 +16,9 @@ use CCR\DB\iDatabase;
 use CCR\Log;
 use CCR\Json;
 
-use ETL\Configuration\EtlConfiguration;
-use ETL\EtlOverseer;
-use ETL\EtlOverseerOptions;
+use Configuration\Configuration;
 use ETL\Utilities;
 use User\Roles;
-use Xdmod\Config;
 
 const SCHEMA = 'moddb';
 
@@ -128,10 +125,8 @@ function main()
     // roles/datawarehouse
     $results = array();
 
-    $config = Config::factory();
-
     // Module Retrieval
-    $modules = $config['modules'];
+    $modules = Configuration::assocArrayFactory('modules.json', CONFIG_DIR, $log);
 
     // Remove the warning to users that this files contents are automatically
     // generated and that they modify it at their own risk.
@@ -141,85 +136,84 @@ function main()
     if (isset($modules['WARNING'])) {
         unset($modules['WARNING']);
     }
-    $moduleNames = array_keys($modules);
     $moduleHierarchies = array();
 
     // Role Retrieval
     $allRoles = Roles::getRoleNames($blacklist);
 
-    // Retrieve the annotated combined config information for each section.
-    $rawHierarchies = $config->getModuleSection('hierarchies', $moduleNames);
-    $rawRoles = $config->getModuleSection('roles', $moduleNames);
-    $rawRealms = $config->getModuleSection('datawarehouse', $moduleNames);
-
+    // Configuration Files
+    $hierarchyConfig = \Configuration\ModuleConfiguration::factory('hierarchies.json', CONFIG_DIR, $log);
+    $roleConfig = \Configuration\ModuleConfiguration::factory('roles.json', CONFIG_DIR, $log);
+    $realmConfig = \Configuration\ModuleConfiguration::factory('datawarehouse.json', CONFIG_DIR, $log);
 
     foreach ($modules as $module => $moduleData) {
 
-        // Setup the metadata to be used in the filtering.
-        if ($module !== DEFAULT_MODULE_NAME) {
-            $metaData = array(
-                'modules' => array(
-                    DEFAULT_MODULE_NAME,
-                    $module
-                )
-            );
-        } else {
-            $metaData = array(
-                'modules' => array(
-                    DEFAULT_MODULE_NAME,
-                )
-            );
-        }
-
-        // Retrieve the section information filtered by module.
-        $hierarchies = $config->filterByMetaData(
-            $rawHierarchies,
-            $metaData
-        );
-
-        $roles = $config->filterByMetaData(
-            $rawRoles,
-            $metaData
-        );
-
-        $realms = $config->filterByMetaData(
-            $rawRealms,
-            $metaData
-        );
+        $hierarchies = $hierarchyConfig->filterByModule($module);
+        $roles = $roleConfig->filterByModule($module);
+        $realms = $realmConfig->filterByModule($module);
 
         // Process the hierarchies provided by this module, if any.
-        if (count($hierarchies) > 0 && isset($hierarchies['hierarchies'])) {
-            $moduleHierarchies[$module] = $hierarchies['hierarchies'];
+        if (count(get_object_vars($hierarchies)) > 0 && property_exists($hierarchies, 'hierarchies')) {
+            $moduleHierarchies[$module] = json_decode(json_encode($hierarchies->hierarchies), true);
         }
 
         // Process the roles provided by this module, if any.
-        if (count($roles) > 0 && isset($roles['roles'])) {
-            $moduleRoles = $roles['roles'];
+        if (count(get_object_vars($roles)) > 0 && property_exists($roles, 'roles')) {
+            $moduleRoles = $roles->roles;
+
+            // for each defined role
             foreach ($allRoles as $role) {
-                $roleData = isset($moduleRoles[$role]) ? $moduleRoles[$role] : array();
-                if (array_key_exists('extends', $roleData)) {
-                    $roleData = array_merge_recursive($moduleRoles[$roleData['extends']], $roleData);
-                }
+
+                // retrieve any role data provided by $module
+                $roleData = property_exists($moduleRoles, $role) ? $moduleRoles->$role : new stdClass();
+
+                // foreach of the role sections,
                 foreach ($sections as $section) {
-                    if (isset($roleData[$section])) {
-                        $results[$module]['acls'][$role][$section] = $roleData[$section];
+
+                    // if that section exists in the module role data
+                    if (property_exists($roleData, $section)) {
+
+                        // include that module / role / section in $results.
+                        $results[$module]['acls'][$role][$section] = json_decode(json_encode($roleData->$section), true);
                     }
                 }
             }
         }
 
         // Process the realms provided by this module, if any.
-        if (count($realms) > 0 && isset($realms['realms'])) {
-            foreach ($realms['realms'] as $realm => $data) {
-                $groupBys = isset($data['group_bys']) ? $data['group_bys'] : null;
-                $statistics = isset($data['statistics']) ? $data['statistics'] : null;
+        if (property_exists($realms, 'realms')) {
+            foreach ($realms->realms as $realm => $data) {
+                $groupBys = property_exists($data, 'group_bys') ? $data->group_bys : null;
+                $statistics = property_exists($data, 'statistics') ? $data->statistics : null;
                 $results[$module]['realms'][$realm] = array(
-                    'group_bys' => $groupBys,
-                    'statistics' => $statistics
+                    'group_bys' => json_decode(json_encode($groupBys), true),
+                    'statistics' => json_decode(json_encode($statistics), true)
                 );
             }
         }
     }
+
+    /* So $results will now look like ( generically speaking ):
+     * $results = array(
+     *   "<module>" => array(
+     *     "acls" => array(
+     *       "<acl>" => array(
+     *         "permitted_modules" => array(),
+     *         "query_descripters" => array(),
+     *         "display"           => "",
+     *         "type"              => "",
+     *         "hierarchies"       => array()
+     *       )
+     *     ),
+     *     "realms" => array(
+     *       "<realm>" = array(
+     *         "group_bys" => array(),
+     *         "statistics" => array()
+     *       )
+     *     )
+     *   )
+     * )
+     */
 
     $db = null;
 
@@ -552,6 +546,7 @@ function wipeManagedTables(iDatabase $db)
         'tabs',
         'acl_hierarchies',
         'acl_group_bys',
+        'report_template_acls',
         'acls',
         'acl_types',
         'group_bys',
@@ -1962,7 +1957,7 @@ SQL;
  * Process each verification step to verify the Acl Setup. This includes:
  *     - Verifying that all of the relevant json files are valid syntactically.
  *     - Verifying that all of the relevant json files can be read and processed
- *       by the Xdmod\Config class.
+ *       by the Configuration\XdmodConfiguration class.
  *
  * @return int 0 if the verification was successful, 1 if it failed.
  **/
@@ -2065,9 +2060,10 @@ function verifyJsonSyntax()
 
 
 /**
- * Attempt to load an instance of Xdmod\Config and retrieve each section that
- * the Acl system depends on. If an exception occurs while attempting to
- * retrieve as section then we can assume there is a problem with that section.
+ * Attempt to load an instance of Configuration\XdmodConfiguration and retrieve
+ * each section that the Acl system depends on. If an exception occurs while
+ * attempting to retrieve as section then we can assume there is a problem with
+ * that section.
  *
  * @return boolean true if all configuration sections were loaded successfully else false.
  **/
@@ -2079,18 +2075,11 @@ function verifyConfigData()
 
     $invalid = array();
 
-    $sections = array(
-        'modules',
-        'roles',
-        'datawarehouse'
-    );
+    $sections = array('modules', 'roles', 'datawarehouse');
 
-    $config = Config::factory();
-
-    foreach ($sections as $section) {
-
+    foreach($sections as $section) {
         try {
-            $data = $config[$section];
+            \Configuration\XdmodConfiguration::assocArrayFactory("$section.json", CONFIG_DIR);
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch (Exception $e) {
             $log->err("[FAIL] Unable to load section $section");

@@ -3,6 +3,7 @@
 namespace Rest;
 
 use CCR\DB\PDODB;
+use Configuration\XdmodConfiguration;
 use Rest\Utilities\Authentication;
 use Silex\Application;
 use Silex\Provider\UrlGeneratorServiceProvider;
@@ -55,8 +56,6 @@ class XdmodApplicationFactory
 
         // CREATE: our new Silex Application
         $app = new Application();
-
-        $config = \Xdmod\Config::factory();
 
         // SET: whether debug mode is on
         $app['debug'] = filter_var(\xd_utilities\getConfiguration('general', 'debug_mode'), FILTER_VALIDATE_BOOLEAN);
@@ -148,7 +147,10 @@ class XdmodApplicationFactory
         //        which calls each of the abstract methods in turn.
         $versionedPathMountPoint = "/{" . self::API_SYMBOL . "}";
         $unversionedPathMountPoint = '';
-        $restControllers = $config['rest'];
+
+        // Retrieve the rest end point configuration
+        $restControllers = XdmodConfiguration::assocArrayFactory('rest.json', CONFIG_DIR);
+
         foreach ($restControllers as $key => $config) {
             if (!array_key_exists('prefix', $config) || !array_key_exists('controller', $config)) {
                 throw new \Exception("Required REST endpoint information (prefix or controller) missing for $key.");

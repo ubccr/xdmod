@@ -2,10 +2,7 @@
 
 namespace IntegrationTests\Controllers;
 
-use CCR\Json;
-use TestHarness\TestFiles;
 use TestHarness\XdmodTestHelper;
-use Xdmod\Config;
 
 class UsageExplorerTest extends \PHPUnit_Framework_TestCase
 {
@@ -500,15 +497,12 @@ EOF;
     {
         $user = $options['user'];
         $data = $options['data'];
+        $helper = $options['helper'];
 
         $expectedValue = $options['expected']['value'];
         $expectedXpath = isset($options['expected']['xpath']) ? $options['expected']['xpath'] : null;
 
-        if ($user !== 'pub') {
-            $this->helper->authenticate($user);
-        }
-
-        $results = $this->helper->post('controllers/user_interface.php', null, $data);
+        $results = $helper->post('controllers/user_interface.php', null, $data);
 
         if ($expectedXpath !== null) {
             $xml = simplexml_load_string($results[0]);
@@ -536,8 +530,8 @@ EOF;
             }
         }
 
-        if ($user !== 'pub') {
-            $this->helper->logout();
+        if (isset($options['last']) && $user !== 'pub') {
+            $helper->logout();
         }
     }
 
@@ -614,8 +608,8 @@ EOF;
                 'realm' => 'Cloud',
                 'filters' => array(
                     array(
-                        array('project' => '2'),
-                        array('project_filter' => '2'),
+                        array('project' => '3'),
+                        array('project_filter' => '3'),
                         array('project_filter'=> '"zealous"')
                     )
                 ),
@@ -662,7 +656,7 @@ EOF;
                 'realm' => 'Cloud',
                 'filters' => array(
                     array(
-                        array('project_filter' => '1,2,3'),
+                        array('project_filter' => '2,3,4'),
                         array('project_filter'=> '\'zealous\',\'youthful\',\'zen\'')
                     )
                 ),
@@ -790,6 +784,10 @@ EOF;
 
         $results = array();
         foreach($users as $user) {
+            $helper = new \TestHarness\XdmodTestHelper();
+            if ($user !== 'pub') {
+                $helper->authenticate($user);
+            }
             foreach($realmData as $realmDatum) {
                 $realm = $realmDatum['realm'];
                 $filterCombos = generateCombinations($realmDatum['filters']);
@@ -806,12 +804,13 @@ EOF;
 
                     $results[] = array(array(
                         'user' => $user,
+                        'helper' => $helper,
                         'data' => $requestData,
                         'expected' => $realmDatum['expected']
                     ));
-
                 }
             }
+            $results[count($results) - 1]['last'] = true;
         }
 
 

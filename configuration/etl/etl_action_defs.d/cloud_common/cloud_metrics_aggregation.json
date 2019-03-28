@@ -5,8 +5,8 @@
         },
         "aggregation_period_query": {
             "overseer_restrictions": {
-                "#last_modified_start_date": "last_modified >= ${VALUE}",
-                "#last_modified_end_date": "last_modified <= ${VALUE}",
+                "last_modified_start_date": "last_modified >= ${VALUE}",
+                "last_modified_end_date": "last_modified <= ${VALUE}",
                 "include_only_resource_codes": "resource_id IN ${VALUE}",
                 "exclude_resource_codes": "resource_id NOT IN ${VALUE}"
             }
@@ -19,71 +19,74 @@
         },
         "source_query": {
             "overseer_restrictions": {
-                "include_only_resource_codes": "cet.resource_id IN ${VALUE}",
-                "exclude_resource_codes": "cet.resource_id NOT IN ${VALUE}"
+                "include_only_resource_codes": "sr.resource_id IN ${VALUE}",
+                "exclude_resource_codes": "sr.resource_id NOT IN ${VALUE}"
             },
             "records": {
                 "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
-                "host_resource_id": "cet.resource_id",
+                "host_resource_id": "sr.resource_id",
                 "account_id": "instance.account_id",
-                "person_id": "instance.person_id",
-                "processorbucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.processor_buckets pb WHERE cet.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
-                "memorybucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.memory_buckets mb WHERE cet.memory_mb BETWEEN mb.min_memory AND mb.max_memory)",
-                "instance_type_id": "cet.instance_type_id",
-                "configuration": "cet.instance_type",
-                "num_cores": "SUM(cet.num_cores)",
-                "core_time": "COALESCE(SUM(cet.num_cores * ${wallduration_case_statement}), 0)",
-                "memory_reserved": "COALESCE(SUM((cet.memory_mb * POW(1024, 2)) * ${wallduration_case_statement}), 0)",
-                "rv_storage_reserved": "COALESCE(SUM((cet.disk_gb * POW(1024, 3)) * ${wallduration_case_statement}), 0)",
-                "memory_mb": "SUM(cet.memory_mb)",
-                "disk_gb": "SUM(cet.disk_gb)",
-                "num_sessions_started": "SUM(IF(cet.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
-                "num_sessions_ended": "SUM(IF(cet.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
+                "person_id": "sr.person_id",
+                "systemaccount_id": "sr.systemaccount_id",
+                "processorbucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.processor_buckets pb WHERE sr.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
+                "memorybucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.memory_buckets mb WHERE sr.memory_mb BETWEEN mb.min_memory AND mb.max_memory)",
+                "instance_type_id": "sr.instance_type_id",
+                "num_cores": "SUM(sr.num_cores)",
+                "core_time": "COALESCE(SUM(sr.num_cores * ${wallduration_case_statement}), 0)",
+                "memory_reserved": "COALESCE(SUM((sr.memory_mb * POW(1024, 2)) * ${wallduration_case_statement}), 0)",
+                "rv_storage_reserved": "COALESCE(SUM((sr.disk_gb * POW(1024, 3)) * ${wallduration_case_statement}), 0)",
+                "memory_mb": "SUM(sr.memory_mb)",
+                "disk_gb": "SUM(sr.disk_gb)",
+                "num_sessions_started": "SUM(IF(sr.start_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
+                "num_sessions_ended": "SUM(IF(sr.end_day_id BETWEEN ${:PERIOD_START_DAY_ID} AND ${:PERIOD_END_DAY_ID}, 1, 0))",
                 "num_sessions_running": "SUM(1)",
                 "wallduration": "COALESCE(SUM(${wallduration_case_statement}), 0)",
-                "submission_venue_id": "cet.submission_venue_id"
+                "submission_venue_id": "sr.submission_venue_id"
             },
             "groupby": [
               "${AGGREGATION_UNIT}_id",
               "year",
               "${AGGREGATION_UNIT}",
-              "configuration",
+              "host_resource_id",
               "processorbucket_id",
+              "memorybucket_id",
+              "instance_type_id",
               "account_id",
+              "systemaccount_id",
               "person_id"
             ],
             "joins":[
               {
-                  "name": "cloud_events_transient",
-                  "alias": "cet",
+                  "name": "session_records",
+                  "alias": "sr",
                   "schema": "${SOURCE_SCHEMA}"
               },{
                   "name": "instance",
                   "schema": "${SOURCE_SCHEMA}",
-                  "on": "instance.instance_id = cet.instance_id and instance.resource_id = cet.resource_id"
+                  "on": "instance.instance_id = sr.instance_id and instance.resource_id = sr.resource_id"
               },{
                   "name": "resourcefact",
                   "schema": "${UTILITY_SCHEMA}",
                   "alias": "task_resource",
-                  "on": "task_resource.id = cet.resource_id"
+                  "on": "task_resource.id = sr.resource_id"
               }
             ],
             "where": [
-              "cet.start_day_id <= ${:PERIOD_END_DAY_ID} AND cet.end_day_id >= ${:PERIOD_START_DAY_ID}",
-              "cet.instance_type != \"Unknown\"",
-              "cet.instance !=\"Unknown\"",
-              "cet.num_cores != 0"
+              "sr.start_day_id <= ${:PERIOD_END_DAY_ID} AND sr.end_day_id >= ${:PERIOD_START_DAY_ID}",
+              "sr.instance_type != \"Unknown\"",
+              "sr.instance_id !=\"1\"",
+              "sr.num_cores != 0"
           ],
             "macros": [{
                 "name": "wallduration_case_statement",
                 "file": "statistic_ratio_case.sql",
                 "args": {
-                    "statistic": "cet.wallduration",
+                    "statistic": "sr.wallduration",
                     "max": "${:PERIOD_SECONDS}",
-                    "src_start_ts": "cet.start_time_ts",
-                    "src_end_ts": "cet.end_time_ts",
+                    "src_start_ts": "sr.start_time_ts",
+                    "src_end_ts": "sr.end_time_ts",
                     "dest_start_ts": "${:PERIOD_START_TS}",
                     "dest_end_ts": "${:PERIOD_END_TS}"
                 }

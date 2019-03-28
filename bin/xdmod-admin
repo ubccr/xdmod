@@ -13,7 +13,6 @@ require_once __DIR__ . '/../configuration/linker.php';
 use CCR\DB;
 use CCR\DB\MySQLHelper;
 use CCR\Log;
-use Xdmod\Config;
 
 // TODO
 // Tasks:
@@ -208,9 +207,11 @@ function listResources()
 {
     global $logger;
 
-    $config = Config::factory();
-
-    $resourcesConfig = $config['resources'];
+    $resourcesConfig = \Configuration\XdmodConfiguration::assocArrayFactory(
+        'resources.json',
+        CONFIG_DIR,
+        $logger
+    );
 
     foreach ($resourcesConfig as $resourceData) {
         echo 'Resource: ', $resourceData['resource'], "\n";
