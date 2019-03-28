@@ -62,12 +62,12 @@
             {
                 "name": "start_time_ts",
                 "type": "bigint(18)",
-                "nullable": true
+                "nullable": false
             },
             {
                 "name": "end_time_ts",
                 "type": "bigint(18)",
-                "nullable": true
+                "nullable": false
             },
             {
                 "name": "start_day_id",
