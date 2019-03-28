@@ -42,13 +42,13 @@
                     "data_series": {
                         "data": [{
                             "combine_type": "stack",
-                            "display_type": "column",
+                            "display_type": "area",
                             "filters": {
                                 "data": [],
                                 "total": 0
                             },
-                            "group_by": "project",
-                            "has_std_err": true,
+                            "group_by": "resource",
+                            "has_std_err": false,
                             "ignore_global": false,
                             "log_scale": false,
                             "long_legend": true,
@@ -69,20 +69,20 @@
                     "limit": 10,
                     "show_filters": true,
                     "start": 0,
-                    "timeseries": false,
-                    "title": "Cloud - Total CPU Hours by Project"
+                    "timeseries": true,
+                    "title": "Cloud - Total CPU Hours by Resource"
                 },
                 {
                     "data_series": {
                         "data": [{
                             "combine_type": "stack",
-                            "display_type": "column",
+                            "display_type": "area",
                             "filters": {
                                 "data": [],
                                 "total": 0
                             },
                             "group_by": "project",
-                            "has_std_err": true,
+                            "has_std_err": false,
                             "ignore_global": false,
                             "log_scale": false,
                             "long_legend": true,
@@ -103,7 +103,7 @@
                     "limit": 10,
                     "show_filters": true,
                     "start": 0,
-                    "timeseries": false,
+                    "timeseries": true,
                     "title": "Cloud - Number of Sessions Started by Project"
                 }
             ]
@@ -134,16 +134,16 @@
                     "group_by": "vm_size_memory"
                 },
                 {
-                  "realm": "Cloud",
-                  "group_by": "submission_venue"
+                    "realm": "Cloud",
+                    "group_by": "submission_venue"
                 },
                 {
-                  "realm": "Cloud",
-                  "group_by": "person"
+                    "realm": "Cloud",
+                    "group_by": "person"
                 },
                 {
-                  "realm": "Cloud",
-                  "group_by": "username"
+                    "realm": "Cloud",
+                    "group_by": "username"
                 }
             ]
         }
