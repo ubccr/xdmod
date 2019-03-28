@@ -22,24 +22,45 @@ The ingestor should be run after you have shredded your data.  If you
 have multiple clusters, you may run the shredder multiple times followed
 by a single use of the ingestor.
 
+Start and End Date
+------------------
+
+If you have changed any data in the Open XDMoD database it is necessary
+to re-ingest that data.  This can be accomplished by specifying a start
+and end date, formatted as YYYY-MM-DD,  that include the dates
+associated with the modified data.
+
+    $ xdmod-ingestor --start-date *start-date* --end-date *end-date*
+
+
+Last Modified Start Date
+------------------
+
+When aggregating data use this date as the basis of what jobs to include.
+Only jobs ingested on or after this date will be aggregated
+This defaults to the start of the ingest and aggregation process.
+
+    $ xdmod-ingestor --last-modified-start-date *YYYY-MM-DD*
+
+
 Advanced Usage 
 ---------------
 
-The ingestor may be set to only ingest specific realms or timeframes.
+The ingestor may be set to only ingest specific realms or timeframes.  You
+must also set the last modified start date for aggregation to work properly.
 
 **Jobs:**
 
 The following is an example of only aggregating the jobs realm.
 
-    $ xdmod-ingestor --aggregate=jobs
+    $ xdmod-ingestor --aggregate=jobs ...
 
 **Cloud:**
 
 If you do not have jobs data and/or wish to break down your ingestion process to 
 exclusively ingest cloud data, you may do so as such. 
 
-You will need to specify the type of cloud data (generic, openstack); you
-must also set the last modified start date for aggregation to work properly:
+You will need to specify the type of cloud data (generic, openstack):
     
     $ last_modified_start_date=$(date +'%F %T')
     $ xdmod-ingestor --datatype=genericcloud
@@ -65,22 +86,3 @@ Debugging output is also available:
 
     $ xdmod-ingestor --debug
 
-Start and End Date
-------------------
-
-If you have changed any data in the Open XDMoD database it is necessary
-to re-ingest that data.  This can be accomplished by specifying a start
-and end date, formatted as YYYY-MM-DD,  that include the dates
-associated with the modified data.
-
-    $ xdmod-ingestor --start-date *start-date* --end-date *end-date*
-
-
-Last Modified Start Date
-------------------
-
-When aggregating data use this date as the basis of what jobs to include.
-Only jobs ingested on or after this date will be aggregated
-This defaults to the start of the ingest and aggregation process.
-
-    $ xdmod-ingestor --last-modified-start-date *YYYY-MM-DD*
