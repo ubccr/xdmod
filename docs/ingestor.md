@@ -22,6 +22,17 @@ The ingestor should be run after you have shredded your data.  If you
 have multiple clusters, you may run the shredder multiple times followed
 by a single use of the ingestor.
 
+Cloud Usage
+------------
+
+If you do not have jobs data and/or wish to break down your ingestion process to 
+exclusively ingest cloud data, you may do so as such. Note that you must set the last
+modified start date for aggregation to work properly (particularly on upgrades):
+    
+    $ last_modified_start_date=$(date +'%F %T')
+    $ xdmod-ingestor --datatype=genericcloud
+    $ xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
+
 Help
 ----
 
