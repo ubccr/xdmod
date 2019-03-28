@@ -22,12 +22,24 @@ The ingestor should be run after you have shredded your data.  If you
 have multiple clusters, you may run the shredder multiple times followed
 by a single use of the ingestor.
 
-Cloud Usage
-------------
+Advanced Usage 
+---------------
+
+The ingestor may be set to only ingest specific realms or timeframes.
+
+Jobs:
+
+The following is an example of only aggregating the jobs realm.
+
+    $ xdmod-ingestor --aggregate=jobs
+
+Cloud:
 
 If you do not have jobs data and/or wish to break down your ingestion process to 
-exclusively ingest cloud data, you may do so as such. Note that you must set the last
-modified start date for aggregation to work properly (particularly on upgrades):
+exclusively ingest cloud data, you may do so as such. 
+
+You will need to specify the type of cloud data (generic, openstack); you
+must also set the last modified start date for aggregation to work properly:
     
     $ last_modified_start_date=$(date +'%F %T')
     $ xdmod-ingestor --datatype=genericcloud
