@@ -40,8 +40,9 @@ When aggregating data use this date as the basis of what jobs to include.
 Only jobs ingested on or after this date will be aggregated
 This defaults to the start of the ingest and aggregation process.
 
-    $ xdmod-ingestor --last-modified-start-date *YYYY-MM-DD*
+    $ xdmod-ingestor --last-modified-start-date "TIME"
 
+The value specified to `TIME` **must** be a MySQL server clock time.
 
 Advanced Usage 
 ---------------
@@ -53,7 +54,24 @@ must also set the last modified start date for aggregation to work properly.
 
 The following is an example of only aggregating the jobs realm.
 
-    $ xdmod-ingestor --aggregate=jobs ...
+Set timestamp:
+    $ last_modified_start_date=$(date +'%F %T')
+
+Ingest shredded jobs to staging table:
+
+    $ xdmod-ingestor --ingest-shredded
+
+Ingest staging table jobs to HpcDB:
+
+    $ xdmod-ingestor --ingest-staging
+
+Ingest all HpcDB jobs:
+
+    $ xdmod-ingestor --ingestHpcdb
+
+Aggregate:
+
+    $ xdmod-ingestor --aggregate=jobs --last-modified-start-date "$last_modified_start_date"
 
 **Cloud:**
 
@@ -61,9 +79,21 @@ If you do not have jobs data and/or wish to break down your ingestion process to
 exclusively ingest cloud data, you may do so as such. 
 
 You will need to specify the type of cloud data (generic, openstack):
-    
+
+Set timestamp:
+
     $ last_modified_start_date=$(date +'%F %T')
+
+Ingest Generic logs:
+
     $ xdmod-ingestor --datatype=genericcloud
+
+Ingest Openstack logs:
+
+    $ xdmod-ingestor --datatype=openstack
+
+Aggregate:
+
     $ xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
 
 Help
