@@ -198,7 +198,7 @@ class ResourcesSetup extends SubMenuSetupItem
         }
 
         return JSON::loadFile(TEMPLATE_DIR . '/roles.d/' . $realm . '.json', false)
-            === JSON::loadFile($rolesFile, false);
+            == JSON::loadFile($rolesFile, false);
     }
 
     /**
