@@ -22,6 +22,7 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         $controller->get("$root/portlets", "$class::getPortlets");
         $controller->get("$root/chartsreports", "$class::getChartsReports");
+        $controller->get("$root/cdcharts", "$class::getCenterDirectorCharts");
 
         $controller->post("$root/layout", "$class::setLayout");
         $controller->delete("$root/layout", "$class::resetLayout");
@@ -180,7 +181,44 @@ class SummaryControllerProvider extends BaseControllerProvider
             return $app->json(array(
                 'success' => true,
                 'total' => count($data),
-                'data' => $data,
+                'data' => $data
+            ));
+        }
+    }
+
+    /**
+     * Get charts and reports to display in the summary portlet.
+     **/
+    public function getCenterDirectorCharts(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+        if (isset($user)) {
+            $centerDirectorReport = null;
+            $rm = new \XDReportManager($user);
+            $reports = $rm->fetchReportTable();
+            foreach ($reports as &$report) {
+                if ($report['report_name'] === 'Quarterly Report - Center Director 1') {
+                    $centerDirectorReport = $report;
+                }
+            }
+
+            if (is_null($centerDirectorReport)){
+                $template = $rm->retrieveReportTemplate($user, 1);
+                $template->buildReportFromTemplate($_REQUEST);
+                $reports = $rm->fetchReportTable();
+                foreach ($reports as &$report) {
+                    if ($report['report_name'] === 'Quarterly Report - Center Director 1') {
+                        $centerDirectorReport = $report;
+                    }
+                }
+            }
+
+            $data = $rm->loadReportData($centerDirectorReport['report_id']);
+
+            return $app->json(array(
+                'success' => true,
+                'total' => 1,
+                'data' => $data
             ));
         }
     }
