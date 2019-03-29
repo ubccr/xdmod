@@ -1,0 +1,11 @@
+title
+"Quota: Hard Threshold (Bytes): by Resource"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Resource,"Quota: Hard Threshold (Bytes)"
+torx,1219010023424000.0000
+recex,128035016704000.0000
+---------

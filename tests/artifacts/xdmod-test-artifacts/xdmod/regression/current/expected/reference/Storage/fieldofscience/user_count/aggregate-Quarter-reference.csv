@@ -1,0 +1,41 @@
+title
+"User Count (Number of Users): by PI Group"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"PI Group","User Count (Number of Users)"
+Unknown,188
+"Mechanics and Materials",20
+"Cell Biology",15
+"Galactic Astronomy",15
+"Solid-State and Microstructures",12
+"Geology and Paleontology",10
+"Physical Chemistry",10
+Sociology,9
+"Organic and Macromolecular Chemistry",8
+Geophysics,6
+"Biochemistry and Molecular Structure and Function",5
+Biophysics,4
+"Experimental Systems",4
+"Decision, Risk, and Management Science",3
+"Polar Meteorology",3
+"Quantum Electronics, Waves, and Beams",3
+"Statistics and Probability",3
+"Theoretical Physics",3
+"Algebra and Number Theory",2
+Arts,2
+Economics,2
+"Fluid, Particulate, and Hydraulic Systems",2
+"Polar Aeronomy and Astrophysics",2
+Seismology,2
+"Solid State Chemistry and Polymers",2
+"Structures and Building Systems",2
+Tectonics,2
+"Global Atmospheric Research",1
+"Law and Social Sciences",1
+"Metals, Ceramics, and Electronic Materials",1
+"Systematic and Population Biology",1
+"Volcanology and Mantle Geochemistry",1
+---------

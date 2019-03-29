@@ -1,0 +1,11 @@
+title
+"Physical Usage (Bytes): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[Arts] Physical Usage (Bytes)","[Astronomical Sciences] Physical Usage (Bytes)","[Atmospheric Sciences] Physical Usage (Bytes)","[Chemical, Thermal Systems] Physical Usage (Bytes)","[Chemistry] Physical Usage (Bytes)","[Earth Sciences] Physical Usage (Bytes)","[Electrical and Communication Systems] Physical Usage (Bytes)","[Environmental Biology] Physical Usage (Bytes)","[Materials Research] Physical Usage (Bytes)","[Mathematical Sciences] Physical Usage (Bytes)","[Mechanical and Structural Systems] Physical Usage (Bytes)","[Microelectronic Information Processing Systems] Physical Usage (Bytes)","[Molecular Biosciences] Physical Usage (Bytes)","[Physics] Physical Usage (Bytes)","[Polar Programs] Physical Usage (Bytes)","[Social and Economic Science] Physical Usage (Bytes)","[Unknown] Physical Usage (Bytes)"
+2018-10-01,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-01,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+---------

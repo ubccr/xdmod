@@ -1,0 +1,19 @@
+title
+"User Count (Number of Users): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[Unknown] User Count (Number of Users)","[Molecular Biosciences] User Count (Number of Users)","[Mechanical and Structural Systems] User Count (Number of Users)","[Earth Sciences] User Count (Number of Users)","[Chemistry] User Count (Number of Users)","[Astronomical Sciences] User Count (Number of Users)","[Electrical and Communication Systems] User Count (Number of Users)","[Social and Economic Science] User Count (Number of Users)","[Mathematical Sciences] User Count (Number of Users)","[Polar Programs] User Count (Number of Users)","[Microelectronic Information Processing Systems] User Count (Number of Users)","[Materials Research] User Count (Number of Users)","[Physics] User Count (Number of Users)","[Arts] User Count (Number of Users)","[Chemical, Thermal Systems] User Count (Number of Users)","[Atmospheric Sciences] User Count (Number of Users)","[Environmental Biology] User Count (Number of Users)"
+2018-12-27,187,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2018-12-28,187,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2018-12-29,188,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2018-12-30,188,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2018-12-31,188,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2019-01-01,188,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2019-01-02,188,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2019-01-03,188,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2019-01-04,188,24,22,21,18,15,15,15,5,5,4,3,3,2,2,1,1
+2019-01-05,188,24,22,20,18,15,15,15,5,5,4,3,3,2,2,1,1
+---------

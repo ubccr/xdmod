@@ -1,0 +1,26 @@
+title
+"Logical Usage (Bytes): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Department,"Logical Usage (Bytes)"
+Unknown,533920377053866.5000
+"Molecular Biosciences",159183348608000.0000
+"Earth Sciences",53056749555200.0000
+"Mechanical and Structural Systems",14837867673600.0000
+"Astronomical Sciences",10697016486400.0000
+"Mathematical Sciences",8979302297600.0000
+Chemistry,8783627276800.0000
+"Electrical and Communication Systems",637370457600.0000
+"Polar Programs",129129152000.0000
+"Environmental Biology",91059212800.0000
+"Social and Economic Science",2526144000.0000
+"Materials Research",821760000.0000
+Physics,8576000.0000
+Arts,128000.0000
+"Atmospheric Sciences",0.0000
+"Chemical, Thermal Systems",0.0000
+"Microelectronic Information Processing Systems",0.0000
+---------

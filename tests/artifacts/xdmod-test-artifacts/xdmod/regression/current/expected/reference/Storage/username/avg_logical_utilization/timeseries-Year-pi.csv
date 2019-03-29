@@ -1,0 +1,12 @@
+title
+"Quota Utilization: Logical (%): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[blaca] Quota Utilization: Logical (%)","[crcco] Quota Utilization: Logical (%)","[egyni] Quota Utilization: Logical (%)","[frahata] Quota Utilization: Logical (%)","[gresh] Quota Utilization: Logical (%)","[lanwa] Quota Utilization: Logical (%)","[ovenb] Quota Utilization: Logical (%)","[palsw] Quota Utilization: Logical (%)","[parcr] Quota Utilization: Logical (%)","[phivi] Quota Utilization: Logical (%)","[razor] Quota Utilization: Logical (%)","[rocdo] Quota Utilization: Logical (%)","[sante] Quota Utilization: Logical (%)","[savsp] Quota Utilization: Logical (%)","[swath] Quota Utilization: Logical (%)"
+2018-01-01,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2019-01-01,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+---------

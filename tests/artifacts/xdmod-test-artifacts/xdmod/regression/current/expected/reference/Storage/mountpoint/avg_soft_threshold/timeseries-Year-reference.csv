@@ -1,0 +1,11 @@
+title
+"Quota: Soft Threshold (Bytes): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[/projects] Quota: Soft Threshold (Bytes)","[/data] Quota: Soft Threshold (Bytes)","[/scratch] Quota: Soft Threshold (Bytes)"
+2018-01-01,855000018944000,127000027136000,0
+2019-01-01,855000018944000,127000027136000,0
+---------
