@@ -253,7 +253,6 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
                         bodyStyle:'padding:5px 0 5px 5px',
                         itemId: 'cdChartCenter',
                         xtype: 'panel',
-                        html: 'Please select a thumbnail from the left column!',
                         // margins: '5 5 5 5',
                         layout: 'fit',
                         tools: [{
