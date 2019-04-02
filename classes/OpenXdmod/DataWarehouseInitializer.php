@@ -299,8 +299,11 @@ class DataWarehouseInitializer
      * Aggregate storage data.
      *
      * If the storage realm is not enabled then do nothing.
+     *
+     * @param string $lastModifiedStartDate Aggregate data ingested on or after
+     *     this date.
      */
-    public function aggregateStorageData()
+    public function aggregateStorageData($lastModifiedStartDate)
     {
         if (!$this->isRealmEnabled('Storage')) {
             $this->logger->notice('Storage realm not enabled, not aggregating');
@@ -308,7 +311,11 @@ class DataWarehouseInitializer
         }
 
         $this->logger->notice('Aggregating storage data');
-        Utilities::runEtlPipeline(['xdw-aggregate-storage'], $this->logger);
+        Utilities::runEtlPipeline(
+            ['xdw-aggregate-storage'],
+            $this->logger,
+            ['last-modified-start-date' => $lastModifiedStartDate]
+        );
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
         $filterListBuilder->buildRealmLists('Storage');

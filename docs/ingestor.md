@@ -96,6 +96,23 @@ Aggregate:
 
     $ xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
 
+**Storage:**
+
+If you do not have jobs data and/or wish to break down your ingestion process to
+exclusively ingest storage data, you may do so as such.
+
+Set timestamp:
+
+    $ last_modified_start_date=$(date +'%F %T')
+
+Ingest storage logs:
+
+    $ xdmod-ingestor --datatype=storage
+
+Aggregate:
+
+    $ xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
+
 Help
 ----
 

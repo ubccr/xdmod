@@ -190,6 +190,10 @@ $ acl-config && acl-import
 
 ## Data Ingestion
 
+Storage data is shredded and ingested using the [`xdmod-shredder`](shredder.md)
+and [`xdmod-ingestor`](ingestor.md) commands. Please see their respective
+guides for further information.
+
 All of the following commands must be executed in the order specified below to
 fully ingest storage data into the data warehouse.
 
@@ -205,6 +209,7 @@ directory even if they have already been ingested.
 Ingest and aggregate data:
 
 ```
-$ xdmod-ingestor --ingest --datatype storage
-$ xdmod-ingestor --aggregate=storage
+$ last_modified_start_date=$(date +'%F %T')
+$ xdmod-ingestor --datatype storage
+$ xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
 ```

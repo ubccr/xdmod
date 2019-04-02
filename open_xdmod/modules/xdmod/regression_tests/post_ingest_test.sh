@@ -34,3 +34,19 @@ then
     exit 1
 
 fi
+
+# Shred, ingest and aggregate storage data for a single day and check to make
+# sure that only one period is aggregated for each unit.
+for storage_dir in $REF_DIR/storage_upgrade/*; do
+    sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
+done
+last_modified_start_date=$(date +'%F %T')
+sudo -u xdmod xdmod-ingestor --datatype storage
+agg_output=$(mktemp --tmpdir storage-aggregation-XXXXXXXX)
+sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date" | tee $agg_output
+for unit in day month quarter year; do
+    if ! grep -q "unit: $unit, periods: 1," $agg_output; then
+        echo Did not aggregate 1 period of storage data for unit $unit
+        exit 1
+    fi
+done
