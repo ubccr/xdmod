@@ -34,8 +34,9 @@ then
     for storage_dir in $REF_DIR/storage/*; do
         sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
     done
-    sudo -u xdmod xdmod-ingestor --ingest --datatype storage
-    sudo -u xdmod xdmod-ingestor --aggregate=storage
+    last_modified_start_date=$(date +'%F %T')
+    sudo -u xdmod xdmod-ingestor --datatype storage
+    sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
     sudo -u xdmod xdmod-ingestor
     php /root/bin/createusers.php
@@ -56,8 +57,9 @@ then
     for storage_dir in $REF_DIR/storage/*; do
         sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
     done
-    sudo -u xdmod xdmod-ingestor --ingest --datatype storage
-    sudo -u xdmod xdmod-ingestor --aggregate=storage
+    last_modified_start_date=$(date +'%F %T')
+    sudo -u xdmod xdmod-ingestor --datatype storage
+    sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
 
     sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
     sudo -u xdmod xdmod-ingestor
