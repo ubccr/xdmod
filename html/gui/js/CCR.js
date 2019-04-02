@@ -580,7 +580,8 @@ CCR.xdmod.reporting.dirtyState = false;
 
 CCR.xdmod.catalog = {
     metric_explorer: {},
-    report_generator: {}
+    report_generator: {},
+    data_export: {}
 };
 
 CCR.xdmod.ui.invertColor = function (hexTripletColor) {

@@ -51,7 +51,7 @@ var exceptionhandler = function (proxy, type, action, exception, response) {
  * @date 2014-09-23
  *
  */
-XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
+XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
     INSTANCE: null,
 
     // PORTAL MODULE PROPERTIES ===============================================

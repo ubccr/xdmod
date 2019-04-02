@@ -56,6 +56,15 @@
                     "javascriptReference": "CCR.xdmod.ui.aboutXD",
                     "userManualSectionName": "About",
                     "tooltip": ""
+                },
+                {
+                    "name": "data_export",
+                    "title": "Data Exporter",
+                    "position": 1100,
+                    "javascriptClass": "XDMoD.Module.DataExport",
+                    "javascriptReference": "CCR.xdmod.ui.dataExport",
+                    "userManualSectionName": "Data Exporter",
+                    "tooltip": ""
                 }
             ],
             "query_descripters": [
