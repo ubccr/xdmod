@@ -15,7 +15,7 @@ In order to make data available to the Open XDMoD portal you will need
 to use the shredder utility. If you followed the install guide, you will
 have already used the shredder to populate your database. In addition to
 the install process, this program is typically used once a day to add
-jobs from the the previous day to the database.
+jobs from the previous day to the database.
 
 Help
 ----
@@ -50,8 +50,13 @@ cluster name.
 Log Format
 ----------
 
-You must specify the format of the log files you are shredding. This is
-dependant on the resource manager you use.
+You must specify the format of the log files to be shredded.  For HPC job
+accounting data, the format depends upon the resource manager.  For cloud data
+the format should match that of the event logs.  There is only one supported
+format for storage data.
+
+**Jobs:**
+
 For [TORQUE and OpenPBS][pbs] use `pbs`, for [Sun Grid Engine][sge] use
 `sge`, for [Univa Grid Engine 8.2+][uge] use `uge`, for [Slurm][] use
 `slurm` and for [LSF][] use `lsf`.
@@ -68,10 +73,27 @@ For [TORQUE and OpenPBS][pbs] use `pbs`, for [Sun Grid Engine][sge] use
 [slurm]: resource-manager-slurm.md
 [lsf]:   resource-manager-lsf.md
 
+**Cloud:**
+
+The shredder accepts two different types of cloud data, `genericcloud` and `openstack`.
+The convention for shredding cloud files is identical to job data:
+
+    $ xdmod-shredder -f genericcloud ...
+    $ xdmod-shredder -f openstack ...
+
+**Storage:**
+
+The shredder accepts one format for storage data.  See the [Storage
+Metrics](storage.md) documentation for an example.  The convention for
+shredding storage files is identical to job data:
+
+    $ xdmod-shredder -f storage ...
+
 Input Source
 ------------
 
-Files may be shredded one at a time:
+Files may be shredded one at a time by running the following command.  Please
+note that this is **not** currently supported for cloud and storage files:
 
     $ xdmod-shredder -i file ...
 

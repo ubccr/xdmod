@@ -31,6 +31,14 @@ detailed interactive charts, graphs, and tables.
 %setup -q -n %{name}-%{version}__PRERELEASE__
 
 %pre
+if [ "%{version}" = "8.1.0" ]; then
+    # This script is only needed for the 8.1.0 install/upgrade. After this time
+    # the node_modules directory is managed by RPM.
+    if [ -e "%{_datadir}/%{name}/etl/js/node_modules" ];
+    then
+        mv "%{_datadir}/%{name}/etl/js/node_modules" "%{_datadir}/%{name}/etl/js/node_modules.rpmsave"
+    fi
+fi
 getent group xdmod >/dev/null || groupadd -r xdmod
 getent passwd xdmod >/dev/null || \
     useradd -r -M -c "Open XDMoD" -g xdmod -d %{_localstatedir}/lib/%{name} -s /sbin/nologin xdmod

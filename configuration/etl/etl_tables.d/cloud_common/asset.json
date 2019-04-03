@@ -95,8 +95,8 @@
 
                 "name": "autoincrement_key",
                 "columns": [
-                    "asset_id",
-                    "resource_id"
+                    "resource_id",
+                    "asset_id"
                 ],
                 "is_unique": true
             }

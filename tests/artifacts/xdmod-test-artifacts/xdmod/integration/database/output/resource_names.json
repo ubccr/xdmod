@@ -20,7 +20,15 @@
         "name": "Posidriv"
     },
     {
+        "code": "recex",
+        "name": "Recex"
+    },
+    {
         "code": "robertson",
         "name": "Robertson"
+    },
+    {
+        "code": "torx",
+        "name": "Torx"
     }
 ]

@@ -1,0 +1,19 @@
+title
+"Physical Usage (Bytes): by Decanal Unit"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[Biological Sciences] Physical Usage (Bytes)","[Computer and Information Science and Engineering] Physical Usage (Bytes)","[Engineering] Physical Usage (Bytes)","[Geosciences] Physical Usage (Bytes)","[Humanities/Arts] Physical Usage (Bytes)","[Mathematical and Physical Sciences] Physical Usage (Bytes)","[Social, Behavioral, and Economic Sciences] Physical Usage (Bytes)","[Unknown] Physical Usage (Bytes)"
+2018-12-27,0,0,0,0,0,0,0,0
+2018-12-28,0,0,0,0,0,0,0,0
+2018-12-29,0,0,0,0,0,0,0,0
+2018-12-30,0,0,0,0,0,0,0,0
+2018-12-31,0,0,0,0,0,0,0,0
+2019-01-01,0,0,0,0,0,0,0,0
+2019-01-02,0,0,0,0,0,0,0,0
+2019-01-03,0,0,0,0,0,0,0,0
+2019-01-04,0,0,0,0,0,0,0,0
+2019-01-05,0,0,0,0,0,0,0,0
+---------

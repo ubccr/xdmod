@@ -20,7 +20,15 @@
         "shared_jobs": "0"
     },
     {
+        "code": "recex",
+        "shared_jobs": "0"
+    },
+    {
         "code": "robertson",
+        "shared_jobs": "0"
+    },
+    {
+        "code": "torx",
         "shared_jobs": "0"
     }
 ]

@@ -1,0 +1,112 @@
+[
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 773166,
+    "hard_threshold": 25000001536000,
+    "logical_usage": 487712384000,
+    "mountpoint": "/data",
+    "pi": "ibech",
+    "resource": "recex",
+    "soft_threshold": 25000001536000,
+    "user": "ibech"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 105192101,
+    "hard_threshold": 20000002048000,
+    "logical_usage": 18162174336000,
+    "mountpoint": "/data",
+    "pi": "magwa",
+    "resource": "recex",
+    "soft_threshold": 20000002048000,
+    "user": "magwa"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 32673,
+    "hard_threshold": 10005000192000,
+    "logical_usage": 9928160640000,
+    "mountpoint": "/data",
+    "pi": "sanma",
+    "resource": "recex",
+    "soft_threshold": 10000003072000,
+    "user": "sanma"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 471,
+    "hard_threshold": 1010008064000,
+    "logical_usage": 124288000,
+    "mountpoint": "/data",
+    "pi": "fulma",
+    "resource": "recex",
+    "soft_threshold": 1000005632000,
+    "user": "shttr"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 10421,
+    "hard_threshold": 10005000192000,
+    "logical_usage": 9219074304000,
+    "mountpoint": "/data",
+    "pi": "norpa",
+    "resource": "recex",
+    "soft_threshold": 10000003072000,
+    "user": "norpa"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 943358,
+    "hard_threshold": 10005000192000,
+    "logical_usage": 3707438080000,
+    "mountpoint": "/data",
+    "pi": "aytinis",
+    "resource": "recex",
+    "soft_threshold": 10000003072000,
+    "user": "aytinis"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 3,
+    "hard_threshold": 2000003072000,
+    "logical_usage": 35556608000,
+    "mountpoint": "/data",
+    "pi": "fulma",
+    "resource": "recex",
+    "soft_threshold": 1000001536000,
+    "user": "setusca"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 1221433,
+    "hard_threshold": 30000001024000,
+    "logical_usage": 29183463424000,
+    "mountpoint": "/data",
+    "pi": "chaff",
+    "resource": "recex",
+    "soft_threshold": 30000001024000,
+    "user": "chaff"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 2151114,
+    "hard_threshold": 10005000192000,
+    "logical_usage": 8970264832000,
+    "mountpoint": "/data",
+    "pi": "leske",
+    "resource": "recex",
+    "soft_threshold": 10000003072000,
+    "user": "leske"
+  },
+  {
+    "dt": "2019-01-01T12:01:01Z",
+    "file_count": 1,
+    "hard_threshold": 10005000192000,
+    "logical_usage": 0,
+    "mountpoint": "/data",
+    "pi": "fulma",
+    "resource": "recex",
+    "soft_threshold": 10000003072000,
+    "user": "camwa"
+  }
+]

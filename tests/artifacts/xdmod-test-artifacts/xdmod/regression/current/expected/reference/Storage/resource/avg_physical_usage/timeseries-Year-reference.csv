@@ -1,0 +1,11 @@
+title
+"Physical Usage (Bytes): by Resource"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[recex] Physical Usage (Bytes)","[torx] Physical Usage (Bytes)"
+2018-01-01,0,0
+2019-01-01,0,0
+---------

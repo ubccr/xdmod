@@ -1,0 +1,19 @@
+title
+"Quota Utilization: Logical (%): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[Earth Sciences] Quota Utilization: Logical (%)","[Molecular Biosciences] Quota Utilization: Logical (%)","[Mathematical Sciences] Quota Utilization: Logical (%)","[Chemistry] Quota Utilization: Logical (%)","[Unknown] Quota Utilization: Logical (%)","[Electrical and Communication Systems] Quota Utilization: Logical (%)","[Arts] Quota Utilization: Logical (%)","[Astronomical Sciences] Quota Utilization: Logical (%)","[Atmospheric Sciences] Quota Utilization: Logical (%)","[Chemical, Thermal Systems] Quota Utilization: Logical (%)","[Environmental Biology] Quota Utilization: Logical (%)","[Materials Research] Quota Utilization: Logical (%)","[Mechanical and Structural Systems] Quota Utilization: Logical (%)","[Microelectronic Information Processing Systems] Quota Utilization: Logical (%)","[Physics] Quota Utilization: Logical (%)","[Polar Programs] Quota Utilization: Logical (%)","[Social and Economic Science] Quota Utilization: Logical (%)"
+2018-12-27,520.2452,115.9095,89.7166,88.1518,67.1665,2.5374,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2018-12-28,541.2074,115.9567,89.7292,88.1883,67.9943,2.5482,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2018-12-29,538.4976,116.0034,89.7292,88.2247,68.2124,2.5582,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2018-12-30,541.3475,116.0415,89.7292,88.2286,68.6620,2.5688,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2018-12-31,543.6225,108.4958,89.7291,88.2284,69.0256,2.5695,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2019-01-01,544.6890,105.4604,89.8451,87.5519,68.9430,2.5632,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2019-01-02,521.0361,105.5008,89.8451,87.4567,68.5291,2.5967,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2019-01-03,517.7531,102.2406,89.8414,87.4543,68.4235,2.5750,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2019-01-04,518.3677,102.3121,89.8899,87.4388,68.4361,2.6136,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2019-01-05,518.9072,102.3760,89.8753,87.4388,68.2414,2.3642,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+---------

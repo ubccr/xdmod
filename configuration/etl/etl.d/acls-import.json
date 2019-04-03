@@ -68,7 +68,15 @@
                     "sql_file": "acls/xdmod/update_user_organizations.sql"
                 }
             ]
+        },
+        {
+            "name": "report-template-acls",
+            "description": "report-template-acls + data",
+            "namespace": "ETL\\Ingestor",
+            "class": "DatabaseIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "acls/report-template-acls.json",
+            "truncate_destination": true
         }
-
     ]
 }

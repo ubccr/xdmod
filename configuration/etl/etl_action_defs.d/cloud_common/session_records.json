@@ -1,0 +1,62 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/cloud_common/session_records.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "instance_id": "e.instance_id",
+            "start_time": "FROM_UNIXTIME(e.start_time_ts)",
+            "start_event_type_id": "e.start_event_id",
+            "end_time": "FROM_UNIXTIME(e.end_time_ts)",
+            "end_event_type_id": "e.end_event_id",
+            "resource_id": "it.resource_id",
+            "instance_type": "itt.instance_type",
+            "instance_type_id": "itt.instance_type_id",
+            "num_cores": "itt.num_cores",
+            "memory_mb": "itt.memory_mb",
+            "disk_gb": "itt.disk_gb",
+            "start_time_ts": "FLOOR(e.start_time_ts)",
+            "end_time_ts": "FLOOR(e.end_time_ts)",
+            "start_day_id": "YEAR(FROM_UNIXTIME(e.start_time_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(e.start_time_ts))",
+            "end_day_id": "YEAR(FROM_UNIXTIME(e.end_time_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(e.end_time_ts))",
+            "wallduration": "FLOOR(e.end_time_ts) - FLOOR(e.start_time_ts)",
+            "person_id": "ev.person_id",
+            "systemaccount_id": "ev.systemaccount_id",
+            "submission_venue_id": "ev.submission_venue_id"
+        },
+        "joins": [
+            {
+                "name": "event_reconstructed",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "e"
+            },
+            {
+                "name": "event",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "ev",
+                "on": "e.start_event_id = ev.event_type_id AND e.start_time_ts = ev.event_time_ts AND e.instance_id = ev.instance_id AND e.resource_id = ev.resource_id"
+            },
+            {
+                "name": "instance",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "it",
+                "on": "e.instance_id = it.instance_id AND e.resource_id = it.resource_id"
+            },
+            {
+                "name": "instance_data",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "itd",
+                "on": "itd.resource_id = it.resource_id AND itd.event_id = ev.event_id"
+            },
+            {
+                "name": "instance_type",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "itt",
+                "on": "itt.resource_id = it.resource_id AND itt.instance_type_id = itd.instance_type_id"
+            }
+        ],
+        "orderby": [
+            "resource_id ASC, instance_id ASC, start_time_ts ASC"
+        ]
+    }
+}

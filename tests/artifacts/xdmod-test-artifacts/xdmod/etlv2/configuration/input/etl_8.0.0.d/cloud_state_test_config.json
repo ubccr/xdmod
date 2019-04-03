@@ -32,9 +32,9 @@
             "description": "Reconstructs discrete runs from cloud events"
         },
         {
-            "name": "cloud-transient",
+            "name": "cloud-session-records",
             "class": "DatabaseIngestor",
-            "definition_file": "cloud_common/cloud_transient.json",
+            "definition_file": "cloud_common/session_records.json",
             "truncate_destination": true,
             "description": "Builds intermediate cloud event table"
         },

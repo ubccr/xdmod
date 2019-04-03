@@ -332,72 +332,68 @@ class SimpleDataset
         $title  = array('title' => 'None');
         $title2 = array('parameters' => array());
 
-        $results      = $this->getResults();
-        $result_count = count($results);
+        $title['title'] = $export_title;
+        $title2['parameters'] = $this->_query->roleParameterDescriptions;
+        $group_bys = $this->_query->getGroupBys();
 
-        if ($result_count > 0) {
-            $title['title'] = $export_title;
-            $title2['parameters'] = $this->_query->roleParameterDescriptions;
-            $group_bys = $this->_query->getGroupBys();
+        $stats = $this->_query->getStats();
+        $has_stats = count($stats) > 0;
+
+        foreach ($group_bys as $group_by) {
+            $headers[]
+                = $group_by->getName() === 'none'
+                ? 'Summary'
+                : $group_by->getLabel();
+        }
+
+        foreach ($stats as $stat) {
+            $stat_unit  = $stat->getUnit();
+            $stat_alias = $stat->getAlias()->getName();
+
+            $data_unit = '';
+            if (substr( $stat_unit, -1 ) == '%') {
+                $data_unit = '%';
+            }
+
+            $column_header = $stat->getLabel();
+
+            if (
+                $column_header != $stat_unit
+                && strpos($column_header, $stat_unit) === false
+            ) {
+                $column_header .= ' (' . $stat_unit . ')';
+            }
+
+            $headers[]
+                = $column_header
+                . (
+                    count($this->_query->filterParameterDescriptions) > 0
+                    ? ' {'
+                        . implode(
+                            ', ',
+                            $this->_query->filterParameterDescriptions
+                        )
+                        . '}'
+                    : ''
+                );
+        } // foreach ($stats as $stat)
+
+
+        foreach ($this->getResults() as $result) {
+            $record = array();
+            foreach ($group_bys as $group_by) {
+                $record[$group_by->getName()]
+                    = $result[$group_by->getLongNameColumnName(true)];
+            }
 
             $stats = $this->_query->getStats();
-            $has_stats = count($stats) > 0;
-
-            foreach ($group_bys as $group_by) {
-                $headers[]
-                    = $group_by->getName() === 'none'
-                    ? 'Summary'
-                    : $group_by->getLabel();
-            }
-
             foreach ($stats as $stat) {
-                $stat_unit  = $stat->getUnit();
-                $stat_alias = $stat->getAlias()->getName();
-
-                $data_unit = '';
-                if (substr( $stat_unit, -1 ) == '%') {
-                    $data_unit = '%';
-                }
-
-                $column_header = $stat->getLabel();
-
-                if (
-                    $column_header != $stat_unit
-                    && strpos($column_header, $stat_unit) === false
-                ) {
-                    $column_header .= ' (' . $stat_unit . ')';
-                }
-
-                $headers[]
-                    = $column_header
-                    . (
-                        count($this->_query->filterParameterDescriptions) > 0
-                        ? ' {'
-                            . implode(
-                                ', ',
-                                $this->_query->filterParameterDescriptions
-                            )
-                            . '}'
-                        : ''
-                    );
-            } // foreach ($stats as $stat) 
-
-            foreach ($results as $result) {
-                $record = array();
-                foreach ($group_bys as $group_by) {
-                    $record[$group_by->getName()]
-                        = $result[$group_by->getLongNameColumnName(true)];
-                }
-
-                $stats = $this->_query->getStats();
-                foreach ($stats as $stat) {
-                    $record[$stat->getAlias()->getName()]
-                        = $result[$stat->getAlias()->getName()];
-                }
-
-                $rows[] = $record;
+                $record[$stat->getAlias()->getName()]
+                    = $result[$stat->getAlias()->getName()];
             }
-        } // foreach ($results as $result) 
+
+            $rows[] = $record;
+        } // foreach ($this->getResults() as $result)
 
         return array(
             'title'    => $title,
