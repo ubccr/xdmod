@@ -218,7 +218,7 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
                             layout: 'fit',
                             width: 800,
                             height: 600,
-                            closeAction: 'hide',
+                            closeAction: 'destroy',
                             plain: true,
                             title: dataView.store.data.items[index].json.chart_title,
 
@@ -230,14 +230,14 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
                                     config.font_size = 3;
                                     config.featured = true;
                                     config.summary_index = (config.preset ? 'summary_' : '') + config.index;
-                                    win.hide();
+                                    win.destroy();
                                     XDMoD.Module.MetricExplorer.setConfig(config, config.summary_index, Boolean(config.preset));
 
                                 }
                             }, {
                                 text: 'Close',
                                 handler: function () {
-                                    win.hide();
+                                    win.destroy();
                                 }
                             }],
                             listeners: {
@@ -247,7 +247,7 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
                                         viewer.el.mask();
                                     }
                                 },
-                                hide: function (eOpts) {
+                                destroy: function (eOpts) {
                                     var viewer = CCR.xdmod.ui.Viewer.getViewer();
                                     viewer.el.unmask();
                                 }
