@@ -1,2 +1,9 @@
 {
+    "xdmod": {
+        "portal": {
+            "css": [
+                "gui/css/SummaryTab.css"
+            ]
+        }
+    }
 }
