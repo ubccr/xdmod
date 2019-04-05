@@ -117,17 +117,53 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         var mainArea = new Ext.Panel({
 
             region: 'center',
-            html: 'This is my new module'
+            html: 'Batch Data Warehouse Exporter'
 
         }); //mainArea
 
         // ==============================================
 
-        var customToolbarComponent = new Ext.Button({
+        var downloadButton = new Ext.Button({
 
-            text: 'Custom'
+            text: 'Download'
 
         }); //customToolbarComponent
+
+        var submitButton = new Ext.Button({
+
+            text: 'Submit'
+
+        }); //customToolbarComponent
+
+        var downloadOptions = new Ext.FormPanel({
+            labelWidth: 75, // label settings here cascade unless overridden
+            frame: true,
+            title: 'Export Options',
+            bodyStyle: 'padding:5px 5px 0',
+            width: 350,
+            defaults: {
+                width: 230
+            },
+            defaultType: 'textfield',
+
+            items: [{
+                fieldLabel: 'Desired Realm',
+                name: 'first',
+                allowBlank: false
+            }, new Ext.form.DateField({
+                fieldLabel: 'Start Date',
+                name: 'startDate',
+            }),new Ext.form.DateField({
+                fieldLabel: 'End Date',
+                name: 'endDate',
+            })],
+
+            buttons: [{
+                text: 'Save'
+            }, {
+                text: 'Cancel'
+            }]
+        });
 
         // ==============================================
 
@@ -156,7 +192,10 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
             */
 
             items: [
-                mainArea
+                mainArea,
+                downloadOptions,
+                submitButton,
+                downloadButton
             ]
 
         }); //Ext.apply
