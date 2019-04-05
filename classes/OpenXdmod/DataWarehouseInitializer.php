@@ -205,9 +205,12 @@ class DataWarehouseInitializer
     public function ingestCloudDataOpenStack()
     {
         if( $this->isRealmEnabled('Cloud') ){
-            try{
+            try {
                 $this->logger->notice('Ingesting OpenStack event log data');
-                Utilities::runEtlPipeline(array('jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'), $this->logger);
+                Utilities::runEtlPipeline(
+                    array('jobs-cloud-import-users-openstack', 'jobs-cloud-extract-openstack'),
+                    $this->logger
+                );
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -228,9 +231,12 @@ class DataWarehouseInitializer
     public function ingestCloudDataGeneric()
     {
         if( $this->isRealmEnabled('Cloud') ){
-            try{
+            try {
                 $this->logger->notice('Ingesting generic cloud log files');
-                Utilities::runEtlPipeline(array('jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'), $this->logger);
+                Utilities::runEtlPipeline(
+                    array('jobs-cloud-import-users-generic', 'jobs-cloud-extract-generic'),
+                    $this->logger
+                );
             }
             catch( Exception $e ){
                 if( $e->getCode() == 1146 ){
@@ -273,11 +279,15 @@ class DataWarehouseInitializer
      * catch the resulting exception and display a message saying that there
      * is no cloud data to aggregate and cloud aggregation is being skipped.
      */
-    public function aggregateCloudData()
+    public function aggregateCloudData($lastModifiedStartDate)
     {
         if( $this->isRealmEnabled('Cloud') ){
             $this->logger->notice('Aggregating Cloud data');
-            Utilities::runEtlPipeline(array('cloud-state-pipeline'), $this->logger);
+            Utilities::runEtlPipeline(
+                array('cloud-state-pipeline'),
+                $this->logger,
+                array('last-modified-start-date' => $lastModifiedStartDate)
+            );
 
             $filterListBuilder = new FilterListBuilder();
             $filterListBuilder->setLogger($this->logger);
@@ -289,8 +299,11 @@ class DataWarehouseInitializer
      * Aggregate storage data.
      *
      * If the storage realm is not enabled then do nothing.
+     *
+     * @param string $lastModifiedStartDate Aggregate data ingested on or after
+     *     this date.
      */
-    public function aggregateStorageData()
+    public function aggregateStorageData($lastModifiedStartDate)
     {
         if (!$this->isRealmEnabled('Storage')) {
             $this->logger->notice('Storage realm not enabled, not aggregating');
@@ -298,7 +311,11 @@ class DataWarehouseInitializer
         }
 
         $this->logger->notice('Aggregating storage data');
-        Utilities::runEtlPipeline(['xdw-aggregate-storage'], $this->logger);
+        Utilities::runEtlPipeline(
+            ['xdw-aggregate-storage'],
+            $this->logger,
+            ['last-modified-start-date' => $lastModifiedStartDate]
+        );
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
         $filterListBuilder->buildRealmLists('Storage');

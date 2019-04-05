@@ -40,12 +40,16 @@
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "definition_file_list": [
-                "cloud_common/cloud_resource_metadata.json",
-                "cloud_common/job_record_event.json",
                 "cloud_common/event.json",
                 "cloud_common/asset.json",
                 "cloud_common/instance_data.json",
-                "cloud_common/event_asset.json"
+                "cloud_common/event_asset.json",
+                "cloud_openstack/raw_event.json",
+                "cloud_openstack/raw_instance_type.json",
+                "cloud_openstack/raw_volume.json",
+                "cloud_generic/raw_event.json",
+                "cloud_generic/raw_instance_type.json",
+                "cloud_generic/raw_volume.json"
             ]
         },
         {

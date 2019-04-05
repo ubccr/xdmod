@@ -1,0 +1,41 @@
+title
+"File Count (Number of files): by PI Group"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"PI Group","File Count (Number of files)"
+Unknown,221213085.9000
+"Mechanics and Materials",3520651.6000
+Biophysics,2977661.6000
+"Algebra and Number Theory",2149021.2000
+"Organic and Macromolecular Chemistry",1526295.4000
+"Solid-State and Microstructures",915302.0000
+Seismology,321035.9000
+"Galactic Astronomy",223503.7000
+"Systematic and Population Biology",62708.5000
+Geophysics,44052.2000
+"Cell Biology",37273.8000
+"Geology and Paleontology",26641.7000
+"Theoretical Physics",20072.0000
+"Physical Chemistry",15086.8000
+"Structures and Building Systems",6979.0000
+"Solid State Chemistry and Polymers",6965.5000
+Sociology,6529.3000
+"Experimental Systems",5339.0000
+"Volcanology and Mantle Geochemistry",896.0000
+"Statistics and Probability",583.6000
+"Polar Aeronomy and Astrophysics",470.0000
+"Polar Meteorology",334.2000
+"Decision, Risk, and Management Science",81.0000
+"Quantum Electronics, Waves, and Beams",75.5000
+Tectonics,52.3000
+"Fluid, Particulate, and Hydraulic Systems",51.0000
+"Global Atmospheric Research",48.0000
+Economics,43.0000
+"Biochemistry and Molecular Structure and Function",36.0000
+Arts,8.0000
+"Law and Social Sciences",1.0000
+"Metals, Ceramics, and Electronic Materials",1.0000
+---------

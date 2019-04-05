@@ -1,0 +1,11 @@
+title
+"File Count (Number of files): by Resource"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Resource,"File Count (Number of files)"
+torx,122746184.9000
+recex,110334700.8000
+---------

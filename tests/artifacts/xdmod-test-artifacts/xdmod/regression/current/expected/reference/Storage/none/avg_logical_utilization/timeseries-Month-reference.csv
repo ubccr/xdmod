@@ -1,0 +1,11 @@
+title
+"Quota Utilization: Logical (%)"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Month,"[Screwdriver] Quota Utilization: Logical (%)"
+2018-12-01,81.5820
+2019-01-01,79.3791
+---------

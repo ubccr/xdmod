@@ -1,0 +1,10 @@
+title
+"Quota Utilization: Logical (%)"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Summary,"Quota Utilization: Logical (%)"
+Screwdriver,80.4803
+---------

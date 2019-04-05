@@ -1,0 +1,12 @@
+title
+"Quota Utilization: Logical (%): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Mountpoint,"Quota Utilization: Logical (%)"
+/data,62.5264
+/projects,47.4736
+/scratch,0.0000
+---------

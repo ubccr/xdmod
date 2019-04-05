@@ -9,7 +9,6 @@ use Models\Services\Users;
 use TestHarness\OrganizationHelper;
 use TestHarness\PeopleHelper;
 use TestHarness\UserHelper;
-use User\aRole;
 use XDUser;
 
 class RoleParametersTest extends BaseTest

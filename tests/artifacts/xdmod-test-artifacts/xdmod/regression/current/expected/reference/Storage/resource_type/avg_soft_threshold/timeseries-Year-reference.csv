@@ -1,0 +1,11 @@
+title
+"Quota: Soft Threshold (Bytes): by Resource Type"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[Storage grid] Quota: Soft Threshold (Bytes)","[Tape storage resource] Quota: Soft Threshold (Bytes)"
+2018-01-01,855000018944000,127000027136000
+2019-01-01,855000018944000,127000027136000
+---------
