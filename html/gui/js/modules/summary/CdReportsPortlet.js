@@ -328,6 +328,7 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
                         config['start_date'] = self.timeframe['start_date'];
                         config['end_date'] = self.timeframe['end_date'];
                         config['timeframe_label'] = 'User Defined';
+                        config['timeseries'] = config['timeseries'] === 'y';
                         this.tmpHpc.store.setBaseParam('start_date', self.timeframe['start_date']);
                         this.tmpHpc.store.setBaseParam('end_date', self.timeframe['end_date']);
                         this.tmpHpc.store.setBaseParam('timeframe_label', 'User Defined');
