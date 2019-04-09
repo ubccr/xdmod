@@ -1327,7 +1327,11 @@ class XDReportManager
             $timeframe_type = $iq[0]['timeframe_type'];
         }
 
-        if (strtolower($timeframe_type) == 'user defined') {
+        if (!(is_null($insertion_rank['start_date'])) && !(is_null($insertion_rank['end_date']))) {
+            $start_date = $insertion_rank['start_date'];
+            $end_date = $insertion_rank['end_date'];
+        }
+        else if (strtolower($timeframe_type) == 'user defined') {
             $start_date = $active_start;
             $end_date = $active_end;
         }
@@ -1597,8 +1601,8 @@ class XDReportManager
     /*
      * writeXMLConfiguration()
      *
-     * This function generates the XML configuration file and image files for 
-     * processing by jasper-builder. The files are placed in the supplied 
+     * This function generates the XML configuration file and image files for
+     * processing by jasper-builder. The files are placed in the supplied
      * directory (which must exist)
      *
      * \param outputdir the name of an existing, writable directory in which to put the files.
@@ -1609,7 +1613,9 @@ class XDReportManager
     private function writeXMLConfiguration(
         $outputdir,
         $report_id,
-        $export_format = null
+        $export_format = null,
+        $start_date = null,
+        $end_date = null
     ) {
         $dom = new \DOMDocument("1.0");
 
@@ -1684,7 +1690,10 @@ class XDReportManager
                 $entry['title']
             );
 
-            if (strtolower($entry['timeframe_type']) == 'user defined') {
+            if (isset($start_date) && isset($end_date)){
+                // use start and end date passed as function parameters
+            }
+            else if (strtolower($entry['timeframe_type']) == 'user defined') {
                 list($start_date, $end_date)
                     = explode(' to ', $entry['comments']);
             }
@@ -1699,7 +1708,7 @@ class XDReportManager
             // work with the correct chart (image)
             $entry['comments'] = $start_date . ' to ' . $end_date;
 
-            $imagedata = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'] ) );
+            $imagedata = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'], "start_date" => $start_date, "end_date" => $end_date) );
             $imagefilename = $outputdir . "/" . $entry['order'] . ".png";
             file_put_contents($imagefilename, $imagedata);
 
@@ -1785,7 +1794,7 @@ class XDReportManager
         return $report_filename;
     }
 
-    public function buildReport($report_id, $export_format)
+    public function buildReport($report_id, $export_format, $start_date=null, $end_date=null)
     {
 
         if (
@@ -1847,7 +1856,7 @@ class XDReportManager
 
         // Generate a report definition (XML) to be used as the input to
         // the Jasper Report Builder application
-        $this->writeXMLConfiguration($template_path, $report_id, $export_format);
+        $this->writeXMLConfiguration($template_path, $report_id, $export_format, $start_date, $end_date);
 
         $charts_per_page = $this->getReportChartsPerPage($report_id);
 

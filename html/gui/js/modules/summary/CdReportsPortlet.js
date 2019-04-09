@@ -58,7 +58,120 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
             {
                 text: 'Download Report',
                 icon: 'gui/images/report_generator/pdf_icon.png',
-                cls: 'x-btn-text-icon'
+                cls: 'x-btn-text-icon',
+                listeners: {
+                    click: function () {
+                        var viewer = CCR.xdmod.ui.Viewer.getViewer();
+                        viewer.el.mask(
+                            '<center>Preparing report for download<br /><b>' +
+                            '</b><br /><img src="gui/images/progbar_2.gif">' +
+                            '<br />Please Wait</center>'
+                        );
+                        var report_id = this.ownerCt.ownerCt.store.data.items[0].data['report_id'];
+                        var start_date = this.ownerCt.ownerCt.timeframe['start_date'];
+                        var end_date = this.ownerCt.ownerCt.timeframe['end_date'];
+                        var format = 'pdf';
+                        var conn = new Ext.data.Connection({
+                            // allow for generous 'execution time' so that lengthy
+                            // reports can be compiled (10 min.)
+                            timeout: 600000
+                        });
+                        conn.request({
+                            url: 'controllers/report_builder.php',
+
+                            params: {
+                                operation: 'send_report',
+                                report_id: report_id,
+                                build_only: true,
+                                export_format: format,
+                                start_date: start_date,
+                                end_date: end_date
+                            },
+
+                            method: 'POST',
+
+                            callback: function (options, success, response) {
+                                var responseData;
+                                if (success) {
+                                    responseData = CCR.safelyDecodeJSONResponse(response);
+                                    success = CCR.checkDecodedJSONResponseSuccess(responseData);
+                                }
+
+                                if (success) {
+                                    var location = 'controllers/report_builder.php/' +
+                                        responseData.report_name +
+                                        '?operation=download_report&report_loc=' +
+                                        responseData.report_loc + '&format=' + format;
+
+                                    var activeTemplate =
+                                        '<center><br />' +
+                                        '<img src="gui/images/checkmark.png"><br /><br />' +
+                                        '<div style="color: #080; border: none">' +
+                                        responseData.message +
+                                        '</div>' +
+                                        '</center>';
+
+                                    var w = new Ext.Window({
+                                        title: 'Report Built',
+                                        width: 220,
+                                        height: 120,
+                                        resizable: false,
+                                        closeAction: 'destroy',
+                                        layout: 'border',
+                                        cls: 'wnd_report_built',
+
+                                        listeners: {
+                                            show: function () {
+                                                var viewer = CCR.xdmod.ui.Viewer.getViewer();
+                                                if (viewer.el) {
+                                                    viewer.el.mask();
+                                                }
+                                            },
+                                            destroy: function () {
+                                                var viewer = CCR.xdmod.ui.Viewer.getViewer();
+                                                viewer.el.unmask();
+                                            }
+                                        },
+
+                                        items: [
+                                            new Ext.Panel({
+                                                region: 'west',
+                                                width: 70,
+                                                html: '<img src="gui/images/report_icon_wnd.png">',
+                                                baseCls: 'x-plain'
+                                            }),
+                                            new Ext.Panel({
+                                                region: 'center',
+                                                width: 150,
+                                                layout: 'border',
+                                                margins: '5 5 5 5',
+                                                items: [
+                                                    new Ext.Panel({
+                                                        region: 'center',
+                                                        html: 'Your report has been built and can now be viewed.',
+                                                        baseCls: 'x-plain'
+                                                    }),
+                                                    new Ext.Button({
+                                                        region: 'south',
+                                                        text: 'View Report',
+                                                        handler: function () {
+                                                            XDMoD.TrackEvent(
+                                                                'Report Generator',
+                                                                'Clicked on View Report button in Report Built window'
+                                                            );
+                                                            window.open(location);
+                                                        }
+                                                    })
+                                                ]
+                                            })
+                                        ]
+                                    });
+                                    w.show();
+                                }
+                            }
+                        });
+                    }
+                }
             }
         ]
     },
@@ -102,7 +215,6 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
 
                     }
                 }
-
             ]
         });
         this.store.load();
@@ -128,6 +240,14 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
 
             prepareData: function (data) {
                 data.shortName = Ext.util.Format.ellipsis(data.chart_title, 40);
+                params = {}
+                v_split = data.thumbnail_link.split('/report_image_renderer.php?')[1].split('&');
+                for (var index = 0; index < v_split.length; index++) {
+                    tmpk = v_split[index].split('=')[0];
+                    tmpv = v_split[index].split('=')[1];
+                    params[tmpk] = tmpv
+                }
+                data.report_id = params['ref'].split(';')[0];
                 return data;
             },
 
@@ -192,7 +312,6 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
 
                                 } else if (key === 'data_series') {
                                     parsed_value = JSON.parse(decodeURIComponent(value));
-                                    console.log(parsed_value);
                                     var data_series = {}
                                     data_series["data"] = parsed_value;
                                     data_series["total"] = parsed_value.length;
@@ -212,7 +331,6 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
                         this.tmpHpc.store.setBaseParam('start_date', self.timeframe['start_date']);
                         this.tmpHpc.store.setBaseParam('end_date', self.timeframe['end_date']);
                         this.tmpHpc.store.setBaseParam('timeframe_label', 'User Defined');
-                        console.log('config', config);
 
                         var win = new Ext.Window({
                             layout: 'fit',
@@ -241,20 +359,20 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
                                 }
                             }],
                             listeners: {
-                                show: function (eOpts, tmpHpc) {
+                                show: function () {
                                     var viewer = CCR.xdmod.ui.Viewer.getViewer();
                                     if (viewer.el) {
                                         viewer.el.mask();
                                     }
                                 },
-                                destroy: function (eOpts) {
+                                destroy: function () {
                                     var viewer = CCR.xdmod.ui.Viewer.getViewer();
                                     viewer.el.unmask();
                                 }
                             }
                         });
 
-                        win.show(Ext.getBody());
+                        win.show();
 
 
                     }
