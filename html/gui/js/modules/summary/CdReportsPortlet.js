@@ -189,38 +189,43 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
         };
         var role = CCR.xdmod.ui.allRoles.filter(isPrimary)[0].param_value.split(':')[0];
 
-        switch(role) {
-            case "cd":
-                var today = new Date();
-                var last5Year = today.add(Date.YEAR, -5);
-                var start = last5Year;
-                var end = today;
-            break;
-            case "cs":
-                var today = new Date();
-                var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
-                var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
-                var start = oneYearAgoStart;
-                var end = oneYearAgoEnd;
-            break;
-            case "usr":
-                var today = new Date();
-                var lastQuarter = today.add(Date.DAY, -90);
-                var start = lastQuarter;
-                var end = today;
-            break;
-            default:
-                var today = new Date();
-                var last5Year = today.add(Date.YEAR, -5);
-                var start = last5Year;
-                var end = today;
+        function getTimestampDuration(timeframe_label) {
+            switch(timeframe_label) {
+                case "5 year":
+                    var today = new Date();
+                    var last5Year = today.add(Date.YEAR, -5);
+                    var start = last5Year;
+                    var end = today;
+                break;
+                case "Previous Year":
+                    var today = new Date();
+                    var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
+                    var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
+                    var start = oneYearAgoStart;
+                    var end = oneYearAgoEnd;
+                break;
+                case "Previous Quarter":
+                    var today = new Date();
+                    var lastQuarter = today.add(Date.DAY, -90);
+                    var start = lastQuarter;
+                    var end = today;
+                break;
+                default:
+                    var today = new Date();
+                    var last5Year = today.add(Date.YEAR, -5);
+                    var start = last5Year;
+                    var end = today;
+            }
+            var timeframe = {
+                'start_date': start.format('Y-m-d'),
+                'end_date': end.format('Y-m-d')
+            };
+            return timeframe;
+
         }
 
-        this.timeframe = {
-
-            'start_date': start.format('Y-m-d'),
-            'end_date': end.format('Y-m-d')
-        };
+        var timeframe_label = this.config[role];
+        this.timeframe = getTimestampDuration(timeframe_label);
 
         this.store = new Ext.data.JsonStore({
             url: XDMoD.REST.url + '/summary/cdcharts',
