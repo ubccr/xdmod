@@ -394,8 +394,8 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
 
                 // CHECK: if we should be reloading
                 if (reload) {
-                    this.jobViewer.fireEvent('reload_root');
-                    this.jobViewer.fireEvent('activate');
+                    this.dataExport.fireEvent('reload_root');
+                    this.dataExport.fireEvent('activate');
                 }
 
                 panel.searchStore.removeAll();
@@ -613,12 +613,12 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
 
         return new Ext.data.JsonStore({
             id: 'results_store',
-            url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/jobs',
+            url: XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/search/jobs',
             proxy: new Ext.data.HttpProxy({
                 api: {
                     read: {
                         method: 'GET',
-                        url   : XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/jobs'
+                        url   : XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/search/jobs'
                     }
                 }
             }),
@@ -927,7 +927,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                         enableKeyEvents: true,
                         store: new Ext.data.JsonStore({
                             proxy: new Ext.data.HttpProxy({
-                                url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/dimensions/resource',
+                                url: XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/dimensions/resource',
                                 method: 'GET'
                             }),
                             baseParams: {
@@ -1095,7 +1095,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                                 store: new Ext.data.GroupingStore({
                                     proxy: new Ext.data.HttpProxy({
                                         method: 'GET',
-                                        url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/dimensions'
+                                        url: XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/dimensions'
                                     }),
                                     baseParams: {
                                         token: self.token,
@@ -1176,7 +1176,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                                 store: new Ext.data.JsonStore({
                                     proxy: new Ext.data.HttpProxy({
                                         method: 'GET',
-                                        url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/dimensions'
+                                        url: XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/dimensions'
                                     }),
                                     baseParams: {
                                         token: self.token,
@@ -1450,7 +1450,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         var realmField = Ext.getCmp('realm-field');
         var realm = realmField ? realmField.getValue() : null;
         var idFragment = id !== undefined ? '/' + id : '';
-        var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm + '&token=' + XDMoD.REST.token;
+        var url = XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm + '&token=' + XDMoD.REST.token;
 
         Ext.Ajax.request({
                 url: url,
@@ -1472,7 +1472,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                         var newToken = ['realm=' + realm, dtype + '=' + value].join('&');
                         var current = Ext.History.getToken();
                         var token = CCR.tokenize(current);
-                        var tab = token && token.tab ? token.tab : self.jobViewer.id;
+                        var tab = token && token.tab ? token.tab : self.dataExport.id;
 
                         Ext.History.add("#" + tab + '?' + newToken);
                     }
@@ -1659,7 +1659,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
      */
     _findFieldDisplay: function(field) {
         var self = this;
-        var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse +
+        var url = XDMoD.REST.url + '/' + self.dataExport.rest.warehouse +
             '/dimensions/' + field + '/name?token=' + XDMoD.REST.token;
 
         return this._getPromise(url, ['results', 'name']);
@@ -1676,7 +1676,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
      */
     _findFieldValueDisplay: function(field, value) {
         var self = this;
-        var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse +
+        var url = XDMoD.REST.url + '/' + self.dataExport.rest.warehouse +
             '/dimensions/' + field +
             '/values/' + value +
             '/name?token=' + XDMoD.REST.token;
@@ -1748,7 +1748,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
             var realm = this._getNodeValue(this._getParentNode(node, 'realm'), 'realm');
             realm = realm !== null ? realm : '';
 
-            var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse +
+            var url = XDMoD.REST.url + '/' + self.dataExport.rest.warehouse +
                     '/search/history/' + this.dtypeId +
                     '?realm=' + realm +
                     '&token=' + XDMoD.REST.token;
