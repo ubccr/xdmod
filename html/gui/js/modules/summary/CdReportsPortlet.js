@@ -184,14 +184,43 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
         var self = this;
         var today = new Date();
 
-        // default is previous Quarter
-        var start_date = today.add(Date.DAY, -90);
+        function isPrimary(item) {
+            return item.is_primary === "1";
+        };
+        var role = CCR.xdmod.ui.allRoles.filter(isPrimary)[0].param_value.split(':')[0];
+
+        switch(role) {
+            case "cd":
+                var today = new Date();
+                var last5Year = today.add(Date.YEAR, -5);
+                var start = last5Year;
+                var end = today;
+            break;
+            case "cs":
+                var today = new Date();
+                var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
+                var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
+                var start = oneYearAgoStart;
+                var end = oneYearAgoEnd;
+            break;
+            case "usr":
+                var today = new Date();
+                var lastQuarter = today.add(Date.DAY, -90);
+                var start = lastQuarter;
+                var end = today;
+            break;
+            default:
+                var today = new Date();
+                var last5Year = today.add(Date.YEAR, -5);
+                var start = last5Year;
+                var end = today;
+        }
 
         this.timeframe = {
-            'start_date': start_date.format('Y-m-d'),
-            'end_date': today.format('Y-m-d')
-        };
 
+            'start_date': start.format('Y-m-d'),
+            'end_date': end.format('Y-m-d')
+        };
 
         this.store = new Ext.data.JsonStore({
             url: XDMoD.REST.url + '/summary/cdcharts',
@@ -392,7 +421,9 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
         timeframe_change: function (start_date, end_date) {
             this.timeframe['start_date'] = start_date.format('Y-m-d');
             this.timeframe['end_date'] = end_date.format('Y-m-d');
-            this.store.load()
+            this.store.load();
+            console.log(this.config);
+            console.log(CCR.xdmod.ui.allRoles);
         }
     }
 
