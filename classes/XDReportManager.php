@@ -1690,18 +1690,18 @@ class XDReportManager
                 $entry['title']
             );
 
-            if (isset($start_date) && isset($end_date)){
-                // use start and end date passed as function parameters
-            }
-            else if (strtolower($entry['timeframe_type']) == 'user defined') {
-                list($start_date, $end_date)
-                    = explode(' to ', $entry['comments']);
-            }
-            else {
-                $e = \xd_date\getEndpoints($entry['timeframe_type']);
+            if ((is_null($start_date) && is_null($end_date))){
+                // only use start and end date from report if start and end date are not supplied as function parameters
+                if (strtolower($entry['timeframe_type']) == 'user defined') {
+                    list($start_date, $end_date)
+                        = explode(' to ', $entry['comments']);
+                }
+                else {
+                    $e = \xd_date\getEndpoints($entry['timeframe_type']);
 
-                $start_date = $e['start_date'];
-                $end_date   = $e['end_date'];
+                    $start_date = $e['start_date'];
+                    $end_date   = $e['end_date'];
+                }
             }
 
             // Update comments and hyperlink so reporting engine can
