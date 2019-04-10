@@ -9,11 +9,6 @@ XDMoD.Module.Summary = function (config) {
 
 Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
     module_id: 'summary',
-    usesToolbar: true,
-
-    toolbarItems: {
-        durationSelector: true
-    },
 
     initComponent: function () {
         var self = this;
@@ -71,7 +66,10 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                         }));
                     }
 
-                    var durationSelector = self.getDurationSelector();
+                    var durationSelector;
+                    if (self.getDurationSelector) {
+                        durationSelector = self.getDurationSelector();
+                    }
 
                     var portalwindow = self.getComponent('portalwindow');
                     portalwindow.removeAll();
@@ -79,10 +77,13 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     this.each(function (record) {
                         var config = record.get('config');
 
-                        config.start_date = durationSelector.getStartDate().format('Y-m-d');
-                        config.end_date = durationSelector.getEndDate().format('Y-m-d');
-                        config.aggregation_unit = durationSelector.getAggregationUnit();
-                        config.timeframe_label = durationSelector.getDurationLabel();
+                        // duration selector only exists for public user view
+                        if (durationSelector) {
+                            config.start_date = durationSelector.getStartDate().format('Y-m-d');
+                            config.end_date = durationSelector.getEndDate().format('Y-m-d');
+                            config.aggregation_unit = durationSelector.getAggregationUnit();
+                            config.timeframe_label = durationSelector.getDurationLabel();
+                        }
 
                         try {
                             var portlet = Ext.ComponentMgr.create({
@@ -114,6 +115,11 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                 }
             }
         });
+
+        if (CCR.xdmod.publicUser) {
+            this.usesToolbar = true;
+            this.toolbarItems =  { durationSelector: true };
+        }
 
         Ext.apply(this, {
             items: [{
