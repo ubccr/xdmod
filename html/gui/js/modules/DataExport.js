@@ -613,7 +613,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
 
         return new Ext.data.JsonStore({
             id: 'results_store',
-            url: XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/search/jobs',
+            url: 'infill',
             proxy: new Ext.data.HttpProxy({
                 api: {
                     read: {
@@ -667,7 +667,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                 }
             }
         });
-    }, // _getResultsStore
+    }, // _createResultsStore
 
     /**
      * Returns an ArrayStore that is suitable for use as this components
@@ -927,7 +927,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                         enableKeyEvents: true,
                         store: new Ext.data.JsonStore({
                             proxy: new Ext.data.HttpProxy({
-                                url: XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/dimensions/resource',
+                                url: 'infill',
                                 method: 'GET'
                             }),
                             baseParams: {
@@ -1095,7 +1095,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                                 store: new Ext.data.GroupingStore({
                                     proxy: new Ext.data.HttpProxy({
                                         method: 'GET',
-                                        url: XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/dimensions'
+                                        url: 'infill',
                                     }),
                                     baseParams: {
                                         token: self.token,
@@ -1176,7 +1176,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                                 store: new Ext.data.JsonStore({
                                     proxy: new Ext.data.HttpProxy({
                                         method: 'GET',
-                                        url: XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/dimensions'
+                                        url: 'infill',
                                     }),
                                     baseParams: {
                                         token: self.token,
@@ -1450,10 +1450,10 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         var realmField = Ext.getCmp('realm-field');
         var realm = realmField ? realmField.getValue() : null;
         var idFragment = id !== undefined ? '/' + id : '';
-        var url = XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm + '&token=' + XDMoD.REST.token;
+        //var url = XDMoD.REST.url + '/' + self.dataExport.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm + '&token=' + XDMoD.REST.token;
 
         Ext.Ajax.request({
-                url: url,
+                url: 'infill',
                 method: 'POST',
                 params: {
                     'data': JSON.stringify(params)
@@ -1688,7 +1688,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
         return new RSVP.Promise(
             function(resolve, reject){
                 Ext.Ajax.request({
-                    url: url,
+                    url: 'infill',
                     success: function(response) {
                         var data = JSON.parse(response.responseText);
                         var success = data.success;
