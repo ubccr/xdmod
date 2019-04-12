@@ -2,29 +2,24 @@
 title: Database Guide
 ---
 
-Open XDMoD uses several MySQL databases.  These will be automatically be
+Open XDMoD uses several MySQL databases.  These will be
 automatically created by the database section of the `xdmod-setup`
 command.
 
 Manual Setup
 ------------
 
-If you prefer to not give your root (or other privileged user's)
-username and password to the setup command, you will need to create and
+**NOTE**: Manual setup instructions are provided for informational purposes only; no guarantee of support is provided.
+
+If you prefer to not give the root (or any other privileged) user's
+credentials to the `xdmod-setup` command, you will need to create and
 initialize the databases manually and add the database credentials to
-`portal_settings.ini`.  These databases must be named as shown below.
+`portal_settings.ini`. These databases must be named as shown below.
 Also, the credentials for `modw`, `modw_aggregates`, and `modw_filters`
 must be the same.
 
 **NOTE**: `modw_aggregates` and `modw_filters` aren't listed in
 `portal_settings.ini`.
-
-You can find the schema for each database in the `db/schema` directory
-of the source distribution or in the `/usr/share/xdmod/db/schema`
-directory if you've installed the RPM.  After you've created the
-databases, intialize them with the corresponding file in this directory.
-Likewise, the `db/data` directory contains the initial data needed by
-Open XDMoD.
 
 Create databases and database user:
 
@@ -33,6 +28,7 @@ Create databases and database user:
     mysql> CREATE DATABASE mod_shredder;
     mysql> CREATE DATABASE moddb;
     mysql> CREATE DATABASE modw;
+    mysql> CREATE DATABASE modw_cloud;
     mysql> CREATE DATABASE modw_aggregates;
     mysql> CREATE DATABASE modw_filters;
     mysql> GRANT ALL ON mod_hpcdb.*       TO 'username'@'localhost' IDENTIFIED BY 'password';
@@ -40,26 +36,38 @@ Create databases and database user:
     mysql> GRANT ALL ON mod_shredder.*    TO 'username'@'localhost' IDENTIFIED BY 'password';
     mysql> GRANT ALL ON moddb.*           TO 'username'@'localhost' IDENTIFIED BY 'password';
     mysql> GRANT ALL ON modw.*            TO 'username'@'localhost' IDENTIFIED BY 'password';
+    mysql> GRANT ALL ON modw_cloud.*      TO 'username'@'localhost' IDENTIFIED BY 'password';
     mysql> GRANT ALL ON modw_aggregates.* TO 'username'@'localhost' IDENTIFIED BY 'password';
     mysql> GRANT ALL ON modw_filters.*    TO 'username'@'localhost' IDENTIFIED BY 'password';
+
+You must also run the following SQL:
+
+    mysql> GRANT TRIGGER, DROP, INDEX, CREATE, INSERT,
+    SELECT, DELETE, UPDATE, CREATE VIEW, SHOW VIEW,
+    ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES,
+    CREATE ROUTINE, ALTER ROUTINE, EVENT, RELOAD, FILE,
+    CREATE TABLESPACE, PROCESS, REFERENCES,
+    LOCK TABLES ON *.* TO 'username'@'localhost';
 
 You will need to change `localhost` if you are running MySQL on a
 different machine than where you installed Open XDMoD.
 
 Initialize databases:
 
-    $ mysql -u username -ppassword mod_hpcdb       </usr/share/xdmod/db/schema/mod_hpcdb.sql
-    $ mysql -u username -ppassword mod_hpcdb       </usr/share/xdmod/db/data/mod_hpcdb.sql
     $ mysql -u username -ppassword mod_logger      </usr/share/xdmod/db/schema/mod_logger.sql
     $ mysql -u username -ppassword mod_logger      </usr/share/xdmod/db/data/mod_logger.sql
-    $ mysql -u username -ppassword mod_shredder    </usr/share/xdmod/db/schema/mod_shredder.sql
-    $ mysql -u username -ppassword mod_shredder    </usr/share/xdmod/db/data/mod_shredder.sql
-    $ mysql -u username -ppassword moddb           </usr/share/xdmod/db/schema/moddb.sql
-    $ mysql -u username -ppassword moddb           </usr/share/xdmod/db/data/moddb.sql
-    $ mysql -u username -ppassword modw            </usr/share/xdmod/db/schema/modw.sql
-    $ mysql -u username -ppassword modw            </usr/share/xdmod/db/data/modw.sql
-    $ mysql -u username -ppassword modw_aggregates </usr/share/xdmod/db/schema/modw_aggregates.sql
-    $ mysql -u username -ppassword modw_filters    </usr/share/xdmod/db/schema/modw_filters.sql
+
+Bootstrap and populate tables:
+
+    $ /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.shredder-bootstrap
+    $ /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.xdb-bootstrap
+    $ /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.hpcdb-bootstrap
+    $ /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.staging-ingest-common
+    $ /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.jobs-xdw-bootstrap
+
+
+**NOTE**: If you installed from source, you will need to use the
+Open XDMoD `share` directory as opposed to the one above.
 
 You will need to change the `username` and `password` accordingly and
 add the `--host` option and/or `--port` option to the commands above if
@@ -68,12 +76,10 @@ the SQL file paths will different if the source package was installed.
 
 Initialize ACLs:
 
-    $ acl-xdmod-management
     $ acl-config
-    $ acl-import
 
 **NOTE**: If you installed the source tarball update your `PATH` to include the
-Open XDMoD `bin` directory before running these commands.
+Open XDMoD `bin` directory before running the above command.
 
 ### moddb
 
