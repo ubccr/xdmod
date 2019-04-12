@@ -22,7 +22,7 @@ class GenericReportTemplate extends aReportTemplate
      *
      * @param array $params Additional parameters.
      */
-    public function buildReportFromTemplate(array &$params = array(), $report_id_suffix=null)
+    public function buildReportFromTemplate(array &$params = array(), $report_id_suffix = null)
     {
         $rm = new XDReportManager($this->_user);
 

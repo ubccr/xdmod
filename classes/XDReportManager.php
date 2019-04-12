@@ -1331,7 +1331,7 @@ class XDReportManager
             $start_date = $insertion_rank['start_date'];
             $end_date = $insertion_rank['end_date'];
         }
-        else if (strtolower($timeframe_type) == 'user defined') {
+        elseif (strtolower($timeframe_type) == 'user defined') {
             $start_date = $active_start;
             $end_date = $active_end;
         }
@@ -1794,7 +1794,7 @@ class XDReportManager
         return $report_filename;
     }
 
-    public function buildReport($report_id, $export_format, $start_date=null, $end_date=null)
+    public function buildReport($report_id, $export_format, $start_date = null, $end_date = null)
     {
 
         if (

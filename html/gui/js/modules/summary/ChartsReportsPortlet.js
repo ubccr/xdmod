@@ -98,7 +98,7 @@ XDMoD.Modules.SummaryPortlets.ChartsReportsPortlet = Ext.extend(Ext.ux.Portlet, 
                 listeners: {
                     rowselect: function (selModel, index, r) {
                         selModel.clearSelections();
-                        if (r.data.type === 'Chart') {                
+                        if (r.data.type === 'Chart') {
                             var config = Ext.util.JSON.decode(r.data.config);
                             XDMoD.Module.MetricExplorer.setConfig(config, config.summary_index, Boolean(config.preset));
                         } else if (r.data.type === 'Report') {

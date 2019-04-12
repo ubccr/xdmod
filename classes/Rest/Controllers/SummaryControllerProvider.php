@@ -203,9 +203,9 @@ class SummaryControllerProvider extends BaseControllerProvider
 
         if ($role == "cd") {
             $template_id = 2;
-        } else if ($role == "cs") {
+        } elseif ($role == "cs") {
             $template_id = 3;
-        } else if ($role == "usr") {
+        } elseif ($role == "usr") {
             $template_id = 4;
         } else {
             $template_id = 4;
