@@ -1327,7 +1327,7 @@ class XDReportManager
             $timeframe_type = $iq[0]['timeframe_type'];
         }
 
-        if (!(is_null($insertion_rank['start_date'])) && !(is_null($insertion_rank['end_date']))) {
+        if (array_key_exists('start_date', $insertion_rank) && array_key_exists('end_date', $insertion_rank) && !(is_null($insertion_rank['start_date'])) && !(is_null($insertion_rank['end_date']))) {
             $start_date = $insertion_rank['start_date'];
             $end_date = $insertion_rank['end_date'];
         }

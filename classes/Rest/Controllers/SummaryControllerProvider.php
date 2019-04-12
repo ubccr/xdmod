@@ -236,7 +236,23 @@ class SummaryControllerProvider extends BaseControllerProvider
             }
 
             $data = $rm->loadReportData($userReport['report_id']);
-
+            $count = 0;
+            foreach($data['queue'] as $queue) {
+                $chart_id = urldecode($queue['chart_id']);
+                $chart_id = explode("&", $chart_id);
+                $chart_id_parsed = array();
+                foreach($chart_id as $value) {
+                    list($key, $value) = explode("=", $value);
+                    $json = json_decode($value, true);
+                    if ($json === null) {
+                        $chart_id_parsed[$key] = $value;
+                    } else {
+                        $chart_id_parsed[$key] = $json;
+                    }
+                }
+                $data['queue'][$count]['chart_id'] = $chart_id_parsed;
+                $count++;
+            }
             return $app->json(array(
                 'success' => true,
                 'total' => 1,

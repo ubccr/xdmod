@@ -189,43 +189,22 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
         };
         var role = CCR.xdmod.ui.allRoles.filter(isPrimary)[0].param_value.split(':')[0];
 
-        function getTimestampDuration(timeframe_label) {
-            switch(timeframe_label) {
-                case "5 year":
-                    var today = new Date();
-                    var last5Year = today.add(Date.YEAR, -5);
-                    var start = last5Year;
-                    var end = today;
-                break;
-                case "Previous Year":
-                    var today = new Date();
-                    var oneYearAgoStart = new Date(today.getFullYear() - 1, 0, 1);
-                    var oneYearAgoEnd = new Date(today.getFullYear() - 1, 11, 31);
-                    var start = oneYearAgoStart;
-                    var end = oneYearAgoEnd;
-                break;
-                case "Previous Quarter":
-                    var today = new Date();
-                    var lastQuarter = today.add(Date.DAY, -90);
-                    var start = lastQuarter;
-                    var end = today;
-                break;
-                default:
-                    var today = new Date();
-                    var last5Year = today.add(Date.YEAR, -5);
-                    var start = last5Year;
-                    var end = today;
-            }
-            var timeframe = {
-                'start_date': start.format('Y-m-d'),
-                'end_date': end.format('Y-m-d')
-            };
-            return timeframe;
 
-        }
+        function filterRange(arr, label) {
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].text === label) {
+                    return {
+                        'start_date': arr[i].start.format('Y-m-d'),
+                        'end_date': arr[i].end.format('Y-m-d')
+                    };
+                } 
+            };
+        };
+        var ranges = CCR.xdmod.ui.DurationToolbar.getDateRanges(); 
+        
 
         var timeframe_label = this.config[role];
-        this.timeframe = getTimestampDuration(timeframe_label);
+        this.timeframe = filterRange(ranges, timeframe_label);
 
         this.store = new Ext.data.JsonStore({
             url: XDMoD.REST.url + '/summary/cdcharts',
@@ -332,40 +311,28 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
 
                         }); // hcp
 
-
-                        config_split = dataView.store.data.items[index].json.chart_id.split('&');
-                        config = {}
+                        config = dataView.store.data.items[index].json.chart_id;
                         this.tmpHpc.store.removeAll();
-                        for (var x = 0; x < config_split.length; x++) {
-                            var [key, value] = config_split[x].split('=')
-                            if (value) {
-                                if (key === 'global_filters') {
-                                    parsed_value = JSON.parse(decodeURIComponent(value));
-                                    this.tmpHpc.store.setBaseParam(key, parsed_value);
-                                    config[key] = parsed_value;
-
-                                } else if (key === 'data_series') {
-                                    parsed_value = JSON.parse(decodeURIComponent(value));
-                                    var data_series = {}
-                                    data_series["data"] = parsed_value;
-                                    data_series["total"] = parsed_value.length;
-                                    this.tmpHpc.store.setBaseParam(key, value);
-                                    config['data_series'] = data_series
-                                } else {
-                                    this.tmpHpc.store.setBaseParam(key, decodeURIComponent(value));
-                                    config[key] = decodeURIComponent(value);
-                                }
-
-                            }
-
+                        for (var key in config){
+                            if (key === 'data_series') {
+                                this.tmpHpc.store.setBaseParam(key, Ext.util.JSON.encode(config[key]));
+                                var data_series = {};
+                                data_series["data"] = config[key];
+                                data_series["total"] = config[key].length;
+                                config['data_series'] = data_series;
+                            } else if (key === 'global_filters') {
+                                this.tmpHpc.store.setBaseParam(key, Ext.util.JSON.encode(config[key]));
+                            } else {
+                                this.tmpHpc.store.setBaseParam(key, config[key]);
+                            }                           
                         }
                         config['start_date'] = self.timeframe['start_date'];
                         config['end_date'] = self.timeframe['end_date'];
                         config['timeframe_label'] = 'User Defined';
-                        config['timeseries'] = config['timeseries'] === 'y';
                         this.tmpHpc.store.setBaseParam('start_date', self.timeframe['start_date']);
                         this.tmpHpc.store.setBaseParam('end_date', self.timeframe['end_date']);
                         this.tmpHpc.store.setBaseParam('timeframe_label', 'User Defined');
+                        this.tmpHpc.store.setBaseParam('operation', 'get_data');
 
                         var win = new Ext.Window({
                             layout: 'fit',
@@ -406,18 +373,11 @@ XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet = Ext.extend(Ext.Panel, {
                                 }
                             }
                         });
-
                         win.show();
-
-
                     }
                 }
             }
         });
-
-
-
-
         this.items = [this.panel];
 
         XDMoD.Modules.SummaryPortlets.ChartThumbnailPortlet.superclass.initComponent.apply(this, arguments);
