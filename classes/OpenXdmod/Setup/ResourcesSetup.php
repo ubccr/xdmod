@@ -6,6 +6,8 @@
 
 namespace OpenXdmod\Setup;
 
+use \CCR\Json;
+
 /**
  * Resources setup.
  */
@@ -195,8 +197,8 @@ class ResourcesSetup extends SubMenuSetupItem
             return false;
         }
 
-        return file_get_contents(TEMPLATE_DIR . '/roles.d/' . $realm . '.json')
-            === file_get_contents($rolesFile);
+        return JSON::loadFile(TEMPLATE_DIR . '/roles.d/' . $realm . '.json', false)
+            == JSON::loadFile($rolesFile, false);
     }
 
     /**

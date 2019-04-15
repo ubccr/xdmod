@@ -1,0 +1,11 @@
+title
+"User Count (Number of Users): by Resource Type"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"Resource Type","User Count (Number of Users)"
+"Storage grid",341
+"Tape storage resource",10
+---------

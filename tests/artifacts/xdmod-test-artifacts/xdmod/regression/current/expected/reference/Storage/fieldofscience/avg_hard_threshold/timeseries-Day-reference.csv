@@ -1,0 +1,19 @@
+title
+"Quota: Hard Threshold (Bytes): by PI Group"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[Unknown] Quota: Hard Threshold (Bytes)","[Cell Biology] Quota: Hard Threshold (Bytes)","[Biophysics] Quota: Hard Threshold (Bytes)","[Solid-State and Microstructures] Quota: Hard Threshold (Bytes)","[Algebra and Number Theory] Quota: Hard Threshold (Bytes)","[Organic and Macromolecular Chemistry] Quota: Hard Threshold (Bytes)","[Seismology] Quota: Hard Threshold (Bytes)","[Arts] Quota: Hard Threshold (Bytes)","[Biochemistry and Molecular Structure and Function] Quota: Hard Threshold (Bytes)","[Decision, Risk, and Management Science] Quota: Hard Threshold (Bytes)","[Economics] Quota: Hard Threshold (Bytes)","[Experimental Systems] Quota: Hard Threshold (Bytes)","[Fluid, Particulate, and Hydraulic Systems] Quota: Hard Threshold (Bytes)","[Galactic Astronomy] Quota: Hard Threshold (Bytes)","[Geology and Paleontology] Quota: Hard Threshold (Bytes)","[Geophysics] Quota: Hard Threshold (Bytes)","[Global Atmospheric Research] Quota: Hard Threshold (Bytes)","[Law and Social Sciences] Quota: Hard Threshold (Bytes)","[Mechanics and Materials] Quota: Hard Threshold (Bytes)","[Metals, Ceramics, and Electronic Materials] Quota: Hard Threshold (Bytes)","[Physical Chemistry] Quota: Hard Threshold (Bytes)","[Polar Aeronomy and Astrophysics] Quota: Hard Threshold (Bytes)","[Polar Meteorology] Quota: Hard Threshold (Bytes)","[Quantum Electronics, Waves, and Beams] Quota: Hard Threshold (Bytes)","[Sociology] Quota: Hard Threshold (Bytes)","[Solid State Chemistry and Polymers] Quota: Hard Threshold (Bytes)","[Statistics and Probability] Quota: Hard Threshold (Bytes)","[Structures and Building Systems] Quota: Hard Threshold (Bytes)","[Systematic and Population Biology] Quota: Hard Threshold (Bytes)","[Tectonics] Quota: Hard Threshold (Bytes)","[Theoretical Physics] Quota: Hard Threshold (Bytes)","[Volcanology and Mantle Geochemistry] Quota: Hard Threshold (Bytes)"
+2018-12-27,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-28,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-29,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-30,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2018-12-31,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-01,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-02,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-03,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-04,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2019-01-05,1042015019008000,220015017984000,30000001024000,25000001536000,10005000192000,10005000192000,10005000192000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+---------

@@ -47,13 +47,13 @@ don't want to use this process and would prefer to manually create the
 databases, see the [Database Guide](databases.html).
 
 #### Acl Database Setup / Population
- 
-This step will run immediately after you have setup the database that XDMoD will 
-be using and does not require any additional input. It is responsible for creating 
+
+This step will run immediately after you have setup the database that XDMoD will
+be using and does not require any additional input. It is responsible for creating
 and populating the tables required by the Acl framework.
-      
-If your XDMoD Installation requires modifications to the acl tables 
-(etc/etl/etl_tables.d/acls/xdmod/<table>.json) then running this step again or 
+
+If your XDMoD Installation requires modifications to the acl tables
+(etc/etl/etl_tables.d/acls/xdmod/<table>.json) then running this step again or
 the `acl-config` bin script is required.
 
 ### Organization Settings
@@ -212,7 +212,7 @@ Primary configuration file. Contains:
 
 Defines realms, group bys, statistics.
 
-### processor_buckets.json
+### etl/etl_data.d/jobs/xdw/processor-buckets.json
 
 Defines the ranges used for number of processors/cores in "Job Size"
 charts.  Sites may want to align the bucket sizes with the number of

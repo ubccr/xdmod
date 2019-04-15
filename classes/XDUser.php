@@ -8,7 +8,6 @@ use CCR\MailWrapper;
 use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Organizations;
-use User\aRole;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 
 /**
@@ -153,7 +152,7 @@ EML;
      * @param string $first_name
      * @param string $last_name
      * @param array  $role_set
-     * @param string $primary_role  <--- reference to object returned from \User\aRole::factory(...)
+     * @param string $primary_role
      *
      */
 

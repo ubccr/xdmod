@@ -320,7 +320,7 @@ class UserAdminTest extends BaseUserAdminTest
             $this->getTestFiles()->getFile('user_admin', $output)
         );
 
-        $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected:\n\n[" . json_encode($expected) . "]\n\nReceived:\n\n[" . json_encode($actual) . "]");
+        $this->assertEquals($expected, $actual, "[$username] Get Menus - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
 
         if ($username !== self::PUBLIC_USER_NAME) {
             $this->helper->logout();
@@ -432,7 +432,7 @@ class UserAdminTest extends BaseUserAdminTest
             $this->getTestFiles()->getFile('user_admin', $expectedFileName, 'output')
         );
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $actual, "[$username] Get Data Warehouse Descripters - Expected:\n\n" . json_encode($expected) . "\n\nReceived:\n\n" . json_encode($actual));
 
         if (!$isPublicUser) {
             $this->helper->logout();

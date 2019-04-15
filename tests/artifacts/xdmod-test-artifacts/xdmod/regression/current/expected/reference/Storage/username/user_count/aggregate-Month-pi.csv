@@ -1,0 +1,25 @@
+title
+"User Count (Number of Users): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2018-12-27,2019-01-05
+---------
+"System Username","User Count (Number of Users)"
+blaca,1
+crcco,1
+egyni,1
+frahata,1
+gresh,1
+lanwa,1
+ovenb,1
+palsw,1
+parcr,1
+phivi,1
+razor,1
+rocdo,1
+sante,1
+savsp,1
+swath,1
+---------

@@ -209,7 +209,9 @@ class ModuleConfiguration extends XdmodConfiguration
         parent::processExtends();
 
         // We need to make sure that we extend our annotatedConfig
-        $this->handleExtendsFor($this->annotatedConfig);
+        if (!$this->isLocalConfig) {
+            $this->handleExtendsFor($this->annotatedConfig);
+        }
     } // processExtends
 
     /**

@@ -1,0 +1,11 @@
+title
+"File Count (Number of files): by Decanal Unit"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[Unknown] File Count (Number of files)","[Engineering] File Count (Number of files)","[Mathematical and Physical Sciences] File Count (Number of files)","[Biological Sciences] File Count (Number of files)","[Geosciences] File Count (Number of files)","[Social, Behavioral, and Economic Sciences] File Count (Number of files)","[Computer and Information Science and Engineering] File Count (Number of files)","[Humanities/Arts] File Count (Number of files)"
+2018-01-01,220513553,4217279,3952995,3108215,411678,7088,5339,8
+2019-01-01,221930219,4668838,3930063,3047144,375384,6221,5339,8
+---------
