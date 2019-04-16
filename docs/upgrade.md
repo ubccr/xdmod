@@ -126,7 +126,8 @@ the recommended values listed on the [software requirements page][mysql-config].
 ### Database Changes
 
 - Drops existing tables in `modw_cloud` if cloud realm is enabled.
-- Updates user profile data in `moddb` to remove invalid queries.
+- Updates user profile data in `moddb` to normalize Metric Explorer
+  configuration of saved charts.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: software-requirements.md#mysql
