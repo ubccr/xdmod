@@ -1,12 +1,19 @@
-title
-"Number of Active Sessions: by System Username"
-parameters
+Array
+(
+    [success] => 
+    [count] => 0
+    [total] => 0
+    [totalCount] => 0
+    [results] => Array
+        (
+        )
 
-start,end
-2018-04-18,2018-04-30
----------
-"System Username","Number of Active Sessions (Number of Sessions)"
-yerwa,36
-setusca,11
-ylwwa,6
----------
+    [data] => Array
+        (
+        )
+
+    [message] => Your user account does not have permission to view the requested data.  If you
+believe that you should be able to see this information, then please select
+"Submit Support Request" in the "Contact Us" menu to request access.
+    [code] => 103
+)
