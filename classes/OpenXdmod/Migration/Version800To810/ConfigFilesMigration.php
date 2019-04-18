@@ -60,8 +60,13 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
 
         if (array_key_exists('+roles', $cloudRolesFile)) {
             foreach($cloudRolesFile['+roles'] as $key => $unused) {
+                $usernameCloudRole = array('realm' => 'Cloud', 'group_by' => 'username');
+                if($key == '+pub'){
+                    $usernameCloudRole['disable'] = true;
+                }
+
                 $cloudRolesFile['+roles'][$key]['+query_descripters'][] = array('realm' => 'Cloud', 'group_by' => 'person');
-                $cloudRolesFile['+roles'][$key]['+query_descripters'][] = array('realm' => 'Cloud', 'group_by' => 'username');
+                $cloudRolesFile['+roles'][$key]['+query_descripters'][] = $usernameCloudRole;
                 if ($key === '+default') {
                     $cloudRolesFile['+roles'][$key]['+summary_charts'] = $templateCloudRoles['+roles'][$key]['+summary_charts'];
                 }
