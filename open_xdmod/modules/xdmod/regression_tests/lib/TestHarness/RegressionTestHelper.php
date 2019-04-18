@@ -369,7 +369,7 @@ class RegressionTestHelper extends XdmodTestHelper
             if ($csvdata['message'] == 'Session Expired') {
                 throw new \PHPUnit_Framework_IncompleteTestError($fullTestName . ' user session expired...');
             }
-            $csvdata = print_r($csvdata, 1);
+            $csvdata = json_encode($csvdata, JSON_PRETTY_PRINT) . "\n";
         }
 
         $csvdata = preg_replace(self::$replaceRegex, self::$replacements, $csvdata);
