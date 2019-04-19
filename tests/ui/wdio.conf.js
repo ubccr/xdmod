@@ -218,7 +218,7 @@ exports.config = {
             if (webdriverHelpers.hasOwnProperty(extension) && typeof webdriverHelpers[extension] === 'function') {
                 browser.addCommand(extension, webdriverHelpers[extension].bind(browser));
             } else {
-                console.warning('Not Adding: ', extension, typeof webdriverHelpers[extension]);
+                process.stderr.write('Not Adding: ' + extension + typeof webdriverHelpers[extension]);
             }
         }
         // eslint-disable-next-line global-require
