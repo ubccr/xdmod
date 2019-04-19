@@ -146,7 +146,7 @@ class RegressionTestHelper extends XdmodTestHelper
         if (!isset(self::$baseDir)) {
             $envBaseDir = getenv('REG_TEST_BASE');
             if (empty($envBaseDir)) {
-                self::$baseDir = __DIR__ . '/../../../tests/artifacts/xdmod-test-artifacts/xdmod/regression/current';
+                self::$baseDir = __DIR__ . '/../../../artifacts/xdmod/regression/current';
             } else {
                 self::$baseDir = __DIR__ . $envBaseDir;
             }

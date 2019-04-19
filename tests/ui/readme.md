@@ -83,9 +83,9 @@ _Note:_ The XDMoD SauceLabs account allows for a max of 5 concurrent tests at a 
 
 If running tests through SauceLabs, enter the correct `key` for the `xdmod-sauce` account.
 
-#### .secrets.json
+#### testing.json
 
-The username and password are read from a file called .secrets.json in the integration test directory. Please follow the instructions in the integration test directory to setup the password file.
+The user names and passwords are read from a file called testing.json in the ci directory under testing.
 
 ## Run
 

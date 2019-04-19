@@ -19,7 +19,7 @@ class ResourceNamesTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->db = DB::factory('datawarehouse');
-        $this->testFiles = new TestFiles(__DIR__ . '/../../');
+        $this->testFiles = new TestFiles(__DIR__ . '/../../../');
     }
 
     public function testResourcesNamesValues()

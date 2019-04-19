@@ -32,7 +32,7 @@ var Chrome = {
     }
 };
 
-var secrets = require('../integration_tests/.secrets.json');
+var secrets = require('../ci/testing.json');
 secrets.url = process.env.TEST_URL ? process.env.TEST_URL : secrets.url;
 var excludes = [
     './test/**/*.page.js'
@@ -82,7 +82,7 @@ exports.config = {
     //
     specs: [
         './test/specs/**/*.js',
-        '../../../../../*/tests/automated_tests/test/specs/*.js'
+        '../../open_xdmod/modules/*/tests/automated_tests/test/specs/*.js'
     ],
 
     // Patterns to exclude.

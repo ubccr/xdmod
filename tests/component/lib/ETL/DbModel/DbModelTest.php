@@ -34,8 +34,8 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
 
     public static function setupBeforeClass()
     {
-        self::$testArtifactInputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input/');
-        self::$testArtifactOutputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/output/');
+        self::$testArtifactInputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/');
+        self::$testArtifactOutputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/output/');
 
         // The modify_table.json file defines actions to create and modify the table as well was the test schema.
         $configFile = self::$testArtifactInputPath . "/xdmod_etl_config_8.0.0.json";

@@ -1,5 +1,5 @@
 let expected = global.testHelpers.artifacts.getArtifact('myProfile');
-let roles = require('./../../../../integration_tests/.secrets.json').role;
+let roles = require('./../../../../ci/testing.json').role;
 let logIn = require('./loginPage.page.js');
 let myProfile = require('./myProfile.page.js');
 let selectors = myProfile.selectors;

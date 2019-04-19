@@ -68,7 +68,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     private static function setupPaths()
     {
-        self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../artifacts/xdmod-test-artifacts";
+        self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../../artifacts/xdmod";
     }
 
     /**
@@ -78,7 +78,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../');
+            $this->testFiles = new TestFiles(__DIR__ . '/../../');
         }
         return $this->testFiles;
     }

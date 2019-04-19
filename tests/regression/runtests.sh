@@ -21,15 +21,15 @@ log_opts() {
 
 cd $(dirname $0)
 
-if [ ! -e ../integration_tests/.secrets.json ];
+if [ ! -e ../ci/testing.json ];
 then
-    echo "ERROR missing .secrets.json file." >&2
+    echo "ERROR missing testing.json file." >&2
     echo >&2
     cat README.md >&2
     false
 fi
 
-phpunit="$(readlink -f ../../../../vendor/bin/phpunit)"
+phpunit="$(readlink -f ../../vendor/bin/phpunit)"
 
 if [ ! -x "$phpunit" ]; then
     echo phpunit not found, run \"composer install\" 1>&2

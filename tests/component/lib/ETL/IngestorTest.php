@@ -154,12 +154,13 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
     {
         // Note that tests are run in the directory where the PHP class is defined.
         $overseer = realpath(BASE_DIR . '/tools/etl/etl_overseer.php');
-        $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
+        $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
         $options = sprintf('-c %s -a %s %s -v warning', $configFile, $action, $localOptions);
+        $command = sprintf('%s %s', $overseer, $options);
         $pipes = array();
 
         $process = proc_open(
-            sprintf('%s %s', $overseer, $options),
+            $command,
             array(
                 0 => array('file', '/dev/null', 'r'),  // STDIN
                 1 => array('pipe', 'w'),               // STDOUT

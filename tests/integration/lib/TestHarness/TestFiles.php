@@ -4,7 +4,7 @@ namespace TestHarness;
 
 class TestFiles
 {
-    const TEST_ARTIFACT_OUTPUT_PATH = './artifacts/xdmod-test-artifacts';
+    const TEST_ARTIFACT_OUTPUT_PATH = './artifacts';
 
     /**
      * The base directory to use when retrieving test files.

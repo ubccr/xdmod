@@ -1,5 +1,5 @@
 /* eslint-env node, es6 */
-let roles = require('./../../../../integration_tests/.secrets.json').role;
+let roles = require('./../../../../ci/testing.json').role;
 let expected = global.testHelpers.artifacts.getArtifact('internalDashboard');
 
 class InternalDashboard {
@@ -71,7 +71,7 @@ class InternalDashboard {
                     col_for_user: function (username, column_name) {
                         return `(
                           //div[contains(@class, "existing_user_grid")]//div[contains(@class, "x-grid3-body")]//table//td[
-                            count(preceding-sibling::td) + 1 = 
+                            count(preceding-sibling::td) + 1 =
                             count(//div[contains(@class, "existing_user_grid")]//div[contains(@class, "x-grid3-header")]//table//td[.="${column_name}"]/preceding-sibling::td) + 1
                           ]
                         ) [

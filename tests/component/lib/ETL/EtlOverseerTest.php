@@ -30,7 +30,7 @@ class EtlOverseerTest extends \PHPUnit_Framework_TestCase
 
     public static function setupBeforeClass()
     {
-        self::$testArtifactInputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod-test-artifacts/xdmod/etlv2/configuration/input/');
+        self::$testArtifactInputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/');
 
         // Use a pipeline with DummyIngestor and/or DummyAggregator so we can test infrastructure
         $configFile = self::$testArtifactInputPath . "/xdmod_etl_config_dummy_actions.json";
@@ -41,7 +41,7 @@ class EtlOverseerTest extends \PHPUnit_Framework_TestCase
             array('default_module_name' => 'xdmod')
         );
         self::$etlConfig->initialize();
-        
+
         // Explicitly set the resource code map so we don't need to query the database
         self::$overseerOptions = new EtlOverseerOptions(
             array(

@@ -11,7 +11,7 @@ then
 fi
 
 cd $(dirname $0)
-phpunit="$(readlink -f ../../../../vendor/bin/phpunit)"
+phpunit="$(readlink -f ../../vendor/bin/phpunit)"
 
 if [ ! -x "$phpunit" ]; then
     echo phpunit not found, run \"composer install\" 1>&2

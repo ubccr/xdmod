@@ -1,5 +1,5 @@
 /* eslint-env node, es6 */
-var roles = require('./../../../../integration_tests/.secrets.json').role;
+var roles = require('./../../../../ci/testing.json').role;
 var expected = global.testHelpers.artifacts.getArtifact('loginPage');
 class LoginPage {
 

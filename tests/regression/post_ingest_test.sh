@@ -1,7 +1,7 @@
 #!/bin/sh
 # Tests that cloud ETL works after upgrade + reingestion
 
-BASEDIR=./open_xdmod/modules/xdmod/regression_tests
+BASEDIR=./tests/regression
 REF_DIR=/var/tmp/referencedata
 last_modified_start_date=$(date +'%F %T')
 

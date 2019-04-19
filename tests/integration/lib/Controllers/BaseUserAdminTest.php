@@ -59,14 +59,14 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->helper = new XdmodTestHelper();
-        $this->testFiles = new TestFiles(__DIR__ . '/../../');
+        $this->testFiles = new TestFiles(__DIR__ . '/../../../');
         $this->peopleHelper = new PeopleHelper();
     }
 
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../../');
+            $this->testFiles = new TestFiles(__DIR__ . '/../../../');
         }
         return $this->testFiles;
     }

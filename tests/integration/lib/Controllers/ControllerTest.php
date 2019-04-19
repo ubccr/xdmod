@@ -22,14 +22,14 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     protected function getTestFiles()
     {
         if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__. '/../../');
+            $this->testFiles = new TestFiles(__DIR__ . '/../../../');
         }
         return $this->testFiles;
     }
 
     protected function setUp()
     {
-        $this->helper = new XdmodTestHelper(__DIR__ . '/../../');
+        $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
     }
 
     public function testEnumExistingUsers()

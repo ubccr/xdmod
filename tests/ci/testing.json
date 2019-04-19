@@ -1,0 +1,35 @@
+{
+    "url": "http://localhost:8080/",
+    "role": {
+        "cd": {
+            "givenname": "Reed",
+            "surname": "Bunting",
+            "username": "centerdirector",
+            "password": "centerdirector"
+        },
+        "cs": {
+            "givenname": "Turtle",
+            "surname": "Dove",
+            "username": "centerstaff",
+            "password": "centerstaff"
+        },
+        "pi": {
+            "givenname": "Caspian",
+            "surname": "Tern",
+            "username": "principal",
+            "password": "principal"
+        },
+        "usr": {
+            "givenname": "",
+            "surname": "Whimbrel",
+            "username": "normaluser",
+            "password": "normaluser"
+        },
+        "mgr": {
+            "givenname": "Admin",
+            "surname": "User",
+            "username": "admin",
+            "password": "admin"
+        }
+    }
+}

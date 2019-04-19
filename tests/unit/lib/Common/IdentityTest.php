@@ -2,12 +2,12 @@
 
 namespace UnitTests\Common;
 
-/* 
+/*
 * @author Amin Ghadersohi
 * @date 2011-Feb-07
 *
 * This test is designed for class \Common\Identity
-* 
+*
 */
 
 class IdentityTest extends \PHPUnit_Framework_TestCase

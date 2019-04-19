@@ -16,7 +16,7 @@ class XdmodTestHelper
 
     public function __construct($config = array())
     {
-        $this->config = json_decode(file_get_contents(__DIR__ . '/../../.secrets.json'), true);
+        $this->config = json_decode(file_get_contents(__DIR__ . '/../../../ci/testing.json'), true);
 
         $this->siteurl = $this->config['url'];
         $this->headers = array();
@@ -117,7 +117,7 @@ class XdmodTestHelper
     public function authenticate($userrole)
     {
         if (! isset($this->config['role'][$userrole])) {
-            throw new \Exception("User role $userrole not defined in .secrets.json file");
+            throw new \Exception("User role $userrole not defined in testing.json file");
         }
         $this->userrole = $userrole;
         $this->setauthvariables(null);
@@ -209,12 +209,12 @@ class XdmodTestHelper
      *
      * @param string $userrole the role you wish to authenticate as with the
      *                         internal dashboard.
-     * @throws \Exception if the specified $userrole is not present in .secrets.json
+     * @throws \Exception if the specified $userrole is not present in testing.json
      */
     public function authenticateDashboard($userrole)
     {
         if (! isset($this->config['role'][$userrole])) {
-            throw new \Exception("User role $userrole not defined in .secrets.json file");
+            throw new \Exception("User role $userrole not defined in testing.json file");
         }
         $this->userrole = $userrole;
         $this->setauthvariables(null);

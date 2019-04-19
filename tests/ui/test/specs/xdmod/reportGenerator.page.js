@@ -1646,11 +1646,11 @@ class ReportGenerator {
     getCharts(user, options) {
         var charts = expected[user].report_templates.charts;
         charts.forEach(function (chart, i) {
-            if (chart['startDate'] in options) {
-                charts[i].startDate = options[chart['startDate']];
+            if (chart.startDate in options) {
+                charts[i].startDate = options[chart.startDate];
             }
-            if (chart['endDate'] in options) {
-                charts[i].endDate = options[chart['endDate']];
+            if (chart.endDate in options) {
+                charts[i].endDate = options[chart.endDate];
             }
         });
         return charts;

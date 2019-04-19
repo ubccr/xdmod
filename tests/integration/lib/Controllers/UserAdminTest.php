@@ -17,7 +17,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function getTestFiles()
     {
         if (!isset($this->testFiles)) {
-            $this->testFiles = new TestFiles(__DIR__ . '/../..');
+            $this->testFiles = new TestFiles(__DIR__ . '/../../../');
         }
         return $this->testFiles;
     }

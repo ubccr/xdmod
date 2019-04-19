@@ -2,12 +2,12 @@
 
 namespace UnitTesting\DataWarehouse\Query\Model;
 
-/* 
+/*
 * @author Amin Ghadersohi
 * @date 2011-Feb-07
 *
 * This test is designed for class \DataWarehouse\Query\Model\Alias
-* 
+*
 */
 
 class AliasTest extends \PHPUnit_Framework_TestCase
