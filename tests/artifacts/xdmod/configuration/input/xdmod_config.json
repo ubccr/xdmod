@@ -2,7 +2,10 @@
   [
     {
       "base_file": "roles",
-      "local_dir": ["roles.d", "xdmod_config"],
+      "local_dir": [
+        "roles.d",
+        "xdmod_config"
+      ],
       "expected": "xdmod_config_roles"
     }
   ],
@@ -15,7 +18,10 @@
   [
     {
       "base_file": "roles-multi_extends_chain",
-      "local_dir": ["roles.d","multi_extends_chain"],
+      "local_dir": [
+        "roles.d",
+        "multi_extends_chain"
+      ],
       "expected": "roles-multi_extends_chain"
     }
   ]

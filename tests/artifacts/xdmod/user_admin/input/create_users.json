@@ -3,7 +3,9 @@
     {
       "username": "test.cd.one-center",
       "acls": {
-        "cd": [1],
+        "cd": [
+          1
+        ],
         "usr": []
       },
       "long_name": "Auk, Great",
@@ -15,7 +17,9 @@
     {
       "username": "test.cs.one-center",
       "acls": {
-        "cs": [1],
+        "cs": [
+          1
+        ],
         "usr": []
       },
       "long_name": "Auk, Little",

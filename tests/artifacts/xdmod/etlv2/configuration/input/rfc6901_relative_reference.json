@@ -1,5 +1,5 @@
 {
-    "reference": {
-        "$ref": "reference_target.json#/includeme"
-    }
+  "reference": {
+    "$ref": "reference_target.json#/includeme"
+  }
 }

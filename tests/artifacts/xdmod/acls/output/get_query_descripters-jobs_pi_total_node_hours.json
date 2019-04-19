@@ -1,1 +1,8 @@
-{"_realm_name":"Jobs","_group_by_name":"pi","_default_statisticname":"total_node_hours","_order_id":0,"_show_menu":true,"_disable_menu":false}
+{
+  "_realm_name": "Jobs",
+  "_group_by_name": "pi",
+  "_default_statisticname": "total_node_hours",
+  "_order_id": 0,
+  "_show_menu": true,
+  "_disable_menu": false
+}

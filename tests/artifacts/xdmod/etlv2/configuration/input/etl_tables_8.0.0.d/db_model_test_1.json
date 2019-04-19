@@ -1,40 +1,39 @@
 {
-    "#": "Create a table that will be modified",
-
-    "table_definition": {
-        "name": "modify_table_test",
-        "engine": "MyISAM",
-        "columns": [
-            {
-                "name": "resource",
-                "type": "varchar(40)",
-                "nullable": true
-            },
-            {
-                "name": "id",
-                "type": "int(11)",
-                "nullable": false
-            },
-            {
-                "name": "available",
-                "type": "int(11)",
-                "nullable": true
-            },
-            {
-                "name": "requested",
-                "type": "int(11)",
-                "nullable": true
-            },
-            {
-                "name": "awarded",
-                "type": "int(11)",
-                "nullable": true
-            },
-            {
-                "name": "recommended",
-                "type": "int(11)",
-                "nullable": true
-            }
-        ]
-    }
+  "#": "Create a table that will be modified",
+  "table_definition": {
+    "name": "modify_table_test",
+    "engine": "MyISAM",
+    "columns": [
+      {
+        "name": "resource",
+        "type": "varchar(40)",
+        "nullable": true
+      },
+      {
+        "name": "id",
+        "type": "int(11)",
+        "nullable": false
+      },
+      {
+        "name": "available",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "requested",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "awarded",
+        "type": "int(11)",
+        "nullable": true
+      },
+      {
+        "name": "recommended",
+        "type": "int(11)",
+        "nullable": true
+      }
+    ]
+  }
 }

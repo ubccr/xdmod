@@ -1,8 +1,10 @@
 [
-  [{
-    "username": "admin",
-    "realm": "jobs",
-    "group_by": null,
-    "statistic": null
-  }]
+  [
+    {
+      "username": "admin",
+      "realm": "jobs",
+      "group_by": null,
+      "statistic": null
+    }
+  ]
 ]

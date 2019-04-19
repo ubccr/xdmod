@@ -120,7 +120,7 @@
                 },
                 "group_by": "resource",
                 "has_std_err": false,
-                "id": 0.00000000000001,
+                "id": 1e-14,
                 "ignore_global": false,
                 "log_scale": false,
                 "long_legend": true,
@@ -157,7 +157,7 @@
                 },
                 "group_by": "jobsize",
                 "has_std_err": false,
-                "id": 0.00000000000002,
+                "id": 2e-14,
                 "ignore_global": false,
                 "log_scale": false,
                 "long_legend": true,
@@ -194,7 +194,7 @@
                 },
                 "group_by": "none",
                 "has_std_err": true,
-                "id": 0.00000000000003,
+                "id": 3e-14,
                 "ignore_global": false,
                 "log_scale": false,
                 "long_legend": true,
@@ -231,7 +231,7 @@
                 },
                 "group_by": "pi",
                 "has_std_err": true,
-                "id": 0.00000000000004,
+                "id": 4e-14,
                 "ignore_global": false,
                 "log_scale": false,
                 "long_legend": true,
@@ -261,10 +261,12 @@
     "pub": {
       "display": "Public",
       "type": "data",
-      "hierarchies": [{
-        "level": 0,
-        "filter_override": false
-      }],
+      "hierarchies": [
+        {
+          "level": 0,
+          "filter_override": false
+        }
+      ],
       "permitted_modules": [
         {
           "name": "tg_summary",
@@ -359,10 +361,12 @@
       "1": "usr",
       "display": "User",
       "type": "data",
-      "hierarchies": [{
-        "level": 100,
-        "filter_override": false
-      }],
+      "hierarchies": [
+        {
+          "level": 100,
+          "filter_override": false
+        }
+      ],
       "dimensions": [
         "person"
       ],
@@ -372,10 +376,12 @@
       "4": "cd",
       "display": "Center Director",
       "type": "data",
-      "hierarchies": [{
-        "level": 400,
-        "filter_override": false
-      }],
+      "hierarchies": [
+        {
+          "level": 400,
+          "filter_override": false
+        }
+      ],
       "dimensions": [
         "provider"
       ],
@@ -385,10 +391,12 @@
       "2": "pi",
       "display": "Principal Investigator",
       "type": "data",
-      "hierarchies": [{
-        "level": 200,
-        "filter_override": false
-      }],
+      "hierarchies": [
+        {
+          "level": 200,
+          "filter_override": false
+        }
+      ],
       "dimensions": [
         "pi"
       ],
@@ -398,10 +406,12 @@
       "3": "cs",
       "display": "Center Staff",
       "type": "data",
-      "hierarchies": [{
-        "level": 300,
-        "filter_override": false
-      }],
+      "hierarchies": [
+        {
+          "level": 300,
+          "filter_override": false
+        }
+      ],
       "dimensions": [
         "provider"
       ],

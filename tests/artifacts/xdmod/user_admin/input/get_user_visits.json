@@ -7,7 +7,7 @@
       },
       "output": "get_user_visits_year_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -18,7 +18,7 @@
       },
       "output": "get_user_visits_month_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -29,7 +29,7 @@
       },
       "success": false,
       "output": "get_user_visits_quarter_1",
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -40,7 +40,7 @@
       },
       "output": "get_user_visits_year_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -51,7 +51,7 @@
       },
       "output": "get_user_visits_month_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -62,7 +62,7 @@
       },
       "output": "get_user_visits_quarter_2",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -73,7 +73,7 @@
       },
       "output": "get_user_visits_year_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -84,7 +84,7 @@
       },
       "output": "get_user_visits_month_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -95,7 +95,7 @@
       },
       "output": "get_user_visits_quarter_2_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -106,7 +106,7 @@
       },
       "output": "get_user_visits_year_3",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -117,7 +117,7 @@
       },
       "output": "get_user_visits_month_3",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -128,7 +128,7 @@
       },
       "output": "get_user_visits_quarter_3",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -139,7 +139,7 @@
       },
       "output": "get_user_visits_year_3_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -150,7 +150,7 @@
       },
       "output": "get_user_visits_month_3_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -161,7 +161,7 @@
       },
       "output": "get_user_visits_quarter_3_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -172,7 +172,7 @@
       },
       "output": "get_user_visits_year_3_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -183,7 +183,7 @@
       },
       "output": "get_user_visits_month_3_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -194,7 +194,7 @@
       },
       "output": "get_user_visits_quarter_3_2",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -205,7 +205,7 @@
       },
       "output": "get_user_visits_year_3_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -216,7 +216,7 @@
       },
       "output": "get_user_visits_month_3_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -227,7 +227,7 @@
       },
       "output": "get_user_visits_quarter_3_2_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -238,7 +238,7 @@
       },
       "output": "get_user_visits_year_5",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -249,7 +249,7 @@
       },
       "output": "get_user_visits_month_5",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -260,7 +260,7 @@
       },
       "output": "get_user_visits_quarter_5",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -271,7 +271,7 @@
       },
       "output": "get_user_visits_year_5_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -282,7 +282,7 @@
       },
       "output": "get_user_visits_month_5_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -293,7 +293,7 @@
       },
       "output": "get_user_visits_quarter_5_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -304,7 +304,7 @@
       },
       "output": "get_user_visits_year_5_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -315,7 +315,7 @@
       },
       "output": "get_user_visits_month_5_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -326,7 +326,7 @@
       },
       "output": "get_user_visits_quarter_5_2",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -337,7 +337,7 @@
       },
       "output": "get_user_visits_year_5_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -348,7 +348,7 @@
       },
       "output": "get_user_visits_month_5_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -359,7 +359,7 @@
       },
       "output": "get_user_visits_quarter_5_2_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -370,7 +370,7 @@
       },
       "output": "get_user_visits_year_5_3",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -381,7 +381,7 @@
       },
       "output": "get_user_visits_month_5_3",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -392,7 +392,7 @@
       },
       "output": "get_user_visits_quarter_5_3",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -403,7 +403,7 @@
       },
       "output": "get_user_visits_year_5_3_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -414,7 +414,7 @@
       },
       "output": "get_user_visits_month_5_3_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -425,7 +425,7 @@
       },
       "output": "get_user_visits_quarter_5_3_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -436,7 +436,7 @@
       },
       "output": "get_user_visits_year_5_3_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -447,7 +447,7 @@
       },
       "output": "get_user_visits_month_5_3_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -458,7 +458,7 @@
       },
       "output": "get_user_visits_quarter_5_3_2",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -469,7 +469,7 @@
       },
       "output": "get_user_visits_year_5_3_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -480,7 +480,7 @@
       },
       "output": "get_user_visits_month_5_3_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -491,7 +491,7 @@
       },
       "output": "get_user_visits_quarter_5_3_2_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -502,7 +502,7 @@
       },
       "output": "get_user_visits_year_700",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -513,7 +513,7 @@
       },
       "output": "get_user_visits_month_700",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -524,7 +524,7 @@
       },
       "output": "get_user_visits_quarter_700",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -535,7 +535,7 @@
       },
       "output": "get_user_visits_year_700_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -546,7 +546,7 @@
       },
       "output": "get_user_visits_month_700_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -557,7 +557,7 @@
       },
       "output": "get_user_visits_quarter_700_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -568,7 +568,7 @@
       },
       "output": "get_user_visits_year_700_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -579,7 +579,7 @@
       },
       "output": "get_user_visits_month_700_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -590,7 +590,7 @@
       },
       "output": "get_user_visits_quarter_700_2",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -601,7 +601,7 @@
       },
       "output": "get_user_visits_year_700_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -612,7 +612,7 @@
       },
       "output": "get_user_visits_month_700_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -623,7 +623,7 @@
       },
       "output": "get_user_visits_quarter_700_2_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -634,7 +634,7 @@
       },
       "output": "get_user_visits_year_700_3",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -645,7 +645,7 @@
       },
       "output": "get_user_visits_month_700_3",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -656,7 +656,7 @@
       },
       "output": "get_user_visits_quarter_700_3",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -667,7 +667,7 @@
       },
       "output": "get_user_visits_year_700_3_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -678,7 +678,7 @@
       },
       "output": "get_user_visits_month_700_3_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -689,7 +689,7 @@
       },
       "output": "get_user_visits_quarter_700_3_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -700,7 +700,7 @@
       },
       "output": "get_user_visits_year_700_3_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -711,7 +711,7 @@
       },
       "output": "get_user_visits_month_700_3_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -722,7 +722,7 @@
       },
       "output": "get_user_visits_quarter_700_3_2",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -733,7 +733,7 @@
       },
       "output": "get_user_visits_year_700_3_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -744,7 +744,7 @@
       },
       "output": "get_user_visits_month_700_3_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -755,7 +755,7 @@
       },
       "output": "get_user_visits_quarter_700_3_2_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -766,7 +766,7 @@
       },
       "output": "get_user_visits_year_700_5",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -777,7 +777,7 @@
       },
       "output": "get_user_visits_month_700_5",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -788,7 +788,7 @@
       },
       "output": "get_user_visits_quarter_700_5",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -799,7 +799,7 @@
       },
       "output": "get_user_visits_year_700_5_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -810,7 +810,7 @@
       },
       "output": "get_user_visits_month_700_5_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -821,7 +821,7 @@
       },
       "output": "get_user_visits_quarter_700_5_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -832,7 +832,7 @@
       },
       "output": "get_user_visits_year_700_5_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -843,7 +843,7 @@
       },
       "output": "get_user_visits_month_700_5_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -854,7 +854,7 @@
       },
       "output": "get_user_visits_quarter_700_5_2",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -865,7 +865,7 @@
       },
       "output": "get_user_visits_year_700_5_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -876,7 +876,7 @@
       },
       "output": "get_user_visits_month_700_5_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -887,7 +887,7 @@
       },
       "output": "get_user_visits_quarter_700_5_2_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -898,7 +898,7 @@
       },
       "output": "get_user_visits_year_700_5_3",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -909,7 +909,7 @@
       },
       "output": "get_user_visits_month_700_5_3",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -920,7 +920,7 @@
       },
       "output": "get_user_visits_quarter_700_5_3",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -931,7 +931,7 @@
       },
       "output": "get_user_visits_year_700_5_3_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -942,7 +942,7 @@
       },
       "output": "get_user_visits_month_700_5_3_1",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -953,7 +953,7 @@
       },
       "output": "get_user_visits_quarter_700_5_3_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -964,7 +964,7 @@
       },
       "output": "get_user_visits_year_700_5_3_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -975,7 +975,7 @@
       },
       "output": "get_user_visits_month_700_5_3_2-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -986,7 +986,7 @@
       },
       "output": "get_user_visits_quarter_700_5_3_2",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -997,7 +997,7 @@
       },
       "output": "get_user_visits_year_700_5_3_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -1008,7 +1008,7 @@
       },
       "output": "get_user_visits_month_700_5_3_2_1-add_user",
       "success": true,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -1019,7 +1019,7 @@
       },
       "output": "get_user_visits_quarter_700_5_3_2_1",
       "success": false,
-      "content_type": "text\/html; charset=UTF-8"
+      "content_type": "text/html; charset=UTF-8"
     }
   ]
 ]

@@ -1,4 +1,14 @@
 [
-    [-1, "unknown",            "Unknown",               "Unknown event type" ],
-    [1,  "request-start",      "Request Start",         "Request to start instance" ]
+  [
+    -1,
+    "unknown",
+    "Unknown",
+    "Unknown event type"
+  ],
+  [
+    1,
+    "request-start",
+    "Request Start",
+    "Request to start instance"
+  ]
 ]

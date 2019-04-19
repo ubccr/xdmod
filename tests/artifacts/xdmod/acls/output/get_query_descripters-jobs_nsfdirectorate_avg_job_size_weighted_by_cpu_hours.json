@@ -1,1 +1,8 @@
-{"_realm_name":"Jobs","_group_by_name":"nsfdirectorate","_default_statisticname":"avg_job_size_weighted_by_cpu_hours","_order_id":0,"_show_menu":true,"_disable_menu":false}
+{
+  "_realm_name": "Jobs",
+  "_group_by_name": "nsfdirectorate",
+  "_default_statisticname": "avg_job_size_weighted_by_cpu_hours",
+  "_order_id": 0,
+  "_show_menu": true,
+  "_disable_menu": false
+}

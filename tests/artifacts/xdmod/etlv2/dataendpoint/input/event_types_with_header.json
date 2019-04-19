@@ -1,5 +1,20 @@
 [
-    ["event_type_id", "event_type", "display", "description"],
-    [-1, "unknown",            "Unknown",               "Unknown event type" ],
-    [1,  "request-start",      "Request Start",         "Request to start instance" ]
+  [
+    "event_type_id",
+    "event_type",
+    "display",
+    "description"
+  ],
+  [
+    -1,
+    "unknown",
+    "Unknown",
+    "Unknown event type"
+  ],
+  [
+    1,
+    "request-start",
+    "Request Start",
+    "Request to start instance"
+  ]
 ]

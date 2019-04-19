@@ -1,1 +1,10 @@
-{"reference":{"this":"is","ground":"control","to":["major","tom"]}}
+{
+  "reference": {
+    "this": "is",
+    "ground": "control",
+    "to": [
+      "major",
+      "tom"
+    ]
+  }
+}
