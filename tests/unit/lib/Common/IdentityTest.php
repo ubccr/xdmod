@@ -46,7 +46,7 @@ class IdentityTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoDefaultParameterToConstructor()
     {
-        $identity =  new \Common\Identity(); // this construction should fail since the name parameter is not specified
+        new \Common\Identity(); // this construction should fail since the name parameter is not specified
     }
 
     public function testGetName()

@@ -867,8 +867,6 @@ class XDUserTest extends BaseTest
      */
     public function testIsCenterDirectorOfOrganizationValidCenter($userName, $organizationId, $expected)
     {
-        $validOrganizationId = 1;
-
         $user = XDUser::getUserByUserName($userName);
         $actual = $user->isCenterDirectorOfOrganization($organizationId);
         $this->assertEquals($expected, $actual);

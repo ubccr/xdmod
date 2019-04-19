@@ -11,7 +11,7 @@ class TimeAggregationUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidTimePeriod()
     {
-        $aggunit = \DataWarehouse\Query\TimeAggregationUnit::factory('era', 'Palenzoic', 'Mesoproterozoic', 'fossilfact_by');
+        \DataWarehouse\Query\TimeAggregationUnit::factory('era', 'Palenzoic', 'Mesoproterozoic', 'fossilfact_by');
     }
 
     public function testGetRawTimePeriod()

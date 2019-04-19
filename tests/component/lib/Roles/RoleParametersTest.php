@@ -331,9 +331,6 @@ class RoleParametersTest extends BaseTest
         // person mappings based on most privileged acl.
         $aclPersons = $inputOptions['acl_persons'];
 
-        // The persons who are also pi's.
-        $piPersons = $inputOptions['pi_persons'];
-
         // All current acls
         $baseAcls = $inputOptions['acls'];
 

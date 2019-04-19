@@ -29,7 +29,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
     public function testNoExceptionCode()
     {
         $msg = "No Code";
-        $excpectedMsg = (string) $this->loggable . " $msg";
+        $expectedMsg = (string) $this->loggable . " $msg";
         try {
             $this->loggable->logAndThrowException($msg);
         } catch ( Exception $e ) {
@@ -45,7 +45,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
     public function testExceptionCode()
     {
         $msg = "Code = 10";
-        $excpectedMsg = (string) $this->loggable . " $msg";
+        $expectedMsg = (string) $this->loggable . " $msg";
         try {
             $this->loggable->logAndThrowException(
                 $msg,

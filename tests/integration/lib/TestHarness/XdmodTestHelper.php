@@ -229,7 +229,7 @@ class XdmodTestHelper
 
     public function logout()
     {
-        $logoutResult = $this->post("rest/auth/logout", null, null);
+        $this->post("rest/auth/logout", null, null);
         $this->setauthvariables(null);
     }
 

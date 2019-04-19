@@ -245,7 +245,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
         );
 
         $options = new DataEndpointOptions($config);
-        $file = DataEndpoint::factory($options, $this->logger);
+        DataEndpoint::factory($options, $this->logger);
 
     }  // testInvalidFilterConfig()
 
@@ -514,7 +514,7 @@ class StructuredFileTest extends \PHPUnit_Framework_TestCase
         $options = new DataEndpointOptions($config);
         $file = DataEndpoint::factory($options, $this->logger);
         $file->verify();
-        $generated = $file->parse();
+        $file->parse();
 
         $this->assertEquals(1, $file->count(), "Expected 1 out of 3 valid records");
 

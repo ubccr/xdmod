@@ -44,7 +44,7 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructorBadInitializer()
     {
-        $store = new VariableStore('bad initializer');
+        new VariableStore('bad initializer');
     }
 
     /**

@@ -111,6 +111,6 @@ EOF;
       */
     public function testExportBananas()
     {
-        $result = $this->exportHelper('bananas', false, 'yes we have no bananas');
+        $this->exportHelper('bananas', false, 'yes we have no bananas');
     }
 }

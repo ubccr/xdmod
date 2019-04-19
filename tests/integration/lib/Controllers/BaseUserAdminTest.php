@@ -210,7 +210,7 @@ abstract class BaseUserAdminTest extends \PHPUnit_Framework_TestCase
         $institution = isset($options['institution']) ? $options['institution'] : -1;
         $firstName = isset($options['first_name']) ? $options['first_name'] : 'Test';
         $lastName = isset($options['last_name']) ? $options['last_name'] : 'User';
-        $emailAddress = isset($option['email_address']) ? $options['email_address'] : $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX;
+        $emailAddress = isset($options['email_address']) ? $options['email_address'] : $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX;
         $userType = isset($options['user_type']) ? $options['user_type'] : self::DEFAULT_USER_TYPE;
         $output = isset($options['output']) ? $options['output'] : 'test.create.user';
         $expectedSuccess = isset($options['expected_success']) ? $options['expected_success'] : true;

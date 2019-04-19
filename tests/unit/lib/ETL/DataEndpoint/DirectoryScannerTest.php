@@ -235,7 +235,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
             )
         );
         $options = new DataEndpointOptions($config);
-        $scanner = DataEndpoint::factory($options, $this->logger);
+        DataEndpoint::factory($options, $this->logger);
     }  // testLastModifiedBadFileRegex()
 
     /**
@@ -260,7 +260,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         );
 
         $options = new DataEndpointOptions($config);
-        $scanner = DataEndpoint::factory($options, $this->logger);
+        DataEndpoint::factory($options, $this->logger);
     }  // testLastModifiedBadDirRegex()
 
     /**
@@ -367,7 +367,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         $this->assertEquals(4, $scanner->getNumRecordsParsed(), "Number of records found using last modified regex");
 
     }  // testLastModifiedFilterUsingFileRegex()
-    
+
     /**
      * 10. Test trying to read a file modified between a particular start and end date using
      *     a modification time parsed from the directory using a regex.
