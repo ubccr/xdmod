@@ -1,7 +1,7 @@
 Open XDMoD Change Log
 =====================
 
-## 2019-04-19 v8.1.0
+## 2019-04-23 v8.1.0
 
 - Documentation
     - ETL
@@ -122,7 +122,7 @@ Open XDMoD Change Log
         - Fixed several exceptions that were outside of a namespace.
         - Fixed an issue where ACLs were not properly created on upgrade.
         - Several minor bugfixes
- 
+
 ## 2018-05-23 v7.5.1
 
 - Bug Fixes
