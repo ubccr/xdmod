@@ -96,7 +96,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %changelog
-* Fri Apr 19 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.0-1.0
+* Tue Apr 23 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.0-1.0
     - Update `%pre` with steps for `node_modules` on 8.1.0 release
 * Tue Oct 30 2018 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.0.0-1.0
     - Add `jq` dependency
