@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.0/dev-contributing.html
+redirect_to: /8.1/dev-contributing.html
 ---

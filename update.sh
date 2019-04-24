@@ -3,8 +3,8 @@
 
 set -e
 
-branches="xdmod8.0 xdmod7.5 xdmod7.0"
-latest="xdmod8.0"
+branches="xdmod8.1 xdmod8.0"
+latest="xdmod8.1"
 
 for branch in $branches;
 do

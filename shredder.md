@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.0/shredder.html
+redirect_to: /8.1/shredder.html
 ---

@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.0/resource-manager-sge.html
+redirect_to: /8.1/resource-manager-sge.html
 ---

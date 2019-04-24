@@ -1,3 +1,3 @@
 ---
-redirect_to: /8.0/troubleshooting.html
+redirect_to: /8.1/troubleshooting.html
 ---
