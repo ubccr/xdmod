@@ -27,26 +27,28 @@ github_username: ubccr
 github_url: https://github.com/ubccr/xdmod
 latest_version: "8.1"
 version_list:
-    - "8.1"
-    - "8.0"
+  - "8.1"
+  - "8.0"
 
 defaults:
-    -
-        scope:
-            path: "8.1"
-            type: "pages"
-        values:
-            layout: "page"
-            version: "8.1"
-            menu_markdown: "8.1/menu.md"
-    -
-        scope:
-            path: "8.0"
-            type: "pages"
-        values:
-            layout: "page"
-            version: "8.0"
-            menu_markdown: "8.0/menu.md"
+  -
+    scope:
+      path: "8.1"
+      type: "pages"
+    values:
+      layout: "page"
+      version: "8.1"
+      sw_version: "8.1.0"
+      style: "effervescence"
+      tocversion: "v8_1toc"
+  -
+    scope:
+      path: "8.0"
+      type: "pages"
+    values:
+      layout: "page"
+      version: "8.0"
+      menu_markdown: "8.0/menu.md"
 
 # Build settings
 markdown: kramdown
