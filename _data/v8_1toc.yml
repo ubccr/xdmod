@@ -40,7 +40,7 @@ toc:
         - page: Database Guide
           url: /8.1/databases.html
         - page: Upgrade Guide
-          url: /8.1/ upgrade.html
+          url: /8.1/upgrade.html
     - title: Using
       subfolderitems:
         - page: Shredder Guide
