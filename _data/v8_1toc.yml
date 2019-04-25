@@ -2,7 +2,7 @@ toc:
     - title: About
       subfolderitems:
         - page: Overview
-          url: /8.1/index.html
+          url: /8.1/
         - page: License Notices
           url: /8.1/notices.html
         - page: Architecture
