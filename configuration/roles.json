@@ -40,6 +40,15 @@
                     "tooltip": ""
                 },
                 {
+                    "name": "job_viewer",
+                    "title": "Job Viewer",
+                    "position": 5000,
+                    "javascriptClass": "XDMoD.Module.JobViewer",
+                    "javascriptReference": "CCR.xdmod.ui.jobViewer",
+                    "tooltip": "View detailed job-level metrics",
+                    "userManualSectionName": "Job Viewer"
+                },
+                {
                     "name": "about_xdmod",
                     "title": "About",
                     "position": 10000,

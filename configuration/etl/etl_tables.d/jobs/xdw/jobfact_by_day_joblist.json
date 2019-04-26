@@ -1,0 +1,30 @@
+{
+    "table_definition": {
+        "name": "jobfact_by_day_joblist",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "agg_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "jobid",
+                "type": "int(11)",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "agg_id",
+                    "jobid"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

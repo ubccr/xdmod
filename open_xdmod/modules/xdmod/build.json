@@ -80,6 +80,7 @@
             "configuration/portal_settings.d",
             "configuration/rawstatistics.json",
             "configuration/rawstatistics.d",
+            {"configuration/rawstatistics.d/20_jobs.json": "rawstatistics.d/20_jobs.json"},
             "configuration/resource_specs.json",
             "configuration/resource_types.json",
             "configuration/resources.json",
