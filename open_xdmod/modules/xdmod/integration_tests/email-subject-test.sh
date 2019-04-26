@@ -7,10 +7,13 @@ sed -i -- 's/subject_prefix = "SEND BEN MONEY"/subject_prefix = ""/' /etc/xdmod/
 
 # sometimes it takes a second to send the emails
 queueLength=`postqueue -p | tail -n1 | awk '{print $5}'`
-if [ "$queueLength" != ""  ]; then
+count=0
+while [[ "$queueLength" != ""  && $count < 5 ]]; do
     echo "queue has not been emptied, waiting 1 second."
     sleep 1
-fi
+    queueLength=`postqueue -p | tail -n1 | awk '{print $5}'`
+    ((count+=1))
+done
 
 emailsubjects=`grep 'SEND BEN MONEY' /var/mail/root -c`
 
