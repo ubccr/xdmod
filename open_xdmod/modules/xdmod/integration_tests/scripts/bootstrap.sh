@@ -40,9 +40,6 @@ then
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
     sudo -u xdmod xdmod-ingestor
     php $BASEDIR/../../../../../tests/ci/scripts/create_xdmod_users.php
-    # This will ensure that the users created in `/root/bin/createusers.php`
-    # have their organizations set correctly.
-    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.acls-import
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];

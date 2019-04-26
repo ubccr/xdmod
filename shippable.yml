@@ -3,7 +3,7 @@ env:
     - XDMOD_TEST_MODE=fresh_install
     - XDMOD_TEST_MODE=upgrade
 build:
-    cache: false
+    cache: true
     cache_dir_list:
         - /root/.composer
         - /root/.npm
