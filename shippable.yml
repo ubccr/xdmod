@@ -8,9 +8,9 @@ build:
         - /root/.composer
         - /root/.npm
     pre_ci:
-        - docker build -t pseudo_repo/xdmod-open-751:latest .
+        - docker build -t pseudo_repo/openxdmod:latest .
     pre_ci_boot:
-        image_name: pseudo_repo/xdmod-open-751
+        image_name: pseudo_repo/openxdmod
         image_tag: latest
         pull: false
         options: "--user root -e HOME=/root --shm-size 2g"

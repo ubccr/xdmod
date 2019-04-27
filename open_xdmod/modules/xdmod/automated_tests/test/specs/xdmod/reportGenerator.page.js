@@ -479,7 +479,8 @@ class ReportGenerator {
                 window: () => `//div[${classContains('x-window')} and .//span[text()="Save Report As"]]`,
                 fileNameInput: () => this.selectors.saveReportAs.window() + '//input[@name="report_name"]',
                 saveButton: () => this.selectors.saveReportAs.window() + '//button[text()="Save"]',
-                closeButton: () => this.selectors.saveReportAs.window() + '//button[text()="Close"]'
+                closeButton: () => this.selectors.saveReportAs.window() + '//button[text()="Close"]',
+                fileNameInputInvalid: () => this.selectors.saveReportAs.window() + `//input[@name="report_name" and ${classContains('x-form-invalid')}]`
             },
             reportBuilt: {
                 window: () => `//div[${classContains('x-window')} and .//span[text()="Report Built"]]`,
@@ -1111,7 +1112,13 @@ class ReportGenerator {
         browser.click(this.selectors.reportEditor.toolbar.saveAsButton());
         this.waitForSaveReportAsWindowVisible();
         if (reportName !== undefined) {
+            /*
+             * There is a "timing" issue when setting the value of the input box
+             * and then clicking on save to quickly, this forces it to wait for
+             * the invalid input to not be present
+             */
             browser.setValue(this.selectors.saveReportAs.fileNameInput(), reportName);
+            browser.waitUntilNotExist(this.selectors.saveReportAs.fileNameInputInvalid());
         }
     }
 

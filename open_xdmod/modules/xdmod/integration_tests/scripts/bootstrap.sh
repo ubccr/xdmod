@@ -39,10 +39,7 @@ then
     sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
     sudo -u xdmod xdmod-ingestor
-    php /root/bin/createusers.php
-    # This will ensure that the users created in `/root/bin/createusers.php`
-    # have their organizations set correctly.
-    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -p xdmod.acls-import
+    php $BASEDIR/../../../../../tests/ci/scripts/create_xdmod_users.php
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
@@ -50,17 +47,4 @@ then
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
     ~/bin/services start
     expect $BASEDIR/xdmod-upgrade.tcl | col -b
-
-    # Add storage resources and data.  These resources and data should be added
-    # to the 8.1 Docker image and this script should then be removed.
-    expect $BASEDIR/xdmod-upgrade-add-storage-resources.tcl | col -b
-    for storage_dir in $REF_DIR/storage/*; do
-        sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
-    done
-    last_modified_start_date=$(date +'%F %T')
-    sudo -u xdmod xdmod-ingestor --datatype storage
-    sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
-
-    sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
-    sudo -u xdmod xdmod-ingestor
 fi
