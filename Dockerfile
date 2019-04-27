@@ -1,1 +1,1 @@
-FROM       tas-tools-ext-01.ccr.xdmod.org/xdmod-centos7:open8.0.0-v2
+FROM       tas-tools-ext-01.ccr.xdmod.org/centos7_6-open8.1.0:latest
