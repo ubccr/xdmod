@@ -84,7 +84,7 @@ class GroupByProvider extends \DataWarehouse\Query\Jobs\GroupBy
         $query->addTable($this->organization_table);
 
         $id_field = new \DataWarehouse\Query\Model\TableField($this->organization_table, $this->_id_field_name);
-        $datatable_organization_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'organization_id');
+        $datatable_organization_id_field = new \DataWarehouse\Query\Model\TableField($data_table, 'resource_organization_id');
 
         // the where condition that specifies the join of the tables
         $query->addWhereCondition(
