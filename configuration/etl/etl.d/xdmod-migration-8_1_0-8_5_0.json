@@ -1,0 +1,24 @@
+{
+    "module": "xdmod",
+    "migration-8_1_0-8_5_0": [
+        {
+            "name": "update-modw_aggregates-tables",
+            "description": "Update modw_aggregates tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "jobs/xdw/jobfact_by_day.json",
+                "jobs/xdw/jobfact_by_day_joblist.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Aggregate tables",
+                    "config": "database",
+                    "schema": "modw_aggregates"
+                }
+            }
+        }
+    ]
+}

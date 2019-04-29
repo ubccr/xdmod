@@ -20,6 +20,14 @@ set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
 expect {
+    -re "\nDo you want to run aggregation now.*\\\]" {
+        send yes\n
+    }
+    timeout {
+        send_user "\nFailed to get prompt\n"; exit 1
+    }
+}
+expect {
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1
     }
