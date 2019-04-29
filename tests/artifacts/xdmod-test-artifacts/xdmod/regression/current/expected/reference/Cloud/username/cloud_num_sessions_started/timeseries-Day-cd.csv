@@ -1,0 +1,22 @@
+title
+"Number of Sessions Started: by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Day,"[yerwa] Number of Sessions Started","[setusca] Number of Sessions Started","[ylwwa] Number of Sessions Started"
+2018-04-18,20,0,2
+2018-04-19,5,11,2
+2018-04-20,9,0,0
+2018-04-21,0,0,0
+2018-04-22,0,0,0
+2018-04-23,0,0,0
+2018-04-24,0,0,0
+2018-04-25,0,0,0
+2018-04-26,2,0,0
+2018-04-27,0,0,1
+2018-04-28,0,0,0
+2018-04-29,0,0,0
+2018-04-30,0,0,1
+---------

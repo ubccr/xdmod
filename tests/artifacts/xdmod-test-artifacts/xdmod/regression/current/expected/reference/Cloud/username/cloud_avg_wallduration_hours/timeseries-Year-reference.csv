@@ -1,10 +1,14 @@
-title
-"Average Wall Hours per Session: by System Username"
-parameters
+{
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [
 
-start,end
-2018-04-18,2018-04-30
----------
-Year,"[ylwwa] Average Wall Hours per Session","[yerwa] Average Wall Hours per Session","[setusca] Average Wall Hours per Session"
-2018,36.50143519,27.87274691,0.40893939
----------
+    ],
+    "data": [
+
+    ],
+    "message": "Your user account does not have permission to view the requested data.  If you\nbelieve that you should be able to see this information, then please select\n\"Submit Support Request\" in the \"Contact Us\" menu to request access.",
+    "code": 103
+}

@@ -1,12 +1,14 @@
-title
-"Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes): by System Username"
-parameters
+{
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [
 
-start,end
-2018-04-18,2018-04-30
----------
-"System Username","Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)"
-setusca,21474836480.0000
-yerwa,21474836480.0000
-ylwwa,21474836480.0000
----------
+    ],
+    "data": [
+
+    ],
+    "message": "Your user account does not have permission to view the requested data.  If you\nbelieve that you should be able to see this information, then please select\n\"Submit Support Request\" in the \"Contact Us\" menu to request access.",
+    "code": 103
+}
