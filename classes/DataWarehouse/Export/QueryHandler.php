@@ -51,7 +51,7 @@ class QueryHandler
                         'end_date' => $endDate);
 
         // return the id for the inserted record
-        $id = $this->pdo->insert($sql);
+        $id = $this->pdo->insert($sql, $params);
 
         return($id);
     }
