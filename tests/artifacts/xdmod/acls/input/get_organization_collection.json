@@ -1,0 +1,22 @@
+[
+  [
+    "centerdirector",
+    "get_organization_collection-centerdirector"
+  ],
+  [
+    "centerstaff",
+    "get_organization_collection-centerstaff"
+  ],
+  [
+    "principal",
+    "get_organization_collection-principal"
+  ],
+  [
+    "normaluser",
+    "get_organization_collection-normaluser"
+  ],
+  [
+    "Public User",
+    "get_organization_collection-Public User"
+  ]
+]
