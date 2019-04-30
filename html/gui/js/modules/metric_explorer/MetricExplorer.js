@@ -2250,7 +2250,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         if (config.featured === JSON.parse(this.currentQueryRecord.data.config).featured &&
           !this.currentQueryRecord.stack.isMarked()) {
-            this.summaryDirty = true;
+            CCR.xdmod.ui.tgSummaryViewer.fireEvent('request_refresh');
         }
 
         var recordUpdated = false;
